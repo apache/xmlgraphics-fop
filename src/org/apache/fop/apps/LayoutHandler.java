@@ -7,24 +7,22 @@
 
 package org.apache.fop.apps;
 
+// Java
 import java.io.OutputStream;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
 
+// SAX
 import org.xml.sax.SAXException;
 
+// FOP
 import org.apache.fop.layout.FontInfo;
-import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.AreaTree;
-import org.apache.fop.area.CachedRenderPagesModel;
 import org.apache.fop.area.Title;
 import org.apache.fop.area.TreeExt;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.LayoutMasterSet;
-
-import org.apache.avalon.framework.logger.Logger;
 
 /**
  * Layout handler that receives the structure events.
@@ -32,17 +30,20 @@ import org.apache.avalon.framework.logger.Logger;
  * rendering processes such as start/end.
  */
 public class LayoutHandler extends StructureHandler {
-    private static final boolean MEM_PROFILE_WITH_GC = false;
+
+    // TODO: Collecting of statistics should be configurable
+    private final boolean collectStatistics = true;
+    private final boolean MEM_PROFILE_WITH_GC = false;
 
     /**
       Somewhere to get our stats from.
      */
-    private Runtime runtime = Runtime.getRuntime();
+    private Runtime runtime;
 
     /**
       Keep track of the number of pages rendered.
      */
-    int pageCount = 0;
+    private int pageCount;
 
     /**
       Keep track of heap memory allocated,
@@ -87,6 +88,8 @@ public class LayoutHandler extends StructureHandler {
      */
     public LayoutHandler(OutputStream outputStream, Renderer renderer,
                          boolean store) {
+        if (collectStatistics)
+            runtime = Runtime.getRuntime();
         this.outputStream = outputStream;
         this.renderer = renderer;
 
@@ -112,15 +115,15 @@ public class LayoutHandler extends StructureHandler {
      * @throws SAXException if there is an error
      */
     public void startDocument() throws SAXException {
-        pageCount = 0;
-
-        if (MEM_PROFILE_WITH_GC) {
-            System.gc(); // This takes time but gives better results
+        //Initialize statistics
+        if (collectStatistics) {
+            pageCount = 0;
+            if (MEM_PROFILE_WITH_GC) {
+                System.gc(); // This takes time but gives better results
+            }
+            initialMemory = runtime.totalMemory() - runtime.freeMemory();
+            startTime = System.currentTimeMillis();
         }
-
-        initialMemory = runtime.totalMemory() - runtime.freeMemory();
-        startTime = System.currentTimeMillis();
-
         try {
             renderer.setupFontInfo(fontInfo);
             // check that the "any,normal,400" font exists
@@ -147,30 +150,27 @@ public class LayoutHandler extends StructureHandler {
             throw new SAXException(e);
         }
 
-        if (getLogger().isDebugEnabled()) {
+        if (collectStatistics) {
             if (MEM_PROFILE_WITH_GC) {
                 // This takes time but gives better results
                 System.gc();
             }
-
             long memoryNow = runtime.totalMemory() - runtime.freeMemory();
             long memoryUsed = (memoryNow - initialMemory) / 1024L;
-            getLogger().debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
-            getLogger().debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
-            getLogger().debug("Total memory used: " + memoryUsed + "Kb");
-
-            if (!MEM_PROFILE_WITH_GC) {
-                getLogger().debug("  Memory use is indicative; no GC was performed");
-                getLogger().debug("  These figures should not be used comparatively");
-            }
-        }
-
-        if (getLogger().isDebugEnabled()) {
             long timeUsed = System.currentTimeMillis() - startTime;
-            getLogger().debug("Total time used: " + timeUsed + "ms");
-            getLogger().debug("Pages rendered: " + pageCount);
-            if (pageCount > 0) {
-                getLogger().debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+            if (getLogger().isDebugEnabled()) {
+                getLogger().debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
+                getLogger().debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
+                getLogger().debug("Total memory used: " + memoryUsed + "Kb");
+                if (!MEM_PROFILE_WITH_GC) {
+                    getLogger().debug("  Memory use is indicative; no GC was performed");
+                    getLogger().debug("  These figures should not be used comparatively");
+                }
+                getLogger().debug("Total time used: " + timeUsed + "ms");
+                getLogger().debug("Pages rendered: " + pageCount);
+                if (pageCount > 0) {
+                    getLogger().debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+                }
             }
         }
     }
@@ -204,16 +204,16 @@ public class LayoutHandler extends StructureHandler {
     throws FOPException {
         //areaTree.setFontInfo(fontInfo);
 
-        if (getLogger().isDebugEnabled()) {
+        if (collectStatistics) {
             if (MEM_PROFILE_WITH_GC) {
                 // This takes time but gives better results
                 System.gc(); 
             }
-
             long memoryNow = runtime.totalMemory() - runtime.freeMemory();
-            getLogger().debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
+            if (getLogger().isDebugEnabled()) {
+                getLogger().debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
+            }
         }
-
         pageSequence.format(areaTree);
     }
 
@@ -235,7 +235,7 @@ public class LayoutHandler extends StructureHandler {
             for (int c = 0; c < pagec; c++) {
                 try {
                     renderer.renderPage(model.getPage(count, c));
-                } catch (java.io.IOException ioex) {
+                } catch (IOException ioex) {
                     throw new FOPException("I/O Error rendering page",
                                            ioex);
                 }
