@@ -65,6 +65,10 @@ import org.w3c.dom.events.*;
  *
  */
 public abstract class GraphicElement extends SVGElementImpl implements SVGTransformable, SVGLangSpace, SVGTests, EventTarget {
+	protected SVGList reqFeatures;
+	protected SVGList reqExtensions;
+	protected SVGList sysLanguage;
+
 	public SVGElement getNearestViewportElement( )
 	{
 		return null;
@@ -134,22 +138,24 @@ public abstract class GraphicElement extends SVGElementImpl implements SVGTransf
 
 	public SVGList getRequiredFeatures( )
 	{
-		return null;
+		return reqFeatures;
 	}
 
 	public void setRequiredFeatures( SVGList requiredFeatures )
                        throws DOMException
 	{
+	    reqFeatures = requiredFeatures;
 	}
 
 	public SVGList getRequiredExtensions( )
 	{
-		return null;
+		return reqExtensions;
 	}
 
 	public void setRequiredExtensions( SVGList requiredExtensions )
                        throws DOMException
 	{
+	    reqExtensions = requiredExtensions;
 	}
 
 	public boolean hasExtension ( String extension )
@@ -159,11 +165,12 @@ public abstract class GraphicElement extends SVGElementImpl implements SVGTransf
 
 	public SVGList getSystemLanguage()
 	{
-		return null;
+		return sysLanguage;
 	}
 
 	public void setSystemLanguage(SVGList systemLanguage)
 	{
+	    sysLanguage = systemLanguage;
 	}
 
 	public void addEventListener(String type, 

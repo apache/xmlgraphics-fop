@@ -51,12 +51,26 @@
 
 package org.apache.fop.dom.svg;
 
+import org.w3c.dom.svg.*;
+
 /**
  * class representing a line in an SVG Area
  *
  */
-public class SVGAElementImpl extends SVGElementImpl {
+public class SVGAElementImpl extends SVGURIReferenceImpl implements SVGAElement {
+    SVGAnimatedString target;
+
 	public SVGAElementImpl()
 	{
+	}
+
+	public void setTarget(SVGAnimatedString str)
+	{
+		target = str;
+	}
+
+	public SVGAnimatedString getTarget()
+	{
+		return target;
 	}
 }
