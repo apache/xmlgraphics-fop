@@ -47,18 +47,46 @@
 </xsl:template>
 
 <xsl:template match="standard">
-  <h2><xsl:value-of select="@name"/></h2>
+  <h2>
+    <a>
+      <xsl:attribute name="target">
+        <xsl:value-of select="@baseURL"/>
+      </xsl:attribute>
+      <xsl:attribute name="href">
+        <xsl:value-of select="@baseURL"/>
+      </xsl:attribute>
+      <xsl:value-of select="@name"/>
+    </a>
+  </h2>
   <xsl:apply-templates select="explanatory"/>
   <xsl:apply-templates select="level-1"/>
 </xsl:template>
 
 <xsl:template match="level-1">
-  <h3><xsl:value-of select="@name"/></h3>
+  <h3>
+    <xsl:value-of select="@name"/>
+    <xsl:if test="@citation">
+      <xsl:text> (</xsl:text>
+      <a>
+        <xsl:attribute name="target">
+          <xsl:apply-templates select="../@baseURL"/>
+        </xsl:attribute>
+        <xsl:attribute name="href">
+          <xsl:apply-templates select="../@baseURL"/>/<xsl:apply-templates select="@extURL"/>
+        </xsl:attribute>
+        <xsl:value-of select="@citation"/>
+      </a>
+      <xsl:text>)</xsl:text>
+    </xsl:if>
+  </h3>
   <xsl:apply-templates select="explanatory"/>
   <table border="1">
   <tr>
     <th rowspan="2">
       <p><xsl:value-of select="@compliance-item-desc"/></p>
+    </th>
+    <th align="center" rowspan="2">
+      Citation
     </th>
     <th align="center" colspan="3">
       Support
@@ -92,8 +120,21 @@
 
 <xsl:template match="level-2">
   <tr>
-    <td colspan="5" class="category">
+    <td colspan="6" class="category">
     <xsl:value-of select="@name"/>
+    <xsl:if test="@citation">
+      <xsl:text> (</xsl:text>
+      <a>
+        <xsl:attribute name="target">
+          <xsl:apply-templates select="../../@baseURL"/>
+        </xsl:attribute>
+        <xsl:attribute name="href">
+          <xsl:apply-templates select="../../@baseURL"/>/<xsl:apply-templates select="@extURL"/>
+        </xsl:attribute>
+        <xsl:value-of select="@citation"/>
+      </a>
+      <xsl:text>)</xsl:text>
+    </xsl:if>
     </td>
   </tr>
   <xsl:apply-templates select="level-3"/>
@@ -103,6 +144,24 @@
   <tr>
     <td>
       <xsl:value-of select="@name"/>
+    </td>
+    <td align="center">
+      <xsl:choose>
+        <xsl:when test="@citation">
+          <a>
+            <xsl:attribute name="target">
+              <xsl:apply-templates select="../../../@baseURL"/>
+            </xsl:attribute>
+            <xsl:attribute name="href">
+              <xsl:apply-templates select="../../../@baseURL"/>/<xsl:apply-templates select="@extURL"/>
+            </xsl:attribute>
+            <xsl:value-of select="@citation"/>
+          </a>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>.</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
     </td>
     <td align="center">
       <xsl:attribute name="class">
