@@ -13,6 +13,26 @@ package org.apache.fop.pdf;
 public class PDFRoot extends PDFObject {
 
     /**
+     * Use no page mode setting, default
+     */
+    public static final int PAGEMODE_USENONE = 0;
+
+    /**
+     * Use outlines page mode to show bookmarks
+     */
+    public static final int PAGEMODE_USEOUTLINES = 1;
+
+    /**
+     * Use thumbs page mode to show thumbnail images
+     */
+    public static final int PAGEMODE_USETHUMBS = 2;
+
+    /**
+     * Full screen page mode
+     */
+    public static final int PAGEMODE_FULLSCREEN = 3;
+
+    /**
      * the /Pages object that is root of the Pages hierarchy
      */
     protected PDFPages rootPages;
@@ -21,6 +41,8 @@ public class PDFRoot extends PDFObject {
      * Root outline object
      */
     private PDFOutline outline;
+
+    private int pageMode = PAGEMODE_USENONE;
 
     /**
      * create a Root (/Catalog) object. NOTE: The PDFRoot
@@ -38,13 +60,13 @@ public class PDFRoot extends PDFObject {
     }
 
     /**
-     * Before the root is written to the document stream,
-     * make sure it's object number is set. Package-private access
-     * only; outsiders should not be fiddling with this stuff.
+     * Set the page mode for the PDF document.
+     *
+     * @param mode the page mode
      */
-    /*void setNumber(int number) {
-        this.number = number;
-    }*/
+    public void setPageMode(int mode) {
+        pageMode = mode;
+    }
 
     /**
      * add a /Page object to the root /Pages object
@@ -95,8 +117,22 @@ public class PDFRoot extends PDFObject {
         if (outline != null) {
             p.append(" /Outlines " + outline.referencePDF() + "\n");
             p.append(" /PageMode /UseOutlines\n");
+        } else {
+            switch (pageMode) {
+                case PAGEMODE_USEOUTLINES:
+                    p.append(" /PageMode /UseOutlines\n");
+                break;
+                case PAGEMODE_USETHUMBS:
+                    p.append(" /PageMode /UseThumbs\n");
+                break;
+                case PAGEMODE_FULLSCREEN:
+                    p.append(" /PageMode /FullScreen\n");
+                break;
+                case PAGEMODE_USENONE:
+                default:
+                break;
+            }
         }
-        p.append(" /PageMode /FullScreen\n");
         p.append(" >>\nendobj\n");
         return p.toString().getBytes();
     }

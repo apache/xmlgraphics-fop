@@ -52,7 +52,7 @@ public class PDFOutline extends PDFObject {
      * @param title the title of the outline entry (can only be null for root Outlines obj)
      * @param action the action for this outline
      */
-    public PDFOutline(int number, String title, String action) {
+    public PDFOutline(int number, String ti, String action) {
         super(number);
         subentries = new ArrayList();
         count = 0;
@@ -61,7 +61,7 @@ public class PDFOutline extends PDFObject {
         next = null;
         first = null;
         last = null;
-        title = title;
+        title = ti;
         actionRef = action;
     }
 
