@@ -7,9 +7,6 @@
       copyright="@year@ The Apache Software Foundation"
       xmlns:xlink="http://www.w3.org/1999/xlink">
 
-    <menu label="Index">
-      <menu-item label="FOP Index" href="../index.html"/>
-    </menu>
     <menu label="About">
       <menu-item label="Index" href="index.html"/>
       <menu-item label="FAQs" href="faq.html"/>
@@ -23,7 +20,11 @@
       <menu-item label="SVG" href="svg.html"/>
       <menu-item label="Fonts" href="fonts.html"/>
     </menu>
-    <menu label="Developers">
+    <menu label="Output">
+      <menu-item label="PDF" href="pdf.html"/>
+      <menu-item label="Postscript" href="pdf.html"/>
+    </menu>
+    <menu label="General">
       <external label="FOP Wiki" href="http://nagoya.apache.org/wiki/apachewiki.cgi?FOPProjectPages"/>
       <menu-item label="Design" href="../design/index.html"/>
       <menu-item label="Tools" href="tools.html"/>
