@@ -482,7 +482,9 @@ public class PropertyList extends HashMap {
         String basePropertyName = findBasePropertyName(attributeName);
         String subPropertyName = findSubPropertyName(attributeName);
 
-        propertyMaker = findMaker(namespace, elementName, basePropertyName);
+        int propId = FOPropertyMapping.getPropertyId(basePropertyName);
+
+        propertyMaker = findMaker(namespace, elementName, propId);
         if (propertyMaker == null) {
             handleInvalidProperty(attributeName);
             return;
@@ -599,13 +601,11 @@ public class PropertyList extends HashMap {
     public Property getSubpropValue(String space, String element,
                                     Property p, int propId) {
 
-        String propertyName = FOPropertyMapping.getPropertyName(propId &
-            Constants.PROPERTY_MASK);
-                                        
         String subpropName = FOPropertyMapping.getPropertyName(propId &
             Constants.COMPOUND_MASK);
 
-        Property.Maker maker = findMaker(space, element, propertyName);
+        Property.Maker maker = findMaker(space, element, propId & 
+            Constants.PROPERTY_MASK);
         if (maker != null) {
             return maker.getSubpropValue(p, subpropName);
         } else {
@@ -619,10 +619,12 @@ public class PropertyList extends HashMap {
      * @param propertyName name of property
      * @return value from the appropriate Property.Maker
      */
-    public boolean isCorrespondingForced(String space, String element,
+    private boolean isCorrespondingForced(String space, String element,
                                          String propertyName) {
+        int propId = FOPropertyMapping.getPropertyId(propertyName);
+                                             
         Property.Maker propertyMaker = findMaker(space, element,
-                                                 propertyName);
+                                                 propId);
         if (propertyMaker != null) {
             return propertyMaker.isCorrespondingForced(this);
         } else {
@@ -639,8 +641,10 @@ public class PropertyList extends HashMap {
      */
     public Property getShorthand(String space, String element,
         String propertyName) {
+        int propId = FOPropertyMapping.getPropertyId(propertyName);
+
         Property.Maker propertyMaker = findMaker(space, element,
-                                                 propertyName);
+                                                 propId);
         if (propertyMaker != null) {
             return propertyMaker.getShorthand(this);
         } else {
@@ -659,11 +663,10 @@ public class PropertyList extends HashMap {
     public Property makeProperty(String space, String element,
                                  int propId) throws FOPException {
 
-        String propertyName = FOPropertyMapping.getPropertyName(propId);
         Property p = null;
 
         Property.Maker propertyMaker = findMaker(space, element,
-                                                 propertyName);
+                                                 propId);
         if (propertyMaker != null) {
             p = propertyMaker.make(this);
         } else {
@@ -683,9 +686,10 @@ public class PropertyList extends HashMap {
     public Property computeProperty(String space, String element, 
         String propertyName) {
 
+        int propId = FOPropertyMapping.getPropertyId(propertyName);
         Property p = null;
         Property.Maker propertyMaker = findMaker(space, element,
-                                                 propertyName);
+                                                 propId);
         if (propertyMaker != null) {
             try {
                 p = propertyMaker.compute(this);
@@ -713,8 +717,9 @@ public class PropertyList extends HashMap {
                                String propertyName) {
         boolean b;
 
+        int propId = FOPropertyMapping.getPropertyId(propertyName);
         Property.Maker propertyMaker = findMaker(space, element,
-                                                 propertyName);
+                                                 propId);
         if (propertyMaker != null) {
             b = propertyMaker.isInherited();
         } else {
@@ -727,19 +732,16 @@ public class PropertyList extends HashMap {
     /**
      * @param space namespace of element
      * @param elementName name of element
-     * @param propertyName name of property
+     * @param propId Id of property
      * @return the Property.Maker for this property
      */
     private Property.Maker findMaker(String space, String elementName,
-        String propertyName) {
+        int propId) {
 
-        // convert the string (e.g., "font-size") to its const value (PR_FONT_SIZE).
-        int propertyId = FOPropertyMapping.getPropertyId(propertyName);
-
-        if (propertyId < 1 || propertyId > Constants.PROPERTY_COUNT) {
+        if (propId < 1 || propId > Constants.PROPERTY_COUNT) {
             return null;
         } else {
-            return FObj.propertyListTable[propertyId];
+            return FObj.propertyListTable[propId];
         }
     }
     
