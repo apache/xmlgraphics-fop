@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: PDFRenderer.java,v 1.37 2004/04/02 09:16:49 jeremias Exp $ */
 
 package org.apache.fop.render.pdf;
 
@@ -953,28 +953,16 @@ public class PDFRenderer extends PrintRenderer {
         if (!textOpen || bl != prevWordY) {
             closeText();
 
-            pdf.append("1 0 0 -1 " + (rx / 1000f) + " "
-                       + (bl / 1000f) + " Tm [" + startText);
+            pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
+                       + (text.getTSadjust()/1000f) + " Tw [" + startText);
             prevWordY = bl;
             textOpen = true;
         } else {
-            // express the space between words in thousandths of an em
-            int space = prevWordX - rx + prevWordWidth;
-            float emDiff = (float) space / (float) currentFontSize * 1000f;
-            // this prevents a problem in Acrobat Reader and other viewers
-            // where large numbers cause text to disappear or default to
-            // a limit
-            if (emDiff < -33000) {
                 closeText();
 
-                pdf.append("1 0 0 1 " + (rx / 1000f) + " "
-                           + (bl / 1000f) + " Tm [" + startText);
+                pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
+                           + (text.getTSadjust()/1000f) + " Tw [" + startText);
                 textOpen = true;
-            } else {
-                pdf.append(Float.toString(emDiff));
-                pdf.append(" ");
-                pdf.append(startText);
-            }
         }
         prevWordWidth = text.getWidth();
         prevWordX = rx;
