@@ -96,8 +96,14 @@
              in a directory of your choice (and append the full path to the JAR to 
              the environment variable <code>FOP_HYPHENATION_PATH</code>).</li>
             <li>Download the desired FOP-compatible hyphenation pattern file(s) from 
-             <fork href="http://offo.sourceforge.net/hyphenation.html">OFFO</fork>, place 
-             them in the directory <code>{fop-dir}/hyph</code>, and run Ant with build target
+             <fork href="http://offo.sourceforge.net/hyphenation.html">OFFO</fork>, 
+             <ul>
+                <li>place them in the directory <code>{fop-dir}/hyph</code>, </li>
+                <li>or place them in a directory of your choice and set the Ant variable
+                <code>hyph.dir</code> to point to that directory (in
+                <code>build-local.properties</code>),</li>
+             </ul>
+             and run Ant with build target
              <code>hyphenation-jar</code>. This will create a JAR containing the 
              compiled patterns in <code>{fop-dir}/build</code> that will be added to the 
              classpath on the next run.
