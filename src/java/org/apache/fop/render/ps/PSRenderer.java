@@ -652,12 +652,12 @@ public class PSRenderer extends AbstractRenderer {
     }
 
     /**
-     * Handle the viewport traits.
-     * This is used to draw the traits for a viewport.
-     *
-     * @param region the viewport region to handle
+     * Handle the traits for a region
+     * This is used to draw the traits for the given page region
+     * (see Sect. 6.4.1.2 of XSL-FO spec.)
+     * @param region the RegionViewport whose region is to be drawn
      */
-    protected void handleViewportTraits(RegionViewport region) {
+    protected void handleRegionTraits(RegionViewport region) {
         currentFontName = "";
         float startx = 0;
         float starty = 0;

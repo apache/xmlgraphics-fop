@@ -68,7 +68,7 @@ import java.io.BufferedInputStream;
  * A simple cached render pages model.
  * If the page is prepared for later rendering then this saves
  * the page contents to a file and once the page is resolved
- * the contents a reloaded.
+ * the contents are reloaded.
  */
 public class CachedRenderPagesModel extends RenderPagesModel {
     private Map pageMap = new HashMap();

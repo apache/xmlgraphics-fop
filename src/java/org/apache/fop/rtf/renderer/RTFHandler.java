@@ -433,7 +433,7 @@ public class RTFHandler extends FOInputHandler {
            PDF output, so we will look for the default here & change it to
            white. */
         if ((fopValue.getRed() == 0) && (fopValue.getGreen() == 0)
-                && (fopValue.getBlue() == 0) && (fopValue.alpha() == 1)) {
+                && (fopValue.getBlue() == 0) && (fopValue.getAlpha() == 0)) {
             rtfColor = RtfColorTable.getInstance().getColorNumber("white");
         } else {
             rtfColor = convertFOPColorToRTF(fopValue);

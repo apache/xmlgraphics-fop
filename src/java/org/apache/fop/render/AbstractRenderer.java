@@ -311,7 +311,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
             startVParea(region.getCTM());
 
             // do after starting viewport area
-            handleViewportTraits(port);
+            handleRegionTraits(port);
             if (region.getRegionClass() == Region.BODY_CODE) {
                 renderBodyRegion((BodyRegion) region);
             } else {
@@ -329,13 +329,12 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     protected void startVParea(CTM ctm) { }
 
     /**
-     * Handle viewport traits.
-     * This should be overridden to draw border and background
-     * traits for the viewport area.
-     *
-     * @param rv the region viewport area
+     * Handle the traits for a region
+     * This is used to draw the traits for the given page region
+     * (see Sect. 6.4.1.2 of XSL-FO spec.)
+     * @param rv the RegionViewport whose region is to be drawn
      */
-    protected void handleViewportTraits(RegionViewport rv) {
+    protected void handleRegionTraits(RegionViewport rv) {
         // draw border and background
     }
 

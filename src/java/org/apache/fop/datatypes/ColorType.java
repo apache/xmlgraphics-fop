@@ -50,6 +50,7 @@
  */
 package org.apache.fop.datatypes;
 
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
@@ -61,22 +62,24 @@ public class ColorType implements Serializable {
     /**
      * the red component
      */
-    protected float red;
+    protected float red = 0f;
 
     /**
      * the green component
      */
-    protected float green;
+    protected float green = 0f;
 
     /**
      * the blue component
      */
-    protected float blue;
+    protected float blue = 0f;
 
     /**
-     * the alpha component
+     * the alpha component (indicator of opaque-ness)
+     * 0.0 - 1.0; 0.0 is completely transparent; 1.0 is completely opaque
+     * see definition at http://java.sun.com/j2se/1.3/docs/api/java/awt/Color.html
      */
-    protected float alpha = 0;
+    protected float alpha = 1f;
 
     /**
      * Main constructor
@@ -177,7 +180,7 @@ public class ColorType implements Serializable {
                 this.red = 0;
                 this.green = 0;
                 this.blue = 0;
-                this.alpha = 1;
+                this.alpha = 0;
             } else {
                 boolean found = false;
                 for (int count = 0; count < NAMES.length; count++) {
@@ -225,11 +228,19 @@ public class ColorType implements Serializable {
     }
 
     /**
-     * Returns the alpha (transparency) component of the color.
-     * @return float a value between 0.0 and 1.0
+     * Returns the alpha (degree of opaque-ness) component of the color.
+     * @return float a value between 0.0 (fully transparent) and 1.0 (fully opaque)
      */
-    public float alpha() {
+    public float getAlpha() {
         return this.alpha;
+    }
+
+    /**
+     * Returns an AWT instance of this color
+     * @return float the AWT color represented by this ColorType instance
+     */
+    public Color getAWTColor() {
+        return new Color(this.red, this.green, this.blue, this.alpha);
     }
 
     /**
