@@ -1,5 +1,4 @@
-<!--
-$Id$
+<!-- $Id$
 ============================================================================
                    The Apache Software License, Version 1.1
 ============================================================================
@@ -51,22 +50,88 @@ Software Foundation, please see <http://www.apache.org/>.
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+<xsl:include href="./propinc.xsl"/>
 
 <xsl:output method="text" />
 
 <xsl:template match="allprops">
 <xsl:variable name="constlist">
-  <xsl:for-each select="document(propfile)//enumeration/value">
+  <xsl:for-each select="document(propfile)//generic-property-list
+    //enumeration/value">
     <xsl:sort select="@const"/>
   <xsl:value-of select="@const"/>:</xsl:for-each>
 </xsl:variable>
+
+<xsl:variable name="propertylist">
+  <xsl:for-each select="document(propfile)//generic-property-list//
+    property[not(@type = 'generic')]">
+    <xsl:sort select="name"/>
+    <xsl:text>PR_</xsl:text>
+    <xsl:call-template name="makeEnumConstant">
+      <xsl:with-param name="propstr" select="name" />
+    </xsl:call-template>
+    <xsl:text>:</xsl:text>
+  </xsl:for-each>
+</xsl:variable>
+
+<xsl:variable name="compoundpropertylist">
+  <xsl:for-each select="document(propfile)//generic-property-list//
+    property/compound/subproperty">
+    <xsl:sort select="name"/>
+    <xsl:text>CP_</xsl:text>
+    <xsl:call-template name="makeEnumConstant">
+      <xsl:with-param name="propstr" select="name" />
+    </xsl:call-template>
+    <xsl:text>:</xsl:text>
+  </xsl:for-each>
+</xsl:variable>
+
+
+<xsl:variable name="elementlist">
+  <xsl:for-each select="document(elementfile)//element">
+    <xsl:sort select="name"/>
+    <xsl:text>FO_</xsl:text>
+    <xsl:call-template name="makeEnumConstant">
+      <xsl:with-param name="propstr" select="name" />
+    </xsl:call-template>
+    <xsl:text>:</xsl:text>
+  </xsl:for-each>
+</xsl:variable>
+
 <xsl:text>
+
 package org.apache.fop.fo.properties;
 
 public interface Constants {</xsl:text>
+
+    // element constants
+<xsl:call-template name="sortconsts">
+  <xsl:with-param name="consts" select="$elementlist"/>
+  <xsl:with-param name="counter" select="'ELEMENT'"/>
+</xsl:call-template>
+
+    // Masks
+    int COMPOUND_SHIFT = 9;
+    int PROPERTY_MASK = (1 &lt;&lt; COMPOUND_SHIFT)-1;
+    int COMPOUND_MASK = ~PROPERTY_MASK;
+
+    // property constants
+<xsl:call-template name="sortconsts">
+  <xsl:with-param name="consts" select="$propertylist"/>
+  <xsl:with-param name="counter" select="'PROPERTY'"/>
+</xsl:call-template>
+
+    // compound property constants
+<xsl:call-template name="sortconsts">
+  <xsl:with-param name="consts" select="$compoundpropertylist"/>
+  <xsl:with-param name="suffix" select="' &lt;&lt; COMPOUND_SHIFT'"/>
+</xsl:call-template>
+
+    // Enumeration constants
 <xsl:call-template name="sortconsts">
   <xsl:with-param name="consts" select="$constlist"/>
 </xsl:call-template>
+
 <xsl:text>
 }
 </xsl:text>
@@ -76,27 +141,40 @@ public interface Constants {</xsl:text>
 <xsl:param name="consts"/>
 <xsl:param name="prevconst"/>
 <xsl:param name="num" select="1"/>
+<xsl:param name="suffix" select="''"/>
+<xsl:param name="counter" select="''"/>
 <xsl:variable name="cval" select="substring-before($consts,':')"/>
 <xsl:choose>
-  <xsl:when test="$consts = ''"/>
+  <xsl:when test="$consts = ''">
+    <xsl:if test="$counter != ''">
+      <xsl:text>
+    int </xsl:text>
+      <xsl:value-of select="$counter"/>_COUNT = <xsl:value-of select="$num - 1"/>;
+    </xsl:if>
+  </xsl:when>
   <xsl:when test="$cval = $prevconst">
     <xsl:call-template name="sortconsts">
       <xsl:with-param name="consts" select="substring-after($consts,concat($cval, ':'))"/>
       <xsl:with-param name="num" select="$num"/>
       <xsl:with-param name="prevconst" select="$cval"/>
+      <xsl:with-param name="counter" select="$counter"/>
+      <xsl:with-param name="suffix" select="$suffix"/>
     </xsl:call-template>
   </xsl:when>
   <xsl:otherwise>
     <xsl:text>
-      int </xsl:text>
+    int </xsl:text>
     <xsl:value-of select="$cval"/>
     <xsl:text> = </xsl:text>
     <xsl:value-of select="$num"/>
+    <xsl:value-of select="$suffix"/>
     <xsl:text>;</xsl:text>
     <xsl:call-template name="sortconsts">
       <xsl:with-param name="consts" select="substring-after($consts,concat($cval, ':'))"/>
       <xsl:with-param name="num" select="$num + 1"/>
       <xsl:with-param name="prevconst" select="$cval"/>
+      <xsl:with-param name="counter" select="$counter"/>
+      <xsl:with-param name="suffix" select="$suffix"/>
     </xsl:call-template>
   </xsl:otherwise>
 </xsl:choose>
