@@ -523,7 +523,6 @@ x="111.963" y="10">Cl</svg:text>
 <svg:svg width="553" height="737"
 style="text-antialiasing:true; stroke-antialiasing:true">
 <svg:desc>Picasso.pdx exported by Mayura Draw 3.6</svg:desc>
-<svg:g transform="translate(-20,1546)"> <!-- translation to put it in correct area -->
 <svg:rect style="stroke:none;fill:#ffe05e"
 transform="matrix(1 0 0 -1 -14.49 755.5 )"
 x="37.4595" y="102.649" width="509.351" height="636.324"/>
@@ -3600,7 +3599,6 @@ x="51.9142" y="105.568" width="515.329" height="13.927"/>
 <svg:rect style="stroke:#ffffff;stroke-width:1;fill:#ffffff"
 transform="matrix(1 0 0 -1 -27.62 758.4 )"
 x="558.487" y="102.649" width="13.135" height="646.54"/>
-</svg:g>
 
 <svg:g transform="matrix(1 0 0 1 286.4 683.7 )"
 style="fill:#000000;font-family:Arial; font-size:18; font-weight:bold;text-align:center"
