@@ -43,6 +43,7 @@
 
     <s3 title="B.3 Inline Formatting Objects">
       <ul>
+        <li>character</li>
         <li>external-graphic</li>
         <li>inline</li>
         <li>instream-foreign-object</li>
@@ -50,18 +51,20 @@
         <li>page-number </li>
         <li>page-number-citation, see <jump href="limitations.html">limitations</jump></li>
       </ul>
-      <p>Not implemented: bidi-override, character, initial-property-set, inline-container</p>
+      <p>Not implemented: bidi-override, initial-property-set, inline-container</p>
     </s3>
 
     <s3 title="B.4 Table Formatting Objects">
       <ul>
-        <li>table (minimal support)</li>
-        <li>table-column (minimal support)</li>
-        <li>table-body (minimal support)</li>
-        <li>table-row (minimal support)</li>
-        <li>table-cell (minimal support)</li>
+        <li>table </li>
+        <li>table-body</li>
+        <li>table-cell</li>
+        <li>table-column</li>
+        <li>table-footer</li>
+        <li>table-header</li>
+        <li>table-row</li>
       </ul>
-      <p>Not implemented: table-and-caption, table-caption, table-header, table-footer </p> 
+      <p>Not implemented: table-and-caption, table-caption </p> 
     </s3>
 
     <s3 title="B.5 List Formatting Objects">
@@ -130,7 +133,10 @@
       <li>bottom</li>
       <li>break-after </li>
       <li>break-before </li>
+      <li>character</li>
       <li>color </li>
+      <li>column-count</li>
+      <li>column-gap</li>
       <li>column-width </li>
       <li>country</li>
       <li>end-indent </li>
@@ -152,7 +158,7 @@
       <li>keep-with-next (broken)</li>
       <li>language</li>
       <li>leader-alignment (not value "page")</li>
-      <li>leader-length (no percentage values)</li>
+      <li>leader-length (see limitations)</li>
       <li>leader-pattern (not value "use-content")</li>
       <li>leader-pattern-width</li>
       <li>left</li>
@@ -163,6 +169,7 @@
       <li>margin-top (only on pages and regions) </li>
       <li>master-name </li>
       <li>maximum-repeats</li>
+      <li>number-columns-spanned</li>
       <li>odd-or-even</li>
       <li>padding (only one value allowed) </li>
       <li>padding-after</li>
@@ -182,11 +189,15 @@
       <li>ref-id </li>
       <li>region-name</li>
       <li>right</li>
+      <li>rule-style</li>
       <li>rule-thickness </li>
       <li>space-after.optimum </li>
       <li>space-before.optimum </li>
+      <li>span</li>
       <li>src </li>
       <li>start-indent </li>
+      <li>table-omit-footer-at-break</li>
+      <li>table-omit-header-at-break</li> 
       <li>text-align </li>
       <li>text-align-last </li>
       <li>textdecoration (only value "underline")</li>

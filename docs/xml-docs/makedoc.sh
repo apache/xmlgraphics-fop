@@ -1,7 +1,7 @@
 #!/bin/sh
 #This file should be executable
 echo
-echo "Converting Fop's xml documentation into a pdf file"
+echo "Converting Fop's xml documentation into a pdf file, creating html docs"
 echo "----------------"
 echo
 
@@ -13,7 +13,7 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 
-LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip:../../lib/ant.jar:../../lib/xml.jar:../../lib/w3c.jar:../../lib:../../build/fop.jar
+LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip:../../lib/ant.jar:../../lib/xml.jar:../../lib/w3c.jar:../../lib:../../build/fop.jar:../../lib\stylebook.jar
 ANT_HOME=../../lib
 
 echo Building with classpath $CLASSPATH:$LOCALCLASSPATH
@@ -23,3 +23,5 @@ echo Starting Ant...
 echo
 
 $JAVA_HOME/bin/java -Dant.home=$ANT_HOME -classpath "$LOCALCLASSPATH:$CLASSPATH" org.apache.tools.ant.Main $*
+
+$JAVA_HOME/bin/java -classpath "$LOCALCLASSPATH:$CLASSPATH" org.apache.stylebook.StyleBook "targetDirectory=../html-docs/" fop.xml style/
