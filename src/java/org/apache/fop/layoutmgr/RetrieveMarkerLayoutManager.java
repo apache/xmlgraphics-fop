@@ -20,6 +20,7 @@ package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.LinkedList;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.fo.flow.Marker;
@@ -62,6 +63,15 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
         return replaceLM.getNextBreakPoss(context);
     }
 
+    public LinkedList getNextKnuthElements(LayoutContext context,
+            int alignment) {
+        loadLM();
+        if (replaceLM == null) {
+            return null;
+        }
+        return replaceLM.getNextKnuthElements(context, alignment);
+    }
+
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
 
@@ -96,7 +106,7 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
             List list = new ArrayList();
             Marker marker = retrieveMarker(name, position, boundary);
             if (marker != null) {
-                marker.addLayoutManager(markerLMList);
+                marker.addLayoutManager(list);
                 if (list.size() > 0) {
                     replaceLM =  (LayoutManager)list.get(0);
                     replaceLM.setParent(this);
