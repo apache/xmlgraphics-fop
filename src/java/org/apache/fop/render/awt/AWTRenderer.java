@@ -76,8 +76,8 @@ implements Runnable, Printable, Pageable {
     protected PreviewDialog frame;
 
     public AWTRenderer() {
-        translator = new Translator();
-        createPreviewDialog();
+        //translator = new Translator();
+        //createPreviewDialog();
     }
 
     /**
@@ -130,6 +130,8 @@ implements Runnable, Printable, Pageable {
             try {
                 wait();
             } catch (InterruptedException e) {
+                // We can go now
+                return;
             }
         }
     }
