@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:output method="text" encoding="iso-8859-1"/>
-
-    <xsl:variable name="licence"><![CDATA[/*
- * $Id$
+  <!-- $Id$ -->
+  <xsl:variable name="licence"><![CDATA[/*
+ * $Id]]><![CDATA[$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -57,16 +56,16 @@
  * Automatically generated from xml-lang.xml by xml-lang.xsl.  DO NOT EDIT!
  *!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  */]]> 
-    </xsl:variable>
-      <!--
-           This XSL file is used to generate the file
-           org/apache/fop/datatypes/CountryLanguageScript.java
-           from the input file
-           xml-lang.xml
-           found in the conf directory.
-           -->
-      <xsl:template match="xml-lang">
-        <xsl:value-of select="$licence"/>
+</xsl:variable>
+<!--
+     This XSL file is used to generate the file
+     org/apache/fop/datatypes/CountryLanguageScript.java
+     from the input file
+     xml-lang.xml
+     found in the conf directory. -->
+<xsl:output method="text" encoding="iso-8859-1"/>
+<xsl:template match="xml-lang">
+  <xsl:value-of select="$licence"/>
   <xsl:variable name="languages">
     <xsl:value-of select="count(./languagecodes/language)"/>
   </xsl:variable>
