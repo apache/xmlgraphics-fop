@@ -54,7 +54,7 @@ import java.io.InputStream;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.fop.util.StreamUtilities;
+import org.apache.commons.io.IOUtil;
 
 /**
  * Reads a TrueType font file into a byte array and
@@ -75,7 +75,7 @@ public class FontFileReader {
     private void init(InputStream in) throws java.io.IOException {
         java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
         try {
-            StreamUtilities.streamCopy(in, bout);
+            IOUtil.copy(in, bout);
             this.file = bout.toByteArray();
             this.fsize = this.file.length;
             this.current = 0;
@@ -341,7 +341,13 @@ public class FontFileReader {
         byte[] tmp = new byte[len];
         System.arraycopy(file, current, tmp, 0, len);
         current += len;
-        return new String(tmp, "ISO-8859-1");
+        final String encoding;
+        if ((tmp.length > 0) && (tmp[0] == 0)) {
+            encoding = "UnicodeBig";
+        } else {
+            encoding = "ISO-8859-1";
+        }
+        return new String(tmp, encoding);
     }
 
     /**
