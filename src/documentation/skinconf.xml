@@ -74,9 +74,9 @@ which will be used to configure the chosen Forrest skin.
 
   <!-- optional group logo
        default skin: renders it at the top-left corner -->
-  <group-name>Apache XML</group-name>
-  <group-description>The Apache XML Project provides commercial-quality standards-based XML solutions that are developed in an open and cooperative fashion, provides feedback to standards bodies (such as IETF and W3C) from an implementation perspective, and is a focus for XML-related activities within Apache projects</group-description>
-  <group-url>http://xml.apache.org/</group-url>
+  <group-name>Apache XML Graphics</group-name>
+  <group-description>Apache XML Graphics is responsible for the creation and maintenance of software for managing the conversion of XML formats to graphical output, and the creation and maintenance of related software components, based on software licensed to the Foundation</group-description>
+  <group-url>http://xmlgraphics.apache.org/</group-url>
   <group-logo>images/group-logo.gif</group-logo>
   <!-- Alternative static image:
   <group-logo>images/group-logo.gif</group-logo> -->
@@ -105,9 +105,9 @@ which will be used to configure the chosen Forrest skin.
     For some skins just set the attributes to blank.
   -->
   <trail location="alt">
-    <link1 name="apache" href="http://www.apache.org/"/>
-    <link2 name="xml.apache" href="http://xml.apache.org/"/>
-    <link3 name="xmlgraphics.apache" href="http://xmlgraphics.apache.org/"/>
+    <link1 name="apache.org" href="http://www.apache.org/"/>
+    <link2 name="XML Federation" href="http://xml.apache.org/"/>
+    <link3 name="xmlgraphics.apache.org" href="http://xmlgraphics.apache.org/"/>
   </trail>
 
   <!-- Configure the TOC, i.e. the Table of Contents.
@@ -119,7 +119,7 @@ which will be used to configure the chosen Forrest skin.
   @location ("page","menu","page,menu", "none")
    Where to show the TOC.
   -->
-  <toc max-depth="2" min-sections="1" location="page"/>
+  <toc max-depth="2" min-sections="3" location="page"/>
 
   <!-- Heading types can be clean|underlined|boxed  -->
   <headings type="underlined"/>

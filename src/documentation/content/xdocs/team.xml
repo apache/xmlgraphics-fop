@@ -24,7 +24,10 @@
     <version>$Revision$</version>
   </header>
   <body>
-    <p>All lists on this page are in alphabetical order. Some of them may be incomplete. If you know of an error or omission, please send a message to the <link href="mailto:fop-dev@xml.apache.org">fop-dev</link> mailing list.</p>
+    <p>
+      All lists on this page are in alphabetical order. Some of them may be incomplete.
+      If you know of an error or omission, please send a message to the 
+      <link href="mailto:fop-dev@xmlgraphics.apache.org">fop-dev</link> mailing list.</p>
     <section id="commit-active">
       <title>Active Committers</title>
       <ul>

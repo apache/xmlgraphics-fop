@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,8 +15,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN"
-    "document-v13.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <!-- FOP Relevant Specifications and links -->
 <document>
   <header>
@@ -53,6 +52,8 @@
         <title>Java</title>
         <ul>
           <li><jump href="http://java.sun.com/j2se/1.3/docs/api/index.html">Java JDK 1.3 Documentation</jump></li>
+          <li><jump href="http://java.sun.com/j2se/1.4/docs/api/index.html">Java JDK 1.4 Documentation</jump></li>
+          <li><jump href="http://java.sun.com/j2se/1.5/docs/api/index.html">Java JDK 1.5 Documentation</jump></li>
         </ul>
       </section>
       <section id="specs-pdf">
@@ -150,16 +151,20 @@
         <ul>
           <li>[mailing list info] <jump href="http://xml.apache.org/fop/maillist.html">http://xml.apache.org/fop/maillist.html</jump></li>
           <ul>
-            <li>[fop-user archives] <jump href="http://marc.theaimsgroup.com/?l=fop-user">http://marc.theaimsgroup.com/?l=fop-user</jump></li>
-            <li>[fop-user gzip'd archives] <jump href="http://xml.apache.org/mail/fop-user/">http://xml.apache.org/mail/fop-user/</jump></li>
-            <li>[fop-user-subscribe] <jump href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</jump></li>
-            <li>[fop-user-digest-subscribe] <jump href="mailto:fop-user-digest-subscribe@xml.apache.org">fop-user-digest-subscribe@xml.apache.org</jump></li>
+            <li>[fop-users mod_mbox archives] <jump href="http://mail-archives.eu.apache.org/mod_mbox/xmlgraphics-fop-users/">http://mail-archives.eu.apache.org/mod_mbox/xmlgraphics-fop-users/</jump></li>
+            <li>[fop-users archives] <jump href="http://marc.theaimsgroup.com/?l=fop-user">http://marc.theaimsgroup.com/?l=fop-user</jump></li>
+            <li>[fop-users gzip'd archives] <jump href="http://xmlgraphics.apache.org/mail/fop-users/">http://xmlgraphics.apache.org/mail/fop-users/</jump></li>
+            <li>[fop-users-subscribe] <jump href="mailto:fop-users-subscribe@xmlgraphics.apache.org">fop-users-subscribe@xmlgraphics.apache.org</jump></li>
+            <li>[fop-users-digest-subscribe] <jump href="mailto:fop-users-digest-subscribe@xmlgraphics.apache.org">fop-users-digest-subscribe@xmlgraphics.apache.org</jump></li>
+            <li>[fop-users-unsubscribe] <jump href="mailto:fop-users-unsubscribe@xmlgraphics.apache.org">fop-users-subscribe@xmlgraphics.apache.org</jump></li>
           </ul>
           <ul>
+            <li>[fop-dev mod_mbox archives] <jump href="http://mail-archives.eu.apache.org/mod_mbox/xmlgraphics-fop-dev/">http://mail-archives.eu.apache.org/mod_mbox/xmlgraphics-fop-dev/</jump></li>
             <li>[fop-dev archives] <jump href="http://marc.theaimsgroup.com/?l=fop-dev">http://marc.theaimsgroup.com/?l=fop-dev</jump></li>
-            <li>[fop-dev gzip'd archives] <jump href="http://xml.apache.org/mail/fop-dev/">http://xml.apache.org/mail/fop-dev/</jump></li>
-            <li>[fop-dev-subscribe] <jump href="mailto:fop-dev-subscribe@xml.apache.org">fop-dev-subscribe@xml.apache.org</jump></li>
-            <li>[fop-dev-digest-subscribe] <jump href="mailto:fop-dev-digest-subscribe@xml.apache.org">fop-dev-digest-subscribe@xml.apache.org</jump></li>
+            <li>[fop-dev gzip'd archives] <jump href="http://xmlgraphics.apache.org/mail/fop-dev/">http://xmlgraphics.apache.org/mail/fop-dev/</jump></li>
+            <li>[fop-dev-subscribe] <jump href="mailto:fop-dev-subscribe@xmlgraphics.apache.org">fop-dev-subscribe@xmlgraphics.apache.org</jump></li>
+            <li>[fop-dev-digest-subscribe] <jump href="mailto:fop-dev-digest-subscribe@xmlgraphics.apache.org">fop-dev-digest-subscribe@xmlgraphics.apache.org</jump></li>
+            <li>[fop-dev-unsubscribe] <jump href="mailto:fop-dev-unsubscribe@xmlgraphics.apache.org">fop-dev-unsubscribe@xmlgraphics.apache.org</jump></li>
           </ul>
         </ul>
       </section>
@@ -191,7 +196,7 @@
           <li>[software] TIFFRenderer is a renderer for outputting multi-page TIFF: <jump href="http://www.tkachenko.com/fop/tiffrenderer.html">http://www.tkachenko.com/fop/tiffrenderer.html</jump> (MPL)</li>
           <li>[software] AFP Renderer / Batch Assembler for FOP: <jump href="http://mypage.bluewin.ch/huanderegg/">http://mypage.bluewin.ch/huanderegg/</jump> (open source, license unclear)</li>
           <li>[software] The <jump href="http://mogwai.sourceforge.net">Mogwai Project</jump> includes a renderer for FOP that generates output for Okidata dot matrix printers (GPL).</li>
-          <li>[software] <jump href="http://barcode4j.krysalis.org">Barcode4J</jump> (formerly Krysalis Barcode) is a barcode generator which can be used with FOP (Apache-style license).</li>
+          <li>[software] <jump href="http://barcode4j.krysalis.org">Barcode4J</jump> (formerly Krysalis Barcode) is a barcode generator which can be used with FOP (Apache license v2.0).</li>
           <li>[software] <jump href="http://afp-renderer.sourceforge.net/">AFP Renderer</jump> renders formatted objects to AFP or (MO:DCA).</li>
           <li>[software &amp; tools] <jump href="http://offo.sourceforge.net/">Objects For Formatting Objects</jump> hosts hyphenation patterns and (eventually) files other accessory data files &amp; scripts.</li>
         </ul>        
@@ -218,8 +223,8 @@
       <section id="products-other">
         <title>Other products</title>
         <ul>
-          <li>[software] <jump href="http://foray.sourceforge.net/">FOray</jump> a renderer for converting XML files to PDF via XSL Formatting Object elements</li>
-          <li>[software] <jump href="http://defoe.sourceforge.net/">Defoe</jump> a renderer for XML files containing Formatting Object elements (aka FOP Alt.Design)</li>
+          <li>[software] <jump href="http://foray.sourceforge.net/">FOray</jump> a renderer for converting XML files to PDF via XSL Formatting Object elements (FOP fork)</li>
+          <li>[software] <jump href="http://defoe.sourceforge.net/folio">Folio</jump> a renderer for XML files containing Formatting Object elements (aka FOP Alt.Design)</li>
 
           <li>[commercial software developer] <jump href="http://antennahouse.com/product.htm">Antenna House</jump> - XSL Formatter, WordMLToFo, XML Editor...</li>
           <li>[commercial software developer] <jump href="http://www.renderx.net/">RenderX</jump> XEP, EnMasse, Docbench...</li>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -36,9 +36,17 @@
       <title>Java</title>
       <section id="java-style">
         <title>Java Style</title>
-        <p>In order to facilitate the human reading of FOP source code, reduce churning in code, and prevent disputes, the FOP developers have agreed on a set of coding conventions.
-The basis of these coding conventions is documented in the <link href="http://xml.apache.org/source.html">Apache XML Project Guidelines</link>, which requires that <strong>all Java Language source code in the repository must be written in conformance to Sun's</strong> <link href="http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html">Code Conventions for the Java Programming Language</link>.
-In addition, the FOP developers have agreed to other conventions, which are summarized in the following table:</p>
+        <p>
+          In order to facilitate the human reading of FOP source code, 
+          reduce churning in code, and prevent disputes, the FOP developers 
+          have agreed on a set of coding conventions. The basis of these coding 
+          conventions is documented in the 
+          <link href="http://xml.apache.org/source.html">Apache XML Project Guidelines</link>, 
+          which requires that <strong>all Java Language source code in the repository 
+          must be written in conformance to Sun's</strong> 
+          <link href="http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html">Code Conventions for the Java Programming Language</link>.
+          In addition, the FOP developers have agreed to other conventions, 
+          which are summarized in the following table:</p>
         <table>
           <tr>
             <th>Convention</th>
@@ -146,9 +154,8 @@ Printing error messages to System.err or System.out is useless in a server-side 
       <section id="java-links">
         <title>Related Links</title>
         <ul>
-          <li><jump href="http://xml.apache.org/source.html">Apache Source Repositories</jump></li>
+          <li><jump href="http://xmlgraphics.apache.org/repo.html">Apache XML Graphics Code Repositories</jump></li>
           <li><jump href="http://jakarta.apache.org/site/faqs.html#Coding%20Conventions%20and%20Standards">Jakarta Code Conventions and Standards</jump> (see Coding Conventions and Standards section)</li>
-          <li><jump href="http://jakarta.apache.org/avalon/code-standards.html">Avalon Project - Coding Standards</jump></li>
         </ul>
       </section>
     </section>

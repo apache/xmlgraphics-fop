@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -86,49 +86,55 @@ Appropriate mailing lists for these topics can be found on the <link href="../ma
           <li>
 To review the archives, you have several options:
             <ul>
-              <li>The <link href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">Mailing list ARChives</link> (MARC) at the AIMS group (search).
+              <li>
+                The <link href="http://mail-archives.eu.apache.org/mod_mbox/xmlgraphics-fop-dev/">Apache Mailing List archive (mod_mbox)</link>.
               </li>
               <li>
-The <link href="http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=fop-dev@xml.apache.org">Apache Eyebrowse</link> archive (search, list by date, author, subject, or thread).
+                The <link href="http://xmlgraphics.apache.org/mail/fop-dev/">Apache Mailing List archive (gzipped mbox files)</link>.
               </li>
               <li>
-The <link href="http://xml.apache.org/mail/fop-dev/">Apache Mailing List archive</link>.
+                The <link href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">Mailing list ARChives</link> (MARC) at the AIMS group (search).
+              </li>
+              <li>
+                The <link href="http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=fop-dev@xml.apache.org">Apache Eyebrowse</link> archive (search, list by date, author, subject, or thread).
               </li>
             </ul>
           </li>
           <li>Before posting questions to any list, see "<link href="../maillist.html#general">General Information</link>".</li>
           <li>
-See <link href="http://xml.apache.org/mail.html#fop-dev_fop-cvs">Apache XML Mailing Lists</link>
+See <link href="http://xmlgraphics.apache.org/mail.html">Apache XML Graphics Mailing Lists</link>
 for detailed subscription information.
           </li>
           <li>
-To subscribe (digest only): Send email to <link href="mailto:fop-dev-digest-subscribe@xml.apache.org">fop-dev-digest-subscribe@xml.apache.org</link>.
+To subscribe (digest only): Send email to <link href="mailto:fop-dev-digest-subscribe@xmlgraphics.apache.org">fop-dev-digest-subscribe@xmlgraphics.apache.org</link>.
           </li>
           <li>
-To subscribe fully: Send email to <link href="mailto:fop-dev-subscribe@xml.apache.org">fop-dev-subscribe@xml.apache.org</link>.
+To subscribe fully: Send email to <link href="mailto:fop-dev-subscribe@xmlgraphics.apache.org">fop-dev-subscribe@xmlgraphics.apache.org</link>.
           </li>
           <li>
-For standard help: Send email to <link href="mailto:fop-dev-help@xml.apache.org">fop-dev-help@xml.apache.org</link>.
+For standard help: Send email to <link href="mailto:fop-dev-help@xmlgraphics.apache.org">fop-dev-help@xmlgraphics.apache.org</link>.
           </li>
           <li>
-To unsubscribe: Send email to <link href="mailto:fop-dev-unsubscribe@xml.apache.org">fop-dev-unsubscribe@xml.apache.org</link>.
+To unsubscribe: Send email to <link href="mailto:fop-dev-unsubscribe@xmlgraphics.apache.org">fop-dev-unsubscribe@xmlgraphics.apache.org</link>.
           </li>
         </ul>
+        <note>The Eyebrowse and MARC archives are currently broken!</note>
       </section>
       <section id="mail-fop-cvs">
         <title>Subscribe to the fop-cvs Mailing List</title>
         <p>When changes are committed to the code repository, a record of the diffs is emailed to the fop-cvs mailing list. FOP developers are encouraged to subscribe to this list because it helps in following the progress of the project.
         </p>
         <ul>
+          <li>Review the archives at <link href="http://mail-archives.eu.apache.org/mod_mbox/xmlgraphics-fop-commits/">http://mail-archives.eu.apache.org/mod_mbox/xmlgraphics-fop-commits/</link> (mod_mbox).</li>
           <li>Review the archives at <link href="http://marc.theaimsgroup.com/?l=fop-cvs&amp;r=1&amp;w=2">Mailing list ARChives</link> (MARC) at the AIMS group (search).</li>
-          <li>Subscribe by sending an email to <link href="mailto:fop-cvs-subscribe@xml.apache.org">fop-cvs-subscribe@xml.apache.org</link>.</li>
+          <li>Subscribe by sending an email to <link href="mailto:fop-commits-subscribe@xmlgraphics.apache.org">fop-commits-subscribe@xmlgraphics.apache.org</link>.</li>
         </ul>
       </section>
       <section id="dev-code">
         <title>Download and Use the Developers' Code Using CVS</title>
         <p>Between releases the newest code can be accessed via cvs. To do this you need to install a cvs
      client on your computer, if it is not already there. An explanation how to connect to the
-     FOP source repository can be found at <link href="http://xml.apache.org/cvs.html">http://xml.apache.org/cvs.html</link>.
+     FOP source repository can be found at <link href="http://xmlgraphics.apache.org/repo.html">http://xmlgraphics.apache.org/repo.html</link>.
      An introduction into cvs and the cvs manual can be found in the
      <link href="http://xml.apache.org/library.html">reference library</link>.</p>
       </section>
