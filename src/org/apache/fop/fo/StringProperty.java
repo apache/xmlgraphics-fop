@@ -36,6 +36,10 @@ public class StringProperty extends Property {
                                        + value);
                     // fall through and use the entire value, including first quote
                 }
+                String str = checkValueKeywords(value);
+                if(str != null) {
+                    value = str;
+                }
             }
             return new StringProperty(value);
         }
