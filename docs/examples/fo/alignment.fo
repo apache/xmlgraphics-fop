@@ -1,7 +1,7 @@
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
 <fo:layout-master-set>
   <fo:simple-page-master master-name="one">
-    <fo:region-body margin-top="25pt" margin-bottom="25pt" margin-left="50pt" margin-right="50pt" />
+    <fo:region-body margin-top="25pt" margin-bottom="25pt" margin-left="35pt" margin-right="30pt" />
   </fo:simple-page-master>
 </fo:layout-master-set>
 <fo:page-sequence master-reference="one">
@@ -50,6 +50,8 @@ And this is the line of text that follows the line with the aligned objects on i
 And finally, this line illustrates the normal spacing between lines of text in this font.
 </fo:block>
 
+<fo:block space-after="15pt"><fo:leader leader-length="100%"/></fo:block>
+
       <fo:block><fo:inline font-weight="bold">Ex 2:</fo:inline> This
 is a longer line of text that provides a context for the line with the images aligned on it.
 This is a line with before-edge
@@ -89,6 +91,8 @@ And this is the line of text that follows the line with the aligned objects on i
 And finally, this line illustrates the normal spacing between lines of text in this font.
 </fo:block>
 
+<fo:block space-after="15pt"><fo:leader leader-length="100%"/></fo:block>
+
       <fo:block><fo:inline font-weight="bold">Ex 3:</fo:inline> This
 is a longer line of text that provides a context for the line with the images aligned on it.
 This is a line with before-edge
@@ -121,6 +125,8 @@ And this is the line of text that follows the line with the aligned objects on i
 And finally, this line illustrates the normal spacing between lines of text in this font.
 </fo:block>
 
+<fo:block space-after="15pt"><fo:leader leader-length="100%"/></fo:block>
+
       <fo:block><fo:inline font-weight="bold">Ex 4:</fo:inline> This
 is a longer line of text that provides a context for the line with the images aligned on it.
 This is a line with before-edge
@@ -152,6 +158,8 @@ This is a line with before-edge
 And this is the line of text that follows the line with the aligned objects on it.
 And finally, this line illustrates the normal spacing between lines of text in this font.
 </fo:block>
+
+<fo:block space-after="15pt"><fo:leader leader-length="100%"/></fo:block>
 
       <fo:block><fo:inline font-weight="bold">Ex 5:</fo:inline> This
 is a longer line of text that provides a context for the line with the images aligned on it.
