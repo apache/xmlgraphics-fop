@@ -1206,24 +1206,9 @@ public class PDFDocument {
 
     private String getGoToReference(String destination) {
         String goToReference = null;
-        /*if (idReferences.doesIDExist(destination)) {
-            if (idReferences.doesGoToReferenceExist(destination)) {
-                goToReference =
-                    idReferences.getInternalLinkGoToReference(destination);
-            } else {    // assign Internal Link GoTo object
-                goToReference =
-                    idReferences.createInternalLinkGoTo(destination,
-                                                        ++this.objectcount);
-                addTrailerObject(idReferences.getPDFGoTo(destination));
-            }
-        } else {        // id was not found, so create it
-
-            idReferences.createUnvalidatedID(destination); 
-            idReferences.addToIdValidationList(destination);
-            goToReference = idReferences.createInternalLinkGoTo(destination,
-                            ++this.objectcount);
-            addTrailerObject(idReferences.getPDFGoTo(destination));
-        }*/
+        PDFGoTo gt = new PDFGoTo(++this.objectcount, destination);
+        goToReference = gt.referencePDF();
+        addTrailerObject(gt);
         return goToReference;
     }
 
@@ -1323,14 +1308,12 @@ public class PDFDocument {
         String goToRef = getGoToReference(destination);
 
         PDFOutline obj = new PDFOutline(++this.objectcount, label, goToRef);
-        //log.debug("created new outline object");
 
         if (parent != null) {
             parent.addOutline(obj);
         }
         this.objects.add(obj);
         return obj;
-
     }
 
     /**

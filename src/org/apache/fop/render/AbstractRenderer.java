@@ -63,6 +63,12 @@ public abstract class AbstractRenderer extends AbstractLogEnabled implements Ren
     }
 
     /**
+     * Render tree extension.
+     */
+    public void renderExtension(TreeExt ext) {
+    }
+
+    /**
      * Prepare a page for rendering.
      * This is called if the renderer supports out of order rendering.
      * The renderer should prepare the page so that a page further on

@@ -58,6 +58,8 @@ public interface Renderer {
 
     public boolean supportsOutOfOrder();
 
+    public void renderExtension(TreeExt ext);
+
     public void preparePage(PageViewport page);
 
     public void startPageSequence(Title seqTitle);
