@@ -161,7 +161,7 @@ public class Property {
                        ,NONE_IT = 16384
                       ,AURAL_IT = 32768
             ,TEXT_DECORATION_IT = 65536
-  // Unused         ,FONTSET_IT = 131072
+                   ,LANGUAGE_IT = 131072
                                 ;
 
     /**
@@ -180,6 +180,7 @@ public class Property {
                                   | NCNAME_IT
                                   | COLOR_IT
                                   | COUNTRY_IT
+                                  | LANGUAGE_IT
                                   | URI_SPECIFICATION_IT
                                   | BOOL_IT
                                   | ENUM_IT
