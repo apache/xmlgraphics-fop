@@ -66,6 +66,7 @@ import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableBody;
@@ -76,10 +77,16 @@ import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.Property;
 import org.apache.fop.apps.Document;
+import org.apache.fop.rtf.rtflib.rtfdoc.IRtfAfterContainer;
+import org.apache.fop.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
+import org.apache.fop.rtf.rtflib.rtfdoc.IRtfPageNumberContainer;
 import org.apache.fop.rtf.rtflib.rtfdoc.IRtfParagraphContainer;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfAfter;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfBefore;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfColorTable;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfElement;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfFile;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
@@ -108,6 +115,14 @@ public class RTFHandler extends FOInputHandler {
     private RtfDocumentArea docArea;
     private RtfParagraph para;
     private boolean warned = false;
+    private boolean bPrevHeaderSpecified=false;//true, if there has been a
+                                               //header in any page-sequence
+    private boolean bPrevFooterSpecified=false;//true, if there has been a
+                                               //footer in any page-sequence
+    private boolean bHeaderSpecified = false;  //true, if there is a header
+                                               //in current page-sequence
+    private boolean bFooterSpecified = false;  //true, if there is a footer
+                                               //in current page-sequence
     private BuilderContext m_context = new BuilderContext(null);
 
     private static final String ALPHA_WARNING = "WARNING: RTF renderer is "
@@ -164,10 +179,9 @@ public class RTFHandler extends FOInputHandler {
         try {
             sect = docArea.newSection();
             m_context.pushContainer(sect);
-            if (!warned) {
-                sect.newParagraph().newText(ALPHA_WARNING);
-                warned = true;
-            }
+
+            bHeaderSpecified=false;
+            bFooterSpecified=false;
         } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOInputHandler events?
             log.error("startPageSequence: " + ioe.getMessage());
@@ -186,12 +200,88 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startFlow(Flow)
      */
     public void startFlow(Flow fl) {
+        try {
+            if (fl.getFlowName().equals("xsl-region-body")) {
+                // if there is no header in current page-sequence but there has been
+                // a header in a previous page-sequence, insert an empty header.
+                if (bPrevHeaderSpecified && !bHeaderSpecified) {
+                    RtfAttributes attr=new RtfAttributes();
+                    attr.set(RtfBefore.HEADER);
+
+                    final IRtfBeforeContainer contBefore = (IRtfBeforeContainer)m_context.getContainer(IRtfBeforeContainer.class,true,this);
+                    contBefore.newBefore(attr);
+                }
+
+                // if there is no footer in current page-sequence but there has been
+                // a footer in a previous page-sequence, insert an empty footer.
+                if (bPrevFooterSpecified && !bFooterSpecified) {
+                    RtfAttributes attr=new RtfAttributes();
+                    attr.set(RtfAfter.FOOTER);
+
+                    final IRtfAfterContainer contAfter = (IRtfAfterContainer)m_context.getContainer(IRtfAfterContainer.class,true,this);
+                    contAfter.newAfter(attr);
+                }
+
+                // print ALPHA_WARNING
+                if (!warned) {
+                    sect.newParagraph().newText(ALPHA_WARNING);
+                    warned = true;
+                }
+            } else if(fl.getFlowName().equals("xsl-region-before")) {
+                bHeaderSpecified=true;
+                bPrevHeaderSpecified=true;
+
+                final IRtfBeforeContainer c = (IRtfBeforeContainer)m_context.getContainer(IRtfBeforeContainer.class,true,this);
+
+                RtfAttributes beforeAttributes = ((RtfElement)c).getRtfAttributes();
+                if ( beforeAttributes == null ) {
+                    beforeAttributes = new RtfAttributes();
+                }
+                beforeAttributes.set(RtfBefore.HEADER);
+
+                RtfBefore before = c.newBefore(beforeAttributes);
+                m_context.pushContainer(before);
+            } else if(fl.getFlowName().equals("xsl-region-after")) {
+                bFooterSpecified=true;
+                bPrevFooterSpecified=true;
+
+                final IRtfAfterContainer c = (IRtfAfterContainer)m_context.getContainer(IRtfAfterContainer.class,true,this);
+
+                RtfAttributes afterAttributes = ((RtfElement)c).getRtfAttributes();
+                if ( afterAttributes == null ) {
+                    afterAttributes = new RtfAttributes();
+                }
+
+                afterAttributes.set(RtfAfter.FOOTER);
+
+                RtfAfter after = c.newAfter(afterAttributes);
+                m_context.pushContainer(after);
+            }
+        } catch(IOException ioe) {
+            log.error("startFlow: " + ioe.getMessage());
+            throw new Error(ioe.getMessage());
+        } catch(Exception e) {
+            log.error("startFlow: " + e.getMessage());
+            throw new Error(e.getMessage());
+        }
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#endFlow(Flow)
      */
     public void endFlow(Flow fl) {
+        try {
+            if (fl.getFlowName().equals("xsl-region-body")) {
+                //just do nothing
+            } else if (fl.getFlowName().equals("xsl-region-before")) {
+                m_context.popContainer();
+            } else if (fl.getFlowName().equals("xsl-region-after")) {
+                m_context.popContainer();
+            }
+        } catch(Exception e){
+            log.error("endFlow: " + e.getMessage());
+            throw new Error(e.getMessage());
+        }
     }
 
     /**
@@ -625,4 +715,33 @@ public class RTFHandler extends FOInputHandler {
                 greenComponent, blueComponent).intValue();
     }
 
+    /**
+     *
+     * @param pagenum PageNumber that is starting.
+     */
+    public void startPageNumber(PageNumber pagenum) {
+        try {
+            //insert page number
+            IRtfPageNumberContainer pageNumberContainer = (IRtfPageNumberContainer)m_context.getContainer(IRtfPageNumberContainer.class,true,this);
+            m_context.pushContainer(pageNumberContainer.newPageNumber());
+
+            //set Attribute "WhiteSpaceFalse" in order to prevent the rtf library from
+            //stripping the whitespaces. This applies to whole paragraph.
+            if(pageNumberContainer instanceof RtfParagraph) {
+                RtfParagraph para=(RtfParagraph)pageNumberContainer;
+                para.getRtfAttributes().set("WhiteSpaceFalse");
+            }
+        } catch(Exception e) {
+            log.error("startPageNumber: " + e.getMessage());
+            throw new Error(e.getMessage());
+        }
+    }
+
+    /**
+     *
+     * @param pagenum PageNumber that is ending.
+     */
+    public void endPageNumber(PageNumber pagenum) {
+        m_context.popContainer();
+    }
 }

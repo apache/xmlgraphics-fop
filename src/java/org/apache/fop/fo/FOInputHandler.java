@@ -61,6 +61,7 @@ import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableBody;
@@ -131,6 +132,21 @@ public abstract class FOInputHandler extends AbstractLogEnabled {
     public abstract void endPageSequence(PageSequence pageSeq) throws FOPException;
 
     /**
+     *
+     * @param pagenum PageNumber that is starting.
+     */
+    public abstract void startPageNumber(PageNumber pagenum);
+
+    /**
+     *
+     * @param pagenum PageNumber that is ending.
+     */
+    public abstract void endPageNumber(PageNumber pagenum);
+
+    /**
+     * This method is called to indicate the start of a new fo:flow or fo:static-content.
+     * This method also handles fo:static-content tags, because the StaticContent class
+     * is derived from the Flow class.
      *
      * @param fl Flow that is starting.
      */

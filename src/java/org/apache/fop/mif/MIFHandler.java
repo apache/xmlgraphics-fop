@@ -63,6 +63,7 @@ import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
@@ -447,5 +448,18 @@ public class MIFHandler extends FOInputHandler {
         }
     }
 
+    /**
+     *
+     * @param pagenum PageNumber that is starting.
+     */
+    public void startPageNumber(PageNumber pagenum) {
+    }
+
+    /**
+     *
+     * @param pagenum PageNumber that is ending.
+     */
+    public void endPageNumber(PageNumber pagenum) {
+    }
 }
 
