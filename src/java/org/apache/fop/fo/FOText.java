@@ -252,6 +252,9 @@ public class FOText extends FObj {
      * text-transform property.
      */
     private void textTransform() {
+        if (textInfo.textTransform == TextTransform.NONE) {
+            return;
+        }
         for (int i = 0; i < ca.length; i++) {
             ca[i] = charTransform(i);
         }
