@@ -11,6 +11,9 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Ints;
+
+import java.util.HashMap;
 
 /**
  * Data class containing the Flow Object names and associated integer
@@ -86,6 +89,10 @@ public class FObjectNames {
 
                                 LAST_FO = WRAPPER;
 
+    /** Index of FO names in foLocalNames array. */
+    private static final int NAMEX = 0;
+    /** Index of FO package string in foLocalNames array. */
+    private static final int PACKAGEX = 1;
     /**
      * Array containing the local names of all of the elements in the
      * <i>FO</i> namespace and the package name suffix of the Object
@@ -157,6 +164,39 @@ public class FObjectNames {
     };
 
     /**
+     * A HashMap whose elements are an integer index value keyed by an
+     * fo local name.  The index value is the index of the fo local name in
+     * the FObjectNames.foLocalNames[] array.
+     * It is initialized in a static initializer.
+     */
+    private static final HashMap foToIndex = new HashMap(LAST_FO + 1);
+    static {
+        for (int i = 0; i <= LAST_FO; i++)
+        // Set up the foToIndex Hashmap with the name of the
+        // flow object as a key, and the integer index as a value
+        if (foToIndex.put(foLocalNames[i][NAMEX], Ints.consts.get(i)) != null)
+            throw new RuntimeException(
+                "Duplicate values in propertyToIndex for key " +
+                    foLocalNames[i][NAMEX]);
+    }
+
+    /**
+     * Get the FObject index corresponding to the FObject name.
+     * @param foName - the FO name.
+     * @return the <tt>int</tt> index.
+     * @throws <tt>FOPException</tt>.
+     */
+    public static int getFOIndex(String foName)
+                throws FOPException
+    {
+        Integer index = (Integer)(foToIndex.get(foName));
+        if (index == null) throw new FOPException
+                                        ("Unknown FObject name: " + foName);
+        return index.intValue();
+    }
+
+    /**
+     * Get the FObject name corresponding to the FO index.
      * @param foType <tt>int</tt> index of the FO type.
      * @return <tt>String</tt> name of the FO.
      * @exception FOPException if the FO index is invalid.
@@ -167,7 +207,7 @@ public class FObjectNames {
         if (foType < 0 || foType > LAST_FO)
                 throw new FOPException
                         ("getFOName: type is invalid: " + foType);
-        return foLocalNames[foType][0];
+        return foLocalNames[foType][NAMEX];
     }
 
 }
