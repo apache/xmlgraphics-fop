@@ -9,6 +9,7 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.RegionReference;
 
@@ -23,13 +24,11 @@ public class RegionAfter extends RegionBA {
     }
 
 
-    protected Rectangle getViewportRectangle (Rectangle pageRefRect) {
+    protected Rectangle getViewportRectangle (FODimension reldims) {
 	// Depends on extent and precedence
 	Rectangle vpRect =
-	    new Rectangle((int)pageRefRect.getX(),
-			  (int)pageRefRect.getY() - (int)pageRefRect.getHeight() + 
-			  getExtent(),
-			  (int)pageRefRect.getWidth(), getExtent());
+	    new Rectangle(0, reldims.bpd - getExtent(),
+			  reldims.ipd, getExtent());
 	if (getPrecedence() == false) {
 	    adjustIPD(vpRect);
 	}

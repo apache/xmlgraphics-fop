@@ -8,12 +8,15 @@
 package org.apache.fop.fo.pagination;
 
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 // FOP
+
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.Overflow;
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.BodyRegion;
@@ -27,43 +30,19 @@ public class RegionBody extends Region {
         super(parent);
     }
 
-    protected Rectangle getViewportRectangle (Rectangle pageRefRect)
+    protected Rectangle getViewportRectangle (FODimension reldims)
     {
         // Common Margin Properties-Block
+	// Need these in writing-mode relative coordinates
+	// Or shall we get absolute and transform to relative using writing mode?
         MarginProps mProps = propMgr.getMarginProps();
-        return
-	    new Rectangle((int)pageRefRect.getX() + mProps.marginLeft,
-			  (int)pageRefRect.getY() - mProps.marginTop,
-			  (int)pageRefRect.getWidth() - mProps.marginLeft -
-			  mProps.marginRight,
-			  (int)pageRefRect.getHeight() - mProps.marginTop -
-			  mProps.marginBottom);
+        return new Rectangle( mProps.startIndent, mProps.spaceBefore,
+			      reldims.ipd - mProps.startIndent - mProps.endIndent,
+			      reldims.bpd - mProps.spaceBefore - mProps.spaceAfter);
     }
 
-    protected void setRegionTraits(RegionReference r) {
-	super.setRegionTraits(r);
-
-        String columnCountAsString =
-            this.properties.get("column-count").getString();
-        int columnCount = 1;
-        try {
-            columnCount = Integer.parseInt(columnCountAsString);
-        } catch (NumberFormatException nfe) {
-            log.error("Bad value on region body 'column-count'");
-            columnCount = 1;
-        }
-        if ((columnCount > 1) && (overflow == Overflow.SCROLL)) {
-            // recover by setting 'column-count' to 1. This is allowed but
-            // not required by the spec.
-            log.error("Setting 'column-count' to 1 because "
-                                   + "'overflow' is set to 'scroll'");
-            columnCount = 1;
-        }
-//         r.setColumnCount(columnCount);
-
-//         int columnGap =
-//             this.properties.get("column-gap").getLength().mvalue();
-//         r.setColumnGap(columnGap);
+    protected void setRegionTraits(RegionReference r, Rectangle2D absRegVPRect) {
+	super.setRegionTraits(r, absRegVPRect);
 
 //         r.setBackgroundColor(backgroundColor);
     }
@@ -84,9 +63,24 @@ public class RegionBody extends Region {
     /**
      * Override the inherited method.
      */
-    public RegionReference makeRegionReferenceArea() {
+    public RegionReference makeRegionReferenceArea(Rectangle2D absRegVPRect) {
 	// Should set some column stuff here I think, or put it elsewhere
-	return new BodyRegion();
+	BodyRegion body = new BodyRegion();
+        int columnCount=
+            this.properties.get("column-count").getNumber().intValue();
+        if ((columnCount > 1) && (overflow == Overflow.SCROLL)) {
+            // recover by setting 'column-count' to 1. This is allowed but
+            // not required by the spec.
+            log.error("Setting 'column-count' to 1 because "
+                                   + "'overflow' is set to 'scroll'");
+            columnCount = 1;
+        }
+	body.setColumnCount(columnCount);
+
+        int columnGap =
+             this.properties.get("column-gap").getLength().mvalue();
+	body.setColumnGap(columnGap);
+	return body;
     }
 
 }

@@ -11,6 +11,7 @@ import java.awt.Rectangle;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.RegionReference;
 
@@ -24,17 +25,14 @@ public class RegionEnd extends RegionSE {
     }
 
 
-    protected Rectangle getViewportRectangle (Rectangle pageRefRect) {
+    protected Rectangle getViewportRectangle (FODimension reldims) {
 	// Depends on extent and precedence
 	Rectangle vpRect =
-	    new Rectangle((int)pageRefRect.getX() + (int)pageRefRect.getWidth() -
-			  getExtent(),
-			  (int)pageRefRect.getY(),
-			  getExtent(), (int)pageRefRect.getHeight());
+	    new Rectangle(reldims.ipd - getExtent(), 0,
+			  getExtent(), reldims.bpd);
 	adjustIPD(vpRect);
 	return vpRect;
     }
-
 
     protected String getDefaultRegionName() {
         return "xsl-region-end";

@@ -13,6 +13,8 @@ public class BodyRegion extends RegionReference {
     BeforeFloat beforeFloat;
     MainReference mainReference;
     Footnote footnote;
+    private int columnGap;
+    private int columnCount;
 
     /** Maximum block progression dimension. Note: min=opt=max */
     private MinOptMax maxBPD;
@@ -22,6 +24,16 @@ public class BodyRegion extends RegionReference {
 
     public BodyRegion() {
         super(BODY);
+    }
+
+    // Number of columns when not spanning
+    public void setColumnCount(int colCount) {
+	this.columnCount = colCount;
+    }
+
+    // A length (mpoints)
+    public void setColumnGap(int colGap) {
+	this.columnGap = colGap;
     }
 
     public void setParent(Area area) {

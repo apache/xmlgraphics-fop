@@ -8,14 +8,18 @@
 package org.apache.fop.fo.pagination;
 
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 // FOP
+
+import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.CTM;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
 
@@ -75,21 +79,30 @@ public abstract class Region extends FObj {
     /**
      * Creates a RegionViewport Area object for this pagination Region.
      */
-    public RegionViewport makeRegionViewport(Rectangle pageRefRect) {
-	return new RegionViewport(getViewportRectangle(pageRefRect));
+    public RegionViewport makeRegionViewport(FODimension reldims, CTM pageCTM) {
+        Rectangle2D relRegionRect = getViewportRectangle(reldims);
+        Rectangle2D absRegionRect = pageCTM.transform(relRegionRect);
+        // Get the region viewport rectangle in absolute coords by
+        // transforming it using the page CTM
+	return new RegionViewport(absRegionRect);
     }
 
 
-    abstract protected Rectangle getViewportRectangle(Rectangle pageRefRect);
+    abstract protected Rectangle getViewportRectangle(FODimension pageRefRect);
 
-
-    public RegionReference makeRegionReferenceArea() {
+    /**
+     * Create the region reference area for this region master.
+     * @param absRegVPRect The region viewport rectangle is "absolute" coordinates
+     * where x=distance from left, y=distance from bottom, width=right-left
+     * height=top-bottom
+     */
+    public RegionReference makeRegionReferenceArea(Rectangle2D absRegVPRect) {
 	RegionReference r = new RegionReference(getRegionAreaClass());
-	setRegionTraits(r);
+	setRegionTraits(r, absRegVPRect);
 	return r;
     }
 
-    protected void setRegionTraits(RegionReference r) {
+    protected void setRegionTraits(RegionReference r, Rectangle2D absRegVPRect) {
         // Common Border, Padding, and Background Properties
         BorderAndPadding bap = propMgr.getBorderAndPadding();
         BackgroundProps bProps = propMgr.getBackgroundProps();
@@ -99,9 +112,9 @@ public abstract class Region extends FObj {
         // this.properties.get("clip");
         // this.properties.get("display-align");
         this.overflow = this.properties.get("overflow").getEnum();
-        // this.properties.get("reference-orientation");
-        // this.properties.get("writing-mode");
-                    
+	FODimension reldims = new FODimension(0,0);
+	r.setCTM(propMgr.getCTMandRelDims(absRegVPRect, reldims));
+
 	//r.setBackground(bProps);
     }
 

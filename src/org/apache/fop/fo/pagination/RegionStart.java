@@ -12,6 +12,7 @@ import java.awt.Rectangle;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.RegionReference;
 
@@ -24,12 +25,12 @@ public class RegionStart extends RegionSE {
     }
 
 
-    protected Rectangle getViewportRectangle (Rectangle pageRefRect) {
+    protected Rectangle getViewportRectangle (FODimension reldims) {
 	// Depends on extent and precedence
+        // This is the rectangle relative to the page-reference area in
+        // writing-mode relative coordinates
 	Rectangle vpRect =
-	    new Rectangle((int)pageRefRect.getX(),
-			  (int)pageRefRect.getY(),
-			  getExtent(), (int)pageRefRect.getHeight());
+	    new Rectangle(0, 0, getExtent(), reldims.bpd);
 	adjustIPD(vpRect);
 	return vpRect;
     }
