@@ -115,12 +115,12 @@ public class TableAttributesConverter {
      * @throws ConverterException On convertion error
      */
     static RtfAttributes convertTableAttributes(PropertyList properties)
-    throws FOPException {
+            throws FOPException {
         RtfAttributes attrib = new RtfAttributes();
 
-        LengthProperty lengthProp=null;
+        LengthProperty lengthProp = null;
         // margin-left
-        lengthProp=(LengthProperty)properties.get("margin-left");
+        lengthProp = (LengthProperty)properties.get("margin-left");
         if (lengthProp != null) {
             Float f = new Float(lengthProp.getLength().getValue() / 1000f);
             final String sValue = f.toString() + "pt";

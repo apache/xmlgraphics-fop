@@ -90,7 +90,7 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
     private boolean writeForBreak = false;
 
     /** Set of attributes that must be copied at the start of a paragraph */
-    private static final String [] PARA_ATTRIBUTES = { "intbl" };
+    private static final String[] PARA_ATTRIBUTES = {"intbl"};
 
     /** Create an RTF paragraph as a child of given container with default attributes */
     RtfParagraph(IRtfParagraphContainer parent, Writer w) throws IOException {

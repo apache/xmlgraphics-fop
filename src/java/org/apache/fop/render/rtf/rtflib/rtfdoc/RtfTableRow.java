@@ -184,7 +184,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         writeAttributes(attrib, ITableAttributes.CELL_BORDER);
         writeAttributes(attrib, BorderAttributesConverter.BORDERS);
 
-        if(attrib.isSet(ITableAttributes.ROW_HEIGHT)) {
+        if (attrib.isSet(ITableAttributes.ROW_HEIGHT)) {
             writeOneAttribute(
                     ITableAttributes.ROW_HEIGHT,
                     attrib.getValue(ITableAttributes.ROW_HEIGHT));
@@ -214,9 +214,9 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                           nestedTableFound = true;
                           indexesFound.addElement(new Integer(index));
                         } else if (subElement instanceof RtfParagraph) {
-                           for (Iterator it3 =
-                               ((RtfParagraph)subElement).getChildren().iterator(); it3.hasNext();)
-                             {
+                           for (Iterator it3
+                                = ((RtfParagraph)subElement).getChildren().iterator(); 
+                                it3.hasNext();) {
                                 final RtfElement subSubElement = (RtfElement)it3.next();
                                 if (subSubElement instanceof RtfTable) {
                                     nestedTableFound = true;

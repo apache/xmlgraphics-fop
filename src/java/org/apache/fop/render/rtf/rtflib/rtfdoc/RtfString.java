@@ -64,15 +64,14 @@ import java.io.Writer;
  *  @author Peter Herweg, pherweg@web.de
  */
 
-public class RtfString extends RtfElement
-{
-    String text="";
+public class RtfString extends RtfElement {
+    private String text = "";
         
     RtfString(RtfContainer parent, Writer w, String s)
     throws IOException {
         super(parent, w);
             
-        text=s;
+        text = s;
     }
         
     /**
@@ -95,6 +94,6 @@ public class RtfString extends RtfElement
     }
         
     public void setText(String s) {
-        text=s;
+        text = s;
     }
 }

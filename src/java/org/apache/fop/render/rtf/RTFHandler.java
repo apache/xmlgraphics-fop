@@ -58,7 +58,6 @@ import java.io.OutputStreamWriter;
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.EnumProperty;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.datatypes.FixedLength;
@@ -81,26 +80,19 @@ import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.LengthProperty;
-import org.apache.fop.fo.PropertyList;
 import org.apache.fop.apps.Document;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfExternalGraphicContainer;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfPageNumberContainer;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfParagraphContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTextrunContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAfter;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfBefore;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFile;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontManager;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
@@ -125,7 +117,7 @@ public class RTFHandler extends FOInputHandler {
     private final Logger log = new ConsoleLogger();
     private RtfSection sect;
     private RtfDocumentArea docArea;
-    private RtfParagraph para;
+    //private RtfParagraph para; //never used
     private boolean warned = false;
     private boolean bPrevHeaderSpecified = false;//true, if there has been a
                                                  //header in any page-sequence
@@ -188,17 +180,17 @@ public class RTFHandler extends FOInputHandler {
 
             //read page size and margins, if specified
             Property prop;
-            if((prop=pageSeq.properties.get("master-reference"))!=null) {
-                String reference=prop.getString();
+            if ((prop = pageSeq.properties.get("master-reference")) != null) {
+                String reference = prop.getString();
 
-                SimplePageMaster pagemaster=
-                    pageSeq.getLayoutMasterSet().getSimplePageMaster(reference);
+                SimplePageMaster pagemaster 
+                    = pageSeq.getLayoutMasterSet().getSimplePageMaster(reference);
 
                 //only simple-page-master supported, so pagemaster may be null
-                if(pagemaster!=null) {
+                if (pagemaster != null) {
                     sect.getRtfAttributes().set(
                         PageAttributesConverter.convertPageAttributes(
-                            pagemaster.properties,null));
+                            pagemaster.properties, null));
                 }
             }
 
@@ -232,8 +224,8 @@ public class RTFHandler extends FOInputHandler {
                     RtfAttributes attr = new RtfAttributes();
                     attr.set(RtfBefore.HEADER);
 
-                    final IRtfBeforeContainer contBefore =
-                            (IRtfBeforeContainer)builderContext.getContainer
+                    final IRtfBeforeContainer contBefore 
+                        = (IRtfBeforeContainer)builderContext.getContainer
                                 (IRtfBeforeContainer.class, true, this);
                     contBefore.newBefore(attr);
                 }
@@ -244,8 +236,8 @@ public class RTFHandler extends FOInputHandler {
                     RtfAttributes attr = new RtfAttributes();
                     attr.set(RtfAfter.FOOTER);
 
-                    final IRtfAfterContainer contAfter =
-                            (IRtfAfterContainer)builderContext.getContainer
+                    final IRtfAfterContainer contAfter
+                        = (IRtfAfterContainer)builderContext.getContainer
                                 (IRtfAfterContainer.class, true, this);
                     contAfter.newAfter(attr);
                 }
@@ -259,8 +251,9 @@ public class RTFHandler extends FOInputHandler {
                 bHeaderSpecified = true;
                 bPrevHeaderSpecified = true;
 
-                final IRtfBeforeContainer c =
-                        (IRtfBeforeContainer)builderContext.getContainer(IRtfBeforeContainer.class,
+                final IRtfBeforeContainer c 
+                    = (IRtfBeforeContainer)builderContext.getContainer(
+                        IRtfBeforeContainer.class,
                         true, this);
 
                 RtfAttributes beforeAttributes = ((RtfElement)c).getRtfAttributes();
@@ -275,8 +268,9 @@ public class RTFHandler extends FOInputHandler {
                 bFooterSpecified = true;
                 bPrevFooterSpecified = true;
 
-                final IRtfAfterContainer c =
-                        (IRtfAfterContainer)builderContext.getContainer(IRtfAfterContainer.class,
+                final IRtfAfterContainer c 
+                    = (IRtfAfterContainer)builderContext.getContainer(
+                        IRtfAfterContainer.class,
                         true, this);
 
                 RtfAttributes afterAttributes = ((RtfElement)c).getRtfAttributes();
@@ -321,14 +315,15 @@ public class RTFHandler extends FOInputHandler {
      */
     public void startBlock(Block bl) {
         try {
-            RtfAttributes rtfAttr = 
-                    TextAttributesConverter.convertAttributes(bl.properties, null);
+            RtfAttributes rtfAttr
+                = TextAttributesConverter.convertAttributes(bl.properties, null);
                     
-            IRtfTextrunContainer container =
-                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
-                    true,this);
+            IRtfTextrunContainer container 
+                = (IRtfTextrunContainer)builderContext.getContainer(
+                    IRtfTextrunContainer.class,
+                    true, this);
 
-            RtfTextrun textrun=container.getTextrun();
+            RtfTextrun textrun = container.getTextrun();
             
             textrun.addParagraphBreak();
             textrun.pushAttributes(rtfAttr);
@@ -348,11 +343,12 @@ public class RTFHandler extends FOInputHandler {
      */
     public void endBlock(Block bl) {
         try {
-            IRtfTextrunContainer container =
-                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
-                    true,this);
+            IRtfTextrunContainer container 
+                = (IRtfTextrunContainer)builderContext.getContainer(
+                    IRtfTextrunContainer.class,
+                    true, this);
                     
-            RtfTextrun textrun=container.getTextrun();
+            RtfTextrun textrun = container.getTextrun();
             
             textrun.addParagraphBreak();
             textrun.popAttributes();
@@ -374,12 +370,12 @@ public class RTFHandler extends FOInputHandler {
         TableContext tableContext = new TableContext(builderContext);
 
         try {
-            RtfAttributes atts = 
-                    TableAttributesConverter.convertTableAttributes(tbl.properties);
+            RtfAttributes atts 
+                = TableAttributesConverter.convertTableAttributes(tbl.properties);
             
-            final IRtfTableContainer tc =
-                   (IRtfTableContainer)builderContext.getContainer(IRtfTableContainer.class,
-                   true, null);
+            final IRtfTableContainer tc 
+                = (IRtfTableContainer)builderContext.getContainer(
+                    IRtfTableContainer.class, true, null);
             builderContext.pushContainer(tc.newTable(atts, tableContext));
         } catch (Exception e) {
             log.error("startTable:" + e.getMessage());
@@ -450,17 +446,17 @@ public class RTFHandler extends FOInputHandler {
      *
      * @param inl Inline that is starting.
      */
-    public void startInline(Inline inl){
+    public void startInline(Inline inl) {
 
         try {
-            RtfAttributes rtfAttr = 
-                    TextAttributesConverter.convertCharacterAttributes(inl.properties, null);
+            RtfAttributes rtfAttr
+                = TextAttributesConverter.convertCharacterAttributes(inl.properties, null);
                     
-            IRtfTextrunContainer container =
-                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
-                    true,this);
+            IRtfTextrunContainer container
+                = (IRtfTextrunContainer)builderContext.getContainer(
+                    IRtfTextrunContainer.class, true, this);
                     
-            RtfTextrun textrun=container.getTextrun();
+            RtfTextrun textrun = container.getTextrun();
             textrun.pushAttributes(rtfAttr);
         } catch (IOException ioe) {
             log.error("startInline:" + ioe.getMessage());
@@ -478,13 +474,13 @@ public class RTFHandler extends FOInputHandler {
      *
      * @param inl Inline that is ending.
      */
-    public void endInline(Inline inl){
+    public void endInline(Inline inl) {
         try {
-            IRtfTextrunContainer container =
-                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
-                    true,this);
+            IRtfTextrunContainer container
+                = (IRtfTextrunContainer)builderContext.getContainer(
+                    IRtfTextrunContainer.class, true, this);
                     
-            RtfTextrun textrun=container.getTextrun();
+            RtfTextrun textrun = container.getTextrun();
             textrun.popAttributes();
         } catch (IOException ioe) {
             log.error("startInline:" + ioe.getMessage());
@@ -703,16 +699,16 @@ public class RTFHandler extends FOInputHandler {
         try {
        
         
-            final IRtfTextrunContainer c =
-                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
-                    true, this);
+            final IRtfTextrunContainer c 
+                = (IRtfTextrunContainer)builderContext.getContainer(
+                    IRtfTextrunContainer.class, true, this);
             
             final RtfExternalGraphic newGraphic = c.getTextrun().newImage();
        
-            Property p=null; 
+            Property p = null; 
                
             //get source file
-            if((p=eg.properties.get("src"))!=null) {
+            if ((p = eg.properties.get("src")) != null) {
                 newGraphic.setURL (p.getString());
             } else {
                 log.error("The attribute 'src' of <fo:external-graphic> is required.");
@@ -720,17 +716,17 @@ public class RTFHandler extends FOInputHandler {
             }
             
             //get scaling
-            if((p=eg.properties.get("scaling"))!=null) {
-                EnumProperty e=(EnumProperty)p;
-                if(p.getEnum()==Constants.UNIFORM) {
+            if ((p = eg.properties.get("scaling")) != null) {
+                EnumProperty e = (EnumProperty)p;
+                if (p.getEnum() == Constants.UNIFORM) {
                     newGraphic.setScaling ("uniform");
                 }
             }
             
             //get width
-            if((p=eg.properties.get("width"))!=null) {
-                LengthProperty lengthProp=(LengthProperty)p;
-                if(lengthProp.getLength() instanceof FixedLength) {
+            if ((p = eg.properties.get("width")) != null) {
+                LengthProperty lengthProp = (LengthProperty)p;
+                if (lengthProp.getLength() instanceof FixedLength) {
                     Float f = new Float(lengthProp.getLength().getValue() / 1000f);
                     String sValue = f.toString() + "pt";
                     newGraphic.setWidth(sValue);
@@ -738,9 +734,9 @@ public class RTFHandler extends FOInputHandler {
             }
             
             //get height
-            if((p=eg.properties.get("height"))!=null) {
-                LengthProperty lengthProp=(LengthProperty)p;
-                if(lengthProp.getLength() instanceof FixedLength) {
+            if ((p = eg.properties.get("height")) != null) {
+                LengthProperty lengthProp = (LengthProperty)p;
+                if (lengthProp.getLength() instanceof FixedLength) {
                     Float f = new Float(lengthProp.getLength().getValue() / 1000f);
                     String sValue = f.toString() + "pt";
                     newGraphic.setHeight(sValue);
@@ -751,11 +747,12 @@ public class RTFHandler extends FOInputHandler {
             //      int compression = m_context.m_options.getRtfExternalGraphicCompressionRate ();
             int compression = 0;
             if (compression != 0) {
-                if (! newGraphic.setCompressionRate (compression)) {
-                    log.warn("The compression rate " + compression + " is invalid. The value has to be between 1 and 100 %.");
+                if (!newGraphic.setCompressionRate(compression)) {
+                    log.warn("The compression rate " + compression 
+                        + " is invalid. The value has to be between 1 and 100 %.");
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("image: " + e.getMessage());
         }
     }
@@ -787,13 +784,13 @@ public class RTFHandler extends FOInputHandler {
     /**
      * @see org.apache.fop.fo.FOInputHandler#characters(char[], int, int)
      */
-    public void characters(char data[], int start, int length) {
+    public void characters(char[] data, int start, int length) {
         try {
-            IRtfTextrunContainer container =
-                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
-                    true,this);
+            IRtfTextrunContainer container
+                = (IRtfTextrunContainer)builderContext.getContainer(
+                    IRtfTextrunContainer.class, true, this);
                     
-            RtfTextrun textrun=container.getTextrun();
+            RtfTextrun textrun = container.getTextrun();
             textrun.addString(new String(data, start, length));
          } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOInputHandler events?
@@ -811,14 +808,15 @@ public class RTFHandler extends FOInputHandler {
      */
     public void startPageNumber(PageNumber pagenum) {
         try {
-            RtfAttributes rtfAttr = 
-                    TextAttributesConverter.convertCharacterAttributes(pagenum.properties, null);
+            RtfAttributes rtfAttr
+                = TextAttributesConverter.convertCharacterAttributes(
+                    pagenum.properties, null);
                     
-            IRtfTextrunContainer container =
-                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
-                    true,this);
+            IRtfTextrunContainer container
+                = (IRtfTextrunContainer)builderContext.getContainer(
+                    IRtfTextrunContainer.class, true, this);
                     
-            RtfTextrun textrun=container.getTextrun();
+            RtfTextrun textrun = container.getTextrun();
             textrun.addPageNumber(rtfAttr);
         } catch (IOException ioe) {
             log.error("startPageNumber:" + ioe.getMessage());
