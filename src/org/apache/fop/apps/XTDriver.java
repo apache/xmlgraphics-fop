@@ -53,7 +53,7 @@ package org.apache.fop.apps;
 
 // FOP
 import org.apache.fop.fo.XTFOTreeBuilder;
-import org.apache.fop.fo.XTElementMapping;
+import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.PropertyListMapping;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.layout.FontInfo;
@@ -174,7 +174,7 @@ public class XTDriver {
      *
      * an element mapping maps element names to Java classes
      */
-    public void addElementMapping(XTElementMapping mapping) {
+    public void addElementMapping(ElementMapping mapping) {
 	mapping.addToBuilder(this.treeBuilder);
     }
     
@@ -189,11 +189,11 @@ public class XTDriver {
      * protected method used by addElementMapping(String) to
      * instantiate element mapping class
      */
-    protected XTElementMapping createElementMapping(String mappingClassName) {
+    protected ElementMapping createElementMapping(String mappingClassName) {
     MessageHandler.logln("using element mapping " + mappingClassName);
 
 	try {
-	    return (XTElementMapping)
+	    return (ElementMapping)
 		Class.forName(mappingClassName).newInstance();
 	} catch (ClassNotFoundException e) {
 	    MessageHandler.errorln("Could not find " + mappingClassName);
@@ -212,7 +212,7 @@ public class XTDriver {
      * add the element mapping with the given class name
      */
     public void addPropertyList(String listClassName) {
-//	createPropertyList(listClassName).addToBuilder(this.treeBuilder);
+	createPropertyList(listClassName).addToBuilder(this.treeBuilder);
     }
 
     /**

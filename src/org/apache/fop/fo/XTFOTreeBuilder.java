@@ -57,10 +57,11 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.pagination.Root;
 
 // SAX
-import org.xml.sax.HandlerBase;
 import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
 import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.DocumentHandler;
+import org.xml.sax.AttributeList;
 
 // Java
 import java.util.Hashtable;
@@ -70,35 +71,9 @@ import java.io.IOException;
 /**
  * SAX Handler that builds the formatting object tree.
  */
-public class XTFOTreeBuilder extends HandlerBase {
-
-    /**
-     * table mapping element names to the makers of objects
-     * representing formatting objects
-     */
-    protected Hashtable fobjTable = new Hashtable();
-
-    /**
-     * class that builds a property list for each formatting object
-     */
-    protected Hashtable propertylistTable = new Hashtable();
-//    protected PropertyListBuilder propertyListBuilder = new
-//	PropertyListBuilder(); 
-	
-    /**
-     * current formatting object being handled
-     */
-    protected FObj currentFObj = null;
-
-    /**
-     * the root of the formatting object tree
-     */
-    protected FObj rootFObj = null;
-
-    /**
-     * set of names of formatting objects encountered but unknown
-     */
-    protected Hashtable unknownFOs = new Hashtable();
+//public class XTFOTreeBuilder extends HandlerBase {
+public class XTFOTreeBuilder extends FOTreeBuilder
+  implements DocumentHandler {
 
     // namespace implementation ideas pinched from John Cowan
     protected static class NSMap {
@@ -114,6 +89,8 @@ public class XTFOTreeBuilder extends HandlerBase {
     }
 
     protected int level = 0;
+    protected String m_uri = null;
+    protected String m_localPart = null;
     protected Stack namespaceStack = new Stack();
 
     {
@@ -133,110 +110,46 @@ public class XTFOTreeBuilder extends HandlerBase {
 
     protected String mapName(String name)
 	throws SAXException {
+        
 	int colon = name.indexOf(':');
 	String prefix = "";
-	String localPart = name;
+	m_localPart = name;
 	if (colon != -1) {
 	    prefix = name.substring(0, colon);
-	    localPart = name.substring(colon + 1);
+	    m_localPart = name.substring(colon + 1);
 	}
-	String uri = findURI(prefix);
-	if (uri == null) {
+	m_uri = findURI(prefix);
+	if (m_uri == null) {
 	    if (prefix.equals("")) {
 		return name;
 	    } else {
 		throw new SAXException(new FOPException("Unknown namespace prefix " + prefix));
 	    }
 	}
-	return uri + "^" + localPart;
+	return m_uri + "^" + m_localPart;
     }
 
-    /**
-     * add a mapping from element name to maker.
-     *
-     * @param namespaceURI namespace URI of formatting object element
-     * @param localName local name of formatting object element
-     * @param maker Maker for class representing formatting object
-    */
-    public void addMapping(String namespaceURI, String localName,
-			   FObj.Maker maker) {
-	this.fobjTable.put(namespaceURI + "^" + localName, maker);
+    /** SAX1 Handler for the end of an element */
+    public void endElement(String rawName) throws SAXException {
+      mapName(rawName);
+      super.endElement(m_uri, m_localPart, rawName);
+      level--;
+      while (((NSMap) namespaceStack.peek()).level > level) {
+	namespaceStack.pop();
+      }
     }
 
-    /**
-     * add a mapping from element name to maker.
-     *
-     * @param namespaceURI namespace URI of formatting object element
-     * @param localName local name of formatting object element
-     * @param maker Maker for class representing formatting object
-    */
-    public void addPropertyList(String namespaceURI, Hashtable list) {
-        PropertyListBuilder plb;
-        plb = (PropertyListBuilder)this.propertylistTable.get(namespaceURI);
-        if(plb == null) {
-            plb = new PropertyListBuilder();
-            plb.addList(list);
-            this.propertylistTable.put(namespaceURI, plb);
-        } else {
-            plb.addList(list);
-        }
-    }
-
-    /**
-     * add a mapping from element name to maker.
-     *
-     * @param namespaceURI namespace URI of formatting object element
-     * @param localName local name of formatting object element
-     * @param maker Maker for class representing formatting object
-    */
-    public void addElementPropertyList(String namespaceURI, String localName, Hashtable list) {
-        PropertyListBuilder plb;
-        plb = (PropertyListBuilder)this.propertylistTable.get(namespaceURI);
-        if(plb == null) {
-            plb = new PropertyListBuilder();
-            plb.addElementList(localName, list);
-            this.propertylistTable.put(namespaceURI, plb);
-        } else {
-            plb.addElementList(localName, list);
-        }
-    }
-
-    /** SAX Handler for characters */
-    public void characters(char data[], int start, int length) {
-	currentFObj.addCharacters(data, start, start + length);
-    }
-
-    /** SAX Handler for the end of an element */
-    public void endElement(
-		String uri, String localName, String rawName) {
-	currentFObj.end();
-	currentFObj = (FObj) currentFObj.getParent();
-	level--;
-	while (((NSMap) namespaceStack.peek()).level > level) {
-	    namespaceStack.pop();
-	}
-    }
-
-    /** SAX Handler for the start of the document */
-    public void startDocument() {
-	MessageHandler.logln("building formatting object tree");
-    }
-
-    /** SAX Handler for the start of an element */
-    public void startElement(String uri,
-    	String localName, String rawName, Attributes attlist)
+    /** SAX1 Handler for the start of an element */
+    public void startElement(String rawName, AttributeList attlist)
 	throws SAXException { 
 
-	/* the formatting object started */
-	FObj fobj;
-
-	/* the maker for the formatting object started */
-	FObj.Maker fobjMaker;
+      // SAX2 version of AttributeList
+      AttributesImpl newAttrs = new AttributesImpl();
 
 	level++;
 	int length = attlist.getLength();
 	for (int i = 0; i < length; i++) {
-	    String att = attlist.getQName(i);
+	    String att = attlist.getName(i);
 	    if (att.equals("xmlns")) {
 		namespaceStack.push( new NSMap("",
 					       attlist.getValue(i),
@@ -245,53 +158,15 @@ public class XTFOTreeBuilder extends HandlerBase {
 		String value = attlist.getValue(i);
 		namespaceStack.push(new NSMap(att.substring(6), value,
 					      level));
+	    } else {
+	      mapName(att);
+	      newAttrs.addAttribute(m_uri, m_localPart, att,
+				    attlist.getType(i), attlist.getValue(i));
 	    }
+
 	}
 
-	String fullName = mapName(rawName);
-
-	fobjMaker = (FObj.Maker) fobjTable.get(fullName);
-	PropertyListBuilder plBuilder = (PropertyListBuilder)this.propertylistTable.get(uri);
-
-	if (fobjMaker == null) {
-	    if (!this.unknownFOs.containsKey(fullName)) {
-		this.unknownFOs.put(fullName, "");
-		MessageHandler.errorln("WARNING: Unknown formatting object "
-				   + fullName);  
-	    }
-	    fobjMaker = new FObjMixed.Maker(); // fall back
-	}
-	
-	try {
-		PropertyList list = plBuilder.makeList(fullName, attlist,  
-		     (currentFObj == null) ? null : currentFObj.properties);
-	    fobj = fobjMaker.make(currentFObj, list);
-	} catch (FOPException e) {
-		throw new SAXException(e);
-	}
-
-	if (rootFObj == null) {
-	    rootFObj = fobj;
-	    if (!fobj.getName().equals("fo:root")) {
-		throw new SAXException(new FOPException("Root element must"
-							+ " be root, not "
-							+ fobj.getName())); 
-	    }
-	} else {
-	    currentFObj.addChild(fobj);
-	}
-	
-	currentFObj = fobj;
-    }
-
-    /**
-     * format this formatting object tree
-     *
-     * @param areaTree the area tree to format into
-     */
-    public void format(AreaTree areaTree)
-	throws FOPException {
-	MessageHandler.logln("formatting FOs into areas");
-	((Root) this.rootFObj).format(areaTree);
+      mapName(rawName);
+      super.startElement(m_uri, m_localPart, rawName, newAttrs);
     }
 }
