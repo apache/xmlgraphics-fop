@@ -53,7 +53,7 @@
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import org.apache.fop.rtf.rtflib.exceptions.RtfStructureException;
-import org.jfor.jfor.converter.ConverterLogChannel;
+import org.apache.fop.rtf.rtflib.jfor.converter.ConverterLogChannel;
 import java.io.*;
 
 /**  Models the top-level structure of an RTF file.

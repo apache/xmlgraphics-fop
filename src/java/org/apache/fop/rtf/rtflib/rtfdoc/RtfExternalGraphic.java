@@ -56,10 +56,10 @@ import org.apache.fop.rtf.rtflib.rtfdoc.RtfElement;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfContainer;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
 
-import org.jfor.jfor.tools.ImageConstants;
-import org.jfor.jfor.tools.ImageUtil;
-import org.jfor.jfor.tools.jpeg.Encoder;
-import org.jfor.jfor.tools.jpeg.JPEGException;
+import org.apache.fop.rtf.rtflib.tools.ImageConstants;
+import org.apache.fop.rtf.rtflib.tools.ImageUtil;
+import org.apache.fop.rtf.rtflib.tools.jpeg.Encoder;
+import org.apache.fop.rtf.rtflib.tools.jpeg.JPEGException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

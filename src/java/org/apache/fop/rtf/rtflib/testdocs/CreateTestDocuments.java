@@ -54,7 +54,7 @@ package org.apache.fop.rtf.rtflib.testdocs;
 
 import java.io.File;
 import java.io.IOException;
-import org.jfor.jfor.main.JForVersionInfo;
+import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
 
 /**  Create test RTF documents from classes found in this package.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch

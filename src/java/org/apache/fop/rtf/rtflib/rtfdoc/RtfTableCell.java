@@ -54,7 +54,7 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.*;
 import java.util.*;
-import org.jfor.jfor.interfaces.ITableColumnsInfo;
+import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 /**  A cell in an RTF table, container for paragraphs, lists, etc.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch

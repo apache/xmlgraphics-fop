@@ -54,7 +54,7 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.*;
 import java.util.*;
-import org.jfor.jfor.main.JForVersionInfo;
+import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
 import org.xml.sax.Attributes;
 
 /**  Base class for all elements of an RTF file.
