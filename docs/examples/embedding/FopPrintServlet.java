@@ -21,10 +21,12 @@ import org.apache.fop.apps.Driver;
 import org.apache.fop.layout.Page;
 import org.apache.fop.apps.Version;
 import org.apache.fop.apps.XSLTInputHandler;
+import org.apache.fop.messaging.MessageHandler;
 
 import org.apache.fop.render.awt.AWTRenderer ;
 
-import org.apache.log.*;
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 
 /**
  * Example servlet to generate a fop printout from a servlet.
@@ -40,13 +42,12 @@ import org.apache.log.*;
  * - servlet_2_2.jar
  * - fop.jar
  * - sax api
- * - logkit jar
+ * - avalon-framework-x.jar (where x is the version found the FOP lib dir)
  *
  * Running: you will need in the WEB-INF/lib/ directory:
  * - fop.jar
  * - batik.jar
- * - avalon-framework-4.0.jar
- * - logkit-1.0.jar
+ * - avalon-framework-x.jar (where x is the version found the FOP lib dir)
  * - xalan-2.0.0.jar
  */
  
@@ -62,9 +63,8 @@ public class FopPrintServlet extends HttpServlet
   {
     if (log == null) 
       {
-        Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
-        log = hierarchy.getLoggerFor("fop");
-        log.setPriority(Priority.WARN);
+ 	 log = new ConsoleLogger(ConsoleLogger.LEVEL_WARN);
+	 MessageHandler.setScreenLogger(log);
       }
         
     try  

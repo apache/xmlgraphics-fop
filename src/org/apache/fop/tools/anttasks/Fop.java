@@ -195,6 +195,7 @@ class FOPTaskStarter extends Starter {
         this.task = task;
 
 	log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+	MessageHandler.setScreenLogger(log);
     }
 
     private int determineRenderer(String format) {

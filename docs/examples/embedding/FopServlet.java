@@ -16,8 +16,10 @@ import org.xml.sax.XMLReader;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.Version;
 import org.apache.fop.apps.XSLTInputHandler;
+import org.apache.fop.messaging.MessageHandler;
 
-import org.apache.log.*;
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 
 /**
  * Example servlet to generate a PDF from a servlet.
@@ -32,14 +34,13 @@ import org.apache.log.*;
  * - servlet_2_2.jar
  * - fop.jar
  * - sax api
- * - logkit jar
+ * - avalon-framework-x.jar (where x is the version found the FOP lib dir)
  *
  * Running: you will need in the WEB-INF/lib/ directory:
  * - fop.jar
  * - batik.jar
- * - avalon-framework-4.0.jar
- * - logkit-1.0.jar
  * - xalan-2.0.0.jar
+ * - avalon-framework-x.jar (where x is the version found the FOP lib dir)
  */
 public class FopServlet extends HttpServlet {
     public static final String FO_REQUEST_PARAM = "fo";
@@ -50,9 +51,8 @@ public class FopServlet extends HttpServlet {
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response) throws ServletException {
         if(log == null) {
-            Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
-            log = hierarchy.getLoggerFor("fop");
-            log.setPriority(Priority.WARN);
+	     log = new ConsoleLogger(ConsoleLogger.LEVEL_WARN);
+	     MessageHandler.setScreenLogger(log);
         }
         try {
             String foParam = request.getParameter(FO_REQUEST_PARAM);
