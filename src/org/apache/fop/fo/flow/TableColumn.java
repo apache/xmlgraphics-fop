@@ -21,6 +21,7 @@ public class TableColumn extends FObj {
     int columnWidth;
     int columnOffset;
     int numColumnsRepeated;
+    int iColumnNumber;
 
     boolean setup = false;
 
@@ -48,7 +49,7 @@ public class TableColumn extends FObj {
     }
 
     public int getColumnNumber() {
-        return 0;    // not implemented yet
+        return iColumnNumber;
     }
 
     public int getNumColumnsRepeated() {
@@ -63,12 +64,13 @@ public class TableColumn extends FObj {
         BorderAndPadding bap = propMgr.getBorderAndPadding();
         BackgroundProps bProps = propMgr.getBackgroundProps();
 
-        // this.properties.get("column-number");
         // this.properties.get("column-width");
         // this.properties.get("number-columns-repeated");
         // this.properties.get("number-columns-spanned");
         // this.properties.get("visibility");
 
+        this.iColumnNumber =
+	    this.properties.get("column-number").getNumber().intValue();
 
         this.numColumnsRepeated =
             this.properties.get("number-columns-repeated").getNumber().intValue();

@@ -16,6 +16,7 @@ import org.apache.fop.apps.FOPException;
 
 // Java
 import java.util.Vector;
+import java.util.Enumeration;
 
 public class Table extends FObj {
 
@@ -45,7 +46,6 @@ public class Table extends FObj {
     boolean omitFooterAtBreak = false;
 
     Vector columns = new Vector();
-    int currentColumnNumber = 0;
     int bodyCount = 0;
 
     AreaContainer areaContainer;
@@ -165,34 +165,14 @@ public class Table extends FObj {
         areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
         areaContainer.setIDReferences(area.getIDReferences());
 
-        // added by Eric Schaeffer
-        currentColumnNumber = 0;
-        int offset = 0;
-
         boolean addedHeader = false;
         boolean addedFooter = false;
         int numChildren = this.children.size();
-        for (int i = 0; i < numChildren; i++) {
-            FONode fo = (FONode)children.elementAt(i);
-            if (fo instanceof TableColumn) {
-                TableColumn c = (TableColumn)fo;
-                c.doSetup(areaContainer);
-                int numColumnsRepeated = c.getNumColumnsRepeated();
-                // int currentColumnNumber = c.getColumnNumber();
 
-                for (int j = 0; j < numColumnsRepeated; j++) {
-                    currentColumnNumber++;
-                    if (currentColumnNumber > columns.size()) {
-                        columns.setSize(currentColumnNumber);
-                    }
-                    columns.setElementAt(c, currentColumnNumber - 1);
-                    c.setColumnOffset(offset);
-                    c.layout(areaContainer);
-                    offset += c.getColumnWidth();
-                }
-            }
-        }
-        areaContainer.setAllocationWidth(offset);
+	// Set up the column vector
+	findColumns(areaContainer);
+	// Now layout all the columns and get total offset
+        areaContainer.setAllocationWidth( layoutColumns(areaContainer));
 
         for (int i = this.marker; i < numChildren; i++) {
             FONode fo = (FONode)children.elementAt(i);
@@ -345,13 +325,65 @@ public class Table extends FObj {
     }
 
     protected void setupColumnHeights() {
-        int numChildren = this.children.size();
-        for (int i = 0; i < numChildren; i++) {
-            FONode fo = (FONode)children.elementAt(i);
-            if (fo instanceof TableColumn) {
-                ((TableColumn)fo).setHeight(areaContainer.getContentHeight());
+	Enumeration eCol = columns.elements();
+	while (eCol.hasMoreElements()) {
+	    TableColumn c = (TableColumn)eCol.nextElement();
+            if ( c != null) {
+                c.setHeight(areaContainer.getContentHeight());
             }
         }
+    }
+
+    private void findColumns(Area areaContainer) throws FOPException {
+	int nextColumnNumber = 1;
+	Enumeration e = children.elements();
+	while (e.hasMoreElements()) {
+            FONode fo = (FONode)e.nextElement();
+            if (fo instanceof TableColumn) {
+                TableColumn c = (TableColumn)fo;
+                c.doSetup(areaContainer);
+                int numColumnsRepeated = c.getNumColumnsRepeated();
+                int currentColumnNumber = c.getColumnNumber();
+		if (currentColumnNumber == 0) {
+		    currentColumnNumber = nextColumnNumber;
+		}
+
+                for (int j = 0; j < numColumnsRepeated; j++) {
+                    if (currentColumnNumber > columns.size()) {
+                        columns.setSize(currentColumnNumber);
+                    }
+		    if (columns.elementAt(currentColumnNumber - 1) != null) {
+			log.warn("More than one column object assigned " +
+				 "to column " +
+				 currentColumnNumber);
+		    }
+                    columns.setElementAt(c, currentColumnNumber - 1);
+                    currentColumnNumber++;
+                }
+		nextColumnNumber = currentColumnNumber;
+            }
+        }
+    }
+
+    private int layoutColumns(Area areaContainer) throws FOPException  {
+        int offset = 0;
+	int nextColumnNumber=1;
+	Enumeration eCol = columns.elements();
+	while (eCol.hasMoreElements()) {
+	    TableColumn c = (TableColumn)eCol.nextElement();
+	    if (c == null) {
+		log.warn("No table-column specified in column " +
+			 nextColumnNumber);
+	    }
+	    else {
+		//c.doSetup(areaContainer);
+		c.setColumnOffset(offset);
+		c.layout(areaContainer);
+		offset += c.getColumnWidth();
+	    }
+	    nextColumnNumber++;
+	}
+	return offset;
     }
 
     public int getAreaHeight() {
