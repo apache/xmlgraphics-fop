@@ -93,7 +93,7 @@ public class MessageHandler {
 
         if (logger == null) {
             logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-            logger.warn("Screen logger not set.");
+            logger.warn("Screen logger not set - Using ConsoleLogger.");
         }
 
         setMessage(message);
@@ -142,7 +142,7 @@ public class MessageHandler {
     public static void error(String errorMessage) {
         if (logger == null) {
             logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-            logger.warn("Screen logger not set.");
+            logger.warn("Screen logger not set - Using ConsoleLogger.");
         }
 
         setMessage(errorMessage);
