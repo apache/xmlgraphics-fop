@@ -1,17 +1,12 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.PropertyValueList;
-import org.apache.fop.datastructs.ROStringArray;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.datatypes.NCName;
-import org.apache.fop.datatypes.EnumType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.ShorthandPropSets;
-import org.apache.fop.fo.properties.Property;
-import org.apache.fop.messaging.MessageHandler;
 
 import java.util.Map;
 import java.util.Iterator;
@@ -144,52 +139,5 @@ public class BorderColor extends ColorTransparent {
         return list;
     }
 
-    /**
-     * Return the ColorType derived from the argument.
-     * The argument must be either a ColorType already, in which case
-     * it is returned unchanged, or an NCName whose string value is a
-     * standard color or 'transparent'.
-     * @param value <tt>PropertyValue</tt>
-     * @return <tt>ColorValue</tt> equivalent of the argument
-     * @exception <tt>PropertyException</tt>
-     */
-    private static ColorType getColor(PropertyValue value)
-            throws PropertyException
-    {
-        int property = value.getProperty();
-        int type = value.getType();
-        if (type == PropertyValue.COLOR_TYPE) return (ColorType)value;
-        // Must be a color enum
-        if (type != PropertyValue.NCNAME)
-            throw new PropertyException
-                (value.getClass().getName() + " instead of color for "
-                                + PropNames.getPropertyName(property));
-        // We have an NCName - hope it''s a color
-        NCName ncname = (NCName)value;
-        // Must be a standard color
-        EnumType enum = null;
-        ColorType color = null;
-        String name = ncname.getNCName();
-        try {
-            try {
-                enum = new EnumType(PropNames.BORDER_COLOR, name);
-            } catch (PropertyException e) {
-                System.out.println("PropertyException: " + e.getMessage());
-                MessageHandler.logln(name +
-                         " is not a standard color for border-color."
-                         + " Trying as a system-color.");
-            }
-            if (enum != null)
-                color = new ColorType(PropNames.BORDER_COLOR,
-                                                        enum.getEnumValue());
-            else
-                color = new ColorType(PropNames.BORDER_COLOR, name);
-        } catch (PropertyException e) {
-            throw new PropertyException
-                (name + " not a standard or system color for "
-                                + PropNames.getPropertyName(property));
-        }
-        return color;
-    }
 }
 
