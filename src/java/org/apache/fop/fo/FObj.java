@@ -59,6 +59,7 @@ import java.util.Set;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.xml.sax.Attributes;
 
@@ -68,9 +69,11 @@ import org.xml.sax.Attributes;
 public class FObj extends FONode {
     private static final String FO_URI = "http://www.w3.org/1999/XSL/Format";
 
-    public static HashMap propertyListTable = null;
-    public static HashMap elementTable = null;
+    public static HashMap propertyListStringTable = null;  // temporary
+    public static HashMap elementStringTable = null;       // temporary
 
+    public static Property.Maker[] propertyListTable = null;
+    
     /**
      * Formatting properties for this fo element.
      */
@@ -104,22 +107,30 @@ public class FObj extends FONode {
      */
     public FObj(FONode parent) {
         super(parent);
-        
-        if (propertyListTable == null) {
-            propertyListTable = new HashMap();
-            propertyListTable.putAll(FOPropertyMapping.getGenericMappings());
+/*      temporary, during conversions to int constants only
+        if (propertyListStringTable == null) {
+            propertyListStringTable = new HashMap();
+            propertyListStringTable.putAll(FOPropertyMapping.getGenericStringMappings());
         }
-        
-        if (elementTable == null) {
-            elementTable = new HashMap();
+*/        
+        if (elementStringTable == null) {
+            elementStringTable = new HashMap();
             for (Iterator iter =
-                FOPropertyMapping.getElementMappings().iterator();
+                FOPropertyMapping.getElementStringMappings().iterator();
                     iter.hasNext();) {
                 String elem = (String) iter.next();
-                elementTable.put(elem, FOPropertyMapping.getElementMapping(elem));
+                elementStringTable.put(elem, FOPropertyMapping.getElementStringMapping(elem));
             }
         }
-        
+
+        if (propertyListTable == null) {
+            propertyListTable = new Property.Maker[Constants.PROPERTY_COUNT+1];
+            Property.Maker[] list = FOPropertyMapping.getGenericMappings();
+            for (int i = 1; i < list.length; i++) {
+                if (list[i] != null)
+                    propertyListTable[i] = list[i]; 
+            }    
+        }
     }
 
     /** Marks input file containing this object **/
