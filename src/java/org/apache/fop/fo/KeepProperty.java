@@ -65,8 +65,8 @@ public class KeepProperty extends Property {
         /**
          * @param name name of property for which Maker should be created
          */
-        protected Maker(String name) {
-            super(name);
+        protected Maker(int propId) {
+            super(propId);
         }
 
     }

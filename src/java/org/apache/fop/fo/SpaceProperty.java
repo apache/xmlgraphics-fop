@@ -68,8 +68,8 @@ public class SpaceProperty extends Property {
         /**
          * @param name name of the property whose Maker is to be created
          */
-        protected Maker(String name) {
-            super(name);
+        protected Maker(int propId) {
+            super(propId);
         }
 
     }

@@ -67,8 +67,8 @@ public class NumberProperty extends Property {
          * Constructor for NumberProperty.Maker
          * @param propName the name of the property
          */
-        public Maker(String propName) {
-            super(propName);
+        public Maker(int propId) {
+            super(propId);
         }
 
         /**
