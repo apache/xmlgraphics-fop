@@ -33,10 +33,10 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
             <th>Views</th>
           </tr>
           <tr>
-            <td>.</td>
+            <td>Developer commits code to FOP repository.</td>
             <td>FOP source repository (cvs) at icarus.apache.org/home/cvs/xml-fop</td>
             <td>Raw XML and other content</td>
-            <td>ViewCVS</td>
+            <td><link href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/documentation/content/xdocs/">ViewCVS</link></td>
           </tr>
           <tr>
             <td>
@@ -47,16 +47,16 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
             <td>Content can be viewed <link href="http://forrestbot.cocoondev.org/sites/xml-fop">here</link>.</td>
           </tr>
           <tr>
-            <td>Forrestbot "publish". Always done manually at <link href="http://forrestbot.cocoondev.org">the Forrestbot Web Interface</link>.</td>
+            <td><link href="#forrestbot-publish">Forrestbot "publish"</link>. Always done manually at <link href="http://forrestbot.cocoondev.org">the Forrestbot Web Interface</link>.</td>
             <td>FOP web repository (cvs) at icarus.apache.org/home/cvs/xml-site/targets/fop</td>
             <td>web-ready</td>
-            <td/>
+            <td><link href="http://cvs.apache.org/viewcvs.cgi/xml-site/targets/fop/">ViewCVS</link></td>
           </tr>
           <tr>
             <td>Automatic Live Site Update every six hours (midnight, 6am, noon, 6pm Pacific time).</td>
             <td>FOP live web site, somewhere on daedalus.apache.org</td>
             <td>web-ready</td>
-            <td/>
+            <td><link href="http://xml.apache.org/fop">FOP Web Site</link></td>
           </tr>
         </table>
       </section>
