@@ -21,7 +21,6 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ToBeImplementedElement;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * fo:float element.
@@ -40,10 +39,6 @@ public class Float extends ToBeImplementedElement {
         // this.propertyList.get("float");
         // this.propertyList.get("clear");
 
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveFloat(this);
     }
 
     public String getName() {

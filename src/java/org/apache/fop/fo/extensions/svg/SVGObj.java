@@ -20,7 +20,6 @@ package org.apache.fop.fo.extensions.svg;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.XMLObj;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * Class for SVG element objects.
@@ -43,10 +42,5 @@ public class SVGObj extends XMLObj {
     public String getNameSpace() {
         return "http://www.w3.org/2000/svg";
     }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveSVGObj(this);
-    }
-
 }
 

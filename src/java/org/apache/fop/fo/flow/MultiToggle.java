@@ -20,7 +20,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.ToBeImplementedElement;
 import org.apache.fop.fo.properties.CommonAccessibility;
 
@@ -45,10 +44,6 @@ public class MultiToggle extends ToBeImplementedElement {
         setupID();
         // this.propertyList.get("switch-to");
 
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveMultiToggle(this);
     }
 
     public String getName() {

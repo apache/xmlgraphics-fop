@@ -47,26 +47,19 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.TextInfo;
 import org.apache.fop.fo.ToBeImplementedElement;
-import org.apache.fop.fo.Unknown;
-import org.apache.fop.fo.UnknownXMLObj;
-import org.apache.fop.fo.XMLElement;
 import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.extensions.ExtensionObj;
 import org.apache.fop.fo.extensions.Label;
 import org.apache.fop.fo.extensions.Outline;
-import org.apache.fop.fo.extensions.svg.SVGElement;
-import org.apache.fop.fo.extensions.svg.SVGObj;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.BidiOverride;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.ExternalGraphic;
-import org.apache.fop.fo.flow.Float;
 import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.fo.flow.FootnoteBody;
-import org.apache.fop.fo.flow.InitialPropertySet;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InlineContainer;
 import org.apache.fop.fo.flow.InstreamForeignObject;
@@ -76,18 +69,12 @@ import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.Marker;
-import org.apache.fop.fo.flow.MultiCase;
-import org.apache.fop.fo.flow.MultiProperties;
-import org.apache.fop.fo.flow.MultiPropertySet;
-import org.apache.fop.fo.flow.MultiSwitch;
-import org.apache.fop.fo.flow.MultiToggle;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableAndCaption;
 import org.apache.fop.fo.flow.TableBody;
-import org.apache.fop.fo.flow.TableCaption;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableFooter;
@@ -172,6 +159,19 @@ public class AddLMVisitor {
      */
     public List getSaveLMList() {
         return saveLMList;
+    }
+
+    /**
+     * @param node FONode object to process
+     */
+    public void serveFONode(FONode node) {
+    }
+
+    /**
+     * @param node FObj object to process
+     */
+    public void serveFObj(FObj node) {
+        serveFONode((FONode)node);
     }
 
     public void serveFOText(FOText foText) {
@@ -798,18 +798,18 @@ public class AddLMVisitor {
      }
 
     /**
-     * @param node FONode object to process
+     * @param node Wrapper object to process
      */
-    public void serveFONode(FONode node) {
+    public void serveWrapper(Wrapper node) {
+        ListIterator baseIter;
+        baseIter = node.getChildNodes();
+        if (baseIter == null) return;
+        while (baseIter.hasNext()) {
+            FObj child = (FObj) baseIter.next();
+            child.acceptVisitor(this);
+        }
     }
-
-    /**
-     * @param node FObj object to process
-     */
-    public void serveFObj(FObj node) {
-        serveFONode((FONode)node);
-    }
-
+    
     /**
      * @param node ColorProfile object to process
      */
@@ -880,19 +880,6 @@ public class AddLMVisitor {
         serveFObjMixed((FObjMixed)node);
     }
 
-    /**
-     * @param node Wrapper object to process
-     */
-    public void serveWrapper(Wrapper node) {
-        ListIterator baseIter;
-        baseIter = node.getChildNodes();
-        if (baseIter == null) return;
-        while (baseIter.hasNext()) {
-            FObj child = (FObj) baseIter.next();
-            child.acceptVisitor(this);
-        }
-    }
-    
     /**
      * @param node FootnoteBody object to process
      */
@@ -1053,117 +1040,4 @@ public class AddLMVisitor {
     public void serveTableColumn(TableColumn node) {
         serveFObj((FObj)node);
     }
-
-    /**
-     * @param node ToBeImplementedElement object to process
-     */
-    public void serveToBeImplementedElement(ToBeImplementedElement node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node Float object to process
-     */
-    public void serveFloat(Float node) {
-        serveToBeImplementedElement((ToBeImplementedElement)node);
-    }
-
-    /**
-     * @param node InitialPropertySet object to process
-     */
-    public void serveInitialPropertySet(InitialPropertySet node) {
-        serveToBeImplementedElement((ToBeImplementedElement)node);
-    }
-
-    /**
-     * @param node MultiCase object to process
-     */
-    public void serveMultiCase(MultiCase node) {
-        serveToBeImplementedElement((ToBeImplementedElement)node);
-    }
-
-    /**
-     * @param node MultiProperties object to process
-     */
-    public void serveMultiProperties(MultiProperties node) {
-        serveToBeImplementedElement((ToBeImplementedElement)node);
-    }
-
-    /**
-     * @param node MultiPropertySet object to process
-     */
-    public void serveMultiPropertySet(MultiPropertySet node) {
-        serveToBeImplementedElement((ToBeImplementedElement)node);
-    }
-
-    /**
-     * @param node MultiSwitch object to process
-     */
-    public void serveMultiSwitch(MultiSwitch node) {
-        serveToBeImplementedElement((ToBeImplementedElement)node);
-    }
-
-    /**
-     * @param node MultiToggle object to process
-     */
-    public void serveMultiToggle(MultiToggle node) {
-        serveToBeImplementedElement((ToBeImplementedElement)node);
-    }
-
-    /**
-     * @param node TableAndCaption object to process
-     */
-    public void serveTableAndCaption(TableAndCaption node) {
-        serveToBeImplementedElement((ToBeImplementedElement)node);
-    }
-
-    /**
-     * @param node TableCaption object to process
-     */
-    public void serveTableCaption(TableCaption node) {
-        serveToBeImplementedElement((ToBeImplementedElement)node);
-    }
-
-    /**
-     * @param node Unknown object to process
-     */
-    public void serveUnknown(Unknown node) {
-        serveFONode((FONode)node);
-    }
-
-    /**
-     * @param node XMLObj object to process
-     */
-    public void serveXMLObj(XMLObj node) {
-        serveFONode((FONode)node);
-    }
-
-    /**
-     * @param node SVGObj object to process
-     */
-    public void serveSVGObj(SVGObj node) {
-        serveXMLObj((XMLObj)node);
-    }
-
-    /**
-     * @param node SVGElement object to process
-     */
-    public void serveSVGElement(SVGElement node) {
-        serveSVGObj((SVGObj)node);
-    }
-
-    /**
-     * @param node UnknownXMLObj object to process
-     */
-    public void serveUnknownXMLObj(UnknownXMLObj node) {
-        serveXMLObj((XMLObj)node);
-    }
-
-    /**
-     * @param node XMLElement object to process
-     */
-    public void serveXMLElement(XMLElement node) {
-        serveXMLObj((XMLObj)node);
-    }
-
 }

@@ -20,7 +20,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.ToBeImplementedElement;
 import org.apache.fop.fo.properties.CommonAccessibility;
 
@@ -44,10 +43,6 @@ public class MultiProperties extends ToBeImplementedElement {
 
         setupID();
 
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveMultiProperties(this);
     }
 
     public String getName() {

@@ -18,8 +18,6 @@
 
 package org.apache.fop.fo;
 
-import org.apache.fop.layoutmgr.AddLMVisitor;
-
 /**
  * This class is a placeholder for elements that have not been implemented.
  */
@@ -31,14 +29,4 @@ public class ToBeImplementedElement extends FObj {
     protected ToBeImplementedElement(FONode parent) {
         super(parent);
     }
-
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveToBeImplementedElement(this);
-    }
-
 }
