@@ -141,7 +141,7 @@ public class LayoutManagerLS extends LayoutStrategy {
         BookmarkData data = new BookmarkData();
         for (int count = 0; count < document.getBookmarks().getOutlines().size(); count++) {
             Outline out = (Outline)(document.getBookmarks().getOutlines()).get(count);
-            data.addSubData(out.getData());
+            data.addSubData(createBookmarkData(out));
         }
         // add data to area tree for resolving and handling
         if (document.getBookmarks().getFOInputHandler() instanceof FOTreeHandler) {
@@ -151,6 +151,23 @@ public class LayoutManagerLS extends LayoutStrategy {
             at.addTreeExtension(data);
             data.setAreaTree(at);
         }
+    }
+
+    /**
+     * Create and return the bookmark data for this outline.
+     * This creates a bookmark data with the destination
+     * and adds all the data from child outlines.
+     *
+     * @return the new bookmark data
+     */
+    public BookmarkData createBookmarkData(Outline outline) {
+        BookmarkData data = new BookmarkData(outline.getInternalDestination());
+        data.setLabel(outline.getLabel());
+        for (int count = 0; count < outline.getOutlines().size(); count++) {
+            Outline out = (Outline)(outline.getOutlines()).get(count);
+            data.addSubData(createBookmarkData(out));
+        }
+        return data;
     }
 
 }

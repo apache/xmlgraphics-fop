@@ -57,7 +57,6 @@ import org.apache.fop.apps.FOPException;
 import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
-import org.apache.fop.area.extensions.BookmarkData;
 
 /**
  * The outline object for the pdf bookmark extension.
@@ -116,23 +115,6 @@ public class Outline extends ExtensionObj {
     }
 
     /**
-     * Get the bookmark data for this outline.
-     * This creates a bookmark data with the destination
-     * and adds all the data from child outlines.
-     *
-     * @return the new bookmark data
-     */
-    public BookmarkData getData() {
-        BookmarkData data = new BookmarkData(internalDestination);
-        data.setLabel(getLabel());
-        for (int count = 0; count < outlines.size(); count++) {
-            Outline out = (Outline)outlines.get(count);
-            data.addSubData(out.getData());
-        }
-        return data;
-    }
-
-    /**
      * Get the label string.
      * This gets the label string from the child label element.
      *
@@ -146,5 +128,16 @@ public class Outline extends ExtensionObj {
         fotv.serveVisitor(this);
     }
 
-}
+    public String getInternalDestination() {
+        return internalDestination;
+    }
 
+    public String getExternalDestination() {
+        return externalDestination;
+    }
+
+    public ArrayList getOutlines() {
+        return outlines;
+    }
+
+}
