@@ -19,7 +19,7 @@
 package org.apache.fop.area;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.fop.fo.Constants;
 
@@ -43,7 +43,7 @@ public class Page implements Serializable, Cloneable {
     private RegionViewport regionAfter = null;
 
     // temporary map of unresolved objects used when serializing the page
-    private Map unresolved = null;
+    private HashMap unresolved = null;
 
     /**
      * Set the region on this page.
@@ -132,9 +132,9 @@ public class Page implements Serializable, Cloneable {
     /**
      * Set the unresolved references on this page for serializing.
      *
-     * @param unres the map of unresolved objects
+     * @param unres the HashMap of unresolved objects
      */
-    public void setUnresolvedReferences(Map unres) {
+    public void setUnresolvedReferences(HashMap unres) {
         unresolved = unres;
     }
 
@@ -143,9 +143,9 @@ public class Page implements Serializable, Cloneable {
      * This should be called after deserializing to retrieve
      * the map of unresolved references that were serialized.
      *
-     * @return the de-serialized map of unresolved objects
+     * @return the de-serialized HashMap of unresolved objects
      */
-    public Map getUnresolvedReferences() {
+    public HashMap getUnresolvedReferences() {
         return unresolved;
     }
 }

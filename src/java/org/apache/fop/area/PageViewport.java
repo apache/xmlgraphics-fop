@@ -50,10 +50,8 @@ public class PageViewport implements Resolvable, Cloneable {
     // this keeps a list of currently unresolved areas or extensions
     // once an idref is resolved it is removed
     // when this is empty the page can be rendered
-    private Map unresolvedIDRefs = new HashMap();
+    private HashMap unresolvedIDRefs = new HashMap();
     
-    private Map unresolved = null;
-
     private Map pendingResolved = null;
 
     // hashmap of markers for this page
@@ -126,12 +124,14 @@ public class PageViewport implements Resolvable, Cloneable {
     }
 
     /**
-     * Add an unresolved id to this page.
-     * All unresolved ids for the contents of this page are
-     * added to this page. This is so that the resolvers can be
-     * serialized with the page to preserve the proper function.
-     * @param id the id of the reference
-     * @param res the resolver of the reference
+     * Add an idref to this page.
+     * All idrefs found for child areas of this PageViewport are added
+     * to unresolvedIDRefs, for subsequent resolution by AreaTreeHandler
+     * calls to this object's resolveIDRef().
+     *
+     * @param id the idref
+     * @param res the child element of this page that needs this
+     *      idref resolved
      */
     public void addUnresolvedIDRef(String idref, Resolvable res) {
         if (unresolvedIDRefs == null) {
@@ -154,11 +154,12 @@ public class PageViewport implements Resolvable, Cloneable {
     }
 
     /**
-     * Get the id references for this page.
-     * @return always null
+     * Get the unresolved idrefs for this page.
+     * @return String array of idref's that still have not been resolved
      */
     public String[] getIDs() {
-        return null;
+        return (unresolvedIDRefs == null) ? null :
+            (String[]) unresolvedIDRefs.keySet().toArray(new String[] {});
     }
 
     /**
@@ -181,7 +182,7 @@ public class PageViewport implements Resolvable, Cloneable {
                 }
             }
         }
-        if (unresolvedIDRefs != null) {
+        if (unresolvedIDRefs != null && pages != null) {
             unresolvedIDRefs.remove(id);
             if (unresolvedIDRefs.isEmpty()) {
                 unresolvedIDRefs = null;
@@ -315,7 +316,7 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public void savePage(ObjectOutputStream out) throws Exception {
         // set the unresolved references so they are serialized
-        page.setUnresolvedReferences(unresolved);
+        page.setUnresolvedReferences(unresolvedIDRefs);
         out.writeObject(page);
         page = null;
     }
@@ -330,8 +331,8 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public void loadPage(ObjectInputStream in) throws Exception {
         page = (Page) in.readObject();
-        unresolved = page.getUnresolvedReferences();
-        if (unresolved != null && pendingResolved != null) {
+        unresolvedIDRefs = page.getUnresolvedReferences();
+        if (unresolvedIDRefs != null && pendingResolved != null) {
             for (Iterator iter = pendingResolved.keySet().iterator();
                          iter.hasNext();) {
                 String id = (String) iter.next();

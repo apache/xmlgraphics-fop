@@ -54,19 +54,12 @@ public class CachedRenderPagesModel extends RenderPagesModel {
     }
 
     /**
-     * Check prepared pages
-     * If a page is resolved it loads the page contents from
-     * the file.
-     *
-     * @param newpage the new page being added
-     * @return true if the current page should be rendered
-     *         false if the renderer doesn't support out of order
-     *         rendering and there are pending pages
+     * @see org.apache.fop.area.RenderPagesModel#checkPreparedPages(PageViewport, boolean)
      */
-    protected boolean checkPreparedPages(PageViewport newpage) {
+    protected boolean checkPreparedPages(PageViewport newpage, boolean renderUnresolved) {
         for (Iterator iter = prepared.iterator(); iter.hasNext();) {
             PageViewport p = (PageViewport)iter.next();
-            if (p.isResolved()) {
+            if (p.isResolved() || renderUnresolved) {
                 if (p != newpage) {
                     try {
                         // load page from cache
@@ -87,6 +80,14 @@ public class CachedRenderPagesModel extends RenderPagesModel {
 
                 try {
                     renderer.renderPage(p);
+                    if (!p.isResolved()) {
+                        String[] idrefs = p.getIDs();
+                        for (int count = 0; count < idrefs.length; count++) {
+                            log.warn("Page " + p.getPageNumber() + 
+                                ": Unresolved id reference \"" + idrefs[count] 
+                                + "\" found.");
+                        }
+                    }
                 } catch (Exception e) {
                     // use error handler to handle this FOP or IO Exception
                     e.printStackTrace();

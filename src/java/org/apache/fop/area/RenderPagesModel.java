@@ -123,7 +123,7 @@ public class RenderPagesModel extends StorePagesModel {
 
 
         // check prepared pages
-        boolean cont = checkPreparedPages(page);
+        boolean cont = checkPreparedPages(page, false);
 
         if (cont) {
             processOffDocumentItems(pendingODI);
@@ -135,16 +135,27 @@ public class RenderPagesModel extends StorePagesModel {
      * Check prepared pages
      *
      * @param newpage the new page being added
+     * @param renderUnresolved render pages with unresolved idref's
+     *          (done at end-of-document processing)
      * @return true if the current page should be rendered
      *         false if the renderer doesn't support out of order
      *         rendering and there are pending pages
      */
-    protected boolean checkPreparedPages(PageViewport newpage) {
+    protected boolean checkPreparedPages(PageViewport newpage, boolean
+        renderUnresolved) {
         for (Iterator iter = prepared.iterator(); iter.hasNext();) {
             PageViewport p = (PageViewport)iter.next();
-            if (p.isResolved()) {
+            if (p.isResolved() || renderUnresolved) {
                 try {
                     renderer.renderPage(p);
+                    if (!p.isResolved()) {
+                        String[] idrefs = p.getIDs();
+                        for (int count = 0; count < idrefs.length; count++) {
+                            log.warn("Page " + p.getPageNumber() + 
+                                ": Unresolved id reference \"" + idrefs[count] 
+                                + "\" found.");
+                        }
+                    }
                 } catch (Exception e) {
                     // use error handler to handle this FOP or IO Exception
                     e.printStackTrace();
@@ -204,7 +215,7 @@ public class RenderPagesModel extends StorePagesModel {
      */
     public void endDocument() throws SAXException {
         // render any pages that had unresolved ids
-        checkPreparedPages(null);
+        checkPreparedPages(null, true);
 
         processOffDocumentItems(pendingODI);
         pendingODI.clear();

@@ -25,7 +25,7 @@ set LOGCHOICE=
 rem The default commons logger for JDK1.4 is JDK1.4Logger.
 rem To use a different logger, uncomment the one desired below
 rem set LOGCHOICE=-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.NoOpLog
-rem set LOGCHOICE=-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog
+set LOGCHOICE=-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog
 rem set LOGCHOICE=-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger
 
 set LOGLEVEL=
