@@ -10,8 +10,16 @@ package org.apache.fop.area.inline;
 import org.apache.fop.area.Area;
 
 // cacheable object
+// image object, mime type, url
 public class Image extends Area {
+    String url;
 
-    // image object, mime type, url
+    public Image(String u) {
+        url = u;
+    }
+
+    public String getURL() {
+        return url;
+    }
 
 }

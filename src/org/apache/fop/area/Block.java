@@ -7,6 +7,7 @@
 
 package org.apache.fop.area;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.geom.Rectangle2D;
@@ -17,7 +18,7 @@ import java.awt.geom.Rectangle2D;
 // or by relative to the parent for floats, tables and lists
 // cacheable object
 // has id information
-public class Block extends Area {
+public class Block extends Area implements Serializable {
     // normally stacked with other blocks
     public static final int STACK = 0;
     // placed relative to the parent area
@@ -78,5 +79,19 @@ public class Block extends Area {
 
     public int getPositioning() {
         return positioning;
+    }
+
+    // store properties in array list, need better solution
+    ArrayList props = null;
+
+    public void addProperty(Property prop) {
+        if (props == null) {
+            props = new ArrayList();
+        }
+        props.add(prop);
+    }
+
+    public List getPropertyList() {
+        return props;
     }
 }

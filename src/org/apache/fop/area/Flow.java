@@ -18,6 +18,10 @@ public class Flow extends Area {
     int stacking = TB;
     int width;
 
+    public void addBlock(Block block) {
+        blocks.add(block);
+    }
+
     public List getBlocks() {
         return blocks;
     }

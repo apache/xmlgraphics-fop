@@ -21,6 +21,10 @@ import java.io.*;
 // FOP
 import org.apache.fop.tools.xslt.XSLTransform;
 
+/*
+add url constructer
+*/
+
 /**
  * XSLTInputHandler basically takes an xmlfile and transforms it with an xsltfile
  * and the resulting xsl:fo document is input for Fop.

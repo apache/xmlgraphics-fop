@@ -16,6 +16,19 @@ public class BodyRegion extends Region {
         super(BODY);
     }
 
+    public void setBeforeFloat(BeforeFloat bf) {
+        beforeFloat = bf;
+    }
+
+    public void setMainReference(MainReference mr) {
+        mainReference = mr;
+    }
+
+    public void setFootnote(Footnote foot) {
+        footnote = foot;
+    }
+
+
     public BeforeFloat getBeforeFloat() {
         return beforeFloat;
     }

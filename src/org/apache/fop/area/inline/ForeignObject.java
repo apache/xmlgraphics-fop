@@ -18,4 +18,16 @@ public class ForeignObject extends Area {
     // dom object
     // height, width
 
+    public ForeignObject(Document d, String ns) {
+        doc = d;
+        namespace = ns;
+    }
+
+    public Document getDocument() {
+        return doc;
+    }
+
+    public String getNameSpace() {
+        return namespace;
+    }
 }

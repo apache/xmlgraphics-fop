@@ -31,6 +31,14 @@ public class LineArea extends Area {
 
     ArrayList inlineAreas = new ArrayList();
 
+    public void setHeight(int height) {
+        lineHeight = height;
+    }
+
+    public int getHeight() {
+        return lineHeight;
+    }
+
     public void addInlineArea(InlineArea area) {
         inlineAreas.add(area);
     }
@@ -38,11 +46,19 @@ public class LineArea extends Area {
     public List getInlineAreas() {
         return inlineAreas;
     }
+
+    // store properties in array list, need better solution
+    ArrayList props = null;
+
+    public void addProperty(Property prop) {
+        if (props == null) {
+            props = new ArrayList();
+        }
+        props.add(prop);
+    }
+
+    public List getPropertyList() {
+        return props;
+    }
 }
-/*
-class LineProperty {
-    int propType;
-    int[] range;
-    Object data;
-}
-*/
+
