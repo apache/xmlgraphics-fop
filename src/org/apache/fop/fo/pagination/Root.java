@@ -57,69 +57,79 @@ import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.extensions.ExtensionObj;
 
 // Java
 import java.util.Vector;
 import java.util.Enumeration;
 
+/**
+ * The fo:root formatting object. Contains page masters, root extensions,
+ * page-sequences.
+ */
 public class Root extends FObj {
-	public static class Maker extends FObj.Maker {
-		public FObj make(FObj parent, PropertyList propertyList) throws FOPException {
-			return new Root(parent, propertyList);
-		}
+    
+    public static class Maker extends FObj.Maker {
+	public FObj make(FObj parent, PropertyList propertyList) 
+	    throws FOPException 
+	{
+	    return new Root(parent, propertyList);
 	}
+    }
 	
-	public static FObj.Maker maker() 
-	{
-		return new Root.Maker();
-	}
+    public static FObj.Maker maker() 
+    {
+	return new Root.Maker();
+    }
 
-	LayoutMasterSet layoutMasterSet;
- 	Vector pageSequences;	
+    LayoutMasterSet layoutMasterSet;
+    Vector pageSequences;	
 		
-	protected Root(FObj parent, PropertyList propertyList) throws FOPException 
-	{
-		super(parent, propertyList);
-		this.name =  "fo:root";
+    protected Root(FObj parent, PropertyList propertyList) throws FOPException 
+    {
+	super(parent, propertyList);
+	this.name =  "fo:root";
 		
-		pageSequences = new Vector();
-		if (parent != null) 
-		{
-			throw new FOPException("root must be root element");
-		}
-	}
+	pageSequences = new Vector();
+	if (parent != null) 
+	    {
+		throw new FOPException("root must be root element");
+	    }
+    }
 
-
-	public void addPageSequence(PageSequence pageSequence) 
-	{
-		this.pageSequences.addElement(pageSequence);
- 	}
-	
-
-	public LayoutMasterSet getLayoutMasterSet() 
-	{
-		return this.layoutMasterSet;
-	}
-	
-
-	public void format(AreaTree areaTree) throws FOPException 
-	{
-//	MessageHandler.errorln(" Root[" + marker + "] ");
-		if(layoutMasterSet == null) 
-		{
-			throw new FOPException("No layout master set.");
-		}
-		
-		Enumeration e = pageSequences.elements();
-		while (e.hasMoreElements()) 
-		{
-			((PageSequence) e.nextElement()).format(areaTree);
-		}
-		
-	}		
-
+    /** @deprecated handled by addChild now
+     */
+    public void addPageSequence(PageSequence pageSequence) 
+    {
+	this.pageSequences.addElement(pageSequence);
+    }
+    
+    
+    public LayoutMasterSet getLayoutMasterSet() 
+    {
+	return this.layoutMasterSet;
+    }
 
     public void setLayoutMasterSet(LayoutMasterSet layoutMasterSet) {
 	this.layoutMasterSet = layoutMasterSet;
     }
+
+    public void format(AreaTree areaTree) throws FOPException 
+    {
+	//	MessageHandler.errorln(" Root[" + marker + "] ");
+	if(layoutMasterSet == null)  {
+	    throw new FOPException("No layout master set.");
+	}
+
+	Enumeration e = children.elements();
+	while (e.hasMoreElements()) {
+	    Object o = e.nextElement();
+	    if (o instanceof PageSequence) {
+		((PageSequence) o).format(areaTree);
+	    }
+	    else if (o instanceof ExtensionObj) {
+		((ExtensionObj)o).format(areaTree);
+	    }
+	}
+    }	
 }

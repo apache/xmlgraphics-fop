@@ -62,6 +62,9 @@ public class PDFRoot extends PDFObject {
     /** the /Pages object that is root of the Pages hierarchy */
     protected PDFPages rootPages;
 
+    /** Root outline object */
+    private PDFOutline _outline;
+
     /**
      * create a Root (/Catalog) object
      *
@@ -89,15 +92,27 @@ public class PDFRoot extends PDFObject {
 	this.rootPages = pages;
     }
 
+    public void setRootOutline(PDFOutline outline) 
+    {
+	_outline = outline;
+    }
+
+
     /**
      * represent the object as PDF
      *
      * @return the PDF string
      */
     public byte[] toPDF() {
-	String p = this.number + " " + this.generation
+	StringBuffer p = new StringBuffer(this.number + " " + this.generation
 	    + " obj\n<< /Type /Catalog\n/Pages " 
-	    + this.rootPages.referencePDF() + " >>\nendobj\n";
-	return p.getBytes();
+	    + this.rootPages.referencePDF() + "\n");
+	if (_outline != null) {
+	    p.append(" /Outlines "+_outline.referencePDF()+"\n");
+	    p.append(" /PageMode /UseOutlines\n");
+	    
+	}
+	p.append(" >>\nendobj\n");
+	return p.toString().getBytes();
     }
 }

@@ -899,30 +899,34 @@ public class PDFDocument {
             }
         }
         else { // linkType is internal            
-            String goToReference;
-            PDFInternalLink internalLink;            
-
-            if ( idReferences.doesIDExist(destination) ) {
-                if ( idReferences.doesGoToReferenceExist(destination) ) {
-                    goToReference = idReferences.getInternalLinkGotToReference(destination);
-                }
-                else { //assign Internal Link GoTo object
-                    goToReference = idReferences.createInternalLinkGoTo(destination,++this.objectcount);                    
-                    this.objects.addElement(idReferences.getPDFGoTo(destination));
-                }
-            }
-            else { //id was not found, so create it
-                idReferences.createNewId(destination);
-                idReferences.addToIdValidationList(destination);
-                goToReference = idReferences.createInternalLinkGoTo(destination,++this.objectcount);
-                this.objects.addElement(idReferences.getPDFGoTo(destination));
-            }
-            internalLink = new PDFInternalLink(goToReference);
+            String goToReference = getGoToReference(destination);
+            PDFInternalLink internalLink = new PDFInternalLink(goToReference);
             link.setAction(internalLink);
         }
         return link;
     }
 
+    private String getGoToReference(String destination) 
+    {
+	String goToReference;
+	if ( idReferences.doesIDExist(destination) ) {
+	    if ( idReferences.doesGoToReferenceExist(destination) ) {
+		goToReference = idReferences.getInternalLinkGoToReference(destination);
+	    }
+	    else { //assign Internal Link GoTo object
+		goToReference = idReferences.createInternalLinkGoTo(destination,++this.objectcount);                    
+		this.objects.addElement(idReferences.getPDFGoTo(destination));
+	    }
+	}
+	else { //id was not found, so create it
+	    idReferences.createNewId(destination);
+	    idReferences.addToIdValidationList(destination);
+	    goToReference = idReferences.createInternalLinkGoTo(destination,++this.objectcount);
+	    this.objects.addElement(idReferences.getPDFGoTo(destination));
+	}	
+	return goToReference;
+    }
+    
     
     /**
      * make a stream object
@@ -954,6 +958,40 @@ public class PDFDocument {
         PDFAnnotList obj = new PDFAnnotList(++this.objectcount);
         this.objects.addElement(obj);
         return obj;
+    }
+
+    /**
+     * Make the root Outlines object
+     */
+    public PDFOutline makeOutlineRoot() 
+    {
+	PDFOutline obj = new PDFOutline(++this.objectcount, null, null);
+	this.objects.addElement(obj);
+	root.setRootOutline(obj);
+	
+	return obj;
+    }
+    
+    /** Make an outline object and add it to the given outline
+     * @param parent parent PDFOutline object
+     * @param label the title for the new outline object
+     * @param action the PDFAction to reference
+     */
+    public PDFOutline makeOutline(PDFOutline parent, 
+				  String label, 
+				  String destination) 
+    {
+	String goToRef = getGoToReference(destination);
+	
+	PDFOutline obj = new PDFOutline(++this.objectcount, label, goToRef);
+	//	System.out.println("created new outline object");
+	
+	if (parent != null) {
+	    parent.addOutline(obj);
+	}
+	this.objects.addElement(obj);
+	return obj;
+	
     }
 
     /**

@@ -66,6 +66,8 @@ import org.apache.fop.pdf.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.image.*;
 import org.apache.fop.configuration.Configuration;
+import org.apache.fop.extensions.*;
+import org.apache.fop.datatypes.IDReferences;
 
 import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
@@ -175,6 +177,7 @@ public class PDFRenderer implements Renderer {
 
     boolean useKerning;
     
+    private PDFOutline rootOutline;
 	
     /**
      * create the PDF renderer
@@ -219,7 +222,8 @@ public class PDFRenderer implements Renderer {
                                    idReferences.getInvalidIds() + "\n");
 
         }
-
+	renderRootExtensions(areaTree);
+	
         MessageHandler.logln("writing out PDF");
         this.pdfDoc.output(stream);
     }
@@ -1021,4 +1025,53 @@ public class PDFRenderer implements Renderer {
         return rs;
     }
 
+    protected void renderRootExtensions(AreaTree areaTree) 
+    {
+	Vector v = areaTree.getExtensions();
+	if (v != null) {
+	    Enumeration e = v.elements();
+	    while (e.hasMoreElements()) {
+		ExtensionObj ext = (ExtensionObj)e.nextElement();
+		if (ext instanceof Outline) {
+		    renderOutline((Outline)ext);
+		}
+	    }
+	}
+	
+    }
+
+    private void renderOutline(Outline outline) 
+    {
+	if (rootOutline == null) {
+	    rootOutline = this.pdfDoc.makeOutlineRoot();
+	}
+	PDFOutline pdfOutline = null;
+	Outline parent = outline.getParentOutline();
+	if (parent == null) {
+	    pdfOutline = this.pdfDoc.makeOutline(rootOutline, 
+						 outline.getLabel().toString(),
+						 outline.getInternalDestination());
+	}
+	else {
+	    PDFOutline pdfParentOutline = (PDFOutline)parent.getRendererObject();
+	    if (pdfParentOutline == null) {
+		MessageHandler.errorln("Error: pdfParentOutline is null");
+	    }
+	    else {
+		pdfOutline = this.pdfDoc.makeOutline(pdfParentOutline, 
+						     outline.getLabel().toString(),
+						     outline.getInternalDestination());
+	    }
+	   
+	}
+	outline.setRendererObject(pdfOutline);
+	
+	// handle sub outlines	
+	Vector v = outline.getOutlines();
+	Enumeration e = v.elements();
+	while (e.hasMoreElements()) {
+	    renderOutline((Outline)e.nextElement());
+	}
+    }
+ 
 }

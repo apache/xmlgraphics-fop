@@ -166,8 +166,10 @@ public class CommandLine {
                                Version.getVersion());
             driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
             driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
+            driver.addElementMapping("org.apache.fop.extensions.ExtensionElementMapping");
             driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
             driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
+            driver.addPropertyList("org.apache.fop.extensions.ExtensionPropertyListMapping");
             driver.buildFOTree(parser, fileInputSource(foFile));
             driver.format();
 	    driver.setOutputStream(new FileOutputStream(pdfFile));

@@ -229,7 +229,7 @@ public class IDReferences {
      * @param id     the id whose reference to use
      * @return reference to GoTo object
      */
-    public String getInternalLinkGotToReference(String id)
+    public String getInternalLinkGoToReference(String id)
     {
         IDNode node = (IDNode)idReferences.get(id);
         return node.getInternalLinkGoToReference();
