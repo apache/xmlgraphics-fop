@@ -136,13 +136,6 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
      * @throws IOException for I/O problems
      */
     protected void writeRtfPrefix() throws IOException {
-        // collapse whitespace before writing out
-        // TODO could be made configurable
-        if (attrib != null && attrib.isSet("WhiteSpaceFalse")) {
-            attrib.unset("WhiteSpaceFalse");
-        } else {
-            new WhitespaceCollapser(this);
-        }
 
         //Reset paragraph properties if needed
            if (resetProperties) {

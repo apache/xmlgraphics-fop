@@ -228,19 +228,12 @@ public class RtfTextrun extends RtfContainer {
      */
     protected void writeRtfContent() throws IOException {
         /**
-         *TODO: The textrun's children are iterated threetimes:
-         * 1. In WhitespaceCollapser
-         * 2. To determine the last RtfParagraphBreak
-         * 3. To write the children
+         *TODO: The textrun's children are iterated twice:
+         * 1. To determine the last RtfParagraphBreak
+         * 2. To write the children
          * Maybe this can be done more efficient.
          */
-        
-        if (attrib != null && attrib.isSet("WhiteSpaceFalse")) {
-            attrib.unset("WhiteSpaceFalse");
-        } else {
-            new WhitespaceCollapser(this);
-        }
-        
+
         //determine, if this RtfTextrun is the last child of its parent
         boolean bLast = false;
         for (Iterator it = parent.getChildren().iterator(); it.hasNext();) {
