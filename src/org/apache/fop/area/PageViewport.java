@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -21,10 +21,11 @@ import java.util.Iterator;
  * This is the top level object for a page and remains valid for the life
  * of the document and the area tree.
  * This object may be used as a key to reference a page.
- * This is the level that creates the page
+ * This is the level that creates the page.
  * The page (reference area) is then rendered inside the page object
  */
 public class PageViewport implements Resolveable, Cloneable {
+    
     private Page page;
     private Rectangle2D viewArea;
     private boolean clip = false;
@@ -222,5 +223,15 @@ public class PageViewport implements Resolveable, Cloneable {
      */
     public void clear() {
         page = null;
+    }
+    
+    /**
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(64);
+        sb.append("PageViewport: page=");
+        sb.append(getPageNumber());
+        return sb.toString();
     }
 }
