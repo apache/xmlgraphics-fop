@@ -21,10 +21,15 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.fo.pagination.Region;
+import org.apache.fop.fo.pagination.RegionOuter;
 import org.apache.fop.fo.pagination.StaticContent;
+import org.apache.fop.traits.MinOptMax;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 /**
@@ -50,6 +55,95 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         this.region = region;
     }
 
+    /** @return the region reference */
+    public RegionReference getRegionReference() {
+        return this.region;
+    }
+    
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
+     */
+    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        //TODO Copied from elsewhere. May be worthwhile to factor out the common parts. 
+        // currently active LM
+        BlockLevelLayoutManager curLM;
+        BlockLevelLayoutManager prevLM = null;
+        MinOptMax stackSize = new MinOptMax();
+        LinkedList returnedList;
+        LinkedList returnList = new LinkedList();
+
+        while ((curLM = ((BlockLevelLayoutManager) getChildLM())) != null) {
+            if (curLM.generatesInlineAreas()) {
+                log.error("inline area not allowed under flow - ignoring");
+                curLM.setFinished(true);
+                continue;
+            }
+
+            // Set up a LayoutContext
+            MinOptMax bpd = context.getStackLimit();
+            BreakPoss bp;
+            bp = null;
+
+            LayoutContext childLC = new LayoutContext(0);
+            boolean breakPage = false;
+            childLC.setStackLimit(MinOptMax.subtract(bpd, stackSize));
+            childLC.setRefIPD(context.getRefIPD());
+
+            // get elements from curLM
+            returnedList = curLM.getNextKnuthElements(childLC, alignment);
+/*LF*/      //System.out.println("FLM.getNextKnuthElements> returnedList.size() = " + returnedList.size());
+
+            // "wrap" the Position inside each element
+            LinkedList tempList = returnedList;
+            KnuthElement tempElement;
+            returnedList = new LinkedList();
+            ListIterator listIter = tempList.listIterator();
+            while (listIter.hasNext()) {
+                tempElement = (KnuthElement)listIter.next();
+                tempElement.setPosition(new NonLeafPosition(this, tempElement.getPosition()));
+                returnedList.add(tempElement);
+            }
+
+            if (returnedList.size() == 1
+                && ((KnuthElement)returnedList.getFirst()).isPenalty()
+                && ((KnuthPenalty)returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
+                // a descendant of this flow has break-before
+                returnList.addAll(returnedList);
+                return returnList;
+            } else {
+                if (returnList.size() > 0) {
+                    // there is a block before this one
+                    if (prevLM.mustKeepWithNext()
+                        || curLM.mustKeepWithPrevious()) {
+                        // add an infinite penalty to forbid a break between blocks
+                        returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, new Position(this), false));
+                    } else if (!((KnuthElement) returnList.getLast()).isGlue()) {
+                        // add a null penalty to allow a break between blocks
+                        returnList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
+                    }
+                }
+/*LF*/          if (returnedList.size() > 0) { // controllare!
+                    returnList.addAll(returnedList);
+                    if (((KnuthElement)returnedList.getLast()).isPenalty()
+                        && ((KnuthPenalty)returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
+                        // a descendant of this flow has break-after
+/*LF*/                  //System.out.println("FLM - break after!!");
+                        return returnList;
+                    }
+/*LF*/          }
+            }
+            prevLM = curLM;
+        }
+
+        setFinished(true);
+
+        if (returnList.size() > 0) {
+            return returnList;
+        } else {
+            return null;
+        }
+    }
+    
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#getNextBreakPoss(LayoutContext)
      */
@@ -86,7 +180,9 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(PositionIterator, LayoutContext)
      */
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
+        AreaAdditionUtil.addAreas(parentIter, layoutContext);
 
+        /*
         LayoutManager childLM;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
@@ -103,6 +199,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         }
 
         blockBreaks.clear();
+        */
         flush();
         region = null;
     }
@@ -135,5 +232,98 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         // error markers not allowed in static
         log.error("Cannot add marker to static areas");
     }
+    
+    public void doLayout(RegionOuter region, StaticContentLayoutManager lm, MinOptMax ipd) {
+        StaticContentBreaker breaker = new StaticContentBreaker(region, lm, ipd);
+        breaker.doLayout(lm.getRegionReference().getBPD());
+        if (breaker.isOverflow()) {
+            if (region.getOverflow() == EN_ERROR_IF_OVERFLOW) {
+                //TODO throw layout exception
+            }
+            log.warn("static-content overflows the available area.");
+        }
+    }
+    
+    private class StaticContentBreaker extends AbstractBreaker {
+        
+        private Region region;
+        private StaticContentLayoutManager lm;
+        private MinOptMax ipd;
+        boolean overflow = false;
+        
+        public StaticContentBreaker(Region region, StaticContentLayoutManager lm, MinOptMax ipd) {
+            this.region = region;
+            this.lm = lm;
+            this.ipd = ipd;
+        }
+
+        public boolean isOverflow() {
+            return this.overflow;
+        }
+        
+        protected LayoutManager getTopLevelLM() {
+            return lm;
+        }
+
+        protected LayoutContext createLayoutContext() {
+            LayoutContext lc = super.createLayoutContext();
+            lc.setRefIPD(ipd.opt);
+            return lc;
+        }
+        
+        protected LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+            LayoutManager curLM; // currently active LM
+            LinkedList returnList = new LinkedList();
+
+            while ((curLM = getChildLM()) != null) {
+                LayoutContext childLC = new LayoutContext(0);
+                childLC.setStackLimit(context.getStackLimit());
+                childLC.setRefIPD(context.getRefIPD());
+
+                LinkedList returnedList = null;
+                if (!curLM.isFinished()) {
+                    returnedList = curLM.getNextKnuthElements(childLC, alignment);
+                }
+                if (returnedList != null) {
+                    lm.wrapPositionElements(returnedList, returnList);
+                    //returnList.addAll(returnedList);
+                }
+            }
+            setFinished(true);
+            return returnList;
+        }
+
+        protected int getCurrentDisplayAlign() {
+            return region.getDisplayAlign();
+        }
+        
+        protected boolean hasMoreContent() {
+            return !lm.isFinished();
+        }
+        
+        protected void addAreas(PositionIterator posIter, LayoutContext context) {
+            AreaAdditionUtil.addAreas(posIter, context);    
+        }
+        
+        protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
+                KnuthSequence originalList, KnuthSequence effectiveList) {
+            //Directly add areas after finding the breaks
+            addAreas(alg, partCount, originalList, effectiveList);
+            if (partCount > 1) {
+                overflow = true;
+            }
+        }
+        
+        protected void finishPart() {
+            //nop for static content
+        }
+        
+        protected LayoutManager getCurrentChildLM() {
+            return null; //TODO NYI
+        }
+        
+    }
+    
+    
 }
 

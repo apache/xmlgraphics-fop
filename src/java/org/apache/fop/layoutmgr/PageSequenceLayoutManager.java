@@ -46,13 +46,13 @@ import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.RegionBody;
+import org.apache.fop.fo.pagination.RegionOuter;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.awt.Rectangle;
 import java.util.Iterator;
@@ -460,7 +460,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     private void layoutStaticContent(int regionID) {
-        Region reg = currentSimplePageMaster.getRegion(regionID);
+        RegionOuter reg = (RegionOuter)currentSimplePageMaster.getRegion(regionID);
         if (reg == null) {
             return;
         }
@@ -485,9 +485,17 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         lm.initialize();
         lm.setRegionReference(rv.getRegion());
         lm.setParent(this);
+        /*
         LayoutContext childLC = new LayoutContext(0);
         childLC.setStackLimit(new MinOptMax((int)curPage.getViewArea().getHeight()));
         childLC.setRefIPD(rv.getRegion().getIPD());
+        */
+        
+        MinOptMax range = new MinOptMax(rv.getRegion().getIPD());
+        lm.doLayout(reg, lm, range);
+        
+        
+        /*
         while (!lm.isFinished()) {
             BreakPoss bp = lm.getNextBreakPoss(childLC);
             if (bp != null) {
@@ -498,11 +506,13 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             } else {
                 log.error("bp==null  cls=" + reg.getRegionName());
             }
-        }
+        }*/
         //lm.flush();
         lm.reset(null);
     }
 
+    
+    
     private void finishPage() {
         if (curPage == null) {
             curSpan = null;
@@ -743,6 +753,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         rv.setBPD((int)relRegionRect.getHeight());
         rv.setIPD((int)relRegionRect.getWidth());
         TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground());
+        rv.setClip(r.getOverflow() == EN_HIDDEN || r.getOverflow() == EN_ERROR_IF_OVERFLOW);
         return rv;
     }
    
