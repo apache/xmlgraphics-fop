@@ -486,9 +486,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         RegionViewport rv = curPage.getPage().getRegionViewport(
                     FO_REGION_BODY);
         curBody = (BodyRegion) rv.getRegion();
-        flowBPD = (int) curBody.getBPD()
-            - rv.getBorderAndPaddingWidthBefore() 
-            - rv.getBorderAndPaddingWidthAfter();
+        flowBPD = (int) curBody.getBPD();
 
         return curPage;
     }
@@ -805,11 +803,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         // transforming it using the page CTM
         RegionViewport rv = new RegionViewport(absRegionRect);
         rv.addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
-        if (r.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false) != 0
-                || r.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false) != 0) {
-            log.error("Border and padding for a region must be '0'.");
-            //See 6.4.13 in XSL 1.0
-        }
         rv.setBPD((int)relRegionRect.getHeight());
         rv.setIPD((int)relRegionRect.getWidth());
         setRegionViewportTraits(r, rv);
@@ -824,8 +817,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @param r the region viewport
      */
     private void setRegionViewportTraits(Region r, RegionViewport rv) {
-        // Common Border, Padding, and Background Properties
-        TraitSetter.addBorders(rv, r.getCommonBorderPaddingBackground());
+        // Apply Background Properties, no border and padding on region viewports
         TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground());
     }
 
