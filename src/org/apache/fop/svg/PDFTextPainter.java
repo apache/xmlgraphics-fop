@@ -70,6 +70,7 @@ import java.awt.font.TextAttribute;
 import org.apache.batik.gvt.TextPainter;
 import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
+import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.text.Mark;
 import org.apache.batik.gvt.font.GVTFontFamily;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
@@ -191,9 +192,15 @@ public class PDFTextPainter implements TextPainter {
         if (size == null) {
             return loc;
         }
-        Stroke stroke =
-            (Stroke)aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.STROKE);
 
+        TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
+            GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
+        
+        if (tpi == null) {
+            return loc;
+        }        
+
+        Stroke stroke = tpi.strokeStroke;
         Float posture = (Float)aci.getAttribute(TextAttribute.POSTURE);
         Float taWeight = (Float)aci.getAttribute(TextAttribute.WEIGHT);
 
