@@ -106,24 +106,22 @@ public class PreviewDialog extends JFrame {
     private JLabel infoStatus;
 
     /**
-     *  Creates a new PreviewDialog that uses the given starter, renderer and translator.
+     *  Creates a new PreviewDialog that uses the given starter and renderer.
      *  @param aStarter the to use starter
      *  @param aRenderer the to use renderer
-     *  @param aRes the to use translator
      */
-    public PreviewDialog(AWTStarter aStarter, AWTRenderer aRenderer, Translator aRes) {
-        this(aRenderer, aRes);
+    public PreviewDialog(AWTStarter aStarter, AWTRenderer aRenderer) {
+        this(aRenderer);
         starter = aStarter;
     }
 
     /**
-     * Creates a new PreviewDialog that uses the given renderer and translator.
+     * Creates a new PreviewDialog that uses the given renderer.
      * @param aRenderer the to use renderer
-     * @param aRes the to use translator
      */
-    public PreviewDialog(AWTRenderer aRenderer, Translator aRes) {
-        translator = aRes;
+    public PreviewDialog(AWTRenderer aRenderer) {
         renderer = aRenderer;
+        translator = renderer.getTranslator();
 
         //Commands aka Actions
         Command printAction = new Command(translator.getString("Menu.Print"), "Print") {
@@ -424,7 +422,9 @@ public class PreviewDialog extends JFrame {
             //while (renderer.getPageCount() != 0)
             //    renderer.removePage(0);
             try {
+                setStatus(translator.getString("Status.Build.FO.tree"));
                 starter.run();
+                setStatus(translator.getString("Status.Show"));
             } catch (FOPException e) {
                 reportException(e);
             }

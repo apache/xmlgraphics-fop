@@ -68,7 +68,7 @@ public class AWTPrintRenderer extends AWTRenderer {
     private PrinterJob printerJob;
 
     public AWTPrintRenderer() {
-        super(null);
+        super();
         initialize();
     }
 
