@@ -62,9 +62,18 @@ public class TableColumn extends FObj {
 	
     FontState fs;
     ColorType backgroundColor;
-    ColorType borderColor;
-    int borderWidth;
-    int borderStyle;
+    ColorType borderTopColor;
+    int borderTopWidth;
+    int borderTopStyle;
+    ColorType borderBottomColor;
+    int borderBottomWidth;
+    int borderBottomStyle;
+    ColorType borderLeftColor;
+    int borderLeftWidth;
+    int borderLeftStyle;
+    ColorType borderRightColor;
+    int borderRightWidth;
+    int borderRightStyle;
     int columnWidth;
     int columnOffset;
     
@@ -113,12 +122,51 @@ public class TableColumn extends FObj {
 				    fontStyle, fontWeight, fontSize);  
 	    this.backgroundColor =
 		this.properties.get("background-color").getColorType();
-	    this.borderColor =
+	    this.borderTopColor =
 		this.properties.get("border-color").getColorType();
-	    this.borderWidth =
+	    this.borderBottomColor = this.borderTopColor;
+	    this.borderLeftColor = this.borderTopColor;
+	    this.borderRightColor = this.borderTopColor;
+	    if (this.borderTopColor == null) {
+		this.borderTopColor =
+		    this.properties.get("border-top-color").getColorType();
+		this.borderBottomColor = 
+		    this.properties.get("border-bottom-color").getColorType();
+		this.borderLeftColor = 
+		    this.properties.get("border-left-color").getColorType();
+		this.borderRightColor = 
+		    this.properties.get("border-right-color").getColorType();
+	    }
+	    this.borderTopWidth =
 		this.properties.get("border-width").getLength().mvalue();
-	    this.borderStyle =
+	    this.borderBottomWidth = this.borderTopWidth;
+	    this.borderLeftWidth = this.borderTopWidth;
+	    this.borderRightWidth = this.borderTopWidth;
+	    if (this.borderTopWidth == 0) {
+		this.borderTopWidth =
+		    this.properties.get("border-top-width").getLength().mvalue();
+		this.borderBottomWidth = 
+		    this.properties.get("border-bottom-width").getLength().mvalue();
+		this.borderLeftWidth = 
+		    this.properties.get("border-left-width").getLength().mvalue();
+		this.borderRightWidth = 
+		    this.properties.get("border-right-width").getLength().mvalue();
+	    }
+	    this.borderTopStyle =
 		this.properties.get("border-style").getEnum();
+	    this.borderBottomStyle = this.borderTopStyle;
+	    this.borderLeftStyle = this.borderTopStyle;
+	    this.borderRightStyle = this.borderTopStyle;
+	    if (this.borderTopStyle == 0) {
+		this.borderTopStyle =
+		    this.properties.get("border-top-style").getEnum();
+		this.borderBottomStyle = 
+		    this.properties.get("border-bottom-style").getEnum();
+		this.borderLeftStyle = 
+		    this.properties.get("border-left-style").getEnum();
+		this.borderRightStyle = 
+		    this.properties.get("border-right-style").getEnum();
+	    }
             this.columnWidth = 
                 this.properties.get("column-width").getLength().mvalue();
             
@@ -132,9 +180,12 @@ public class TableColumn extends FObj {
 			  area.getHeight(), Position.RELATIVE);
 	areaContainer.setPage(area.getPage());
 	areaContainer.setBackgroundColor(backgroundColor);
-        areaContainer.setBorderStyle(borderStyle, borderStyle, borderStyle, borderStyle); 
-        areaContainer.setBorderWidth(borderWidth, borderWidth, borderWidth, borderWidth); 
-        areaContainer.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
+        areaContainer.setBorderStyle(borderTopStyle, borderLeftStyle, 
+				     borderBottomStyle, borderRightStyle); 
+        areaContainer.setBorderWidth(borderTopWidth, borderLeftWidth, 
+				     borderBottomWidth, borderRightWidth); 
+        areaContainer.setBorderColor(borderTopColor, borderLeftColor, 
+				     borderBottomColor, borderRightColor); 
         areaContainer.setHeight(area.getHeight());
 	area.addChild(areaContainer);
         

@@ -130,13 +130,13 @@ public class StandardPropertyListMapping implements PropertyListMapping {
 	propertyTable.put("border-right-style",BorderRightStyle.maker());
 	propertyTable.put("border-right-width",BorderRightWidth.maker());
 	propertyTable.put("border-start-color",BorderStartColor.maker());
-	propertyTable.put("border-start-color",BorderStartColor.maker());
+	propertyTable.put("border-start-style",BorderStartStyle.maker());
 	propertyTable.put("border-start-width",BorderStartWidth.maker());
 	propertyTable.put("border-style",BorderStyle.maker());
 	propertyTable.put("border-top",BorderTop.maker());
 	propertyTable.put("border-top-color",BorderTopColor.maker());
 	propertyTable.put("border-top-style",BorderTopStyle.maker());
-	propertyTable.put("border-top-style",BorderTopStyle.maker());
+	propertyTable.put("border-top-width",BorderTopWidth.maker());
 	propertyTable.put("border-width",BorderWidth.maker());
 	propertyTable.put("bottom",Bottom.maker());
 	propertyTable.put("height",Height.maker());
