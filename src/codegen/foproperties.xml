@@ -833,6 +833,15 @@
     <datatype>Number</datatype>
     <default>1</default>
   </property>
+
+  <property>
+    <name>region-name</name>
+    <class-name>RegionName</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  
  </generic-property-list>
 </property-list>
 

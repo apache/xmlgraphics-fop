@@ -1056,6 +1056,12 @@
     <datatype>String</datatype>
     <default></default>
   </property>
-
+  <property>
+    <name>region-name</name>
+    <class-name>RegionName</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
 </property-list>
 
