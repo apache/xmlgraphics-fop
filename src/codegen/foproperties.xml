@@ -298,15 +298,14 @@
     <default>start</default>
   </property>
   <property>
-    <name>white-space-treatment</name>
+    <name>white-space-collapse</name>
     <inherited>true</inherited>
     <datatype>Enum</datatype>
       <enumeration>
-        <value const="PRESERVE">preserve</value>
-        <value const="COLLAPSE">collapse</value>
-        <value const="IGNORE">ignore</value>
+        <value const="TRUE">true</value>
+        <value const="FALSE">false</value>
       </enumeration>
-    <default>collapse</default>
+    <default>true</default>
   </property>
   <property>
     <name>break-after</name>
