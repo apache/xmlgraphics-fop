@@ -12,36 +12,32 @@ Keiron Liddle
 Jordan Naftolin
 Eric Schaeffer 
 Jon Smirl 
+Christian Geisert
+Bertrand Delacretaz
+
+Initial development of new layout managers, area tree and renderers.
+Altered xml handling.
+Added User Agent.
+Made the image package thread safe and now has a caching system.
+Added extension example, of the type xml->svg.
 
 
-**** THINGS WORKED ON ***** 
+**** THINGS WORKED ON *****
 
-
-redesign/refactoring - layout [Karen Lease]
-redesign/refactoring - page layout [Arved Sandstrom]
-svg, testing [Keiron Liddle]
-
+layout manager design
+documentation - design and developers understanding
+maintenance branch
 
 **** THINGS TO DO ****
 
-
 1)
-The immediate list of things that need to be done. These include things
-that may prevent other activity or could be done independantly.
+The main list of things that need to be done.
 
-* Redesign of flow layout handling, breaks keeps, spacing etc.
-* Redesign/factoring of line area handling.
-* Testing system, moving old tests to new system etc.
-* SVG
+- design of line area handling.
+- design of flow layout handling, breaks keeps, spacing etc.
 - integrating Avalon and Fop
-- Documentation / website needs to better help users understand how to use FOP
-- examples (a separate set of user fo examples)
-
-(* being worked on,  - no current activity)
 
 2)
-After the the layout handling is redesigned then these items should be
-promoted to first priority.
 These should be done with the aim of getting to basic conformance.
 
 - Implement all remaining formatting objects
@@ -51,16 +47,5 @@ These should be done with the aim of getting to basic conformance.
 3)
 Nail down external interfaces (the main part is fairly stable).
 Setting base directory, using config, logging, extensions etc.
-
-Interfaces to include:
-how does FOP get called
-how does the formatter interface to renderers
-how do people write new plug-ins: handlers for new image types
-processors for fo:instream-foreign-object
-
-4)
-Improve the code. Follow the Sun Java coding guidelines.
-Have better comments and correlation between spec terms
-and methods etc.
 
 
