@@ -34,6 +34,7 @@ public class FOUserAgent {
     HashMap defaults = new HashMap();
     HashMap handlers = new HashMap();
     Logger log;
+    String base;
 
     public void setLogger(Logger logger) {
         log = logger;
@@ -41,6 +42,14 @@ public class FOUserAgent {
 
     public Logger getLogger() {
         return log;
+    }
+
+    public void setBaseDirectory(String b) {
+        base = b;
+    }
+
+    public String getBaseDirectory() {
+        return base;
     }
 
     /**
