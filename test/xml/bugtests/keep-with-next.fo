@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-	<fo:layout-master-set>
-	    <fo:simple-page-master master-name="simplePM"
-	                  page-height="11in" 
-	                  page-width="8.5in"
-	                  margin-top="1cm" 
-	                  margin-bottom="1cm" 
-	                  margin-left="1in" 
-	                  margin-right="0.75in">
-	      <fo:region-before extent="2.5cm"/>
-	      <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
-	      <fo:region-after extent="2.5cm"/>
-	    </fo:simple-page-master>
-	</fo:layout-master-set>
+  <fo:layout-master-set>
+      <fo:simple-page-master master-name="simplePM"
+                    page-height="11in"
+                    page-width="8.5in"
+                    margin-top="1cm"
+                    margin-bottom="1cm"
+                    margin-left="1in"
+                    margin-right="0.75in">
+        <fo:region-before extent="2.5cm"/>
+        <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
+        <fo:region-after extent="2.5cm"/>
+      </fo:simple-page-master>
+  </fo:layout-master-set>
 
-	<fo:page-sequence master-reference="simplePM">
-	    <fo:flow flow-name="xsl-region-body">
-			<fo:block space-before.optimum="1cm" font-family="monospace" font-size="10pt" white-space-treatment="preserve" wrap-option="no-wrap">
+  <fo:page-sequence master-reference="simplePM">
+      <fo:flow flow-name="xsl-region-body">
+      <fo:block space-before.optimum="1cm" font-family="monospace" font-size="10pt" white-space-treatment="preserve" wrap-option="no-wrap">
  F I N A L    C A L C U L A T I O N                      AUD $      AUD $
    ----------------------------------
    L A B O U R            TIME BASIS   10 WU = 1 HR
@@ -32,8 +32,8 @@
    R E P A I R  C O S T S.......................................   1 466.70
    ----------------------
 C O M M E N T S :
-E-PART PRICES = MANUFACTURERS RRP.     	*-POSITION = USER SUPPLIED DATA
-E-PART NUMBER IS NOT ORDER NUMBER      	NN = NO MANUFACTURERS CODE EXISTS
+E-PART PRICES = MANUFACTURERS RRP.       *-POSITION = USER SUPPLIED DATA
+E-PART NUMBER IS NOT ORDER NUMBER        NN = NO MANUFACTURERS CODE EXISTS
 SKEZAX=WORKING UNITS AS PER AUDATEX       )=WU PARTIAL INCL IN OTHER POSITIONS
 C O N T R O L  -  I N F O R M A T I O N   NO         666          25.08.2000
 OWNER       MRS                         SARAH
@@ -54,14 +54,14 @@ MO-CODE
 - MODEL-OPTIONS          : E3 F3 I4 I7 J6 K2 M8 P8 Q6 Q7 V3 V6 W4 Z8
 PARTS / PAINTING
 - REP-METHOD/CODE-NO     : N  0741 LO
-			</fo:block>
-			
-	    	<fo:block keep-with-next="true" font-family="Helvetica" font-size="10pt">
-	    		The following is the control page for the Repair Assessment. It includes the 
-	    		<fo:inline font-weight="bold">Owner</fo:inline><fo:inline>, Reference No, Make, Reg No, and Options.</fo:inline>
-	    	</fo:block>
+      </fo:block>
 
-			<fo:block space-before.optimum="2cm" font-family="monospace" font-size="10pt" white-space-treatment="preserve" wrap-option="no-wrap">
+        <fo:block keep-with-next="true" font-family="Helvetica" font-size="10pt">
+          The following is the control page for the Repair Assessment. It includes the
+          <fo:inline font-weight="bold">Owner</fo:inline><fo:inline>, Reference No, Make, Reg No, and Options.</fo:inline>
+        </fo:block>
+
+      <fo:block space-before.optimum="2cm" font-family="monospace" font-size="10pt" white-space-treatment="preserve" wrap-option="no-wrap">
 R E P A I R /-/ A S S E S S M E N T   NO         666              25.08.2000
 OWNER       MRS                         SARAH
             SCHAER                      GUNDELDINGERSTRASSE 131
@@ -82,7 +82,7 @@ OPTIONS     FROM VIN X_200001     LUGGAGE NET           ELECTRIC FRONT SEATS
             ALTERNATOR 120 AMP    4-SPEED AUTOMATIC     SPORTS SUSPENSION
             ANTI-LOCK BRAKES      ELECT STABILITY PROG  SUNROOF (ACCESSORY)
             2.7 LTR V6
-			</fo:block>
-		</fo:flow>
-	</fo:page-sequence>
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
 </fo:root>
