@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks tables with collapse border model. Simple cell borders to start with.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" margin="20pt">
+          <fo:region-body margin="0pt"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block background-color="lightgray">block before table</fo:block>
+          <fo:table table-layout="fixed" width="100%" border-collapse="collapse" padding="5pt">
+            <fo:table-column column-width="2in"/>
+            <fo:table-column column-width="2in"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="solid 10pt blue">
+                  <fo:block>cell1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell background-color="yellow" border="solid 5pt black">
+                  <fo:block>cell2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell background-color="orange" border="dotted 15pt black" number-columns-spanned="2">
+                  <fo:block>spanned</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row border="solid 15pt green">
+                <fo:table-cell>
+                  <fo:block>cell4</fo:block>
+                </fo:table-cell>
+                <fo:table-cell background-color="yellow">
+                  <fo:block>cell5</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block background-color="lightgray">block after table</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="add checks here" xpath="false"/>
+  </checks>
+</testcase>
