@@ -115,7 +115,7 @@ public class FoListItem extends FONode {
                    != null) {
                 new FoMarker(getFOTree(), this, ev, stateFlags);
                 numMarkers++;
-                xmlevents.getEndElement(FObjectNames.MARKER);
+                xmlevents.getEndElement(ev);
             }
 
             // Look for one list-item-label
@@ -126,7 +126,7 @@ public class FoListItem extends FONode {
                 throw new FOPException
                         ("No list-item-label in list-item.");
             new FoListItemLabel(getFOTree(), this, ev, stateFlags);
-            xmlevents.getEndElement(FObjectNames.LIST_ITEM_LABEL);
+            xmlevents.getEndElement(ev);
 
             // Look for one list-item-body
             nowProcessing = "list-item-body";
@@ -136,7 +136,7 @@ public class FoListItem extends FONode {
                 throw new FOPException
                         ("No list-item-body in list-item.");
             new FoListItemBody(getFOTree(), this, ev, stateFlags);
-            xmlevents.getEndElement(FObjectNames.LIST_ITEM_BODY);
+            xmlevents.getEndElement(ev);
 
             /*
         } catch (NoSuchElementException e) {

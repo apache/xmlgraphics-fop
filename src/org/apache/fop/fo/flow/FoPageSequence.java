@@ -109,7 +109,7 @@ public class FoPageSequence extends FONode {
                 // process the title
                 title = numChildren();
                 new FoTitle(getFOTree(), this, ev);
-                xmlevents.getEndElement(FObjectNames.TITLE);
+                xmlevents.getEndElement(ev);
             } // else ignore
 
             // Look for zero or more static-content
@@ -121,7 +121,7 @@ public class FoPageSequence extends FONode {
                 if (firstStaticContent != -1)
                     firstStaticContent = numChildren();
                 new FoStaticContent(getFOTree(), this, ev);
-                xmlevents.getEndElement(FObjectNames.STATIC_CONTENT);
+                xmlevents.getEndElement(ev);
             }
 
             // Look for one or more page-sequence
@@ -133,13 +133,13 @@ public class FoPageSequence extends FONode {
                 throw new FOPException("No flow found.");
             firstFlow = numChildren();
             new FoFlow(getFOTree(), this, ev);
-            xmlevents.getEndElement(FObjectNames.FLOW);
+            xmlevents.getEndElement(ev);
             while ((ev = xmlevents.expectStartElement
                             (FObjectNames.FLOW, XMLEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:page-sequences
                 new FoFlow(getFOTree(), this, ev);
-                xmlevents.getEndElement(FObjectNames.FLOW);
+                xmlevents.getEndElement(ev);
             }
         } catch (NoSuchElementException e) {
             throw new FOPException

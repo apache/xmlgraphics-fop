@@ -122,7 +122,7 @@ public class FoTableAndCaption extends FONode {
                    != null) {
                 new FoMarker(getFOTree(), this, ev, stateFlags);
                 numMarkers++;
-                xmlevents.getEndElement(FObjectNames.MARKER);
+                xmlevents.getEndElement(ev);
             }
 
             // Look for optional table-caption
@@ -132,7 +132,7 @@ public class FoTableAndCaption extends FONode {
                    != null) {
                 new FoTableCaption(getFOTree(), this, ev, stateFlags);
                 captionOffset = numMarkers;
-                xmlevents.getEndElement(FObjectNames.TABLE_CAPTION);
+                xmlevents.getEndElement(ev);
             }
 
             // Look for one table
@@ -143,7 +143,7 @@ public class FoTableAndCaption extends FONode {
                 throw new FOPException("No table found.");
             tableOffset = numChildren();
             new FoTable(getFOTree(), this, ev, stateFlags);
-            xmlevents.getEndElement(FObjectNames.TABLE);
+            xmlevents.getEndElement(ev);
 
             /*
         } catch (NoSuchElementException e) {
