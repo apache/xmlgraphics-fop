@@ -23,6 +23,9 @@ import org.apache.fop.configuration.Configuration;
 
 public class Script extends NCName {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     public Script(int property, String scriptCode) throws PropertyException
     {
         super(property, scriptCode);

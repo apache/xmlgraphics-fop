@@ -20,6 +20,9 @@ import org.apache.fop.configuration.Configuration;
 
 public class Country extends NCName {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     public Country(int property, String countryCode) throws PropertyException
     {
         super(property, countryCode);

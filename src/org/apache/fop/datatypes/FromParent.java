@@ -54,6 +54,9 @@ import org.apache.fop.fo.Properties;
 
 public class FromParent extends AbstractPropertyValue {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * @param property the <tt>int</tt> index of the property on which
      * this value is being defined.  In this case, a shorthand property.

@@ -26,6 +26,9 @@ import org.apache.fop.fo.expr.PropertyException;
  */
 
 public class Time {
+
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
     /*
      * Constants for UnitNames
      */

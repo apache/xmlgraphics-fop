@@ -24,6 +24,9 @@ import org.apache.fop.messaging.MessageHandler;
 
 public class EnumType extends AbstractPropertyValue {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * An integer enumeration value.
      */

@@ -22,6 +22,9 @@ import org.apache.fop.fo.Properties;
 
 public class StringType extends AbstractPropertyValue {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     protected String string;
 
     /**

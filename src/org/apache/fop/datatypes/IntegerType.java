@@ -19,6 +19,9 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class IntegerType {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * Construct a <tt>Numeric</tt> with a given quantity.
      * The unit power is assumed as 0.  The base unit is NUMERIC.

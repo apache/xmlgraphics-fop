@@ -21,6 +21,9 @@ import org.apache.fop.fo.PropertyConsts;
 
 public class Literal extends StringType {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * Construct a <i>Literal</i> with a given <tt>String</tt>.
      * @param property the index of the property with which this value

@@ -18,6 +18,9 @@ import org.apache.fop.fo.expr.AbstractPropertyValue;
  */
 public class ColorType extends AbstractPropertyValue {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     public static final int
         RED = 0
      ,GREEN = 1

@@ -84,6 +84,9 @@ import org.apache.fop.fo.Properties;
  */
 public class Numeric extends AbstractPropertyValue implements Cloneable {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * Integer constant encoding a valid Numeric subclass
      * base unit

@@ -21,6 +21,9 @@ import org.apache.fop.fo.Properties;
 
 public class MimeType extends AbstractPropertyValue {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * A mimetype; one of the possible types of value for
      * <i>content-type</i>.

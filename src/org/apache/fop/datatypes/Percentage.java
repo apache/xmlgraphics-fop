@@ -20,6 +20,9 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class Percentage {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * Private constructor - don't instantiate a <i>Percentage</i> object.
      */

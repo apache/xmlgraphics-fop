@@ -23,6 +23,9 @@ import org.apache.fop.fo.Properties;
 
 public class MappedEnumType extends EnumType {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * The String value to which the associated ENUM token maps.
      * It expresses some underlying type other than an ENUM.
