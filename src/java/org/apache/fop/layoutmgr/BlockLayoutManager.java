@@ -336,14 +336,14 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             curBlockArea = new Block();
 
             // Must get dimensions from parent area
-            Area parentArea = parentLM.getParentArea(curBlockArea);
+            //Area parentArea = parentLM.getParentArea(curBlockArea);
 
             // set traits
             TraitSetter.addBorders(curBlockArea, 
                     fobj.getCommonBorderPaddingBackground());
             TraitSetter.addBackground(curBlockArea, 
                     fobj.getCommonBorderPaddingBackground());
-            TraitSetter.addMargins(curBlockArea, parentArea,
+            TraitSetter.addMargins(curBlockArea,
                     fobj.getCommonBorderPaddingBackground(), 
                     fobj.getCommonMarginBlock());
             TraitSetter.addBreaks(curBlockArea, 

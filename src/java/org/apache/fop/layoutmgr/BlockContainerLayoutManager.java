@@ -481,7 +481,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
             TraitSetter.addBorders(viewportBlockArea, fobj.getCommonBorderPaddingBackground());
             TraitSetter.addBackground(viewportBlockArea, fobj.getCommonBorderPaddingBackground());
-            TraitSetter.addMargins(viewportBlockArea, null, 
+            TraitSetter.addMargins(viewportBlockArea, 
                     fobj.getCommonBorderPaddingBackground(),
                     fobj.getCommonMarginBlock());
             
