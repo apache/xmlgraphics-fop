@@ -19,10 +19,9 @@
 package org.apache.fop.apps;
 
 // FOP
-import org.apache.fop.area.AreaTree;
-import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.render.Renderer;
 
 // SAX
 import org.xml.sax.SAXException;
@@ -39,11 +38,8 @@ public class Document {
     /** The Font information relevant for this document */
     private FontInfo fontInfo;
     
-    /** The current AreaTree for the PageSequence being rendered. */
-    public AreaTree areaTree;
-
-    /** The AreaTreeModel for the PageSequence being rendered. */
-    public AreaTreeModel atModel;
+    /** The Renderer being used for this document */
+    protected Renderer renderer;
 
     /**
      * Structure handler used to notify structure
@@ -77,12 +73,12 @@ public class Document {
     }
 
     /**
-     * Get the area tree for this layout handler.
+     * Get the renderer for this document
      *
-     * @return the area tree for this document
+     * @return the renderer for this document
      */
-    public AreaTree getAreaTree() {
-        return areaTree;
+    public Renderer getRenderer() {
+        return renderer;
     }
 
     /**

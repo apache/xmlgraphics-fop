@@ -24,6 +24,7 @@ import java.util.Map;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 // FOP
 import org.apache.fop.fo.FONode;
@@ -31,7 +32,6 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.apps.FOPException;
-import org.xml.sax.Locator;
 
 /**
  * The layout-master-set formatting object.

@@ -119,13 +119,6 @@ public abstract class FOInputHandler {
         return doc;
     }
 
-    /**   
-      * @return the current Area Tree object
-      */   
-     public AreaTree getAreaTree() {
-        return doc.getAreaTree();
-     } 
-    
     /**
      * Returns the Driver object associated with this FOInputHandler.
      * @return the Driver object

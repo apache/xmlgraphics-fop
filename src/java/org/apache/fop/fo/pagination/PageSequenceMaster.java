@@ -21,13 +21,15 @@ package org.apache.fop.fo.pagination;
 // Java
 import java.util.List;
 
-// SAX
+// XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 // FOP
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.apps.FOPException;
 
@@ -57,6 +59,33 @@ public class PageSequenceMaster extends FObj {
     public PageSequenceMaster(FONode parent) {
         super(parent);
     }
+
+
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL/FOP: (single-page-master-reference|repeatable-page-master-reference|
+     *     repeatable-page-master-alternatives)+
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+        if (nsURI == FOElementMapping.URI) {
+            if (!localName.equals("single-page-master-reference") 
+                && !localName.equals("repeatable-page-master-reference")
+                && !localName.equals("repeatable-page-master-alternatives")) {   
+                    invalidChildError(loc, nsURI, localName);
+            }
+        } else {
+            invalidChildError(loc, nsURI, localName);
+        }
+    }
+
+    protected void end() {
+        if (children == null) {
+           missingChildElementError("(single-page-master-reference|" +
+            "repeatable-page-master-reference|repeatable-page-master-alternatives)+");
+        }
+    }
+
 
     /**
      * @see org.apache.fop.fo.FObj#addProperties
