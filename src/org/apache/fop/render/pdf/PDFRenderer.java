@@ -391,6 +391,8 @@ public class PDFRenderer extends PrintRenderer {
         GVTBuilder builder = new GVTBuilder();
         GraphicsNodeRenderContext rc = getRenderContext(fs);
         BridgeContext ctx = new BridgeContext(userAgent, rc);
+        PDFAElementBridge aBridge = new PDFAElementBridge();
+        ctx.putBridge(aBridge);
         GraphicsNode root;
         PDFGraphics2D graphics =
           new PDFGraphics2D(true, fs, pdfDoc,
@@ -399,6 +401,7 @@ public class PDFRenderer extends PrintRenderer {
         graphics.setGraphicContext(
           new org.apache.batik.ext.awt.g2d.GraphicContext());
         graphics.setRenderingHints(rc.getRenderingHints());
+        aBridge.setPDFGraphics2D(graphics);
         try {
             root = builder.build(ctx, doc);
             root.paint(graphics, rc);

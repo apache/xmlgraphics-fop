@@ -1,7 +1,7 @@
 /* $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.svg;
@@ -86,6 +86,7 @@ import org.w3c.dom.css.*;
 import org.w3c.dom.svg.SVGLength;
 
 import org.apache.fop.svg.*;
+import org.apache.fop.pdf.*;
 
 import org.w3c.dom.DOMException;
 import org.w3c.dom.DOMImplementation;
@@ -126,6 +127,9 @@ import org.apache.batik.gvt.renderer.StaticRendererFactory;
  */
 public class PDFTranscoder extends XMLAbstractTranscoder {
 
+    public static final TranscodingHints.Key KEY_STROKE_TEXT =
+        new StringKey();
+
     /** The user agent dedicated to an <tt>ImageTranscoder</tt>. */
     protected UserAgent userAgent = new ImageTranscoderUserAgent();
 
@@ -164,11 +168,18 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         svgCtx.setPixelToMM(userAgent.getPixelToMM());
         ((SVGOMDocument) document).setSVGContext(svgCtx);
 
+        boolean stroke = true;
+        if (hints.containsKey(KEY_STROKE_TEXT)) {
+            stroke = ((Boolean) hints.get(KEY_STROKE_TEXT)).booleanValue();
+        }
+
         // build the GVT tree
         GVTBuilder builder = new GVTBuilder();
         ImageRendererFactory rendFactory = new StaticRendererFactory();
-        GraphicsNodeRenderContext rc = getRenderContext();
+        GraphicsNodeRenderContext rc = getRenderContext(stroke);
         BridgeContext ctx = new BridgeContext(userAgent, rc);
+        PDFAElementBridge pdfAElementBridge = new PDFAElementBridge();
+        ctx.putBridge(pdfAElementBridge);
         GraphicsNode gvtRoot;
         try {
             gvtRoot = builder.build(ctx, svgDoc);
@@ -184,11 +195,13 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         // compute the image's width and height according the hints
         float imgWidth = -1;
         if (hints.containsKey(ImageTranscoder.KEY_WIDTH)) {
-            imgWidth = ((Float) hints.get(ImageTranscoder.KEY_WIDTH)).floatValue();
+            imgWidth = ((Float) hints.get(ImageTranscoder.KEY_WIDTH)).
+                       floatValue();
         }
         float imgHeight = -1;
         if (hints.containsKey(ImageTranscoder.KEY_HEIGHT)) {
-            imgHeight = ((Float) hints.get(ImageTranscoder.KEY_HEIGHT)).floatValue();
+            imgHeight = ((Float) hints.get(ImageTranscoder.KEY_HEIGHT)).
+                        floatValue();
         }
         float width, height;
         if (imgWidth > 0 && imgHeight > 0) {
@@ -229,7 +242,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         }
         // take the AOI into account if any
         if (hints.containsKey(ImageTranscoder.KEY_AOI)) {
-            Rectangle2D aoi = (Rectangle2D) hints.get(ImageTranscoder.KEY_AOI);
+            Rectangle2D aoi =
+              (Rectangle2D) hints.get(ImageTranscoder.KEY_AOI);
             // transform the AOI into the image's coordinate system
             aoi = Px.createTransformedShape(aoi).getBounds2D();
             AffineTransform Mx = new AffineTransform();
@@ -247,13 +261,21 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         int w = (int) width;
         int h = (int) height;
 
-        PDFDocumentGraphics2D graphics = new PDFDocumentGraphics2D(true,
+        PDFDocumentGraphics2D graphics = new PDFDocumentGraphics2D(stroke,
                                          output.getOutputStream(), w, h);
         graphics.setSVGDimension(docWidth, docHeight);
-        if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
-            graphics.setBackgroundColor((Color) hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
+
+        if (!stroke) {
+            TextPainter textPainter = null;
+            textPainter = new PDFTextPainter(graphics.getFontState());
+            rc.setTextPainter(textPainter);
         }
-        //        GraphicsNodeRenderContext rc = getRenderContext();
+
+        pdfAElementBridge.setPDFGraphics2D(graphics);
+        if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
+            graphics.setBackgroundColor( (Color) hints.get(
+                                           ImageTranscoder.KEY_BACKGROUND_COLOR));
+        }
         graphics.setGraphicContext(
           new org.apache.batik.ext.awt.g2d.GraphicContext());
         graphics.setRenderingHints(rc.getRenderingHints());
@@ -268,7 +290,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         }
     }
 
-    public GraphicsNodeRenderContext getRenderContext() {
+    public GraphicsNodeRenderContext getRenderContext(boolean stroke) {
         GraphicsNodeRenderContext nodeRenderContext = null;
         if (nodeRenderContext == null) {
             RenderingHints hints = new RenderingHints(null);
@@ -282,7 +304,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
               new FontRenderContext(new AffineTransform(), true,
                                     true);
 
-            TextPainter textPainter = new StrokingTextPainter();
+            TextPainter textPainter = null;
+            textPainter = new StrokingTextPainter();
 
             GraphicsNodeRableFactory gnrFactory =
               new ConcreteGraphicsNodeRableFactory();
@@ -290,7 +313,6 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             nodeRenderContext = new GraphicsNodeRenderContext(
                                   new AffineTransform(), null, hints,
                                   fontRenderContext, textPainter, gnrFactory);
-            nodeRenderContext.setTextPainter(textPainter);
         }
 
         return nodeRenderContext;
@@ -364,7 +386,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          * <tt>TranscodingHints</tt> or 0.3528 if any.
          */
         public float getPixelToMM() {
-            if (getTranscodingHints().containsKey(ImageTranscoder.KEY_PIXEL_TO_MM)) {
+            if (getTranscodingHints().containsKey(
+                      ImageTranscoder.KEY_PIXEL_TO_MM)) {
                 return ( (Float) getTranscodingHints().get(
                            ImageTranscoder.KEY_PIXEL_TO_MM)).floatValue();
             } else {
@@ -378,8 +401,10 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          * <tt>TranscodingHints</tt> or "en" (english) if any.
          */
         public String getLanguages() {
-            if (getTranscodingHints().containsKey(ImageTranscoder.KEY_LANGUAGE)) {
-                return (String) getTranscodingHints().get(ImageTranscoder.KEY_LANGUAGE);
+            if (getTranscodingHints().containsKey(
+                      ImageTranscoder.KEY_LANGUAGE)) {
+                return (String) getTranscodingHints().get(
+                         ImageTranscoder.KEY_LANGUAGE);
             } else {
                 return "en";
             }
@@ -398,8 +423,10 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          * Returns the XML parser to use from the TranscodingHints.
          */
         public String getXMLParserClassName() {
-            if (getTranscodingHints().containsKey(KEY_XML_PARSER_CLASSNAME)) {
-                return (String)getTranscodingHints().get(KEY_XML_PARSER_CLASSNAME);
+            if (getTranscodingHints().containsKey(
+                      KEY_XML_PARSER_CLASSNAME)) {
+                return (String) getTranscodingHints().get(
+                         KEY_XML_PARSER_CLASSNAME);
             } else {
                 return XMLResourceDescriptor.getXMLParserClassName();
             }
