@@ -173,19 +173,7 @@ public class PDFRenderer implements Renderer {
     /** The  width of the previous word. Used to calculate space between */
     int prevWordWidth = 0;
 
-    /** a number formatter to trim off extra precision we don't need*/
-    static java.text.NumberFormat numFormat;
-    
-    
     boolean useKerning;
-    
-
-    // initialize the static number formatter
-    static {
-	numFormat = java.text.NumberFormat.getNumberInstance();
-	numFormat.setMaximumFractionDigits(2);
-	numFormat.setGroupingUsed(false);
-    }
     
 	
     /**
@@ -709,8 +697,8 @@ public class PDFRenderer implements Renderer {
 	    if (!textOpen || bl != prevWordY) {
 		closeText();
 		
-		pdf.append("1 0 0 1 " +numFormat.format(rx / 1000f) + " " + 
-			   numFormat.format(bl / 1000f) + " Tm [(");
+		pdf.append("1 0 0 1 " +(rx / 1000f) + " " + 
+			   (bl / 1000f) + " Tm [(");
 		prevWordY = bl;
 		textOpen = true;
 	    }
@@ -718,7 +706,7 @@ public class PDFRenderer implements Renderer {
 		// express the space between words in thousandths of an em
 		int space = prevWordX - rx + prevWordWidth;
 		float emDiff = (float)space / (float)currentFontSize * 1000f;
-		pdf.append(numFormat.format(emDiff) + " (");
+		pdf.append(emDiff + " (");
 	    }
 	    prevWordWidth = area.getContentWidth();
 	    prevWordX = rx;

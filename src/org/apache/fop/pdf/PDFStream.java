@@ -117,6 +117,9 @@ public class PDFStream extends PDFObject {
 
     public void addFilter(String filterType) 
     {
+	if (filterType == null) {
+	    return;
+	}
 	if (filterType.equals("flate")) {
 	    addFilter(new FlateFilter());
 	}
@@ -125,6 +128,9 @@ public class PDFStream extends PDFObject {
 	}
 	else if (filterType.equals("ascii-hex")) {
 	    addFilter(new ASCIIHexFilter());
+	}
+	else if (filterType.equals(""))	{
+	    return;
 	}
 	else {
 	    MessageHandler.errorln("Unsupported filter type in stream-filter-list: "+filterType);
