@@ -59,7 +59,9 @@ public class PDFGoTo extends PDFObject {
 
     /** the pageReference */
     protected String pageReference;
-    protected float yPosition=0;
+    protected float 
+        xPosition=0,
+        yPosition=0;    
 
     /**
      * create a /GoTo object.
@@ -89,9 +91,26 @@ public class PDFGoTo extends PDFObject {
 
 
 
+    /**
+     * Sets the Y position to jump to
+     * 
+     * @param yPosition y position
+     */
     public void setYPosition(int yPosition)
     {
         this.yPosition = (yPosition/1000f); 
+    }
+
+
+    
+    /**
+     * Sets the x Position to jump to
+     * 
+     * @param xPosition x position
+     */
+    public void setXPosition(int xPosition)
+    {
+        this.xPosition = (xPosition/1000f); 
     }
 
 
@@ -103,7 +122,7 @@ public class PDFGoTo extends PDFObject {
     public String toPDF() {
 	String p = new String(this.number + " " + this.generation +
 			      " obj\n<<\n/S /GoTo\n" +
-			      "/D [" + this.pageReference + " /FitH "+yPosition+"]\n" + 
+			      "/D [" + this.pageReference + " /XYZ "+xPosition+" "+yPosition+" null]\n" + 
 			      ">>\nendobj\n"); 
 	return p;
     }
