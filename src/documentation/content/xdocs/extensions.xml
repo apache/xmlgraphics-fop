@@ -37,7 +37,7 @@ entry:
     <fox:outline internal-destination="sec3-1">
       <fox:label>Prerequisites</fox:label>
     </fox:outline>
-  <fox:outline>
+  </fox:outline>
 </fo:root>]]></source>
         <p>
 It works similarly to a basic-link. There is also an external-destination
