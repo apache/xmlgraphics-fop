@@ -675,6 +675,7 @@ list of possible build targets.
     <mkdir dir="${build.dir}/test-reports/fop-transcoder"/>
     <junit haltonerror="yes" fork="${junit.fork}">
       <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
@@ -690,13 +691,19 @@ list of possible build targets.
       </batchtest>
     </junit>
     <echo message="Running basic functionality tests for fop-transcoder-allinone.jar"/>
+  	<!-- These are the same tests as in the block above but testing the "allinone" JAR
+  	     instead. Please don't add any additional paths other than the test classes, the
+  	     allinone JAR and the any Batik JARs to the classpath. If this fails, but the
+  	     previous test block succeeded it indicates that the packaging of the allinone
+  	     JAR needs to be updated.
+  	-->
     <mkdir dir="${build.dir}/test-reports/fop-transcoder-allinone"/>
     <junit haltonerror="yes" fork="${junit.fork}">
       <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
-        <path refid="libs-basic-run-classpath"/>
         <fileset dir="build">
           <include name="fop-transcoder-allinone.jar"/>
         </fileset>
@@ -714,6 +721,7 @@ list of possible build targets.
     <mkdir dir="${build.dir}/test-reports/fop"/>
     <junit haltonerror="yes" fork="${junit.fork}">
       <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
@@ -733,6 +741,7 @@ list of possible build targets.
     <mkdir dir="${build.dir}/test-reports/fop"/>
     <junit haltonerror="yes" fork="${junit.fork}">
       <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
       <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
       <formatter type="brief" usefile="false"/>
       <classpath>
