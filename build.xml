@@ -62,7 +62,6 @@ list of possible build targets.
     <include name="lib/xml-apis.jar"/>
     <include name="lib/batik.jar"/>
     <include name="lib/avalon-framework*.jar"/>
-    <include name="lib/jimi*"/>
   </fileset>
 
   <fileset dir="${basedir}" id="dist.src">
@@ -144,35 +143,35 @@ list of possible build targets.
 
     <property name="textfontencoding" value="WinAnsiEncoding"/>
 
-    <property name="src.dir" value="./src"/>
+    <property name="src.dir" value="${basedir}/src"/>
     <property name="src.java" value="${src.dir}/java"/>
     <property name="src.codegen" value="${src.dir}/codegen"/>
-    <property name="docs.dir" value="./docs"/>
+    <property name="docs.dir" value="${basedir}/docs"/>
     <property name="xdocs.dir" value="${src.dir}/documentation/content/xdocs"/>
-    <property name="fo.examples.dir" value="./examples/fo/basic"/>
-    <property name="lib.dir" value="./lib"/>
+    <property name="fo.examples.dir" value="${basedir}/examples/fo/basic"/>
+    <property name="lib.dir" value="${basedir}/lib"/>
     <property name="hyph.dir" value="${src.dir}/hyph"/>
-    <property name="conf.dir" value="./conf"/>
+    <property name="conf.dir" value="${basedir}/conf"/>
     <property name="packages" value="org.apache.fop.*"/>
 
     <property name="viewer.resources.src.dir" value="${src.java}/org/apache/fop/viewer/resources"/>
     <property name="viewer.images.src.dir" value="${src.java}/org/apache/fop/viewer/images"/>
 
-    <property name="build.dir" value="./build"/>
-    <property name="build.src" value="./build/src"/>
-    <property name="build.gensrc" value="./build/gensrc"/>
-    <property name="build.docsrc" value="./build/docsrc"/>
-    <property name="build.codegen" value="./build/src/codegen"/>
-    <property name="build.dest" value="./build/classes"/>
-    <property name="build.docs" value="./build/docs"/>
-    <property name="build.javadocs" value="./build/javadocs"/>
+    <property name="build.dir" value="${basedir}/build"/>
+    <property name="build.src" value="${build.dir}/src"/>
+    <property name="build.gensrc" value="${build.dir}/gensrc"/>
+    <property name="build.docsrc" value="${build.dir}/docsrc"/>
+    <property name="build.codegen" value="${build.src}/codegen"/>
+    <property name="build.dest" value="${build.dir}/classes"/>
+    <property name="build.docs" value="${build.dir}/docs"/>
+    <property name="build.javadocs" value="${build.dir}/javadocs"/>
     <property name="build.examples.dir" value="${build.dir}/examples"/>
 
     <property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/viewer/resources"/>
     <property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/viewer/Images"/>
 
-    <property name="dist.bin.dir" value="./dist-bin"/>
-    <property name="dist.src.dir" value="./dist-src"/>
+    <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
+    <property name="dist.src.dir" value="${basedir}/dist-src"/>
     <property name="dist.bin.result.dir" value="${dist.bin.dir}/${Name}-${version}"/>
     <property name="dist.src.result.dir" value="${dist.src.dir}/${Name}-${version}"/>
 
