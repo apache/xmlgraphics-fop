@@ -56,17 +56,20 @@ Software Foundation, please see <http://www.apache.org/>.
 
 <xsl:template match="allprops">
 <xsl:variable name="constlist">
-    <xsl:for-each select="document(propfile)//enumeration/value">
+  <xsl:for-each select="document(propfile)//enumeration/value">
     <xsl:sort select="@const"/>
-    <xsl:value-of select="@const"/>:</xsl:for-each>
+  <xsl:value-of select="@const"/>:</xsl:for-each>
 </xsl:variable>
+<xsl:text>
 package org.apache.fop.fo.properties;
 
-public interface Constants {
-  <xsl:call-template name="sortconsts">
-     <xsl:with-param name="consts" select="$constlist"/>
-  </xsl:call-template>
+public interface Constants {</xsl:text>
+<xsl:call-template name="sortconsts">
+  <xsl:with-param name="consts" select="$constlist"/>
+</xsl:call-template>
+<xsl:text>
 }
+</xsl:text>
 </xsl:template>
 
 <xsl:template name="sortconsts">
@@ -75,21 +78,26 @@ public interface Constants {
 <xsl:param name="num" select="1"/>
 <xsl:variable name="cval" select="substring-before($consts,':')"/>
 <xsl:choose>
- <xsl:when test="$consts = ''"/>
- <xsl:when test="$cval = $prevconst">
-  <xsl:call-template name="sortconsts">
-     <xsl:with-param name="consts" select="substring-after($consts,concat($cval, ':'))"/>
-     <xsl:with-param name="num" select="$num"/>
-     <xsl:with-param name="prevconst" select="$cval"/>
-  </xsl:call-template>
- </xsl:when>
- <xsl:otherwise>
-        public final static int <xsl:value-of select="$cval"/> = <xsl:value-of select="$num"/>;
-  <xsl:call-template name="sortconsts">
-     <xsl:with-param name="consts" select="substring-after($consts,concat($cval, ':'))"/>
-     <xsl:with-param name="num" select="$num + 1"/>
-     <xsl:with-param name="prevconst" select="$cval"/>
-  </xsl:call-template>
+  <xsl:when test="$consts = ''"/>
+  <xsl:when test="$cval = $prevconst">
+    <xsl:call-template name="sortconsts">
+      <xsl:with-param name="consts" select="substring-after($consts,concat($cval, ':'))"/>
+      <xsl:with-param name="num" select="$num"/>
+      <xsl:with-param name="prevconst" select="$cval"/>
+    </xsl:call-template>
+  </xsl:when>
+  <xsl:otherwise>
+    <xsl:text>
+      int </xsl:text>
+    <xsl:value-of select="$cval"/>
+    <xsl:text> = </xsl:text>
+    <xsl:value-of select="$num"/>
+    <xsl:text>;</xsl:text>
+    <xsl:call-template name="sortconsts">
+      <xsl:with-param name="consts" select="substring-after($consts,concat($cval, ':'))"/>
+      <xsl:with-param name="num" select="$num + 1"/>
+      <xsl:with-param name="prevconst" select="$cval"/>
+    </xsl:call-template>
   </xsl:otherwise>
 </xsl:choose>
 </xsl:template>
