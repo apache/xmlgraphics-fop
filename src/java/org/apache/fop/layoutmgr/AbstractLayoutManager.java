@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
@@ -116,10 +115,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
 
     public LayoutManager getParent() {
         return this.parentLM;
-    }
-
-    public AreaTreeHandler getAreaTreeHandler() {
-        return getParent().getAreaTreeHandler();
     }
 
     //     /**
@@ -415,7 +410,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         if (fobjIter == null) {
             return null;
         }
-        AreaTreeHandler areaTreeHandler = getAreaTreeHandler();
         List newLMs = new ArrayList(size);
         while (fobjIter.hasNext() && newLMs.size() < size ) {
             Object theobj = fobjIter.next();
