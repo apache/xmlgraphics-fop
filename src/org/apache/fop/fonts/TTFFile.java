@@ -298,12 +298,12 @@ public class TTFFile {
                             }
 
                             
-                              log.debug("IIdx: "+
-                              mtxPtr +
-                              " Delta: " + cmap_deltas[i]+
-                              " Unicode: " + j +
-                              " name: " +
-                              mtx_tab[(j+cmap_deltas[i]) & 0xffff].name);
+                              //log.debug("IIdx: "+
+                              //mtxPtr +
+                              //" Delta: " + cmap_deltas[i]+
+                              //" Unicode: " + j +
+                              //" name: " +
+                              //mtx_tab[(j+cmap_deltas[i]) & 0xffff].name);
                             
                         }
                         if (glyphIdx < mtx_tab.length) {
