@@ -17,7 +17,7 @@
             </li>
             <li>An XSLT processor 
             </li>
-            <li>The SVG library w3c.jar corresponding to the SVG Candidate Recommendation (02 November 2000).
+            <li>The SVG library batik.jar is the library from the batik project at xml.apache.org.
             </li>
             <li>The imaging library Jimi from Sun
             </li>

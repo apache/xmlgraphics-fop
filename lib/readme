@@ -4,7 +4,7 @@ for compiling, running or testing Fop.
 ant.jar         Ant is the scripting tool which is used to build Fop or to run 
                 the test scripts. see build.xml in root for more information
 
-w3c.jar         the svg library from the w3 consortium
+batik.jar       the svg library from Batik at xml.apache.org
 
 
 buildtools.jar  Ant tasks required for building FOP. Rebuild with 

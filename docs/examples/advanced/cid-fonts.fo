@@ -283,7 +283,7 @@
      <fo:block font-family="Courier" font-size="10pt" 
       space-before.optimum="6pt"
       white-space-collapse="false" margin-left="6pt" text-align="start">
-C:\Fop-0.18.1> set CLASSPATH=fop.jar;lib\xerces-1.2.3.jar;lib\xalan-2.0.0.jar;lib\w3c.jar
+C:\Fop-0.18.1> set CLASSPATH=fop.jar;lib\xerces-1.2.3.jar;lib\xalan-2.0.0.jar;lib\batik.jar
      </fo:block>
 
 
