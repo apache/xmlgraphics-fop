@@ -4,40 +4,49 @@
 
 <document>
   <header>
-    <title>Bugs</title>
+    <title>Bugs and Other Trackable Issues</title>
   </header>
   <body>
-    <section>
-      <title>Bugs Already Reported</title>
+    <p>
+      Information on this page applies to enhancement requests and other trackable
+issues as well as bugs.
+    </p>
+    <section id="issues_existing">
+      <title>Reported Issues</title>
       <p>A list of unresolved reported bugs can be found at
 <link href="http://nagoya.apache.org/bugzilla/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Fop&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;order=bugs.component">FOP
-Open Bugs (Bugzilla)</link>.</p>
+Open Bugs (Bugzilla)</link>. If you have an interest in an issue already
+reported, please consider the following:
+      </p>
+      <ul>
+        <li>If you have insight that may help developers solve an existing problem,
+please add comments and/or file attachments to the existing issue.</li>
+        <li>If you would like to track the status of the issue, consider adding
+your email address to the list of "CC" recipients, so that you will receive
+an email as changes are made to the issue.</li>
+      </ul>
     </section>
-    <section>
-      <title>Reporting New Bugs</title>
+    <section id="issues_new">
+      <title>Unreported Issues (Reporting New Issues)</title>
       <p>User reports of bugs and requests for enhancements are extremely
 important parts of FOP development, and we appreciate the time you take to help
 us track these issues down.
 To help us ensure that the bug database is as useful as it should be, please
-use the following checklist if you are considering reporting a new bug:</p>
+use the following checklist if you are considering reporting a new issue:</p>
         <ul>
           <li>Is your issue really a request to comply with some aspect of the
 XSL-FO standard?
 If so, please do not enter a bug report.
 The developers already carefully track which standard requirements have been
 implemented.
-Other enhancement requests are welcome (although they are not technically
-"bugs", they are entered and tracked in the same system -- just be sure to mark
-the issue as an enhancement).</li>
+Other enhancement requests are welcome, but please be sure to mark
+the issue as an enhancement.</li>
           <li>Is your issue addressed by an <link
 href="http://xml.apache.org/fop/faq.html">FAQ</link>? If so, please do not
 enter a bug report unless the FAQ did not adequately address your issue.</li>
-          <li>Has this bug already been reported?
-See section above for a list of bugs that have already been reported.
-If the bug has already been reported, please do not open a new bug report.
-Reporting the same bug twice will only slow the development team down.
-However, if you have insight that may help developers track an existing problem,
-please add comments and/or file attachments to the existing bug.</li>
+          <li>Has this issue already been reported? If so, please do not
+report it again, as this will only slow the development team down.
+See section above for a list of issues that have already been reported.</li>
           <li>Do you know how to write a good bug report?
 Please review the
 <link href="http://nagoya.apache.org/bugzilla/bugwritinghelp.html">Apache Bug
