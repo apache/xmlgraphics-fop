@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-cocoon2/src/documentation/xdocs/dtd/book-cocoon-v10.dtd">
+
+<book software="FOP"
+    title="ALT Design"
+    copyright="@year@ The Apache Software Foundation"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <menu label="Index">
+      <menu-item label="FOP Home" href="../../index.html"/>
+      <menu-item label="Design" href="../index.html"/>
+    </menu>
+    <menu label="About">
+      <menu-item label="Alt Design" href="index.html"/>
+      <menu-item label="co-routines" href="coroutines.html"/>
+      <menu-item label="galleys" href="galleys.html"/>
+      <menu-item label="footnotes" href="footnotes.html"/>
+      <menu-item label="keeps" href="keeps.html"/>
+      <menu-item label="space-specifiers" href="spaces.html"/>
+      <menu-item label="alt.properties" href="alt.properties.html"/>
+      <menu-item label="Classes overview" href="classes-overview.html"/>
+      <menu-item label="Properties classes" href="properties-classes.html"/>
+      <menu-item label="Properties" href="Properties.png.html"/>
+      <menu-item label="PropertyConsts" href="PropertyConsts.png.html"/>
+      <menu-item label="PropNames" href="PropNames.png.html"/>
+      <menu-item label="AbsolutePosition" href="AbsolutePosition.png.html"/>
+      <menu-item label="VerticalAlign" href="VerticalAlign.png.html"/>
+      <menu-item label="BorderCommonStyle" href="BorderCommonStyle.png.html"/>
+      <menu-item label="XML parsing" href="xml-parsing.html"/>
+      <menu-item label="Property parsing" href="propertyExpressions.html"/>
+      <menu-item label="Compound properties" href="compound-properties.html"/>
+      <menu-item label="Traits" href="traits.html"/>
+      <menu-item label="User agent refs" href="user-agent-refs.html"/>
+    </menu>
+</book>
+

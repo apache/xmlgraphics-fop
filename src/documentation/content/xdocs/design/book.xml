@@ -12,6 +12,7 @@
     </menu>
     <menu label="About">
       <menu-item label="Index" href="index.html"/>
+      <menu-item label="Understanding" href="understanding/index.html"/>
     </menu>
     <menu label="Overview">
       <menu-item label="Architecture" href="architecture.html"/>
@@ -32,6 +33,9 @@
     </menu>
     <menu label="Status">
       <menu-item label="Status" href="status.html"/>
+    </menu>
+    <menu label="Alternate">
+      <menu-item label="ALT DESIGN" href="alt.design/index.html"/>
     </menu>
 </book>
 

@@ -1,0 +1,20 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>..fo.Properties diagram</title>
+    <authors> 
+      <person id="pbw" name="Peter B. West"
+        email="pbwest@powerup.com.au"/>
+    </authors>
+    </header>
+    <body>
+    <section>
+      <title>Properties.class</title>
+      <figure src="Properties.png" alt="Properties.class diagram"/>
+    </section>
+    </body>
+</document>
+
