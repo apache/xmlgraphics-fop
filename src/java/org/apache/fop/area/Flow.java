@@ -25,5 +25,12 @@ package org.apache.fop.area;
 public class Flow extends BlockParent {
     // the list of blocks created from the flow
     private int stacking = TB;
+
+    /**
+     * Constructor.
+     */
+    public Flow() {
+        addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+    }
 }
 

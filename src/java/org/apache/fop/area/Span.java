@@ -37,15 +37,28 @@ public class Span extends Area {
      */
     public Span(int cols) {
         flowAreas = new java.util.ArrayList(cols);
+        addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
     }
 
     /**
-     * Add the flow area to this span area.
+     * Add a flow area to this span area.
      *
      * @param flow the flow area to add
      */
     public void addFlow(Flow flow) {
         flowAreas.add(flow);
+    }
+
+    /**
+     * Create a new flow and add it to this span area
+     *
+     * @return the newly made Flow object
+     */
+    public Flow addNewFlow() {
+        Flow newFlow = new Flow();
+        newFlow.setIPD(getIPD());
+        flowAreas.add(newFlow);
+        return newFlow;
     }
 
     /**

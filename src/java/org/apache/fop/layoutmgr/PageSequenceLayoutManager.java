@@ -80,9 +80,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private String pageNumberString;
     private boolean isFirstPage = true;
 
-    /** True if haven't yet laid out any pages.*/
-    private boolean bFirstPage;
-
     /** Current page being worked on. */
     private PageViewport curPage;
 
@@ -602,7 +599,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 // Make a new span and the first flow
                 createSpan(numCols);
             } else if (curFlow == null) {
-                createFlow();
+                curFlow = curSpan.addNewFlow();
             }
             return curFlow;
         } else {
@@ -642,7 +639,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             if (curSpan != null
                     && curSpan.getColumnCount() != curSpanColumns) {
                 // Move to next column
-                createFlow();
+                curFlow = curSpan.addNewFlow();
                 return;
             }
             // else need new page
@@ -707,16 +704,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         curBody.setMainReference(new MainReference());
     }
 
-    private Flow createFlow() {
-        curFlow = new Flow();
-        curFlow.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
-        curFlow.setIPD(curSpan.getIPD()); // adjust for columns
-        //curFlow.setBPD(100000);
-        // Set IPD and max BPD on the curFlow from curBody
-        curSpan.addFlow(curFlow);
-        return curFlow;
-    }
-
     private void createSpan(int numCols) {
         // check number of columns (= all in Body or 1)
         // If already have a span, get its size and position (as MinMaxOpt)
@@ -730,7 +717,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         //}
         //else newpos = new MinOptMax();
         curSpan = new Span(numCols);
-        curSpan.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
         curSpanColumns = numCols;
         // get Width or Height as IPD for span
 
@@ -741,7 +727,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         curSpan.setIPD(ipdWidth);
         //curSpan.setPosition(BPD, newpos);
         curBody.getMainReference().addSpan(curSpan);
-        createFlow();
+        curFlow = curSpan.addNewFlow();
     }
 
     private PageViewport createPageAreas(SimplePageMaster spm) {
@@ -803,7 +789,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         // Get the region viewport rectangle in absolute coords by
         // transforming it using the page CTM
         RegionViewport rv = new RegionViewport(absRegionRect);
-        rv.addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
         rv.setBPD((int)relRegionRect.getHeight());
         rv.setIPD((int)relRegionRect.getWidth());
         setRegionViewportTraits(r, rv);
@@ -826,7 +811,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             Rectangle2D absRegVPRect) {
         // Should set some column stuff here I think, or put it elsewhere
         BodyRegion body = new BodyRegion();
-        body.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
         setRegionPosition(r, body, absRegVPRect);
         int columnCount = r.getColumnCount();
         if ((columnCount > 1) && (r.getOverflow() == EN_SCROLL)) {
@@ -853,7 +837,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private RegionReference makeRegionReferenceArea(Region r,
             Rectangle2D absRegVPRect) {
         RegionReference rr = new RegionReference(r.getNameId());
-        rr.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
         setRegionPosition(r, rr, absRegVPRect);
         return rr;
     }
