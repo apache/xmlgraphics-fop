@@ -125,6 +125,9 @@ public class LinearGradient extends SVGObj {
         linear.setTransform(
           ((SVGTransform) this.properties.get("transform")).
           getTransform());
+        linear.setGradientTransform(
+          ((SVGTransform) this.properties.get("gradientTransform")).
+          getTransform());
         linear.setId(this.properties.get("id").getString());
         String rf = this.properties.get("xlink:href").getString();
         linear.setHref(new SVGAnimatedStringImpl(rf));
@@ -162,15 +165,11 @@ public class LinearGradient extends SVGObj {
                 break;
         }
         switch ((this.properties.get("gradientUnits")).getEnum()) {
-            case GradientUnits.USER_SPACE:
-                linear.setGradientUnits( new SVGAnimatedEnumerationImpl(
-                                           SVGUnitTypes.SVG_UNIT_TYPE_USERSPACE));
-                break;
-            case GradientUnits.USER_SPACE_ON_USE:
+            case GenericUnits.Enums.USER_SPACE_ON_USE:
                 linear.setGradientUnits( new SVGAnimatedEnumerationImpl(
                                            SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE));
                 break;
-            case GradientUnits.OBJECT_BOUNDING_BOX:
+            case GenericUnits.Enums.OBJECT_BOUNDING_BOX:
                 linear.setGradientUnits( new SVGAnimatedEnumerationImpl(
                                            SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX));
                 break;

@@ -162,9 +162,9 @@ public class SVGRenderer {
      */
     protected void handleSwitchElement(int posx, int posy,
                                        SVGSwitchElement ael) {
-        SVGList relist = ael.getRequiredExtensions();
-        SVGList rflist = ael.getRequiredFeatures();
-        SVGList sllist = ael.getSystemLanguage();
+        SVGStringList relist = ael.getRequiredExtensions();
+        SVGStringList rflist = ael.getRequiredFeatures();
+        SVGStringList sllist = ael.getSystemLanguage();
         NodeList nl = ael.getChildNodes();
         choices:
         for (int count = 0; count < nl.getLength(); count++) {
@@ -173,7 +173,7 @@ public class SVGRenderer {
             // test data
             if (n instanceof GraphicElement) {
                 GraphicElement graphic = (GraphicElement) n;
-                SVGList grelist = graphic.getRequiredExtensions();
+                SVGStringList grelist = graphic.getRequiredExtensions();
                 // if null it evaluates to true
                 if (grelist != null) {
                     if (grelist.getNumberOfItems() == 0) {
@@ -194,7 +194,7 @@ public class SVGRenderer {
                         }
                     }
                 }
-                SVGList grflist = graphic.getRequiredFeatures();
+                SVGStringList grflist = graphic.getRequiredFeatures();
                 if (grflist != null) {
                     if (grflist.getNumberOfItems() == 0) {
                         if ((rflist != null) &&
@@ -224,7 +224,7 @@ public class SVGRenderer {
                         }
                     }
                 }
-                SVGList gsllist = graphic.getSystemLanguage();
+                SVGStringList gsllist = graphic.getSystemLanguage();
                 if (gsllist != null) {
                     if (gsllist.getNumberOfItems() == 0) {
                         if ((sllist != null) &&
@@ -730,6 +730,13 @@ public class SVGRenderer {
         doDrawing(di);
     }
 
+    /**
+     * Calculate the last control point for a bezier curve.
+     * This is used to find the last control point for a curve where
+     * only the first control point is specified.
+     * The control point is a reflection of the first control point
+     * which results in an even smooth curve. The curve is symmetrical.
+     */
     protected float[] calculateLastControl(float x1, float y1, float x2, float y2, float relx, float rely)
     {
         float vals[] = new float[2];
@@ -1062,6 +1069,11 @@ public class SVGRenderer {
               SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 0);
             ay2 = new SVGAnimatedLengthImpl(length);
         }
+        SVGAnimatedTransformList an = linear.getGradientTransform();
+        SVGMatrix transform = null;
+        if(an != null)
+            transform = an.getBaseVal().consolidate().getMatrix();
+        System.out.println("gt: " + transform);
         Vector theCoords = null;
         if (gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_UNKNOWN)
             gradUnits = linear.getGradientUnits().getBaseVal();
@@ -2417,20 +2429,20 @@ public class SVGRenderer {
                         xpos = currentX;
                         ypos = currentY;
                         if (ylist.getNumberOfItems() > charPos) {
-                            ypos = baseY + ((Float) ylist.getItem(charPos)).
-                                   floatValue();
+                            ypos = baseY + (ylist.getItem(charPos)).
+                                   getValue();
                         }
                         if (dylist.getNumberOfItems() > charPos) {
-                            ypos = ypos + ((Float) dylist.getItem(charPos)).
-                                   floatValue();
+                            ypos = ypos + (dylist.getItem(charPos)).
+                                   getValue();
                         }
                         if (xlist.getNumberOfItems() > charPos) {
-                            xpos = baseX + ((Float) xlist.getItem(charPos)).
-                                   floatValue();
+                            xpos = baseX + (xlist.getItem(charPos)).
+                                   getValue();
                         }
                         if (dxlist.getNumberOfItems() > charPos) {
-                            xpos = xpos + ((Float) dxlist.getItem(charPos)).
-                                   floatValue();
+                            xpos = xpos + (dxlist.getItem(charPos)).
+                                   getValue();
                         }
                         if (ch > 127) {
                             pdf = pdf.append(transstr +

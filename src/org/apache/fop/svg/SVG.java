@@ -119,7 +119,7 @@ public class SVG extends FObj implements GraphicsCreator {
         SVGLength h = ((SVGLengthProperty) this.properties.get("height")).
                       getSVGLength();
         svgArea = new SVGSVGElementImpl();
-        SVGAnimatedLength sal;
+        SVGAnimatedLengthImpl sal;
         if (w == null)
             w = new SVGLengthImpl();
         sal = new SVGAnimatedLengthImpl(w);
