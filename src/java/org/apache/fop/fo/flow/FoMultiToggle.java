@@ -126,7 +126,7 @@ public class FoMultiToggle extends FOPageSeqNode {
                     }
                 } catch(UnexpectedStartElementException e) {
                     ev = xmlevents.getStartElement();
-                    logger.warning
+                    log.warning
                     ("Ignoring unexpected Start Element: "
                             + ev.getQName());
                     ev = xmlevents.getEndElement(
