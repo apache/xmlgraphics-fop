@@ -311,10 +311,40 @@ public class PropertyManager implements Constants {
                         getSpace().getOptimum().getLength().getValue();
         props.spaceAfter = this.propertyList.get(PR_SPACE_AFTER).
                         getSpace().getOptimum().getLength().getValue();
-        props.startIndent = this.propertyList.get(PR_START_INDENT).
-                        getLength().getValue();
-        props.endIndent = this.propertyList.get(PR_END_INDENT).
-                        getLength().getValue();
+
+
+        // For now we do the section 5.3.2 calculation here.
+        // This is a hack that doesn't deal correctly with:
+        // - Reference vs. non-reference areas.
+        // - writing mode, it mixes start and left.
+        // - inherited values of margins and indents.
+        // When the indents properties calculate this values correctly,
+        // the block below can be removed and replaced with simple
+        // props.startIndent = this.propertyList.get(PR_START_INDENT)
+        // props.endIndent = this.propertyList.get(PR_END_INDENT)
+        CommonBorderAndPadding bpProps = getBorderAndPadding();
+
+        int startIndent = 0;
+        if (props.marginLeft != 0) {
+            startIndent = props.marginLeft; 
+        } else {
+            startIndent = this.propertyList.get(PR_START_INDENT).
+                                getLength().getValue(); 
+        }
+        props.startIndent = startIndent +
+                            bpProps.getBorderStartWidth(false) +
+                            bpProps.getPaddingStart(false);  
+
+        int endIndent = 0;
+        if (props.marginRight != 0) {
+            endIndent = props.marginRight; 
+        } else {
+            endIndent = this.propertyList.get(PR_END_INDENT).
+                                getLength().getValue(); 
+        }
+        props.endIndent = endIndent +
+                          bpProps.getBorderEndWidth(false) +
+                          bpProps.getPaddingEnd(false);
 
         return props;
     }
