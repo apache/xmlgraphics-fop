@@ -337,6 +337,8 @@ public class TableRow extends FObj {
     }
 
     public Status layout(Area area) throws FOPException {
+        boolean configID = false;
+
         if (this.marker == BREAK_AFTER) {
             return new Status(Status.OK);
         }
@@ -350,6 +352,7 @@ public class TableRow extends FObj {
             }
 
             area.getIDReferences().createID(id);
+            configID = true;
 
             this.marker = 0;
         }
@@ -360,7 +363,7 @@ public class TableRow extends FObj {
             area.increaseHeight(spaceBefore);
         }
 
-        if (marker == 0) {
+        if (marker == 0 && configID) {
             // configure id
             area.getIDReferences().configureID(id, area);
         }
@@ -536,7 +539,6 @@ public class TableRow extends FObj {
             area.start();
         }
 
-
         // test to see if some cells are not
         // completely laid out.
         // Hani Elabed 11/22/2000
@@ -548,9 +550,6 @@ public class TableRow extends FObj {
                 break; // out of for loop
             }
         }
-
-
-
 
         // replaced by Hani Elabed 11/27/2000
         //return new Status(Status.OK);
@@ -580,7 +579,7 @@ public class TableRow extends FObj {
         //    	        area.increaseHeight(areaContainer.getHeight());
         area.removeChild(areaContainer);
         this.resetMarker();
+        cells = null;
         this.removeID(area.getIDReferences());
-        marker = 0;
     }
 }

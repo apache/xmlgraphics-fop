@@ -289,7 +289,9 @@ public class IDReferences {
     public void setInternalGoToPageReference(String id, String pageReference)
     {
         IDNode node=(IDNode)idReferences.get(id);
-        node.setInternalLinkGoToPageReference(pageReference);
+        if (node != null) {
+            node.setInternalLinkGoToPageReference(pageReference);
+        }
     }
 
 
