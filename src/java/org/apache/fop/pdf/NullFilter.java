@@ -1,5 +1,5 @@
 /*
- * $Id: DCTFilter.java,v 1.6 2003/03/07 08:25:47 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -50,30 +50,46 @@
  */ 
 package org.apache.fop.pdf;
 
+import org.apache.fop.util.StreamUtilities;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
- * DCT Filter class. Right now it is just used as a dummy filter flag so
- * we can write JPG images to the PDF. The encode method just returns the
- * data passed to it. In the future an actual JPEG compression should be
- * added to the encode method so other images can be compressed.
- *
- * @author Eric Dalquist
+ * Null Filter class. The content is just passed through. The class is used to
+ * override the default Flate filter for debugging purposes.
  */
-public class DCTFilter extends NullFilter {
+public class NullFilter extends PDFFilter {
 
     /**
-     * Get filter name.
-     * @return the pdf name for the DCT filter
+     * @see org.apache.fop.pdf.PDFFilter#getName()
      */
     public String getName() {
-        return "/DCTDecode";
+        return "";
     }
 
     /**
-     * Get the decode params for this filter.
-     * @return the DCT filter has no decode params
+     * @see org.apache.fop.pdf.PDFFilter#getDecodeParms()
      */
     public String getDecodeParms() {
         return null;
+    }
+
+    /**
+     * @see org.apache.fop.pdf.PDFFilter#encode(InputStream, OutputStream, int)
+     */
+    public void encode(InputStream in, OutputStream out, int length) throws IOException {
+        StreamUtilities.streamCopy(in, out, length);
+        out.close();
+    }
+
+    /**
+     * @see org.apache.fop.pdf.PDFFilter#applyFilter(OutputStream)
+     */
+    public OutputStream applyFilter(OutputStream out) throws IOException {
+        return out;
+        //No active filtering, NullFilter does nothing
     }
 
 }

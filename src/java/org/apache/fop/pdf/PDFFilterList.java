@@ -132,6 +132,8 @@ public class PDFFilterList {
         }
         if (filterType.equals("flate")) {
             addFilter(new FlateFilter());
+        } else if (filterType.equals("null")) {
+            addFilter(new NullFilter());
         } else if (filterType.equals("ascii-85")) {
             if (this.ignoreASCIIFilters) {
                 return; //ignore ASCII filter
@@ -179,7 +181,7 @@ public class PDFFilterList {
         }
         if (filterset == null || filterset.size() == 0) {
             // built-in default to flate
-            //addFilter(new FlateFilter());
+            addFilter(new FlateFilter());
         } else {
             for (int i = 0; i < filterset.size(); i++) {
                 String v = (String)filterset.get(i);
