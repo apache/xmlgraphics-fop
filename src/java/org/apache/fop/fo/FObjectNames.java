@@ -236,7 +236,7 @@ public class FObjectNames {
      * Get the FObject index corresponding to the FObject name.
      * @param foName - the FO name.
      * @return the <tt>int</tt> index.
-     * @throws <tt>FOPException</tt>.
+     * @throws FOPException
      */
     public static int getFOIndex(String foName)
                 throws FOPException

@@ -820,7 +820,7 @@ public class PropNames {
 
     /**
      * Get the property index of a property name.
-     * @param propindex <tt>int</tt> index of the FO property.
+     * @param name  of the FO property.
      * @return <tt>String</tt> name of the indexd FO property.
      * @exception PropertyException if the property index is invalid.
      */
