@@ -212,6 +212,10 @@ public class Property {
      * for debugging.
      */
     public String toString() {
-        return getString();
+        Object obj = getObject();
+        if (obj != this) {
+            return obj.toString();
+        }
+        return null;
     }
 }
