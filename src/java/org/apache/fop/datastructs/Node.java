@@ -66,19 +66,12 @@ public class Node implements Cloneable {
     /** Creation size of the <i>children</i> <tt>ArrayList</tt>. */
     private static final int FAMILYSIZE = 4;
     
-    /** Constant <code>boolean</code> for synchronization argument.  */
-    public static final boolean SYNCHRONIZE = true;
-    /** Constant <code>boolean</code> for synchronization argument.  */
-    public static final boolean DONT_SYNCHRONIZE = ! SYNCHRONIZE;
-
-    public final boolean synchronize;
-    
     /**
      * This immutable empty array is provided as a convenient class-level
      * synchronization object for circumstances where such synchronization
      * is required.
      */
-    public static final boolean[] sync = new boolean[0];
+    public static final boolean[] syncArray = new boolean[0];
 
     /**
      * No argument constructor.
@@ -86,16 +79,6 @@ public class Node implements Cloneable {
      */
 
     public Node() {
-        synchronize = false;
-        parent = null;
-    }
-
-    /**
-     * Constructor with specific synchronization flag.
-     * @param synchronize flag for synchronization
-     */
-    public Node(boolean synchronize) {
-        this.synchronize = synchronize;
         parent = null;
     }
     
@@ -105,16 +88,14 @@ public class Node implements Cloneable {
      * @param parent of this Node
      * @param index of child in parent.  If the parent reference
      * is <code>null</code>, an IndexOutOfBoundsException is thrown.
-     * @param synchronize if true, synchronizes on the parent.
      */
 
-    public Node(Node parent, int index, boolean synchronize)
+    public Node(Node parent, int index)
     throws IndexOutOfBoundsException {
         if (parent == null) {
             throw new IndexOutOfBoundsException("Null parent");
         }
         else {
-            this.synchronize = synchronize;
             this.parent = parent;
             parent.addChild(index, this);
         }
@@ -125,12 +106,10 @@ public class Node implements Cloneable {
      * @param parent of this Node.  if this is
      *               null, the generated Node is assumed to be the root
      *               node. 
-     * @param synchronize if true, synchronizes on the parent.
      */
 
-    public Node(Node parent, boolean synchronize)
+    public Node(Node parent)
         throws IndexOutOfBoundsException {
-        this.synchronize = synchronize;
         this.parent = parent;
         if (parent != null) {
             parent.addChild(this);
@@ -145,17 +124,9 @@ public class Node implements Cloneable {
      */
 
     public void addChild(Node child) {
-        if (synchronize) {
-            synchronized (this) {
-                if (children == null)
-                    children = new ArrayList(FAMILYSIZE);
-                children.add(child);
-            }
-        } else {
-            if (children == null)
-                children = new ArrayList(FAMILYSIZE);
-            children.add(child);
-        }
+        if (children == null)
+            children = new ArrayList(FAMILYSIZE);
+        children.add(child);
     }
     
     /**
@@ -167,17 +138,9 @@ public class Node implements Cloneable {
      */
     public void addChild(int index, Node child)
     throws IndexOutOfBoundsException {
-        if (synchronize) {
-            synchronized (this) {
-                if (children == null)
-                    children = new ArrayList(FAMILYSIZE);
-                children.add(index, child);
-            }
-        } else {
-            if (children == null)
-                children = new ArrayList(FAMILYSIZE);
-            children.add(index, child);
-        }
+        if (children == null)
+            children = new ArrayList(FAMILYSIZE);
+        children.add(index, child);
     }
 
     /**
@@ -312,15 +275,7 @@ public class Node implements Cloneable {
      */
 
     public Node removeChildAtIndex(int index) {
-        if (synchronize) {
-            synchronized (sync) {
-                Node tmpNode = (Node) children.remove(index);
-                return tmpNode;
-            }
-        }
-        Node tmpNode = (Node) children.remove(index);
-        return tmpNode;
-        
+        return (Node) children.remove(index);
     }
 
     /**
@@ -335,22 +290,11 @@ public class Node implements Cloneable {
 
     public Node removeChild(Node child)
     throws NoSuchElementException {
-        if (synchronize) {
-            synchronized (this) {
-                int index = children.indexOf(child);
-                if (index == -1) {
-                    throw new NoSuchElementException();
-                }
-                Node tmpNode = removeChildAtIndex(index);
-                return tmpNode;
-            }
-        }
         int index = children.indexOf(child);
         if (index == -1) {
             throw new NoSuchElementException();
         }
-        Node tmpNode = removeChildAtIndex(index);
-        return tmpNode;
+        return removeChildAtIndex(index);
     }
 
     /**
@@ -363,16 +307,6 @@ public class Node implements Cloneable {
      * subtree will keep the whole subtree from being GCed.
      */
     public Node deleteSubTree() {
-        if (synchronize) {
-            synchronized (this) {
-                if (parent != null) {
-                    // Not the root node - remove from parent
-                    parent.removeChild(this);
-                    unsetParent();
-                } // end of else
-                return this;
-            }
-        }
         if (parent != null) {
             // Not the root node - remove from parent
             parent.removeChild(this);
@@ -389,18 +323,6 @@ public class Node implements Cloneable {
      * @return the number of deleted nodes
      */
     public int deleteCountSubTree() {
-        if (synchronize) {
-            synchronized (this) {
-                int count = deleteCount(this);
-                // nullify the parent reference
-                if (parent != null) {
-                    // Not the root node - remove from parent
-                    parent.removeChild(this);
-                    unsetParent();
-                }
-                return count;
-            }
-        }
         int count = deleteCount(this);
         // nullify the parent reference
         if (parent != null) {
@@ -434,11 +356,6 @@ public class Node implements Cloneable {
      * @return the parent <tt>Node</tt>.
      */
     public Node getParent() {
-        if (synchronize) {
-            synchronized (this) {
-                return parent;
-            }
-        }
         return parent;
     }
 
@@ -447,24 +364,13 @@ public class Node implements Cloneable {
      * @param parent the reference to set
      */
     public void setParent(Node parent) {
-        if (synchronize) {
-            synchronized (this) {
-                this.parent = parent;
-            }
-        } else {
-            this.parent = parent;
-        }
+        this.parent = parent;
     }
 
     /**
      * Nullifies the parent <tt>Node</tt> of this node.
      */
     public void unsetParent() {
-        if (synchronize) {
-            synchronized (this) {
-                parent = null;
-            }
-        }
         parent = null;
     }
 
@@ -474,12 +380,6 @@ public class Node implements Cloneable {
      * @return the <tt>Node</tt> reference to the n'th child.
      */
     public Node getChild(int n) {
-        if (synchronize) {
-            synchronized (this) {
-                if (children == null) return null;
-                return (Node) children.get(n);
-            }
-        }
         if (children == null) return null;
         return (Node) children.get(n);
     }
@@ -489,12 +389,6 @@ public class Node implements Cloneable {
      * @return the <tt>Iterator</tt>.
      */
     public Iterator nodeChildren() {
-        if (synchronize) {
-            synchronized (this) {
-                if (children == null) return null;
-                return children.iterator();
-            }
-        }
         if (children == null) return null;
         return children.iterator();
     }
@@ -504,12 +398,6 @@ public class Node implements Cloneable {
      * @return the <tt>int</tt> number of children.
      */
     public int numChildren() {
-        if (synchronize) {
-            synchronized (this) {
-                if (children == null) return 0;
-                return children.size();
-            }
-        }
         if (children == null) return 0;
         return children.size();
     }
@@ -520,14 +408,6 @@ public class Node implements Cloneable {
      * @return the sibling node
      */
     public Node getPrecedingSibling() {
-        if (synchronize) {
-            synchronized (this) {
-                if (this.parent == null) return null;
-                int thisChild = parent.children.indexOf(this);
-                if (thisChild == 0) return null;
-                return parent.getChild(--thisChild);
-            }
-        }
         if (this.parent == null) return null;
         int thisChild = parent.children.indexOf(this);
         if (thisChild == 0) return null;
@@ -540,14 +420,6 @@ public class Node implements Cloneable {
      * @return the sibling node
      */
     public Node getFollowingSibling() {
-        if (synchronize) {
-            synchronized (this) {
-                if (this.parent == null) return null;
-                int thisChild = parent.children.indexOf(this);
-                if (++thisChild >= parent.numChildren()) return null;
-                return parent.getChild(thisChild);
-            }
-        }
         if (this.parent == null) return null;
         int thisChild = parent.children.indexOf(this);
         if (++thisChild >= parent.numChildren()) return null;
@@ -558,21 +430,7 @@ public class Node implements Cloneable {
      * Gets the leaf <code>Node</code> immediately preceding this node in the
      * pre-order tree rooted on the <code>nominalRoot</code>, or, if the
      * nominal root is not encountered, the actual root.
-     * In a pre-order tree, all children follow their parent.
-     * @param nominalRoot the root node for the purposes of this operation
-     * @return the preceding leaf node or <code>null</code>
-     */
-    public Node precedingLeaf(Node nominalRoot) {
-        if (synchronize) {
-            synchronized (this) {
-                return getPrecedingLeaf(nominalRoot);
-            }
-        }
-        return getPrecedingLeaf(nominalRoot);
-    }
-    
-    /**
-     * Realizes <code>precedingLeaf()</code>.   Climbs the tree rooted at
+     * Climbs the tree rooted at
      * <code>nominalRoot</code> from <code>this</code>, searching for an
      * ancestor with a branch preceding this.
      * If none is found, there is no preceding leaf node.
@@ -581,7 +439,7 @@ public class Node implements Cloneable {
      * @param nominalRoot the root node for the purposes of this operation
      * @return the preceding leaf node or <code>null</code>
      */
-    private Node getPrecedingLeaf(Node nominalRoot) {
+    public Node precedingLeaf(Node nominalRoot) {
         if (this == nominalRoot || this.parent == null) {
             return null;
         }
@@ -609,21 +467,7 @@ public class Node implements Cloneable {
      * Gets the leaf <code>Node</code> immediately following this node in the
      * post-order tree rooted on the <code>nominalRoot</code>, or, if the
      * nominal root is not encountered, the actual root.
-     * In a post-order tree, all children precede their parent.
-     * @param nominalRoot the root node for the purposes of this operation
-     * @return the following leaf node or <code>null</code>
-     */
-    public Node followingLeaf(Node nominalRoot) {
-        if (synchronize) {
-            synchronized (this) {
-                return getFollowingLeaf(nominalRoot);
-            }
-        }
-        return getFollowingLeaf(nominalRoot);
-    }
-    
-    /**
-     * Realizes <code>followingLeaf()</code>.   Climbs the tree rooted at
+     * Climbs the tree rooted at
      * <code>nominalRoot</code> from <code>this</code>, searching for an
      * ancestor with a branch following this.
      * If none is found, there is no following leaf node.
@@ -632,7 +476,7 @@ public class Node implements Cloneable {
      * @param nominalRoot the root node for the purposes of this operation
      * @return the following leaf node or <code>null</code>
      */
-    private Node getFollowingLeaf(Node nominalRoot) {
+    public Node followingLeaf(Node nominalRoot) {
         if (this == nominalRoot || this.parent == null) {
             return null;
         }
@@ -681,33 +525,26 @@ public class Node implements Cloneable {
         private PreOrder nextChildIterator;
         
         /**
-         * If synchronization is require, sync on the containing
-         * <code>Node</code>.
-         */
-        private final Node sync = Node.this;
-        /** Are operations on this iterator synchronized? */
-        private final boolean synchronize;
-        
-        /**
          * Constructor for pre-order iterator.
          */
         public PreOrder() {
-            this.synchronize = Node.this.synchronize;
             hasNext();  // A call to set up the initial iterators
             // so that a call to next() without a preceding call to
             // hasNext() will behave sanely
         }
         
-        public boolean hasNext() {
-            if (synchronize) {
-                synchronized (sync) {
-                    return doHasNext();
-                }
+        /**
+         * Synchronized constructor for pre-order iterator.
+         */
+        public PreOrder(Object sync) {
+            synchronized (sync) {
+                hasNext();  // A call to set up the initial iterators
+                // so that a call to next() without a preceding call to
+                // hasNext() will behave sanely
             }
-            return doHasNext();
         }
         
-        private boolean doHasNext() {
+        public boolean hasNext() {
             if (selfNotReturned) {
                 return true;
             }
@@ -728,16 +565,7 @@ public class Node implements Cloneable {
             }
         }
 
-        public Object next() throws NoSuchElementException {
-            if (synchronize) {
-                synchronized (sync) {
-                    return doNext();
-                }
-            }
-            return doNext();
-        }
-
-        private Object doNext() {
+        public Object next() {
             if (! hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -807,39 +635,33 @@ public class Node implements Cloneable {
         // end of the (empty) child vector
 
         private PostOrder nextChildIterator;
-        /**
-         * If synchronization is require, sync on the containing
-         * <code>Node</code>.
-         */
-        private final Node sync = Node.this;
-        /** Are operations on this iterator synchronized? */
-        private final boolean synchronize;
         
         /**
          * Constructor for post-order iterator.
          */
         public PostOrder() {
-            this.synchronize = Node.this.synchronize;
             hasNext();  // A call to set up the initial iterators
             // so that a call to next() without a preceding call to
             // hasNext() will behave sanely
         }
-
-        public boolean hasNext() {
-            if (synchronize) {
-                synchronized (sync) {
-                    return doHasNext();
-                }
+        
+        /**
+         * Synchronized constructor for post-order iterator.
+         * @param sync the object on which to synchronize
+         */
+        public PostOrder(Object sync) {
+            synchronized (sync) {
+                hasNext();  // A call to set up the initial iterators
+                // so that a call to next() without a preceding call to
+                // hasNext() will behave sanely
             }
-            return doHasNext();
         }
-
-        private boolean doHasNext() {
+        
+        public boolean hasNext() {
             // self is always the last to go
             if (selfReturned) { // nothing left
                 return false;
             }
-            
             // Check first for children, and set up an iterator if so
             if (nextChildIndex < numChildren()) {
                 if (nextChildIterator == null) {
@@ -850,23 +672,11 @@ public class Node implements Cloneable {
                 // else an iterator exists.
                 // Assume that the next() method
                 // will keep the iterator current
-            } // end of Any children?
-            
+            }
             return true;
         }
 
-        public Object next()
-        throws NoSuchElementException {
-            if (synchronize) {
-                synchronized (sync) {
-                    return doNext();
-                }
-            }
-            return doNext();
-        }
-
-        private Object doNext() throws NoSuchElementException {
-            // synchronize the whole against changes to the tree
+        public Object next() throws NoSuchElementException {
             if (! hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -921,33 +731,25 @@ public class Node implements Cloneable {
          * If synchronization is require, sync on the containing
          * <code>Node</code>.
          */
-        private final Node sync = Node.this;
-        /** Are operations on this iterator synchronized? */
-        private final boolean synchronize;
         
         /**
          * Constructor for ancestors iterator.
          */
         public Ancestor() {
-            this.synchronize = Node.this.synchronize;
             nextAncestor = Node.this.parent;
+        }
+        
+        public Ancestor(Object sync) {
+            synchronized (sync) {
+                nextAncestor = Node.this.parent;
+            }
         }
 
         public boolean hasNext() {
-            if (synchronize) {
-                synchronized (sync) {
-                    return nextAncestor != null;
-                }
-            }
             return nextAncestor != null;
         }
 
         public Object next() throws NoSuchElementException {
-            if (synchronize) {
-                Node tmpNode = nextAncestor;
-                nextAncestor = tmpNode.parent;
-                return tmpNode;
-            }
             Node tmpNode = nextAncestor;
             nextAncestor = tmpNode.parent;
             return tmpNode;
@@ -981,16 +783,8 @@ public class Node implements Cloneable {
          * hasNext() will always return false
          */
         private ArrayList rootDummy = new ArrayList(0);
-        /**
-         * If synchronization is require, sync on the containing
-         * <code>Node</code>.
-         */
-        private final Node sync = Node.this;
-        /** Are operations on this iterator synchronized? */
-        private final boolean synchronize;
         
         public FollowingSibling() {
-            this.synchronize = Node.this.synchronize;
             // Set up iterator on the parent's arrayList of children
             Node refNode = Node.this.parent;
             if (refNode != null) {
@@ -1006,31 +800,36 @@ public class Node implements Cloneable {
                 listIterator = rootDummy.listIterator();
             }
         }
-
-        public boolean hasNext() {
-            if (synchronize) {
-                synchronized (sync) {
-                    return listIterator.hasNext();
+        
+        public FollowingSibling(Object sync) {
+            synchronized (sync) {
+                // Set up iterator on the parent's arrayList of children
+                Node refNode = Node.this.parent;
+                if (refNode != null) {
+                    // Not the root node; siblings may exist
+                    // Set up iterator on the parent's children ArrayList
+                    ArrayList siblings = refNode.children;
+                    int index = siblings.indexOf(Node.this);
+                    // if this is invalid, we are in serious trouble
+                    listIterator = siblings.listIterator(index + 1);
+                } // end of if (Node.this.parent != null)
+                else {
+                    // Root node - no siblings
+                    listIterator = rootDummy.listIterator();
                 }
+                
             }
+        }
+        
+        public boolean hasNext() {
             return listIterator.hasNext();
         }
 
         public Object next() throws NoSuchElementException {
-            if (synchronize) {
-                synchronized (sync) {
-                    return listIterator.next();
-                }
-            }
             return listIterator.next();
         }
 
         public int nextIndex() {
-            if (synchronize) {
-                synchronized (sync) {
-                    return listIterator.nextIndex();
-                }
-            }
             return listIterator.nextIndex();
         }
 
@@ -1089,16 +888,8 @@ public class Node implements Cloneable {
          * hasNext() will always return false
          */
         private ArrayList rootDummy = new ArrayList(0);
-        /**
-         * If synchronization is require, sync on the containing
-         * <code>Node</code>.
-         */
-        private final Node sync = Node.this;
-        /** Are operations on this iterator synchronized? */
-        private final boolean synchronize;
         
         public PrecedingSibling() {
-            this.synchronize = Node.this.synchronize;
             // Set up iterator on the parent's arrayList of children
             Node refNode = Node.this.parent;
             if (refNode != null) {
@@ -1115,31 +906,35 @@ public class Node implements Cloneable {
             }
         }
         
-
-        public boolean hasPrevious() {
-            if (synchronize) {
-                synchronized (sync) {
-                    return listIterator.hasPrevious();
+        protected PrecedingSibling(Object sync) {
+            synchronized (sync) {
+                // Set up iterator on the parent's arrayList of children
+                Node refNode = Node.this.parent;
+                if (refNode != null) {
+                    // Not the root node; siblings may exist
+                    // Set up iterator on the parent's children ArrayList
+                    ArrayList siblings = refNode.children;
+                    int index = siblings.indexOf(Node.this);
+                    // if this is invalid, we are in serious trouble
+                    listIterator = siblings.listIterator(index);
+                } // end of if (Node.this.parent != null)
+                else {
+                    // Root node - no siblings
+                    listIterator = rootDummy.listIterator();
                 }
             }
+        }
+        
+        
+        public boolean hasPrevious() {
             return listIterator.hasPrevious();
         }
 
         public Object previous() throws NoSuchElementException {
-            if (synchronize) {
-                synchronized (sync) {
-                    return listIterator.previous();
-                }
-            }
             return listIterator.previous();
         }
 
         public int previousIndex() {
-            if (synchronize) {
-                synchronized (sync) {
-                    return listIterator.previousIndex();
-                }
-            }
             return listIterator.previousIndex();
         }
 

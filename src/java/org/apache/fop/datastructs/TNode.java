@@ -34,11 +34,11 @@ public class TNode extends Node {
     }
 
     public TNode(Tree tree, TNode parent, int index) {
-        super(parent, index, Node.SYNCHRONIZE);
+        super(parent, index);
     }
 
     public TNode(TNode parent) {
-        super(parent, Node.SYNCHRONIZE);
+        super(parent);
     }
 
     /**
@@ -49,7 +49,7 @@ public class TNode extends Node {
      */
 
     public TNode(TNode parent, Object content) {
-        super(parent, Node.SYNCHRONIZE);
+        super(parent);
         this.content = content;
     }
 
@@ -63,7 +63,7 @@ public class TNode extends Node {
 
     public TNode(TNode parent, int index, Object content)
         throws IndexOutOfBoundsException {
-        super(parent, index, Node.SYNCHRONIZE);
+        super(parent, index);
         this.content = content;
     }
 

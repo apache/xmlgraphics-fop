@@ -33,9 +33,9 @@ public class InlineContainer extends InlineArea implements ReferenceArea {
      * @param index
      * @throws IndexOutOfBoundsException
      */
-    public InlineContainer(Node parent, int index)
+    public InlineContainer(Node parent, int index, Object areaSync)
         throws IndexOutOfBoundsException {
-        super(parent, index);
+        super(parent, index, areaSync);
         // TODO Auto-generated constructor stub
     }
 
@@ -43,8 +43,9 @@ public class InlineContainer extends InlineArea implements ReferenceArea {
      * @param parent
      * @throws IndexOutOfBoundsException
      */
-    public InlineContainer(Node parent) throws IndexOutOfBoundsException {
-        super(parent);
+    public InlineContainer(Node parent, Object areaSync)
+    throws IndexOutOfBoundsException {
+        super(parent, areaSync);
         // TODO Auto-generated constructor stub
     }
 

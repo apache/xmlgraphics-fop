@@ -33,9 +33,9 @@ public class InlineArea extends Area {
      * @param index
      * @throws IndexOutOfBoundsException
      */
-    public InlineArea(Node parent, int index)
+    public InlineArea(Node parent, int index, Object areaSync)
         throws IndexOutOfBoundsException {
-        super(parent, index);
+        super(parent, index, areaSync);
         // TODO Auto-generated constructor stub
     }
 
@@ -43,8 +43,8 @@ public class InlineArea extends Area {
      * @param parent
      * @throws IndexOutOfBoundsException
      */
-    public InlineArea(Node parent) throws IndexOutOfBoundsException {
-        super(parent);
+    public InlineArea(Node parent, Object areaSync) throws IndexOutOfBoundsException {
+        super(parent, areaSync);
         // TODO Auto-generated constructor stub
     }
 

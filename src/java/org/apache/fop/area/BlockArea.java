@@ -32,8 +32,9 @@ public class BlockArea extends Area {
      * @param index
      * @throws IndexOutOfBoundsException
      */
-    public BlockArea(Node parent, int index) throws IndexOutOfBoundsException {
-        super(parent, index);
+    public BlockArea(Node parent, int index, Object areaSync)
+    throws IndexOutOfBoundsException {
+        super(parent, index, areaSync);
         // TODO Auto-generated constructor stub
     }
 
@@ -41,8 +42,9 @@ public class BlockArea extends Area {
      * @param parent
      * @throws IndexOutOfBoundsException
      */
-    public BlockArea(Node parent) throws IndexOutOfBoundsException {
-        super(parent);
+    public BlockArea(Node parent, Object areaSync)
+    throws IndexOutOfBoundsException {
+        super(parent, areaSync);
         // TODO Auto-generated constructor stub
     }
 

@@ -19,6 +19,7 @@
 package org.apache.fop.area;
 
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.datastructs.SyncedNode;
 
 /**
  * The base class for all areas.  <code>Area</code> extends <code>Node</code>
@@ -26,16 +27,16 @@ import org.apache.fop.datastructs.Node;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class Area extends Node {
+public class Area extends SyncedNode {
 
     /**
      * @param parent
      * @param index
      * @throws IndexOutOfBoundsException
      */
-    public Area(Node parent, int index)
+    public Area(Node parent, int index, Object areaSync)
         throws IndexOutOfBoundsException {
-        super(parent, index, Node.SYNCHRONIZE);
+        super(parent, index, areaSync);
         // TODO Auto-generated constructor stub
     }
 
@@ -43,9 +44,9 @@ public class Area extends Node {
      * @param parent
      * @throws IndexOutOfBoundsException
      */
-    public Area(Node parent)
+    public Area(Node parent, Object areaSync)
         throws IndexOutOfBoundsException {
-        super(parent, Node.SYNCHRONIZE);
+        super(parent, areaSync);
         // TODO Auto-generated constructor stub
     }
 
