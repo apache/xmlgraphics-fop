@@ -68,7 +68,13 @@ public class LengthRange implements CompoundDatatype {
     private int bfSet = 0;    // bit field
     private boolean bChecked = false;
 
-    // From CompoundDatatype
+    /**
+     * From CompoundDatatype
+     * @param sCmpnName component name ("minimum", "maximum", or "optimum")
+     * which is being set
+     * @param cmpnValue Property object to be set
+     * @param bIsDefault true of this is the default value (??)
+     */
     public void setComponent(String sCmpnName, Property cmpnValue,
                              boolean bIsDefault) {
         if (sCmpnName.equals("minimum")) {
@@ -80,7 +86,12 @@ public class LengthRange implements CompoundDatatype {
         }
     }
 
-    // From CompoundDatatype
+    /**
+     * From CompoundDatatype
+     * @param sCmpnName component name ("minimum", "maximum", or "optimum")
+     * for which the length is sought
+     * @return the requested Property, or null if the component name is invalid
+     */
     public Property getComponent(String sCmpnName) {
         if (sCmpnName.equals("minimum")) {
             return getMinimum();
@@ -192,16 +203,25 @@ public class LengthRange implements CompoundDatatype {
         bChecked = true;
     }
 
+    /**
+     * @return minimum length
+     */
     public Property getMinimum() {
         checkConsistency();
         return this.minimum;
     }
 
+    /**
+     * @return maximum length
+     */
     public Property getMaximum() {
         checkConsistency();
         return this.maximum;
     }
 
+    /**
+     * @return optimum length
+     */
     public Property getOptimum() {
         checkConsistency();
         return this.optimum;

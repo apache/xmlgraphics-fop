@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
@@ -60,7 +60,12 @@ public class Space extends LengthRange {
     private Property precedence;
     private Property conditionality;
 
-    // From CompoundDatatype
+    /**
+     * From CompoundDatatype
+     * @param sCmpnName name of component
+     * @param cmpnValue Property object for the component
+     * @param bIsDefault true if this is the default (??)
+     */
     public void setComponent(String sCmpnName, Property cmpnValue,
                              boolean bIsDefault) {
         if (sCmpnName.equals("precedence")) {
@@ -72,7 +77,11 @@ public class Space extends LengthRange {
         }
     }
 
-    // From CompoundDatatype
+    /**
+     * From CompoundDatatype
+     * @param sCmpnName name of component
+     * @return Property matching the component name
+     */
     public Property getComponent(String sCmpnName) {
         if (sCmpnName.equals("precedence")) {
             return getPrecedence();
@@ -83,19 +92,35 @@ public class Space extends LengthRange {
         }
     }
 
+    /**
+     *
+     * @param precedence precedence Property to set
+     * @param bIsDefault (is not used anywhere)
+     */
     protected void setPrecedence(Property precedence, boolean bIsDefault) {
         this.precedence = precedence;
     }
 
+    /**
+     *
+     * @param conditionality conditionality Property to set
+     * @param bIsDefault (is not used anywhere)
+     */
     protected void setConditionality(Property conditionality,
                                      boolean bIsDefault) {
         this.conditionality = conditionality;
     }
 
+    /**
+     * @return precedence Property
+     */
     public Property getPrecedence() {
         return this.precedence;
     }
 
+    /**
+     * @return conditionality Property
+     */
     public Property getConditionality() {
         return this.conditionality;
     }

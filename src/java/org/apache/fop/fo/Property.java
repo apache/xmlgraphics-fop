@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.fo;
 
 import org.apache.fop.datatypes.ColorType;
@@ -64,14 +64,22 @@ import org.apache.fop.fo.expr.PropertyInfo;
 import org.apache.fop.apps.FOPException;
 import java.util.Vector;
 
+/**
+ * Base class for all property objects
+ * @author unascribed
+ */
 public class Property {
 
+    /**
+     * Base class for all property makers
+     * @author unascribed
+     */
     public static class Maker {
         private static final String UNKNOWN = "UNKNOWN";
         private String propName;
 
         /**
-         * Return the name of the property whose value is being set.
+         * @return the name of the property for this Maker
          */
         protected String getPropName() {
             return propName;
@@ -106,7 +114,7 @@ public class Property {
          * Return a boolean indicating whether this property inherits the
          * "specified" value rather than the "computed" value. The default is
          * to inherit the "computed" value.
-         * @return If true, property inherits the value specified.
+         * @return true, if the property inherits the value specified.
          */
         public boolean inheritsSpecified() {
             return false;
@@ -114,12 +122,12 @@ public class Property {
 
 
         /**
-         * Return an object implementing the PercentBase interface.
          * This is used to handle properties specified as a percentage of
          * some "base length", such as the content width of their containing
          * box.
          * Overridden by subclasses which allow percent specifications. See
          * the documentation on properties.xsl for details.
+         * @return an object implementing the PercentBase interface.
          */
         public PercentBase getPercentBase(FObj fo, PropertyList pl) {
             return null;
