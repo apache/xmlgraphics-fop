@@ -7,7 +7,7 @@
  */
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.fo.Properties.Font;
+import org.apache.fop.fo.properties.Font;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.ShorthandPropSets;
 import org.apache.fop.fo.expr.PropertyException;
