@@ -187,70 +187,7 @@
       <question>I get an OutOfMemoryException.</question>
       <answer>
         <p>
-          FOP can consume quite a bit of memory, even though this has been
-          continually improved. The memory consumption is partially inherent to
-          the formatting process and partially caused by implementation
-          choices. For certain layouts, all FO processors currently on the
-          market have memory problems.
-        </p>
-        <p>
-          Some hints regarding your document structure:
-        </p>
-        <ul>
-          <li>
-            Increase memory settings of the JVM, see for example <link
-              href="http://java.sun.com/j2se/1.3/docs/tooldocs/solaris/java.html">the
-              -Xmx option</link>. Be aware that it is usually unwise to
-            increase the memory allocated to the JVM beyond the amount of
-            physical RAM, it will significantly slow down. YMMV.
-          </li>
-          <li>
-            Avoid forward references, that is page number citations to pages to
-            places on pages which follow the citation. Forward references cause
-            all pages from the page with the reference on to be held in memory
-            until the page with the referenced element is encountered. Common
-            forward references are table of contents at the beginning of the
-            document and the <link href="#pagenum">"page N of TOTAL"</link> in
-            footers. Forward references may be required by the task, however,
-            if you are getting a memory overflow you should at least check
-            whether this is really as necessary as claimed. A TOC, for example,
-            could often be placed at the end of the document without dimishing
-            it's value too much, the paper can be reshuffled after printing,
-            and you can use bookmarks in PDF.
-          </li>
-          <li>
-            Avoid large images, especially if they are scaled down. Scale them
-            outside of FOP and use the already scaled images for the FOP
-            run. For many image formats it is mainly the size of the image file
-            which matters, not width*height, so you can try other means like
-            using a higher compression rate.
-          </li>
-          <li>
-            Use multiple page sequences. FOP starts rendering after the end of
-            a page sequence is encountered. While the actual rendering is done
-            page by page, some additional memory allocated for other purposes
-            could be freed after the page sequence has been rendered.
-          </li>
-          <li>
-            Break down large tables. If you don't use table headers and
-            footers, just start a new table every N rows. With headers and
-            footers, consider integrating them as normal table rows, or, if
-            they are used at page breaks, try to put the information into
-            static content. You can use markers to change them.
-          </li>
-        </ul>
-        <p>
-          There are also some bugs which cause FOP to go into an nonterminating
-          loop, which also often results in a memory overflow. A characteristic
-          symptom are continuous <link href="#boxoverflow">box
-          overflows</link>. Most of them are triggered by elements not fitting
-          in the available space, like big images and improperly specified width
-          of nested block elements. Look for such stuff and correct it.
-        </p>
-        <p>
-          Reducing memory consumption in general and squishing bugs is an
-          ongoing effort, partially addressed in the <link
-          href="dev/index.html">redesign</link>.
+          See <link href="running.html#memory">FOP Memory</link>.
         </p>
       </answer>
     </faq>
