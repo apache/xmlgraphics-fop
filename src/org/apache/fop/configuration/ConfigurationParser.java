@@ -81,8 +81,10 @@ public class ConfigurationParser extends DefaultHandler {
     private int status = OUT;
     private int datatype = -1;
 
-    //stores the result configuration
-    private static Hashtable configuration = new Hashtable(20);
+    //store the result configuration
+    private static Hashtable standardConfiguration = new Hashtable(30);
+    private static Hashtable pdfConfiguration = new Hashtable(20);
+    private static Hashtable awtConfiguration = new Hashtable(20);
 
     //stores key for new config entry
     private String key = "";
@@ -102,6 +104,8 @@ public class ConfigurationParser extends DefaultHandler {
     /** locator for line number information */
     private Locator locator;
 
+    /** determines role / target of configuration information, default is standard */
+    private int role = Configuration.STANDARD;
 
     /** get locator for position information */
     public void setDocumentLocator(Locator locator) {
@@ -121,8 +125,24 @@ public class ConfigurationParser extends DefaultHandler {
             status += IN_LIST;
         } else if (localName.equals("subentry")) {
             status += IN_SUBENTRY;
-        } else if (localName.equals("configuration") ||
-                localName.equals("entry") || localName.equals("datatype")) {
+        } else if (localName.equals("entry"))   {
+            if (attributes.getLength() == 0) {
+                role = Configuration.STANDARD;
+            } else {
+                //retrieve attribute value for "role" which determines configuration target
+                String rolen = attributes.getValue("role");
+                if (rolen.equalsIgnoreCase("pdf")) {
+                    role = Configuration.PDF;
+                } else if (rolen.equalsIgnoreCase("awt")) {
+                    role = Configuration.AWT;
+                } else if (rolen.equalsIgnoreCase("standard")) {
+                    role = Configuration.STANDARD;
+                } else {
+                    MessageHandler.errorln("unknown role: " + rolen + ". Using standard.");
+                }
+            }
+            //role=standard as default
+        } else if (localName.equals("configuration") ) {
         } else {
             //to make sure that user knows about false tag
             MessageHandler.errorln(
@@ -135,18 +155,18 @@ public class ConfigurationParser extends DefaultHandler {
      */
     public void endElement(String uri, String localName, String qName) {
         if (localName.equals("entry")) {
-            int tek = 0;
             switch (datatype) {
                 case STRING:
-                    configuration.put(key, value);
+                    this.store(role, key, value);
                     break;
                 case LIST:
-                    configuration.put(key, list);
+                    this.store(role, key, list);
                     break;
                 case MAP:
-                    configuration.put(key, map);
+                    this.store(role, key, map);
             }
             status = OUT;
+            role = Configuration.STANDARD;
         } else if (localName.equals("subentry")) {
             map.put(subkey, value);
             status -= IN_SUBENTRY;
@@ -157,7 +177,23 @@ public class ConfigurationParser extends DefaultHandler {
         } else if (localName.equals("value")) {
             status -= IN_VALUE;
         }
+    }
 
+    private void store (int role, String key, Object value) {
+        switch (role)  {
+        case Configuration.STANDARD: 
+            standardConfiguration.put(key,value);
+            break;
+        case Configuration.PDF: 
+            pdfConfiguration.put(key,value);
+            break;
+        case Configuration.AWT: 
+            awtConfiguration.put(key,value);
+            break;
+        default: 
+            MessageHandler.errorln("Unknown role for new configuration entry. " 
+                                    +"Putting key:" + key + " - value:" + value +" into standard configuration.");
+        } 
     }
 
     /**
@@ -195,8 +231,18 @@ public class ConfigurationParser extends DefaultHandler {
      * returns the parsed configuration information
      * @return Hashtable containing the configuration information as key/value pairs
      */
-    public Hashtable getConfiguration() {
-        return configuration;
+    public Hashtable getConfiguration(int role) {
+        switch (role)  {
+            case Configuration.STANDARD: 
+                return standardConfiguration;
+            case Configuration.PDF: 
+                return pdfConfiguration;
+            case Configuration.AWT: 
+                return awtConfiguration;
+            default: 
+                MessageHandler.errorln("Can't return asked for configuration. Unknown role " );
+                return null;
+        }
     }
 
 }

@@ -61,9 +61,7 @@ import org.xml.sax.InputSource;
 //fop
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.configuration.AWTConfiguration;
-import org.apache.fop.configuration.PDFConfiguration;
-import org.apache.fop.configuration.StandardConfiguration;
+import org.apache.fop.configuration.Configuration;
 
 /**
  *  entry class for reading configuration from file and creating a configuration
@@ -87,16 +85,13 @@ public class ConfigurationReader {
     /** inputsource for configuration file  */
     private InputSource filename;
 
-    private String role ;
 
     /**
      * creates a configuration reader
      * @param filename the file which contains the configuration information
-     * @param role three values are recognized: awt, pdf, standard
      */
-    public ConfigurationReader (InputSource filename, String role) {
+    public ConfigurationReader (InputSource filename) {
         this.filename = filename;
-        this.role = role;
     }
 
 
@@ -127,16 +122,9 @@ public class ConfigurationReader {
 
         try {
             parser.parse(filename);
-            if (role.equalsIgnoreCase("standard")) {
-                StandardConfiguration.setup(
-                  configurationParser.getConfiguration());
-            } else if (role.equalsIgnoreCase("pdf")) {
-                PDFConfiguration.setup(
-                  configurationParser.getConfiguration());
-            } else if (role.equalsIgnoreCase("awt")) {
-                AWTConfiguration.setup(
-                  configurationParser.getConfiguration());
-            }
+            Configuration.setup(Configuration.STANDARD, configurationParser.getConfiguration(Configuration.STANDARD));
+            Configuration.setup(Configuration.PDF, configurationParser.getConfiguration(Configuration.PDF));
+            Configuration.setup(Configuration.AWT, configurationParser.getConfiguration(Configuration.AWT));
         } catch (SAXException e) {
             if (e.getException() instanceof FOPException) {
                 dumpError(e.getException());
@@ -221,7 +209,7 @@ public class ConfigurationReader {
       *
       */
     public void setDumpError(boolean dumpError) {
-        this.errorDump = errorDump;
+        errorDump = dumpError;
     }
 
 }

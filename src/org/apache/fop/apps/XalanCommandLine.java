@@ -82,6 +82,7 @@ import org.apache.xalan.xslt.XSLTResultTarget;
 // FOP
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.configuration.ConfigurationReader;
+import org.apache.fop.configuration.Configuration;
 
 /**
  * mainline class.
@@ -97,7 +98,7 @@ public class XalanCommandLine {
     private String xsltFile = null;
     private String userConfigFile = null;
     private String baseDir = null;
-
+    private boolean dumpConfiguration = false;
 
     /** show a full dump on error */ //this should be implemented here too
     private static boolean errorDump = false;
@@ -106,6 +107,8 @@ public class XalanCommandLine {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
                 errorDump = true;
+            } else if (args[i].equals("-x")) {
+                dumpConfiguration = true;
             } else if ((args[i].charAt(0) == '-') &&
                     (args[i].charAt(1) == 'c')) {
                 userConfigFile = args[i].substring(2);
@@ -133,14 +136,15 @@ public class XalanCommandLine {
     public void printUsage(String arg) {
         if (arg != null) {
             MessageHandler.errorln("Unkown argument: '"+ arg + "'");
-            MessageHandler.errorln("Usage: java [-d] " +
-                                   "[-cMyConfigFile] " +
-                                   "org.apache.fop.apps.XalanCommandLine " + "xml-file xslt-file pdf-file");
-            MessageHandler.errorln("Options:\n" + "  -d or --full-error-dump    Show stack traces upon error");
-            MessageHandler.errorln("-cMyConfigFile use values in configuration file MyConfigFile instead of/additional to default");
+        } 
+        MessageHandler.errorln("Usage: java [-d] [-x]" +
+                               "[-cMyConfigFile] " +
+                               "org.apache.fop.apps.XalanCommandLine " + "xml-file xslt-file pdf-file");
+        MessageHandler.errorln("Options:\n" + "  -d or --full-error-dump    Show stack traces upon error");
+        MessageHandler.errorln("  -x                           dump configuration information");
+        MessageHandler.errorln("-cMyConfigFile use values in configuration file MyConfigFile instead of/additional to default");
 
-            System.exit(1);
-        }
+        System.exit(1);
     }
 
     /**
@@ -217,10 +221,14 @@ public class XalanCommandLine {
         if (errorDump)  {
             driver.setErrorDump(true);
         }
-        driver.loadStandardConfiguration("standard");
         if (userConfigFile != null) {
-            driver.loadUserconfiguration(userConfigFile, "standard");
+            driver.loadUserconfiguration(userConfigFile);
         }
+        if (dumpConfiguration) {
+            Configuration.dumpConfiguration();
+            System.exit(0);
+        }
+
         driver.setBaseDir(foFile);
         String version = Version.getVersion();
         MessageHandler.logln(version);
