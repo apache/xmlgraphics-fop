@@ -168,7 +168,6 @@ public class Table extends FObj {
     }
 
     public Column getTableColumnLayoutManager(TableColumn node) {
-         node.initialize();
          Column clm = new Column(node);
          return clm;
     }
@@ -178,6 +177,9 @@ public class Table extends FObj {
          return blm;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:table";
     }
