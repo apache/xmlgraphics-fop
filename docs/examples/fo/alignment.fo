@@ -50,7 +50,7 @@ And this is the line of text that follows the line with the aligned objects on i
 And finally, this line illustrates the normal spacing between lines of text in this font.
 </fo:block>
 
-<fo:block space-after="15pt"><fo:leader leader-length="100%"/></fo:block>
+<fo:block space-after="15pt"><fo:leader leader-pattern="rule"/></fo:block>
 
       <fo:block><fo:inline font-weight="bold">Ex 2:</fo:inline> This
 is a longer line of text that provides a context for the line with the images aligned on it.
@@ -91,7 +91,7 @@ And this is the line of text that follows the line with the aligned objects on i
 And finally, this line illustrates the normal spacing between lines of text in this font.
 </fo:block>
 
-<fo:block space-after="15pt"><fo:leader leader-length="100%"/></fo:block>
+<fo:block space-after="15pt"><fo:leader leader-pattern="rule"/></fo:block>
 
       <fo:block><fo:inline font-weight="bold">Ex 3:</fo:inline> This
 is a longer line of text that provides a context for the line with the images aligned on it.
@@ -125,7 +125,7 @@ And this is the line of text that follows the line with the aligned objects on i
 And finally, this line illustrates the normal spacing between lines of text in this font.
 </fo:block>
 
-<fo:block space-after="15pt"><fo:leader leader-length="100%"/></fo:block>
+<fo:block space-after="15pt"><fo:leader leader-pattern="rule"/></fo:block>
 
       <fo:block><fo:inline font-weight="bold">Ex 4:</fo:inline> This
 is a longer line of text that provides a context for the line with the images aligned on it.
@@ -159,7 +159,7 @@ And this is the line of text that follows the line with the aligned objects on i
 And finally, this line illustrates the normal spacing between lines of text in this font.
 </fo:block>
 
-<fo:block space-after="15pt"><fo:leader leader-length="100%"/></fo:block>
+<fo:block space-after="15pt"><fo:leader leader-pattern="rule"/></fo:block>
 
       <fo:block><fo:inline font-weight="bold">Ex 5:</fo:inline> This
 is a longer line of text that provides a context for the line with the images aligned on it.
