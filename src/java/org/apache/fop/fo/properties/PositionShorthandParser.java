@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 2004 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,30 +30,30 @@ public class PositionShorthandParser implements ShorthandParser {
             Property property,
             PropertyMaker maker,
             PropertyList propertyList) {
-		int propVal = property.getEnum();
-    	if (propId == Constants.PR_ABSOLUTE_POSITION) {
-    		switch (propVal) {
-    			case Constants.STATIC:
-    			case Constants.RELATIVE:
-    				return new EnumProperty(Constants.AUTO, "AUTO");
-    			case Constants.ABSOLUTE:
-    				return new EnumProperty(Constants.ABSOLUTE, "ABSOLUTE");
-    			case Constants.FIXED:
-    				return new EnumProperty(Constants.FIXED, "FIXED");
-    		}
-    	}
-    	if (propId == Constants.PR_RELATIVE_POSITION) {
-    		switch (propVal) {
-    			case Constants.STATIC:
-    				return new EnumProperty(Constants.STATIC, "STATIC");
-    			case Constants.RELATIVE:
-    				return new EnumProperty(Constants.RELATIVE, "RELATIVE");
-    			case Constants.ABSOLUTE:
-    				return new EnumProperty(Constants.STATIC, "STATIC");
-    			case Constants.FIXED:
-    				return new EnumProperty(Constants.STATIC, "STATIC");
-    		}
-    	}
-    	return null;
+        int propVal = property.getEnum();
+        if (propId == Constants.PR_ABSOLUTE_POSITION) {
+            switch (propVal) {
+            case Constants.STATIC:
+            case Constants.RELATIVE:
+                return new EnumProperty(Constants.AUTO, "AUTO");
+            case Constants.ABSOLUTE:
+                return new EnumProperty(Constants.ABSOLUTE, "ABSOLUTE");
+            case Constants.FIXED:
+                return new EnumProperty(Constants.FIXED, "FIXED");
+            }
+        }
+        if (propId == Constants.PR_RELATIVE_POSITION) {
+            switch (propVal) {
+            case Constants.STATIC:
+                return new EnumProperty(Constants.STATIC, "STATIC");
+            case Constants.RELATIVE:
+                return new EnumProperty(Constants.RELATIVE, "RELATIVE");
+            case Constants.ABSOLUTE:
+                return new EnumProperty(Constants.STATIC, "STATIC");
+            case Constants.FIXED:
+                return new EnumProperty(Constants.STATIC, "STATIC");
+            }
+        }
+        return null;
     }
 }
