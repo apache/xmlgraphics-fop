@@ -64,7 +64,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
     private int startPageNum = 0;
     private int currentPageNum = 0;
-    private String pageNumberString;
 
     /** Current page being worked on. */
     private PageViewport curPage = null;
@@ -129,7 +128,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     public void activateLayout() {
         startPageNum = pageSeq.getStartingPageNumber();
         currentPageNum = startPageNum - 1;
-        pageNumberString = pageSeq.makeFormattedPageNumber(currentPageNum);
 
         LineArea title = null;
 
@@ -269,16 +267,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     /**
-     * Get the current page number string.
-     * This returns the formatted string for the current page.
-     *
-     * @return the formatted page number string
-     */
-    public String getCurrentPageNumberString() {
-        return pageNumberString;
-    }
-    
-    /**
      * Provides access to the current page.
      * @return the current PageViewport
      */
@@ -415,7 +403,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
 
         currentPageNum++;
-        pageNumberString = pageSeq.makeFormattedPageNumber(currentPageNum);
+        String pageNumberString = pageSeq.makeFormattedPageNumber(currentPageNum);
 
         try {
             // create a new page
@@ -484,7 +472,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
         MinOptMax range = new MinOptMax(rv.getRegionReference().getIPD());
         lm.doLayout(reg, lm, range);
-        
         
         /*
         while (!lm.isFinished()) {

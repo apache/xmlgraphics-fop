@@ -168,11 +168,11 @@ public interface LayoutManager {
     void addAreas(PositionIterator posIter, LayoutContext context);
 
     /**
-     * Get the string of the current page number.
+     * Get the PageViewport currently being generated
      *
-     * @return the string for the current page number
+     * @return the current PageViewport
      */
-    String getCurrentPageNumberString();
+    PageViewport getCurrentPageViewport();
 
     /**
      * Resolve the id reference.

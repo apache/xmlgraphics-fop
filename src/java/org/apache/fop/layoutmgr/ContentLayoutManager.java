@@ -251,8 +251,8 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
             Position bp2) { }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public String getCurrentPageNumberString() {
-        return parentLM.getCurrentPageNumberString();
+    public PageViewport getCurrentPageViewport() {
+        return parentLM.getCurrentPageViewport();
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
