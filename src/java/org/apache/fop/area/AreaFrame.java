@@ -23,6 +23,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.fop.area.Area.AreaGeometry;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.properties.WritingMode;
 
 
 /**
@@ -157,10 +159,13 @@ public class AreaFrame extends AreaGeometry {
      * @param before
      */
     public void setBefore(double before) {
-        double diff = before - contentOffset.getY();
-        setRect(getX(), getY(),
-                getWidth(), getHeight() + diff);
-        contentOffset.setLocation(contentOffset.getX(), before);
+        try {
+            setAbsoluteEdgeWidth(
+                    WritingMode.getCorrespondingAbsoluteEdge(
+                    writingMode, WritingMode.BEFORE), before);
+        } catch (PropertyException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -173,10 +178,13 @@ public class AreaFrame extends AreaGeometry {
      * @param start
      */
     public void setStart(double start) {
-        double diff = start - contentOffset.getY();
-        setRect(getX(), getY(),
-                getWidth() + diff, getHeight());
-        contentOffset.setLocation(start, contentOffset.getX());
+        try {
+            setAbsoluteEdgeWidth(
+                    WritingMode.getCorrespondingAbsoluteEdge(
+                    writingMode, WritingMode.START), start);
+        } catch (PropertyException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -188,8 +196,13 @@ public class AreaFrame extends AreaGeometry {
      * @param after
      */
     public void setAfter(double after) {
-        double diff = after - (getY() - contentOffset.getY() - contents.getY());
-        setRect(getX(), getY(), getWidth(), getHeight() + diff);
+        try {
+            setAbsoluteEdgeWidth(
+                    WritingMode.getCorrespondingAbsoluteEdge(
+                    writingMode, WritingMode.AFTER), after);
+        } catch (PropertyException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -201,7 +214,90 @@ public class AreaFrame extends AreaGeometry {
      * @param end
      */
     public void setEnd(double end) {
-        double diff = end - (getX() - contentOffset.getX() - contents.getX());
+        try {
+            setAbsoluteEdgeWidth(
+                    WritingMode.getCorrespondingAbsoluteEdge(
+                    writingMode, WritingMode.END), end);
+        } catch (PropertyException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setAbsoluteEdgeWidth(int edge, double width) {
+        switch (edge) {
+        case WritingMode.TOP:
+            setTop(width);
+            break;
+        case WritingMode.BOTTOM:
+            setBottom(width);
+            break;
+        case WritingMode.LEFT:
+            setLeft(width);
+            break;
+        case WritingMode.RIGHT:
+            setRight(width);
+            break;
+        default:
+            throw new RuntimeException(
+                    "Invalid absolute writing mode: " + edge);
+        }
+    }
+
+    /**
+     * Sets the top edge width of the frame.  The <code>contents</code> size
+     * is unaffected, but the size of the frame (<code>this</code>) will
+     * change.  The height will vary by the difference between the previous and
+     * new top edge.  The <code>contentOffset</code> will also change by the
+     * same amount.  Note that the origin of this frame (<code>getX(),
+     * getY()</code>) will not change.
+     * @param top
+     */
+    public void setTop(double top) {
+        double diff = top - contentOffset.getY();
+        setRect(getX(), getY(),
+                getWidth(), getHeight() + diff);
+        contentOffset.setLocation(contentOffset.getX(), top);
+    }
+
+    /**
+     * Sets the left edge width of the frame.  The <code>contents</code> size
+     * is unaffected, but the size of the frame (<code>this</code>) will
+     * change.  The width will vary by the difference between the previous and
+     * new left edge.  The <code>contentOffset</code> will also change by the
+     * same amount.  Note that the origin of this frame (<code>getX(),
+     * getY()</code>) will not change.
+     * @param left
+     */
+    public void setLeft(double left) {
+        double diff = left - contentOffset.getY();
+        setRect(getX(), getY(),
+                getWidth() + diff, getHeight());
+        contentOffset.setLocation(left, contentOffset.getX());
+    }
+
+    /**
+     * Sets the bottom edge width of the frame.  The <code>contents</code> size
+     * and the <code>contentOffset</code> are unaffected, but the size of the
+     * frame (<code>this</code>) will change.  The height will vary by the
+     * difference between the previous and new bottom edge.  Note that the
+     * origin of this frame (<code>getX(), getY()</code>) will not change.
+     * @param bottom
+     */
+    public void setBottom(double bottom) {
+        double diff = bottom - (getY() - contentOffset.getY() - contents.getY());
+        setRect(getX(), getY(), getWidth(), getHeight() + diff);
+    }
+
+    /**
+     * Sets the right edge width of the frame.  The <code>contents</code> size
+     * and the <code>contentOffset</code> are unaffected, but the size of the
+     * frame (<code>this</code>) will change.  The width will vary by the
+     * difference between the previous and new right edge.  Note that the
+     * origin of this frame (<code>getX(), getY()</code>) will not change.
+     * @param right
+     */
+    public void setRight(double right) {
+        double diff = right - (getX() - contentOffset.getX() - contents.getX());
         setRect(getX(), getY(), getWidth() + diff, getHeight());
     }
 
