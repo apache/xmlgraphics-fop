@@ -80,6 +80,18 @@ public class FontFamily extends Property  {
         }
     }
 
+    /**
+     * Is the given string a generic font family name?
+     * @param font
+     * @return
+     */
+    public static boolean isGeneric(String font) {
+        if (rwEnumHash.get(font) != null) {
+            return true;
+        }
+        return false;
+    }
+
     public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
