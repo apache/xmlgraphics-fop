@@ -191,7 +191,8 @@ public class TableRow extends FObj {
 	blockArea.end();
 	area.addChild(blockArea);
 	area.addDisplaySpace(largestCellHeight);
-	area.increaseHeight(largestCellHeight);
+	// bug fix from Eric Schaeffer
+	//area.increaseHeight(largestCellHeight);
 
 	if (spaceAfter != 0) {
 	    area.addDisplaySpace(spaceAfter);
