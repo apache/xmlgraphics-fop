@@ -70,6 +70,7 @@ public class CommonHyphenation {
     public CommonHyphenation(PropertyList pList) throws PropertyException {
         language = pList.get(Constants.PR_LANGUAGE).getString();
         country = pList.get(Constants.PR_COUNTRY).getString();
+        script = pList.get(Constants.PR_SCRIPT).getString();
         hyphenate = pList.get(Constants.PR_HYPHENATE).getEnum();
         hyphenationCharacter = pList.get(Constants.PR_HYPHENATION_CHARACTER).getCharacter();
         hyphenationPushCharacterCount = 

@@ -37,7 +37,7 @@ import org.apache.fop.fo.extensions.ExtensionElementMapping;
  */
 public class Root extends FObj {
     // The value of properties relevant for fo:root.
-    // private ToBeImplementedProperty mediaUsage;
+    private int mediaUsage;
     // End of property values
 
     private LayoutMasterSet layoutMasterSet;
@@ -63,7 +63,6 @@ public class Root extends FObj {
      */
     public Root(FONode parent) {
         super(parent);
-        // this.propertyList.get("media-usage");
         pageSequences = new java.util.ArrayList();
         if (parent != null) {
             //throw new FOPException("root must be root element");
@@ -73,8 +72,8 @@ public class Root extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
-        // prMediaUsage = pList.get(PR_MEDIA_USAGE);
+    public void bind(PropertyList pList) throws FOPException {
+        mediaUsage = pList.get(PR_MEDIA_USAGE).getEnum();
     }
 
     /**

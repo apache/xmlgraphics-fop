@@ -46,7 +46,8 @@ public class Title extends FObjMixed {
     private CommonMarginInline commonMarginInline;
     private ColorType color;
     private Length lineHeight;
-    // private ToBeImplementedProperty visibility;
+    private int visibility;
+    // End of property values
 
     /**
      * @param parent FONode that is the parent of this object
@@ -63,7 +64,7 @@ public class Title extends FObjMixed {
         commonMarginInline = pList.getMarginInlineProps();
         color = pList.get(PR_COLOR).getColorType();
         lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
-        // visibility = pList.get(PR_VISIBILITY);
+        visibility = pList.get(PR_VISIBILITY).getEnum();
     }
 
     /**

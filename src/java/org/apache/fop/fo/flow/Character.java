@@ -64,7 +64,7 @@ public class Character extends FObj {
     private CommonMarginInline commonMarginInline;
     private CommonRelativePosition commonRelativePosition;
     private Length alignmentAdjust;
-    // private ToBeImplementedProperty treatAsWordSpace;
+    private int treatAsWordSpace;
     private int alignmentBaseline;
     private Length baselineShift;
     private char character;
@@ -79,12 +79,12 @@ public class Character extends FObj {
     private KeepProperty keepWithPrevious;
     private Property letterSpacing;
     private Length lineHeight;
-    // private ToBeImplementedProperty scoreSpaces;
-    // private ToBeImplementedProperty suppressAtLineBreak;
+    private int scoreSpaces;
+    private int suppressAtLineBreak;
     private int textDecoration;
     // private ToBeImplementedProperty textShadow;
     private int textTransform;
-    // private ToBeImplementedProperty visibility;
+    private int visibility;
     private Property wordSpacing;
     // End of property values
 
@@ -112,7 +112,7 @@ public class Character extends FObj {
         commonRelativePosition = pList.getRelativePositionProps();
 
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
-        // treatAsWordSpace = pList.get(PR_TREAT_AS_WORD_SPACE);
+        treatAsWordSpace = pList.get(PR_TREAT_AS_WORD_SPACE).getEnum();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         character = pList.get(PR_CHARACTER).getCharacter();
@@ -127,12 +127,12 @@ public class Character extends FObj {
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
-        // scoreSpaces = pList.get(PR_SCORE_SPACES);
-        // suppressAtLineBreak = pList.get(PR_SUPPRESS_AT_LINE_BREAK);
+        scoreSpaces = pList.get(PR_SCORE_SPACES).getEnum();
+        suppressAtLineBreak = pList.get(PR_SUPPRESS_AT_LINE_BREAK).getEnum();
         textDecoration = pList.get(PR_TEXT_DECORATION).getEnum();
         // textShadow = pList.get(PR_TEXT_SHADOW);
         textTransform = pList.get(PR_TEXT_TRANSFORM).getEnum();
-        // visibility = pList.get(PR_VISIBILITY);
+        visibility = pList.get(PR_VISIBILITY).getEnum();
         wordSpacing = pList.get(PR_WORD_SPACING);
     }
 

@@ -49,7 +49,7 @@ public class InitialPropertySet extends FObj {
     private String id;
     // private ToBeImplementedProperty letterSpacing;
     private Length lineHeight;
-    // private ToBeImplementedProperty scoreSpaces;
+    private int scoreSpaces;
     private int textDecoration;
     // private ToBeImplementedProperty textShadow;
     private int textTransform;
@@ -76,7 +76,7 @@ public class InitialPropertySet extends FObj {
         id = pList.get(PR_ID).getString();
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
-        // scoreSpaces = pList.get(PR_SCORE_SPACES);
+        scoreSpaces = pList.get(PR_SCORE_SPACES).getEnum();
         textDecoration = pList.get(PR_TEXT_DECORATION).getEnum();
         // textShadow = pList.get(PR_TEXT_SHADOW);
         textTransform = pList.get(PR_TEXT_TRANSFORM).getEnum();

@@ -60,7 +60,7 @@ public class BlockContainer extends FObj {
     private int span;
     private Length width;
     private int writingMode;
-    // private ToBeImplementedProperty zIndex;
+    private Numeric zIndex;
     // End of property values
 
     /**
@@ -94,7 +94,7 @@ public class BlockContainer extends FObj {
         span = pList.get(PR_SPAN).getEnum();
         width = pList.get(PR_WIDTH).getLength();
         writingMode = pList.get(PR_WRITING_MODE).getEnum();
-        // zIndex = pList.get(PR_Z_INDEX);
+        zIndex = pList.get(PR_Z_INDEX).getNumeric();
     }
 
     /**

@@ -44,7 +44,7 @@ public class TableColumn extends FObj {
     private Length columnWidth;
     private Numeric numberColumnsRepeated;
     private Numeric numberColumnsSpanned;
-    // private ToBeImplementedProperty visibility;
+    private int visibility;
     // End of property values
     
     /**
@@ -67,7 +67,7 @@ public class TableColumn extends FObj {
         columnWidth = pList.get(PR_COLUMN_WIDTH).getLength();
         numberColumnsRepeated = pList.get(PR_NUMBER_COLUMNS_REPEATED).getNumeric();
         numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric();
-        // visibility = pList.get(PR_VISIBILITY);
+        visibility = pList.get(PR_VISIBILITY).getEnum();
     }
 
     /**

@@ -45,7 +45,7 @@ public class TableBody extends FObj {
     // private ToBeImplementedProperty borderBeforePrecedence;
     // private ToBeImplementedProperty borderEndPrecedence;
     // private ToBeImplementedProperty borderStartPrecedence;
-    // private ToBeImplementedProperty visibility;
+    private int visibility;
     // End of property values
     
     /**
@@ -67,7 +67,7 @@ public class TableBody extends FObj {
         // borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE);
         // borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE);
         // borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE);
-        // visibility = pList.get(PR_VISIBILITY);
+        visibility = pList.get(PR_VISIBILITY).getEnum();
     }
     
     /**
