@@ -73,6 +73,6 @@ public class SVGAnimatedLengthImpl implements SVGAnimatedLength {
 
   public SVGLength getAnimVal( )
   {
-      return null;
+      return len;
   }
 }

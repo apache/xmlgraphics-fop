@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
+ 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,62 +48,73 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-
 package org.apache.fop.dom.svg;
+
+import java.util.*;
 
 import org.w3c.dom.svg.*;
 
 /**
+ * class representing text in an SVG Area
  *
  */
-public class SVGCircleElementImpl extends GraphicElement implements SVGCircleElement {
-	private SVGAnimatedLength cx;
-	private SVGAnimatedLength cy;
-	private SVGAnimatedLength r;
+public class SVGTextContentElementImpl extends GraphicElement implements SVGTextContentElement {
 
-	/**
-	 */
-	public SVGCircleElementImpl()
+	public SVGTextContentElementImpl()
 	{
 	}
 
-	public SVGRect getBBox()
+	public SVGAnimatedLength getTextLength( )
 	{
-		SVGRect rect = new SVGRectImpl();
-		rect.setX(cx.getBaseVal().getValue() - r.getBaseVal().getValue());
-		rect.setY(cy.getBaseVal().getValue() - r.getBaseVal().getValue());
-		rect.setWidth(2 * r.getBaseVal().getValue());
-		rect.setHeight(2 * r.getBaseVal().getValue());
-		return rect;
+		return null;
 	}
 
-	public SVGAnimatedLength getCx( )
+	public SVGAnimatedEnumeration getLengthAdjust( )
 	{
-		return cx;
+		return null;
 	}
 
-	public void setCx( SVGAnimatedLength cx )
+	public int getNumberOfChars (  )
 	{
-		this.cx = cx;
+		return 0;
 	}
 
-	public SVGAnimatedLength getCy( )
+	public float getComputedTextLength (  )
 	{
-		return cy;
+		return 0;
 	}
 
-	public void setCy( SVGAnimatedLength cy )
+	public float getSubStringLength ( int charnum, int nchars)
 	{
-		this.cy = cy;
+		return 0;
 	}
 
-	public SVGAnimatedLength getR( )
+	public SVGPoint getStartPositionOfChar ( int charnum )
 	{
-		return r;
+		return null;
 	}
 
-	public void setR( SVGAnimatedLength r )
+	public SVGPoint getEndPositionOfChar ( int charnum )
 	{
-		this.r = r;
+		return null;
+	}
+
+	public SVGRect getExtentOfChar ( int charnum )
+	{
+		return null;
+	}
+
+	public float getRotationOfChar ( int charnum )
+	{
+		return 0;
+	}
+
+	public int getCharNumAtPosition ( SVGPoint point )
+	{
+		return 0;
+	}
+
+	public void selectSubString ( int charnum, int nchars )
+	{
 	}
 }

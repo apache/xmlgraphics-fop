@@ -58,7 +58,7 @@ import org.w3c.dom.svg.*;
 /**
  *
  */
-public class SVGTSpanElementImpl extends SVGElementImpl {// implements SVGTSpanElement {
+public class SVGTSpanElementImpl extends SVGTextContentElementImpl implements SVGTSpanElement {
 	public String str;
 	public int dx = 0;
 	public int dy = 0;
@@ -74,5 +74,30 @@ public class SVGTSpanElementImpl extends SVGElementImpl {// implements SVGTSpanE
 	 */
 	public SVGTSpanElementImpl()
 	{
+	}
+
+	public SVGAnimatedLengthList getX( )
+	{
+		return null;
+	}
+
+	public SVGAnimatedLengthList getY( )
+	{
+		return null;
+	}
+
+	public SVGAnimatedLengthList getDx( )
+	{
+		return null;
+	}
+
+	public SVGAnimatedLengthList getDy( )
+	{
+		return null;
+	}
+
+	public SVGAnimatedTextRotate getRotate( )
+	{
+		return null;
 	}
 }

@@ -56,7 +56,7 @@ import java.util.*;
 import org.w3c.dom.svg.*;
 
 /**
- *
+ * TODO: implement properly
  */
 public class SVGPathElementImpl extends GraphicElement implements SVGPathElement {
 
@@ -73,6 +73,62 @@ public class SVGPathElementImpl extends GraphicElement implements SVGPathElement
 	public SVGAnimatedNumber getPathLength()
 	{
 		return null;
+	}
+
+	public SVGRect getBBox()
+	{
+		float minX = 10000000; // a big number
+		float maxX = -10000000; // a low number
+		float minY = 10000000; // a big number
+		float maxY = -10000000; // a low number
+		// the bounds of a path is always within the end points and
+		// the control points, so adjust the min and max to be these extremes
+		for(Enumeration e = pathElements.elements(); e.hasMoreElements(); ) {
+    		SVGPathSegImpl pc = (SVGPathSegImpl)e.nextElement();
+    		float[] vals = pc.getValues();
+    		switch(pc.getPathSegType()) {
+    			case SVGPathSeg.PATHSEG_MOVETO_ABS:
+    			break;
+    			case SVGPathSeg.PATHSEG_MOVETO_REL:
+    			break;
+    			case SVGPathSeg.PATHSEG_LINETO_ABS:
+    			break;
+    			case SVGPathSeg.PATHSEG_LINETO_REL:
+    			break;
+    			case SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS:
+    			break;
+    			case SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL:
+    			break;
+    			case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS:
+    			break;
+    			case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL:
+    			break;
+    			case SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS:
+    			break;
+    			case SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL:
+    			break;
+    			case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
+    			break;
+    			case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL:
+    			break;
+    			case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_ABS:
+    			break;
+    			case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL:
+    			break;
+    			case SVGPathSeg.PATHSEG_ARC_ABS:
+    			break;
+    			case SVGPathSeg.PATHSEG_ARC_REL:
+    			break;
+    			case SVGPathSeg.PATHSEG_CLOSEPATH:
+    			break;
+    		}
+		}
+		SVGRect rect = new SVGRectImpl();
+		rect.setX(minX);
+		rect.setY(minY);
+		rect.setWidth(maxX - minX);
+		rect.setHeight(maxY - minY);
+		return rect;
 	}
 
 	public void setPathLength( SVGAnimatedNumber length )

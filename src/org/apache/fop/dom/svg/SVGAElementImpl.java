@@ -73,4 +73,9 @@ public class SVGAElementImpl extends SVGURIReferenceImpl implements SVGAElement 
 	{
 		return target;
 	}
+
+    public SVGRect getBBox()
+    {
+        return getChildrenBBox();
+    }
 }

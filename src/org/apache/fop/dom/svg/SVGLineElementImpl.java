@@ -83,6 +83,16 @@ public class SVGLineElementImpl extends GraphicElement implements SVGLineElement
 	{
 	}
 
+	public SVGRect getBBox()
+	{
+		SVGRect rect = new SVGRectImpl();
+		rect.setX(Math.min(x1.getBaseVal().getValue(), x2.getBaseVal().getValue()));
+		rect.setY(Math.min(y1.getBaseVal().getValue(), y2.getBaseVal().getValue()));
+		rect.setWidth(Math.abs(x1.getBaseVal().getValue() - x2.getBaseVal().getValue()));
+		rect.setHeight(Math.abs(y1.getBaseVal().getValue() - y2.getBaseVal().getValue()));
+		return rect;
+	}
+
   public SVGAnimatedLength getX1( )
   {
   	return x1;

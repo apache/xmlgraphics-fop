@@ -76,4 +76,21 @@ public class SVGPolygonElementImpl extends GraphicElement implements SVGPolygonE
 	{
 		return null;
 	}
+
+	public SVGRect getBBox()
+	{
+		float minX = 10000000; // a big number
+		float maxX = -10000000; // a low number
+		float minY = 10000000; // a big number
+		float maxY = -10000000; // a low number
+		for(Enumeration e = points.elements(); e.hasMoreElements(); ) {
+			e.nextElement();
+		}
+		SVGRect rect = new SVGRectImpl();
+		rect.setX(minX);
+		rect.setY(minY);
+		rect.setWidth(maxX - minX);
+		rect.setHeight(maxY - minY);
+		return rect;
+	}
 }

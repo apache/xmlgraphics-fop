@@ -59,14 +59,22 @@ import org.w3c.dom.events.*;
 /**
  *
  */
-class SVGDocumentImpl extends SVGElementImpl implements SVGDocument {
+public class SVGDocumentImpl extends ElementImpl implements SVGDocument {
+	String title;
+	public static final String namespaceURI = "http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd";
+
+	public SVGDocumentImpl()
+	{
+	}
+
 	public String getTitle()
 	{
-		return null;
+		return title;
 	}
 
 	public void setTitle(String title)
 	{
+		this.title = title;
 	}
 
 	public String getReferrer()
@@ -81,12 +89,12 @@ class SVGDocumentImpl extends SVGElementImpl implements SVGDocument {
 
 	public String getURL()
 	{
-		return null;
+		return "";
 	}
 
 	public SVGSVGElement getRootElement()
 	{
-		return null;
+		return (SVGSVGElement)childs.elementAt(0);
 	}
 
 	public Element getElementById(String elementId)

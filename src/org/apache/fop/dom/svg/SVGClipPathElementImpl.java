@@ -62,7 +62,7 @@ public class SVGClipPathElementImpl extends GraphicElement implements SVGClipPat
 	public Vector elements = new Vector();
 	SVGAnimatedEnumeration units;
 
-	public void addElement(GraphicImpl g)
+	public void addElement(SVGElement g)
 	{
 		elements.addElement(g);
 	}

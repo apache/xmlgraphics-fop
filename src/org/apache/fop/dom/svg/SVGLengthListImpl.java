@@ -63,7 +63,7 @@ import org.w3c.dom.svg.*;
 public class SVGLengthListImpl extends SVGListImpl implements SVGLengthList {
 
 	protected float millipoints = 0;
-	protected Vector valueList;
+	protected Vector valueList = new Vector();
 
 	protected float fontsize = 12;
 
@@ -103,7 +103,6 @@ public class SVGLengthListImpl extends SVGListImpl implements SVGLengthList {
 			// could be an array of points, as in for svg:text
 			int pos;
 			pos = len.trim().indexOf(" ");
-			this.valueList = new Vector();
 			if(pos != -1) {
 				this.millipoints = 0;
 				StringTokenizer st = new StringTokenizer(len.trim());

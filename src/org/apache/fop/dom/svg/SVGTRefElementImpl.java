@@ -53,13 +53,102 @@ package org.apache.fop.dom.svg;
 
 import java.util.Vector;
 
+import org.w3c.dom.svg.*;
+
 /**
  *
  */
-public class SVGTRefElementImpl  extends SVGTSpanElementImpl {
+public class SVGTRefElementImpl extends SVGTSpanElementImpl implements SVGTRefElement {
 	public String ref;
 
+	String xlinkType;
+	String xlinkRole;
+	String xlinkTitle;
+	String xlinkShow;
+	String xlinkActuate;
+	String xlinkArcRole;
+	SVGAnimatedString href;
+
 	public SVGTRefElementImpl()
+	{
+	}
+
+	public String getXlinkType( )
+	{
+		return xlinkType;
+	}
+
+	public void setXlinkType( String xlinkType )
+	{
+		this.xlinkType = xlinkType;
+	}
+
+	public String getXlinkRole( )
+	{
+		return xlinkRole;
+	}
+
+	public void setXlinkRole( String xlinkRole )
+	{
+		this.xlinkRole = xlinkRole;
+	}
+
+	public String getXlinkTitle( )
+	{
+		return xlinkTitle;
+	}
+
+	public void setXlinkTitle( String xlinkTitle )
+	{
+		this.xlinkTitle = xlinkTitle;
+	}
+
+	public String getXlinkArcRole()
+	{
+		return xlinkArcRole;
+	}
+
+	public void setXlinkArcRole(String xlinkArcRole)
+	{
+		this.xlinkArcRole = xlinkArcRole;
+	}
+
+	public String getXlinkShow( )
+	{
+		return xlinkShow;
+	}
+
+	public void setXlinkShow( String xlinkShow )
+	{
+		this.xlinkShow = xlinkShow;
+	}
+
+	public String getXlinkActuate( )
+	{
+		return xlinkActuate;
+	}
+
+	public void setXlinkActuate( String xlinkActuate )
+	{
+		this.xlinkActuate = xlinkActuate;
+	}
+
+	public SVGAnimatedString getHref( )
+	{
+		return href;
+	}
+
+	public void setHref( SVGAnimatedString href )
+	{
+		this.href = href;
+	}
+
+	public SVGAnimatedBoolean getExternalResourcesRequired()
+	{
+		return null;
+	}
+
+	public void setExternalResourcesRequired(SVGAnimatedBoolean externalResourcesRequired)
 	{
 	}
 }

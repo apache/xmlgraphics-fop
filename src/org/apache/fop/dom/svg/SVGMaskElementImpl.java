@@ -51,20 +51,47 @@
 
 package org.apache.fop.dom.svg;
 
+import org.w3c.dom.svg.*;
+
 import java.util.Vector;
 
 /**
  *
  */
-public class SVGMaskElementImpl extends SVGElementImpl {
+public class SVGMaskElementImpl extends GraphicElement implements SVGMaskElement {
 	public Vector elements = new Vector();
 
-	public void addElement(GraphicImpl g)
+	public void addElement(SVGElement g)
 	{
 		elements.addElement(g);
 	}
 
 	public SVGMaskElementImpl()
 	{
+	}
+
+	public SVGAnimatedEnumeration getMaskUnits( )
+	{
+		return null;
+	}
+
+	public SVGAnimatedLength getX( )
+	{
+		return null;
+	}
+
+	public SVGAnimatedLength getY( )
+	{
+		return null;
+	}
+
+	public SVGAnimatedLength getWidth( )
+	{
+		return null;
+	}
+
+	public SVGAnimatedLength getHeight( )
+	{
+		return null;
 	}
 }

@@ -58,7 +58,7 @@ import org.w3c.dom.svg.*;
  * class representing text in an SVG Area
  *
  */
-public class SVGTextElementImpl extends GraphicElement {//implements SVGTextElement {
+public class SVGTextElementImpl extends SVGTextContentElementImpl {
 
 	/** x-coordinate of text */
 	public float x;
