@@ -1,20 +1,21 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.fonts;
+package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
 
+
 /**
  * Reads a TrueType file and generates a subset
- * that can be used to embed a TrueType CID font
+ * that can be used to embed a TrueType CID font.
  * TrueType tables needed for embedded CID fonts are:
  * "head", "hhea", "loca", "maxp", "cvt ", "prep", "glyf", "hmtx" and "fpgm".
  * The TrueType spec can be found at the Microsoft

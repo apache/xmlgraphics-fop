@@ -1,19 +1,20 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.fonts;
+package org.apache.fop.fonts.truetype;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.fop.util.StreamUtilities;
+
 /**
- * Reads a file into an array and
+ * Reads a TrueType font file into a byte array and
  * provides file like functions for array access.
  */
 public class FontFileReader {
@@ -31,22 +32,12 @@ public class FontFileReader {
     private void init(InputStream in) throws java.io.IOException {
         java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
         try {
-            copyStream(in, bout);
+            StreamUtilities.streamCopy(in, bout);
             this.file = bout.toByteArray();
             this.fsize = this.file.length;
             this.current = 0;
         } finally {
             bout.close();
-        }
-    }
-
-    /**@todo Use method from Avalon Excalibur IO or Jakarta Commons IO*/
-    private void copyStream(InputStream in, OutputStream out) throws IOException {
-        final int bufferSize = 2048;
-        final byte[] buf = new byte[bufferSize];
-        int bytesRead;
-        while ((bytesRead = in.read(buf)) != -1) {
-            out.write(buf, 0, bytesRead);
         }
     }
 
