@@ -60,8 +60,8 @@ compilegen: properties charlist fonts
 	cd $(GENDIR) && \
 	($(FIND) . -name \*.java -print > javafiletoc) && \
 	for javafile in `cat javafiletoc` ; do \
-		echo $(JAVAC) $(JAVAC_ARGS) $$javafile ;\
-		$(JAVAC) $(JAVAC_ARGS) $$javafile ;\
+		echo $(JAVAC) $(GEN_JAVAC_ARGS) $$javafile ;\
+		$(JAVAC) $(GEN_JAVAC_ARGS) $$javafile ;\
 	done
 
 $(GENDIR): 
@@ -95,9 +95,10 @@ distgen:
 	($(TAR) -cf - -T $(JARTOC) | (cd ../$(JARTEMP); $(TAR) -xf - )) 
 
 distorg:
+	cd src && \
 	rm -f $(JARTOC) && \
-	($(FIND) src/org -name \*.class -print > $(JARTOC)) && \
-	($(TAR) -cf - -T $(JARTOC) | (cd $(JARTEMP); $(TAR) -xf - ))
+	($(FIND) org -name \*.class -print > $(JARTOC)) && \
+	($(TAR) -cf - -T $(JARTOC) | (cd ../$(JARTEMP); $(TAR) -xf - ))
 
 $(TARGETS:%=%subs): %subs :
 	for dir in $(SUBDIRS) ; do \
