@@ -222,7 +222,7 @@ public class MessageHandler {
 
     /**
      * adds a MessageListener which listens for MessageEvents
-     * @param MessageListener the listener to add
+     * @param listener  the MessageListener to add
      */
     public static void addListener(MessageListener listener) {
         listeners.addElement(listener);
@@ -230,7 +230,7 @@ public class MessageHandler {
 
     /**
      * removes a MessageListener
-     * @param MessageListener the listener to remove
+     * @param listener  the MessageListener to remove
      */
     public static void removeListener(MessageListener listener) {
         listeners.removeElement(listener);
