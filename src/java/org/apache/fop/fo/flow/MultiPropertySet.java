@@ -18,6 +18,11 @@
 
 package org.apache.fop.fo.flow;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
@@ -36,11 +41,18 @@ public class MultiPropertySet extends ToBeImplementedElement {
         super(parent);
     }
 
-    private void setup() {
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: empty
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+            invalidChildError(loc, nsURI, localName);
+    }
 
+    private void setup() {
         setupID();
         // this.propertyList.get("active-state");
-
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
