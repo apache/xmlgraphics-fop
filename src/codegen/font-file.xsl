@@ -1,3 +1,12 @@
+<!-- 
+This files writes the class files for the fonts (Courier.java, Helvetica.java etc.). 
+It uses the information in the font description files (Courier.xml, Helvetica.xml) to this
+In these font description files each character is referenced by its adobe name:
+      <char name="A" width="667"/>
+To resolve this name and to find the code for this character it looks up the adobe name in the
+file charlist.xml and extracts the WinAnsi code.
+-->
+
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:lxslt="http://xml.apache.org/xslt"
