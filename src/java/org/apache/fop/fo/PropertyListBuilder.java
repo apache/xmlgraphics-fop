@@ -56,6 +56,7 @@ import org.xml.sax.Attributes;
 
 // FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.Property.*;
 
 public class PropertyListBuilder {
 
@@ -156,62 +157,19 @@ public class PropertyListBuilder {
         /** @todo When we do "shorthand" properties, must handle the "font"
          * property as well to see if font-size is set.
          */
-        convertAttributeToProperty(attributes, FONTSIZEATTR, validProperties, p, parentFO);
+        String attributeName = FONTSIZEATTR;
+        String attributeValue = attributes.getValue(attributeName);
+        convertAttributeToProperty(attributes, attributeName, validProperties,
+                                   p, parentFO, attributeValue);
 
         for (int i = 0; i < attributes.getLength(); i++) {
-            String attributeName = attributes.getQName(i);
-            convertAttributeToProperty(attributes, attributeName, validProperties, p, parentFO, i);
+            attributeName = attributes.getQName(i);
+            attributeValue = attributes.getValue(i);
+            convertAttributeToProperty(attributes, attributeName,
+                                       validProperties, p, parentFO,
+                                       attributeValue);
         }
         return p;
-    }
-
-    private void convertAttributeToProperty(Attributes attributes,
-                                            String attributeName,
-                                            HashMap validProperties,
-                                            PropertyList p,
-                                            FObj parentFO,
-                                            int i) {
-        /* Handle "compound" properties, ex. space-before.minimum */
-        String basePropName = findBasePropertyName(attributeName);
-        String subPropName = findSubPropertyName(attributeName);
-        Property propVal = null;
-
-        Property.Maker propertyMaker = findMaker(validProperties, basePropName);
-
-        if (propertyMaker != null) {
-            try {
-                if (subPropName != null) {
-                    Property baseProp = p.getExplicitBaseProp(basePropName);
-                    if (baseProp == null) {
-                        // See if it is specified later in this list
-                        String baseValue = attributes.getValue(basePropName);
-                        if (baseValue != null) {
-                            baseProp = propertyMaker.make(p, baseValue,
-                                                          parentFO);
-                        }
-                        // else baseProp = propertyMaker.makeCompound(p, parentFO);
-                    }
-                    propVal = propertyMaker.make(baseProp, subPropName,
-                                                 p,
-                                                 attributes.getValue(i),
-                                                 parentFO);
-                } else {
-                    propVal = propertyMaker.make(p,
-                                                 attributes.getValue(i),
-                                                 parentFO);
-                }
-                if (propVal != null) {
-                    p.put(basePropName, propVal);
-                }
-            } catch (FOPException e) { /* Do other props. */
-                //log.error(e.getMessage());
-            }
-        } else {
-            if (!attributeName.startsWith("xmlns")) {
-                //log.error("property '"
-                //                       + attributeName + "' ignored");
-            }
-        }
     }
 
     /**
@@ -226,22 +184,69 @@ public class PropertyListBuilder {
     private void convertAttributeToProperty(Attributes attributes,
                                             String attributeName,
                                             HashMap validProperties,
-                                            PropertyList propList,
-                                            FObj parentFO) {
-        String attributeValue = attributes.getValue(attributeName);
+                                            PropertyList p,
+                                            FObj parentFO,
+                                            String attributeValue) {
+        /* Handle "compound" properties, ex. space-before.minimum */
+        String basePropName = findBasePropertyName(attributeName);
+        String subPropName = findSubPropertyName(attributeName);
+
+        Property.Maker propertyMaker = findMaker(validProperties, basePropName);
+        if (propertyMaker == null) {
+            handleInvalidProperty(attributeName);
+            return;
+        }
         if (attributeValue == null) {
             return;
         }
-        Property.Maker propertyMaker = findMaker(validProperties, attributeName);
-        if (propertyMaker == null) {
-            return;
-        }
         try {
-            propList.put(attributeName,
-                propertyMaker.make(propList, attributeValue, parentFO));
+            Property prop = null;
+            if (subPropName == null) {
+                prop = propertyMaker.make(p, attributeValue, parentFO);
+            }
+            else {
+                prop = findSubPropValue(attributes, p, parentFO, basePropName, subPropName, prop, propertyMaker, attributeValue);
+            }
+            if (prop != null) {
+                p.put(basePropName, prop);
+            }
         }
         catch (FOPException e) {
             /**@todo log this exception */
+            // log.error(e.getMessage());
+        }
+    }
+
+    private Property findSubPropValue(Attributes attributes,
+                                      PropertyList p,
+                                      FObj parentFO,
+                                      String basePropName,
+                                      String subPropName,
+                                      Property propVal,
+                                      Maker propertyMaker,
+                                      String attributeValue)
+            throws FOPException {
+        Property baseProp = p.getExplicitBaseProp(basePropName);
+        if (baseProp == null) {
+            // See if it is specified later in this list
+            String baseValue = attributes.getValue(basePropName);
+            if (baseValue != null) {
+                baseProp = propertyMaker.make(p, baseValue,
+                                              parentFO);
+            }
+            // else baseProp = propertyMaker.makeCompound(p, parentFO);
+        }
+        propVal = propertyMaker.make(baseProp, subPropName,
+                                     p,
+                                     attributeValue,
+                                     parentFO);
+        return propVal;
+    }
+
+    private void handleInvalidProperty(String attributeName) {
+        if (!attributeName.startsWith("xmlns")) {
+            //log.error("property '"
+            //                       + attributeName + "' ignored");
         }
     }
 
