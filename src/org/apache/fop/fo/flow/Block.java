@@ -185,8 +185,9 @@ public class Block extends FObjMixed {
                 area.end();
             }
 
-            if (area.getIDReferences() != null)
+            if (area.getIDReferences() != null) {
                 area.getIDReferences().createID(id);
+            }
 
             this.marker = 0;
 
@@ -221,9 +222,6 @@ public class Block extends FObjMixed {
         this.areasGenerated++;
         if (this.areasGenerated == 1)
             blockArea.isFirst(true);
-        // for normal areas this should be the only pair
-//        blockArea.addLineagePair(this, this.areasGenerated);
-
         // markers
 //         if (this.hasMarkers())
 //             blockArea.addMarkers(this.getMarkers());
@@ -243,37 +241,25 @@ public class Block extends FObjMixed {
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
             FONode fo = (FONode)children.get(i);
-            int status;
-            if (Status.isIncomplete(status = fo.layout(blockArea))) {
+            int status = fo.layout(blockArea);
+            if (Status.isIncomplete(status)) {
                 this.marker = i;
-                // this block was modified by
-                // Hani Elabed 11/27/2000
-                // if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE))
-                // {
-                // status = new Status(Status.AREA_FULL_SOME);
-                // }
-
-                // new block to replace the one above
-                // Hani Elabed 11/27/2000
                 if (status == Status.AREA_FULL_NONE) {
-                    // something has already been laid out
-                    if ((i != 0)) {
-                        status = Status.AREA_FULL_SOME;
+                    if (i == 0) {
+                        // Nothing was laid out.
+                        anythingLaidOut = false;
+                        return status;
+                    } else {
+                        // A previous child has already been laid out.
                         area.addChild(blockArea);
                         area.setMaxHeight(area.getMaxHeight() - spaceLeft
                                           + blockArea.getMaxHeight());
                         area.increaseHeight(blockArea.getHeight());
                         anythingLaidOut = true;
-
-                        return status;
-                    } else    // i == 0 nothing was laid out..
-                    {
-                        anythingLaidOut = false;
-                        return status;
+                        return Status.AREA_FULL_SOME;
                     }
                 }
-
-                // blockArea.end();
+                // Something has been laid out.
                 area.addChild(blockArea);
                 area.setMaxHeight(area.getMaxHeight() - spaceLeft
                                   + blockArea.getMaxHeight());
@@ -285,13 +271,10 @@ public class Block extends FObjMixed {
         }
 
         blockArea.end();
-
+        blockArea.isLast(true);
+        area.addChild(blockArea);
         area.setMaxHeight(area.getMaxHeight() - spaceLeft
                           + blockArea.getMaxHeight());
-
-        area.addChild(blockArea);
-
-        /* should this be combined into above? */
         area.increaseHeight(blockArea.getHeight());
 
         if (spaceAfter != 0) {
@@ -301,8 +284,6 @@ public class Block extends FObjMixed {
         if (area instanceof BlockArea) {
             area.start();
         }
-        // This is not needed any more and it consumes a LOT
-        // of memory. So we release it for the GC.
         areaHeight= blockArea.getHeight();
         contentWidth= blockArea.getContentWidth();
 
@@ -311,18 +292,12 @@ public class Block extends FObjMixed {
         int breakAfterStatus = propMgr.checkBreakAfter(area);
         if (breakAfterStatus != Status.OK) {
             this.marker = BREAK_AFTER;
-            blockArea = null; //Faster GC - BlockArea is big
+            blockArea = null;
             return breakAfterStatus;
         }
-
         if (keepWithNext != 0) {
-            blockArea = null; // Faster GC - BlockArea is big
             return Status.KEEP_WITH_NEXT;
         }
-
-        // log.error(" b:OK" + marker + " ");
-        blockArea.isLast(true);
-        blockArea = null; // Faster GC - BlockArea is big
         return Status.OK;
     }
 

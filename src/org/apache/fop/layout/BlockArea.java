@@ -213,6 +213,7 @@ public class BlockArea extends Area {
             this.currentLineArea.addPending();
             this.currentLineArea.align(this.alignLastLine);
             this.addLineArea(this.currentLineArea);
+            this.currentLineArea = null;
         }
     }
 
