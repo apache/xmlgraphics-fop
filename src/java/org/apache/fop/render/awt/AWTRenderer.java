@@ -85,12 +85,17 @@ import org.apache.fop.area.Page;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.Word;
+import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.properties.BackgroundRepeat;
+import org.apache.fop.fonts.Typeface;
+import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.render.awt.FontMetricsMapper;
 import org.apache.fop.render.awt.viewer.PreviewDialog;
 import org.apache.fop.render.awt.viewer.Translator;
 
@@ -101,10 +106,13 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
     protected double scaleFactor = 100.0;
     protected int pageNumber = 0;
-    protected Vector pageViewportList = new java.util.Vector();
-    protected Vector pageList = new java.util.Vector();
-    protected BufferedImage currentPageImage = null;
-
+    private int pageWidth = 0;
+    private int pageHeight = 0;
+    private Vector pageViewportList = new java.util.Vector();
+    private Vector pageList = new java.util.Vector();
+    private Vector bufferedImageList = new java.util.Vector();
+    private BufferedImage currentPageImage = null;
+    
     /** Font configuration */
     protected Document fontInfo;
 
@@ -112,33 +120,16 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         The InputHandler associated with this Renderer.
         Sent to the PreviewDialog for document reloading.
     */
-    protected InputHandler inputHandler;
+    private InputHandler inputHandler;
 
     /**
      * The resource bundle used for AWT messages.
      */
     protected Translator translator = null;
 
-    protected Map fontNames = new java.util.Hashtable();
-    protected Map fontStyles = new java.util.Hashtable();
-    protected Color saveColor = null;
-
-    /**
-     * The current (internal) font name
-    */
-    protected String currentFontName;
-
-    /**
-     * The current font size in millipoints
-     */
-    protected int currentFontSize;
-
-    /**
-     * The current colour's red, green and blue component
-     */
-    protected float currentRed = 0;
-    protected float currentGreen = 0;
-    protected float currentBlue = 0;
+    private Map fontNames = new java.util.Hashtable();
+    private Map fontStyles = new java.util.Hashtable();
+    private Color saveColor = null;
 
     /**
      * The preview dialog frame used for display of the documents.
@@ -156,6 +147,13 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     public AWTRenderer() {
         translator = new Translator();
         createPreviewDialog(null);
+    }
+
+    /**
+     * @see org.apache.fop.render.Renderer
+     */
+    public boolean supportsOutOfOrder() {
+        return false;
     }
 
     public Translator getTranslator() {
@@ -191,6 +189,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         // empty pageViewportList, in case of a reload from PreviewDialog
         pageViewportList.removeAllElements();
         pageList.removeAllElements();
+        bufferedImageList.removeAllElements();
         System.out.println("\nRegion Types: 0-Before/Top, 1-Start/Left, 2-Body, 3-End/Right, 4-After/Bottom");
     }
 
@@ -249,6 +248,11 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     public void renderPage(PageViewport pageViewport)  throws IOException, FOPException {
         pageViewportList.add(pageViewport);
         pageList.add(pageViewport.getPage().clone());
+        bufferedImageList.add(getPageImage(pageViewport));
+    }
+
+    public BufferedImage getBufferedPageImage(int pageNum) throws FOPException {
+        return (BufferedImage) bufferedImageList.get(pageNum);
     }
 
     /** Generates a desired page from the renderer's page viewport vector.
@@ -256,18 +260,12 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
      *  @return the <code>java.awt.image.BufferedImage</code> corresponding to the page
      *  @throws FOPException in case of an out-of-range page number requested
     */
-    public BufferedImage getPageImage(int pageNum) throws FOPException {
-        if (pageNum < 0 || pageNum >= pageViewportList.size()) {
-            throw new FOPException("out-of-range page number (" + pageNum
-                + ") requested; only " + pageViewportList.size()
-                + " page(s) available.");
-        }
-        PageViewport pageViewport = (PageViewport) pageViewportList.get(pageNum);
-        Page page = (Page) pageList.get(pageNum);
+    public BufferedImage getPageImage(PageViewport pageViewport) throws FOPException {
+        Page page = pageViewport.getPage();
 
         Rectangle2D bounds = pageViewport.getViewArea();
-        int pageWidth = (int) Math.round(bounds.getWidth() / 1000f );
-        int pageHeight = (int) Math.round(bounds.getHeight() / 1000f );
+        pageWidth = (int) Math.round(bounds.getWidth() / 1000f );
+        pageHeight = (int) Math.round(bounds.getHeight() / 1000f );
 /*
         System.out.println("(Page) X, Y, Width, Height: " + bounds.getX()
             + " " + bounds.getY()
@@ -298,8 +296,57 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         graphics.drawLine(0, pageHeight + 2, pageWidth + 2, pageHeight + 2);
         graphics.drawLine(1, pageHeight + 3, pageWidth + 3, pageHeight + 3);
 
-        currentFontName = "";
-        currentFontSize = 0;
+        renderPageAreas(page);
+        return currentPageImage;
+    }
+
+        /** Generates a desired page from the renderer's page viewport vector.
+     * @param pageNum the 0-based page number to generate
+     *  @return the <code>java.awt.image.BufferedImage</code> corresponding to the page
+     *  @throws FOPException in case of an out-of-range page number requested
+    */
+    public BufferedImage getPageImage(int pageNum) throws FOPException {
+        if (pageNum < 0 || pageNum >= pageViewportList.size()) {
+            throw new FOPException("out-of-range page number (" + pageNum
+                + ") requested; only " + pageViewportList.size()
+                + " page(s) available.");
+        }
+        PageViewport pageViewport = (PageViewport) pageViewportList.get(pageNum);
+        Page page = (Page) pageList.get(pageNum);
+
+        Rectangle2D bounds = pageViewport.getViewArea();
+        pageWidth = (int) Math.round(bounds.getWidth() / 1000f );
+        pageHeight = (int) Math.round(bounds.getHeight() / 1000f );
+/*
+        System.out.println("(Page) X, Y, Width, Height: " + bounds.getX()
+            + " " + bounds.getY()
+            + " " + bounds.getWidth()
+            + " " + bounds.getHeight());
+*/
+        currentPageImage =
+            new BufferedImage((int)((pageWidth * (int)scaleFactor) / 100),
+                              (int)((pageHeight * (int)scaleFactor) / 100),
+                              BufferedImage.TYPE_INT_RGB);
+
+        Graphics2D graphics = currentPageImage.createGraphics();
+        graphics.setRenderingHint (RenderingHints.KEY_FRACTIONALMETRICS,
+                                   RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
+        // transform page based on scale factor supplied
+        AffineTransform at = graphics.getTransform();
+        at.scale(scaleFactor / 100.0, scaleFactor / 100.0);
+        graphics.setTransform(at);
+
+        // draw page frame
+        graphics.setColor(Color.white);
+        graphics.fillRect(0, 0, pageWidth, pageHeight);
+        graphics.setColor(Color.black);
+        graphics.drawRect(-1, -1, pageWidth + 2, pageHeight + 2);
+        graphics.drawLine(pageWidth + 2, 0, pageWidth + 2, pageHeight + 2);
+        graphics.drawLine(pageWidth + 3, 1, pageWidth + 3, pageHeight + 3);
+        graphics.drawLine(0, pageHeight + 2, pageWidth + 2, pageHeight + 2);
+        graphics.drawLine(1, pageHeight + 3, pageWidth + 3, pageHeight + 3);
+
         renderPageAreas(page);
         return currentPageImage;
     }
@@ -311,8 +358,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
      * @param region the RegionViewport whose region is to be drawn
      */
     protected void handleRegionTraits(RegionViewport region) {
-        currentFontName = "";
-        currentFontSize = 0;
         Rectangle2D viewArea = region.getViewArea();
 
         int startX = (int) Math.round((viewArea.getX() / 1000f)
@@ -329,11 +374,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         if (region.getRegion() != null) {
             System.out.print("\nRegion type = " + region.getRegion().getRegionClass());
         }
-/*        System.out.println("\nView  X, Width, Y, Height: " + viewArea.getX()
-            + " " + viewArea.getWidth()
-            + " " + viewArea.getY()
-            + " " + viewArea.getHeight()
-            ); */
+
         System.out.println("  X, Width, Y, Height: " + startX
             + " " + width
             + " " + startY
@@ -391,8 +432,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         if (bps != null) {
             int borderWidth = (int) Math.round((bps.width / 1000f) * (scaleFactor / 100f));
             graphics.setColor(bps.color.getAWTColor());
-//          System.out.println("Border at (" + startx + "," + (starty + height - borderWidth) + 
-//              ") width, height: (" + (width) + "," + (borderWidth) + ")");
             graphics.fillRect(startx, starty, width, borderWidth);
         }
         bps = (BorderProps) block.getTrait(Trait.BORDER_AFTER);
@@ -417,5 +456,45 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
             graphics.fillRect(startx + width - borderWidth, starty, 
                 borderWidth, height);
         }
+        
+    }
+    
+    /**
+     * @see org.apache.fop.render.Renderer#renderWord(Word)
+     */
+    public void renderWord(Word word) {
+        System.out.println("In render word: " + word.getWord());
+
+        Graphics2D graphics = currentPageImage.createGraphics();
+        String fontName = (String) word.getTrait(Trait.FONT_NAME);
+        int size = ((Integer) word.getTrait(Trait.FONT_SIZE)).intValue();
+//      Typeface f = (Typeface) fontInfo.getFonts().get(fontName);
+        ColorType ct = (ColorType) word.getTrait(Trait.COLOR);
+
+        FontMetricsMapper mapper = (FontMetricsMapper) 
+            fontInfo.getMetricsFor(fontName);
+        if (mapper == null) {
+            mapper = new FontMetricsMapper("MonoSpaced", java.awt.Font.PLAIN,
+                graphics);
+        }
+
+//      graphics.setColor(ct.getAWTColor());
+//      graphics.setFont(mapper.getFont(size));
+        graphics.setColor(java.awt.Color.black);
+        graphics.setFont(new java.awt.Font("monospaced", java.awt.Font.PLAIN,
+            10));
+        
+        int rx = currentBlockIPPosition;
+        int bl = currentBPPosition + word.getOffset();
+
+        int newx = (int) (rx + 500) / 1000;
+        int newy = (int) (pageHeight - (bl + 500) / 1000);
+                
+        String s = word.getWord();
+//      graphics.drawString(s, newx, newy);
+        graphics.drawString(s, 220, 200);
+
+        // TODO: render text decorations
+        currentBlockIPPosition += word.getWidth();
     }
 }
