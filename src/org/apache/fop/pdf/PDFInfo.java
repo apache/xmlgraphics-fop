@@ -47,6 +47,15 @@ public class PDFInfo extends PDFObject {
         this.producer = producer;
     }
 
+    /**
+     * set the creator string
+     *
+     * @param creator the document creator
+     */
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
     public void setTitle(String t) {
         this.title = t;
     }
@@ -82,6 +91,10 @@ public class PDFInfo extends PDFObject {
         }
         if (keywords != null) {
             p += "/Keywords (" + this.keywords + ")\n";
+        }
+
+        if (creator != null) {
+            p += "/Creator (" + this.creator + ")\n";
         }
 
         p += "/Producer (" + this.producer + ")\n";

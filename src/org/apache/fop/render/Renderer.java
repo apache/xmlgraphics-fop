@@ -47,6 +47,9 @@ public interface Renderer {
 
     /**
      * Initiates the rendering phase.
+     * This must only be called once for a rendering. If
+     * stopRenderer is called then this may be called again
+     * for a new document rendering.
      *
      * @param outputStream     The OutputStream to use for output
      * @exception IOException  If an I/O error occurs
@@ -56,6 +59,8 @@ public interface Renderer {
 
     /**
      * Signals the end of the rendering phase.
+     * The renderer should reset to an initial state and dispose of
+     * any resources for the completed rendering.
      *
      * @exception IOException  If an I/O error occurs
      */
@@ -91,6 +96,15 @@ public interface Renderer {
      *      embedded in the generated file.
      */
     void setProducer(String producer);
+
+    /**
+     * Set the creator of the document to be rendered. If this method
+     * isn't called the renderer uses a default.
+     * Note: Not all renderers support this feature.
+     *
+     * @param creator  The name of the document creator
+     */
+    void setCreator(String creator);
 
     /**
      * Reports if out of order rendering is supported. <p>

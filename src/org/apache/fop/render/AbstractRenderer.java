@@ -95,6 +95,13 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
      */
     protected int containingIPPosition = 0;
 
+    /** @see org.apache.fop.render.Renderer */
+    public void setProducer(String producer) {
+    }
+
+    /** @see org.apache.fop.render.Renderer */
+    public void setCreator(String creator) {
+    }
 
     /** @see org.apache.fop.render.Renderer */
     public void setUserAgent(FOUserAgent agent) {
