@@ -184,7 +184,6 @@ public class LineArea extends Area {
                         // appending indent space leader-alignment setting
                         // InlineSpace to false, so it is not used in line
                         // justification
-                        System.out.println("align, space="+spaceBeforeLeader);
                         if (spaceBeforeLeader > 0) {
                             children.add(idx, new InlineSpace(spaceBeforeLeader,
                                                               false));
@@ -219,7 +218,6 @@ public class LineArea extends Area {
                         // appending indent space leader-alignment setting
                         // InlineSpace to false, so it is not used in line
                         // justification
-                        System.out.println("align, space="+spaceBeforeLeader);
                         if (spaceBeforeLeader > 0) {
                             children.add(idx, new InlineSpace(spaceBeforeLeader,
                                                               false));
@@ -742,12 +740,6 @@ public class LineArea extends Area {
                           int leaderLengthOptimum, int leaderLengthMaximum,
                           int ruleStyle, int ruleThickness,
                           int leaderPatternWidth, int leaderAlignment) {
-        System.out.println(
-            "min="+leaderLengthMinimum+
-            " opt="+leaderLengthOptimum+
-            " max="+leaderLengthMaximum+
-            " th="+ruleThickness+
-            " al="+leaderAlignment);
         if (leaderLengthMinimum>leaderLengthOptimum
             || leaderLengthOptimum>leaderLengthMaximum) {
             MessageHandler.errorln("leader sizes wrong");
@@ -892,8 +884,10 @@ public class LineArea extends Area {
                     }
                 }
             }
+            break;
         default: 
             MessageHandler.errorln("bad align: "+type);
+            break;
         }
     }
 

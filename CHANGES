@@ -1,5 +1,7 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fixed leader expansion and leader alignment to reference area to some
+  extent(#7490 and #15936).
 - Temporary fix for wrong mapping of the hyphen character in the PostScript
   renderer. Needs to be done in a clean way later.
   Submitted by: Arnd Beissner <arnd.beissner@cappelino.de>

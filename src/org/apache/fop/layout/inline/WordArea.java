@@ -14,12 +14,6 @@ public class WordArea extends InlineArea {
 
     private String text;
 
-    // Textdecoration
-    protected boolean underlined = false;
-    protected boolean overlined = false;
-    protected boolean lineThrough = false;
-
-
     public WordArea(FontState fontState, float red, float green, float blue,
                     String text, int width) {
         super(fontState, width, red, green, blue);
@@ -33,14 +27,6 @@ public class WordArea extends InlineArea {
 
     public String getText() {
         return this.text;
-    }
-
-    public void setUnderlined(boolean ul) {
-        this.underlined = ul;
-    }
-
-    public boolean getUnderlined() {
-        return this.underlined;
     }
 
 }
