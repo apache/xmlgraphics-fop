@@ -15,8 +15,9 @@ public class IDNode {
 
     private PDFGoTo internalLinkGoTo;
 
-    private int pageNumber = -1, xPosition = 0,    // x position on page
-    yPosition = 0;                                 // y position on page
+    private String pageNumber;
+    private int xPosition = 0;    // x position on page
+    private int yPosition = 0;    // y position on page
 
 
     /**
@@ -34,8 +35,8 @@ public class IDNode {
      *
      * @param number page number of node
      */
-    protected void setPageNumber(int number) {
-        pageNumber = number;
+    protected void setPageNumber(String pageNumber) {
+        this.pageNumber = pageNumber;
     }
 
 
@@ -45,7 +46,7 @@ public class IDNode {
      * @return page number of this node
      */
     public String getPageNumber() {
-        return (pageNumber != -1) ? new Integer(pageNumber).toString() : null;
+        return pageNumber;
     }
 
 
