@@ -104,46 +104,46 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         int cheight = -1;
         len = fobj.getContentWidth();
         if (len.getEnum() != EN_AUTO) {
-            /*if(len.scaleToFit()) {
-                if(ipd != -1) {
+            if (len.getEnum() == EN_SCALE_TO_FIT) {
+                if (ipd != -1) {
                     cwidth = ipd;
                 }
-            } else {*/
-            cwidth = len.getValue();
+            } else {
+                cwidth = len.getValue();
+            }
         }
         len = fobj.getContentHeight();
         if (len.getEnum() != EN_AUTO) {
-            /*if(len.scaleToFit()) {
-                if(bpd != -1) {
+            if (len.getEnum() == EN_SCALE_TO_FIT) {
+                if (bpd != -1) {
                     cwidth = bpd;
                 }
-            } else {*/
-            cheight = len.getValue();
+            } else {
+                cheight = len.getValue();
+            }
         }
 
-        Point2D csize = new Point2D.Float(cwidth == -1 ? -1 : cwidth / 1000f,
-                                          cheight == -1 ? -1 : cheight / 1000f);
-        Point2D size = child.getDimension(csize);
-        if (size == null) {
-            // error
-            return null;
-        }
-        if (cwidth == -1) {
-            cwidth = (int)size.getX() * 1000;
-        }
-        if (cheight == -1) {
-            cheight = (int)size.getY() * 1000;
-        }
         int scaling = fobj.getScaling();
-        if (scaling == EN_UNIFORM) {
-            // adjust the larger
-            double rat1 = cwidth / (size.getX() * 1000f);
-            double rat2 = cheight / (size.getY() * 1000f);
-            if (rat1 < rat2) {
-                // reduce cheight
-                cheight = (int)(rat1 * size.getY() * 1000);
+        if ((scaling == EN_UNIFORM) || (cwidth == -1) || cheight == -1) {
+            if (cwidth == -1 && cheight == -1) {
+                cwidth = fobj.getIntrinsicWidth();
+                cheight = fobj.getIntrinsicHeight();
+            } else if (cwidth == -1) {
+                cwidth = (int)(fobj.getIntrinsicWidth() * (double)cheight 
+                    / fobj.getIntrinsicHeight());
+            } else if (cheight == -1) {
+                cheight = (int)(fobj.getIntrinsicHeight() * (double)cwidth 
+                    / fobj.getIntrinsicWidth());
             } else {
-                cwidth = (int)(rat2 * size.getX() * 1000);
+                // adjust the larger
+                double rat1 = cwidth / fobj.getIntrinsicWidth();
+                double rat2 = cheight / fobj.getIntrinsicHeight();
+                if (rat1 < rat2) {
+                    // reduce cheight
+                    cheight = (int)(rat1 * fobj.getIntrinsicHeight());
+                } else if (rat1 > rat2) {
+                    cwidth = (int)(rat2 * fobj.getIntrinsicWidth());
+                }
             }
         }
 

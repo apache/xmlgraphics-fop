@@ -27,16 +27,14 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.ExternalGraphic;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
 
 /**
  * LayoutManager for the fo:external-graphic formatting object
  */
 public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
+    
     private ExternalGraphic fobj;
 
-    private String url;
     private int breakAfter;
     private int breakBefore;
     private int align;
@@ -70,8 +68,6 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
      * @todo see if can simplify property handling logic
      */
     private void setup() {
-        url = ImageFactory.getURL(fobj.getSrc());
-
         // assume lr-tb for now and just use the .optimum value of the range
         Length ipd = fobj.getInlineProgressionDimension().getOptimum().getLength();
         if (ipd.getEnum() != EN_AUTO) {
@@ -91,9 +87,6 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
                 viewHeight = bpd.getValue();
             }
         }
-
-        // if we need to load this image to get its size
-        FopImage fopimage = null;
 
         int cwidth = -1;
         int cheight = -1;
@@ -120,35 +113,24 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
 
         int scaling = fobj.getScaling();
         if ((scaling == EN_UNIFORM) || (cwidth == -1) || cheight == -1) {
-            ImageFactory fact = ImageFactory.getInstance();
-            fopimage = fact.getImage(url, fobj.getUserAgent());
-            if (fopimage == null) {
-                // error
-                url = null;
-                return;
-            }
-            // load dimensions
-            if (!fopimage.load(FopImage.DIMENSIONS)) {
-                // error
-                url = null;
-                return;
-            }
             if (cwidth == -1 && cheight == -1) {
-                cwidth = (int)(fopimage.getWidth() * 1000);
-                cheight = (int)(fopimage.getHeight() * 1000);
+                cwidth = fobj.getIntrinsicWidth();
+                cheight = fobj.getIntrinsicHeight();
             } else if (cwidth == -1) {
-                cwidth = (int)(fopimage.getWidth() * cheight) / fopimage.getHeight();
+                cwidth = (int)(fobj.getIntrinsicWidth() * (double)cheight 
+                    / fobj.getIntrinsicHeight());
             } else if (cheight == -1) {
-                cheight = (int)(fopimage.getHeight() * cwidth) / fopimage.getWidth();
+                cheight = (int)(fobj.getIntrinsicHeight() * (double)cwidth 
+                    / fobj.getIntrinsicWidth());
             } else {
                 // adjust the larger
-                double rat1 = cwidth / (fopimage.getWidth() * 1000f);
-                double rat2 = cheight / (fopimage.getHeight() * 1000f);
+                double rat1 = cwidth / fobj.getIntrinsicWidth();
+                double rat2 = cheight / fobj.getIntrinsicHeight();
                 if (rat1 < rat2) {
                     // reduce cheight
-                    cheight = (int)(rat1 * fopimage.getHeight() * 1000);
+                    cheight = (int)(rat1 * fobj.getIntrinsicHeight());
                 } else if (rat1 > rat2) {
-                    cwidth = (int)(rat2 * fopimage.getWidth() * 1000);
+                    cwidth = (int)(rat2 * fobj.getIntrinsicWidth());
                 }
             }
         }
@@ -165,7 +147,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
             if (overflow == EN_HIDDEN) {
                 clip = true;
             } else if (overflow == EN_ERROR_IF_OVERFLOW) {
-                fobj.getLogger().error("Image: " + url
+                fobj.getLogger().error("Image: " + fobj.getURL()
                                   + " overflows the viewport, clipping to viewport");
                 clip = true;
             }

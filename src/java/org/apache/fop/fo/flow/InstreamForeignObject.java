@@ -18,8 +18,7 @@
 
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
+import java.awt.geom.Point2D;
 
 import org.xml.sax.Locator;
 
@@ -27,8 +26,10 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.IntrinsicSizeAccess;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -36,14 +37,14 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.layoutmgr.InstreamForeignObjectLM;
 
 /**
  * The instream-foreign-object flow formatting object.
  * This is an atomic inline object that contains
  * xml data.
  */
-public class InstreamForeignObject extends FObj {
+public class InstreamForeignObject extends FObj implements IntrinsicSizeAccess {
+    
     // The value of properties relevant for fo:instream-foreign-object.
     private CommonAccessibility commonAccessibility;
     private CommonAural commonAural;
@@ -74,6 +75,9 @@ public class InstreamForeignObject extends FObj {
     private Length width;
     // End of property values
 
+    //Additional value
+    private Point2D intrinsicDimensions;
+    
     /**
      * constructs an instream-foreign-object object (called by Maker).
      *
@@ -280,4 +284,44 @@ public class InstreamForeignObject extends FObj {
     public int getNameId() {
         return FO_INSTREAM_FOREIGN_OBJECT;
     }
+
+    /**
+     * Preloads the image so the intrinsic size is available.
+     */
+    private void prepareIntrinsicSize() {
+        if (intrinsicDimensions == null) {
+            XMLObj child = (XMLObj)childNodes.get(0);
+            Point2D csize = new Point2D.Float(-1, -1);
+            intrinsicDimensions = child.getDimension(csize);
+            if (intrinsicDimensions == null) {
+                getLogger().error("Intrinsic dimensions of "
+                        + " instream-foreign-object could not be determined");
+            }
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.IntrinsicSizeAccess#getIntrinsicWidth()
+     */
+    public int getIntrinsicWidth() {
+        prepareIntrinsicSize();
+        if (intrinsicDimensions != null) {
+            return (int)(intrinsicDimensions.getX() * 1000);
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.IntrinsicSizeAccess#getIntrinsicHeight()
+     */
+    public int getIntrinsicHeight() {
+        prepareIntrinsicSize();
+        if (intrinsicDimensions != null) {
+            return (int)(intrinsicDimensions.getY() * 1000);
+        } else {
+            return 0;
+        }
+    }
+    
 }
