@@ -177,7 +177,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
         ItemPosition rp = new ItemPosition(this, breakList.size() - 1, breakList);
         BreakPoss breakPoss = new BreakPoss(rp);
-        if (over) { 
+        if (over) {
             breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
         }
         breakPoss.setStackingSize(itemSize);

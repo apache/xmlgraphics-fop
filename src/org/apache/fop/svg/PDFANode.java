@@ -104,7 +104,7 @@ public class PDFANode extends CompositeGraphicsNode {
                     destination = "" + x + " " + y + " "
                                   + (x + width) + " " + (y + height);
                 }
-                pdfg.addLink(getBounds(), transform, destination, type);           
+                pdfg.addLink(getBounds(), transform, destination, type);
             }
         }
     }

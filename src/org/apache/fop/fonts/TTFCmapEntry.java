@@ -12,7 +12,7 @@ package org.apache.fop.fonts;
  * the glyph indexes related to the range
  */
 public class TTFCmapEntry {
-    
+
     private int unicodeStart;
     private int unicodeEnd;
     private int glyphStartIndex;

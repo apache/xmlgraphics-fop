@@ -24,8 +24,8 @@ import java.util.List;
 public class StaticContentLayoutManager extends BlockStackingLayoutManager {
 
     private RegionReference region;
-    private List blockBreaks = new ArrayList();      
-  
+    private List blockBreaks = new ArrayList();
+
     public StaticContentLayoutManager(FObj fobj) {
         super(fobj);
     }
@@ -33,7 +33,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     public void setRegionReference(RegionReference region) {
         this.region = region;
     }
-   
+
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
         // currently active LM
@@ -73,7 +73,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             PositionIterator breakPosIter =
               new BreakPossPosIter(blockBreaks, iStartPos,
                                    lfp.getLeafPos() + 1);
-            iStartPos = lfp.getLeafPos() + 1; 
+            iStartPos = lfp.getLeafPos() + 1;
             while ((childLM = breakPosIter.getNextChildLM()) != null) {
                 childLM.addAreas(breakPosIter, lc);
             }

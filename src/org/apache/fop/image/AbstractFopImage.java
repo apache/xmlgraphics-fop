@@ -158,7 +158,7 @@ public abstract class AbstractFopImage implements FopImage {
      * Load a bitmap array of the image.
      * If the renderer requires a bitmap image then the
      * implementations should override this to load the bitmap.
-     * 
+     *
      * @param ua the user agent
      * @return true if the loading was successful
      */
@@ -169,7 +169,7 @@ public abstract class AbstractFopImage implements FopImage {
     /**
      * Load the original image data.
      * In some cases the original data can be used by the renderer.
-     * This should load the data and any other associated information. 
+     * This should load the data and any other associated information.
      *
      * @param ua the user agent
      * @return true if the loading was successful

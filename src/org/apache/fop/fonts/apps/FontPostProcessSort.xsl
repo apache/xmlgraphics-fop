@@ -3,17 +3,17 @@
 <xsl:output method="xml"/>
 
 <xsl:template match="@*|node()">
-	<xsl:copy>
-		<xsl:apply-templates select="@*|node()"/>
-	</xsl:copy>
+  <xsl:copy>
+    <xsl:apply-templates select="@*|node()"/>
+  </xsl:copy>
 </xsl:template>
 
 <xsl:template match="widths">
-	<xsl:copy>
-		<xsl:apply-templates select="char">
-			<xsl:sort select="@name" case-order="upper-first"/>
-		</xsl:apply-templates>
-	</xsl:copy>
+  <xsl:copy>
+    <xsl:apply-templates select="char">
+      <xsl:sort select="@name" case-order="upper-first"/>
+    </xsl:apply-templates>
+  </xsl:copy>
 </xsl:template>
 
 

@@ -122,7 +122,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             }
             BreakPoss breakPoss = new BreakPoss(
                                     new LeafPosition(this, bodyBreaks.size() - 1));
-            if (over) { 
+            if (over) {
                 breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
             }
             breakPoss.setStackingSize(stackSize);
@@ -163,7 +163,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             }
         }
 
-        if(borderProps != null) { 
+        if(borderProps != null) {
             addBorders(curBlockArea, borderProps);
         }
         if(backgroundProps != null) {
@@ -225,7 +225,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             bodyBreaks.clear();
             reset(null);
         } else {
-            
+
         }
     }
 }

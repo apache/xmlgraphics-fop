@@ -699,35 +699,35 @@ public class PDFFunction extends PDFObject {
         }
         if (range != null) {
             if (!range.equals(func.range)) {
-                return false; 
+                return false;
             }
         } else if (func.range != null) {
             return false;
         }
         if (size != null) {
             if (!size.equals(func.size)) {
-                return false; 
+                return false;
             }
         } else if (func.size != null) {
             return false;
         }
         if (encode != null) {
             if (!encode.equals(func.encode)) {
-                return false; 
+                return false;
             }
         } else if (func.encode != null) {
             return false;
         }
         if (decode != null) {
             if (!decode.equals(func.decode)) {
-                return false; 
+                return false;
             }
         } else if (func.decode != null) {
             return false;
         }
         if (functionDataStream != null) {
             if (!functionDataStream.equals(func.functionDataStream)) {
-                return false; 
+                return false;
             }
         } else if (func.functionDataStream != null) {
             return false;

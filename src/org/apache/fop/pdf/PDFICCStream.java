@@ -12,7 +12,7 @@ import java.awt.color.ICC_Profile;
 public class PDFICCStream extends PDFStream {
     private int origLength;
     private int len1, len3;
-    
+
     private ICC_Profile cp;
     private PDFColorSpace pdfColorSpace;
 
@@ -20,12 +20,12 @@ public class PDFICCStream extends PDFStream {
         this.cp = cp;
         pdfColorSpace = alt;
     }
-    
+
     public PDFICCStream(int num) {
         super(num);
         cp = null;
     }
-    
+
         // overload the base object method so we don't have to copy
         // byte arrays around so much
     protected int output(java.io.OutputStream stream)
@@ -38,11 +38,11 @@ public class PDFICCStream extends PDFStream {
         StringBuffer pb = new StringBuffer();
         pb.append(this.number).append(" ").append(this.generation).append(" obj\n<< ");
         pb.append("/N ").append(cp.getNumComponents()).append(" ");
-        
+
         if (pdfColorSpace != null) {
             pb.append("/Alternate /").append(pdfColorSpace.getColorSpacePDFString()).append(" ");
         }
-        
+
         pb.append("/Length ").append((_data.getSize() + 1)).append(" ").append(filterEntry);
         pb.append(" >>\n");
         byte[] p = pb.toString().getBytes();

@@ -120,7 +120,7 @@ public class Item extends BlockStackingLayoutManager {
             }
             BreakPoss breakPoss = new BreakPoss(
                                     new LeafPosition(this, childBreaks.size() - 1));
-            if (over) { 
+            if (over) {
                 breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
             }
             breakPoss.setStackingSize(stackSize);

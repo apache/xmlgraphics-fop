@@ -53,7 +53,7 @@ public class TableRow extends FObj {
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
-            
+
         // this.properties.get("block-progression-dimension");
 
         // Common Aural Properties
@@ -67,7 +67,7 @@ public class TableRow extends FObj {
 
         // Common Relative Position Properties
         RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
-                    
+
         // this.properties.get("break-before");
         // this.properties.get("break-after");
         setupID();

@@ -5,14 +5,14 @@
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.viewer; 
+package org.apache.fop.viewer;
 
 //Java
-import java.util.ResourceBundle; 
+import java.util.ResourceBundle;
 import java.util.Locale;
 import java.util.MissingResourceException;
 
-/** 
+/**
  * AWT Viewer's localization class, backed up by <code>java.util.ResourceBundle</code>.
  * Originally contributed by:
  * Stanislav.Gorkhover@jCatalog.com
@@ -25,10 +25,10 @@ public class Translator {
      * Default constructor, default <code>Locale</code> is used.
      */
     public Translator() {
-        this(Locale.getDefault()); 
+        this(Locale.getDefault());
     }
- 
-    /** 
+
+    /**
      * Constructor for a given <code>Locale</code>.
      */
     public Translator(Locale locale) {

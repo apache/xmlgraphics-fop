@@ -10,7 +10,7 @@ package org.apache.fop.fonts;
 import java.io.IOException;
 
 class TTFDirTabEntry {
-    
+
     private byte[] tag = new byte[4];
     private int checksum;
     private long offset;
@@ -33,13 +33,13 @@ class TTFDirTabEntry {
         //System.out.println(this.toString());
         return new String(tag, "ISO-8859-1");
     }
-    
-    
+
+
     public String toString() {
-        return "Read dir tab [" 
+        return "Read dir tab ["
             + tag[0] + " " + tag[1] + " " + tag[2] + " " + tag[3] + "]"
             + " offset: " + offset
-            + " length: " + length 
+            + " length: " + length
             + " name: " + tag;
     }
 

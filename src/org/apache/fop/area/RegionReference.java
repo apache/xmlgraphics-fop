@@ -25,17 +25,17 @@ public class RegionReference extends Area implements Cloneable {
      * The start region.
      */
     public static final int START = 1;
-    
+
     /**
      * The body region.
      */
     public static final int BODY = 2;
-    
+
     /**
      * The end region.
      */
     public static final int END = 3;
-    
+
     /**
      * The after region.
      */

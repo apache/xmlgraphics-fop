@@ -10,7 +10,7 @@ package org.apache.fop.fonts;
 import java.util.List;
 
 class TTFMtxEntry {
-    
+
     private int wx;
     private int lsb;
     private String name = "";
@@ -22,10 +22,10 @@ class TTFMtxEntry {
 
     public String toString(TTFFile t) {
         return "Glyph " + name + " index: " + index + " bbox [ "
-             + t.convertTTFUnit2PDFUnit(boundingBox[0]) + " " 
-             + t.convertTTFUnit2PDFUnit(boundingBox[1]) + " " 
-             + t.convertTTFUnit2PDFUnit(boundingBox[2]) + " " 
-             + t.convertTTFUnit2PDFUnit(boundingBox[3]) + "] wx: " 
+             + t.convertTTFUnit2PDFUnit(boundingBox[0]) + " "
+             + t.convertTTFUnit2PDFUnit(boundingBox[1]) + " "
+             + t.convertTTFUnit2PDFUnit(boundingBox[2]) + " "
+             + t.convertTTFUnit2PDFUnit(boundingBox[3]) + "] wx: "
              + t.convertTTFUnit2PDFUnit(wx);
     }
 

@@ -11,7 +11,7 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:output method="text"/>
-  
+
   <xsl:param name="encoding" select="/font-metrics/encoding"/>
   <xsl:variable name="native-encoding" select="/font-metrics/encoding"/>
   <xsl:variable name="glyphs" select="document('encodings.xml')/encoding-set/encoding[@id=$encoding]/glyph"/>
@@ -43,7 +43,7 @@ public class <xsl:value-of select="class-name"/> extends Font {
     public String encoding() {
         return encoding;
     }
-    
+
     public String fontName() {
         return fontName;
     }
@@ -85,10 +85,10 @@ public class <xsl:value-of select="class-name"/> extends Font {
 
     public char mapChar(char c) {
         char d = mapping.mapChar(c);
-	if(d != 0)
+  if(d != 0)
             return d;
         else
-	    return '#';
+      return '#';
     }
 
 }

@@ -11,10 +11,10 @@ public class PDFColorSpace {
     private boolean hasICCProfile;
     private byte[] iccProfile;
     private int numComponents;
-    
+
     // Ok... so I had some grand purpose for this, but I can't recall.
     // I'm just writing it
-    
+
     public static int DEVICE_UNKNOWN = -1;
     public static int DEVICE_GRAY = 1;
     // what's the *official* spelling?

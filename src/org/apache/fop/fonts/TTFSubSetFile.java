@@ -21,7 +21,7 @@ import java.util.List;
  * Typography site: http://www.microsoft.com/truetype/
  */
 public class TTFSubSetFile extends TTFFile {
-    
+
     private byte[] output = null;
     private int realSize = 0;
     private int currentPos = 0;
@@ -390,7 +390,7 @@ public class TTFSubSetFile extends TTFFile {
         if (entry != null) {
             pad4();
             //int offset = (int)entry.offset;
-            Iterator e = glyphs.keySet().iterator(); 
+            Iterator e = glyphs.keySet().iterator();
             while (e.hasNext()) {
                 Integer origIndex = (Integer)e.next();
                 Integer subsetIndex = (Integer)glyphs.get(origIndex);
@@ -531,7 +531,7 @@ public class TTFSubSetFile extends TTFFile {
                 // Inefficient to iterate through all glyphs
                 newComposites = new java.util.HashMap();
 
-                Iterator e = glyphs.keySet().iterator(); 
+                Iterator e = glyphs.keySet().iterator();
                 while (e.hasNext()) {
                     Integer origIndex = (Integer)e.next();
 
@@ -583,10 +583,10 @@ public class TTFSubSetFile extends TTFFile {
 
     /**
      * Returns a subset of the original font.
-     * 
+     *
      * @param in FontFileReader to read from
      * @param name Name to be checked for in the font file
-     * @param glyphs Map of glyphs (glyphs has old index as (Integer) key and 
+     * @param glyphs Map of glyphs (glyphs has old index as (Integer) key and
      * new index as (Integer) value)
      * @return A subset of the original font
      * @throws IOException in case of an I/O problem

@@ -100,7 +100,7 @@ public class ImageFactory {
      * the image.
      * The image should then be put into the weak cache.
      *
-     * @param url the url for the image 
+     * @param url the url for the image
      * @param context the user agent context
      */
     public void releaseImage(String url, FOUserAgent context) {
@@ -112,7 +112,7 @@ public class ImageFactory {
      * @param href image URL as a String
      * @return a new FopImage object
      *
-     * @param href the url for the image 
+     * @param href the url for the image
      * @param baseURL the base url
      * @param ua the user agent context
      * @return the fop image instance

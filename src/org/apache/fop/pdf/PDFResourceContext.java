@@ -14,7 +14,7 @@ package org.apache.fop.pdf;
  * specifies the dimensions of the page and references a /Resources
  * object, a contents stream and the page's parent in the page
  * hierarchy.
- * 
+ *
  * Modified by Mark Lillywhite, mark-fop@inomial.com. The Parent
  * object was being referred to by reference, but all that we
  * ever used from the Parent was it's PDF object ID, and according

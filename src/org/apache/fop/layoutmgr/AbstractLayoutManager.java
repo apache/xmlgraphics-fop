@@ -141,7 +141,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     protected boolean hasMoreLM(LayoutManager prevLM) {
         // prevLM should = curChildLM
         if (prevLM != curChildLM) {
-            //log.debug("AbstractLayoutManager.peekNextLM: " + 
+            //log.debug("AbstractLayoutManager.peekNextLM: " +
             //                   "passed LM is not current child LM!");
             return false;
         }
@@ -158,7 +158,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * If pos is null, then back up to the first child LM.
      */
     protected void reset(Position pos) {
-        //if (lm == null) return; 
+        //if (lm == null) return;
         LayoutManager lm = (pos != null) ? pos.getLM() : null;
         if (curChildLM != lm) {
             // ASSERT curChildLM == (LayoutManager)childLMiter.previous()
@@ -191,7 +191,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * This method provides a hook for a LayoutManager to intialize traits
      * for the areas it will create, based on Properties set on its FO.
      */
-    public void init() { 
+    public void init() {
         if (fobj != null && bInited == false) {
             initProperties(fobj.getPropertyManager());
             bInited = true;
@@ -205,7 +205,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     protected void initProperties(PropertyManager pm) {
         //log.debug("AbstractLayoutManager.initProperties");
     }
-    
+
 
     /**
      * Tell whether this LayoutManager has handled all of its content.
@@ -369,7 +369,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
 
     /**
      * Add background to an area.
-     * Layout managers that create areas with a background can use this to 
+     * Layout managers that create areas with a background can use this to
      * add the background to the area.
      */
     public static void addBackground(Area curBlock, BackgroundProps backProps) {
@@ -386,7 +386,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
                 back.vertical = backProps.backPosVertical.mvalue();
             }
         }
-    
+
         if(back.color != null || back.url != null) {
             curBlock.addTrait(Trait.BACKGROUND, back);
         }

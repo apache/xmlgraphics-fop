@@ -41,13 +41,13 @@ public class ListBlock extends FObj {
     public void addLayoutManager(List list) {
         ListBlockLayoutManager blm = new ListBlockLayoutManager(this);
         list.add(blm);
-    }       
+    }
 
     public void setup() throws FOPException {
 
             // Common Accessibility Properties
             AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
-        
+
             // Common Aural Properties
             AuralProps mAurProps = propMgr.getAuralProps();
 

@@ -11,9 +11,9 @@ package org.apache.fop.apps;
  * originally contributed by
  * Stanislav Gorkhover: stanislav.gorkhover@jcatalog.com
  * jCatalog Software AG
- * 
+ *
  * Updated by Mark Lillywhite, mark-fop@inomial.com. Modified to
- * handle the print job better, added -Ddialog option, removed 
+ * handle the print job better, added -Ddialog option, removed
  * (apparently) redundant copies code, generally cleaned up, and
  * added interfaces to the new Render API.
  */

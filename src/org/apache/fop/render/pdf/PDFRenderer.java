@@ -19,12 +19,12 @@ import org.apache.fop.apps.Version;
 import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fo.properties.BackgroundRepeat;
 import org.apache.fop.pdf.PDFStream;
-import org.apache.fop.pdf.PDFDocument; 
+import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFXObject;
-import org.apache.fop.pdf.PDFPage;        
+import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFOutline;
@@ -34,7 +34,7 @@ import org.apache.fop.extensions.BookmarkData;
 
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.TreeExt;
-import org.apache.fop.area.CTM; 
+import org.apache.fop.area.CTM;
 import org.apache.fop.area.Title;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Page;
@@ -661,7 +661,7 @@ public class PDFRenderer extends PrintRenderer {
                     closeText();
                     currentStream.add("ET\n");
                 }
-                currentStream.add("q\n"); 
+                currentStream.add("q\n");
                 float x = (float)bv.getXOffset() / 1000f;
                 float y = (float)bv.getYOffset() / 1000f;
                 float width = (float)bv.getWidth() / 1000f;
@@ -677,7 +677,7 @@ public class PDFRenderer extends PrintRenderer {
             if (ctm != null) {
                 endVParea();
             }
-        
+
             if (bv.getClip()) {
                 currentStream.add("Q\n");
                 if (ctm == null) {

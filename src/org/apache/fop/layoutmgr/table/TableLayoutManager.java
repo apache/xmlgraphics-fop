@@ -287,7 +287,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
 
         curBlockArea.setHeight(tableHeight);
 
-        if(borderProps != null) { 
+        if(borderProps != null) {
             addBorders(curBlockArea, borderProps);
         }
         if(backgroundProps != null) {

@@ -86,7 +86,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     private int follow;
 
     // inline start pos when adding areas
-    int iStartPos = 0;    
+    int iStartPos = 0;
 
     /**
      * Create a new Line Layout Manager.
@@ -447,7 +447,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             BreakPoss bp = (BreakPoss)iter.next();
             if (bp.getLead() > lineLead) {
                 lineLead = bp.getLead();
-            } 
+            }
             if (bp.getTotal() > maxtb) {
                 maxtb = bp.getTotal();
             }

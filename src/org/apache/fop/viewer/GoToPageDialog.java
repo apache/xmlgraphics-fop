@@ -22,7 +22,7 @@ import java.awt.event.ActionListener;
 public class GoToPageDialog extends JDialog {
     private JTextField pgNbField;
     private int pageNumber = -1;
- 
+
     /**
      * Creates modal dialog with a given title, attached to a given frame.
      */

@@ -40,23 +40,23 @@ public class Inline extends FObjMixed {
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
-                    
-        // Common Aural Properties   
+
+        // Common Aural Properties
         AuralProps mAurProps = propMgr.getAuralProps();
 
         // Common Border, Padding, and Background Properties
         BorderAndPadding bap = propMgr.getBorderAndPadding();
         BackgroundProps bProps = propMgr.getBackgroundProps();
-     
+
         // Common Font Properties
         //this.fontState = propMgr.getFontState(area.getFontInfo());
 
         // Common Margin Properties-Inline
         MarginInlineProps mProps = propMgr.getMarginInlineProps();
-            
+
         // Common Relative Position Properties
         RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
-            
+
         // this.properties.get("alignment-adjust");
         // this.properties.get("alignment-baseline");
         // this.properties.get("baseline-shift");

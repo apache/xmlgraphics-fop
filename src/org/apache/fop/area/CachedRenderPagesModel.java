@@ -101,7 +101,7 @@ public class CachedRenderPagesModel extends AreaTree.RenderPagesModel {
             String fname = "page" + page.toString() + ".ser";
             tempstream = new ObjectOutputStream(new BufferedOutputStream(
                                                 new FileOutputStream(fname)));
-            page.savePage(tempstream); 
+            page.savePage(tempstream);
             tempstream.close();
             pageMap.put(page, fname);
         } catch (Exception e) {

@@ -117,7 +117,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         borderProps = pm.getBorderAndPadding();
         backgroundProps = pm.getBackgroundProps();
     }
-    
+
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         LayoutManager curLM; // currently active LM
 

@@ -159,7 +159,7 @@ public class FontSetup {
                                                  metricsFile,
                                                  configFontInfo.getKerning());
                     fontInfo.addMetrics(internalName, font);
-                    
+
                     ArrayList triplets = configFontInfo.getFontTriplets();
                     for (int c = 0; c < triplets.size(); c++) {
                         FontTriplet triplet = (FontTriplet)triplets.get(c);

@@ -43,7 +43,7 @@ import java.io.IOException;
     private RtfDocumentArea _docArea;
     private RtfParagraph _para;
     private boolean _warned = false;
-    
+
     private static final String ALPHA_WARNING = "WARNING: RTF renderer is veryveryalpha at this time, see class org.apache.fop.rtf.renderer.RTFHandler";
 
     public RTFHandler(OutputStream os) {
@@ -58,7 +58,7 @@ import java.io.IOException;
     }
 
     public void startDocument() throws SAXException {
-        // FIXME sections should be created 
+        // FIXME sections should be created
         try {
             _rtfFile = new RtfFile(new OutputStreamWriter(_os));
             _docArea = _rtfFile.startDocumentArea();

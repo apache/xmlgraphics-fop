@@ -75,7 +75,7 @@ public class TableCell extends FObj {
 
     // boolean setup = false;
     boolean bSepBorders = true;
-    
+
     /**
      * Set to true if all content completely laid out.
      */
@@ -295,7 +295,7 @@ public class TableCell extends FObj {
             this.borderHeight = (borderBefore + borderAfter) / 2;
         }
     }
-    
+
     protected boolean containsMarkers() {
         return true;
     }

@@ -21,7 +21,7 @@
 
 <xsl:template match="*//attribute">
   <property>
-	<name><xsl:apply-templates/></name>
+  <name><xsl:apply-templates/></name>
     <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
 </xsl:template>
