@@ -432,42 +432,49 @@ public class LineArea extends Area {
 
                     if (this.wrapOption == WrapOption.WRAP) {
 
-                        int ret=wordStart;
-
                         if (hyphProps.hyphenate == Hyphenate.TRUE) {
+                            int ret = wordStart;
                             ret = this.doHyphenation(dataCopy, i, wordStart,
                                                      this.getContentWidth()
                                                      - (finalWidth
                                                         + spaceWidth
                                                         + pendingWidth));
 
+                            // current word couldn't be hypenated
+                            // couldn't fit first word
+                            // I am at the beginning of my line
+                            if ((ret == wordStart) &&
+                                (wordStart == start) &&
+                                (finalWidth == 0)) {
+
+                                MessageHandler.error(">");
+                                addSpacedWord(new String(data, wordStart, wordLength - 1),
+                                              ls,
+                                              finalWidth + spaceWidth
+                                              + embeddedLinkStart,
+                                              spaceWidth, textState, false);
+
+                                finalWidth += wordWidth;
+                                wordWidth = 0;
+                                ret = i;
+                            }
+                            return ret;
+                        } else if (wordStart == start) {
+                            // first word
+                            overrun = true;
+                            // if not at start of line, return word start
+                            // to try again on a new line
+                            if (finalWidth > 0) {
+                                return wordStart;
+                            }
+                        } else {
+                            return wordStart;
                         }
 
-
-                        if ((ret == wordStart) &&      // current word couldn't be hypenated
-                            (wordStart == start) &&    // couldn't fit first word
-                            (finalWidth == 0)) {       // I am at the beginning of my line
-
-                            MessageHandler.error(">");
-
-                            addSpacedWord(new String(data, wordStart, wordLength - 1),
-                                          ls,
-                                          finalWidth + spaceWidth
-                                          + embeddedLinkStart,
-                                          spaceWidth, textState, false);
-
-                            finalWidth += wordWidth;
-                            wordWidth = 0;
-
-                            ret = i;
-                        }
-
-                        return ret;
                     }
                 }
             }
-        }                                        // end of iteration over text
-
+        } // end of iteration over text
 
         if (prev == TEXT) {
 
