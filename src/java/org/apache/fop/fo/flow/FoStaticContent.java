@@ -29,6 +29,7 @@ import java.util.BitSet;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
+import org.apache.fop.area.Page;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.NCName;
 import org.apache.fop.fo.FONode;
@@ -152,14 +153,45 @@ public class FoStaticContent extends FOPageSeqNode {
     public String getFlowName() {
         return flowName;
     }
+//
+//    public Area getReferenceRectangle() throws FOPException {
+//        // TODO Reference rectangle is assumed to be the content rectangle of
+//        // the first region into which the content is flowed.  For region-body
+//        // it is normal-flow reference-area; for other regions it is the
+//        // region-reference-area.  See
+//        // 7.3 Reference Rectangle for Percentage Computations
+//        throw new FOPException("Called from FoStaticContent");
+//    }
 
-    public Area getReferenceRectangle() throws FOPException {
+    public Area getReferenceRectangle() {
         // TODO Reference rectangle is assumed to be the content rectangle of
         // the first region into which the content is flowed.  For region-body
         // it is normal-flow reference-area; for other regions it is the
         // region-reference-area.  See
         // 7.3 Reference Rectangle for Percentage Computations
-        throw new FOPException("Called from FoStaticContent");
+        // The difficulty is that there may be multiple attempts to layout the
+        // flow.  Each attempt will generate its own page set, only the first
+        // of which contains a region-body-reference-area which qualifies as
+        // the reference rectangle for percentages defined on the flow.
+        //
+        // Get the first page of the page-sequence
+        // TODO check whether the current page from the page-sequence will be
+        // enough
+        Page page = pageSequence.getCurr1stPage();
+        if (page == null) return null;
+        return page.getNormalFlowRefArea();
+    }
+
+    public Area getLayoutContext() {
+        // The layout context for fo:flow is
+        // the first normal-flow-reference-area.
+        return getReferenceRectangle();
+    }
+
+    public Area getChildrensLayoutContext() {
+        // The layout context for the &block; children of fo:flow is
+        // the current normal-flow-reference-area.
+        return pageSequence.getPage().getNormalFlowRefArea();
     }
     
 }
