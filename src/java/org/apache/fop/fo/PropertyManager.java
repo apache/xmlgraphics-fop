@@ -19,7 +19,6 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fo.properties.Property;
@@ -38,7 +37,6 @@ import org.apache.fop.traits.LayoutProps; // keep, break, span, space?
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fo.properties.CommonHyphenation;
-import org.xml.sax.Attributes;
 
 /**
  * Helper class for managing groups of properties.

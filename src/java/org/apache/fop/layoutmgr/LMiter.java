@@ -18,10 +18,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.area.AreaTreeHandler;
-import org.apache.fop.fo.FObj;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;

@@ -18,7 +18,6 @@
 
 package org.apache.fop.layoutmgr.list;
 
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;

@@ -21,9 +21,6 @@ package org.apache.fop.fo.pagination;
 // Java
 import java.awt.Rectangle;
 
-// XML
-import org.xml.sax.Attributes;
-
 // FOP
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.FODimension;

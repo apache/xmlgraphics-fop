@@ -25,7 +25,6 @@ import org.xml.sax.SAXException;
 
 // Apache
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;

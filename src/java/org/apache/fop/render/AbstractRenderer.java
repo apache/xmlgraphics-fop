@@ -22,7 +22,6 @@ package org.apache.fop.render;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
 import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
@@ -62,7 +61,6 @@ import org.apache.fop.area.inline.Character;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fo.pagination.Region;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

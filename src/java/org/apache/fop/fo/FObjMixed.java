@@ -21,7 +21,6 @@ package org.apache.fop.fo;
 import java.util.List;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
-import org.apache.fop.layoutmgr.LMiter;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 
 /**
