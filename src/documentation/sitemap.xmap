@@ -773,7 +773,7 @@
 
    <map:match pattern="compliance.pdf">
     <map:generate type="file-nolabel" src="content/xdocs/compliance.xml"/>
-    <map:transform src="resources/stylesheets/compliance2fo.xsl"/>
+    <map:transform src="resources/stylesheets/compliance2fo.xsl" label="content"/>
     <map:serialize type="fo2pdf"/>
    </map:match>
 
