@@ -44,7 +44,9 @@ public class BlockArea extends Area {
     }
 
     /** The page space allocation for layout of the block */
-    private Rectangle2D pageSpace = new Rectangle2D.Float();
+    private Rectangle2D pageSpace = new Rectangle2D.Double();
+    /** The content space equivalent to the pageSpace */
+    private Rectangle2D contentSpace = null;
 
 //    /**
 //     * Receives an allocation of page space from area parent
@@ -59,6 +61,9 @@ public class BlockArea extends Area {
      * child area.  <i>N.B.</i> <code>reference-area</code>s must override
      * this method to apply an <code>AffineTransform</code> to areas passed
      * up and returned.
+     * <p>The requested space is the whole area required by the child, including
+     * padding, borders and margins (spaces).  The area is allocated from the
+     * content area of the parent.
      * @return
      */
     public Rectangle2D pageSpaceRequest(AreaRange spaceRange) {
@@ -74,8 +79,10 @@ public class BlockArea extends Area {
                 // they contain inline items which will go into the same
                 // line-area.  At this point, e.g., footnotes will be found.
             } else {
+            	// The available space is sufficient to contain the mimimum
+            	// layout from the child, but insufficient to contain all of it.
                 // Negotiate available space with the requester
-
+            	
             }
         } else { // Need more space from above.  Page may be full
             // Negotiate with parent for more space
@@ -101,32 +108,32 @@ public class BlockArea extends Area {
         
     }
 
-    protected float getStartSpace() {
+    protected double getStartSpace() {
         return getStartIndent() + getStartIntrusion();
     }
 
-    protected float getEndSpace() {
+    protected double getEndSpace() {
         return getEndIndent() + getEndIntrusion();
     }
 
-    protected float getStartIndent() {
+    protected double getStartIndent() {
         // Dummy start-indent
-        return 10.0f;
+        return 10.0;
     }
 
-    protected float getEndIndent() {
+    protected double getEndIndent() {
         // Dummy end-indent
-        return 10.0f;
+        return 10.0;
     }
 
-    protected float getStartIntrusion() {
+    protected double getStartIntrusion() {
         // dummy intrusion
-        return 0.0f;
+        return 0.0;
     }
 
-    protected float getEndIntrusion() {
+    protected double getEndIntrusion() {
         // dummy intrusion
-        return 0.0f;
+        return 0.0;
     }
 
 }
