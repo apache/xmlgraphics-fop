@@ -122,8 +122,10 @@ public class PageSequence extends FObj
 	
         layoutMasterSet = root.getLayoutMasterSet();
         thisIsFirstPage=true; // we are now on the first page of the page sequence
+	/*
         InitialPageNumber ipn = (InitialPageNumber) this.properties.get("initial-page-number");
-        String ipnValue=ipn.getString();
+	*/
+        String ipnValue= this.properties.get("initial-page-number").getString();
 
         if ( ipnValue.equals("auto") )
         {
@@ -151,7 +153,8 @@ public class PageSequence extends FObj
             }
         }
 
-        masterName = ((MasterName) this.properties.get("master-name")).getString();
+	// masterName = ((MasterName) this.properties.get("master-name")).getString();
+        masterName = this.properties.get("master-name").getString();
     }
 
     protected Page makePage(AreaTree areaTree) throws FOPException {

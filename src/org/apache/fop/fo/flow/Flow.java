@@ -76,6 +76,7 @@ public class Flow extends FObj {
     }
 
     PageSequence pageSequence;
+    private Area area;  // Area in which we lay out our kids
 
     protected Flow(FObj parent, PropertyList propertyList)
 	throws FOPException {
@@ -96,7 +97,7 @@ public class Flow extends FObj {
 	if (this.marker == START) {
 	    this.marker = 0;
 	}
-
+        this.area = area;
 	boolean prevChildMustKeepWithNext = false;
 
 	int numChildren = this.children.size();
@@ -128,4 +129,14 @@ public class Flow extends FObj {
 	}
 	return new Status(Status.OK);
     }
+
+  /**
+   * Return the content width of this flow (really of the region
+   * in which it is flowing).
+   */
+  protected int getContentWidth() {
+    if (area != null)
+      return area.getContentWidth(); //getAllocationWidth()??
+    else return 0;  // not laid out yet
+  }
 }
