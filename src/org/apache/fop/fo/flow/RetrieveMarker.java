@@ -55,32 +55,35 @@ public class RetrieveMarker extends FObjMixed {
         Marker bestMarker = searchPage(containingPage, true);
 
         // if marker not yet found, and 'retrieve-boundary' permits,
-        // search forward by Page
-        if ((null == bestMarker)
-                && (retrieveBoundary != RetrieveBoundary.PAGE)) {
-            // System.out.println("Null bestMarker and searching...");
-            Page currentPage = containingPage;
-            boolean isFirstCall = true;
-            while (bestMarker == null) {
-                Page previousPage = locatePreviousPage(currentPage,
-                                                       retrieveBoundary,
-                                                       isFirstCall);
-                isFirstCall = false;
-                // System.out.println("Previous page = '" + previousPage + "'");
-                bestMarker = searchPage(previousPage, false);
-                currentPage = previousPage;
+        // search backward by Page
+        if (bestMarker == null) {
+            if (retrieveBoundary != RetrieveBoundary.PAGE) {
+//                System.out.println("Null bestMarker and searching...");
+                Page currentPage = containingPage;
+                boolean isFirstCall = true;
+                while (bestMarker == null) {
+                    Page previousPage = locatePreviousPage(currentPage,
+                                                           retrieveBoundary,
+                                                           isFirstCall);
+                    isFirstCall = false;
+                    if (previousPage!=null) {
+                        bestMarker = searchPage(previousPage, false);
+                        currentPage = previousPage;
+                    } else {
+                        return new Status(Status.OK);
+                    }
+                }
+            } else {
+                return new Status(Status.OK);
             }
         }
 
         Status status = new Status(Status.OK);
-        if (null != bestMarker) {
-            // System.out.println("Laying out marker '" + bestMarker + "' in area '" + area + "'");
-            // the 'markers' referred to in this method are internal; they have
-            // nothing to do with fo:marker
-            bestMarker.resetMarker();
-            status = bestMarker.layoutMarker(area);
-        }
-
+        // System.out.println("Laying out marker '" + bestMarker + "' in area '" + area + "'");
+        // the 'markers' referred to in this method are internal; they have
+        // nothing to do with fo:marker
+        bestMarker.resetMarker();
+        status = bestMarker.layoutMarker(area);
         return status;
     }
 

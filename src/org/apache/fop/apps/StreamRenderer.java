@@ -318,42 +318,55 @@ public class StreamRenderer {
         }
     }
 
-       public Page getNextPage(Page current, boolean isWithinPageSequence,
-                            boolean isFirstCall) {
-        Page nextPage = null;
-        int pageIndex = 0;
-        if (isFirstCall)
-            pageIndex = renderQueue.size();
-        else
-            pageIndex = renderQueue.indexOf(current);
-        if ((pageIndex + 1) < renderQueue.size()) {
-            nextPage = ((RenderQueueEntry)renderQueue
-                        .elementAt(pageIndex + 1)).getPage();
-            if (isWithinPageSequence
-                    &&!nextPage.getPageSequence().equals(current.getPageSequence())) {
-                nextPage = null;
-            }
-        }
-        return nextPage;
-    }
+  // unused and broken
+//      public Page getNextPage(Page current, boolean isWithinPageSequence,
+//                              boolean isFirstCall) {
+//          Page nextPage = null;
+//          int pageIndex = 0;
+//          if (isFirstCall)
+//              pageIndex = renderQueue.size();
+//          else
+//              pageIndex = renderQueue.indexOf(current);
+//          if ((pageIndex + 1) < renderQueue.size()) {
+//              nextPage = ((RenderQueueEntry)renderQueue
+//                          .elementAt(pageIndex + 1)).getPage();
+//              if (isWithinPageSequence
+//                      &&!nextPage.getPageSequence().equals(current.getPageSequence())) {
+//                  nextPage = null;
+//              }
+//          }
+//          return nextPage;
+//      }
 
     public Page getPreviousPage(Page current, boolean isWithinPageSequence,
                                 boolean isFirstCall) {
-        Page previousPage = null;
-        int pageIndex = 0;
-        if (isFirstCall)
-            pageIndex = renderQueue.size();
-        else
-            pageIndex = renderQueue.indexOf(current);
-        if ((pageIndex - 1) >= 0) {
-            previousPage = ((RenderQueueEntry)renderQueue
-                            .elementAt(pageIndex - 1)).getPage();
-            PageSequence currentPS = current.getPageSequence();
-            PageSequence previousPS = previousPage.getPageSequence();
-            if (isWithinPageSequence &&!previousPS.equals(currentPS)) {
-                previousPage = null;
+        if (isFirstCall) {
+            int pageIndex = renderQueue.size();
+            if (pageIndex > 0) {
+                Page previousPage = ((RenderQueueEntry)renderQueue
+                                     .elementAt(pageIndex - 1)).getPage();
+                PageSequence currentPS = current.getPageSequence();
+                PageSequence previousPS = previousPage.getPageSequence();
+                if (!isWithinPageSequence || previousPS.equals(currentPS)) {
+                   return previousPage;
+                }
+            }
+        } else {
+            for (int pageIndex=renderQueue.size()-1;pageIndex>0;pageIndex--) {
+                Page page = ((RenderQueueEntry)renderQueue
+                             .elementAt(pageIndex)).getPage();
+                if (current.equals(page)) {
+                    Page previousPage = ((RenderQueueEntry)renderQueue
+                                         .elementAt(pageIndex - 1)).getPage();
+                    PageSequence currentPS = current.getPageSequence();
+                    PageSequence previousPS = previousPage.getPageSequence();
+                    if (!isWithinPageSequence || previousPS.equals(currentPS)) {
+                        return previousPage;
+                    }
+                    return null;
+                }
             }
         }
-        return previousPage;
+        return null;
     }
 }
