@@ -56,6 +56,13 @@ public class FObj extends FONode implements Constants {
     /** Dynamic layout dimension. Used to resolve relative lengths. */
     protected Map layoutDimension = null;
 
+    /** During input FO validation, certain FO's are not valid as
+        child nodes if this FO is a descendant of an Out Of Line 
+        Formatting Object as defined in specification.
+        See Section 6.2 of 1.0/1.2 spec for more information.
+    */
+    protected boolean isOutOfLineFODescendant = false;
+
     /**
      * Create a new formatting object.
      * All formatting object classes extend this class.
@@ -64,7 +71,18 @@ public class FObj extends FONode implements Constants {
      */
     public FObj(FONode parent) {
         super(parent);
-
+        
+        // determine if isOutOfLineFODescendant should be set
+        if (parent != null && parent instanceof FObj) {
+            if (((FObj)parent).getIsOutOfLineFODescendant() == true) {
+                isOutOfLineFODescendant = true;
+            } else if (parent.getName().equals("fo:float")
+                || parent.getName().equals("fo:footnote")
+                || parent.getName().equals("fo:footnote-body")) {
+                isOutOfLineFODescendant = true;
+            }
+        }
+        
         if (propertyListTable == null) {
             propertyListTable = new PropertyMaker[Constants.PROPERTY_COUNT+1];
             PropertyMaker[] list = FOPropertyMapping.getGenericMappings();
@@ -73,6 +91,16 @@ public class FObj extends FONode implements Constants {
                     propertyListTable[i] = list[i]; 
             }    
         }
+    }
+
+    /**
+     * Used to indicate if this FO is the descendant of an out-of-line
+     * formatting object  (From Sect. 6.10, fo:float, fo:footnote, 
+     * fo:footnote-body).  Important for validating child nodes.
+     * @return true if descendant, false otherwise
+     */
+    public boolean getIsOutOfLineFODescendant() {
+        return isOutOfLineFODescendant;
     }
 
     /**
@@ -446,7 +474,7 @@ public class FObj extends FONode implements Constants {
      * @param lName local name (i.e., no prefix) of incoming node 
      * @return true if a member, false if not
      */
-    protected static boolean isBlockItem(String nsURI, String lName) {
+    protected boolean isBlockItem(String nsURI, String lName) {
         return (nsURI == FOElementMapping.URI && 
             (lName.equals("block") 
             || lName.equals("table") 
@@ -465,7 +493,7 @@ public class FObj extends FONode implements Constants {
      * @param lName local name (i.e., no prefix) of incoming node 
      * @return true if a member, false if not
      */
-    protected static boolean isInlineItem(String nsURI, String lName) {
+    protected boolean isInlineItem(String nsURI, String lName) {
         return (nsURI == FOElementMapping.URI && 
             (lName.equals("bidi-override") 
             || lName.equals("character") 
@@ -478,7 +506,7 @@ public class FObj extends FONode implements Constants {
             || lName.equals("page-number-citation")
             || lName.equals("basic-link")
             || lName.equals("multi-toggle")
-            || lName.equals("footnote") // temp only -- not always correct (see spec)
+            || (!isOutOfLineFODescendant && lName.equals("footnote"))
             || isNeutralItem(nsURI, lName)));
     }
 
@@ -490,12 +518,12 @@ public class FObj extends FONode implements Constants {
      * @param lName local name (i.e., no prefix) of incoming node 
      * @return true if a member, false if not
      */
-    protected static boolean isNeutralItem(String nsURI, String lName) {
+    protected boolean isNeutralItem(String nsURI, String lName) {
         return (nsURI == FOElementMapping.URI && 
             (lName.equals("multi-switch") 
             || lName.equals("multi-properties")
             || lName.equals("wrapper") 
-            || lName.equals("float") // temp only -- not always correct (see spec)
+            || (!isOutOfLineFODescendant && lName.equals("float"))
             || lName.equals("retrieve-marker")));
     }
 }
