@@ -4,6 +4,7 @@
 <document>
   <header>
     <title>FOP: Fonts</title>
+    <version>$Revision$</version>
     <authors>
       <person name="Jeremias Märki" email=""/>
       <person name="Tore Engvig" email=""/>

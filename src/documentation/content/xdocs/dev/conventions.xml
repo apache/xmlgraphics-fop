@@ -4,6 +4,7 @@
 <document>
   <header>
     <title>FOP Development: Coding Conventions</title>
+    <version>$Revision$</version>
   </header>
   <body>
     <p>Acknowledgement: Some content in this guide was adapted from other Apache projects such as Avalon, Cactus, Turbine and Velocity.</p>

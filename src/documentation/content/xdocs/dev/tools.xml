@@ -3,7 +3,8 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 <document>
   <header>
-    <title>Developer Tools</title>
+    <title>FOP Development: Developer Tools</title>
+    <version>$Revision$</version>
   </header>
   <body>
     <p>This page documents items that may be helpful to other developers, especially to those who are new to FOP. Exhaustive treatment of these topics is better suited to other fora, but the information presented here is intended to deal with FOP-specific issues related to these tools, especially "gotchas", and to help developers get jump-started.</p>

@@ -3,12 +3,13 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <document>
-    <header>
-        <title>FOP Design: Optimisations</title>
-        <authors>
-            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
-        </authors>
-    </header>
+  <header>
+    <title>FOP Design: Optimisations</title>
+    <version>$Revision$</version>
+    <authors>
+      <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+    </authors>
+  </header>
 
     <body>
 <section id="intro">

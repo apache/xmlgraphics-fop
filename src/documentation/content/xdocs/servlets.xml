@@ -5,6 +5,7 @@
   <header>
     <title>Servlets</title>
     <subtitle>How to use FOP in a Servlet</subtitle>
+    <version>$Revision$</version>
   </header>
   <body>
     <section id="overview">

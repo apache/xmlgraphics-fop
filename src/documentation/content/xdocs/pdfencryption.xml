@@ -5,6 +5,7 @@
 <document>
   <header>
     <title>PDF encryption.</title>
+    <version>$Revision$</version>
     <authors>
       <person name="J.Pietschmann" email="pietsch@apache.org"/>
       <person name="Jeremias Märki" email="jeremias@apache.org"/>

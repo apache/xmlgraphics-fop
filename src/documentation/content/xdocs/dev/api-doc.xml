@@ -3,7 +3,8 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 <document>
   <header>
-    <title>FOP API Documentation (javadocs)</title>
+    <title>FOP Development: API Documentation (javadocs)</title>
+    <version>$Revision$</version>
   </header>
   <body>
     <section id="gump">

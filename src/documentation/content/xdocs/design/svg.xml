@@ -3,10 +3,11 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <document>
-    <header>
-        <title>FOP Design: SVG</title>
-    </header>
-    <body>
+  <header>
+    <title>FOP Design: SVG</title>
+    <version>$Revision$</version>
+  </header>
+  <body>
 <section id="intro">
   <title>Introduction</title>
     <p>SVG is rendered through Batik.</p><p>The XML from the XSL:FO document

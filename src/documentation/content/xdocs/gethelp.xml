@@ -3,8 +3,9 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 <document>
   <header>
-    <title>Getting Help</title>
+    <title>FOP: Getting Help</title>
     <subtitle>Checklist for Finding Appropriate Resources</subtitle>
+    <version>$Revision$</version>
   </header>
   <body>
     <p>The FOP developer community is eager to help you maximize the usefulness of FOP.

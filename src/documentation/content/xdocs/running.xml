@@ -5,6 +5,7 @@
 <document>
   <header>
     <title>Running FOP</title>
+    <version>$Revision$</version>
   </header>
 
   <body>

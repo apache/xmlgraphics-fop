@@ -5,6 +5,7 @@
 <document>
   <header>
     <title>Standard FOP Extensions</title>
+    <version>$Revision$</version>
   </header>
   <body>
     <p>By "extension", we mean any data that can be placed in the input XML document that is not addressed by the XSL-FO standard.

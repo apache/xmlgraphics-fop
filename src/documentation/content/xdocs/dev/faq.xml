@@ -2,7 +2,7 @@
 <!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/faq-v11.dtd">
 
-<faqs title="FOP Developer FAQ">
+<faqs title="FOP Development: FAQ">
   <part id="part_general">
     <title>General Questions</title>
     <faq>
