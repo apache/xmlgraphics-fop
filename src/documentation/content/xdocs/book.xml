@@ -19,6 +19,7 @@
           <menu-item label="Configure" href="configuration.html"/>
           <menu-item label="Run" href="running.html"/>
           <menu-item label="Embed" href="embedding.html"/>
+          <menu-item label="Servlets" href="servlets.html"/>
           <menu-item label="Ant task" href="anttask.html"/>
         </menu>
 
