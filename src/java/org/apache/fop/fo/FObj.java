@@ -351,7 +351,7 @@ public class FObj extends FONode implements Constants {
      * @return A ListIterator or null if childNode isn't a child of
      * this FObj.
      */
-    public ListIterator getChildren(FONode childNode) {
+    public ListIterator getChildNodes(FONode childNode) {
         if (childNodes != null) {
             int i = childNodes.indexOf(childNode);
             if (i >= 0) {
