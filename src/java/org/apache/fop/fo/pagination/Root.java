@@ -49,11 +49,6 @@ public class Root extends FObj {
      */
     private int runningPageNumberCounter = 0;
 
-    /** 
-     * Controlling FOTreeHandler object for this FO Tree
-     */
-    private FOInputHandler foInputHandler = null;
-
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
@@ -200,26 +195,6 @@ public class Root extends FObj {
      */
     public Bookmarks getBookmarks() {
         return bookmarks;
-    }
-
-    /**
-     * Sets the Document that this Root is attached to
-     * @param document the apps.Document implementation to which this Root
-     * is attached
-     */
-    public void setFOInputHandler(FOInputHandler foInputHandler) {
-        this.foInputHandler = foInputHandler;
-    }
-
-    /**
-     * This method overrides the FONode version. The FONode version calls the
-     * method by the same name for the parent object. Since Root is at the top
-     * of the tree, it returns the actual FOInputHandler object. Thus, any FONode
-     * can use this chain to find which FOInputHandler it is being built for.
-     * @return the FOInputHandler implementation that this Root is attached to
-     */
-    public FOInputHandler getFOInputHandler() {
-        return foInputHandler;
     }
 
     /**
