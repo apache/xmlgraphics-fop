@@ -20,7 +20,7 @@
 
 <xsl:preserve-space elements="*"/>
 
-<xsl:template match="/compliance">
+<xsl:template match="compliance">
 <!-- Forrest/Cocoon will place the output from this stylesheet inside of a
      larger html document. The output here is all within one <div> tag. -->
   <div class="content">
@@ -36,10 +36,10 @@
       <link type="text/css" href="skin/page.css" rel="stylesheet"/>
       <style>
       &lt;!--
-      .yes         { background-color: #99CCFF }
-      .no          { background-color: #FF99CC }
-      .partial     { background-color: #C0C0C0 }
-      .category    { background-color: #FFCC66;
+      .yes         { background-color: #99FF99 }
+      .no          { background-color: #FF9999 }
+      .partial     { background-color: #FFFFCC }
+      .category    { /*background-color: #CFDCED;*/
                      font-size: 1.2em }
       --&gt;
       </style>
