@@ -54,9 +54,18 @@ public class Block extends FObjMixed {
 
     String id;
     int span;
+    private int wsTreatment; //ENUMERATION
+    private int lfTreatment; //ENUMERATION
+    private boolean bWScollapse; //true if white-space-collapse=true
 
     // this may be helpful on other FOs too
     boolean anythingLaidOut = false;
+
+    /**
+     * Index of first inline-type FO seen in a sequence.
+     * Used during FO tree building to do white-space handling.
+     */
+    private FONode firstInlineChild = null;
 
     public Block(FONode parent) {
         super(parent);
@@ -65,6 +74,10 @@ public class Block extends FObjMixed {
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
         this.span = this.properties.get("span").getEnum();
+        this.wsTreatment = this.properties.get("white-space-treatment").getEnum();
+        this.bWScollapse = (this.properties.get("white-space-collapse").getEnum() ==
+	    Constants.TRUE);
+	this.lfTreatment = this.properties.get("linefeed-treatment").getEnum();
     }
 
     public Status layout(Area area) throws FOPException {
@@ -118,7 +131,7 @@ public class Block extends FObjMixed {
             // this.properties.get("line-height-shift-adjustment");
             // this.properties.get("line-stacking-strategy");
             // this.properties.get("orphans");
-            // this.properties.get("space-treatment");
+            // this.properties.get("white-space-treatment");
             // this.properties.get("span");
             // this.properties.get("text-align");
             // this.properties.get("text-align-last");
@@ -359,5 +372,147 @@ public class Block extends FObjMixed {
 
     public boolean generatesInlineAreas() {
         return false;
+    }
+
+
+    public void addChild(FONode child) {
+	// Handle whitespace based on values of properties
+	// Handle a sequence of inline-producing children in
+	// one pass
+	if (((FObj)child).generatesInlineAreas()) {
+	    if (firstInlineChild == null) {
+		firstInlineChild = child;
+	    }
+	    // lastInlineChild = children.size();
+	}
+	else {
+	    // Handle whitespace in preceeding inline areas if any
+	    handleWhiteSpace();
+	}
+	super.addChild(child);
+    }
+
+    public void end() {
+	handleWhiteSpace();
+    }
+
+    private void handleWhiteSpace() {
+	log.debug("fo:block: handleWhiteSpace");
+	if (firstInlineChild != null) {
+	    boolean bInWS=false;
+	    boolean bPrevWasLF=false;
+	    RecursiveCharIterator charIter =
+		new RecursiveCharIterator(this, firstInlineChild);
+	    LFchecker lfCheck = new LFchecker(charIter);
+
+	    while (charIter.hasNext()) {
+		switch (CharClass.classOf(charIter.nextChar())) {
+		case CharClass.XMLWHITESPACE:
+		    /* Some kind of whitespace character, except linefeed. */
+		    boolean bIgnore=false;
+		    
+		    switch (wsTreatment) {
+		    case Constants.IGNORE:
+			bIgnore=true;
+			break;
+		    case Constants.IGNORE_IF_BEFORE_LINEFEED:
+			bIgnore = lfCheck.nextIsLF();
+			break;
+		    case Constants.IGNORE_IF_SURROUNDING_LINEFEED:
+			bIgnore = (bPrevWasLF || lfCheck.nextIsLF());
+			break;
+		    case Constants.IGNORE_IF_AFTER_LINEFEED:
+			bIgnore = bPrevWasLF;
+			break;
+		    }
+		    // Handle ignore
+		    if (bIgnore) {
+			charIter.remove();
+		    }
+		    else if (bWScollapse) {
+			if (bInWS || (lfTreatment == Constants.PRESERVE && 
+				      (bPrevWasLF || lfCheck.nextIsLF()))) {
+			    charIter.remove();
+			}
+			else {
+			    bInWS = true;
+			}
+		    }
+		    break;
+
+		case CharClass.LINEFEED:
+		    /* A linefeed */
+		    lfCheck.reset();
+		    bPrevWasLF=true; // for following whitespace
+
+		    switch (lfTreatment) {
+		    case Constants.IGNORE:
+			charIter.remove();
+			break;
+		    case Constants.TREAT_AS_SPACE:
+			if (bInWS) {
+			    // only if bWScollapse=true
+			    charIter.remove();
+			}
+			else {
+			    if (bWScollapse) bInWS=true;
+			    charIter.replaceChar('\u0020');
+			}
+			break;
+		    case Constants.TREAT_AS_ZERO_WIDTH_SPACE:
+			charIter.replaceChar('\u200b');
+			// Fall through: this isn't XML whitespace
+		    case Constants.PRESERVE:
+			bInWS=false;
+			break;
+		    }
+		    break;
+
+		case CharClass.EOT:
+		    //   A "boundary" objects such as non-character inline
+		    // or nested block object was encountered.
+		    // If any whitespace run in progress, finish it.
+		    // FALL THROUGH
+
+		case CharClass.UCWHITESPACE: // Non XML-whitespace
+		case CharClass.NONWHITESPACE:
+		    /* Any other character */
+		    bInWS = bPrevWasLF=false;
+		    lfCheck.reset();
+		    break;
+		}
+	    }
+	    firstInlineChild = null;
+	}
+    }
+
+    private static class LFchecker {
+	private boolean bNextIsLF=false;
+	private RecursiveCharIterator charIter;
+	
+	LFchecker(RecursiveCharIterator charIter) {
+	    this.charIter = charIter;
+	}
+
+	boolean nextIsLF() {
+	    if (bNextIsLF==false) {
+		CharIterator lfIter = charIter.mark();
+		while (lfIter.hasNext()) {
+		    char c = lfIter.nextChar();
+		    if (c == '\n') {
+			bNextIsLF=true;
+			break;
+		    }
+		    else if (CharClass.classOf(c)!=CharClass.XMLWHITESPACE) {
+			break;
+		    }
+		}
+	    }
+	    return bNextIsLF;
+	}
+
+	void reset() {
+	    bNextIsLF=false;
+	}
     }
 }

@@ -19,6 +19,8 @@ import org.apache.fop.system.BufferManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.TextLayoutManager;
 
+import java.util.NoSuchElementException;
+
 /**
  * a text node in the formatting object tree
  *
@@ -89,7 +91,54 @@ public class FOText extends FObj {
     }
 
     public LayoutManager getLayoutManager() {
+	// What if nothing left (length=0)?
+	if (length < ca.length) {
+	    char[] tmp = ca;
+	    ca  = new char[length];
+	    System.arraycopy(tmp, 0, ca, 0, length);
+	}
 	return new TextLayoutManager(this, ca, textInfo);
+    }
+
+    public CharIterator charIterator() {
+	return new TextCharIterator();
+    }
+
+    private class TextCharIterator extends AbstractCharIterator {
+	int curIndex = 0;
+	public boolean hasNext() {
+	    return (curIndex < length);
+	}
+
+	public char nextChar() {
+	    if (curIndex < length) {
+		// Just a char class? Don't actually care about the value!
+		return ca[curIndex++];
+	    }
+	    else throw new NoSuchElementException();
+	}
+
+	public void remove() {
+	    if (curIndex>0 && curIndex < length) {
+		// copy from curIndex to end to curIndex-1
+		System.arraycopy(ca, curIndex, ca, curIndex-1,
+				 length-curIndex);
+		length--;
+		curIndex--;
+	    }
+	    else if (curIndex == length) {
+		curIndex = --length;
+	    }
+	}
+
+
+	public void replaceChar(char c) {
+	    if (curIndex>0 && curIndex <= length) {
+		ca[curIndex-1]=c;
+	    }
+	}
+
+
     }
 }
 
