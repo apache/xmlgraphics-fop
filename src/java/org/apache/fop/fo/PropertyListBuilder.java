@@ -58,6 +58,10 @@ import org.xml.sax.Attributes;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Property.Maker;
 
+/**
+ * Class for managing the PropertyList objects, including adding items to them
+ * and retrieving items from them.
+ */
 public class PropertyListBuilder {
 
     /**
@@ -68,19 +72,40 @@ public class PropertyListBuilder {
     private HashMap propertyListTable;
     private HashMap elementTable;
 
+    /**
+     * Basic Constructor, initialized the tables.
+     */
     public PropertyListBuilder() {
         this.propertyListTable = new HashMap();
         this.elementTable = new HashMap();
     }
 
+    /**
+     * Add the entire propertyListTable to the list
+     * @param list list to which the elements of propertyListTable should be
+     * added
+     */
     public void addList(HashMap list) {
         propertyListTable.putAll(list);
     }
 
+    /**
+     * Adds a single element to the list
+     * @param element name of element to add
+     * @param list list to which the element should be added
+     */
     public void addElementList(String element, HashMap list) {
         elementTable.put(element, list);
     }
 
+    /**
+     *
+     * @param propertyList collection of properties
+     * @param space namespace of element
+     * @param element name of element
+     * @param propertyName name of property
+     * @return the requested Property object
+     */
     public Property computeProperty(PropertyList propertyList, String space,
                                     String element, String propertyName) {
 
@@ -103,6 +128,13 @@ public class PropertyListBuilder {
         return p;
     }
 
+    /**
+     *
+     * @param space namespace of element
+     * @param element name of element
+     * @param propertyName name of property
+     * @return isInherited value from the requested Property.Maker
+     */
     public boolean isInherited(String space, String element,
                                String propertyName) {
         boolean b;
@@ -280,6 +312,14 @@ public class PropertyListBuilder {
         return subPropName;
     }
 
+    /**
+     * @param space namespace of element
+     * @param element name of element
+     * @param propertyName name of property
+     * @param p a Property object
+     * @param subpropName name of the sub-property to get
+     * @return the sub-property
+     */
     public Property getSubpropValue(String space, String element,
                                     String propertyName, Property p,
                                     String subpropName) {
@@ -291,7 +331,13 @@ public class PropertyListBuilder {
         }
     }
 
-
+    /**
+     * @param propertyList collection of properties
+     * @param space namespace of element
+     * @param element name of element
+     * @param propertyName name of property
+     * @return value from the appropriate Property.Maker
+     */
     public boolean isCorrespondingForced(PropertyList propertyList,
                                          String space, String element,
                                          String propertyName) {
@@ -305,6 +351,13 @@ public class PropertyListBuilder {
         return false;
     }
 
+    /**
+     * @param propertyList collection of properties
+     * @param space namespace of element
+     * @param element name of element
+     * @param propertyName name of property
+     * @return new Property object
+     */
     public Property getShorthand(PropertyList propertyList, String space,
                                  String element, String propertyName) {
         Property.Maker propertyMaker = findMaker(space, element,
@@ -317,7 +370,14 @@ public class PropertyListBuilder {
         }
     }
 
-
+    /**
+     * @param propertyList collection of properties
+     * @param space namespace of element
+     * @param element name of element
+     * @param propertyName name of property
+     * @return new Property object
+     * @throws FOPException for errors in the input
+     */
     public Property makeProperty(PropertyList propertyList, String space,
                                  String element,
                                  String propertyName) throws FOPException {
@@ -335,6 +395,12 @@ public class PropertyListBuilder {
         return p;
     }
 
+    /**
+     * @param space namespace of element
+     * @param elementName name of element
+     * @param propertyName name of property
+     * @return the Property.Maker for this property
+     */
     protected Property.Maker findMaker(String space, String elementName,
                                        String propertyName) {
         return findMaker((HashMap)elementTable.get(elementName),

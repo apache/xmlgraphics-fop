@@ -154,7 +154,7 @@ public class PropertyManager {
                 try {
                     fontWeight = Integer.parseInt(fw);
                 } catch (NumberFormatException nfe) {
-                } /**@todo log that exception */
+                } /** TODO: log that exception */
             }
             fontWeight = ((int) fontWeight / 100) * 100;
             if (fontWeight < 100) {

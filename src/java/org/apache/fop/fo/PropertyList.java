@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,33 +42,52 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.fo;
 
 import java.util.HashMap;
 import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.apps.FOPException;
 
+/**
+ * Class containing the collection of properties for a given FObj.
+ */
 public class PropertyList extends HashMap {
 
-    private byte[] wmtable = null;    // writing-mode values
+    // writing-mode values
+    private byte[] wmtable = null;
+
+    // absolute directions and dimensions
+    /** constant for direction "left" */
     public static final int LEFT = 0;
+    /** constant for direction "right" */
     public static final int RIGHT = 1;
+    /** constant for direction "top" */
     public static final int TOP = 2;
+    /** constant for direction "bottom" */
     public static final int BOTTOM = 3;
+    /** constant for dimension "height" */
     public static final int HEIGHT = 4;
+    /** constant for dimension "width" */
     public static final int WIDTH = 5;
 
+    // directions relative to writing-mode
+    /** constant for direction "start" */
     public static final int START = 0;
+    /** constant for direction "end" */
     public static final int END = 1;
+    /** constant for direction "before" */
     public static final int BEFORE = 2;
+    /** constant for direction "after" */
     public static final int AFTER = 3;
+    /** constant for dimension "block-progression-dimension" */
     public static final int BLOCKPROGDIM = 4;
+    /** constant for dimension "inline-progression-dimension" */
     public static final int INLINEPROGDIM = 5;
 
     private static final String[] ABS_NAMES = new String[] {
@@ -102,6 +121,13 @@ public class PropertyList extends HashMap {
     private String element = "";
     private FObj fobj = null;
 
+    /**
+     * Basic constructor.
+     * @param parentPropertyList the PropertyList belongin to the new objects
+     * parent
+     * @param space name of namespace
+     * @param el name of element
+     */
     public PropertyList(PropertyList parentPropertyList, String space,
                         String el) {
         this.parentPropertyList = parentPropertyList;
@@ -109,14 +135,23 @@ public class PropertyList extends HashMap {
         this.element = el;
     }
 
+    /**
+     * @param fobj the FObj object to which this propertyList should be attached
+     */
     public void setFObj(FObj fobj) {
         this.fobj = fobj;
     }
 
+    /**
+     * @return the FObj object to which this propertyList is attached
+     */
     public FObj getFObj() {
         return this.fobj;
     }
 
+    /**
+     * @return the FObj object attached to the parentPropetyList
+     */
     public FObj getParentFObj() {
         if (parentPropertyList != null) {
             return parentPropertyList.getFObj();
@@ -253,6 +288,8 @@ public class PropertyList extends HashMap {
     /**
      * Return the property on the current FlowObject if it is specified, or if a
      * corresponding property is specified. If neither is specified, it returns null.
+     * @param propertyName name of property
+     * @return the Property corresponding to that name
      */
     public Property getSpecified(String propertyName) {
         return get(propertyName, false, false);
@@ -264,6 +301,8 @@ public class PropertyList extends HashMap {
      * this will try to compute it based on other properties, or if it is
      * inheritable, to return the inherited value. If all else fails, it returns
      * the default value.
+     * @param propertyName property name
+     * @return the Property corresponding to that name
      */
     public Property get(String propertyName) {
         return get(propertyName, true, true);
@@ -315,14 +354,24 @@ public class PropertyList extends HashMap {
         }
     }
 
+    /**
+     *
+     * @param builder the PropertyListBuilder to attache to this object
+     */
     public void setBuilder(PropertyListBuilder builder) {
         this.builder = builder;
     }
 
+    /**
+     * @return the namespace of this element
+     */
     public String getNameSpace() {
         return namespace;
     }
 
+    /**
+     * @return element name for this
+     */
     public String getElement() {
         return element;
     }
@@ -377,9 +426,10 @@ public class PropertyList extends HashMap {
     }
 
     /**
-     * Given an absolute direction (top, bottom, left, right),
-     * return the corresponding writing model relative direction name
-     * for the flow object. Uses the stored writingMode.
+     * Uses the stored writingMode.
+     * @param absdir an absolute direction (top, bottom, left, right)
+     * @return the corresponding writing model relative direction name
+     * for the flow object.
      */
     public String wmAbsToRel(int absdir) {
         if (wmtable != null) {
@@ -390,9 +440,9 @@ public class PropertyList extends HashMap {
     }
 
     /**
-     * Given a writing mode relative direction (start, end, before, after)
-     * return the corresponding absolute direction name
-     * for the flow object. Uses the stored writingMode.
+     * Uses the stored writingMode.
+     * @param reldir a writing mode relative direction (start, end, before, after)
+     * @return the corresponding absolute direction name for the flow object.
      */
     public String wmRelToAbs(int reldir) {
         if (wmtable != null) {
@@ -407,6 +457,7 @@ public class PropertyList extends HashMap {
 
     /**
      * Set the writing mode traits for the FO with this property list.
+     * @param writingMode the writing-mode property to be set for this object
      */
     public void setWritingMode(int writingMode) {
         this.wmtable = (byte[])WRITING_MODE_TABLES.get(new Integer(writingMode));
