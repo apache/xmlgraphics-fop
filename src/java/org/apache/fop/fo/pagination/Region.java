@@ -204,7 +204,7 @@ public abstract class Region extends FObj {
      * Area tree.
      * @return the region area class
      */
-    protected abstract int getRegionAreaClass();
+    public abstract int getRegionAreaClass();
 
     /**
      * Returns the default region name (xsl-region-before, xsl-region-start,
