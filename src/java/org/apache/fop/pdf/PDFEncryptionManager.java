@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import java.security.Provider;
 import java.security.Security;
 
 import org.apache.commons.logging.Log;
-import org.apache.fop.apps.FOUserAgent;
 
 /**
  * This class acts as a factory for PDF encryption support. It enables the
@@ -38,7 +37,7 @@ public class PDFEncryptionManager {
      */
     public static boolean isJCEAvailable() {
         try {
-            Class clazz = Class.forName("javax.crypto.Cipher");
+            /*Class clazz =*/ Class.forName("javax.crypto.Cipher");
             return true;
         } catch (ClassNotFoundException e) {
             return false;
@@ -71,20 +70,17 @@ public class PDFEncryptionManager {
      * Sets up PDF encryption if PDF encryption is requested by registering
      * a <code>PDFEncryptionParams</code> object with the user agent and if
      * the necessary cryptographic support is available.
-     * @param userAgent the user agent
+     * @param params the PDF encryption params or null to disable encryption
      * @param pdf the PDF document to setup encryption for
      * @param log the logger to send warnings to
      */
-    public static void setupPDFEncryption(FOUserAgent userAgent, 
+    public static void setupPDFEncryption(PDFEncryptionParams params, 
                                           PDFDocument pdf,
                                           Log log) {
-        if (userAgent == null) {
-            throw new NullPointerException("User agent must not be null");
-        }
         if (pdf == null) {
             throw new NullPointerException("PDF document must not be null");
         }
-        if (userAgent.getPDFEncryptionParams() != null) {
+        if (params != null) {
             if (!checkAvailableAlgorithms()) {
                 if (isJCEAvailable()) {
                     log.warn("PDF encryption has been requested, JCE is "
@@ -97,7 +93,7 @@ public class PDFEncryptionManager {
                             + "unavailable! The PDF won't be encrypted.");
                 }
             }
-            pdf.setEncryption(userAgent.getPDFEncryptionParams());
+            pdf.setEncryption(params);
         }
     }
     
