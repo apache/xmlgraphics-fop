@@ -206,16 +206,10 @@ public class FOPropSets {
         foPropertyLists[FObjectNames.CHARACTER] = new ROBitSet(character);
 
         //color-profile
-        BitSet color_profile = new BitSet();
-        color_profile.set(PropNames.COLOR_PROFILE_NAME);
-        color_profile.set(PropNames.RENDERING_INTENT);
-        color_profile.set(PropNames.SRC);
-        foPropertyLists[FObjectNames.COLOR_PROFILE] = new ROBitSet(color_profile);
 
         //conditional-page-master-reference
 
         //declarations
-        foPropertyLists[FObjectNames.DECLARATIONS] = new ROBitSet(new BitSet());
 
         //external-graphic
         BitSet external_graphic = new BitSet();
