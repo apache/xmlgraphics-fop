@@ -113,6 +113,8 @@
   <text x="15" y="310" font-family="FOPFont" font-size="12">FOP in FOPfont</text>
 </g>
 
+  <!-- empty element -->
+  <text/>
 </g>
 
 </svg>
