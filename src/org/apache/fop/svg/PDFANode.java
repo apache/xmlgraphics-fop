@@ -11,9 +11,11 @@ import org.apache.batik.gvt.*;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Dimension2D;
+import java.awt.geom.AffineTransform;
 
 /**
  * A graphics node that represents an image described as a graphics node.
@@ -21,11 +23,24 @@ import java.awt.geom.Dimension2D;
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  */
 public class PDFANode extends CompositeGraphicsNode {
+    String destination;
+    AffineTransform transform;
 
     /**
      * Constructs a new empty <tt>PDFANode</tt>.
      */
     public PDFANode() {}
+
+    /**
+     * Set the destination String.
+     */
+    public void setDestination(String dest) {
+        destination = dest;
+    }
+
+    public void setTransform(AffineTransform tf) {
+        transform = tf;
+    }
 
     /**
      * Paints this node if visible.
@@ -36,6 +51,13 @@ public class PDFANode extends CompositeGraphicsNode {
     public void paint(Graphics2D g2d, GraphicsNodeRenderContext rc) {
         if (isVisible) {
             super.paint(g2d, rc);
+            if(g2d instanceof PDFGraphics2D) {
+                PDFGraphics2D pdfg = (PDFGraphics2D)g2d;
+                int type = org.apache.fop.layout.LinkSet.EXTERNAL;
+                Shape outline = getOutline(rc);
+                //Rectangle bounds = transform.createTransformedShape(outline).getBounds();
+                pdfg.addLink(outline, transform, destination, type);           
+            }
         }
     }
 

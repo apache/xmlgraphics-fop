@@ -417,7 +417,7 @@ public class PDFRenderer extends PrintRenderer {
                                  currentYPosition);
         graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
         graphics.setRenderingHints(rc.getRenderingHints());
-        aBridge.setPDFGraphics2D(graphics);
+        aBridge.setCurrentTransform(new AffineTransform(sx, 0, 0, sy, xOffset / 1000f, yOffset / 1000f));
         try {
             root = builder.build(ctx, doc);
             root.paint(graphics, rc);
@@ -426,6 +426,8 @@ public class PDFRenderer extends PrintRenderer {
             MessageHandler.errorln("Error: svg graphic could not be rendered: "
                                    + e.getMessage());
         }
+
+        currentAnnotList = graphics.getAnnotList();
 
         currentStream.add("Q\n");
     }
@@ -740,8 +742,10 @@ public class PDFRenderer extends PrintRenderer {
                                            page.getWidth() / 1000,
                                            page.getHeight() / 1000, page);
 
-        if (page.hasLinks()) {
-            currentAnnotList = this.pdfDoc.makeAnnotList();
+        if (page.hasLinks() || currentAnnotList != null) {
+            if(currentAnnotList == null) {
+                currentAnnotList = this.pdfDoc.makeAnnotList();
+            }
             currentPage.setAnnotList(currentAnnotList);
 
             Enumeration e = page.getLinkSets().elements();
@@ -758,6 +762,7 @@ public class PDFRenderer extends PrintRenderer {
                                              dest, linkType));
                 }
             }
+            currentAnnotList = null;
         } else {
             // just to be on the safe side
             currentAnnotList = null;

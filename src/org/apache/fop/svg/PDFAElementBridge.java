@@ -8,6 +8,7 @@
 package org.apache.fop.svg;
 
 import java.awt.Cursor;
+import java.awt.geom.AffineTransform;
 
 import org.apache.batik.bridge.*;
 
@@ -29,15 +30,15 @@ import org.w3c.dom.svg.SVGAElement;
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  */
 public class PDFAElementBridge extends AbstractGraphicsNodeBridge {
-    PDFGraphics2D pdfDoc;
+    AffineTransform transform;
 
     /**
      * Constructs a new bridge for the &lt;a> element.
      */
     public PDFAElementBridge() {}
 
-    public void setPDFGraphics2D(PDFGraphics2D doc) {
-        this.pdfDoc = doc;
+    public void setCurrentTransform(AffineTransform tf) {
+        transform = tf;
     }
 
     /**
@@ -64,6 +65,8 @@ public class PDFAElementBridge extends AbstractGraphicsNodeBridge {
      */
     public GraphicsNode createGraphicsNode(BridgeContext ctx, Element e) {
         PDFANode aNode = (PDFANode)super.createGraphicsNode(ctx, e);
+        aNode.setDestination(((SVGAElement)e).getHref().getBaseVal());
+        aNode.setTransform(transform);
         return aNode;
     }
 

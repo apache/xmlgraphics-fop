@@ -51,6 +51,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     protected PDFDocument pdfDoc;
 
+    /**
+     * the current annotation list to add annotations to
+     */
+    PDFAnnotList currentAnnotList = null;
+
     protected FontState fontState;
 
     /**
@@ -126,6 +131,31 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public Graphics create() {
         return new PDFGraphics2D(this);
+    }
+
+    /**
+     * This is a pdf specific method used to add a link to the
+     * pdf document.
+     */
+    public void addLink(Shape bounds, AffineTransform trans, String dest, int linkType) {
+        if(currentAnnotList == null) {
+            currentAnnotList = pdfDoc.makeAnnotList();
+        }
+        AffineTransform at = getTransform();
+        Shape b = at.createTransformedShape(bounds);
+        b = trans.createTransformedShape(b);
+        Rectangle rect = b.getBounds();
+        // this handles the / 1000 in PDFLink
+        rect.x = rect.x * 1000;
+        rect.y = rect.y * 1000;
+        rect.height = -rect.height * 1000;
+        rect.width = rect.width * 1000;
+        currentAnnotList.addLink(pdfDoc.makeLink(rect,
+                                             dest, linkType));
+    }
+
+    public PDFAnnotList getAnnotList() {
+        return currentAnnotList;
     }
 
     /**
@@ -882,10 +912,18 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void fill(Shape s) {
         // System.err.println("fill");
+        Color c;
+        c = getBackground();
+        if(c.getAlpha() == 0) {
+            c = getColor();
+            if(c.getAlpha() == 0) {
+                return;
+            }
+        }
         currentStream.write("q\n");
         Shape imclip = getClip();
         writeClip(imclip);
-        Color c = getColor();
+        c = getColor();
         applyColor(c, true);
         c = getBackground();
         applyColor(c, false);
