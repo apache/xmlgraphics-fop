@@ -13,8 +13,8 @@
     <property name="referenceDir" value="reference"/>
     <property name="testDir" value="tests"/>
     <property name="foDir" value="fo"/>
-    <taskdef name="fop" classname="Fop"/>
-    <taskdef name="compare" classname="Compare"/>
+    <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"/>
+    <taskdef name="compare" classname="org.apache.fop.tools.anttasks.Compare"/>
 
 
   </target>

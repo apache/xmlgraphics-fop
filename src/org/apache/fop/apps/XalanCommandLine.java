@@ -63,17 +63,20 @@ import org.xml.sax.SAXParseException;
 import java.io.*;
 import java.net.URL;
 
+/*
 // Xalan
 import org.apache.xalan.xpath.xml.XMLParserLiaison;
 import org.apache.xalan.xslt.XSLTInputSource;
 import org.apache.xalan.xslt.XSLTProcessor;
 import org.apache.xalan.xslt.XSLTProcessorFactory;
 import org.apache.xalan.xslt.XSLTResultTarget;
+*/
 
 // FOP
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.configuration.ConfigurationReader;
 import org.apache.fop.configuration.Configuration;
+import org.apache.fop.tools.xslt.XSLTransform;
 
 /**
  * mainline class.
@@ -261,24 +264,27 @@ public class XalanCommandLine {
             }
 
             // Use XSLTProcessorFactory to instantiate an XSLTProcessor.
-            XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
+	    //    XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
 
             // Create the 3 objects the XSLTProcessor needs to perform the transformation.
             // Fix up the args...
-            XMLParserLiaison xmlPL = processor.getXMLProcessorLiaison();
-            URL urlTmp = xmlPL.getURLFromString(foFile, null);
-            MessageHandler.errorln("xml: " + urlTmp);
-            XSLTInputSource xmlSource =
+	    //   XMLParserLiaison xmlPL = processor.getXMLProcessorLiaison();
+	    //  URL urlTmp = xmlPL.getURLFromString(foFile, null);
+	    // MessageHandler.errorln("xml: " + urlTmp);
+	    /* XSLTInputSource xmlSource =
               new XSLTInputSource (urlTmp.toString());
-            urlTmp = xmlPL.getURLFromString(xsltFile, null);
-            MessageHandler.errorln("xslt: " + urlTmp);
-            XSLTInputSource xslSheet =
+	    */
+	    // urlTmp = xmlPL.getURLFromString(xsltFile, null);
+	    //  MessageHandler.errorln("xslt: " + urlTmp);
+	    /* XSLTInputSource xslSheet =
               new XSLTInputSource (urlTmp.toString());
 
             XSLTResultTarget xmlResult = new XSLTResultTarget (writer);
-
+	    */
             // Perform the transformation.
-            processor.process(xmlSource, xslSheet, xmlResult);
+	    //  processor.process(xmlSource, xslSheet, xmlResult);
+
+	    XSLTransform.transform(foFile, xsltFile, writer);
 
             if (usefile) {
                 reader = new FileReader(pdfFile + ".tmp");

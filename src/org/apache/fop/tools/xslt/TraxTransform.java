@@ -52,11 +52,13 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.fop.tools.anttasks;
+package org.apache.fop.tools.xslt;
 
 import javax.xml.transform.*;
 
 import java.io.FileInputStream;
+import java.io.Writer;
+
 import java.util.Hashtable;
 import org.w3c.dom.Document;
 
@@ -69,10 +71,11 @@ public class TraxTransform
     /** Cache of compiled stylesheets (filename, StylesheetRoot) */
     private static Hashtable _stylesheetCache = new Hashtable();
 
-    public static Transformer getTransformer(String xsltFilename)
+    public static Transformer getTransformer(String xsltFilename, 
+					     boolean cache)
     {
 	try {
-	    if (_stylesheetCache.containsKey(xsltFilename)) {
+	    if (cache && _stylesheetCache.containsKey(xsltFilename)) {
 		Templates cachedStylesheet = (Templates)_stylesheetCache.get(xsltFilename);
 		return cachedStylesheet.newTransformer();
 	    }
@@ -81,16 +84,17 @@ public class TraxTransform
 		new javax.xml.transform.stream.StreamSource (xsltFilename);
 	    
 	   
-	    System.out.println("****************************");
+	    /*	    System.out.println("****************************");
 	    System.out.println("trax compile \nin: " + xsltFilename);
 	    System.out.println("****************************");
-	    
+	    */
 	    TransformerFactory factory = TransformerFactory.newInstance();
 	    
 	    Templates compiledSheet =
 		factory.newTemplates(xslSheet);
-	    
-	    _stylesheetCache.put(xsltFilename, compiledSheet);
+	    if (cache) {
+		_stylesheetCache.put(xsltFilename, compiledSheet);
+	    }
 	    return compiledSheet.newTransformer();
 	}
 	catch (TransformerConfigurationException ex) {
@@ -100,16 +104,18 @@ public class TraxTransform
 	
     }
 
-    public static void transform(String xmlSource, String xslURL,
-                           String outputFile) 
+    public static void transform(String xmlSource, 
+				 String xslURL,
+				 String outputFile) 
     {
 	transform(new javax.xml.transform.stream.StreamSource(xmlSource),
 		  new javax.xml.transform.stream.StreamSource(xslURL),
 		  new javax.xml.transform.stream.StreamResult(outputFile));
     }
     
-    public static void transform(Document xmlSource, String xslURL,
-                           String outputFile) 
+    public static void transform(Document xmlSource, 
+				 String xslURL,
+				 String outputFile) 
     {
 
 	transform(new javax.xml.transform.dom.DOMSource(xmlSource),
@@ -118,16 +124,27 @@ public class TraxTransform
 
     }
     
-    public static void transform(Source xmlSource, Source xslSource, Result result) 
+    public static void transform(String xmlSource,
+				 String xslURL,
+				 Writer output) 
     {
-	try {
+	transform(new javax.xml.transform.stream.StreamSource(xmlSource),
+		  new javax.xml.transform.stream.StreamSource(xslURL),
+		  new javax.xml.transform.stream.StreamResult(output));
+    }
+    
+    public static void transform(Source xmlSource, 
+				 Source xslSource, 
+				 Result result) 
+    {
+	try { 
 	    Transformer transformer;
 	    if (xslSource.getSystemId() == null) {
 		TransformerFactory factory = TransformerFactory.newInstance();
 		transformer = factory.newTransformer(xslSource);
 	    }
 	    else {
-		transformer = getTransformer(xslSource.getSystemId());
+		transformer = getTransformer(xslSource.getSystemId(),true);
 	    }
 	    transformer.transform(xmlSource, result);
 	}

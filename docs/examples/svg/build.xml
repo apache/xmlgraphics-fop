@@ -73,8 +73,8 @@ These are the meaningful targets for this build file:
 
     <property name="xslt" value="org.apache.xalan.xslt.Process"/>
 
-    <taskdef name="fop" classname="Fop"/>
-    <taskdef name="xslt" classname="Xslt"/>
+    <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"/>
+    <taskdef name="xslt" classname="org.apache.fop.tools.anttasks.Xslt"/>
 
   </target>
 
