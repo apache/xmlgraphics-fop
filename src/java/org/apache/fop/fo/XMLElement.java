@@ -23,9 +23,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
-// FOP
-import org.apache.fop.layoutmgr.AddLMVisitor;
-
 /**
  * class representing svg:svg pseudo flow object.
  */
@@ -62,14 +59,4 @@ public class XMLElement extends XMLObj {
     public String getNameSpace() {
         return namespace;
     }
-
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveXMLElement(this);
-    }
-
 }

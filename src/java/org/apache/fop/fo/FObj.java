@@ -21,6 +21,7 @@ package org.apache.fop.fo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
@@ -434,6 +435,14 @@ public class FObj extends FONode implements Constants {
     }
 
     /**
+     * Return a LayoutManager responsible for laying out this FObj's content.
+     * Must override in subclasses if their content can be laid out.
+     * @param list the list to which the layout manager(s) should be added
+     */
+    public void addLayoutManager(List list) {
+    }
+
+    /**
      * This is a hook for the AddLMVisitor class to be able to access
      * this object.
      * @param aLMV the AddLMVisitor object that can access this object.
@@ -442,7 +451,6 @@ public class FObj extends FONode implements Constants {
         aLMV.serveFObj(this);
     }
     
-
     /*
      * Return a string representation of the fo element.
      * Deactivated in order to see precise ID of each fo element created

@@ -20,7 +20,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.ToBeImplementedElement;
 import org.apache.fop.fo.properties.CommonAccessibility;
 
@@ -45,10 +44,6 @@ public class MultiSwitch extends ToBeImplementedElement {
         // this.propertyList.get("auto-restore");
         setupID();
 
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveMultiSwitch(this);
     }
 
     public String getName() {

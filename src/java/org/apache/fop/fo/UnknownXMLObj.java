@@ -19,7 +19,6 @@
 package org.apache.fop.fo;
 
 import org.xml.sax.Locator;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * Class for handling generic XML from a namespace not recognized by FOP
@@ -89,15 +88,5 @@ public class UnknownXMLObj extends XMLObj {
         }
         super.addCharacters(data, start, length, locator);
     }
-
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveUnknownXMLObj(this);
-    }
-
 }
 

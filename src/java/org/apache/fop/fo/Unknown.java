@@ -18,8 +18,6 @@
 
 package org.apache.fop.fo;
 
-import org.apache.fop.layoutmgr.AddLMVisitor;
-
 /**
  * Class for handling an unknown element, for example one from an unsupported
  * namespace.
@@ -53,14 +51,4 @@ public class Unknown extends FONode {
     private void setup() {
         getLogger().debug("Layout Unknown element");
     }
-
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveUnknown(this);
-    }
-
 }

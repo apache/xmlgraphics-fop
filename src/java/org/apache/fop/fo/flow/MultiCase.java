@@ -20,7 +20,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.ToBeImplementedElement;
 import org.apache.fop.fo.properties.CommonAccessibility;
 
@@ -47,10 +46,6 @@ public class MultiCase extends ToBeImplementedElement {
         // this.propertyList.get("case-name");
         // this.propertyList.get("case-title");
 
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveMultiCase(this);
     }
 
     public String getName() {

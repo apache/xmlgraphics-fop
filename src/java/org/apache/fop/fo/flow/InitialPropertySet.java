@@ -25,7 +25,6 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.ToBeImplementedElement;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
@@ -84,10 +83,6 @@ public class InitialPropertySet extends ToBeImplementedElement {
         // this.propertyList.get("text-transform");
         // this.propertyList.get("word-spacing");
 
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveInitialPropertySet(this);
     }
 
     public String getName() {

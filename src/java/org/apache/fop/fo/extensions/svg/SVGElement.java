@@ -20,7 +20,6 @@ package org.apache.fop.fo.extensions.svg;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.dom.svg.SVGOMElement;
@@ -282,10 +281,5 @@ public class SVGElement extends SVGObj {
             return 100;
         }
     }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveSVGElement(this);
-    }
-
 }
 

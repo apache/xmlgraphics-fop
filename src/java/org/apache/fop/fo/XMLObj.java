@@ -29,9 +29,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-// FOP
-import org.apache.fop.layoutmgr.AddLMVisitor;
-
 /**
  * Abstract class modelling generic, non-XSL-FO XML objects. Such objects are
  * stored in a DOM.
@@ -209,15 +206,5 @@ public abstract class XMLObj extends FONode {
         org.w3c.dom.Text text = doc.createTextNode(str);
         element.appendChild(text);
     }
-
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveXMLObj(this);
-    }
-
 }
 
