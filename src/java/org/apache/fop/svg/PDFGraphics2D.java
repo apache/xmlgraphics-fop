@@ -471,6 +471,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             g.setPaint(new Color(1, 1, 1, 0));
             g.fillRect(0, 0, width * scaleFactor, height * scaleFactor);
             g.clip(new Rectangle(0, 0, buf.getWidth(), buf.getHeight()));
+            g.setComposite(gc.getComposite());
 
             if (!g.drawImage(img, 0, 0, buf.getWidth(), buf.getHeight(), observer)) {
                 return false;
@@ -500,29 +501,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                         mask[maskpos++] = (byte)(alpha & 0xFF);
                         if (alpha != 255) {
                             hasMask = true;
-                            /*
-                            if (alpha != 0) {
-                                binaryMask = false;
-                            }*/
-
-                            // System.out.println("Alpha: " + alpha);
-                            // Composite with opaque white...
-                            add = (255 - alpha);
-                            mult = (alpha << 16) / 255;
-                            result[count++] =
-                                (byte)(add
-                                       + ((((val >> 16) & 0xFF) * mult) >> 16));
-                            result[count++] =
-                                (byte)(add
-                                       + ((((val >> 8) & 0xFF) * mult) >> 16));
-                            result[count++] = (byte)(add
-                                                     + ((((val) & 0xFF) * mult)
-                                                        >> 16));
-                        } else {
-                            result[count++] = (byte)((val >> 16) & 0xFF);
-                            result[count++] = (byte)((val >> 8) & 0xFF);
-                            result[count++] = (byte)((val) & 0xFF);
                         }
+                        result[count++] = (byte)((val >> 16) & 0xFF);
+                        result[count++] = (byte)((val >> 8) & 0xFF);
+                        result[count++] = (byte)((val) & 0xFF);
                     }
                 }
                 break;
@@ -641,12 +623,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void draw(Shape s) {
         // System.out.println("draw(Shape)");
-        Color c;
-        c = getColor();
-        if (c.getAlpha() == 0) {
-            return;
-        }
-
         AffineTransform trans = getTransform();
         double[] tranvals = new double[6];
         trans.getMatrix(tranvals);
@@ -672,6 +648,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             }
         }
 
+        Color c;
+        c = getColor();
+        if (c.getAlpha() == 0) {
+            return;
+        }
         if (c.getAlpha() != 255) {
             Map vals = new java.util.HashMap();
             vals.put(PDFGState.GSTATE_ALPHA_STROKE, new Float(c.getAlpha() / 255f));
@@ -1237,6 +1218,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         writeClip(imclip);
         Color c = getColor();
         applyColor(c, true);
+        applyPaint(getPaint(), true);
         int salpha = c.getAlpha();
 
         if (salpha != 255) {
@@ -1374,6 +1356,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         writeClip(imclip);
         Color c = getColor();
         applyColor(c, true);
+        applyPaint(getPaint(), true);
 
         boolean fill = true;
         boolean stroke = false;
@@ -1382,6 +1365,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             stroke = true;
             applyStroke(currentStroke);
             applyColor(c, false);
+            applyPaint(getPaint(), false);
         }
 
         currentStream.write("BT\n");
