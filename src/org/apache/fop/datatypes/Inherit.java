@@ -3,6 +3,7 @@ package org.apache.fop.datatypes;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.expr.PropertyValue;
+import org.apache.fop.fo.expr.PropertyTriplet;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropertyConsts;
 
@@ -31,6 +32,10 @@ public class Inherit extends AbstractPropertyValue {
      * may be different from the target property.
      */
     private int sourceProperty;
+
+    /**
+     */
+    private PropertyTriplet inheritedPercentage = null;
 
     /**
      * @param property the <tt>int</tt> index of the property on which
@@ -88,6 +93,25 @@ public class Inherit extends AbstractPropertyValue {
      */
     public int getSourceProperty() {
         return sourceProperty;
+    }
+
+    /**
+     * @return <tt>PropertyTriplet</tt> which contains or will contain the
+     * the computed value of the percentage being inherited.  This field
+     * will be null except when a percentage is being inherited.  If so,
+     * a null value will be returned.
+     */
+    public PropertyTriplet getInheritedPercentage() {
+        return inheritedPercentage;
+    }
+
+    /**
+     * @param percentageTriplet the <tt>PropertyTriplet</tt> which contains
+     * or will contain the the computed value of the percentage being
+     * inherited.
+     */
+    public void setInheritedPercentage(PropertyTriplet percentage) {
+        inheritedPercentage = percentage;
     }
 
     /**
