@@ -13,7 +13,6 @@ import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.traits.InlineProps;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Space;

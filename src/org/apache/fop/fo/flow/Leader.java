@@ -21,7 +21,7 @@ import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 import org.apache.fop.layoutmgr.ContentLayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LMiter;
-import org.apache.fop.area.MinOptMax;
+import org.apache.fop.layoutmgr.MinOptMax;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.InlineParent;

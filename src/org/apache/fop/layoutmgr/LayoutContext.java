@@ -6,7 +6,6 @@
  */
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.area.MinOptMax;
 
 /**
  * This class is used to pass information to the getNextBreakPoss()

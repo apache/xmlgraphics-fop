@@ -9,7 +9,6 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.properties.VerticalAlign;
 

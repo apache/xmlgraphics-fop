@@ -14,7 +14,6 @@ import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
-import org.apache.fop.area.MinOptMax;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layout.AbsolutePositionProps;
 import org.apache.fop.fo.properties.AbsolutePosition;

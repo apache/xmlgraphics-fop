@@ -12,7 +12,6 @@ import org.apache.fop.fo.TextInfo;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
-import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Word;

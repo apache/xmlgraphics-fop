@@ -19,7 +19,7 @@ import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
-import org.apache.fop.area.MinOptMax;
+import org.apache.fop.layoutmgr.MinOptMax;
 import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.BackgroundProps;
 
