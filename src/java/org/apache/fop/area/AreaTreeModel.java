@@ -74,5 +74,12 @@ public abstract class AreaTreeModel {
      * @return the PageViewport for the particular page
      */
     public abstract PageViewport getPage(int seq, int count);
+    
+    /**
+     * Get the title for a page sequence.
+     * @param count the page sequence count
+     * @return the title of the page sequence
+     */
+    public abstract Title getTitle(int count);
 
 }
