@@ -63,7 +63,7 @@ public class Table extends FObj {
             tableHeader = (TableBody)child;
         } else {
             // add bodies
-            children.add(child);
+            super.addChild(child);
         }
     }
 
@@ -149,4 +149,9 @@ public class Table extends FObj {
         return false;
     }
 
+    protected boolean containsMarkers() {
+        return true;
+    }
+
 }
+

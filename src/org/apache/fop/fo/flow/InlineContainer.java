@@ -69,6 +69,10 @@ public class InlineContainer extends FObj {
         // this.properties.get("writing-mode");
     }
 
+    protected boolean containsMarkers() {
+        return true;
+    }
+
     /**
      * This creates a single inline container area after
      * laying out the child block areas. All footnotes, floats

@@ -22,7 +22,7 @@ import java.util.List;
  * and their processing
  */
 public class FObjMixed extends FObj {
-    TextInfo textInfo = null;
+    protected TextInfo textInfo = null;
     protected FontInfo fontInfo = null;
 
     public FObjMixed(FONode parent) {
@@ -35,8 +35,10 @@ public class FObjMixed extends FObj {
     }
 
     public void addLayoutManager(List lms) {
-        lms.add(new InlineStackingLayoutManager(this,
+        if (children != null) {
+            lms.add(new InlineStackingLayoutManager(this,
                      new LMiter(children.listIterator())));
+        }
     }
 
     protected void addCharacters(char data[], int start, int length) {
@@ -54,7 +56,6 @@ public class FObjMixed extends FObj {
     }
 
     public void setup() {
-
         if (this.properties != null) {
             setupID();
         }

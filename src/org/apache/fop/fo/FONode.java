@@ -106,11 +106,22 @@ public abstract class FONode {
      * this FObj.
      */
     public ListIterator getChildren(FONode childNode) {
-    return null;
+        return null;
     }
 
     public CharIterator charIterator() {
-    return new OneCharIterator(CharUtilities.CODE_EOT);
+        return new OneCharIterator(CharUtilities.CODE_EOT);
     }
 
+    /**
+     * This is a quick check to see if it is a marker.
+     * This is needed since there is no other quick way of checking
+     * for a marker and not adding to the child list.
+     *
+     * @return true if this is a marker
+     */
+    protected boolean isMarker() {
+        return false;
+    }
 }
+

@@ -70,9 +70,9 @@ public class LengthBase implements PercentBase {
             return propertyList.get("font-size").getLength().mvalue();
         case INH_FONTSIZE:
             return propertyList.getInherited("font-size").getLength().mvalue();
-        case CONTAINING_BOX:
+        //case CONTAINING_BOX:
             // depends on property?? inline-progression vs block-progression
-            return parentFO.getContentWidth();
+            //return parentFO.getContentWidth();
         case CONTAINING_REFAREA:    // example: start-indent, end-indent
          {
             //FONode fo;

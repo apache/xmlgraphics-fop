@@ -45,4 +45,10 @@ public class TableCaption extends ToBeImplementedElement {
         // this.properties.get("width");
 
     }
+
+    protected boolean containsMarkers() {
+        return true;
+    }
+
 }
+

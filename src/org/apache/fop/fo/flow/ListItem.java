@@ -99,4 +99,9 @@ public class ListItem extends FObj {
         return false;
     }
 
+    protected boolean containsMarkers() {
+        return true;
+    }
+
 }
+

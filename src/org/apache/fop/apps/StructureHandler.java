@@ -8,6 +8,7 @@
 package org.apache.fop.apps;
 
 // Java
+import java.util.Set;
 import java.util.HashSet;
 
 // Avalon
@@ -31,12 +32,12 @@ public class StructureHandler extends AbstractLogEnabled {
        The current set of id's in the FO tree
        This is used so we know if the FO tree contains duplicates
      */
-    private HashSet idReferences = new HashSet();
+    private Set idReferences = new HashSet();
 
     public StructureHandler() {
     }
 
-    public HashSet getIDReferences() {
+    public Set getIDReferences() {
         return idReferences;
     }
 
