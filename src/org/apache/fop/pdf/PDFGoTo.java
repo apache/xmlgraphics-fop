@@ -55,7 +55,7 @@ package org.apache.fop.pdf;
  * class representing a /GoTo object.
  *
  */
-public class PDFGoTo extends PDFObject {
+public class PDFGoTo extends PDFAction {
 
     /** the pageReference */
     protected String pageReference;
@@ -113,6 +113,11 @@ public class PDFGoTo extends PDFObject {
         this.xPosition = (xPosition/1000f); 
     }
 
+    public String getAction() 
+    {
+	return referencePDF();
+    }
+    
 
     /**
      * represent the object in PDF
