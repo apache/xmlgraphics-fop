@@ -15,4 +15,8 @@ public class DataTypeNotImplementedException extends PropertyException {
         super(detail);
     }
 
+    public DataTypeNotImplementedException(Throwable e) {
+        super(e);
+    }
+
 }

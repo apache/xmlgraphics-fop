@@ -15,4 +15,8 @@ public class PropertyNotImplementedException extends PropertyException {
         super(detail);
     }
 
+    public PropertyNotImplementedException(Throwable e) {
+        super(e);
+    }
+
 }
