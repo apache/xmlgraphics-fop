@@ -19,8 +19,6 @@ import org.apache.fop.tools.DocumentReader;
 
 import org.apache.fop.render.pdf.PDFRenderer;
 
-import org.apache.fop.system.BufferManager;
-
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
@@ -172,8 +170,6 @@ public class Driver {
     /**
      * the system resources that FOP will use
      */
-    private BufferManager _bufferManager;
-
     private Logger log;
 
     public static final String getParserClassName() {
@@ -191,9 +187,7 @@ public class Driver {
      */
     public Driver() {
         _stream = null;
-        _bufferManager = new BufferManager();
         _treeBuilder = new FOTreeBuilder();
-        _treeBuilder.setBufferManager(_bufferManager);
         setupDefaultMappings();
     }
 
@@ -509,12 +503,6 @@ public class Driver {
                 log.error("", e);
             }
         }
-    }
-
-    /* Set up the system buffers */
-
-    public void setBufferFile(File bufferFile) {
-        this._bufferManager.addBufferFile(bufferFile);
     }
 
     /**

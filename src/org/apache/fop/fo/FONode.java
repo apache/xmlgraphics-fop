@@ -13,7 +13,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.AreaClass;
 import org.apache.fop.layout.LinkSet;
-import org.apache.fop.system.BufferManager;
 import org.apache.fop.fo.flow.Marker;
 
 // Avalon
@@ -38,8 +37,6 @@ abstract public class FONode {
     protected FObj parent;
 
     protected String areaClass = AreaClass.UNASSIGNED;
-
-    public BufferManager bufferManager;
 
     protected Vector children = new Vector();    // made public for searching for id's
 
@@ -80,9 +77,6 @@ abstract public class FONode {
 
     protected FONode(FObj parent) {
         this.parent = parent;
-        if (parent != null) {
-            this.bufferManager = parent.bufferManager;
-        }
 
         markers = new Hashtable();
 
@@ -148,14 +142,6 @@ abstract public class FONode {
 
     public FObj getParent() {
         return this.parent;
-    }
-
-    public void setBufferManager(BufferManager bufferManager) {
-        this.bufferManager = bufferManager;
-    }
-
-    public BufferManager getBufferManager() {
-        return this.bufferManager;
     }
 
     public void setLinkSet(LinkSet linkSet) {
