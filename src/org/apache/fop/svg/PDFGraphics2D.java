@@ -786,15 +786,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void drawString(String s, float x, float y) {
         // System.out.println("drawString(String)");
 
-        Shape imclip = getClip();
-        writeClip(imclip);
-        Color c = getColor();
-        applyColor(c, true);
-        c = getBackground();
-        applyColor(c, false);
-
-        currentStream.write("BT\n");
-
         if(ovFontState == null) {
             Font gFont = getFont();
             String n = gFont.getFamily();
@@ -813,19 +804,30 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         } else {
             fontState = ovFontState;
             ovFontState = null;
-        }
+        }       
         String name;
         int size;
         name = fontState.getFontName();
         size = fontState.getFontSize() / 1000;
-
+    
         if ((!name.equals(this.currentFontName))
                 || (size != this.currentFontSize)) {
-            this.currentFontName = name;
+            this.currentFontName = name; 
             this.currentFontSize = size;
             currentStream.write("/" + name + " " + size + " Tf\n");
 
         }
+
+        currentStream.write("q\n");
+
+        Shape imclip = getClip();
+        writeClip(imclip);
+        Color c = getColor();
+        applyColor(c, true);
+        c = getBackground();
+        applyColor(c, false);
+
+        currentStream.write("BT\n");
 
         Hashtable kerning = null;
         boolean kerningAvailable = false;
@@ -859,9 +861,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write(PDFNumber.doubleOut(vals[0]) + " "
                             + PDFNumber.doubleOut(vals[1]) + " "
                             + PDFNumber.doubleOut(vals[2]) + " "
-                            + PDFNumber.doubleOut(-vals[3]) + " "
+                            + PDFNumber.doubleOut(vals[3]) + " "
                             + PDFNumber.doubleOut(vals[4]) + " "
-                            + PDFNumber.doubleOut(vals[5]) + " Tm [" + startText);
+                            + PDFNumber.doubleOut(vals[5]) + " cm\n");
+        currentStream.write("1 0 0 -1 0 0 Tm [" + startText);
 
         int l = s.length();
 
@@ -899,6 +902,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write("] TJ\n");
 
         currentStream.write("ET\n");
+        currentStream.write("Q\n");
     }
 
     private void addKerning(StringWriter buf, Integer ch1, Integer ch2,
