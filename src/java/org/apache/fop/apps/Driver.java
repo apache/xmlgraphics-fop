@@ -552,6 +552,11 @@ public class Driver implements LogEnabled {
      * @return a content handler for handling the SAX events.
      */
     public ContentHandler getContentHandler() {
+        if (treeBuilder == null) {
+            throw new NullPointerException("Driver isn't initialized. "
+                + "You may have to call initialize() first.");
+        }
+        
         // TODO: - do this stuff in a better way
         // PIJ: I guess the structure handler should be created by the renderer.
         if (rendererType == RENDER_MIF) {
