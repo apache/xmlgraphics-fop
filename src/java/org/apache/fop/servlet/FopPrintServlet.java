@@ -148,7 +148,7 @@ public class FopPrintServlet extends HttpServlet {
             Source src = new StreamSource(foFile);
             
             // Resulting SAX events (the generated FO) must be piped through to FOP
-            Result res = new SAXResult(driver.getContentHandler());
+            Result res = new SAXResult(driver.getDefaultHandler());
             
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);
@@ -179,7 +179,7 @@ public class FopPrintServlet extends HttpServlet {
             Source src = new StreamSource(xmlfile);
         
             // Resulting SAX events (the generated FO) must be piped through to FOP
-            Result res = new SAXResult(driver.getContentHandler());
+            Result res = new SAXResult(driver.getDefaultHandler());
 
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);

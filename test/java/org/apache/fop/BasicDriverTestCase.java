@@ -77,7 +77,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
         Source src = new DOMSource(loadDocument(foFile));
-        Result res = new SAXResult(driver.getContentHandler());
+        Result res = new SAXResult(driver.getDefaultHandler());
         transformer.transform(src, res);
         
         assertTrue("Generated PostScript has zero length", baout.size() > 0);
@@ -115,7 +115,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
         Source src = new StreamSource(foFile);
-        Result res = new SAXResult(driver.getContentHandler());
+        Result res = new SAXResult(driver.getDefaultHandler());
         transformer.transform(src, res);
         
         assertTrue("Generated PDF has zero length", baout.size() > 0);
@@ -134,7 +134,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
         Source src = new StreamSource(foFile);
-        Result res = new SAXResult(driver.getContentHandler());
+        Result res = new SAXResult(driver.getDefaultHandler());
         transformer.transform(src, res);
         
         assertTrue("Generated PostScript has zero length", baout.size() > 0);
@@ -153,7 +153,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
         Source src = new StreamSource(foFile);
-        Result res = new SAXResult(driver.getContentHandler());
+        Result res = new SAXResult(driver.getDefaultHandler());
         transformer.transform(src, res);
         
         assertTrue("Generated RTF has zero length", baout.size() > 0);

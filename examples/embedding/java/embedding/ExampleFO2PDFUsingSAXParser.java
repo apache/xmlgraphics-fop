@@ -43,7 +43,7 @@ import org.apache.fop.apps.FOPException;
  * This class demonstrates the conversion of an FO file to PDF using FOP.
  * It uses a SAXParser with FOP as the DefaultHandler
  */
-public class ExampleFO2PDFUsingSAX {
+public class ExampleFO2PDFUsingSAXParser {
 
     /**
      * Converts an FO file to a PDF file using FOP
@@ -99,7 +99,7 @@ public class ExampleFO2PDFUsingSAX {
      */
     public static void main(String[] args) {
         try {
-            System.out.println("FOP ExampleFO2PDFUsingSAX\n");
+            System.out.println("FOP ExampleFO2PDFUsingSAXParser\n");
             System.out.println("Preparing...");
             
             //Setup directories
@@ -109,14 +109,14 @@ public class ExampleFO2PDFUsingSAX {
 
             //Setup input and output files            
             File fofile = new File(baseDir, "xml/fo/helloworld.fo");
-            File pdffile = new File(outDir, "ResultFO2PDFUsingSAX.pdf");
+            File pdffile = new File(outDir, "ResultFO2PDFUsingSAXParser.pdf");
 
             System.out.println("Input: XSL-FO (" + fofile + ")");
             System.out.println("Output: PDF (" + pdffile + ")");
             System.out.println();
             System.out.println("Transforming...");
             
-            ExampleFO2PDFUsingSAX app = new ExampleFO2PDFUsingSAX();
+            ExampleFO2PDFUsingSAXParser app = new ExampleFO2PDFUsingSAXParser();
             app.convertFO2PDF(fofile, pdffile);
             
             System.out.println("Success!");

@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 // XML
-import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -126,20 +125,18 @@ public class Driver implements Constants {
     }
 
     /**
-     * Determines which SAX ContentHandler is appropriate for the renderType.
-     * Structure renderers (e.g. MIF & RTF) each have a specialized
-     * ContentHandler that directly place data into the output stream. Layout
-     * renderers (e.g. PDF & PostScript) use a ContentHandler that builds an FO
-     * Tree.
+     * Returns a DefaultHandler object used to generate the document.
+     * Note this object implements the ContentHandler interface.
+     * For processing with a Transformer object, this DefaultHandler object
+     * can be used in the SAXResult constructor.
+     * Alternatively, for processing with a SAXParser, this object can be
+     * used as the DefaultHandler argument to its parse() methods.
+     *
      * @return a SAX DefaultHandler for handling the SAX events.
      * @throws FOPException if setting up the DefaultHandler fails
      */
     public DefaultHandler getDefaultHandler() throws FOPException {
         return new FOTreeBuilder(renderType, foUserAgent, stream);
-    }
-
-    public ContentHandler getContentHandler() throws FOPException {
-        return getDefaultHandler();
     }
 
     /**
@@ -167,7 +164,7 @@ public class Driver implements Constants {
      */
     public synchronized void render(XMLReader parser, InputSource source)
                 throws FOPException {
-        parser.setContentHandler(getContentHandler());
+        parser.setContentHandler(getDefaultHandler());
 
         try {
             /**
