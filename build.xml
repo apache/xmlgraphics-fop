@@ -111,7 +111,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <fileset dir="${basedir}" id="dist.bin">
     <include name="build/site/**"/>
     <include name="conf/**"/>
-    <include name="contrib/servlet/**"/>
     <include name="docs/xslfoRef.pdf"/>
     <include name="docs/examples/**"/>
     <exclude name="docs/examples/build.xml"/>
@@ -119,13 +118,21 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <exclude name="docs/examples/results.html"/>
     <include name="docs/graphics/**"/>
     <include name="docs/foschema/**"/>
+    <include name="examples/**"/>
+    <exclude name="examples/build.xml"/>
+    <exclude name="examples/fo/runtests.*"/>
+    <exclude name="examples/fo/results.html"/>
+    <exclude name="examples/tests/**"/>
     <include name="CHANGES"/>
     <include name="LICENSE"/>
+    <include name="KEYS"/>
     <include name="README"/>
     <include name="STATUS"/>
     <include name="ReleaseNotes.html"/>
     <include name="fop.bat"/>
     <include name="fop.sh"/>
+    <include name="xalan.bat"/>
+    <include name="xalan.sh"/>
     <exclude name="src/**"/>
     <exclude name="dist/**"/>
     <exclude name="lib/**"/>
@@ -151,9 +158,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <include name="src/**"/>
     <include name="build/site/**"/>
     <include name="conf/**"/>
-    <include name="contrib/servlet/**"/>
     <include name="build/site/**"/>
     <include name="docs/**"/>
+    <include name="examples/**"/>
     <include name="hyph/**"/>
     <include name="lib/**"/>
     <include name="CHANGES"/>
@@ -164,6 +171,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <include name="build*"/>
     <include name="fop.bat"/>
     <include name="fop.sh"/>
+    <include name="xalan.bat"/>
+    <include name="xalan.sh"/>
   </fileset>
 
   <path id="libs-build-classpath">
@@ -185,9 +194,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.20.5rc"/>
+    <property name="version" value="0.20.5"/>
     <filter  token="version" value="${version}"/>
-    <property name="year" value="1999-2002"/>
+    <property name="year" value="1999-2003"/>
 
     <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
 
