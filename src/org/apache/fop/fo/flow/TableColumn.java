@@ -38,9 +38,14 @@ public class TableColumn extends FObj {
         return new TableColumn.Maker();
     }
 
-    public TableColumn(FObj parent, PropertyList propertyList) {
+    public TableColumn(FObj parent, PropertyList propertyList)
+        throws FOPException {
         super(parent, propertyList);
         this.name = "fo:table-column";
+        if (!(parent instanceof Table)) {
+            throw new FOPException("A table column must be child of fo:table, not "
+                                   + parent.getName());
+        }
     }
 
     public Length getColumnWidthAsLength() {
