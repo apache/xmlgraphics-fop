@@ -432,7 +432,7 @@ public class FOText extends FObj {
         }
     }
 
-    private class TextCharIterator extends AbstractCharIterator {
+    private class TextCharIterator extends CharIterator {
         private int curIndex = 0;
 
         /* Current space removal process:  just increment the startIndex
