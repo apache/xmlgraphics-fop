@@ -118,13 +118,6 @@ public abstract class FONode {
     }
 
     /**
-     * Sets the structure handler to send events to.
-     * @param foih FOInputHandler instance
-     */
-    public void setFOInputHandler(FOInputHandler foih) {
-    }
-
-    /**
      * Do something with the attributes for this element
      * @param attlist Collection of attributes passed to us from the parser.
      * @throws FOPException for errors or inconsistencies in the attributes

@@ -62,6 +62,7 @@ import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.AreaTreeModel;
 
 import org.apache.fop.fo.extensions.Bookmarks;
+import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.FOTreeEvent;
 import org.apache.fop.fo.FOTreeListener;
@@ -110,6 +111,12 @@ public class Document implements FOTreeControl, FOTreeListener {
      * This is used so we know if the FO tree contains duplicates.
      */
     private Set idReferences = new HashSet();
+
+    /**
+     * Structure handler used to notify structure events
+     * such as start end element.
+     */
+    public FOInputHandler foInputHandler;
 
     /**
      * Main constructor
@@ -383,5 +390,11 @@ public class Document implements FOTreeControl, FOTreeListener {
         return idReferences;
     }
 
-}
+    /**
+     * @return the FOInputHandler for parsing this FO Tree
+     */
+    public FOInputHandler getFOInputHandler() {
+        return foInputHandler;
+    }
 
+}

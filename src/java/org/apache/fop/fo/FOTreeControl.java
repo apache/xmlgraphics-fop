@@ -114,4 +114,8 @@ public interface FOTreeControl {
      */
     Set getIDReferences();
 
+    /**
+     * @return the FOInputHandler for parsing this FO Tree
+     */
+    FOInputHandler getFOInputHandler();
 }

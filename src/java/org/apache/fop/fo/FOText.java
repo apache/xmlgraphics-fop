@@ -76,7 +76,7 @@ public class FOText extends FObj {
      * the character array containing the text
      */
     public char[] ca;
-    private int start;
+    public int start;
 
     /**
      * the length of the character array containing the text
@@ -137,11 +137,6 @@ public class FOText extends FObj {
         textInfo = ti;
         createBlockPointers();
         textTransform();
-    }
-
-    public void setFOInputHandler(FOInputHandler foih) {
-        super.setFOInputHandler(foih);
-        foInputHandler.characters(ca, start, length);
     }
 
     /**

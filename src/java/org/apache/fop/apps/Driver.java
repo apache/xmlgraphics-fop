@@ -576,6 +576,7 @@ public class Driver implements LogEnabled {
             currentDocument = new Document(this);
         }
         parser.setContentHandler(getContentHandler());
+        currentDocument.foInputHandler = foInputHandler;
         /** LayoutStrategy is hard-wired for now, but needs to be made
         accessible through the API and/or configuration */
         if (foInputHandler instanceof FOTreeHandler) {

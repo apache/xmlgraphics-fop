@@ -282,7 +282,6 @@ public class FOTreeBuilder extends DefaultHandler {
             fobj.setUserAgent(userAgent);
             // set the structure handler so that appropriate
             // elements can signal structure events
-            fobj.setFOInputHandler(foInputHandler);
 
             fobj.handleAttrs(attlist);
         } catch (FOPException e) {

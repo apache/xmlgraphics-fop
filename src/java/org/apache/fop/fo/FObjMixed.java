@@ -57,22 +57,12 @@ package org.apache.fop.fo;
 public class FObjMixed extends FObj {
     /** TextInfo for this object */
     protected TextInfo textInfo = null;
-    /** FontInfo for this object */
-    protected FOTreeControl fontInfo = null;
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public FObjMixed(FONode parent) {
         super(parent);
-    }
-
-    /**
-     * @param foih FOInputHandler to set
-     */
-    public void setFOInputHandler(FOInputHandler foih) {
-        super.setFOInputHandler(foih);
-        fontInfo = foih.getFontInfo();
     }
 
     /**
@@ -90,7 +80,7 @@ public class FObjMixed extends FObj {
 
         FOText ft = new FOText(data, start, length, textInfo, this);
         ft.setUserAgent(userAgent);
-        ft.setFOInputHandler(foInputHandler);
+        getFOTreeControl().getFOInputHandler().characters(ft.ca, ft.start, ft.length);
         addChild(ft);
     }
 
