@@ -218,11 +218,11 @@ public class XMLEvent {
 
     /**
      * A nested class for holding an passing a URI index and local name
-     * pair, as used in the contain <tt>XMLEvent</tt> class.
+     * pair, as used in the containing <tt>XMLEvent</tt> class.
      */
     public static class UriLocalName {
-        private int uriIndex;
-        private String localName;
+        public int uriIndex;
+        public String localName;
 
         /**
          * @param uriIndex - the index of the namespace URI maintained in
