@@ -125,7 +125,7 @@
 	</fo:table-body>
       </fo:table>
 
-      <fo:block space-before.optimum="260pt" space-after.optimum="15pt">
+      <fo:block space-before.optimum="270pt" space-after.optimum="15pt">
       Table 1: basic keep with next and keep with previous
       </fo:block>
 

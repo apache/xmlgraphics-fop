@@ -31,73 +31,73 @@
       Table 1: spaces around cells
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red">
+      <fo:table border-style="solid" border-width="0.5pt" border-color="red">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 
     <fo:table-body>
 	  <fo:table-row>
-	    <fo:table-cell border-width="0.5pt">
+	    <fo:table-cell border-style="solid" border-width="0.5pt">
 	      <fo:block text-align="center">
 	      first
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-width="0.5pt">
+	    <fo:table-cell border-style="solid" border-width="0.5pt">
 	      <fo:block text-align="center">
 	      table
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-width="0.5pt">
+	    <fo:table-cell border-style="solid" border-width="0.5pt">
 	      <fo:block text-align="center">
 	      row
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
 	  <fo:table-row>
-	    <fo:table-cell border-width="0.5pt">
+	    <fo:table-cell border-style="solid" border-width="0.5pt">
 	      <fo:block text-align="center">
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell padding-left="5pt" border-width="0.5pt">
+	    <fo:table-cell padding-left="5pt" border-style="solid" border-width="0.5pt">
 	      <fo:block text-align="center">
 	      left 5pt
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-width="0.5pt">
+	    <fo:table-cell border-style="solid" border-width="0.5pt">
 	      <fo:block text-align="center">
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
 	  <fo:table-row>
-	    <fo:table-cell space-before.optimum="5pt" border-width="0.5pt">
+	    <fo:table-cell space-before.optimum="5pt" border-style="solid" border-width="0.5pt">
 	      <fo:block text-align="center">
 	      before 5pt
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell padding-right="5pt" border-width="0.5pt">
+	    <fo:table-cell padding-right="5pt" border-style="solid" border-width="0.5pt">
 	      <fo:block text-align="center">
 	      right 5pt
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell space-after.optimum="5pt" border-width="0.5pt">
+	    <fo:table-cell space-after.optimum="5pt" border-style="solid" border-width="0.5pt">
 	      <fo:block text-align="center">
 	      after 5pt
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
 	  <fo:table-row>
-	    <fo:table-cell border-width="0.5pt">
+	    <fo:table-cell border-style="solid" border-width="0.5pt">
 	      <fo:block text-align="center">
 	      last
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-width="0.5pt">
+	    <fo:table-cell border-style="solid" border-width="0.5pt">
 	      <fo:block text-align="center">
 	      table
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-width="0.5pt">
+	    <fo:table-cell border-style="solid" border-width="0.5pt">
 	      <fo:block text-align="center">
 	      row
 	      </fo:block>
@@ -110,13 +110,13 @@
       Table 2: spaces around rows
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red">
+      <fo:table border-style="solid" border-width="0.5pt" border-color="red">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 
     <fo:table-body>
-	  <fo:table-row border-width="0.5pt" padding-left="5pt">
+	  <fo:table-row border-style="solid" border-width="0.5pt" padding-left="5pt">
 	    <fo:table-cell>
 	      <fo:block text-align="center">
 	      padding
@@ -133,7 +133,7 @@
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
-	  <fo:table-row border-width="0.5pt" space-before.optimum="5pt">
+	  <fo:table-row border-style="solid" border-width="0.5pt" space-before.optimum="5pt">
 	    <fo:table-cell>
 	      <fo:block text-align="center">
 	      space
@@ -150,7 +150,7 @@
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
-	  <fo:table-row border-width="0.5pt" space-after.optimum="5pt">
+	  <fo:table-row border-style="solid" border-width="0.5pt" space-after.optimum="5pt">
 	    <fo:table-cell>
 	      <fo:block text-align="center">
 	      space
@@ -167,7 +167,7 @@
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
-	  <fo:table-row border-width="0.5pt" padding-right="5pt">
+	  <fo:table-row border-style="solid" border-width="0.5pt" padding-right="5pt">
 	    <fo:table-cell>
 	      <fo:block text-align="center">
 	      padding
@@ -191,12 +191,12 @@
       Table 3: spaces around body
       </fo:block>
 
-      <fo:table border-width="0.5pt" border-color="red">
+      <fo:table border-style="solid" border-width="0.5pt" border-color="red">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 
-    <fo:table-body border-width="0.5pt" padding-left="5pt">
+    <fo:table-body border-style="solid" border-width="0.5pt" padding-left="5pt">
 	  <fo:table-row>
 	    <fo:table-cell>
 	      <fo:block text-align="center">
@@ -216,7 +216,7 @@
 	  </fo:table-row>
 	</fo:table-body>
 
-    <fo:table-body border-width="0.5pt" space-before.optimum="5pt">
+    <fo:table-body border-style="solid" border-width="0.5pt" space-before.optimum="5pt">
 	  <fo:table-row>
 	    <fo:table-cell>
 	      <fo:block text-align="center">
@@ -236,7 +236,7 @@
 	  </fo:table-row>
 	</fo:table-body>
 
-    <fo:table-body border-width="0.5pt" space-after.optimum="5pt">
+    <fo:table-body border-style="solid" border-width="0.5pt" space-after.optimum="5pt">
 	  <fo:table-row>
 	    <fo:table-cell>
 	      <fo:block text-align="center">
@@ -256,7 +256,7 @@
 	  </fo:table-row>
 	</fo:table-body>
 
-    <fo:table-body border-width="0.5pt" padding-right="5pt">
+    <fo:table-body border-style="solid" border-width="0.5pt" padding-right="5pt">
 	  <fo:table-row>
 	    <fo:table-cell>
 	      <fo:block text-align="center">
@@ -281,8 +281,8 @@
       Table 4: spaces around table
       </fo:block>
 
-    <fo:block border-width="0.5pt">
-      <fo:table space-before.optimum="5pt" border-width="0.5pt" border-color="red">
+    <fo:block border-style="solid" border-width="0.5pt">
+      <fo:table space-before.optimum="5pt" border-style="solid" border-width="0.5pt" border-color="red">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -309,8 +309,8 @@
       </fo:table>
     </fo:block>
 
-    <fo:block border-width="0.5pt">
-      <fo:table padding-left="5pt" border-width="0.5pt" border-color="red">
+    <fo:block border-style="solid" border-width="0.5pt">
+      <fo:table padding-left="5pt" border-style="solid" border-width="0.5pt" border-color="red">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -337,8 +337,8 @@
       </fo:table>
     </fo:block>
 
-    <fo:block border-width="0.5pt">
-      <fo:table padding-right="5pt" border-width="0.5pt" border-color="red">
+    <fo:block border-style="solid" border-width="0.5pt">
+      <fo:table padding-right="5pt" border-style="solid" border-width="0.5pt" border-color="red">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -365,8 +365,8 @@
       </fo:table>
     </fo:block>
 
-    <fo:block border-width="0.5pt">
-      <fo:table space-after.optimum="5pt" border-width="0.5pt" border-color="red">
+    <fo:block border-style="solid" border-width="0.5pt">
+      <fo:table space-after.optimum="5pt" border-style="solid" border-width="0.5pt" border-color="red">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -397,15 +397,15 @@
       Table 5: combinations
       </fo:block>
 
-    <fo:block border-width="0.5pt">
-      <fo:table space-after.optimum="20pt" border-width="0.5pt" border-color="red">
+    <fo:block border-style="solid" border-width="0.5pt">
+      <fo:table space-after.optimum="20pt" border-style="solid" border-width="0.5pt" border-color="red">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 
-    <fo:table-body space-after.optimum="15pt" border-width="0.5pt" border-color="green">
-	  <fo:table-row space-after.optimum="10pt" border-width="0.5pt" border-color="blue">
-	    <fo:table-cell space-after.optimum="5pt" border-width="0.5pt" border-color="yellow">
+    <fo:table-body space-after.optimum="15pt" border-style="solid" border-width="0.5pt" border-color="green">
+	  <fo:table-row space-after.optimum="10pt" border-style="solid" border-width="0.5pt" border-color="blue">
+	    <fo:table-cell space-after.optimum="5pt" border-style="solid" border-width="0.5pt" border-color="yellow">
 	      <fo:block text-align="center">
 	      after 5pt
 	      </fo:block>
@@ -462,15 +462,15 @@
       </fo:table>
     </fo:block>
 
-    <fo:block border-width="0.5pt">
-      <fo:table space-after.optimum="5pt" border-width="0.5pt" border-color="red">
+    <fo:block border-style="solid" border-width="0.5pt">
+      <fo:table space-after.optimum="5pt" border-style="solid" border-width="0.5pt" border-color="red">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 
-    <fo:table-body space-after.optimum="10pt" border-width="0.5pt" border-color="green">
-	  <fo:table-row space-after.optimum="15pt" border-width="0.5pt" border-color="blue">
-	    <fo:table-cell space-after.optimum="20pt" border-width="0.5pt" border-color="yellow">
+    <fo:table-body space-after.optimum="10pt" border-style="solid" border-width="0.5pt" border-color="green">
+	  <fo:table-row space-after.optimum="15pt" border-style="solid" border-width="0.5pt" border-color="blue">
+	    <fo:table-cell space-after.optimum="20pt" border-style="solid" border-width="0.5pt" border-color="yellow">
 	      <fo:block text-align="center">
 	      after 20pt
 	      </fo:block>
