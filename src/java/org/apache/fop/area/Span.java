@@ -46,15 +46,6 @@ public class Span extends Area {
     }
 
     /**
-     * Add a normal-flow-reference-area to this span-reference-area.
-     *
-     * @param flow the normal-flow-reference-area to add
-     */
-    public void addNormalFlow(NormalFlow flow) {
-        flowAreas.add(flow);
-    }
-
-    /**
      * Create a new normal flow and add it to this span area
      *
      * @return the newly made NormalFlow object

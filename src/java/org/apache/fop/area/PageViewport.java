@@ -81,6 +81,15 @@ public class PageViewport implements Resolvable, Cloneable {
     }
 
     /**
+     * Convenience method to get BodyRegion of this PageViewport
+     * @return BodyRegion object
+     */
+    public BodyRegion getBodyRegion() {
+        return (BodyRegion)
+            getPage().getRegionViewport(Constants.FO_REGION_BODY).getRegion();
+    }    
+
+    /**
      * Set if this viewport should clip.
      * @param c true if this viewport should clip
      */
