@@ -96,8 +96,8 @@ public class FOTree extends Tree implements Runnable {
             if (i == PropNames.FONT_SIZE) continue;
             // Set up the initial values for each property
             prop = PropertyConsts.getInitialValue(i);
-            System.out.println("....Setting initial value: "
-                               + i + ((prop == null) ? " NULL" : " notNULL"));
+            //System.out.println("....Setting initial value: "
+            //                 + i + ((prop == null) ? " NULL" : " notNULL"));
             initialValues[i] = prop;
         }
 
