@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "book-cocoon-v10.dtd">
+
+      <book software="FOP"
+        title="FOP"
+        copyright="@year@ The Apache Software Foundation"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+
+        <menu label="About">
+          <menu-item label="Index" href="index.html"/>
+          <menu-item label="Changes" href="changes.html"/>
+          <menu-item label="Todo" href="todo.html"/>
+        </menu>
+    </book>

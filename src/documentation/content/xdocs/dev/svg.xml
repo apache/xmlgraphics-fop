@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+      <document> 
+        <header> 
+          <title>SVG in FOP</title> 
+        </header> 
+        <body> 
+          <section>
+            <title>Introduction</title>
+            <p>
+FOP uses the SVG library from
+<link href="http://xml.apache.org/batik/">Batik</link> to handle SVG.
+This format can be handled as an <code>fo:instream-foreign-object</code>
+or in a separate file referenced with <code>fo:external-graphic</code>.
+Either way the SVG document will be read in and converted into a
+DOM in Batik. This DOM will then be used by the renderer to
+create the graphical image.
+    </p>
+    <p>
+The AWT and Print renderers simply use batik to draw the SVG into a graphic.
+    </p>
+    <p>
+In the case of the PDF renderer there is a PDFGraphics2D class that Batik uses
+to render the image into. This class converts the drawing instructions into
+PDF markup which is placed into the current PDF document.
+            </p>
+          </section>
+          <section>
+            <title>Converting SVG to a PDF Document</title>
+            <p>
+It is possible to convert a standalone SVG document directly
+into a simple page PDF document.
+This is possible through the use of Batik's transcoder mechanism.<br/>
+<code>java org.apache.batik.apps.rasterizer.Main -m application/pdf document.svg</code>
+<br/>
+This will output the svg document as "document.pdf" containing
+a PDF rendering of the SVG file.
+    </p>
+    <p>
+It is also possible to specify the width and/or height
+of the PDF document on the command line with -w and -h or if
+you are using the transcoder api you can use the transcoding hints.
+    </p>
+    <p>
+Currently the SVG image is drawn at the SVG document size and
+simply scaled in PDF to the new size. So the result may not be
+the best possible. For example if you have any images or effects
+it will draw them at the original resolution of the svg document.
+When this is viewed in the pdf it will have an incorrect resolution
+for the size of the pdf.
+</p>
+    <p>
+The size of the pdf file will also remain the same regardless of
+what size the page is.
+    </p>
+    <p>
+For more information see <link href="http://xml.apache.org/batik/">Batik</link>
+for how transcoders work.
+            </p>
+          </section>
+          <section>
+            <title>Examples</title>
+            <p>
+These examples illustrate a number of issues relating to conversion
+to PDF:
+  <table>
+    <caption>SVG to PDF examples</caption>
+    <tr>
+      <th></th>
+      <th>svg file</th> 
+      <th>png file</th> 
+      <th>pdf result</th> 
+    </tr>
+    <tr>
+      <td>images</td> 
+      <td><link href="svg/images.svg">images.svg</link></td> 
+      <td><link href="svg/images.png">images.png</link></td>
+      <td><link href="svg/images.pdf">images.pdf</link></td>
+    </tr>
+    <tr>
+      <td>svg linking</td>
+      <td><link href="svg/link.svg">link.svg</link></td>
+      <td><link href="svg/link.png">link.png</link></td>
+      <td><link href="svg/link.pdf">link.pdf</link></td>
+    </tr>
+    <tr>
+      <td>gradients and patterns</td>
+      <td><link href="svg/paints.svg">paints.svg</link></td>
+      <td><link href="svg/paints.png">paints.png</link></td>
+      <td><link href="svg/paints.pdf">paints.pdf</link></td>
+    </tr>
+    <tr>
+      <td>various text and effects on text</td>
+      <td><link href="svg/text.svg">text.svg</link></td>
+      <td><link href="svg/text.png">text.png</link></td>
+      <td><link href="svg/text.pdf">text.pdf</link></td>
+    </tr>
+    <tr>
+      <td>transparent objects</td>
+      <td><link href="svg/transparency.svg">transparency.svg</link></td>
+      <td><link href="svg/transparency.png">transparency.png</link></td>
+      <td><link href="svg/transparency.pdf">transparency.pdf</link></td>
+    </tr>
+  </table> 
+As can be seen most of the specific issues are handled.
+
+  <table>
+    <caption>XSL:FO to PDF examples</caption>
+    <tr>
+      <th></th>
+      <th>fo file</th>
+      <th>pdf result</th>
+    </tr>
+    <tr>
+      <td>embedding svg</td>
+      <td><link href="fo/embedding.fo">embedding.fo</link></td>
+      <td><link href="fo/embedding.fo.pdf">embedding.fo.pdf</link></td>
+    </tr>
+  </table> 
+            </p>
+          </section>
+          <section>
+            <title>Important Notes</title>
+            <p>
+The svg is inserted into PDF by using PDF commands to draw and fill
+lines and curves. This means that the graphical objects created with
+this remain as vector graphics.
+    </p>
+    <p>
+There are a number of SVG things that cannot be converted directly into
+PDF. Parts of the graphic such as effects and images are inserted
+into the PDF as a raster graphic. The resolution of this graphic may not
+be ideal depending on the FOP dpi (72dpi) and the scaling for that graphic.
+    </p>
+    <p>
+Another important note is that text may be converted and drawn as a
+set of shapes by batik.
+If possible it will use normal PDF text when inserting text. It does
+this by checking if the text can be drawn normally and the font is
+supported. This example svg <link href="svg/text.svg">text.svg</link> /
+<link href="svg/text.pdf">text.pdf</link>
+shows how various types and effects with text are handled.
+    </p>
+    <p>
+If the text cannot be drawn normally then it uses shapes.
+This means that a typical character will have about 10 curves
+(each curve consists of at least 20 characters).
+This can make the pdf files large and when the pdf is viewed the
+viewer does not normally draw those fine curves very well (turning on
+Smooth Line Art in the Acrobat preferences will fix this).
+If the text is inserted into the PDF using the inbuilt text commands
+for PDF it will use a single character.
+    </p>
+          </section>
+          <section>
+            <title>Known Problems</title>
+            <p>
+<ul>
+<li>
+soft mask transparency is combined with white so that it looks better
+on pdf 1.3 viewers but this causes the soft mask to be slightly lighter
+or darker on pdf 1.4 viewers
+</li>
+<li>
+there is some problem with a gradient inside a pattern causing a pdf
+error when viewed in acrobat 5
+</li>
+<li>
+text is not always handled correctly, it may select the wrong font
+especially if characters have multiple fonts in the font list
+</li>
+<li>
+more pdf text handling could be implemented
+It could draw the string using the attributed character iterator
+to handle tspans and other simple changes of text.
+</li>
+<li>
+JPEG images are not inserted directly into the pdf document
+This area has not been implemented yet since the appropriate
+method in batik is static
+</li>
+<li>
+Uniform transparency for images and other svg elements that are converted
+into a raster graphic are not drawn properly in PDF. The image is opaque.
+</li>
+</ul>
+            </p>
+          </section>
+          <section>
+            <title>Developer Notes</title>
+            <p>
+For most output formats in FOP the SVG is simply drawn into
+an image with Batik.
+For PDF there are a set of classes to handle drawing the
+<link href="http://xml.apache.org/batik/architecture.html">GVT (Graphic Vector Toolkit)</link>
+into PDF markup.
+            </p>
+          <section>
+            <title>Classes</title>
+            <p>
+These are the relevant classes, found in the package org.apache.fop.svg :
+    </p>
+    <p>
+<ul>
+<li><em>PDFGraphics2D</em>
+<br/>
+used for drawing onto a Graphics2D into an existing pdf document, used
+internally to draw the svg.
+</li>
+<li><em>PDFDocumentGraphics2D</em>
+<br/>
+used to create a pdf document and inherits from PDFGraphics2D to do the
+rest of the drawing. Used by the transcoder to create a standalone pdf
+document from an svg. Can be used independantly the same as any Graphics2D.
+</li>
+<li><em>PDFTranscoder</em>
+<br/>
+used by Batik to transcode an svg document into a standalone pdf, via
+PDFDocumentGraphics2D.
+</li>
+</ul>
+            </p>
+          </section>
+          <section>
+            <title>Ideas</title>
+            <p>
+Batik can convert ttf to svg font.
+This svg font could be converted into a pdf stroked font
+(type 3 font).
+            </p>
+          </section>
+          </section>
+        </body>
+    </document>
