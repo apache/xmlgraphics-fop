@@ -153,7 +153,7 @@ public class TableBody extends FObj {
 				 */
 				this.areaContainer =
 						new AreaContainer(propMgr.getFontState(area.getFontInfo()),
-															0,area.getHeight(),
+															0,area.getContentHeight(),
 															area.getContentWidth(), // IPD
 															area.spaceLeft(),
 															Position.RELATIVE);
@@ -220,38 +220,38 @@ public class TableBody extends FObj {
 										}
 								}
 								this.marker = i;
-								if ((i != 0) &&
+ 								if ((i != 0) &&
 												(status.getCode() == Status.AREA_FULL_NONE)) {
 										status = new Status(Status.AREA_FULL_SOME);
 								}
-								if (i < widows && numChildren >= widows) {
-										resetMarker();
-										return new Status(Status.AREA_FULL_NONE);
-								}
-								if (numChildren <= orphans) {
-										resetMarker();
-										return new Status(Status.AREA_FULL_NONE);
-								}
-								if (numChildren - i < orphans && numChildren >= orphans) {
-										for (int count = i;
-														count > numChildren - orphans - 1; count--) {
-												row = (TableRow) children.elementAt(count);
-												row.removeLayout(areaContainer);
-												i--;
-										}
-										if (i < widows && numChildren >= widows) {
-												resetMarker();
-												return new Status(Status.AREA_FULL_NONE);
-										}
-										this.marker = i;
-										area.addChild(areaContainer);
-										//areaContainer.end();
+// 								if (i < widows && numChildren >= widows) {
+// 										resetMarker();
+// 										return new Status(Status.AREA_FULL_NONE);
+// 								}
+// 								if (numChildren <= orphans) {
+// 										resetMarker();
+// 										return new Status(Status.AREA_FULL_NONE);
+// 								}
+// 								if (numChildren - i < orphans && numChildren >= orphans) {
+// 										for (int count = i;
+// 														count > numChildren - orphans - 1; count--) {
+// 												row = (TableRow) children.elementAt(count);
+// 												row.removeLayout(areaContainer);
+// 												i--;
+// 										}
+// 										if (i < widows && numChildren >= widows) {
+// 												resetMarker();
+// 												return new Status(Status.AREA_FULL_NONE);
+// 										}
+// 										this.marker = i;
+// 										area.addChild(areaContainer);
+// 										//areaContainer.end();
 
-										area.increaseHeight(areaContainer.getHeight());
-										area.setAbsoluteHeight(
-											areaContainer.getAbsoluteHeight());
-										return new Status(Status.AREA_FULL_SOME);
-								}
+// 										area.increaseHeight(areaContainer.getHeight());
+// 										area.setAbsoluteHeight(
+// 											areaContainer.getAbsoluteHeight());
+// 										return new Status(Status.AREA_FULL_SOME);
+// 								}
 								if (!((i == 0) &&
 												(areaContainer.getContentHeight() <= 0))) {
 										area.addChild(areaContainer);
