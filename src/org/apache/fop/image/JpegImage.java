@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.image;
 
 // Java
@@ -63,10 +63,12 @@ import org.apache.fop.image.analyser.ImageReader;
 /**
  * FopImage object for JPEG images, Using Java native classes.
  * @author Eric Dalquist
+ * @author Ben Galbraith (ben [at] galbraiths [dot] org)
  * @see AbstractFopImage
  * @see FopImage
  */
 public class JpegImage extends AbstractFopImage {
+    boolean isPhotoshopJfif = false;
     boolean hasAPPEMarker = false;
     boolean found_icc_profile = false;
     boolean found_dimensions = false;
@@ -174,12 +176,35 @@ public class JpegImage extends AbstractFopImage {
                                 uByte(this.m_bitmaps[index+2]) == 0 &&
                                 uByte(this.m_bitmaps[index+3]) == 14 &&
                                 "Adobe".equals(new String(this.m_bitmaps, index+4, 5)))) {
-                        // The reason for reading the APPE marker is that photoshop
-                        // generates cmyk jpeg's with inverted values. The correct thing
-                        // to do would be to interpret the values in the marker, but for now
-                        // only assume that if APPE marker is present and colorspace is CMYK,
-                        // the image is inverted.
-                        hasAPPEMarker = true;
+                        /*
+                         * It turns out that the Adobe APPE marker specification is used by more than just Adobe.
+                         * However, Photoshop is the only widely identified program that inverts the CMYK values.
+                         * This issue is documented in the document "USING THE IJG JPEG LIBRARY" produced by the
+                         * Independent JPEG Group's software.  Thus, the presence of the APPE marker will no longer be
+                         * used to assume that the CMYK values have been inverted, as was the case in earlier versions
+                         * of this file.
+                         *
+                         * I could not find a test for determining if the values themselves are inverted; instead,
+                         * I will check if Adobe Photoshop was used to create the file below.
+                         *
+                         * This code will remain present for the time being. -blg
+                         */
+                        //hasAPPEMarker = true;
+
+                        index += calcBytes(this.m_bitmaps[index + 2],
+                                           this.m_bitmaps[index + 3]) + 2;
+                        // check if Adobe Photoshop created this file
+                    } else if (((uByte(this.m_bitmaps[index]) == 0xff)) &&
+                            (uByte(this.m_bitmaps[index + 1]) == 0xe1)) {
+                        /*
+                         * Check if Adobe Photoshop was used to generate this file; if so, a later check will
+                         * determine if the color space is CMYK and thus the colors should be inverted -blg
+                         */
+                        if (this.m_bitmaps.length >= index + 124 + 15) { // prevent index out of range error
+                            if ("Adobe Photoshop".equals(new String(this.m_bitmaps, index+124, 15))) {
+                                isPhotoshopJfif = true;
+                            }
+                        }
 
                         index += calcBytes(this.m_bitmaps[index + 2],
                                            this.m_bitmaps[index + 3]) + 2;
@@ -211,7 +236,7 @@ public class JpegImage extends AbstractFopImage {
             this.m_colorSpace.setICCProfile(iccStream.toByteArray());
         }
 
-        if (hasAPPEMarker && this.m_colorSpace.getColorSpace() == ColorSpace.DEVICE_CMYK)
+        if (isPhotoshopJfif && this.m_colorSpace.getColorSpace() == ColorSpace.DEVICE_CMYK)
             this.m_invertImage = true;
     }
 
