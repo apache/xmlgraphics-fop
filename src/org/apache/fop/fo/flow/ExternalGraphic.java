@@ -181,6 +181,21 @@ public class ExternalGraphic extends FObj {
                 //MessageHandler.errorln("DisplayGraphic: imgW=" + imgWidth + " imgH=" + imgHeight + " w=" + width + " h=" + height);
             }
 
+            // scale image if it doesn't fit in the area/page
+            // Need to be more tested...
+            double ratio = ((double) width) / ((double) height);
+            int areaWidth = area.getAllocationWidth();
+            int areaHeight = area.getMaxHeight();
+            if ((width > areaWidth) || (height > areaHeight)) {
+                    if (width > height) {
+                            width = areaWidth;
+                            height = (int) (((double) width) / ratio);
+                    } else {
+                            height = areaHeight;
+                            width = (int) (ratio * ((double) width));
+                    }
+            }
+
             if (area.spaceLeft() < (height + spaceBefore)) {
                 return new Status(Status.AREA_FULL_NONE);
             }
