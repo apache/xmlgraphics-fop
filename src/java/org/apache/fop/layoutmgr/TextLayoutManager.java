@@ -62,7 +62,8 @@ public class TextLayoutManager extends AbstractLayoutManager {
     /** Non-space characters on which we can end a line. */
     private static final String BREAK_CHARS = "-/" ;
 
-    private char[] chars;
+    private char[] textArray;
+    private int textArrayLength;
     private TextInfo textInfo;
 
     private static final char NEWLINE = '\n';
@@ -93,11 +94,13 @@ public class TextLayoutManager extends AbstractLayoutManager {
     /**
      * Create a Text layout manager.
      *
-     * @param chars the characters
+     * @param chars character array
+     * @param length length of the above array to be processed
      * @param textInfo the text information for doing layout
      */
-    public TextLayoutManager(char[] chars, TextInfo textInfo) {
-        this.chars = chars;
+    public TextLayoutManager(char[] chars, int length, TextInfo textInfo) {
+        this.textArray = chars;
+        this.textArrayLength = length;
         this.textInfo = textInfo;
         this.vecAreaInfo = new java.util.ArrayList();
 
@@ -136,11 +139,11 @@ public class TextLayoutManager extends AbstractLayoutManager {
         // Skip all leading spaces for hyphenation
         int i;
         for (i = ai.iStartIndex;
-                i < ai.iBreakIndex && CharUtilities.isAnySpace(chars[i]) == true;
+                i < ai.iBreakIndex && CharUtilities.isAnySpace(textArray[i]) == true;
                 i++) {
             //nop
         }
-        sbChars.append(new String(chars, i, ai.iBreakIndex - i));
+        sbChars.append(new String(textArray, i, ai.iBreakIndex - i));
     }
 
     /**
@@ -153,11 +156,11 @@ public class TextLayoutManager extends AbstractLayoutManager {
      * @return true if can break before this text
      */
     public boolean canBreakBefore(LayoutContext context) {
-        char c = chars[iNextStart];
+        char c = textArray[iNextStart];
         return ((c == NEWLINE) || (textInfo.bWrap 
                     && (CharUtilities.isBreakableSpace(c)
                     || (BREAK_CHARS.indexOf(c) >= 0 && (iNextStart == 0 
-                        || Character.isLetterOrDigit(chars[iNextStart-1]))))));
+                        || Character.isLetterOrDigit(textArray[iNextStart-1]))))));
     }
 
     /**
@@ -198,14 +201,14 @@ public class TextLayoutManager extends AbstractLayoutManager {
         boolean bCanHyphenate = true;
         int iStopIndex = iNextStart + hc.getNextHyphPoint();
 
-        if (chars.length < iStopIndex || textInfo.bCanHyphenate == false) {
-            iStopIndex = chars.length;
+        if (textArrayLength < iStopIndex || textInfo.bCanHyphenate == false) {
+            iStopIndex = textArrayLength;
             bCanHyphenate = false;
         }
         hc.updateOffset(iStopIndex - iNextStart);
 
         for (; iNextStart < iStopIndex; iNextStart++) {
-            char c = chars[iNextStart];
+            char c = textArray[iNextStart];
             hyphIPD.opt += textInfo.fs.getCharWidth(c);
             // letter-space?
         }
@@ -254,11 +257,11 @@ public class TextLayoutManager extends AbstractLayoutManager {
          * retained.
          */
         if (context.suppressLeadingSpace()) {
-            for (; iNextStart < chars.length
-                    && chars[iNextStart] == SPACE; iNextStart++) {
+            for (; iNextStart < textArrayLength
+                    && textArray[iNextStart] == SPACE; iNextStart++) {
             }
             // If now at end, nothing to compose here!
-            if (iNextStart >= chars.length) {
+            if (iNextStart >= textArrayLength) {
                 setFinished(true);
                 return null; // Or an "empty" BreakPoss?
             }
@@ -279,8 +282,8 @@ public class TextLayoutManager extends AbstractLayoutManager {
         short iWScount = 0; // Count of word spaces
         boolean bSawNonSuppressible = false;
 
-        for (; iNextStart < chars.length; iNextStart++) {
-            char c = chars[iNextStart];
+        for (; iNextStart < textArrayLength; iNextStart++) {
+            char c = textArray[iNextStart];
             if (CharUtilities.isAnySpace(c) == false) {
                 break;
             }
@@ -317,7 +320,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
             }
         }
 
-        if (iNextStart < chars.length) {
+        if (iNextStart < textArrayLength) {
             spaceIPD.add(pendingSpace.resolve(false));
         } else {
             // This FO ended with spaces. Return the BP
@@ -340,13 +343,13 @@ public class TextLayoutManager extends AbstractLayoutManager {
             // Look for a legal line-break: breakable white-space and certain
             // characters such as '-' which can serve as word breaks.
             // Don't look for hyphenation points here though
-            for (; iNextStart < chars.length; iNextStart++) {
-                char c = chars[iNextStart];
+            for (; iNextStart < textArrayLength; iNextStart++) {
+                char c = textArray[iNextStart];
                 // Include any breakable white-space as break char
                 if ((c == NEWLINE) || (textInfo.bWrap 
                     && (CharUtilities.isBreakableSpace(c)
                     || (BREAK_CHARS.indexOf(c) >= 0 && (iNextStart == 0 
-                        || Character.isLetterOrDigit(chars[iNextStart-1])))))) {
+                        || Character.isLetterOrDigit(textArray[iNextStart-1])))))) {
                             iFlags |= BreakPoss.CAN_BREAK_AFTER;
                             if (c != SPACE) {
                                 iNextStart++;
@@ -360,11 +363,11 @@ public class TextLayoutManager extends AbstractLayoutManager {
                     // line-end, set a flag for parent LM.
                     int iLastChar;
                     for (iLastChar = iNextStart;
-                            iLastChar < chars.length
-                            && chars[iLastChar] == SPACE; iLastChar++) {
+                            iLastChar < textArrayLength
+                            && textArray[iLastChar] == SPACE; iLastChar++) {
                         //nop
                     }
-                    if (iLastChar == chars.length) {
+                    if (iLastChar == textArrayLength) {
                         iFlags |= BreakPoss.REST_ARE_SUPPRESS_AT_LB;
                     }
                     return makeBreakPoss(iThisStart, spaceIPD, wordIPD,
@@ -413,7 +416,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
          */
         //bp.setDescender(textInfo.fs.getDescender());
         //bp.setAscender(textInfo.fs.getAscender());
-        if (iNextStart == chars.length) {
+        if (iNextStart == textArrayLength) {
             flags |= BreakPoss.ISLAST;
             setFinished(true);
         }
@@ -486,10 +489,10 @@ public class TextLayoutManager extends AbstractLayoutManager {
         int adjust = 0;
         
         // ignore newline character
-        if (chars[ai.iBreakIndex - 1] == NEWLINE) {
+        if (textArray[ai.iBreakIndex - 1] == NEWLINE) {
             adjust = 1;
         }
-        String str = new String(chars, iStart, ai.iBreakIndex - iStart - adjust);
+        String str = new String(textArray, iStart, ai.iBreakIndex - iStart - adjust);
 
         if (" ".equals(str)) {
             word = new Space();
@@ -504,24 +507,24 @@ public class TextLayoutManager extends AbstractLayoutManager {
             }
             word = t;
         }
-        if ((chars[iStart] == SPACE || chars[iStart] == NBSPACE)
+        if ((textArray[iStart] == SPACE || textArray[iStart] == NBSPACE)
                 && context.getLeadingSpace().hasSpaces()) {
             context.getLeadingSpace().addSpace(halfWS);
         }
         // Set LAST flag if done making characters
         int iLastChar;
         for (iLastChar = ai.iBreakIndex;
-                iLastChar < chars.length && chars[iLastChar] == SPACE;
+                iLastChar < textArrayLength && textArray[iLastChar] == SPACE;
                 iLastChar++) {
             //nop
         }
         context.setFlags(LayoutContext.LAST_AREA,
-                         iLastChar == chars.length);
+                         iLastChar == textArrayLength);
 
         // Can we have any trailing space? Yes, if last char was a space!
         context.setTrailingSpace(new SpaceSpecifier(false));
-        if (chars[ai.iBreakIndex - 1] == SPACE
-                || chars[ai.iBreakIndex - 1] == NBSPACE) {
+        if (textArray[ai.iBreakIndex - 1] == SPACE
+                || textArray[ai.iBreakIndex - 1] == NBSPACE) {
             context.getTrailingSpace().addSpace(halfWS);
         }
         if (word != null) {

@@ -180,17 +180,11 @@ public class AddLMVisitor implements FOTreeVisitor {
     }
 
     public void serveFOText(FOText node) {
-        if (node.length == 0) {
-            return;
+        if (node.length > 0) {
+            LayoutManager lm = new TextLayoutManager(node.ca, node.length, node.textInfo);
+            lm.setFObj(node);
+            currentLMList.add(lm);
         }
-        if (node.length < node.ca.length) {
-            char[] tmp = node.ca;
-            node.ca = new char[node.length];
-            System.arraycopy(tmp, 0, node.ca, 0, node.length);
-        }
-        LayoutManager lm = new TextLayoutManager(node.ca, node.textInfo);
-        lm.setFObj(node);
-        currentLMList.add(lm);
     }
 
     public void serveFObjMixed(FObjMixed node) {
