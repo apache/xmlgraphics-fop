@@ -58,7 +58,8 @@ import org.apache.fop.layout.FontState;
  */
 public class CharUtilities {
 
-    /** Character code used to signal a character boundary in
+    /** 
+     * Character code used to signal a character boundary in
      * inline content, such as an inline with borders and padding
      * or a nested block object.
      */
@@ -87,10 +88,17 @@ public class CharUtilities {
 
 
     /**
+     * Utility class: Constructor prevents instantiating when subclassed.
+     */
+    protected CharUtilities() {
+        throw new UnsupportedOperationException();
+    }
+    
+    /**
      * Return the appropriate CharClass constant for the type
      * of the passed character.
      * @param c character to inspect
-     * @return int the determined character class
+     * @return the determined character class
      */
     public static int classOf(char c) {
         if (c == CODE_EOT) { return EOT; }
@@ -107,7 +115,7 @@ public class CharUtilities {
      * versions of space that might not exists in the font.
      * @param c character to inspect
      * @param fs FontState to use
-     * @return int the width of the character
+     * @return the width of the character
      */
     public static int getCharWidth(char c, FontState fs) {
         int width;
@@ -184,7 +192,7 @@ public class CharUtilities {
      * space with normal behaviour. Normal behaviour means that
      * it's not non-breaking.
      * @param c character to inspect
-     * @return boolean True if the character is a normal space
+     * @return True if the character is a normal space
      */
     public static boolean isSpace(char c) {
         return (c == ' '
@@ -207,16 +215,14 @@ public class CharUtilities {
      * Method to determine if the character is a nonbreaking
      * space.
      * @param c character to check
-     * @return boolean True if the character is a nbsp
+     * @return True if the character is a nbsp
      */
     public static boolean isNBSP(char c) {
-        if (c == '\u00A0' || c == '\u202F'    // narrow no-break space
-            || c == '\u3000'                  // ideographic space
-            || c == '\uFEFF') {               // zero width no-break space
-            return true;
-        } else {
-            return false;
-        }
+        return
+            (c == '\u00A0'      // no-break space
+            || c == '\u202F'    // narrow no-break space
+            || c == '\u3000'    // ideographic space
+            || c == '\uFEFF');  // zero width no-break space
     }
 
     /**
