@@ -686,5 +686,20 @@ public class Driver implements LogEnabled {
         }
     }
 
-}
+    /**
+     * Public accessor for setting the currentDocument to process.
+     * @param document the Document object that should be processed.
+     */
+    public void setCurrentDocument(Document document) {
+        currentDocument = document;
+    }
 
+    /**
+     * Public accessor for getting the currentDocument
+     * @return the currentDocument
+     */
+    public Document getCurrentDocument() {
+       return currentDocument;
+    }
+
+}
