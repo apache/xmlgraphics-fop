@@ -45,8 +45,9 @@ public class Marker extends FObjMixed {
         try {
             parent.addMarker(this);
         } catch (FOPException fopex) {
-            log.error("marker cannot be added to '" + parent
-                                 + "'");
+            // log is null in constructor
+            //log.error("marker cannot be added to '" + parent
+            //                     + "'");
         }
     }
 
