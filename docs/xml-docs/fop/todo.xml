@@ -1,0 +1,137 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- TODO -->
+<document>
+    <header>
+        <title>TODO</title>
+        <subtitle>TODO list for FOP</subtitle>
+        <authors>
+        </authors>
+    </header>
+
+    <body>
+
+<s1 title="TODO List for FOP">
+  <s2 title="FOP TODO">
+    <p>
+Core Features - these are the areas that are important to getting fop
+to be useable for general use.
+    </p>
+    <p>
+Processing improvements - these are mainly things that can be improved
+in the way fop works, eg. resources usage, pdf output etc.
+    </p>
+    <p>
+Enhancements - these are added functionality that might be useful, no
+comment is made about the suitability of these suggestions.
+    </p>
+  </s2>
+  <s2 title="Core Features">
+<s3 title="Layout">
+    <p>
+The design for the layout is being developed under the
+<jump href="design/index.html">Design</jump> section.
+The details should be discussed on the dev mailing list.
+    </p>
+</s3>
+<s3 title="Property Support">
+    <p>
+Currently all properties are in the xml file. We need to handle all default
+values properly (including ones that change depending on the element) and
+all possible values.
+    </p>
+    <p>
+To see if a property is implemented then look in the src/codegen/foproperties.xml file.
+    </p>
+    <p>
+To see if a particular element uses this property then look in the element code. This is generally found in the package org.apache.fop.fo.flow.*.
+    </p>
+</s3>
+<s3 title="Property Resolution">
+    <p>
+This is support for the functions in property values that evaluate some
+expression.
+Better support for resolution including support for "inherit" and values
+with lists.
+    </p>
+</s3>
+<s3 title="Examples">
+    <p>
+Better and more available examples for users and new people to get a
+feel for what FOP does.
+    </p>
+</s3>
+</s2>
+  <s2 title="Processing Improvements">
+<s3 title="Image Handling">
+    <p>
+Needs to be a bit more solid. Images are not cached properly
+and image formats are not well documented.
+Allow for direct insertion of jpeg images in svg into the pdf.
+    </p>
+</s3>
+<s3 title="Configuration">
+    <p>
+A better configuration setup that users can easily integrate.
+    </p>
+</s3>
+<s3 title="More PDF Outputs">
+    <p>
+Support for streaming and linearized pdf to help with different
+deployement of pdf documents.
+    </p>
+</s3>
+<s3 title="i18n in awt viewer">
+    <p>
+Use proper i18n handling for awt viewer.
+    </p>
+</s3>
+</s2>
+  <s2 title="Enhancements">
+<s3 title="font handling">
+    <p>
+Need better handling of font names, since a font can have several names.
+    </p>
+</s3>
+<s3 title="user agent">
+    <p>
+A user agent (or some similar thing) is needed to handle adjustable
+values, such as setting dpi resolution.
+    </p>
+</s3>
+<s3 title="input from url">
+    <p>
+be able to specify a url as the input fo (or xml, xsl) documents.
+    </p>
+</s3>
+<s3 title="improve text handling in svg">
+    <p>
+support (better) the direct rendering of text into pdf graphics
+and other similair outputs
+    </p>
+</s3>
+<s3 title="stream encoding">
+    <p>
+Support for different encoding on different types of streams
+in pdf document.
+For example images and text.
+    </p>
+</s3>
+<s3 title="PDF Graphic State">
+    <p>
+Add support for the pdf graphic state for use with transparency
+in pdf 1.4.
+    </p>
+</s3>
+<s3 title="svg features">
+    <p>
+Currently patterns and gradients are not generated properly
+    </p>
+</s3>
+  </s2>
+
+
+</s1>
+    </body>
+</document>
+

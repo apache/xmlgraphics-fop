@@ -1,0 +1,53 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<!-- Examples -->
+
+<s1 title="Examples">
+    <p>Examples for the use of xsl:fo can be found in the Fop distribution in 
+       the subdirectory xml-fop/docs/examples/fo. You can start transformation of all fo files into pdf
+       files by starting xml-fop/docs/examples/runtests. The resulting test files can be found in 
+       xml-fop/docs/examples/tests
+    </p>
+    <p>At the moment the following files are part of the distribution:</p>
+    <ul>
+      <li>simple.fo - a very simple file which gives use a first impression of the structure of an fo file
+      </li>
+      <li>normal.fo - a simple file showing the use of a 2 level of headings, normal text and a header.
+      </li>
+      <li>table.fo - some table examples 
+      </li>
+      <li>list.fo - a short tutorial how to use list fo's and properties
+      </li>
+      <li>images.fo - shows how to embed gif and jpg images into the xsl:fo file using external-graphic.
+      </li>
+      <li>border.fo - a not so simple example how to use borders in tables 
+      </li>
+      <li>extensive.fo - a longer test file containing a lot of different flow objects and properties. 
+          A good candidate to test your bugfix or new Fop code. 
+      </li>
+      <li>leader.fo - shows different uses of fo:leader, p.e. as rule or in a table of content
+      </li>
+      <li>normalex.fo - shows the use of computed property values
+      </li>
+      <li>inhprop.fo - shows the use of inherited property values
+      </li>
+      <li>instream.fo - shows the use of fo:instream-foreign-object together with svg 
+      </li>
+      <li>textdeko.fo - shows the use of the property textdecoration
+      </li>
+      <li>readme.fo - uses an old version of Fop documentation for a longer example
+      </li>
+      
+      <li>Look also into the directory examples/svg. There you find some very extensive svg examples. 
+          Just start makedoc.
+      </li>
+      <li>In the directory examples/pagination you find a suite of examples showing the use 
+          of xsl:fo pagination. 
+      </li>
+    </ul>
+      <p>Developers will find the first steps to a test suite for all implemented formatting objects and 
+       properties in xml-fop/test/xml/.</p>
+
+</s1>
+

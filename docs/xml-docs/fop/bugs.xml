@@ -1,0 +1,19 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Bugs -->
+
+<s1 title="Bugs">
+  <s2 title="How to report bugs">
+    <p>Please report bugs to <jump href="http://nagoya.apache.org/bugzilla/">bugzilla</jump>, the Apache bug
+       database. A copy of your bug report is sent automatically to the discussion list fop-dev@xml.apache.org. </p>
+    <p>Please make sure, before you report a bug, that it is not mentioned in the FAQ or 
+       in the list of open bugs at bugzilla.</p>
+    <p>Please make your description as concise as possible and add an example fo 
+       file with your report, which just demonstrates the problem. Thanks for your help!</p>
+  </s2>
+  <s2 title="Known bugs">
+    <p>A list of known bugs can be found at <jump href="http://nagoya.apache.org/bugzilla/">bugzilla</jump>.</p>
+  </s2>
+</s1>
+
+
