@@ -132,7 +132,7 @@ public class Table extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
      * @todo see if can/should move much of this logic into TableLayoutManager
      *      and/or TableBody and TableColumn FO subclasses.
      */

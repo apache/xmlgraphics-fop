@@ -19,6 +19,7 @@
 package org.apache.fop.fo;
 
 // Java
+import java.util.List;
 import java.util.ListIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -132,13 +133,6 @@ public abstract class FONode {
     protected void addCharacters(char data[], int start, int length,
                                  Locator locator) throws SAXParseException {
         // ignore
-    }
-
-    /**
-     *
-     */
-    protected void start() {
-        // do nothing by default
     }
 
     /**
@@ -326,6 +320,14 @@ public abstract class FONode {
         } else {
             return "Error(" + loc.getLineNumber() + "/" + loc.getColumnNumber() + "): ";
         }
+    }
+
+    /**
+     * Return a LayoutManager responsible for laying out this FObj's content.
+     * Must override in subclasses if their content can be laid out.
+     * @param list the list to which the layout manager(s) should be added
+     */
+    public void addLayoutManager(List list) {
     }
 
     /**

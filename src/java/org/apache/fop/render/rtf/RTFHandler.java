@@ -30,6 +30,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
@@ -367,7 +368,7 @@ public class RTFHandler extends FOEventHandler {
             bDefer = false;
             
             bDeferredExecution=true;
-            recurseFObj(bl);
+            recurseFONode(bl);
             bDeferredExecution=false;
             
             //exit function, because the code has already beed executed while 
@@ -1225,115 +1226,115 @@ public class RTFHandler extends FOEventHandler {
     /**
      * Calls the appropriate event handler for the passed FObj. 
      *
-     * @param fobj FO-object whose event is to be called
+     * @param foNode FO node whose event is to be called
      * @param bStart TRUE calls the start handler, FALSE the end handler 
      */
-    private void invokeDeferredEvent(FObj fobj, boolean bStart) {
-        if (fobj instanceof Block) {
+    private void invokeDeferredEvent(FONode foNode, boolean bStart) {
+        if (foNode instanceof Block) {
             if (bStart) {
-                startBlock( (Block) fobj);
+                startBlock( (Block) foNode);
             } else {
-                endBlock( (Block) fobj);
+                endBlock( (Block) foNode);
             }
-        } else if (fobj instanceof Inline) {
+        } else if (foNode instanceof Inline) {
             if (bStart) {
-                startInline( (Inline) fobj);
+                startInline( (Inline) foNode);
             } else {
-                endInline( (Inline) fobj);
+                endInline( (Inline) foNode);
             }
-        } else if (fobj instanceof FOText) {
+        } else if (foNode instanceof FOText) {
             if (bStart) {
-                FOText text = (FOText) fobj;
+                FOText text = (FOText) foNode;
                 characters(text.ca, text.startIndex, text.endIndex);
             }
-        } else if (fobj instanceof Character) {
+        } else if (foNode instanceof Character) {
             if (bStart) {
-                Character c = (Character) fobj;
+                Character c = (Character) foNode;
                 character(c);
             }
-        } else if (fobj instanceof BasicLink) {
+        } else if (foNode instanceof BasicLink) {
             if (bStart) {
-                startLink( (BasicLink) fobj);
+                startLink( (BasicLink) foNode);
             } else {
                 endLink();
             }
-        } else if (fobj instanceof PageNumber) {
+        } else if (foNode instanceof PageNumber) {
             if (bStart) {
-                startPageNumber( (PageNumber) fobj);
+                startPageNumber( (PageNumber) foNode);
             } else {
-                endPageNumber( (PageNumber) fobj);
+                endPageNumber( (PageNumber) foNode);
             }
-        } else if (fobj instanceof Footnote) {
+        } else if (foNode instanceof Footnote) {
             if (bStart) {
-                startFootnote( (Footnote) fobj);
+                startFootnote( (Footnote) foNode);
             } else {
-                endFootnote( (Footnote) fobj);
+                endFootnote( (Footnote) foNode);
             }
-        } else if (fobj instanceof FootnoteBody) {
+        } else if (foNode instanceof FootnoteBody) {
             if (bStart) {
-                startFootnoteBody( (FootnoteBody) fobj);
+                startFootnoteBody( (FootnoteBody) foNode);
             } else {
-                endFootnoteBody( (FootnoteBody) fobj);
+                endFootnoteBody( (FootnoteBody) foNode);
             }
-        } else if (fobj instanceof ListBlock) {
+        } else if (foNode instanceof ListBlock) {
             if (bStart) {
-                startList( (ListBlock) fobj);
+                startList( (ListBlock) foNode);
             } else {
-                endList( (ListBlock) fobj);
+                endList( (ListBlock) foNode);
             }
-        } else if (fobj instanceof ListItem) {
+        } else if (foNode instanceof ListItem) {
             if (bStart) {
-                startListItem( (ListItem) fobj);
+                startListItem( (ListItem) foNode);
             } else {
-                endListItem( (ListItem) fobj);
+                endListItem( (ListItem) foNode);
             }
-        } else if (fobj instanceof ListItemLabel) {
+        } else if (foNode instanceof ListItemLabel) {
             if (bStart) {
                 startListLabel();
             } else {
                 endListLabel();
             }
-        } else if (fobj instanceof Table) {
+        } else if (foNode instanceof Table) {
             if (bStart) {
-                startTable( (Table) fobj);
+                startTable( (Table) foNode);
             } else {
-                endTable( (Table) fobj);
+                endTable( (Table) foNode);
             }
-        } else if (fobj instanceof TableColumn) {
+        } else if (foNode instanceof TableColumn) {
             if (bStart) {
-                startColumn( (TableColumn) fobj);
+                startColumn( (TableColumn) foNode);
             } else {
-                endColumn( (TableColumn) fobj);
+                endColumn( (TableColumn) foNode);
             }
-        } else if (fobj instanceof TableRow) {
+        } else if (foNode instanceof TableRow) {
             if (bStart) {
-                startRow( (TableRow) fobj);
+                startRow( (TableRow) foNode);
             } else {
-                endRow( (TableRow) fobj);
+                endRow( (TableRow) foNode);
             }
-        } else if (fobj instanceof TableCell) {
+        } else if (foNode instanceof TableCell) {
             if (bStart) {
-                startCell( (TableCell) fobj);
+                startCell( (TableCell) foNode);
             } else {
-                endCell( (TableCell) fobj);
+                endCell( (TableCell) foNode);
             }
         }
     }
     
     /**
-     * Calls the event handlers for the passed FObj and all its elements. 
+     * Calls the event handlers for the passed FONode and all its elements. 
      *
-     * @param fobj FO-object which shall be recursed
+     * @param foNode FONode object which shall be recursed
      */
-    private void recurseFObj(FObj fobj) {
-        invokeDeferredEvent(fobj, true);
+    private void recurseFONode(FONode foNode) {
+        invokeDeferredEvent(foNode, true);
         
-        if (fobj.childNodes != null) {
-            for(Iterator it=fobj.childNodes.iterator();it.hasNext();) {
-                recurseFObj( (FObj) it.next() );
+        if (foNode.getChildNodes() != null) {
+            for(Iterator it = foNode.getChildNodes(); it.hasNext() ; ) {
+                recurseFONode( (FONode) it.next() );
             }
         }
         
-        invokeDeferredEvent(fobj, false);
+        invokeDeferredEvent(foNode, false);
     }
 }

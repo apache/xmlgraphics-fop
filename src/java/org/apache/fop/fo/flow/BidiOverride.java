@@ -109,7 +109,7 @@ public class BidiOverride extends FObjMixed {
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
      * @todo see if can/should move the child iteration logic 
      *      to BidiLayoutManager
      */
