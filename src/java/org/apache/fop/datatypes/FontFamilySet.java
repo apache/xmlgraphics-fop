@@ -26,7 +26,7 @@
 
 package org.apache.fop.datatypes;
 
-import java.util.Iterator;
+//import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.fop.fo.PropNames;
@@ -87,7 +87,7 @@ public class FontFamilySet extends AbstractPropertyValue {
     /**
      * An <tt>Iterator</tt> implementing member class of FontFamilySet.
      */
-    class Traverser implements Iterator {
+    public class Traverser {
 
         /**
          * The index for the iteration across the fontFamilyNames array.
@@ -100,13 +100,13 @@ public class FontFamilySet extends AbstractPropertyValue {
             return index < fontFamilyNames.length;
         }
 
-        public Object next() {
+        public String next() {
             if (hasNext()) return fontFamilyNames[index++];
             throw new NoSuchElementException();
         }
 
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
+//        public void remove() {
+//            throw new UnsupportedOperationException();
+//        }
     }
 }
