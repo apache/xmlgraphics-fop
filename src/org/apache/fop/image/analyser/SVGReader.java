@@ -41,56 +41,59 @@
 package org.apache.fop.image.analyser;
 
 // Java
-import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.ArrayList;
+
+import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGSVGElement;
 
 // FOP
-import org.apache.fop.image.FopImageException;
+import org.apache.fop.svg.SVGDriver;
+import org.apache.fop.messaging.*;
+import org.apache.fop.image.SVGImage;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 
 /**
- * Factory for ImageReader objects.
- * @author Pankaj Narula
- * @version 1.0
+ * ImageReader object for SVG document image type.
  */
-public class ImageReaderFactory {
-  static protected ArrayList formats = null;
+public class SVGReader extends AbstractImageReader {
+
+  public boolean verifySignature(BufferedInputStream fis) throws IOException {
+    this.imageStream = fis;
+    return loadImage();
+  }
+
+  public String getMimeType() {
+    return "image/svg";
+  }
 
   /**
-    * ImageReader maker.
-    * @param in image input stream
-    * @return ImageReader object
-    * @exception FopImageException  an error occured during creation or 
-    *                               image type is not supported
-    */
-  static public ImageReader Make(InputStream in)
-    throws FopImageException {
-
-    // need to use a config file and remove static methods
-    formats = new ArrayList();
-    formats.add(new JPEGReader());
-    formats.add(new BMPReader());
-    formats.add(new GIFReader());
-    formats.add(new PNGReader());
-    formats.add(new SVGReader());
-    //
-
-    ImageReader reader;
-    BufferedInputStream bis = new BufferedInputStream(in);
-    Iterator itr = formats.iterator();
-    try {
-      while (itr.hasNext()) {
-        reader = (ImageReader) itr.next();
-        if (reader.verifySignature(bis)) {
-          return reader;
-        }
-      }
-    } catch (IOException ex) {
-      throw new FopImageException(ex.getMessage());
-    }
-    return null;
+   * This means the external svg document will be loaded twice.
+   * Possibly need a slightly different design for the image stuff.
+   */
+  protected boolean loadImage()
+  {
+    // parse document and get the size attributes of the svg element
+  try {
+	    SVGDriver driver = new SVGDriver();
+	    driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
+	    driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
+		XMLReader parser = SVGImage.createParser();
+	    driver.buildSVGTree(parser, new InputSource(this.imageStream));
+	    SVGDocument doc = driver.getSVGDocument();
+	    SVGSVGElement svg = doc.getRootElement();
+		this.width = (int)svg.getWidth().getBaseVal().getValue() * 1000;
+		this.height = (int)svg.getHeight().getBaseVal().getValue() * 1000;
+		return true;
+	} catch (Exception e) {
+	    MessageHandler.errorln("ERROR LOADING EXTERNAL SVG: " + e.getMessage());
+	    // assuming any exception means this document is not svg
+	    // or could not be loaded for some reason
+	    return false;
+	}
   }
+
 }
 
