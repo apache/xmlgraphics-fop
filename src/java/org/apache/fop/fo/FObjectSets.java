@@ -70,8 +70,9 @@ public class FObjectSets {
     private static final String revision = "$Revision$";
 
     /**  The set of FOs comprising the block entity.
-     *    See 6.14 Formatting Object Content. */
-    private static final BitSet block;
+     *    See 6.14 Formatting Object Content.
+     *   Nullified when initialization complete. */
+    private static BitSet block;
     /** The publicly accessible block entity set.
      *    See 6.14 Formatting Object Content. */
     public static final ROBitSet blockEntity;
@@ -86,8 +87,9 @@ public class FObjectSets {
     }
 
     /** The set of FOs comprising the inline entity.
-     *    See 6.14 Formatting Object Content. */
-    private static final BitSet inline;
+     *    See 6.14 Formatting Object Content.
+     *  Nullified when initialization complete. */
+    private static BitSet inline;
 
     /** The publicly accessible inline entity set.
      *    See 6.14 Formatting Object Content. */
@@ -112,8 +114,9 @@ public class FObjectSets {
 
     /** The set of FOs available wherever %block; is allowed
      * including within descendents of out-of-line FOs.
-     *    See 6.14 Formatting Object Content. */
-    private static final BitSet outOfLineBlock;
+     *    See 6.14 Formatting Object Content.
+     *  Nullified when initialization complete. */
+    private static BitSet outOfLineBlock;
 
     /** The publicly accessible set of FOs available wherever
      * %block; is allowed, including within descendents from
@@ -128,8 +131,9 @@ public class FObjectSets {
 
     /** The set of FOs available wherever #PCDATA|%block;|%inline; is allowed
      * including within descendents of out-of-line FOs.
-     *    See 6.14 Formatting Object Content. */
-    private static final BitSet outOfLinePcdataBlockInline;
+     *    See 6.14 Formatting Object Content.
+     *  Nullified when initialization complete. */
+    private static BitSet outOfLinePcdataBlockInline;
 
     /** The publicly accessible set of FOs available wherever
      * #PCDATA|%block;|%inline; is allowed, including within descendents from
@@ -151,8 +155,9 @@ public class FObjectSets {
     /**
      * The set of FOs available wherever #PCDATA|%block;|%inline; is allowed
      * except within descendents of out-of-line FOs.
-     *     See 6.14 Formatting Object Content. */
-    private static final BitSet normalPcdataBlockInline;
+     *    See 6.14 Formatting Object Content.
+     *  Nullified when initialization complete. */
+    private static BitSet normalPcdataBlockInline;
 
     /** The publicly accessible set of FOs available wherever
      * #PCDATA|%block;|%inline; is allowed except within descendents of
@@ -169,8 +174,9 @@ public class FObjectSets {
     /**
      * The set of FOs available wherever #PCDATA|%inline; is allowed
      * except within descendents of out-of-line FOs.
-     *     See 6.14 Formatting Object Content. */
-    private static final BitSet normalPcdataInline;
+     *    See 6.14 Formatting Object Content.
+     *  Nullified when initialization complete. */
+    private static BitSet normalPcdataInline;
 
     /** The publicly accessible set of FOs available wherever
      * #PCDATA|%inline; is allowed except within descendents of
@@ -183,6 +189,15 @@ public class FObjectSets {
         // Removed FOOTNOTE because it may occur in static-content
         //normalPcdataInline.set(FObjectNames.FOOTNOTE);
         normalPcdataInlineSet = new ROBitSet(normalPcdataInline);
+    }
+    
+    static {
+        block = null;
+        inline = null;
+        outOfLineBlock = null;
+        outOfLinePcdataBlockInline = null;
+        normalPcdataBlockInline = null;
+        normalPcdataInline = null;
     }
 
     private FObjectSets() {}
