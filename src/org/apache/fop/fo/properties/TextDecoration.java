@@ -2,13 +2,14 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.PropertyValueList;
 import org.apache.fop.datatypes.NCName;
-import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.datastructs.ROStringArray;
-import org.apache.fop.datastructs.ROIntArray;
-import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.datatypes.None;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.TextDecorations;
 import org.apache.fop.datatypes.TextDecorator;
+import org.apache.fop.datastructs.ROStringArray;
+import org.apache.fop.datastructs.ROIntArray;
+import org.apache.fop.fo.PropertyConsts;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.Property;
@@ -26,16 +27,19 @@ public class TextDecoration extends Property  {
         return new TextDecorations
                             (PropNames.TEXT_DECORATION, NO_DECORATION);
     }
-    public static final int inherited = COMPUTED;
+    public static final int inherited = NO;
 
-    /** Text decoration constant */
+    /** Text decoration constant. */
     public static final byte
       NO_DECORATION = 0
          ,UNDERLINE = 1
           ,OVERLINE = 2
       ,LINE_THROUGH = 4
              ,BLINK = 8
+
+   ,ALL_DECORATIONS = UNDERLINE | OVERLINE | LINE_THROUGH | BLINK;
                     ;
+
 
     private static final String[] alternatives = {
                                 null
@@ -68,23 +72,34 @@ public class TextDecoration extends Property  {
     {
         byte onMask = NO_DECORATION;
         byte offMask = NO_DECORATION;
+        int type = list.getType();
         Iterator iter;
         PropertyValueList ssList = null;
         LinkedList strings = new LinkedList();
-        if ( ! (list instanceof PropertyValueList)) {
-            if ( ! (list instanceof NCName))
+        if ( ! (type == PropertyValue.LIST)) {
+            switch (type) {
+            case PropertyValue.NCNAME:
+                strings.add(((NCName)list).getNCName());
+                break;
+            case PropertyValue.NONE:
+                strings.add("none");
+                break;
+            default:
                 throw new PropertyException
-                    ("text-decoration require list of NCNames");
-            strings.add(((NCName)list).getNCName());
+                    ("text-decoration requires list of NCNames");
+            }
         } else { // list is a PropertyValueList
             ssList = spaceSeparatedList((PropertyValueList)list);
             iter = ((PropertyValueList)ssList).iterator();
             while (iter.hasNext()) {
                 Object value = iter.next();
-                if ( ! (value instanceof NCName))
+                if (value instanceof NCName)
+                    strings.add(((NCName)value).getNCName());
+                else if(value instanceof None)
+                    strings.add("none");
+                else
                     throw new PropertyException
                         ("text-decoration requires a list of NCNames");
-                strings.add(((NCName)value).getNCName());
             }
         }
         iter = strings.iterator();
@@ -94,6 +109,10 @@ public class TextDecoration extends Property  {
             boolean negate;
             negate = false;
             str = (String)iter.next();
+            if (str.equals("none")) {
+                offMask |= ALL_DECORATIONS;
+                break;
+            }
             str2 = str;
             if (str.indexOf("no-") == 0) {
                 str2 = str.substring(3);
