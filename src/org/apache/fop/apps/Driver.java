@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.apps;
 
 // FOP
@@ -74,26 +75,79 @@ import org.xml.sax.helpers.AttributeListImpl;
 import java.io.PrintWriter;
 import java.io.IOException;
 
+/**
+ * <P>Primary class that drives overall FOP process.
+ *
+ * <P>Once this class is instantiated, methods are called to set the
+ * Renderer to use, the (possibly multiple) ElementMapping(s) to
+ * use and the PrintWriter to use to output the results of the
+ * rendering (where applicable). In the case of the Renderer and
+ * ElementMapping(s), the Driver may be supplied either with the
+ * object itself, or the name of the class, in which case Driver will
+ * instantiate the class itself. The advantage of the latter is it
+ * enables runtime determination of Renderer and ElementMapping(s).
+ *
+ * <P>Once the Driver is set up, the buildFOTree method
+ * is called. Depending on whether DOM or SAX is being used, the
+ * invocation of the method is either buildFOTree(Document) or
+ * buildFOTree(Parser, InputSource) respectively.
+ *
+ * <P>A third possibility may be used to build the FO Tree, namely
+ * calling getDocumentHandler() and firing the SAX events yourself.
+ *
+ * <P>Once the FO Tree is built, the format() and render() methods may be
+ * called in that order.
+ *
+ * <P>Here is an example use of Driver from CommandLine.java:
+ *
+ * <PRE>
+ *   Driver driver = new Driver();
+ *   driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);
+ *   driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
+ *   driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
+ *   driver.setWriter(new PrintWriter(new FileWriter(args[1])));
+ *   driver.buildFOTree(parser, fileInputSource(args[0]));
+ *   driver.format();
+ *   driver.render();
+ * </PRE>
+ */
 public class Driver {
 
+    /** the FO tree builder */
     protected FOTreeBuilder treeBuilder;
+
+    /** the area tree that is the result of formatting the FO tree */
     protected AreaTree areaTree;
+
+    /** the renderer to use to output the area tree */
     protected Renderer renderer;
+
+    /** the PrintWriter to use to output the results of the renderer */
     protected PrintWriter writer;
 
+    /** create a new Driver */
     public Driver() {
 	this.treeBuilder = new FOTreeBuilder();
     }
    
+    /** set the Renderer to use */
     public void setRenderer(Renderer renderer) {
 	this.renderer = renderer;
     }
 
+    /**
+     * set the class name of the Renderer to use as well as the
+     * producer string for those renderers that can make use of it
+     */
     public void setRenderer(String rendererClassName, String producer) {
 	this.renderer = createRenderer(rendererClassName);
 	this.renderer.setProducer(producer);
     }
 
+    /**
+     * protected method used by setRenderer(String, String) to
+     * instantiate the Renderer class
+     */
     protected Renderer createRenderer(String rendererClassName) {
 	System.err.println("using renderer " + rendererClassName);
 
@@ -113,14 +167,26 @@ public class Driver {
 	return null;
     }
     
+    /**
+     * add the given element mapping.
+     *
+     * an element mapping maps element names to Java classes
+     */
     public void addElementMapping(ElementMapping mapping) {
 	mapping.addToBuilder(this.treeBuilder);
     }
     
+    /**
+     * add the element mapping with the given class name
+     */
     public void addElementMapping(String mappingClassName) {
 	createElementMapping(mappingClassName).addToBuilder(this.treeBuilder);
     }
 
+    /**
+     * protected method used by addElementMapping(String) to
+     * instantiate element mapping class
+     */
     protected ElementMapping createElementMapping(String mappingClassName) {
 	System.err.println("using element mapping " + mappingClassName);
 
@@ -140,10 +206,21 @@ public class Driver {
 	return null;
     }
 
+    /**
+     * return the tree builder (a SAX DocumentHandler).
+     *
+     * used in situations where SAX is used but not via a FOP-invoked
+     * SAX parser. A good example is an XSLT engine that fires SAX
+     * events but isn't a SAX Parser itself.
+     */
     public DocumentHandler getDocumentHandler() {
 	return this.treeBuilder;
     }
 
+    /**
+     * build the formatting object tree using the given SAX Parser and
+     * SAX InputSource
+     */
     public void buildFOTree(Parser parser, InputSource source)
 	throws FOPException {
 	parser.setDocumentHandler(this.treeBuilder);
@@ -159,6 +236,9 @@ public class Driver {
 	}
     }
 
+    /**
+     * build the formatting object tree using the given DOM Document
+     */
     public void buildFOTree(Document document) 
 	throws FOPException {
 
@@ -243,10 +323,17 @@ public class Driver {
 	}
     }
 
+    /**
+     * set the PrintWriter to use to output the result of the Renderer
+     * (if applicable)
+     */
     public void setWriter(PrintWriter writer) {
 	this.writer = writer;
     }
 
+    /**
+     * format the formatting object tree into an area tree
+     */
     public void format()
 	throws FOPException {
 	FontInfo fontInfo = new FontInfo();
@@ -258,6 +345,9 @@ public class Driver {
 	this.treeBuilder.format(areaTree);
     }
 
+    /**
+     * render the area tree to the output form
+     */
     public void render()
 	throws IOException {
 	this.renderer.render(areaTree, this.writer);
