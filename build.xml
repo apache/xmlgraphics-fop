@@ -39,13 +39,7 @@ Ant is a little but very handy tool that uses a build file written in XML
 
 To make things easier for you, the Fop distribution contains a
 precompiled version of Ant and the build scripts take care of all the
-classpath issues except the following:
-
-You need to have xerces.jar, xalan.jar and bsf.jar (comes with xalan) in 
-your classpath. You can get those from http://xml.apache.org/xerces and 
-http://xml.apache.org/xalan respectively.
-
-Additionaly you have to make sure, that the "JAVA_HOME" environment
+classpath issues except the following: "JAVA_HOME" environment
 property should be set to match the JVM you want to use. That's it.
 
 
