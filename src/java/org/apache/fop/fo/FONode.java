@@ -22,6 +22,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +32,9 @@ import org.apache.fop.area.AreaListener;
 import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.datastructs.SyncedNode;
 import org.apache.fop.datastructs.TreeException;
+import org.apache.fop.datatypes.CountryType;
 import org.apache.fop.datatypes.EnumType;
+import org.apache.fop.datatypes.LanguageType;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
@@ -606,6 +609,31 @@ public class FONode extends SyncedNode implements AreaListener {
         return EnumType.getEnumValue(wm);
     }
 
+    /**
+     * Gets the current locale.  This is derived from the <code>language</code>
+     * and <code>country</code> properties in effect.  Note that no account is
+     * taken of <code>script</code> at this stage.
+     * <p><b>N.B.</b> The initial values of both <code>language</code> and
+     * <code>country</code> are taken from the default <code>Locale</code>
+     * returned bu the JVM.  This may be problemattical in the case where a
+     * user sets a <code>language</code> but not a <code>country</code>,
+     * because the <code>Locale</code> returned by this method will use the
+     * default <code>country</code>.
+     * 
+     * @return the locale
+     * @throws PropertyException
+     */
+    public Locale getLocale() throws PropertyException {
+        Locale locale = null;
+        // Get the value of the language and country properties
+        PropertyValue pv = getPropertyValue(PropNames.LANGUAGE);
+        String language =
+            LanguageType.getISO639_1Language(
+                    getPropertyValue(PropNames.LANGUAGE));
+        String country =
+            CountryType.getCountry(getPropertyValue(PropNames.COUNTRY));
+        return new Locale(language, country);
+    }
     /**
      * Clone the current font size.
      * @return a <tt>Numeric</tt> containing the current font size
