@@ -58,7 +58,6 @@ import org.apache.tools.ant.Task;
 import java.net.*;
 import java.io.*;
 import java.util.*;
-//import org.apache.xalan.xslt.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -205,18 +204,9 @@ public class Xslt extends Task {
 	    org.w3c.dom.Document source = buildDocument(infile);
 	    // Perform the transformation.
 	    System.out.println("============================");
-	    System.out.println("new xslt \nin: " + infile + "\nstyle: " +
+	    System.out.println("xslt \nin: " + infile + "\nstyle: " +
 			       xsltfile + "\nout: " + outfile);
 	    System.out.println("============================");
-	
-	    /*
-	    if (isTraxAvailable()) {
-		TraxTransform.transform(source, xsltfile, outfile);
-	    }
-	    else {
-		Xalan1Transform.transform(source, xsltfile, outfile);
-	    }
-	    */
 	    org.apache.fop.tools.xslt.XSLTransform.transform(source,xsltfile,outfile);
 	    
 	
@@ -236,23 +226,6 @@ public class Xslt extends Task {
     
     } //end transform
 
-    /*
-    private boolean isTraxAvailable() 
-    {
-	
-	try {
-	    // check for trax
-	    Class transformer = Class.forName("javax.xml.transform.Transformer");
-	    if (transformer != null) {
-		return true;
-	    }
-	}
-	catch (ClassNotFoundException ex){
-	    return false;
-	}	
-	return false;
-    }
-    */
     
     /**
      *  Checks for existence of output file and compares

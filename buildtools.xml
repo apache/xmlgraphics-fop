@@ -47,29 +47,32 @@
    </target>
 
    <target name="prepare.src" depends="prepare.xalan1,prepare.trax">
-     <copydir src="${src.dir}"
-	      dest="${build.src}"
-	      includes="${tools}/**,${hyph}/**"
-	      excludes="${tools}/anttasks/Fop.java,${hyph}/Hyphenator.java,**/${xalan1},**/${trax}"/>
+     <copy todir="${build.src}">
+       <fileset dir="${src.dir}"
+	        includes="${tools}/**,${hyph}/**"
+	        excludes="${tools}/anttasks/Fop.java,${hyph}/Hyphenator.java,**/${xalan1},**/${trax}"/>
+     </copy>
    </target>
 
    <target name="prepare.xalan1" if="xalan1.present">
      <echo message="Xalan1 is present. Installing Xalan1 support"/>
-     <copydir src="${src.dir}"
-	      dest="${build.src}"
+     <copy todir="${build.src}">
+	<fileset dir="${src.dir}"
 	      includes="**/${xalan1}"/>
+     </copy>
    </target>
 
    <target name="prepare.trax" if="trax.present">
      <echo message="JAXP1.1 transforms is present. Installing TRaX support"/>
-     <copydir src="${src.dir}"
-	      dest="${build.src}"
-	      includes="**/${trax}"/>
+     <copy todir="${build.src}">
+       <fileset dir="${src.dir}"
+	        includes="**/${trax}"/>
+     </copy>
    </target>
 
    <target name="clean" depends="init">
-     <deltree dir="${build.src}"/>
-     <deltree dir="${build.dest}"/>
+     <delete dir="${build.src}"/>
+     <delete dir="${build.dest}"/>
    </target>
 
 </project>
