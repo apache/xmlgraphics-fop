@@ -17,7 +17,7 @@ Usage of attributes:
 
 <head>
    <title>FOP: An Open-Source XSL Formatter and Renderer</title>
-   <version>1.3 1999/11/23 03:31:30</version>
+   <version>1.4 1999/11/29 19:45</version>
    <maintain>
       <name>James Tauber</name> 
       <name>Fotis Jannidis</name> 
@@ -43,16 +43,23 @@ Usage of attributes:
   </p>
 </section>
 
+<!-- Compiling FOP -->
+
 <section  class="level1">
   <title>Compiling FOP</title>
   <section class="level2">
     <title>1. Prerequisites</title>
-<section class="level3">
+    <section class="level3">
       <title>a) Java 1.1.x or later</title>
       <p></p>
     </section>
     <section class="level3">
-      <title>b) XT from James Clark</title>
+      <title>b) An XML parser</title>
+      <p>An XML parser which supports DOM like 
+         <link href="http://xml.apache.org/xerces-j/index.html">Xerces-J</link>.</p>
+    </section>
+    <section class="level3">
+      <title>c) XT from James Clark</title>
       <p>Some of the Java source code in FOP is generated from XML using
          XSLT. XT must be used to generate this code.</p>
       <p>XT is an XSL stylesheet processor written in java. At the moment you
@@ -69,7 +76,7 @@ Usage of attributes:
       </p>
     </section>
     <section class="level3">
-      <title>c) make</title>
+      <title>d) make</title>
       <p>Under windows it has been reported that the use of the cygnus solutions port 
          of the GNU utilities works. You can find it at 
          <link href="http://sourceware.cygnus.com/cygwin/">Cygnus Solutions</link>
@@ -78,13 +85,16 @@ Usage of attributes:
   </section>
 </section>
 
+<!-- Running FOP -->
+
 <section  class="level1">
   <title>Running FOP</title>
   <section class="level2">
     <title>1) Prerequisites</title>
     <p>Following software must be installed:</p>
     <p>a) Java 1.1.x or later</p>
-    <p>b) A sax parser like <link href="http://www.jclark.com/xml/xp/index.html">XP</link>.</p>
+    <p>b) An XML parser which supports SAX and DOM like 
+          <link href="http://xml.apache.org/xerces-j/index.html">Xerces-J</link>.</p>
     <p>c) If you have to produce the flow objects files, which are the input for FOP, 
        you need a transformation utility to create this files from your xml files. 
        Normally this is an XSLT stylesheet processor like 
@@ -94,7 +104,15 @@ Usage of attributes:
   </section>
   <section class="level2">
     <title>2) Starting FOP as an standalone application</title>
-    <p>There are two ways of running FOP from the command line.</p>
+    <p>There are three ways of running FOP from the command line.</p>
+    <p>a) Batch processing formatting object files: </p>
+    <p class="pre">java org.apache.fop.apps.CommandLine fo-file pdf-file</p>
+    <p>b) Batch processing xml files (includes production of the fo-files):</p>
+    <p class="pre">java org.apache.fop.apps.CommandLine xml-file xsl-file pdf-file</p>
+    <p>c) Previewing the fo-file:</p>
+    <p class="pre">java org.apache.fop.apps.AWTCommandLine fo-file</p>
+    <p>Each method uses next to the fop classes other packages. The following describes 
+       each method in detail.</p>
     <section class="level3">
       <title>a) Method One</title>
       <p>One is to first use an XSLT engine to produce the formatting object tree as an 
@@ -105,8 +123,12 @@ Usage of attributes:
       <p class="pre">java -cp fop_x_xx_x.jar;sax.jar;xp.jar</p>
       <p class="pre">org.apache.fop.apps.CommandLine formatting-tree-file pdf-file</p>
       <p>If your SAX Parser is other than XP, you will need to set the property 
-         org.xml.sax.parser to the SAX Parser class to use.
+         org.xml.sax.parser to the SAX Parser class to use. The following example shows 
+         the command line, if you use Xerces, the xml parser from xml.apache.org: 
       </p>
+      <p class="pre">java -Dorg.xml.sax.parser=org.apache.xerces.parsers.SAXParser </p>
+      <p class="pre">-cp fop_x_xx_x.jar;xerces.jar</p>
+      <p class="pre">org.apache.fop.apps.AWTCommandLine formatting-tree-file pdf-file</p>
     </section>
     <section class="level3">
       <title>b) Method Two</title>
@@ -122,14 +144,24 @@ Usage of attributes:
       <p>Again, if your SAX Parser is other than XP, you will need to set the property
          org.xml.sax.parser to the SAX Parser class to use.
       </p>
+    </section>
+    <section class="level3">
+      <title>c) Method Three</title>
+      <p>If you already produced the FO file, you can preview the results of your 
+         transformation without using any pdf viewer by invoking FOP with the viewer 
+         application. You will need to include FOP, SAX and your SAX Parser in your classpath 
+      </p>
+      <p class="pre">java org.apache.fop.apps.AWTCommandLine formatting-tree-file </p>
       <p>Note: If you are using java 2 or later (i.e. jdk 1.2. or later) you can put all 
          needed jar files into the subdirectory jdk1.2.x\jre\lib\ext (windows example). Then 
          FOP can be started without classpath: 
       </p>
-      <p class="pre">java org.apache.fop.apps.CommandLine formatting-tree-file pdf-file</p>
+      <p class="pre">java org.apache.fop.apps.CommandLine fo-file pdf-file</p>
     </section>
   </section>
 </section>
+
+<!-- What's Implemented? -->
 
 <section  class="level1">
   <title>What's Implemented?</title>
@@ -207,14 +239,23 @@ Usage of attributes:
       <p class="li">text-indent </p>
       <p class="li">href</p>
       <p class="li">column-width</p>
+      <p class="li">background-color</p>
+      <p class="li">padding-top (only in conjunction with background color)</p>
+      <p class="li">padding-left (only in conjunction with background color)</p>
+      <p class="li">padding-bottom (only in conjunction with background color)</p>
+      <p class="li">padding-right (only in conjunction with background color)</p>
     </div>
   </section>
 </section>
+
+<!-- Bugs -->
 
 <section class="level1">
   <title>Bugs</title>
   <p>see STATUS file</p>
 </section>
+
+<!-- FOP Relevant Specifications -->
 
 <section class="level1">
   <title>FOP Relevant Specifications</title>
