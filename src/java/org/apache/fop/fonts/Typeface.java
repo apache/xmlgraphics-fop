@@ -1,5 +1,5 @@
 /*
- * $Id: Font.java,v 1.2 2003/03/06 17:43:05 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -56,7 +56,7 @@ package org.apache.fop.fonts;
 /**
  * Base class for PDF font classes
  */
-public abstract class Font implements FontMetrics {
+public abstract class Typeface implements FontMetrics {
 
     /**
      * Get the encoding of the font.

@@ -56,7 +56,7 @@ import java.util.Map;
 /**
  * Abstract base class for custom fonts loaded from files, for example.
  */
-public abstract class CustomFont extends Font
+public abstract class CustomFont extends Typeface
             implements FontDescriptor, MutableFont {
 
     private String fontName = null;

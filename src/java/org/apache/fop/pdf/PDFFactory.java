@@ -64,7 +64,7 @@ import org.apache.commons.io.IOUtil;
 // FOP
 import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.fonts.CustomFont;
-import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontType;
@@ -1102,11 +1102,11 @@ public class PDFFactory {
                                                 + desc.getFontType());
         } 
         
-        Font tempFont;
+        Typeface tempFont;
         if (desc instanceof LazyFont) {
             tempFont = ((LazyFont)desc).getRealFont();
         } else {
-            tempFont = (Font)desc;
+            tempFont = (Typeface)desc;
         }
         if (!(tempFont instanceof CustomFont)) {
             throw new IllegalArgumentException(

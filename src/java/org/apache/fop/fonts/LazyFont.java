@@ -59,14 +59,14 @@ import java.util.Map;
 /**
  * This class is used to defer the loading of a font until it is really used.
  */
-public class LazyFont extends Font implements FontDescriptor {
+public class LazyFont extends Typeface implements FontDescriptor {
 
     private String metricsFileName = null;
     private String fontEmbedPath = null;
     private boolean useKerning = false;
 
     private boolean isMetricsLoaded = false;
-    private Font realFont = null;
+    private Typeface realFont = null;
     private FontDescriptor realFontDescriptor = null;
 
     /**
@@ -109,7 +109,7 @@ public class LazyFont extends Font implements FontDescriptor {
      * Gets the real font.
      * @return the real font
      */
-    public Font getRealFont() {
+    public Typeface getRealFont() {
         load();
         return realFont;
     }

@@ -53,7 +53,7 @@ package org.apache.fop.render.pdf;
 // FOP
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.LazyFont;
@@ -253,7 +253,7 @@ public class FontSetup {
         Iterator e = fonts.keySet().iterator();
         while (e.hasNext()) {
             String f = (String)e.next();
-            Font font = (Font)fonts.get(f);
+            Typeface font = (Typeface)fonts.get(f);
             FontDescriptor desc = null;
             if (font instanceof FontDescriptor) {
                 desc = (FontDescriptor)font;

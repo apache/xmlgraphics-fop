@@ -165,8 +165,8 @@ public class FontState {
      */
     public char mapChar(char c) {
 
-        if (metric instanceof org.apache.fop.fonts.Font) {
-            return ((org.apache.fop.fonts.Font)metric).mapChar(c);
+        if (metric instanceof org.apache.fop.fonts.Typeface) {
+            return ((org.apache.fop.fonts.Typeface)metric).mapChar(c);
         }
 
         // Use default CodePointMapping
