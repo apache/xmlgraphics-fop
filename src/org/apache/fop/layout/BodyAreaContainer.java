@@ -92,7 +92,10 @@ public class BodyAreaContainer extends Area {
 	// the start FO in case of rollback
 	private FObj startFO;
 	private boolean isNewSpanArea;
-	
+
+	// keeps track of footnote state for multiple layouts
+    private int footnoteState = 0;
+
     public BodyAreaContainer(FontState fontState, int xPosition, int yPosition,
 		int allocationWidth, int maxHeight, int position,
 		int columnCount, int columnGap) {
@@ -374,11 +377,65 @@ public class BodyAreaContainer extends Area {
 	{
 		return isNewSpanArea;
 	}
-	
+
 	public AreaContainer getCurrentColumnArea()
 	{
 		Vector spanAreas = this.mainReferenceArea.getChildren();
 		SpanArea spanArea = (SpanArea)spanAreas.elementAt(spanAreas.size()-1);
 		return spanArea.getCurrentColumnArea();		
 	}
+
+    public int getFootnoteState()
+    {
+        return footnoteState;
+    }
+
+    public boolean needsFootnoteAdjusting()
+    {
+        footnoteYPosition = footnoteReferenceArea.getYPosition();
+        switch(footnoteState) {
+            case 0:
+                resetHeights();
+                if(footnoteReferenceArea.getHeight() > 0
+                    && mainYPosition + mainReferenceArea.getHeight() > footnoteYPosition) {
+                    return true;
+                }
+            case 1:
+            break;
+        }
+        return false;
+    }
+
+    public void adjustFootnoteArea()
+    {
+        footnoteState++;
+        if(footnoteState == 1) {
+            mainReferenceArea.setMaxHeight(footnoteReferenceArea.getYPosition() - mainYPosition);
+            footnoteYPosition = footnoteReferenceArea.getYPosition();
+            footnoteReferenceArea.setMaxHeight(footnoteReferenceArea.getHeight());
+
+            Vector childs = footnoteReferenceArea.getChildren();
+            for(Enumeration en = childs.elements(); en.hasMoreElements(); ) {
+                Object obj = en.nextElement();
+                if(obj instanceof Area) {
+                    Area childArea = (Area)obj;
+                    footnoteReferenceArea.removeChild(childArea);
+                }
+            }
+
+            getPage().setPendingFootnotes(null);
+        }
+    }
+
+    protected static void resetMaxHeight(Area ar, int change) {
+        ar.setMaxHeight(change);
+        Vector childs = ar.getChildren();
+        for(Enumeration en = childs.elements(); en.hasMoreElements(); ) {
+            Object obj = en.nextElement();
+            if(obj instanceof Area) {
+                Area childArea = (Area)obj;
+                resetMaxHeight(childArea, change);
+            }
+        }
+    }
 }

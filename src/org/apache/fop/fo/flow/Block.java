@@ -259,7 +259,8 @@ public class Block extends FObjMixed {
                 startIndent += bodyIndent + distanceBetweenStarts;
             }
 
-            area.getIDReferences().createID(id);
+            if(area.getIDReferences() != null)
+                area.getIDReferences().createID(id);
 
             this.marker = 0;
 
@@ -286,6 +287,10 @@ public class Block extends FObjMixed {
                     if (((FOText) fo).willCreateArea()) {
                         fo.setWidows(blockWidows);
                         break;
+                    } else {
+                        children.removeElementAt(i);
+                        numChildren = this.children.size();
+                        i--;
                     }
                 } else {
                     fo.setWidows(blockWidows);
@@ -293,7 +298,7 @@ public class Block extends FObjMixed {
                 }
             }
 
-            for (int i = numChildren - 1; i > 0; i--) {
+            for (int i = numChildren - 1; i >= 0; i--) {
                 FONode fo = (FONode) children.elementAt(i);
                 if (fo instanceof FOText) {
                     if (((FOText) fo).willCreateArea()) {
@@ -315,10 +320,11 @@ public class Block extends FObjMixed {
             this.textIndent = 0;
         }
 
-        if (marker == 0) {
+        if (marker == 0 && area.getIDReferences() != null) {
             area.getIDReferences().configureID(id, area);
         }
 
+        int spaceLeft = area.spaceLeft();
         this.blockArea = new BlockArea(fs, area.getAllocationWidth(),
                                        area.spaceLeft(), startIndent, endIndent, textIndent,
                                        align, alignLast, lineHeight);
@@ -367,6 +373,7 @@ public class Block extends FObjMixed {
                     if ((i != 0)) {
                         status = new Status(Status.AREA_FULL_SOME);
                         area.addChild(blockArea);
+                        area.setMaxHeight(area.getMaxHeight() - spaceLeft + blockArea.getMaxHeight());
                         area.increaseHeight(blockArea.getHeight());
                         area.setAbsoluteHeight(
                           blockArea.getAbsoluteHeight());
@@ -382,6 +389,7 @@ public class Block extends FObjMixed {
 
                 //blockArea.end();
                 area.addChild(blockArea);
+                area.setMaxHeight(area.getMaxHeight() - spaceLeft + blockArea.getMaxHeight());
                 area.increaseHeight(blockArea.getHeight());
                 area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
                 anythingLaidOut = true;

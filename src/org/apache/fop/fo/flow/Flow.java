@@ -148,9 +148,10 @@ public class Flow extends FObj {
 	
 		// flow is *always* laid out into a BodyAreaContainer
 		BodyAreaContainer bac = (BodyAreaContainer)area;
-		
+
 		boolean prevChildMustKeepWithNext = false;
-	
+		Vector pageMarker = this.getMarkerSnapshot(new Vector());
+
 		int numChildren = this.children.size();
 		for (int i = this.marker; i < numChildren; i++) {
 			FObj fo = (FObj) children.elementAt(i);
@@ -177,6 +178,15 @@ public class Flow extends FObj {
 			}
 			
 			_status = fo.layout(currentArea);
+
+/*		    if((_status.isPageBreak() || i == numChildren - 1) && bac.needsFootnoteAdjusting()) {
+		        bac.adjustFootnoteArea();
+		        this.rollback(pageMarker);
+		        i = this.marker - 1;
+		        Area mainReferenceArea = bac.getMainReferenceArea();
+		        // remove areas
+		        continue;
+		    }*/
 			if (_status.isIncomplete()) {
 				if ((prevChildMustKeepWithNext) && (_status.laidOutNone())) {
 					this.marker = i - 1;

@@ -52,6 +52,9 @@ package org.apache.fop.layout;
 
 // FOP
 import org.apache.fop.render.Renderer;
+import org.apache.fop.fo.flow.*;
+import org.apache.fop.fo.*;
+import org.apache.fop.apps.*;
 
 // Java
 import java.util.Vector;
@@ -92,6 +95,8 @@ public class BlockArea extends Area {
     protected String language;
     protected String country;
 
+    protected Vector pendingFootnotes = null;
+
     public BlockArea(FontState fontState, int allocationWidth,
                      int maxHeight, int startIndent, int endIndent,
                      int textIndent, int align, int alignLastLine, int lineHeight) {
@@ -121,6 +126,17 @@ public class BlockArea extends Area {
             this.addChild(la);
             this.increaseHeight(size);
             this.addDisplaySpace(this.halfLeading);
+        }
+        // add pending footnotes
+        if(pendingFootnotes != null) {
+            for(Enumeration e = pendingFootnotes.elements(); e.hasMoreElements(); ) {
+                FootnoteBody fb = (FootnoteBody)e.nextElement();
+                Page page = getPage();
+                if(!Footnote.layoutFootnote(page, fb, this)) {
+                    page.addPendingFootnote(fb);
+                }
+            }
+            pendingFootnotes = null;
         }
     }
 
@@ -369,4 +385,10 @@ public class BlockArea extends Area {
       this.hyphenationRemainCharacterCount = hyphenationRemainCharacterCount;
     }
 
+    public void addFootnote(FootnoteBody fb) {
+        if(pendingFootnotes == null) {
+            pendingFootnotes = new Vector();
+        }
+        pendingFootnotes.addElement(fb);
+    }
 }

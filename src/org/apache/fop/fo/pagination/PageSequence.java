@@ -354,7 +354,12 @@ public class PageSequence extends FObj
         {
 		throw new FOPException("page masters exhausted. Cannot recover.");
         }
-        return pageMaster.makePage(areaTree);
+        Page p = pageMaster.makePage(areaTree);
+        if(currentPage != null) {
+            Vector foots = currentPage.getPendingFootnotes();
+            p.setPendingFootnotes(foots);
+        }
+        return p;
     }
 
     /**
