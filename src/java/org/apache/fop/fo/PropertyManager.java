@@ -52,11 +52,8 @@ package org.apache.fop.fo;
 
 // Java
 import java.text.MessageFormat;
-import java.awt.geom.Rectangle2D;
 
 // FOP
-import org.apache.fop.area.CTM;
-import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -71,7 +68,6 @@ import org.apache.fop.traits.InlineProps;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.traits.LayoutProps; // keep, break, span, space?
 import org.apache.fop.fo.properties.Constants;
-import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.fo.properties.Span;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fo.properties.CommonHyphenation;
@@ -513,76 +509,10 @@ public class PropertyManager {
     }
 
     /**
-     * Construct a coordinate transformation matrix (CTM).
-     * @param absVPrect absolute viewpoint rectangle
-     * @param reldims relative dimensions
-     * @return CTM the coordinate transformation matrix (CTM)
-     */
-    public CTM getCTMandRelDims(Rectangle2D absVPrect,
-                                FODimension reldims) {
-        int width, height;
-        // We will use the absolute reference-orientation to set up the CTM.
-        // The value here is relative to its ancestor reference area.
-        int absRefOrient = getAbsRefOrient(
-                this.properties.get("reference-orientation").getNumber().intValue());
-        if (absRefOrient % 180 == 0) {
-            width = (int) absVPrect.getWidth();
-            height = (int) absVPrect.getHeight();
-        } else {
-            // invert width and height since top left are rotated by 90 (cl or ccl)
-            height = (int) absVPrect.getWidth();
-            width = (int) absVPrect.getHeight();
-        }
-        /* Set up the CTM for the content of this reference area.
-         * This will transform region content coordinates in
-         * writing-mode relative into absolute page-relative
-         * which will then be translated based on the position of
-         * the region viewport.
-         * (Note: scrolling between region vp and ref area when
-         * doing online content!)
-         */
-        CTM ctm = new CTM(absVPrect.getX(), absVPrect.getY());
-
-        // First transform for rotation
-        if (absRefOrient != 0) {
-            // Rotation implies translation to keep the drawing area in the
-            // first quadrant. Note: rotation is counter-clockwise
-            switch (absRefOrient) {
-                case 90:
-                    ctm = ctm.translate(0, width); // width = absVPrect.height
-                    break;
-                case 180:
-                    ctm = ctm.translate(width, height);
-                    break;
-                case 270:
-                    ctm = ctm.translate(height, 0); // height = absVPrect.width
-                    break;
-            }
-            ctm = ctm.rotate(absRefOrient);
-        }
-        int wm = this.properties.get("writing-mode").getEnum();
-        /* Since we've already put adjusted width and height values for the
-         * top and left positions implied by the reference-orientation, we
-         * can set ipd and bpd appropriately based on the writing mode.
-         */
-
-        if (wm == WritingMode.LR_TB || wm == WritingMode.RL_TB) {
-            reldims.ipd = width;
-            reldims.bpd = height;
-        } else {
-            reldims.ipd = height;
-            reldims.bpd = width;
-        }
-        // Set a rectangle to be the writing-mode relative version???
-        // Now transform for writing mode
-        return ctm.multiply(CTM.getWMctm(wm, reldims.ipd, reldims.bpd));
-    }
-
-    /**
      * Calculate absolute reference-orientation relative to media orientation.
      */
-    private int getAbsRefOrient(int myRefOrient) {
+    public int getAbsRefOrient(int myRefOrient) {
         return myRefOrient;
     }
-}
 
+}

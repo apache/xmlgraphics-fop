@@ -149,7 +149,7 @@ public class SimplePageMaster extends FObj {
         // Set up the CTM on the page reference area based on writing-mode
         // and reference-orientation
         FODimension reldims = new FODimension(0, 0);
-        CTM pageCTM = propMgr.getCTMandRelDims(pageRefRect, reldims);
+        CTM pageCTM = CTM.getCTMandRelDims(propMgr, pageRefRect, reldims);
 
         // Create a RegionViewport/ reference area pair for each page region
 
