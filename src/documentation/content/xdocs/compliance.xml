@@ -216,7 +216,7 @@ want it to.</comment>
         </level-2>
         <level-2 name="Common Font Properties" citation="§7.8" extURL="slice7.html#common-font-properties" ref-name="commonfont">
           <level-3 name="font-family" citation="§7.8.2" extURL="slice7.html#font-family" compliance-level="1" comply="yes">
-          	<comment>font-family lists are not suppported, use a single font-family name</comment>
+          	<comment>font-family lists are not supported, use a single font-family name</comment>
           </level-3>
           <level-3 name="font-selection-strategy" citation="§7.8.3" extURL="slice7.html#font-selection-strategy" compliance-level="3" comply="no"/>
           <level-3 name="font-size" citation="§7.8.4" extURL="slice7.html#font-size" compliance-level="1" comply="yes"/>
