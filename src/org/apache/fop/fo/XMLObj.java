@@ -8,7 +8,6 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.fo.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
@@ -140,12 +139,12 @@ public abstract class XMLObj extends FObj {
      * @param area the area to layout the object into
      * @return the status of the layout
      */
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         /* generate a warning */
         log.error("" + this.tagName + " outside foreign xml");
 
         /* return status */
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     public void removeID(IDReferences idReferences) {}

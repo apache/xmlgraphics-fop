@@ -208,9 +208,9 @@ public class TableRow extends FObj {
         }
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         if (this.marker == BREAK_AFTER) {
-            return new Status(Status.OK);
+            return Status.OK;
         }
 
         // Layout the first area for this FO
@@ -231,7 +231,7 @@ public class TableRow extends FObj {
             this.marker = 0;
             int breakStatus = propMgr.checkBreakBefore(area);
             if (breakStatus != Status.OK)
-                return new Status(breakStatus);
+                return breakStatus;
         }
 
         if (marker == 0) {    // KDL: need to do this if thrown or if split?
@@ -301,10 +301,10 @@ public class TableRow extends FObj {
 
 
             int rowSpan = cell.getNumRowsSpanned();
-            Status status;
-            if ((status = cell.layout(areaContainer)).isIncomplete()) {
-                if ((keepTogether.getType() == KeepValue.KEEP_WITH_ALWAYS)
-                        || (status.getCode() == Status.AREA_FULL_NONE)
+            int status;
+            if (Status.isIncomplete((status = cell.layout(areaContainer)))) {
+               if ((keepTogether.getType() == KeepValue.KEEP_WITH_ALWAYS)
+                        || (status == Status.AREA_FULL_NONE)
                         || rowSpan > 1) {
                     // We will put this row into the next column/page
                     // Note: the only time this shouldn't be honored is
@@ -312,8 +312,8 @@ public class TableRow extends FObj {
                     // Remove spanning cells from RowSpanMgr?
                     this.resetMarker();
                     this.removeID(area.getIDReferences());
-                    return new Status(Status.AREA_FULL_NONE);
-                } else if (status.getCode() == Status.AREA_FULL_SOME) {
+                    return Status.AREA_FULL_NONE;
+                } else if (status == Status.AREA_FULL_SOME) {
                     /*
                      * Row is not keep-together, cell isn't spanning
                      * and part of it fits. We can break the cell and
@@ -379,35 +379,35 @@ public class TableRow extends FObj {
         // return new Status(Status.OK);
 
         if (someCellDidNotLayoutCompletely) {
-            return new Status(Status.AREA_FULL_SOME);
+            return Status.AREA_FULL_SOME;
         } else {
             if (rowSpanMgr.hasUnfinishedSpans()) {
                 // Ignore break after if row span!
-                return new Status(Status.KEEP_WITH_NEXT);
+                return Status.KEEP_WITH_NEXT;
             }
             if (breakAfter == BreakAfter.PAGE) {
                 this.marker = BREAK_AFTER;
-                return new Status(Status.FORCE_PAGE_BREAK);
+                return Status.FORCE_PAGE_BREAK;
             }
 
             if (breakAfter == BreakAfter.ODD_PAGE) {
                 this.marker = BREAK_AFTER;
-                return new Status(Status.FORCE_PAGE_BREAK_ODD);
+                return Status.FORCE_PAGE_BREAK_ODD;
             }
 
             if (breakAfter == BreakAfter.EVEN_PAGE) {
                 this.marker = BREAK_AFTER;
-                return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+                return Status.FORCE_PAGE_BREAK_EVEN;
             }
 
             if (breakAfter == BreakAfter.COLUMN) {
                 this.marker = BREAK_AFTER;
-                return new Status(Status.FORCE_COLUMN_BREAK);
+                return Status.FORCE_COLUMN_BREAK;
             }
             if (keepWithNext.getType() != KeepValue.KEEP_WITH_AUTO) {
-                return new Status(Status.KEEP_WITH_NEXT);
+                return Status.KEEP_WITH_NEXT;
             }
-            return new Status(Status.OK);
+            return Status.OK;
         }
 
     }

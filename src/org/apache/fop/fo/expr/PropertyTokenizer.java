@@ -281,12 +281,23 @@ class PropertyTokenizer {
         return false;
     }
 
+    static private final int CS = 1, nameStartChars = 1; // "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    static private final int C = 2, nameChars = 2; //".-0123456789";
+    static private final int D = 4, digits = 4; //"0123456789";
+    static private final int H = 8, hexchars = 8; //digits + "abcdefABCDEF";
+    static private final int C_CS = C + CS;
 
-    static private final String nameStartChars =
-        "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    static private final String nameChars = ".-0123456789";
-    static private final String digits = "0123456789";
-    static private final String hexchars = digits + "abcdefABCDEF";
+
+    static private final int charMap[] = {
+                                             0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, //0x00
+                                             0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, //0x10
+                                             0,0,0,0, 0,0,0,0, 0,0,0,0, 0,C,C,0, //0x20
+                                             C+D+H,C+D+H,C+D+H,C+D+H, C+D+H,C+D+H,C+D+H,C+D+H, C+D+H,C+D+H,0,0, 0,0,0,0, //0x30
+                                             0,CS+H,CS+H,CS+H, CS+H,CS+H,CS+H,CS, CS,CS,CS,CS, CS,CS,CS,CS, //0x40
+                                             CS,CS,CS,CS, CS,CS,CS,CS, CS,CS,CS,0, 0,0,0,CS,  //0x50
+                                             0,CS+H,CS+H,CS+H, CS+H,CS+H,CS+H,CS, CS,CS,CS,CS, CS,CS,CS,CS, //0x60
+                                             CS,CS,CS,CS, CS,CS,CS,CS, CS,CS,CS,0, 0,0,0,0  //0x70
+                                         };
 
     /**
      * Return a boolean value indicating whether the argument is a
@@ -294,7 +305,7 @@ class PropertyTokenizer {
      * @param c The character to check
      */
     private static final boolean isDigit(char c) {
-        return digits.indexOf(c) >= 0;
+        return c > 0 && c < 128 && (charMap[ c] & digits) != 0;
     }
 
     /**
@@ -303,7 +314,8 @@ class PropertyTokenizer {
      * @param c The character to check
      */
     private static final boolean isHexDigit(char c) {
-        return hexchars.indexOf(c) >= 0;
+        return c > 0 && c < 128 && (charMap[ c] & hexchars) != 0;
+        //return hexchars.indexOf(c) >= 0;
     }
 
     /**
@@ -328,7 +340,8 @@ class PropertyTokenizer {
      * @param c The character to check
      */
     private static final boolean isNameStartChar(char c) {
-        return nameStartChars.indexOf(c) >= 0 || c >= 0x80;
+        return c >= 0x80 || c < 0 || (charMap[ c] & nameStartChars) != 0;
+        //return nameStartChars.indexOf(c) >= 0 || c >= 0x80;
     }
 
     /**
@@ -337,8 +350,8 @@ class PropertyTokenizer {
      * @param c The character to check
      */
     private static final boolean isNameChar(char c) {
-        return nameStartChars.indexOf(c) >= 0 || nameChars.indexOf(c) >= 0
-               || c >= 0x80;
+        return c > 0x80 || c < 0 || (charMap[ c] & C_CS) != 0;
+        //return nameStartChars.indexOf(c) >= 0 || nameChars.indexOf(c) >= 0 || c >= 0x80;
     }
 
 }

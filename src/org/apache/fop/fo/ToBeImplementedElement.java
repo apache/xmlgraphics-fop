@@ -8,7 +8,6 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.fo.*;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.Area;
@@ -23,10 +22,10 @@ public abstract class ToBeImplementedElement extends FObj {
         super(parent, propertyList);
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
       log.debug("The element '" + this.getName()
                 + "' is not yet implemented.");
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
 }

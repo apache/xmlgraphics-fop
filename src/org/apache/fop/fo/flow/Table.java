@@ -65,9 +65,9 @@ public class Table extends FObj {
         return "fo:table";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         if (this.marker == BREAK_AFTER) {
-            return new Status(Status.OK);
+            return Status.OK;
         }
 
         if (this.marker == START) {
@@ -142,15 +142,15 @@ public class Table extends FObj {
             this.marker = 0;
 
             if (breakBefore == BreakBefore.PAGE) {
-                return new Status(Status.FORCE_PAGE_BREAK);
+                return Status.FORCE_PAGE_BREAK;
             }
 
             if (breakBefore == BreakBefore.ODD_PAGE) {
-                return new Status(Status.FORCE_PAGE_BREAK_ODD);
+                return Status.FORCE_PAGE_BREAK_ODD;
             }
 
             if (breakBefore == BreakBefore.EVEN_PAGE) {
-                return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+                return Status.FORCE_PAGE_BREAK_EVEN;
             }
 
         }
@@ -203,28 +203,28 @@ public class Table extends FObj {
             if (fo instanceof TableHeader) {
                 if (columns.size() == 0) {
                     log.warn("current implementation of tables requires a table-column for each column, indicating column-width");
-                    return new Status(Status.OK);
+                    return Status.OK;
                 }
                 tableHeader = (TableHeader)fo;
                 tableHeader.setColumns(columns);
             } else if (fo instanceof TableFooter) {
                 if (columns.size() == 0) {
                     log.warn("current implementation of tables requires a table-column for each column, indicating column-width");
-                    return new Status(Status.OK);
+                    return Status.OK;
                 }
                 tableFooter = (TableFooter)fo;
                 tableFooter.setColumns(columns);
             } else if (fo instanceof TableBody) {
                 if (columns.size() == 0) {
                     log.warn("current implementation of tables requires a table-column for each column, indicating column-width");
-                    return new Status(Status.OK);
+                    return Status.OK;
                 }
-                Status status;
+                int status;
                 if (tableHeader != null &&!addedHeader) {
-                    if ((status =
-                            tableHeader.layout(areaContainer)).isIncomplete()) {
+                    if (Status.isIncomplete((status =
+                                                 tableHeader.layout(areaContainer)))) {
                         tableHeader.resetMarker();
-                        return new Status(Status.AREA_FULL_NONE);
+                        return Status.AREA_FULL_NONE;
                     }
                     addedHeader = true;
                     tableHeader.resetMarker();
@@ -233,19 +233,19 @@ public class Table extends FObj {
                 }
                 if (tableFooter != null &&!this.omitFooterAtBreak
                         &&!addedFooter) {
-                    if ((status =
-                            tableFooter.layout(areaContainer)).isIncomplete()) {
-                        return new Status(Status.AREA_FULL_NONE);
+                    if (Status.isIncomplete((status =
+                                                 tableFooter.layout(areaContainer)))) {
+                        return Status.AREA_FULL_NONE;
                     }
                     addedFooter = true;
                     tableFooter.resetMarker();
                 }
                 ((TableBody)fo).setColumns(columns);
 
-                if ((status = fo.layout(areaContainer)).isIncomplete()) {
+                if (Status.isIncomplete((status = fo.layout(areaContainer)))) {
                     this.marker = i;
                     if (bodyCount == 0
-                            && status.getCode() == Status.AREA_FULL_NONE) {
+                            && status == Status.AREA_FULL_NONE) {
                         if (tableHeader != null)
                             tableHeader.removeLayout(areaContainer);
                         if (tableFooter != null)
@@ -268,7 +268,7 @@ public class Table extends FObj {
                                                      + ((TableBody)fo).getHeight());
                         }
                         setupColumnHeights();
-                        status = new Status(Status.AREA_FULL_SOME);
+                        status = Status.AREA_FULL_SOME;
                     }
                     return status;
                 } else {
@@ -287,7 +287,7 @@ public class Table extends FObj {
         }
 
         if (tableFooter != null && this.omitFooterAtBreak) {
-            if (tableFooter.layout(areaContainer).isIncomplete()) {
+            if (Status.isIncomplete(tableFooter.layout(areaContainer))) {
                 // this is a problem since we need to remove a row
                 // from the last table body and place it on the
                 // next page so that it can have a footer at
@@ -301,7 +301,7 @@ public class Table extends FObj {
                 }
                 tableFooter.removeLayout(areaContainer);
                 tableFooter.resetMarker();
-                return new Status(Status.AREA_FULL_SOME);
+                return Status.AREA_FULL_SOME;
             }
         }
 
@@ -326,20 +326,20 @@ public class Table extends FObj {
 
         if (breakAfter == BreakAfter.PAGE) {
             this.marker = BREAK_AFTER;
-            return new Status(Status.FORCE_PAGE_BREAK);
+            return Status.FORCE_PAGE_BREAK;
         }
 
         if (breakAfter == BreakAfter.ODD_PAGE) {
             this.marker = BREAK_AFTER;
-            return new Status(Status.FORCE_PAGE_BREAK_ODD);
+            return Status.FORCE_PAGE_BREAK_ODD;
         }
 
         if (breakAfter == BreakAfter.EVEN_PAGE) {
             this.marker = BREAK_AFTER;
-            return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+            return Status.FORCE_PAGE_BREAK_EVEN;
         }
 
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     protected void setupColumnHeights() {

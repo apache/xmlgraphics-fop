@@ -105,9 +105,9 @@ public class TableColumn extends FObj {
         setup = true;
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         if (this.marker == BREAK_AFTER) {
-            return new Status(Status.OK);
+            return Status.OK;
         }
 
         if (this.marker == START) {
@@ -127,7 +127,7 @@ public class TableColumn extends FObj {
 	    areaContainer.setHeight(area.getHeight());
 	    area.addChild(areaContainer);
 	}
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     public void setColumnOffset(int columnOffset) {

@@ -18,7 +18,6 @@ import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.svg.*;
 import org.apache.fop.mif.*;
-import org.apache.fop.layout.*;
 import org.apache.fop.image.*;
 
 import org.w3c.dom.*;

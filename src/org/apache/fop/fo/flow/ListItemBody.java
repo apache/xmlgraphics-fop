@@ -36,7 +36,7 @@ public class ListItemBody extends FObj {
         return "fo:list-item-body";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         if (this.marker == START) {
 
             // Common Accessibility Properties
@@ -62,17 +62,17 @@ public class ListItemBody extends FObj {
         for (int i = this.marker; i < numChildren; i++) {
             FObj fo = (FObj)children.get(i);
 
-            Status status;
-            if ((status = fo.layout(area)).isIncomplete()) {
+            int status;
+            if (Status.isIncomplete((status = fo.layout(area)))) {
                 this.marker = i;
-                if ((i == 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
-                    return new Status(Status.AREA_FULL_NONE);
+                if ((i == 0) && (status == Status.AREA_FULL_NONE)) {
+                    return Status.AREA_FULL_NONE;
                 } else {
-                    return new Status(Status.AREA_FULL_SOME);
+                    return Status.AREA_FULL_SOME;
                 }
             }
         }
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
 }

@@ -63,9 +63,9 @@ public abstract class FObj extends FONode {
      *
      * @param area
      */
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         // should always be overridden
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     /**

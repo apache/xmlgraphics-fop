@@ -104,10 +104,10 @@ public class PageNumberCitation extends FObj {
         return "fo:page-number-citation";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         if (!(area instanceof BlockArea)) {
             log.warn("page-number-citation outside block area");
-            return new Status(Status.OK);
+            return Status.OK;
         }
 
         IDReferences idReferences = area.getIDReferences();
@@ -192,7 +192,7 @@ public class PageNumberCitation extends FObj {
             BlockArea blockArea = (BlockArea)area;
             LineArea la = blockArea.getCurrentLineArea();
             if (la == null) {
-                return new Status(Status.AREA_FULL_NONE);
+                return Status.AREA_FULL_NONE;
             }
             la.changeFont(propMgr.getFontState(area.getFontInfo()));
             la.changeColor(red, green, blue);
@@ -211,9 +211,9 @@ public class PageNumberCitation extends FObj {
 
 
         if (this.marker == -1) {
-            return new Status(Status.OK);
+            return Status.OK;
         } else {
-            return new Status(Status.AREA_FULL_NONE);
+            return Status.AREA_FULL_NONE;
         }
 
     }

@@ -56,11 +56,11 @@ public class Character extends FObj {
         return "fo:character";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         BlockArea blockArea;
         if (!(area instanceof BlockArea)) {
             log.warn("currently Character can only be in a BlockArea");
-            return new Status(Status.OK);
+            return Status.OK;
         }
         blockArea = (BlockArea)area;
         boolean textDecoration;
@@ -135,7 +135,7 @@ public class Character extends FObj {
 
         LineArea la = blockArea.getCurrentLineArea();
         if (la == null) {
-            return new Status(Status.AREA_FULL_NONE);
+            return Status.AREA_FULL_NONE;
         }
         la.changeFont(propMgr.getFontState(area.getFontInfo()));
         la.changeColor(red, green, blue);
@@ -147,7 +147,7 @@ public class Character extends FObj {
         if (result == Character.DOESNOT_FIT) {
             la = blockArea.createNextLineArea();
             if (la == null) {
-                return new Status(Status.AREA_FULL_NONE);
+                return Status.AREA_FULL_NONE;
             }
             la.changeFont(propMgr.getFontState(area.getFontInfo()));
             la.changeColor(red, green, blue);
@@ -157,7 +157,7 @@ public class Character extends FObj {
             la.addCharacter(characterValue, this.getLinkSet(),
                             textDecoration);
         }
-        return new Status(Status.OK);
+        return Status.OK;
 
     }
 

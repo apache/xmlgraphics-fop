@@ -47,12 +47,12 @@ public class Leader extends FObjMixed {
         return "fo:leader";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         BlockArea blockArea;
         // restriction in this version
         if (!(area instanceof BlockArea)) {
             log.warn("in this version of Fop fo:leader must be a direct child of fo:block ");
-            return new Status(Status.OK);
+            return Status.OK;
         } else {
             blockArea = (BlockArea)area;
         }
@@ -143,10 +143,10 @@ public class Leader extends FObjMixed {
                                   ruleStyle, leaderPatternWidth,
                                   leaderAlignment);
         if (succeeded == 1) {
-            return new Status(Status.OK);
+            return Status.OK;
         } else {
             // not sure that this is the correct Status here
-            return new Status(Status.AREA_FULL_SOME);
+            return Status.AREA_FULL_SOME;
         }
     }
 

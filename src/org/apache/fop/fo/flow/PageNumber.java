@@ -12,7 +12,6 @@ import org.apache.fop.fo.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
 public class PageNumber extends FObj {
@@ -44,10 +43,10 @@ public class PageNumber extends FObj {
         return "fo:page-number";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         if (!(area instanceof BlockArea)) {
             log.warn("page-number outside block area");
-            return new Status(Status.OK);
+            return Status.OK;
         }
         if (this.marker == START) {
 
@@ -108,7 +107,7 @@ public class PageNumber extends FObj {
                                      red, green, blue, wrapOption, null,
                                      whiteSpaceCollapse, p.toCharArray(), 0,
                                      p.length(), ts, VerticalAlign.BASELINE);
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
 }

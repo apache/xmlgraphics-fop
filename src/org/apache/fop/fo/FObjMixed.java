@@ -59,9 +59,7 @@ public abstract class FObjMixed extends FObj {
         super.addChild(child);
     }
 
-
-  
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
 
         if (this.properties != null) {
             Property prop = this.properties.get("id");
@@ -84,13 +82,13 @@ public abstract class FObjMixed extends FObj {
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
             FONode fo = (FONode)children.get(i);
-            Status status;
-            if ((status = fo.layout(area)).isIncomplete()) {
+            int status;
+            if (Status.isIncomplete((status = fo.layout(area)))) {
                 this.marker = i;
                 return status;
             }
         }
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
 }

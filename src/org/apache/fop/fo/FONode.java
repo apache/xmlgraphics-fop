@@ -140,7 +140,7 @@ abstract public class FONode {
         return this.linkSet;
     }
 
-    abstract public Status layout(Area area) throws FOPException;
+    abstract public int layout(Area area) throws FOPException;
 
     /**
      * lets outside sources access the property list

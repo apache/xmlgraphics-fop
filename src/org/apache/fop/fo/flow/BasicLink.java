@@ -39,7 +39,7 @@ public class BasicLink extends Inline {
         return "fo:basic-link";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         String destination;
         int linkType;
 
@@ -118,8 +118,8 @@ public class BasicLink extends Inline {
             FONode fo = (FONode)children.get(i);
             fo.setLinkSet(ls);
 
-            Status status;
-            if ((status = fo.layout(area)).isIncomplete()) {
+            int status;
+            if (Status.isIncomplete((status = fo.layout(area)))) {
                 this.marker = i;
                 return status;
             }
@@ -135,7 +135,7 @@ public class BasicLink extends Inline {
 
         p.addLinkSet(ls);
 
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
 }

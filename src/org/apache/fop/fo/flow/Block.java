@@ -74,14 +74,14 @@ public class Block extends FObjMixed {
         return "fo:block";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         BlockArea blockArea;
 
         // log.error(" b:LAY[" + marker + "] ");
 
 
         if (this.marker == BREAK_AFTER) {
-            return new Status(Status.OK);
+            return Status.OK;
         }
 
         if (this.marker == START) {
@@ -141,7 +141,7 @@ public class Block extends FObjMixed {
             // area
             int breakBeforeStatus = propMgr.checkBreakBefore(area);
             if (breakBeforeStatus != Status.OK) {
-                return new Status(breakBeforeStatus);
+                return breakBeforeStatus;
             }
 
         }
@@ -190,8 +190,8 @@ public class Block extends FObjMixed {
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
             FONode fo = (FONode)children.get(i);
-            Status status;
-            if ((status = fo.layout(blockArea)).isIncomplete()) {
+            int status;
+            if (Status.isIncomplete(status = fo.layout(blockArea))) {
                 this.marker = i;
                 // this block was modified by
                 // Hani Elabed 11/27/2000
@@ -202,10 +202,10 @@ public class Block extends FObjMixed {
 
                 // new block to replace the one above
                 // Hani Elabed 11/27/2000
-                if (status.getCode() == Status.AREA_FULL_NONE) {
+                if (status == Status.AREA_FULL_NONE) {
                     // something has already been laid out
                     if ((i != 0)) {
-                        status = new Status(Status.AREA_FULL_SOME);
+                        status = Status.AREA_FULL_SOME;
                         area.addChild(blockArea);
                         area.setMaxHeight(area.getMaxHeight() - spaceLeft
                                           + blockArea.getMaxHeight());
@@ -259,18 +259,18 @@ public class Block extends FObjMixed {
         if (breakAfterStatus != Status.OK) {
             this.marker = BREAK_AFTER;
             blockArea = null; //Faster GC - BlockArea is big
-            return new Status(breakAfterStatus);
+            return breakAfterStatus;
         }
 
         if (keepWithNext != 0) {
             blockArea = null; // Faster GC - BlockArea is big
-            return new Status(Status.KEEP_WITH_NEXT);
+            return Status.KEEP_WITH_NEXT;
         }
 
         // log.error(" b:OK" + marker + " ");
         blockArea.isLast(true);
         blockArea = null; // Faster GC - BlockArea is big
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     public int getAreaHeight() {

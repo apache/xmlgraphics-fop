@@ -49,7 +49,7 @@ public class ListItem extends FObj {
         return "fo:list-item";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         if (this.marker == START) {
 
             // Common Accessibility Properties
@@ -133,7 +133,7 @@ public class ListItem extends FObj {
         ListItemLabel label = (ListItemLabel)children.get(0);
         ListItemBody body = (ListItemBody)children.get(1);
 
-        Status status;
+        int status;
 
         // what follows doesn't yet take into account whether the
         // body failed completely or only got some text in
@@ -143,13 +143,13 @@ public class ListItem extends FObj {
             area.getIDReferences().configureID(id, area);
 
             status = label.layout(blockArea);
-            if (status.isIncomplete()) {
+            if (Status.isIncomplete(status)) {
                 return status;
             }
         }
 
         status = body.layout(blockArea);
-        if (status.isIncomplete()) {
+        if (Status.isIncomplete(status)) {
             blockArea.end();
             area.addChild(blockArea);
             area.increaseHeight(blockArea.getHeight());
@@ -170,7 +170,7 @@ public class ListItem extends FObj {
             area.start();
         }
         this.blockArea.isLast(true);
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     /**

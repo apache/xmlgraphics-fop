@@ -49,7 +49,7 @@ public class ListBlock extends FObj {
         return "fo:list-block";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         if (this.marker == START) {
 
             // Common Accessibility Properties
@@ -143,13 +143,13 @@ public class ListBlock extends FObj {
         for (int i = this.marker; i < numChildren; i++) {
             if (!(children.get(i) instanceof ListItem)) {
                 log.error("children of list-blocks must be list-items");
-                return new Status(Status.OK);
+                return Status.OK;
             }
             ListItem listItem = (ListItem)children.get(i);
-            Status status;
-            if ((status = listItem.layout(blockArea)).isIncomplete()) {
-                if (status.getCode() == Status.AREA_FULL_NONE && i > 0) {
-                    status = new Status(Status.AREA_FULL_SOME);
+            int status;
+            if (Status.isIncomplete((status = listItem.layout(blockArea)))) {
+                if (status == Status.AREA_FULL_NONE && i > 0) {
+                    status = Status.AREA_FULL_SOME;
                 }
                 this.marker = i;
                 blockArea.end();
@@ -172,7 +172,7 @@ public class ListBlock extends FObj {
         }
 
         blockArea.isLast(true);
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
 }

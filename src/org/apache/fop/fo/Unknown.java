@@ -8,7 +8,6 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.fo.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
@@ -44,8 +43,8 @@ public class Unknown extends FObj {
         return "(unknown)";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         log.debug("Layout Unknown element");
-        return new Status(Status.OK);
+        return Status.OK;
     }
 }

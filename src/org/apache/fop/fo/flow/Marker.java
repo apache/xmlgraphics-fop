@@ -49,16 +49,16 @@ public class Marker extends FObjMixed {
         return "fo:marker";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         // no layout action desired
         this.registryArea = area;
         area.addMarker(this);
         area.getPage().registerMarker(this);
         // System.out.println("Marker being registered in area '" + area + "'");
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
-    public Status layoutMarker(Area area) throws FOPException {
+    public int layoutMarker(Area area) throws FOPException {
         if (this.marker == START)
             this.marker = 0;
 
@@ -66,14 +66,14 @@ public class Marker extends FObjMixed {
         for (int i = this.marker; i < numChildren; i++) {
             FONode fo = (FONode)children.get(i);
 
-            Status status;
-            if ((status = fo.layout(area)).isIncomplete()) {
+            int status;
+            if (Status.isIncomplete((status = fo.layout(area)))) {
                 this.marker = i;
                 return status;
             }
         }
 
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     public String getMarkerClassName() {

@@ -46,7 +46,7 @@ public class FootnoteBody extends FObj {
         return "fo:footnote-body";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         if (this.marker == START) {
             this.marker = 0;
         }
@@ -69,8 +69,8 @@ public class FootnoteBody extends FObj {
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
             FONode fo = (FONode)children.get(i);
-            Status status;
-            if ((status = fo.layout(blockArea)).isIncomplete()) {
+            int status;
+            if (Status.isIncomplete((status = fo.layout(blockArea)))) {
                 this.resetMarker();
                 return status;
             }
@@ -79,7 +79,7 @@ public class FootnoteBody extends FObj {
         area.addChild(blockArea);
         area.increaseHeight(blockArea.getHeight());
         blockArea.isLast(true);
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
 }

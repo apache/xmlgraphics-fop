@@ -32,10 +32,10 @@ public abstract class ExtensionObj extends FObj {
      *
      * @param area
      */
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         ExtensionArea extArea = new ExtensionArea(this);
         area.addChild(extArea);
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
 
