@@ -61,155 +61,12 @@ import java.util.*;
  *
  */
 public class ElementImpl extends NodeImpl implements Element {
-//	Vector childs = new Vector();
-//	Node parent = null;
-//	Document ownerDoc;
 
 	public Node replaceChild(Node n, Node no)
 	{
 		return null;
 	}
 
-/*    public String getNodeName()
-	{
-		return null;
-	}
-
-    public short getNodeType()
-	{
-		return 0;
-	}
-
-    public Node getParentNode()
-	{
-		return parent;
-	}
-
-    public NodeList getChildNodes()
-	{
-		return new NodeListImpl(childs);
-	}
-
-    public Node getFirstChild()
-	{
-		return null;
-	}
-
-    public Node getLastChild()
-	{
-		return null;
-	}
-
-    public Node getPreviousSibling()
-	{
-		return null;
-	}
-
-    public Node getNextSibling()
-	{
-		return null;
-	}
-
-    public NamedNodeMap getAttributes()
-	{
-		return null;
-	}
-
-    public Document getOwnerDocument()
-	{
-		return ownerDoc;
-	}
-
-    void setOwnerDocument(Document doc)
-    {
-        ownerDoc = doc;
-		NodeList nl = getChildNodes();
-		for(int count = 0; count < nl.getLength(); count++) {
-			Node n = nl.item(count);
-			if(n instanceof ElementImpl) {
-				((ElementImpl)n).setOwnerDocument(ownerDoc);
-			}
-		}
-    }
-
-    public Node insertBefore(Node newChild,
-                                     Node refChild)
-                                     throws DOMException
-	{
-		return null;
-	}
-
-    public Node removeChild(Node oldChild)
-                                    throws DOMException
-	{
-		return null;
-	}
-
-    public Node appendChild(Node newChild)
-                                    throws DOMException
-	{
-		childs.addElement(newChild);
-		if(newChild instanceof ElementImpl) {
-			ElementImpl ele = (ElementImpl)newChild;
-			ele.parent = this;
-			ele.setOwnerDocument(ownerDoc);
-		}
-		return newChild;
-	}
-
-    public boolean hasChildNodes()
-	{
-		return childs.size() > 0;
-	}
-
-    public Node cloneNode(boolean deep)
-	{
-		return null;
-	}
-
-    public void normalize()
-	{
-	}
-
-    public boolean supports(String feature,
-                                 String version)
-	{
-		return false;
-	}
-
-    public String getNamespaceURI()
-	{
-		return SVGDocumentImpl.namespaceURI;
-	}
-
-    public String getPrefix()
-	{
-		return "svg";
-	}
-
-    public void setPrefix(String prefix) throws DOMException
-	{
-	}
-
-    public String getLocalName()
-	{
-		return null;
-	}
-
-    public String getNodeValue() throws DOMException
-	{
-		return null;
-	}
-
-    public void setNodeValue(String nodeValue) throws DOMException
-	{
-	}
-
-    public String getTagName()
-	{
-		return null;
-	}
-*/
     public String getAttribute(String name)
 	{
 		return null;
@@ -242,7 +99,23 @@ public class ElementImpl extends NodeImpl implements Element {
 
     public NodeList getElementsByTagName(String name)
 	{
-		return null;
+		NodeList nl = getChildNodes();
+		Vector eles = new Vector();
+		for(int count = 0; count < nl.getLength(); count++) {
+			Node el = (Node)nl.item(count);
+			if(el instanceof Element) {
+				if(name.equals(((Element)el).getTagName())) {
+					eles.addElement(el);
+				}
+				NodeList subtags = ((Element)el).getElementsByTagName(name);
+				for(int c = 0; c < subtags.getLength(); c++) {
+					Node node = (Node)subtags.item(c);
+					eles.addElement(node);
+				}
+			}
+		}
+		NodeList val = new NodeListImpl(eles);
+		return val;
 	}
 
     public String getAttributeNS(String namespaceURI,
@@ -298,23 +171,3 @@ public class ElementImpl extends NodeImpl implements Element {
         return false;
     }
 }
-/*
-class NodeListImpl implements NodeList
-{
-	Vector vect = null;
-
-	NodeListImpl(Vector v)
-	{
-		vect = v;
-	}
-
-	public int getLength()
-	{
-		return vect.size();
-	}
-
-	public Node item(int i)
-	{
-		return (Node)vect.elementAt(i);
-	}
-}*/

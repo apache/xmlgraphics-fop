@@ -51,51 +51,28 @@
 
 package org.apache.fop.dom.svg;
 
-import java.util.*;
-
 import org.w3c.dom.svg.*;
 
-/**
- *
- */
-public class SVGPolygonElementImpl extends GraphicElement implements SVGPolygonElement {
+public class SVGAnimatedStringImpl implements SVGAnimatedString {
+    String str = null;
 
-	public Vector points;
+    public SVGAnimatedStringImpl(String l)
+    {
+        str = l;
+    }
 
-	public SVGPolygonElementImpl(Vector p)
-	{
-		this.points = p;
-	}
+  public String getBaseVal( )
+  {
+      return str;
+  }
 
-	public SVGList getPoints( )
-	{
-		return null;
-	}
+  public void setBaseVal( String baseVal )
+  {
+      str = baseVal;
+  }
 
-	public SVGList getAnimatedPoints( )
-	{
-		return null;
-	}
-
-	public SVGRect getBBox()
-	{
-		float minX = 10000000; // a big number
-		float maxX = -10000000; // a low number
-		float minY = 10000000; // a big number
-		float maxY = -10000000; // a low number
-		for(Enumeration e = points.elements(); e.hasMoreElements(); ) {
-			e.nextElement();
-		}
-		SVGRect rect = new SVGRectImpl();
-		rect.setX(minX);
-		rect.setY(minY);
-		rect.setWidth(maxX - minX);
-		rect.setHeight(maxY - minY);
-		return rect;
-	}
-
-    public String getTagName()
-	{
-		return "polygon";
-	}
+  public String getAnimVal( )
+  {
+      return str;
+  }
 }

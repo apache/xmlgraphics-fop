@@ -106,4 +106,9 @@ public class SVGCircleElementImpl extends GraphicElement implements SVGCircleEle
 	{
 		this.r = r;
 	}
+
+    public String getTagName()
+	{
+		return "circle";
+	}
 }

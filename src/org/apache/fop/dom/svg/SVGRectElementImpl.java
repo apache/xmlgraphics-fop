@@ -153,4 +153,9 @@ public class SVGRectElementImpl extends GraphicElement implements SVGRectElement
 	{
 	    this.ry = ry;
 	}
+
+    public String getTagName()
+	{
+		return "rect";
+	}
 }

@@ -50,19 +50,23 @@
  */
 package org.apache.fop.dom.svg;
 
+import org.apache.fop.dom.stylesheets.*;
+import org.apache.fop.dom.css.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.dom.ElementImpl;
 
-import org.w3c.dom.css.CSSStyleDeclaration;
-import org.w3c.dom.css.CSSValue;
+import org.w3c.dom.css.*;
 import org.w3c.dom.svg.*;
 import org.w3c.dom.*;
+import org.w3c.dom.stylesheets.*;
 
 import java.util.*;
 
 public abstract class SVGElementImpl extends ElementImpl implements SVGElement {
 	String idString = "";
 	CSSStyleDeclaration styleDec;
+	SVGSVGElement ownerSvg;
+	SVGAnimatedString className = new SVGAnimatedStringImpl("");
 
 	public String getId()
 	{
@@ -81,7 +85,7 @@ public abstract class SVGElementImpl extends ElementImpl implements SVGElement {
 
 	public SVGSVGElement getOwnerSVGElement( )
 	{
-		return null;
+		return ownerSvg;
 	}
 
 	public SVGElement getViewportElement( )
@@ -91,25 +95,49 @@ public abstract class SVGElementImpl extends ElementImpl implements SVGElement {
 
 	public SVGAnimatedString getClassName( )
 	{
-		return null;
+		return className;
 	}
 
 	public void setClassName( SVGAnimatedString className )
 	{
+		this.className = className;
 	}
 
 	public CSSValue getPresentationAttribute ( String name )
 	{
 		CSSStyleDeclaration style;
+		CSSValue val = null;
+
 		style = getStyle();
-		if(style == null) {
-			return null;
+		if(style != null) {
+			val = style.getPropertyCSSValue(name);
 		}
-		CSSValue val;
-		val = style.getPropertyCSSValue(name);
+
 		if(val == null) {
+			// this checks for the style selector matching
+			// everytime a property is requested, this is bad, slow
+
 			// get "style" element style for this
 			SVGSVGElement svg = getOwnerSVGElement();
+			// maybe
+			// val = svg.getComputedStyle(this, name);
+			StyleSheetList list = svg.getStyleSheets();
+			for(int count = 0; count < list.getLength(); count++) {
+				CSSRuleList rlist = ((CSSStyleSheet)list.item(count)).getCssRules();
+				for(int c = 0; c < rlist.getLength(); c++) {
+					CSSRule rule = rlist.item(c);
+					if(rule.getType() == CSSRule.STYLE_RULE) {
+						if(((CSSStyleRuleImpl)rule).matches(this)) {
+							style = ((CSSStyleRule)rule).getStyle();
+							val = style.getPropertyCSSValue(name);
+//							break;
+						}
+					}
+				}
+//				if(val != null) {
+//					break;
+//				}
+			}
 		}
 		if(val == null) {
 			// get element parents style
@@ -136,128 +164,6 @@ public abstract class SVGElementImpl extends ElementImpl implements SVGElement {
 		styleDec = dec;
 	}
 
-/*	SVGElement parent = null;
-	public SVGElement getGraphicParent()
-	{
-		return parent;
-	}
-
-	public void setParent(SVGElement graph)
-	{
-		parent = graph;
-	}*/
-
-/*	Hashtable style = null;
-	public void setStyle(Hashtable st)
-	{
-		style = st;
-	}
-
-	public Hashtable oldgetStyle()
-	{
-		Hashtable ret = null;
-		if(parent != null) {
-			ret = parent.oldgetStyle();
-			if(ret != null)
-				ret = (Hashtable)ret.clone();
-		}
-		if(ret == null) {
-			ret = style;
-		} else {
-			if(style != null) {
-				for(Enumeration e = style.keys(); e.hasMoreElements(); ) {
-					String str = (String)e.nextElement();
-					ret.put(str, style.get(str));
-				}
-			}
-		}
-		return ret;
-	}
-
-	Hashtable defs = new Hashtable();
-	public void addDefs(Hashtable table)
-	{
-		for(Enumeration e = table.keys(); e.hasMoreElements(); ) {
-			String str = (String)e.nextElement();
-			defs.put(str, table.get(str));
-		}
-	}
-
-	public Hashtable getDefs()
-	{
-		Hashtable ret = null;
-		if(parent != null) {
-			ret = parent.getDefs();
-			if(ret != null)
-				ret = (Hashtable)ret.clone();
-		}
-		if(ret == null) {
-			ret = defs;
-		} else {
-			if(defs != null) {
-				for(Enumeration e = defs.keys(); e.hasMoreElements(); ) {
-					String str = (String)e.nextElement();
-					ret.put(str, defs.get(str));
-				}
-			}
-		}
-		return ret;
-	}
-
-	public SVGElement locateDef(String str)
-	{
-		Object obj = null;
-		if(defs != null) {
-			obj = defs.get(str);
-		}
-		if(obj == null) {
-			NodeList list = getChildNodes();
-			for(int count = 0; count < list.getLength(); count++) {
-				Object o = list.item(count);
-				if(o instanceof SVGElement) {
-					String s;
-					s = ((SVGElement)o).getId();
-					if(str.equals(s)) {
-						obj = o;
-						break;
-					}
-				}
-			}
-		}
-		if(obj == null && parent != null) {
-			obj = parent.locateDef(str);
-		}
-		return (SVGElement)obj;
-	}
-
-	Vector trans = null;
-	public void setTransform(Vector tr)
-	{
-		trans = tr;
-	}
-
-	public Vector oldgetTransform()
-	{
-		return trans;
-/*		Vector ret = null;
-		if(parent != null) {
-			ret = parent.oldgetTransform();
-			if(ret != null)
-				ret = (Vector)ret.clone();
-		}
-		if(ret == null) {
-			ret = trans;
-		} else {
-			if(trans != null) {
-				for(Enumeration e = trans.elements(); e.hasMoreElements(); ) {
-					Object o = e.nextElement();
-					ret.addElement(o);
-				}
-			}
-		}
-		return ret;*
-	}
-*/
 	public SVGAnimatedBoolean getExternalResourcesRequired( )
 	{
 		return null;
@@ -265,5 +171,29 @@ public abstract class SVGElementImpl extends ElementImpl implements SVGElement {
 
 	public void setExternalResourcesRequired( SVGAnimatedBoolean externalResourcesRequired )
 	{
+	}
+
+    public Node appendChild(Node newChild)
+                                    throws DOMException
+	{
+		Node nChild = super.appendChild(newChild);
+		if(newChild instanceof SVGElementImpl) {
+			SVGElementImpl ele = (SVGElementImpl)newChild;
+			if(ownerSvg != null)
+				ele.setOwnerSVG(ownerSvg);
+		}
+		return nChild;
+	}
+
+    public void setOwnerSVG(SVGSVGElement owner)
+	{
+		ownerSvg = owner;
+		NodeList nl = getChildNodes();
+		for(int count = 0; count < nl.getLength(); count++) {
+			Node n = nl.item(count);
+			if(n instanceof SVGElementImpl) {
+				((SVGElementImpl)n).setOwnerSVG(owner);
+			}
+		}
 	}
 }
