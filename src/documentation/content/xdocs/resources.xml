@@ -41,7 +41,7 @@
       <section id="specs-pdf">
         <title>PDF</title>
         <ul>
-          <li><jump href="http://partners.adobe.com/asn/developer/acrosdk/docs/filefmtspecs/PDFReference.pdf">Portable Document Format (PDF) 1.4 Reference Manual</jump>
+          <li><jump href="http://partners.adobe.com/asn/tech/pdf/specifications.jsp">Portable Document Format (PDF) Reference Manual</jump>
          </li>
         </ul>
       </section>
