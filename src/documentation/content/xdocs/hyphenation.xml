@@ -1,0 +1,51 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+<document>
+  <header>
+    <title>FOP: Hyphenation</title>
+  </header>
+  <body>
+    <section id="intro">
+      <title>Introduction</title>
+      <p>FOP uses an XML-based TeX-like hyphenation pattern scheme.
+Hyphenation pattern files for many languages are included in the standard FOP distribution.
+However, because of <link href="#license-issues">licensing issues</link>, there are currently some significant holes in FOP's hyphenation support.
+The information on this page is intended to help you work around these limitations, if possible, add support for other languages, or enhance FOP's support of current languages.</p>
+      <note>If you have access to hyphenation patterns that are licensed in an Apache-compatible way, or if you have made improvements to an existing FOP hyphenation pattern, or if you have created one from scratch, please consider contributing these to FOP so that they can benefit other FOP users as well. Please inquire on the <link href="maillist.html#fop-user">FOP User mailing list</link>.</note>
+    </section>
+    <section id="license-issues">
+      <title>License Issues</title>
+      <p>Many of the hyphenation files distributed with TeX and its offspring are licenced under the <fork href="http://www.latex-project.org/lppl.html">LaTeX Project Public License (LPPL)</fork>, which prevents them from being distributed with Apache software.
+Although Apache FOP cannot redistribute hyphenation pattern files that do not conform with its license scheme, that does not necessarily prevent users from using such hyphenation patterns with FOP.
+However, it does place on the user the responsibility for determining whether the user can rightly use such hyphenation patterns under the hyphenation pattern license.</p>
+      <warning>The user is responsible to settle license issues for hyphenation pattern files that are obtained from non-Apache sources.</warning>
+    </section>
+    <section id="sources">
+      <title>Sources of Hyphenation Pattern Files</title>
+      <p>The most important source of hyphenation pattern files is the <fork href="http://www.ctan.org/tex-archive/language/hyphenation/">CTAN TeX Archive</fork>.</p>
+    </section>
+    <section id="install">
+      <title>Installing Custom Hyphenation Patterns</title>
+      <p>To install custom a custom hyphenation pattern for use with FOP:</p>
+      <ol>
+        <li>Convert the TeX hyphenation pattern file to the FOP format. The FOP format is an xml file conforming to the DTD found at <code>{fop-dir}/src/hyph/hyphenation.dtd</code>.</li>
+        <li>Name this new file following this schema: <code>languageCode_countryCode.xml</code>.
+The country code is optional, and should be used only if needed. For example:
+          <ul>
+            <li><code>en_US.xml</code> would be the file name for an American English hyphenation pattern.</li>
+            <li><code>it.xml</code> would be the file name for an Italian hyphenation pattern.</li>
+          </ul>
+The language and country codes must match the XSL-FO input, which follows <link href="http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO 639</link> (languages) and
+<link href="http://www.ics.uci.edu/pub/ietf/http/related/iso3166.txt">ISO 3166</link> (countries).
+NOTE: The ISO 639/ISO 3166 convention is that language names are written in lower case, while country codes are written in upper case.</li>
+        <li>There are two ways to make the FOP-compatible hyphenation pattern file accessible to FOP:
+          <ul>
+            <li>Place the FOP-compatible hyphenation pattern file into the directory {fop-dir}/src/hyph and rebuild FOP. The file will be picked up and added to fop.jar.</li>
+            <li>Put the file into a directory of your choice and configure FOP to look for custom patterns in this directory, by setting the <link href="configuration.html#hyphenation-dir">&lt;hyphenation-dir&gt; configuration option</link>.</li>
+          </ul>
+        </li>
+      </ol>
+    </section>
+  </body>
+</document>
