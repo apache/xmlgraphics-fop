@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -255,7 +255,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
-        LayoutManager curLM ; // currently active LM
+        LayoutManager curLM; // currently active LM
 
         while ((curLM = getChildLM()) != null) {
             BreakPoss bp = null;
@@ -286,6 +286,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     public String getCurrentPageNumber() {
         return pageNumberString;
+    }
+    
+    /**
+     * Provides access to the current page.
+     * @return the current PageViewport
+     */
+    public PageViewport getCurrentPageViewport() {
+        return this.curPage;
     }
 
     /**
@@ -478,11 +486,15 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         try {
             curPage = createPage(bIsBlank, bIsLast);
             isFirstPage = false;
-        } catch (FOPException fopex) { /* ???? */
-            fopex.printStackTrace();
+        } catch (FOPException fopex) {
+            //TODO this exception is fatal, isn't it?
+            log.error("Cannot create page", fopex);
         }
 
         curPage.setPageNumber(getCurrentPageNumber());
+        if (log.isDebugEnabled()) {
+            log.debug("[" + curPage.getPageNumber() + "]");
+        }
         RegionViewport rv = curPage.getPage().getRegionViewport(
                     FO_REGION_BODY);
         curBody = (BodyRegion) rv.getRegion();
@@ -575,6 +587,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 // We may be forced to make new page
                 handleBreak(breakVal);
             } else if (curPage == null) {
+                log.debug("curPage is null. Making new page");
                 makeNewPage(false, false);
             }
             // Now we should be on the right kind of page
