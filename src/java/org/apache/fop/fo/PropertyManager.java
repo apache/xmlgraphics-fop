@@ -83,7 +83,7 @@ public class PropertyManager implements Constants {
     /**
      * Constructs a FontState object. If it was constructed before it is
      * reused.
-     * @param document apps.Document implementation containing the font
+     * @param fontInfo the FontInfo implementation containing the font
      * information
      * @return a FontState object
      */
