@@ -3,11 +3,11 @@
 
   <!-- defines the layout master -->
   <fo:layout-master-set>
-    <fo:simple-page-master master-name="first" 
-                           page-height="29.7cm" page-width="21cm" 
-                           margin-top="1cm" 
-                           margin-bottom="2cm" 
-                           margin-left="2.5cm" 
+    <fo:simple-page-master master-name="first"
+                           page-height="29.7cm" page-width="21cm"
+                           margin-top="1cm"
+                           margin-bottom="2cm"
+                           margin-left="2.5cm"
                            margin-right="2.5cm">
     <fo:region-body margin-top="3cm"/>
      <fo:region-before extent="3cm"/>
@@ -28,38 +28,38 @@
   <fo:flow flow-name="xsl-region-body">
 
       <!-- title -->
-      <fo:block font-size="14pt" 
-                font-family="sans-serif" 
-                line-height="18pt" 
-                space-before.optimum="3pt" 
-                space-after.optimum="3pt" 
-                font-weight="bold" 
+      <fo:block font-size="14pt"
+                font-family="sans-serif"
+                line-height="18pt"
+                space-before.optimum="3pt"
+                space-after.optimum="3pt"
+                font-weight="bold"
                 start-indent="15pt">
           Validity Constraint: Standalone Document Declaration
       </fo:block>
 
       <!-- normal text -->
-      <fo:block font-size="12pt" 
-                font-family="sans-serif" 
-                line-height="15pt" 
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
+                line-height="15pt"
                 space-after.optimum="3pt" >
-          The standalone document declaration must have the value "no" if 
+          The standalone document declaration must have the value "no" if
           any external markup declarations contain declarations of:
       </fo:block>
 
       <!-- list -->
       <fo:list-block>
-        
+
         <!-- list item -->
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <!-- list text --> 
+          <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
             <fo:block>
-              attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or 
+              attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or
             </fo:block>
           </fo:list-item-body>
         </fo:list-item>
@@ -70,10 +70,10 @@
           <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <!-- list text --> 
+          <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
             <fo:block>
-              entities (other than amp, lt, gt, apos, quot), if references to those entities appear in the document, or 
+              entities (other than amp, lt, gt, apos, quot), if references to those entities appear in the document, or
             </fo:block>
           </fo:list-item-body>
         </fo:list-item>
@@ -84,7 +84,7 @@
           <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <!-- list text --> 
+          <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
             <fo:block>
               attributes with values subject to normalization, where the attribute appears in the document with a value which will
@@ -98,10 +98,10 @@
           <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <!-- list text --> 
+          <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
             <fo:block>
-              change as a result of normalization, or 
+              change as a result of normalization, or
             </fo:block>
           </fo:list-item-body>
         </fo:list-item>
@@ -112,12 +112,12 @@
           <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <!-- list text --> 
+          <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
             <fo:block>
 
               element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white spaceadsfadsfsssssssssssssss thin any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white spaceadsfadsfssssssssthin any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white spaceadsfadsfssssssssthin any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white spaceadsfadsfssssssssthin any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white spaceadsfadsfssssssss
-              element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. elementtance of those types. sfg sfd gdg d d 
+              element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. elementtance of those types. sfg sfd gdg d d
             </fo:block>
           </fo:list-item-body>
         </fo:list-item>
@@ -126,20 +126,20 @@
 
 
  <fo:list-item>
-  <fo:list-item-label end-indent="label-end()"> <fo:block/></fo:list-item-label>  
+  <fo:list-item-label end-indent="label-end()"> <fo:block/></fo:list-item-label>
    <fo:list-item-body start-indent="body-start()">
    <fo:list-block>
-        
+
          <!-- list item -->
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <!-- list text --> 
+          <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
             <fo:block>
-              attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or 
+              attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or
             </fo:block>
           </fo:list-item-body>
         </fo:list-item>
@@ -149,10 +149,10 @@
           <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <!-- list text --> 
+          <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
             <fo:block>
-              attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or 
+              attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or
             </fo:block>
           </fo:list-item-body>
         </fo:list-item>
@@ -162,10 +162,10 @@
           <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <!-- list text --> 
+          <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
             <fo:block>
-              attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or 
+              attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or
             </fo:block>
           </fo:list-item-body>
         </fo:list-item>
@@ -175,10 +175,10 @@
           <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <!-- list text --> 
+          <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
             <fo:block>
-              attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or 
+              attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or
             </fo:block>
           </fo:list-item-body>
         </fo:list-item>
@@ -193,10 +193,10 @@
           <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <!-- list text --> 
+          <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
             <fo:block>
-              element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. elementtance of those types. 
+              element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. elementtance of those types.
             </fo:block>
           </fo:list-item-body>
         </fo:list-item>
@@ -206,10 +206,10 @@
           <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <!-- list text --> 
+          <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
             <fo:block>
-              element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. elementtance of those types. 
+              element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. elementtance of those types.
             </fo:block>
           </fo:list-item-body>
         </fo:list-item>
@@ -219,10 +219,10 @@
           <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <!-- list text --> 
+          <!-- list text -->
           <fo:list-item-body start-indent="body-start()">
             <fo:block>
-              element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. elementtance of those types. 
+              element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. elementtance of those types.
             </fo:block>
           </fo:list-item-body>
         </fo:list-item>
@@ -233,7 +233,7 @@
 
 
 
-    
+
       </fo:list-block>
 
 
