@@ -81,9 +81,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     /** Current page being worked on. */
     private PageViewport curPage;
 
-    /** Body region of the current page */
-    private BodyRegion curBody;
-
     /** Current span being filled */
     private Span curSpan;
 
@@ -480,12 +477,35 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         if (log.isDebugEnabled()) {
             log.debug("[" + curPage.getPageNumberString() + "]");
         }
-        RegionViewport rv = curPage.getPage().getRegionViewport(
-                    FO_REGION_BODY);
-        curBody = (BodyRegion) rv.getRegion();
-        flowBPD = (int) curBody.getBPD();
+
+        flowBPD = (int) curPage.getBodyRegion().getBPD();
         createSpan(1); // todo determine actual # of NormalFlows needed
         return curPage;
+    }
+
+    private void createSpan(int numCols) {
+        // check number of columns (= all in Body or 1)
+        // If already have a span, get its size and position (as MinMaxOpt)
+        // This determines the position of the new span area
+        // Attention: space calculation between the span areas.
+
+        //MinOptMax newpos ;
+        //if (curSpan != null) {
+        //newpos = curSpan.getPosition(BPD);
+        //newpos.add(curSpan.getDimension(BPD));
+        //}
+        //else newpos = new MinOptMax();
+        curSpan = new Span(numCols);
+        // get Width or Height as IPD for span
+
+        RegionViewport rv = curPage.getPage().getRegionViewport(FO_REGION_BODY);
+        int ipdWidth = (int) rv.getRegion().getIPD() -
+            rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
+
+        curSpan.setIPD(ipdWidth);
+        //curSpan.setPosition(BPD, newpos);
+        curPage.getBodyRegion().getMainReference().addSpan(curSpan);
+        curFlow = curSpan.addNewNormalFlow();
     }
 
     private void layoutStaticContent(Region region) {
@@ -532,7 +552,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
     private void finishPage() {
         if (curPage == null) {
-            curBody = null;
             curSpan = null;
             curFlow = null;
             return;
@@ -546,7 +565,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         // Queue for ID resolution and rendering
         areaTreeModel.addPage(curPage);
         curPage = null;
-        curBody = null;
         curSpan = null;
         curFlow = null;
     }
@@ -583,7 +601,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             int numCols = 1;
             if (span == Constants.EN_ALL) {
                 // Assume the number of columns is stored on the curBody object.
-                //numCols = curBody.getProperty(NUMBER_OF_COLUMNS);
+                //numCols = curPage.getBodyRegion().getProperty(NUMBER_OF_COLUMNS);
             }
             if (curSpan == null) {
                 bNeedSpan = true;
@@ -607,17 +625,17 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             }
             // Now handle different kinds of areas
             if (aclass == Area.CLASS_BEFORE_FLOAT) {
-                BeforeFloat bf = curBody.getBeforeFloat();
+                BeforeFloat bf = curPage.getBodyRegion().getBeforeFloat();
                 if (bf == null) {
                     bf = new BeforeFloat();
-                    curBody.setBeforeFloat(bf);
+                    curPage.getBodyRegion().setBeforeFloat(bf);
                 }
                 return bf;
             } else if (aclass == Area.CLASS_FOOTNOTE) {
-                Footnote fn = curBody.getFootnote();
+                Footnote fn = curPage.getBodyRegion().getFootnote();
                 if (fn == null) {
                     fn = new Footnote();
-                    curBody.setFootnote(fn);
+                    curPage.getBodyRegion().setFootnote(fn);
                 }
                 return fn;
             }
@@ -697,31 +715,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         else {
             return true;
         }
-    }
-
-    private void createSpan(int numCols) {
-        // check number of columns (= all in Body or 1)
-        // If already have a span, get its size and position (as MinMaxOpt)
-        // This determines the position of the new span area
-        // Attention: space calculation between the span areas.
-
-        //MinOptMax newpos ;
-        //if (curSpan != null) {
-        //newpos = curSpan.getPosition(BPD);
-        //newpos.add(curSpan.getDimension(BPD));
-        //}
-        //else newpos = new MinOptMax();
-        curSpan = new Span(numCols);
-        // get Width or Height as IPD for span
-
-        RegionViewport rv = curPage.getPage().getRegionViewport(FO_REGION_BODY);
-        int ipdWidth = (int) rv.getRegion().getIPD() -
-            rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
-
-        curSpan.setIPD(ipdWidth);
-        //curSpan.setPosition(BPD, newpos);
-        curBody.getMainReference().addSpan(curSpan);
-        curFlow = curSpan.addNewNormalFlow();
     }
 
     private PageViewport createPageAreas(SimplePageMaster spm) {
