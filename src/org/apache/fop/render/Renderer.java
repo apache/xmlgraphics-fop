@@ -53,6 +53,7 @@ package org.apache.fop.render;
 // FOP
 import org.apache.fop.svg.SVGArea;
 import org.apache.fop.image.ImageArea;
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.*;
 
 // Java
@@ -74,7 +75,7 @@ public interface Renderer {
     public void setProducer(String producer);
 
     /** render the given area tree to the given writer */
-    public void render(AreaTree areaTree, PrintWriter writer) throws IOException;
+    public void render(AreaTree areaTree, PrintWriter writer) throws IOException, FOPException;
  
     /** render the given area container */
     public void renderAreaContainer(AreaContainer area);
