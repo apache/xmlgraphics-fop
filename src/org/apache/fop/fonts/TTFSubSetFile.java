@@ -88,10 +88,12 @@ public class TTFSubSetFile extends TTFFile {
         currentPos += 12;
         realSize += 16;
 
-        writeString("fpgm");
-        fpgmDirOffset = currentPos;
-        currentPos += 12;
-        realSize += 16;
+        if (hasFpgm()) {
+            writeString("fpgm");
+            fpgmDirOffset = currentPos;
+            currentPos += 12;
+            realSize += 16;
+        }
 
         writeString("glyf");
         glyfDirOffset = currentPos;
@@ -153,6 +155,9 @@ public class TTFSubSetFile extends TTFFile {
     }
 
 
+    private boolean hasFpgm() {
+        return (dirTabs.get("fpgm") != null);
+    }
 
     /**
      * Copy the fpgm table as is from original font to subset font
@@ -171,7 +176,8 @@ public class TTFSubSetFile extends TTFFile {
             currentPos += (int)entry.length;
             realSize += (int)entry.length;
         } else {
-            throw new IOException("Can't find fpgm table");
+            //fpgm table is optional
+            //throw new IOException("Can't find fpgm table");
         }
     }
 
