@@ -46,6 +46,7 @@ public class TXTRenderer extends PrintRenderer {
      * the current stream to add Text commands to
      */
     TXTStream currentStream;
+    public static final String encodingOptionName = "txt.encoding";
 
     private int pageHeight = 7920;
 
@@ -1719,6 +1720,14 @@ public class TXTRenderer extends PrintRenderer {
     throws IOException {
         log.info("rendering areas to TEXT");
         currentStream = new TXTStream(outputStream);
+        String encoding = (String)options.get(encodingOptionName);
+        try {
+            byte buff[] = " ".getBytes(encoding);
+        } catch (java.io.UnsupportedEncodingException uee) {
+            log.warn("Encoding '"+encoding+"' is not a valid Java encoding. Use UTF-8.");
+            encoding = "UTF-8";
+        }
+        currentStream.setEncoding(encoding);
         firstPage=true;
     }
 

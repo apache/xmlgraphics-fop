@@ -11,6 +11,7 @@ import java.io.*;
 public class TXTStream {
     OutputStream out = null;
     boolean doOutput = true;
+    private String encoding;
 
     public TXTStream(OutputStream os) {
         out = os;
@@ -21,7 +22,7 @@ public class TXTStream {
             return;
 
         try {
-        	byte buff[] = str.getBytes("UTF-8");
+            byte buff[] = str.getBytes(encoding);
             out.write(buff);
         } catch (IOException e) {
             throw new RuntimeException(e.toString());
@@ -32,4 +33,10 @@ public class TXTStream {
         doOutput = doout;
     }
 
+    public void setEncoding(String encoding) {
+        if (encoding != null)
+            this.encoding = encoding;
+        else
+            this.encoding = "UTF-8";
+    }
 }
