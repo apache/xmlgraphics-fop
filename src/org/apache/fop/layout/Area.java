@@ -69,6 +69,9 @@ abstract public class Area extends Box {
     /* max size in line-progression-direction */
     protected int maxHeight;
 
+    /**
+     * Total height of content of this area.
+     */
     protected int currentHeight = 0;
 
     // used to keep track of the current x position within a table.  Required for drawing rectangle links.
@@ -96,6 +99,15 @@ abstract public class Area extends Box {
 	setFontState(fontState);
     }
 
+    /**
+     * Creates a new <code>Area</code> instance.
+     *
+     * @param fontState a <code>FontState</code> value
+     * @param allocationWidth the inline-progression dimension of the content
+     * rectangle of the Area
+     * @param maxHeight the maximum block-progression dimension available
+     * for this Area (its allocation rectangle)
+     */
     public Area (FontState fontState, int allocationWidth, int maxHeight) {
 	setFontState(fontState);
         this.allocationWidth = allocationWidth;
@@ -138,6 +150,14 @@ abstract public class Area extends Box {
       return this.allocationWidth ;
     }
 
+  /**
+   * Set the allocation width.
+   * @param w The new allocation width.
+   * This sets content width to the same value.
+   * Currently only called during layout of Table to set the width
+   * to the total width of all the columns. Note that this assumes the
+   * column widths are explicitly specified.
+   */
     public void setAllocationWidth(int w) {
         this.allocationWidth = w;
         this.contentRectangleWidth = this.allocationWidth;
@@ -159,18 +179,34 @@ abstract public class Area extends Box {
         return this.fontState;
     }
 
+    /**
+     * Returns content height of the area.
+     *
+     * @return Content height in millipoints
+     */
     public int getContentHeight() {
         return this.currentHeight;
     }
 
+    /**
+     * Returns allocation height of this area.
+     * The allocation height is the sum of the content height plus border
+     * and padding in the vertical direction.
+     *
+     * @return allocation height in millipoints
+     */
     public int getHeight() {
         return this.currentHeight + getPaddingTop() + getPaddingBottom() +
                getBorderTopWidth() + getBorderBottomWidth();
     }
 
     public int getMaxHeight() {
+	// Change KDL: return max height of content rectangle
+	return this.maxHeight;
+	/*
         return this.maxHeight - getPaddingTop() - getPaddingBottom() -
                getBorderTopWidth() - getBorderBottomWidth();
+	*/
     }
 
     public Page getPage() {
@@ -241,6 +277,7 @@ abstract public class Area extends Box {
         this.absoluteHeight += amount;
     }
 
+    // Remove allocation height of child
     public void removeChild(Area area) {
         this.currentHeight -= area.getHeight();
         this.absoluteHeight -= area.getHeight();
@@ -269,6 +306,12 @@ abstract public class Area extends Box {
       this.bp = bp;
     }
 
+    /**
+     * Return space remaining in the vertical direction (height).
+     * This returns maximum available space - current content height
+     * Note: content height should be based on allocation height of content!
+     * @return space remaining in base units (millipoints)
+     */
     public int spaceLeft() {
         return maxHeight - currentHeight;
     }
@@ -276,15 +319,25 @@ abstract public class Area extends Box {
     public void start() {
     }
 
+   
+    /**
+     * Set the content height to the passed value if that value is
+     * larger than current content height. If the new content height
+     * is greater than the maximum available height, set the content height
+     * to the max. available (!!!)
+     *
+     * @param height allocation height of content in millipoints
+     */
     public void setHeight(int height) {
-        if (height > currentHeight)
+	int prevHeight = currentHeight;
+        if (height > currentHeight) {
             currentHeight = height;
-        absoluteHeight = height;
+	}
 
-        if (currentHeight > getMaxHeight())
+        if (currentHeight > getMaxHeight()) {
             currentHeight = getMaxHeight();
-        absoluteHeight = getMaxHeight();
-
+	}
+	absoluteHeight += (currentHeight - prevHeight);
     }
 
     public void setMaxHeight(int height) {
@@ -312,6 +365,8 @@ abstract public class Area extends Box {
 		return this.foCreator;
 	}	
 
+  // Function not currently used! (KLease, 16mar01)
+
 	public AreaContainer getNearestAncestorAreaContainer()
 	{
 		Area area = this.getParent();
@@ -325,4 +380,5 @@ abstract public class Area extends Box {
   public BorderAndPadding getBorderAndPadding() {
     return bp;
   }
+
 }
