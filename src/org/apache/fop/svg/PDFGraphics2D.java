@@ -1,25 +1,35 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.svg;
 
-import org.apache.fop.pdf.*;
-import org.apache.fop.layout.*;
-import org.apache.fop.fonts.*;
-import org.apache.fop.render.pdf.*;
-import org.apache.fop.image.*;
+import org.apache.fop.pdf.PDFResourceContext;
+import org.apache.fop.pdf.PDFResources;
+import org.apache.fop.pdf.PDFGState;
+import org.apache.fop.pdf.PDFColorSpace;
+import org.apache.fop.pdf.PDFColor;
+import org.apache.fop.pdf.PDFState;
+import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.pdf.PDFPattern;
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFLink;
+import org.apache.fop.pdf.BitmapImage;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.FontMetric;
+import org.apache.fop.render.pdf.FontSetup;
+import org.apache.fop.image.JpegImage;
 import org.apache.fop.render.pdf.CIDFont;
 import org.apache.fop.render.pdf.fonts.LazyFont;
 import org.apache.fop.render.pdf.FopPDFImage;
-import org.apache.fop.fo.FOUserAgent;
 
-import org.apache.batik.ext.awt.g2d.*;
-import org.apache.batik.ext.awt.image.GraphicsUtil;
-
+import org.apache.batik.ext.awt.g2d.AbstractGraphics2D;
+import org.apache.batik.ext.awt.g2d.GraphicContext;
 import org.apache.batik.ext.awt.MultipleGradientPaint;
 import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.batik.ext.awt.LinearGradientPaint;
@@ -28,15 +38,35 @@ import org.apache.batik.gvt.GraphicsNode;
 
 import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.GraphicsConfiguration;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.image.*;
-import java.awt.font.*;
-import java.awt.geom.*;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.Paint;
+import java.awt.Rectangle;
+import java.awt.Dimension;
+import java.awt.BasicStroke;
+import java.awt.AlphaComposite;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
+import java.awt.image.ImageObserver;
+import java.awt.image.RenderedImage;
+import java.awt.image.Raster;
+import java.awt.image.renderable.RenderableImage;
+import java.awt.FontMetrics;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.color.ColorSpace;
-import java.awt.image.renderable.*;
-import java.io.*;
+import java.io.StringWriter;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import java.util.Map;
 import java.util.ArrayList;
@@ -52,19 +82,23 @@ import java.util.HashMap;
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
 public class PDFGraphics2D extends AbstractGraphics2D {
-    boolean standalone = false;
+    protected boolean standalone = false;
 
     /**
      * the PDF Document being created
      */
     protected PDFDocument pdfDoc;
+
+    /**
+     * The current resource context for adding fonts, patterns etc.
+     */
     protected PDFResourceContext resourceContext;
     protected String pageRef;
 
     /**
      * the current state of the pdf graphics
      */
-    PDFState graphicsState;
+    protected PDFState graphicsState;
     int baseLevel = 0;
 
     protected FontInfo fontInfo;
@@ -165,7 +199,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     public void restorePDFState() {
-        for(int count = graphicsState.getStackLevel(); count > baseLevel; count--) {
+        for (int count = graphicsState.getStackLevel(); count > baseLevel; count--) {
             currentStream.write("Q\n");
         }
         graphicsState.restoreLevel(baseLevel);
@@ -180,9 +214,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         Shape b = at.createTransformedShape(bounds);
         b = trans.createTransformedShape(b);
         Rectangle rect = b.getBounds();
-        rect.height = -rect.height;
 
-        if(linkType != PDFLink.EXTERNAL) {
+        if (linkType != PDFLink.EXTERNAL) {
             String pdfdest = "/FitR " + dest;
             resourceContext.addAnnotation(pdfDoc.makeLink(rect, pageRef, pdfdest));
         } else {
@@ -201,7 +234,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write("q\n");
         Shape imclip = getClip();
         writeClip(imclip);
-        if(!at.isIdentity()) {
+        if (!at.isIdentity()) {
             currentStream.write("" + matrix[0] + " " + matrix[1] + " "
                                 + matrix[2] + " " + matrix[3] + " "
                                 + matrix[4] + " " + matrix[5] + " cm\n");
@@ -213,10 +246,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                           + (y + height) + " cm\n" + "/Im"
                           + xObjectNum + " Do\nQ\n");
 
-        if(outputStream != null) {
+        if (outputStream != null) {
             try {
                 this.pdfDoc.output(outputStream);
-            } catch(IOException ioe) {
+            } catch (IOException ioe) {
                 // ignore exception, will be thrown again later
             }
         }
@@ -306,7 +339,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                         mask[maskpos++] = (byte)(alpha & 0xFF);
                         if (alpha != 255) {
                             hasMask = true;
-                            if(alpha != 0) binaryMask = false;
+                            if (alpha != 0) binaryMask = false;
 
                             // System.out.println("Alpha: " + alpha);
                             // Composite with opaque white...
@@ -334,17 +367,17 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 break;
             }
             String ref = null;
-            if(hasMask) {
+            if (hasMask) {
                 // if the mask is binary then we could convert it into a bitmask
                 BitmapImage fopimg = new BitmapImage("TempImageMask:" + img.toString(), buf.getWidth(), buf.getHeight(), mask, null);
                 fopimg.setColorSpace(new PDFColorSpace(PDFColorSpace.DEVICE_GRAY));
                 PDFXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
                 ref = xobj.referencePDF();
 
-                if(outputStream != null) {
+                if (outputStream != null) {
                     try {
                         this.pdfDoc.output(outputStream);
-                    } catch(IOException ioe) {
+                    } catch (IOException ioe) {
                         // ignore exception, will be thrown again later
                     }
                 }
@@ -357,10 +390,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             imageInfo = pdfDoc.addImage(resourceContext, fopimg);
             int xObjectNum = imageInfo.getXNumber();
 
-            if(outputStream != null) {
+            if (outputStream != null) {
                 try {
                     this.pdfDoc.output(outputStream);
-                } catch(IOException ioe) {
+                } catch (IOException ioe) {
                     // ignore exception, will be thrown again later
                 }
             }
@@ -376,7 +409,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write("q\n");
         Shape imclip = getClip();
         writeClip(imclip);
-        if(!at.isIdentity()) {
+        if (!at.isIdentity()) {
             currentStream.write("" + matrix[0] + " " + matrix[1] + " "
                                 + matrix[2] + " " + matrix[3] + " "
                                 + matrix[4] + " " + matrix[5] + " cm\n");
@@ -486,7 +519,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         // System.out.println("draw(Shape)");
         Color c;
         c = getColor();
-        if(c.getAlpha() == 0) {
+        if (c.getAlpha() == 0) {
             return;
         }
 
@@ -499,13 +532,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         boolean newTransform = graphicsState.checkTransform(trans)
                                && !trans.isIdentity();
 
-        if(newClip || newTransform) { 
+        if (newClip || newTransform) { 
             currentStream.write("q\n");
             graphicsState.push();
-            if(newClip) {
+            if (newClip) {
                 writeClip(imclip);
             }
-            if(newTransform) {
+            if (newTransform) {
                 currentStream.write(PDFNumber.doubleOut(tranvals[0], 5) + " "
                             + PDFNumber.doubleOut(tranvals[1], 5) + " "
                             + PDFNumber.doubleOut(tranvals[2], 5) + " "
@@ -515,7 +548,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             }
         }
 
-        if(c.getAlpha() != 255) {
+        if (c.getAlpha() != 255) {
             HashMap vals = new HashMap();
             vals.put(PDFGState.CA, new Float(c.getAlpha() / 255f));
             PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
@@ -565,7 +598,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             iter.next();
         }
         doDrawing(false, true, false);
-        if(newClip || newTransform) {
+        if (newClip || newTransform) {
             currentStream.write("Q\n");
             graphicsState.pop();
         }
@@ -581,7 +614,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void clip(Shape cl) {
         super.clip(cl);
         Shape newClip = getClip();
-        if(newClip == null || lastClip == null || !(new Area(newClip).equals(new Area(lastClip)))) {
+        if (newClip == null || lastClip == null || !(new Area(newClip).equals(new Area(lastClip)))) {
         graphicsState.setClip(newClip);
         writeClip(newClip);
         }
@@ -592,14 +625,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void setClip(Shape cl) {
         super.setClip(cl);
         Shape newClip = getClip();
-        if(newClip == null || lastClip == null || !(new Area(newClip).equals(new Area(lastClip)))) {
-        for(int count = graphicsState.getStackLevel(); count > baseLevel; count--) {
+        if (newClip == null || lastClip == null || !(new Area(newClip).equals(new Area(lastClip)))) {
+        for (int count = graphicsState.getStackLevel(); count > baseLevel; count--) {
             currentStream.write("Q\n");
         }
         graphicsState.restoreLevel(baseLevel);
         currentStream.write("q\n");
         graphicsState.push();
-        if(newClip != null) {
+        if (newClip != null) {
             graphicsState.setClip(newClip);
         }
         writeClip(newClip);
@@ -724,12 +757,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
             ArrayList someColors = new ArrayList();
 
-            for(int count = 0; count < cols.length; count++) {
+            for (int count = 0; count < cols.length; count++) {
                 Color c1 = cols[count];
                 PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
                                                c1.getBlue());
                 someColors.add(color1);
-                if(count > 0 && count < cols.length - 1) {
+                if (count > 0 && count < cols.length - 1) {
                     theBounds.add(new Double(fractions[count]));
                 }
             }
@@ -751,7 +784,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
             // find largest scaling for the radius
             double scale = gradt.getScaleX();
-            if(gradt.getScaleY() > scale) {
+            if (gradt.getScaleY() > scale) {
                 scale = gradt.getScaleY();
             }
             ar = ar * scale;
@@ -770,13 +803,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
             Color[] cols = rgp.getColors();
             ArrayList someColors = new ArrayList();
-            for(int count = 0; count < cols.length; count++) {
+            for (int count = 0; count < cols.length; count++) {
                 someColors.add(new PDFColor(cols[count].getRed(), cols[count].getGreen(), cols[count].getBlue()));
             }
 
             float[] fractions = rgp.getFractions();
             ArrayList theBounds = new ArrayList();
-            for(int count = 1; count < fractions.length - 1; count++) {
+            for (int count = 1; count < fractions.length - 1; count++) {
                 float offset = fractions[count];
                 theBounds.add(new Double(offset));
             }
@@ -843,10 +876,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
             currentStream.write(myPat.getColorSpaceOut(fill));
 
-            if(outputStream != null) {
+            if (outputStream != null) {
                 try {
                     this.pdfDoc.output(outputStream);
-                } catch(IOException ioe) {
+                } catch (IOException ioe) {
                     // ignore exception, will be thrown again later
                 } 
             }
@@ -862,7 +895,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             if (da != null) {
                 currentStream.write("[");
                 for (int count = 0; count < da.length; count++) {
-                    if(((int)da[count]) == 0) {
+                    if (((int)da[count]) == 0) {
                         // the dasharray units in pdf are (whole) numbers
                         // in user space units, cannot be 0
                         currentStream.write("1");
@@ -995,7 +1028,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         // System.out.println("drawString(String)");
 
         FontState fontState;
-        if(ovFontState == null) {
+        if (ovFontState == null) {
             Font gFont = getFont();
             String n = gFont.getFamily();
             if (n.equals("sanserif")) {
@@ -1033,7 +1066,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         applyColor(c, true);
         int salpha = c.getAlpha();
 
-        if(salpha != 255) {
+        if (salpha != 255) {
             HashMap vals = new HashMap();
             vals.put(PDFGState.ca, new Float(salpha / 255f));
             PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
@@ -1056,7 +1089,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         org.apache.fop.render.pdf.Font f =
             (org.apache.fop.render.pdf.Font)fontInfo.getFonts().get(name);
         if (f instanceof LazyFont){
-            if(((LazyFont) f).getRealFont() instanceof CIDFont){
+            if (((LazyFont) f).getRealFont() instanceof CIDFont){
                 useMultiByte = true;
             }
         } else if (f instanceof CIDFont){
@@ -1198,7 +1231,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         boolean fill = true;
         boolean stroke = false;
-        if(true) {
+        if (true) {
             Stroke currentStroke = getStroke();
             stroke = true;
             applyStroke(currentStroke);
@@ -1210,9 +1243,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         // set text rendering mode:
         // 0 - fill, 1 - stroke, 2 - fill then stroke
         int textr = 0;
-        if(fill && stroke) {
+        if (fill && stroke) {
             textr = 2;
-        } else if(stroke) {
+        } else if (stroke) {
             textr = 1;
         }
         currentStream.write(textr + " Tr\n");
@@ -1267,23 +1300,23 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         // System.err.println("fill");
         Color c;
         c = getBackground();
-        if(c.getAlpha() == 0) {
+        if (c.getAlpha() == 0) {
             c = getColor();
-            if(c.getAlpha() == 0) {
+            if (c.getAlpha() == 0) {
                 return;
             }
         }
         Shape imclip = getClip();
         boolean newState = graphicsState.checkClip(imclip);
 
-        if(newState) {
+        if (newState) {
             currentStream.write("q\n");
             graphicsState.push();
             writeClip(imclip);
             graphicsState.setClip(imclip);
         }
 
-        if(c.getAlpha() != 255) {
+        if (c.getAlpha() != 255) {
             HashMap vals = new HashMap();
             vals.put(PDFGState.ca, new Float(c.getAlpha() / 255f));
             PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
@@ -1292,16 +1325,16 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         c = getColor();
-        if(graphicsState.setColor(c)) {
+        if (graphicsState.setColor(c)) {
             applyColor(c, true);
         }
         c = getBackground();
-        if(graphicsState.setBackColor(c)) {
+        if (graphicsState.setBackColor(c)) {
             applyColor(c, false);
         }
 
         Paint paint = getPaint();
-        if(graphicsState.setPaint(paint)) {
+        if (graphicsState.setPaint(paint)) {
             applyPaint(paint, true);
         }
 
@@ -1342,7 +1375,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
         doDrawing(true, false,
                   iter.getWindingRule() == PathIterator.WIND_EVEN_ODD);
-        if(newState) {
+        if (newState) {
             currentStream.write("Q\n");
             graphicsState.pop();
         }
@@ -1351,18 +1384,20 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     protected void doDrawing(boolean fill, boolean stroke, boolean nonzero) {
         if (fill) {
             if (stroke) {
-                if (nonzero)
+                if (nonzero) {
                     currentStream.write("B*\n");
-                else
+                } else {
                     currentStream.write("B\n");
+                }
             } else {
-                if (nonzero)
+                if (nonzero) {
                     currentStream.write("f*\n");
-                else
+                } else {
                     currentStream.write("f\n");
+                }
             }
         } else {
-            // if(stroke)
+            // if (stroke)
             currentStream.write("S\n");
         }
     }

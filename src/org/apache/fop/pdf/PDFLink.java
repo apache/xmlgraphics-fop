@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -14,21 +14,28 @@ import java.awt.geom.Rectangle2D;
  * class representing an /Annot object of /Subtype /Link
  */
 public class PDFLink extends PDFObject {
+    /**
+     * Used to represent an external link.
+     */
     public static final int EXTERNAL = 0;
+
+    /**
+     * Used to represent an internal link.
+     */
     public static final int INTERNAL = 1;
 
-    float ulx;
-    float uly;
-    float brx;
-    float bry;
-    String color;
-    PDFAction action;
+    private float ulx;
+    private float uly;
+    private float brx;
+    private float bry;
+    private String color;
+    private PDFAction action;
 
     /**
      * create objects associated with a link annotation (GoToR)
      *
      * @param number the object's number
-     * @param producer the application producing the PDF
+     * @param r the rectangle of the link hotspot in absolute coordinates
      */
     public PDFLink(int number, Rectangle2D r) {
         /* generic creation of PDF object */
@@ -37,11 +44,15 @@ public class PDFLink extends PDFObject {
         this.ulx = (float)r.getX();
         this.uly = (float)r.getY();
         this.brx = (float)(r.getX() + r.getWidth());
-        this.bry = (float)(r.getY() - r.getHeight());
+        this.bry = (float)(r.getY() + r.getHeight());
         this.color = "0 0 0";    // just for now
 
     }
 
+    /**
+     * Set the pdf action for this link.
+     * @param action the pdf action that is activated for this link
+     */
     public void setAction(PDFAction action) {
         this.action = action;
     }
