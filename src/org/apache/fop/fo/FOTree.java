@@ -60,6 +60,8 @@ public class FOTree extends Tree implements Runnable {
     private boolean errorDump;
 
     /**
+     * The <tt>PropertyParser</tt> which will be used by the FO tree
+     * builder.
      */
     protected PropertyParser exprParser;
 
@@ -69,6 +71,7 @@ public class FOTree extends Tree implements Runnable {
     Object[] args = new Object[2];
 
     /**
+     * The array of stacks for resolving properties during FO tree building.
      * An Array of LinkedList[].  Each LinkedList is a stack containing the
      * most recently specified value of a particular property.  The first
      * element of each stack will contain the initial value.
@@ -84,14 +87,15 @@ public class FOTree extends Tree implements Runnable {
     /**
      * An FONode identifier.  This is available to be incremented for
      * each FONode created.  The only requirement is that active FONodes
-     * have a unique identifier.  An accessor function is defined, but the
-     * responsibility for calling it rests with FONode.
+     * have a unique identifier.  An accessor function is defined.
      */
     private int nodeID = 0;
 
     /**
      * Get the next node identifier.  There is no need to synchronize this
      * as FONodes are created within a single thread.
+     * N.B. If more than one thread gains the ability to create new nodes,
+     * this method will have to be synchronized.
      * @return the next node identifier
      */
     public int nextNodeID() {
@@ -108,7 +112,7 @@ public class FOTree extends Tree implements Runnable {
         super();
         errorDump = Configuration.getBooleanValue("debugMode").booleanValue();
         this.xmlevents = xmlevents;
-        exprParser = new PropertyParser();
+        exprParser = new PropertyParser(this);
 
         // Initialise the propertyStacks
         propertyStacks = new LinkedList[PropNames.LAST_PROPERTY_INDEX + 1];
@@ -155,6 +159,7 @@ public class FOTree extends Tree implements Runnable {
     }
 
     /**
+     * Get the font size from the <i>font-size</i> property stack.
      * @return a <tt>Numeric</tt> containing the current font size
      * @exception PropertyException if current font size is not defined,
      * or is not expressed as a <tt>Numeric</tt>.
@@ -173,7 +178,7 @@ public class FOTree extends Tree implements Runnable {
     }
 
     /**
-     * Set the initial value of a particular property
+     * Set the initial value of a particular property.
      * @param value <tt>PropertyValue</tt> to set
      * @exception <tt>PropertyException</tt>
      */
@@ -186,6 +191,8 @@ public class FOTree extends Tree implements Runnable {
     }
 
     /**
+     * Get the current <i>TextDecorations</i> property from the property
+     * stacks.
      * @return a <tt>TextDecorations</tt> object containing the current
      * text decorations
      * @exception PropertyException if current text decorations are not
@@ -206,7 +213,9 @@ public class FOTree extends Tree implements Runnable {
     }
 
     /**
-     * @param index: <tt>int</tt> property index.
+     * Get the <tt>PropertyTriplet</tt> at the top of the stack for a
+     * given property.
+     * @param index - the property index.
      * @return a <tt>PropertyTriplet</tt> containing the latest property
      * value elements for the indexed property.
      */
@@ -217,7 +226,9 @@ public class FOTree extends Tree implements Runnable {
     }
 
     /**
-     * @param index: <tt>int</tt> property index.
+     * Pop the <tt>PropertyTriplet</tt> at the top of the stack for a
+     * given property.
+     * @param index - the property index.
      * @return a <tt>PropertyTriplet</tt> containing the property
      * value elements at the top of the stack for the indexed property.
      */
@@ -228,7 +239,9 @@ public class FOTree extends Tree implements Runnable {
     }
 
     /**
-     * @param index: <tt>int</tt> property index.
+     * Get the initial value <tt>PropertyTriplet</tt> from the bottom of the
+     * stack for a given property.
+     * @param index - the property index.
      * @return a <tt>PropertyTriplet</tt> containing the property
      * value elements at the bottom of the stack for the indexed property.
      */
@@ -239,7 +252,9 @@ public class FOTree extends Tree implements Runnable {
     }
 
     /**
-     * @param index: <tt>int</tt> property index.
+     * Get the initial specified value from the bottom of the stack for a
+     * given property.  This may be a null value.
+     * @param index - the property index.
      * @return a <tt>PropertyValue</tt> containing the <em>specified</em>
      * property value at the bottom of the stack for the indexed property.
      */
@@ -251,6 +266,8 @@ public class FOTree extends Tree implements Runnable {
     }
 
     /**
+     * Push a <tt>PropertyValue</tt> onto the top of stack for a given
+     * property.
      * @param index: <tt>int</tt> property index.
      * @param value a <tt>PropertyTriplet</tt> containing the property
      * value elements for the indexed property.
@@ -263,7 +280,8 @@ public class FOTree extends Tree implements Runnable {
     }
 
     /**
-     * @param index: <tt>int</tt> property index.
+     * Get the computed value from the top of stack for a given property.
+     * @param index - the property index.
      * @return a <tt>PropertyValue</tt> containing the latest computed
      * property value for the indexed property.
      */
@@ -274,17 +292,37 @@ public class FOTree extends Tree implements Runnable {
     }
 
     /**
-     * @param index: <tt>int</tt> property index.
-     * @return a <tt>PropertyValue</tt> containing the inherited
-     * property value for the indexed property; i.e. computed if available,
-     * else specified.
+     * Get the inherited value from the top of stack for a given property.
+     * This is the <tt>PropertyTriplet</tt> containing the value.  The
+     * calling method must decide what to do when there is no computed
+     * value in the triplet.  Note that in the case of <tt>line-height</tt>
+     * and possibly others, where the value has been specified as a
+     * &lt;number&gt;, it is the specified value that is inherited.
+     * @param index - the property index.
+     * @return a <tt>PropertyTriplet</tt> containing the inherited
+     * property value for the indexed property.
      */
-    public PropertyValue getCurrentInherited(int index)
+    public PropertyTriplet getInheritedTriplet(int index)
             throws PropertyException
     {
-        return getCurrentPropertyTriplet(index).getComputedOrSpecified();
+        return getCurrentPropertyTriplet(index);
     }
 
+    /**
+    public PropertyValue fromNearestSpecified(int property)
+        throws PropertyException
+    {
+        
+    }
+     */
+
+    /**
+     * Parser thread notifies itself to FO tree builder by this call.  The
+     * purpose of this notification is to allow the FO tree builder thread
+     * to attempt to interrupt the parser thread when the builder
+     * terminates.
+     * @param parserThread - the <tt>Thread</tt> object of the parser thread.
+     */
     public void setParserThread(Thread parserThread) {
         this.parserThread = parserThread;
     }
