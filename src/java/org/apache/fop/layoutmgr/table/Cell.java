@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;
 
 import java.util.ArrayList;
@@ -218,6 +219,7 @@ public class Cell extends BlockStackingLayoutManager {
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
+            curBlockArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             curBlockArea.setPositioning(Block.ABSOLUTE);
             // set position
             curBlockArea.setXOffset(xoffset);
