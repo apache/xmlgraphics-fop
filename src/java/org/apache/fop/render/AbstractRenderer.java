@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 import org.w3c.dom.Document;
 
 // FOP
-import org.apache.fop.area.CoordTransformer;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.apps.Fop;
@@ -100,12 +99,6 @@ public abstract class AbstractRenderer
      */
     public void preparePage(PageViewport page) { }
 
-    /**
-     * (todo) Description of the Method
-     *
-     * @param ctm  The coordinate transformation matrix to use
-     */
-    protected void startVParea(CoordTransformer ctm) { }
 
     /**
      * Handle the traits for a region
