@@ -475,7 +475,8 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                     Region.BODY_CODE);
         curBody = (BodyRegion) rv.getRegion();
         flowBPD = (int) rv.getViewArea().getHeight() -
-            rv.getMarginBeforeWidth() - rv.getMarginAfterWidth();
+            rv.getBorderAndPaddingWidthBefore() - rv.getBorderAndPaddingWidthAfter();
+
         return curPage;
     }
 
@@ -714,7 +715,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         
         RegionViewport rv = curPage.getPage().getRegionViewport(Region.BODY_CODE);
         int ipdWidth = (int) rv.getViewArea().getWidth() -
-            rv.getMarginStartWidth() - rv.getMarginEndWidth();
+            rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
 
         curSpan.setIPD(ipdWidth);
         //curSpan.setPosition(BPD, newpos);

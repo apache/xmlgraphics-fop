@@ -112,12 +112,11 @@ public class RegionViewport extends Area implements Cloneable {
     }
 
     /**
-     * Return the margin-before offset for printing text
-     *  (sum of region border and padding)
+     * Return the sum of region border- and padding-before
      *
-     * @return margin-before offset, in millipoints
+     * @return width in millipoints
      */
-    public int getMarginBeforeWidth() {
+    public int getBorderAndPaddingWidthBefore() {
         int margin = 0;
         BorderProps bps = (BorderProps) getTrait(Trait.BORDER_BEFORE);
         if (bps != null) {
@@ -133,12 +132,11 @@ public class RegionViewport extends Area implements Cloneable {
     }
     
     /**
-     * Return the margin-after offset for printing text
-     *  (sum of region border and padding)
+     * Return the sum of region border- and padding-after
      *
-     * @return margin-after offset, in millipoints
+     * @return width in millipoints
      */
-    public int getMarginAfterWidth() {
+    public int getBorderAndPaddingWidthAfter() {
         int margin = 0;
         
         BorderProps bps = (BorderProps) getTrait(Trait.BORDER_AFTER);
@@ -155,12 +153,11 @@ public class RegionViewport extends Area implements Cloneable {
     }
 
     /**
-     * Return the margin-start offset for printing text
-     *  (sum of region border and padding)
+     * Return the sum of region border- and padding-start
      *
-     * @return margin-start offset, in millipoints
+     * @return width in millipoints
      */
-    public int getMarginStartWidth() {
+    public int getBorderAndPaddingWidthStart() {
         int margin = 0;
         BorderProps bps = (BorderProps) getTrait(Trait.BORDER_START);
         if (bps != null) {
@@ -176,12 +173,11 @@ public class RegionViewport extends Area implements Cloneable {
     }
 
     /**
-     * Return the margin-end offset for printing text
-     *  (sum of region border and padding)
+     * Return the sum of region border- and padding-end
      *
-     * @return margin-end offset, in millipoints
+     * @return width in millipoints
      */
-    public int getMarginEndWidth() {
+    public int getBorderAndPaddingWidthEnd() {
         int margin = 0;
         BorderProps bps = (BorderProps) getTrait(Trait.BORDER_END);
         if (bps != null) {
