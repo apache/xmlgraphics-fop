@@ -104,6 +104,21 @@ public class NCName extends StringType {
     }
 
     /**
+     * Return the NCName value from a PropertyValue. 
+     * @param pv
+     * @return the NCName string value
+     * @exception PropertyException if the <code>PropertyValue</code> is not
+     * an <code>NCName</code>
+     */
+    public static String getNCName(PropertyValue pv)
+    throws PropertyException {
+        if (pv.getType() == PropertyValue.NCNAME) {
+            return ((NCName)pv).getNCName();
+        }
+        throw new PropertyException("PropertyValue not an NCNAME type");
+    }
+
+    /**
      * validate the <i>NCName</i> against the associated property.
      */
     public void validate() throws PropertyException {
