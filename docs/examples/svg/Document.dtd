@@ -30,6 +30,9 @@
 <!ELEMENT image					(#PCDATA)>
 <!ELEMENT a						(#PCDATA)>
 <!ELEMENT b						(#PCDATA)>
+<!ELEMENT ol					(li*)>
+<!ELEMENT ul					(li*)>
+<!ELEMENT li					(#PCDATA)>
 <!ELEMENT blockquote			(#PCDATA)>
 <!ELEMENT code					(#PCDATA)>
 <!ELEMENT Version				(#PCDATA)>
