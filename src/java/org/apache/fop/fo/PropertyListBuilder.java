@@ -160,50 +160,58 @@ public class PropertyListBuilder {
 
         for (int i = 0; i < attributes.getLength(); i++) {
             String attributeName = attributes.getQName(i);
-            /* Handle "compound" properties, ex. space-before.minimum */
-            String basePropName = findBasePropertyName(attributeName);
-            String subPropName = findSubPropertyName(attributeName);
-            Property propVal = null;
+            convertAttributeToProperty(attributes, attributeName, validProperties, p, parentFO, i);
+        }
+        return p;
+    }
 
-            Property.Maker propertyMaker = findMaker(validProperties, basePropName);
+    private void convertAttributeToProperty(Attributes attributes,
+                                            String attributeName,
+                                            HashMap validProperties,
+                                            PropertyList p,
+                                            FObj parentFO,
+                                            int i) {
+        /* Handle "compound" properties, ex. space-before.minimum */
+        String basePropName = findBasePropertyName(attributeName);
+        String subPropName = findSubPropertyName(attributeName);
+        Property propVal = null;
 
-            if (propertyMaker != null) {
-                try {
-                    if (subPropName != null) {
-                        Property baseProp = p.getExplicitBaseProp(basePropName);
-                        if (baseProp == null) {
-                            // See if it is specified later in this list
-                            String baseValue = attributes.getValue(basePropName);
-                            if (baseValue != null) {
-                                baseProp = propertyMaker.make(p, baseValue,
-                                                              parentFO);
-                            }
-                            // else baseProp = propertyMaker.makeCompound(p, parentFO);
+        Property.Maker propertyMaker = findMaker(validProperties, basePropName);
+
+        if (propertyMaker != null) {
+            try {
+                if (subPropName != null) {
+                    Property baseProp = p.getExplicitBaseProp(basePropName);
+                    if (baseProp == null) {
+                        // See if it is specified later in this list
+                        String baseValue = attributes.getValue(basePropName);
+                        if (baseValue != null) {
+                            baseProp = propertyMaker.make(p, baseValue,
+                                                          parentFO);
                         }
-                        propVal = propertyMaker.make(baseProp, subPropName,
-                                                     p,
-                                                     attributes.getValue(i),
-                                                     parentFO);
-                    } else {
-                        propVal = propertyMaker.make(p,
-                                                     attributes.getValue(i),
-                                                     parentFO);
+                        // else baseProp = propertyMaker.makeCompound(p, parentFO);
                     }
-                    if (propVal != null) {
-                        p.put(basePropName, propVal);
-                    }
-                } catch (FOPException e) { /* Do other props. */
-                    //log.error(e.getMessage());
+                    propVal = propertyMaker.make(baseProp, subPropName,
+                                                 p,
+                                                 attributes.getValue(i),
+                                                 parentFO);
+                } else {
+                    propVal = propertyMaker.make(p,
+                                                 attributes.getValue(i),
+                                                 parentFO);
                 }
-            } else {
-                if (!attributeName.startsWith("xmlns")) {
-                    //log.error("property '"
-                    //                       + attributeName + "' ignored");
+                if (propVal != null) {
+                    p.put(basePropName, propVal);
                 }
+            } catch (FOPException e) { /* Do other props. */
+                //log.error(e.getMessage());
+            }
+        } else {
+            if (!attributeName.startsWith("xmlns")) {
+                //log.error("property '"
+                //                       + attributeName + "' ignored");
             }
         }
-
-        return p;
     }
 
     /**
