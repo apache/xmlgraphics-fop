@@ -62,7 +62,7 @@ PCL to the UNIX printer queue.
 </section>
 <section id="pdf">
   <title>PDF</title>
-    <p>
+  <p>
 PDF is the best supported output format. It is also the most accurate
 with text and layout. This creates a PDF document that is streamed out
 as each page is rendered. This means that the internal page index
@@ -70,8 +70,10 @@ information is stored near the end of the document.
 The PDF version supported is 1.3 which is currently the most popular
 version for Acrobat Reader (4.0), PDF versions are forwards/backwards
 compatible.
-    </p>
-    <anchor id="pdf-fonts"/>
+  </p>
+  <p>Note that FOP does not currently support "tagged pdf".</p>
+  <section id="pdf-fonts">
+    <title>Fonts</title>
     <p>
       PDF has a set of fonts that are always available to all PDF viewers,
       to quote from the PDF Specification:
@@ -83,7 +85,79 @@ Helvetica, and Times), as well as two symbolic fonts (Symbol and ITC Zapf
 Dingbats). These fonts, or suitable substitute fonts with the same metrics, are
 guaranteed to be available in all PDF viewer applications."</em>
     </p>
-    <p>Note that FOP does not currently support "tagged pdf".</p>
+  </section>
+  <section id="pdf-postprocess">
+    <title>Post-processing</title>
+    <p>FOP does not currently support several desirable PDF features: document properties (title, author, etc.), and watermarks. One workaround is to use Adobe Acrobat (the full version, not the Reader) to process the file manually or with scripting that it supports.</p>
+    <p>Another popular post-processing tool is <link href="http://www.lowagie.com/iText">iText</link>, which has tools for adding security features, document properties, watermarks, and many other features to PDF files.
+    </p>
+    <warning>Caveat: iText swallows PDF bookmarks.</warning>
+    <p>Here is some sample code that uses iText to encrypt a FOP-generated PDF. (Note that FOP now supports <link href="pdfencryption.html">PDF encryption</link>. However the principles for using iText for other PDF features are similar.)</p>
+    <source><![CDATA[public static void main(String args[]) {
+  try {
+    ByteArrayOutputStream fopout=new ByteArrayOutputStream();
+    FileOutputStream outfile=new FileOutputStream(args[2]);
+    Driver driver =new Driver();
+    driver.setOutputStream(fopout);
+    driver.setRenderer(Driver.RENDER_PDF);
+    Transformer transformer=TransformerFactory
+      .newInstance().newTransformer(new StreamSource(new File(args[1])));
+    transformer.transform(new StreamSource(new File(args[0])),
+       new SAXResult(driver.getContentHandler()));
+    PdfReader reader = new PdfReader(fopout.toByteArray());
+    int n = reader.getNumberOfPages();
+    Document document = new Document(reader.getPageSizeWithRotation(1));
+    PdfWriter writer = PdfWriter.getInstance(document, outfile);
+    writer.setEncryption(PdfWriter.STRENGTH40BITS, "pdf", null,
+      PdfWriter.AllowCopy);
+    document.open();
+    PdfContentByte cb = writer.getDirectContent();
+    PdfImportedPage page;
+    int rotation;
+    int i = 0;
+    while (i < n) {
+      i++;
+      document.setPageSize(reader.getPageSizeWithRotation(i));
+      document.newPage();
+      page = writer.getImportedPage(reader, i);
+      rotation = reader.getPageRotation(i);
+      if (rotation == 90 || rotation == 270) {
+        cb.addTemplate(page, 0, -1f, 1f, 0, 0,
+         reader.getPageSizeWithRotation(i).height());  }
+      else {
+        cb.addTemplate(page, 1f, 0, 0, 1f, 0, 0);
+      }
+      System.out.println("Processed page " + i);
+    }
+    document.close();
+  }
+  catch( Exception e) {
+    e.printStackTrace();
+  }
+}]]></source>
+    <p>Check the iText tutorial and documentation for setting access flags, password, encryption strength and other parameters.
+    </p>
+  </section>
+  <section id="pdf-watermark">
+    <title>Watermarks</title>
+    <p>
+      In addition to the <link href="#pdf-postprocess">PDF Post-processing</link> options, consider the following workarounds:
+    </p>
+    <ul>
+      <li>
+        Use a background image for the body region.
+      </li>
+      <li>
+        (submitted by Trevor_Campbell@kaz.com.au) Place an image in a
+        region that overlaps the flowing text. For example, make
+        region-before large enough to contain your image. Then include a
+        block (if necessary, use an absolutely positioned block-container)
+        containing the watermark image in the static-content for the
+        region-before. Note that the image will be drawn on top of the
+        normal content.
+      </li>
+    </ul>
+  </section>
 </section>
 <section id="pcl">
   <title>PCL</title>
