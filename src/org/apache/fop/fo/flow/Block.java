@@ -334,6 +334,7 @@ public class Block extends FObjMixed {
 				this.blockArea = new BlockArea(fs, area.getAllocationWidth(),
 																			 area.spaceLeft(), startIndent, endIndent, textIndent,
 																			 align, alignLast, lineHeight);
+				this.blockArea.setParent(area);	// BasicLink needs it
 				blockArea.setPage(area.getPage());
 				blockArea.setBackgroundColor(backgroundColor);
 				blockArea.setPadding(paddingTop, paddingLeft, paddingBottom,
