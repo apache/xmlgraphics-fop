@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -9,32 +9,27 @@ package org.apache.fop.render.awt;
 
 // FOP
 import org.apache.fop.layout.FontInfo;
-import org.apache.fop.layout.FontDescriptor;
 
 // Java
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.awt.Font;
 import java.awt.Graphics2D;
 
 /**
- * sets up the AWT fonts. It is similar to
+ * Sets up the AWT fonts. It is similar to
  * org.apache.fop.render.pdf.FontSetup.
  * Assigns the font (with metrics) to internal names like "F1" and
- * assigns family-style-weight triplets to the fonts
+ * assigns family-style-weight triplets to the fonts.
  */
 public class FontSetup {
 
 
     /**
-     * sets up the font info object.
+     * Sets up the font info object.
      *
-     * adds metrics for basic fonts and useful family-style-weight
-     * triplets for lookup
+     * Adds metrics for basic fonts and useful family-style-weight
+     * triplets for lookup.
      *
      * @param fontInfo the font info object to set up
-     * @param parent needed, since a live AWT component is needed
-     * to get a valid java.awt.FontMetrics object
+     * @param graphics needed for acces to font metrics
      */
     public static void setup(FontInfo fontInfo, Graphics2D graphics) {
         FontMetricsMapper metric;

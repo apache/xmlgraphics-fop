@@ -1,32 +1,22 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.render.awt;
 
-// FOP
-import org.apache.fop.layout.FontInfo;
-import org.apache.fop.layout.FontDescriptor;
-import org.apache.fop.layout.FontState;
-
 // Java
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.awt.Component;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.FontMetrics;
-import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 
 /**
  * This is a FontMetrics to be used  for AWT  rendering.
- * It  instanciates a font, depening on famil and style
+ * It  instanciates a font, depening on family and style
  * values. The java.awt.FontMetrics for this font is then
  * created to be used for the actual measurement.
  * Since layout is word by word and since it is expected that
@@ -89,13 +79,12 @@ public class AWTFontMetrics {
     /**
      * Temp graphics object needed to get the font metrics
      */
-    Graphics2D graphics;
+    private Graphics2D graphics;
 
     /**
      * Constructs a new Font-metrics.
-     * @param parent  an temp graphics object - this is needed  so
-     * that we can get an instance of
-     * java.awt.FontMetrics
+     * @param graphics a temp graphics object - this is needed  so
+     * that we can get an instance of java.awt.FontMetrics
      */
     public AWTFontMetrics(Graphics2D graphics) {
         this.graphics = graphics;
@@ -104,15 +93,16 @@ public class AWTFontMetrics {
     /**
      * Determines the font ascent of the Font described by this
      * FontMetrics object
-     * @param family font family (jave name) to use
-     * @param style font style (jave def.) to use
+     * @param family font family (java name) to use
+     * @param style font style (java def.) to use
+     * @param size font size
      * @return ascent in milliponts
      */
     public int getAscender(String family, int style, int size) {
         setFont(family, style, size);
         // return (int)(FONT_FACTOR * fmt.getAscent());
 
-        // workaround for sun bug on FontMetric.getAscent()
+        // workaround for sun bug on FontMetrics.getAscent()
         // http://developer.java.sun.com/developer/bugParade/bugs/4399887.html
         int realAscent = fmt.getAscent()
                          - (fmt.getDescent() + fmt.getLeading());
@@ -122,6 +112,10 @@ public class AWTFontMetrics {
 
     /**
      * The size of a capital letter measured from the font's baseline
+     * @param family font family
+     * @param style font style
+     * @param size font size
+     * @return capital height in millipoints
      */
     public int getCapHeight(String family, int style, int size) {
         // currently just gets Ascent value but maybe should use
@@ -134,6 +128,7 @@ public class AWTFontMetrics {
      * FontMetrics object
      * @param family font family (jave name) to use
      * @param style font style (jave def.) to use
+     * @param size font size
      * @return descent in milliponts
      */
     public int getDescender(String family, int style, int size) {
@@ -146,6 +141,7 @@ public class AWTFontMetrics {
      * FontMetrics object
      * @param family font family (jave name) to use
      * @param style font style (jave def.) to use
+     * @param size font size
      * @return font height in milliponts
      */
     public int getXHeight(String family, int style, int size) {
@@ -159,7 +155,8 @@ public class AWTFontMetrics {
      * @param  i the character for which to get the width
      * @param family font family (jave name) to use
      * @param style font style (jave def.) to use
-     * @param size the of the font
+     * @param size font size
+     * @return character width in millipoints
      */
     public int width(int i, String family, int style, int size) {
         int w;
@@ -167,10 +164,11 @@ public class AWTFontMetrics {
         // the output seems to look a little better if the
         // space is rendered larger than given by
         // the FontMetrics object
-        if (i <= 32)
+        if (i <= 32) {
             w = (int)(1.4 * fmt.charWidth(i) * FONT_FACTOR);
-        else
+        } else {
             w = (int)(fmt.charWidth(i) * FONT_FACTOR);
+        }
         return w;
     }
 
@@ -179,6 +177,8 @@ public class AWTFontMetrics {
      * characters
      * @param family font family (jave name) to use
      * @param style font style (jave def.) to use
+     * @param size font size
+     * @return array of character widths in millipoints
      */
     public int[] getWidths(String family, int style, int size) {
         int i;
@@ -199,6 +199,7 @@ public class AWTFontMetrics {
      * whether it is a new one
      * @param family font family (jave name) to use
      * @param style font style (jave def.) to use
+     * @param size font size
      * @return true if the font was changed, false otherwise
      */
     private boolean setFont(String family, int style, int size) {
@@ -212,12 +213,13 @@ public class AWTFontMetrics {
             fmt = graphics.getFontMetrics(f1);
             changed = true;
         } else {
-            if ((this.style != style) ||!this.family.equals(family)
+            if ((this.style != style) || !this.family.equals(family)
                     || this.size != s) {
                 if (family.equals(this.family)) {
                     f1 = f1.deriveFont(style, (float)s);
-                } else
+                } else {
                     f1 = new Font(family, style, s);
+                }
                 fmt = graphics.getFontMetrics(f1);
                 changed = true;
             }
@@ -249,8 +251,6 @@ public class AWTFontMetrics {
      * @return font with the desired characeristics.
      */
     public java.awt.Font getFont(String family, int style, int size) {
-        Font f;
-
         setFont(family, style, size);
         return f1;
         /*

@@ -1,19 +1,20 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.pdf;
 
+import org.apache.fop.fonts.FontType;
+
 /**
- * class representing a Type3 font.
- *
- * <p><b>CAUTION: this is not yet fully implemented!!!!!!!</b>
+ * Class representing a Type3 font.
+ * <p>
+ * <b>CAUTION: this is not yet fully implemented!!!!!!!</b>
  * the /CharProcs is still missing its <code>toPDF()</code> method.
- * </p>
- *
+ * <p>
  * Type3 fonts are specified on page 206 and onwards of the PDF 1.3 spec.
  */
 public class PDFFontType3 extends PDFFontNonBase14 {
@@ -39,21 +40,19 @@ public class PDFFontType3 extends PDFFontNonBase14 {
     protected PDFResources resources;
 
     /**
-     * create the /Font object
+     * Create the /Font object
      *
      * @param number the object's number
      * @param fontname the internal name for the font
-     * @param subtype the font's subtype (PDFFont.TYPE3)
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
-     * @param mapping the Unicode mapping mechanism
      */
-    public PDFFontType3(int number, String fontname, byte subtype,
+    public PDFFontType3(int number, String fontname, 
                         String basefont,
-                        Object encoding /* , PDFToUnicode mapping */) {
+                        Object encoding) {
 
         /* generic creation of PDF object */
-        super(number, fontname, subtype, basefont, encoding /* , mapping */);
+        super(number, fontname, FontType.TYPE3, basefont, encoding /* , mapping */);
 
         this.fontBBox = null;
         this.fontMatrix = null;
@@ -61,26 +60,24 @@ public class PDFFontType3 extends PDFFontNonBase14 {
     }
 
     /**
-     * create the /Font object
+     * Create the /Font object
      *
      * @param number the object's number
      * @param fontname the internal name for the font
-     * @param subtype the font's subtype (PDFFont.TYPE3)
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
-     * @param mapping the Unicode mapping mechanism
      * @param fontBBox the font's bounding box
      * @param fontMatrix the font's transformation matrix
      * @param charProcs the glyphs' definitions
      */
-    public PDFFontType3(int number, String fontname, byte subtype,
+    public PDFFontType3(int number, String fontname, 
                         String basefont,
-                        Object encoding /* , PDFToUnicode mapping */,
+                        Object encoding,
                         PDFRectangle fontBBox, PDFArray fontMatrix,
                         PDFCharProcs charProcs) {
 
         /* generic creation of PDF object */
-        super(number, fontname, subtype, basefont, encoding /* , mapping */);
+        super(number, fontname, FontType.TYPE3, basefont, encoding /* , mapping */);
 
         this.fontBBox = fontBBox;
         this.fontMatrix = fontMatrix;
@@ -88,7 +85,7 @@ public class PDFFontType3 extends PDFFontNonBase14 {
     }
 
     /**
-     * set the font's bounding box
+     * Set the font's bounding box
      *
      * @param bbox bounding box for the font
      */
@@ -97,7 +94,7 @@ public class PDFFontType3 extends PDFFontNonBase14 {
     }
 
     /**
-     * set the font's transformation matrix
+     * Set the font's transformation matrix
      *
      * @param matrix the transformation matrix for the font
      */
@@ -106,7 +103,8 @@ public class PDFFontType3 extends PDFFontNonBase14 {
     }
 
     /**
-     * set the glyphs' definitions.
+     * Set the glyphs' definitions.
+     * <p>
      * The /CharProcs object needs to be registered in the document's resources.
      *
      * @param chars the glyphs' dictionary
@@ -116,24 +114,20 @@ public class PDFFontType3 extends PDFFontNonBase14 {
     }
 
     /**
-     * fill in the specifics for the font's subtype.
-     *
-     * the given buffer already contains the fields common to all font types.
-     *
-     * @param p the buffer to be completed with the type specific fields
+     * @see org.apache.fop.pdf.PDFFont#fillInPDF(StringBuffer)
      */
-    protected void fillInPDF(StringBuffer p) {
+    protected void fillInPDF(StringBuffer target) {
         if (fontBBox != null) {
-            p.append("\n/FontBBox ");
-            p.append(fontBBox.toPDF());
+            target.append("\n/FontBBox ");
+            target.append(fontBBox.toPDF());
         }
         if (fontMatrix != null) {
-            p.append("\n/FontMatrix ");
-            p.append(fontMatrix.toPDF());
+            target.append("\n/FontMatrix ");
+            target.append(fontMatrix.toPDF());
         }
         if (charProcs != null) {
-            p.append("\n/CharProcs ");
-            p.append(charProcs.referencePDF());
+            target.append("\n/CharProcs ");
+            target.append(charProcs.referencePDF());
         }
     }
 

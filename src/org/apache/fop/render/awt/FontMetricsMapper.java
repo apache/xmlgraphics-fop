@@ -1,33 +1,30 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.render.awt;
 
-// FOP
-import org.apache.fop.layout.FontInfo;
-import org.apache.fop.layout.FontDescriptor;
-import org.apache.fop.layout.FontState;
-
 // Java
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.awt.Graphics2D;
-import java.awt.Font;
+import java.util.Map;
+
+// FOP
+import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.fonts.FontType;
 
 
 /**
- * This class implements org.apache.fop.layout.FontMetric and
+ * This class implements org.apache.fop.layout.FontMetrics and
  * is added to the hash table in FontInfo. It  deferes the
  * actual calculation of the metrics to
  * AWTFontMetrics.  It only keeps the java name and
  * style as member varibles
  */
 
-public class FontMetricsMapper implements org.apache.fop.layout.FontMetric {
+public class FontMetricsMapper implements FontMetrics {
 
     /**
      * The first and last non space-character
@@ -57,85 +54,98 @@ public class FontMetricsMapper implements org.apache.fop.layout.FontMetric {
      * Constructs a new Font-metrics.
      * @param family the family name of the font (java value)
      * @param style the java type style value of the font
-     * @param parent  an AWT component - this is needed  so
-     * that we can get an instance of
-     * java.awt.FontMetrics
+     * @param graphics a Graphics2D object - this is needed  so
+     * that we can get an instance of java.awt.FontMetrics
      */
     public FontMetricsMapper(String family, int style, Graphics2D graphics) {
         this.family = family;
         this.style = style;
-        if (metric == null)
+        if (metric == null) {
             metric = new AWTFontMetrics(graphics);
+        }
     }
 
     /**
-     * Determines the font ascent of the Font described by this
-     * FontMetrics object
-     * @return ascent in milliponts
+     * @see org.apache.fop.layout.FontMetrics#getFontName()
+     */
+    public String getFontName() {
+        return family;
+    }
+
+    /**
+     * @see org.apache.fop.layout.FontMetrics#getFontType()
+     */
+    public FontType getFontType() {
+        return FontType.OTHER;
+    }
+    
+    /**
+     * @see org.apache.fop.layout.FontMetrics#getAscender(int)
      */
     public int getAscender(int size) {
         return metric.getAscender(family, style, size);
     }
 
-
     /**
-     * The size of a capital letter measured from the font's baseline
+     * @see org.apache.fop.layout.FontMetrics#getCapHeight(int)
      */
     public int getCapHeight(int size) {
         return metric.getCapHeight(family, style, size);
     }
 
     /**
-     * Determines the font descent of the Font described by this
-     * FontMetrics object
-     * @return descent in milliponts
+     * @see org.apache.fop.layout.FontMetrics#getDescender(int)
      */
     public int getDescender(int size) {
         return metric.getDescender(family, style, size);
     }
 
     /**
-     * Determines the typical font height of this
-     * FontMetrics object
-     * @return font height in milliponts
+     * @see org.apache.fop.layout.FontMetrics#getXHeight(int)
      */
     public int getXHeight(int size) {
         return metric.getXHeight(family, style, size);
     }
 
-
-    public int getFirstChar() {
-        return FIRST_CHAR;
-    }
-
-    public int getLastChar() {
-        return LAST_CHAR;
-    }
-
     /**
-     * return width (in 1/1000ths of point size) of character at
-     * code point i.
+     * @see org.apache.fop.layout.FontMetrics#getWidth(int, int)
      */
-    public int width(int i, int size) {
+    public int getWidth(int i, int size) {
         return metric.width(i, family, style, size);
     }
 
 
     /**
-     * return width (in 1/1000ths of point size) of all character
+     * @see org.apache.fop.layout.FontMetrics#getWidths()
      */
-    public int[] getWidths(int size) {
-        return metric.getWidths(family, style, size);
+    public int[] getWidths() {
+        return metric.getWidths(family, style, AWTFontMetrics.FONT_SIZE);
     }
 
     /**
      * Gets a Font instance  of the Font that this
      * FontMetrics describes in the desired size.
+     * @param size font size
      * @return font with the desired characeristics.
      */
-    public Font getFont(int size) {
+    public java.awt.Font getFont(int size) {
         return metric.getFont(family, style, size);
     }
+
+    /**
+     * @see org.apache.fop.layout.FontMetrics#getKerningInfo()
+     */
+    public Map getKerningInfo() {
+        return java.util.Collections.EMPTY_MAP;
+    }
+
+    /**
+     * @see org.apache.fop.layout.FontMetrics#hasKerningInfo()
+     */
+    public boolean hasKerningInfo() {
+        return false;
+    }
+
 
 }
 
