@@ -27,6 +27,7 @@ import org.apache.fop.datatypes.Bool;
 import org.apache.fop.datatypes.Inherit;
 import org.apache.fop.datatypes.Auto;
 import org.apache.fop.datatypes.None;
+import org.apache.fop.datatypes.Slash;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.StringType;
 import org.apache.fop.datatypes.MimeType;
@@ -69,8 +70,53 @@ public class PropertyParser extends PropertyTokenizer {
 
     /**
      * Parse the property expression described in the instance variables.
-     * <p>
-     * Note: If the property expression String is empty, a StringProperty
+     * 
+     * <p>The <tt>PropertyValue</tt> returned by this function has the
+     * following characteristics:
+     * If the expression resolves to a single element that object is returned
+     * directly in an object which implements <PropertyValue</tt>.
+     *
+     * <p>If the expression cannot be resolved into a single object, the set
+     * to which it resolves is returned in a <tt>PropertyValueList</tt> object
+     * (which itself implements <tt>PropertyValue</tt>).
+     *
+     * <p>The <tt>PropertyValueList</tt> contains objects whose corresponding
+     * elements in the original expression were separated by <em>commas</em>.
+     *
+     * <p>Objects whose corresponding elements in the original expression
+     * were separated by spaces are composed into a sublist contained in
+     * another <tt>PropertyValueList</tt>.  If all of the elements in the
+     * expression were separated by spaces, the returned
+     * <tt>PropertyValueList</tt> will contain one element, a
+     * <tt>PropertyValueList</tt> containing objects representing each of
+     * the space-separated elements in the original expression.
+     *
+     * <p>E.g., if a <b>font-family</b> property is assigned the string
+     * <em>Palatino, New Century Schoolbook, serif</em>, the returned value
+     * will look like this:
+     * <pre>
+     * PropertyValueList(NCName('Palatino')
+     *                   PropertyValueList(NCName('New')
+     *                                     NCName('Century')
+     *                                     NCName('Schoolbook') )
+     *                   NCName('serif') )
+     * </pre>
+     * <p>If the property had been assigned the string
+     * <em>Palatino, "New Century Schoolbook", serif</em>, the returned value
+     * would look like this:
+     * <pre>
+     * PropertyValueList(NCName('Palatino')
+     *                   NCName('New Century Schoolbook')
+     *                   NCName('serif') )
+     * </pre>
+     * <p>If a <b>background-position</b> property is assigned the string
+     * <em>top center</em>, the returned value will look like this:
+     * <pre>
+     * PropertyValueList(PropertyValueList(NCName('top')
+     *                                     NCName('center') ) )
+     * </pre>
+     *
+     * <p>Note: If the property expression String is empty, a StringProperty
      * object holding an empty String is returned.
      * @param property an <tt>int</tt> containing the property index.
      * which the property expression is to be evaluated.
@@ -360,6 +406,10 @@ public class PropertyParser extends PropertyTokenizer {
 
         case MIMETYPE:
             prop = new MimeType(property, currentTokenValue);
+            break;
+
+        case SLASH:
+            prop = new Slash(property);
             break;
 
         case FUNCTION_LPAR: {
