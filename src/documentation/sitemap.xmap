@@ -214,6 +214,18 @@
      </map:call>
    </map:match>
 
+<!-- ========================== FOP Additions ========================== -->
+
+   <map:match pattern="body-compliance.xml"> 
+     <map:generate type="file-nolabel" src="content/xdocs/compliance.xml"/>
+     <map:transform src="resources/stylesheets/compliance2document.xsl" label="content"/>
+     <map:call resource="skinit">
+      <map:parameter name="type" value="document2html"/>
+      <map:parameter name="path" value="compliance"/>
+     </map:call>
+   </map:match>
+
+<!-- ======================== End FOP Additions ======================== -->
 
    <!-- Redirect requests for community/ (eg in the trail) to the home page -->
    <map:match pattern="community/index.html">
@@ -457,6 +469,24 @@
     <map:transform src="skins/forrest-site/xslt/fo/document2fo.xsl"/>
     <map:serialize type="fo2pdf"/>
    </map:match>
+
+<!-- ========================= FOP Additions ========================== -->
+
+   <map:match pattern="**/faq.pdf">
+    <map:generate type="file-nolabel" src="content/xdocs/{1}/faq.xml"/>
+    <map:transform src="library/xslt/faq2document.xsl" label="content"/>
+    <map:transform src="skins/forrest-site/xslt/fo/document2fo.xsl"/>
+    <map:serialize type="fo2pdf"/>
+   </map:match>
+
+   <map:match pattern="compliance.pdf">
+    <map:generate type="file-nolabel" src="content/xdocs/compliance.xml"/>
+    <map:transform src="resources/stylesheets/compliance2document.xsl" label="content"/>
+    <map:transform src="skins/forrest-site/xslt/fo/document2fo.xsl"/>
+    <map:serialize type="fo2pdf"/>
+   </map:match>
+
+<!-- ======================= End FOP Additions ======================== -->
 
    <map:match pattern="community/howto/**.pdf">
     <map:generate src="content/xdocs/community/howto/{1}.xml"/>

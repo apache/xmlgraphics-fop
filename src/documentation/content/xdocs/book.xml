@@ -26,6 +26,7 @@
           <menu-item label="Running" href="running.html"/>
           <menu-item label="Embedding" href="embedding.html"/>
           <menu-item label="Output Formats" href="output.html"/>
+          <menu-item label="Compliance" href="compliance.html"/>
           <menu-item label="Implemented" href="implemented.html"/>
           <menu-item label="Limitations" href="limitations.html"/>
         </menu>

@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE compliance PUBLIC "-//APACHE//DTD Compliance V1.0//EN" "compliance-v10.dtd"-->
+
+<compliance>
+  <head>
+    <title>FOP 0.20.4 Standards Compliance</title>
+  </head>
+  <body>
+    <standard name="W3C XSL-FO 1.0 Standard" baseURL="" compliance-level-1-desc="Basic" compliance-level-2-desc="Extended" compliance-level-3-desc="Complete">
+      <explanatory>
+        <p>FOP's goal is to be compliant with the W3C XSL-FO 1.0 standard. There are three levels of compliance specified in the standard: basic, extended, and complete. In the tables below, blue indicates support at the specified level of compliance, and red indicates a lack of support.</p>
+      </explanatory>
+      <level-1 name="XSL-FO Object Support" compliance-item-desc="Object Name">
+        <explanatory>
+          <p>The following is a summary of FOP's current support for the standard XSL-FO objects.</p>
+        </explanatory>
+        <level-2 name="Declarations and Pagination and Layout Objects">
+          <level-3 name="root" compliance-level="1" comply="yes"/>
+          <level-3 name="page-sequence" compliance-level="1" comply="yes"/>
+          <level-3 name="page-sequence-master" compliance-level="1" comply="yes"/>
+          <level-3 name="single-page-master-reference" compliance-level="1" comply="yes"/>
+          <level-3 name="repeatable-page-master-reference" compliance-level="1" comply="yes"/>
+          <level-3 name="repeatable-page-master-alternatives" compliance-level="2" comply="yes"/>
+          <level-3 name="conditional-page-master-reference" compliance-level="2" comply="yes"/>
+          <level-3 name="layout-master-set" compliance-level="1" comply="yes"/>
+          <level-3 name="simple-page-master" compliance-level="1" comply="yes"/>
+          <level-3 name="region-body" compliance-level="1" comply="yes"/>
+          <level-3 name="region-before" compliance-level="2" comply="yes"/>
+          <level-3 name="region-after" compliance-level="2" comply="yes"/>
+          <level-3 name="region-start" compliance-level="2" comply="yes"/>
+          <level-3 name="region-end" compliance-level="2" comply="yes"/>
+          <level-3 name="flow" compliance-level="1" comply="yes"/>
+          <level-3 name="static-content" compliance-level="2" comply="yes"/>
+          <level-3 name="declarations" compliance-level="1" comply="no"/>
+          <level-3 name="color-profile" compliance-level="2" comply="no"/>
+          <level-3 name="title" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Block-level Formatting Objects">
+          <level-3 name="block" compliance-level="1" comply="yes"/>
+          <level-3 name="block-container" compliance-level="2" comply="partial"/>
+        </level-2>
+        <level-2 name="Inline-level Formatting Objects">
+          <level-3 name="character" compliance-level="1" comply="yes"/>
+          <level-3 name="external-graphic" compliance-level="1" comply="yes"/>
+          <level-3 name="inline" compliance-level="1" comply="yes"/>
+          <level-3 name="instream-foreign-object" compliance-level="2" comply="yes"/>
+          <level-3 name="leader" compliance-level="1" comply="partial"/>
+          <level-3 name="page-number" compliance-level="1" comply="yes"/>
+          <level-3 name="page-number-citation" compliance-level="2" comply="partial">
+            <comment>Only works for table of contents without any problems. The case
+where the page number doesn't fit on a line isn't handled, and any text on
+the same line and after the page-number might not appear exactly where you
+want it to.</comment>
+          </level-3>
+          <level-3 name="bidi-override" compliance-level="2" comply="no"/>
+          <level-3 name="initial-property-set" compliance-level="2" comply="no"/>
+          <level-3 name="inline-container" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Formatting Objects for Tables">
+          <level-3 name="table" compliance-level="1" comply="yes"/>
+          <level-3 name="table-body" compliance-level="1" comply="yes"/>
+          <level-3 name="table-cell" compliance-level="1" comply="yes">
+            <comment>must contain block-level FOs (cannot contain straight character data</comment> 
+          </level-3>
+          <level-3 name="table-column" compliance-level="1" comply="yes">
+            <comment>you must explicitly specify column widths</comment>
+          </level-3>
+          <level-3 name="table-footer" compliance-level="2" comply="yes"/>
+          <level-3 name="table-header" compliance-level="1" comply="yes"/>
+          <level-3 name="table-row" compliance-level="1" comply="yes"/>
+          <level-3 name="table-and-caption" compliance-level="1" comply="no"/>
+          <level-3 name="table-caption" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Formatting Objects for Lists">
+          <level-3 name="list-block" compliance-level="1" comply="yes"/>
+          <level-3 name="list-item" compliance-level="1" comply="yes"/>
+          <level-3 name="list-item-body" compliance-level="1" comply="yes"/>
+          <level-3 name="list-item-label" compliance-level="2" comply="yes"/>
+        </level-2>
+        <level-2 name="Dynamic Effects: Link and Multi Formatting Objects">
+          <level-3 name="basic-link" compliance-level="2" comply="yes">
+            <comment>both internal and external supported</comment>
+          </level-3>
+          <level-3 name="multi-switch" compliance-level="2" comply="no"/>
+          <level-3 name="multi-case" compliance-level="1" comply="no"/>
+          <level-3 name="multi-toggle" compliance-level="2" comply="no"/>
+          <level-3 name="multi-properties" compliance-level="2" comply="no"/>
+          <level-3 name="multi-property-set" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Out-of-Line Formatting Objects">
+          <level-3 name="footnote" compliance-level="2" comply="yes"/>
+          <level-3 name="footnote-body" compliance-level="2" comply="yes"/>
+          <level-3 name="float" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Other Formatting Objects">
+          <level-3 name="wrapper" compliance-level="1" comply="yes"/>
+          <level-3 name="marker" compliance-level="2" comply="yes"/>
+          <level-3 name="retrieve-marker" compliance-level="2" comply="yes"/>
+        </level-2>
+      </level-1>
+      <level-1 name="XSL-FO Property Support" compliance-item-desc="Property Name">
+        <explanatory>
+          <p>The following is a summary of FOP's current support for the standard XSL-FO properties. Please note that a number of properties and categories of properties are not supported because they do not apply to documents in visual formats.</p>
+        </explanatory>
+        <level-2 name="Common Accessibility Properties">
+          <level-3 name="source-document" compliance-level="1" comply="na"/>
+          <level-3 name="role" compliance-level="1" comply="na"/>
+        </level-2>
+        <level-2 name="Common Absolute Position Properties">
+          <level-3 name="absolute-position" compliance-level="3" comply="no"/>
+          <level-3 name="top" compliance-level="2" comply="yes"/>
+          <level-3 name="right" compliance-level="2" comply="yes"/>
+          <level-3 name="bottom" compliance-level="2" comply="yes"/>
+          <level-3 name="left" compliance-level="2" comply="yes"/>
+        </level-2>
+        <level-2 name="Common Aural Properties">
+          <level-3 name="azimuth" compliance-level="1" comply="na"/>
+          <level-3 name="cue-after" compliance-level="1" comply="na"/>
+          <level-3 name="cue-before" compliance-level="1" comply="na"/>
+          <level-3 name="elevation" compliance-level="1" comply="na"/>
+          <level-3 name="pause-after" compliance-level="1" comply="na"/>
+          <level-3 name="pause-before" compliance-level="1" comply="na"/>
+          <level-3 name="pitch" compliance-level="1" comply="na"/>
+          <level-3 name="pitch-range" compliance-level="1" comply="na"/>
+          <level-3 name="play-during" compliance-level="1" comply="na"/>
+          <level-3 name="richness" compliance-level="1" comply="na"/>
+          <level-3 name="speak" compliance-level="1" comply="na"/>
+          <level-3 name="speak-header" compliance-level="1" comply="na"/>
+          <level-3 name="speak-numeral" compliance-level="1" comply="na"/>
+          <level-3 name="speak-punctuation" compliance-level="1" comply="na"/>
+          <level-3 name="speech-rate" compliance-level="1" comply="na"/>
+          <level-3 name="stress" compliance-level="1" comply="na"/>
+          <level-3 name="voice-family" compliance-level="1" comply="na"/>
+          <level-3 name="volume" compliance-level="1" comply="na"/>
+        </level-2>
+        <level-2 name="Common Border, Padding, and Background Properties">
+          <level-3 name="background-attachment" compliance-level="2" comply="no"/>
+          <level-3 name="background-color" compliance-level="1" comply="yes"/>
+          <level-3 name="background-image" compliance-level="2" comply="yes"/>
+          <level-3 name="background-repeat" compliance-level="2" comply="no"/>
+          <level-3 name="background-position-horizontal" compliance-level="2" comply="no"/>
+          <level-3 name="background-position-vertical" compliance-level="2" comply="no"/>
+          <level-3 name="border-before-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-before-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-before-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-after-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-after-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-after-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-start-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-start-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-start-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-end-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-end-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-end-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-top-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-top-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-top-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-bottom-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-bottom-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-bottom-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-left-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-left-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-left-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-right-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-right-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-right-width" compliance-level="1" comply="yes"/>
+          <level-3 name="padding-before" compliance-level="1" comply="yes"/>
+          <level-3 name="padding-after" compliance-level="1" comply="yes"/>
+          <level-3 name="padding-start" compliance-level="1" comply="yes"/>
+          <level-3 name="padding-end" compliance-level="1" comply="yes"/>
+          <level-3 name="padding-top" compliance-level="1" comply="yes"/>
+          <level-3 name="padding-bottom" compliance-level="1" comply="yes"/>
+          <level-3 name="padding-left" compliance-level="1" comply="yes"/>
+          <level-3 name="padding-right" compliance-level="1" comply="yes"/>
+        </level-2>
+        <level-2 name="Common Font Properties">
+          <level-3 name="font-family" compliance-level="1" comply="yes"/>
+          <level-3 name="font-selection-strategy" compliance-level="3" comply="no"/>
+          <level-3 name="font-size" compliance-level="1" comply="yes"/>
+          <level-3 name="font-stretch" compliance-level="2" comply="no"/>
+          <level-3 name="font-size-adjust" compliance-level="2" comply="no"/>
+          <level-3 name="font-style" compliance-level="1" comply="yes"/>
+          <level-3 name="font-variant" compliance-level="1" comply="no"/>
+          <level-3 name="font-weight" compliance-level="1" comply="yes"/>
+        </level-2>
+        <level-2 name="Common Hyphenation Properties">
+          <level-3 name="country" compliance-level="2" comply="yes"/>
+          <level-3 name="language" compliance-level="2" comply="yes"/>
+          <level-3 name="script" compliance-level="2" comply="no"/>
+          <level-3 name="hyphenate" compliance-level="2" comply="yes"/>
+          <level-3 name="hyphenation-character" compliance-level="2" comply="yes"/>
+          <level-3 name="hyphenation-push-character-count" compliance-level="2" comply="yes"/>
+          <level-3 name="hyphenation-remain-character-count" compliance-level="2" comply="yes"/>
+        </level-2>
+        <level-2 name="Common Margin Properties - Block">
+          <level-3 name="margin-top" compliance-level="1" comply="partial">
+            <comment>only on pages and regions</comment>
+          </level-3>
+          <level-3 name="margin-bottom" compliance-level="1" comply="partial">
+            <comment>only on pages and regions</comment>
+          </level-3>
+          <level-3 name="margin-left" compliance-level="1" comply="partial">
+            <comment>only on pages and regions</comment>
+          </level-3>
+          <level-3 name="margin-right" compliance-level="1" comply="partial">
+            <comment>only on pages and regions</comment>
+          </level-3>
+          <level-3 name="space-before" compliance-level="1" comply="partial">
+            <comment>space-before.optimum supported</comment>
+          </level-3>
+          <level-3 name="space-after" compliance-level="1" comply="partial">
+            <comment>space-after.optimum supported</comment>
+          </level-3>
+          <level-3 name="start-indent" compliance-level="1" comply="yes"/>
+          <level-3 name="end-indent" compliance-level="1" comply="yes"/>
+        </level-2>
+        <level-2 name="Common Margin Properties - Inline">
+          <level-3 name="space-end" compliance-level="1" comply="no"/>
+          <level-3 name="space-start" compliance-level="1" comply="no"/>
+        </level-2>
+        <level-2 name="Common Relative Position Properties">
+          <level-3 name="relative-position" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Area Alignment Properties">
+          <level-3 name="alignment-adjust" compliance-level="1" comply="no"/>
+          <level-3 name="alignment-baseline" compliance-level="1" comply="no"/>
+          <level-3 name="baseline-shift" compliance-level="1" comply="no"/>
+          <level-3 name="display-align" compliance-level="2" comply="no"/>
+          <level-3 name="dominant-baseline" compliance-level="1" comply="no"/>
+          <level-3 name="relative-align" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Area Dimension Properties">
+          <level-3 name="block-progression-dimension" compliance-level="1" comply="no"/>
+          <level-3 name="content-height" compliance-level="2" comply="no"/>
+          <level-3 name="content-width" compliance-level="1" comply="no"/>
+          <level-3 name="height" compliance-level="1" comply="yes"/>
+          <level-3 name="inline-progression-dimension" compliance-level="1" comply="no"/>
+          <level-3 name="max-height" compliance-level="3" comply="no"/>
+          <level-3 name="max-width" compliance-level="3" comply="no"/>
+          <level-3 name="min-height" compliance-level="3" comply="no"/>
+          <level-3 name="min-width" compliance-level="3" comply="no"/>
+          <level-3 name="scaling" compliance-level="2" comply="no"/>
+          <level-3 name="scaling-method" compliance-level="2" comply="no"/>
+          <level-3 name="width" compliance-level="1" comply="yes"/>
+        </level-2>
+        <level-2 name="Block and Line-related Properties">
+          <level-3 name="hyphenation-keep" compliance-level="2" comply="no"/>
+          <level-3 name="hyphenation-ladder-count" compliance-level="2" comply="no"/>
+          <level-3 name="last-line-end-indent" compliance-level="2" comply="no"/>
+          <level-3 name="line-height" compliance-level="1" comply="yes"/>
+          <level-3 name="line-height-shift-adjustment" compliance-level="2" comply="no"/>
+          <level-3 name="line-stacking-strategy" compliance-level="1" comply="no"/>
+          <level-3 name="linefeed-treatment" compliance-level="2" comply="no"/>
+          <level-3 name="text-align" compliance-level="1" comply="yes"/>
+          <level-3 name="text-align-last" compliance-level="2" comply="yes"/>
+          <level-3 name="text-indent" compliance-level="1" comply="yes"/>
+          <level-3 name="white-space-collapse" compliance-level="2" comply="yes"/>
+          <level-3 name="white-space-treatment" compliance-level="2" comply="no"/>
+          <level-3 name="wrap-option" compliance-level="1" comply="yes"/>
+        </level-2>
+        <level-2 name="Character Properties">
+          <level-3 name="character" compliance-level="1" comply="yes"/>
+          <level-3 name="letter-spacing" compliance-level="2" comply="yes"/>
+          <level-3 name="suppress-at-line-break" compliance-level="2" comply="no"/>
+          <level-3 name="text-decoration" compliance-level="2" comply="yes"/>
+          <level-3 name="text-shadow" compliance-level="2" comply="no"/>
+          <level-3 name="text-transform" compliance-level="2" comply="no"/>
+          <level-3 name="treat-as-word-space" compliance-level="2" comply="no"/>
+          <level-3 name="word-spacing" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Color-related Properties">
+          <level-3 name="color" compliance-level="1" comply="yes"/>
+          <level-3 name="color-profile-name" compliance-level="2" comply="no"/>
+          <level-3 name="rendering-intent" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Float-related Properties">
+          <level-3 name="clear" compliance-level="2" comply="no"/>
+          <level-3 name="float" compliance-level="2" comply="no"/>
+          <level-3 name="intrusion-displace" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Keeps and Breaks Properties">
+          <level-3 name="break-after" compliance-level="1" comply="yes"/>
+          <level-3 name="break-before" compliance-level="1" comply="yes"/>
+          <level-3 name="keep-together" compliance-level="2" comply="partial">
+            <comment>works only in table rows</comment>
+          </level-3>
+          <level-3 name="keep-with-next" compliance-level="1" comply="partial">
+            <comment>works only in table rows</comment>
+          </level-3>
+          <level-3 name="keep-with-previous" compliance-level="1" comply="partial">
+            <comment>works only in table rows</comment>
+          </level-3>
+          <level-3 name="orphans" compliance-level="1" comply="no"/>
+          <level-3 name="widows" compliance-level="1" comply="no"/>
+        </level-2>
+        <level-2 name="Layout-related Properties">
+          <level-3 name="clip" compliance-level="2" comply="no"/>
+          <level-3 name="overflow" compliance-level="1" comply="no"/>
+          <level-3 name="reference-orientation" compliance-level="2" comply="no"/>
+          <level-3 name="span" compliance-level="2" comply="yes"/>
+        </level-2>
+        <level-2 name="Leader and Rule Properties">
+          <level-3 name="leader-alignment" compliance-level="2" comply="yes">
+            <comment>not value &quot;page&quot;</comment>
+          </level-3>
+          <level-3 name="leader-pattern" compliance-level="1" comply="yes">
+            <comment>not value &quot;use-content&quot;</comment>
+          </level-3>
+          <level-3 name="leader-pattern-width" compliance-level="2" comply="yes"/>
+          <level-3 name="leader-length" compliance-level="1" comply="yes">
+            <comment>leader-length.minimum is not used at all</comment>
+          </level-3>
+          <level-3 name="rule-style" compliance-level="1" comply="yes"/>
+          <level-3 name="rule-thickness" compliance-level="1" comply="yes"/>
+        </level-2>
+        <level-2 name="Properties for Dynamic Effects Formatting Objects">
+          <level-3 name="active-state" compliance-level="2" comply="no"/>
+          <level-3 name="auto-restore" compliance-level="2" comply="no"/>
+          <level-3 name="case-name" compliance-level="2" comply="no"/>
+          <level-3 name="case-title" compliance-level="2" comply="no"/>
+          <level-3 name="destination-placement-offset" compliance-level="2" comply="no"/>
+          <level-3 name="external-destination" compliance-level="2" comply="yes"/>
+          <level-3 name="indicate-destination" compliance-level="2" comply="no"/>
+          <level-3 name="internal-destination" compliance-level="2" comply="yes"/>
+          <level-3 name="show-destination" compliance-level="2" comply="no"/>
+          <level-3 name="starting-state" compliance-level="2" comply="no"/>
+          <level-3 name="target-presentation-context" compliance-level="2" comply="no"/>
+          <level-3 name="target-processing-context" compliance-level="2" comply="no"/>
+          <level-3 name="target-stylesheet" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Properties for Markers">
+          <level-3 name="marker-class-name" compliance-level="2" comply="no"/>
+          <level-3 name="retrieve-class-name" compliance-level="2" comply="no"/>
+          <level-3 name="retrieve-position" compliance-level="2" comply="no"/>
+          <level-3 name="retrieve-boundary" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Properties for Number to String Conversion">
+          <level-3 name="format" compliance-level="1" comply="no"/>
+          <level-3 name="grouping-separator" compliance-level="2" comply="no"/>
+          <level-3 name="grouping-size" compliance-level="2" comply="no"/>
+          <level-3 name="letter-value" compliance-level="1" comply="no"/>
+        </level-2>
+        <level-2 name="Pagination and Layout Properties">
+          <level-3 name="blank-or-not-blank" compliance-level="2" comply="yes"/>
+          <level-3 name="column-count" compliance-level="2" comply="yes"/>
+          <level-3 name="column-gap" compliance-level="2" comply="yes"/>
+          <level-3 name="extent" compliance-level="2" comply="yes"/>
+          <level-3 name="flow-name" compliance-level="1" comply="yes"/>
+          <level-3 name="force-page-count" compliance-level="2" comply="no"/>
+          <level-3 name="initial-page-number" compliance-level="1" comply="yes"/>
+          <level-3 name="master-name" compliance-level="1" comply="yes"/>
+          <level-3 name="master-reference" compliance-level="1" comply="yes"/>
+          <level-3 name="maximum-repeats" compliance-level="2" comply="yes"/>
+          <level-3 name="media-usage" compliance-level="2" comply="no"/>
+          <level-3 name="odd-or-even" compliance-level="2" comply="yes"/>
+          <level-3 name="page-height" compliance-level="1" comply="yes"/>
+          <level-3 name="page-position" compliance-level="2" comply="yes"/>
+          <level-3 name="page-width" compliance-level="1" comply="yes"/>
+          <level-3 name="precedence" compliance-level="2" comply="no"/>
+          <level-3 name="region-name" compliance-level="1" comply="yes"/>
+        </level-2>
+        <level-2 name="Table Properties">
+          <level-3 name="border-after-precedence" compliance-level="1" comply="no"/>
+          <level-3 name="border-before-precedence" compliance-level="1" comply="no"/>
+          <level-3 name="border-collapse" compliance-level="2" comply="no"/>
+          <level-3 name="border-end-precedence" compliance-level="1" comply="no"/>
+          <level-3 name="border-separation" compliance-level="2" comply="no"/>
+          <level-3 name="border-start-precedence" compliance-level="1" comply="no"/>
+          <level-3 name="caption-side" compliance-level="3" comply="no"/>
+          <level-3 name="column-number" compliance-level="1" comply="no"/>
+          <level-3 name="column-width" compliance-level="1" comply="yes"/>
+          <level-3 name="empty-cells" compliance-level="2" comply="no"/>
+          <level-3 name="ends-row" compliance-level="2" comply="no"/>
+          <level-3 name="number-columns-repeated" compliance-level="1" comply="no"/>
+          <level-3 name="number-columns-spanned" compliance-level="1" comply="yes"/>
+          <level-3 name="starts-row" compliance-level="2" comply="no"/>
+          <level-3 name="table-layout" compliance-level="2" comply="no"/>
+          <level-3 name="table-omit-footer-at-break" compliance-level="2" comply="yes"/>
+          <level-3 name="table-omit-header-at-break" compliance-level="2" comply="yes"/>
+        </level-2>
+        <level-2 name="Writing-mode-related Properties">
+          <level-3 name="direction" compliance-level="1" comply="no"/>
+          <level-3 name="glyph-orientation-horizontal" compliance-level="2" comply="no"/>
+          <level-3 name="glyph-orientation-vertical" compliance-level="2" comply="no"/>
+          <level-3 name="text-altitude" compliance-level="2" comply="no"/>
+          <level-3 name="text-depth" compliance-level="2" comply="no"/>
+          <level-3 name="unicode-bidi" compliance-level="2" comply="no"/>
+          <level-3 name="writing-mode" compliance-level="1" comply="no"/>
+        </level-2>
+        <level-2 name="Miscellaneous Properties">
+          <level-3 name="content-type" compliance-level="2" comply="no"/>
+          <level-3 name="id" compliance-level="1" comply="yes"/>
+          <level-3 name="provisional-label-separation" compliance-level="1" comply="yes"/>
+          <level-3 name="provisional-distance-between-starts" compliance-level="1" comply="yes"/>
+          <level-3 name="ref-id" compliance-level="2" comply="yes"/>
+          <level-3 name="score-spaces" compliance-level="2" comply="no"/>
+          <level-3 name="src" compliance-level="1" comply="yes"/>
+          <level-3 name="visibility" compliance-level="2" comply="no"/>
+          <level-3 name="z-index" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Shorthand Properties">
+          <level-3 name="background" compliance-level="3" comply="no"/>
+          <level-3 name="background-position" compliance-level="3" comply="no"/>
+          <level-3 name="border" compliance-level="3" comply="no"/>
+          <level-3 name="border-bottom" compliance-level="3" comply="yes"/>
+          <level-3 name="border-color" compliance-level="3" comply="yes">
+            <comment>only one value allowed</comment>
+          </level-3>
+          <level-3 name="border-left" compliance-level="3" comply="yes"/>
+          <level-3 name="border-right" compliance-level="3" comply="yes"/>
+          <level-3 name="border-style" compliance-level="3" comply="yes"/>
+          <level-3 name="border-spacing" compliance-level="3" comply="no"/>
+          <level-3 name="border-top" compliance-level="3" comply="yes"/>
+          <level-3 name="border-width" compliance-level="3" comply="yes"/>
+          <level-3 name="cue" compliance-level="3" comply="no"/>
+          <level-3 name="font" compliance-level="3" comply="no"/>
+          <level-3 name="margin" compliance-level="3" comply="partial">
+            <comment>only on pages and regions</comment>
+          </level-3>
+          <level-3 name="padding" compliance-level="3" comply="partial">
+            <comment>only one value allowed</comment>
+            <comment>only implemented for blocks</comment>
+            <comment>can't be used to make extra space (use indents + spaces instead)</comment>
+            <comment>can be used to control how much the background-color extends beyond the content rectangle</comment>
+          </level-3>
+          <level-3 name="page-break-after" compliance-level="3" comply="no"/>
+          <level-3 name="page-break-before" compliance-level="3" comply="no"/>
+          <level-3 name="page-break-inside" compliance-level="3" comply="no"/>
+          <level-3 name="pause" compliance-level="3" comply="no"/>
+          <level-3 name="position" compliance-level="3" comply="partial">
+            <comment>&quot;inherit&quot; not handled</comment>
+          </level-3>
+          <level-3 name="size" compliance-level="3" comply="no"/>
+          <level-3 name="vertical-align" compliance-level="3" comply="no"/>
+          <level-3 name="white-space" compliance-level="3" comply="no"/>
+          <level-3 name="xml:lang" compliance-level="3" comply="no"/>
+        </level-2>
+      </level-1>
+    </standard>
+  </body>
+</compliance>
+
