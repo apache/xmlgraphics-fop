@@ -11,7 +11,6 @@ import org.apache.fop.fo.*;
 import org.apache.fop.pdf.PDFGoTo;
 import org.apache.fop.pdf.PDFAction;
 import org.apache.fop.datatypes.IDReferences;
-import org.apache.fop.messaging.MessageHandler;
 
 import java.util.*;
 
@@ -53,11 +52,11 @@ public class Outline extends ExtensionObj {
         _externalDestination =
             this.properties.get("external-destination").getString();
         if (_externalDestination != null &&!_externalDestination.equals("")) {
-            MessageHandler.errorln("WARNING: fox:outline external-destination not supported currently.");
+            log.warn("fox:outline external-destination not supported currently.");
         }
 
         if (_internalDestination == null || _internalDestination.equals("")) {
-            MessageHandler.errorln("WARNING: fox:outline requires an internal-destination.");
+            log.warn("fox:outline requires an internal-destination.");
         }
 
         for (FONode node = getParent(); node != null;

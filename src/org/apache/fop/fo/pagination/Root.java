@@ -101,7 +101,7 @@ public class Root extends FObj {
     public void setLayoutMasterSet(LayoutMasterSet layoutMasterSet) {
         this.layoutMasterSet = layoutMasterSet;
     }
-
+/*
     public void format(AreaTree areaTree) throws FOPException {
         // log.debug(" Root[" + marker + "] ");
         if (layoutMasterSet == null) {
@@ -118,5 +118,5 @@ public class Root extends FObj {
             }
         }
     }
-
+*/
 }
