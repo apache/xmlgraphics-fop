@@ -5,12 +5,39 @@
 <document>
     <header>
         <title>Release Notes</title>
-        <subtitle>Fop 0.20.3</subtitle>
-        <authors>
-        </authors>
+        <subtitle>Fop 0.20.4</subtitle>
+        <authors>Christian Geisert</authors>
     </header>
 
     <body>
+<s1 title="FOP 0.20.4">
+  <p>Important changes since 0.20.3:
+    <ul>
+       <li>FOP should now work with any JAXP1.1 compliant parser/transformer. 
+         It has been successfully tested with Xerces/Xalan, Saxon and JDK1.4 
+         (which includes Crimson and Xalan).
+       </li>
+       <li>The following JARs have been updated: 
+         Xerces to version 2.0.1, Xalan to version 2.3.1 and Batik to version 1.5beta2.
+      </li>
+      <li>Fop has been compiled with Jimi support this time
+        but you still have to download
+        <jump href="http://java.sun.com/products/jimi/">Jimi</jump>
+        and copy it to lib/ to get PNG support (no need to build FOP yourself though).
+      </li>
+      <li>Building FOP with JDK1.2 does not work. Running is ok except
+        support for additional truetype fonts in AWT Viewer.
+      </li>
+      <li>Logging has been changed from LogKit to Avalon's Logger Interface.
+        (see <jump href="embedding.html">Embedding</jump> for details).
+      </li>
+      <li>
+        <p>For a more detailed list of changes, see the CHANGES file in the root of the FOP distribution.</p>
+      </li>
+      </ul>
+    </p>
+ </s1>
+
 <s1 title="FOP 0.20.3">
   <p>Important Information:
     <ul>
