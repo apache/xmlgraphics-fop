@@ -65,23 +65,25 @@ public class AreaTree {
 
     public Page getNextPage(Page current, boolean isWithinPageSequence,
                             boolean isFirstCall) {
-        return streamRenderer.getNextPage(current, isWithinPageSequence,isFirstCall);
+        //return streamRenderer.getNextPage(current, isWithinPageSequence,isFirstCall);
+	return null; // This will go away in new layout!
     }
 
     public Page getPreviousPage(Page current, boolean isWithinPageSequence,
                                 boolean isFirstCall) {
-        return streamRenderer.getPreviousPage(current,isWithinPageSequence,isFirstCall);
+        //return streamRenderer.getPreviousPage(current,isWithinPageSequence,isFirstCall);
+	return null; // This will go away in new layout!
     }
 
     public void addPage(Page page)
     throws FOPException {
-        try {
-            page.setExtensions(rootExtensions);
-            rootExtensions = null;
-            streamRenderer.queuePage(page);
-        } catch (IOException e) {
-            throw new FOPException(e);
-        }
+//         try {
+//             page.setExtensions(rootExtensions);
+//             rootExtensions = null;
+//             streamRenderer.queuePage(page);
+//         } catch (IOException e) {
+//             throw new FOPException(e);
+//         }
     }
 
     public IDReferences getIDReferences() {
