@@ -26,6 +26,7 @@ import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.PropertyValueList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.SystemFontFunction;
 import org.apache.fop.datastructs.ROStringArray;
 import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datatypes.Ints;
@@ -58,6 +59,10 @@ import org.apache.fop.datatypes.FromNearestSpecified;
  */
 
 public abstract class Properties {
+
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /*
      * The list of property data types.  These are used to form a bitmap of
      * the property data types that are valid for values of each of the
@@ -239,6 +244,31 @@ public abstract class Properties {
 
 
     /**
+     * Check the PropertyValueList passed as an argument, to determine
+     * whether it contains a space-separated list from the parser.
+     * A space-separated list will be represented by a single
+     * PropertyValueList as an element of the argument PropertyValueList.
+     * @param list <tt>PropertyValueList</tt> the containing list.
+     * @return <tt>PropertyValueList</tt> the contained space-separated list.
+     * @exception <tt>PropertyException</tt>
+     */
+    private static PropertyValueList spaceSeparatedList
+                                                    (PropertyValueList list)
+            throws PropertyException
+    {
+        if (list.size() != 1)
+                throw new PropertyException
+                        (list.getClass().getName() + " list is not a "
+                                + "single list of space-separated values");
+        PropertyValue val2 = (PropertyValue)(list.getFirst());
+        if ( ! (val2 instanceof PropertyValueList))
+                throw new PropertyException
+                        (list.getClass().getName() + " list is not a "
+                                + "single list of space-separated values");
+        return (PropertyValueList)val2;
+    }
+
+    /**
      * Return the EnumType derived from the argument.
      * The argument must be an NCName whose string value is a
      * valid Enum for the property associated with the NCName.
@@ -304,6 +334,8 @@ public abstract class Properties {
 
     /**
      * 'value' is a PropertyValueList or an individual PropertyValue.
+     * If 'value' is a PropertyValueList, it must contain a single
+     * PropertyValueList, which in turn contains the individual elements.
      *
      * 'value' can contain a parsed Inherit value,
      *  parsed FromParent value, parsed FromNearestSpecified value,
@@ -335,7 +367,8 @@ public abstract class Properties {
             return processEdgeValue(value, styleProp, colorProp, widthProp);
         } else {
             return processEdgeList
-                ((PropertyValueList)value, styleProp, colorProp, widthProp);
+                (spaceSeparatedList((PropertyValueList)value),
+                                            styleProp, colorProp, widthProp);
         }
     }
 
@@ -784,6 +817,8 @@ public abstract class Properties {
 
         /**
          * 'value' is a PropertyValueList or an individual PropertyValue.
+         * If 'value' is a PropertyValueList, it must contain a single
+         * PropertyValueList, which in turn contains the individual elements.
          *
          * 'value' can contain a parsed Inherit value or, in any order;
          * background-color
@@ -800,8 +835,9 @@ public abstract class Properties {
          *     one or two parsed NCNames containing enumeration tokens
          *
          * <p>The value(s) provided, if valid, are converted into a list
-         * containing the expansion of the shorthand.  The elements may
-         * be in any order.  A minimum of one value will be present.
+         * containing the expansion of the shorthand.  Any subset of the
+         * elements may be present, from minimum of one.  The elements
+         * which are present will always occur in the following order:
          *
          *   a BackgroundColor ColorType or Inherit value
          *   a BackgroundImage UriType, None or Inherit value
@@ -810,18 +846,19 @@ public abstract class Properties {
          *   a BackgroundPositionHorizontal Numeric or Inherit value
          *   a BackgroundPositionVertical Numeric or Inherit value
          */
-        public static PropertyValue complex(PropertyValue value)
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
-                return processValue(value);
+                return processValue(foTree, value);
             } else {
-                return processList((PropertyValueList)value);
+                return processList
+                    (foTree, spaceSeparatedList((PropertyValueList)value));
             }
         }
 
         private static PropertyValueList processValue
-            (PropertyValue value) throws PropertyException
+            (FOTree foTree, PropertyValue value) throws PropertyException
         {
             // Can be Inherit, ColorType, UriType, None, Numeric, or an
             // NCName (i.e. enum token)
@@ -836,11 +873,12 @@ public abstract class Properties {
                 PropertyValueList tmpList
                         = new PropertyValueList(value.getProperty());
                 tmpList.add(value);
-                return processList(tmpList);
+                return processList(foTree, tmpList);
             }
         }
 
-        private static PropertyValueList processList(PropertyValueList value)
+        private static PropertyValueList processList
+                (FOTree foTree, PropertyValueList value)
                         throws PropertyException
         {
             int property = value.getProperty();
@@ -904,7 +942,7 @@ public abstract class Properties {
                     if (position != null)
                             MessageHandler.log("background: duplicate" +
                             "position overrides previous position");
-                    position = BackgroundPosition.complex(posnList);
+                    position = BackgroundPosition.complex(foTree, posnList);
                     continue scanning_elements;
                 }
 
@@ -980,7 +1018,8 @@ public abstract class Properties {
                         if (position != null)
                                 MessageHandler.log("background: duplicate" +
                                 "position overrides previous position");
-                        position = BackgroundPosition.complex(posnList);
+                        position =
+                                BackgroundPosition.complex(foTree, posnList);
                         continue scanning_elements;
                     }
                     throw new PropertyException
@@ -1124,7 +1163,8 @@ public abstract class Properties {
          *   or an Inherit value.
          * The distance measurement can be either a Length or a Percentage.
          *
-         * <p>If 'value' is a PropertyValueList, it contains either a pair of
+         * <p>If 'value' is a PropertyValueList, it contains a
+         * PropertyValueList containing either a pair of
          * distance measurement (length or percentage) or a pair of
          * enumeration tokens representing the background position offset
          * in the "height" and "width" dimensions.
@@ -1134,13 +1174,14 @@ public abstract class Properties {
          * element is a value for BackgroundPositionHorizontal, and the
          * second is for BackgroundPositionVertical.
          */
-        public static PropertyValue complex(PropertyValue value)
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
                 return processValue(value);
             } else {
-                return processList((PropertyValueList)value);
+                return processList
+                            (spaceSeparatedList((PropertyValueList)value));
             }
         }
 
@@ -1840,7 +1881,7 @@ public abstract class Properties {
          *  N.B. this is the order of elements defined in
          *       PropertySets.borderRightExpansion
          */
-        public static PropertyValue complex(PropertyValue value)
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             return Properties.borderEdge(value,
@@ -1965,7 +2006,7 @@ public abstract class Properties {
          * the third element is a value for border-bottom-color,
          * the fourth element is a value for border-left-color.
          */
-        public static PropertyValue complex(PropertyValue value)
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
@@ -1995,7 +2036,8 @@ public abstract class Properties {
                 // List may contain only multiple color specifiers
                 // i.e. ColorTypes or NCNames specifying a standard color or
                 // 'transparent'.
-                PropertyValueList list = (PropertyValueList)value;
+                PropertyValueList list =
+                                spaceSeparatedList((PropertyValueList)value);
                 ColorType top, left, bottom, right;
                 int count = list.size();
                 if (count < 2 || count > 4)
@@ -2184,7 +2226,7 @@ public abstract class Properties {
          *  N.B. this is the order of elements defined in
          *       PropertySets.borderRightExpansion
          */
-        public static PropertyValue complex(PropertyValue value)
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             return Properties.borderEdge(value,
@@ -2270,7 +2312,7 @@ public abstract class Properties {
          *  N.B. this is the order of elements defined in
          *       PropertySets.borderRightExpansion
          */
-        public static PropertyValue complex(PropertyValue value)
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             return Properties.borderEdge(value,
@@ -2400,7 +2442,7 @@ public abstract class Properties {
          *   Note: the Lengths cannot be percentages (what about relative
          *         lengths?)
          */
-        public static PropertyValue complex(PropertyValue value)
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
@@ -2416,7 +2458,8 @@ public abstract class Properties {
                         " object for border-spacing");
             } else {
                 // Must be a pair of Lengths
-                PropertyValueList list = (PropertyValueList)value;
+                PropertyValueList list =
+                                spaceSeparatedList((PropertyValueList)value);
                 if (list.size() != 2)
                     throw new PropertyException
                         ("List of " + list.size() + " for border-spacing");
@@ -2566,7 +2609,7 @@ public abstract class Properties {
          * the third element is a value for border-bottom-style,
          * the fourth element is a value for border-left-style.
          */
-        public static PropertyValue complex(PropertyValue value)
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
@@ -2594,7 +2637,8 @@ public abstract class Properties {
             } else {
                 // List may contain only multiple style specifiers
                 // i.e. NCNames specifying a standard style
-                PropertyValueList list = (PropertyValueList)value;
+                PropertyValueList list =
+                                spaceSeparatedList((PropertyValueList)value);
                 EnumType top, left, bottom, right;
                 int count = list.size();
                 if (count < 2 || count > 4)
@@ -2658,7 +2702,7 @@ public abstract class Properties {
          *  N.B. this is the order of elements defined in
          *       PropertySets.borderRightExpansion
          */
-        public static PropertyValue complex(PropertyValue value)
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             return Properties.borderEdge(value,
@@ -2746,7 +2790,8 @@ public abstract class Properties {
          *   a FromNearestSpecified value,
          *   or an Inherit value.
          *
-         * <p>If 'value' is a PropertyValueList, it contains a list of
+         * <p>If 'value' is a PropertyValueList, it contains a
+         * PropertyValueList which in turn contains a list of
          * 2 to 4 NCName enum tokens representing border-widths.
          *
          * <p>The value(s) provided, if valid, are converted into a list
@@ -2756,7 +2801,7 @@ public abstract class Properties {
          * the third element is a value for border-bottom-width,
          * the fourth element is a value for border-left-width.
          */
-        public static PropertyValue complex(PropertyValue value)
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
@@ -2784,7 +2829,8 @@ public abstract class Properties {
             } else {
                 // List may contain only multiple width specifiers
                 // i.e. NCNames specifying a standard width
-                PropertyValueList list = (PropertyValueList)value;
+                PropertyValueList list =
+                                spaceSeparatedList((PropertyValueList)value);
                 MappedEnumType top, left, bottom, right;
                 int count = list.size();
                 if (count < 2 || count > 4)
@@ -3003,7 +3049,7 @@ public abstract class Properties {
         public static final int initialValueType = AUTO_IT;
         public static final int inherited = NO;
 
-        public static PropertyValue complex(PropertyValue value)
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
             // AUTO and INHERIT will have been normally processed
@@ -3165,15 +3211,15 @@ public abstract class Properties {
          *   a FromNearestSpecified value,
          *   or an Inherit value.
          *
-         * <p>If 'value' is a PropertyValueList, it contains a list of
-         * 2 parsed UriType values.
+         * <p>If 'value' is a PropertyValueList, it contains an inner
+         * PropertyValueList of 2 parsed UriType values.
          *
          * <p>The value(s) provided, if valid, are converted into a list
          * containing the expansion of the shorthand.
          * The first element is a value for cue-before,
          * the second element is a value for cue-after.
          */
-        public static PropertyValue complex(PropertyValue value)
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
@@ -3188,7 +3234,8 @@ public abstract class Properties {
                         " object for cue");
             } else {
                 // List may contain only 2 uri specifiers
-                PropertyValueList list = (PropertyValueList)value;
+                PropertyValueList list =
+                                spaceSeparatedList((PropertyValueList)value);
                 if (list.size() != 2)
                     throw new PropertyException
                         ("List of " + list.size() + " for cue");
@@ -3485,6 +3532,377 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = SHORTHAND_INH;
+
+        public static final int
+                   CAPTION = 1
+                     ,ICON = 2
+                     ,MENU = 3
+              ,MESSAGE_BOX = 4
+            ,SMALL_CAPTION = 5
+               ,STATUS_BAR = 6
+                           ;
+
+        private static final String[] rwEnums = {
+            null
+            ,"caption"
+            ,"icon"
+            ,"menu"
+            ,"message-box"
+            ,"small-caption"
+            ,"status-bar"
+        };
+
+        public static final ROStringArray enums = new ROStringArray(rwEnums);
+        private static final HashMap rwEnumValues;
+        public static final Map enumValues;
+        static {
+            rwEnumValues = new HashMap(rwEnums.length);
+            for (int i = 1; i < rwEnums.length; i++ ) {
+                rwEnumValues.put((Object)rwEnums[i],
+                                    (Object) Ints.consts.get(i));
+            }
+            enumValues =
+                Collections.unmodifiableMap((Map)rwEnumValues);
+        }
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * If 'value' is a PropertyValueList it may contain, in turn, a
+         * PropertyValueList with the space-separated elements of the
+         * original expression, or a list of comma-separated elements if
+         * these were the only elements of the expression.
+         *
+         * If a top-level list occurs, i.e. if 'value' is a PropertyValueList
+         * which contains multiple elements, it represents a comma-separated
+         * list, which can only legitimately contain a <em>font-family</em>
+         * specification.
+         *
+         * 'value' can contain a parsed Inherit value or
+         * a parsed NCName value containing one of the system font
+         *  enumeration tokens listed in rwEnums, above, or
+         *  a <em>single</em> element from those noted below in the discussion
+         *  of font specification elements.
+         *
+         * If 'value' is a space-separated list, it may contain:
+         *   A trailing <em>font-family</em> specification, possibly
+         *   preceded by an optional initial detailed font specification.
+         *   The font-family specification may be comprised of a single
+         *   element or a comma-separated list of specific or generic font
+         *   names.  A single font name may be a space-separated name.
+         *
+         *   The optional initial detailed font specification may be
+         *    comprised of a trailing dimension specifier, possibly preceded
+         *    by an optional set of font descriptor elements.
+         *
+         *   The dimension specifier is comprised of a <em>font-size</em>
+         *    specifier, possibly followed by an optional line height
+         *    specifier.  The line height specifier is made up of a slash
+         *    character followed by a <em>line-height</em> specifier proper.
+         *
+         *   The optional set of font descriptor elements may include,
+         *    in any order, from one to three of
+         *    a font-style element
+         *    a font-variant element
+         *    a font-weight element
+         *
+         * [ [&lt;font-style&gt;||&lt;font-variant&gt;||&lt;font-weight&gt;]?
+         *    &lt;font-size&gt; [ / &lt;line-height&gt; ]?
+         *    &lt;font-family&gt; ]
+         *    |caption|icon|menu|message-box|small-caption|status-bar
+         *    |inherit
+         *
+         *  In other words, this is one of the greatest parsing shambles
+         *   ever conceived by the mind of man.
+         *
+         * <p>The value(s) provided, if valid, are converted into a list
+         * containing the expansion of the shorthand.  A minimum of one
+         * value will be present.
+         *
+         */
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+                        throws PropertyException
+        {
+            if ( ! (value instanceof PropertyValueList)) {
+                return processValue(foTree, value);
+            } else {
+                PropertyValueList list = null;
+                try {
+                    list = spaceSeparatedList((PropertyValueList)value);
+                } catch (PropertyException e) {}
+                if (list == null) {
+                    // Must be a comma-separated list
+                    // i.e. a font-family list
+                    return processCommaSepList((PropertyValueList)value);
+                } else {
+                    return processSpaceSepList(foTree, list);
+                }
+            }
+        }
+
+        private static PropertyValueList processValue
+            (FOTree foTree, PropertyValue value)
+                        throws PropertyException
+        {
+            // Can be Inherit, FromParent, FromNearestSpecified, a
+            // system font NCName or a single element font-family specifier
+            if (value instanceof Inherit |
+                    value instanceof FromParent |
+                        value instanceof FromNearestSpecified)
+            {
+                return PropertySets.expandAndCopySHand(value);
+            }
+            // else not Inherit/From../From..
+            FontFamilySet family = null;
+            if (value instanceof NCName) {
+                // Is it a system font enumeration?
+                EnumType enum = null;
+                String ncname = ((NCName)value).getNCName();
+                try {
+                    enum = new EnumType(value.getProperty(), ncname);
+                } catch (PropertyException e) {}
+                if (enum != null) {
+                    // A system font enum
+                    return SystemFontFunction.expandFontSHand
+                                            (PropNames.FONT, ncname);
+                } else {
+                    // Not a system font enum
+                    // Can only be a single-element font-family spec
+                    // i.e. anything is possible
+                    // Try for a FontFamilySet
+                    family =
+                        (FontFamilySet)(FontFamily.complex(foTree, value));
+                }
+            } else {
+                // Not an NCName; is it a Literal?
+                if (value instanceof StringType) {
+                    family =
+                        (FontFamilySet)(FontFamily.complex(foTree, value));
+                } else {
+                    // Not an NCName, not a StringType
+                    throw new PropertyException
+                        ("Invalid single element " +
+                            value.getClass().getName() +
+                                " for font shorthand");
+                }
+            }
+            // Out of here we can only have a FontFamilySet
+            PropertyValueList list =
+                PropertySets.initialValueExpansion(foTree, PropNames.FONT);
+            return PropertySets.overrideSHandElement(list, family);
+        }
+
+
+        /**
+         * @param value a <tt>PropertyValueList</tt> containing the
+         * comma-separated list; i.e. the top-level list returned by the
+         * parser.  In this instance, this can only be a <em>font-family</em>
+         * specification.
+         * @return <tt>PropertyValueList</tt> containing a
+         * <tt>PropertyValue</tt> for each property in the expansion of the
+         * shorthand.
+         * @exception PropertyValueException
+         */
+        private static PropertyValueList
+                            processCommaSepList(PropertyValueList value)
+                        throws PropertyException
+        {
+            // Pass this on to the procedure in the FontFamily property
+            return value;
+        }
+
+        /**
+         * @param value a <tt>PropertyValueList</tt> containing the actual
+         * space-separated list; i.e. the single inner list from the
+         * outer list returned by the parser.
+         * @return <tt>PropertyValueList</tt> containing a
+         * <tt>PropertyValue</tt> for each property in the expansion of the
+         * shorthand.
+         * @exception PropertyValueException
+         */
+        private static PropertyValueList
+                processSpaceSepList(FOTree foTree, PropertyValueList value)
+                        throws PropertyException
+        {
+            int property = value.getProperty();
+            PropertyValue color= null,
+                            image = null,
+                            repeat = null,
+                            attachment = null,
+                            position = null;
+
+            PropertyValueList newlist = new PropertyValueList(property);
+            // This is a list
+            if (value.size() == 0)
+                throw new PropertyException
+                                ("Empty list for Background");
+            ListIterator elements = ((PropertyValueList)value).listIterator();
+
+            scanning_elements: while (elements.hasNext()) {
+                PropertyValue pval = (PropertyValue)(elements.next());
+                if (pval instanceof ColorType) {
+                    if (color != null) MessageHandler.log("background: " +
+                                "duplicate color overrides previous color");
+                    color = pval;
+                    continue scanning_elements;
+                }
+
+                if (pval instanceof UriType) {
+                    if (image != null) MessageHandler.log("background: " +
+                        "duplicate image uri overrides previous image spec");
+                    image = pval;
+                    continue scanning_elements;
+                }
+
+                if (pval instanceof None) {
+                    if (image != null) MessageHandler.log("background: " +
+                        "duplicate image spec overrides previous image spec");
+                    image = pval;
+                    continue scanning_elements;
+                }
+
+                if (pval instanceof Numeric) {
+                    // Must be one of the position values
+                    // send it to BackgroundPosition.complex for processing
+                    // If it is followed by another Numeric, form a list from
+                    // the pair, else form a list from this element only
+                    PropertyValueList posnList = new PropertyValueList
+                                            (PropNames.BACKGROUND_POSITION);
+                    posnList.add(pval);
+                    // Is it followed by another Numeric?
+                    if (elements.hasNext()) {
+                        PropertyValue tmpval;
+                        if ((tmpval = (PropertyValue)(elements.next()))
+                                    instanceof Numeric) {
+                            posnList.add(tmpval);
+                        } else {
+                            // Not a following Numeric, so restore the list
+                            // cursor
+                            tmpval = (PropertyValue)(elements.previous());
+                        }
+                    }
+                    // Now send one or two Numerics to BackgroundPosition
+                    if (position != null)
+                            MessageHandler.log("background: duplicate" +
+                            "position overrides previous position");
+                    position = BackgroundPosition.complex(foTree, posnList);
+                    continue scanning_elements;
+                }
+
+                if (pval instanceof NCName) {
+                    // NCName can be:
+                    //  a standard color name
+                    //  a background attachment mode
+                    //  one or two position indicators
+                    String ncname = ((NCName)pval).getNCName();
+                    ColorType colorval = null;
+                    try {
+                        colorval = new ColorType
+                                        (PropNames.BACKGROUND_COLOR, ncname);
+                    } catch (PropertyException e) {};
+                    if (colorval != null) {
+                        if (color != null) MessageHandler.log("background: " +
+                                "duplicate color overrides previous color");
+                        color = colorval;
+                        continue scanning_elements;
+                    }
+
+                    // Is it an attachment mode?
+                    EnumType enum = null;
+                    try {
+                        enum = new EnumType
+                                (PropNames.BACKGROUND_ATTACHMENT, ncname);
+                    } catch (PropertyException e) {};
+                    if (enum != null) {
+                        if (attachment != null)
+                                MessageHandler.log("background: duplicate" +
+                                "attachment overrides previous attachment");
+                        attachment = enum;
+                        continue scanning_elements;
+                    }
+
+                    // Must be a position indicator
+                    // send it to BackgroundPosition.complex for processing
+                    // If it is followed by another NCName, form a list from
+                    // the pair, else form a list from this element only
+
+                    // This is made messy by the syntax of the Background
+                    // shorthand.  A following NCName need not be a second
+                    // position indicator.  So we have to test this element
+                    // and the following element individually.
+                    PropertyValueList posnList = new PropertyValueList
+                                            (PropNames.BACKGROUND_POSITION);
+                    PropertyValue tmpval = null;
+                    // Is the current NCName a position token?
+                    boolean pos1ok = false, pos2ok = false;
+                    try {
+                        PropertyConsts.enumValueToIndex
+                                        (ncname, BackgroundPosition.enums);
+                        pos1ok = true;
+                        if (elements.hasNext()) {
+                            tmpval = (PropertyValue)(elements.next());
+                            if (tmpval instanceof NCName) {
+                                String ncname2 = ((NCName)tmpval).getString();
+                                PropertyConsts.enumValueToIndex
+                                        (ncname2, BackgroundPosition.enums);
+                                pos2ok = true;
+                            } else {
+                                // Restore the listIterator cursor
+                                Object tmpo = elements.previous();
+                            }
+                        }
+                    } catch (PropertyException e) {};
+
+                    if (pos1ok) {
+                        posnList.add(pval);
+                        // Is it followed by another position NCName?
+                        if (pos2ok) posnList.add(tmpval);
+                        // Now send one or two NCNames to BackgroundPosition
+                        if (position != null)
+                                MessageHandler.log("background: duplicate" +
+                                "position overrides previous position");
+                        position =
+                                BackgroundPosition.complex(foTree, posnList);
+                        continue scanning_elements;
+                    }
+                    throw new PropertyException
+                        ("Unknown NCName value for background: " + ncname);
+                }
+
+                throw new PropertyException
+                    ("Invalid " + pval.getClass().getName() +
+                        " property value for background");
+            }
+
+            // Now construct the list of PropertyValues with their
+            // associated property indices, as expanded from the
+            // Background shorthand.  Note that the position value is a list
+            // containing the expansion of the BackgroundPosition shorthand.
+
+            if (color != null) {
+                color.setProperty(PropNames.BACKGROUND_COLOR);
+                newlist.add(color);
+            }
+            if (image != null) {
+                image.setProperty(PropNames.BACKGROUND_IMAGE);
+                newlist.add(image);
+            }
+            if (repeat != null) {
+                repeat.setProperty(PropNames.BACKGROUND_REPEAT);
+                newlist.add(repeat);
+            }
+            if (attachment != null) {
+                attachment.setProperty(PropNames.BACKGROUND_ATTACHMENT);
+                newlist.add(attachment);
+            }
+            if (position != null) {
+                // position must have two elements
+                Iterator positions = ((PropertyValueList)position).iterator();
+                newlist.add(positions.next());
+                newlist.add(positions.next());
+            }
+            return newlist;
+        }
     }
 
     public static class FontFamily extends Properties {
@@ -3519,7 +3937,7 @@ public abstract class Properties {
                 Collections.unmodifiableMap((Map)rwEnumValues);
         }
 
-        public static PropertyValue complex(PropertyValue propvalue)
+        public static PropertyValue complex(FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
             // There is no point in attempting to validate the enumeration
@@ -3535,35 +3953,35 @@ public abstract class Properties {
             // be at the top level, and any font family names
             // that contained spaces will be in PropertyValueLists.
 
-            int property = propvalue.getProperty();
+            int property = value.getProperty();
             // First, check that we have a list
-            if ( ! (propvalue instanceof PropertyValueList)) {
-                if ( ! (propvalue instanceof StringType))
+            if ( ! (value instanceof PropertyValueList)) {
+                if ( ! (value instanceof StringType))
                     throw new PropertyException
-                        ("Invalid " + propvalue.getClass().getName() +
+                        ("Invalid " + value.getClass().getName() +
                             " PropertyValue for font-family");
                 return new FontFamilySet(property,
-                        new String[] {((StringType)propvalue).getString() });
+                        new String[] {((StringType)value).getString() });
             }
-            PropertyValueList list = (PropertyValueList)propvalue;
+            PropertyValueList list = (PropertyValueList)value;
             String[] strings = new String[list.size()];
             int i = 0;          // the strings index
             Iterator scan = list.iterator();
             while (scan.hasNext()) {
-                Object value = scan.next();
+                Object pvalue = scan.next();
                 String name = "";
-                if (value instanceof PropertyValueList) {
+                if (pvalue instanceof PropertyValueList) {
                     // build a font name according to
                     // 7.8.2 "font-family" <family-name>
-                    Iterator font = ((PropertyValueList)value).iterator();
+                    Iterator font = ((PropertyValueList)pvalue).iterator();
                     while (font.hasNext())
                         name = name + (name.length() == 0 ? "" : " ")
                                 + ((StringType)(font.next())).getString();
                 }
-                else if (value instanceof StringType)
-                            name = ((StringType)value).getString();
+                else if (pvalue instanceof StringType)
+                            name = ((StringType)pvalue).getString();
                 else throw new PropertyException
-                        ("Invalid " + propvalue.getClass().getName() +
+                        ("Invalid " + value.getClass().getName() +
                             " PropertyValue for font-family");
                 strings[i++] = name;
             }
@@ -5933,7 +6351,7 @@ public abstract class Properties {
         public static final int initialValueType = NONE_IT;
         public static final int inherited = NO;
 
-        public static PropertyValue complex(PropertyValue list)
+        public static PropertyValue complex(FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
             // Confirm that the list contains only UriType elements
@@ -6525,7 +6943,7 @@ public abstract class Properties {
         public static final ROStringArray enums = new ROStringArray(rwEnums);
         public static final ROStringArray enumValues = enums;
 
-        public static PropertyValue complex(PropertyValue list)
+        public static PropertyValue complex(FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
             // Assume that the enumeration has been checked for.  Look for
@@ -6843,7 +7261,7 @@ public abstract class Properties {
                                     ,BLINK
                             });
 
-        public static PropertyValue complex(PropertyValue list)
+        public static PropertyValue complex(FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
             byte onMask = NO_DECORATION;
@@ -6954,7 +7372,7 @@ public abstract class Properties {
          * <tt>Length</tt>s may be preceded or followed by a color
          * specifier.
          */
-        public static PropertyValue complex(PropertyValue list)
+        public static PropertyValue complex(FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
             int property = list.getProperty();
