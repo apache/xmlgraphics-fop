@@ -48,20 +48,20 @@
   </fo>
   <checks>
     <!-- First block, no gap -->
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@border-start"/>
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@border-end"/>
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@border-before"/>
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@border-after"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@border-start"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@border-end"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@border-before"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@border-after"/>
     <eval expected="5000 5000 5000 5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@bap"/>
     <eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ipd"/>
     <eval expected="360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ipda"/>
     <eval expected="24400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@bpd"/>
     <eval expected="34400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@bpda"/>
     <!-- Nested block of first block -->
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@border-start"/>
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@border-end"/>
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@border-before"/>
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@border-after"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@border-start"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@border-end"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@border-before"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@border-after"/>
     <eval expected="5000 5000 5000 5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@bap"/>
     <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@ipd"/>
     <eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@ipda"/>
@@ -69,10 +69,10 @@
     <eval expected="24400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@bpda"/>
 
     <!-- Second block, 5pt gap -->
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@border-start"/>
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@border-end"/>
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@border-before"/>
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@border-after"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@border-start"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@border-end"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@border-before"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@border-after"/>
     <eval expected="5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@padding-start"/>
     <eval expected="5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@padding-end"/>
     <eval expected="5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@padding-before"/>
@@ -83,10 +83,10 @@
     <eval expected="24400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@bpd"/>
     <eval expected="44400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@bpda"/>
     <!-- Nested block of second block -->
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/@border-start"/>
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/@border-end"/>
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/@border-before"/>
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/@border-after"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/@border-start"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/@border-end"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/@border-before"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/@border-after"/>
     <eval expected="5000 5000 5000 5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/@bap"/>
     <eval expected="330000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/@ipd"/>
     <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/@ipda"/>
@@ -99,10 +99,10 @@
     <!--     actual block -->
     <eval expected="5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@space-start"/>
     <eval expected="5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@space-end"/>
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@border-start"/>
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@border-end"/>
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@border-before"/>
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@border-after"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@border-start"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@border-end"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@border-before"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@border-after"/>
     <eval expected="5000 5000 5000 5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@bap"/>
     <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@ipd"/>
     <eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@ipda"/>
@@ -112,10 +112,10 @@
     <eval expected="5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[5]/@bpd"/>
 
     <!-- Nested block of third block -->
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@border-start"/>
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@border-end"/>
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@border-before"/>
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@border-after"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@border-start"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@border-end"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@border-before"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@border-after"/>
     <eval expected="5000 5000 5000 5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@bap"/>
     <eval expected="330000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@ipd"/>
     <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@ipda"/>
@@ -123,10 +123,10 @@
     <eval expected="24400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@bpda"/>
 
     <!-- Fourth block, looks like the second block, but using margin on inner block instead of padding on outer block -->
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@border-start"/>
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@border-end"/>
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@border-before"/>
-    <eval expected="(133,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@border-after"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@border-start"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@border-end"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@border-before"/>
+    <eval expected="(solid,#0000ff,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@border-after"/>
     <eval expected="5000 5000 5000 5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@bap"/>
     <eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@ipd"/>
     <eval expected="360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@ipda"/>
@@ -138,10 +138,10 @@
     <!--     actual block -->
     <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/block[2]/@space-start"/>
     <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/block[2]/@space-end"/>
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/block[2]/@border-start"/>
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/block[2]/@border-end"/>
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/block[2]/@border-before"/>
-    <eval expected="(133,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/block[2]/@border-after"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/block[2]/@border-start"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/block[2]/@border-end"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/block[2]/@border-before"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/block[2]/@border-after"/>
     <eval expected="5000 5000 5000 5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/block[2]/@bap"/>
     <eval expected="330000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/block[2]/@ipd"/>
     <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/block[2]/@ipda"/>
