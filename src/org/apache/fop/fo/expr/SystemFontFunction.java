@@ -9,7 +9,7 @@ package org.apache.fop.fo.expr;
 
 import org.apache.fop.fo.Properties.Font;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.PropertySets;
+import org.apache.fop.fo.ShorthandPropSets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.FunctionNotImplementedException;
 import org.apache.fop.datastructs.ROIntArray;
@@ -29,7 +29,7 @@ public class SystemFontFunction {
      * Return the <tt>PropertyValue</tt> appropriate to the <em>property</em>
      * of the argument.  <em>property</em> must be one of the font
      * characteristic properties in the expansion set of the <em>font</em>
-     * shorthand property; <em>PropertySets.fontExpansion</em>.
+     * shorthand property; <em>ShorthandPropSets.fontExpansion</em>.
      * @param property <tt>int</tt> index of the font characteristic property
      * to be returned.
      * @param font <tt>String</tt> name of the system font
@@ -50,7 +50,7 @@ public class SystemFontFunction {
      * font characteristic, named by <em>propName</em>, defined on the
      * system font named by <em>font</em>.  <em>propName</em> must be one of
      * characteristic properties in the expansion set of the <em>font</em>
-     * shorthand property; <em>PropertySets.fontExpansion</em>.
+     * shorthand property; <em>ShorthandPropSets.fontExpansion</em>.
      * @param property <tt>int</tt> index of the property for the
      * <tt>PropertyValue</tt> to be returned.
      * @param font <tt>String</tt> name of the system font
@@ -88,7 +88,7 @@ public class SystemFontFunction {
     {
         // Get the array of indices of the properties in the
         // expansion of this shorthand
-        ROIntArray expansion = PropertySets.fontExpansion;
+        ROIntArray expansion = ShorthandPropSets.fontExpansion;
         PropertyValueList list = new PropertyValueList(property);
         for (int i = 0; i < expansion.length; i++) {
             list.add(systemFontCharacteristic(expansion.get(i), font));

@@ -23,6 +23,7 @@ import java.util.Collections;
 import org.apache.fop.messaging.MessageHandler;
 
 import org.apache.fop.fo.PropertyConsts;
+import org.apache.fop.fo.ShorthandPropSets;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjects;
 import org.apache.fop.datatypes.PropertyValue;
@@ -425,7 +426,7 @@ public abstract class Properties {
         default:
             if ( ! nested) {
                 if ((datatype & COMPOUND) != 0)
-                    return PropertySets.expandCompoundProperty
+                    return ShorthandPropSets.expandCompoundProperty
                                                     (foNode.foTree, value);
                 if (proptype == PropertyValue.INHERIT) {
                     if ((datatype & INHERIT) != 0)
@@ -597,7 +598,7 @@ public abstract class Properties {
      *   a border-EDGE-width MappedNumeric or inheritance value
      *
      *  N.B. this is the order of elements defined in
-     *       PropertySets.borderRightExpansion
+     *       ShorthandPropSets.borderRightExpansion
      */
     protected static PropertyValue borderEdge(FONode foNode,
             PropertyValue value, int styleProp, int colorProp, int widthProp)
@@ -635,7 +636,7 @@ public abstract class Properties {
             {
                 // Copy the value to each member of the shorthand expansion
                 return refineExpansionList
-                            (foNode, PropertySets.expandAndCopySHand(value));
+                        (foNode, ShorthandPropSets.expandAndCopySHand(value));
             }
         }
         // Make a list and pass to processList
@@ -1138,7 +1139,7 @@ public abstract class Properties {
             {
                 // Copy the value to each member of the shorthand expansion
                 return refineExpansionList
-                    (foNode, PropertySets.expandAndCopySHand(value));
+                    (foNode, ShorthandPropSets.expandAndCopySHand(value));
             } else  {
                 // Make a list and pass to processList
                 PropertyValueList tmpList
@@ -1503,7 +1504,7 @@ public abstract class Properties {
                             type == PropertyValue.FROM_NEAREST_SPECIFIED) {
                     // Copy the value to each member of the shorthand
                     newlist = refineExpansionList
-                        (foNode, PropertySets.expandAndCopySHand(value));
+                        (foNode, ShorthandPropSets.expandAndCopySHand(value));
                 }
             }
 
@@ -1951,7 +1952,7 @@ public abstract class Properties {
                         type == PropertyValue.FROM_NEAREST_SPECIFIED)
                 // Copy the value to each member of the shorthand expansion
                 return refineExpansionList
-                    (foNode, PropertySets.expandAndCopySHand(value));
+                    (foNode, ShorthandPropSets.expandAndCopySHand(value));
 
             PropertyValueList ssList = null;
             // Must be a space-separated list or a single value from the
@@ -2245,7 +2246,7 @@ public abstract class Properties {
          *   a border-EDGE-width MappedNumeric or inheritance value
          *
          *  N.B. this is the order of elements defined in
-         *       PropertySets.borderRightExpansion
+         *       ShorthandPropSets.borderRightExpansion
          *
          * @param foNode - the <tt>FONode</tt> being built
          * @param value <tt>PropertyValue</tt> returned by the parser
@@ -2397,12 +2398,12 @@ public abstract class Properties {
                     if (type == PropertyValue.INHERIT ||
                             type == PropertyValue.FROM_PARENT ||
                                 type == PropertyValue.FROM_NEAREST_SPECIFIED)
-                        return refineExpansionList
-                            (foNode, PropertySets.expandAndCopySHand(value));
+                        return refineExpansionList(foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
                 }
                 if (type == PropertyValue.COLOR_TYPE)
                     return refineExpansionList
-                        (foNode, PropertySets.expandAndCopySHand(value));
+                        (foNode, ShorthandPropSets.expandAndCopySHand(value));
                 if (type == PropertyValue.NCNAME) {
                     // Must be a standard color
                     ColorType color;
@@ -2415,7 +2416,7 @@ public abstract class Properties {
                                 " not a standard color for border-color");
                     }
                     return refineExpansionList
-                        (foNode, PropertySets.expandAndCopySHand(color));
+                        (foNode, ShorthandPropSets.expandAndCopySHand(color));
                 }
                 else throw new PropertyException
                     ("Invalid " + value.getClass().getName() +
@@ -2614,7 +2615,7 @@ public abstract class Properties {
          *   a border-EDGE-width MappedNumeric or inheritance value
          *
          *  N.B. this is the order of elements defined in
-         *       PropertySets.borderRightExpansion
+         *       ShorthandPropSets.borderRightExpansion
          *
          * @param foNode - the <tt>FONode</tt> being built
          * @param value <tt>PropertyValue</tt> returned by the parser
@@ -2700,7 +2701,7 @@ public abstract class Properties {
          *   a border-EDGE-width MappedNumeric or inheritance value
          *
          *  N.B. this is the order of elements defined in
-         *       PropertySets.borderRightExpansion
+         *       ShorthandPropSets.borderRightExpansion
          *
          * @param foNode - the <tt>FONode</tt> being built
          * @param value <tt>PropertyValue</tt> returned by the parser
@@ -2838,12 +2839,12 @@ public abstract class Properties {
                         type == PropertyValue.FROM_PARENT ||
                             type == PropertyValue.FROM_NEAREST_SPECIFIED)
                     return refineExpansionList
-                        (foNode, PropertySets.expandAndCopySHand(value));
+                        (foNode, ShorthandPropSets.expandAndCopySHand(value));
 
                 if (type == PropertyValue.NUMERIC &&
                                                 ((Numeric)value).isLength())
                     return refineExpansionList
-                        (foNode, PropertySets.expandAndCopySHand(value));
+                        (foNode, ShorthandPropSets.expandAndCopySHand(value));
 
                 throw new PropertyException
                     ("Invalid " + value.getClass().getName() +
@@ -3036,8 +3037,8 @@ public abstract class Properties {
                     if (type == PropertyValue.INHERIT ||
                             type == PropertyValue.FROM_PARENT ||
                                 type == PropertyValue.FROM_NEAREST_SPECIFIED)
-                        return refineExpansionList
-                            (foNode, PropertySets.expandAndCopySHand(value));
+                        return refineExpansionList(foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
                 }
                 if (type == PropertyValue.NCNAME) {
                     // Must be a border-style
@@ -3051,7 +3052,7 @@ public abstract class Properties {
                                                     " not a border-style");
                     }
                     return refineExpansionList
-                        (foNode, PropertySets.expandAndCopySHand(enum));
+                        (foNode, ShorthandPropSets.expandAndCopySHand(enum));
                 }
                 else throw new PropertyException
                     ("Invalid " + value.getClass().getName() +
@@ -3125,7 +3126,7 @@ public abstract class Properties {
          *   a border-EDGE-width MappedNumeric or inheritance value
          *
          *  N.B. this is the order of elements defined in
-         *       PropertySets.borderRightExpansion
+         *       ShorthandPropSets.borderRightExpansion
          *
          * @param foNode - the <tt>FONode</tt> being built
          * @param value <tt>PropertyValue</tt> returned by the parser
@@ -3255,8 +3256,8 @@ public abstract class Properties {
                     if (type == PropertyValue.INHERIT ||
                             type == PropertyValue.FROM_PARENT ||
                                 type == PropertyValue.FROM_NEAREST_SPECIFIED)
-                        return refineExpansionList
-                            (foNode, PropertySets.expandAndCopySHand(value));
+                        return refineExpansionList(foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
                 }
                 if (type == PropertyValue.NCNAME) {
                     // Must be a border-width
@@ -3277,7 +3278,7 @@ public abstract class Properties {
                     // Correct the property in the mapped Numeric
                     mapped.setProperty(PropNames.BORDER_WIDTH);
                     return refineExpansionList
-                        (foNode, PropertySets.expandAndCopySHand(mapped));
+                        (foNode, ShorthandPropSets.expandAndCopySHand(mapped));
                 }
                 else throw new PropertyException
                     ("Invalid " + value.getClass().getName() +
@@ -3698,7 +3699,7 @@ public abstract class Properties {
                             type == PropertyValue.FROM_NEAREST_SPECIFIED ||
                                 type == PropertyValue.URI_TYPE)
                     return refineExpansionList
-                        (foNode, PropertySets.expandAndCopySHand(value));
+                        (foNode, ShorthandPropSets.expandAndCopySHand(value));
                 throw new PropertyException
                     ("Invalid " + value.getClass().getName() +
                         " object for cue");
@@ -4168,7 +4169,7 @@ public abstract class Properties {
                         type == PropertyValue.FROM_NEAREST_SPECIFIED)
             {
                 return refineExpansionList
-                    (foNode, PropertySets.expandAndCopySHand(value));
+                    (foNode, ShorthandPropSets.expandAndCopySHand(value));
             }
             // else not Inherit/From../From..
             FontFamilySet family = null;
@@ -4385,9 +4386,9 @@ public abstract class Properties {
             newlist = new PropertyValueList(PropNames.FONT);
             // Add each discovered property to the list.
             // N.B. These properties should be added in the order given
-            // in the PropertySets.fontExpansion ROIntArray.
-            for (int i = 0; i < PropertySets.fontExpansion.length; i++) {
-                switch (PropertySets.fontExpansion.get(i)) {
+            // in the ShorthandPropSets.fontExpansion ROIntArray.
+            for (int i = 0; i < ShorthandPropSets.fontExpansion.length; i++) {
+                switch (ShorthandPropSets.fontExpansion.get(i)) {
                 case PropNames.FONT_STYLE:
                     if (style != null) newlist.add(style);
                     break;
@@ -4405,7 +4406,8 @@ public abstract class Properties {
                     break;
                 case PropNames.LINE_HEIGHT:
                     if (height != null)
-                        newlist.addAll(PropertySets.expandCompoundProperty
+                        newlist.addAll
+                            (ShorthandPropSets.expandCompoundProperty
                                                     (foNode.foTree, height));
                     break;
                 }
@@ -5653,11 +5655,11 @@ public abstract class Properties {
                     || value instanceof FromNearestSpecified
                     )
                     return refineExpansionList
-                        (foNode, PropertySets.expandAndCopySHand(value));
+                        (foNode, ShorthandPropSets.expandAndCopySHand(value));
                 // N.B.  Does this require further refinement?
                 // Where is Auto expanded?
                 return refineExpansionList
-                    (foNode, PropertySets.expandAndCopySHand
+                    (foNode, ShorthandPropSets.expandAndCopySHand
                                                     (autoOrDistance(value)));
             } else {
                 PropertyValueList list =
@@ -6046,7 +6048,7 @@ public abstract class Properties {
                             && ((Numeric)value).isDistance())
                     )
                     return refineExpansionList
-                        (foNode, PropertySets.expandAndCopySHand(value));
+                        (foNode, ShorthandPropSets.expandAndCopySHand(value));
                 throw new PropertyException
                     ("Invalid property value for 'padding': "
                         + value.getClass().getName());
@@ -6362,7 +6364,7 @@ public abstract class Properties {
                             value instanceof Auto)
             {
                 return refineExpansionList
-                    (foNode, PropertySets.expandAndCopySHand(value));
+                    (foNode, ShorthandPropSets.expandAndCopySHand(value));
             }
             if (value instanceof NCName) {
                 EnumType enum = null;
@@ -6425,7 +6427,7 @@ public abstract class Properties {
                             value instanceof Auto)
             {
                 return refineExpansionList
-                    (foNode, PropertySets.expandAndCopySHand(value));
+                    (foNode, ShorthandPropSets.expandAndCopySHand(value));
             }
             if (value instanceof NCName) {
                 EnumType enum = null;
@@ -6496,7 +6498,7 @@ public abstract class Properties {
                             value instanceof Auto)
             {
                 return refineExpansionList
-                    (foNode, PropertySets.expandAndCopySHand(value));
+                    (foNode, ShorthandPropSets.expandAndCopySHand(value));
             }
             if (value instanceof NCName) {
                 EnumType enum = null;
@@ -6654,7 +6656,7 @@ public abstract class Properties {
                         value instanceof FromNearestSpecified)
             {
                 return refineExpansionList
-                    (foNode, PropertySets.expandAndCopySHand(value));
+                    (foNode, ShorthandPropSets.expandAndCopySHand(value));
             }
             if (value instanceof NCName) {
                 EnumType enum = null;
