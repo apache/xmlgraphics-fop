@@ -7,9 +7,18 @@
 
 package org.apache.fop.fo.expr;
 
-public class PropertyException extends Exception {
+import org.apache.fop.apps.FOPException;
+
+public class PropertyException extends FOPException {
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     public PropertyException(String detail) {
         super(detail);
+    }
+
+    public PropertyException(Throwable e) {
+        super(e);
     }
 
 }
