@@ -49,7 +49,7 @@ public abstract class AbstractPropertyValue
      {
         if (index < 1 || index > PropNames.LAST_PROPERTY_INDEX)
             throw new PropertyException("Invalid property index: " + index);
-        if (type < 1 || type > PropertyValue.LAST_PROPERTY_TYPE)
+        if (type < 0 || type > PropertyValue.LAST_PROPERTY_TYPE)
             throw new PropertyException("Invalid property type: " + type);
         property = index;
         this.type = type;
@@ -64,7 +64,7 @@ public abstract class AbstractPropertyValue
         property = PropertyConsts.getPropertyIndex(propertyName);
         if (property < 1 || property > PropNames.LAST_PROPERTY_INDEX)
             throw new PropertyException("Invalid property index: " + property);
-        if (type < 1 || type > PropertyValue.LAST_PROPERTY_TYPE)
+        if (type < 0 || type > PropertyValue.LAST_PROPERTY_TYPE)
             throw new PropertyException("Invalid property type: " + type);
         this.type = type;
     }
