@@ -290,11 +290,11 @@ public class Cell extends BlockStackingLayoutManager {
             curBlockArea = new Block();
             curBlockArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             curBlockArea.setPositioning(Block.ABSOLUTE);
+            int indent = 0;
+            indent += fobj.getCommonBorderPaddingBackground().getBorderStartWidth(false);
+            indent += fobj.getCommonBorderPaddingBackground().getPaddingStart(false);
             // set position
-            int x = xoffset + inRowIPDOffset;
-            //mimic start-indent
-            x += fobj.getCommonBorderPaddingBackground().getBorderStartWidth(false);
-            curBlockArea.setXOffset(x);
+            curBlockArea.setXOffset(xoffset + inRowIPDOffset + indent);
             curBlockArea.setYOffset(yoffset);
             curBlockArea.setIPD(cellIPD);
             //curBlockArea.setHeight();
