@@ -9,8 +9,8 @@
       <question>What is FOP?</question>
       <answer>
       <p>
-        FOP is a print formatter for <jump href="#XSLFO">XSL formatting
-        objects</jump>.
+        FOP is a print formatter for <link href="#XSLFO">XSL formatting
+        objects</link>.
       </p>
       <p>
         It can be used to render an XML file containing XSL formatting objects
@@ -66,8 +66,8 @@
       <answer>
         <p>
           XSL is a W3C standard concerned with publishing XML documents. It
-          consists of two parts: <jump href="#XSLT">XSLT</jump> and <jump
-          href="#XSLFO">XSLFO</jump>. The acronym expands to
+          consists of two parts: <link href="#XSLT">XSLT</link> and <link
+          href="#XSLFO">XSLFO</link>. The acronym expands to
           e<strong>X</strong>tensible <strong>S</strong>tylesheet
           <strong>L</strong>anguage.
         </p>
@@ -123,21 +123,45 @@
   <part>
     <title>Common stumbling blocks</title>
     <faq>
+      <question>Why does FOP insert a blank page between my page sequences?</question>
+      <answer>
+        <p>
+          This is because spec conformance has been improved.
+        </p>
+        <p>
+          The <link
+          href="http://www.w3.org/TR/xsl/slice7.html#force-page-count">force-page-count
+          property</link> controls how a FO processor pads page sequences in
+          order to get certain page counts or last page numbers. The default is
+          "<code>auto</code>". With this setting, if the next page sequence
+          begins with an odd page number because you set the
+          initial-page-number, and the current page sequence also ends with an
+          odd page number, the processor inserts a blank page to keep odd and
+          even page numbers alternating (similar for the case the current page
+          sequence ends with an even page number and the next page sequence
+          starts with an even page number.
+        </p>
+        <p>
+          If you don't want to have this blank page, use
+          <code>force-page-count="no-force"</code>.
+        </p>
+      </answer>
+    </faq>
+    <faq>
       <question>I get the error: [ERROR]: 'master-reference' for
       'fo:page-sequence'matches no 'simple-page-master' or
       'page-sequence-master'</question>
       <answer>
         <p>
-          FOP was changed to be in accordance with the latest standard
-          (see <link href="resources.html#w3-xsl">XSL
-          standard</link>).The page master for a fo:page-sequence is
-          now refereced by the master-reference attribute. Replace the
-          master-name attributes of your fo:page-sequence elements by
-          master-reference attributes. You have to do this also for
-          fo:single-page-master-reference,
+          FOP was changed to be in accordance with the latest standard (see
+          <link href="resources.html#w3-xsl">XSL standard</link>).The page
+          master for a fo:page-sequence is now refereced by the
+          master-reference attribute. Replace the master-name attributes of
+          your fo:page-sequence elements by master-reference attributes. You
+          have to do this also for fo:single-page-master-reference,
           fo:repeatable-page-master-reference and
-          fo:conditional-page-master-reference elements in you page
-          master definitions.
+          fo:conditional-page-master-reference elements in you page master
+          definitions.
         </p>
         <p>
           See also <link href="relnotes.html">release notes</link>.
@@ -151,8 +175,15 @@
           The Jimi image library, which is by default used for processing
           images in PNG and other formats, was removed from the distribution
           for licensing reasons. You have to <fork
-            href="http://java.sun.com">download</fork>
+            href="http://java.sun.com/products/jimi">download</fork>
           and install it by yourself.
+        </p>
+        <p>
+          Extract the file "JimiProClasses.zip" from the archive you've downloaded, rename it to "jimi-1.0.jar" and move it to FOP's lib directory.
+        </p>
+        <p>
+          An alternative to Jimi is to use Sun's JAI. It is much faster, but
+          not available for all platforms.
         </p>
       </answer>
     </faq>
@@ -160,8 +191,8 @@
       <question>I get a NoClassDefFound exception.</question>
       <answer>
         <p>
-          This is typically a problem with your <link
-            href="classpath.html">classpath</link>.</p>
+          This is typically a problem with your <!--link
+            href="classpath.html"-->classpath<!--/link-->.</p>
         <p>If you are running FOP from the command line:</p>
         <ul>
           <li>
@@ -176,8 +207,8 @@
           </li>
         </ul>
         <p>
-          If you run FOP embedded in your servlet, web application or other Java
-          application, check the classpath of the application.
+          If you run FOP embedded in your servlet, web application or other
+          Java application, check the classpath of the application.
         </p>
       </answer>
     </faq>
@@ -191,8 +222,9 @@
           jaxp.jar, xml4j.jar or lotusxsl.jar.
         </p>
         <p>
-          Incompatible versions of Batik may also cause this problem. Use
-          the version of Batik that comes with FOP.
+          Incompatible versions of Batik may also cause this problem. Use the
+          version of Batik that comes with FOP. It is not always possible to
+          use a more recent version of Batik.
         </p>
       </answer>
     </faq>
@@ -218,17 +250,18 @@
             physical RAM, it will significantly slow down. YMMV.
           </li>
           <li>
-            Avoid forward references. Forward references cause all pages from
-            the page with the reference on to be held in memory until the
-            page with the referenced element is encountered. Common forward
-            references are table of contents at the beginning of the document
-            and the <link href="#pagenum">"page N of TOTAL"</link> in footers.
-            Forward references may be required by the task, however, if you are
-            getting a memory overflow you should at least check whether this is
-            really as necessary as claimed. A TOC, for example, could often be
-            placed at the end of the document without dimishing it's value too
-            much, the paper can be reshuffled after printing, and you can use
-            bookmarks in PDF.
+            Avoid forward references, that is page number citations to pages to
+            places on pages which follow the citation. Forward references cause
+            all pages from the page with the reference on to be held in memory
+            until the page with the referenced element is encountered. Common
+            forward references are table of contents at the beginning of the
+            document and the <link href="#pagenum">"page N of TOTAL"</link> in
+            footers. Forward references may be required by the task, however,
+            if you are getting a memory overflow you should at least check
+            whether this is really as necessary as claimed. A TOC, for example,
+            could often be placed at the end of the document without dimishing
+            it's value too much, the paper can be reshuffled after printing,
+            and you can use bookmarks in PDF.
           </li>
           <li>
             Avoid large images, especially if they are scaled down. Scale them
@@ -238,23 +271,31 @@
             using a higher compression rate.
           </li>
           <li>
-            Use multiple page sequences. FOP starts rendering after the end of a
-            page sequence is encountered. While the actual rendering is done
-            page by page, some memory allocated for other purposes could
-            possibly be freed after the page sequence has been rendered.
+            Use multiple page sequences. FOP starts rendering after the end of
+            a page sequence is encountered. While the actual rendering is done
+            page by page, some additional memory allocated for other purposes
+            could be freed after the page sequence has been rendered.
+          </li>
+          <li>
+            Break down large tables. If you don't use table headers and
+            footers, just start a new table every N rows. With headers and
+            footers, consider integrating them as normal table rows, or, if
+            they are used at page breaks, try to put the information into
+            static content. You can use markers to change them.
           </li>
         </ul>
         <p>
           There are also some bugs which cause FOP to go into an nonterminating
           loop, which also often results in a memory overflow. A characteristic
-          symptom are continuous <jump href="#boxoverflow">box
-          overflows</jump>. Most of them are triggered by elements not fitting
+          symptom are continuous <link href="#boxoverflow">box
+          overflows</link>. Most of them are triggered by elements not fitting
           in the available space, like big images and improperly specified width
           of nested block elements. Look for such stuff and correct it.
         </p>
         <p>
           Reducing memory consumption in general and squishing bugs is an
-          ongoing effort, partially addressed in the <link href="dev/index.html">redesign</link>.
+          ongoing effort, partially addressed in the <link
+          href="dev/index.html">redesign</link>.
         </p>
       </answer>
     </faq>
@@ -297,8 +338,8 @@
       <question>I get an "[ERROR]: null", or a NullPointerException.</question>
       <answer>
         <p>
-          Most often, you supplied an invalid FO document to FOP. Currently only
-          very common errors are intercepted and produce a comprehensible error
+          This is often caused by an invalid FO document. Currently only very
+          common errors are intercepted and produce a comprehensible error
           message. If you forgot container elements like fo:page-sequence or
           fo:flow and put blocks and inline elements directly as children of
           fo:root or fo:page-sequence, you'll only get a
@@ -331,14 +372,14 @@
         <p>
           The most likely reason is a known problem with the Java run time
           environment which is triggered by rendering SVGs. Suns JDK 1.4 does
-          not have this problem. See also <jump href="#svghangs">FOP does not
-          exit if a SVG is included</jump>.
+          not have this problem. See also <link href="#svghangs">FOP does not
+          exit if a SVG is included</link>.
         </p>
         <p>
           Another possibility is that FOP went into a non terminating
           loop. Usually this is indicated by lots of log messages of the form
-          "[INFO]: [NNNN]" which indicate a new page has been started or <jump
-          href="#boxoverflow">box overflows</jump>. After some time, FOP will
+          "[INFO]: [NNNN]" which indicate a new page has been started or <link
+          href="#boxoverflow">box overflows</link>. After some time, FOP will
           crash with an OutOfMemoryException.
         </p>
         <p>
@@ -346,7 +387,7 @@
           programm, for example from Java using Runtime.exec(), it may hang
           while trying to write log entries to the output pipe. You have to read
           the FOP output regularly to empty the pipe buffer. It is best to avoid
-          exec'ing FOP, use the library interface.
+          exec'ing FOP, use the library interface instead.
         </p>
       </answer>
     </faq>
@@ -420,40 +461,42 @@
         </p>
         <source><![CDATA[<fo:table table-layout="fixed" width="100%">
   <fo:table-column column-width="proportional-column-width(1)"/>
-    <fo:table-body>
-      <fo:table-row keep-with-next="always">
-        <fo:table-cell>
-          <fo:block>
-            <fo:external-graphic src="foo.jpg"/>
-          </fo:block>
-        </fo:table-cell>
-      </fo:table-row>
-      <fo:table-row>
-        <fo:table-cell>
-          <fo:block>Image Caption</fo:block>
-        </fo:table-cell>
-      </fo:table-row>
-    </fo:table-body>
-  </fo:table>]]></source>
+  <fo:table-body>
+    <fo:table-row keep-with-next="always">
+      <fo:table-cell>
+        <fo:block>
+          <fo:external-graphic src="foo.jpg"/>
+        </fo:block>
+      </fo:table-cell>
+    </fo:table-row>
+    <fo:table-row>
+      <fo:table-cell>
+        <fo:block>Image Caption</fo:block>
+      </fo:table-cell>
+    </fo:table-row>
+  </fo:table-body>
+</fo:table>]]></source>
       </answer>
     </faq>
     <faq>
       <question>My tables are missing, or missing their content.</question>
       <answer>
         <p>
-          Check for fo:table-body around the rows. FOP doesn't raise an error if
-          it is omitted, it just drops the content.
+          Check for fo:table-body around the rows. FOP up to 0.20.4 doesn't
+          raise an error if it is omitted, it just drops the content. More
+          recent releases will catch this problem.
         </p>
         <p>
           Also, the fo:table-with-caption element is not implemented, tables
-          within such an element are dropped too. The DocBook style sheets
-          generate fo:table-with-caption elements, so watch out.
+          within such an element are dropped too. FOP generates an error
+          message for this problem. The DocBook style sheets generate
+          fo:table-with-caption elements, so watch out.
         </p>
       </answer>
     </faq>
     <faq>
-      <question>Text overflowing table cells and the like is not clipped. Long text
-        flows into adjacent cells/block, obscuring stuff there.</question>
+      <question>Text overflowing table cells and the like is not clipped. Long
+        text flows into adjacent cells/block, obscuring stuff there.</question>
       <answer>
         <p>
           Clipping as specified by the <code>overflow="hidden"</code> is not yet
@@ -502,16 +545,15 @@
       <question>A graphic is not displayed.</question>
       <answer>
         <p>
-          The most common reason is that the file is not found because
-          of an empty or wrong baseDir setting, spelling errors in the
-          file name, in particular using the wrong case, or, if the
-          image is retrieved over HTTP, the image was not delivered because
-          of security settings in the server, missing cookies or other
-          authorization information or other server misconfigurations.
-          One way to check this is to cut&amp;paste the source URL
-          from the fo:external-graphic into the Location field of
-          a browser <strong>on the machine where the FOP process
-            will be running</strong>.
+          The most common reason is that the file is not found because of an
+          empty or wrong baseDir setting, spelling errors in the file name, in
+          particular using the wrong case, or, if the image is retrieved over
+          HTTP, the image was not delivered because of security settings in the
+          server, missing cookies or other authorization information, or
+          because of server misconfigurations.  One way to check this is to
+          cut&amp;paste the source URL from the fo:external-graphic into the
+          Location field of a browser <strong>on the machine where the FOP
+          process will be running</strong>.
         </p>
         <p>
           Several other possibilities:
@@ -526,8 +568,8 @@
             formats known to work)
           </li>
           <li>
-            Something else obscures the graphic, for example stuff from a static
-            content (very rare, but has happened).
+            Something else obscures the graphic, for example stuff from a
+            static content (very rare, but has happened).
           </li>
         </ul>
         <!-- p>
@@ -572,7 +614,8 @@ driver.run();</source>
       </answer>
     </faq>
     <faq>
-      <question>How do I use FOP in a servlet with an XSLT transformation?</question>
+      <question>How do I use FOP in a servlet with an XSLT
+      transformation?</question>
       <answer>
         <p>
           Use the TraxInputHandler if both the source XML and XSL are read from
@@ -615,10 +658,10 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
           The <code>xmlsource</code> is a placeholder for your actual XML
           source. You can supply a <code>new StreamSource( new
           StringReader(xmlstring))</code> if you have to read the XML from a
-          string. Constructing an XML string and reparse it is not always a good
-          iea, consider to use a SAXSource if you generate your XML. You can, of
-          course, supply a DOMSource or whatever you like. You can also use
-          dynamically generated XSL if you want to.
+          string. Constructing an XML string and reparse it is not always a
+          good idea, consider to use a SAXSource if you generate your XML. You
+          can, of course, supply a DOMSource or whatever you like. You can also
+          use dynamically generated XSL if you want to.
         </p>
         <p>
           Because you have an explicit transformer object, you can set
@@ -635,12 +678,13 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       </answer>
     </faq>
     <faq>
-      <question>How do I use my own fonts when running FOP from a servlet?</question>
+      <question>How do I use my own fonts when running FOP from a
+      servlet?</question>
       <answer>
         <p>
           Declare the fonts in the <code>userconfig.xml</code> file as
-          usual. See <jump href="#usercfg">loading the user configuration
-          file</jump> for further steps.
+          usual. See <link href="#usercfg">loading the user configuration
+          file</link> for further steps.
         </p>
       </answer>
     </faq>
@@ -656,7 +700,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
         <source>org.apache.fop.configuration.Configuration.put("baseDir","C:\my\base\dir");</source>
         <p>
-          See <jump href="#usercfg">using a user configuration file</jump>
+          See <link href="#usercfg">using a user configuration file</link>
           for caveats.
         </p>
       </answer>
@@ -719,7 +763,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       </answer>
     </faq>
     <faq>
-      <question>FOP and multithreading</question>
+      <question>Can FOP be used in multithreaded environments?</question>
       <answer>
         <p>
           FOP is not completely thread safe. At the very least you'll have to
@@ -767,8 +811,11 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
         <source>org.apache.fop.configuration.Configuration.put("strokeSVGText", Boolean.FALSE);</source>
         <p>
-          See also <jump href="#usercfg">using a user configuration file</jump>
+          See also <link href="#usercfg">using a user configuration file</link>
           in a servlet.
+        </p>
+        <p>
+          This does not work for other renderers.
         </p>
       </answer>
     </faq>
@@ -910,6 +957,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
               href="pdf-security">encryption</link>.
             The bad news is that iText swallows PDF bookmarks.
           </li>
+          
           <li>
             You can use Adobe Acrobat (the full version, not the Reader) to
             process the file manually or with scripting that it supports.
@@ -918,7 +966,8 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       </answer>
     </faq>
     <faq id="pdf-security">
-      <question>How do I add security features (encryption, disable printing) to my PDF document?</question>
+      <question>How do I add security features (encryption, disable printing)
+      to my PDF document?</question>
       <answer>
         <p>
           FOP does not currently support this feature. Possible workarounds
@@ -978,15 +1027,19 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       </answer>
     </faq>
     <faq>
-      <question>How do I add document properties (title, author, etc.) to my PDF document?</question>
+      <question>How do I add document properties (title, author, etc.) to my
+      PDF document?</question>
       <answer>
-        <p>FOP does not currently support this feature. Possible workarounds include those mentioned in the <link href="#PDF-postprocess">PDF Post-Processing FAQ</link>.</p>
+        <p>FOP does not currently support this feature. Possible workarounds
+        include those mentioned in the <link href="#PDF-postprocess">PDF
+        Post-Processing FAQ</link>.</p>
       </answer>
     </faq>
     <faq>
       <question>How do I add watermarks to my PDF document?</question>
       <answer>
-        <p>FOP does not currently support this feature. Possible workarounds:</p>
+        <p>FOP does not currently support this feature. Possible
+        workarounds:</p>
         <ul>
           <li>
             Use a background image for the body region.
@@ -998,11 +1051,11 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
           <li>
             (submitted by Trevor_Campbell@kaz.com.au) Place an image in a
             region that overlaps the flowing text. For example, make
-            region-before large enough to contain your image. Then include
-            a block (if necessary, use an absolutely positioned
-            block-container) containing the watermark image in the
-            static-content for the region-before.
-            Note that the image will be drawn on top of the normal content.
+            region-before large enough to contain your image. Then include a
+            block (if necessary, use an absolutely positioned block-container)
+            containing the watermark image in the static-content for the
+            region-before. Note that the image will be drawn on top of the
+            normal content.
           </li>
         </ul>
       </answer>
@@ -1013,10 +1066,9 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         <p>
           Check the paper size in Acrobat settings and the "fit to page" print
           setting. Contorted printing is often caused by a mismatched paper
-          format, for example if the setting is "US Letter" but the PDF was made
-          for A4.
-          Sometimes also the printer driver interferes, check its settings
-          too.
+          format, for example if the setting is "US Letter" but the PDF was
+          made for A4. Sometimes also the printer driver interferes, check its
+          settings too.
         </p>
       </answer>
     </faq>
@@ -1034,7 +1086,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
   <part>
     <title>IEx specific stuff</title>
     <faq>
-      <question>The FOP servlet is called multiple times.</question>
+      <question>The FOP servlet is called multiple times!</question>
       <answer>
         <p>
           This is a problem of Internet Explorer requesting the content several
@@ -1069,8 +1121,8 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       <question>How do I print PDF directly from the browser?</question>
       <answer>
         <p>
-          It depends whether you mean "printing to a printer under control of the
-          server" or "printing on the client's printer".
+          It depends whether you mean "printing to a printer under control of
+          the server" or "printing on the client's printer".
         </p>
         <p>
           For the first problem, look at the print servlet in the FOP
@@ -1101,8 +1153,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
           a page:
         </p>
         <source><![CDATA[<?xml version="1.0"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
-  xmlns:svg="http://www.w3.org/2000/svg">
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
   <fo:layout-master-set>
     <fo:simple-page-master master-name="content"
       page-width="210mm" page-height="297mm">
@@ -1129,13 +1180,108 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       </answer>
     </faq>
     <faq>
-      <question>(FO) How to get page numbers printed on the "outer side" of the
-        page (for books, obviously)?</question>
+      <question>(FO) How do I center a table horizontally?</question>
       <answer>
         <p>
-          That's about different static content on <jump
-          href="#oddeven">odd/even pages</jump>.
+          You can add a column left and right wich pad the table so that the visible part is centered.
         </p>
+        <source><![CDATA[<?xml version="1.0"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="content"
+      page-width="210mm" page-height="297mm">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="content">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:table table-layout="fixed" width="100%">
+        <fo:table-column column-width="proportional-column-width(1)"/>
+        <fo:table-column column-width="100mm"/>
+        <fo:table-column column-width="proportional-column-width(1)"/>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell/>
+            <fo:table-cell>
+              <fo:block>foo</fo:block>
+            </fo:table-cell>
+            <fo:table-cell/>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>]]></source>
+        <p>
+          If your table is more complicated, or if defining borders on individual cells becomes too much work, use the code above and nest your table within the moddle cell.
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>(FO) How to get page numbers printed on the "outer side" of the
+        page (for books, for example)?</question>
+      <answer>
+        <p>
+          Place different static content on <link href="#oddeven">odd and even
+          pages</link>.
+        </p>
+      </answer>
+    </faq>
+    <faq id="oddeven">
+      <question>(FO) How do I use different static content for odd and even
+      pages?</question>
+      <answer>
+        <p>
+          There are examples in the FO distribution and in the <link
+          href="http://www.dpawson.co.uk/xsl/sect3/index.html">XSL FAQ FO
+          section</link>.
+        </p>
+        <p>
+          Define a page master with alternating pages masters for odd and even
+          pages, specify appropriate regions in these page masters, and be sure
+          to give them different names. You use these names to put different
+          static content in these regions. A self contained document
+          demonstrating this:
+        </p>
+        <source><![CDATA[<?xml version="1.0"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="even"
+      page-height="297mm" page-width="210mm"
+      margin-top="20mm" margin-bottom="20mm"
+      margin-left="25mm" margin-right="25mm">
+      <fo:region-body margin-bottom="20mm"/>
+      <fo:region-after region-name="footer-even" extent="20mm"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="odd"
+      page-height="297mm" page-width="210mm"
+      margin-top="20mm" margin-bottom="20mm"
+      margin-left="25mm" margin-right="25mm">
+      <fo:region-body margin-bottom="20mm"/>
+      <fo:region-after region-name="footer-odd" extent="20mm"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="document">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference odd-or-even="even"
+          master-reference="even"/>
+        <fo:conditional-page-master-reference odd-or-even="odd"
+          master-reference="odd"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="document">
+    <fo:static-content flow-name="footer-even">
+      <fo:block text-align="start"><fo:page-number/></fo:block>
+    </fo:static-content>
+    <fo:static-content flow-name="footer-odd">
+      <fo:block text-align-last="end"><fo:page-number/></fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block/>
+      <fo:block break-before="page"/>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>]]></source>
       </answer>
     </faq>
     <faq>
@@ -1183,61 +1329,6 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
     <fo:flow flow-name="xsl-region-body">
       <fo:block/>
       <fo:block break-before="page"/>
-      <fo:block break-before="page"/>
-    </fo:flow>
-  </fo:page-sequence>
-</fo:root>]]></source>
-      </answer>
-    </faq>
-    <faq id="oddeven">
-      <question>(FO) Different static content for odd/even pages</question>
-      <answer>
-        <p>
-          There are examples in the FO distribution and in the XSL FAQ FO
-          section http://www.dpawson.co.uk/xsl/sect3/index.html
-        </p>
-        <p>
-          Define a page master with alternating pages masters for odd and even
-          pages, specify appropriate regions in these page masters, and be sure
-          to give them different names. You use these names to put different
-          static content in these regions. A self contained document
-          demonstrating this:
-        </p>
-        <source><![CDATA[<?xml version="1.0"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-  <fo:layout-master-set>
-    <fo:simple-page-master master-name="even"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body margin-bottom="20mm"/>
-      <fo:region-after region-name="footer-even" extent="20mm"/>
-    </fo:simple-page-master>
-    <fo:simple-page-master master-name="odd"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body margin-bottom="20mm"/>
-      <fo:region-after region-name="footer-odd" extent="20mm"/>
-    </fo:simple-page-master>
-    <fo:page-sequence-master master-name="document">
-      <fo:repeatable-page-master-alternatives>
-        <fo:conditional-page-master-reference odd-or-even="even"
-          master-reference="even"/>
-        <fo:conditional-page-master-reference odd-or-even="odd"
-          master-reference="odd"/>
-      </fo:repeatable-page-master-alternatives>
-    </fo:page-sequence-master>
-  </fo:layout-master-set>
-  <fo:page-sequence master-reference="document">
-    <fo:static-content flow-name="footer-even">
-      <fo:block text-align="start"><fo:page-number/></fo:block>
-    </fo:static-content>
-    <fo:static-content flow-name="footer-odd">
-      <fo:block text-align-last="end"><fo:page-number/></fo:block>
-    </fo:static-content>
-    <fo:flow flow-name="xsl-region-body">
-      <fo:block/>
       <fo:block break-before="page"/>
     </fo:flow>
   </fo:page-sequence>
@@ -1533,8 +1624,8 @@ class rendtest {
         </p>
         <p>
           Refer to the <link href="http://www.w3.org/XML/">XML
-            specification</link> or to a good tutorial for
-          details of the XML file format.
+            specification</link> or to a good tutorial for details of the XML
+            file format.
         </p>
       </answer>
     </faq>
