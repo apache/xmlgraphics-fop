@@ -75,7 +75,7 @@ public class FoXMLEvent extends XMLEvent {
 
     /**
      * Clear the fields of this event.  Provided for pool operations.
-     * The <i>namespaces</i> field is not cleared.
+     * Neither the <i>namespaces</i> nor the <i>id</i> field is cleared.
      * @return the cleared <tt>XMLEvent</tt> event.
      */
     public XMLEvent clear() {
@@ -85,11 +85,35 @@ public class FoXMLEvent extends XMLEvent {
 
     /**
      * Clear the fields of this event.  Provided for pool operations.
-     * The <i>namespaces</i> field is not cleared.
+     * Neither the <i>namespaces</i> nor the <i>id</i> field is cleared.
      * @return the cleared <tt>XMLEvent</tt> event.
      */
     public FoXMLEvent clearFo() {
         return (FoXMLEvent)clear();
+    }
+
+    /**
+     * Copy the fields of the argument event to this event.
+     * Provided for pool operations.
+     * Neither the <i>namespaces</i> nor the <i>id</i> field is copied.
+     * The <i>namespaces</i> field is not cleared.
+     * @param ev the <tt>XMLEvent</tt> to copy.
+     * @return the copied <tt>XMLEvent</tt> event.
+     */
+    public XMLEvent copyEvent(FoXMLEvent ev) {
+        foType = ev.foType;
+        return super.copyEvent(ev);
+    }
+
+    /**
+     * Copy the fields of the argument event to this event.
+     * Provided for pool operations.
+     * Neither the <i>namespaces</i> nor the <i>id</i> field is copied.
+     * The <i>namespaces</i> field is not cleared.
+     * @return the copied <tt>XMLEvent</tt> event.
+     */
+    public FoXMLEvent copyFoEvent(FoXMLEvent ev) {
+        return (FoXMLEvent)copyEvent(ev);
     }
 
     /**
