@@ -1,0 +1,13 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<section id="areatree">
+ <title>Area Tree</title>
+	<para>
+The code to implement the area tree will attempt to match the areas
+defined in the specification. A number of optimisations may be possible
+for similar areas and groups of areas.
+  </para>
+  <para>
+
+  </para>
+
+</section>

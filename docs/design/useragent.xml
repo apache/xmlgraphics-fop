@@ -1,0 +1,146 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<section id="useragent-use">
+ <title>Usage</title>
+	<para>
+The user agent is used by the formatting process to determine
+certain user definable values.
+  </para>
+  <para>
+It will enable the customisation of values for generating and
+rendering the document.
+  </para>
+  <para>
+The user agent must be available to the layout processor and
+the renderer. Users can supply their own user agent or use
+the default one for a particular renderer.
+	</para>
+
+  <para>
+Standard Features:
+       <itemizedlist>
+       <listitem><para>
+adjusting length values (eg. for borders) to renderable values
+       </para></listitem>
+       <listitem><para>
+available fonts
+       </para></listitem>
+       <listitem><para>
+converting cm/in to pt (dpi)
+       </para></listitem>
+       <listitem><para>
+active state for multi properties
+       </para></listitem>
+       <listitem><para>
+title, used to identify a set of pages (in a page sequence)
+       </para></listitem>
+       <listitem><para>
+the width (in inline-progression-dimension) of a character with
+trea-word-as-space true
+       </para></listitem>
+       <listitem><para>
+maximum space used by conditional areas from region-reference-area
+       </para></listitem>
+       <listitem><para>
+if there should be "hot links" to before floats or footnotes
+       </para></listitem>
+       <listitem><para>
+when to clear side floats if space in inline-progression-dimension
+is not enough
+       </para></listitem>
+       <listitem><para>
+placement of left over footnotes on a page with a region-body
+       </para></listitem>
+       <listitem><para>
+using color property as border colour
+       </para></listitem>
+       <listitem><para>
+interpretting all border styles (except outset) as solid
+       </para></listitem>
+       <listitem><para>
+thin, medium and thick values for border width
+       </para></listitem>
+       <listitem><para>
+initial font-family value
+       </para></listitem>
+       <listitem><para>
+absolute font sizes (eg, xx-small, x-small etc.)
+       </para></listitem>
+       <listitem><para>
+relative font sizes (eg. larger, smaller)
+       </para></listitem>
+       <listitem><para>
+small caps simulation
+       </para></listitem>
+       <listitem><para>
+font weight mapping
+       </para></listitem>
+       <listitem><para>
+baseline info for a font if not available
+       </para></listitem>
+       <listitem><para>
+determining sub/superscript when another baseline is dominant
+       </para></listitem>
+       <listitem><para>
+scaling method for external-graphic and instream-foreign-object
+       </para></listitem>
+       <listitem><para>
+the width of a replaced element
+       </para></listitem>
+       <listitem><para>
+"normal" line height value
+       </para></listitem>
+       <listitem><para>
+text alignment (stretching the line with letter and word spacing)
+       </para></listitem>
+       <listitem><para>
+text transform
+       </para></listitem>
+       <listitem><para>
+initial color
+       </para></listitem>
+       <listitem><para>
+rendering intent of auto
+       </para></listitem>
+       <listitem><para>
+dot character for leader
+       </para></listitem>
+       <listitem><para>
+line breaking with leaders, use optimum length when breaking the line
+       </para></listitem>
+       <listitem><para>
+page height/width of auto
+       </para></listitem>
+       <listitem><para>
+left and right caption widths
+       </para></listitem>
+       <listitem><para>
+glyph orientation vertical of auto
+       </para></listitem>
+       <listitem><para>
+rendering processor of content-type (mime type)
+       </para></listitem>
+       </itemizedlist>
+  </para>
+
+  <para>
+Interactive Features:
+       <itemizedlist>
+       <listitem><para>
+inline and block scroll amount
+       </para></listitem>
+       <listitem><para>
+dynamic effects, links and property sets
+       </para></listitem>
+       <listitem><para>
+initial "pause-after", "pause-before" and "voice-family" value
+       </para></listitem>
+       <listitem><para>
+treating fixed as scroll on background attachement
+       </para></listitem>
+       <listitem><para>
+media usage of auto
+       </para></listitem>
+       </itemizedlist>
+  </para>
+
+</section>

@@ -1,0 +1,50 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20001102//EN"
+	"http://www.w3.org/TR/2000/CR-SVG-20001102/DTD/svg-20001102.dtd">
+<svg width="440" height="250">
+	<rect x="5" y="5" width="151" height="239" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="260" y="6" width="151" height="239" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<polygon
+		points="219.67,112 247,127 219.67,142 219.67,132.882 163,132.882 163,120.824 219.67,120.824" style="
+		stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);
+		fill-opacity:1;fill:rgb(0,0,0);opacity:1"/>
+	<path d="M4.5 31 L155.5 31" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-linecap:round;stroke-width:1;stroke-opacity:1;
+		stroke:rgb(0,0,0);fill-opacity:1;fill:rgb(0,0,0);opacity:1"/>
+	<path d="M260.5 32 L411.5 32" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-linecap:round;stroke-width:1;stroke-opacity:1;
+		stroke:rgb(0,0,0);fill-opacity:1;fill:rgb(0,0,0);opacity:1"/>
+	<path d="M5.5 222 L156.5 222" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-linecap:round;stroke-width:1;stroke-opacity:1;
+		stroke:rgb(0,0,0);fill-opacity:1;fill:rgb(0,0,0);opacity:1"/>
+	<path d="M261.5 220 L412.5 220" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-linecap:round;stroke-width:1;stroke-opacity:1;
+		stroke:rgb(0,0,0);fill-opacity:1;fill:rgb(0,0,0);opacity:1"/>
+	<path d="M23.5 32 L23.5 222" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-linecap:round;stroke-width:1;stroke-opacity:1;
+		stroke:rgb(0,0,0);fill-opacity:1;fill:rgb(0,0,0);opacity:1"/>
+	<path d="M133.5 32 L133.5 222" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-linecap:round;stroke-width:1;stroke-opacity:1;
+		stroke:rgb(0,0,0);fill-opacity:1;fill:rgb(0,0,0);opacity:1"/>
+	<path d="M282.5 31 L282.5 221" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-linecap:round;stroke-width:1;stroke-opacity:1;
+		stroke:rgb(0,0,0);fill-opacity:1;fill:rgb(0,0,0);opacity:1"/>
+	<path d="M389.5 31 L389.5 221" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-linecap:round;stroke-width:1;stroke-opacity:1;
+		stroke:rgb(0,0,0);fill-opacity:1;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="283" y="33" width="106" height="32" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(58,53,255);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="283" y="71" width="106" height="27" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(58,53,255);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="283" y="107" width="106" height="28" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(58,53,255);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="283" y="143" width="106" height="32" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(58,53,255);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="282" y="187" width="108" height="13" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(58,53,255);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="282" y="208" width="108" height="27" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(58,53,255);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<path d="M282.5 50 L389.5 50" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-linecap:round;stroke-width:1;stroke-opacity:1;
+		stroke:rgb(36,239,21);fill-opacity:1;fill:rgb(0,0,0);opacity:1"/>
+	<path d="M283.5 195 L390.5 195" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-linecap:round;stroke-width:1;stroke-opacity:1;
+		stroke:rgb(36,239,21);fill-opacity:1;fill:rgb(0,0,0);opacity:1"/>
+	<text x="361" y="46" style="font-family:Arial;font-size:12;stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);
+		fill-opacity:1;fill:rgb(0,0,0);opacity:1">Before Float</text>
+	<text x="379.157" y="211" style="font-family:Arial;font-size:12;stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);
+		fill-opacity:1;fill:rgb(0,0,0);opacity:1">Footnote</text>
+</svg>
+
