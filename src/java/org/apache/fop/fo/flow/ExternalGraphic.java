@@ -54,8 +54,6 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.TextAlign;
 import org.apache.fop.fo.properties.Overflow;
 import org.apache.fop.fo.properties.DisplayAlign;
@@ -63,9 +61,6 @@ import org.apache.fop.fo.properties.Scaling;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.layoutmgr.TraitSetter;
-import org.apache.fop.area.inline.Image;
-import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.Length;
 
 // Java
@@ -98,34 +93,6 @@ public class ExternalGraphic extends FObj {
      */
     public ExternalGraphic(FONode parent) {
         super(parent);
-    }
-
-    /**
-     * Get the inline area for this external grpahic.
-     * This creates the image area and puts it inside a viewport.
-     *
-     * @return the viewport containing the image area
-     */
-    public InlineArea getInlineArea() {
-        setup();
-        if (url == null) {
-            return null;
-        }
-        Image imArea = new Image(url);
-        Viewport vp = new Viewport(imArea);
-        vp.setWidth(viewWidth);
-        vp.setHeight(viewHeight);
-        vp.setClip(clip);
-        vp.setContentPosition(placement);
-        vp.setOffset(0);
-
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-        TraitSetter.addBorders(vp, bap);
-        TraitSetter.addBackground(vp, bProps);
-
-        return vp;
     }
 
     /**
@@ -286,5 +253,20 @@ public class ExternalGraphic extends FObj {
         fotv.serveVisitor(this);
     }
 
-}
+    public String getURL() {
+        return url;
+    }
 
+    public int getViewWidth() {
+        return viewWidth;
+    }
+
+    public boolean getClip() {
+        return clip;
+    }
+
+    public Rectangle2D getPlacement() {
+        return placement;
+    }
+
+}
