@@ -19,7 +19,7 @@
           <th>Base-14</th>
           <th>AWT/OS</th>
           <th>Custom</th>
-          <th>Embedding</th>
+          <th>Custom Embedding</th>
         </tr>
         <tr>
           <td>PDF</td>
@@ -133,7 +133,9 @@ The constructed values however appear to have no visible influence.</note>
       </section>
       <section id="truetype-metrics">
         <title>TrueType Font Metrics</title>
-        <p>FOP includes a tool that can generate an appropriate font metrics file from your TrueType font file. To create such a file in Windows from the TrueType font at c:\myfonts\cmr10.ttf:</p>
+        <p>FOP includes TTFReader, which reads the TTF file and generates an appropriate font metrics file for it.
+Use it in a similar manner to PFMReader.
+For example, to create such a metcis file in Windows from the TrueType font at c:\myfonts\cmr10.ttf:</p>
         <source>java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;
          lib\xercesImpl.jar;lib\xalan.jar
            org.apache.fop.fonts.apps.TTFReader
@@ -141,7 +143,7 @@ The constructed values however appear to have no visible influence.</note>
       </section>
       <section id="truetype-collections-metrics">
         <title>TrueType Collections Font Metrics</title>
-        <p>TrueType collections (.ttc files) contains more than one font.
+        <p>TrueType collections (.ttc files) contain more than one font.
 To create metrics files for these fonts, you must specify which font in the collection should be generated, by using the "-ttcname" option with the TTFReader.</p>
         <p>To get a list of the fonts in a collection, just start the TTFReader as if it were a normal TrueType file (without the -ttcname option).
 It will display all of the font names and exit with an Exception.</p>
@@ -167,23 +169,23 @@ Relative URLs are resolved relative to the fontBaseDir property (or baseDir) if 
         </ul>
         <note>Cocoon users will need to setup the config, see FOPSerializer for more information.</note>
       </section>
-    </section>
-    <section id="embedding">
-      <title>Embedding fonts</title>
-      <note>The PostScript renderer does not yet support font embedding.</note>
-      <note>The font is simply embedded into the PDF file, it is not converted.</note>
-      <p>Font embedding is enabled in the userconfig.xml file and controlled by the embed-file attribute.
+      <section id="embedding">
+        <title>Embedding</title>
+        <note>The PostScript renderer does not yet support font embedding.</note>
+        <note>The font is simply embedded into the PDF file, it is not converted.</note>
+        <p>Font embedding is enabled in the userconfig.xml file and controlled by the embed-file attribute.
 If you don't specify the embed-file attribute the font will not be embedded, but will only be referenced.</p>
-      <p>When FOP embeds a font, it scrambles its fontname by inserting a prefix that ensures that the fontname will not match the fontname of an installed font.
+        <p>When FOP embeds a font, it scrambles its fontname by inserting a prefix that ensures that the fontname will not match the fontname of an installed font.
 This is helpful with older versions of Acrobat Reader that preferred installed fonts over embedded fonts.</p>
-      <p>When embedding PostScript fonts, the entire font is always embedded.</p>
-      <p>When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a new font, containing only the glyphs used, is created from the original font and embedded in the pdf.
+        <p>When embedding PostScript fonts, the entire font is always embedded.</p>
+        <p>When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a new font, containing only the glyphs used, is created from the original font and embedded in the pdf.
 Currently, this embedded font contains only the minimum data needed to be embedded in a pdf document, and does not contain any codepage information.
 The PDF document contains indexes to the glyphs in the font instead of to encoded characters.
 While the document will be displayed correctly, the net effect of this is that searching, indexing, and cut-and-paste will not work properly.</p>
-      <p>One workaround for this behavior is to use the -ansi option when generating metrics with TTFReader.
+        <p>One workaround for this behavior is to use the -ansi option when generating metrics with TTFReader.
 This will cause the whole font to be embedded in the pdf document.
 Characters will be WinAnsi encoded (as specified in the PDF spec), so you lose the ability to use characters from other character sets.</p>
+      </section>
     </section>
   </body>
 </document>
