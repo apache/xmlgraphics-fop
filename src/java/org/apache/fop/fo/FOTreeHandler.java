@@ -19,7 +19,6 @@
 package org.apache.fop.fo;
 
 // Java
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -56,7 +55,6 @@ import org.apache.fop.layoutmgr.ContentLayoutManager;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.LMiter;
 import org.apache.fop.layoutmgr.PageLayoutManager;
-import org.apache.fop.render.Renderer;
 
 
 /**
@@ -93,7 +91,7 @@ public class FOTreeHandler extends FOInputHandler {
     private long initialMemory;
 
     /**
-     * Keep track of time used by renderer.
+     * Keep track of time used in rendering
      */
     private long startTime;
 
@@ -102,83 +100,28 @@ public class FOTreeHandler extends FOInputHandler {
     private AddLMVisitor addLMVisitor = null;
     
     /**
-     * the renderer to use to output the area tree
-     */
-    private Renderer renderer;
-
-    /**
      * Main constructor
      * @param userAgent the apps.userAgent implementation that governs
      *      this FO Tree
-     * @param OutputStream stream to use to output results of renderer
+     * @param renderType the fo.Constants value indicating desired
+     *          output type (RENDER_PDF, RENDER_PS, etc.)
+     * @param OutputStream stream to use to output results of rendering
      *
-     * @param store if true then use the store pages model and keep the
-     *        area tree in memory
      */
     public FOTreeHandler(FOUserAgent userAgent, int renderType, 
-        OutputStream stream, boolean store) throws FOPException {
+        OutputStream stream) throws FOPException {
         super(userAgent);
 
-        if (foUserAgent.getRendererOverride() != null) {
-            renderer = foUserAgent.getRendererOverride();
-        } else {
-            renderer = createRenderer(renderType);
-            renderer.setUserAgent(foUserAgent);
-        }
-        
-        areaTree = new AreaTree(renderer);
+        areaTree = new AreaTree(userAgent, renderType, fontInfo, stream);
 
-        try {
-            renderer.setupFontInfo(fontInfo);
-            // check that the "any,normal,400" font exists
-            if (!fontInfo.isSetupValid()) {
-                throw new FOPException(
-                    "No default font defined by OutputConverter");
-            }
-            renderer.startRenderer(stream);
-        } catch (IOException e) {
-            throw new FOPException(e);
-        }
-        
         if (collectStatistics) {
             runtime = Runtime.getRuntime();
         }
     }
 
     /**
-     * Creates a Renderer object based on render-type desired
-     * @param renderType the type of renderer to use
-     * @return Renderer the new Renderer instance
-     * @throws IllegalArgumentException if an unsupported renderer type was requested
-     */
-    private Renderer createRenderer(int renderType) throws IllegalArgumentException {
-
-        switch (renderType) {
-        case Constants.RENDER_PDF:
-            return new org.apache.fop.render.pdf.PDFRenderer();
-        case Constants.RENDER_AWT:
-            return new org.apache.fop.render.awt.AWTRenderer();
-        case Constants.RENDER_PRINT:
-            return new org.apache.fop.render.awt.AWTPrintRenderer();
-        case Constants.RENDER_PCL:
-            return new org.apache.fop.render.pcl.PCLRenderer();
-        case Constants.RENDER_PS:
-            return new org.apache.fop.render.ps.PSRenderer();
-        case Constants.RENDER_TXT:
-            return new org.apache.fop.render.txt.TXTRenderer();
-        case Constants.RENDER_XML:
-            return new org.apache.fop.render.xml.XMLRenderer();
-        case Constants.RENDER_SVG:
-            return new org.apache.fop.render.svg.SVGRenderer();
-        default:
-            throw new IllegalArgumentException("Invalid renderer type " 
-                + renderType);
-        }
-    }
-
-    /**
-     * Start the document.
-     * This starts the document in the renderer.
+     * Prepare FOTreeHandler for FO Tree building.
+     * This is called from FOTreeBuilder.startDocument()
      *
      * @throws SAXException if there is an error
      */
@@ -201,16 +144,13 @@ public class FOTreeHandler extends FOInputHandler {
      * @throws SAXException if there is some error
      */
     public void endDocument() throws SAXException {
-        try {
-            if (pageSequenceFound == false) {
-                throw new SAXException("Error: No fo:page-sequence child " +
-                    "found within fo:root element.");
-            }
-            areaTree.endDocument();
-            renderer.stopRenderer();
-        } catch (IOException ex) {
-            throw new SAXException(ex);
+
+        if (pageSequenceFound == false) {
+            throw new SAXException("Error: No fo:page-sequence child " +
+                "found within fo:root element.");
         }
+
+        areaTree.endDocument();
 
         if (collectStatistics) {
             if (MEM_PROFILE_WITH_GC) {
