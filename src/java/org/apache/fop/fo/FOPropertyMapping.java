@@ -1822,19 +1822,19 @@ public class FOPropertyMapping implements Constants {
 
         sub = new LengthProperty.Maker(CP_MINIMUM);
         sub.setDefault("0pt");
-        sub.setPercentBase(LengthBase.CONTAINING_BOX);
+        sub.setPercentBase(LengthBase.BLOCK_WIDTH);
         sub.setByShorthand(true);
         m.addSubpropMaker(sub);
 
         sub = new LengthProperty.Maker(CP_OPTIMUM);
         sub.setDefault("12.0pt");
-        sub.setPercentBase(LengthBase.CONTAINING_BOX);
+        sub.setPercentBase(LengthBase.BLOCK_WIDTH);
         sub.setByShorthand(true);
         m.addSubpropMaker(sub);
 
         sub = new LengthProperty.Maker(CP_MAXIMUM);
         sub.setDefault("100%", true);
-        sub.setPercentBase(LengthBase.CONTAINING_BOX);
+        sub.setPercentBase(LengthBase.BLOCK_WIDTH);
         sub.setByShorthand(true);
         m.addSubpropMaker(sub);
         addPropertyMaker("leader-length", m);
