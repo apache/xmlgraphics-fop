@@ -479,33 +479,33 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <xslt infile="${charlist.xml}" xsltfile="${charlist.xsl}" 
         outfile="${build.src}/${replacestring}/render/pdf/CodePointMapping.java" smart="yes"/>
-    <xslt infile="${Courier.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${Courier.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/Courier.java" smart="yes"/>
-    <xslt infile="${Courier-Oblique.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${Courier-Oblique.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/CourierOblique.java" smart="yes"/>
-    <xslt infile="${Courier-Bold.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${Courier-Bold.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/CourierBold.java" smart="yes"/>
-    <xslt infile="${Courier-BoldOblique.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${Courier-BoldOblique.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/CourierBoldOblique.java" smart="yes"/>
-    <xslt infile="${Helvetica.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${Helvetica.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/Helvetica.java" smart="yes"/>
-    <xslt infile="${Helvetica-Oblique.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${Helvetica-Oblique.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/HelveticaOblique.java" smart="yes"/>
-    <xslt infile="${Helvetica-Bold.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${Helvetica-Bold.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBold.java" smart="yes"/>
-    <xslt infile="${Helvetica-BoldOblique.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${Helvetica-BoldOblique.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBoldOblique.java" smart="yes"/>
-    <xslt infile="${Times-Roman.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${Times-Roman.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesRoman.java" smart="yes"/>
-    <xslt infile="${Times-Italic.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${Times-Italic.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesItalic.java" smart="yes"/>
-    <xslt infile="${Times-Bold.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${Times-Bold.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesBold.java" smart="yes"/>
-    <xslt infile="${Times-BoldItalic.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${Times-BoldItalic.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesBoldItalic.java" smart="yes"/>
-    <xslt infile="${ZapfDingbats.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${ZapfDingbats.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/ZapfDingbats.java" smart="yes"/>
-    <xslt infile="${Symbol.xml}" xsltfile="${fontfile.xsl}" mergefile="${charlist.xml}"
+    <xslt infile="${Symbol.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/Symbol.java" smart="yes"/>
 
     <!-- custom fonts (Use t1fontfile.xsl instead of fontfile.xsl for Type 1 fonts!) step 2/2 -->
@@ -556,7 +556,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
            debug="${debug}"
            deprecation="${deprecation}"
            optimize="${optimize}"
-           excludes="**/${ignore_this},${jimi},${ignore_jdk11}"/>
+           excludes="**/${ignore_this},${Jimi},${ignore_jdk11}"/>
   </target>
 
   <!-- =================================================================== -->
