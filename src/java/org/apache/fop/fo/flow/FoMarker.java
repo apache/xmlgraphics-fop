@@ -57,16 +57,16 @@ import java.util.BitSet;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
+import org.apache.fop.datatypes.NCName;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.XmlEventReader;
-import org.apache.fop.xml.UnexpectedStartElementException;
+import org.apache.fop.xml.XmlEventsArrayBuffer;
 
 /**
  * Implements the fo:marker flow object.
@@ -91,7 +91,17 @@ public class FoMarker extends FONode {
     /** The number of applicable properties.  This is the size of the
         <i>sparsePropsSet</i> array. */
     private static final int numProps;
-
+    
+    /**
+     * The marker-class-name for this fo:marker
+     */
+    public final String markerClassName;
+    
+    /**
+     * The buffer which will hold the contents of the fo:marker subtree
+     */
+    private XmlEventsArrayBuffer buffer;
+    
     static {
         // Collect the sets of properties that apply
         BitSet propsets = new BitSet();
@@ -108,8 +118,7 @@ public class FoMarker extends FONode {
     }
 
     /**
-     * Construct an fo:wrapper node, and build the fo:wrapper subtree.
-     * <p>Content model for fo:inline: (marker*,(#PCDATA|%inline;|%wrapper;)*)
+     * Construct an fo:marker node, and buffer the contents for later parsing.
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
@@ -126,35 +135,35 @@ public class FoMarker extends FONode {
         if ((stateFlags & FONode.FLOW) == 0)
             throw new FOPException
                     ("fo:marker must be descendent of fo:flow.");
-        XmlEvent ev = null;
-        do {
+        NCName ncName;
             try {
-                if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
-                    ev = xmlevents.expectPcdataOrInlineOrBlock();
-                else
-                    ev = xmlevents.expectOutOfLinePcdataOrInlineOrBlock();
-                if (ev != null) {
-                    // Generate the flow object
-                    FObjects.fobjects.makeFlowObject(
-                            foTree, this, ev, stateFlags);
-                    if (ev.getType() != XmlEvent.CHARACTERS) {
-                        ev = xmlevents.getEndElement(
-                                XmlEventReader.DISCARD_EV, ev);
-                    }
-                    namespaces.relinquishEvent(ev);
-                }
-            } catch(UnexpectedStartElementException e) {
-                ev = xmlevents.getStartElement();
-                MessageHandler.logln
-                        ("Ignoring unexpected Start Element: "
-                                                         + ev.getQName());
-                ev = xmlevents.getEndElement(
-                        XmlEventReader.DISCARD_EV, ev);
-                namespaces.relinquishEvent(ev);
-            }
-        } while (ev != null);
+            ncName = (NCName)(getPropertyValue(PropNames.MARKER_CLASS_NAME));
+        } catch (PropertyException e) {
+            throw new FOPException("Cannot find marker-class-name in fo:marker", e);
+        } catch (ClassCastException e) {
+            throw new FOPException("Wrong PropertyValue type in fo:marker", e);
+        }
+        markerClassName = ncName.getNCName();
 
+        // all but the marker-class-name property are irrelevant on fo:marker
         makeSparsePropsSet();
+        
+        // Collect the contents of fo:marker for future processing
+        buffer = new XmlEventsArrayBuffer(namespaces);
+        XmlEvent ev = xmlevents.getEndElement(
+                buffer, XmlEventReader.RETAIN_EV, event);
+        // The original START_ELEMENT event is still known to the parent
+        // node, which will arrange to relinquish it.  Relinquish
+        // the just-returned END_ELEMENT event
+        namespaces.relinquishEvent(ev);
+        
+    }
+    
+    /**
+     * @return the marker subtree buffer
+     */
+    public XmlEventsArrayBuffer getEventBuffer() {
+        return buffer;
     }
 
 }
