@@ -28,6 +28,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.NCName;
+import org.apache.fop.xml.XMLEvent;
 
 /**
  * Implements the fo:page-sequence-master flow object.  These Fos are
@@ -40,6 +41,22 @@ public class FoPageSequenceMaster extends FONode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
+
+    /**
+     * An array with <tt>XMLEvent.UriLocalName</tt> objects identifying
+     * <tt>single-page-master-reference</tt>,
+     * <tt>repeatable-page-master-reference</tt> and
+     * <tt>repeatable-page-master-alternatives</tt> XML events.
+     */
+    private static final XMLEvent.UriLocalName[]
+                                            singleOrRepeatableMasterRefs = {
+        new XMLEvent.UriLocalName
+              (XMLNamespaces.XSLNSpaceIndex, "single-page-master-reference"),
+        new XMLEvent.UriLocalName
+         (XMLNamespaces.XSLNSpaceIndex, "repeatable-page-master-reference"),
+        new XMLEvent.UriLocalName
+         (XMLNamespaces.XSLNSpaceIndex, "repeatable-page-master-alternatives")
+    };
 
     private String masterName;
 
@@ -59,19 +76,10 @@ public class FoPageSequenceMaster extends FONode {
                                 ("master-name property not an NCName.");
         masterName = ((NCName)name).getNCName();
         // Process sequence members here
-        LinkedList list = new LinkedList();
-        list.add((Object)(new XMLEvent.UriLocalName
-          (XMLNamespaces.XSLNSpaceIndex, "single-page-master-reference")));
-        list.add((Object)(new XMLEvent.UriLocalName
-                          (XMLNamespaces.XSLNSpaceIndex,
-                                        "repeatable-page-master-reference")));
-        list.add((Object)
-                 (new XMLEvent.UriLocalName
-                          (XMLNamespaces.XSLNSpaceIndex,
-                                   "repeatable-page-master-alternatives")));
         try {
             do {
-                XMLEvent ev = xmlevents.expectStartElement(list);
+                XMLEvent ev = xmlevents.expectStartElement
+                    (singleOrRepeatableMasterRefs, XMLEvent.DISCARD_W_SPACE);
                 String localName = ev.getLocalName();
                 if (localName.equals("single-page-master-reference")) {
                     System.out.println("Found single-page-master-reference");
