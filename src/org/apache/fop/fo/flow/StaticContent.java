@@ -97,11 +97,11 @@ public class StaticContent extends FObj {
 	int numChildren = this.children.size();
 	// Set area absolute height so that link rectangles will be drawn correctly in xsl-before and xsl-after
 	String flowName = this.properties.get("flow-name").getString();
-	if(flowName.equals("xsl-before"))
+	if(flowName.equals("xsl-region-before"))
 	{
 		area.setAbsoluteHeight(-area.getMaxHeight());
 	}
-	else if(flowName.equals("xsl-after"))
+	else if(flowName.equals("xsl-region-after"))
 	{
 		area.setAbsoluteHeight(area.getPage().getBody().getMaxHeight());
 	}
