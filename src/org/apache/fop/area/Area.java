@@ -9,6 +9,7 @@ package org.apache.fop.area;
 
 import java.io.Serializable;
 
+import java.util.Map;
 import java.util.HashMap;
 
 // If the area appears more than once in the output
@@ -187,7 +188,7 @@ public class Area implements Serializable {
      *
      * @return the map of traits
      */
-    public HashMap getTraits() {
+    public Map getTraits() {
         return this.props;
     }
 

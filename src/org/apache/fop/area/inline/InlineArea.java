@@ -12,8 +12,6 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.traits.BorderProps;
 
-import java.util.ArrayList;
-
 /**
  * Inline Area
  * This area is for all inline areas that can be placed
@@ -29,9 +27,6 @@ public class InlineArea extends Area {
     // offset position from top of parent area
     int verticalPosition = 0;
 
-    // store properties in array list, need better solution
-    private ArrayList props = null;
-
     /**
      * Render this inline area.
      * Inline areas that extend this class are expected
@@ -43,10 +38,22 @@ public class InlineArea extends Area {
     public void render(Renderer renderer) {
     }
 
+    /**
+     * Set the width of this inline area.
+     * Currently sets the ipd.
+     *
+     * @param w the width
+     */
     public void setWidth(int w) {
         contentIPD = w;
     }
 
+    /**
+     * Get the width of this inline area.
+     * Currently gets the ipd.
+     *
+     * @return the width
+     */
     public int getWidth() {
         return contentIPD;
     }
@@ -90,10 +97,26 @@ public class InlineArea extends Area {
         return iBP;
     }
 
+    /**
+     * Set the offset of this inline area.
+     * This is used to set the offset of the inline area
+     * which is normally relative to the top of the line
+     * or the baseline.
+     *
+     * @param v the offset
+     */
     public void setOffset(int v) {
         verticalPosition = v;
     }
 
+    /**
+     * Get the offset of this inline area.
+     * This returns the offset of the inline area
+     * which is normally relative to the top of the line
+     * or the baseline.
+     *
+     * @return the offset
+     */
     public int getOffset() {
         return verticalPosition;
     }

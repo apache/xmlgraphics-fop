@@ -14,28 +14,54 @@ import org.apache.fop.render.Renderer;
 import java.util.List;
 import java.util.ArrayList;
 
-// this is an inline area that can have blocks as children
+/**
+ * Container area for inline container.
+ * This area should be placed in a viewport as a result of the
+ * inline container formatting object.
+ * This allows an inline area to have blocks as children.
+ */
 public class Container extends Area {
-    ArrayList blocks = new ArrayList();
-    int width;
+    /**
+     * The list of block areas stacked inside this container
+     */
+    protected List blocks = new ArrayList();
 
+    /**
+     * The width of this container
+     */
+    protected int width;
+
+    /**
+     * Create a new container area
+     */
     public Container() {
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderContainer(this);
-    }
-
+    /**
+     * Add the block to this area.
+     *
+     * @param block the block area to add
+     */
     public void addBlock(Block block) {
         blocks.add(block);
     }
 
+    /**
+     * Get the block areas stacked inside this container area.
+     *
+     * @return the list of block areas
+     */
     public List getBlocks() {
         return blocks;
     }
 
+    /**
+     * Get the width of this container area.
+     *
+     * @return the width
+     */
     public int getWidth() {
         return width;
     }
-
 }
+

@@ -47,7 +47,7 @@ public class FilledArea extends InlineParent {
      */
     public List getChildAreas() {
         int units = (int)(getWidth() / unitWidth);
-        ArrayList newList = new ArrayList();
+        List newList = new ArrayList();
         for (int count = 0; count < units; count++) {
             newList.addAll(inlines);
         }

@@ -8,6 +8,7 @@
 package org.apache.fop.area;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.HashMap;
 
 /**
@@ -31,11 +32,11 @@ public class Page implements Serializable, Cloneable {
 
     // hashmap of markers for this page
     // start and end are added by the fo that contains the markers
-    private HashMap markerStart = null;
-    private HashMap markerEnd = null;
+    private Map markerStart = null;
+    private Map markerEnd = null;
 
     // temporary map of unresolved objects used when serializing the page
-    private HashMap unresolved = null;
+    private Map unresolved = null;
 
     /**
      * Set the region on this page.
@@ -110,7 +111,7 @@ public class Page implements Serializable, Cloneable {
      *
      * @param unres the map of unresolved objects
      */
-    public void setUnresolvedReferences(HashMap unres) {
+    public void setUnresolvedReferences(Map unres) {
         unresolved = unres;
     }
 
@@ -121,7 +122,7 @@ public class Page implements Serializable, Cloneable {
      *
      * @return the de-serialized map of unresolved objects
      */
-    public HashMap getUnresolvedReferences() {
+    public Map getUnresolvedReferences() {
         return unresolved;
     }
 }

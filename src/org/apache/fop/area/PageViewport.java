@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.HashMap; 
 import java.util.Iterator;
 
@@ -30,14 +31,14 @@ public class PageViewport implements Resolveable, Cloneable {
     private String pageNumber = null;
 
     // list of id references and the rectangle on the page
-    private HashMap idReferences = null;
+    private Map idReferences = null;
 
     // this keeps a list of currently unresolved areas or extensions
     // once the thing is resolved it is removed
     // when this is empty the page can be rendered
-    private HashMap unresolved = null;
+    private Map unresolved = null;
 
-    private HashMap pendingResolved = null;
+    private Map pendingResolved = null;
 
     /**
      * Create a page viewport.

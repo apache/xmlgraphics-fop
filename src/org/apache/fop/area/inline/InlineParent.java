@@ -22,7 +22,7 @@ public class InlineParent extends InlineArea {
     /**
      * The list of inline areas added to this inline parent.
      */
-    protected ArrayList inlines = new ArrayList();
+    protected List inlines = new ArrayList();
 
     /**
      * An inline parent is a reference area somay have clipping

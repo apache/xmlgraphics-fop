@@ -80,7 +80,7 @@ public class Trait implements Serializable {
     public static final Integer LINETHROUGH = new Integer(12);
 
     /**
-     *
+     * Shadow offset.
      */
     public static final Integer OFFSET = new Integer(13);
 
@@ -93,15 +93,43 @@ public class Trait implements Serializable {
      * The border start.
      */
     public static final Integer BORDER_START = new Integer(15);
+
+    /**
+     * The border end.
+     */
     public static final Integer BORDER_END = new Integer(16);
+
+    /**
+     * The border before.
+     */
     public static final Integer BORDER_BEFORE = new Integer(17);
+
+    /**
+     * The border after.
+     */
     public static final Integer BORDER_AFTER = new Integer(18);
+
+    /**
+     * The padding start.
+     */
     public static final Integer PADDING_START = new Integer(19);
+
+    /**
+     * The padding end.
+     */
     public static final Integer PADDING_END = new Integer(20);
+
+    /**
+     * The padding before.
+     */
     public static final Integer PADDING_BEFORE = new Integer(21);
+
+    /**
+     * The padding after.
+     */
     public static final Integer PADDING_AFTER = new Integer(22);
 
-    static HashMap shmTraitInfo;
+    private static final Map shmTraitInfo = new HashMap();
 
     private static class TraitInfo {
         String sName;
@@ -114,7 +142,6 @@ public class Trait implements Serializable {
 
     static {
         // Create a hashmap mapping trait code to name for external representation
-        shmTraitInfo = new HashMap();
         shmTraitInfo.put(ID_LINK, new TraitInfo("id-link", String.class));
         shmTraitInfo.put(INTERNAL_LINK,
                           new TraitInfo("internal-link", String.class));
@@ -154,6 +181,12 @@ public class Trait implements Serializable {
                           new TraitInfo("padding-after", Integer.class));
     }
 
+    /**
+     * Get the trait name for a trait code.
+     *
+     * @param traitCode the trait code to get the name for
+     * @return the trait name
+     */
     public static String getTraitName(Object traitCode) {
         Object obj = shmTraitInfo.get(traitCode);
         if (obj != null) {
@@ -163,6 +196,12 @@ public class Trait implements Serializable {
         }
     }
 
+    /**
+     * Get the trait code for a trait name.
+     *
+     * @param sTraitName the name of the trait to find
+     * @return the trait code object
+     */
     public static Object getTraitCode(String sTraitName) {
         Iterator iter = shmTraitInfo.entrySet().iterator();
         while (iter.hasNext()) {
@@ -175,28 +214,60 @@ public class Trait implements Serializable {
         return null;
     }
 
+    /**
+     * Get the data storage class for the trait.
+     *
+     * @param oTraitCode the trait code to lookup
+     * @return the class type for the trait
+     */
     private static Class getTraitClass(Object oTraitCode) {
         TraitInfo ti = (TraitInfo) shmTraitInfo.get(oTraitCode);
         return (ti != null ? ti.sClass : null);
     }
 
+    /**
+     * The type of trait for an area.
+     */
     public Object propType;
+
+    /**
+     * The data value of the trait.
+     */
     public Object data;
 
+    /**
+     * Create a new emty trait.
+     */
     public Trait() {
         this.propType = null;
         this.data = null;
     }
 
+    /**
+     * Create a trait with the value and type.
+     *
+     * @param propType the type of trait
+     * @param data the data value
+     */
     public Trait(Object propType, Object data) {
         this.propType = propType;
         this.data = data;
     }
 
+    /**
+     * Return the string for debugging.
+     *
+     * @param the string from the data value
+     */
     public String toString() {
         return data.toString();
     }
 
+    /**
+     * Make a trait value.
+     *
+     * @param oCode 
+     */
     public static Object makeTraitValue(Object oCode, String sTraitValue) {
         // Get the code from the name
         // See what type of object it is
@@ -229,11 +300,34 @@ public class Trait implements Serializable {
         return null;
     }
 
+    /**
+     * Background trait structure.
+     * Used for storing back trait information which are related.
+     */
     public static class Background implements Serializable {
+        /**
+         * The background color if any.
+         */
         public ColorType color = null;
+
+        /**
+         * The background image url if any.
+         */
         public String url = null;
+
+        /**
+         * Background repeat enum for images.
+         */
         public int repeat;
+
+        /**
+         * Background horizontal offset for images.
+         */
         public int horiz;
+
+        /**
+         * Background vertical offset for images.
+         */
         public int vertical;
     }
 

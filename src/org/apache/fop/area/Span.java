@@ -7,12 +7,13 @@
 
 package org.apache.fop.area;
 
+import java.util.List;
 import java.util.ArrayList;
 
 // this is a reference area block area with 0 border and padding
 public class Span extends Area {
     // the list of flow reference areas in this span area
-    private ArrayList flowAreas;
+    private List flowAreas;
     private int height;
 
     public Span(int cols) {

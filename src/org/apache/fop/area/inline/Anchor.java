@@ -17,3 +17,4 @@ public class Anchor extends InlineArea {
     // has reference to associated footnote or float out-of-line area
 
 }
+

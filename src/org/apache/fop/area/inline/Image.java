@@ -35,5 +35,5 @@ public class Image extends Area {
     public String getURL() {
         return url;
     }
-
 }
+

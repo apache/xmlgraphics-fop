@@ -44,7 +44,7 @@ public class BlockParent extends Area {
     /**
      * The children of this block parent area.
      */
-    protected ArrayList children = null;
+    protected List children = null;
 
     // orientation if reference area
     private int orientation = ORIENT_0;
