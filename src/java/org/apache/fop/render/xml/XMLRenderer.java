@@ -366,10 +366,11 @@ public class XMLRenderer extends AbstractRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderBlock(Block)
      */
     protected void renderBlock(Block block) {
-        String prop = "";
+        String prop = " width=\"" + block.getWidth() + 
+                      "\" height=\"" + block.getHeight() + "\"";
         Map map = block.getTraits();
         if (map != null) {
-            prop = " props=\"" + getPropString(map) + "\"";
+            prop = prop + " props=\"" + getPropString(map) + "\"";
         }
         writeStartTag("<block" + prop + ">");
         super.renderBlock(block);
