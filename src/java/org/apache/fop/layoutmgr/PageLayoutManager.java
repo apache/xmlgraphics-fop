@@ -155,6 +155,8 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     private HashMap staticContentLMs = new HashMap(4);
 
+    private LayoutManagerLS lmls;
+
     /**
      * This is the top level layout manager.
      * It is created by the PageSequence FO.
@@ -162,9 +164,11 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param areaTree the area tree to add pages to
      * @param pageseq the page sequence fo
      */
-    public PageLayoutManager(AreaTree areaTree, PageSequence pageseq) {
+    public PageLayoutManager(AreaTree areaTree, PageSequence pageseq,
+                             LayoutManagerLS lmls) {
         this.areaTree = areaTree;
         pageSequence = pageseq;
+        this.lmls = lmls;
     }
 
     /**
@@ -909,6 +913,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         lm.setFObj(sc);
         staticContentLMs.put(sc.getFlowName(), lm);
         return lm;
+    }
+
+    public LayoutManagerLS getLayoutManagerLS() {
+        return lmls;
     }
 
 }

@@ -208,6 +208,14 @@ public class ContentLayoutManager implements LayoutProcessor {
         parentLM = lm;
     }
 
+    public LayoutProcessor getParent() {
+        return this.parentLM;
+    }
+
+    public LayoutManagerLS getLayoutManagerLS() {
+        return getParent().getLayoutManagerLS();
+    }
+
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public boolean canBreakBefore(LayoutContext lc) {
         return false;

@@ -64,9 +64,11 @@ public class LMiter implements ListIterator {
     private FObj curFO;
     protected List listLMs;
     protected int curPos = 0;
-    private AddLMVisitor addLMVisitor = new AddLMVisitor();
+    /** The LayoutProcessor to which this LMiter is attached **/
+    private LayoutProcessor lp;
 
-    public LMiter(ListIterator bIter) {
+    public LMiter(LayoutProcessor lp, ListIterator bIter) {
+        this.lp = lp;
         baseIter = bIter;
         listLMs = new ArrayList(10);
     }
@@ -76,6 +78,7 @@ public class LMiter implements ListIterator {
     }
 
     protected boolean preLoadNext() {
+        AddLMVisitor addLMVisitor = lp.getLayoutManagerLS().getAddLMVisitor();
         // skip over child FObj's that don't add lms
         while (baseIter != null && baseIter.hasNext()) {
             Object theobj = baseIter.next();
