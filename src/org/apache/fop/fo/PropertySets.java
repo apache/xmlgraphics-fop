@@ -56,7 +56,7 @@ public class PropertySets {
 
     static {
          accessibilityProps.add(Ints.consts.get(PropNames.ROLE));       
-         accessibilityProps.add(Ints.consts.get(PropNames.SOURCE_DOCUMENT));       
+         accessibilityProps.add(Ints.consts.get(PropNames.SOURCE_DOCUMENT));
          accessibilitySet =
                          Collections.unmodifiableSet((Set)accessibilityProps);
     }
@@ -847,6 +847,265 @@ public class PropertySets {
                 ("Unmatched properties:" + unmatched +
                  " : in expansion list for " + expansionList.getProperty());
         return expansionList;
+    }
+
+    public static final ROIntArray blockProgressDimCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.BLOCK_PROGRESSION_DIMENSION_MINIMUM
+            ,PropNames.BLOCK_PROGRESSION_DIMENSION_OPTIMUM
+            ,PropNames.BLOCK_PROGRESSION_DIMENSION_MAXIMUM
+        });
+
+    public static final ROIntArray blockProgressDimNonCopyExpansion =
+        new ROIntArray(new int[] {});
+
+    public static final ROIntArray borderAfterWidthCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.BORDER_AFTER_WIDTH_LENGTH
+        });
+
+    public static final ROIntArray borderAfterWidthNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.BORDER_AFTER_WIDTH_CONDITIONALITY
+        });
+
+    public static final ROIntArray borderBeforeWidthCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.BORDER_BEFORE_WIDTH_LENGTH
+        });
+
+    public static final ROIntArray borderBeforeWidthNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.BORDER_BEFORE_WIDTH_CONDITIONALITY
+        });
+
+    public static final ROIntArray borderEndWidthCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.BORDER_END_WIDTH_LENGTH
+        });
+
+    public static final ROIntArray borderEndWidthNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.BORDER_END_WIDTH_CONDITIONALITY
+        });
+
+    public static final ROIntArray borderStartWidthCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.BORDER_START_WIDTH_LENGTH
+        });
+
+    public static final ROIntArray borderStartWidthNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.BORDER_START_WIDTH_CONDITIONALITY
+        });
+
+    public static final ROIntArray borderSeparationCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.BORDER_SEPARATION_BLOCK_PROGRESSION_DIRECTION
+            ,PropNames.BORDER_SEPARATION_INLINE_PROGRESSION_DIRECTION
+        });
+
+    public static final ROIntArray borderSeparationNonCopyExpansion =
+        new ROIntArray(new int[] {});
+
+    public static final ROIntArray inlineProgressDimCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.INLINE_PROGRESSION_DIMENSION_MINIMUM
+            ,PropNames.INLINE_PROGRESSION_DIMENSION_OPTIMUM
+            ,PropNames.INLINE_PROGRESSION_DIMENSION_MAXIMUM
+        });
+
+    public static final ROIntArray inlineProgressDimNonCopyExpansion =
+        new ROIntArray(new int[] {});
+
+    public static final ROIntArray keepTogetherCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.KEEP_TOGETHER_WITHIN_LINE
+            ,PropNames.KEEP_TOGETHER_WITHIN_COLUMN
+            ,PropNames.KEEP_TOGETHER_WITHIN_PAGE
+        });
+
+    public static final ROIntArray keepTogetherNonCopyExpansion =
+        new ROIntArray(new int[] {});
+
+    public static final ROIntArray keepWithNextCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.KEEP_WITH_NEXT_WITHIN_LINE
+            ,PropNames.KEEP_WITH_NEXT_WITHIN_COLUMN
+            ,PropNames.KEEP_WITH_NEXT_WITHIN_PAGE
+        });
+
+    public static final ROIntArray keepWithNextNonCopyExpansion =
+        new ROIntArray(new int[] {});
+
+    public static final ROIntArray keepWithPreviousCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.KEEP_WITH_PREVIOUS_WITHIN_LINE
+            ,PropNames.KEEP_WITH_PREVIOUS_WITHIN_COLUMN
+            ,PropNames.KEEP_WITH_PREVIOUS_WITHIN_PAGE
+        });
+
+    public static final ROIntArray keepWithPreviousNonCopyExpansion =
+        new ROIntArray(new int[] {});
+
+    public static final ROIntArray leaderLengthCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.LEADER_LENGTH_MINIMUM
+            ,PropNames.LEADER_LENGTH_OPTIMUM
+            ,PropNames.LEADER_LENGTH_MAXIMUM
+        });
+
+    public static final ROIntArray leaderLengthNonCopyExpansion =
+        new ROIntArray(new int[] {});
+
+    public static final ROIntArray lineHeightCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.LINE_HEIGHT_MINIMUM
+            ,PropNames.LINE_HEIGHT_OPTIMUM
+            ,PropNames.LINE_HEIGHT_MAXIMUM
+        });
+
+    public static final ROIntArray lineHeightNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.LINE_HEIGHT_CONDITIONALITY
+            ,PropNames.LINE_HEIGHT_PRECEDENCE
+        });
+
+    public static final ROIntArray paddingAfterCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.PADDING_AFTER_LENGTH
+        });
+
+    public static final ROIntArray paddingAfterNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.PADDING_AFTER_CONDITIONALITY
+        });
+
+    public static final ROIntArray paddingBeforeCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.PADDING_BEFORE_LENGTH
+        });
+
+    public static final ROIntArray paddingBeforeNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.PADDING_BEFORE_CONDITIONALITY
+        });
+
+    public static final ROIntArray paddingEndCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.PADDING_END_LENGTH
+        });
+
+    public static final ROIntArray paddingEndNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.PADDING_END_CONDITIONALITY
+        });
+
+    public static final ROIntArray paddingStartCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.PADDING_START_LENGTH
+        });
+
+    public static final ROIntArray paddingStartNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.PADDING_START_CONDITIONALITY
+        });
+
+    public static final ROIntArray spaceAfterCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.SPACE_AFTER_MINIMUM
+            ,PropNames.SPACE_AFTER_OPTIMUM
+            ,PropNames.SPACE_AFTER_MAXIMUM
+        });
+
+    public static final ROIntArray spaceAfterNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.SPACE_AFTER_CONDITIONALITY
+            ,PropNames.SPACE_AFTER_PRECEDENCE
+        });
+
+    public static final ROIntArray spaceBeforeCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.SPACE_BEFORE_MINIMUM
+            ,PropNames.SPACE_BEFORE_OPTIMUM
+            ,PropNames.SPACE_BEFORE_MAXIMUM
+        });
+
+    public static final ROIntArray spaceBeforeNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.SPACE_BEFORE_CONDITIONALITY
+            ,PropNames.SPACE_BEFORE_PRECEDENCE
+        });
+
+    public static final ROIntArray spaceEndCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.SPACE_END_MINIMUM
+            ,PropNames.SPACE_END_OPTIMUM
+            ,PropNames.SPACE_END_MAXIMUM
+        });
+
+    public static final ROIntArray spaceEndNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.SPACE_END_CONDITIONALITY
+            ,PropNames.SPACE_END_PRECEDENCE
+        });
+
+    public static final ROIntArray spaceStartCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.SPACE_START_MINIMUM
+            ,PropNames.SPACE_START_OPTIMUM
+            ,PropNames.SPACE_START_MAXIMUM
+        });
+
+    public static final ROIntArray spaceStartNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.SPACE_START_CONDITIONALITY
+            ,PropNames.SPACE_START_PRECEDENCE
+        });
+
+    private static final int[] compounds = {
+        PropNames.BLOCK_PROGRESSION_DIMENSION
+        ,PropNames.BORDER_AFTER_WIDTH
+        ,PropNames.BORDER_BEFORE_WIDTH
+        ,PropNames.BORDER_END_WIDTH
+        ,PropNames.BORDER_START_WIDTH
+        ,PropNames.BORDER_SEPARATION
+        ,PropNames.INLINE_PROGRESSION_DIMENSION
+        ,PropNames.KEEP_TOGETHER
+        ,PropNames.KEEP_WITH_NEXT
+        ,PropNames.KEEP_WITH_PREVIOUS
+        ,PropNames.LEADER_LENGTH
+        ,PropNames.LINE_HEIGHT
+        ,PropNames.PADDING_AFTER
+        ,PropNames.PADDING_BEFORE
+        ,PropNames.PADDING_END
+        ,PropNames.PADDING_START
+        ,PropNames.SPACE_AFTER
+        ,PropNames.SPACE_BEFORE
+        ,PropNames.SPACE_END
+        ,PropNames.SPACE_START
+        ,PropNames.WORD_SPACING
+    };
+
+    /**
+     * Map property index to compound array index
+     */
+    private static final HashMap compoundMap;
+    static {
+        compoundMap = new HashMap(compounds.length);
+        for (int i = 0; i < compounds.length; i++) {
+            compoundMap.put
+                    ((Object)(Ints.consts.get(compounds[i])), 
+                     (Object)(Ints.consts.get(i)));
+        }
+    }
+
+    /**
+     * RO compound properties.
+     */
+    public static final ROIntArray roCompounds;
+    static {
+        roCompounds = new ROIntArray(compounds);
     }
 
     private PropertySets (){}

@@ -117,7 +117,7 @@ public abstract class Properties {
                           ,BOOL = 131072
                        ,INHERIT = 262144
                           ,ENUM = 524288
-                ,MAPPED_NUMERIC = 1048576
+                 ,MAPPED_LENGTH = 1048576
                      ,SHORTHAND = 2097152
                        ,COMPLEX = 4194304
                           ,AUTO = 8388608
@@ -142,7 +142,7 @@ public abstract class Properties {
     // will have to be adjusted.  pbw
 
                         ,NUMBER = FLOAT | INTEGER
-                     ,ENUM_TYPE = ENUM | MAPPED_NUMERIC
+                     ,ENUM_TYPE = ENUM | MAPPED_LENGTH
                         ,STRING = LITERAL | ENUM_TYPE
                      ,HYPH_TYPE = COUNTRY_T | LANGUAGE_T | SCRIPT_T
                        ,ID_TYPE = ID_T | IDREF
@@ -183,8 +183,8 @@ public abstract class Properties {
         if ((datatypes & BOOL) != 0) typeNames += "<BOOL>|";
         if ((datatypes & INHERIT) != 0) typeNames += "<INHERIT>|";
         if ((datatypes & ENUM) != 0) typeNames += "<ENUM>|";
-        if ((datatypes & MAPPED_NUMERIC) != 0) typeNames
-                                                    += "<MAPPED_NUMERIC>|";
+        if ((datatypes & MAPPED_LENGTH) != 0) typeNames
+                                                    += "<MAPPED_LENGTH>|";
         if ((datatypes & SHORTHAND) != 0) typeNames += "<SHORTHAND>|";
         if ((datatypes & COMPLEX) != 0) typeNames += "<COMPLEX>|";
         if ((datatypes & AUTO) != 0) typeNames += "<AUTO>|";
@@ -269,7 +269,8 @@ public abstract class Properties {
                              NO = 0
                       ,COMPUTED = 1
                      ,SPECIFIED = 2
-                ,VALUE_SPECIFIC = 3
+                  ,COMPOUND_INH = 3
+                ,VALUE_SPECIFIC = 4
                               ;
 
     /**
@@ -347,7 +348,7 @@ public abstract class Properties {
             String ncname = ((NCName)value).getNCName();
             // Can by any of
             // NAME, COUNTRY_T, LANGUAGE_T, SCRIPT_T, ID_T, IDREF, ENUM
-            // MAPPED_NUMERIC or CHARACTER_T
+            // MAPPED_LENGTH or CHARACTER_T
             if ((datatype & (NAME | ID_T | IDREF | CHARACTER_T)) != 0)
                 return value;
             if ((datatype & COUNTRY_T) != 0)
@@ -358,7 +359,7 @@ public abstract class Properties {
                 return new ScriptType(property, ncname);
             if ((datatype & ENUM) != 0)
                 return new EnumType(property, ncname);
-            if ((datatype & MAPPED_NUMERIC) != 0)
+            if ((datatype & MAPPED_LENGTH) != 0)
                 return (new MappedNumeric(property, ncname, foTree))
                                 .getMappedNumValue();
         }
@@ -714,6 +715,14 @@ public abstract class Properties {
             ,"medium"
             ,"thick"
         };
+
+        private static final double[] mappedPoints = {
+            0d
+            ,0.5d
+            ,1d
+            ,2d
+        };
+        
         public static final ROStringArray enums = new ROStringArray(rwEnums);
         public static final ROStringArray enumValues = enums;
 
@@ -722,21 +731,15 @@ public abstract class Properties {
 
         /**
          * @param <tt>int</tt> property index
+         * @param <tt>int</tt> mappedEnum enumeration value
          * @return <tt>Numeric[]</tt> containing the values corresponding
          * to the MappedNumeric enumeration constants for border width
          */
-        public static Numeric[] borderWidthNumArray(int property)
+        public static Numeric getMappedLength(int property, int enum)
             throws PropertyException
         {
-            Numeric[] numarray = new Numeric[4];
-            numarray[0] = null;
-            numarray[1] =
-                Length.makeLength(property, 0.5d, Length.PT); // thin
-            numarray[2] =
-                Length.makeLength(property, 1d, Length.PT); // medium
-            numarray[3] =
-                Length.makeLength(property, 2d, Length.PT); // thick // thick
-            return numarray;
+            return 
+                Length.makeLength(property, mappedPoints[enum], Length.PT);
         }
 
     }
@@ -1998,21 +2001,20 @@ public abstract class Properties {
     // if the mapping changes.
     public static class BorderAfterWidth extends Properties {
         public static final int dataTypes =
-                                COMPOUND | MAPPED_NUMERIC | LENGTH | INHERIT;
+                                COMPOUND | MAPPED_LENGTH | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength
-                                (PropNames.BORDER_AFTER_WIDTH, 1d, Length.PT);
+            return getMappedLength(BorderCommonWidth.MEDIUM);
         }
 
-        public static Numeric[] getMappedNumArray()
+        public static Numeric getMappedLength(int enum)
             throws PropertyException
         {
-            return Properties.BorderCommonWidth.borderWidthNumArray
-                                            (PropNames.BORDER_AFTER_WIDTH);
+            return Properties.BorderCommonWidth.getMappedLength
+                                        (PropNames.BORDER_AFTER_WIDTH, enum);
         }
 
         public static final int inherited = NO;
@@ -2023,10 +2025,27 @@ public abstract class Properties {
     }
 
     public static class BorderAfterWidthLength extends Properties {
-        public static final int dataTypes = LENGTH;
+        public static final int dataTypes = MAPPED_LENGTH | LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
-        public static final int initialValueType = NOTYPE_IT;
+        public static final int initialValueType = LENGTH_IT;
+        public static PropertyValue getInitialValue(int property)
+            throws PropertyException
+        {
+            return getMappedLength(BorderCommonWidth.MEDIUM);
+        }
+
+        public static Numeric getMappedLength(int enum)
+            throws PropertyException
+        {
+            return Properties.BorderCommonWidth.getMappedLength
+                                (PropNames.BORDER_AFTER_WIDTH_LENGTH, enum);
+        }
+
         public static final int inherited = NO;
+
+        public static final ROStringArray enums = BorderCommonWidth.enums;
+        public static final ROStringArray enumValues
+                                            = BorderCommonWidth.enumValues;
     }
 
     public static class BorderAfterWidthConditionality extends Properties {
@@ -2054,7 +2073,8 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new ColorType (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
+            return new ColorType
+                            (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
@@ -2085,21 +2105,20 @@ public abstract class Properties {
 
     public static class BorderBeforeWidth extends Properties {
         public static final int dataTypes =
-                                COMPOUND | MAPPED_NUMERIC | LENGTH | INHERIT;
+                                COMPOUND | MAPPED_LENGTH | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength
-                            (PropNames.BORDER_BEFORE_WIDTH, 1d, Length.PT);
+            return getMappedLength(BorderCommonWidth.MEDIUM);
         }
 
-        public static Numeric[] getMappedNumArray()
+        public static Numeric getMappedLength(int enum)
             throws PropertyException
         {
-            return Properties.BorderCommonWidth.borderWidthNumArray
-                                            (PropNames.BORDER_BEFORE_WIDTH);
+            return Properties.BorderCommonWidth.getMappedLength
+                                        (PropNames.BORDER_BEFORE_WIDTH, enum);
         }
 
         public static final int inherited = NO;
@@ -2110,10 +2129,26 @@ public abstract class Properties {
     }
 
     public static class BorderBeforeWidthLength extends Properties {
-        public static final int dataTypes = LENGTH;
+        public static final int dataTypes = MAPPED_LENGTH | LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
-        public static final int initialValueType = NOTYPE_IT;
+        public static final int initialValueType = LENGTH_IT;
+        public static PropertyValue getInitialValue(int property)
+            throws PropertyException
+        {
+            return getMappedLength(BorderCommonWidth.MEDIUM);
+        }
+
+        public static Numeric getMappedLength(int enum)
+            throws PropertyException
+        {
+            return Properties.BorderCommonWidth.getMappedLength
+                                (PropNames.BORDER_BEFORE_WIDTH_LENGTH, enum);
+        }
         public static final int inherited = NO;
+
+        public static final ROStringArray enums = BorderCommonWidth.enums;
+        public static final ROStringArray enumValues
+                                            = BorderCommonWidth.enumValues;
     }
 
     public static class BorderBeforeWidthConditionality extends Properties {
@@ -2196,21 +2231,20 @@ public abstract class Properties {
     }
 
     public static class BorderBottomWidth extends Properties {
-        public static final int dataTypes = MAPPED_NUMERIC | INHERIT;
+        public static final int dataTypes = MAPPED_LENGTH | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength
-                            (PropNames.BORDER_BOTTOM_WIDTH, 1d, Length.PT);
+            return getMappedLength(BorderCommonWidth.MEDIUM);
         }
 
-        public static Numeric[] getMappedNumArray()
+        public static Numeric getMappedLength(int enum)
             throws PropertyException
         {
-            return Properties.BorderCommonWidth.borderWidthNumArray
-                                            (PropNames.BORDER_BOTTOM_WIDTH);
+            return Properties.BorderCommonWidth.getMappedLength
+                                        (PropNames.BORDER_BOTTOM_WIDTH, enum);
         }
 
         public static final int inherited = NO;
@@ -2445,21 +2479,20 @@ public abstract class Properties {
 
     public static class BorderEndWidth extends Properties {
         public static final int dataTypes =
-                                COMPOUND | MAPPED_NUMERIC | LENGTH | INHERIT;
+                                COMPOUND | MAPPED_LENGTH | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength
-                                (PropNames.BORDER_END_WIDTH, 1d, Length.PT);
+            return getMappedLength(BorderCommonWidth.MEDIUM);
         }
 
-        public static Numeric[] getMappedNumArray()
+        public static Numeric getMappedLength(int enum)
             throws PropertyException
         {
-            return Properties.BorderCommonWidth.borderWidthNumArray
-                                            (PropNames.BORDER_END_WIDTH);
+            return Properties.BorderCommonWidth.getMappedLength
+                                        (PropNames.BORDER_END_WIDTH, enum);
         }
 
         public static final int inherited = NO;
@@ -2470,10 +2503,27 @@ public abstract class Properties {
     }
 
     public static class BorderEndWidthLength extends Properties {
-        public static final int dataTypes = LENGTH;
+        public static final int dataTypes = MAPPED_LENGTH | LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
-        public static final int initialValueType = NOTYPE_IT;
+        public static final int initialValueType = LENGTH_IT;
+        public static PropertyValue getInitialValue(int property)
+            throws PropertyException
+        {
+            return getMappedLength(BorderCommonWidth.MEDIUM);
+        }
+
+        public static Numeric getMappedLength(int enum)
+            throws PropertyException
+        {
+            return Properties.BorderCommonWidth.getMappedLength
+                                (PropNames.BORDER_END_WIDTH_LENGTH, enum);
+        }
+
         public static final int inherited = NO;
+
+        public static final ROStringArray enums = BorderCommonWidth.enums;
+        public static final ROStringArray enumValues
+                                            = BorderCommonWidth.enumValues;
     }
 
     public static class BorderEndWidthConditionality extends Properties {
@@ -2556,21 +2606,20 @@ public abstract class Properties {
     }
 
     public static class BorderLeftWidth extends Properties {
-        public static final int dataTypes = MAPPED_NUMERIC | INHERIT;
+        public static final int dataTypes = MAPPED_LENGTH | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength
-                                (PropNames.BORDER_LEFT_WIDTH, 1d, Length.PT);
+            return getMappedLength(BorderCommonWidth.MEDIUM);
         }
 
-        public static Numeric[] getMappedNumArray()
+        public static Numeric getMappedLength(int enum)
             throws PropertyException
         {
-            return Properties.BorderCommonWidth.borderWidthNumArray
-                                            (PropNames.BORDER_LEFT_WIDTH);
+            return Properties.BorderCommonWidth.getMappedLength
+                                        (PropNames.BORDER_LEFT_WIDTH, enum);
         }
 
         public static final int inherited = NO;
@@ -2644,21 +2693,20 @@ public abstract class Properties {
     }
 
     public static class BorderRightWidth extends Properties {
-        public static final int dataTypes = MAPPED_NUMERIC | INHERIT;
+        public static final int dataTypes = MAPPED_LENGTH | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength
-                                (PropNames.BORDER_RIGHT_WIDTH, 1d, Length.PT);
+            return getMappedLength(BorderCommonWidth.MEDIUM);
         }
 
-        public static Numeric[] getMappedNumArray()
+        public static Numeric getMappedLength(int enum)
             throws PropertyException
         {
-            return Properties.BorderCommonWidth.borderWidthNumArray
-                                            (PropNames.BORDER_RIGHT_WIDTH);
+            return Properties.BorderCommonWidth.getMappedLength
+                                        (PropNames.BORDER_RIGHT_WIDTH, enum);
         }
 
         public static final int inherited = NO;
@@ -2687,7 +2735,7 @@ public abstract class Properties {
                 (PropNames.BORDER_SEPARATION_BLOCK_PROGRESSION_DIRECTION,
                     0.0d, Length.PT);
         }
-        public static final int inherited = NO;
+        public static final int inherited = COMPUTED;
     }
 
     public static class BorderSeparationInlineProgressionDirection
@@ -2702,7 +2750,7 @@ public abstract class Properties {
                 (PropNames.BORDER_SEPARATION_INLINE_PROGRESSION_DIRECTION,
                     0.0d, Length.PT);
         }
-        public static final int inherited = NO;
+        public static final int inherited = COMPUTED;
     }
 
     public static class BorderSpacing extends Properties {
@@ -2811,21 +2859,20 @@ public abstract class Properties {
 
     public static class BorderStartWidth extends Properties {
         public static final int dataTypes =
-                                COMPOUND | MAPPED_NUMERIC | LENGTH | INHERIT;
+                                COMPOUND | MAPPED_LENGTH | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength
-                                (PropNames.BORDER_START_WIDTH, 1d, Length.PT);
+            return getMappedLength(BorderCommonWidth.MEDIUM);
         }
 
-        public static Numeric[] getMappedNumArray()
+        public static Numeric getMappedLength(int enum)
             throws PropertyException
         {
-            return Properties.BorderCommonWidth.borderWidthNumArray
-                                            (PropNames.BORDER_START_WIDTH);
+            return Properties.BorderCommonWidth.getMappedLength
+                                        (PropNames.BORDER_START_WIDTH, enum);
         }
 
         public static final int inherited = NO;
@@ -2836,10 +2883,27 @@ public abstract class Properties {
     }
 
     public static class BorderStartWidthLength extends Properties {
-        public static final int dataTypes = LENGTH;
+        public static final int dataTypes = MAPPED_LENGTH | LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
-        public static final int initialValueType = NOTYPE_IT;
+        public static final int initialValueType = LENGTH_IT;
+        public static PropertyValue getInitialValue(int property)
+            throws PropertyException
+        {
+            return getMappedLength(BorderCommonWidth.MEDIUM);
+        }
+
+        public static Numeric getMappedLength(int enum)
+            throws PropertyException
+        {
+            return Properties.BorderCommonWidth.getMappedLength
+                                (PropNames.BORDER_START_WIDTH_LENGTH, enum);
+        }
+
         public static final int inherited = NO;
+
+        public static final ROStringArray enums = BorderCommonWidth.enums;
+        public static final ROStringArray enumValues
+                                            = BorderCommonWidth.enumValues;
     }
 
     public static class BorderStartWidthConditionality extends Properties {
@@ -3051,21 +3115,20 @@ public abstract class Properties {
     }
 
     public static class BorderTopWidth extends Properties {
-        public static final int dataTypes = MAPPED_NUMERIC | INHERIT;
+        public static final int dataTypes = MAPPED_LENGTH | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength
-                                (PropNames.BORDER_TOP_WIDTH, 1d, Length.PT);
+            return getMappedLength(BorderCommonWidth.MEDIUM);
         }
 
-        public static Numeric[] getMappedNumArray()
+        public static Numeric getMappedLength(int enum)
             throws PropertyException
         {
-            return Properties.BorderCommonWidth.borderWidthNumArray
-                                            (PropNames.BORDER_TOP_WIDTH);
+            return Properties.BorderCommonWidth.getMappedLength
+                                        (PropNames.BORDER_TOP_WIDTH, enum);
         }
 
         public static final int inherited = NO;
@@ -3141,10 +3204,13 @@ public abstract class Properties {
                 }
                 if (value instanceof NCName) {
                     // Must be a border-width
+                    // BorderWidth does not support a mapped enum
+                    // transformation directly, so use BorderTopWidth to
+                    // check for mapped enum.
                     Numeric mapped;
                     try {
                         mapped =
-                            (new MappedNumeric(PropNames.BORDER_WIDTH,
+                            (new MappedNumeric(PropNames.BORDER_TOP_WIDTH,
                                 ((NCName)value).getNCName(), foTree))
                                     .getMappedNumValue();
                     } catch (PropertyException e) {
@@ -3152,6 +3218,8 @@ public abstract class Properties {
                             (((NCName)value).getNCName() +
                                                     " not a border-width");
                     }
+                    // Correct the property in the mapped Numeric
+                    mapped.setProperty(PropNames.BORDER_WIDTH);
                     return PropertySets.expandAndCopySHand(mapped);
                 }
                 else throw new PropertyException
@@ -4378,7 +4446,7 @@ public abstract class Properties {
 
     public static class FontSize extends Properties {
         public static final int dataTypes =
-                            PERCENTAGE | LENGTH | MAPPED_NUMERIC | INHERIT;
+                            PERCENTAGE | LENGTH | MAPPED_LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING| RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static final int XX_SMALL = 1;
@@ -4395,7 +4463,7 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return  Length.makeLength(PropNames.FONT_SIZE, 12d, Length.PT);
+            return getMappedLength(MEDIUM);
         }
 
         public static final int inherited = COMPUTED;
@@ -4413,29 +4481,28 @@ public abstract class Properties {
             ,"smaller"
         };
 
-        public static Numeric[] getMappedNumArray()
+        // N.B. this is a combination of points and ems
+        private static final double[] mappedLengths = {
+            0d
+            ,7d         // xx-small
+            ,8.3d       // x-small
+            ,10d        // small
+            ,12d        // medium
+            ,14.4d      // large
+            ,17.3d      // x-large
+            ,20.7d      // xx-large
+            ,1.2d       // larger
+            ,0.83d      // smaller
+        };
+
+        public static Numeric getMappedLength(int enum)
             throws PropertyException
         {
-            int property = PropNames.FONT_SIZE;
-            Numeric[] numarray = new Numeric[10];
-            numarray[0] = null;
-            numarray[1] =
-                Length.makeLength(property, 7d, Length.PT); // xx-small
-            numarray[2] =
-                Length.makeLength(property, 8.3d, Length.PT); // x-small
-            numarray[3] =
-                Length.makeLength(property, 10d, Length.PT); // small
-            numarray[4] =
-                Length.makeLength(property, 12d, Length.PT); // medium
-            numarray[5] =
-                Length.makeLength(property, 14.4d, Length.PT); // large
-            numarray[6] =
-                Length.makeLength(property, 17.3d, Length.PT); // x-large
-            numarray[7] =
-                Length.makeLength(property, 20.7d, Length.PT); // xx-large
-            numarray[8] = Ems.makeEms(property, 1.2d); // larger
-            numarray[9] = Ems.makeEms(property, 0.83d); // smaller
-            return numarray;
+            if (enum == LARGER || enum == SMALLER)
+                return Ems.makeEms(PropNames.FONT_SIZE, mappedLengths[enum]);
+            return
+                Length.makeLength
+                        (PropNames.FONT_SIZE, mappedLengths[enum], Length.PT);
         }
 
         public static final ROStringArray enums = new ROStringArray(rwEnums);
@@ -4900,7 +4967,8 @@ public abstract class Properties {
     }
 
     public static class KeepTogether extends Properties {
-        public static final int dataTypes = AUTO | ENUM | INTEGER | INHERIT;
+        public static final int dataTypes =
+                                COMPOUND | AUTO | ENUM | INTEGER | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
@@ -4910,25 +4978,26 @@ public abstract class Properties {
         public static final int dataTypes = AUTO | ENUM | INTEGER | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = AUTO_IT;
-        public static final int inherited = NO;
+        public static final int inherited = COMPUTED;
     }
 
     public static class KeepTogetherWithinColumn extends Properties {
         public static final int dataTypes = AUTO | ENUM | INTEGER | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = AUTO_IT;
-        public static final int inherited = NO;
+        public static final int inherited = COMPUTED;
     }
 
     public static class KeepTogetherWithinPage extends Properties {
         public static final int dataTypes = AUTO | ENUM | INTEGER | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = AUTO_IT;
-        public static final int inherited = NO;
+        public static final int inherited = COMPUTED;
     }
 
     public static class KeepWithNext extends Properties {
-        public static final int dataTypes = AUTO | ENUM | INTEGER | INHERIT;
+        public static final int dataTypes =
+                                COMPOUND | AUTO | ENUM | INTEGER | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
@@ -4956,7 +5025,8 @@ public abstract class Properties {
     }
 
     public static class KeepWithPrevious extends Properties {
-        public static final int dataTypes = AUTO | ENUM | INTEGER | INHERIT;
+        public static final int dataTypes =
+                                COMPOUND | AUTO | ENUM | INTEGER | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
@@ -5038,7 +5108,7 @@ public abstract class Properties {
             return Length.makeLength(PropNames.LEADER_LENGTH_MINIMUM,
                                                             0.0d, Length.PT);
         }
-        public static final int inherited = NO;
+        public static final int inherited = COMPUTED;
     }
 
     public static class LeaderLengthOptimum extends Properties {
@@ -5051,7 +5121,7 @@ public abstract class Properties {
             return Length.makeLength(PropNames.LEADER_LENGTH_OPTIMUM,
                                                             12.0d, Length.PT);
         }
-        public static final int inherited = NO;
+        public static final int inherited = COMPUTED;
     }
 
     public static class LeaderLengthMaximum extends Properties {
@@ -5064,7 +5134,7 @@ public abstract class Properties {
             return Percentage.makePercentage
                                     (PropNames.LEADER_LENGTH_MAXIMUM, 100.0d);
         }
-        public static final int inherited = NO;
+        public static final int inherited = COMPUTED;
     }
 
     public static class LeaderPattern extends Properties {
@@ -5187,9 +5257,9 @@ public abstract class Properties {
 
     public static class LineHeight extends Properties {
         public static final int dataTypes =
-            COMPOUND| PERCENTAGE | LENGTH | NUMBER | MAPPED_NUMERIC | INHERIT;
+            COMPOUND| PERCENTAGE | LENGTH | NUMBER | MAPPED_LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING;
-        public static final int initialValueType = NOTYPE_IT;
+        public static final int initialValueType = LENGTH_IT;
         public static final int NORMAL = 1;
         public static final int inherited = VALUE_SPECIFIC;
 
@@ -5200,14 +5270,13 @@ public abstract class Properties {
         public static final ROStringArray enums = new ROStringArray(rwEnums);
         public static final ROStringArray enumValues = enums;
 
-        public static Numeric[] getMappedNumArray()
+        public static Numeric getMappedLength(int enum)
             throws PropertyException
         {
-            int property = PropNames.LINE_HEIGHT;
-            Numeric[] numarray = new Numeric[2];
-            numarray[0] = null;
-            numarray[1] = Ems.makeEms(property, 1.2d); // normal
-            return numarray;
+            if (enum != NORMAL)
+                throw new PropertyException("Invalid MAPPED_LENGTH enum: "
+                                            + enum);
+            return Ems.makeEms(PropNames.LINE_HEIGHT, 1.2d); // normal
         }
 
     }
@@ -5221,7 +5290,7 @@ public abstract class Properties {
         {
             return Ems.makeEms(PropNames.LINE_HEIGHT, 1.2d);
         }
-        public static final int inherited = NO;
+        public static final int inherited = VALUE_SPECIFIC;
     }
 
     public static class LineHeightOptimum extends Properties {
@@ -5233,7 +5302,7 @@ public abstract class Properties {
         {
             return Ems.makeEms(PropNames.LINE_HEIGHT, 1.2d);
         }
-        public static final int inherited = NO;
+        public static final int inherited = VALUE_SPECIFIC;
     }
 
     public static class LineHeightMaximum extends Properties {
@@ -5245,7 +5314,7 @@ public abstract class Properties {
         {
             return Ems.makeEms(PropNames.LINE_HEIGHT, 1.2d);
         }
-        public static final int inherited = NO;
+        public static final int inherited = VALUE_SPECIFIC;
     }
 
     public static class LineHeightConditionality extends Properties {
@@ -5258,7 +5327,7 @@ public abstract class Properties {
             return new EnumType(PropNames.SPACE_AFTER_CONDITIONALITY,
                                                     Conditionality.DISCARD);
         }
-        public static final int inherited = NO;
+        public static final int inherited = COMPUTED;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
@@ -5268,14 +5337,15 @@ public abstract class Properties {
     public static class LineHeightPrecedence extends Properties {
         public static final int dataTypes = INTEGER | ENUM;
         public static final int traitMapping = FORMATTING;
-        public static final int initialValueType = INTEGER_IT;
+        public static final int initialValueType = ENUM_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new IntegerType(PropNames.LINE_HEIGHT_PRECEDENCE, 0);
+            return new EnumType
+                (PropNames.LINE_HEIGHT_PRECEDENCE, PrecedenceCommon.FORCE);
         }
 
-        public static final int inherited = NO;
+        public static final int inherited = COMPUTED;
 
         public static final ROStringArray enums = PrecedenceCommon.enums;
         public static final ROStringArray enumValues
@@ -5851,7 +5921,8 @@ public abstract class Properties {
     }
 
     public static class PaddingBefore extends Properties {
-        public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
+        public static final int dataTypes =
+                                    COMPOUND |PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
@@ -7955,14 +8026,15 @@ public abstract class Properties {
     }
 
     public static class WordSpacing extends Properties {
-        public static final int dataTypes = LENGTH | ENUM | INHERIT;
+        public static final int dataTypes =
+                                COMPOUND | LENGTH | MAPPED_LENGTH | INHERIT;
         public static final int traitMapping = DISAPPEARS;
-        public static final int initialValueType = ENUM_IT;
+        public static final int initialValueType = LENGTH_IT;
         public static final int NORMAL = 1;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new EnumType (PropNames.WORD_SPACING, NORMAL);
+            return Length.makeLength(property, 0d, Length.PT); //normal
         }
         public static final int inherited = COMPUTED;
 
@@ -7972,6 +8044,140 @@ public abstract class Properties {
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
         public static final ROStringArray enumValues = enums;
+
+        public static Numeric getMappedLength(int enum)
+            throws PropertyException
+        {
+            if (enum != NORMAL)
+                throw new PropertyException("Invalid MAPPED_LENGTH enum: "
+                                            + enum);
+            return Length.makeLength(PropNames.WORD_SPACING, 0d, Length.PT);
+        }
+    }
+
+    public static class WordSpacingMinimum extends Properties {
+        public static final int dataTypes = MAPPED_LENGTH | LENGTH;
+        public static final int traitMapping = DISAPPEARS;
+        public static final int initialValueType = LENGTH_IT;
+        public static final int NORMAL = 1;
+        public static PropertyValue getInitialValue(int property)
+            throws PropertyException
+        {
+            return Length.makeLength(property, 0d, Length.PT); //normal
+        }
+        public static final int inherited = COMPUTED;
+
+        private static final String[] rwEnums = {
+            null
+            ,"normal"
+        };
+        public static final ROStringArray enums = new ROStringArray(rwEnums);
+        public static final ROStringArray enumValues = enums;
+
+        public static Numeric getMappedLength(int enum)
+            throws PropertyException
+        {
+            if (enum != NORMAL)
+                throw new PropertyException("Invalid MAPPED_LENGTH enum: "
+                                            + enum);
+            return Length.makeLength
+                            (PropNames.WORD_SPACING_MINIMUM, 0d, Length.PT);
+        }
+    }
+
+    public static class WordSpacingOptimum extends Properties {
+        public static final int dataTypes = MAPPED_LENGTH | LENGTH;
+        public static final int traitMapping = DISAPPEARS;
+        public static final int initialValueType = LENGTH_IT;
+        public static final int NORMAL = 1;
+        public static PropertyValue getInitialValue(int property)
+            throws PropertyException
+        {
+            return Length.makeLength(property, 0d, Length.PT); //normal
+        }
+        public static final int inherited = COMPUTED;
+
+        private static final String[] rwEnums = {
+            null
+            ,"normal"
+        };
+        public static final ROStringArray enums = new ROStringArray(rwEnums);
+        public static final ROStringArray enumValues = enums;
+
+        public static Numeric getMappedLength(int enum)
+            throws PropertyException
+        {
+            if (enum != NORMAL)
+                throw new PropertyException("Invalid MAPPED_LENGTH enum: "
+                                            + enum);
+            return Length.makeLength
+                            (PropNames.WORD_SPACING_OPTIMUM, 0d, Length.PT);
+        }
+    }
+
+    public static class WordSpacingMaximum extends Properties {
+        public static final int dataTypes = MAPPED_LENGTH | LENGTH;
+        public static final int traitMapping = DISAPPEARS;
+        public static final int initialValueType = LENGTH_IT;
+        public static final int NORMAL = 1;
+        public static PropertyValue getInitialValue(int property)
+            throws PropertyException
+        {
+            return Length.makeLength(property, 0d, Length.PT); //normal
+        }
+        public static final int inherited = COMPUTED;
+
+        private static final String[] rwEnums = {
+            null
+            ,"normal"
+        };
+        public static final ROStringArray enums = new ROStringArray(rwEnums);
+        public static final ROStringArray enumValues = enums;
+
+        public static Numeric getMappedLength(int enum)
+            throws PropertyException
+        {
+            if (enum != NORMAL)
+                throw new PropertyException("Invalid MAPPED_LENGTH enum: "
+                                            + enum);
+            return Length.makeLength
+                            (PropNames.WORD_SPACING_MAXIMUM, 0d, Length.PT);
+        }
+    }
+
+    public static class WordSpacingConditionality extends Properties {
+        public static final int dataTypes = ENUM;
+        public static final int traitMapping = FORMATTING;
+        public static final int initialValueType = ENUM_IT;
+        public static PropertyValue getInitialValue(int property)
+            throws PropertyException
+        {
+            return new EnumType(PropNames.WORD_SPACING_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
+        }
+        public static final int inherited = COMPUTED;
+
+        public static final ROStringArray enums = Conditionality.enums;
+        public static final ROStringArray enumValues
+                                            = Conditionality.enumValues;
+    }
+
+    public static class WordSpacingPrecedence extends Properties {
+        public static final int dataTypes = INTEGER | ENUM;
+        public static final int traitMapping = FORMATTING;
+        public static final int initialValueType = ENUM_IT;
+        public static PropertyValue getInitialValue(int property)
+            throws PropertyException
+        {
+            return new EnumType
+                (PropNames.LINE_HEIGHT_PRECEDENCE, PrecedenceCommon.FORCE);
+        }
+
+        public static final int inherited = COMPUTED;
+
+        public static final ROStringArray enums = PrecedenceCommon.enums;
+        public static final ROStringArray enumValues
+                                            = PrecedenceCommon.enumValues;
     }
 
     public static class WrapOption extends Properties {
