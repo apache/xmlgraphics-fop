@@ -123,14 +123,13 @@ public class FOTree extends Tree implements Runnable {
                                ("scriptsMap","Pk"));
             // Let the parser look after STARTDOCUMENT and the correct
             // positioning of the root element
-            event = xmlevents.getStartElement
-                                    (XMLNamespaces.XSLNSpaceIndex, "root");
-            if (event != null) {
-                System.out.println("FOTree:" + event);
-            }
+            event = xmlevents.getStartElement(FObjectNames.ROOT);
             foRoot = new FoRoot(this, event);
             foRoot.buildFoTree();
             System.out.println("Back from buildFoTree");
+            // Clean up the fo:root event
+            xmlevents.getEndElement(event);
+            // Get the end of document
             xmlevents.getEndDocument();
         } catch (Exception e) {
             if (errorDump) Driver.dumpError(e);
