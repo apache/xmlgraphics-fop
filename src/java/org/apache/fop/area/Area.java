@@ -92,13 +92,13 @@ public class Area extends AreaNode implements Cloneable  {
         return content;
     }
 
-//    protected void setMargins(
-//    		double before, double after, double start, double end) {
-//        spaces.setBefore(before);
-//        spaces.setAfter(after);
-//        spaces.setStart(start);
-//        spaces.setEnd(end);
-//    }
+    protected void setMargins(
+    		double before, double after, double start, double end) {
+        spaces.setBefore(before);
+        spaces.setAfter(after);
+        spaces.setStart(start);
+        spaces.setEnd(end);
+    }
     /** Translates this area into position in its parent area */
     protected AffineTransform translation = null;
 	/**
@@ -147,8 +147,8 @@ public class Area extends AreaNode implements Cloneable  {
         } catch (PropertyException e) {
             throw new RuntimeException(e.getMessage());
         }
-        content = new ContentRectangle(this, contentWritingMode);
-        //padding = new PaddingRectangle(frameWritingMode, content, 0.0, 0.0);
+        content = new ContentRectangle(this);
+        padding = content.getPadding();
         borders = padding.getBorders();
         spaces = borders.getSpaces();
     }
@@ -275,15 +275,15 @@ public class Area extends AreaNode implements Cloneable  {
             }
         }
 
-        protected int getWritingMode() {
+        public int getWritingMode() {
             return writingMode;
         }
 
-        protected int getContentWritingMode() {
+        public int getContentWritingMode() {
             return contentWritingMode;
         }
 
-        protected int getFrameWritingMode() {
+        public int getFrameWritingMode() {
             return frameWritingMode;
         }
 
