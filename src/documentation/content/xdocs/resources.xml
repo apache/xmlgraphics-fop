@@ -1,7 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
-
 <!-- FOP Relevant Specifications and links -->
 <document>
   <header>
@@ -9,182 +8,133 @@
     <subtitle>Resources useful for developing and using FOP</subtitle>
   </header>
   <body>
-  <section id="mailing-lists">
-    <title>Mailing Lists and Archives</title>
-    <section id="mailing-lists-general">
-      <title>General Information</title>
+    <section id="mailing-lists">
+      <title>Mailing Lists and Archives</title>
+      <section id="mailing-lists-general">
+        <title>General Information</title>
         <p>Before posting questions to any list, review "<link href="http://www.catb.org/~esr/faqs/smart-questions.html">How To Ask Questions The Smart Way</link>".</p>
         <p>Be sure to set your email client to send plain text email messages to any mailing lists.
 Please do <em>not</em> send html or rtf email, as they do not work well with the archive engines.
 If you are using Microsoft Outlook, this setting can be found at the "Mail Format" tab of the Tools/Options menu.</p>
         <p>For help in understanding email acronyms, see the <link href="http://www.lingo2word.com/lists/acronym_listA.html">Lingo2Word Acronym List</link>, or the <link href="http://www.keno.org/web_design/acronyms.htm">Keno Internet Services Internet Glossary</link>.</p>
-    </section>
-    <section id="mailing-lists-fop-user">
-      <title>FOP User Mailing List</title>
-        <p>
-Use this forum to discuss topics of interest to FOP users.
-After reviewing the FOP documentation and searching the
-archives (see below), use this forum to ask questions about
-how to download, install, configure, and use FOP. Please do
-<em>not </em>use this forum for general XSL-FO, XSLT, or PDF questions.
-        </p>
-      <ul>
-            <li>
-To review the archives, you have several options:
-              <ul>
-                <li>
-The <link href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">Mailing list ARChives </link> (MARC) at the AIMS group (search).
-                </li>
-                <li>
-The <link href="http://nagoya.apache.org/eyebrowse/SummarizeList?listName=fop-user@xml.apache.org">Apache Eyebrowse</link> archive (search, list by date, author, subject, or thread).
-                </li>
-                <li>
-The <link href="http://xml.apache.org/mail/fop-user">Apache Mailing List archive</link> (gzip files).
-                </li>
-              </ul>
-            </li>
-            <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
-            <li>
-See <link href="http://xml.apache.org/mail.html#fop-user">Apache XML Mailing Lists</link>
-for detailed subscription information.
-            </li>
-            <li>
-To subscribe (digest only): Send email to <link href="mailto:fop-user-digest-subscribe@xml.apache.org">fop-user-digest-subscribe@xml.apache.org</link>.
-            </li>
-            <li>
-To subscribe fully: Send email to <link href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</link>.
-            </li>
-            <li>
-For standard help: Send email to <link href="mailto:fop-user-help@xml.apache.org">fop-user-help@xml.apache.org</link>.
-            </li>
-            <li>
-To unsubscribe: Send email to <link href="mailto:fop-user-unsubscribe@xml.apache.org">fop-user-unsubscribe@xml.apache.org</link>.
-            </li>
-      </ul>
-    </section>
-    <section id="mailing-lists-w3c-xslfo">
-      <title>XSL-FO Mailing List (at W3C)</title>
-          <p>
-Use this forum to ask general XSL-FO questions.
-          </p>
-      <ul>
-            <li>
-To review the archive: <link href="http://lists.w3.org/Archives/Public/www-xsl-fo/">W3C XSL-FO Archives</link>.
-            </li>
-            <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
-            <li>
-Subscription administration information can be found at <link href="http://www.w3.org/Mail/Request">W3C Mailing List Administrativia</link>. After reviewing the instructions there, send your subscribe or unsubscribe request to <link href="mailto:www-xsl-fo-request@w3.org">www-xsl-fo-request@w3.org</link>.
-            </li>
-      </ul>
-    </section>
-    <section id="mailing-lists-yahoogroups-xslfo">
-      <title>XSL-FO Mailing List (at YahooGroups)</title>
-      <p>Use this forum to ask general XSL-FO questions.</p>
-      <ul>
-        <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
-        <li>The home page for this groups is <jump href="http://groups.yahoo.com/group/XSL-FO">XSL-FO - discussion of XSL Formatting Objects</jump>.</li>
-      </ul>
-    </section>
+      </section>
+      <section id="mailing-lists-fop-user">
+        <title>FOP User Mailing List</title>
+        <p>Use this forum to discuss topics of interest to FOP users.
+After reviewing the FOP documentation and searching the archives (see below), use this forum to ask questions about how to download, install, configure, and use FOP.
+Please do <em>not</em> use this forum for general XSL-FO, XSLT, or PDF questions.</p>
+        <ul>
+          <li>To review the archives, you have several options:
+            <ul>
+              <li>The <link href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">Mailing list ARChives </link> (MARC) at the AIMS group (search).</li>
+              <li>The <link href="http://nagoya.apache.org/eyebrowse/SummarizeList?listName=fop-user@xml.apache.org">Apache Eyebrowse</link> archive (search, list by date, author, subject, or thread).</li>
+              <li>The <link href="http://xml.apache.org/mail/fop-user">Apache Mailing List archive</link> (gzip files).</li>
+            </ul>
+          </li>
+          <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
+          <li>See <link href="http://xml.apache.org/mail.html#fop-user">Apache XML Mailing Lists</link> for detailed subscription information.</li>
+          <li>To subscribe (digest only): Send email to <link href="mailto:fop-user-digest-subscribe@xml.apache.org">fop-user-digest-subscribe@xml.apache.org</link>.</li>
+          <li>To subscribe fully: Send email to <link href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</link>.</li>
+          <li>For standard help: Send email to <link href="mailto:fop-user-help@xml.apache.org">fop-user-help@xml.apache.org</link>.</li>
+          <li>To unsubscribe: Send email to <link href="mailto:fop-user-unsubscribe@xml.apache.org">fop-user-unsubscribe@xml.apache.org</link>.</li>
+        </ul>
+      </section>
+      <section id="mailing-lists-w3c-xslfo">
+        <title>XSL-FO Mailing List (at W3C)</title>
+        <p>Use this forum to ask general XSL-FO questions.</p>
+        <ul>
+          <li>
+To review the archive: <link href="http://lists.w3.org/Archives/Public/www-xsl-fo/">W3C XSL-FO Archives</link>.</li>
+          <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
+          <li>Subscription administration information can be found at <link href="http://www.w3.org/Mail/Request">W3C Mailing List Administrativia</link>.
+After reviewing the instructions there, send your subscribe or unsubscribe request to <link href="mailto:www-xsl-fo-request@w3.org">www-xsl-fo-request@w3.org</link>.</li>
+        </ul>
+      </section>
+      <section id="mailing-lists-yahoogroups-xslfo">
+        <title>XSL-FO Mailing List (at YahooGroups)</title>
+        <p>Use this forum to ask general XSL-FO questions.</p>
+        <ul>
+          <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
+          <li>The home page for this groups is <jump href="http://groups.yahoo.com/group/XSL-FO">XSL-FO - discussion of XSL Formatting Objects</jump>.</li>
+        </ul>
+      </section>
       <section id="mailing-lists-xslt-mulberry">
         <title>XSLT List (Mulberry Tech)</title>
         <ul>
-            <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
+          <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
           <li>Information for using and subscribing can be found at <jump href="http://www.mulberrytech.com/xsl/xsl-list">XSL-List -- Open Forum on XSL</jump>.</li>
         </ul>
       </section>
-  </section>
-  <section id="specs">
-    <title>Specifications</title>
-    <section id="specs-xslfo">
-      <title>XSL-FO</title>
+    </section>
+    <section id="specs">
+      <title>Specifications</title>
+      <section id="specs-xslfo">
+        <title>XSL-FO</title>
+        <ul>
+          <li><link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Recommendation (15 October 2001)</link></li>
+          <li><link href="http://www.renderx.com/Tests/validator/fo.dtd.html">Unofficial DTD for the XSL-FO Recommendation</link> provided by N. Grigoriev from RenderX.</li>
+        </ul>
+      </section>
+      <section id="specs-xslt">
+        <title>XSLT</title>
+        <ul>
+          <li><link href="http://www.w3.org/TR/xslt">XSLT Recommendation</link></li>
+        </ul>
+      </section>
+      <section id="specs-xml">
+        <title>XML</title>
+        <ul>
+          <li><link href="http://www.w3.org/TR/REC-xml">XML Recommendation</link></li>
+          <li><link href="http://sax.sourceforge.net/">Simple API for XML (SAX)</link></li>
+          <li><link href="http://www.w3.org/TR/REC-DOM-Level-1">Document Object Model (DOM)</link></li>
+          <li><link href="http://www.w3.org/TR/REC-xml-names/">Namespaces in XML Recommendation</link></li>
+        </ul>
+      </section>
+      <section id="other">
+        <title>Other</title>
+        <ul>
+          <li><link href="http://www.w3.org/TR/SVG/">Supported SVG Recommendation (04 September 2001)</link></li>
+          <li><link href="http://partners.adobe.com/asn/developer/acrosdk/docs/filefmtspecs/PDFReference.pdf">Portable Document Format (PDF) 1.4 Reference Manual</link></li>
+          <li><link href="http://java.sun.com/j2se/1.3/docs/api/index.html">Java JDK 1.3 Documentation</link></li>
+        </ul>
+      </section>
+    </section>
+    <section id="documents">
+      <title>Books, Tutorials, Articles</title>
+      <section id="documents-xslfo">
+        <title>XSL-FO</title>
+        <ul>
+          <li><link href="http://www.ibiblio.org/xml/books/bible2/chapters/ch18.html">Elliotte Rusty Harold: Chapter 18 on xsl:fo from his excellent book XML Bible, Second Edition</link></li>
+          <li><link href="http://www.sun.com/software/xml/developers/slides-dtd/">Paul Sandoz: Using formatting objects with the slides dtd</link></li>
+          <li><link href="http://www.xml.com/pub/a/2001/01/17/xsl-fo/index.html">J. David Eisenberg: Using XSL Formatting Objects</link></li>
+          <li><link href="http://zvon.org/xxl/xslfoReference/Output/index.html">Miloslav Nic: XSL FO reference</link></li>
+          <li><link href="http://www.dpawson.co.uk/xsl/sect3/bk/index.html">Dave Pawson: An introduction to XSL Formatting Objects</link></li>
+          <li><jump href="http://www.oreilly.com/catalog/xslfo">XSL-FO</jump>, by Dave Pawson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00355-2.</li>
+        </ul>
+      </section>
+      <section id="documents-xslt">
+        <title>XSLT</title>
+        <ul>
+          <li><jump href="http://wrox.com/books/1861005067.htm">XSLT Programmer's Reference</jump>, by Michael H. Kay, Wrox Press, ISBN 1-861-00506-7.</li>
+          <li><jump href="http://www.oreilly.com/catalog/xslt">XSLT</jump>, by Doug Tidwell, O'Reilly &amp; Associates, 2001, ISBN 0-596-00053-7.</li>
+          <li><jump href="http://www.oreilly.com/catalog/xsltckbk">XSLT Cookbook</jump>, by Sal Mangano, O'Reilly &amp; Associates, 2002, ISBN 0-596-00372-2.</li>
+          <li><jump href="http://www.dpawson.co.uk/xsl/xslfaq.html">Dave Pawson's XSLT FAQ</jump>.</li>
+        </ul>
+      </section>
+    </section>
+    <section id="products">
+      <title>Related/Useful Products</title>
       <ul>
-        <li><link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Recommendation (15 October 2001)</link></li>
-        <li><link href="http://www.renderx.com/Tests/validator/fo.dtd.html">Unofficial DTD for the XSL-FO Recommendation</link> provided by N. Grigoriev from RenderX.</li>
+        <li>PJ is an open source product that can be used to modify PDF documents:
+<link href="http://www.etymon.com/pj/index.html">http://www.etymon.com/pj/index.html</link></li>
+        <li>iText is a library that can edit PDF files, it is possible to do
+post processing of the generated PDF files: <link href="http://www.lowagie.com/iText/">http://www.lowagie.com/iText/</link>.</li>
+        <li>html2fo is a converter from html to xsl:fo: <link href="http://html2fo.sourceforge.net/">http://html2fo.sourceforge.net/</link>.</li>
+        <li>FOA is a XSL-FO Authoring tool: <link href="http://foa.sourceforge.net/">http://foa.sourceforge.net/</link>.</li>
+        <li>TIFFRenderer is a renderer for outputting multi-page TIFF: <link href="http://www.tkachenko.com/fop/tiffrenderer.html">http://www.tkachenko.com/fop/tiffrenderer.html</link>.</li>
+        <li>AFP Renderer / Batch Assembler for FOP: <link href="http://mypage.bluewin.ch/huanderegg/">http://mypage.bluewin.ch/huanderegg/</link>.</li>
+        <li>The <link href="http://mogwai.sourceforge.net">Mogwai Project</link> includes a renderer for FOP that generates output for Okidata dot matrix printers.</li>
       </ul>
     </section>
-    <section id="specs-xslt">
-      <title>XSLT</title>
-      <ul>
-        <li><link href="http://www.w3.org/TR/xslt">XSLT Recommendation</link></li>
-      </ul>
-    </section>
-    <section id="specs-xml">
-      <title>XML</title>
-      <ul>
-        <li><link href="http://www.w3.org/TR/REC-xml">XML Recommendation</link></li>
-        <li><link href="http://sax.sourceforge.net/">Simple API for XML (SAX)</link></li>
-        <li><link href="http://www.w3.org/TR/REC-DOM-Level-1">Document Object Model (DOM)</link></li>
-        <li><link href="http://www.w3.org/TR/REC-xml-names/">Namespaces in XML Recommendation</link></li>
-      </ul>
-    </section>
-    <section id="other">
-      <title>Other</title>
-      <ul>
-        <li><link href="http://www.w3.org/TR/SVG/">Supported SVG Recommendation (04 September 2001)</link></li>
-        <li><link href="http://partners.adobe.com/asn/developer/acrosdk/docs/filefmtspecs/PDFReference.pdf">Portable Document Format (PDF) 1.4 Reference Manual</link></li>
-        <li><link href="http://java.sun.com/j2se/1.3/docs/api/index.html">Java JDK 1.3 Documentation</link></li>
-      </ul>
-    </section>
-  </section>
-  <section id="documents">
-    <title>Books, Tutorials, Articles</title>
-    <section id="documents-xslfo">
-      <title>XSL-FO</title>
-      <ul>
-        <li><link href="http://www.ibiblio.org/xml/books/bible2/chapters/ch18.html">Elliotte Rusty Harold: Chapter 18 on xsl:fo from his excellent book XML Bible, Second Edition</link></li>
-        <li><link href="http://www.sun.com/software/xml/developers/slides-dtd/">Paul Sandoz: Using formatting objects with the slides dtd</link></li>
-        <li><link href="http://www.xml.com/pub/a/2001/01/17/xsl-fo/index.html">J. David Eisenberg: Using XSL Formatting Objects</link></li>
-        <li><link href="http://zvon.org/xxl/xslfoReference/Output/index.html">Miloslav Nic: XSL FO reference</link></li>
-        <li><link href="http://www.dpawson.co.uk/xsl/sect3/bk/index.html">Dave Pawson: An introduction to XSL Formatting Objects</link></li>
-        <li><jump href="http://www.oreilly.com/catalog/xslfo">XSL-FO</jump>, by Dave Pawson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00355-2.</li>
-      </ul>
-    </section>
-    <section id="documents-xslt">
-      <title>XSLT</title>
-      <ul>
-        <li><jump href="http://wrox.com/books/1861005067.htm">XSLT Programmer's Reference</jump>, by Michael H. Kay, Wrox Press, ISBN 1-861-00506-7.</li>
-        <li><jump href="http://www.oreilly.com/catalog/xslt">XSLT</jump>, by Doug Tidwell, O'Reilly &amp; Associates, 2001, ISBN 0-596-00053-7.</li>
-        <li><jump href="http://www.oreilly.com/catalog/xsltckbk">XSLT Cookbook</jump>, by Sal Mangano, O'Reilly &amp; Associates, 2002, ISBN 0-596-00372-2.</li>
-        <li><jump href="http://www.dpawson.co.uk/xsl/xslfaq.html">Dave Pawson's XSLT FAQ</jump>.</li>
-      </ul>
-    </section>
-  </section>
-  <section id="products">
-    <title>Related/Useful Products</title>
-    <ul>
-      <li>
-PJ is an open source product that can be used to modify PDF documents:
-<link href="http://www.etymon.com/pj/index.html">http://www.etymon.com/pj/index.html</link>
-      </li>
-      <li>
-iText is a library that can edit PDF files, it is possible to do
-post processing of the generated PDF files: <link href="http://www.lowagie.com/iText/">http://www.lowagie.com/iText/</link>.
-      </li>
-      <li>
-      html2fo is a converter from html to xsl:fo:
-      <link href="http://html2fo.sourceforge.net/">http://html2fo.sourceforge.net/</link>.
-      </li>
-      <li>
-      FOA is a XSL-FO Authoring tool:
-      <link href="http://foa.sourceforge.net/">http://foa.sourceforge.net/</link>.
-      </li>
-      <li>
-      TIFFRenderer is a renderer for outputting multi-page TIFF:
-      <link href="http://www.tkachenko.com/fop/tiffrenderer.html">
-      http://www.tkachenko.com/fop/tiffrenderer.html</link>.
-      </li>
-      <li>
-      AFP Renderer / Batch Assembler for FOP:
-      <link href="http://mypage.bluewin.ch/huanderegg/">
-      http://mypage.bluewin.ch/huanderegg/</link>.
-      </li>
-      <li>
-        The <link href="http://mogwai.sourceforge.net">Mogwai Project</link>
-includes a renderer for FOP that generates output for Okidata dot matrix
-printers.
-      </li>
-    </ul>
-  </section>
   </body>
 </document>
-
