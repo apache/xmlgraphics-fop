@@ -1,5 +1,8 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fixed bug: PFBParser reports "Could not load the whole segment".
+  (#19764, JM)
+  Submitted by: Matthias Germann <germannm@post.ch>
 - Fixed bug in ASCII85OutputStream where EOF marker got split over two lines
   resulting in an illegal stream. (JM)
   Submitted by: Larry Moore <lmoore@providerlink.com>
