@@ -33,7 +33,7 @@ public interface ShorthandParser {
      * @return Property object corresponding to propName
      */
     Property getValueForProperty(int propId,
-                                 ListProperty listProperty,
+                                 Property property,
                                  PropertyMaker maker,
                                  PropertyList propertyList);
 }

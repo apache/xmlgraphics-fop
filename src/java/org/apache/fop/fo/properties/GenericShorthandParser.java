@@ -33,7 +33,7 @@ public class GenericShorthandParser implements ShorthandParser {
      * @param index the index into the List of properties
      * @return the property from the List of properties at the index parameter
      */
-    protected Property getElement(ListProperty list, int index) {
+    protected Property getElement(Property list, int index) {
         if (list.getList().size() > index) {
             return (Property) list.getList().elementAt(index);
         } else {
@@ -44,18 +44,18 @@ public class GenericShorthandParser implements ShorthandParser {
     // Stores 1 to 3 values for border width, style, color
     // Used for: border, border-top, border-right etc
     public Property getValueForProperty(int propId,
-                                        ListProperty listProperty,
+                                        Property property,
                                         PropertyMaker maker,
                                         PropertyList propertyList) {
         Property prop = null;
         // Check for keyword "inherit"
-        if (listProperty.getList().size() == 1) {
-            String sval = getElement(listProperty, 0).getString();
+        if (property.getList().size() == 1) {
+            String sval = getElement(property, 0).getString();
             if (sval != null && sval.equals("inherit")) {
                 return propertyList.getFromParent(propId);
             }
         }
-        return convertValueForProperty(propId, listProperty, maker, propertyList);
+        return convertValueForProperty(propId, property, maker, propertyList);
     }
 
 
@@ -68,12 +68,12 @@ public class GenericShorthandParser implements ShorthandParser {
      * @return the Property matching the parameters, or null if not found
      */
     protected Property convertValueForProperty(int propId,
-                                               ListProperty listProperty,
+                                               Property property,
                                                PropertyMaker maker,
                                                PropertyList propertyList) {
         Property prop = null;
         // Try each of the stored values in turn
-        Enumeration eprop = listProperty.getList().elements();
+        Enumeration eprop = property.getList().elements();
         while (eprop.hasMoreElements() && prop == null) {
             Property p = (Property) eprop.nextElement();
             prop = maker.convertShorthandProperty(propertyList, p, null);
