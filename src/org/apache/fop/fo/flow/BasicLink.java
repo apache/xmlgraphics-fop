@@ -117,10 +117,12 @@ public class BasicLink extends FObjMixed {
 
 	Page p = area.getPage();
 
-	// this will only work if links are in region-body (AHS);
-	// need to handle links in all regions
-	AreaContainer ac = p.getBody().getCurrentColumnArea();
-
+	AreaContainer ac = area.getNearestAncestorAreaContainer();
+	if (ac == null)
+	{
+		throw new FOPException("Couldn't get ancestor AreaContainer when processing basic-link");
+	}
+	
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
 	    FONode fo = (FONode) children.elementAt(i);
