@@ -693,21 +693,20 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     }
 
     protected void renderSVGDocument(Document doc, int x, int y) {
-        UserAgent userAgent = new MUserAgent(new AffineTransform());
+        MUserAgent userAgent = new MUserAgent(new AffineTransform());
+        userAgent.setLogger(log);
 
         GVTBuilder builder = new GVTBuilder();
-        GraphicsNodeRenderContext rc = getRenderContext();
-        BridgeContext ctx = new BridgeContext(userAgent, rc);
+        BridgeContext ctx = new BridgeContext(userAgent);
         GraphicsNode root;
 
         // correct integer roundoff     aml/rlc
         // graphics.translate(x / 1000f, pageHeight - y / 1000f);
         graphics.translate((x + 500) / 1000, pageHeight - (y + 500) / 1000);
 
-        graphics.setRenderingHints(rc.getRenderingHints());
         try {
             root = builder.build(ctx, doc);
-            root.paint(graphics, rc);
+            root.paint(graphics);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -718,38 +717,9 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
     }
 
-    public GraphicsNodeRenderContext getRenderContext() {
-        GraphicsNodeRenderContext nodeRenderContext = null;
-        if (nodeRenderContext == null) {
-            RenderingHints hints = new RenderingHints(null);
-            hints.put(RenderingHints.KEY_ANTIALIASING,
-                      RenderingHints.VALUE_ANTIALIAS_ON);
-
-            hints.put(RenderingHints.KEY_INTERPOLATION,
-                      RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-            FontRenderContext fontRenderContext =
-                new FontRenderContext(new AffineTransform(), true, true);
-
-            TextPainter textPainter = new StrokingTextPainter();
-
-            GraphicsNodeRableFactory gnrFactory =
-                new ConcreteGraphicsNodeRableFactory();
-
-            nodeRenderContext =
-                new GraphicsNodeRenderContext(new AffineTransform(), null,
-                                              hints, fontRenderContext,
-                                              textPainter, gnrFactory);
-        }
-
-        return nodeRenderContext;
-    }
-
-
     public void setProducer(String producer) {
         // defined in Renderer Interface
     }
-
 
     public int print(Graphics g, PageFormat pageFormat,
                      int pageIndex) throws PrinterException {
@@ -860,67 +830,13 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     }
 
 
-    protected class MUserAgent implements UserAgent {
-        AffineTransform currentTransform = null;
+    protected class MUserAgent extends org.apache.fop.svg.SVGUserAgent {
 
         /**
          * Creates a new SVGUserAgent.
          */
         protected MUserAgent(AffineTransform at) {
-            currentTransform = at;
-        }
-
-        /**
-         * Displays an error message.
-         */
-        public void displayError(String message) {
-            System.err.println(message);
-        }
-
-        /**
-         * Displays an error resulting from the specified Exception.
-         */
-        public void displayError(Exception ex) {
-            ex.printStackTrace(System.err);
-        }
-
-        /**
-         * Displays a message in the User Agent interface.
-         * The given message is typically displayed in a status bar.
-         */
-        public void displayMessage(String message) {
-            System.out.println(message);
-        }
-
-        /**
-         * Returns a customized the pixel to mm factor.
-         */
-        public float getPixelToMM() {
-            // this is set to 72dpi as the values in fo are 72dpi
-            return 0.35277777777777777778f; // 72 dpi
-            // return 0.26458333333333333333333333333333f;    // 96dpi
-        }
-
-        /**
-         * Returns the language settings.
-         */
-        public String getLanguages() {
-            return "en";    // userLanguages;
-        }
-
-        /**
-         * Returns the user stylesheet uri.
-         * @return null if no user style sheet was specified.
-         */
-        public String getUserStyleSheetURI() {
-            return null;    // userStyleSheetURI;
-        }
-
-        /**
-         * Returns the class name of the XML parser.
-         */
-        public String getXMLParserClassName() {
-            return Driver.getParserClassName();
+            super(at);
         }
 
         /**
@@ -940,10 +856,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         public void setSVGCursor(java.awt.Cursor cursor) {}
 
 
-        public AffineTransform getTransform() {
-            return currentTransform;
-        }
-
         public Dimension2D getViewportSize() {
             return new Dimension(100, 100);
         }
@@ -951,19 +863,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         public EventDispatcher getEventDispatcher() {
             return null;
         }
-
-        public boolean supportExtension(String str) {
-            return false;
-        }
-
-        public boolean hasFeature(String str) {
-            return false;
-        }
-
-        public void registerExtension(BridgeExtension be) {}
-
-        public void handleElement(Element elt, Object data) {}
-
     }
 
     public void startRenderer(OutputStream outputStream)

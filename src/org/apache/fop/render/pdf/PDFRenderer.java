@@ -46,7 +46,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.font.FontRenderContext;
 import java.awt.Dimension;
 
 /**
@@ -385,12 +384,37 @@ public class PDFRenderer extends PrintRenderer {
 
     protected void renderSVGDocument(Document doc, int x, int y,
                                      FontState fs) {
-        SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
-        int w = (int)(svg.getWidth().getBaseVal().getValue() * 1000);
-        int h = (int)(svg.getHeight().getBaseVal().getValue() * 1000);
-
         float sx = 1, sy = -1;
         int xOffset = x, yOffset = y;
+
+        org.apache.fop.svg.SVGUserAgent userAgent
+             = new org.apache.fop.svg.SVGUserAgent(new AffineTransform());
+        userAgent.setLogger(log);
+
+        GVTBuilder builder = new GVTBuilder();
+        BridgeContext ctx = new BridgeContext(userAgent);
+        TextPainter textPainter = null;
+        Boolean bl =
+            org.apache.fop.configuration.Configuration.getBooleanValue("strokeSVGText");
+        if (bl == null || bl.booleanValue()) {
+            textPainter = new StrokingTextPainter();
+        } else {
+            textPainter = new PDFTextPainter(fs);
+        }
+        ctx.setTextPainter(textPainter);
+
+        PDFAElementBridge aBridge = new PDFAElementBridge();
+        aBridge.setCurrentTransform(new AffineTransform(sx, 0, 0, sy, xOffset / 1000f, yOffset / 1000f));
+        ctx.putBridge(aBridge);
+
+
+        GraphicsNode root;
+        root = builder.build(ctx, doc);
+        // get the 'width' and 'height' attributes of the SVG document
+        float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
+        float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
+        ctx = null;
+        builder = null;
 
         /*
          * Clip to the svg area.
@@ -414,6 +438,7 @@ public class PDFRenderer extends PrintRenderer {
         currentStream.add(sx + " 0 0 " + sy + " " + xOffset / 1000f + " "
                           + yOffset / 1000f + " cm\n");
 
+        SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
         AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg, w / 1000f, h / 1000f);
         if(!at.isIdentity()) {
             double[] vals = new double[6];
@@ -426,25 +451,15 @@ public class PDFRenderer extends PrintRenderer {
                             + PDFNumber.doubleOut(vals[5]) + " cm\n");
         }
 
-        UserAgent userAgent = new MUserAgent(new AffineTransform());
-
-        GVTBuilder builder = new GVTBuilder();
-        GraphicsNodeRenderContext rc = getRenderContext(fs);
-        BridgeContext ctx = new BridgeContext(userAgent, rc);
-        PDFAElementBridge aBridge = new PDFAElementBridge();
-        ctx.putBridge(aBridge);
-        GraphicsNode root;
         PDFGraphics2D graphics = new PDFGraphics2D(true, fs, pdfDoc,
                                  currentFontName,
                                  currentFontSize,
                                  currentXPosition,
                                  currentYPosition);
         graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
-        graphics.setRenderingHints(rc.getRenderingHints());
-        aBridge.setCurrentTransform(new AffineTransform(sx, 0, 0, sy, xOffset / 1000f, yOffset / 1000f));
+
         try {
-            root = builder.build(ctx, doc);
-            root.paint(graphics, rc);
+            root.paint(graphics);
             currentStream.add(graphics.getString());
         } catch (Exception e) {
             log.error("svg graphic could not be rendered: "
@@ -454,40 +469,6 @@ public class PDFRenderer extends PrintRenderer {
         currentAnnotList = graphics.getAnnotList();
 
         currentStream.add("Q\n");
-    }
-
-    public GraphicsNodeRenderContext getRenderContext(FontState fs) {
-        GraphicsNodeRenderContext nodeRenderContext = null;
-        if (nodeRenderContext == null) {
-            RenderingHints hints = new RenderingHints(null);
-            hints.put(RenderingHints.KEY_ANTIALIASING,
-                      RenderingHints.VALUE_ANTIALIAS_ON);
-
-            hints.put(RenderingHints.KEY_INTERPOLATION,
-                      RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-            FontRenderContext fontRenderContext =
-                new FontRenderContext(new AffineTransform(), true, true);
-
-            TextPainter textPainter = null;
-            Boolean bl =
-                org.apache.fop.configuration.Configuration.getBooleanValue("strokeSVGText");
-            if (bl == null || bl.booleanValue()) {
-                textPainter = new StrokingTextPainter();
-            } else {
-                textPainter = new PDFTextPainter(fs);
-            }
-            GraphicsNodeRableFactory gnrFactory =
-                new ConcreteGraphicsNodeRableFactory();
-
-            nodeRenderContext =
-                new GraphicsNodeRenderContext(new AffineTransform(), null,
-                                              hints, fontRenderContext,
-                                              textPainter, gnrFactory);
-            nodeRenderContext.setTextPainter(textPainter);
-        }
-
-        return nodeRenderContext;
     }
 
     /**
@@ -867,110 +848,4 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
-    protected class MUserAgent implements UserAgent {
-        AffineTransform currentTransform = null;
-
-        /**
-         * Creates a new SVGUserAgent.
-         */
-        protected MUserAgent(AffineTransform at) {
-            currentTransform = at;
-        }
-
-        /**
-         * Displays an error message.
-         */
-        public void displayError(String message) {
-            System.err.println(message);
-        }
-
-        /**
-         * Displays an error resulting from the specified Exception.
-         */
-        public void displayError(Exception ex) {
-            ex.printStackTrace(System.err);
-        }
-
-        /**
-         * Displays a message in the User Agent interface.
-         * The given message is typically displayed in a status bar.
-         */
-        public void displayMessage(String message) {
-            System.out.println(message);
-        }
-
-        /**
-         * Returns a customized the pixel to mm factor.
-         */
-        public float getPixelToMM() {
-            // this is set to 72dpi as the values in fo are 72dpi
-            return 0.35277777777777777778f; // 72 dpi
-            // return 0.26458333333333333333333333333333f;    // 96dpi
-        }
-
-        /**
-         * Returns the language settings.
-         */
-        public String getLanguages() {
-            return "en";    // userLanguages;
-        }
-
-        /**
-         * Returns the user stylesheet uri.
-         * @return null if no user style sheet was specified.
-         */
-        public String getUserStyleSheetURI() {
-            return null;    // userStyleSheetURI;
-        }
-
-        /**
-         * Returns the class name of the XML parser.
-         */
-        public String getXMLParserClassName() {
-            return org.apache.fop.apps.Driver.getParserClassName();
-        }
-
-        /**
-         * Opens a link in a new component.
-         * @param doc The current document.
-         * @param uri The document URI.
-         */
-        public void openLink(SVGAElement elt) {
-            // application.openLink(uri);
-        }
-
-
-        public Point getClientAreaLocationOnScreen() {
-            return new Point(0, 0);
-        }
-
-        public void setSVGCursor(java.awt.Cursor cursor) {}
-
-
-        public AffineTransform getTransform() {
-            return currentTransform;
-        }
-
-        public Dimension2D getViewportSize() {
-            return new Dimension(100, 100);
-        }
-
-        public EventDispatcher getEventDispatcher() {
-            return null;
-        }
-
-        public boolean supportExtension(String str) {
-            return false;
-        }
-
-        public boolean hasFeature(String str) {
-            return false;
-        }
-
-        public void registerExtension(BridgeExtension be) {}
-
-        public void handleElement(Element elt, Object data) {}
-
-
-    }
 }

@@ -10,7 +10,6 @@ package org.apache.fop.svg;
 import java.awt.Graphics2D;
 import java.awt.*;
 import java.text.AttributedCharacterIterator;
-import java.awt.font.FontRenderContext;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.Font;
@@ -53,8 +52,7 @@ public class PDFTextPainter implements TextPainter {
      * @param g2d the Graphics2D to use
      * @param context the rendering context.
      */
-    public void paint(TextNode node, Graphics2D g2d,
-                      GraphicsNodeRenderContext context) {
+    public void paint(TextNode node, Graphics2D g2d) {
         // System.out.println("PDFText paint");
         String txt = node.getText();
         Point2D loc = node.getLocation();
@@ -191,12 +189,11 @@ public class PDFTextPainter implements TextPainter {
      * @param y the y coordinate, in the text layout's coordinate system,
      * of the selection event.
      * @param aci the AttributedCharacterIterator describing the text
-     * @param context the GraphicsNodeRenderContext to use when doing text layout.
      * @return an instance of Mark which encapsulates the state necessary to
      * implement hit testing and text selection.
      */
     public Mark selectAt(double x, double y, AttributedCharacterIterator aci,
-                         TextNode node, GraphicsNodeRenderContext context) {
+                         TextNode node) {
         System.out.println("PDFText selectAt");
         return null;
     }
@@ -209,13 +206,12 @@ public class PDFTextPainter implements TextPainter {
      * @param y the y coordinate, in the text layout's coordinate system,
      * of the selection event.
      * @param aci the AttributedCharacterIterator describing the text
-     * @param context the GraphicsNodeRenderContext to use when doing text layout.
      * @return an instance of Mark which encapsulates the state necessary to
      * implement hit testing and text selection.
      */
     public Mark selectTo(double x, double y, Mark beginMark,
-                         AttributedCharacterIterator aci, TextNode node,
-                         GraphicsNodeRenderContext context) {
+                         AttributedCharacterIterator aci,
+                         TextNode node) {
         System.out.println("PDFText selectTo");
         return null;
     }
@@ -228,13 +224,12 @@ public class PDFTextPainter implements TextPainter {
      * @param y the y coordinate, in the text layout's coordinate system,
      * of the selection event.
      * @param aci the AttributedCharacterIterator describing the text
-     * @param context the GraphicsNodeRenderContext to use when doing text layout.
      * @return an instance of Mark which encapsulates the state necessary to
      * implement hit testing and text selection.
      */
     public Mark selectAll(double x, double y,
-                          AttributedCharacterIterator aci, TextNode node,
-                          GraphicsNodeRenderContext context) {
+                          AttributedCharacterIterator aci,
+                          TextNode node) {
         System.out.println("PDFText selectAll");
         return null;
     }
@@ -244,8 +239,8 @@ public class PDFTextPainter implements TextPainter {
      * Selects the first glyph in the text node.
      */
     public Mark selectFirst(double x, double y,
-                            AttributedCharacterIterator aci, TextNode node,
-                            GraphicsNodeRenderContext context) {
+                            AttributedCharacterIterator aci,
+                            TextNode node) {
         System.out.println("PDFText selectFirst");
         return null;
     }
@@ -255,8 +250,8 @@ public class PDFTextPainter implements TextPainter {
      * Selects the last glyph in the text node.
      */
     public Mark selectLast(double x, double y,
-                           AttributedCharacterIterator aci, TextNode node,
-                           GraphicsNodeRenderContext context) {
+                           AttributedCharacterIterator aci,
+                           TextNode node) {
         System.out.println("PDFText selectLast");
         return null;
     }
@@ -300,7 +295,7 @@ public class PDFTextPainter implements TextPainter {
      * @param includeStroke whether to create the "stroke shape outlines"
      * instead of glyph outlines.
      */
-    public Shape getShape(TextNode node, FontRenderContext frc) {
+    public Shape getShape(TextNode node) {
         System.out.println("PDFText getShape");
         return null;
     }
@@ -314,7 +309,7 @@ public class PDFTextPainter implements TextPainter {
      * @param includeStroke whether to create the "stroke shape outlines"
      * instead of glyph outlines.
      */
-    public Shape getDecoratedShape(TextNode node, FontRenderContext frc) {
+    public Shape getDecoratedShape(TextNode node) {
         System.out.println("PDFText getDecoratedShape");
         return new Rectangle(1, 1);
     }
@@ -326,7 +321,7 @@ public class PDFTextPainter implements TextPainter {
      * @param g2d the Graphics2D to use
      * @param context rendering context.
      */
-    public Rectangle2D getBounds(TextNode node, FontRenderContext frc) {
+    public Rectangle2D getBounds(TextNode node) {
         System.out.println("PDFText getBounds");
         return null;
     }
@@ -339,8 +334,7 @@ public class PDFTextPainter implements TextPainter {
      * @param g2d the Graphics2D to use
      * @param context rendering context.
      */
-    public Rectangle2D getDecoratedBounds(TextNode node,
-                                          FontRenderContext frc) {
+    public Rectangle2D getDecoratedBounds(TextNode node) {
         System.out.println("PDFText getDecoratedBounds");
         return null;
     }
@@ -353,8 +347,7 @@ public class PDFTextPainter implements TextPainter {
      * @param g2d the Graphics2D to use
      * @param context rendering context.
      */
-    public Rectangle2D getPaintedBounds(TextNode node,
-                                        FontRenderContext frc) {
+    public Rectangle2D getPaintedBounds(TextNode node) {
         // System.out.println("PDFText getPaintedBounds");
         return null;
     }
