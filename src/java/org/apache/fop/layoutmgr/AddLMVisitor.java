@@ -60,6 +60,8 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.Viewport;
 
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.FObj;
@@ -89,6 +91,8 @@ import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 
 import org.apache.fop.fo.properties.LeaderPattern;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonBackground;
 
 import org.apache.fop.layoutmgr.BidiLayoutManager;
 import org.apache.fop.layoutmgr.LayoutProcessor;
@@ -396,7 +400,7 @@ public class AddLMVisitor extends FOTreeVisitor {
       * created viewport/image area.
       */
      public void serveVisitor(ExternalGraphic node) {
-         InlineArea area = node.getInlineArea();
+         InlineArea area = getExternalGraphicInlineArea(node);
          if (area != null) {
              node.setupID();
              LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
@@ -407,6 +411,34 @@ public class AddLMVisitor extends FOTreeVisitor {
              lm.setLead(node.getViewHeight());
              currentLMList.add(lm);
          }
+     }
+
+     /**
+      * Get the inline area for this external grpahic.
+      * This creates the image area and puts it inside a viewport.
+      *
+      * @return the viewport containing the image area
+      */
+     public InlineArea getExternalGraphicInlineArea(ExternalGraphic node) {
+         node.setup();
+         if (node.getURL() == null) {
+             return null;
+         }
+         Image imArea = new Image(node.getURL());
+         Viewport vp = new Viewport(imArea);
+         vp.setWidth(node.getViewWidth());
+         vp.setHeight(node.getViewHeight());
+         vp.setClip(node.getClip());
+         vp.setContentPosition(node.getPlacement());
+         vp.setOffset(0);
+
+         // Common Border, Padding, and Background Properties
+         CommonBorderAndPadding bap = node.getPropertyManager().getBorderAndPadding();
+         CommonBackground bProps = node.getPropertyManager().getBackgroundProps();
+         TraitSetter.addBorders(vp, bap);
+         TraitSetter.addBackground(vp, bProps);
+
+         return vp;
      }
 
      public void serveVisitor(BlockContainer node) {
