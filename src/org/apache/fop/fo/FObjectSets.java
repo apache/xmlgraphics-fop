@@ -61,6 +61,8 @@ public class FObjectSets {
         inline.set(FObjectNames.LEADER);
         inline.set(FObjectNames.BASIC_LINK);
         inline.set(FObjectNames.MULTI_TOGGLE);
+        // Moved FOOTNOTE here because it may occur in static-content
+        inline.set(FObjectNames.FOOTNOTE);
         inlineEntity = new ROBitSet(inline);
     }
 
@@ -134,7 +136,8 @@ public class FObjectSets {
         normalPcdataInline = new BitSet();
         normalPcdataInline.or(inline);
         normalPcdataInline.set(FObjectNames.FLOAT);
-        normalPcdataInline.set(FObjectNames.FOOTNOTE);
+        // Removed FOOTNOTE because it may occur in static-content
+        //normalPcdataInline.set(FObjectNames.FOOTNOTE);
         normalPcdataInlineSet = new ROBitSet(normalPcdataInline);
     }
 
