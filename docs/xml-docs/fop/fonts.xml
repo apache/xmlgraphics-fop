@@ -9,6 +9,10 @@
 		<p>Font support in FOP can be extended by the addition of font metric files (written in XML) created from Adobe
 		Type 1 fonts and Truetype fonts. No other font types (Type 3, etc.) are supported at this time.
 		</p>
+    <note><p>
+        The Font is simply embedded into the PDF file, it is not converted.
+        If it is a Windows font then it will only be displayed properly on Windows.
+    </p></note>
 	</s2>
 	<s2 title="Adding additional Type 1 fonts">
 		<p>As mentioned above you need an XML file containing font metrics to be able to use an additional font. FOP
@@ -23,12 +27,12 @@
 			<p>
 				<code>org.apache.fop.fonts.apps.PFMReader pfm-file xml-file</code>
 			</p>
-			<p>Note: The tool will construct some values (FontBBox, StemV and ItalicAngle) based on assumptions and
+			<note><p>The tool will construct some values (FontBBox, StemV and ItalicAngle) based on assumptions and
 			calculations which are only an approximation to the real values. FontBBox and Italic Angle can be found in
 			the human-readable part of the PFB file. The PFMReader tool does not yet interpret PFB files, so if you want
 			to be correct, you may have to adjust the values in the XML file manually. The constructed values however
 			appear to have no visible influence.
-			</p>
+			</p></note>
 		</s3>
 		<s3 title="Register the fonts within FOP">
 			<p>
