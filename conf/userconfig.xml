@@ -42,30 +42,32 @@ basedir: normally the base directory is the directory where the fo file is
 
 <!--
 ************************************************************************
-  Use kerning, default is to noe use kerning, uncomment to use kerning
+  Add fonts here
 ************************************************************************
 -->
 
-  <entry>
-    <key>use-kerning</key>
-    <value>yes</value>
-  </entry>
+<fonts>
+ <!-- example -->
+ <!--
+ <font metrics-file="arial.xml" kerning="yes" embed-file="arial.ttf">
+    <font-triplet name="Arial" style="normal" weight="normal"/>
+    <font-triplet name="ArialMT" style="normal" weight="normal"/>
+ </font>
+ <font metrics-file="arialb.xml" kerning="yes" embed-file="arialb.ttf">
+    <font-triplet name="Arial" style="normal" weight="bold"/>
+    <font-triplet name="ArialMT" style="normal" weight="bold"/>
+ </font>
+ <font metrics-file="ariali.xml" kerning="yes" embed-file="ariali.ttf">
+    <font-triplet name="Arial" style="italics" weight="normal"/>
+    <font-triplet name="ArialMT" style="italics" weight="normal"/>
+ </font>
+ <font metrics-file="arialbi.xml" kerning="yes" embed-file="arialbi.ttf">
+    <font-triplet name="Arial" style="italics" weight="bold"/>
+    <font-triplet name="ArialMT" style="italics" weight="bold"/>
+ </font>
+ -->
+</fonts>
 
-
-<!--
-************************************************************************
-   Font embedding, only the fonts mentioned here is embedded 
-   The value is the name of the font (the name is what is returned by
-   the font's fontName() method
-************************************************************************
--->
-  <entry>
-    <key>embed-fonts</key>
-    <list>
-       <value>Perpetua</value>
-       <value>Perpetua,Bold</value>
-    </list>
-  </entry>
 
 </configuration>
 

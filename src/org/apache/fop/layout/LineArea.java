@@ -184,7 +184,9 @@ public class LineArea extends Area {
         */
 
         //Space must be alloted to the page number, so currently we give it 3 spaces
-        int width = currentFontState.width(32) * 3;
+        
+        int width = currentFontState.width(currentFontState.mapChar(' '));
+
 
         PageNumberInlineArea pia =
           new PageNumberInlineArea(currentFontState, this.red,
@@ -214,6 +216,10 @@ public class LineArea extends Area {
         int wordStart = start;
         int wordLength = 0;
         int wordWidth = 0;
+            // With CID fonts, space isn't neccecary currentFontState.width(32)
+        int whitespaceWidth =
+            currentFontState.width(currentFontState.mapChar(' '));
+        
         char[] data = new char[odata.length];
         for (int count = 0; count < odata.length; count++) {
             data[count] = odata[count];
@@ -224,18 +230,10 @@ public class LineArea extends Area {
             int charWidth;
             /* get the character */
             char c = data[i];
-
-            if (c > 127) {
-                /* this class shouldn't be hard coded */
-                char d = org.apache.fop.render.pdf.CodePointMapping.map[c];
-                if (d != 0) {
-                    c = data[i] = d;
-                } else {
-                    MessageHandler.error("ch" + (int) c + "?");
-                    c = data[i] = '#';
-                }
-            }
-
+            if (!((c == ' ') || (c == '\n') || (c == '\r') ||
+                (c == '\t')))
+                c = data[i] = currentFontState.mapChar(c);
+            
             charWidth = currentFontState.width(c);
 
             if ((c == ' ') || (c == '\n') || (c == '\r') ||
@@ -248,12 +246,12 @@ public class LineArea extends Area {
                     if (this.whiteSpaceCollapse ==
                             WhiteSpaceCollapse.FALSE) {
                         if (c == ' ') {
-                            spaceWidth += currentFontState.width(32);
+                            spaceWidth += whitespaceWidth;
                         } else if (c == '\n') {
                             // force line break
                             return i;
                         } else if (c == '\t') {
-                            spaceWidth += 8 * currentFontState.width(32);
+                            spaceWidth += 8 * whitespaceWidth;
                         }
                     } // else ignore it
 
@@ -339,7 +337,7 @@ public class LineArea extends Area {
 
                     embeddedLinkStart = 0; //reset embeddedLinkStart since a space was encountered
 
-                    spaceWidth = currentFontState.width(32);
+                    spaceWidth = whitespaceWidth;
 
                     /*
                     here is the place for space-treatment value 'ignore':
@@ -359,7 +357,7 @@ public class LineArea extends Area {
                             // force a line break
                             return i;
                         } else if (c == '\t') {
-                            spaceWidth = currentFontState.width(32);
+                            spaceWidth = whitespaceWidth;
                         }
                     }
 
@@ -370,7 +368,7 @@ public class LineArea extends Area {
                     if (this.whiteSpaceCollapse ==
                             WhiteSpaceCollapse.FALSE) {
                         prev = WHITESPACE;
-                        spaceWidth = currentFontState.width(32);
+                        spaceWidth = whitespaceWidth;
                     } else {
                         // skip over it
                         start++;

@@ -203,11 +203,11 @@ public class PFMFile {
            String glyph1=Glyphs.tex8r[g1];
            String glyph2=Glyphs.tex8r[g2];
 
-           Hashtable adjTab=(Hashtable)kerningTab.get(glyph1);
+           Hashtable adjTab=(Hashtable)kerningTab.get(new Integer(g1));
            if (adjTab==null)
               adjTab=new Hashtable();
-           adjTab.put(glyph2, new Integer(adj));
-           kerningTab.put(glyph1, adjTab);
+           adjTab.put(new Integer(g2), new Integer(adj));
+           kerningTab.put(new Integer(g1), adjTab);
         }
     }
 

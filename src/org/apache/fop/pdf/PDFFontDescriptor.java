@@ -180,10 +180,13 @@ public class PDFFontDescriptor extends PDFObject {
 					p.append("\n/FontFile ");
 				break;
 				case PDFFont.TRUETYPE:
+                                    p.append("\n/FontFile2 ");
+                                    break;
+				case PDFFont.TYPE0:
 					p.append("\n/FontFile2 ");
 				break;
 				default:
-					p.append("\n/FontFile3 ");
+					p.append("\n/FontFile2 ");
 			}
 			p.append(fontfile.referencePDF());
 		}

@@ -51,27 +51,30 @@
 package org.apache.fop.fonts;
 
 import java.io.*;
+import java.util.Vector;
 
 class TTFMtxEntry {
-   int wx;
-   String name;
-   int index;
-   int[] bbox;
-   long offset;
-   byte found;
-   
-   TTFMtxEntry() {
-      name="";
-      found=0;
-      bbox=new int[4];
-   }
-
-   public String toString(TTFFile t) {
-      return new String("Glyph "+name+ " index: " + index +
-                        " bbox [ "+t.get_ttf_funit(bbox[0])+
-                        " " + t.get_ttf_funit(bbox[1]) +
-                        " " + t.get_ttf_funit(bbox[2]) +
-                        " " + t.get_ttf_funit(bbox[3]) + "]" +
-                        "wx: "+t.get_ttf_funit(wx));
-   }
+    int wx;
+    String name;
+    int index;
+    Vector unicodeIndex;
+    int[] bbox;
+    long offset;
+    byte found;
+    
+    TTFMtxEntry() {
+        name="";
+        found=0;
+        unicodeIndex = new Vector();
+        bbox=new int[4];
+    }
+    
+    public String toString(TTFFile t) {
+        return new String("Glyph "+name+ " index: " + index +
+                          " bbox [ "+t.get_ttf_funit(bbox[0])+
+                          " " + t.get_ttf_funit(bbox[1]) +
+                          " " + t.get_ttf_funit(bbox[2]) +
+                          " " + t.get_ttf_funit(bbox[3]) + "]" +
+                          "wx: "+t.get_ttf_funit(wx));
+    }
 }

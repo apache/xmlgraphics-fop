@@ -66,9 +66,6 @@ import java.util.Enumeration;
  */
 public class TTFReader {
 
-    static private final String XSL_POSTPROCESS = "TTFPostProcess.xsl";
-    static private final String XSL_SORT        = "TTFPostProcessSort.xsl";
-
     private boolean invokedStandalone = false;
 
     public TTFReader() {
@@ -86,13 +83,14 @@ public class TTFReader {
       Vector arguments=new Vector();
       for (int i=0; i < args.length; i++) {
          if (args[i].startsWith("-")) {
-            i++;
-            if (i < args.length)
-               options.put(args[i-1], args[i]);
-            else
-               options.put(args[i-1], "");
+             if ((i+1) < args.length && !args[i+1].startsWith("-")) {
+                 options.put(args[i], args[i+1]);
+                 i++;
+             } else {
+               options.put(args[i], "");
+             }
          } else {
-            arguments.addElement(args[i]);
+             arguments.addElement(args[i]);
          }
       }
 
@@ -105,19 +103,22 @@ public class TTFReader {
    private final static void displayUsage() {
       System.out.println(" java org.apache.fop.fonts.apps.TTFReader [options] fontfile.ttf xmlfile.xml\n");
       System.out.println(" where options can be:\n");
+      System.out.println("-enc cid");
+      System.out.println("     With this option you create a CID keyed font.");
+      System.out.println("     If you're going to use characters outside the");
+      System.out.println("     pdfencoding range (almost the same as iso-8889-1)");
+      System.out.println("     you must add this option.");
+      System.out.println("-ttcname <fontname>");
+      System.out.println("     If you're reading data from a TrueType Collection");
+      System.out.println("     (.ttc file) you must specify which font from the");
+      System.out.println("     collection you will read metrics from. If you read");
+      System.out.println("     from a .ttc file without this option, the fontnames");
+      System.out.println("      will be listed for you.");
       System.out.println(" -fn <fontname>\n");
-      System.out.println("     default is to use the fontname in the .ttf file, but you can override\n");
-      System.out.println("     that name to make sure that the embedded font is used instead of installed\n");
-      System.out.println("     fonts when viewing documents with Acrobat Reader.\n");
-      System.out.println(" -cn <classname>\n");
-      System.out.println("     default is to use the fontname\n");
-      System.out.println(" -ef <path to the truetype fontfile>\n");
-      System.out.println("     will add the possibility to embed the font. When running fop, fop will look\n");
-      System.out.println("     for this file to embed it\n");
-      System.out.println(" -er <path to truetype fontfile relative to org/apache/fop/render/pdf/fonts>\n");
-      System.out.println("     you can also include the fontfile in the fop.jar file when building fop.\n");
-      System.out.println("     You can use both -ef and -er. The file specified in -ef will be searched first,\n");
-      System.out.println("     then the -er file.\n");
+      System.out.println("     default is to use the fontname in the .ttf file, but\n"+
+                         "     you can override that name to make sure that the\n");
+      System.out.println("     embedded font is used (if you're embedding fonts)\n");
+      System.out.println("     instead of installed fonts when viewing documents with Acrobat Reader.\n");
    }
       
       
@@ -145,6 +146,8 @@ public class TTFReader {
        String embResource=null;
        String className=null;
        String fontName=null;
+       String ttcName=null;
+       boolean isCid=false;
        
        Hashtable options=new Hashtable();
        String[] arguments=parseArguments(options, args);
@@ -152,9 +155,18 @@ public class TTFReader {
        TTFReader app = new TTFReader();
        app.invokedStandalone = true;
        
-       System.out.println("TTF Reader v1.0");
+       System.out.println("TTF Reader v1.1");
        System.out.println();
 
+       if (options.get("-enc") != null) {
+           String enc = (String)options.get("-enc");
+           if ("cid".equals(enc))
+               isCid=true;
+       }
+           
+       if (options.get("-ttcname") != null) 
+           ttcName=(String)options.get("-ttcname");
+           
        if (options.get("-ef") != null)
           embFile=(String)options.get("-ef");
        
@@ -173,20 +185,26 @@ public class TTFReader {
            options.get("--help") != null)
           displayUsage();
        else {
-          TTFFile ttf = app.loadTTF(arguments[0]);
+          TTFFile ttf = app.loadTTF(arguments[0], ttcName);
           if (ttf != null) {
-             app.preview(ttf);
-             
              org.w3c.dom.Document doc = app.constructFontXML(ttf,
                                                              fontName,
                                                              className,
                                                              embResource,
-                                                             embFile);
+                                                             embFile,
+                                                             isCid,
+                                                             ttcName);
              
-             doc = app.postProcessXML(doc);
              if (doc != null) {
                 app.writeFontXML(doc, arguments[1]);
              }
+             
+             if (ttf.isEmbeddable())
+                 System.out.println("This font contains no embedding license restrictions");
+             else
+                 System.out.println("** Note: This font contains license retrictions for\n"+
+                                    "         embedding. This font can't be embedded.");
+             
           }
        }
     }
@@ -195,16 +213,16 @@ public class TTFReader {
         * Read a TTF file and returns it as an object.
         *
         * @param   filename The filename of the PFM file.
-        * @return  The PFM as an object.
+        * @return  The TTF as an object.
         */
-   public TTFFile loadTTF(String filename) {
+   public TTFFile loadTTF(String fileName, String fontName) {
       TTFFile ttfFile=new TTFFile();
       try {
-         System.out.println("Reading " + filename + "...");
+         System.out.println("Reading " + fileName + "...");
          System.out.println();
 
-         FontFileReader reader = new FontFileReader(filename);
-         ttfFile.readFont(reader);
+         FontFileReader reader = new FontFileReader(fileName);
+         ttfFile.readFont(reader, fontName);
       } catch (Exception e) {
          e.printStackTrace();
          return null;
@@ -212,45 +230,6 @@ public class TTFReader {
       return ttfFile;
     }
 
-    /**
-     * Displays a preview of the TTF file on the console.
-     * 
-     * @param   ttf The TTF file to preview.
-     */
-    public void preview(TTFFile ttf) {
-        PrintStream out = System.out;
-
-        out.print("Font: ");
-        out.println(ttf.getWindowsName());
-        out.print("Name: ");
-        out.println(ttf.getPostscriptName());
-        out.print("CharSet: ");
-        out.println(ttf.getCharSetName());
-        out.print("CapHeight: ");
-        out.println(ttf.getCapHeight());
-        out.print("XHeight: ");
-        out.println(ttf.getXHeight());
-        out.print("LowerCaseAscent: ");
-        out.println(ttf.getLowerCaseAscent());
-        out.print("LowerCaseDescent: ");
-        out.println(ttf.getLowerCaseDescent());
-        out.print("Having widths for ");
-        out.print(ttf.getLastChar()-ttf.getFirstChar());
-        out.print(" characters (");
-        out.print(ttf.getFirstChar());
-        out.print("-");
-        out.print(ttf.getLastChar());
-        out.println(").");
-        out.print("for example: Char ");
-        out.print(ttf.getFirstChar());
-        out.print(" has a width of ");
-        out.println(ttf.getCharWidth(ttf.getFirstChar()));
-        out.println();
-        if (ttf.isEmbeddable())
-           out.println("This font might be embedded");
-        else
-           out.println("This font might not be embedded");
-    }
 
     /**
      * Writes the generated DOM Document to a file.
@@ -276,21 +255,26 @@ public class TTFReader {
     }
 
     /**
-     * Generates the font metrics file from the PFM file.
+     * Generates the font metrics file from the TTF/TTC file.
      * 
-     * @param   pfm The PFM file to generate the font metrics from.
+     * @param   ttf The PFM file to generate the font metrics from.
      * @return  The DOM document representing the font metrics file.
      */
     public org.w3c.dom.Document constructFontXML(TTFFile ttf, String fontName,
                                                  String className, String resource,
-                                                 String file) {
+                                                 String file, boolean isCid,
+                                                 String ttcName) {
         System.out.println("Creating xml font file...");
         System.out.println();
 
         Document doc = new DocumentImpl();
         Element root = doc.createElement("font-metrics");
         doc.appendChild(root);
-
+        if (isCid)
+            root.setAttribute("type", "TYPE0");
+        else
+            root.setAttribute("type", "TRUETYPE");
+        
         Element el = doc.createElement("font-name");
         root.appendChild(el);
 
@@ -298,51 +282,19 @@ public class TTFReader {
             // "Perpetua-Bold", but the TrueType spec says that in the ttf file
             // it should be "Perpetua,Bold".
 
-        String s = ttf.getPostscriptName();
+        String s = stripWhiteSpace(ttf.getPostscriptName());
 
         if (fontName != null)
-           el.appendChild(doc.createTextNode(fontName));
+           el.appendChild(doc.createTextNode(stripWhiteSpace(fontName)));
         else
-           el.appendChild(doc.createTextNode(s.replace('-', ',')));
+            el.appendChild(doc.createTextNode(s));
 
-        int pos = s.indexOf("-");
-        if (pos >= 0) {
-           char sb[] = new char[s.length() - 1];
-           s.getChars(0, pos, sb, 0);
-           s.getChars(pos + 1, s.length(), sb, pos);
-           s = new String(sb);
-        }
-        
-        el = doc.createElement("class-name");
+        el = doc.createElement("embed");
         root.appendChild(el);
-        if (className != null)
-           el.appendChild(doc.createTextNode(className));
-        else
-           el.appendChild(doc.createTextNode(s));
-
-        el = doc.createElement("embedFile");
-        root.appendChild(el);
-            //if (file==null || !ttf.isEmbeddable())
-        if (file==null)
-           el.appendChild(doc.createTextNode("null"));
-        else
-           el.appendChild(doc.createTextNode("\""+escapeString(file)+"\""));
-        
-        el = doc.createElement("embedResource");
-        root.appendChild(el);
-            //if (resource==null || !ttf.isEmbeddable())
-        if (resource==null)
-           el.appendChild(doc.createTextNode("null"));
-        else
-           el.appendChild(doc.createTextNode("\""+escapeString(resource)+"\""));
-
-        el = doc.createElement("subtype");
-        root.appendChild(el);
-        el.appendChild(doc.createTextNode("TRUETYPE"));
-
-        el = doc.createElement("encoding");
-        root.appendChild(el);
-        el.appendChild(doc.createTextNode(ttf.getCharSetName()+"Encoding"));
+        if (file != null && ttf.isEmbeddable())
+            el.setAttribute("file", file);
+        if (resource != null && ttf.isEmbeddable())
+            el.setAttribute("class", resource);
 
         el = doc.createElement("cap-height");
         root.appendChild(el);
@@ -353,12 +305,12 @@ public class TTFReader {
         root.appendChild(el);
         value = new Integer(ttf.getXHeight());
         el.appendChild(doc.createTextNode(value.toString()));
-
+        
         el = doc.createElement("ascender");
         root.appendChild(el);
         value = new Integer(ttf.getLowerCaseAscent());
         el.appendChild(doc.createTextNode(value.toString()));
-
+        
         el = doc.createElement("descender");
         root.appendChild(el);
         value = new Integer(ttf.getLowerCaseDescent());
@@ -379,115 +331,143 @@ public class TTFReader {
         root.appendChild(el);
         value = new Integer(ttf.getFlags());
         el.appendChild(doc.createTextNode(value.toString()));
-
+        
         el = doc.createElement("stemv");
         root.appendChild(el);
         value = new Integer(ttf.getStemV());
         el.appendChild(doc.createTextNode(value.toString()));
-
+        
         el = doc.createElement("italicangle");
         root.appendChild(el);
         value = new Integer(ttf.getItalicAngle());
         el.appendChild(doc.createTextNode(value.toString()));
 
-        el = doc.createElement("first-char");
-        root.appendChild(el);
-        value = new Integer(ttf.getFirstChar());
-        el.appendChild(doc.createTextNode(value.toString()));
-
-        el = doc.createElement("last-char");
-        root.appendChild(el);
-        value = new Integer(ttf.getLastChar());
-        el.appendChild(doc.createTextNode(value.toString()));
-
-        Element widths = doc.createElement("widths");
-        root.appendChild(widths);
-
-        for (short i = ttf.getFirstChar(); i < ttf.getLastChar(); i++) {
-            el = doc.createElement("char");
-            widths.appendChild(el);
-                //el.setAttribute("ansichar", "0x00" + Integer.toHexString(i).toUpperCase());
-            el.setAttribute("name", "0x00" +
-                            Integer.toHexString(i).toUpperCase());
-            el.setAttribute("width",
-                            new Integer(ttf.getCharWidth(i)).toString());
+        if (ttcName != null) {
+            el = doc.createElement("ttc-name");
+            root.appendChild(el);
+            el.appendChild(doc.createTextNode(ttcName));
         }
+        
+        el = doc.createElement("subtype");
+        root.appendChild(el);
+        
+            // Fill in extras for CID keyed fonts
+        if (isCid) {
+            el.appendChild(doc.createTextNode("TYPE0"));
 
+            Element mel = doc.createElement("multibyte-extras");
+            root.appendChild(mel);
+            
+            el = doc.createElement("cid-type");
+            mel.appendChild(el);
+            el.appendChild(doc.createTextNode("CIDFontType2"));
+
+            el = doc.createElement("default-width");
+            mel.appendChild(el);
+            el.appendChild(doc.createTextNode("0"));
+
+            el = doc.createElement("bfranges");
+            mel.appendChild(el);
+            for (Enumeration e=ttf.getCMaps().elements(); e.hasMoreElements();) {
+                TTFCmapEntry ce = (TTFCmapEntry)e.nextElement();
+                Element el2=doc.createElement("bf");
+                el.appendChild(el2);
+                el2.setAttribute("us", Integer.toString(ce.unicodeStart));
+                el2.setAttribute("ue", Integer.toString(ce.unicodeEnd));
+                el2.setAttribute("gi", Integer.toString(ce.glyphStartIndex));
+            }
+            
+            el = doc.createElement("cid-widths");
+            el.setAttribute("start-index", "0");
+            mel.appendChild(el);
+
+            int[] wx = ttf.getWidths();
+            for (int i = 0; i < wx.length; i++) {
+                Element wxel=doc.createElement("wx");
+                wxel.setAttribute("w", Integer.toString(wx[i]));
+                el.appendChild(wxel);
+            }
+        } else {
+                // Fill in extras for singlebyte fonts
+            el.appendChild(doc.createTextNode("TRUETYPE"));
+
+            Element sel=doc.createElement("singlebyte-extras");
+            root.appendChild(sel);
+            
+            el = doc.createElement("encoding");
+            sel.appendChild(el);
+            el.appendChild(doc.createTextNode(ttf.getCharSetName()));
+
+            el = doc.createElement("first-char");
+            sel.appendChild(el);
+            value = new Integer(ttf.getFirstChar());
+            el.appendChild(doc.createTextNode(value.toString()));
+            
+            el = doc.createElement("last-char");
+            sel.appendChild(el);
+            value = new Integer(ttf.getLastChar());
+            el.appendChild(doc.createTextNode(value.toString()));
+            
+            Element widths = doc.createElement("widths");
+            sel.appendChild(widths);
+            
+            for (short i = ttf.getFirstChar(); i < ttf.getLastChar(); i++) {
+                el = doc.createElement("char");
+                widths.appendChild(el);
+                el.setAttribute("idx", Integer.toString(i));
+                el.setAttribute("wdt", Integer.toString(ttf.getCharWidth(i)));
+            }
+        }
+        
             // Get kerning
-        for (Enumeration enum=ttf.getKerning().keys(); enum.hasMoreElements();) {
-           String kpx1=(String)enum.nextElement();
-           el=doc.createElement("kerning");
-           el.setAttribute("kpx1", kpx1);
-           root.appendChild(el);
-           Element el2=null;
-           
-           Hashtable h2=(Hashtable)ttf.getKerning().get(kpx1);
-           for (Enumeration enum2=h2.keys(); enum2.hasMoreElements(); ) {
-              String kpx2=(String)enum2.nextElement();
-              el2=doc.createElement("pair");
-              el2.setAttribute("kpx2", kpx2);
-              Integer val=(Integer)h2.get(kpx2);
-              el2.setAttribute("kern", val.toString());
-              el.appendChild(el2);
-           }
+        Enumeration enum;
+        if (isCid)
+            enum=ttf.getKerning().keys();
+        else
+            enum=ttf.getAnsiKerning().keys();
+        
+        while (enum.hasMoreElements()) {
+            Integer kpx1=(Integer)enum.nextElement();
+
+            el=doc.createElement("kerning");
+            el.setAttribute("kpx1", kpx1.toString());
+            root.appendChild(el);
+            Element el2=null;
+            
+            Hashtable h2;
+            if (isCid)
+                h2 = (Hashtable)ttf.getKerning().get(kpx1);
+            else
+                h2 = (Hashtable)ttf.getAnsiKerning().get(kpx1);
+            
+            for (Enumeration enum2=h2.keys(); enum2.hasMoreElements(); ) {
+                Integer kpx2=(Integer)enum2.nextElement();
+                if (isCid || kpx2.intValue() < 256) {
+                    el2=doc.createElement("pair");
+                    el2.setAttribute("kpx2", kpx2.toString());
+                    Integer val=(Integer)h2.get(kpx2);
+                    el2.setAttribute("kern", val.toString());
+                    el.appendChild(el2);
+                }
+            }
         }
+        
         return doc;
     }
+        
+    
+    private String stripWhiteSpace(String s) {
+        char[] ch = new char[s.length()];
+        s.getChars(0, s.length(), ch, 0);
+        StringBuffer stb = new StringBuffer();
+        for (int i = 0; i < ch.length; i++)
+            if (ch[i] != ' ' && ch[i] != '\r' &&
+                ch[i] != '\n' && ch[i] != '\t')
+                stb.append(ch[i]);
 
-    /**
-     * Modifies the generated font metrics file. First, it processes the
-     * character mmappings, then it sorts them.
-     * 
-     * @param   doc The DOM document representing the font metrics file.
-     * @return  A DOM document representing the processed font metrics file.
-     */
-    public org.w3c.dom.Document postProcessXML(org.w3c.dom.Document doc) {
-       if (true)
-          return doc;
-        try {
-            OutputFormat format = new OutputFormat(doc);     //Serialize DOM
-            XMLSerializer serial = new XMLSerializer(System.out, format);
-            serial.asDOMSerializer();                        // As a DOM Serializer
-            serial.serialize(doc.getDocumentElement());
-            
-            System.out.println("Postprocessing...");
-            System.out.println();
-
-           
-
-            InputStream xsl = this.getClass().getResourceAsStream(XSL_POSTPROCESS);
-            if (xsl == null) {
-                throw new Exception("Resource " + XSL_POSTPROCESS + " not found");
-            }
-           
-            Document targetDoc = new DocumentImpl();
-	    org.apache.fop.tools.xslt.XSLTransform.transform(doc, xsl, targetDoc);
-	    
-
-            System.out.println("Sorting...");
-            System.out.println();
-
-            // Sort the whole thing
-            
-
-            xsl = this.getClass().getResourceAsStream(XSL_SORT);
-            if (xsl == null) {
-                throw new Exception("Resource " + XSL_SORT + " not found");
-            }
-            
-
-            org.w3c.dom.Document targetDocSorted = new DocumentImpl();
-
-	    org.apache.fop.tools.xslt.XSLTransform.transform(targetDoc, xsl, targetDocSorted);
-
-            return targetDocSorted;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return stb.toString();
     }
-
+        
    private String escapeString(String str) {
       StringBuffer esc=new StringBuffer();
       

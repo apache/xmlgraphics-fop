@@ -150,6 +150,12 @@ public class PDFCMap extends PDFStream {
 		this.wMode = mode;
 	}
 
+    public void addContents() {
+        StringBuffer p=new StringBuffer();
+        fillInPDF(p);
+        add(p.toString());
+    }
+    
 	/**
 	 * set the base CMap
 	 *
@@ -169,16 +175,59 @@ public class PDFCMap extends PDFStream {
 	}
 
 	public void fillInPDF(StringBuffer p) {
-		p.append(" /Type /CMap\n/CMapName /" + name);
-		p.append("\n"); p.append(sysInfo.toPDF());
-		p.append("\n/WMode "); p.append(wMode);
-		if (base != null) {
-			p.append("\n/UseCMap ");
-			if (base instanceof String) {
-				p.append("/"+base);
-			} else {	// base instanceof PDFStream
-				p.append(((PDFStream)base).referencePDF());
-			}
-		}
+                //p.append("/Type /CMap\n");
+                //p.append(sysInfo.toPDFString());
+                //p.append("/CMapName /" + name);
+                //p.append("\n");
+            p.append("%!PS-Adobe-3.0 Resource-CMap\n");
+            p.append("%%DocumentNeededResources: ProcSet (CIDInit)\n");
+            p.append("%%IncludeResource: ProcSet (CIDInit)\n");
+            p.append("%%BeginResource: CMap (" + name + ")\n");
+            p.append("%%EndComments\n");
+            
+            p.append("/CIDInit /ProcSet findresource begin\n");
+            p.append("12 dict begin\n");
+            p.append("begincmap\n");
+            
+            p.append("/CIDSystemInfo 3 dict dup begin\n");
+            p.append("  /Registry (Adobe) def\n");
+            p.append("  /Ordering (Identity) def\n");
+            p.append("  /Supplement 0 def\n");
+            p.append("end def\n");
+
+            p.append("/CMapVersion 1 def\n");
+            p.append("/CMapType 1 def\n");
+            p.append("/CMapName /" + name + " def\n");
+
+            p.append("1 begincodespacerange\n");
+            p.append("<0000> <FFFF>\n");
+            p.append("endcodespacerange\n");
+            p.append("1 begincidrange\n");
+            p.append("<0000> <FFFF> 0\n");
+            p.append("endcidrange\n");
+            
+                //p.append("1 beginbfrange\n");
+                //p.append("<0020> <0100> <0000>\n");
+                //p.append("endbfrange\n");
+            
+            p.append("endcmap\n");
+            p.append("CMapName currentdict /CMap defineresource pop\n");
+            p.append("end\n");
+            p.append("end\n");
+            p.append("%%EndResource\n");
+            p.append("%%EOF\n");
+                /*
+            p.append(" /Type /CMap\n/CMapName /" + name);
+            p.append("\n"); 
+            p.append("\n/WMode "); p.append(wMode);
+            if (base != null) {
+                p.append("\n/UseCMap ");
+                if (base instanceof String) {
+                    p.append("/"+base);
+                } else {	// base instanceof PDFStream
+                    p.append(((PDFStream)base).referencePDF());
+                }
+            }
+            */
 	}
 }

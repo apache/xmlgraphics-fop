@@ -92,6 +92,7 @@ public class PDFCIDFontDescriptor extends PDFFontDescriptor {
     }
 
     protected void fillInPDF(StringBuffer p) {
+        p.append("\n/MissingWidth 500\n");
 	if (lang != null) {
 	    p.append("\n/Lang /"); p.append(lang);
 	}
