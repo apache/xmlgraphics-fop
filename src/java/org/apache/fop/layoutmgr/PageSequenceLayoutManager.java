@@ -155,7 +155,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
         if (pageSeq.getTitleFO() != null) {
             ContentLayoutManager clm = 
-            	new ContentLayoutManager(pageSeq.getTitleFO());
+                new ContentLayoutManager(pageSeq.getTitleFO());
             clm.setAreaTreeHandler(areaTreeHandler);
             title = (LineArea) clm.getParentArea(null); // can improve
         }
@@ -502,7 +502,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         StaticContentLayoutManager lm;
         try {
             lm = (StaticContentLayoutManager)
-            	areaTreeHandler.getLayoutManagerMaker().makeLayoutManager(sc);
+                areaTreeHandler.getLayoutManagerMaker().makeLayoutManager(sc);
         } catch (FOPException e) {
             log.error
                 ("Failed to create a StaticContentLayoutManager for flow "
