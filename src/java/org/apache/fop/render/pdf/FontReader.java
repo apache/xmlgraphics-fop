@@ -304,7 +304,7 @@ public class FontReader extends DefaultHandler {
                 wds[j++] = i.intValue();
             }
 
-            multiFont.addCIDWidthEntry(cidWidthIndex, wds);
+            //multiFont.addCIDWidthEntry(cidWidthIndex, wds);
             multiFont.setWidthArray(wds);
 
         } else if ("bfranges".equals(localName)) {

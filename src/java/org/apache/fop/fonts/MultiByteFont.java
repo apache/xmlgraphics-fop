@@ -73,7 +73,7 @@ public class MultiByteFont extends CIDFont {
     private CIDFontType cidType = CIDFontType.CIDTYPE2;
 
     private String namePrefix = null;    // Quasi unique prefix
-    private PDFWArray warray = new PDFWArray();
+    //private PDFWArray warray = new PDFWArray();
     private int width[] = null;
 
     private BFEntry[] bfentries = null;
@@ -170,23 +170,6 @@ public class MultiByteFont extends CIDFont {
         }
     }
 
-/* unused
-    public PDFWArray getWidthsAsPDFWArray() {
-        if (isEmbeddable()) {
-            // Create widths for reencoded chars
-            warray = new PDFWArray();
-            int[] tmpWidth = new int[usedGlyphsCount];
-
-            for (int i = 0; i < usedGlyphsCount; i++) {
-                Integer nw = (Integer)usedGlyphsIndex.get(new Integer(i));
-                int nwx = (nw == null) ? 0 : nw.intValue();
-                tmpWidth[i] = width[nwx];
-            }
-            warray.addEntry(0, tmpWidth);
-        }
-        return warray;
-    }*/
-
     /**
      * @see org.apache.fop.fonts.FontDescriptor#isEmbeddable()
      */
@@ -240,6 +223,23 @@ public class MultiByteFont extends CIDFont {
             arr[i] *= size;
         */
         return arr;
+    }
+
+    /**
+     * @see org.apache.fop.fonts.CIDFont#getSubsetWidths()
+     */
+    public PDFWArray getSubsetWidths() {
+        // Create widths for reencoded chars
+        PDFWArray warray = new PDFWArray();
+        int[] tmpWidth = new int[usedGlyphsCount];
+
+        for (int i = 0; i < usedGlyphsCount; i++) {
+            Integer nw = (Integer)usedGlyphsIndex.get(new Integer(i));
+            int nwx = (nw == null) ? 0 : nw.intValue();
+            tmpWidth[i] = width[nwx];
+        }
+        warray.addEntry(0, tmpWidth);
+        return warray;
     }
 
     /**
@@ -334,9 +334,10 @@ public class MultiByteFont extends CIDFont {
      * @param cidWidthIndex index
      * @param wds array of widths
      */
+    /*
     public void addCIDWidthEntry(int cidWidthIndex, int[] wds) {
         this.warray.addEntry(cidWidthIndex, wds);
-    }
+    }*/
 
 
     /**
