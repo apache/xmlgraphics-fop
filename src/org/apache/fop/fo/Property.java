@@ -208,12 +208,16 @@ public class Property {
 	Property p = PropertyParser.parse(pvalue,
 			        new PropertyInfo(this, propertyList, fo));
 	pret = convertProperty(p, propertyList, fo);
-	if (pret != null && inheritsSpecified())
+	if (pret == null) {
+	  throw new org.apache.fop.fo.expr.PropertyException("No conversion defined");
+	}
+	else if (inheritsSpecified()) {
 	  pret.setSpecifiedValue(pvalue);
+	}
 	return pret;
       } catch (org.apache.fop.fo.expr.PropertyException propEx) {
-	MessageHandler.errorln("Error in " + propName + " property value: "
-			   + propEx);
+	MessageHandler.errorln("Error in " + propName + " property value '"
+			       + value + "': " + propEx);
 	throw new FOPException("Property error");
       }
     }
