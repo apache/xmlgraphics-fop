@@ -62,7 +62,6 @@ import org.apache.fop.pdf.PDFFilter;
 import java.util.Hashtable;
 import java.net.URL;
 import java.io.IOException;
-//import java.io.PrintWriter;
 import java.awt.image.*;
 import java.awt.*;
 
@@ -96,29 +95,69 @@ public class JimiImage implements FopImage {
 		int[] tmpMap = null;
 		try {
 			ImageProducer ip = Jimi.getImageProducer(this.m_href.openStream(), Jimi.SYNCHRONOUS | Jimi.IN_MEMORY);
-			FopImageConsumer consumer = new FopImageConsumer();
+			FopImageConsumer consumer = new FopImageConsumer(ip);
 			ip.startProduction(consumer);
 
 			while (! consumer.isImageReady()) {}
 			this.m_height = consumer.getHeight();
 			this.m_width = consumer.getWidth();
 
-			tmpMap = new int[this.m_width * this.m_height];
-			PixelGrabber pg = new PixelGrabber(
-										ip,
-										0, 0,
-										this.m_width, this.m_height,
-										tmpMap, 
-										0, this.m_width
-										);
 			try {
-				pg.grabPixels();
-			} catch (InterruptedException intex) {
-				throw new FopImageException("Image grabbing interrupted : " + intex.getMessage());
+				tmpMap = consumer.getImage();
+			} catch (Exception ex) {
+				throw new FopImageException("Image grabbing interrupted : " + ex.getMessage());
+			}
+
+			ColorModel cm = consumer.getColorModel();
+			this.m_bitsPerPixel = 8;
+//			this.m_bitsPerPixel = cm.getPixelSize();
+			this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
+			if (cm.hasAlpha()) {
+				int transparencyType = cm.getTransparency(); // java.awt.Transparency. BITMASK or OPAQUE or TRANSLUCENT
+				if (transparencyType == java.awt.Transparency.OPAQUE) {
+					this.m_isTransparent = false;
+				} else if (transparencyType == java.awt.Transparency.BITMASK) {
+					if (cm instanceof IndexColorModel) {
+						this.m_isTransparent = false;
+						byte[] alphas = new byte[((IndexColorModel) cm).getMapSize()];
+						byte[] reds = new byte[((IndexColorModel) cm).getMapSize()];
+						byte[] greens = new byte[((IndexColorModel) cm).getMapSize()];
+						byte[] blues = new byte[((IndexColorModel) cm).getMapSize()];
+						((IndexColorModel) cm).getAlphas(alphas);
+						((IndexColorModel) cm).getReds(reds);
+						((IndexColorModel) cm).getGreens(greens);
+						((IndexColorModel) cm).getBlues(blues);
+						for (int i = 0; i < ((IndexColorModel) cm).getMapSize(); i++) {
+							if ((alphas[i] & 0xFF) == 0) {
+								this.m_isTransparent = true;
+								this.m_transparentColor = new PDFColor((int) (reds[i] & 0xFF), (int) (greens[i] & 0xFF), (int) (blues[i] & 0xFF));
+								break;
+							}
+						}
+					} else {
+/*
+						this.m_isTransparent = false;
+						for (int i = 0; i < this.m_width * this.m_height; i++) {
+							if (cm.getAlpha(tmpMap[i]) == 0) {
+								this.m_isTransparent = true;
+								this.m_transparentColor = new PDFColor(cm.getRed(tmpMap[i]), cm.getGreen(tmpMap[i]), cm.getBlue(tmpMap[i]));
+								break;
+							}
+						}
+*/
+						// use special API...
+						this.m_isTransparent = false;
+					}
+				} else {
+					this.m_isTransparent = false;
+				}
+			} else {
+				this.m_isTransparent = false;
 			}
 		} catch (Exception ex) {
 			throw new FopImageException("Error while loading image " + this.m_href.toString() + " : " + ex.getClass() + " - " + ex.getMessage());
 		}
+
 
 		// Should take care of the ColorSpace and bitsPerPixel
 		this.m_bitmaps = new byte[this.m_width * this.m_height * 3];
@@ -134,9 +173,6 @@ public class JimiImage implements FopImage {
 			}
 		}
 		this.m_bitmapsSize = java.lang.reflect.Array.getLength(this.m_bitmaps);
-
-		this.m_bitsPerPixel = 8;
-		this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
 	}
 
 	// Get image general properties.
@@ -177,11 +213,11 @@ public class JimiImage implements FopImage {
 
 	// For transparent images
 	public boolean isTransparent() throws FopImageException {
-		return false;
+		return this.m_isTransparent;
 	}
 
 	public PDFColor getTransparentColor() throws FopImageException {
-		return null;
+		return this.m_transparentColor;
 	}
 
 	// get the image bytes, and bytes properties
@@ -231,92 +267,4 @@ public class JimiImage implements FopImage {
 //		this.m_transparentColor = null;
 	}
 
-	// CONSUMER CLASS
-	public class FopImageConsumer implements ImageConsumer {
-		int width = -1;
-		int height = -1;
-		Integer imageStatus = new Integer(-1);
-
-		public FopImageConsumer() {
-		}
-
-		public void imageComplete(int status) {
-			synchronized(this.imageStatus) {
-				// Need to stop status if image done
-				if (this.imageStatus.intValue() != ImageConsumer.STATICIMAGEDONE)
-					this.imageStatus = new Integer(status);
-			}
-/*
-System.err.print("Status ");
-if (status == ImageConsumer.COMPLETESCANLINES) {
-	System.err.println("CompleteScanLines");
-} else if (status == ImageConsumer.IMAGEABORTED) {
-	System.err.println("ImageAborted");
-} else if (status == ImageConsumer.IMAGEERROR) {
-	System.err.println("ImageError");
-} else if (status == ImageConsumer.RANDOMPIXELORDER) {
-	System.err.println("RandomPixelOrder");
-} else if (status == ImageConsumer.SINGLEFRAME) {
-	System.err.println("SingleFrame");
-} else if (status == ImageConsumer.SINGLEFRAMEDONE) {
-	System.err.println("SingleFrameDone");
-} else if (status == ImageConsumer.SINGLEPASS) {
-	System.err.println("SinglePass");
-} else if (status == ImageConsumer.STATICIMAGEDONE) {
-	System.err.println("StaticImageDone");
-} else if (status == ImageConsumer.TOPDOWNLEFTRIGHT) {
-	System.err.println("TopDownLeftRight");
-}
-*/
-		}
-
-		public boolean isImageReady()
-			throws Exception {
-			synchronized(this.imageStatus) {
-				if ( this.imageStatus.intValue() != -1 ) {
-					String statusStr = null;
-					if ( this.imageStatus.intValue() == ImageConsumer.IMAGEABORTED ) {
-						statusStr = new String("Image Aborted");
-					} else if ( this.imageStatus.intValue() == ImageConsumer.IMAGEERROR ) {
-						statusStr = new String("Image Error");
-					}
-					if ( statusStr != null ) {
-						throw new Exception("Error in image consumer (" + statusStr + ")");
-					}
-		
-					if ( this.imageStatus.intValue() == ImageConsumer.STATICIMAGEDONE ) {
-						return true;
-					}
-				}
-				return false;
-			}
-		}
-
-		public void setColorModel(ColorModel model) {}
-
-		public void setDimensions(int width, int height) {
-			this.width = width;
-			this.height = height;
-		}
-
-		public void setHints(int hintflags) {}
-
-		public void setPixels(int x, int y, int w, int h,
-		   ColorModel model, byte[] pixels,int off,
-		   int scansize) {}
-
-		public void setPixels(int x, int y, int w, int h,
-		   ColorModel model, int[] pixels, int off,
-		   int scansize) {}
-
-		public void setProperties(Hashtable props) {}
-
-		public int getWidth() {
-			return this.width;
-		}
-
-		public int getHeight() {
-			return this.height;
-		}
-	}
 }
