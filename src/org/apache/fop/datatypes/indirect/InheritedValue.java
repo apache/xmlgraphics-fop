@@ -50,6 +50,10 @@ public class InheritedValue extends IndirectValue {
         throws PropertyException
     {
         super(property, PropertyValue.INHERIT, sourceProperty);
+        if (PropertyConsts.nonInheritedProps.get(sourceProperty))
+            throw new PropertyException
+                    ("Non-inherited property "
+                     + PropNames.getPropertyName(sourceProperty));
     }
 
     /**
@@ -74,6 +78,10 @@ public class InheritedValue extends IndirectValue {
         throws PropertyException
     {
         super(propertyName, PropertyValue.INHERIT, sourcePropertyName);
+        if (PropertyConsts.nonInheritedProps.get(
+                    PropertyConsts.getPropertyIndex(sourcePropertyName)))
+            throw new PropertyException
+                    ("Non-inherited property " + sourcePropertyName);
     }
 
     /**
