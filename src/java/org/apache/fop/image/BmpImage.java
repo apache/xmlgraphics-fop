@@ -55,7 +55,7 @@ import java.io.IOException;
 import java.awt.color.ColorSpace;
 
 // FOP
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * Bitmap image.

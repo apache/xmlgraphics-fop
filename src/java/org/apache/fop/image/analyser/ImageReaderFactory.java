@@ -57,7 +57,7 @@ import java.util.ArrayList;
 
 // FOP
 import org.apache.fop.image.FopImage;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * Factory for ImageReader objects.

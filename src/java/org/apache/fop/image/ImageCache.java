@@ -51,7 +51,7 @@
 package org.apache.fop.image;
 
 // FOP
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * Image cache holder.

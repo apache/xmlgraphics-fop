@@ -66,7 +66,7 @@ import org.apache.avalon.framework.logger.Logger;
 
 // FOP
 import org.apache.fop.image.analyser.ImageReaderFactory;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 
 /**

@@ -57,7 +57,7 @@ import java.io.InputStream;
 
 // FOP
 import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * Base class to implement the FopImage interface.

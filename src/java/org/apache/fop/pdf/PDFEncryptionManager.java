@@ -56,7 +56,7 @@ import java.security.Provider;
 import java.security.Security;
 
 import org.apache.avalon.framework.logger.Logger;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * This class acts as a factory for PDF encryption support. It enables the

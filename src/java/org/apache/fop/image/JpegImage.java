@@ -56,7 +56,7 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 
 // FOP
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.util.CMYKColorSpace;
 
 /**

@@ -63,6 +63,7 @@ import org.apache.avalon.framework.logger.Logger;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.apps.*;
 
 /**
  * base class for nodes in the XML tree

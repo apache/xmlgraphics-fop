@@ -67,7 +67,7 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.fo.FOTreeControl;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * Interface implemented by all renderers. This interface is used to control

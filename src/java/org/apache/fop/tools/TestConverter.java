@@ -55,7 +55,7 @@ import org.apache.fop.apps.FOFileHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.InputHandler;
 import org.apache.fop.apps.XSLTInputHandler;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;

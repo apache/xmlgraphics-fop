@@ -64,6 +64,7 @@ import org.apache.fop.traits.LayoutProps;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fonts.*;
+import org.apache.fop.apps.*;
 
 /**
  * LayoutManager for a block FO.

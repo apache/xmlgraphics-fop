@@ -58,7 +58,7 @@ import java.io.IOException;
 // FOP
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.EPSImage;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * ImageReader object for EPS document image type.

@@ -70,6 +70,7 @@ import org.apache.fop.datatypes.Length;
 
 // Java
 import java.awt.geom.Rectangle2D;
+import org.apache.fop.apps.*;
 
 /**
  * External graphic formatting object.

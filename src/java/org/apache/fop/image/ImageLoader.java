@@ -50,7 +50,7 @@
  */ 
 package org.apache.fop.image;
 
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * Class to load images.

@@ -59,6 +59,7 @@ import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.Title;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.FOTreeHandler;
+import org.apache.fop.apps.*;
 
 /**
  * The implementation of LayoutStrategy for the "redesign" or second generation

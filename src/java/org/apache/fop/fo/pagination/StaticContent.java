@@ -55,6 +55,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.StaticContentLayoutManager;
+import org.apache.fop.apps.*;
 
 /**
  * Class modelling the fo:static-content object. See Sec. 6.4.19 of the XSL-FO

@@ -69,7 +69,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 // FOP
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.XMLImage;
 import org.apache.fop.image.ImageFactory;

@@ -87,7 +87,7 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Character;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOTreeControl;
 
 // Avalon

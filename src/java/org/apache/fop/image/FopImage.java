@@ -55,7 +55,7 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 
 import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * Fop image interface for loading images.

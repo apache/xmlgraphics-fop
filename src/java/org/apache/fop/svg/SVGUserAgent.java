@@ -50,7 +50,7 @@
  */ 
 package org.apache.fop.svg;
 
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 import org.apache.batik.bridge.UserAgentAdapter;
 
