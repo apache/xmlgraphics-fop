@@ -145,6 +145,8 @@ Done since 0.13 release
 - added a MessageHandler  [Fotis Jannidis]
 - fixed table overflow bug [Jordan Naftolin]
 - finally fixed postscript printing of generated PDF [Domagoj Cosic]
+- removed XTCommandLine from build.xml 
+- removed PDFOutputHandler from build.xml 
 
 Done since 0.12.1 release 
 - using Ant to build Fop instead of make [Giacomo Pati] 
