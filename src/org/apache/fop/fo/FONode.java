@@ -7,6 +7,7 @@ import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
+import org.apache.fop.fo.expr.FunctionNotImplementedException;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
@@ -19,6 +20,7 @@ import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXMLEventPool;
 import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.xml.XMLNamespaces;
 import org.apache.fop.messaging.MessageHandler;
@@ -105,7 +107,10 @@ public class FONode extends Node{
         PAGESEQ | FLOW | STATIC | TITLE | MC_MARKER;
 
     /** The buffer from which parser events are drawn. */
-    protected SyncedFoXmlEventsBuffer xmlevents;
+    protected final SyncedFoXmlEventsBuffer xmlevents;
+
+    /** The pool of <tt>FoXMLEvent</tt>s associated with <i>xmlevents</i>. */
+    protected final FoXMLEventPool pool;
 
     /** The namespaces object associated with <i>xmlevents</i>. */
     protected XMLNamespaces namespaces;
@@ -222,6 +227,7 @@ public class FONode extends Node{
         this.numProps = sparseIndices.length;
         attrBitSet = FOPropertySets.getAttrROBitSet(stateFlags);
         xmlevents = foTree.xmlevents;
+        pool = xmlevents.getPool();
         namespaces = xmlevents.getNamespaces();
         exprParser = foTree.exprParser;
         propertySet = new PropertyValue[PropNames.LAST_PROPERTY_INDEX + 1];
@@ -248,7 +254,7 @@ public class FONode extends Node{
             int property;
             int prop = foKeys[propx].intValue();
             if ( ! attrBitSet.get(prop)) {
-                MessageHandler.log("Ignoring "
+                MessageHandler.logln("Ignoring "
                                    + PropNames.getPropertyName(prop)
                                    + " on "
                                    + FObjectNames.getFOName(type)
@@ -258,30 +264,41 @@ public class FONode extends Node{
                 continue;
             }
             String attrValue = foAttributes.getFoAttrValue(prop);
-            props = handleAttrValue(prop, attrValue);
-            ptype = props.getType();
-            if (ptype != PropertyValue.LIST) { 
-                property = props.getProperty();
-                // Update the propertySet
-                propertySet[property] = props;
-                specifiedProps.set(property);
-                // Handle corresponding properties here
-            } else { // a list
-                PropertyValue value;
-                Iterator propvals = ((PropertyValueList)props).iterator();
-                while (propvals.hasNext()) {
-                    value = (PropertyValue)(propvals.next());
-                    property = value.getProperty();
-                    propertySet[value.getProperty()] = value;
+            try {
+                props = handleAttrValue(prop, attrValue);
+                ptype = props.getType();
+                if (ptype != PropertyValue.LIST) { 
+                    property = props.getProperty();
+                    // Update the propertySet
+                    propertySet[property] = props;
                     specifiedProps.set(property);
                     // Handle corresponding properties here
+                } else { // a list
+                    PropertyValue value;
+                    Iterator propvals = ((PropertyValueList)props).iterator();
+                    while (propvals.hasNext()) {
+                        value = (PropertyValue)(propvals.next());
+                        property = value.getProperty();
+                        propertySet[value.getProperty()] = value;
+                        specifiedProps.set(property);
+                        // Handle corresponding properties here
+                    }
                 }
+            } catch (FunctionNotImplementedException e) {
+                MessageHandler.logln
+                        ("Function not implemented: " + e.getMessage()
+                         + ". Ignoring property '"
+                         + PropNames.getPropertyName(prop) + "'.");
+            } catch (PropertyException e) {
+                MessageHandler.logln
+                        ("Problem with '" + PropNames.getPropertyName(prop)
+                         + "':\n" + e.getMessage() + "\nIgnoring property.");
             }
         }
     }
 
     private PropertyValue handleAttrValue(int property, String attrValue)
-        throws PropertyException
+        throws FunctionNotImplementedException, PropertyException
     {
         // parse the expression
         exprParser.resetParser();
