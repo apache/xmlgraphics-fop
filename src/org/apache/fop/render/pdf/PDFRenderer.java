@@ -237,7 +237,9 @@ public class PDFRenderer implements Renderer {
 	int w = area.getContentWidth();
 	int h = area.getHeight();
 	ColorType bg = area.getBackgroundColor();
-	if (bg.alpha() == 0) {
+	// I'm not sure I should have to check for bg being null
+	// but I do
+	if ((bg != null) && (bg.alpha() == 0)) {
 	    this.addRect(rx, ry, w, -h,
 			 bg.red(), bg.green(), bg.blue(),
 			 bg.red(), bg.green(), bg.blue());
