@@ -101,7 +101,7 @@ public class TableCell extends FObj {
 
     protected int height = 0;
     protected int top;
-    protected int verticalAlign = 0;
+    protected int verticalAlign = VerticalAlign.BASELINE;
 
     boolean setup = false;
 
@@ -243,7 +243,7 @@ public class TableCell extends FObj {
 	}
 
 	if ((spaceBefore != 0) && (this.marker ==0)) {
-	    area.addDisplaySpace(spaceBefore);
+	    area.increaseHeight(spaceBefore);
 	}
 
         if ( marker==0 ) {
@@ -253,7 +253,7 @@ public class TableCell extends FObj {
 
 	this.areaContainer =
 	    new AreaContainer(fs, startOffset - area.borderWidthLeft,
-                              - area.borderWidthTop,
+                              - area.borderWidthTop + ((this.marker ==0) ? spaceBefore : 0),
                           width, area.spaceLeft(), Position.RELATIVE);
 	areaContainer.setPage(area.getPage());
 	areaContainer.setPadding(paddingTop, paddingLeft, paddingBottom,
@@ -293,17 +293,17 @@ public class TableCell extends FObj {
 	areaContainer.end();
 	area.addChild(areaContainer);
 
- 	height = getHeight();
+ 	height = areaContainer.getHeight();
  	top = areaContainer.getCurrentYPosition();
  	// reset absoluteHeight to beginning of row
- 	area.setHeight(getHeight());
+ 	area.setHeight(areaContainer.getHeight() + spaceBefore + spaceAfter);
  	area.setAbsoluteHeight(originalAbsoluteHeight);
 
 	return new Status(Status.OK);
     }
 
     public int getHeight() {
-	return areaContainer.getHeight();
+	return areaContainer.getHeight() + spaceBefore + spaceAfter;
     }
     
     public void setRowHeight(int h) {
@@ -311,11 +311,11 @@ public class TableCell extends FObj {
 	    switch(verticalAlign) {
 	        case VerticalAlign.MIDDLE:
 	            areaContainer.setHeight(height);
-	            areaContainer.setYPosition(top + h / 2 - height / 2);
+	            areaContainer.setYPosition(spaceBefore + top + h / 2 - height / 2);
 	    	break;
     		case VerticalAlign.BASELINE:
 		    default:
-	            areaContainer.setHeight(h);
+	            areaContainer.setHeight(h - (spaceBefore + spaceAfter));
 	    	break;
 	    }
     }
