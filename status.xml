@@ -103,6 +103,11 @@ inactive??
   </todo>
 
   <changes>
+   <release version="2004" date="2004">
+    <action context="code" dev="FB" type="update">
+      Abandoned code-generated property maker classes.
+    </action>
+   </release>
    <release version="2003" date="2003">
     <action context="code" dev="JM" type="fix" due-to="CTB/McGraw-Hill">
       Fix for bad font encodings in the PS renderer (Fonts get reencoded as
