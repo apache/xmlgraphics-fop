@@ -153,7 +153,7 @@ public class Root extends FObj {
      * Returns the number of pages generated (over all PageSequence instances).
      * @return the number of pages
      */
-    protected int getRunningPageNumberCounter() {
+    public int getRunningPageNumberCounter() {
         return this.runningPageNumberCounter;
     }
 

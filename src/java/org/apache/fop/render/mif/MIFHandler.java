@@ -148,8 +148,6 @@ public class MIFHandler extends FOEventHandler {
            textRect.addElement(prop);
            page.addElement(textRect);
 
-
-
            mifFile.addPage(page);
         }
     }

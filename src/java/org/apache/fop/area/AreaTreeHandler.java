@@ -272,7 +272,7 @@ public class AreaTreeHandler extends FOEventHandler {
             log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
             log.debug("Total memory used: " + memoryUsed + "Kb");
             log.debug("Total time used: " + timeUsed + "ms");
-            log.debug("Pages rendered: " + pageCount);
+            log.debug("Pages rendered: " + rootFObj.getRunningPageNumberCounter());
             if (pageCount > 0) {
                 log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
             }

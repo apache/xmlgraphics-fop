@@ -33,7 +33,7 @@ import org.apache.fop.fo.flow.InlineLevel;
  */
 public class Title extends InlineLevel {
     // The value of properties relevant for fo:title.
-    // See also superclass InlineLevel
+    // See superclass InlineLevel
     // End of property values
 
     /**
@@ -41,10 +41,6 @@ public class Title extends InlineLevel {
      */
     public Title(FONode parent) {
         super(parent);
-    }
-
-    public void bind(PropertyList pList) throws FOPException {
-        super.bind(pList);
     }
 
     /**
