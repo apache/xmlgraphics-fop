@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+<fo:layout-master-set>
+
+<fo:simple-page-master master-name="first"
+		page-height="29.7cm" 
+		page-width="21cm"
+		margin-top="0.5cm" 
+		margin-bottom="0.5cm" 
+		margin-left="2cm" 
+		margin-right="2cm">
+	<fo:region-body margin-top="1cm"/>
+	<fo:region-before extent="1cm"/>
+	<fo:region-after extent="1cm"/>
+</fo:simple-page-master>
+
+<fo:page-sequence-master master-name="basicPSM" >
+	<fo:repeatable-page-master-alternatives>
+	<fo:conditional-page-master-reference master-name="first"
+			page-position="first" />
+	</fo:repeatable-page-master-alternatives>
+</fo:page-sequence-master>
+
+</fo:layout-master-set>
+
+
+<fo:page-sequence master-name="basicPSM">
+
+<!-- ページ番号 -->
+<fo:static-content flow-name="xsl-region-before">
+<fo:block text-align="end" font-size="8pt" line-height="10pt" font-family="Ryumin-Light">FOP-0.16.0 日本語化パッチ p. <fo:page-number/>
+</fo:block>
+</fo:static-content> 
+
+<!-- タイトル -->
+<fo:flow flow-name="xsl-region-body">
+<fo:block space-before.optimum="30pt" space-after.optimum="30pt">
+<fo:instream-foreign-object>
+<svg:svg width="400" height="30">
+	<svg:defs>
+	<svg:linearGradient id="Grad" x1="200" x2="250" y1="28" y2="2">
+	<svg:stop offset="0%" style="color:#00a000; opacity:100%"/>
+	<svg:stop offset="100%" style="color:#a00000; opacity:100%"/>
+	</svg:linearGradient>
+	</svg:defs>
+	<svg:text style="font-size: 24; font-family: Helvetica; font-weight: bold; fill:url(#Grad); stroke:#000000; stroke-width:1" x="150" y="28">JAPANIZED FOP</svg:text>
+</svg:svg>
+</fo:instream-foreign-object>
+</fo:block>
+
+<fo:block font-size="10pt" font-family="Ryumin-Light" line-height="12pt"
+	space-after.optimum="1pt" text-align="start" padding-top="1pt">本パッチは、Apache の FOP ( <fo:inline font-style="italic" font-family="Ryumin-Light"><fo:basic-link color="blue" external-destination="http://xml.apache.org/fop">http://xml.apache.org/fop</fo:basic-link></fo:inline> ) の日本語対応パッチです。本パッチは、FOP-0.16.0 に対して適用可能です。</fo:block>
+<fo:block font-size="10pt" font-family="Ryumin-Light" line-height="12pt"
+	space-after.optimum="16pt" text-align="start" padding-top="1pt">日本語 PDF 作成に関して、ベンダのサポートを受けたい場合には、本パッチではなく、他の商用製品を使用するようにしましょう！</fo:block>
+
+
+<fo:block font-size="12pt" font-family="Ryumin-Light" font-weight="bold"
+	line-height="16pt" color="white" background-color="blue"
+	text-align="center" space-after.optimum="16pt" padding-top="1pt">使用可能ファミリフォント名一覧</fo:block>
+
+<fo:block font-size="10pt" font-family="ＭＳ明朝" line-height="20pt"
+	space-before.optimum="1pt" space-after.optimum="1pt"
+	text-align="start" padding-top="3pt"><fo:inline text-decoration="underline">ＭＳ明朝</fo:inline>or<fo:inline text-decoration="underline">MS-Mincho</fo:inline></fo:block>
+
+<fo:list-block provisional-distance-between-starts="0.5cm"
+	provisional-label-separation="0.1cm" start-indent="1.5cm">
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="ＭＳ明朝" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body><fo:block>
+	<fo:inline font-family="ＭＳ明朝" font-size="10pt">ファミリフォント ＭＳ明朝</fo:inline>
+	</fo:block></fo:list-item-body>
+	</fo:list-item>
+
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="ＭＳ明朝" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body><fo:block>
+	<fo:inline font-family="MS-Mincho" font-weight="bold" font-size="10pt">ファミリフォント MS-Mincho で BOLD を指定</fo:inline>
+	</fo:block></fo:list-item-body>
+	</fo:list-item>
+
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="ＭＳ明朝" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body><fo:block>
+	<fo:inline font-family="MS-Mincho" font-style="italic" font-size="10pt">ファミリフォント MS-Mincho でイタリックを指定</fo:inline>
+	</fo:block></fo:list-item-body>
+	</fo:list-item>
+
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="ＭＳ明朝" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body><fo:block>
+	<fo:inline font-family="ＭＳ明朝" font-weight="bold" font-style="italic" font-size="10pt">ファミリフォント ＭＳ明朝 で BOLD とイタリックを指定</fo:inline>
+	</fo:block></fo:list-item-body>
+	</fo:list-item>
+</fo:list-block>
+
+
+<fo:block font-size="10pt" font-family="ＭＳゴシック" line-height="20pt"
+	space-before.optimum="1pt" space-after.optimum="1pt"
+	text-align="start" padding-top="3pt"><fo:inline text-decoration="underline">ＭＳゴシック</fo:inline>or<fo:inline text-decoration="underline">MS-Gothic</fo:inline></fo:block>
+
+<fo:list-block provisional-distance-between-starts="0.5cm"
+	provisional-label-separation="0.1cm" start-indent="1.5cm">
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="ＭＳゴシック" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body><fo:block>
+	<fo:inline font-family="ＭＳゴシック" font-size="10pt">ファミリフォント ＭＳゴシック</fo:inline>
+	</fo:block></fo:list-item-body>
+	</fo:list-item>
+
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="ＭＳゴシック" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body><fo:block>
+	<fo:inline font-family="MS-Gothic" font-weight="bold" font-size="10pt">ファミリフォント MS-Gothic で BOLD を指定</fo:inline>
+	</fo:block></fo:list-item-body>
+	</fo:list-item>
+
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="ＭＳゴシック" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body><fo:block>
+	<fo:inline font-family="MS-Gothic" font-style="italic" font-size="10pt">ファミリフォント MS-Gothic でイタリックを指定</fo:inline>
+	</fo:block></fo:list-item-body>
+	</fo:list-item>
+
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="ＭＳゴシック" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body><fo:block>
+	<fo:inline font-family="ＭＳゴシック" font-weight="bold" font-style="italic" font-size="10pt">ファミリフォント ＭＳゴシック で BOLD とイタリックを指定</fo:inline>
+	</fo:block></fo:list-item-body>
+	</fo:list-item>
+</fo:list-block>
+
+
+<fo:block font-size="10pt" font-family="Ryumin-Light" line-height="20pt"
+	space-before.optimum="1pt" space-after.optimum="1pt"
+	text-align="start" padding-top="3pt"><fo:inline text-decoration="underline">Ryumin-Light</fo:inline> ( リュウミンL-KL )</fo:block>
+
+<fo:list-block provisional-distance-between-starts="0.5cm"
+	provisional-label-separation="0.1cm" start-indent="1.5cm">
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="Ryumin-Light" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body>
+	<fo:block font-family="Ryumin-Light" font-size="10pt">ファミリフォント Ryumin-Light</fo:block></fo:list-item-body>
+	</fo:list-item>
+
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="Ryumin-Light" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body>
+	<fo:block font-family="Ryumin-Light" font-weight="bold" font-size="10pt">ファミリフォント Ryumin-Light で BOLD を指定</fo:block></fo:list-item-body>
+	</fo:list-item>
+
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="Ryumin-Light" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body>
+	<fo:block font-family="Ryumin-Light" font-style="italic" font-size="10pt">ファミリフォント Ryumin-Light でイタリックを指定</fo:block></fo:list-item-body>
+	</fo:list-item>
+
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="Ryumin-Light" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body>
+	<fo:block font-family="Ryumin-Light" font-weight="bold" font-style="italic" font-size="10pt">ファミリフォント Ryumin-Light で BOLD とイタリックを指定</fo:block></fo:list-item-body>
+	</fo:list-item>
+</fo:list-block>
+
+
+<fo:block font-size="10pt" font-family="GothicBBB-Medium" line-height="20pt"
+	space-before.optimum="1pt" space-after.optimum="1pt"
+	text-align="start" padding-top="3pt"><fo:inline text-decoration="underline">GothicBBB-Medium</fo:inline> ( 中ゴシックBBB )</fo:block>
+
+<fo:list-block provisional-distance-between-starts="0.5cm"
+	provisional-label-separation="0.1cm" start-indent="1.5cm">
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="GothicBBB-Medium" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body>
+	<fo:block font-family="GothicBBB-Medium" font-size="10pt">ファミリフォント GothicBBB-Medium</fo:block></fo:list-item-body>
+	</fo:list-item>
+
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="GothicBBB-Medium" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body>
+	<fo:block font-family="GothicBBB-Medium" font-weight="bold" font-size="10pt">ファミリフォント GothicBBB-Medium で BOLD を指定</fo:block></fo:list-item-body>
+	</fo:list-item>
+
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="GothicBBB-Medium" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body>
+	<fo:block font-family="GothicBBB-Medium" font-style="italic" font-size="10pt">ファミリフォント GothicBBB-Medium でイタリックを指定</fo:block></fo:list-item-body>
+	</fo:list-item>
+
+	<fo:list-item>
+	<fo:list-item-label>
+		<fo:block font-family="GothicBBB-Medium" font-size="10pt">・</fo:block>
+	</fo:list-item-label>
+	<fo:list-item-body>
+	<fo:block font-family="GothicBBB-Medium" font-weight="bold" font-style="italic" font-size="10pt">ファミリフォント GothicBBB-Medium で BOLD とイタリックを指定</fo:block></fo:list-item-body>
+	</fo:list-item>
+</fo:list-block>
+
+
+<fo:block font-size="10pt" font-family="Osaka" line-height="20pt"
+	space-before.optimum="1pt" space-after.optimum="16pt"
+	text-align="start" padding-top="3pt"><fo:inline text-decoration="underline">Osaka</fo:inline></fo:block>
+
+
+
+<fo:block font-size="12pt" font-family="Ryumin-Light" font-weight="bold"
+	line-height="16pt" color="white" background-color="blue"
+	text-align="center" space-after.optimum="16pt" padding-top="1pt">ファミリフォント名による動作の違い</fo:block>
+
+<fo:block font-size="10pt" font-family="Ryumin-Light" line-height="12pt"
+	space-after.optimum="10pt" text-align="start" padding-top="1pt">ファミリフォントに、ＭＳ明朝 ( or MS-Mincho )、ＭＳゴシック ( or MS-Gothic )、Osaka を指定した場合、CMap に基づく変換を行わないません。そのため、PDF ファイルに対してシフト JIS で日本語を書き込みます。</fo:block>
+
+<fo:block font-size="10pt" font-family="Ryumin-Light" line-height="12pt"
+	space-after.optimum="10pt" text-align="start" padding-top="1pt">ファミリフォントに、Ryumin-Light、GothicBBB-Medium を指定した場合、CMap に基づく変換を行います。そのため、ＭＳ明朝やＭＳゴシックを指定する場合よりも処理時間が長くなりますが、PDF ファイルに対して CIDFont で日本語を書き込みます。</fo:block>
+
+<fo:block font-size="10pt" font-family="Ryumin-Light" line-height="12pt"
+	space-after.optimum="10pt" text-align="start" padding-top="1pt">なお、本パッチでは、PDF ファイルに対するフォントの埋め込み機能は提供していません。</fo:block>
+
+</fo:flow>
+
+</fo:page-sequence>
+</fo:root>
