@@ -100,5 +100,13 @@ public class FOInputHandler extends InputHandler {
         return super.createParser();
     }
 
+    /**
+     * @see org.apache.fop.apps.InputHandler#run(Driver)
+     */
+    public void run(Driver driver) throws FOPException {
+        throw new FOPException("not implemented: FOInputHandler.run(Driver)");
+    }
+
+
 }
 
