@@ -157,6 +157,15 @@ public class PDFRenderer extends PrintRenderer {
         renderRootExtensions(extensions);
         FontSetup.addToResources(this.pdfDoc, fontInfo);
         pdfDoc.outputTrailer(stream);
+
+        // this frees up memory and makes the renderer reusable
+        this.pdfDoc = new PDFDocument();
+        this.pdfResources = null;
+        extensions = null;
+        currentStream = null;
+        currentAnnotList = null;
+        currentPage = null;
+        currentColor = null;
     }
 
     /**
