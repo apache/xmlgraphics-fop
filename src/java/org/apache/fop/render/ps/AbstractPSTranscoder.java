@@ -84,7 +84,7 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
         }*/
 
         BridgeContext ctx = new BridgeContext(userAgent);
-        PSTextPainter textPainter = new PSTextPainter(graphics.getDocument());
+        PSTextPainter textPainter = new PSTextPainter(graphics.getFontInfo());
         ctx.setTextPainter(textPainter);
         ctx.putBridge(new PSTextElementBridge(textPainter));
 

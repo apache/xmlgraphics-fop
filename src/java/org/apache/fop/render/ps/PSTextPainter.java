@@ -47,7 +47,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.apps.Document;
+import org.apache.fop.fonts.FontInfo;
 
 /**
  * Renders the attributed character iterator of a <tt>TextNode</tt>.
@@ -69,7 +69,7 @@ public class PSTextPainter implements TextPainter {
     /** the logger for this class */
     protected Log log = LogFactory.getLog(PSTextPainter.class);
     
-    private Document document;
+    private FontInfo fontInfo;
 
     /**
      * Use the stroking text painter to get the bounds and shape.
@@ -80,10 +80,10 @@ public class PSTextPainter implements TextPainter {
 
     /**
      * Create a new PS text painter with the given font information.
-     * @param document the context document
+     * @param fontInfo the FontInfo object
      */
-    public PSTextPainter(Document document) {
-        this.document = document;
+    public PSTextPainter(FontInfo fontInfo) {
+        this.fontInfo = fontInfo;
     }
 
     /**
@@ -386,18 +386,18 @@ public class PSTextPainter implements TextPainter {
                     return;
                 }*/
                 fontFamily = fam.getFamilyName();
-                if (document.getFontInfo().hasFont(fontFamily, style, weight)) {
-                    String fname = document.getFontInfo().fontLookup(
+                if (fontInfo.hasFont(fontFamily, style, weight)) {
+                    String fname = fontInfo.fontLookup(
                             fontFamily, style, weight);
-                    FontMetrics metrics = document.getFontInfo().getMetricsFor(fname);
+                    FontMetrics metrics = fontInfo.getMetricsFor(fname);
                     int fsize = (int)(fontSize.floatValue() * 1000);
                     return new Font(fname, metrics, fsize);
                 }
             }
         }
-        String fname = document.getFontInfo().fontLookup(
+        String fname = fontInfo.fontLookup(
                 "any", style, Font.NORMAL);
-        FontMetrics metrics = document.getFontInfo().getMetricsFor(fname);
+        FontMetrics metrics = fontInfo.getMetricsFor(fname);
         int fsize = (int)(fontSize.floatValue() * 1000);
         return new Font(fname, metrics, fsize);
     }
