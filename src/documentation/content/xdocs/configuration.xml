@@ -16,7 +16,7 @@ It contains templates for the various configuration options, most of which are c
 Be sure to follow any instructions, including comments which specify the value range.
 Also, since the configuration file is XML, be sure to keep it well-formed.</p>
     <note>Do <strong>not</strong> change <code>{fop-dir}/conf/config.xml</code> or use it as the basis for your configuration file. It has an entirely different purpose.</note>
-    <p>The general structure of the configuration file is a series of &lt;entry> tags, each containing a &lt;key> and a &lt;value. (Fonts use a different format). Here is an example:</p>
+    <p>The general structure of the configuration file is a series of &lt;entry> tags, each containing a &lt;key> and a &lt;value>. (Fonts use a different format). Here is an example:</p>
     <source><![CDATA[<entry>
   <key>strokeSVGText</key>
   <value>false</value>
@@ -58,9 +58,15 @@ Also, since the configuration file is XML, be sure to keep it well-formed.</p>
       </tr>
     </table>
   </section>
-  <section id="svg">
-    <title>SVG</title>
-    <section id="svg-strokeSVGText">
+  <section id="detail-key-value">
+    <title>Detail for Key-Value Configuration Options</title>
+    <p>The sections below provide detailed information for configuration options that are not self-explanatory. The parenthetical information after each key name indicates (Data Type, Default).</p>
+    <section id="hyphenation-dir">
+      <title>hyphenation-dir (URL, none)</title>
+      <p>Use this entry to indicate a directory containing custom hyphenation files (if any).
+See <link href="hyphenation.html">FOP: Hyphenation</link> for more information on creating and modifying hyphenation within FOP.</p>
+    </section>
+    <section id="strokeSVGText">
       <title>strokeSVGText (boolean, True)</title>
       <p>In some cases, some text in SVG documents is converted to graphical shapes instead of retaining its character as text. To force all text to be rendered as text, set strokeSVGText = false. For a discussion of this issue, see <link href="graphics.html#svg-pdf-text">FOP: Graphics, Placing SVG Text into PDF</link>.</p>
       <note>strokeSVGText is currently only effective in the PDF renderer.</note>
