@@ -16,6 +16,7 @@ import org.apache.fop.datatypes.TextDecorations;
 import org.apache.fop.datatypes.indirect.Inherit;
 import org.apache.fop.datatypes.indirect.IndirectValue;
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.datastructs.Node.*;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.apps.FOPException;
@@ -157,7 +158,7 @@ public class FONode extends Node{
     /** Map of <tt>Integer</tt> indices of <i>sparsePropsSet</i> array.
         It is indexed by the FO index of the FO associated with a given
         position in the <i>propertySet</i> array. */
-    private final HashMap sparsePropsMap;
+    private final int[] sparsePropsMap;
 
     /** An array of of the applicable property indices, in property index
         order. */
@@ -206,7 +207,7 @@ public class FONode extends Node{
      * @param stateFlags - the set of states relevant at this point in the
      * tree.  Includes the state information necessaryto select an attribute
      * set for this node.
-     * @param sparsePropsMap - a <tt>HashMap</tt> mapping the property indices
+     * @param sparsePropsMap - an <tt>int[]</tt> mapping the property indices
      * to their offsets in the set of properties applicable to this node.
      * @param sparseindices - an <tt>int[]</tt> holding the set of property
      * indices applicable to this node, in ascending order.
@@ -216,7 +217,7 @@ public class FONode extends Node{
      */
     public FONode
         (FOTree foTree, int type, FONode parent, FoXMLEvent event,
-             int stateFlags, HashMap sparsePropsMap, int[] sparseIndices)
+             int stateFlags, int[] sparsePropsMap, int[] sparseIndices)
         throws TreeException, FOPException, PropertyException
     {
         super(foTree, parent);
@@ -478,7 +479,7 @@ public class FONode extends Node{
         PropertyValue pval;
         if (propertySet == null) {
             return IndirectValue.adjustedPropertyValue
-                                            (getSparsePropValue(property));
+                                (sparsePropsSet[ sparsePropsMap[property] ]);
         }
         if ((pval = propertySet[property]) != null) 
             return IndirectValue.adjustedPropertyValue(pval);
@@ -499,9 +500,7 @@ public class FONode extends Node{
      * @return the <tt>PropertyValue</tt> for the specified property.
      */
     public PropertyValue getSparsePropValue(int prop) {
-        return sparsePropsSet[
-            ((Integer)(sparsePropsMap.get(Ints.consts.get(prop)))).intValue()
-                            ];
+        return sparsePropsSet[ sparsePropsMap[prop] ];
     }
 
 
