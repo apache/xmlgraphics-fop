@@ -123,7 +123,8 @@ public final class GenericFOPTestCase extends TestCase {
         InputSource source = new InputSource(new StringReader(fo));
         DigestFilter filter = new DigestFilter("MD5");
         filter.setParent(parserFactory.newSAXParser().getXMLReader());
-        driver.render(filter, source);
+        filter.setContentHandler(driver.getDefaultHandler());
+        filter.parse(source);
         String digestInActual = digestToString(filter.getDigestValue());
         if (!digestIn.equals(digestInActual)) {
             fail("input MD5: was " + digestInActual + ", expected " + digestIn);

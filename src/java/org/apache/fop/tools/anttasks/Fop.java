@@ -535,7 +535,7 @@ class FOPTaskStarter {
             userAgent.setBaseURL(this.baseURL);
             Driver driver = new Driver(renderer, userAgent);
             driver.setOutputStream(out);
-            driver.render(inputHandler);
+            inputHandler.render(driver);
         } catch (Exception ex) {
             throw new BuildException(ex);
         } finally {
