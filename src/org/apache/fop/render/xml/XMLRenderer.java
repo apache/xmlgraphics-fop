@@ -51,6 +51,7 @@ public class XMLRenderer implements Renderer {
      * options
      */
     protected Hashtable options;
+    private boolean consistentOutput = false;
 
     public XMLRenderer() {}
 
@@ -59,6 +60,10 @@ public class XMLRenderer implements Renderer {
      */
     public void setOptions(Hashtable options) {
         this.options = options;
+        Boolean con = (Boolean)options.get("consistentOutput");
+        if(con != null) {
+            consistentOutput = con.booleanValue();
+        }
     }
 
     /**
@@ -199,8 +204,12 @@ public class XMLRenderer implements Renderer {
         baText.append(" is-last=\"" + area.isLast() + "\"");
         if (null != area.getGeneratedBy())
             baText.append(" generated-by=\""
-                          + area.getGeneratedBy().getName() + "//"
-                          + area.getGeneratedBy() + "\"");
+                          + area.getGeneratedBy().getName() + "//");
+            if(consistentOutput) {
+                baText.append(area.getGeneratedBy().getClass() + "\"");
+            } else {
+                baText.append(area.getGeneratedBy() + "\"");
+            }
         baText.append(">");
         writeStartTag(baText.toString());
 

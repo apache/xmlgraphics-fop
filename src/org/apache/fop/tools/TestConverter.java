@@ -226,6 +226,7 @@ public class TestConverter {
 
             Hashtable rendererOptions = new Hashtable();
             rendererOptions.put("fineDetail", new Boolean(false));
+            rendererOptions.put("consistentOutput", new Boolean(true));
             driver.getRenderer().setOptions(rendererOptions);
             driver.getRenderer().setProducer("Testsuite Converter");
 
