@@ -60,6 +60,9 @@ public class FOPException extends Exception {
     private static final String EXCEPTION_SEPARATOR = "\n---------\n";
 
     private Throwable exception;
+    private String systemId;
+    private int line;
+    private int column;
 
     /**
      * create a new FOP Exception
@@ -68,6 +71,13 @@ public class FOPException extends Exception {
      */
     public FOPException(String message) {
         super(message);
+    }
+
+    public FOPException(String message, String systemId, int line, int column) {
+        super(message);
+        this.systemId = systemId;
+        this.line = line;
+        this.column = column;
     }
 
     /**
@@ -103,6 +113,16 @@ public class FOPException extends Exception {
      */
     public Throwable getException() {
         return exception;
+    }
+
+    public void setLocation(String systemId, int line, int column) {
+        this.systemId = systemId;
+        this.line = line;
+        this.column = column;
+    }
+
+    public boolean isLocationSet() {
+        return line>=0;
     }
 
     /**
