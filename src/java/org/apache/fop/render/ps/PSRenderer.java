@@ -369,6 +369,7 @@ public class PSRenderer extends AbstractRenderer {
         PSProcSets.writeFOPStdProcSet(gen);
         PSProcSets.writeFOPEPSProcSet(gen);
         PSProcSets.writeFontDict(gen, fontInfo);
+        gen.writeln("FOPFonts begin");
         gen.writeDSCComment(DSCConstants.END_SETUP);
     }
 
@@ -428,7 +429,6 @@ public class PSRenderer extends AbstractRenderer {
             }                
         }
         gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);         
-        gen.writeln("FOPFonts begin");
         if (rotate) {
             gen.writeln(Math.round(pspageheight) + " 0 translate");
             gen.writeln("90 rotate");
