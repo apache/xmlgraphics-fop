@@ -81,8 +81,9 @@ public class FOTreeBuilder extends DefaultHandler {
     /**
      * class that builds a property list for each formatting object
      */
-    protected PropertyListBuilder propertyListBuilder = new
-	PropertyListBuilder(); 
+    protected Hashtable propertylistTable = new Hashtable();
+//    protected PropertyListBuilder propertyListBuilder = new
+//	PropertyListBuilder(); 
 	
     /**
      * current formatting object being handled
@@ -162,6 +163,44 @@ public class FOTreeBuilder extends DefaultHandler {
 	this.fobjTable.put(namespaceURI + "^" + localName, maker);
     }
 
+    /**
+     * add a mapping from element name to maker.
+     *
+     * @param namespaceURI namespace URI of formatting object element
+     * @param localName local name of formatting object element
+     * @param maker Maker for class representing formatting object
+    */
+    public void addPropertyList(String namespaceURI, Hashtable list) {
+        PropertyListBuilder plb;
+        plb = (PropertyListBuilder)this.propertylistTable.get(namespaceURI);
+        if(plb == null) {
+            plb = new PropertyListBuilder();
+            plb.addList(list);
+            this.propertylistTable.put(namespaceURI, plb);
+        } else {
+            plb.addList(list);
+        }
+    }
+
+    /**
+     * add a mapping from element name to maker.
+     *
+     * @param namespaceURI namespace URI of formatting object element
+     * @param localName local name of formatting object element
+     * @param maker Maker for class representing formatting object
+    */
+    public void addElementPropertyList(String namespaceURI, String localName, Hashtable list) {
+        PropertyListBuilder plb;
+        plb = (PropertyListBuilder)this.propertylistTable.get(namespaceURI);
+        if(plb == null) {
+            plb = new PropertyListBuilder();
+            plb.addElementList(localName, list);
+            this.propertylistTable.put(namespaceURI, plb);
+        } else {
+            plb.addElementList(localName, list);
+        }
+    }
+
     /** SAX Handler for characters */
     public void characters(char data[], int start, int length) {
 	currentFObj.addCharacters(data, start, start + length);
@@ -212,6 +251,7 @@ public class FOTreeBuilder extends DefaultHandler {
 	String fullName = mapName(rawName);
 
 	fobjMaker = (FObj.Maker) fobjTable.get(fullName);
+	PropertyListBuilder plBuilder = (PropertyListBuilder)this.propertylistTable.get(uri);
 
 	if (fobjMaker == null) {
 	    if (!this.unknownFOs.containsKey(fullName)) {
@@ -223,7 +263,7 @@ public class FOTreeBuilder extends DefaultHandler {
 	}
 	
 	try {
-		PropertyList list = this.propertyListBuilder.makeList(fullName, attlist,  
+		PropertyList list = plBuilder.makeList(fullName, attlist,  
 		     (currentFObj == null) ? null : currentFObj.properties);
 	    fobj = fobjMaker.make(currentFObj, list);
 	} catch (FOPException e) {

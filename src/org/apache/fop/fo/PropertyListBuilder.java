@@ -64,165 +64,28 @@ import java.util.Hashtable;
 
 public class PropertyListBuilder {
     
-    private Hashtable propertyTable;
-	private Hashtable spaceTable;
+    private Hashtable propertyListTable;
 	private Hashtable elementTable;
 
     public PropertyListBuilder() {
-	this.propertyTable = new Hashtable();
-
-	propertyTable.put("end-indent",EndIndent.maker());
-	propertyTable.put("master-name",MasterName.maker());
-	propertyTable.put("page-master-first",PageMasterFirst.maker());
-	propertyTable.put("page-master-repeating",PageMasterRepeating.maker());
-	propertyTable.put("page-master-odd",PageMasterOdd.maker());
-	propertyTable.put("page-master-even",PageMasterEven.maker());
-	propertyTable.put("margin-top",MarginTop.maker());
-	propertyTable.put("margin-bottom",MarginBottom.maker());
-	propertyTable.put("margin-left",MarginLeft.maker());
-	propertyTable.put("margin-right",MarginRight.maker());
-	propertyTable.put("extent",Extent.maker());
-	propertyTable.put("page-width",PageWidth.maker());
-	propertyTable.put("page-height",PageHeight.maker());
-	propertyTable.put("flow-name",FlowName.maker());
-	propertyTable.put("font-family",FontFamily.maker());
-	propertyTable.put("font-style",FontStyle.maker());
-	propertyTable.put("font-weight",FontWeight.maker());
-	propertyTable.put("font-size",FontSize.maker());
-	propertyTable.put("line-height",LineHeight.maker());
-	propertyTable.put("text-align",TextAlign.maker());
-	propertyTable.put("text-align-last",TextAlignLast.maker());
-	propertyTable.put("space-before.optimum",SpaceBeforeOptimum.maker());
-	propertyTable.put("space-after.optimum",SpaceAfterOptimum.maker());
-	propertyTable.put("start-indent",StartIndent.maker());
-	propertyTable.put("end-indent",EndIndent.maker());
-	propertyTable.put("provisional-distance-between-starts",ProvisionalDistanceBetweenStarts.maker());
-	propertyTable.put("provisional-label-separation",ProvisionalLabelSeparation.maker());
-	propertyTable.put("rule-thickness",RuleThickness.maker());
-	propertyTable.put("color",Color.maker());
-	propertyTable.put("wrap-option",WrapOption.maker());
-	propertyTable.put("white-space-treatment",WhiteSpaceTreatment.maker());
-	propertyTable.put("break-before",BreakBefore.maker());
-	propertyTable.put("break-after",BreakAfter.maker());
-	propertyTable.put("text-indent",TextIndent.maker());
-	propertyTable.put("src",Src.maker());
-	propertyTable.put("column-width",ColumnWidth.maker());
-	propertyTable.put("keep-with-next",KeepWithNext.maker());
-	propertyTable.put("background-color",BackgroundColor.maker());
-	propertyTable.put("padding-top",PaddingTop.maker());
-	propertyTable.put("padding-bottom",PaddingBottom.maker());
-	propertyTable.put("padding-left",PaddingLeft.maker());
-	propertyTable.put("padding-right",PaddingRight.maker());
-	propertyTable.put("external-destination",ExternalDestination.maker());
-	propertyTable.put("internal-destination",InternalDestination.maker());
-	propertyTable.put("x",SVGLengthProperty.maker());
-	propertyTable.put("y",SVGLengthProperty.maker());
-	propertyTable.put("x1",SVGLengthProperty.maker());
-	propertyTable.put("x2",SVGLengthProperty.maker());
-	propertyTable.put("y1",SVGLengthProperty.maker());
-	propertyTable.put("y2",SVGLengthProperty.maker());
-
-	propertyTable.put("border-after-color",BorderAfterColor.maker());
-	propertyTable.put("border-after-style",BorderAfterStyle.maker());
-	propertyTable.put("border-after-width",BorderAfterWidth.maker());
-	propertyTable.put("border-before-color",BorderBeforeColor.maker());
-	propertyTable.put("border-before-style",BorderBeforeStyle.maker());
-	propertyTable.put("border-before-width",BorderBeforeWidth.maker());
-	propertyTable.put("border-bottom",BorderBottom.maker());
-	propertyTable.put("border-bottom-color",BorderBottomColor.maker());
-	propertyTable.put("border-bottom-style",BorderBottomStyle.maker());
-	propertyTable.put("border-bottom-width",BorderBottomWidth.maker());
-	propertyTable.put("border-color",BorderColor.maker());
-	propertyTable.put("border-end-color",BorderEndColor.maker());
-	propertyTable.put("border-end-style",BorderEndStyle.maker());
-	propertyTable.put("border-end-width",BorderEndWidth.maker());
-	propertyTable.put("border-left",BorderLeft.maker());
-	propertyTable.put("border-left-color",BorderLeftColor.maker());
-	propertyTable.put("border-left-style",BorderLeftStyle.maker());
-	propertyTable.put("border-left-width",BorderLeftWidth.maker());
-	propertyTable.put("border-right",BorderRight.maker());
-	propertyTable.put("border-right-color",BorderRightColor.maker());
-	propertyTable.put("border-right-style",BorderRightStyle.maker());
-	propertyTable.put("border-right-width",BorderRightWidth.maker());
-	propertyTable.put("border-start-color",BorderStartColor.maker());
-	propertyTable.put("border-start-color",BorderStartColor.maker());
-	propertyTable.put("border-start-width",BorderStartWidth.maker());
-	propertyTable.put("border-style",BorderStyle.maker());
-	propertyTable.put("border-top",BorderTop.maker());
-	propertyTable.put("border-top-color",BorderTopColor.maker());
-	propertyTable.put("border-top-style",BorderTopStyle.maker());
-	propertyTable.put("border-top-style",BorderTopStyle.maker());
-	propertyTable.put("border-width",BorderWidth.maker());
-	propertyTable.put("bottom",Bottom.maker());
-	propertyTable.put("height",Height.maker());
-	propertyTable.put("left",Left.maker());
-	propertyTable.put("padding",Padding.maker());
-	propertyTable.put("padding-after",PaddingAfter.maker());
-	propertyTable.put("padding-before",PaddingBefore.maker());
-	propertyTable.put("padding-end",PaddingEnd.maker());
-	propertyTable.put("padding-start",PaddingStart.maker());
-	propertyTable.put("position",Position.maker());
-	propertyTable.put("right",Right.maker());
-	propertyTable.put("top",Top.maker());
-	propertyTable.put("width",Width.maker());
-	propertyTable.put("initial-page-number",InitialPageNumber.maker());
-	propertyTable.put("ref-id",RefId.maker());  // used by page-number-citation
-	propertyTable.put("id",Id.maker());			// attribute for objects, used by page-number-citation
-	propertyTable.put("maximum-repeats",MaximumRepeats.maker());
-	propertyTable.put("page-position",PagePosition.maker());
-	propertyTable.put("odd-or-even",OddOrEven.maker());
-	propertyTable.put("blank-or-not-blank",BlankOrNotBlank.maker());
-	propertyTable.put("content-width",ContentWidth.maker());
-	propertyTable.put("content-height",ContentHeight.maker());
-
-		// should split up name space properties into separate files
-		spaceTable = new Hashtable();
-		Hashtable table = new Hashtable();
-		table.put("height",SVGLengthProperty.maker());
-		table.put("width",SVGLengthProperty.maker());
-		spaceTable.put("http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd", table);
-
-		propertyTable.put("rx",SVGLengthProperty.maker());
-		propertyTable.put("ry",SVGLengthProperty.maker());
-		propertyTable.put("dx",SVGLengthProperty.maker());
-		propertyTable.put("dy",SVGLengthProperty.maker());
-		propertyTable.put("cx",SVGLengthProperty.maker());
-		propertyTable.put("cy",SVGLengthProperty.maker());
-		propertyTable.put("r",SVGLengthProperty.maker());
-		propertyTable.put("fx",SVGLengthProperty.maker());
-		propertyTable.put("fy",SVGLengthProperty.maker());
-		propertyTable.put("refX",SVGLengthProperty.maker());
-		propertyTable.put("refY",SVGLengthProperty.maker());
-		propertyTable.put("markerWidth",SVGLengthProperty.maker());
-		propertyTable.put("markerHeight",SVGLengthProperty.maker());
-		propertyTable.put("offset",SVGLengthProperty.maker());
-
-/*		propertyTable.put("orient",SVGOrient.maker());*/
-		propertyTable.put("xlink:href",HRef.maker());
-		propertyTable.put("style",SVGStyle.maker());
-		propertyTable.put("transform",SVGTransform.maker());
-		propertyTable.put("d",SVGD.maker());
-		propertyTable.put("points",SVGPoints.maker());
-//		propertyTable.put("viewBox",SVGBox.maker());
-
-//		propertyTable.put("id", SVGStringProperty.maker());
-
-		elementTable = new Hashtable();
-		table = new Hashtable();
-		table.put("x",SVGLengthListProperty.maker());
-		table.put("y",SVGLengthListProperty.maker());
-		table.put("dx",SVGLengthListProperty.maker());
-		table.put("dy",SVGLengthListProperty.maker());
-//		table.put("id",SVGStringProperty.maker());
-		elementTable.put("http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd^tref", table);
-		elementTable.put("http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd^tspan", table);
+        this.propertyListTable = new Hashtable();
+        this.elementTable = new Hashtable();
 	}
 
-    public Property computeProperty(PropertyList propertyList, String propertyName) {
+    public void addList(Hashtable list)
+    {
+        propertyListTable = list; // should add all
+    }
+
+    public void addElementList(String element, Hashtable list)
+    {
+        elementTable.put(element, list);
+    }
+
+    public Property computeProperty(PropertyList propertyList, String space, String element, String propertyName) {
 	
 	Property p = null;
-    
-	Property.Maker propertyMaker = (Property.Maker)propertyTable.get(propertyName);
+	Property.Maker propertyMaker = findMaker(space, element, propertyName);
 	if (propertyMaker != null) {
 	    p = propertyMaker.compute(propertyList);
 	} else {
@@ -231,10 +94,10 @@ public class PropertyListBuilder {
 	return p;
     }
     
-    public boolean isInherited(String propertyName) {
+    public boolean isInherited(String space, String element, String propertyName) {
 	boolean b;
 	
-	Property.Maker propertyMaker = (Property.Maker)propertyTable.get(propertyName);
+	Property.Maker propertyMaker = findMaker(space, element, propertyName);
 	if (propertyMaker != null) {
 	    b = propertyMaker.isInherited();
 	} else {
@@ -247,33 +110,28 @@ public class PropertyListBuilder {
     public PropertyList makeList(String elementName, Attributes attributes, PropertyList parentPropertyList) throws FOPException {
 	int index = elementName.indexOf("^");
 	String space = "http://www.w3.org/TR/1999/XSL/Format";
-    Hashtable sptable = null;
 	if(index != -1) {
 		space = elementName.substring(0, index);
-		sptable = (Hashtable)spaceTable.get(space);
 	}
 
 	PropertyList par = null;
 	if(parentPropertyList != null && space.equals(parentPropertyList.getNameSpace())) {
 		par = parentPropertyList;
 	}
-	PropertyList p = new PropertyList(par, space);
+//	System.out.println(elementName.substring(index + 1));
+	PropertyList p = new PropertyList(par, space, elementName.substring(index + 1));
 	p.setBuilder(this);
     Hashtable table;
-    table = (Hashtable)elementTable.get(elementName);
+    table = (Hashtable)elementTable.get(elementName.substring(index + 1));
 	for (int i = 0; i < attributes.getLength(); i++) {
 	    String attributeName = attributes.getQName(i);
 	    Property.Maker propertyMaker = null;
-	    if(sptable != null) {
-	    	propertyMaker = (Property.Maker)sptable.get(attributeName);
+    	if(table != null) {
+	    	propertyMaker = (Property.Maker)table.get(attributeName);
 	    }
 	    if(propertyMaker == null) {
-	    	if(table != null) {
-		    	propertyMaker = (Property.Maker)table.get(attributeName);
-		    }
+        	propertyMaker = (Property.Maker)propertyListTable.get(attributeName);
 	    }
-	    if(propertyMaker == null)
-		    propertyMaker = (Property.Maker)propertyTable.get(attributeName);
 	    if (propertyMaker != null) {
 		p.put(attributeName,propertyMaker.make(p,attributes.getValue(i)));
 	    } else {
@@ -284,16 +142,30 @@ public class PropertyListBuilder {
 	return p;
     }
     
-    public Property makeProperty(PropertyList propertyList, String propertyName) throws FOPException {
+    public Property makeProperty(PropertyList propertyList, String space, String element, String propertyName) throws FOPException {
 	
 	Property p = null;
 	
-	Property.Maker propertyMaker = (Property.Maker)propertyTable.get(propertyName);
+	Property.Maker propertyMaker = findMaker(space, element, propertyName);
 	if (propertyMaker != null) {
 	    p = propertyMaker.make(propertyList);
 	} else {
 	    MessageHandler.errorln("WARNING: property " + propertyName + " ignored");
 	}
 	return p;
+    }
+
+    protected Property.Maker findMaker(String space, String elementName, String propertyName)
+    {
+        Hashtable propertyTable;
+	    Property.Maker propertyMaker = null;
+        propertyTable = (Hashtable)elementTable.get(propertyName);
+	    if(propertyTable != null) {
+	        propertyMaker = (Property.Maker)propertyTable.get(propertyName);
+	    }
+        if(propertyMaker == null) {
+        	propertyMaker = (Property.Maker)propertyListTable.get(propertyName);
+        }
+        return propertyMaker;
     }
 }
