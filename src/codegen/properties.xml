@@ -395,6 +395,13 @@
     <default></default>
   </property>
   <property>
+    <name>internal-destination</name>
+    <class-name>InternalDestination</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
     <name>border-before-color</name>
     <class-name>BorderBeforeColor</class-name>
     <inherited>false</inherited>
