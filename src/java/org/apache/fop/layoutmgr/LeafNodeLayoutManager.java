@@ -33,12 +33,13 @@ import java.util.LinkedList;
  * This class can be extended to handle the creation and adding of the
  * inline area.
  */
-public class LeafNodeLayoutManager extends AbstractLayoutManager {
+public class LeafNodeLayoutManager extends AbstractLayoutManager 
+                                   implements InlineLevelLayoutManager {
     /**
      * The inline area that this leafnode will add.
      */
     protected InlineArea curArea = null;
-    protected int alignment;
+    protected int verticalAlignment;
     private int lead;
     private MinOptMax ipd;
 
@@ -116,7 +117,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
      * @param al the vertical alignment positioning
      */
     public void setAlignment(int al) {
-        alignment = al;
+        verticalAlignment = al;
     }
 
     /**
@@ -147,49 +148,6 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
     }
 
     /**
-     * Get the next break position.
-     * Since this holds an inline area it will return a single
-     * break position.
-     * @param context the layout context for this inline area
-     * @return the break poisition for adding this inline area
-     */
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
-        curArea = get(context);
-        if (curArea == null) {
-            setFinished(true);
-            return null;
-        }
-        BreakPoss bp = new BreakPoss(new LeafPosition(this, 0),
-                                     BreakPoss.CAN_BREAK_AFTER
-                                     | BreakPoss.CAN_BREAK_BEFORE | BreakPoss.ISFIRST
-                                     | BreakPoss.ISLAST);
-        ipd = getAllocationIPD(context.getRefIPD());
-        bp.setStackingSize(ipd);
-        bp.setNonStackingSize(new MinOptMax(curArea.getBPD()));
-        bp.setTrailingSpace(new SpaceSpecifier(false));
-
-        int bpd = curArea.getBPD();
-        switch (alignment) {
-            case VerticalAlign.MIDDLE:
-                bp.setMiddle(bpd / 2 /* - fontLead/2 */);
-                bp.setLead(bpd / 2 /* + fontLead/2 */);
-            break;
-            case VerticalAlign.TOP:
-                bp.setTotal(bpd);
-            break;
-            case VerticalAlign.BOTTOM:
-                bp.setTotal(bpd);
-            break;
-            case VerticalAlign.BASELINE:
-            default:
-                bp.setLead(bpd);
-            break;
-        }
-        setFinished(true);
-        return bp;
-    }
-
-    /**
      * Get the allocation ipd of the inline area.
      * This method may be overridden to handle percentage values.
      * @param refIPD the ipd of the parent reference area
@@ -197,19 +155,6 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
      */
     protected MinOptMax getAllocationIPD(int refIPD) {
         return new MinOptMax(curArea.getIPD());
-    }
-
-    /**
-     * Reset the position.
-     * If the reset position is null then this inline area should be
-     * restarted.
-     * @param resetPos the position to reset.
-     */
-    public void resetPosition(Position resetPos) {
-        // only reset if setting null, start again
-        if (resetPos == null) {
-            setFinished(false);
-        }
     }
 
     /**
@@ -244,9 +189,9 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
      */
     protected void offsetArea(LayoutContext context) {
         int bpd = curArea.getBPD();
-        switch (alignment) {
+        switch (verticalAlignment) {
             case VerticalAlign.MIDDLE:
-                curArea.setOffset(context.getBaseline() - bpd / 2 /* - fontLead/2 */);
+                curArea.setOffset(context.getMiddleBaseline() - bpd / 2);
             break;
             case VerticalAlign.TOP:
                 //curArea.setOffset(0);
@@ -305,7 +250,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
         int lead = 0;
         int total = 0;
         int middle = 0;
-        switch (alignment) {
+        switch (verticalAlignment) {
             case VerticalAlign.MIDDLE  : middle = bpd / 2 ;
                                          lead = bpd / 2 ;
                                          break;
@@ -331,6 +276,9 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
         return returnList;
     }
 
+    public void getWordChars(StringBuffer sbChars, Position bp) {
+    }
+
     public KnuthElement addALetterSpaceTo(KnuthElement element) {
         // return the unchanged box object
         return new KnuthBox(areaInfo.ipdArea.opt, areaInfo.lead,
@@ -339,8 +287,6 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
     }
 
     public void hyphenate(Position pos, HyphContext hc) {
-        // use the AbstractLayoutManager.hyphenate() null implementation
-        super.hyphenate(pos, hc);
     }
 
     public boolean applyChanges(List oldList) {

@@ -19,6 +19,7 @@
 package org.apache.fop.area.inline;
 
 import java.util.List;
+import java.util.ListIterator;
 import java.util.ArrayList;
 
 /**
@@ -37,6 +38,29 @@ public class FilledArea extends InlineParent {
      * Create a new filled area.
      */
     public FilledArea() {
+    }
+
+    /**
+     * Set the offset of the descendant TextAreas,
+     * instead of the offset of the FilledArea itself.
+     *
+     * @param v the offset
+     */
+    public void setOffset(int v) {
+        setChildOffset(inlines.listIterator(), v);
+    }
+
+    private void setChildOffset(ListIterator childrenIterator, int v) {
+        while (childrenIterator.hasNext()) {
+            InlineArea child = (InlineArea) childrenIterator.next();
+            if (child instanceof InlineParent) {
+                setChildOffset(((InlineParent) child).getChildAreas().listIterator(), v);
+            } else if (child instanceof org.apache.fop.area.inline.Viewport) {
+                // nothing
+            } else {
+                child.setOffset(v);
+            }
+        }
     }
 
     /**

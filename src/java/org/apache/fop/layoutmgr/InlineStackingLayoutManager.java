@@ -69,7 +69,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
     private Area currentArea; // LineArea or InlineParent
 
     private BreakPoss prevBP;
-    private LayoutContext childLC ;
+    protected LayoutContext childLC ;
 
     private LayoutManager lastChildLM = null; // Set when return last breakposs
     private boolean bAreaCreated = false;
@@ -462,8 +462,9 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
             = new StackingIter(positionList.listIterator());
 
         LayoutManager prevLM = null;
-        LayoutManager childLM ;
-        while ((childLM = childPosIter.getNextChildLM()) != null) {
+        InlineLevelLayoutManager childLM ;
+        while ((childLM = (InlineLevelLayoutManager) childPosIter.getNextChildLM())
+               != null) {
             getContext().setFlags(LayoutContext.LAST_AREA,
                                   context.isLastArea() && childLM == lastLM);
             childLM.addAreas(childPosIter, getContext());
@@ -555,212 +556,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
                 ls.setIPD(iAdjust);
                 parentArea.addChild(ls);
             }
-        }
-    }
-
-    public LinkedList getNextKnuthElements(LayoutContext lc, int alignment) {
-        LayoutManager curLM;
-
-        // the list returned by child LM
-        LinkedList returnedList;
-        KnuthElement returnedElement;
-
-        // the list which will be returned to the parent LM
-        LinkedList returnList = new LinkedList();
-
-        SpaceSpecifier leadingSpace = lc.getLeadingSpace();
-
-        if (lc.startsNewArea()) {
-            // First call to this LM in new parent "area", but this may
-            // not be the first area created by this inline
-            childLC = new LayoutContext(lc);
-            if (getSpaceStart() != null) {
-                lc.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart()));
-            }
-
-            // Check for "fence"
-            if (hasLeadingFence(!lc.isFirstArea())) {
-                // Reset leading space sequence for child areas
-                leadingSpace = new SpaceSpecifier(false);
-            }
-            // Reset state variables
-            clearPrevIPD(); // Clear stored prev content dimensions
-        }
-
-        while ((curLM = getChildLM()) != null) {
-            // get KnuthElements from curLM
-            returnedList = curLM.getNextKnuthElements(lc, alignment);
-            if (returnedList != null) {
-                // "wrap" the Position stored in each element of returnedList
-                ListIterator listIter = returnedList.listIterator();
-                while (listIter.hasNext()) {
-                    returnedElement = (KnuthElement) listIter.next();
-                    returnedElement.setPosition
-                        (new NonLeafPosition(this,
-                                             returnedElement.getPosition()));
-                    returnList.add(returnedElement);
-                }
-                return returnList;
-            } else {
-                // curLM returned null because it finished;
-                // just iterate once more to see if there is another child
-            }
-        }
-        setFinished(true);
-        return null;
-    }
-
-    public KnuthElement addALetterSpaceTo(KnuthElement element) {
-        NonLeafPosition savedPos = (NonLeafPosition) element.getPosition();
-        element.setPosition(savedPos.getPosition());
-
-        KnuthElement newElement
-            = element.getLayoutManager().addALetterSpaceTo(element);
-        newElement.setPosition
-            (new NonLeafPosition(this, newElement.getPosition()));
-        element.setPosition(savedPos);
-        return newElement;
-    }
-
-    public void getWordChars(StringBuffer sbChars, Position pos) {
-        Position newPos = ((NonLeafPosition) pos).getPosition();
-        newPos.getLM().getWordChars(sbChars, newPos);
-    }
-
-    public void hyphenate(Position pos, HyphContext hc) {
-        Position newPos = ((NonLeafPosition) pos).getPosition();
-        newPos.getLM().hyphenate(newPos, hc);
-    }
-
-    public boolean applyChanges(List oldList) {
-        // "unwrap" the Positions stored in the elements
-        ListIterator oldListIterator = oldList.listIterator();
-        KnuthElement oldElement;
-        while (oldListIterator.hasNext()) {
-            oldElement = (KnuthElement) oldListIterator.next();
-            oldElement.setPosition
-                (((NonLeafPosition) oldElement.getPosition()).getPosition());
-        }
-        // reset the iterator
-        oldListIterator = oldList.listIterator();
-
-        LayoutManager prevLM = null;
-        LayoutManager currLM;
-        int fromIndex = 0;
-
-        boolean bSomethingChanged = false;
-        while(oldListIterator.hasNext()) {
-            oldElement = (KnuthElement) oldListIterator.next();
-            currLM = oldElement.getLayoutManager();
-            // initialize prevLM
-            if (prevLM == null) {
-                prevLM = currLM;
-            }
-
-            if (currLM != prevLM || !oldListIterator.hasNext()) {
-                if (oldListIterator.hasNext()) {
-                    bSomethingChanged
-                        = prevLM.applyChanges(oldList.subList(fromIndex, oldListIterator.previousIndex()))
-                        || bSomethingChanged;
-                    prevLM = currLM;
-                    fromIndex = oldListIterator.previousIndex();
-                } else if (currLM == prevLM) {
-                    bSomethingChanged
-                        = prevLM.applyChanges(oldList.subList(fromIndex, oldList.size()))
-                        || bSomethingChanged;
-                } else {
-                    bSomethingChanged
-                        = prevLM.applyChanges(oldList.subList(fromIndex, oldListIterator.previousIndex()))
-                        || bSomethingChanged;
-                    bSomethingChanged
-                        = currLM.applyChanges(oldList.subList(oldListIterator.previousIndex(), oldList.size()))
-                        || bSomethingChanged;
-                }
-            }
-        }
-
-        // "wrap" again the Positions stored in the elements
-        oldListIterator = oldList.listIterator();
-        while (oldListIterator.hasNext()) {
-            oldElement = (KnuthElement) oldListIterator.next();
-            oldElement.setPosition
-                (new NonLeafPosition(this, oldElement.getPosition()));
-        }
-        return bSomethingChanged;
-    }
-
-    public LinkedList getChangedKnuthElements(List oldList, int flaggedPenalty, int alignment) {
-        // "unwrap" the Positions stored in the elements
-        ListIterator oldListIterator = oldList.listIterator();
-        KnuthElement oldElement;
-        while (oldListIterator.hasNext()) {
-            oldElement = (KnuthElement) oldListIterator.next();
-            oldElement.setPosition
-                (((NonLeafPosition) oldElement.getPosition()).getPosition());
-        }
-        // reset the iterator
-        oldListIterator = oldList.listIterator();
-
-        KnuthElement returnedElement;
-        LinkedList returnedList = new LinkedList();
-        LinkedList returnList = new LinkedList();
-        LayoutManager prevLM = null;
-        LayoutManager currLM;
-        int fromIndex = 0;
-
-        while(oldListIterator.hasNext()) {
-            oldElement = (KnuthElement) oldListIterator.next();
-            currLM = oldElement.getLayoutManager();
-            if (prevLM == null) {
-                prevLM = currLM;
-            }
-
-            if (currLM != prevLM || !oldListIterator.hasNext()) {
-                if (oldListIterator.hasNext()) {
-                    returnedList.addAll
-                        (prevLM.getChangedKnuthElements
-                         (oldList.subList(fromIndex,
-                                          oldListIterator.previousIndex()),
-                          flaggedPenalty, alignment));
-                    prevLM = currLM;
-                    fromIndex = oldListIterator.previousIndex();
-                } else if (currLM == prevLM) {
-                    returnedList.addAll
-                        (prevLM.getChangedKnuthElements
-                         (oldList.subList(fromIndex, oldList.size()),
-                          flaggedPenalty, alignment));
-                } else {
-                    returnedList.addAll
-                        (prevLM.getChangedKnuthElements
-                         (oldList.subList(fromIndex,
-                                          oldListIterator.previousIndex()),
-                          flaggedPenalty, alignment));
-                    returnedList.addAll
-                        (currLM.getChangedKnuthElements
-                         (oldList.subList(oldListIterator.previousIndex(),
-                                          oldList.size()),
-                          flaggedPenalty, alignment));
-                }
-            }
-        }
-
-        // "wrap" the Position stored in each element of returnedList
-        ListIterator listIter = returnedList.listIterator();
-        while (listIter.hasNext()) {
-            returnedElement = (KnuthElement) listIter.next();
-            returnedElement.setPosition
-                (new NonLeafPosition(this, returnedElement.getPosition()));
-            returnList.add(returnedElement);
-        }
-        return returnList;
-    }
-
-    public int getWordSpaceIPD() {
-        LayoutManager firstChild = getChildLM();
-        if (firstChild != null) {
-            return firstChild.getWordSpaceIPD();
-        } else {
-            return 0;
         }
     }
 }

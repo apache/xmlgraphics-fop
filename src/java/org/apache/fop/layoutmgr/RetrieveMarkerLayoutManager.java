@@ -73,7 +73,8 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
         if (replaceLM == null) {
             return null;
         }
-        return replaceLM.getNextKnuthElements(context, alignment);
+        return ((InlineLevelLayoutManager) replaceLM)
+               .getNextKnuthElements(context, alignment);
     }
 
     public void addAreas(PositionIterator parentIter,

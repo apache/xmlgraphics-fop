@@ -237,19 +237,4 @@ public interface LayoutManager {
      * @param newLMs the list of LMs to be added
      */
     void addChildLMs(List newLMs);
-
-    LinkedList getNextKnuthElements(LayoutContext context, int alignment);
-
-    KnuthElement addALetterSpaceTo(KnuthElement element);
-
-    void getWordChars(StringBuffer sbChars, Position pos);
-
-    void hyphenate(Position pos, HyphContext hc);
-
-    boolean applyChanges(List oldList);
-
-    LinkedList getChangedKnuthElements(List oldList, int flaggedPenalty,
-                                       int alignment);
-
-    int getWordSpaceIPD();
 }

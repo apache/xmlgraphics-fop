@@ -84,6 +84,7 @@ public class Character extends FObj {
     private int textDecoration;
     // private ToBeImplementedProperty textShadow;
     private int textTransform;
+    private int verticalAlign;
     private int visibility;
     private Property wordSpacing;
     // End of property values
@@ -132,6 +133,7 @@ public class Character extends FObj {
         textDecoration = pList.get(PR_TEXT_DECORATION).getEnum();
         // textShadow = pList.get(PR_TEXT_SHADOW);
         textTransform = pList.get(PR_TEXT_TRANSFORM).getEnum();
+        verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
         visibility = pList.get(PR_VISIBILITY).getEnum();
         wordSpacing = pList.get(PR_WORD_SPACING);
     }
@@ -222,6 +224,13 @@ public class Character extends FObj {
      */
     public Property getWordSpacing() {
         return wordSpacing; 
+    }
+
+    /**
+     * Return the "vertical-align" property.
+     */
+    public int getVerticalAlign() {
+        return verticalAlign; 
     }
 
     /**

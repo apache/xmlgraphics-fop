@@ -86,6 +86,7 @@ public class LayoutContext {
 
     private int iLineHeight;
     private int iBaseline;
+    private int iMiddleShift;
 
     public LayoutContext(LayoutContext parentLC) {
         this.flags = parentLC.flags;
@@ -98,6 +99,7 @@ public class LayoutContext {
         this.ipdAdjust = parentLC.ipdAdjust;
         this.iLineHeight = parentLC.iLineHeight;
         this.iBaseline = parentLC.iBaseline;
+        this.iMiddleShift = parentLC.iMiddleShift;
         // Copy other fields as necessary. Use clone???
     }
 
@@ -225,6 +227,14 @@ public class LayoutContext {
         return iBaseline;
     }
     
+    public void setMiddleShift(int ms) {
+        iMiddleShift = ms;
+    }
+
+    public int getMiddleBaseline() {
+        return iBaseline + iMiddleShift;
+    }
+    
     public String toString() {
         return "Layout Context:" +
         "\nStack Limit: \t" + (getStackLimit() == null ? "null" : getStackLimit().toString()) +
@@ -235,6 +245,7 @@ public class LayoutContext {
         "\nIPD Adjust: \t" + getIPDAdjust() +
         "\nLine Height: \t" + getLineHeight() +
         "\nBaseline: \t" + getBaseline() +
+        "\nMiddle Baseline: \t" + getMiddleBaseline() +
         "\nResolve Leading Space: \t" + resolveLeadingSpace() +
         "\nSuppress Leading Space: \t" + suppressLeadingSpace() +
         "\nIs First Area: \t" + isFirstArea() + 

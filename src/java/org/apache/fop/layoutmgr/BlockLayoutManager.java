@@ -57,6 +57,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     private int lead = 12000;
     private int lineHeight = 14000;
     private int follow = 2000;
+    private int middleShift = 0;
 
     private int iStartPos = 0;
 
@@ -71,6 +72,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         
         lead = fs.getAscender();
         follow = -fs.getDescender();
+        middleShift = -fs.getXHeight() / 2;
         lineHeight = fobj.getLineHeight().getOptimum().getLength().getValue();
     }
 
@@ -141,7 +143,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      */
     private LineLayoutManager createLineManager(LayoutManager firstlm) {
         LineLayoutManager llm;
-        llm = new LineLayoutManager(fobj, lineHeight, lead, follow);
+        llm = new LineLayoutManager(fobj, lineHeight, lead, follow, middleShift);
         List inlines = new ArrayList();
         inlines.add(firstlm);
         while (proxyLMiter.hasNext()) {

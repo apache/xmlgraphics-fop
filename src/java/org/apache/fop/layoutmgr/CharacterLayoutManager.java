@@ -48,6 +48,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         fobj = node;
         InlineArea inline = getCharacterInlineArea(node);
         setCurrentArea(inline);
+        setAlignment(fobj.getVerticalAlign());
         fs = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo());
 
         SpaceVal ls = SpaceVal.makeLetterSpacing(fobj.getLetterSpacing());
@@ -71,15 +72,15 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
      */
     protected void offsetArea(LayoutContext context) {
         int bpd = curArea.getBPD();
-        switch (alignment) {
+        switch (verticalAlignment) {
             case VerticalAlign.MIDDLE:
-                curArea.setOffset(context.getBaseline() - bpd / 2 /* - fontLead/2 */);
+                curArea.setOffset(context.getMiddleBaseline() + fs.getXHeight() / 2);
             break;
             case VerticalAlign.TOP:
-                //curArea.setOffset(0);
+                curArea.setOffset(fs.getAscender());
             break;
             case VerticalAlign.BOTTOM:
-                curArea.setOffset(context.getLineHeight() - bpd);
+                curArea.setOffset(context.getLineHeight() - bpd + fs.getAscender());
             break;
             case VerticalAlign.BASELINE:
             default:
@@ -116,16 +117,15 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         int lead = 0;
         int total = 0;
         int middle = 0;
-        switch (alignment) {
+        switch (verticalAlignment) {
             case VerticalAlign.MIDDLE  : middle = bpd / 2 ;
-                                         lead = bpd / 2 ;
                                          break;
-            case VerticalAlign.TOP     : total = bpd;
-                                         break;
+            case VerticalAlign.TOP     : // fall through
             case VerticalAlign.BOTTOM  : total = bpd;
                                          break;
-            case VerticalAlign.BASELINE:
-            default:                     lead = bpd;
+            case VerticalAlign.BASELINE: // fall through
+            default                    : lead = fs.getAscender();
+                                         total = bpd;
                                          break;
         }
 
