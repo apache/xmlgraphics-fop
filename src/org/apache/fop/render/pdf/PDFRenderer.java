@@ -188,12 +188,15 @@ public class PDFRenderer implements Renderer {
      * @param g the green component
      * @param b the blue component
      */
-    protected void addLine(int x1, int y1, int x2, int y2, int th, PDFPathPaint stroke)
+    protected void addLine(int x1, int y1, int x2, int y2, int th, 
+		PDFPathPaint stroke)
     {
-		currentStream.add(stroke.getColorSpaceOut(false));
-		currentStream.add(th / 1000f + " w\n");
-		addLine(x1/1000f, y1/1000f, x2/1000f, y2/1000f, false);
-		currentStream.add("0 G\n");
+		currentStream.add("ET\nq\n"
+			+ stroke.getColorSpaceOut(false)
+			+ (x1/1000f) + " "+ (y1/1000f) + " m "
+			+ (x2/1000f) + " "+ (y2/1000f) + " l "
+			+ (th / 1000f) + " w S\n"
+			+ "Q\nBT\n");
     }
 
     /**
@@ -279,10 +282,11 @@ public class PDFRenderer implements Renderer {
 	 */
 	protected void addRect(int x, int y, int w, int h,
 			   PDFPathPaint stroke) { 
-	currentStream.add(stroke.getColorSpaceOut(false)
+	currentStream.add("ET\nq\n"
+			+ stroke.getColorSpaceOut(false)
 			  + (x/1000f) + " " + (y/1000f) + " "
-			  + (w/1000f) + " " + (h/1000f) + " re S\n"
-			  + "0 G\n");
+			  + (w/1000f) + " " + (h/1000f) + " re s\n"
+			  + "Q\nBT\n");
 	}
 
 	/**
@@ -298,13 +302,12 @@ public class PDFRenderer implements Renderer {
 	protected void addRect(int x, int y, int w, int h,
 			   PDFPathPaint stroke,
 			   PDFPathPaint fill) {
-	currentStream.add(fill.getColorSpaceOut(true)
+	currentStream.add("ET\nq\n"
+			+ fill.getColorSpaceOut(true)
 			  + stroke.getColorSpaceOut(false)
 			  + (x/1000f) + " " + (y/1000f) + " "
-			  + (w/1000f) + " " + (h/1000f) + " re S\n"
-			  + (x/1000f) + " " + (y/1000f) + " "
-			  + (w/1000f) + " " + (h/1000f) + " re f\n"
-			  + "0 g\n");
+			  + (w/1000f) + " " + (h/1000f) + " re b\n"
+			  + "Q\nBT\n");
     }
 
     protected void addPath(Vector points, int posx, int posy, boolean fill)
