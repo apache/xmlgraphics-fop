@@ -18,7 +18,7 @@
           <th>Support Thru</th>
         </tr>
         <tr>
-          <td>BMP</td>
+          <td>BMP (Microsoft Windows Bitmap)</td>
           <td>bitmap</td>
           <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
         </tr>
@@ -28,7 +28,7 @@
           <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
-          <td>GIF</td>
+          <td>GIF (Graphics Interchange Format)</td>
           <td>bitmap</td>
           <td><link href="#native">FOP native</link></td>
         </tr>
@@ -43,12 +43,12 @@
           <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
-          <td><link href="#jpeg">JPEG</link></td>
+          <td><link href="#jpeg">JPEG (Joint Photographic Experts Group)</link></td>
           <td>bitmap</td>
           <td><link href="#native">FOP native</link></td>
         </tr>
         <tr>
-          <td>PCX</td>
+          <td>PCX (PC Paintbrush)</td>
           <td>bitmap</td>
           <td><link href="#jimi">JIMI</link></td>
         </tr>
@@ -58,12 +58,12 @@
           <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
-          <td>PNG</td>
+          <td>PNG (Portable Network Graphic)</td>
           <td>bitmap</td>
           <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
         </tr>
         <tr>
-          <td>PNM</td>
+          <td>PNM (Portable aNyMap Utilities, part of the Portable Bitmap Utilies, aka pbmplus. PNM is a superset encompassing PBM or Portable Bitmap, PGM or Portable Grayscale, and PPM or Portable Pixmap.)</td>
           <td>bitmap</td>
           <td><link href="#jai">JAI</link></td>
         </tr>
@@ -73,32 +73,32 @@
           <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
-          <td>Sunraster</td>
+          <td>RAS (Sunraster)</td>
           <td>bitmap</td>
           <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
-          <td><link href="#svg">SVG</link></td>
+          <td><link href="#svg">SVG</link> (Scalable Vector Graphics)</td>
           <td>vector (with embedded bitmaps)</td>
           <td><link href="#batik">Batik</link></td>
         </tr>
         <tr>
-          <td>Targa</td>
+          <td>TGA (Targa)</td>
           <td>bitmap</td>
           <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
-          <td>TIFF</td>
+          <td>TIFF (Tag Image Format File)</td>
           <td>bitmap</td>
           <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
         </tr>
         <tr>
-          <td>XBM</td>
+          <td>XBM (X BitMap)</td>
           <td>bitmap</td>
           <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
-          <td>XPM</td>
+          <td>XPM (X PixMap)</td>
           <td>bitmap</td>
           <td><link href="#jimi">JIMI</link></td>
         </tr>
@@ -129,9 +129,7 @@ JAI is much faster than JIMI, but is not available for all platforms. See <link 
       </section>
       <section id="batik">
         <title>Batik</title>
-        <p>
-          FOP distributions include a batik.jar file. No installation is required.
-        </p>
+        <p>Current FOP distributions include a distribution of the Apache Software Foundation's <jump href="http://xml.apache.org/batik">Batik</jump> version 1.5beta4. No installation is required. Because Batik's API changes frequently, it is highly recommended that you use this version with FOP.</p>
       </section>
     </section>
     <section id="jpeg">
@@ -144,7 +142,7 @@ JAI is much faster than JIMI, but is not available for all platforms. See <link 
       <section id="svg-intro">
         <title>Introduction</title>
         <p>
-FOP uses the SVG library from <link href="http://xml.apache.org/batik/">Batik</link> to handle SVG.
+FOP uses <link href="#batik">Batik</link> for SVG support.
 This format can be handled as an <code>fo:instream-foreign-object</code> or in a separate
 file referenced with <code>fo:external-graphic</code>. Either way the SVG document will be
 read in and converted into a DOM in Batik. This DOM will then be used by the renderer to
@@ -284,6 +282,7 @@ into a raster graphic are not drawn properly in PDF. The image is opaque.
         <li>If only one dimension is given, FOP by default uses the same aspect ratio to compute the other dimension (to avoid the appearance of stretching). For example, suppose a graphic 300 pixels wide and 400 pixels high, for which content-width = ".5in". FOP will compute the content-height = .667 inches, and will render the graphic at that size, with an apparent resolution of 600 dpi.</li>
         <li>If both dimensions are given, FOP simply renders the image in that space. For example, suppose a graphic 300 pixels wide and 400 pixels high, for which content-width = "3in" and content-height = "4in". FOP will render the graphic at that size, with an apparent resolution of 100 dpi.</li>
       </ul>
+      <p>If you need a higher apparent output resolution for bitmapped images, first make sure that at least one dimension of the image is defined in your XSL-FO input. Apart from that, resolution problems are in the image file itself, and must be corrected there: use or create a higher-resolution image file.</p>
       <note>The explanation above describes only the basic default behavior. There are other attributes of the fo:external-graphic element that can affect the behavior described above.</note>
     </section>
   </body>
