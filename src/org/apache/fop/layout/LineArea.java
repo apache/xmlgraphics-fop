@@ -145,12 +145,16 @@ public class LineArea extends Area {
 	renderer.renderLineArea(this);
     }
 
-    public int addText(char data[], int start, int end, LinkSet ls) {
+    public int addText(char odata[], int start, int end, LinkSet ls) {
 	boolean overrun = false;
 
 	wordStart = start;
 	wordLength = 0;
 	wordWidth = 0;
+	char[] data = new char[odata.length];
+	for(int count=0;count <odata.length; count++) {
+		data[count] = odata[count];
+	}
 
 	/* iterate over each character */
 	for (int i = start; i < end; i++) {
