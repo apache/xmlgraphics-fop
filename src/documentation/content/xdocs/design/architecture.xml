@@ -1,80 +1,60 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
-
 <document>
-    <header>
-        <title>Architecture</title>
-        <subtitle>Architecture information for FOP</subtitle>
-        <authors>
-            <person name="Arved Sandstrom" email=""/>
-        </authors>
-    </header>
-
-    <body>
-
-<section>
-  <title>FOP Mechanics</title>
-
-<section>
-  <title>Introduction</title>
-<p>
-The overall process is controlled by <em>org.apache.fop.apps.Driver</em>.
-This class handles the FO Tree building, structure handler, renderers, output and logging.
-</p>
-<p>
-The process in general is that the FO document is sent to the tree
-builder via SAX events. This creates an FO Tree. The FO Tree is then
-handled by the layout processor which converts the FO Tree into an area
-tree. This area tree is then given to the renderer and the renderer converts
-the area tree into a stream of data containing the output document.
-</p>
-</section>
-
-<section>
-  <title>Formatting Object Tree</title>
-<p>
-The class <em>org.apache.fop.fo.FOTreeBuilder</em> is responsible for
-actually constructing the FO tree. The key SAX events used are </p>
-<p><code>startElement()</code>,</p>
-<p><code>endElement()</code> and <code>characters()</code>.</p>
-
-</section>
-
-<section>
-  <title>Layout</title>
-<p>
-The layout managers handle the layout. They take an FO tree and construct
-the area tree.
-The layout process involves finding out where line breaks and page
-breaks should be made. The areas are then added to the page. The
-static areas can the be done for all the static regions.
-Completed pages are then added to the area tree, the area tree can
-then deal with the page.
-</p>
-</section>
-
-<section>
-  <title>Area Tree</title>
-<p>
-The area tree is a data structure designed to hold the page areas.
+  <header>
+    <title>Implementation Overview</title>
+    <subtitle>Following a Document Through FOP</subtitle>
+    <authors>
+      <person name="Arved Sandstrom" email=""/>
+    </authors>
+  </header>
+  <body>
+    <p>The purpose of this document is to tie together the FOP design (interface) with some of the key points where control is passed within FOP (implementation), so that developers can quickly find the section of code that is relevant to their needs. The process described is for a "typical" command-line document. All class names are in org.apache.fop unless otherwise designated.</p>
+    <section>
+      <title>Overview</title>
+      <p>The input FO document is sent to the FO tree builder via SAX events. Fragments of an FO Tree are built from this process. As each page-sequence element is completed, it is passed to a layout processor, which in turn converts it into an Area Tree. The Area Tree is then given to the Renderer, which converts it into a stream of data containing the output document. The sections below will provide additional details.</p>
+    </section>
+    <section>
+      <title>Startup</title>
+      <ul>
+        <li>The job starts in apps.Fop.main().</li>
+        <li>Control is passed to apps.CommandLineStarter.run().</li>
+        <li>Control is passed to <em>apps.Driver.render()</em>. This class fires up a SAX parser, the events from which indirectly control the remaining processing, including building the FO Tree, building the Area Tree, rendering, output and logging.</li>
+      </ul>
+    </section>
+    <section>
+      <title>Formatting Object Tree</title>
+      <ul>
+        <li>The SAX events that the parser creates are handled by <em>fo.FOTreeBuilder</em>, which uses <code>startElement()</code>, <code>endElement()</code>, and <code>characters()</code> methods to build the FO Tree.</li>
+        <li>fo.FOTreeBuilder.endElement() runs the end() method for each node as it is created. The fo.pagination.PageSequence class overrides this end() method to run apps.LayoutHandler.endPageSequence().</li>
+        <li>apps.LayoutHandler.endPageSequence() in turn runs fo.pagination.PageSequence.format, which drives the layout process.</li>
+      </ul>
+    </section>
+    <section>
+      <title>Layout</title>
+      <p>There are layout managers for each type of layout decision.
+They take an FO Tree as input and build a laid-out Area Tree from it.
+The layout process involves finding out where line breaks and page breaks should be made, then creating the areas on the page.
+Static areas can then be added for any static regions.
+As pages are completed, they are added to the Area Tree.</p>
+    </section>
+    <section>
+      <title>Area Tree</title>
+      <p>The area tree is a data structure designed to hold the page areas.
 These pages are then filled with the page regions and various areas.
 The area tree is used primarily as a minimal structure that can be rendered
-by the renderers.
-</p>
-<p>
-The area tree is supported by an area tree model. This model
+by the renderers.</p>
+      <p>The area tree is supported by an area tree model. This model
 handles the adding of pages to the area tree. It also handles
 page sequence starts, document level extensions, id references
 and unresolved id areas. This model allows the pages to be handled
 directly by a renderer or to store the pages for later use.
 </p>
-</section>
-
-
-<section>
-  <title>Rendering</title>
-<p>
+    </section>
+    <section>
+      <title>Rendering</title>
+      <p>
 The renderer receives pages from the area tree and renders those pages.
 If a renderer supports out of order rendering then it will either
 render or prepare a page in the correct order. Otherwise the
@@ -83,15 +63,12 @@ The task of the renderer is to take the pages and output them to
 the requested type.
 In the case of the AWTRenderer it needs to be able to view any page.
 </p>
-<p>
+      <p>
 When rendering a page it takes the page and renders each page region.
 The main work for a renderer implementation is to handle the viewports
-and inline areas. The inline areas need to be dran on the page in the
+and inline areas. The inline areas need to be drawn on the page in the
 correct place.
 </p>
-</section>
-
-</section>
-    </body>
+    </section>
+  </body>
 </document>
-
