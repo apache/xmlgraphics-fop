@@ -3,6 +3,7 @@ package org.apache.fop.fo;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.CountryLanguageScript;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.xml.XMLNamespaces;
@@ -115,12 +116,9 @@ public class FOTree extends Tree implements Runnable {
         FoXMLEvent event;
         try {
             // Dummy only - check the language and country setup
-            System.out.println((String)Configuration.getHashMapEntry
-                               ("countriesMap","AU"));
-            System.out.println((String)Configuration.getHashMapEntry
-                               ("languagesMap","EN"));
-            System.out.println((String)Configuration.getHashMapEntry
-                               ("scriptsMap","Pk"));
+            System.out.println(CountryLanguageScript.getCountryName("AU"));
+            System.out.println(CountryLanguageScript.getEnglishName("EN"));
+            System.out.println(CountryLanguageScript.getScriptName("pk"));
             // Let the parser look after STARTDOCUMENT and the correct
             // positioning of the root element
             event = xmlevents.getStartElement(FObjectNames.ROOT);
