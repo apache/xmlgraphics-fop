@@ -5,62 +5,53 @@
  * LICENSE file included with these sources.
  */
 
-/*
- * originally contributed by
- * Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
- * Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
- * Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
- */
-
 package org.apache.fop.viewer;
 
 import java.awt.*;
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+/**
+ * Go to Page Dialog.
+ * Originally contributed by:
+ * Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
+ * Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
+ * Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
+ */
 public class GoToPageDialog extends JDialog {
-    JPanel panel1 = new JPanel();
-    GridBagLayout gridBagLayout1 = new GridBagLayout();
-    JLabel pgNbLabel = new JLabel();
-    JTextField pgNbField = new JTextField();
-    JButton okButton = new JButton();
-    JButton cancelButton = new JButton();
-
-    int pageNumber = -1;
-
-    public GoToPageDialog(Frame frame, String title, boolean modal) {
-        super(frame, title, modal);
-        try {
-            jbInit();
-            pack();
-        } catch (Exception ex) {
-            //log.error("GoToPageDialog: Konstruktor: "
-            //                       + ex.getMessage(), ex);
-        }
+    private JTextField pgNbField;
+    private int pageNumber = -1;
+ 
+    /**
+     * Creates modal dialog with a given title, attached to a given frame.
+     */
+    public GoToPageDialog(Frame frame, String title, Translator translator) {
+        super(frame, title, true);
+        jbInit(translator);
+        pack();
     }
 
-    public GoToPageDialog() {
-        this(null, "", false);
-    }
-
-    void jbInit() throws Exception {
+    private void jbInit(Translator translator) {
+        JPanel panel1 = new JPanel();
+        GridBagLayout gridBagLayout1 = new GridBagLayout();
+        JLabel pgNbLabel = new JLabel();
+        pgNbField = new JTextField();
+        JButton okButton = new JButton();
+        JButton cancelButton = new JButton();
         panel1.setLayout(gridBagLayout1);
-        pgNbLabel.setText("Page number");
-        okButton.setText("Ok");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-
+        pgNbLabel.setText(translator.getString("Label.Page.number"));
+        okButton.setText(translator.getString("Button.Ok"));
+        okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 okButton_actionPerformed(e);
             }
-
         });
-        cancelButton.setText("Cancel");
+        cancelButton.setText(translator.getString("Button.Cancel"));
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 cancelButton_actionPerformed(e);
             }
-
         });
         panel1.setMinimumSize(new Dimension(250, 78));
         getContentPane().add(panel1);
@@ -86,23 +77,26 @@ public class GoToPageDialog extends JDialog {
                                           new Insets(0, 10, 10, 10), 0, 0));
     }
 
-    void okButton_actionPerformed(ActionEvent e) {
+    private void okButton_actionPerformed(ActionEvent e) {
         try {
             pageNumber = Integer.parseInt(pgNbField.getText());
             dispose();
-        } catch (Exception ex) {
+        } catch (NumberFormatException nfe) {
             pgNbField.setText("???");
         }
 
     }
 
-    void cancelButton_actionPerformed(ActionEvent e) {
+    private void cancelButton_actionPerformed(ActionEvent e) {
         pageNumber = -1;
         dispose();
     }
 
+    /**
+     * Returns page number, entered by user.
+     */
     public int getPageNumber() {
         return pageNumber;
     }
-
 }
+

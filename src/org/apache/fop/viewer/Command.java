@@ -6,60 +6,60 @@
  */
 
 package org.apache.fop.viewer;
-/*
+
+//Java
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import java.net.URL;
+
+/**
+ * This class represents UI-commands, which can be used as menu or toolbar
+ * items<br>.
+ * When the <code>Command</code> object receives action event, that object's
+ * <code>doit</code> method is invoked. <code>doit</code> method by default
+ * does nothing and the class customer have to override it to implement
+ * any action handling logic.
+ * Originally contributed by:
  * Juergen Verwohlt: Juergen.Verwohlt@jcatalog.com,
  * Rainer Steinkuhle: Rainer.Steinkuhle@jcatalog.com,
  * Stanislav Gorkhover: Stanislav.Gorkhover@jcatalog.com
  */
-
-import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import java.net.*;
-
-
-/**
- * Klasse für UI-Kommandos. Die Kommandos können in das Menüsystem oder
- * in eine Toolbar eingefügt werden.<br>
- * <code>Commands</code> unterstützen mehrsprachigkeit.<br>
- * Durch überschreiben der Methode <code>doit<code> kann die Klasse customisiert werden.
- * Über die Methode <code>undoit</code> kann Undo-Funktionalität unterstützt werden.<br>
- *
- * @author Juergen.Verwohlt@jcatalog.com
- * @version 1.0 18.03.99
- */
 public class Command extends AbstractAction {
 
-    public static String IMAGE_DIR = "/org/apache/fop/viewer/Images/";
+    private static String IMAGE_DIR = "Images/";
 
+    /**
+     * Creates <code>Command</code> object with a given name and
+     * sets the name as a tooltip text. No associated icon image.
+     */
     public Command(String name) {
-        this(name, (ImageIcon)null);
+        super(name);
+        putValue(SHORT_DESCRIPTION, name);
     }
 
-    public Command(String name, ImageIcon anIcon) {
-        super(name, anIcon);
-    }
-
+    /**
+     * Creates <code>Command</code> object with a given name, the same
+     * tooltip text and icon image if appropriate image file is found.
+     */
     public Command(String name, String iconName) {
         super(name);
-        String path = IMAGE_DIR + iconName + ".gif";
-        URL url = getClass().getResource(path);
-        if (url == null) {
-            //log.error("Icon not found: " + path);
-        } else
+        putValue(SHORT_DESCRIPTION, name);
+        URL url = getClass().getResource(IMAGE_DIR + iconName + ".gif");
+        if (url != null) {
             putValue(SMALL_ICON, new ImageIcon(url));
+        }
     }
 
     public void actionPerformed(ActionEvent e) {
         doit();
     }
 
+    /**
+     * Action handler, have to be overrided by subclasses.
+     */
     public void doit() {
-        //log.error("Not implemented.");
+        //Do nothing
     }
-
-    public void undoit() {
-        //log.error("Not implemented.");
-    }
-
 }
+

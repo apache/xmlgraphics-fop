@@ -4,346 +4,298 @@
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
-
+ 
 package org.apache.fop.viewer;
+ 
+//Java
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.print.PrinterJob;
+import java.awt.print.PrinterException;
+import java.awt.image.BufferedImage;
 
-/*
- * originally contributed by
+//FOP
+import org.apache.fop.apps.AWTStarter;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.render.awt.AWTRenderer;
+
+/**
+ * AWT Viewer main window.
+ * Originally contributed by:
  * Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
  * Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
  * Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
- * Doro Wiarda (wiarda@dwiarda.com:
- * added  MessageListener support and made
- * the showing of the progress and error
- * messages Swing thread safe.
- * This is needed as xml parse errors do not
- * necessarily occur in the
- * EventDispatchThread.
  */
-
-import java.awt.*;
-import java.awt.print.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.util.StringTokenizer;
-import java.util.ArrayList;
-
-import javax.swing.*;
-
-import org.apache.fop.layout.*;
-import org.apache.fop.render.awt.*;
-
-/**
- * Frame and User Interface for Preview
- */
-public class PreviewDialog extends JFrame implements ProgressListener {
-
-    protected Translator res;
-
-    protected int currentPage = 0;
-    protected int pageCount = 0;
-
+public class PreviewDialog extends JFrame {
+    protected Translator translator;
     protected AWTRenderer renderer;
+    protected AWTStarter starter;
 
-    protected IconToolBar toolBar = new IconToolBar();
-
-    protected Command printAction;
-    protected Command firstPageAction;
-    protected Command previousPageAction;
-    protected Command nextPageAction;
-    protected Command lastPageAction;
-
-    protected JLabel zoomLabel =
-        new JLabel();    // {public float getAlignmentY() { return 0.0f; }};
-    protected JComboBox scale = new JComboBox() {
-        public float getAlignmentY() {
-            return 0.5f;
-        }
-
-    };
-
-    protected JScrollPane previewArea = new JScrollPane();
-    // protected JLabel statusBar = new JLabel();
-    protected JPanel statusBar = new JPanel();
-    protected GridBagLayout statusBarLayout = new GridBagLayout();
-
-    protected JLabel statisticsStatus = new JLabel();
-    protected JLabel processStatus = new JLabel();
-    protected JLabel infoStatus = new JLabel();
-    protected JLabel previewImageLabel = new JLabel();
+    private int currentPage = 0;
+    private int pageCount = 0;
+    private Reloader reloader;
+    private JComboBox scale;
+    private JLabel processStatus;
+    private JLabel pageLabel;
+    private JLabel infoStatus;
 
     /**
-     * Create a new PreviewDialog that uses the given renderer and translator.
-     *
+     *  Creates a new PreviewDialog that uses the given starter, renderer and translator.
+     *  @param aStarter the to use starter
+     *  @param aRenderer the to use renderer
+     *  @param aRes the to use translator
+     */
+    public PreviewDialog(AWTStarter aStarter, AWTRenderer aRenderer, Translator aRes) {
+        this(aRenderer, aRes);
+        starter = aStarter;
+    }
+
+    /**
+     * Creates a new PreviewDialog that uses the given renderer and translator.
      * @param aRenderer the to use renderer
      * @param aRes the to use translator
      */
     public PreviewDialog(AWTRenderer aRenderer, Translator aRes) {
-        res = aRes;
+        translator = aRes;
         renderer = aRenderer;
 
-        printAction = new Command(res.getString("Print"), "Print") {
+        //Commands aka Actions
+        Command printAction = new Command(translator.getString("Menu.Print"), "Print") {
             public void doit() {
                 print();
             }
-
         };
-        firstPageAction = new Command(res.getString("First page"),
+        Command firstPageAction = new Command(translator.getString("Menu.First.page"),
                                       "firstpg") {
             public void doit() {
-                goToFirstPage(null);
+                goToFirstPage();
             }
-
         };
-        previousPageAction = new Command(res.getString("Previous page"),
+        Command previousPageAction = new Command(translator.getString("Menu.Prev.page"),
                                          "prevpg") {
             public void doit() {
-                goToPreviousPage(null);
+                goToPreviousPage();
             }
-
         };
-        nextPageAction = new Command(res.getString("Next page"), "nextpg") {
+        Command nextPageAction = new Command(translator.getString("Menu.Next.page"), "nextpg") {
             public void doit() {
-                goToNextPage(null);
+                goToNextPage();
             }
 
         };
-        lastPageAction = new Command(res.getString("Last page"), "lastpg") {
+        Command lastPageAction = new Command(translator.getString("Menu.Last.page"), "lastpg") {
             public void doit() {
-                goToLastPage(null);
+                goToLastPage();
             }
-
+        };
+        Command reloadAction = new Command(translator.getString("Menu.Reload"), "reload") {
+            public void doit() {
+                reload();
+            }
         };
 
+        setTitle("FOP: AWT-" + translator.getString("Title.Preview"));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.setSize(new Dimension(379, 476));
+
+        //Sets size to be 61%x90% of the screen size
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        //Rather frivolous size - fits A4 page width in 1024x768 screen on my desktop
+        setSize(screen.width*61/100, screen.height*9/10);
+
+        //Page view stuff
+        pageLabel = new JLabel();
+        JScrollPane previewArea = new JScrollPane(pageLabel);
+        previewArea.getViewport().setBackground(Color.gray);
         previewArea.setMinimumSize(new Dimension(50, 50));
+        getContentPane().add(previewArea, BorderLayout.CENTER);
 
-        this.setTitle("FOP: AWT-" + res.getString("Preview"));
-
-        scale.addItem("25");
-        scale.addItem("50");
-        scale.addItem("75");
-        scale.addItem("100");
-        scale.addItem("150");
-        scale.addItem("200");
-
+        //Scaling combobox
+        scale = new JComboBox();
+        scale.addItem("25%");
+        scale.addItem("50%");
+        scale.addItem("75%");
+        scale.addItem("100%");
+        scale.addItem("150%");
+        scale.addItem("200%");
         scale.setMaximumSize(new Dimension(80, 24));
         scale.setPreferredSize(new Dimension(80, 24));
-
-        scale.addActionListener(new java.awt.event.ActionListener() {
+        scale.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 scale_actionPerformed(e);
             }
-
         });
-
-        scale.setSelectedItem("100");
+        scale.setSelectedItem("100%");
         renderer.setScaleFactor(100.0);
 
-        zoomLabel.setText(res.getString("Zoom"));
+        //Menu
+        setJMenuBar(setupMenu());
 
-        this.setJMenuBar(setupMenue());
-
-        this.getContentPane().add(toolBar, BorderLayout.NORTH);
-
+        //Toolbar
+        JToolBar toolBar = new JToolBar();
         toolBar.add(printAction);
+        toolBar.add(reloadAction);
         toolBar.addSeparator();
         toolBar.add(firstPageAction);
         toolBar.add(previousPageAction);
         toolBar.add(nextPageAction);
         toolBar.add(lastPageAction);
         toolBar.addSeparator();
-        toolBar.add(zoomLabel, null);
+        toolBar.add(new JLabel(translator.getString("Menu.Zoom")));
         toolBar.addSeparator();
-        toolBar.add(scale, null);
+        toolBar.add(scale);
+        getContentPane().add(toolBar, BorderLayout.NORTH);
+        //Status bar
+        JPanel statusBar = new JPanel();
+        processStatus = new JLabel();
+        processStatus.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(0,3,0,0)));
+        infoStatus = new JLabel();
+        infoStatus.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(0,3,0,0)));
 
-        this.getContentPane().add(previewArea, BorderLayout.CENTER);
-        this.getContentPane().add(statusBar, BorderLayout.SOUTH);
-
-        statisticsStatus.setBorder(BorderFactory.createEtchedBorder());
-        processStatus.setBorder(BorderFactory.createEtchedBorder());
-        infoStatus.setBorder(BorderFactory.createEtchedBorder());
-
-        statusBar.setLayout(statusBarLayout);
+        statusBar.setLayout(new GridBagLayout());
 
         processStatus.setPreferredSize(new Dimension(200, 21));
-        statisticsStatus.setPreferredSize(new Dimension(100, 21));
-        infoStatus.setPreferredSize(new Dimension(100, 21));
         processStatus.setMinimumSize(new Dimension(200, 21));
-        statisticsStatus.setMinimumSize(new Dimension(100, 21));
+
+        infoStatus.setPreferredSize(new Dimension(100, 21));
         infoStatus.setMinimumSize(new Dimension(100, 21));
         statusBar.add(processStatus,
-                      new GridBagConstraints(0, 0, 2, 1, 2.0, 0.0,
+                      new GridBagConstraints(0, 0, 1, 0, 2.0, 0.0,
                                              GridBagConstraints.CENTER,
                                              GridBagConstraints.HORIZONTAL,
-                                             new Insets(0, 0, 0, 5), 0, 0));
-        statusBar.add(statisticsStatus,
-                      new GridBagConstraints(2, 0, 1, 2, 1.0, 0.0,
-                                             GridBagConstraints.CENTER,
-                                             GridBagConstraints.HORIZONTAL,
-                                             new Insets(0, 0, 0, 5), 0, 0));
+                                             new Insets(0, 0, 0, 3), 0, 0));
         statusBar.add(infoStatus,
-                      new GridBagConstraints(3, 0, 1, 1, 1.0, 0.0,
+                      new GridBagConstraints(1, 0, 1, 0, 1.0, 0.0,
                                              GridBagConstraints.CENTER,
                                              GridBagConstraints.HORIZONTAL,
                                              new Insets(0, 0, 0, 0), 0, 0));
-
-        previewArea.getViewport().add(previewImageLabel);
-        showPage();
+        getContentPane().add(statusBar, BorderLayout.SOUTH);
     }
 
     /**
-     * Create a new menubar to be shown in this window.
-     *
+     * Creates a new menubar to be shown in this window.
      * @return the newly created menubar
      */
-    private JMenuBar setupMenue() {
-        JMenuBar menuBar;
-        JMenuItem menuItem;
-        JMenu menu;
-        JMenu subMenu;
+    private JMenuBar setupMenu() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu(translator.getString("Menu.File"));
 
-        menuBar = new JMenuBar();
-        menu = new JMenu(res.getString("File"));
-        subMenu = new JMenu("OutputFormat");
-        subMenu.add(new Command("mHTML"));
-        subMenu.add(new Command("mPDF"));
-        subMenu.add(new Command("mRTF"));
-        subMenu.add(new Command("mTEXT"));
-        // menu.add(subMenu);
-        // menu.addSeparator();
-        menu.add(new Command(res.getString("Print")) {
+        //Adds mostly the same actions, but without icons
+        menu.add(new Command(translator.getString("Menu.Print")) {
             public void doit() {
                 print();
             }
-
+        });
+        menu.add(new Command(translator.getString("Menu.Reload")) {
+            public void doit() {
+                reload();
+            }
         });
         menu.addSeparator();
-        menu.add(new Command(res.getString("Exit")) {
+        menu.add(new Command(translator.getString("Menu.Exit")) {
             public void doit() {
                 dispose();
             }
-
         });
         menuBar.add(menu);
-        menu = new JMenu(res.getString("View"));
-        menu.add(new Command(res.getString("First page")) {
+        menu = new JMenu(translator.getString("Menu.View"));
+        menu.add(new Command(translator.getString("Menu.First.page")) {
             public void doit() {
-                goToFirstPage(null);
+                goToFirstPage();
             }
-
         });
-        menu.add(new Command(res.getString("Previous page")) {
+        menu.add(new Command(translator.getString("Menu.Prev.page")) {
             public void doit() {
-                goToPreviousPage(null);
+                goToPreviousPage();
             }
-
         });
-        menu.add(new Command(res.getString("Next page")) {
+        menu.add(new Command(translator.getString("Menu.Next.page")) {
             public void doit() {
-                goToNextPage(null);
+                goToNextPage();
             }
-
         });
-        menu.add(new Command(res.getString("Last page")) {
+        menu.add(new Command(translator.getString("Menu.Last.page")) {
             public void doit() {
-                goToLastPage(null);
+                goToLastPage();
             }
-
         });
-        menu.add(new Command(res.getString("Go to Page") + " ...") {
+        menu.add(new Command(translator.getString("Menu.Go.to.Page") + " ...") {
             public void doit() {
-                goToPage(null);
+                showGoToPageDialog();
             }
-
         });
         menu.addSeparator();
-        subMenu = new JMenu(res.getString("Zoom"));
+        JMenu subMenu = new JMenu(translator.getString("Menu.Zoom"));
         subMenu.add(new Command("25%") {
             public void doit() {
                 setScale(25.0);
             }
-
         });
         subMenu.add(new Command("50%") {
             public void doit() {
                 setScale(50.0);
             }
-
         });
         subMenu.add(new Command("75%") {
             public void doit() {
                 setScale(75.0);
             }
-
         });
         subMenu.add(new Command("100%") {
             public void doit() {
                 setScale(100.0);
             }
-
         });
         subMenu.add(new Command("150%") {
             public void doit() {
                 setScale(150.0);
             }
-
         });
         subMenu.add(new Command("200%") {
             public void doit() {
                 setScale(200.0);
             }
-
         });
         menu.add(subMenu);
         menu.addSeparator();
-        menu.add(new Command(res.getString("Default zoom")) {
+        menu.add(new Command(translator.getString("Menu.Default.zoom")) {
             public void doit() {
                 setScale(100.0);
             }
-
         });
         menuBar.add(menu);
-        menu = new JMenu(res.getString("Help"));
-        menu.add(new Command(res.getString("Index")));
-        menu.addSeparator();
-        menu.add(new Command(res.getString("Introduction")));
-        menu.addSeparator();
-        menu.add(new Command(res.getString("About")) {
+        menu = new JMenu(translator.getString("Menu.Help"));
+        menu.add(new Command(translator.getString("Menu.About")) {
             public void doit() {
-                startHelpAbout(null);
+                startHelpAbout();
             }
-
         });
         menuBar.add(menu);
         return menuBar;
     }
 
-    // Aktion Hilfe | Info durchgeführt
-
     /**
-     * Show the About box
-     *
-     * @param e a value of type 'ActionEvent'
+     * Shows the About box
      */
-    public void startHelpAbout(ActionEvent e) {
-        PreviewDialogAboutBox dlg = new PreviewDialogAboutBox(this);
+    private void startHelpAbout() {
+        PreviewDialogAboutBox dlg = new PreviewDialogAboutBox(this, translator);
+        //Centers the box
         Dimension dlgSize = dlg.getPreferredSize();
         Dimension frmSize = getSize();
         Point loc = getLocation();
         dlg.setLocation((frmSize.width - dlgSize.width) / 2 + loc.x,
                         (frmSize.height - dlgSize.height) / 2 + loc.y);
-        dlg.setModal(true);
-        dlg.show();
+        dlg.setVisible(true);
     }
 
     /**
-     * Change the current visible page
-     *
+     * Changes the current visible page
      * @param number the page number to go to
      */
-    private void goToPage(int number) {
+      private void goToPage(int number) {
         currentPage = number;
         renderer.setPageNumber(number);
         showPage();
@@ -352,7 +304,7 @@ public class PreviewDialog extends JFrame implements ProgressListener {
     /**
      * Shows the previous page.
      */
-    private void goToPreviousPage(ActionEvent e) {
+    private void goToPreviousPage() {
         if (currentPage <= 0)
             return;
         currentPage--;
@@ -363,7 +315,7 @@ public class PreviewDialog extends JFrame implements ProgressListener {
     /**
      * Shows the next page.
      */
-    private void goToNextPage(ActionEvent e) {
+    private void goToNextPage() {
         if (currentPage >= pageCount - 1)
             return;
         currentPage++;
@@ -373,52 +325,75 @@ public class PreviewDialog extends JFrame implements ProgressListener {
     /**
      * Shows the last page.
      */
-    private void goToLastPage(ActionEvent e) {
-
+    private void goToLastPage() {
         if (currentPage == pageCount - 1)
             return;
         currentPage = pageCount - 1;
-
         goToPage(currentPage);
     }
 
     /**
-     * Shows a page by number.
+     * Reloads and reformats document.
      */
-    private void goToPage(ActionEvent e) {
+    private synchronized void reload() {
+        if (reloader == null || !reloader.isAlive()) {
+            reloader = new Reloader();
+            reloader.start();
+        }
+    }
 
+    /**
+     * This class is used to reload document  in
+     * a thread safe way.
+     */
+    private class Reloader extends Thread {
+        public void run() {
+            pageLabel.setIcon(null);
+            infoStatus.setText("");
+            currentPage = 0;
+            //Cleans up renderer - to be done
+            //while (renderer.getPageCount() != 0)
+            //    renderer.removePage(0);
+            try {
+                starter.run();
+            } catch (FOPException e) {
+                reportException(e);
+            }
+        }
+    }
+
+    /**
+     * Shows "go to page" dialog and then goes to the selected page
+     */
+    private void showGoToPageDialog() {
         GoToPageDialog d = new GoToPageDialog(this,
-                                              res.getString("Go to Page"),
-                                              true);
+            translator.getString("Menu.Go.to.Page"), translator);
         d.setLocation((int)getLocation().getX() + 50,
                       (int)getLocation().getY() + 50);
-        d.show();
+        d.setVisible(true);
         currentPage = d.getPageNumber();
-
         if (currentPage < 1 || currentPage > pageCount)
             return;
-
         currentPage--;
-
         goToPage(currentPage);
     }
 
     /**
      * Shows the first page.
      */
-    private void goToFirstPage(ActionEvent e) {
+    private void goToFirstPage() {
         if (currentPage == 0)
             return;
         currentPage = 0;
         goToPage(currentPage);
     }
 
+    /**
+     * Prints the document
+     */
     private void print() {
         PrinterJob pj = PrinterJob.getPrinterJob();
-        // Nicht nötig, Pageable get a Printable.
-        // pj.setPrintable(renderer);
         pj.setPageable(renderer);
-
         if (pj.printDialog()) {
             try {
                 pj.print();
@@ -428,8 +403,10 @@ public class PreviewDialog extends JFrame implements ProgressListener {
         }
     }
 
-    public void setScale(double scaleFactor) {
-
+    /**
+     * Scales page image
+     */
+    private void setScale(double scaleFactor) {
         if (scaleFactor == 25.0)
             scale.setSelectedIndex(0);
         else if (scaleFactor == 50.0)
@@ -442,74 +419,47 @@ public class PreviewDialog extends JFrame implements ProgressListener {
             scale.setSelectedIndex(4);
         else if (scaleFactor == 200.0)
             scale.setSelectedIndex(5);
-
         renderer.setScaleFactor(scaleFactor);
         showPage();
     }
 
-    void scale_actionPerformed(ActionEvent e) {
-        setScale(new Double((String)scale.getSelectedItem()).doubleValue());
+    private void scale_actionPerformed(ActionEvent e) {
+        String item = (String)scale.getSelectedItem();
+        setScale(Double.parseDouble(item.substring(0, item.indexOf('%'))));
     }
-
-    public void progress(int percentage) {
-        progress(new String(percentage + "%"));
-    }
-
-    public void progress(int percentage, String message) {
-        progress(new String(message + " " + percentage + "%"));
-    }
-
 
     /**
-     * Setting the text  of a JLabel is not thread save, it
-     * needs to be done in  the EventThread. Here we make sure
-     * it is done.
+     * Sets message to be shown in the status bar in a thread safe way.
      */
-    public void progress(String message) {
-        SwingUtilities.invokeLater(new showProgress(message, false));
+    public void setStatus(String message) {
+        SwingUtilities.invokeLater(new ShowStatus(message));
     }
 
-
     /**
-     * This class is used to show status and error messages in
-     * a thread safe way.
+     * This class is used to show status in a thread safe way.
      */
-    class showProgress implements Runnable {
-
+    private class ShowStatus implements Runnable {
         /**
          * The message to display
          */
-        Object message;
-
+        String message;
         /**
-         * Is this an errorMessage, i.e. should it be shown in
-         * an JOptionPane or in the status bar.
-         */
-        boolean isErrorMessage = false;
-
-        /**
-         * Constructs  showProgress thread
+         * Constructs  ShowStatus thread
          * @param message message to display
-         * @param isErrorMessage show in status bar or in JOptionPane
          */
-        public showProgress(Object message, boolean isErrorMessage) {
+        public ShowStatus(String message) {
             this.message = message;
-            this.isErrorMessage = isErrorMessage;
         }
-
         public void run() {
-            if (isErrorMessage) {
-                JOptionPane.showMessageDialog(null, message, "Error",
-                                              JOptionPane.ERROR_MESSAGE);
-            } else
-                processStatus.setText(message.toString());
+            processStatus.setText(message.toString());
         }
-
     }
 
+    /**
+     * Starts rendering process and shows the current page.
+     */
     public void showPage() {
-        showPageImage viewer = new showPageImage();
-
+        ShowPageImage viewer = new ShowPageImage();
         if (SwingUtilities.isEventDispatchThread()) {
             viewer.run();
         } else
@@ -521,108 +471,39 @@ public class PreviewDialog extends JFrame implements ProgressListener {
      * This class is used to update the page image
      * in a thread safe way.
      */
-    class showPageImage implements Runnable {
-
+    private class ShowPageImage implements Runnable {
         /**
-         * The run method that does the actuall updating
+         * The run method that does the actual updating
          */
         public void run() {
-            BufferedImage pageImage = null;
-            Graphics graphics = null;
-
-            //renderer.render(currentPage);
-            pageImage = renderer.getLastRenderedPage();
+            //Rendering a page - to be done
+            /*
+            renderer.render(currentPage);
+            BufferedImage pageImage = renderer.getLastRenderedPage();
             if (pageImage == null)
                 return;
-            graphics = pageImage.getGraphics();
-            graphics.setColor(Color.black);
-            graphics.drawRect(0, 0, pageImage.getWidth() - 1,
-                              pageImage.getHeight() - 1);
-
-            previewImageLabel.setIcon(new ImageIcon(pageImage));
-
+            pageLabel.setIcon(new ImageIcon(pageImage));
             pageCount = renderer.getPageCount();
-
-            statisticsStatus.setText(res.getString("Page") + " "
-                                     + (currentPage + 1) + " "
-                                     + res.getString("of") + " " + pageCount);
+            //Updates status bar
+            infoStatus.setText(translator.getString("Status.Page") + " "
+                + (currentPage + 1) + " "
+                + translator.getString("Status.of") + " " + pageCount);
+            */
         }
-
     }
-
 
     /**
-     * Called by logger if an error message or a
-     * log message is received.
+     * Opens standard Swing error dialog box and reports given exception details.
      */
-    public void processMessage() {
-/*        String error = event.getMessage();
-        String text = processStatus.getText();
-        FontMetrics fmt =
-            processStatus.getFontMetrics(processStatus.getFont());
-        int width = processStatus.getWidth() - fmt.stringWidth("...");
-        showProgress showIt;
-
-        if (event.getMessageType() == event.LOG) {
-            if (!text.endsWith("\n")) {
-                text = text + error;
-                while (fmt.stringWidth(text) > width) {
-                    text = text.substring(1);
-                    width = processStatus.getWidth() - fmt.stringWidth("...");
-                }
-            } else
-                text = error;
-            progress(text);
-        } else {
-            error = error.trim();
-            if (error.equals(">")) {
-                text = text + error;
-                while (fmt.stringWidth(text) > width) {
-                    text = text.substring(1);
-                    width = processStatus.getWidth() - fmt.stringWidth("...");
-                }
-                progress(processStatus.getText() + error);
-                return;
-            }
-            if (error.equals(""))
-                return;
-            if (error.length() < 60) {
-                showIt = new showProgress(error, true);
-            } else {
-                StringTokenizer tok = new StringTokenizer(error, " ");
-                ArrayList labels = new ArrayList();
-                StringBuffer buffer = new StringBuffer();
-                String tmp, list[];
-
-                while (tok.hasMoreTokens()) {
-                    tmp = tok.nextToken();
-                    if ((buffer.length() + tmp.length() + 1) < 60) {
-                        buffer.append(" ").append(tmp);
-                    } else {
-                        labels.add(buffer.toString());
-                        buffer = new StringBuffer();
-                        buffer.append(tmp);
-                    }
-                }
-                labels.add(buffer.toString());
-                list = new String[labels.size()];
-                for (int i = 0; i < labels.size(); i++) {
-                    list[i] = labels.get(i).toString();
-                }
-                showIt = new showProgress(list, true);
-            }
-            if (SwingUtilities.isEventDispatchThread()) {
-                showIt.run();
-            } else {
-                try {
-                    SwingUtilities.invokeAndWait(showIt);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    progress(event.getMessage());
-                }
-            }
-        }*/
+    public void reportException(Exception e) {
+        String msg = translator.getString("Exception.Occured");
+        setStatus(msg);
+        JOptionPane.showMessageDialog(
+ 		    getContentPane(),
+            "<html><b>" + msg + ":</b><br>"
+ 		     + e.getClass().getName() + "<br>" + e.getMessage() + "</html>", translator.getString("Exception.Error"),
+             JOptionPane.ERROR_MESSAGE
+ 		);
     }
-
-}    // class PreviewDialog
+}
 
