@@ -1208,6 +1208,29 @@ public class LineArea extends Area {
         return ret;
     }
 
+    private final int getEmWidth() {
+        char mappedChar = currentFontState.mapChar('m');
+        // the mapping returns '#' for unmapped characters in standard fonts
+        // what happens for other fonts?
+        if (mappedChar == '#') {
+            return 500 * currentFontState.getFontSize();
+        } else {
+            return currentFontState.width(mappedChar);
+        }
+    }
+
+    private final int getEnWidth() {
+        char mappedChar = currentFontState.mapChar('n');
+        // the mapping returns '#' for unmapped characters in standard fonts
+        // what happens for other fonts?
+        if (mappedChar != '#') {
+          // should do something to discover non-proportional fonts
+            return (getEmWidth()*9)/10;
+        } else {
+            return currentFontState.width(mappedChar);
+        }
+    }
+
     /**
      * Helper method for getting the width of a unicode char
      * from the current fontstate.
@@ -1215,55 +1238,56 @@ public class LineArea extends Area {
      * versions of space that might not exists in the font.
      */
     private int getCharWidth(char c) {
-        int width;
-
-        if ((c == '\n') || (c == '\r') || (c == '\t') || (c == '\u00A0')) {
-            width = getCharWidth(' ');
+        if ((c == '\n') || (c == '\r') || (c == '\t')) {
+            return getCharWidth(' ');
         } else {
-            width = currentFontState.width(currentFontState.mapChar(c));
-            if (width <= 0) {
+            char mappedChar = currentFontState.mapChar(c);
+            if (mappedChar == '#' || mappedChar == 0) {
                 // Estimate the width of spaces not represented in
                 // the font
-                int em = currentFontState.width(currentFontState.mapChar('m'));
-                int en = currentFontState.width(currentFontState.mapChar('n'));
-                if (em <= 0)
-                    em = 500 * currentFontState.getFontSize();
-                if (en <= 0)
-                    en = em - 10;
-
-                if (c == ' ')
-                    width = em;
-                if (c == '\u2000')
-                    width = en;
-                if (c == '\u2001')
-                    width = em;
-                if (c == '\u2002')
-                    width = em / 2;
-                if (c == '\u2003')
-                    width = currentFontState.getFontSize();
-                if (c == '\u2004')
-                    width = em / 3;
-                if (c == '\u2005')
-                    width = em / 4;
-                if (c == '\u2006')
-                    width = em / 6;
-                if (c == '\u2007')
-                    width = getCharWidth(' ');
-                if (c == '\u2008')
-                    width = getCharWidth('.');
-                if (c == '\u2009')
-                    width = em / 5;
-                if (c == '\u200A')
-                    width = 5;
-                if (c == '\u200B')
-                    width = 100;
-                if (c == '\u202F')
-                    width = getCharWidth(' ') / 2;
-                if (c == '\u3000')
-                    width = getCharWidth(' ') * 2;
+                if (c == '#') {
+                    return currentFontState.width(mappedChar);
+                } else if (c == ' ') {
+                    return getEmWidth();
+                } else if (c == '\u00A0') {
+                    return getCharWidth(' ');
+                } else if (c == '\u2000') {
+                    return getEnWidth();
+                } else if (c == '\u2001') {
+                    return getEmWidth();
+                } else if (c == '\u2002') {
+                    return getEnWidth();
+                } else if (c == '\u2003') {
+                    return getEmWidth();
+                } else if (c == '\u2004') {
+                    return getEmWidth() / 3;
+                } else if (c == '\u2005') {
+                    return getEmWidth() / 4;
+                } else if (c == '\u2006') {
+                    return getEmWidth() / 6;
+                } else if (c == '\u2007') {
+                    return getCharWidth(' ');
+                } else if (c == '\u2008') {
+                    return getCharWidth('.');
+                } else if (c == '\u2009') {
+                    return getEmWidth() / 5;
+                } else if (c == '\u200A') {
+                    return getEmWidth() / 10;
+                } else if (c == '\u200B') {
+                    return 1;
+                } else if (c == '\u202F') {
+                    return getCharWidth(' ') / 2;
+                } else if (c == '\u3000') {
+                    return getCharWidth(' ') * 2;
+                } else if (c == '\u3000') {
+                    return getCharWidth(' ') * 2;
+                } else {
+                    return currentFontState.width(mappedChar);
+                }
+            } else {
+                return currentFontState.width(mappedChar);
             }
         }
-        return width;
     }
 
 
