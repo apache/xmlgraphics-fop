@@ -501,7 +501,7 @@ public class TableRow extends FObj {
      * Before starting layout for the first time, initialize information
      * about spanning rows, empty cells and spanning columns.
      */
-    private void initCellArray() {
+    private void initCellArray() throws FOPException {
         cellArray = new CellArray(rowSpanMgr, columns.size());
         int colNum = 1;
         for (int i = 0; i< children.size(); i++) {
@@ -519,30 +519,31 @@ public class TableRow extends FObj {
                 // cell.setColumnNumber(colNum);
                 // If cellColNum "off the end", this cell is in limbo!
                 if (colNum < 1) {
-                    // ERROR!!!
-                    continue;
+                    throw new FOPException("Cell (#"+i+") implicitely positioned beyond number of columns", cell.getSystemId(), cell.getLine(), cell.getColumn());
                 } else
                     cellColNum = colNum;
             } else if (cellColNum > columns.size()) {
-                // Explicit specification out of range!
-                // Skip it and print an ERROR MESSAGE
+                // Explicit colomn number specification out of range, skip it.
+                log.error(" "+systemId+':'+cell.getLine()+':'+cell.getColumn()+": Cell (#"+ i +") explicitely positioned beyond number of columns, dropped");
                 continue;
             }
             // see if it fits and doesn't overwrite anything
             if (cellColNum + numCols - 1 > columns.size()) {
-                // MESSAGE: TOO MANY COLUMNS SPANNED!
+                // Too many columns spanned.
+                log.error(" "+systemId+':'+cell.getLine()+':'+cell.getColumn()+": Cell (#"+i+") spans columns beyond available number, clipped");
                 numCols = columns.size() - cellColNum + 1;
             }
             // Check for overwriting other cells (returns false)
             if (cellArray.storeCell(cell, cellColNum, numCols) == false) {
-                // Print out some kind of warning message.
+                log.error(" "+systemId+':'+cell.getLine()+':'+cell.getColumn()+": Cell +(#"+i+") overwrites other cells");
             }
             if (cellColNum > colNum) {
                 // Cells are initialized as empty already
                 colNum = cellColNum;
             } else if (cellColNum < colNum) {
-                // MESSAGE ? cells out of order?
+                // Cells out of order
                 colNum = cellColNum;    // CR "to the letter"!
+                log.debug(" "+systemId+':'+line+':'+column+": Cell positioned out of order");
             }
             int cellWidth = getCellWidth(cellColNum, numCols);
             cell.setWidth(cellWidth);
