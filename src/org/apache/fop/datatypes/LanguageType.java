@@ -5,7 +5,6 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.configuration.Configuration;
 import org.apache.fop.datatypes.PropertyValue;
 
 /*
@@ -33,9 +32,12 @@ public class LanguageType extends NCName {
     {
         super(property, languageCode, PropertyValue.LANGUAGE);
         // Validate the code
-        if (Configuration.getHashMapEntry("languagesMap", languageCode)
-            == null) throw new PropertyException
+        String code;
+        if ((code = CountryLanguageScript.canonicalLangCode(languageCode))
+                == null)
+            throw new PropertyException
                              ("Invalid language code: " + languageCode);
+        setString(code);
     }
 
     public LanguageType(String propertyName, String languageCode)
