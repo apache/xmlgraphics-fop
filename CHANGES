@@ -1,5 +1,7 @@
 ==============================================================================
 Done since 0.20.4 release
+- PS renderer got a configurable setting to do auto-landscape rotation. (JM)
+  Inspired by: Henrik Olsson <henrik.olsson@intentia.se>
 - Use Locator to make system id, line and column number available to
   FOs. Use it when throwing FOPExceptions. TBD: Use it in mesages, also
   catch RuntimeExceptions and wrap them.
