@@ -229,6 +229,18 @@
      </map:call>
    </map:match>
 
+   <map:match pattern="body-**/faq.xml">
+     <map:generate type="file-nolabel" src="content/xdocs/{1}/faq.xml"/>
+     <map:transform src="library/xslt/faq2document.xsl" label="content"/>
+     <map:call resource="skinit">
+      <map:parameter name="type" value="document2html"/>
+      <map:parameter name="resource" value="faq"/>
+      <map:parameter name="dir" value=""/>
+      <map:parameter name="isfaq" value="true"/>
+
+     </map:call>
+   </map:match>
+
    <map:match pattern="body-faq.xml">
      <map:generate type="file-nolabel" src="content/xdocs/faq.xml"/>
      <map:transform src="library/xslt/faq2document.xsl" label="content"/>
