@@ -513,12 +513,14 @@ public abstract class AbstractRenderer
      */
     protected void renderBlock(Block block) {
         List children = block.getChildAreas();
-        if (children == null) {
-            handleBlockTraits(block);
-            // simply move position
-            currentBPPosition += block.getAllocBPD();
-        } else if (block instanceof BlockViewport) {
-            renderBlockViewport((BlockViewport) block, children);
+        if (block instanceof BlockViewport) {
+            if (children != null) {
+                renderBlockViewport((BlockViewport) block, children);
+            } else {
+                handleBlockTraits(block);
+                // simply move position
+                currentBPPosition += block.getAllocBPD();
+            }
         } else {
             // save position and offset
             int saveIP = currentIPPosition;
@@ -530,7 +532,9 @@ public abstract class AbstractRenderer
 
                 handleBlockTraits(block);
 
-                renderBlocks(block, children);
+                if (children != null) {
+                    renderBlocks(block, children);
+                }
 
                 // absolute blocks do not effect the layout
                 currentBPPosition = saveBP;
@@ -541,7 +545,9 @@ public abstract class AbstractRenderer
 
                 handleBlockTraits(block);
 
-                renderBlocks(block, children);
+                if (children != null) {
+                    renderBlocks(block, children);
+                }
 
                 // stacked and relative blocks effect stacking
                 currentIPPosition = saveIP;
