@@ -719,19 +719,14 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     public PageViewport createPage(boolean bIsBlank, boolean bIsLast)
                                    throws FOPException {
-        currentSimplePageMaster = getSimpleMasterPageToUse(bIsBlank);
+        currentSimplePageMaster = getSimplePageMasterToUse(bIsBlank);
         Region body = currentSimplePageMaster.getRegion(Region.BODY);
         if (!pageSequence.getMainFlow().getFlowName().equals(body.getRegionName())) {
           throw new FOPException("Flow '" + pageSequence.getMainFlow().getFlowName()
                                  + "' does not map to the region-body in page-master '"
                                  + currentSimplePageMaster.getMasterName() + "'");
         }
-        PageMaster pageMaster = currentSimplePageMaster.getPageMaster();
-        if (pageMaster == null) {
-            createSimplePageMasterAreas(currentSimplePageMaster);
-        }
-        pageMaster = currentSimplePageMaster.getPageMaster();
-        PageViewport p = pageMaster.makePage();
+        PageViewport p = createPageAreas(currentSimplePageMaster);
         return p;
         // The page will have a viewport/reference area pair defined
         // for each region in the master.
@@ -745,7 +740,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         //forcePage(areaTree, firstAvailPageNumber);
     }
 
-    private SimplePageMaster getSimpleMasterPageToUse(boolean bIsBlank)
+    private SimplePageMaster getSimplePageMasterToUse(boolean bIsBlank)
             throws FOPException {
         if (pageSequence.getPageSequenceMaster() == null) {
             return pageSequence.getSimplePageMaster();
@@ -755,13 +750,13 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
               .getNextSimplePageMaster(isOddPage, isFirstPage, bIsBlank);
     }
 
-    public void createSimplePageMasterAreas(SimplePageMaster node) {
+    public PageViewport createPageAreas(SimplePageMaster spm) {
         int pageWidth =
-                node.properties.get("page-width").getLength().getValue();
+                spm.properties.get("page-width").getLength().getValue();
         int pageHeight =
-                node.properties.get("page-height").getLength().getValue();
+                spm.properties.get("page-height").getLength().getValue();
         // Get absolute margin properties (top, left, bottom, right)
-        CommonMarginBlock mProps = node.getPropertyManager().getMarginProps();
+        CommonMarginBlock mProps = spm.getPropertyManager().getMarginProps();
 
       /* Create the page reference area rectangle (0,0 is at top left
        * of the "page media" and y increases
@@ -773,20 +768,19 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                        pageWidth - mProps.marginLeft - mProps.marginRight,
                        pageHeight - mProps.marginTop - mProps.marginBottom);
 
-       // ??? KL shouldn't this take the viewport too???
        Page page = new Page();  // page reference area
 
        // Set up the CTM on the page reference area based on writing-mode
        // and reference-orientation
        FODimension reldims = new FODimension(0, 0);
-       CTM pageCTM = CTM.getCTMandRelDims(node.getPropertyManager().getAbsRefOrient(),
-               node.getPropertyManager().getWritingMode(), pageRefRect, reldims);
+       CTM pageCTM = CTM.getCTMandRelDims(spm.getPropertyManager().getAbsRefOrient(),
+               spm.getPropertyManager().getWritingMode(), pageRefRect, reldims);
 
        // Create a RegionViewport/ reference area pair for each page region
 
        boolean bHasBody = false;
 
-       for (Iterator regenum = node.getRegions().values().iterator();
+       for (Iterator regenum = spm.getRegions().values().iterator();
             regenum.hasNext();) {
            Region r = (Region)regenum.next();
            RegionViewport rvp = r.makeRegionViewport(reldims, pageCTM);
@@ -798,11 +792,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
        }
 
        if (!bHasBody) {
-           node.getLogger().error("simple-page-master has no region-body");
+           spm.getLogger().error("simple-page-master has no region-body");
        }
 
-       node.setPageMaster(new PageMaster(new PageViewport(page,
-               new Rectangle(0, 0, pageWidth, pageHeight))));
+       return new PageViewport(page, new Rectangle(0, 0, pageWidth, pageHeight));
 
     }
 
