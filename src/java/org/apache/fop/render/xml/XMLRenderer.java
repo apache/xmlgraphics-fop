@@ -245,8 +245,12 @@ public class XMLRenderer extends AbstractRenderer {
     protected void addAreaAttributes(Area area) {
         addAttribute("ipd", area.getIPD());
         addAttribute("bpd", area.getBPD());
-        addAttribute("ipda", area.getAllocIPD());
-        addAttribute("bpda", area.getAllocBPD());
+        if (area.getIPD() != 0) {
+            addAttribute("ipda", area.getAllocIPD());
+        }
+        if (area.getBPD() != 0) {
+            addAttribute("bpda", area.getAllocBPD());
+        }
         addAttribute("bap", area.getBorderAndPaddingWidthStart() + " "
                 + area.getBorderAndPaddingWidthEnd() + " "
                 + area.getBorderAndPaddingWidthBefore() + " "
@@ -369,27 +373,30 @@ public class XMLRenderer extends AbstractRenderer {
     protected void renderRegionViewport(RegionViewport port) {
         if (port != null) {
             atts.clear();
+            addAreaAttributes(port);
             addAttribute("rect", port.getViewArea());
             startElement("regionViewport", atts);
             RegionReference region = port.getRegion();
+            atts.clear();
+            addAreaAttributes(region);
             if (region.getRegionClass() == FO_REGION_BEFORE) {
-                startElement("regionBefore");
+                startElement("regionBefore", atts);
                 renderRegion(region);
                 endElement("regionBefore");
             } else if (region.getRegionClass() == FO_REGION_START) {
-                startElement("regionStart");
+                startElement("regionStart", atts);
                 renderRegion(region);
                 endElement("regionStart");
             } else if (region.getRegionClass() == FO_REGION_BODY) {
-                startElement("regionBody");
+                startElement("regionBody", atts);
                 renderBodyRegion((BodyRegion) region);
                 endElement("regionBody");
             } else if (region.getRegionClass() == FO_REGION_END) {
-                startElement("regionEnd");
+                startElement("regionEnd", atts);
                 renderRegion(region);
                 endElement("regionEnd");
             } else if (region.getRegionClass() == FO_REGION_AFTER) {
-                startElement("regionAfter");
+                startElement("regionAfter", atts);
                 renderRegion(region);
                 endElement("regionAfter");
             }
@@ -420,6 +427,7 @@ public class XMLRenderer extends AbstractRenderer {
      */
     protected void renderMainReference(MainReference mr) {
         atts.clear();
+        addAreaAttributes(mr);
         addAttribute("columnGap", mr.getColumnGap());
         addAttribute("width", mr.getWidth());
         startElement("mainReference", atts);
@@ -428,7 +436,9 @@ public class XMLRenderer extends AbstractRenderer {
         List spans = mr.getSpans();
         for (int count = 0; count < spans.size(); count++) {
             span = (Span) spans.get(count);
-            startElement("span");
+            atts.clear();
+            addAreaAttributes(span);
+            startElement("span", atts);
             for (int c = 0; c < span.getColumnCount(); c++) {
                 Flow flow = (Flow) span.getFlow(c);
 
@@ -444,7 +454,9 @@ public class XMLRenderer extends AbstractRenderer {
      */
     protected void renderFlow(Flow flow) {
         // the normal flow reference area contains stacked blocks
-        startElement("flow");
+        atts.clear();
+        addAreaAttributes(flow);
+        startElement("flow", atts);
         super.renderFlow(flow);
         endElement("flow");
     }
