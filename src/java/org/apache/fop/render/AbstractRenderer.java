@@ -105,11 +105,6 @@ public abstract class AbstractRenderer
     protected Date creationDate = null;
 
     /**
-     * renderer configuration
-     */
-    protected Map options;
-
-    /**
      * block progression position
      */
     protected int currentBPPosition = 0;
@@ -177,11 +172,6 @@ public abstract class AbstractRenderer
      */
     public void setCreationDate(Date date) {
         creationDate = date;
-    }
-
-    /** @see org.apache.fop.render.Renderer */
-    public void setOptions(Map opt) {
-        options = opt;
     }
 
     /** @see org.apache.fop.render.Renderer */

@@ -78,8 +78,8 @@ public class CommandLineOptions {
     /* output mode */
     private int outputmode = NOT_SET;
 
-    private java.util.HashMap rendererOptions;
-
+    private FOUserAgent foUserAgent;
+    
     private Log log;
 
     private Vector xsltParams = null;
@@ -96,7 +96,9 @@ public class CommandLineOptions {
         log = LogFactory.getLog("FOP");
         
         boolean optionsParsed = true;
-        rendererOptions = new java.util.HashMap();
+        
+        foUserAgent = new FOUserAgent();
+        
         try {
             optionsParsed = parseOptions(args);
             if (optionsParsed) {
@@ -454,7 +456,7 @@ public class CommandLineOptions {
         case SVG_OUTPUT:
             return Driver.RENDER_SVG;
         case AREA_OUTPUT:
-            rendererOptions.put("fineDetail", isCoarseAreaXml());
+            foUserAgent.getRendererOptions().put("fineDetail", isCoarseAreaXml());
             return Driver.RENDER_XML;
         case RTF_OUTPUT:
             return Driver.RENDER_RTF;
@@ -480,11 +482,11 @@ public class CommandLineOptions {
     }
 
     /**
-     * Get the renderer specific options.
-     * @return hash map with option/value pairs.
+     * Get the FOUserAgent for this Command-Line run
+     * @return FOUserAgent instance
      */
-    public java.util.HashMap getRendererOptions() {
-        return rendererOptions;
+    protected FOUserAgent getFOUserAgent() {
+        return foUserAgent;
     }
 
     /**

@@ -19,6 +19,7 @@
 package org.apache.fop.apps;
 
 // Java
+import java.util.HashMap;
 import java.util.Map;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,6 +56,15 @@ public class FOUserAgent {
     private String baseURL;
     private PDFEncryptionParams pdfEncryptionParams;
     private float px2mm = 0.35277777777777777778f; //72dpi (=25.4/dpi)
+    private HashMap rendererOptions = new java.util.HashMap();
+
+    /**
+     * Returns the renderer options
+     * @return renderer options
+     */
+    public HashMap getRendererOptions() {
+        return rendererOptions;
+    }
 
     /**
      * Sets the base URL.

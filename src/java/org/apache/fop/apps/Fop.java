@@ -45,6 +45,7 @@ public class Fop {
             Driver driver = new Driver();
             options = new CommandLineOptions(args);
 
+            driver.setUserAgent(options.getFOUserAgent());
             inputHandler = options.getInputHandler();
 
             try {
@@ -60,9 +61,6 @@ public class Fop {
                     }
                 }
 
-                if (driver.getRenderer() != null) {
-                    driver.getRenderer().setOptions(options.getRendererOptions());
-                }
                 driver.render(inputHandler);
             } finally {
                 if (bos != null) {

@@ -180,7 +180,8 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     private boolean isCoarseXml() {
-        return ((Boolean) options.get("fineDetail")).booleanValue();
+        return ((Boolean) 
+            userAgent.getRendererOptions().get("fineDetail")).booleanValue();
     }
 
     /**

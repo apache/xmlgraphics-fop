@@ -97,13 +97,6 @@ public interface Renderer {
     void setupFontInfo(FontInfo fontInfo);
 
     /**
-     * Set up renderer options.
-     *
-     * @param options  The Configuration for the renderer
-     */
-    void setOptions(Map options);
-
-    /**
      * Set the producer of the rendering. If this method isn't called the
      * renderer uses a default. Note: Not all renderers support this feature.
      *
