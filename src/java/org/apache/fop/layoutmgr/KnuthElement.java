@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,13 +28,8 @@ package org.apache.fop.layoutmgr;
  */
 public abstract class KnuthElement {
 
-    public static final int KNUTH_BOX = 0;
-    public static final int KNUTH_GLUE = 1;
-    public static final int KNUTH_PENALTY = 2;
-
     public static final int INFINITE = 1000;
 
-    private int type;
     private int width;
     private Position position;
     private boolean bIsAuxiliary;
@@ -48,8 +43,7 @@ public abstract class KnuthElement {
      * @param pos  the Position stored in this element
      * @param bAux is this an auxiliary element?
      */
-    protected KnuthElement(int t, int w, Position pos, boolean bAux) {
-        type = t;
+    protected KnuthElement(int w, Position pos, boolean bAux) {
         width = w;
         position = pos;
         bIsAuxiliary = bAux;
@@ -59,21 +53,21 @@ public abstract class KnuthElement {
      * Return true if this element is a KnuthBox.
      */
     public boolean isBox() {
-        return (type == KNUTH_BOX);
+        return false;
     }
 
     /**
      * Return true if this element is a KnuthGlue.
      */
     public boolean isGlue() {
-        return (type == KNUTH_GLUE);
+        return false;
     }
 
     /**
      * Return true if this element is a KnuthPenalty.
      */
     public boolean isPenalty() {
-        return (type == KNUTH_PENALTY);
+        return false;
     }
 
     /**
@@ -88,6 +82,22 @@ public abstract class KnuthElement {
      */
     public int getW() {
         return width;
+    }
+
+    public int getP() {
+        throw new RuntimeException("Element is not a penalty");
+    }
+
+    public int getY() {
+        throw new RuntimeException("Element is not a glue");
+    }
+
+    public int getZ() {
+        throw new RuntimeException("Element is not a glue");
+    }
+
+    public boolean isForcedBreak() {
+        return false;
     }
 
     /**

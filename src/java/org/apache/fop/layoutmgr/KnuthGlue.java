@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,9 +58,13 @@ public class KnuthGlue extends KnuthElement {
      * @param bAux is this glue auxiliary?
      */
     public KnuthGlue(int w, int y, int z, Position pos, boolean bAux) {
-        super(KNUTH_GLUE, w, pos, bAux);
+        super(w, pos, bAux);
         stretchability = y;
         shrinkability = z;
+    }
+
+    public boolean isGlue() {
+        return true;
     }
 
     /**
