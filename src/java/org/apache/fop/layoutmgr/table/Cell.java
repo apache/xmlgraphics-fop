@@ -115,8 +115,8 @@ public class Cell extends BlockStackingLayoutManager {
         referenceIPD = context.getRefIPD(); 
         cellIPD = referenceIPD;
         cellIPD -= getIPIndents();
-        if (getTable().getBorderCollapse() == EN_SEPARATE) {
-            int borderSep = getTable().getBorderSeparation().getLengthPair()
+        if (fobj.isSeparateBorderModel()) {
+            int borderSep = fobj.getBorderSeparation().getLengthPair()
                     .getIPD().getLength().getValue();
             cellIPD -= borderSep;
         }
@@ -252,8 +252,8 @@ public class Cell extends BlockStackingLayoutManager {
             addID(fobj.getId());
         }
 
-        if (!emptyCell || (getTable().getBorderCollapse() == EN_SEPARATE 
-                && fobj.showEmptyCells())) {
+        if (!emptyCell 
+                || (fobj.isSeparateBorderModel() && fobj.showEmptyCells())) {
             TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
             TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
         }
@@ -320,8 +320,8 @@ public class Cell extends BlockStackingLayoutManager {
             indent += fobj.getCommonBorderPaddingBackground().getPaddingStart(false);
             // set position
             int halfBorderSep = 0;
-            if (getTable().getBorderCollapse() == EN_SEPARATE) {
-                halfBorderSep = getTable().getBorderSeparation().getLengthPair()
+            if (fobj.isSeparateBorderModel()) {
+                halfBorderSep = fobj.getBorderSeparation().getLengthPair()
                         .getIPD().getLength().getValue() / 2;
             }
             curBlockArea.setXOffset(xoffset + inRowIPDOffset + halfBorderSep + indent);
