@@ -25,6 +25,7 @@ import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datastructs.ROIntArray;
+import org.apache.fop.datastructs.ROBitSet;
 
 /**
  * Data class relating sets of properties to Flow Objects.
@@ -618,7 +619,7 @@ public class FObjects {
         foPropertyLists[FObjectNames.INLINE].
                         add(Ints.consts.get(PropNames.BASELINE_SHIFT));
         foPropertyLists[FObjectNames.INLINE].
-                    add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
+                add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
         foPropertyLists[FObjectNames.INLINE].
                         add(Ints.consts.get(PropNames.COLOR));
         foPropertyLists[FObjectNames.INLINE].
@@ -628,7 +629,7 @@ public class FObjects {
         foPropertyLists[FObjectNames.INLINE].
                         add(Ints.consts.get(PropNames.ID));
         foPropertyLists[FObjectNames.INLINE].
-                    add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
+                add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
         foPropertyLists[FObjectNames.INLINE].
                         add(Ints.consts.get(PropNames.KEEP_TOGETHER));
         foPropertyLists[FObjectNames.INLINE].
@@ -671,7 +672,7 @@ public class FObjects {
         foPropertyLists[FObjectNames.INLINE_CONTAINER].
                         add(Ints.consts.get(PropNames.BASELINE_SHIFT));
         foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                    add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
+                add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
         foPropertyLists[FObjectNames.INLINE_CONTAINER].
                         add(Ints.consts.get(PropNames.CLIP));
         foPropertyLists[FObjectNames.INLINE_CONTAINER].
@@ -683,7 +684,7 @@ public class FObjects {
         foPropertyLists[FObjectNames.INLINE_CONTAINER].
                         add(Ints.consts.get(PropNames.ID));
         foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                    add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
+                add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
         foPropertyLists[FObjectNames.INLINE_CONTAINER].
                         add(Ints.consts.get(PropNames.KEEP_TOGETHER));
         foPropertyLists[FObjectNames.INLINE_CONTAINER].
@@ -733,7 +734,7 @@ public class FObjects {
         foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
                         add(Ints.consts.get(PropNames.BASELINE_SHIFT));
         foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                    add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
+                add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
         foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
                         add(Ints.consts.get(PropNames.CLIP));
         foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
@@ -751,7 +752,7 @@ public class FObjects {
         foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
                         add(Ints.consts.get(PropNames.ID));
         foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                    add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
+                add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
         foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
                         add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
         foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
@@ -881,9 +882,9 @@ public class FObjects {
         foPropertyLists[FObjectNames.LIST_BLOCK].
                         add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
         foPropertyLists[FObjectNames.LIST_BLOCK].
-            add(Ints.consts.get(PropNames.PROVISIONAL_DISTANCE_BETWEEN_STARTS));
+        add(Ints.consts.get(PropNames.PROVISIONAL_DISTANCE_BETWEEN_STARTS));
         foPropertyLists[FObjectNames.LIST_BLOCK].
-                    add(Ints.consts.get(PropNames.PROVISIONAL_LABEL_SEPARATION));
+                add(Ints.consts.get(PropNames.PROVISIONAL_LABEL_SEPARATION));
 
         //list-item
         foPropertyLists[FObjectNames.LIST_ITEM] = new HashSet(
@@ -1779,131 +1780,143 @@ public class FObjects {
     // If it is restored to full functioning, the public BitSet objects
     // must be replaced with unmodifiableSets.
 
-    private static final BitSet allProps;
+    public static final ROBitSet allProps;
 
     /**
      * root only set of properties - properties for exclusive use on the
      * root element.  These properties make no sense anywhere below the
      * root element.
      */
-    private static final BitSet rootOnly;
+    public static final ROBitSet rootOnly;
 
     /**
      * declarations only set of properties - properties for exclusive
      * use within the declarations subtree.  These properties make no
      * sense in or under layout-master-set or page-sequences.
      */
-    private static final BitSet declarationsOnly;
+    public static final ROBitSet declarationsOnly;
 
     /**
      * set of all declarations properties - properties which are
      * usable within the declarations subtree.
      */
-    private static final BitSet declarationsAll;
+    public static final ROBitSet declarationsAll;
 
     /**
      * layout-master-set only set of properties - properties for exclusive
      * use within the layout-master-set subtree.  These properties make no
      * sense in or under declarations or page-sequences.
      */
-    private static final BitSet layoutMasterOnly;
+    public static final ROBitSet layoutMasterOnly;
 
     /**
      * set of all layout-master-set properties - properties which are
      * usable within the layout-master-set subtree.
      */
-    private static final BitSet layoutMasterSet;
+    public static final ROBitSet layoutMasterSet;
 
     /**
      * set of all page flow subtree properties - properties which are
      * usable within the page flow subtree.
      */
-    private static final BitSet pageFlowSet;
+    public static final ROBitSet pageFlowSet;
 
     static {
 
         // Iterator for the PropertySets defined in PropertySets
         Iterator propertySet;
         // fill the BitSet of all properties
-        allProps = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        BitSet allprops = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
         for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
-            allProps.set(i);
+            allprops.set(i);
         }
-        allProps.clear(PropNames.NO_PROPERTY);
+        allprops.clear(PropNames.NO_PROPERTY);
+
+        allProps = new ROBitSet(allprops);
 
         //root only set of properties - properties for exclusive use on the
         // root element
-        rootOnly = new BitSet(1);
-        rootOnly.set(PropNames.MEDIA_USAGE);
+        BitSet rootonly = new BitSet(1);
+        rootonly.set(PropNames.MEDIA_USAGE);
+
+        rootOnly = new ROBitSet(rootonly);
 
         //declarations only set of properties - properties for exclusive use
         // in the declarations SUBTREE
-        declarationsOnly = new BitSet(2);
-        declarationsOnly.set(PropNames.COLOR_PROFILE_NAME);
-        declarationsOnly.set(PropNames.RENDERING_INTENT);
+        BitSet declarationsonly = new BitSet(2);
+        declarationsonly.set(PropNames.COLOR_PROFILE_NAME);
+        declarationsonly.set(PropNames.RENDERING_INTENT);
+
+        declarationsOnly = new ROBitSet(declarationsonly);
 
         // set of all declarations properties - properties which may be
         // used in the declarations SUBTREE
-        declarationsAll = new BitSet(3);
-        declarationsAll.set(PropNames.SRC);
-        declarationsAll.or(declarationsOnly);
+        BitSet declarationsall = new BitSet(3);
+        declarationsall.set(PropNames.SRC);
+        declarationsall.or(declarationsonly);
+
+        declarationsAll = new ROBitSet(declarationsall);
 
         //layout-master-set only set of properties - properties for exclusive
         // use within the layout-master-set SUBTREE
-        layoutMasterOnly = new BitSet();
-        layoutMasterOnly.set(PropNames.MASTER_NAME);
-        layoutMasterOnly.set(PropNames.MASTER_REFERENCE);
-        layoutMasterOnly.set(PropNames.MAXIMUM_REPEATS);
-        layoutMasterOnly.set(PropNames.PAGE_POSITION);
-        layoutMasterOnly.set(PropNames.ODD_OR_EVEN);
-        layoutMasterOnly.set(PropNames.BLANK_OR_NOT_BLANK);
-        layoutMasterOnly.set(PropNames.PAGE_HEIGHT);
-        layoutMasterOnly.set(PropNames.PAGE_WIDTH);
-        layoutMasterOnly.set(PropNames.COLUMN_COUNT);
-        layoutMasterOnly.set(PropNames.COLUMN_GAP);
-        layoutMasterOnly.set(PropNames.REGION_NAME);
-        layoutMasterOnly.set(PropNames.EXTENT);
-        layoutMasterOnly.set(PropNames.PRECEDENCE);
+        BitSet layoutmasteronly = new BitSet();
+        layoutmasteronly.set(PropNames.MASTER_NAME);
+        layoutmasteronly.set(PropNames.MASTER_REFERENCE);
+        layoutmasteronly.set(PropNames.MAXIMUM_REPEATS);
+        layoutmasteronly.set(PropNames.PAGE_POSITION);
+        layoutmasteronly.set(PropNames.ODD_OR_EVEN);
+        layoutmasteronly.set(PropNames.BLANK_OR_NOT_BLANK);
+        layoutmasteronly.set(PropNames.PAGE_HEIGHT);
+        layoutmasteronly.set(PropNames.PAGE_WIDTH);
+        layoutmasteronly.set(PropNames.COLUMN_COUNT);
+        layoutmasteronly.set(PropNames.COLUMN_GAP);
+        layoutmasteronly.set(PropNames.REGION_NAME);
+        layoutmasteronly.set(PropNames.EXTENT);
+        layoutmasteronly.set(PropNames.PRECEDENCE);
+
+        layoutMasterOnly = new ROBitSet(layoutmasteronly);
 
         // set of all layout-master-set properties - properties which may be
         // used in the layout-master-set SUBTREE
-        layoutMasterSet = new BitSet();
+        BitSet layoutmasterset = new BitSet();
 
-        // Add the laoyout-master-set exclusive properties
-        layoutMasterSet.or(layoutMasterOnly);
+        // Add the layout-master-set exclusive properties
+        layoutmasterset.or(layoutmasteronly);
 
-        layoutMasterSet.set(PropNames.REFERENCE_ORIENTATION);
-        layoutMasterSet.set(PropNames.WRITING_MODE);
-        layoutMasterSet.set(PropNames.CLIP);
-        layoutMasterSet.set(PropNames.DISPLAY_ALIGN);
-        layoutMasterSet.set(PropNames.OVERFLOW);
+        layoutmasterset.set(PropNames.REFERENCE_ORIENTATION);
+        layoutmasterset.set(PropNames.WRITING_MODE);
+        layoutmasterset.set(PropNames.CLIP);
+        layoutmasterset.set(PropNames.DISPLAY_ALIGN);
+        layoutmasterset.set(PropNames.OVERFLOW);
 
         // Add the common margin properties - block
         propertySet = PropertySets.marginBlockSet.iterator();
         while (propertySet.hasNext()) {
-            layoutMasterSet.set(((Integer)propertySet.next()).intValue());
+            layoutmasterset.set(((Integer)propertySet.next()).intValue());
         }
         // Add the common border properties
         propertySet = PropertySets.borderSet.iterator();
         while (propertySet.hasNext()) {
-            layoutMasterSet.set(((Integer)propertySet.next()).intValue());
+            layoutmasterset.set(((Integer)propertySet.next()).intValue());
         }
         // Add the common padding properties
         propertySet = PropertySets.paddingSet.iterator();
         while (propertySet.hasNext()) {
-            layoutMasterSet.set(((Integer)propertySet.next()).intValue());
+            layoutmasterset.set(((Integer)propertySet.next()).intValue());
         }
         // Add the common background properties
         propertySet = PropertySets.backgroundSet.iterator();
         while (propertySet.hasNext()) {
-            layoutMasterSet.set(((Integer)propertySet.next()).intValue());
+            layoutmasterset.set(((Integer)propertySet.next()).intValue());
         }
-        pageFlowSet = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
-        pageFlowSet.or(allProps);
-        pageFlowSet.andNot(rootOnly);
-        pageFlowSet.andNot(declarationsOnly);
-        pageFlowSet.andNot(layoutMasterOnly);
+        layoutMasterSet = new ROBitSet(layoutmasterset);
 
+        BitSet pageflowset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        pageflowset.or(allprops);
+        pageflowset.andNot(rootonly);
+        pageflowset.andNot(declarationsonly);
+        pageflowset.andNot(layoutmasteronly);
+        pageFlowSet = new ROBitSet(pageflowset);
     }
 
     static {
