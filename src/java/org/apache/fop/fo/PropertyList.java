@@ -19,8 +19,6 @@
 package org.apache.fop.fo;
 
 // Java
-import java.util.Map;
-import java.util.HashMap;
 import org.xml.sax.Attributes;
 
 // FOP
@@ -43,92 +41,26 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Class containing the collection of properties for a given FObj.
  */
-public class PropertyList extends HashMap {
-
-    // writing-mode values
-    private byte[] writingModeTable = null;
+abstract public class PropertyList {
 
     // writing-mode index
     private int writingMode;
 
     private static boolean[] inheritableProperty;
 
-    // absolute directions and dimensions
-    /** constant for direction "left" */
-    public static final int LEFT = 0;
-    /** constant for direction "right" */
-    public static final int RIGHT = 1;
-    /** constant for direction "top" */
-    public static final int TOP = 2;
-    /** constant for direction "bottom" */
-    public static final int BOTTOM = 3;
-    /** constant for dimension "height" */
-    public static final int HEIGHT = 4;
-    /** constant for dimension "width" */
-    public static final int WIDTH = 5;
-
-    // directions relative to writing-mode
-    /** constant for direction "start" */
-    public static final int START = 0;
-    /** constant for direction "end" */
-    public static final int END = 1;
-    /** constant for direction "before" */
-    public static final int BEFORE = 2;
-    /** constant for direction "after" */
-    public static final int AFTER = 3;
-    /** constant for dimension "block-progression-dimension" */
-    public static final int BLOCKPROGDIM = 4;
-    /** constant for dimension "inline-progression-dimension" */
-    public static final int INLINEPROGDIM = 5;
-
-    private static final String[] ABS_WM_NAMES = new String[] {
-        "left", "right", "top", "bottom", "height", "width"
-    };
-
-    private static final String[] REL_WM_NAMES = new String[] {
-        "start", "end", "before", "after", "block-progression-dimension",
-        "inline-progression-dimension"
-    };
-
-    private static final HashMap WRITING_MODE_TABLES = new HashMap(4);
-    {
-        WRITING_MODE_TABLES.put(new Integer(Constants.WritingMode.LR_TB),    /* lr-tb */
-        new byte[] {
-            START, END, BEFORE, AFTER, BLOCKPROGDIM, INLINEPROGDIM
-        });
-        WRITING_MODE_TABLES.put(new Integer(Constants.WritingMode.RL_TB),    /* rl-tb */
-        new byte[] {
-            END, START, BEFORE, AFTER, BLOCKPROGDIM, INLINEPROGDIM
-        });
-        WRITING_MODE_TABLES.put(new Integer(Constants.WritingMode.TB_RL),    /* tb-rl */
-        new byte[] {
-            AFTER, BEFORE, START, END, INLINEPROGDIM, BLOCKPROGDIM
-        });
-    }
-
-    private PropertyList parentPropertyList = null;
-    private String namespace = "";
+    protected PropertyList parentPropertyList = null;
     private FObj fobj = null;
 
-    private Log log = LogFactory.getLog(PropertyList.class);
-
-    /**
-     * Cache for properties looked up via maker.findProperty
-     * with bTryInherit == true
-     */
-    private Map cache = new HashMap();
+    private static Log log = LogFactory.getLog(PropertyList.class);
 
     /**
      * Basic constructor.
      * @param parentPropertyList the PropertyList belonging to the new objects
      * parent
-     * @param space name of namespace
      */
-    public PropertyList(FObj fObjToAttach, PropertyList parentPropertyList,
-        String space) {
+    public PropertyList(FObj fObjToAttach, PropertyList parentPropertyList) {
         this.fobj = fObjToAttach;
         this.parentPropertyList = parentPropertyList;
-        this.namespace = space;
     }
 
     /**
@@ -157,74 +89,45 @@ public class PropertyList extends HashMap {
     }
 
     /**
-     * @return the namespace of this element
-     */
-    public String getNameSpace() {
-        return namespace;
-    }
-
-    /**
      * Return the value explicitly specified on this FO.
-     * @param propertyName The name of the property whose value is desired.
-     * It may be a compound name, such as space-before.optimum.
+     * @param propId The id of the property whose value is desired.
      * @return The value if the property is explicitly set or set by
      * a shorthand property, otherwise null.
      */
     public Property getExplicitOrShorthand(int propId) {
         /* Handle request for one part of a compound property */
-        Property p = getExplicitBaseProp(propId & Constants.PROPERTY_MASK);
+        Property p = getExplicit(propId);
         if (p == null) {
             p = getShorthand(propId & Constants.PROPERTY_MASK);
-        }
-        if (p != null && (propId & Constants.COMPOUND_MASK) != 0) {
-            return getSubpropValue(p, propId);
         }
         return p;
     }
 
     /**
      * Return the value explicitly specified on this FO.
-     * @param propertyName The name of the property whose value is desired.
-     * It may be a compound name, such as space-before.optimum.
+     * @param propId The ID of the property whose value is desired.
      * @return The value if the property is explicitly set, otherwise null.
      */
-    public Property getExplicit(int propId) {
-        String propertyName = FOPropertyMapping.getPropertyName(propId);
-
-        /* Handle request for one part of a compound property */
-        if ((propId & Constants.COMPOUND_MASK) != 0) {
-            Property p = getExplicitBaseProp(propId & Constants.PROPERTY_MASK);
-            if (p != null) {
-                return getSubpropValue(p, propId);
-            } else {
-                return null;
-            }
-        }
-        return (Property) super.get(propertyName);
-    }
+    abstract public Property getExplicit(int propId);
 
     /**
-     * Return the value explicitly specified on this FO.
-     * @param propertyName The name of the base property whose value is desired.
-     * @return The value if the property is explicitly set, otherwise null.
+     * Set an value defined explicitly on this FO.
+     * @param propId The ID of the property to set.
+     * @param value The value of the property.
      */
-    public Property getExplicitBaseProp(int propId) {
-        String propertyName = FOPropertyMapping.getPropertyName(propId);
-        return (Property) super.get(propertyName);
-    }
+    abstract public void putExplicit(int propId, Property value);
 
     /**
      * Return the value of this property inherited by this FO.
      * Implements the inherited-property-value function.
      * The property must be inheritable!
-     * @param propID The ID of the property whose value is desired.
+     * @param propId The ID of the property whose value is desired.
      * @return The inherited value, otherwise null.
      */
     public Property getInherited(int propId) {
 
-        if (parentPropertyList != null
-                && isInherited(propId)) {
-            return parentPropertyList.get(propId);
+        if (isInherited(propId)) {
+            return getFromParent(propId);
         } else {
             // return the "initial" value
             try {
@@ -255,7 +158,7 @@ public class PropertyList extends HashMap {
      * inheritable, to return the inherited value. If all else fails, it returns
      * the default value.
      */
-    private Property get(int propId, boolean bTryInherit,
+    public Property get(int propId, boolean bTryInherit,
                          boolean bTryDefault) {
 
         PropertyMaker propertyMaker = findMaker(propId & Constants.PROPERTY_MASK);
@@ -269,77 +172,9 @@ public class PropertyList extends HashMap {
     }
 
     /**
-     * Wrapper around PropertyMaker.findProperty using the cache;
-     * use this method only if bTryInherit == true.
-     * The propertyMaker parameter is there
-     * to avoid repeated lookup of the maker
-     * in an alternating sequence of calls
-     * between findProperty and maker.findProperty.
-     * This would not be valid for FO elements
-     * which have their own list of property makers,
-     * see findMaker(propId).
-     * @param propId the ID of the property
-     * @param propertyMaker the maker of the property
-     * @return the cached property value
-     */
-    public Property findProperty (int propId, PropertyMaker propertyMaker) 
-        throws FOPException {
-        Property p;
-        if (isInCache(propId)) {
-            p = getFromCache(propId);
-        } else {
-            p = propertyMaker.findProperty(this, true);
-            addToCache(propId, p);
-        }
-        return p;
-    }
-
-    /**
-     * Add a property value to the cache.
-     * The cached value may be null,
-     * meaning that no property value has been specified by the user
-     * on this FO element or, in the case of inheritable properties,
-     * on an ancester FO element.
-     * @param propId the ID of the property
-     * @param prop the property value being cached
-     */
-    private void addToCache(int propId, Property prop) {
-        String propertyName = FOPropertyMapping.getPropertyName(propId);
-        log.trace("PropertyList.addToCache: "
-                  + propertyName + ", " + getFObj().getName());
-        cache.put(new Integer(propId), prop);
-    }
-
-    /**
-     * Check whether a property is in the cache.
-     * The presence of a key for a property
-     * means that a value for this property has been cached.
-     * @return whether a property is in the cache
-     */
-    public boolean isInCache(int propId) {
-        // Uncomment one or the other to use/not use the cache
-        return cache.containsKey(new Integer(propId));
-        // return false;
-    }
-
-    /**
-     * Retrieve a property from the cache
-     * @param propId the ID of the property
-     * @return the cached property value
-     */
-    public Property getFromCache(int propId) {
-        Property prop;
-        String propertyName = FOPropertyMapping.getPropertyName(propId);
-        prop = (Property) cache.get(new Integer(propId));
-        log.trace("PropertyList.getFromCache: "
-                  + propertyName + ", " + getFObj().getName());
-        return prop;
-    }
-
-    /**
      * Return the "nearest" specified value for the given property.
      * Implements the from-nearest-specified-value function.
-     * @param propertyName The name of the property whose value is desired.
+     * @param propId The ID of the property whose value is desired.
      * @return The computed value if the property is explicitly set on some
      * ancestor of the current FO, else the initial value.
      */
@@ -371,7 +206,6 @@ public class PropertyList extends HashMap {
      * FO is the root or is in a different namespace from its parent.
      */
     public Property getFromParent(int propId) {
-
         if (parentPropertyList != null) {
             return parentPropertyList.get(propId);
         } else {
@@ -386,12 +220,19 @@ public class PropertyList extends HashMap {
     }
 
     /**
-     * Set the writing mode traits for the FO with this property list.
-     * @param writingMode the writing-mode property to be set for this object
+     * Set writing mode for this FO.
+     * Use that from the nearest ancestor, including self, which generates
+     * reference areas, or from root FO if no ancestor found.
      */
-    public void setWritingMode(int writingMode) {
-        this.writingMode = writingMode;
-        this.writingModeTable = (byte[])WRITING_MODE_TABLES.get(new Integer(writingMode));
+    protected void setWritingMode() {
+        FObj p = fobj.findNearestAncestorFObj();
+        // If this is a RA or the root, use the property value.
+        if (fobj.generatesReferenceAreas() || p == null) {
+            writingMode = get(Constants.PR_WRITING_MODE).getEnum();
+        } else {
+            // Otherwise steal the wm value from the parent.
+            writingMode = getParentPropertyList().getWritingMode();
+        }
     }
 
     /**
@@ -402,11 +243,13 @@ public class PropertyList extends HashMap {
         return writingMode;
     }
 
+
     /**
      * Uses the stored writingMode.
-     * @param absdir an absolute direction (top, bottom, left, right)
-     * @return the corresponding writing model relative direction name
-     * for the flow object.
+     * @param lrtb the property ID to return under lrtb writingmode.
+     * @param rltb the property ID to return under rltb writingmode.
+     * @param tbrl the property ID to return under tbrl writingmode.
+     * @return one of the property IDs, depending on the writing mode.
      */
     public int getWritingMode(int lrtb, int rltb, int tbrl) {
         switch (writingMode) {
@@ -415,23 +258,6 @@ public class PropertyList extends HashMap {
             case Constants.WritingMode.TB_RL: return tbrl;
         }
         return -1;
-    }
-
-
-    /**
-     * Uses the stored writingMode.
-     * @param relativeWritingMode relative direction (start, end, before, after)
-     * @return the corresponding absolute direction name for the flow object.
-     */
-    public String getAbsoluteWritingMode(int relativeWritingMode) {
-        if (writingModeTable != null) {
-            for (int i = 0; i < writingModeTable.length; i++) {
-                if (writingModeTable[i] == relativeWritingMode) {
-                    return ABS_WM_NAMES[i];
-                }
-            }
-        }
-        return "";
     }
 
     /**
@@ -496,19 +322,19 @@ public class PropertyList extends HashMap {
                  * the base attribute was already created in 
                  * findBaseProperty()
                  */
-                if (super.get(basePropertyName) != null) {
+                if (getExplicit(propId) != null) {
                     return;
                 }
                 prop = propertyMaker.make(this, attributeValue, parentFO);
             } else { // e.g. "leader-length.maximum"
                 Property baseProperty = findBaseProperty(attributes,
-                        parentFO, basePropertyName, propertyMaker);
+                        parentFO, propId, basePropertyName, propertyMaker);
                 int subpropId = FOPropertyMapping.getSubPropertyId(subPropertyName);
                 prop = propertyMaker.make(baseProperty, subpropId,
                         this, attributeValue, parentFO);
             }
             if (prop != null) {
-                put(basePropertyName, prop);
+                putExplicit(propId, prop);
             }
         } catch (FOPException e) {
             /**@todo log this exception */
@@ -518,6 +344,7 @@ public class PropertyList extends HashMap {
 
     private Property findBaseProperty(Attributes attributes,
                                       FObj parentFO,
+                                      int propId,
                                       String basePropName,
                                       PropertyMaker propertyMaker)
             throws FOPException {
@@ -526,7 +353,7 @@ public class PropertyList extends HashMap {
          * e.g. <fo:leader xxxx="120pt" xxxx.maximum="200pt"... />
          */
 
-        Property baseProperty = (Property) super.get(basePropName);
+        Property baseProperty = getExplicit(propId);
 
         if (baseProperty != null) {
             return baseProperty;
@@ -587,22 +414,6 @@ public class PropertyList extends HashMap {
 
     /**
      * @param propId ID of property
-     * @param p a Property object
-     * @return the sub-property
-     */
-    private Property getSubpropValue(Property p, int propId) {
-
-        PropertyMaker maker = findMaker(propId & Constants.PROPERTY_MASK);
-
-        if (maker != null) {
-            return maker.getSubprop(p, propId & Constants.COMPOUND_MASK);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @param propId ID of property
      * @return new Property object
      */
     private Property getShorthand(int propId) {
@@ -622,17 +433,14 @@ public class PropertyList extends HashMap {
      * @throws FOPException for errors in the input
      */
     private Property makeProperty(int propId) throws FOPException {
-
-        Property p = null;
         PropertyMaker propertyMaker = findMaker(propId);
-
         if (propertyMaker != null) {
-            p = propertyMaker.make(this);
+            return propertyMaker.make(this);
         } else {
             //log.error("property " + propertyName
             //                       + " ignored");
         }
-        return p;
+        return null;
     }
 
     /**
