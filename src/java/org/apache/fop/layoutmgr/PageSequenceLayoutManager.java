@@ -47,6 +47,7 @@ import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.PageNumberGenerator;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
+import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
@@ -743,8 +744,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
                                    throws FOPException {
         currentSimplePageMaster = getSimplePageMasterToUse(bIsBlank);
         Region body = currentSimplePageMaster.getRegion(FO_REGION_BODY);
-        if (!pageSequence.getMainFlow().getPropString(PR_FLOW_NAME).equals(body.getRegionName())) {
-          throw new FOPException("Flow '" + pageSequence.getMainFlow().getPropString(PR_FLOW_NAME)
+        if (!pageSequence.getMainFlow().getFlowName().equals(body.getRegionName())) {
+          throw new FOPException("Flow '" + pageSequence.getMainFlow().getFlowName()
                                  + "' does not map to the region-body in page-master '"
                                  + currentSimplePageMaster.getMasterName() + "'");
         }
@@ -773,8 +774,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
     }
 
     private PageViewport createPageAreas(SimplePageMaster spm) {
-        int pageWidth = spm.getPropLength(PR_PAGE_WIDTH);
-        int pageHeight = spm.getPropLength(PR_PAGE_HEIGHT);
+        int pageWidth = spm.getPageWidth().getValue();
+        int pageHeight = spm.getPageHeight().getValue();
 
         // Set the page dimension as the toplevel containing block for margin.
         ((FObj) fobj.getParent()).setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
@@ -809,7 +810,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
            r.setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM);
            if (r.getNameId() == FO_REGION_BODY) {
-               rvp.setRegion(makeRegionBodyReferenceArea(r, rvp.getViewArea()));
+               rvp.setRegion(makeRegionBodyReferenceArea((RegionBody) r, rvp.getViewArea()));
            } else {
                rvp.setRegion(makeRegionReferenceArea(r, rvp.getViewArea()));
            }
@@ -848,13 +849,12 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground());
     }
 
-    private RegionReference makeRegionBodyReferenceArea(Region r,
+    private RegionReference makeRegionBodyReferenceArea(RegionBody r,
             Rectangle2D absRegVPRect) {
         // Should set some column stuff here I think, or put it elsewhere
         BodyRegion body = new BodyRegion();
         setRegionPosition(r, body, absRegVPRect);
-        int columnCount =
-                r.getProperty(PR_COLUMN_COUNT).getNumber().intValue();
+        int columnCount = r.getColumnCount();
         if ((columnCount > 1) && (r.getOverflow() == Overflow.SCROLL)) {
             // recover by setting 'column-count' to 1. This is allowed but
             // not required by the spec.
@@ -864,7 +864,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         }
         body.setColumnCount(columnCount);
 
-        int columnGap = r.getPropLength(PR_COLUMN_GAP);
+        int columnGap = r.getColumnGap();
         body.setColumnGap(columnGap);
         return body;
     }
@@ -905,13 +905,13 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      */
     private StaticContentLayoutManager getStaticContentLayoutManager(StaticContent sc) {
         StaticContentLayoutManager lm =
-                (StaticContentLayoutManager)staticContentLMs.get(sc.getPropString(PR_FLOW_NAME));
+                (StaticContentLayoutManager)staticContentLMs.get(sc.getFlowName());
         if (lm != null) {
             return lm;
         }
         lm = new StaticContentLayoutManager();
         lm.setFObj(sc);
-        staticContentLMs.put(sc.getPropString(PR_FLOW_NAME), lm);
+        staticContentLMs.put(sc.getFlowName(), lm);
         return lm;
     }
 }

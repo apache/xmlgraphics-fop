@@ -96,7 +96,7 @@ public class RepeatablePageMasterReference extends FObj
                 return null;
             }
         }
-        return getPropString(PR_MASTER_REFERENCE);
+        return masterReference;
     }
 
     /**

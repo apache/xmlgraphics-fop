@@ -22,7 +22,7 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.properties.PercentLength;
 import org.apache.fop.fo.properties.Property;
@@ -56,17 +56,17 @@ public class LabelEndFunction extends FunctionBase {
         Length separation =
             pInfo.getPropertyList().getNearestSpecified(Constants.PR_PROVISIONAL_LABEL_SEPARATION).getLength();
 
-        FONode item = pInfo.getFO();
-        while (item != null && !(item instanceof ListItem)) {
-            item = item.getParent();
+        PropertyList pList = pInfo.getPropertyList();
+        while (pList != null && !(pList.getFObj() instanceof ListItem)) {
+            pList = pList.getParentPropertyList();
         }
-        if (item == null) {
+        if (pList == null) {
             throw new PropertyException("label-end() called from outside an fo:list-item");
         }
-        Length startIndent = ((ListItem)item).getProperty(Constants.PR_START_INDENT).getLength();
+        Length startIndent = pList.get(Constants.PR_START_INDENT).getLength();
 
         // Should be CONTAINING_REFAREA but that doesn't work
-        LengthBase base = new LengthBase((ListItem)item, pInfo.getPropertyList(),
+        LengthBase base = new LengthBase(pList.getFObj(), pInfo.getPropertyList(),
                                          LengthBase.CONTAINING_BOX);
         PercentLength refWidth = new PercentLength(1.0, base);
 

@@ -67,18 +67,6 @@ public class ColorProfile extends FObj {
     }
 
     /**
-     * Special processing for the end of parsing an ColorProfile object.
-     * Extract instance variables from the collection of properties for this
-     * object.
-     */
-    protected void endOfNode() throws SAXParseException {
-        src = getPropString(PR_SRC);
-        profileName = getPropString(PR_COLOR_PROFILE_NAME);
-        intent = getPropEnum(PR_RENDERING_INTENT);
-        this.propertyList = null;
-    }
-
-    /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
         XSL 1.0/FOP: EMPTY (no child nodes permitted)
      */

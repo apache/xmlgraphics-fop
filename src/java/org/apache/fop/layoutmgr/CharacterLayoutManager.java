@@ -56,9 +56,8 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     }
 
     private InlineArea getCharacterInlineArea(Character node) {
-        String str = node.getProperty(Character.PR_CHARACTER).getString();
         org.apache.fop.area.inline.Character ch =
-            new org.apache.fop.area.inline.Character(str.charAt(0));
+            new org.apache.fop.area.inline.Character(node.getCharacter());
         return ch;
     }
 
@@ -255,5 +254,8 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         return returnList;
     }
 
+    protected void addId() {
+        addID(fobj.getId());
+    }
 }
 

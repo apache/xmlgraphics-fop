@@ -67,7 +67,6 @@ public class Column extends AbstractLayoutManager {
      */
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
-        addID();
     }
 
     /**

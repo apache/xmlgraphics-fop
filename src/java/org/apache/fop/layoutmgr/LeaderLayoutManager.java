@@ -23,6 +23,7 @@ import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.traits.MinOptMax;
@@ -48,7 +49,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         super(node);
         ldrNode = node;
         font = node.getFontState();
-        setAlignment(node.getPropEnum(PR_LEADER_ALIGNMENT));
+        setAlignment(node.getLeaderAlignment());
     }
 
     public InlineArea get(LayoutContext context) {
@@ -61,9 +62,10 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
 
     private MinOptMax getLeaderAllocIPD(int ipd) {
         // length of the leader
-        int opt = ldrNode.getLength(ldrNode.getProperty(PR_LEADER_LENGTH).getLengthRange().getOptimum().getLength(), ipd);
-        int min = ldrNode.getLength(ldrNode.getProperty(PR_LEADER_LENGTH).getLengthRange().getMinimum().getLength(), ipd);
-        int max = ldrNode.getLength(ldrNode.getProperty(PR_LEADER_LENGTH).getLengthRange().getMaximum().getLength(), ipd);
+        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, ipd);
+        int opt = ldrNode.getLeaderLength().getOptimum().getLength().getValue();
+        int min = ldrNode.getLeaderLength().getMinimum().getLength().getValue();
+        int max = ldrNode.getLeaderLength().getMaximum().getLength().getValue();
         return new MinOptMax(min, opt, max);
     }
 
@@ -238,4 +240,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         return returnList;
     }
 
+    protected void addId() {
+        addID(ldrNode.getId());
+    }
 }

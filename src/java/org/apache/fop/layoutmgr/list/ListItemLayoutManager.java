@@ -42,6 +42,8 @@ import java.util.List;
  * The list item contains a list item label and a list item body.
  */
 public class ListItemLayoutManager extends BlockStackingLayoutManager {
+    private ListItem fobj;
+    
     private Item label;
     private Item body;
 
@@ -64,6 +66,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
      */
     public ListItemLayoutManager(ListItem node) {
         super(node);
+        fobj = node;
         setLabel(node.getLabel());
         setBody(node.getBody());
     }
@@ -203,7 +206,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID();
+        addID(fobj.getId());
 
         Item childLM;
         LayoutContext lc = new LayoutContext(0);

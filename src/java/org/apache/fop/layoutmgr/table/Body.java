@@ -167,7 +167,6 @@ public class Body extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID();
 
         Row childLM;
         int iStartPos = 0;

@@ -92,16 +92,4 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
         }
         return super.convertProperty(p, propertyList, fo);
     }
-   
-    /*
-    protected Property convertPropertyDatatype(Property p, 
-                                               PropertyList propertyList,
-                                               FObj fo) {
-        Number numval = p.getNumber();
-        if (numval != null) {
-            return new PercentLength(numval.doubleValue(), getPercentBase(fo,propertyList));
-        }
-        return super.convertPropertyDatatype(p, propertyList, fo);
-    }
-    */
 }

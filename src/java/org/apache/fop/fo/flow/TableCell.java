@@ -202,8 +202,7 @@ public class TableCell extends FObj {
              * border-separate should only be specified on the table object,
              * but it inherits.
              */
-            int iSep = getPropLength(PR_BORDER_SEPARATION | 
-                CP_INLINE_PROGRESSION_DIRECTION);
+            int iSep = borderSeparation.getIPD().getLength().getValue();
             this.startAdjust = iSep / 2 + bp.getBorderStartWidth(false)
                                + bp.getPaddingStart(false);
 
@@ -212,8 +211,7 @@ public class TableCell extends FObj {
                                + bp.getPaddingEnd(false);
 
             // Offset of content rectangle in the block-progression direction
-            int bSep = getPropLength(PR_BORDER_SEPARATION | 
-                CP_BLOCK_PROGRESSION_DIRECTION);
+            int bSep = borderSeparation.getBPD().getLength().getValue();
             this.beforeOffset = bSep / 2
                                 + bp.getBorderBeforeWidth(false)
                                 + bp.getPaddingBefore(false);

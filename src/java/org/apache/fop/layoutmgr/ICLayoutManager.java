@@ -23,19 +23,19 @@ import java.util.List;
 
 // FOP
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.fo.FObj;
-
+import org.apache.fop.fo.flow.InlineContainer;
 /**
  * This creates a single inline container area after
  * laying out the child block areas. All footnotes, floats
  * and id areas are maintained for later retrieval.
  */
 public class ICLayoutManager extends LeafNodeLayoutManager {
-
+    private InlineContainer fobj;
     private List childrenLM;
 
-    public ICLayoutManager(FObj node, List childLM) {
+    public ICLayoutManager(InlineContainer node, List childLM) {
         super(node);
+        fobj = node;
         childrenLM = childLM;
     }
 
@@ -43,4 +43,7 @@ public class ICLayoutManager extends LeafNodeLayoutManager {
         return null;
     }
 
+    protected void addId() {
+        addID(fobj.getId());
+    }
 }
