@@ -748,8 +748,8 @@ public class PropertySets {
         for (int i = 0; i < expansion.length; i++) {
             int expandedProp = expansion.get(i);
             PropertyValue expandedPropValue;
-            PropertyValue specified =
-                    foTree.getInitialValue(expandedProp).getSpecified();
+            PropertyValue specified
+                    = foTree.getInitialSpecifiedValue(expandedProp);
             //   The PropertyValue must be cloneable
             try {
                 expandedPropValue = (PropertyValue)(specified.clone());
