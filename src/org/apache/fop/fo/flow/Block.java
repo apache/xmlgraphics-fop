@@ -187,7 +187,7 @@ public class Block extends FObjMixed {
 		startIndent += bodyIndent + distanceBetweenStarts;
 	    }
 
-            area.getIDReferences().createID(id,area); 
+            area.getIDReferences().createID(id); 
 
 	    this.marker = 0;
 
