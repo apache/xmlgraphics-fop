@@ -6,6 +6,8 @@ Done since 0.20.3 release
   Submitted by: Michael Gratton <mjg@recalldesign.com>
 - Updated ant to version 1.4.1 (Christian Geisert)
   (ant-optional.jar is no longer needed)
+- Changed build.sh to work under cygwin
+  Submitted by: Andriy Palamarchuk <APalamar@wyeth.com>
 ==============================================================================
 Done since 0.20.2 release
 *** General
