@@ -237,5 +237,20 @@ into a raster graphic are not drawn properly in PDF. The image is opaque.
       <p>If you need a higher apparent output resolution for bitmapped images, first make sure that at least one dimension of the image is defined in your XSL-FO input. Apart from that, resolution problems are in the image file itself, and must be corrected there: use or create a higher-resolution image file.</p>
       <note>The explanation above describes only the basic default behavior. There are other attributes of the fo:external-graphic element that can affect the behavior described above.</note>
     </section>
+    <section id="caching">
+      <title>Image caching</title>
+      <p>
+        FOP caches images between runs. The URL is used as a key to identify images which means that when
+        a particular URL appears again, the image is taken from the cache. If you have a servlet that
+        generates a different image each time it is called with the same URL you need to use a constantly 
+        changing dummy parameter on the URL to avoid caching.
+      </p>
+      <p>
+        Currently, the images are not automatically released when an OutOfMemoryError is imminent. The
+        image cache can grow to a considerable size over time when a lot of different URLs are in use.
+        Starting with version 0.20.5 you can call <code>org.apache.fop.image.FopImageFactory.resetCache()</code>
+        to manually empty the cache. Image caching will be improved as part of our redesign effort.
+      </p>
+    </section>
   </body>
 </document>
