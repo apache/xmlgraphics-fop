@@ -85,7 +85,7 @@
   <figure src="images/design/alt.design/PropertyStaticsOverview.png" alt="Top level
     property classes"/>
   <dl>
-    <dt><link href="PropNames.html">PropNames</link></dt>
+    <dt><link href="PropNames-png.html">PropNames</link></dt>
     <dd>
       Contains an array, <code>propertyNames</code>, of the names of
       all properties, and a set of enumeration constants, one
@@ -97,7 +97,7 @@
       hence the naming tiredness.)
       <br/> <br/>
     </dd>
-    <dt><link href="PropertyConsts.html">PropertyConsts</link></dt>
+    <dt><link href="PropertyConsts-png.html">PropertyConsts</link></dt>
     <dd>
       Contains two basic sets of data:<br/>
       Property-indexed arrays and property set
@@ -142,7 +142,7 @@
       <em>backgroundProps</em>  and
       <em>tableProps</em>.<br/> <br/>
     </dd>
-    <dt><link href="Properties.html">Properties</link></dt>
+    <dt><link href="Properties-png.html">Properties</link></dt>
     <dd>
        <br/>
       This class contains only sets of constants for use by the
