@@ -1181,6 +1181,7 @@ public class PDFRenderer extends PrintRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
      */
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
+        endTextObject();
         Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
         renderDocument(doc, ns, pos);
