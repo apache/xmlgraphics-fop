@@ -1,8 +1,6 @@
 /*
- * $Id$
- * 
  *
- * Copyright 1999-2003 The Apache Software Foundation.
+ * Copyright 1999-2004 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- *  
+ * $Id$
  */
 
 package org.apache.fop.apps;
@@ -45,6 +43,7 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.fop.configuration.ConfigurationResource;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationReader;
 
@@ -116,7 +115,7 @@ public class FOPOptions {
 
     private java.util.HashMap rendererOptions;
 
-    private Logger log;
+    private Logger log = Logger.getLogger(Fop.fopPackage);
 
     private Vector xsltParams = null;
     
@@ -345,7 +344,7 @@ public class FOPOptions {
             } catch (Exception e) {}
         }
         if (debug) {
-            Fop.logger.config("base directory: " + baseDir);
+            log.config("base directory: " + baseDir);
         }
         
         if (dumpConfig) {
@@ -356,7 +355,8 @@ public class FOPOptions {
         // quiet mode - this is the last setting, so there is no way to
         // supress the logging of messages during options processing
         if (configuration.isTrue("quiet")) {
-            Fop.logger.setLevel(Level.OFF);
+            Fop.setLoggingLevel(Level.OFF);
+            //log.setLevel(Level.OFF);
         }
         
     }
@@ -385,44 +385,6 @@ public class FOPOptions {
     }
     
     /**
-     * Convenience class for common functionality required by the config
-     * files.
-     * @param fname the configuration file name.
-     * @param classob the requesting class
-     * @return an <tt>InputStream</tt> generated through a call to
-     * <tt>getResourceAsStream</tt> on the context <tt>ClassLoader</tt>
-     * or the <tt>ClassLoader</tt> for the conf class provided as an argument.
-     */
-    public InputStream getConfResourceFile(String fname, Class classob)
-    throws FOPException
-    {
-        InputStream configfile = null;
-        
-        // Try to use Context Class Loader to load the properties file.
-        try {
-            java.lang.reflect.Method getCCL =
-                Thread.class.getMethod("getContextClassLoader", new Class[0]);
-            if (getCCL != null) {
-                ClassLoader contextClassLoader =
-                    (ClassLoader)getCCL.invoke(Thread.currentThread(),
-                            new Object[0]);
-                configfile = contextClassLoader.getResourceAsStream("conf/"
-                        + fname);
-            }
-        } catch (Exception e) {}
-        
-        // the entry /conf/config.xml refers to a directory conf
-        // which is a sibling of org
-        if (configfile == null)
-            configfile = classob.getResourceAsStream("/conf/" + fname);
-        if (configfile == null) {
-            throw new FOPException(
-                    "can't find configuration file " + fname);
-        }
-        return configfile;
-    }
-    
-    /**
      * Loads configuration file from a system standard place.
      * The context class loader and the <code>ConfigurationReader</code>
      * class loader are asked in turn to <code>getResourceAsStream</code>
@@ -433,11 +395,11 @@ public class FOPOptions {
      */
     public void loadConfiguration(String fname)
     throws FOPException {
-        InputStream configfile =
-            getConfResourceFile(fname, ConfigurationReader.class);
+        InputStream configfile = ConfigurationResource.getResourceFile(
+                "conf/" + fname, ConfigurationReader.class);
         
         if (debug) {
-            Fop.logger.config(
+            log.config(
                     "reading configuration file " + fname);
         }
         ConfigurationReader reader = new ConfigurationReader(
@@ -460,14 +422,14 @@ public class FOPOptions {
         if (userConfigFile == null) {
             return;
         }
-        Fop.logger.config(
+        log.config(
                 "reading user configuration file " + userConfigFileName);
         try {
             ConfigurationReader reader = new ConfigurationReader(
                     InputHandler.fileInputSource(userConfigFile),
                     configuration);
         } catch (FOPException ex) {
-            Fop.logger.warning("Can't find user configuration file "
+            log.warning("Can't find user configuration file "
                     + userConfigFile + " in user locations");
             if (debug) {
                 ex.printStackTrace();
@@ -479,7 +441,7 @@ public class FOPOptions {
                 // Try reading the file using loadConfig()
                 loadConfiguration(userConfigFileName);
             } catch (FOPException ex) {
-                Fop.logger.warning("Can't find user configuration file "
+                log.warning("Can't find user configuration file "
                         + userConfigFile + " in system locations");
                 if (debug) {
                     ex.printStackTrace();
@@ -489,8 +451,8 @@ public class FOPOptions {
     }
     
     /**
-     * Get the logger.
-     * @return the logger
+     * Get the log.
+     * @return the log
      */
     public Logger getLogger() {
         return log;
@@ -503,165 +465,146 @@ public class FOPOptions {
         Options options = new Options();
         // The mutually exclusive verbosity group includes the -d and -q flags
         OptionGroup verbosity = new OptionGroup();
+        OptionBuilder.withArgName("debug mode");
+        OptionBuilder.withLongOpt("full-error-dump");
+        OptionBuilder.withDescription("Debug mode: verbose reporting");
         verbosity.addOption(
-                OptionBuilder
-                .withArgName("debug mode")
-                .withLongOpt("full-error-dump")
-                .withDescription("Debug mode: verbose reporting")
-                .create("d"));
+                OptionBuilder.create("d"));
+        OptionBuilder.withArgName("quiet mode");
+        OptionBuilder.withLongOpt("quiet");
+        OptionBuilder.withDescription("Quiet mode: report errors only");
         verbosity.addOption(
-                OptionBuilder
-                .withArgName("quiet mode")
-                .withLongOpt("quiet")
-                .withDescription("Quiet mode: report errors only")
-                .create("q"));
+                OptionBuilder.create("q"));
         verbosity.setRequired(false);
         // Add verbosity to options
         options.addOptionGroup(verbosity);
         // Add the dump-config option directly
+        OptionBuilder.withArgName("dump config");
+        OptionBuilder.withLongOpt("dump-config");
+        OptionBuilder.withDescription("Dump configuration settings");
         options.addOption(
-                OptionBuilder
-                .withArgName("dump config")
-                .withLongOpt("dump-config")
-                .withDescription("Dump configuration settings")
-                .create("x"));
+                OptionBuilder.create("x"));
         // Add the config-file option directly
+        OptionBuilder.withArgName("config file");
+        OptionBuilder.withLongOpt("config-file");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Configuration file");
         options.addOption(
-                OptionBuilder
-                .withArgName("config file")
-                .withLongOpt("config-file")
-                .hasArg()
-                .withDescription("Configuration file")
-                .create("c"));
+                OptionBuilder.create("c"));
         // Add the language option directly
+        OptionBuilder.withArgName("language");
+        OptionBuilder.withLongOpt("language");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("ISO639 language code");
         options.addOption(
-                OptionBuilder
-                .withArgName("language")
-                .withLongOpt("language")
-                .hasArg()
-                .withDescription("ISO639 language code")
-                .create("l"));
+                OptionBuilder.create("l"));
         // Create the mutually exclusive input group
         OptionGroup input = new OptionGroup();
+        OptionBuilder.withArgName("fo:file");
+        OptionBuilder.withLongOpt("fo");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("XSL-FO input file");
         input.addOption(
-                OptionBuilder
-                .withArgName("fo:file")
-                .withLongOpt("fo")
-                .hasArg()
-                .withDescription("XSL-FO input file")
-                .create("fo"));
+                OptionBuilder.create("fo"));
+        OptionBuilder.withArgName("xml file");
+        OptionBuilder.withLongOpt("xml");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("XML source file for generating XSL-FO input");
         input.addOption(
-                OptionBuilder
-                .withArgName("xml file")
-                .withLongOpt("xml")
-                .hasArg()
-                .withDescription("XML source file for generating XSL-FO input")
-                .create("xml"));
+                OptionBuilder.create("xml"));
         // Add the input group to the options
         options.addOptionGroup(input);
         // The xsl option depends on the xml input option.  There is no
         // simple way to express this relationship
+        OptionBuilder.withArgName("xsl stylesheet");
+        OptionBuilder.withLongOpt("xsl");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("XSL stylesheet for transforming XML to XSL-FO");
         options.addOption(
-                OptionBuilder
-                .withArgName("xsl stylesheet")
-                .withLongOpt("xsl")
-                .hasArg()
-                .withDescription("XSL stylesheet for transforming XML to XSL-FO")
-                .create("xsl"));
+                OptionBuilder.create("xsl"));
         // Work-around for the xsl parameters
         // Allow multiple arguments (does this apply to multiple instances
         // of the argument specifier?) of the form <name=value>, using '='
         // as a value separator
+        OptionBuilder.withArgName("name=value");
+        OptionBuilder.withValueSeparator();
+        OptionBuilder.withLongOpt("xsl-param");
+        OptionBuilder.hasArgs(Option.UNLIMITED_VALUES);
+        OptionBuilder.withDescription("Parameter to XSL stylesheet");
         options.addOption(
-                OptionBuilder
-                .withArgName("name=value")
-                .withValueSeparator()
-                .withLongOpt("xsl-param")
-                .hasArgs(Option.UNLIMITED_VALUES)
-                .withDescription("Parameter to XSL stylesheet")
-                .create("param"));
+                OptionBuilder.create("param"));
         
         // Create the mutually exclusive output group
         OptionGroup output = new OptionGroup();
+        OptionBuilder.withArgName("screen renderer");
+        OptionBuilder.withLongOpt("awt");
+        OptionBuilder.withDescription("Input will be renderered to display");
         output.addOption(
-                OptionBuilder
-                .withLongOpt("awt")
-                .withDescription("Input will be renderered to display")
-                .create("awt"));
+                OptionBuilder.create("awt"));
+        OptionBuilder.withArgName("pdf output file");
+        OptionBuilder.withLongOpt("pdf");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Input will be rendered as PDF to named file");
         output.addOption(
-                OptionBuilder
-                .withArgName("pdf output file")
-                .withLongOpt("pdf")
-                .hasArg()
-                .withDescription("Input will be rendered as PDF to named file")
-                .create("pdf"));
+                OptionBuilder.create("pdf"));
+        OptionBuilder.withArgName("postscript output file");
+        OptionBuilder.withLongOpt("ps");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Input will be rendered as Postscript to named file");
         output.addOption(
-                OptionBuilder
-                .withArgName("postscript output file")
-                .withLongOpt("ps")
-                .hasArg()
-                .withDescription("Input will be rendered as Postscript to named file")
-                .create("ps"));
+                OptionBuilder.create("ps"));
+        OptionBuilder.withArgName("pcl output file");
+        OptionBuilder.withLongOpt("pcl");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Input will be rendered as PCL to named file");
         output.addOption(
-                OptionBuilder
-                .withArgName("pcl output file")
-                .withLongOpt("pcl")
-                .hasArg()
-                .withDescription("Input will be rendered as PCL to named file")
-                .create("pcl"));
+                OptionBuilder.create("pcl"));
+        OptionBuilder.withArgName("rtf output file");
+        OptionBuilder.withLongOpt("rtf");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Input will be rendered as RTF to named file");
         output.addOption(
-                OptionBuilder
-                .withArgName("rtf output file")
-                .withLongOpt("rtf")
-                .hasArg()
-                .withDescription("Input will be rendered as RTF to named file")
-                .create("rtf"));
+                OptionBuilder.create("rtf"));
+        OptionBuilder.withArgName("mif output file");
+        OptionBuilder.withLongOpt("mif");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Input will be rendered as MIF to named file");
         output.addOption(
-                OptionBuilder
-                .withArgName("mif output file")
-                .withLongOpt("mif")
-                .hasArg()
-                .withDescription("Input will be rendered as MIF to named file")
-                .create("mif"));
+                OptionBuilder.create("mif"));
+        OptionBuilder.withArgName("svg output file");
+        OptionBuilder.withLongOpt("svg");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Input will be rendered as SVG to named file");
         output.addOption(
-                OptionBuilder
-                .withArgName("svg output file")
-                .withLongOpt("svg")
-                .hasArg()
-                .withDescription("Input will be rendered as SVG to named file")
-                .create("svg"));
+                OptionBuilder.create("svg"));
+        OptionBuilder.withArgName("text output file");
+        OptionBuilder.withLongOpt("plain-text");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Input will be rendered as plain text to named file");
         output.addOption(
-                OptionBuilder
-                .withArgName("text output file")
-                .withLongOpt("plain-text")
-                .hasArg()
-                .withDescription("Input will be rendered as plain text to named file")
-                .create("txt"));
+                OptionBuilder.create("txt"));
+        OptionBuilder.withArgName("area tree output file");
+        OptionBuilder.withLongOpt("area-tree");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("Area tree will be output as XML to named file");
         output.addOption(
-                OptionBuilder
-                .withArgName("area tree output file")
-                .withLongOpt("area-tree")
-                .hasArg()
-                .withDescription("Area tree will be output as XML to named file")
-                .create("at"));
+                OptionBuilder.create("at"));
+        OptionBuilder.withArgName("help");
+        OptionBuilder.withLongOpt("print");
+        OptionBuilder.hasOptionalArg();
+        OptionBuilder.withDescription("Input will be rendered and sent to the printer. "
+                + "Requires extra arguments to the \"java\" command. "
+                + "See options with \"-print help\".");
         output.addOption(
-                OptionBuilder
-                .withArgName("help")
-                .withLongOpt("print")
-                .hasOptionalArg()
-                .withDescription("Input will be rendered and sent to the printer. "
-                        + "Requires extra arguments to the \"java\" command. "
-                        + "See options with \"-print help\".")
-                .create("print"));
+                OptionBuilder.create("print"));
         
         // -s option relevant only to -at area tree output.  Again, no way
         // to express this directly
+        OptionBuilder.withArgName("supress low-level areas");
+        OptionBuilder.withLongOpt("only-block-areas");
+        OptionBuilder.withDescription("Suppress non-block areas in XML renderer");
         options.addOption(
-                OptionBuilder
-                .withArgName("supress low-level areas")
-                .withLongOpt("only-block-areas")
-                .withDescription("Suppress non-block areas in XML renderer")
-                .create("s"));
+                OptionBuilder.create("s"));
         return options;
     }
     
@@ -688,14 +631,20 @@ public class FOPOptions {
         // Miscellaneous
         if (cli.hasOption("d")) {
             arguments.put("debugMode", Boolean.TRUE);
-            //log.setLevel(Level.FINE);
+            //Fop.setLoggingLevel(Level.FINE);
+            log.setLevel(Level.FINE);
         }
         if (cli.hasOption("q")) {
             arguments.put("quiet", Boolean.TRUE);
-            //log.setLevel(Level.SEVERE);
+            //Fop.setLoggingLevel(Level.SEVERE);
+            log.setLevel(Level.SEVERE);
         }
         if (cli.hasOption("x")) {
             arguments.put("dumpConfiguration", Boolean.TRUE);
+            if (log.getLevel().intValue() > Level.CONFIG.intValue()) {
+                //Fop.setLoggingLevel(Level.CONFIG);
+                log.setLevel(Level.CONFIG);
+            }
         }
         if (cli.hasOption("c")) {
             arguments.put("userConfigFileName", cli.getOptionValue("c"));
@@ -781,12 +730,12 @@ public class FOPOptions {
         if (remArgs != null) {
             int i = 0;
             if (inputmode == NOT_SET && i < remArgs.length
-                    && args[i].charAt(0) != '-') {
+                    && remArgs[i].charAt(0) != '-') {
                 setInputMode(FO_INPUT);
                 arguments.put("foFileName", remArgs[i++]);
             }
             if (outputmode == NOT_SET && i < remArgs.length
-                    && args[i].charAt(0) != '-') {
+                    && remArgs[i].charAt(0) != '-') {
                 setOutputMode(PDF_OUTPUT);
                 arguments.put("outputFileName", remArgs[i++]);
             }
@@ -1077,91 +1026,100 @@ public class FOPOptions {
      * debug mode. outputs all commandline settings
      */
     private void debug() {
-        log.fine("Input mode: ");
+        StringBuffer fine = new StringBuffer();
+        StringBuffer severe = new StringBuffer();
+        fine.append("Input mode: ");
         switch (inputmode) {
             case NOT_SET:
-                log.fine("not set");
+                fine.append("not set");
                 break;
             case FO_INPUT:
-                log.fine("FO ");
-                log.fine("fo input file: " + foFile.toString());
+                fine.append("FO ");
+                fine.append("fo input file: " + foFile.toString());
                 break;
             case XSLT_INPUT:
-                log.fine("xslt transformation");
-                log.fine("xml input file: " + xmlFile.toString());
-                log.fine("xslt stylesheet: " + xsltFile.toString());
+                fine.append("xslt transformation");
+                fine.append("xml input file: " + xmlFile.toString());
+                fine.append("xslt stylesheet: " + xsltFile.toString());
                 break;
             default:
-                log.fine("unknown input type");
+                fine.append("unknown input type");
         }
-        log.fine("Output mode: ");
+        fine.append("\nOutput mode: ");
         switch (outputmode) {
             case NOT_SET:
-                log.fine("not set");
+                fine.append("not set");
                 break;
             case PDF_OUTPUT:
-                log.fine("pdf");
-                log.fine("output file: " + outputFile.toString());
+                fine.append("pdf");
+                fine.append("output file: " + outputFile.toString());
                 break;
             case AWT_OUTPUT:
-                log.fine("awt on screen");
+                fine.append("awt on screen");
                 if (outputFile != null) {
-                    log.severe("awt mode, but outfile is set:");
-                    log.fine("out file: " + outputFile.toString());
+                    severe.append("awt mode, but outfile is set:\n");
+                    fine.append("out file: " + outputFile.toString());
                 }
                 break;
             case MIF_OUTPUT:
-                log.fine("mif");
-                log.fine("output file: " + outputFile.toString());
+                fine.append("mif");
+                fine.append("output file: " + outputFile.toString());
                 break;
             case RTF_OUTPUT:
-                log.fine("rtf");
-                log.fine("output file: " + outputFile.toString());
+                fine.append("rtf");
+                fine.append("output file: " + outputFile.toString());
                 break;
             case PRINT_OUTPUT:
-                log.fine("print directly");
+                fine.append("print directly");
                 if (outputFile != null) {
-                    log.severe("print mode, but outfile is set:");
-                    log.severe("out file: " + outputFile.toString());
+                    severe.append("print mode, but outfile is set:\n");
+                    severe.append("out file: " + outputFile.toString() + "\n");
                 }
                 break;
             case PCL_OUTPUT:
-                log.fine("pcl");
-                log.fine("output file: " + outputFile.toString());
+                fine.append("pcl");
+                fine.append("output file: " + outputFile.toString());
                 break;
             case PS_OUTPUT:
-                log.fine("PostScript");
-                log.fine("output file: " + outputFile.toString());
+                fine.append("PostScript");
+                fine.append("output file: " + outputFile.toString());
                 break;
             case TXT_OUTPUT:
-                log.fine("txt");
-                log.fine("output file: " + outputFile.toString());
+                fine.append("txt");
+                fine.append("output file: " + outputFile.toString());
                 break;
             case SVG_OUTPUT:
-                log.fine("svg");
-                log.fine("output file: " + outputFile.toString());
+                fine.append("svg");
+                fine.append("output file: " + outputFile.toString());
                 break;
             default:
-                log.fine("unknown input type");
+                fine.append("unknown input type");
         }
         
         
-        log.fine("OPTIONS");
+        fine.append("\nOPTIONS\n");
         if (userConfigFile != null) {
-            log.fine("user configuration file: "
+            fine.append("user configuration file: "
                     + userConfigFile.toString());
         } else {
-            log.fine("no user configuration file is used [default]");
+            fine.append("no user configuration file is used [default]");
         }
+        fine.append("\n");
         if (dumpConfig == true) {
-            log.fine("dump configuration");
+            fine.append("dump configuration");
         } else {
-            log.fine("don't dump configuration [default]");
+            fine.append("don't dump configuration [default]");
         }
+        fine.append("\n");
         if (configuration.isTrue("quiet")) {
-            log.fine("quiet mode on");
+            fine.append("quiet mode on");
         } else {
-            log.fine("quiet mode off [default]");
+            fine.append("quiet mode off [default]");
+        }
+        fine.append("\n");
+        log.fine(fine.toString());
+        if (severe.toString() != "") {
+            log.severe(severe.toString());
         }
         
     }
