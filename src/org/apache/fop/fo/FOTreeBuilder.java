@@ -159,7 +159,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      */
     public void characters(char data[], int start, int length) {
         if(currentFObj != null) {
-            currentFObj.addCharacters(data, start, start + length);
+            currentFObj.addCharacters(data, start, length);
         }
     }
 

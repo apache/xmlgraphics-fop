@@ -23,7 +23,6 @@ import org.apache.fop.apps.FOPException;
 public class FOText extends FONode {
 
     protected char[] ca;
-    protected int start;
     protected int length;
 
     FontState fs;
@@ -41,14 +40,11 @@ public class FOText extends FONode {
 
     TextState ts;
 
-
-    public FOText(char[] chars, int s, int e, FObj parent) {
+    public FOText(StringBuffer b, FObj parent) {
         super(parent);
-        this.start = 0;
-        this.ca = new char[e - s];
-        for (int i = s; i < e; i++)
-            ca[i - s] = chars[i];
-        this.length = e - s;
+        this.length = b.length();
+        this.ca = new char[this.length];
+        b.getChars(0,length,ca,0);
     }
 
     public void setUnderlined(boolean ul) {
@@ -72,7 +68,7 @@ public class FOText extends FONode {
             return true;
         }
 
-        for (int i = start; i < start + length; i++) {
+        for (int i = 0; i < length; i++) {
             char ch = ca[i];
             if (!((ch == ' ') || (ch == '\n') || (ch == '\r')
                     || (ch == '\t'))) {    // whitespace
@@ -85,7 +81,7 @@ public class FOText extends FONode {
     public Status layout(Area area) throws FOPException {
         if (!(area instanceof BlockArea)) {
             log.error("text outside block area"
-                                   + new String(ca, start, length));
+                                   + new String(ca, 0, length));
             return new Status(Status.OK);
         }
         if (this.marker == START) {
@@ -125,7 +121,7 @@ public class FOText extends FONode {
             ts.setOverlined(overlined);
             ts.setLineThrough(lineThrough);
 
-            this.marker = this.start;
+            this.marker = 0;
         }
         int orig_start = this.marker;
         this.marker = addText((BlockArea)area, fs, red, green, blue,
@@ -227,13 +223,6 @@ public class FOText extends FONode {
                                      int whiteSpaceCollapse, char data[],
                                      int start, int end, TextState textState,
                                      int vAlign) {
-        int ts, te;
-        char[] ca;
-
-        ts = start;
-        te = end;
-        ca = data;
-
         LineArea la = ba.getCurrentLineArea();
         if (la == null) {
             return start;
@@ -249,13 +238,13 @@ public class FOText extends FONode {
         // hyphenationRemainCharacterCount);
         ba.setupLinkSet(ls);
 
-        ts = la.addText(ca, ts, te, ls, textState);
+        start = la.addText(data, start, end, ls, textState);
         // this.hasLines = true;
 
-        while (ts != -1) {
+        while ( start != -1) {
             la = ba.createNextLineArea();
             if (la == null) {
-                return ts;
+                return start;
             }
             la.changeFont(fontState);
             la.changeColor(red, green, blue);
@@ -266,7 +255,7 @@ public class FOText extends FONode {
             // hyphenationRemainCharacterCount);
             ba.setupLinkSet(ls);
 
-            ts = la.addText(ca, ts, te, ls, textState);
+            start = la.addText(data, start, end, ls, textState);
         }
         return -1;
     }
