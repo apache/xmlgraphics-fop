@@ -74,8 +74,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 // Java
-import java.io.PrintWriter;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * <P>Primary class that drives overall FOP process.
@@ -126,6 +125,9 @@ public class XTDriver {
 
     /** the PrintWriter to use to output the results of the renderer */
     protected PrintWriter writer;
+
+    /** the stream to use to output the results of the renderer */
+    protected OutputStream stream;
 
     /** create a new Driver */
     public XTDriver() {
@@ -367,6 +369,14 @@ public class XTDriver {
     }
 
     /**
+       * set the OutputStream to use to output the result of the Renderer
+       * (if applicable)
+       */
+    public void setOutputStream(OutputStream stream) {
+        this.stream = stream;
+    }
+
+    /**
      * format the formatting object tree into an area tree
      */
     public void format()
@@ -385,6 +395,6 @@ public class XTDriver {
      */
     public void render()
 	throws IOException, FOPException {
-	this.renderer.render(areaTree, this.writer);
+	this.renderer.render(areaTree, this.stream);
     }
 }

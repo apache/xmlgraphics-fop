@@ -116,7 +116,8 @@ public class XTCommandLine {
 	    driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
 	    driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
 	    driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-	    driver.setOutputStream(new FileOutputStream(args[2]));
+        OutputStream stream = new BufferedOutputStream(new FileOutputStream(args[2]));
+	    driver.setOutputStream(stream);
 	    driver.buildFOTree(xslProcessor, fileInputSource(args[0]));
 	    driver.format();
 	    driver.render();

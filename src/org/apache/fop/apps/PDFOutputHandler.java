@@ -33,6 +33,9 @@ public class PDFOutputHandler extends XTFOTreeBuilder implements OutputDocumentH
   /** the PrintWriter to use to output the results of the renderer */
   protected PrintWriter writer;
 
+  /** the stream to use to output the results of the renderer */
+  protected OutputStream stream;
+
   private boolean keepOpen;
 
   //////////////////////////////////////////////////////////////////////////////////////
@@ -46,14 +49,14 @@ public class PDFOutputHandler extends XTFOTreeBuilder implements OutputDocumentH
    */
   public PDFOutputHandler(OutputStream out) {
     this();
-    this.writer = new PrintWriter(out);
+    this.stream = out;
   }
 
   //////////////////////////////////////////////////////////////////////////////////////
   /**
    */
   public DocumentHandler init(Destination dest, AttributeList atts) throws IOException {
-    this.writer = new PrintWriter(dest.getOutputStream("application/pdf", null));
+    this.stream = dest.getOutputStream("application/pdf", null);
     this.keepOpen = dest.keepOpen();
 
     String version = org.apache.fop.apps.Version.getVersion();
@@ -112,7 +115,7 @@ public class PDFOutputHandler extends XTFOTreeBuilder implements OutputDocumentH
    */
   public void doRender()
     throws IOException,FOPException {
-    this.renderer.render(areaTree, this.writer);
+    this.renderer.render(areaTree, this.stream);
   }
   
   //////////////////////////////////////////////////////////////////////////////////////
