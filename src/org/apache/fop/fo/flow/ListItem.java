@@ -65,18 +65,19 @@ import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 
 public class ListItem extends FObj {
-    ListItemLabel label = null;
-    ListItemBody body = null;
+    
+    private ListItemLabel label = null;
+    private ListItemBody body = null;
 
-    int align;
-    int alignLast;
-    int breakBefore;
-    int breakAfter;
-    int lineHeight;
-    int startIndent;
-    int endIndent;
-    int spaceBefore;
-    int spaceAfter;
+    private int align;
+    private int alignLast;
+    private int breakBefore;
+    private int breakAfter;
+    private int lineHeight;
+    private int startIndent;
+    private int endIndent;
+    private int spaceBefore;
+    private int spaceAfter;
 
     public ListItem(FONode parent) {
         super(parent);

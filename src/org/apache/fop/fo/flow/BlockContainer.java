@@ -67,17 +67,17 @@ import java.util.List;
 
 public class BlockContainer extends FObj {
 
-    ColorType backgroundColor;
-    int position;
+    private ColorType backgroundColor;
+    private int position;
 
-    int top;
-    int bottom;
-    int left;
-    int right;
-    int width;
-    int height;
+    private int top;
+    private int bottom;
+    private int left;
+    private int right;
+    private int width;
+    private int height;
 
-    int span;
+    private int span;
 
     public BlockContainer(FONode parent) {
         super(parent);
