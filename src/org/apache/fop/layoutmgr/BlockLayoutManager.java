@@ -220,7 +220,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         addBlockSpacing(adjust, layoutProps.spaceBefore.space);
 
         addID();
-        addMarkers(true);
+        addMarkers(true, true);
 
         LayoutManager childLM ;
         LayoutContext lc = new LayoutContext(0);
@@ -242,7 +242,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         }
 
 
-        addMarkers(false);
+        addMarkers(false, true);
 
         flush();
 

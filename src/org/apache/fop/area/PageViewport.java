@@ -47,8 +47,9 @@ public class PageViewport implements Resolveable, Cloneable {
     // start and end are added by the fo that contains the markers
     private Map markerFirstStart = null;
     private Map markerLastStart = null;
-    private Map markerFirstEnd = null;
+    private Map markerFirstAny = null;
     private Map markerLastEnd = null;
+    private Map markerLastAny = null;
 
     /**
      * Create a page viewport.
@@ -185,8 +186,8 @@ public class PageViewport implements Resolveable, Cloneable {
      * For "first-starting-within-page" it adds the markers
      * that are starting only if the marker class name is not
      * already added.
-     * For "first-including-carryover" it adds any marker if
-     * the marker class name is not already added.
+     * For "first-including-carryover" it adds any starting marker
+     * if the marker class name is not already added.
      * For "last-starting-within-page" it adds all marks that
      * are starting, replacing earlier markers.
      * For "last-ending-within-page" it adds all markers that
@@ -196,44 +197,58 @@ public class PageViewport implements Resolveable, Cloneable {
      *
      * @param marks the map of markers to add
      * @param start if the area being added is starting or ending
+     * @param isfirst isfirst or islast flag
      */
-    public void addMarkers(Map marks, boolean start) {
+    public void addMarkers(Map marks, boolean start, boolean isfirst) {
         if (start) {
-            if (markerFirstStart == null) {
-                markerFirstStart = new HashMap();
-            }
-            if (markerLastStart == null) {
-                markerLastStart = new HashMap();
-            }
-            if (markerFirstEnd == null) {
-                markerFirstEnd = new HashMap();
-            }
-            // only put in new values, leave current
-            for (Iterator iter = marks.keySet().iterator(); iter.hasNext();) {
-                Object key = iter.next();
-                if (!markerFirstStart.containsKey(key)) {
-                    markerFirstStart.put(key, marks.get(key));
+            if (isfirst) {
+                if (markerFirstStart == null) {
+                    markerFirstStart = new HashMap();
                 }
-                if (!markerFirstEnd.containsKey(key)) {
-                    markerFirstEnd.put(key, marks.get(key));
+                if (markerFirstAny == null) {
+                    markerFirstAny = new HashMap();
+                }
+                // only put in new values, leave current
+                for (Iterator iter = marks.keySet().iterator(); iter.hasNext();) {
+                    Object key = iter.next();
+                    if (!markerFirstStart.containsKey(key)) {
+                        markerFirstStart.put(key, marks.get(key));
+                    }
+                    if (!markerFirstAny.containsKey(key)) {
+                        markerFirstAny.put(key, marks.get(key));
+                    }
+                }
+                if (markerLastStart == null) {
+                    markerLastStart = new HashMap();
+                }
+                // replace all
+                markerLastStart.putAll(marks);
+
+            } else {
+                if (markerFirstAny == null) {
+                    markerFirstAny = new HashMap();
+                }
+                // only put in new values, leave current
+                for (Iterator iter = marks.keySet().iterator(); iter.hasNext();) {
+                    Object key = iter.next();
+                    if (!markerFirstAny.containsKey(key)) {
+                        markerFirstAny.put(key, marks.get(key));
+                    }
                 }
             }
-            markerLastStart.putAll(marks);
         } else {
-            if (markerFirstEnd == null) {
-                markerFirstEnd = new HashMap();
-            }
-            if (markerLastEnd == null) {
-                markerLastEnd = new HashMap();
-            }
-            // only put in new values, leave current
-            for (Iterator iter = marks.keySet().iterator(); iter.hasNext();) {
-                Object key = iter.next();
-                if (!markerFirstEnd.containsKey(key)) {
-                    markerFirstEnd.put(key, marks.get(key));
+            if (!isfirst) {
+                if (markerLastEnd == null) {
+                    markerLastEnd = new HashMap();
                 }
+                // replace all
+                markerLastEnd.putAll(marks);
             }
-            markerLastEnd.putAll(marks);
+            if (markerLastAny == null) {
+                markerLastAny = new HashMap();
+            }
+            // replace all
+            markerLastAny.putAll(marks);
         }
     }
 
@@ -247,29 +262,39 @@ public class PageViewport implements Resolveable, Cloneable {
      * @return Object the marker found or null
      */
     public Object getMarker(String name, int pos) {
+        Object mark = null;
         switch (pos) {
             case RetrievePosition.FSWP:
                 if (markerFirstStart != null) {
-                    return markerFirstStart.get(name);
+                    mark = markerFirstStart.get(name);
+                }
+                if (mark == null && markerFirstAny != null) {
+                    mark = markerFirstAny.get(name);
                 }
             break;
             case RetrievePosition.FIC:
-                if (markerFirstStart != null) {
-                    return markerFirstEnd.get(name);
+                if (markerFirstAny != null) {
+                    mark = markerFirstAny.get(name);
                 }
             break;
             case RetrievePosition.LSWP:
-                if (markerFirstStart != null) {
-                    return markerLastStart.get(name);
+                if (markerLastStart != null) {
+                    mark = markerLastStart.get(name);
+                }
+                if (mark == null && markerLastAny != null) {
+                    mark = markerLastAny.get(name);
                 }
             break;
             case RetrievePosition.LEWP:
-                if (markerFirstStart != null) {
-                    return markerLastEnd.get(name);
+                if (markerLastEnd != null) {
+                    mark = markerLastEnd.get(name);
+                }
+                if (mark == null && markerLastAny != null) {
+                    mark = markerLastAny.get(name);
                 }
             break;
         }
-        return null;
+        return mark;
     }
 
     /**
@@ -321,7 +346,7 @@ public class PageViewport implements Resolveable, Cloneable {
     /**
      * Clear the page contents to save memory.
      * This object is kept for the life of the area tree since
-     * it holds id information and is used as a key.
+     * it holds id and marker information and is used as a key.
      */
     public void clear() {
         page = null;

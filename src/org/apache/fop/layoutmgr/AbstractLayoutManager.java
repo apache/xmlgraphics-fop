@@ -174,7 +174,8 @@ public abstract class AbstractLayoutManager implements LayoutManager {
                 curChildLM.resetPosition(null);
                 curChildLM = (LayoutManager) childLMiter.previous();
             }
-            childLMiter.next(); // Otherwise next returns same object
+            // Otherwise next returns same object
+            childLMiter.next();
         }
         if(curChildLM != null) {
             curChildLM.resetPosition(pos);
@@ -324,10 +325,10 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     /**
      * Add the markers when adding an area.
      */
-    protected void addMarkers(boolean start) {
+    protected void addMarkers(boolean start, boolean isfirst) {
         // add markers
         if (markers != null) {
-            addMarkerMap(markers, start);
+            addMarkerMap(markers, start, isfirst);
         }
     }
 
@@ -336,8 +337,8 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      *
      * @see org.apache.fop.layoutmgr.LayoutManager
      */
-    public void addMarkerMap(Map marks, boolean start) {
-        parentLM.addMarkerMap(marks, start);
+    public void addMarkerMap(Map marks, boolean start, boolean isfirst) {
+        parentLM.addMarkerMap(marks, start, isfirst);
     }
 
     /**

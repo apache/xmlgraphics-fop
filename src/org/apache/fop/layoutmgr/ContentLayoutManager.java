@@ -214,8 +214,8 @@ public class ContentLayoutManager implements LayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void addMarkerMap(Map marks, boolean start) {
-        parentLM.addMarkerMap(marks, start);
+    public void addMarkerMap(Map marks, boolean start, boolean isfirst) {
+        parentLM.addMarkerMap(marks, start, isfirst);
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */

@@ -13,6 +13,7 @@ import org.apache.fop.area.Block;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * LayoutManager for an fo:flow object.
@@ -102,7 +103,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      *
      * @see org.apache.fop.layoutmgr.LayoutManager
      */
-    public void addMarker(String name, LayoutManager lm, boolean start) {
+    public void addMarker(Map marks, boolean start, boolean isfirst) {
         // error markers not allowed in static
         getLogger().error("Cannot add marker to static areas");
     }

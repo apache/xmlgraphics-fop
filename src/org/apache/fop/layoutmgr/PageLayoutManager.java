@@ -268,10 +268,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param lm the layout manager for the marker contents
      * @param start true if starting marker area, false for ending
      */
-    public void addMarkerMap(Map marks, boolean start) {
+    public void addMarkerMap(Map marks, boolean start, boolean isfirst) {
         //getLogger().debug("adding markers: " + marks + ":" + start);
         // add markers to page on area tree
-        curPage.addMarkers(marks, start);
+        curPage.addMarkers(marks, start, isfirst);
     }
 
     /**

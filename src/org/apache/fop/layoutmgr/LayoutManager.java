@@ -9,6 +9,7 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fo.FObj;
+
 import org.apache.fop.fo.flow.Marker;
 
 import org.apache.fop.area.Area;
@@ -193,10 +194,10 @@ public interface LayoutManager {
      * method is used to add those markers to the page.
      *
      * @param name the marker class name
-     * @param lm the layout manager of the marker child
      * @param start true if the formatting object is starting false is finishing
+     * @param isfirst a flag for is first
      */
-    public void addMarkerMap(Map marks, boolean start);
+    public void addMarkerMap(Map marks, boolean start, boolean isfirst);
 
     /**
      * Retrieve a marker.
@@ -208,5 +209,4 @@ public interface LayoutManager {
      * @return the layout manaager of the retrieved marker if any
      */
     public Marker retrieveMarker(String name, int pos, int boundary);
-
 }
