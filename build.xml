@@ -440,29 +440,44 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <!-- generate the java files from xml resources -->
     <echo message="Generating the java files from xml resources"/>
-    <xslt infile="${allprops.xml}" xsltfile="${genconst.xsl}"
-        dependent="${foproperties.xml},${extproperties.xml},${colorkw.xml}"
-        outfile="${build.src}/${replacestring}/fo/properties/Constants.java" smart="yes"/>
 
-    <xslt infile="${foproperties.xml}" xsltfile="${properties.xsl}"
-        dependent="${propinc.xsl},${colorkw.xml}"
-        outfile="${build.src}/${replacestring}/fo/properties/fo_${ignore_this}" smart="yes"/>
-    <xslt infile="${foproperties.xml}" xsltfile="${propmap.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${build.src}/${replacestring}/fo/properties/FOPropertyMapping.java" smart="yes"/>
-    <xslt infile="${foproperties.xml}" xsltfile="${enumgen.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${build.src}/${replacestring}/fo/properties/foenums_${ignore_this}" smart="yes"/>
+    <dependset>
+        <srcfilelist dir="./" files="${foproperties.xml},${colorkw.xml}"/>
+        <targetfilelist dir="./" files="${build.src}/${replacestring}/fo/properties/Constants.java,${build.src}/${replacestring}/fo/properties/fo_${ignore_this}"/>
+    </dependset>
+    <dependset>
+        <srcfilelist dir="./" files="${propinc.xsl}"/>
+        <targetfilelist dir="./" files="${build.src}/${replacestring}/fo/properties/fo_${ignore_this},${build.src}/${replacestring}/fo/properties/FOPropertyMapping.java,${build.src}/${replacestring}/fo/properties/foenums_${ignore_this}"/>
+    </dependset>
 
-    <xslt infile="${extproperties.xml}" xsltfile="${properties.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${build.src}/${replacestring}/fo/properties/ext_${ignore_this}" smart="yes"/>
-    <xslt infile="${extproperties.xml}" xsltfile="${propmap.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${build.src}/${replacestring}/fo/properties/ExtensionPropertyMapping.java" smart="yes"/>
-    <xslt infile="${extproperties.xml}" xsltfile="${enumgen.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${build.src}/${replacestring}/fo/properties/extenums_${ignore_this}" smart="yes"/>
+    <dependset>
+        <srcfilelist dir="./" files="${encodings.xml},${charlist.xsl},${fontfile.xsl},
+                                     ${Courier.xml},${Courier-Oblique.xml},${Courier-Bold.xml},
+                                     ${Courier-BoldOblique.xml},
+                                     ${Helvetica.xml},${Helvetica-Bold.xml},${Helvetica-Oblique.xml},
+                                     ${Helvetica-BoldOblique.xml},
+                                     ${Times-Roman.xml},${Times-Italic.xml},${Times-Bold.xml},
+                                     ${Times-BoldItalic.xml},
+                                     ${Symbol.xml},${ZapfDingbats.xml}"/>
+        <targetfilelist dir="./" files="${build.src}/${replacestring}/render/pdf/fonts/Courier*,
+                                        ${build.src}/${replacestring}/render/pdf/fonts/Times*,
+                                        ${build.src}/${replacestring}/render/pdf/fonts/Helvetica*,
+                                        ${build.src}/${replacestring}/render/pdf/fonts/Symbol*,
+                                        ${build.src}/${replacestring}/render/pdf/fonts/ZapfDingbats*"/>
+    </dependset>
+
+    <style in="${allprops.xml}" style="${genconst.xsl}"
+        out="${build.src}/${replacestring}/fo/properties/Constants.java"/>
+
+    <style in="${foproperties.xml}" style="${properties.xsl}"
+        out="${build.src}/${replacestring}/fo/properties/fo_${ignore_this}"/>
+    <style in="${foproperties.xml}" style="${propmap.xsl}"
+        out="${build.src}/${replacestring}/fo/properties/FOPropertyMapping.java"/>
+    <style in="${foproperties.xml}" style="${enumgen.xsl}"
+        out="${build.src}/${replacestring}/fo/properties/foenums_${ignore_this}"/>
+
+    <style in="${extproperties.xml}" style="${propmap.xsl}"
+        out="${build.src}/${replacestring}/fo/properties/ExtensionPropertyMapping.java"/>
 
     <style
        in="${encodings.xml}" style="${charlist.xsl}"
