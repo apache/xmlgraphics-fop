@@ -24,12 +24,9 @@
 
 package org.apache.fop.fo;
 
-//import java.util.BitSet;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import org.apache.fop.datastructs.ROStringArray;
-import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
@@ -82,69 +79,6 @@ public class PropertyConsts {
     public Property getProperty(int propindex) throws PropertyException {
         return setupProperty(propindex);
     }
-    /**
-     * A Class[] array containing Class objects corresponding to each of the
-     * class names in the classNames array.  Elements are set
-     * in parallel to the creation of the class names in
-     * the classNames array.  It can be indexed by the property name
-     * constants defined in this file.
-     */
-    private final Class[] classes
-                            = new Class[PropNames.LAST_PROPERTY_INDEX + 1];
-
-    /**
-     * A String[] array of the property class names.  This array is
-     * effectively 1-based, with the first element being unused.
-     * The elements of this array are set by converting the FO
-     * property names from the array PropNames.propertyNames into class
-     * names by converting the first character of every component word to
-     * upper case, and removing all punctuation characters.
-     * It can be indexed by the property name constants defined in
-     * the PropNames class.
-     */
-    private final String[] classNames
-                            = new String[PropNames.LAST_PROPERTY_INDEX + 1];
-
-    /**
-     * A HashMap whose elements are an integer index value keyed by the name
-     * of a property class.  The index value is the index of the property
-     * class name in the classNames[] array.
-     */
-    private final HashMap classToIndex = new HashMap(
-                    (int)((PropNames.LAST_PROPERTY_INDEX + 1) / 0.75) + 1);
-
-    /**
-     * An int[] array of the values of the <i>traitMapping</i> field of each
-     * property.  The array is indexed by the index value constants that are
-     * defined in the PropNames class in parallel to the
-     * PropNames.propertyNames[] array.
-     * The array elements are set from the values of the
-     * <i>traitMapping</i> field in each property class.
-     */
-    private final int[] traitMappings
-                            = new int[PropNames.LAST_PROPERTY_INDEX + 1];
-
-    /**
-     * An int[] array of the types of the <i>initialValue</i> field of each
-     * property.  The array is indexed by the index value constants that are
-     * defined in the PropNames class in parallel to the
-     * PropNames.propertyNames[] array.
-     */
-    private final int[] initialValueTypes
-                            = new int[PropNames.LAST_PROPERTY_INDEX + 1];
-    /**
-     * Get the initial value type for a property name.
-     * @param property String name of the FO property
-     * @return int enumerated initialValueType.  These constants are defined
-     * as static final ints in this class.  Note that an undefined property
-     * name will return the constant defined as NOTYPE_IT
-     */
-    public int getInitialValueType(String property)
-                    throws PropertyException
-    {
-        // Get the property index then index into the initialvaluetypes array
-        return getInitialValueType(PropNames.getPropertyIndex(property));
-    }
 
     /**
      * get the initial value type for a property index.
@@ -156,8 +90,7 @@ public class PropertyConsts {
     public int getInitialValueType(int propindex)
             throws PropertyException
     {
-        setupProperty(propindex);
-        return initialValueTypes[propindex];
+        return setupProperty(propindex).getInitialValueType();
     }
 
     /**
@@ -255,14 +188,6 @@ public class PropertyConsts {
         Property property = setupProperty(propindex);
         return inherited[propindex] != Property.NO;
     }
-    /**
-     * @param property String name of the FO property
-     * @return <tt>boolean</tt> is property inherited?
-     * @throws PropertyException
-     */
-    public boolean isInherited(String property) throws PropertyException {
-        return isInherited(PropNames.getPropertyIndex(property));
-    }
 
 
     /**
@@ -306,15 +231,6 @@ public class PropertyConsts {
     }
 
     /**
-     * @param property String name of the FO property
-     * @return <tt>boolean</tt> is property a shorthand?
-     * @throws PropertyException
-     */
-    public boolean isShorthand(String property) throws PropertyException {
-        return isShorthand(PropNames.getPropertyIndex(property));
-    }
-
-    /**
      * @param propertyIndex int index of the FO property
      * @return <tt>boolean</tt> is property a compound?
      * @throws PropertyException
@@ -325,31 +241,12 @@ public class PropertyConsts {
     }
 
     /**
-     * @param property String name of the FO property
-     * @return <tt>boolean</tt> is property a compound?
-     * @throws PropertyException
-     */
-    public boolean isCompound(String property) throws PropertyException {
-        return isCompound(PropNames.getPropertyIndex(property));
-    }
-
-    /**
      * @param propertyIndex int index of the FO property
      * @return <tt>int</tt> dataTypes value.
      * @throws PropertyException
      */
     public int getDataTypes(int propertyIndex) throws PropertyException {
-        Property property = setupProperty(propertyIndex);
-        return datatypes[propertyIndex];
-    }
-
-    /**
-     * @param property String name of the FO property
-     * @return <tt>int</tt> dataTypes value.
-     * @throws PropertyException
-     */
-    public int getDataTypes(String property) throws PropertyException {
-        return getDataTypes(PropNames.getPropertyIndex(property));
+        return setupProperty(propertyIndex).getDataTypes();
     }
 
     /**
@@ -452,26 +349,15 @@ public class PropertyConsts {
                             ).toString() + token.substring(1);
             cname = cname + pname;
         }
-        classNames[propindex] = cname;
-        
-        // Set up the classToIndex Hashmap with the name of the
-        // property class as a key, and the integer index as a value
-        if (classToIndex.put(cname, Ints.consts.get(propindex)) != null)
-            throw new PropertyException
-                ("Duplicate values in classToIndex for key " + cname);
 
         // Get the class for this property name
         String name = packageName + ".properties." + cname;
         try {
             pclass = Class.forName(name);
-            classes[propindex] = pclass;
             // Instantiate the class
             property = (Property)(pclass.newInstance());
             properties[propindex] = property;
             inherited[propindex] = property.getInherited();
-            datatypes[propindex] = property.getDataTypes();
-            initialValueTypes[propindex] = property.getInitialValueType();
-            traitMappings[propindex] = property.getTraitMapping();
             correspondingAbs[propindex] = property.isCorrespondingAbsolute();
             correspondingRel[propindex] = property.isCorrespondingRelative();
 
