@@ -182,7 +182,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.20.4cvs"/>
+    <property name="version" value="0.20.4rc"/>
     <filter  token="version" value="${version}"/>
     <property name="year" value="1999-2002"/>
 
@@ -285,7 +285,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest"/>
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
-    <property name="runtime.classpath" value="lib/xercesImpl-2.0.1.jar lib/xml-apis.jar lib/xalan-2.3.1.jar lib/batik.jar lib/jimi-1.0.jar lib/avalon-framework-cvs-20020315.jar"/>
+            <property name="runtime.classpath" value="xercesImpl-2.0.1.jar xml-apis.jar xalan-2.3.1.jar batik.jar jimi-1.0.jar avalon-framework-cvs-20020315.jar"/>
    
     <filter filtersfile="${build.src}/codegen/filter"/>
 
