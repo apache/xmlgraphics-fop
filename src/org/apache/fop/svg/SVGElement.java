@@ -84,39 +84,17 @@ public class SVGElement extends SVGObj {
 
             this.fs = area.getFontState();
 
-        final Element svgRoot = element;
+        // TODO - change so doesn't hold onto fo,area tree
+        Element svgRoot = element;
         /* create an SVG area */
         /* if width and height are zero, get the bounds of the content. */
-        DefaultSVGContext dc = new DefaultSVGContext() {
-            public float getPixelToMM() {
-                // 72 dpi
-                return 0.35277777777777777778f;
-            }
-
-            public float getViewportWidth(Element e) throws IllegalStateException {
-                if(e == svgRoot) {
-                    ForeignObjectArea foa = (ForeignObjectArea)area;
-                    if(!foa.isContentWidthAuto()) {
-                        return foa.getContentWidth();
-                    }
-                }
-                return super.getViewportWidth(e);
-            }
-
-            public float getViewportHeight(Element e) throws IllegalStateException {
-                if(e == svgRoot) {
-                    ForeignObjectArea foa = (ForeignObjectArea)area;
-                    if(!foa.isContentHeightAuto()) {
-                        return foa.getContentHeight();
-                    }
-                }
-                return super.getViewportHeight(e);
-            }
-
-            public List getDefaultFontFamilyValue() {
-                return FONT_FAMILY;
-            }
-        };
+        FOPSVGContext dc = new FOPSVGContext();
+        dc.svgRoot = element;
+        ForeignObjectArea foa = (ForeignObjectArea)area;
+        dc.cwauto = foa.isContentWidthAuto();
+        dc.chauto = foa.isContentHeightAuto();
+        dc.cwidth = foa.getContentWidth();
+        dc.cheight = foa.getContentHeight();
         ((SVGOMDocument)doc).setSVGContext(dc);
 
         try {
@@ -145,7 +123,6 @@ public class SVGElement extends SVGObj {
         svg.end();
 
         /* add the SVG area to the containing area */
-        ForeignObjectArea foa = (ForeignObjectArea)area;
         foa.setObject(svg);
         foa.setIntrinsicWidth(svg.getWidth());
         foa.setIntrinsicHeight(svg.getHeight());
@@ -162,16 +139,6 @@ public class SVGElement extends SVGObj {
         element = doc.getDocumentElement();
 
         buildTopLevel(doc, element);
-    }
-
-    public final static List FONT_FAMILY;
-    static {
-        FONT_FAMILY = new ArrayList();
-        FONT_FAMILY.add("Helvetica");
-        FONT_FAMILY.add("Times");
-        FONT_FAMILY.add("Courier");
-        FONT_FAMILY.add("sans-serif");
-        FONT_FAMILY.add("serif");
     }
 
     public static Point2D getSize(FontState fs, Element svgRoot) {
@@ -267,3 +234,49 @@ public class SVGElement extends SVGObj {
         }
     }
 }
+
+class FOPSVGContext extends DefaultSVGContext {
+        public boolean cwauto;
+        public boolean chauto;
+        public float cwidth;
+        public float cheight;
+        public Element svgRoot;
+
+            public float getPixelToMM() {
+                // 72 dpi
+                return 0.35277777777777777778f;
+            }
+
+            public float getViewportWidth(Element e) throws IllegalStateException {
+            if(e == svgRoot) {
+                if(!cwauto) {
+                   return cwidth;
+                }
+            }
+                return super.getViewportWidth(e);
+            }
+
+            public float getViewportHeight(Element e) throws IllegalStateException {
+            if(e == svgRoot) {
+                if(!chauto) {
+                    return cheight;
+                }
+            }
+                return super.getViewportHeight(e);
+            }
+
+            public List getDefaultFontFamilyValue() {
+                return FONT_FAMILY;
+    }
+
+    public final static List FONT_FAMILY;
+    static {
+        FONT_FAMILY = new ArrayList();
+        FONT_FAMILY.add("Helvetica");
+        FONT_FAMILY.add("Times");
+        FONT_FAMILY.add("Courier");
+        FONT_FAMILY.add("sans-serif");
+        FONT_FAMILY.add("serif");
+    }
+}
+
