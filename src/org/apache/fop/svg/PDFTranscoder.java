@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -117,7 +117,7 @@ import org.w3c.dom.svg.SVGSVGElement;
  * <p><tt>KEY_LANGUAGE</tt> to set the default language to use (may be
  * used by a &lt;switch> SVG element for example),
  * <tt>KEY_USER_STYLESHEET_URI</tt> to fix the URI of a user
- * stylesheet, and <tt>KEY_PIXEL_TO_MM</tt> to specify the pixel to
+ * stylesheet, and <tt>KEY_PIXEL_UNIT_TO_MILLIMETER</tt> to specify the pixel to
  * millimeter conversion factor.
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
@@ -153,7 +153,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
      * @exception TranscoderException if an error occured while transcoding
      */
     protected void transcode(Document document, String uri,
-                             TranscoderOutput output) 
+                             TranscoderOutput output)
                              throws TranscoderException {
 
         if (!(document instanceof SVGOMDocument)) {
@@ -176,7 +176,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         TextPainter textPainter = null;
         textPainter = new StrokingTextPainter();
         ctx.setTextPainter(textPainter);
-        
+
         PDFAElementBridge pdfAElementBridge = new PDFAElementBridge();
         AffineTransform currentTransform = new AffineTransform(1, 0, 0, 1, 0, 0);
         pdfAElementBridge.setCurrentTransform(currentTransform);
@@ -362,8 +362,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          * <tt>TranscodingHints</tt> or 0.3528 if any.
          */
         public float getPixelToMM() {
-            if (getTranscodingHints().containsKey(ImageTranscoder.KEY_PIXEL_TO_MM)) {
-                return ((Float)getTranscodingHints().get(ImageTranscoder.KEY_PIXEL_TO_MM)).floatValue();
+            if (getTranscodingHints().containsKey(ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER)) {
+                return ((Float)getTranscodingHints().get(ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER)).floatValue();
             } else {
                 // return 0.3528f; // 72 dpi
                 return 0.26458333333333333333333333333333f;    // 96dpi
