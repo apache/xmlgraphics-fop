@@ -175,7 +175,8 @@ public class TableCell extends FObj {
 						fo.setIsInTableCell();
 						fo.forceWidth(width); // ???
 
-						// Overflows may cause a row to be re-layedout, need to pass already processed content.
+						// Overflows may cause a row to be re-layedout,
+						// need to pass already processed content.
 						this.marker = i;
 
 						Status status;
@@ -186,7 +187,7 @@ public class TableCell extends FObj {
 								} else {
 										// hani Elabed 11/21/2000
 										area.addChild(cellArea);
-										area.setAbsoluteHeight(cellArea.getAbsoluteHeight());
+										// area.setAbsoluteHeight(cellArea.getAbsoluteHeight());
 										return new Status(Status.AREA_FULL_SOME);
 								}
 						}
@@ -205,8 +206,8 @@ public class TableCell extends FObj {
 				// reset absoluteHeight to beginning of row
 				// area.setHeight(cellArea.getHeight() + spaceBefore + spaceAfter);
 				// I don't think we should do this here (KL) !!!
-				area.setHeight(cellArea.getHeight());
-				area.setAbsoluteHeight(originalAbsoluteHeight);
+				// area.setHeight(cellArea.getHeight());
+				//area.setAbsoluteHeight(originalAbsoluteHeight);
 
 				return new Status(Status.OK);
 		}

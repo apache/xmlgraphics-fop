@@ -1,52 +1,7 @@
 /*-- $Id$ --
-
- ============================================================================
-									 The Apache Software License, Version 1.1
- ============================================================================
-
-		Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
-
- Redistribution and use in source and binary forms, with or without modifica-
- tion, are permitted provided that the following conditions are met:
-
- 1. Redistributions of  source code must  retain the above copyright  notice,
-		this list of conditions and the following disclaimer.
-
- 2. Redistributions in binary form must reproduce the above copyright notice,
-		this list of conditions and the following disclaimer in the documentation
-		and/or other materials provided with the distribution.
-
- 3. The end-user documentation included with the redistribution, if any, must
-		include  the following  acknowledgment:  "This product includes  software
-		developed  by the  Apache Software Foundation  (http://www.apache.org/)."
-		Alternately, this  acknowledgment may  appear in the software itself,  if
-		and wherever such third-party acknowledgments normally appear.
-
- 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
-		endorse  or promote  products derived  from this  software without  prior
-		written permission. For written permission, please contact
-		apache@apache.org.
-
- 5. Products  derived from this software may not  be called "Apache", nor may
-		"Apache" appear  in their name,  without prior written permission  of the
-		Apache Software Foundation.
-
- THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
- APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
- INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
- DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
- OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
- ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
- (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
- THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
- This software  consists of voluntary contributions made  by many individuals
- on  behalf of the Apache Software  Foundation and was  originally created by
- James Tauber <jtauber@jtauber.com>. For more  information on the Apache
- Software Foundation, please see <http://www.apache.org/>.
-
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.fo.flow;
@@ -246,9 +201,8 @@ public class TableRow extends FObj {
 														 "space-before.optimum").getLength().mvalue();
 				this.spaceAfter = this.properties.get(
 														"space-after.optimum").getLength().mvalue();
-						this.breakBefore =
-							this.properties.get("break-before").getEnum();
-						this.breakAfter = this.properties.get("break-after").getEnum();
+				this.breakBefore = this.properties.get("break-before").getEnum();
+				this.breakAfter = this.properties.get("break-after").getEnum();
 				this.backgroundColor =
 					this.properties.get("background-color").getColorType();
 
@@ -314,24 +268,24 @@ public class TableRow extends FObj {
 						}
 				}
 
-				/**
 				if ((spaceBefore != 0) && (this.marker == 0)) {
 						spacer = new DisplaySpace(spaceBefore);
 						area.increaseHeight(spaceBefore);
 				}
-				***/
+				else spacer=null; // Not first area created by the row!
+
 				if (marker == 0 && configID) {
 						// configure id
 						area.getIDReferences().configureID(id, area);
 				}
 
 				int spaceLeft = area.spaceLeft();
-				int origMaxHeight = area.getMaxHeight();
+				// int origMaxHeight = area.getMaxHeight();
 				this.areaContainer =
 						new AreaContainer(propMgr.getFontState(area.getFontInfo()),
 															0,0,
 															area.getContentWidth(),
-															area.spaceLeft(),
+															spaceLeft, 
 															Position.RELATIVE);
 				areaContainer.foCreator=this;	// G Seshadri
 				areaContainer.setPage(area.getPage());
@@ -408,71 +362,60 @@ public class TableRow extends FObj {
 						// added by Hani Elabed 11/22/2000
 						CellState cellState = (CellState) cells.elementAt(i);
 
-						//if (this.isInListBody) {
-						//fo.setIsInListBody();
-						//fo.setDistanceBetweenStarts(this.distanceBetweenStarts);
-						//fo.setBodyIndent(this.bodyIndent);
-						//}
-
-
 						//--- this is modified to preserve the state of start
 						//--- offset of the cell.
 						//--- change by Hani Elabed 11/22/2000
 						cell.setStartOffset(cellState.getWidthOfCellSoFar());
 
 						// Each column in the row should start with the same height available
-						if ( i > 0 )
-						{
-							areaContainer.increaseHeight(areaContainer.spaceLeft() - areaContainer.getMaxHeight() - spaceLeft + origMaxHeight);
-							areaContainer.setMaxHeight(spaceLeft);
-						}
+						// True: we now don't set the row height until all cells in it are
+						// (at least partially) composed, so this is not necssary.
+						// -Karen Lease, 01 may 2001
+// 						if ( i > 0 )
+// 						{
+// 							areaContainer.increaseHeight(areaContainer.spaceLeft() - areaContainer.getMaxHeight() - spaceLeft + origMaxHeight);
+// 							areaContainer.setMaxHeight(spaceLeft);
+// 						}
 
 						Status status;
 						if ((status = cell.layout(areaContainer)).isIncomplete()) {
 								this.marker = i;
-								/*			if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE))
-											{
-													status = new Status(Status.AREA_FULL_SOME);
-											}*/
-
-
 								if (status.getCode() == Status.AREA_FULL_SOME) {
 										// this whole block added by
 										// Hani Elabed 11/27/2000
 
 										cellState.setLayoutComplete(false);
-
-										// locate the first cell
-										// that need to be laid out further
-										//for (int j = 0; j < numChildren; j++) {
-										//		CellState state = (CellState) cells.elementAt(j);
-										//
-										//		if (! state.isLayoutComplete()) {
-										//				this.marker = j;
-										//				break; // out of for loop
-										//		}
-										//}
+										someCellDidNotLayoutCompletely = true;
 								} else {
+										/* None of the cell content was laid out.
+										 * In this case, we stop doing this row and
+										 * reset the marker to start it in the next
+										 * column or page. Note that the row height hasn't been
+										 * set and the row area hasn't yet
+										 * been added to its parent at this point!
+										 */
+
 										// added on 11/28/2000, by Dresdner Bank, Germany
 										if (spacer != null) {
-												area.removeChild(spacer);
-												spacer = null;
+												area.increaseHeight(-spaceBefore);
+												// area.removeChild(spacer);
+												// spacer = null;
 										}
-										hasAddedSpacer = false;
-										if(spacerAfter != null)
-												area.removeChild(spacerAfter);
-										spacerAfter = null;
+//										hasAddedSpacer = false;
+// 										if(spacerAfter != null)
+// 												area.removeChild(spacerAfter);
+// 										spacerAfter = null;
 
 										// removing something that was added by succession
 										// of cell.layout()
 										// just to keep my sanity here, Hani
-										area.increaseHeight(areaContainer.getHeight());
-										area.removeChild(areaContainer);
+										// area.increaseHeight(areaContainer.getHeight());
+										// area.removeChild(areaContainer);
 										this.resetMarker();
 										this.removeID(area.getIDReferences());
 
 										// hani elabed 11/27/2000
-										cellState.setLayoutComplete(false);
+										// cellState.setLayoutComplete(false);
 
 										return status;
 								}
@@ -487,7 +430,9 @@ public class TableRow extends FObj {
 						}
 				}
 
-				area.setMaxHeight(area.getMaxHeight() - spaceLeft + this.areaContainer.getMaxHeight());
+				// This is in case a float was composed in the cells
+				area.setMaxHeight(area.getMaxHeight() - spaceLeft +
+													this.areaContainer.getMaxHeight());
 
 				for (int i = 0; i < numChildren; i++) {
 						TableCell cell = (TableCell) children.elementAt(i);
@@ -504,26 +449,24 @@ public class TableRow extends FObj {
 				areaContainer.setHeight(largestCellHeight);
 				areaAdded = true;
 				areaContainer.end();
+
+				/* The method addDisplaySpace increases both the content
+				 * height of the parent area (table body, head or footer) and
+				 * also its "absolute height". So we don't need to do this
+				 * explicitly.
+				 *
+				 * Note: it doesn't look from the CR as though we should take
+				 * into account borders and padding on rows, only background.
+				 * The exception is perhaps if the borders are "collapsed", but
+				 * they should still be rendered only on cells and not on the
+				 * rows themselves. (Karen Lease - 01may2001)
+				 */
 				area.addDisplaySpace(largestCellHeight +
 														 areaContainer.getPaddingTop() +
 														 areaContainer.getBorderTopWidth() +
 														 areaContainer.getPaddingBottom() +
 														 areaContainer.getBorderBottomWidth());
 
-				// bug fix from Eric Schaeffer
-				//area.increaseHeight(largestCellHeight);
-
-				// test to see if some cells are not
-				// completely laid out.
-				// Hani Elabed 11/22/2000
-				for (int i = 0; i < numChildren; i++) {
-						CellState cellState = (CellState) cells.elementAt(i);
-
-						if (! cellState.isLayoutComplete()) {
-								someCellDidNotLayoutCompletely = true;
-								break; // out of for loop
-						}
-				}
 
 				if (!someCellDidNotLayoutCompletely && spaceAfter != 0) {
 						spacerAfter = new DisplaySpace(spaceAfter);
@@ -531,9 +474,6 @@ public class TableRow extends FObj {
 						area.increaseHeight(spaceAfter);
 				}
 
-				if (area instanceof BlockArea) {
-						area.start();
-				}
 
 				// replaced by Hani Elabed 11/27/2000
 				//return new Status(Status.OK);
@@ -587,7 +527,6 @@ public class TableRow extends FObj {
 						area.removeChild(areaContainer);
 				areaAdded = false;
 				this.resetMarker();
-				cells = null;
 				this.removeID(area.getIDReferences());
 		}
 
@@ -597,6 +536,6 @@ public class TableRow extends FObj {
 				spacer = null;
 				spacerAfter = null;
 				hasAddedSpacer = false;
-         cells = null;
+        cells = null;
 		}
 }
