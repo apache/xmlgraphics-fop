@@ -51,12 +51,28 @@
 package org.apache.fop.pdf;
 
 /**
- * This class contains some utility methods for outputing numbers to PDF.
+ * This class represents a simple number object. It also contains contains some 
+ * utility methods for outputing numbers to PDF.
  */
-public class PDFNumber {
+public class PDFNumber extends PDFObject {
 
-    /** prevent instantiation */
-    private PDFNumber() { }
+    private Number number;
+
+    /**
+     * Returns the number.
+     * @return the number
+     */
+    public Number getNumber() {
+        return this.number;
+    }
+    
+    /**
+     * Sets the number.
+     * @param number the number
+     */
+    public void setNumber(Number number) {
+        this.number = number;
+    }
 
     /**
      * Output a Double value to a string suitable for PDF.
@@ -141,6 +157,21 @@ public class PDFNumber {
             }
         }
         return (p.toString());
+    }
+
+    /**
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     */
+    protected String toPDFString() {
+        if (getNumber() == null) {
+            throw new IllegalArgumentException(
+                "The number of this PDFNumber must not be empty");
+        }
+        StringBuffer sb = new StringBuffer(64);
+        sb.append(getObjectID());
+        sb.append(getNumber().toString());
+        sb.append("\nendobj\n");
+        return sb.toString();
     }
 
 }
