@@ -1,6 +1,8 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.datastructs.Tree;
+import org.apache.fop.datastructs.Node;
+import org.apache.fop.datastructs.Node.*;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.CountryLanguageScript;
@@ -141,6 +143,19 @@ public class FOTree extends Tree implements Runnable {
             // Now propagate a Runtime exception
             throw new RuntimeException(e);
         }
+
+        // DEBUG
+        System.out.println("Elapsed time: " +
+                    (System.currentTimeMillis() - 
+                            org.apache.fop.apps.Fop.startTime)); // DEBUG
+
+        FONode.PreOrder preorder = foRoot.new PreOrder(getModCount());
+        int nodecount = 0;
+        while (preorder.hasNext()) {
+            nodecount++;
+            FONode next = (FONode) preorder.next();
+        }
+        System.out.println("# of FONodes: " + nodecount);
     }
 
 }// FOTree
