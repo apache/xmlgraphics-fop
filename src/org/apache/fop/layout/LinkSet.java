@@ -135,7 +135,7 @@ public class LinkSet {
         Enumeration re = rects.elements();                 
         while (re.hasMoreElements()) {
 	    LinkedRectangle r = (LinkedRectangle)re.nextElement();
-            r.setX(r.getX() + ac.getXPosition() + area.getTableCellXOffset() - ba.startIndent);             
+            r.setX(r.getX() + ac.getXPosition() + area.getTableCellXOffset());             
             r.setY( ac.getYPosition() - height +(maxY-r.getY()) - ba.getHalfLeading());                    
          }
     }
