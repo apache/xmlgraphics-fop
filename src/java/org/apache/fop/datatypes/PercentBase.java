@@ -55,6 +55,12 @@ package org.apache.fop.datatypes;
  * computations
  */
 public interface PercentBase {
+    static Integer TABLE_UNITS = new Integer(1);
+    static Integer BLOCK_IPD = new Integer(2);
+    static Integer BLOCK_BPD = new Integer(3);
+    static Integer REFERENCE_AREA_IPD = new Integer(4);
+    static Integer REFERENCE_AREA_BPD = new Integer(5);
+    
     int getDimension();
     double getBaseValue();
 

@@ -50,9 +50,10 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.expr.NumericProperty;
-
 import java.util.Vector;
+
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.Numeric;
 
 /**
  * Base class for all property objects
@@ -91,7 +92,7 @@ public class Property {
      * This method expects to be overridden by subclasses
      * @return Length property value
      */
-    public LengthProperty getLength() {
+    public Length getLength() {
         return null;
     }
 
@@ -179,7 +180,7 @@ public class Property {
      * This method expects to be overridden by subclasses
      * @return Numeric property value
      */
-    public NumericProperty getNumeric() {
+    public Numeric getNumeric() {
         return null;
     }
 

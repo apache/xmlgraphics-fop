@@ -50,12 +50,12 @@
  */
 package org.apache.fop.fo.expr;
 
+import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.ListItem;
-import org.apache.fop.fo.properties.LengthProperty;
-import org.apache.fop.fo.properties.LinearCombinationLength;
 import org.apache.fop.fo.properties.PercentLength;
 import org.apache.fop.fo.properties.Property;
 
@@ -83,9 +83,9 @@ public class LabelEndFunction extends FunctionBase {
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
 
-        LengthProperty distance =
+        Length distance =
             pInfo.getPropertyList().get(Constants.PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getLength();
-        LengthProperty separation =
+        Length separation =
             pInfo.getPropertyList().getNearestSpecified(Constants.PR_PROVISIONAL_LABEL_SEPARATION).getLength();
 
         FONode item = pInfo.getFO();
@@ -95,21 +95,19 @@ public class LabelEndFunction extends FunctionBase {
         if (item == null) {
             throw new PropertyException("label-end() called from outside an fo:list-item");
         }
-        LengthProperty startIndent = ((ListItem)item).propertyList.get(Constants.PR_START_INDENT).getLength();
-
-        LinearCombinationLength labelEnd = new LinearCombinationLength();
+        Length startIndent = ((ListItem)item).propertyList.get(Constants.PR_START_INDENT).getLength();
 
         // Should be CONTAINING_REFAREA but that doesn't work
         LengthBase base = new LengthBase((ListItem)item, pInfo.getPropertyList(),
                                          LengthBase.CONTAINING_BOX);
         PercentLength refWidth = new PercentLength(1.0, base);
 
-        labelEnd.addTerm(1.0, refWidth);
-        labelEnd.addTerm(-1.0, distance);
-        labelEnd.addTerm(-1.0, startIndent);
-        labelEnd.addTerm(1.0, separation);
+        Numeric labelEnd = refWidth; 
+        labelEnd = NumericOp.addition(labelEnd, NumericOp.negate(distance));
+        labelEnd = NumericOp.addition(labelEnd, NumericOp.negate(startIndent));
+        labelEnd = NumericOp.addition(labelEnd, separation);
 
-        return labelEnd;
+        return (Property) labelEnd;
     }
 
 }

@@ -70,6 +70,11 @@ public class LengthBase implements PercentBase {
     public static final int CONTAINING_BOX = 3;
     /** constant for a containing refarea percent-based length */
     public static final int CONTAINING_REFAREA = 4;
+    /** constant for a containing block percent-based length */
+    public static final int BLOCK_WIDTH = 5;
+    /** constant for a containing block percent-based length */
+    public static final int BLOCK_HEIGHT = 6;
+
     /** array of valid percent-based length types */
     public static final int[] PERCENT_BASED_LENGTH_TYPES
             = { CUSTOM_BASE, FONTSIZE, INH_FONTSIZE, CONTAINING_BOX,
@@ -143,9 +148,10 @@ public class LengthBase implements PercentBase {
             return propertyList.get(Constants.PR_FONT_SIZE).getLength().getValue();
         case INH_FONTSIZE:
             return propertyList.getInherited(Constants.PR_FONT_SIZE).getLength().getValue();
-        //case CONTAINING_BOX:
-            // depends on property?? inline-progression vs block-progression
-            //return parentFO.getContentWidth();
+        case BLOCK_WIDTH:
+            return parentFO.getLayoutDimension(PercentBase.BLOCK_IPD).intValue();
+        case BLOCK_HEIGHT:
+            return parentFO.getLayoutDimension(PercentBase.BLOCK_BPD).intValue();
         case CONTAINING_REFAREA:    // example: start-indent, end-indent
          {
             //FONode fo;

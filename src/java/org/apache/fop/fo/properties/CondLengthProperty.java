@@ -52,6 +52,7 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.CompoundDatatype;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -170,7 +171,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
      * TODO: Should we allow this?
      * @return this.condLength cast as a Length
      */
-    public LengthProperty getLength() {
+    public Length getLength() {
         return length.getLength();
     }
 

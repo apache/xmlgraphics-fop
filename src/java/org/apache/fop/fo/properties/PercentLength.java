@@ -51,7 +51,6 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.fo.expr.NumericProperty;
 
 /**
  * a percent specified length quantity in XSL
@@ -84,22 +83,6 @@ public class PercentLength extends LengthProperty {
     }
 
     /**
-     * Convenience constructor when only the factor is known
-     * @param factor the percentage factor, expressed as a decimal (e.g. use
-     * .95 to represent 95%)
-     */
-    public PercentLength(double factor) {
-        this(factor, null);
-    }
-
-    /**
-     * @param lbase the base to set
-     */
-    public void setBaseLength(PercentBase lbase) {
-        this.lbase = lbase;
-    }
-
-    /**
      * @return the base
      */
     public PercentBase getBaseLength() {
@@ -107,19 +90,36 @@ public class PercentLength extends LengthProperty {
     }
 
     /**
-     * Return the computed value in millipoints. This assumes that the
-     * base length has been resolved to an absolute length value.
-     */
-    protected void computeValue() {
-        setComputedValue((int)(factor * (double)lbase.getBaseLength()));
-    }
-
-    /**
      *
      * @return the factor
+     * TODO: Should this really exists? 
      */
     public double value() {
         return factor;
+    }
+
+    /**
+     * Return false because percent-length are always relative.
+     * @see org.apache.fop.datatypes.Numeric#isAbsolute()
+     */
+    public boolean isAbsolute() {
+        return false;
+    }
+
+    /**
+     * Return the value of this Numeric.
+     * @see org.apache.fop.datatypes.Numeric#getNumericValue()
+     */
+    public double getNumericValue() {
+        return factor * lbase.getBaseLength();
+    }
+
+    /**
+     * Return the length of this PercentLength.
+     * @see org.apache.fop.datatypes.Length#getValue() 
+     */
+    public int getValue() {
+        return (int) (factor * lbase.getBaseLength());
     }
 
     /**
@@ -128,13 +128,6 @@ public class PercentLength extends LengthProperty {
     public String toString() {
         // TODO: What about the base value?
         return (new Double(factor * 100.0).toString()) + "%";
-    }
-
-    /**
-     * @return new Numeric object that is equivalent to this
-     */
-    public NumericProperty asNumeric() {
-        return new NumericProperty(this);
     }
 
 }

@@ -52,19 +52,16 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.expr.NumericProperty;
 
 /**
  * Superclass for properties wrapping a Length value.
  */
-public class LengthProperty extends Property implements Length {
-    /** Holds the length in millipoints. */
-    protected int millipoints = 0;
-    /** Indicates if the value has been computed, or not. */
-    protected boolean bIsComputed = false;
-
+abstract public class LengthProperty extends Property 
+    implements Length, Numeric
+{
     /**
      * Inner class for making instances of LengthProperty
      */
@@ -121,50 +118,13 @@ public class LengthProperty extends Property implements Length {
             if (p instanceof LengthProperty) {
                 return p;
             }
-            LengthProperty val = p.getLength();
+            Length val = p.getLength();
             if (val != null) {
-                return val;
+                return (Property) val;
             }
             return convertPropertyDatatype(p, propertyList, fo);
         }
 
-    }
-
-
-    /**
-     * Returns the length in 1/1000ths of a point (millipoints)
-     * @return the length in millipoints
-     */
-    public int getValue() {
-        if (!bIsComputed) {
-            computeValue();
-        }
-        return millipoints;
-    }
-
-    /**
-     * Computes the value.
-     */
-    protected void computeValue() {
-    }
-
-
-    /**
-     * Sets the computed value.
-     * @param millipoints the length in millipoints
-     */
-    protected void setComputedValue(int millipoints) {
-        setComputedValue(millipoints, true);
-    }
-
-    /**
-     * Sets the computed value.
-     * @param millipoints the length in millipoints
-     * @param bSetComputed True if the isComputed flag should be set.
-     */
-    protected void setComputedValue(int millipoints, boolean bSetComputed) {
-        this.millipoints = millipoints;
-        this.bIsComputed = bSetComputed;
     }
 
     /**
@@ -173,14 +133,6 @@ public class LengthProperty extends Property implements Length {
      */
     public boolean isAuto() {
         return false;
-    }
-
-    /**
-     * Indicates if the length has been computed.
-     * @return True if the length has been computed
-     */
-    public boolean isComputed() {
-        return this.bIsComputed;
     }
 
     /**
@@ -199,35 +151,24 @@ public class LengthProperty extends Property implements Length {
         return 0.0;
     }
 
-    public void resolveTableUnit(double dTableUnit) {
+    /**
+     * Return the numeric dimension. Length always a dimension of 1.
+     */
+    public int getDimension() {
+        return 1;
     }
 
     /**
-     * @return null (cannot be converted to a Numeric ??)
+     * @return this.length cast as a Numeric
      */
-    public NumericProperty asNumeric() {
-        return null;
-    }
-
-    /**
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        String s = millipoints + "mpt";
-        return s;
-    }
-
-    /**
-     * @return this.lenght cast as a Numeric
-     */
-    public NumericProperty getNumeric() {
-        return asNumeric() ;
+    public Numeric getNumeric() {
+        return this;
     }
 
     /**
      * @return this.length
      */
-    public LengthProperty getLength() {
+    public Length getLength() {
         return this;
     }
 

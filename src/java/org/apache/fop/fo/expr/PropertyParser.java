@@ -50,6 +50,7 @@
  */
 package org.apache.fop.fo.expr;
 
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.fo.properties.FixedLength;
@@ -71,7 +72,6 @@ public class PropertyParser extends PropertyTokenizer {
     private PropertyInfo propInfo;    // Maker and propertyList related info
 
     private static final String RELUNIT = "em";
-    private static final NumericProperty NEGATIVE_ONE = new NumericProperty(new Double(-1.0));
     private static final HashMap FUNCTION_TABLE = new HashMap();
 
     static {
@@ -291,7 +291,6 @@ public class PropertyParser extends PropertyTokenizer {
              */
             double pcval = new Double(currentTokenValue.substring(0,
                         currentTokenValue.length() - 1)).doubleValue() / 100.0;
-            // LengthBase lbase = this.propInfo.getPercentLengthBase();
             PercentBase pcBase = this.propInfo.getPercentBase();
             if (pcBase != null) {
                 if (pcBase.getDimension() == 0) {
@@ -401,12 +400,12 @@ public class PropertyParser extends PropertyTokenizer {
      * the sum of the two operands.
      * @throws PropertyException If either operand is null.
      */
-    private Property evalAddition(NumericProperty op1,
-                                  NumericProperty op2) throws PropertyException {
+    private Property evalAddition(Numeric op1,
+                                  Numeric op2) throws PropertyException {
         if (op1 == null || op2 == null) {
             throw new PropertyException("Non numeric operand in addition");
         }
-        return op1.add(op2);
+        return (Property) NumericOp.addition(op1, op2);
     }
 
     /**
@@ -418,12 +417,12 @@ public class PropertyParser extends PropertyTokenizer {
      * the difference of the two operands.
      * @throws PropertyException If either operand is null.
      */
-    private Property evalSubtraction(NumericProperty op1,
-                                     NumericProperty op2) throws PropertyException {
+    private Property evalSubtraction(Numeric op1,
+                                     Numeric op2) throws PropertyException {
         if (op1 == null || op2 == null) {
             throw new PropertyException("Non numeric operand in subtraction");
         }
-        return op1.subtract(op2);
+        return (Property) NumericOp.subtraction(op1, op2);
     }
 
     /**
@@ -434,11 +433,11 @@ public class PropertyParser extends PropertyTokenizer {
      * the negative of the operand (multiplication by *1).
      * @throws PropertyException If the operand is null.
      */
-    private Property evalNegate(NumericProperty op) throws PropertyException {
+    private Property evalNegate(Numeric op) throws PropertyException {
         if (op == null) {
             throw new PropertyException("Non numeric operand to unary minus");
         }
-        return op.multiply(NEGATIVE_ONE);
+        return (Property) NumericOp.negate(op);
     }
 
     /**
@@ -450,12 +449,12 @@ public class PropertyParser extends PropertyTokenizer {
      * the product of the two operands.
      * @throws PropertyException If either operand is null.
      */
-    private Property evalMultiply(NumericProperty op1,
-                                  NumericProperty op2) throws PropertyException {
+    private Property evalMultiply(Numeric op1,
+                                  Numeric op2) throws PropertyException {
         if (op1 == null || op2 == null) {
             throw new PropertyException("Non numeric operand in multiplication");
         }
-        return op1.multiply(op2);
+        return (Property) NumericOp.multiply(op1, op2);
     }
 
 
@@ -468,12 +467,12 @@ public class PropertyParser extends PropertyTokenizer {
      * op1 divided by op2.
      * @throws PropertyException If either operand is null.
      */
-    private Property evalDivide(NumericProperty op1,
-                                NumericProperty op2) throws PropertyException {
+    private Property evalDivide(Numeric op1,
+                                Numeric op2) throws PropertyException {
         if (op1 == null || op2 == null) {
             throw new PropertyException("Non numeric operand in division");
         }
-        return op1.divide(op2);
+        return (Property) NumericOp.divide(op1, op2);
     }
 
     /**
