@@ -26,7 +26,7 @@
      Fop source repository can be found at <jump href="http://xml.apache.org/cvs.html">http://xml.apache.org/cvs.html</jump>. 
      An introduction into cvs and the cvs manual can be found in the 
      <jump href="http://xml.apache.org/library.html">reference library</jump>.</p>
-  <p>All changes to the code repository are annonced in a special discussion group. You can subscribe 
+  <p>All changes to the code repository are sent to a special mailing list. After a cvs commit the diffs are automatically sent to this list. You can subscribe 
      to fop-cvs@xml.apache.org by sending an email to <jump href="mailto:fop-cvs-subscribe@xml.apache.org">
      fop-cvs-subscribe@xml.apache.org</jump>. If you want to contribute to the development of Fop you should subscribe, 
      because it is important that you follow changes being made. </p>

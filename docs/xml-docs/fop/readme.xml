@@ -18,8 +18,8 @@
     <p>FOP is the world's first print formatter driven by XSL formatting
        objects and the world's first output independent formatter. It is a
        Java application that reads a formatting object tree and then
-       renders the resulting pages to a specified output. Output formats
-       currently supported are PDF, PCL, SVG, XML (area tree representation),
+       renders the resulting pages to a specified output. <jump href="output.html">Output formats</jump>
+       currently supported are PDF, PCL, PS, SVG, XML (area tree representation),
        Print, AWT, MIF and TXT.
        The primary output target is PDF.
     </p>
@@ -43,6 +43,10 @@
        <jump href="http://xml.apache.org/fop">http://xml.apache.org/fop</jump>.
        Here you can find information about using and developing with FOP.
     </p>
+    <p>Users can subscribe to fop-user@xml.apache.org by sending an email
+        to <jump href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</jump>
+        this is where user specific topics are discussed.
+     </p>
   </s1>
 
   <s1 title="Formatting">

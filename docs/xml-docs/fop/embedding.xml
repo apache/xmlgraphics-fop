@@ -57,8 +57,10 @@
      invocation of the method is either render(Document) or
      render(Parser, InputSource) respectively.
   </p>
-  <p>A third possibility may be used to build the FO Tree, namely
-     calling getContentHandler() and firing the SAX events yourself.
+  <p>
+     <strong>Another possibility may be used to build the FO Tree. You can
+     call getContentHandler() and fire the SAX events yourself.
+     </strong>
   </p>
   <p>Once the FO Tree is built, the format() and render() methods may be
      called in that order.
