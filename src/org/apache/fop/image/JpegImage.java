@@ -14,9 +14,11 @@ import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
+import java.awt.color.ICC_ColorSpace;
 
 // FOP
-import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.DCTFilter;
 import org.apache.fop.image.analyser.ImageReader;
@@ -29,6 +31,7 @@ import org.apache.fop.fo.FOUserAgent;
  * @see FopImage
  */
 public class JpegImage extends AbstractFopImage {
+    ICC_Profile iccProfile = null;
     boolean found_icc_profile = false;
     boolean found_dimensions = false;
 
@@ -40,14 +43,10 @@ public class JpegImage extends AbstractFopImage {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ByteArrayOutputStream iccStream = new ByteArrayOutputStream();
         InputStream inStream;
-        this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_UNKNOWN);
         byte[] readBuf = new byte[4096];
         int bytes_read;
         int index = 0;
         boolean cont = true;
-
-        this.m_compressionType = new DCTFilter();
-        this.m_compressionType.setApplied(true);
 
         try {
             inStream = this.m_href.openStream();
@@ -86,14 +85,15 @@ public class JpegImage extends AbstractFopImage {
                                                  this.m_bitmaps[index + 8]);
 
                         if (this.m_bitmaps[index + 9] == 1) {
-                            this.m_colorSpace.setColorSpace(
-                              ColorSpace.DEVICE_GRAY);
+                            this.m_colorSpace = ColorSpace.getInstance(
+                              ColorSpace.CS_GRAY);
                         } else if (this.m_bitmaps[index + 9] == 3) {
-                            this.m_colorSpace.setColorSpace(
-                              ColorSpace.DEVICE_RGB);
+                            this.m_colorSpace = ColorSpace.getInstance(
+                              ColorSpace.CS_LINEAR_RGB);
                         } else if (this.m_bitmaps[index + 9] == 4) {
-                            this.m_colorSpace.setColorSpace(
-                              ColorSpace.DEVICE_CMYK);
+                            // howto create CMYK color space
+                            this.m_colorSpace = ColorSpace.getInstance(
+                              ColorSpace.CS_CIEXYZ);
                         }
 
                         found_dimensions = true;
@@ -152,9 +152,13 @@ public class JpegImage extends AbstractFopImage {
                                               e.getMessage(), e);
                 return false;
             }
-            this.m_colorSpace.setICCProfile(iccStream.toByteArray());
+            iccProfile = ICC_Profile.getInstance(iccStream.toByteArray());
         }
         return true;
+    }
+
+    public ICC_Profile getICCProfile() {
+        return iccProfile;
     }
 
     private int calcBytes(byte bOne, byte bTwo) {

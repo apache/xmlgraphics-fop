@@ -460,7 +460,7 @@ public class PDFRenderer extends PrintRenderer {
 
             this.currentFontName = name;
             this.currentFontSize = size;
-            pdf = pdf.append("/" + name + " " + (size / 1000) + " Tf\n");
+            pdf = pdf.append("/" + name + " " + ((float)size / 1000f) + " Tf\n");
         }
     }
 
@@ -497,19 +497,22 @@ public class PDFRenderer extends PrintRenderer {
             if(!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
                 return;
             }
-            int xobj = pdfDoc.addImage(fopimage);
+            FopPDFImage pdfimage = new FopPDFImage(fopimage);
+            int xobj = pdfDoc.addImage(pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
         } else if("image/jpg".equals(mime)) {
             if(!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
                 return;
             }
-            int xobj = pdfDoc.addImage(fopimage);
+            FopPDFImage pdfimage = new FopPDFImage(fopimage);
+            int xobj = pdfDoc.addImage(pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
         } else {
             if(!fopimage.load(FopImage.BITMAP, userAgent)) {
                 return;
             }
-            int xobj = pdfDoc.addImage(fopimage);
+            FopPDFImage pdfimage = new FopPDFImage(fopimage);
+            int xobj = pdfDoc.addImage(pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
 
             closeText();

@@ -9,9 +9,10 @@ package org.apache.fop.image;
 
 // Java
 import java.net.URL;
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
 
 // FOP
-import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFFilter;
 import org.apache.fop.image.analyser.ImageReaderFactory;
@@ -76,12 +77,6 @@ public abstract class AbstractFopImage implements FopImage {
      * Transparent color (org.apache.fop.pdf.PDFColor).
      */
     protected PDFColor m_transparentColor = null;
-
-    /**
-     * Image compression type.
-     * Added by Eric Dalquist
-     */
-    protected PDFFilter m_compressionType = null;
 
     /**
      * Constructor.
@@ -172,6 +167,10 @@ public abstract class AbstractFopImage implements FopImage {
         return this.m_colorSpace;
     }
 
+    public ICC_Profile getICCProfile() {
+        return null;
+    }
+
     /**
      * Return the number of bits per pixel.
      * @return number of bits per pixel
@@ -186,6 +185,14 @@ public abstract class AbstractFopImage implements FopImage {
      */
     public boolean isTransparent() {
         return this.m_isTransparent;
+    }
+
+    public boolean hasSoftMask() {
+        return false;
+    }
+
+    public byte[] getSoftMask() {
+        return null;
     }
 
     /**
@@ -226,20 +233,6 @@ public abstract class AbstractFopImage implements FopImage {
      */
     public int getRessourceBytesSize() {
         return 0;
-    }
-
-    /**
-     * Return the original image compression type.
-     * @return the original image compression type (org.apache.fop.pdf.PDFFilter)
-     */
-    public PDFFilter getPDFFilter() {
-
-        /*
-         * Added by Eric Dalquist
-         * Using the bitsPerPixel var as our flag since many imges will
-         * have a null m_compressionType even after being loaded
-         */
-        return m_compressionType;
     }
 
 }

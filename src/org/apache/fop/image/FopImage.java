@@ -11,10 +11,10 @@
 package org.apache.fop.image;
 
 import java.io.InputStream;
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
 
-import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.pdf.PDFFilter;
 import org.apache.fop.fo.FOUserAgent;
 
 public interface FopImage {
@@ -39,8 +39,8 @@ public interface FopImage {
     public int getWidth();
     public int getHeight();
 
-    // DeviceGray, DeviceRGB, or DeviceCMYK
     public ColorSpace getColorSpace();
+    public ICC_Profile getICCProfile();
 
     // bits per pixel
     public int getBitsPerPixel();
@@ -48,6 +48,8 @@ public interface FopImage {
     // For transparent images
     public boolean isTransparent();
     public PDFColor getTransparentColor();
+    public boolean hasSoftMask();
+    public byte[] getSoftMask();
 
     // get the image bytes, and bytes properties
 
@@ -61,8 +63,6 @@ public interface FopImage {
     // should be changed...
     public byte[] getRessourceBytes();
     public int getRessourceBytesSize();
-    // return null if no corresponding PDFFilter
-    public PDFFilter getPDFFilter();
 
     public static class ImageInfo {
         public InputStream stream;

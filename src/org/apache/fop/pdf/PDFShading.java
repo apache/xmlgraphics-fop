@@ -10,9 +10,6 @@ package org.apache.fop.pdf;
 // Java...
 import java.util.ArrayList;
 
-// FOP
-import org.apache.fop.datatypes.ColorSpace;
-
 /**
  * class representing a PDF Smooth Shading object.
  *
@@ -40,7 +37,7 @@ public class PDFShading extends PDFObject {
      * A ColorSpace representing the colorspace. "DeviceRGB" is an example.
      */
     // protected StringBuffer colorSpace = null;
-    protected ColorSpace colorSpace = null;
+    protected PDFColorSpace colorSpace = null;
 
     /**
      * The background color. Since shading is opaque,
@@ -148,7 +145,7 @@ public class PDFShading extends PDFObject {
      * @param theFunction The PDF Function that maps an (x,y) location to a color
      */
     public PDFShading(int theNumber, String theShadingName,
-                      int theShadingType, ColorSpace theColorSpace,
+                      int theShadingType, PDFColorSpace theColorSpace,
                       ArrayList theBackground, ArrayList theBBox,
                       boolean theAntiAlias, ArrayList theDomain,
                       ArrayList theMatrix, PDFFunction theFunction) {
@@ -189,7 +186,7 @@ public class PDFShading extends PDFObject {
      * The default is [false, false]
      */
     public PDFShading(int theNumber, String theShadingName,
-                      int theShadingType, ColorSpace theColorSpace,
+                      int theShadingType, PDFColorSpace theColorSpace,
                       ArrayList theBackground, ArrayList theBBox,
                       boolean theAntiAlias, ArrayList theCoords,
                       ArrayList theDomain, PDFFunction theFunction,
@@ -234,7 +231,7 @@ public class PDFShading extends PDFObject {
      * @param theFunction the PDFFunction
      */
     public PDFShading(int theNumber, String theShadingName,
-                      int theShadingType, ColorSpace theColorSpace,
+                      int theShadingType, PDFColorSpace theColorSpace,
                       ArrayList theBackground, ArrayList theBBox,
                       boolean theAntiAlias, int theBitsPerCoordinate,
                       int theBitsPerComponent, int theBitsPerFlag,
@@ -277,7 +274,7 @@ public class PDFShading extends PDFObject {
      * @param theNumber the object number of this PDF object.
      */
     public PDFShading(int theNumber, String theShadingName,
-                      int theShadingType, ColorSpace theColorSpace,
+                      int theShadingType, PDFColorSpace theColorSpace,
                       ArrayList theBackground, ArrayList theBBox,
                       boolean theAntiAlias, int theBitsPerCoordinate,
                       int theBitsPerComponent, ArrayList theDecode,

@@ -12,10 +12,6 @@ import java.util.ArrayList;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-// FOP
-import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.datatypes.ColorSpace;
-
 public class PDFColor extends PDFPathPaint {
     protected static double blackFactor = 2.0;    // could be 3.0 as well.
     protected double red = -1.0;
@@ -27,18 +23,9 @@ public class PDFColor extends PDFPathPaint {
     protected double yellow = -1.0;
     protected double black = -1.0;
 
-    public PDFColor(org.apache.fop.datatypes.ColorType theColor) {
-        this.colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
-        // super(theNumber)
-        this.red = (double)theColor.red();
-        this.green = (double)theColor.green();
-        this.blue = (double)theColor.blue();
-
-    }
-
     public PDFColor(double theRed, double theGreen, double theBlue) {
         // super(theNumber);
-        this.colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
+        this.colorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
 
         this.red = theRed;
         this.green = theGreen;
@@ -56,7 +43,7 @@ public class PDFColor extends PDFPathPaint {
                     double theBlack) {
         // super(theNumber);//?
 
-        this.colorSpace = new ColorSpace(ColorSpace.DEVICE_CMYK);
+        this.colorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_CMYK);
 
         this.cyan = theCyan;
         this.magenta = theMagenta;
@@ -68,12 +55,12 @@ public class PDFColor extends PDFPathPaint {
     public ArrayList getVector() {    // return a vector representation of the color
         // in the appropriate colorspace.
         ArrayList theColorVector = new ArrayList();
-        if (this.colorSpace.getColorSpace() == ColorSpace.DEVICE_RGB) {    // RGB
+        if (this.colorSpace.getColorSpace() == PDFColorSpace.DEVICE_RGB) {    // RGB
             theColorVector.add(new Double(this.red));
             theColorVector.add(new Double(this.green));
             theColorVector.add(new Double(this.blue));
         } else if (this.colorSpace.getColorSpace()
-                   == ColorSpace.DEVICE_CMYK) {    // CMYK
+                   == PDFColorSpace.DEVICE_CMYK) {    // CMYK
             theColorVector.add(new Double(this.cyan));
             theColorVector.add(new Double(this.magenta));
             theColorVector.add(new Double(this.yellow));
@@ -127,16 +114,16 @@ public class PDFColor extends PDFPathPaint {
     public void setColorSpace(int theColorSpace) {
         int theOldColorSpace = this.colorSpace.getColorSpace();
         if (theOldColorSpace != theColorSpace) {
-            if (theOldColorSpace == ColorSpace.DEVICE_RGB) {
-                if (theColorSpace == ColorSpace.DEVICE_CMYK) {
+            if (theOldColorSpace == PDFColorSpace.DEVICE_RGB) {
+                if (theColorSpace == PDFColorSpace.DEVICE_CMYK) {
                     this.convertRGBtoCMYK();
                 } else    // convert to Gray?
                  {
                     this.convertRGBtoGRAY();
                 }
 
-            } else if (theOldColorSpace == ColorSpace.DEVICE_CMYK) {
-                if (theColorSpace == ColorSpace.DEVICE_RGB) {
+            } else if (theOldColorSpace == PDFColorSpace.DEVICE_CMYK) {
+                if (theColorSpace == PDFColorSpace.DEVICE_RGB) {
                     this.convertCMYKtoRGB();
                 } else    // convert to Gray?
                  {
@@ -144,7 +131,7 @@ public class PDFColor extends PDFPathPaint {
                 }
             } else        // used to be Gray
              {
-                if (theColorSpace == ColorSpace.DEVICE_RGB) {
+                if (theColorSpace == PDFColorSpace.DEVICE_RGB) {
                     this.convertGRAYtoRGB();
                 } else    // convert to CMYK?
                  {
@@ -161,7 +148,7 @@ public class PDFColor extends PDFPathPaint {
         double tempDouble;
 
         if (this.colorSpace.getColorSpace()
-                == ColorSpace.DEVICE_RGB) {       // colorspace is RGB
+                == PDFColorSpace.DEVICE_RGB) {       // colorspace is RGB
             // according to pdfspec 12.1 p.399
             // if the colors are the same then just use the g or G operator
             boolean same = false;
@@ -190,7 +177,7 @@ public class PDFColor extends PDFPathPaint {
             }
         }                                         // end of output RGB
          else if (this.colorSpace.getColorSpace()
-                  == ColorSpace.DEVICE_CMYK) {    // colorspace is CMYK
+                  == PDFColorSpace.DEVICE_CMYK) {    // colorspace is CMYK
 
             if (fillNotStroke) {                  // fill
                 p.append(PDFNumber.doubleOut(this.cyan) + " "

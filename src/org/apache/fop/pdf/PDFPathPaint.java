@@ -7,12 +7,10 @@
 
 package org.apache.fop.pdf;
 
-import org.apache.fop.datatypes.ColorSpace;
-
 public abstract class PDFPathPaint extends PDFObject {
 
     // protected int colorspace = 0; //default is 0:RGB, not 1:CMYK
-    protected ColorSpace colorSpace;
+    protected PDFColorSpace colorSpace;
 
     public PDFPathPaint(int theNumber) {
         super(theNumber);

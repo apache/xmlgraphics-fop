@@ -60,9 +60,9 @@ public class PDFTextElementBridge extends SVGTextElementBridge {
     private boolean isSimple(BridgeContext ctx, Element element, GraphicsNode node) {
         // Font size, in user space units.
         float fs = TextUtilities.convertFontSize(element).floatValue();
-        if(((int)fs) != fs) {
+        /*if(((int)fs) != fs) {
             return false;
-        }
+        }*/
         if(fs > 36) {
             return false;
         }

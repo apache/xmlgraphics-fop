@@ -18,9 +18,9 @@ package org.apache.fop.image;
 import java.net.URL;
 import java.io.InputStream;
 import java.io.IOException;
+import java.awt.color.ColorSpace;
 
 // FOP
-import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.analyser.ImageReader;
 import org.apache.fop.fo.FOUserAgent;
@@ -86,7 +86,7 @@ public class BmpImage extends AbstractFopImage {
         int imagestart = headermap[10] + headermap[11] * 256 +
                          headermap[12] * 256 * 256 + headermap[13] * 256 * 256 * 256;
         this.m_bitsPerPixel = headermap[28];
-        this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
+        this.m_colorSpace = ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB);
         int bytes = 0;
         if (this.m_bitsPerPixel == 1)
             bytes = (this.m_width + 7) / 8;

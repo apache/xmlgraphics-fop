@@ -5,9 +5,9 @@
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.datatypes;
+package org.apache.fop.pdf;
 
-public class ColorSpace {
+public class PDFColorSpace {
     private boolean hasICCProfile;
     private byte[] iccProfile;
     private int numComponents;
@@ -21,18 +21,17 @@ public class ColorSpace {
     // public static int DEVICE_GREY = 1;
     public static int DEVICE_RGB = 2;
     public static int DEVICE_CMYK = 3;
-    
-    
+
     // Are there any others?
 
-    protected int currentColorSpace = -1;
+    protected int currentColorSpace = DEVICE_UNKNOWN;
 
-    public ColorSpace(int theColorSpace) {
+    public PDFColorSpace(int theColorSpace) {
         this.currentColorSpace = theColorSpace;
         hasICCProfile = false;
         numComponents = calculateNumComponents();
     }
-    
+
     private int calculateNumComponents() {
         if (currentColorSpace == DEVICE_GRAY)
             return 1;
@@ -48,34 +47,32 @@ public class ColorSpace {
         this.currentColorSpace = theColorSpace;
         numComponents = calculateNumComponents();
     }
-    
+
     public boolean hasICCProfile() {
         return hasICCProfile;
     }
-    
+
     public byte[] getICCProfile() {
         if (hasICCProfile)
             return iccProfile;
         else
             return new byte[0];
     }
-    
+
     public void setICCProfile(byte[] iccProfile) {
         this.iccProfile = iccProfile;
         hasICCProfile = true;
     }
-    
+
     public int getColorSpace() {
         return (this.currentColorSpace);
     }
-    
+
     public int getNumComponents() {
         return numComponents;
     }
-    
-    public String getColorSpacePDFString() {    // this is for PDF Output. Does anyone else need a string representation?
-        
-        
+
+    public String getColorSpacePDFString() {
         // shouldn't this be a select-case? I can never remember
         // the syntax for that.
         if (this.currentColorSpace == this.DEVICE_RGB) {
@@ -88,5 +85,5 @@ public class ColorSpace {
             return ("DeviceRGB");
         }
     }
-    
+
 }
