@@ -22,9 +22,6 @@ package org.apache.fop.image;
 import java.io.IOException;
 import java.awt.color.ColorSpace;
 
-// FOP
-import org.apache.commons.logging.Log;
-
 /**
  * Bitmap image.
  * This supports loading a bitmap image into bitmap data.
