@@ -50,15 +50,8 @@
  */
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 // FOP
-import org.apache.fop.area.Trait;
-import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.Space;
-import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentLength;
@@ -75,13 +68,7 @@ import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.layoutmgr.ContentLayoutManager;
-import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
-import org.apache.fop.layoutmgr.LMiter;
-import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 import org.apache.fop.layoutmgr.MinOptMax;
-import org.apache.fop.util.CharUtilities;
 
 /**
  * Class modelling fo:leader object. See Sec. 6.6.9 of the XSL-FO Standard.
@@ -233,6 +220,13 @@ public class Leader extends FObjMixed {
     public int getPatternWidth() {
         return patternWidth;
     }
+
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

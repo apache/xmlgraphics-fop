@@ -50,10 +50,6 @@
  */
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-import java.io.Serializable;
-
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
@@ -63,14 +59,6 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.area.inline.InlineParent;
-import org.apache.fop.area.Trait;
-import org.apache.fop.area.Resolveable;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Area;
-import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
-import org.apache.fop.layoutmgr.LMiter;
-import org.apache.fop.layoutmgr.LayoutProcessor;
 
 /**
  * The basic link.
@@ -145,14 +133,26 @@ public class BasicLink extends Inline {
         return true;
     }
 
+    /**
+     * @return the String value of the link
+     */
     public String getLink() {
         return link;
     }
 
+    /**
+     * @return true if the link is external, false otherwise
+     */
     public boolean getExternal() {
         return external;
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

@@ -50,9 +50,6 @@
  */
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
@@ -65,7 +62,6 @@ import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 
 /**
  * Class modelling the fo:list-block object. See Sec. 6.8.2 of the XSL-FO
@@ -151,6 +147,12 @@ public class ListBlock extends FObj {
         return true;
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

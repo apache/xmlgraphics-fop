@@ -50,9 +50,6 @@
  */
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 // XML
 import org.xml.sax.Attributes;
 
@@ -64,7 +61,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.RecursiveCharIterator;
-import org.apache.fop.fo.TextInfo;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.properties.CommonAccessibility;
@@ -74,7 +70,6 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.util.CharUtilities;
 
 /*
@@ -398,6 +393,12 @@ public class Block extends FObjMixed {
         }
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

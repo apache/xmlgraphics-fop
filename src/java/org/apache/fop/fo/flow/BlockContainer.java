@@ -60,11 +60,8 @@ import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.layoutmgr.BlockContainerLayoutManager;
 
 import org.xml.sax.Attributes;
-
-import java.util.List;
 
 /**
  * Class modelling the fo:block-container object. See Sec. 6.5.3 of the XSL-FO
@@ -165,6 +162,12 @@ public class BlockContainer extends FObj {
         return this.span;
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

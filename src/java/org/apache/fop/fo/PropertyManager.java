@@ -58,7 +58,6 @@ import java.awt.geom.Rectangle2D;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonMarginInline;
@@ -120,7 +119,8 @@ public class PropertyManager {
     /**
      * Sets the Document object telling the property manager which fonts are
      * available.
-     * @param doc Document containing font information
+     * @param foTreeControl foTreeControl implementation containing font
+     * information
      */
     public void setFontInfo(FOTreeControl foTreeControl) {
         this.foTreeControl = foTreeControl;
@@ -130,7 +130,8 @@ public class PropertyManager {
     /**
      * Constructs a FontState object. If it was constructed before it is
      * reused.
-     * @param doc Document containing the font information
+     * @param foTreeControl FOTreeControl implementation containing the font
+     * information
      * @return a FontState object
      */
     public Font getFontState(FOTreeControl foTreeControl) {
@@ -476,7 +477,8 @@ public class PropertyManager {
     /**
      * Constructs a TextInfo objects. If it was constructed before it is
      * reused.
-     * @param doc Document containing list of available fonts
+     * @param foTreeControl FOTreeControl implementation containing list of
+     * available fonts
      * @return a TextInfo object
      */
     public TextInfo getTextLayoutProps(FOTreeControl foTreeControl) {

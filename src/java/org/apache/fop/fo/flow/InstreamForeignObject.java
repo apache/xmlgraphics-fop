@@ -53,7 +53,6 @@ package org.apache.fop.fo.flow;
 // FOP
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.List;
 
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Viewport;
@@ -66,7 +65,6 @@ import org.apache.fop.fo.properties.DisplayAlign;
 import org.apache.fop.fo.properties.Overflow;
 import org.apache.fop.fo.properties.Scaling;
 import org.apache.fop.fo.properties.TextAlign;
-import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 import org.w3c.dom.Document;
 
 /**
@@ -357,6 +355,12 @@ public class InstreamForeignObject extends FObj {
 
 */
 
+/**
+ * This is a hook for an FOTreeVisitor subclass to be able to access
+ * this object.
+ * @param fotv the FOTreeVisitor subclass that can access this object.
+ * @see org.apache.fop.fo.FOTreeVisitor
+ */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

@@ -55,10 +55,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.layoutmgr.RetrieveMarkerLayoutManager;
-import org.xml.sax.Attributes;
-
-import java.util.List;
+ import org.xml.sax.Attributes;
 
 /**
  * The retrieve-marker formatting object.
@@ -107,6 +104,12 @@ public class RetrieveMarker extends FObjMixed {
         return retrieveBoundary;
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

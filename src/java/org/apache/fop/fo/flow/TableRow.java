@@ -50,9 +50,6 @@
  */
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 // FOP
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.KeepValue;
@@ -67,7 +64,6 @@ import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.layoutmgr.table.Row;
 
 /**
  * Class modelling the fo:table-row object. See Sec. 6.7.9 of the XSL-FO
@@ -156,6 +152,12 @@ public class TableRow extends FObj {
         }
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

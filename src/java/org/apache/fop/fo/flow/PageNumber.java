@@ -50,9 +50,6 @@
  */
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 // FOP
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonAccessibility;
@@ -64,18 +61,11 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.layout.TextState;
-import org.apache.fop.util.CharUtilities;
 
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
-import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOInputHandler;
-import org.apache.fop.area.Trait;
 
 /**
  * Class modelling the fo:page-number object. See Sec. 6.6.10 of the XSL-FO
@@ -156,10 +146,19 @@ public class PageNumber extends FObj {
 
     }
 
+    /**
+     * @return the FontState object for this PageNumber
+     */
     public Font getFontState() {
         return fontState;
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }
