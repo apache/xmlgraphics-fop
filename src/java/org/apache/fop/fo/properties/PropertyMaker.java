@@ -255,12 +255,12 @@ public class PropertyMaker implements Cloneable {
             if (p == null) {    // check for shorthand specification
                 p = getShorthand(propertyList);
             }
-            if (p == null && bTryInherit) {    
-                // else inherit (if has parent and is inheritable)
-                PropertyList parentPropertyList = propertyList.getParentPropertyList(); 
-                if (parentPropertyList != null && isInherited()) {
-                    p = parentPropertyList.get(propId, true, false);
-                }
+        }
+        if (p == null && bTryInherit) {    
+            // else inherit (if has parent and is inheritable)
+            PropertyList parentPropertyList = propertyList.getParentPropertyList(); 
+            if (parentPropertyList != null && isInherited()) {
+                p = parentPropertyList.get(propId, true, false);
             }
         }
         return p;
