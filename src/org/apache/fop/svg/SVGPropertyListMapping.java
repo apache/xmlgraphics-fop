@@ -52,70 +52,23 @@
 package org.apache.fop.svg;
 
 import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
+import org.apache.fop.fo.properties.SVGPropertyMapping;
 import org.apache.fop.dom.svg.SVGDocumentImpl;
 
-import java.util.Hashtable;
+import java.util.Enumeration;
 
 public class SVGPropertyListMapping implements PropertyListMapping {
 
     public void addToBuilder(TreeBuilder builder) {
 
-        String uri = SVGDocumentImpl.namespaceURI;
-        Hashtable propertyTable = new Hashtable();
-        propertyTable.put("height",SVGLengthProperty.maker());
-        propertyTable.put("width",SVGLengthProperty.maker());
-
-        propertyTable.put("x",SVGLengthProperty.maker());
-        propertyTable.put("y",SVGLengthProperty.maker());
-        propertyTable.put("x1",SVGLengthProperty.maker());
-        propertyTable.put("x2",SVGLengthProperty.maker());
-        propertyTable.put("y1",SVGLengthProperty.maker());
-        propertyTable.put("y2",SVGLengthProperty.maker());
-        propertyTable.put("rx",SVGLengthProperty.maker());
-        propertyTable.put("ry",SVGLengthProperty.maker());
-        propertyTable.put("dx",SVGLengthProperty.maker());
-        propertyTable.put("dy",SVGLengthProperty.maker());
-        propertyTable.put("cx",SVGLengthProperty.maker());
-        propertyTable.put("cy",SVGLengthProperty.maker());
-        propertyTable.put("r",SVGLengthProperty.maker());
-        propertyTable.put("fx",SVGLengthProperty.maker());
-        propertyTable.put("fy",SVGLengthProperty.maker());
-        propertyTable.put("refX",SVGLengthProperty.maker());
-        propertyTable.put("refY",SVGLengthProperty.maker());
-        propertyTable.put("markerWidth",SVGLengthProperty.maker());
-        propertyTable.put("markerHeight",SVGLengthProperty.maker());
-        propertyTable.put("offset",SVGLengthProperty.maker());
-
-        /*		propertyTable.put("orient",SVGOrient.maker());*/
-        propertyTable.put("xlink:href",HRef.maker());
-        propertyTable.put("style",SVGStyle.maker());
-        propertyTable.put("transform",SVGTransform.maker());
-        propertyTable.put("d",SVGD.maker());
-        propertyTable.put("points",SVGPoints.maker());
-        propertyTable.put("viewBox",ViewBox.maker());
-        propertyTable.put("xml:space",XMLSpace.maker());
-        propertyTable.put("spreadMethod",SpreadMethod.maker());
-        propertyTable.put("gradientUnits",GradientUnits.maker());
-
-        propertyTable.put("font-family",FontFamily.maker());
-        propertyTable.put("font-style",FontStyle.maker());
-        propertyTable.put("font-weight",FontWeight.maker());
-        propertyTable.put("font-size",FontSize.maker());
-        propertyTable.put("requiredFeatures", RequiredFeatures.maker());
-        propertyTable.put("requiredExtensions", RequiredExtensions.maker());
-        propertyTable.put("systemLanguage", SystemLanguage.maker());
-
-        propertyTable.put("id",Id.maker()); // attribute for objects
-        propertyTable.put("class",ElementClass.maker()); // class for styling
-
-        builder.addPropertyList(uri, propertyTable);
-        propertyTable = new Hashtable();
-        propertyTable.put("x",SVGLengthListProperty.maker());
-        propertyTable.put("y",SVGLengthListProperty.maker());
-        propertyTable.put("dx",SVGLengthListProperty.maker());
-        propertyTable.put("dy",SVGLengthListProperty.maker());
-        builder.addElementPropertyList(uri, "tref", propertyTable);
-        builder.addElementPropertyList(uri, "tspan", propertyTable);
+	String uri = SVGDocumentImpl.namespaceURI;
+        builder.addPropertyList(uri, SVGPropertyMapping.getGenericMappings());
+	/* Add any element mappings */
+	for (Enumeration e = SVGPropertyMapping.getElementMappings();
+	     e.hasMoreElements();) {
+	  String elem = (String)e.nextElement();
+	  builder.addElementPropertyList(uri, elem,
+		  SVGPropertyMapping.getElementMapping(elem));
+	}
     }
 }
