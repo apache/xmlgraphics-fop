@@ -275,7 +275,8 @@ public class SVGRenderer {
     protected void addLine(float x1, float y1, float x2, float y2,
                            DrawingInstruction di) {
         String str;
-        str = "" + x1 + " " + y1 + " m " + x2 + " " + y2 + " l";
+        PDFNumber pdfNumber = new PDFNumber();
+        str = "" + pdfNumber.doubleOut(x1) + " " + pdfNumber.doubleOut(y1) + " m " + pdfNumber.doubleOut(x2) + " " + pdfNumber.doubleOut(y2) + " l";
         if (di != null && di.fill)
             currentStream.write(str + " f\n"); // ??
         currentStream.write(str + " S\n");
@@ -287,18 +288,19 @@ public class SVGRenderer {
      */
     protected void addCircle(float cx, float cy, float r,
                              DrawingInstruction di) {
+        PDFNumber pdfNumber = new PDFNumber();
         String str;
-        str = "" + cx + " " + (cy - r) + " m\n" + "" +
-              (cx + 21 * r / 40f) + " " + (cy - r) + " " +
-              (cx + r) + " " + (cy - 21 * r / 40f) + " " +
-              (cx + r) + " " + cy + " c\n" + "" + (cx + r) + " " +
-              (cy + 21 * r / 40f) + " " + (cx + 21 * r / 40f) +
-              " " + (cy + r) + " " + cx + " " + (cy + r) + " c\n" +
-              "" + (cx - 21 * r / 40f) + " " + (cy + r) + " " +
-              (cx - r) + " " + (cy + 21 * r / 40f) + " " +
-              (cx - r) + " " + cy + " c\n" + "" + (cx - r) + " " +
-              (cy - 21 * r / 40f) + " " + (cx - 21 * r / 40f) +
-              " " + (cy - r) + " " + cx + " " + (cy - r) + " c\n";
+        str = "" + pdfNumber.doubleOut(cx) + " " + pdfNumber.doubleOut((cy - r)) + " m\n" + "" +
+              pdfNumber.doubleOut((cx + 21 * r / 40f)) + " " + pdfNumber.doubleOut((cy - r)) + " " +
+              pdfNumber.doubleOut((cx + r)) + " " + pdfNumber.doubleOut((cy - 21 * r / 40f)) + " " +
+              pdfNumber.doubleOut((cx + r)) + " " + pdfNumber.doubleOut(cy) + " c\n" + "" + pdfNumber.doubleOut((cx + r)) + " " +
+              pdfNumber.doubleOut((cy + 21 * r / 40f)) + " " + pdfNumber.doubleOut((cx + 21 * r / 40f)) +
+              " " + pdfNumber.doubleOut((cy + r)) + " " + pdfNumber.doubleOut(cx) + " " + pdfNumber.doubleOut((cy + r)) + " c\n" +
+              "" + pdfNumber.doubleOut((cx - 21 * r / 40f)) + " " + pdfNumber.doubleOut((cy + r)) + " " +
+              pdfNumber.doubleOut(cx - r) + " " + pdfNumber.doubleOut(cy + 21 * r / 40f) + " " +
+              pdfNumber.doubleOut(cx - r) + " " + pdfNumber.doubleOut(cy) + " c\n" + "" + pdfNumber.doubleOut(cx - r) + " " +
+              pdfNumber.doubleOut(cy - 21 * r / 40f) + " " + pdfNumber.doubleOut(cx - 21 * r / 40f) +
+              " " + pdfNumber.doubleOut(cy - r) + " " + pdfNumber.doubleOut(cx) + " " + pdfNumber.doubleOut(cy - r) + " c\n";
 
         currentStream.write(str);
         doDrawing(di);
@@ -310,18 +312,19 @@ public class SVGRenderer {
      */
     protected void addEllipse(float cx, float cy, float rx, float ry,
                               DrawingInstruction di) {
+        PDFNumber pdfNumber = new PDFNumber();
         String str;
-        str = "" + cx + " " + (cy - ry) + " m\n" + "" +
-              (cx + 21 * rx / 40f) + " " + (cy - ry) + " " +
-              (cx + rx) + " " + (cy - 21 * ry / 40f) + " " +
-              (cx + rx) + " " + cy + " c\n" + "" + (cx + rx) + " " +
-              (cy + 21 * ry / 40f) + " " + (cx + 21 * rx / 40f) +
-              " " + (cy + ry) + " " + cx + " " + (cy + ry) +
-              " c\n" + "" + (cx - 21 * rx / 40f) + " " + (cy + ry) +
-              " " + (cx - rx) + " " + (cy + 21 * ry / 40f) + " " +
-              (cx - rx) + " " + cy + " c\n" + "" + (cx - rx) + " " +
-              (cy - 21 * ry / 40f) + " " + (cx - 21 * rx / 40f) +
-              " " + (cy - ry) + " " + cx + " " + (cy - ry) + " c\n";
+        str = "" + pdfNumber.doubleOut(cx) + " " + pdfNumber.doubleOut(cy - ry) + " m\n" + "" +
+              pdfNumber.doubleOut(cx + 21 * rx / 40f) + " " + pdfNumber.doubleOut(cy - ry) + " " +
+              pdfNumber.doubleOut(cx + rx) + " " + pdfNumber.doubleOut(cy - 21 * ry / 40f) + " " +
+              pdfNumber.doubleOut(cx + rx) + " " + pdfNumber.doubleOut(cy) + " c\n" + "" + pdfNumber.doubleOut(cx + rx) + " " +
+              pdfNumber.doubleOut(cy + 21 * ry / 40f) + " " + pdfNumber.doubleOut(cx + 21 * rx / 40f) +
+              " " + pdfNumber.doubleOut(cy + ry) + " " + pdfNumber.doubleOut(cx) + " " + pdfNumber.doubleOut(cy + ry) +
+              " c\n" + "" + pdfNumber.doubleOut(cx - 21 * rx / 40f) + " " + pdfNumber.doubleOut(cy + ry) +
+              " " + pdfNumber.doubleOut(cx - rx) + " " + pdfNumber.doubleOut(cy + 21 * ry / 40f) + " " +
+              pdfNumber.doubleOut(cx - rx) + " " + pdfNumber.doubleOut(cy) + " c\n" + "" + pdfNumber.doubleOut(cx - rx) + " " +
+              pdfNumber.doubleOut(cy - 21 * ry / 40f) + " " + pdfNumber.doubleOut(cx - 21 * rx / 40f) +
+              " " + pdfNumber.doubleOut(cy - ry) + " " + pdfNumber.doubleOut(cx) + " " + pdfNumber.doubleOut(cy - ry) + " c\n";
         currentStream.write(str);
         doDrawing(di);
     }
@@ -339,9 +342,10 @@ public class SVGRenderer {
      */
     protected void addRect(float x, float y, float w, float h,
                            float rx, float ry, DrawingInstruction di) {
+        PDFNumber pdfNumber = new PDFNumber();
         String str = "";
         if (rx == 0.0 && ry == 0.0) {
-            str = "" + x + " " + y + " " + w + " " + h + " re\n";
+            str = "" + pdfNumber.doubleOut(x) + " " + pdfNumber.doubleOut(y) + " " + pdfNumber.doubleOut(w) + " " + pdfNumber.doubleOut(h) + " re\n";
         } else {
             if (ry == 0.0)
                 ry = rx;
@@ -349,23 +353,23 @@ public class SVGRenderer {
                 rx = w / 2.0f;
             if (ry > h / 2.0f)
                 ry = h / 2.0f;
-            str = "" + (x + rx) + " " + y + " m\n";
-            str += "" + (x + w - rx) + " " + y + " l\n";
-            str += "" + (x + w - 19 * rx / 40) + " " + y + " " +
-                   (x + w) + " " + (y + 19 * ry / 40) + " " +
-                   (x + w) + " " + (y + ry) + " c\n";
-            str += "" + (x + w) + " " + (y + h - ry) + " l\n";
-            str += "" + (x + w) + " " + (y + h - 19 * ry / 40) + " " +
-                   (x + w - 19 * rx / 40) + " " + (y + h) + " " +
-                   (x + w - rx) + " " + (y + h) + " c\n";
-            str += "" + (x + rx) + " " + (y + h) + " l\n";
-            str += "" + (x + 19 * rx / 40) + " " + (y + h) + " " + x +
-                   " " + (y + h - 19 * ry / 40) + " " + x + " " +
-                   (y + h - ry) + " c\n";
-            str += "" + x + " " + (y + ry) + " l\n";
-            str += "" + x + " " + (y + 19 * ry / 40) + " " +
-                   (x + 19 * rx / 40) + " " + y + " " + (x + rx) +
-                   " " + y + " c\n";
+            str = "" + pdfNumber.doubleOut(x + rx) + " " + pdfNumber.doubleOut(y) + " m\n";
+            str += "" + pdfNumber.doubleOut(x + w - rx) + " " + pdfNumber.doubleOut(y) + " l\n";
+            str += "" + pdfNumber.doubleOut(x + w - 19 * rx / 40) + " " + pdfNumber.doubleOut(y) + " " +
+                   pdfNumber.doubleOut(x + w) + " " + pdfNumber.doubleOut(y + 19 * ry / 40) + " " +
+                   pdfNumber.doubleOut(x + w) + " " + pdfNumber.doubleOut(y + ry) + " c\n";
+            str += "" + pdfNumber.doubleOut(x + w) + " " + pdfNumber.doubleOut(y + h - ry) + " l\n";
+            str += "" + pdfNumber.doubleOut(x + w) + " " + pdfNumber.doubleOut(y + h - 19 * ry / 40) + " " +
+                   pdfNumber.doubleOut(x + w - 19 * rx / 40) + " " + pdfNumber.doubleOut(y + h) + " " +
+                   pdfNumber.doubleOut(x + w - rx) + " " + pdfNumber.doubleOut(y + h) + " c\n";
+            str += "" + pdfNumber.doubleOut(x + rx) + " " + pdfNumber.doubleOut(y + h) + " l\n";
+            str += "" + pdfNumber.doubleOut(x + 19 * rx / 40) + " " + pdfNumber.doubleOut(y + h) + " " + pdfNumber.doubleOut(x) +
+                   " " + pdfNumber.doubleOut(y + h - 19 * ry / 40) + " " + pdfNumber.doubleOut(x) + " " +
+                   pdfNumber.doubleOut(y + h - ry) + " c\n";
+            str += "" + pdfNumber.doubleOut(x) + " " + pdfNumber.doubleOut(y + ry) + " l\n";
+            str += "" + pdfNumber.doubleOut(x) + " " + pdfNumber.doubleOut(y + 19 * ry / 40) + " " +
+                   pdfNumber.doubleOut(x + 19 * rx / 40) + " " + pdfNumber.doubleOut(y) + " " + pdfNumber.doubleOut(x + rx) +
+                   " " + pdfNumber.doubleOut(y) + " c\n";
         }
         currentStream.write(str);
         doDrawing(di);
@@ -379,75 +383,106 @@ public class SVGRenderer {
      */
     protected void addPath(Vector points, int posx, int posy,
                            DrawingInstruction di) {
+        PDFNumber pdfNumber = new PDFNumber();
         SVGPathSegImpl pathmoveto = null;
         float lastx = 0;
         float lasty = 0;
+        float lastmovex = 0;
+        float lastmovey = 0;
+        float[] cxs;
+        float tempx;
+        float tempy;
+        float lastcx = 0;
+        float lastcy = 0;
         for (Enumeration e = points.elements(); e.hasMoreElements();) {
             SVGPathSegImpl pc = (SVGPathSegImpl) e.nextElement();
             float[] vals = pc.getValues();
-            float lastcx = 0;
-            float lastcy = 0;
             switch (pc.getPathSegType()) {
                 case SVGPathSeg.PATHSEG_MOVETO_ABS:
                     pathmoveto = pc;
                     lastx = vals[0];
                     lasty = vals[1];
-                    currentStream.write(lastx + " " + lasty + " m\n");
+                    currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " m\n");
+                    lastcx = 0;
+                    lastcy = 0;
+                    lastmovex = lastx;
+                    lastmovey = lasty;
                     break;
                 case SVGPathSeg.PATHSEG_MOVETO_REL:
+                    // the test cases seem to interprete this command differently
+                    // it seems if there is an 'm' then the current path is closed
+                    // then the point is move to a place relative to the point
+                    // after doing the close
                     if (pathmoveto == null) {
-                        lastx = vals[0];
-                        lasty = vals[1];
+                        lastx += vals[0];
+                        lasty += vals[1];
                         pathmoveto = pc;
-                        currentStream.write(lastx + " " + lasty + " m\n");
+                        currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " m\n");
                     } else {
                         lastx += vals[0];
                         lasty += vals[1];
-                        currentStream.write(lastx + " " + lasty + " l\n");
+                        pathmoveto = pc;
+                        currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
                     }
+                    lastmovex = lastx;
+                    lastmovey = lasty;
+                    lastcx = 0;
+                    lastcy = 0;
                     break;
                 case SVGPathSeg.PATHSEG_LINETO_ABS:
                     lastx = vals[0];
                     lasty = vals[1];
-                    currentStream.write(lastx + " " + lasty + " l\n");
+                    currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
+                    lastcx = 0;
+                    lastcy = 0;
                     break;
                 case SVGPathSeg.PATHSEG_LINETO_REL:
                     lastx += vals[0];
                     lasty += vals[1];
-                    currentStream.write(lastx + " " + lasty + " l\n");
+                    currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
+                    lastcx = 0;
+                    lastcy = 0;
                     break;
                 case SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS:
                     lasty = vals[0];
-                    currentStream.write(lastx + " " + lasty + " l\n");
+                    currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
+                    lastcx = 0;
+                    lastcy = 0;
                     break;
                 case SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL:
                     lasty += vals[0];
-                    currentStream.write(lastx + " " + lasty + " l\n");
+                    currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
+                    lastcx = 0;
+                    lastcy = 0;
                     break;
                 case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS:
                     lastx = vals[0];
-                    currentStream.write(lastx + " " + lasty + " l\n");
+                    currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
+                    lastcx = 0;
+                    lastcy = 0;
                     break;
                 case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL:
                     lastx += vals[0];
-                    currentStream.write(lastx + " " + lasty + " l\n");
+                    currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
+                    lastcx = 0;
+                    lastcy = 0;
                     break;
                 case SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS:
                     lastx = vals[4];
                     lasty = vals[5];
                     lastcx = vals[2];
                     lastcy = vals[3];
-                    currentStream.write((vals[0]) + " " + (vals[1]) +
-                                        " " + (vals[2]) + " " + (vals[3]) + " " +
-                                        lastx + " " + lasty + " c\n");
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) +
+                                        " " + pdfNumber.doubleOut(vals[2]) + " " + pdfNumber.doubleOut(vals[3]) + " " +
+                                        pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " c\n");
                     break;
                 case SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL:
-                    currentStream.write((vals[0] + lastx) + " " +
-                                        (vals[1] + lasty) + " " +
-                                        (vals[2] + lastx) + " " +
-                                        (vals[3] + lasty) + " " +
-                                        (vals[4] + lastx) + " " +
-                                        (vals[5] + lasty) + " c\n");
+                    currentStream.write(pdfNumber.doubleOut(vals[0] + lastx) + " " +
+                                        pdfNumber.doubleOut(vals[1] + lasty) + " " +
+                                        pdfNumber.doubleOut(vals[2] + lastx) + " " +
+                                        pdfNumber.doubleOut(vals[3] + lasty) + " " +
+                                        pdfNumber.doubleOut(vals[4] + lastx) + " " +
+                                        pdfNumber.doubleOut(vals[5] + lasty) + " c\n");
                     lastcx = vals[2] + lastx;
                     lastcy = vals[3] + lasty;
                     lastx += vals[4];
@@ -460,11 +495,15 @@ public class SVGRenderer {
                     if (lastcy == 0) {
                         lastcy = lasty;
                     }
+                    lastcx = lastx + (lastx - lastcx);
+                    lastcy = lasty + (lasty - lastcy);
                     lastx = vals[2];
                     lasty = vals[3];
-                    currentStream.write(lastcx + " " + lastcy + " " +
-                                        (vals[0]) + " " + (vals[1]) + " " +
-                                        lastx + " " + lasty + " c\n");
+                    currentStream.write(pdfNumber.doubleOut(lastcx) + " " + pdfNumber.doubleOut(lastcy) + " " +
+                                        pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " " +
+                                        pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " c\n");
+                    lastcx = vals[0];
+                    lastcy = vals[1];
                     break;
                 case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL:
                     if (lastcx == 0) {
@@ -473,11 +512,15 @@ public class SVGRenderer {
                     if (lastcy == 0) {
                         lastcy = lasty;
                     }
-                    currentStream.write(lastcx + " " + lastcy + " " +
-                                        (vals[0] + lastx) + " " +
-                                        (vals[1] + lasty) + " " +
-                                        (vals[2] + lastx) + " " +
-                                        (vals[3] + lasty) + " c\n");
+                    lastcx = lastx + (lastx - lastcx);
+                    lastcy = lasty + (lasty - lastcy);
+                    currentStream.write(pdfNumber.doubleOut(lastcx) + " " + pdfNumber.doubleOut(lastcy) + " " +
+                                        pdfNumber.doubleOut(vals[0] + lastx) + " " +
+                                        pdfNumber.doubleOut(vals[1] + lasty) + " " +
+                                        pdfNumber.doubleOut(vals[2] + lastx) + " " +
+                                        pdfNumber.doubleOut(vals[3] + lasty) + " c\n");
+                    lastcx = (vals[0] + lastx);
+                    lastcy = (vals[1] + lasty);
                     lastx += vals[2];
                     lasty += vals[3];
                     break;
@@ -488,12 +531,15 @@ public class SVGRenderer {
                     if (lastcy == 0) {
                         lastcy = lasty;
                     }
-                    lastx = vals[0];
-                    lasty = vals[1];
-                    lastcx = 0;
-                    lastcy = 0;
-                    currentStream.write(lastcx + " " + lastcy + " " +
-                                        lastx + " " + lasty + " y\n");
+                    tempx = lastx;
+                    tempy = lasty;
+                    lastx = vals[2];
+                    lasty = vals[3];
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " " +
+                                        pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " y\n");
+                    cxs = calculateLastControl(tempx, tempy, lastx, lasty, -tempx + vals[0], -tempy + vals[1]);
+                    lastcx = cxs[0];
+                    lastcy = cxs[1];
                     break;
                 case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL:
                     if (lastcx == 0) {
@@ -502,11 +548,49 @@ public class SVGRenderer {
                     if (lastcy == 0) {
                         lastcy = lasty;
                     }
-                    currentStream.write(lastcx + " " + lastcy + " " +
-                                        (vals[0] + lastx) + " " +
-                                        (vals[1] + lasty) + " y\n");
-                    lastcx = 0;
-                    lastcy = 0;
+                    currentStream.write(pdfNumber.doubleOut(vals[0] + lastx) + " " + pdfNumber.doubleOut(vals[1] + lasty) + " " +
+                                        pdfNumber.doubleOut(vals[2] + lastx) + " " +
+                                        pdfNumber.doubleOut(vals[3] + lasty) + " y\n");
+                    cxs = calculateLastControl(lastx, lasty, lastx + vals[2], lasty + vals[3], vals[0], vals[1]);
+                    lastcx = cxs[0];
+                    lastcy = cxs[1];
+                    lastx += vals[2];
+                    lasty += vals[3];
+                    break;
+                case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS:
+                    if (lastcx == 0) {
+                        lastcx = lastx;
+                    }
+                    if (lastcy == 0) {
+                        lastcy = lasty;
+                    }
+                    tempx = lastx;
+                    tempy = lasty;
+                    lastcx = lastx + (lastx - lastcx);
+                    lastcy = lasty + (lasty - lastcy);
+                    lastx = vals[0];
+                    lasty = vals[1];
+                    currentStream.write(pdfNumber.doubleOut(lastcx) + " " + pdfNumber.doubleOut(lastcy) + " " +
+                                        pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " y\n");
+                    cxs = calculateLastControl(tempx, tempy, lastx, lasty, -tempx + lastcx, -tempy + lastcy);
+                    lastcx = cxs[0];
+                    lastcy = cxs[1];
+                    break;
+                case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL:
+                    if (lastcx == 0) {
+                        lastcx = lastx;
+                    }
+                    if (lastcy == 0) {
+                        lastcy = lasty;
+                    }
+                    lastcx = lastx + (lastx - lastcx);
+                    lastcy = lasty + (lasty - lastcy);
+                    currentStream.write(pdfNumber.doubleOut(lastcx) + " " + pdfNumber.doubleOut(lastcy) + " " +
+                                        pdfNumber.doubleOut(vals[0] + lastx) + " " +
+                                        pdfNumber.doubleOut(vals[1] + lasty) + " y\n");
+                    cxs = calculateLastControl(lastx, lasty, lastx + vals[0], lasty + vals[1], -lastx + lastcx, -lasty + lastcy);
+                    lastcx = cxs[0];
+                    lastcy = cxs[1];
                     lastx += vals[0];
                     lasty += vals[1];
                     break;
@@ -516,7 +600,7 @@ public class SVGRenderer {
                     // then work out the direction from flags
                 case SVGPathSeg.PATHSEG_ARC_ABS:
                     {
-                        double rx = vals[0];
+/*                        double rx = vals[0];
                         double ry = vals[1];
                         double theta = vals[2];
                         boolean largearcflag = (vals[3] == 1.0);
@@ -562,18 +646,18 @@ public class SVGRenderer {
 
                         double cx = lastx;
                         double cy = lasty;
-                        currentStream.write(contrx1 + " " + contry1 +
-                                            " " + contrx2 + " " + contry2 + " " +
-                                            vals[5] + " " + vals[6] + " c\n");
+                        currentStream.write(pdfNumber.doubleOut(contrx1) + " " + pdfNumber.doubleOut(contry1) +
+                                            " " + pdfNumber.doubleOut(contrx2) + " " + pdfNumber.doubleOut(contry2) + " " +
+                                            pdfNumber.doubleOut(vals[5]) + " " + pdfNumber.doubleOut(vals[6]) + " c\n");
                         lastcx = 0; //??
                         lastcy = 0; //??
                         lastx = vals[5];
-                        lasty = vals[6];
+                        lasty = vals[6];*/
                     }
                     break;
                 case SVGPathSeg.PATHSEG_ARC_REL:
                     {
-                        double rx = vals[0];
+/*                        double rx = vals[0];
                         double ry = vals[1];
                         double theta = vals[2];
                         boolean largearcflag = (vals[3] == 1.0);
@@ -624,23 +708,46 @@ public class SVGRenderer {
 
                         double cx = lastx;
                         double cy = lasty;
-                        currentStream.write(contrx1 + " " + contry1 +
-                                            " " + contrx2 + " " + contry2 + " " +
-                                            (vals[5] + lastx) + " " +
-                                            (vals[6] + lasty) + " c\n");
+                        currentStream.write(pdfNumber.doubleOut(contrx1) + " " + pdfNumber.doubleOut(contry1) +
+                                            " " + pdfNumber.doubleOut(contrx2) + " " + pdfNumber.doubleOut(contry2) + " " +
+                                            pdfNumber.doubleOut(vals[5] + lastx) + " " +
+                                            pdfNumber.doubleOut(vals[6] + lasty) + " c\n");
 
                         lastcx = 0; //??
                         lastcy = 0; //??
                         lastx += vals[5];
-                        lasty += vals[6];
+                        lasty += vals[6];*/
                     }
                     break;
                 case SVGPathSeg.PATHSEG_CLOSEPATH:
                     currentStream.write("h\n");
+                    pathmoveto = null;
+                    lastx = lastmovex;
+                    lasty = lastmovey;
                     break;
             }
         }
         doDrawing(di);
+    }
+
+    protected float[] calculateLastControl(float x1, float y1, float x2, float y2, float relx, float rely)
+    {
+        float vals[] = new float[2];
+        relx = -relx;
+        rely = -rely;
+        float dist = (float)Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+        float costheta = (float)(x2 - x1) / dist;
+        float sinetheta = (float)(y2 - y1) / dist;
+        float temp = relx;
+        relx = relx * costheta + rely * sinetheta;
+        rely = -temp * sinetheta + rely * costheta;
+        relx = -relx;
+        temp = relx;
+        relx = relx * costheta - rely * sinetheta;
+        rely = temp * sinetheta + rely * costheta;
+        vals[0] = x2 - relx;
+        vals[1] = y2 - rely;
+        return vals;
     }
 
     /**
@@ -650,6 +757,7 @@ public class SVGRenderer {
      */
     protected void addPolyline(Vector points, DrawingInstruction di,
                                boolean close) {
+        PDFNumber pdfNumber = new PDFNumber();
         PathPoint pc;
         float lastx = 0;
         float lasty = 0;
@@ -658,13 +766,13 @@ public class SVGRenderer {
             pc = (PathPoint) e.nextElement();
             lastx = pc.x;
             lasty = pc.y;
-            currentStream.write(lastx + " " + lasty + " m\n");
+            currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " m\n");
         }
         while (e.hasMoreElements()) {
             pc = (PathPoint) e.nextElement();
             lastx = pc.x;
             lasty = pc.y;
-            currentStream.write(lastx + " " + lasty + " l\n");
+            currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
         }
         if (close)
             currentStream.write("h\n");
@@ -709,26 +817,27 @@ public class SVGRenderer {
                 href = "file:" + href;
             }
             FopImage img = FopImageFactory.Make(href);
+            PDFNumber pdfNumber = new PDFNumber();
             if (img instanceof SVGImage) {
                 SVGSVGElement svg =
                   ((SVGImage) img).getSVGDocument().getRootElement();
-                currentStream.write("q\n" + width /
-                                    svg.getWidth().getBaseVal().getValue() + " 0 0 " +
-                                    height /
-                                    svg.getHeight().getBaseVal().getValue() + " 0 0 cm\n");
+                currentStream.write("q\n" + pdfNumber.doubleOut(width /
+                                    svg.getWidth().getBaseVal().getValue()) + " 0 0 " +
+                                    pdfNumber.doubleOut(height /
+                                    svg.getHeight().getBaseVal().getValue()) + " 0 0 cm\n");
                 renderSVG(svg, (int) x * 1000, (int) y * 1000);
                 currentStream.write("Q\n");
                 //				renderSVG(svg);
             } else if (img != null) {
                 int xObjectNum = this.pdfDoc.addImage(img);
-                currentStream.write("q\n1 0 0 -1 " + 0 + " " +
-                                    (2 * y + height) + " cm\n" + width + " 0 0 " +
-                                    height + " " + x + " " + y + " cm\n" + "/Im" +
+                currentStream.write("q\n1 0 0 -1 0 " +
+                                    pdfNumber.doubleOut(2 * y + height) + " cm\n" + pdfNumber.doubleOut(width) + " 0 0 " +
+                                    pdfNumber.doubleOut(height) + " " + pdfNumber.doubleOut(x) + " " + pdfNumber.doubleOut(y) + " cm\n" + "/Im" +
                                     xObjectNum + " Do\nQ\n");
                 //				img.close();
             }
         } catch (Exception e) {
-            System.err.println("could not add image to SVG: " + href);
+            MessageHandler.errorln("could not add image to SVG: " + href);
         }
     }
 
@@ -774,7 +883,7 @@ public class SVGRenderer {
                 SVGPatternElement pattern = (SVGPatternElement) gi;
                 handlePattern(pattern, di, fill, area);
             } else {
-                System.err.println("WARNING Invalid fill reference :" +
+                MessageHandler.errorln("WARNING Invalid fill reference :" +
                                    gi + ":" + address);
             }
         }
@@ -1104,7 +1213,7 @@ public class SVGRenderer {
             }
             if (cv == null) {
                 // problems
-                System.err.println("no stop-color or color in stop element");
+                MessageHandler.errorln("no stop-color or color in stop element");
                 return;
             }
             PDFColor color = new PDFColor(0, 0, 0);
@@ -1143,7 +1252,7 @@ public class SVGRenderer {
             }
             if (cv == null) {
                 // problems
-                System.err.println("no stop-color or color in stop element");
+                MessageHandler.errorln("no stop-color or color in stop element");
                 continue;
             }
             PDFColor color = new PDFColor(0, 0, 0);
@@ -1291,7 +1400,7 @@ public class SVGRenderer {
             }
             if (cv == null) {
                 // problems
-                System.err.println("no stop-color or color in stop element");
+                MessageHandler.errorln("no stop-color or color in stop element");
                 return;
             }
             PDFColor color = new PDFColor(0, 0, 0);
@@ -1544,7 +1653,7 @@ public class SVGRenderer {
             }
             if (cv == null) {
                 // problems
-                System.err.println("no stop-color or color in stop element");
+                MessageHandler.errorln("no stop-color or color in stop element");
                 continue;
             }
             PDFColor color = new PDFColor(0, 0, 0);
@@ -1767,7 +1876,7 @@ public class SVGRenderer {
                     }
                 }
                 currentStream.write("] ");
-                sp = style.getPresentationAttribute("stroke-offset");
+                sp = style.getPresentationAttribute("stroke-dashoffset");
                 if (sp != null && sp.getValueType() ==
                         CSSValue.CSS_PRIMITIVE_VALUE) {
                     currentStream.write(
@@ -1777,37 +1886,48 @@ public class SVGRenderer {
                     currentStream.write("0 d\n");
                 }
             }
-            /*			Vector list;
-             			list = (Vector)sp;
-             			currentStream.add("[ ");
-             			for(Enumeration e = list.elements(); e.hasMoreElements(); ) {
-             				Integer val = (Integer)e.nextElement();
-             				currentStream.add(val.intValue() + " ");
-             			}
-             			sp = style.getPropertyCSSValue("stroke-offset");
-             			if(sp != null) {
-             				float width;
-             				width = ((SVGLengthImpl)sp).getValue();
-             				PDFNumber pdfNumber = new PDFNumber();
-             				currentStream.add("] " + pdfNumber.doubleOut(width) + " d\n");
-             			} else {
-             				currentStream.add("] 0 d\n");
-             			}*/
-
+        }
+        sp = style.getPresentationAttribute("clip-path");
+        if (sp != null) {
+            String clipurl;
+            if (sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+                if (((CSSPrimitiveValue) sp).getPrimitiveType() ==
+                        CSSPrimitiveValue.CSS_URI) {
+                    clipurl = ((CSSPrimitiveValue) sp).getCssText();
+                    if (clipurl.startsWith("url(")) {
+                        int b1 = clipurl.indexOf("(");
+                        int b2 = clipurl.indexOf(")");
+                        clipurl = clipurl.substring(b1 + 1, b2);
+                    }
+                    // get def of mask and set mask
+                    SVGElement graph = null;
+                    graph = locateDef(clipurl, area);
+                    if (graph != null) {
+                        MessageHandler.logln("clip path: " + graph);
+                        // render the clip path elements and make it the clip
+                        // renderElement(svgarea, graph, posx, posy);
+                    }
+                }
+            }
         }
         sp = style.getPresentationAttribute("mask");
         if (sp != null) {
             String maskurl;
             if (sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
                 if (((CSSPrimitiveValue) sp).getPrimitiveType() ==
-                        CSSPrimitiveValue.CSS_STRING) {
+                        CSSPrimitiveValue.CSS_URI) {
                     maskurl = ((CSSPrimitiveValue) sp).getCssText();
                     //					System.out.println("mask: " + maskurl);
                     // get def of mask and set mask
+                    if (maskurl.startsWith("url(")) {
+                        int b1 = maskurl.indexOf("(");
+                        int b2 = maskurl.indexOf(")");
+                        maskurl = maskurl.substring(b1 + 1, b2);
+                    }
                     SVGElement graph = null;
                     graph = locateDef(maskurl, area);
                     if (graph != null) {
-                        System.out.println("mask: " + graph);
+                        MessageHandler.logln("mask: " + graph);
                         //						SVGElement parent = graph.getGraphicParent();
                         //						graph.setParent(area);
                         //						renderElement(svgarea, graph, posx, posy);
@@ -1834,6 +1954,11 @@ public class SVGRenderer {
         }
     }
 
+    /**
+     * Main rendering selection.
+     * This applies any transform and style and then calls the appropriate
+     * rendering method depending on the type of element.
+     */
     public void renderElement(SVGElement area, int posx, int posy) {
         int x = posx;
         int y = posy;
@@ -2001,7 +2126,7 @@ public class SVGRenderer {
     }
 
     /**
-     * Todo: underline, linethrough, textpath, tref
+     * Todo: underline, linethrough, textpath
      */
     public void renderText(SVGTextElementImpl tg, float x, float y,
                            DrawingInstruction di) {
@@ -2124,7 +2249,7 @@ public class SVGRenderer {
                     }
                 }
             } catch (Exception e) {
-                System.out.println(e);
+                MessageHandler.errorln(e.toString());
             }
         }
         return null;
@@ -2268,7 +2393,7 @@ public class SVGRenderer {
                                             " " + fs.getFontSize() / 1000f + " Tf\n");
                     }
                 } else {
-                    System.err.println("Error: unknown text element " + o);
+                    MessageHandler.errorln("Error: unknown text element " + o);
                 }
             }
         }
