@@ -31,7 +31,6 @@ PARENT DIRECTORY!
       <menu-item label="XML Parsing" href="xml_parsing.html"/>
       <menu-item label="FO Tree" href="fo_tree.html"/>
       <menu-item label="Properties" href="properties.html"/>
-      <menu-item label="Layout Managers" href="layout_managers.html"/>
     </menu>
     <menu label="Extras">
       <menu-item label="Images" href="images.html"/>
