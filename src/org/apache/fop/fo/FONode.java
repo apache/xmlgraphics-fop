@@ -184,9 +184,9 @@ public class FONode extends FOTree.Node{
                       .get(property))
                      .invoke(null, foTree.args));
         } catch (IllegalAccessException e) {
-            throw new PropertyException (e.getMessage());
+            throw new PropertyException (e);
         } catch (InvocationTargetException e) {
-            throw new PropertyException (e.getMessage());
+            throw new PropertyException (e);
         }
     }
 
