@@ -96,8 +96,7 @@ public class PageNumberCitation extends FObj {
     public int getStringWidth(String str) {
         int width = 0;
         for (int count = 0; count < str.length(); count++) {
-            width += CharUtilities.getCharWidth(str.charAt(count),
-                                                fontState);
+            width += fontState.getCharWidth(str.charAt(count));
         }
         return width;
     }
