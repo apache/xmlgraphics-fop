@@ -93,8 +93,8 @@ public class StandardElementMapping implements ElementMapping {
 	builder.addMapping(uri, "page-number-citation", PageNumberCitation.maker());
 	builder.addMapping(uri, "display-sequence",
 			   DisplaySequence.maker()); 
-	builder.addMapping(uri, "inline-sequence",
-			   InlineSequence.maker()); 
+	builder.addMapping(uri, "inline",
+			   Inline.maker()); 
   builder.addMapping(uri, "external-graphic",
                            ExternalGraphic.maker());
 	builder.addMapping(uri, "table", Table.maker());
