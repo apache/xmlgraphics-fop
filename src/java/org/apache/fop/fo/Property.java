@@ -117,7 +117,7 @@ public class Property {
             inherited = generic.inherited;
             defaultValue = generic.defaultValue;
             percentBase = generic.percentBase;
-            if (shorthands != null) {
+            if (generic.shorthands != null) {
                 shorthands = new Property.Maker[generic.shorthands.length];
                 System.arraycopy(shorthands, 0, generic.shorthands, 0, shorthands.length);
             }
