@@ -106,8 +106,8 @@ public class FontFamily extends Property  {
     static {
         rwEnumHash = new HashMap((int)(rwEnums.length / 0.75) + 1);
         for (int i = 1; i < rwEnums.length; i++ ) {
-            rwEnumHash.put((Object)rwEnums[i],
-                                (Object) Ints.consts.get(i));
+            rwEnumHash.put(rwEnums[i],
+                                Ints.consts.get(i));
         }
     }
 

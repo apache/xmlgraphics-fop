@@ -158,7 +158,7 @@ public class TextDecoration extends Property  {
             }
         } else { // list is a PropertyValueList
             ssList = spaceSeparatedList((PropertyValueList)list);
-            iter = ((PropertyValueList)ssList).iterator();
+            iter = ssList.iterator();
             while (iter.hasNext()) {
                 Object value = iter.next();
                 if (value instanceof NCName)

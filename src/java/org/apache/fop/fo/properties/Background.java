@@ -127,10 +127,9 @@ public class Background extends Property  {
      * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> on which this expression is being
      * parsed.
-     * @value - the <tt>PropertyValue</tt> passed from
-     * <i>PropertyParser.parse()</i>.
-     * @return the refined <tt>PropertyValue</tt>.
-     * @throws <tt>PropertyException</tt>.
+     * @param value  passed from <i>PropertyParser.parse()</i>
+     * @return the refined <tt>PropertyValue</tt>
+     * @throws PropertyException
      */
     public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
@@ -184,7 +183,7 @@ public class Background extends Property  {
 	if (value.size() == 0)
 	    throw new PropertyException
 			    ("Empty list for Background");
-	ListIterator elements = ((PropertyValueList)value).listIterator();
+	ListIterator elements = value.listIterator();
 
 	scanning_elements: while (elements.hasNext()) {
 	    PropertyValue pval = (PropertyValue)(elements.next());
