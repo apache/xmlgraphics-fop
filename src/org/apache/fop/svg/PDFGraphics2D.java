@@ -67,8 +67,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     /** the current colour for use in svg */
     PDFColor currentColour = new PDFColor(0, 0, 0);
 
-    FontInfo fontInfo;
-
     /**
      * Create a new PDFGraphics2D with the given pdf document info.
      * This is used to create a Graphics object for use inside an already
@@ -388,7 +386,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream = null;
         currentFontName = null;
         currentColour = null;
-        fontInfo = null;
     }
 
     /**
@@ -686,7 +683,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see #setClip
      */
     public void drawString(String s, float x, float y) {
-        System.out.println("drawString(String)");
+        //System.out.println("drawString(String)");
         currentStream.write("BT\n");
 
       Shape imclip = getClip();
