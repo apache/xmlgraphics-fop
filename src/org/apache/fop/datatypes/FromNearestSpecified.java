@@ -1,33 +1,28 @@
 package org.apache.fop.datatypes;
 
-import org.apache.fop.fo.expr.AbstractPropertyValue;
+import org.apache.fop.datatypes.IndirectValue;
 import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.Properties;
 
 /*
- * FromNearestSpecified.java
- * <br/>
  * $Id$
- * <br/>
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 /**
- * <p>
- * A pseudo-class to represent a call to the core property value function
- * from-nearest-specified-value(), <i>only</i> in the cases where the property
+ * A pseudo-class to represent a call to the core function
+ * from-nearest-specified-value().
+ * Used <i>only</i> in the cases where the property
  * assigned to is identical to the <tt>NCName</tt> argument, and this is a
  * shorthand.
- * <p>
- * Further, the function call must be the only component of the expression
+ * <p>Further, the function call must be the only component of the expression
  * in which it occurs.  (See Rec. Section 5.10.4 Property Value Functions.)
  * In these circumstances, the function call resolves to a
  * from-nearest-specified-value() function call on each of the properties to
  * which the shorthand resolves.
- * <p>
- * The use of the pseudo-type should ensure that the function call is not
+ * <p>The use of the pseudo-type should ensure that the function call is not
  * involved in any arithmetic components of a more complex expression.  I.e,
  * the function evaluator in the parser must check to see whether the
  * property for which the from-nearest-specified-value() function is being
@@ -39,22 +34,23 @@ import org.apache.fop.fo.Properties;
  * be later resolved before the property value can be utilised in the fo
  * node, but, in the meantime, any attempt to involve the function call in
  * any more complex expression will throw an exception.
- * <p>
- * This mechanism ensures, without greatly complicating the parser,
+ * <p>This mechanism ensures, without greatly complicating the parser,
  * that the constraint on the from-nearest-specified-value() function, with
  * respect to shorthands, is met.
- * <p>
- * This pseudo-datatype is also used as the first stage of shorthand
+ * <p>This pseudo-datatype is also used as the first stage of shorthand
  * expansion.  After a shorthand's expression is parsed, the next stage of
  * resolution will generate a FromNearestSpecified object for each property
  * in the expansion of the shorthand.
+ * <p>Once created, this class acts as an <tt>IndirectValue</tt> in the
+ * event that it cannot immediately be resolved.  This association exists
+ * simply to save creating another object. 
  *
  * @see FromParent
  * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
  * @version $Revision$ $Name$
  */
 
-public class FromNearestSpecified extends AbstractPropertyValue {
+public class FromNearestSpecified extends IndirectValue {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
