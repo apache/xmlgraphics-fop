@@ -1,5 +1,5 @@
 /*
- * $Id: Bookmarks.java,v 1.7 2003/03/05 20:40:18 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,12 +48,13 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.extensions;
+package org.apache.fop.fo.extensions;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 
 import java.util.ArrayList;
+import org.apache.fop.extensions.*;
 
 /**
  * Bookmarks data is the top level element of the pdf bookmark extension.

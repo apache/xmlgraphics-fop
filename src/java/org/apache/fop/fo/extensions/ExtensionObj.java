@@ -1,5 +1,5 @@
 /*
- * $Id: Outline.java,v 1.10 2003/03/05 20:40:18 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,96 +48,29 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.extensions;
+package org.apache.fop.fo.extensions;
 
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.apps.FOPException;
-
-import java.util.ArrayList;
-
-import org.xml.sax.Attributes;
 
 /**
- * The outline object for the pdf bookmark extension.
- * The outline element contains a label and optionally more outlines.
+ * Base class for pdf bookmark extension objects.
  */
-public class Outline extends ExtensionObj {
-    private Label label;
-    private ArrayList outlines = new ArrayList();
-
-    private String internalDestination;
-    private String externalDestination;
+public abstract class ExtensionObj extends FObj {
 
     /**
-     * Create a new outline object.
+     * Create a new extension object.
      *
-     * @param parent the parent fo node
+     * @param parent the parent formatting object
      */
-    public Outline(FONode parent) {
+    public ExtensionObj(FONode parent) {
         super(parent);
-    }
-
-    /**
-     * The attribues on the outline object are the internal and external
-     * destination. One of these is required.
-     *
-     * @param attlist the attribute list
-     * @throws FOPException a fop exception if there is an error
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        internalDestination =
-            attlist.getValue("internal-destination");
-        externalDestination =
-            attlist.getValue("external-destination");
-        if (externalDestination != null && !externalDestination.equals("")) {
-            getLogger().warn("fox:outline external-destination not supported currently.");
-        }
-
-        if (internalDestination == null || internalDestination.equals("")) {
-            getLogger().warn("fox:outline requires an internal-destination.");
-        }
-
-    }
-
-    /**
-     * Add the child to this outline.
-     * This checks for the type, label or outline and handles appropriately.
-     *
-     * @param obj the child object
-     */
-    protected void addChild(FONode obj) {
-        if (obj instanceof Label) {
-            label = (Label)obj;
-        } else if (obj instanceof Outline) {
-            outlines.add(obj);
-        }
-    }
-
-    /**
-     * Get the label string.
-     * This gets the label string from the child label element.
-     *
-     * @return the label string or empty if not found
-     */
-    public String getLabel() {
-        return label == null ? "" : label.toString();
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }
 
-    public String getInternalDestination() {
-        return internalDestination;
-    }
-
-    public String getExternalDestination() {
-        return externalDestination;
-    }
-
-    public ArrayList getOutlines() {
-        return outlines;
-    }
-
 }
+
