@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -37,27 +37,31 @@ If you are using Microsoft Outlook, this setting can be found at the "Mail Forma
       <p>For help in understanding email acronyms, see the <jump href="http://www.lingo2word.com/lists/acronym_listA.html">Lingo2Word Acronym List</jump>, or the <jump href="http://www.keno.org/web_design/acronyms.htm">Keno Internet Services Internet Glossary</jump>.</p>
     </section>
     <section id="fop-user">
-      <title>FOP User Mailing List</title>
+      <title>FOP Users Mailing List</title>
       <p>Use this forum to discuss topics of interest to FOP users.</p>
       <section id="fop-user-archive">
         <title>Archives</title>
         <p>To review the archives, you have several options:</p>
         <ul>
+        
+          <li>The <link href="http://mail-archives.eu.apache.org/mod_mbox/xmlgraphics-fop-users/">Apache Mailing List archive</link> (mod_mbox archive).</li>
+          <li>The <link href="http://xmlgraphics.apache.org/mail/fop-users/">Apache Mailing List archive</link> (gzip files).</li>
           <li>The <jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">Mailing list ARChives </jump> (MARC) at the AIMS group (search).</li>
           <li>The <jump href="http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=fop-user@xml.apache.org">Apache Eyebrowse</jump> archive (search, list by date, author, subject, or thread).</li>
-          <li>The <link href="http://xml.apache.org/mail/fop-user">Apache Mailing List archive</link> (gzip files).</li>
         </ul>
+        <note>The Eyebrowse and MARC archives are currently broken!</note>
       </section>
       <section id="fop-user-subscribe">
         <title>Subscription Information</title>
         <ul>
-          <li>See <link href="http://xml.apache.org/mail.html#fop-user">Apache XML Mailing Lists</link> for detailed subscription information.</li>
-          <li>To subscribe (digest only): Send email to <link href="mailto:fop-user-digest-subscribe@xml.apache.org">fop-user-digest-subscribe@xml.apache.org</link>.</li>
-          <li>To subscribe fully: Send email to <link href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</link>.</li>
-          <li>For standard help: Send email to <link href="mailto:fop-user-help@xml.apache.org">fop-user-help@xml.apache.org</link>.</li>
-          <li>To unsubscribe: Send email to <link href="mailto:fop-user-unsubscribe@xml.apache.org">fop-user-unsubscribe@xml.apache.org</link>.</li>
+          <li>See <link href="http://xmlgraphics.apache.org/mail.html">Apache XML Graphics Mailing Lists</link> for detailed subscription information.</li>
+          <li>To subscribe (digest only): Send email to <link href="mailto:fop-user-digest-subscribe@xmlgraphics.apache.org">fop-users-digest-subscribe@xmlgraphics.apache.org</link>.</li>
+          <li>To subscribe fully: Send email to <link href="mailto:fop-users-subscribe@xmlgraphics.apache.org">fop-users-subscribe@xmlgraphics.apache.org</link>.</li>
+          <li>For standard help: Send email to <link href="mailto:fop-users-help@xmlgraphics.apache.org">fop-users-help@xmlgraphics.apache.org</link>.</li>
+          <li>To unsubscribe: Send email to <link href="mailto:fop-users-unsubscribe@xmlgraphics.apache.org">fop-users-unsubscribe@xmlgraphics.apache.org</link>.</li>
         </ul>
       </section>
+      <note>You can find the developer mailing list on the <link href="/dev/index.html">Development pages</link>.</note>
       <section id="fop-user-policy">
         <title>Submitting a Question</title>
         <p>FOP support is primarily <em>self-service</em>. The FOP User Mailing List serves as a backup to the self-service documentation for cases where either the documentation is deficient or where users have unusual circumstances. FOP developers and users are happy to help answer questions that are <em>appropriate to the forum</em> (i.e. FOP-specific), and that are <em>submitted after appropriate preparation</em>. To ensure that your question is not <strong>abusive</strong> of this policy, please use the following checklist:</p>
@@ -69,14 +73,14 @@ If you are using Microsoft Outlook, this setting can be found at the "Mail Forma
           <li>Have you included any detailed error messages? Please do so.</li>
           <li>Does a proper understanding of your question require inclusion of XSLT code, DocBook source, or other semantic XML? If so, the question is <em>almost certainly not appropriate to this list</em>. In general, the only input documents that are appropriate on this list are XSL-FO snippets. See <link href="running.html#running_xalan">Running Xalan</link> for instructions about capturing the XSL-FO document that is actually submitted to FOP. If you haven't examined the XSL-FO document yourself, then you are not yet prepared to formulate a FOP-specific question.</li>
           <li>If you are providing one or more XSL-FO snippets:
-              <ul>
+            <ul>
               <li>Have you reduced them to the shortest possible complete, <strong>self-contained</strong> document that demonstrates the problem? Please do so.</li>
               <li>Have you removed images that are not an integral part of the question? Please do so.</li>
               <li>Have you filtered out confidential material? Please do so.</li>
             </ul>
           </li>
           <li>If you are including a stack trace:
-              <ul>
+            <ul>
               <li>Is it helpful in finding the problem? If not, please do not submit it.</li>
               <li>Have you included only those portions that are relevant to the question? If not, please do so.</li>
             </ul>
