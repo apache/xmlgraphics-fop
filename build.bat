@@ -12,6 +12,7 @@ set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xml-apis.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xercesImpl-2.2.1.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xalan-2.4.1.jar
 
+set ANT_HOME_BAK=%ANT_HOME%
 set ANT_HOME=%LIBDIR%
 
 echo Building with classpath %LOCALCLASSPATH%
@@ -20,6 +21,7 @@ echo Starting Ant...
 
 %JAVA_HOME%\bin\java.exe -Dant.home=%ANT_HOME% -classpath "%LOCALCLASSPATH%" org.apache.tools.ant.Main %1 %2 %3 %4 %5
 
+set ANT_HOME=%ANT_HOME_BAK%
 goto end
 
 :error
