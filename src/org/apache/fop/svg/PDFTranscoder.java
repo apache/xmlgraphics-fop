@@ -382,7 +382,6 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             return "";
         }
 
-
         /**
          * Returns the user stylesheet specified in the
          * <tt>TranscodingHints</tt> or null if any.
@@ -400,6 +399,10 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             } else {
                 return XMLResourceDescriptor.getXMLParserClassName();
             }
+        }
+
+        public boolean isXMLParserValidating() {
+            return false;
         }
 
         /**
