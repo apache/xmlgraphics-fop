@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Collections;
+import java.util.Arrays;
 
 /*
  * FOAttributes.java
@@ -63,7 +64,18 @@ public class FOAttributes {
      */
     private HashMap foAttrMap = new HashMap(0);
 
-    private int DefAttrNSIndex = XMLNamespaces.DefAttrNSIndex;
+    /**
+     * An sorted array of the keys (property indices) of the values in
+     * <i>foAttrMap</i>.
+     */
+    private Integer[] foAttrKeys = null;
+
+    /**
+     * A static array of <tt>Integer</tt> as a template for the generation
+     * of the <i>foAttrKeys</i> array.
+     */
+    private static Integer[] integerArray
+                                    = new Integer[] { Ints.consts.get(0) };
 
     private FONode foNode;
 
@@ -105,7 +117,7 @@ public class FOAttributes {
             int attrUriIndex = foNode.namespaces.getURIIndex(attrUri);
 
             //System.out.println("FONode:" + event);
-            if (attrUriIndex == DefAttrNSIndex) {
+            if (attrUriIndex == XMLNamespaces.DefAttrNSIndex) {
                 // Standard FO namespace
                 // Catch default namespace declaration here.  This seems to
                 // be a kludge.  Should 'xmlns' come through here?
@@ -130,7 +142,7 @@ public class FOAttributes {
                     System.out.println("Creating nSpaceAttrMaps");
                     nSpaceAttrMaps = new ArrayList(attrUriIndex + 1);
                     // Add the fo list
-                    for (j = 0; j < DefAttrNSIndex; j++)
+                    for (j = 0; j < XMLNamespaces.DefAttrNSIndex; j++)
                         nSpaceAttrMaps.add(new HashMap(0));
 
                     System.out.println("Adding foAttrMap");
@@ -151,9 +163,17 @@ public class FOAttributes {
                 tmpHash.put(attrLocalname, attrValue);
             }
         }
+        // Set up the sorted array of the foAttr keys, if foAttrMap has
+        // any entries.
+        if (foAttrMap.size() > 0) {
+            foAttrKeys = (Integer[])(foAttrMap.keySet().toArray(integerArray));
+            Arrays.sort(foAttrKeys);
+        }
     }
 
     /**
+     * Get the default namespace attribute values as an unmodifiable
+     * <tt>Map</tt>.
      * @return a unmodifiable <tt>Map</tt> containing the the attribute
      * values for all of the default attribute namespace attributes in this
      * attribute list, indexed by the property name index from
@@ -164,6 +184,7 @@ public class FOAttributes {
     }
 
     /**
+     * Get the <tt>HashMap</tt> of all default namespace attributes.
      * @return <tt>HashMap</tt> <i>foAttrMap</i> containing the the attribute
      * values for all of the default attribute namespace attributes in this
      * attribute list, indexed by the property name index from
@@ -172,6 +193,19 @@ public class FOAttributes {
      */
     public HashMap getFoAttrMap() {
         return foAttrMap;
+    }
+
+    /**
+     * Get the sorted array of property index keys for the default namespace
+     * attributes.
+     * @return <tt>Integer[]</tt> <i>foAttrKeys</i> containing the the
+     * sorted keys (the property indices from <tt>PropNames</tt>) of the
+     * attribute values for all of the default attribute namespace attributes
+     * in this attribute list.
+     * Warning: This array may be changed by the calling process.
+     */
+    public Integer[] getFoAttrKeys() {
+        return foAttrKeys;
     }
 
     /**
@@ -199,6 +233,8 @@ public class FOAttributes {
     }
 
     /**
+     * Get an unmodifiable <tt>Map</tt> of the attribute values for a
+     * particular namespace.
      * @param uriIndex an <tt>int</tt> containing the index of the attribute
      * values namespace, maintained in an <tt>XMLEvent</tt> <tt>static</tt>
      * array.
@@ -208,7 +244,7 @@ public class FOAttributes {
      * derived from the one maintained in <i>nSpaceAttrMaps</i>.
      */
     public Map getAttrMap(int uriIndex) {
-        if (uriIndex == DefAttrNSIndex)
+        if (uriIndex == XMLNamespaces.DefAttrNSIndex)
             return Collections.unmodifiableMap((Map)foAttrMap);
         if (nSpaceAttrMaps != null) {
             if (uriIndex >= nSpaceAttrMaps.size()) return null;
@@ -220,6 +256,7 @@ public class FOAttributes {
     }
 
     /**
+     * Get the value of an attribute in a particular namespace.
      * @param uriIndex an <tt>int</tt> index of the URIs maintained
      * by <tt>XMLEvent</tt>.
      * @param localName a <tt>String</tt> with the local name of the
@@ -230,7 +267,7 @@ public class FOAttributes {
     public String getUriAttrValue(int uriIndex, String localName)
         throws PropertyException
     {
-        if (uriIndex == DefAttrNSIndex)
+        if (uriIndex == XMLNamespaces.DefAttrNSIndex)
             return getFoAttrValue(PropertyConsts.getPropertyIndex(localName));
         return (String)
                 (((HashMap)nSpaceAttrMaps.get(uriIndex)).get(localName));
@@ -281,7 +318,7 @@ public class FOAttributes {
             // the entries from the merging foAttrs
             for (int i = 0; i < attrLen; i++) {
                 // skip foAttrMap
-                if (i == DefAttrNSIndex) continue;
+                if (i == XMLNamespaces.DefAttrNSIndex) continue;
                ((HashMap) nSpaceAttrMaps.get(i))
                        .putAll(foAttrs.getAttrMap(i));
             }
