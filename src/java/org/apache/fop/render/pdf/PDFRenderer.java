@@ -300,7 +300,6 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     private void renderOutline(BookmarkData outline, PDFOutline parentOutline) {
-        PDFOutline outlineRoot = pdfDoc.getOutlineRoot();
         PDFOutline pdfOutline = null;
         PageViewport pv = outline.getPageViewport();
         if (pv != null) {
@@ -309,11 +308,11 @@ public class PDFRenderer extends PrintRenderer {
             float yoffset = (float)h / 1000f;
             String intDest = (String)pageReferences.get(pv.getKey());
             if (parentOutline == null) {
+                PDFOutline outlineRoot = pdfDoc.getOutlineRoot();
                 pdfOutline = pdfDoc.getFactory().makeOutline(outlineRoot,
                                         outline.getLabel(), intDest, yoffset);
             } else {
-                PDFOutline pdfParentOutline = parentOutline;
-                pdfOutline = pdfDoc.getFactory().makeOutline(pdfParentOutline,
+                pdfOutline = pdfDoc.getFactory().makeOutline(parentOutline,
                                         outline.getLabel(), intDest, yoffset);
             }
         }
