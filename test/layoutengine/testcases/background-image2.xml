@@ -42,6 +42,9 @@
           <fo:block-container left="10pt" top="110pt" width="100pt" height="50pt" border="solid 5pt" padding="5pt" absolute-position="absolute" background-color="blue" background-repeat="repeat" background-image="##img">
             <fo:block margin="0pt">repeat</fo:block>
           </fo:block-container>
+          <fo:block-container left="150pt" top="110pt" width="100pt" height="50pt" border="solid 5pt" padding="5pt" absolute-position="absolute" background-color="blue" background-repeat="no-repeat" background-image="##img">
+            <fo:block margin="0pt">no-repeat</fo:block>
+          </fo:block-container>
           <fo:block-container left="10pt" top="210pt" width="100pt" height="50pt" border="solid 5pt" padding="5pt" absolute-position="absolute" background-position-vertical="75%" background-color="blue" background-repeat="repeat-x" background-image="##img">
             <fo:block margin="0pt">repeat-x and vertical: 75%</fo:block>
           </fo:block-container>
