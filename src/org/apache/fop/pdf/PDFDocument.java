@@ -125,11 +125,6 @@ public class PDFDocument {
     protected int xObjectCount = 0;
 
     /**
-     * the XObjects
-     */
-    protected ArrayList xObjects = new ArrayList();
-
-    /**
      * the XObjects Map.
      * Should be modified (works only for image subtype)
      */
@@ -141,6 +136,8 @@ public class PDFDocument {
     protected HashMap fontMap = new HashMap();
 
     protected HashMap filterMap = new HashMap();
+
+    protected ArrayList gstates = new ArrayList();
 
     /**
      * creates an empty PDF document <p>
@@ -953,23 +950,49 @@ public class PDFDocument {
     /**
      * make an ExtGState for extra graphics options
      */
-    public PDFGState makeGState() {
+    public PDFGState makeGState(HashMap settings, PDFGState current) {
+
+        // try to locate a gstate that has all the settings
+        // or will inherit from the current gstate
+        // compare "DEFAULT + settings" with "current + each gstate"
+
+        PDFGState wanted = new PDFGState(0);
+        wanted.addValues(PDFGState.DEFAULT);
+        wanted.addValues(settings);
+
+        PDFGState poss;
+        for(Iterator iter = gstates.iterator(); iter.hasNext(); ) {
+            PDFGState avail = (PDFGState)iter.next();
+            poss = new PDFGState(0);
+            poss.addValues(current);
+            poss.addValues(avail);
+            if(poss.equals(wanted)) {
+                return avail;
+            }
+        }
 
         PDFGState gstate = new PDFGState(++this.objectcount);
+        gstate.addValues(settings);
         this.objects.add(gstate);
+        gstates.add(gstate);
         return gstate;
     }
 
-    public PDFXObject addImage(PDFResourceContext res, PDFImage img) {
-        if(res != null) {
-            res.getPDFResources().setXObjects(xObjects);
-        }
+    public PDFXObject getImage(String key) {
+        PDFXObject xObject = (PDFXObject)xObjectsMap.get(key);
+        return xObject;
+    }
 
+    public PDFXObject addImage(PDFResourceContext res, PDFImage img) {
         // check if already created
         String key = img.getKey();
         PDFXObject xObject = (PDFXObject)xObjectsMap.get(key);
-        if (xObject != null)
+        if (xObject != null) {
+            if(res != null) {
+                res.getPDFResources().addXObject(xObject);
+            }
             return xObject;
+        }
 
         // setup image
         img.setup(this);
@@ -977,7 +1000,10 @@ public class PDFDocument {
         xObject = new PDFXObject(++this.objectcount, ++this.xObjectCount,
                                  img);
         this.objects.add(xObject);
-        this.xObjects.add(xObject);
+        this.resources.addXObject(xObject);
+        if(res != null) {
+            res.getPDFResources().addXObject(xObject);
+        }
         this.xObjectsMap.put(key, xObject);
         return xObject;
     }
@@ -1242,8 +1268,6 @@ public class PDFDocument {
         };
         stream.write(bin);
         this.position += bin.length;
-
-        this.resources.setXObjects(xObjects);
     }
 
     /**

@@ -32,6 +32,8 @@ import org.apache.batik.gvt.font.*;
 
 import org.apache.fop.layout.*;
 
+// TODO properly calculate bounds for links etc.
+
 /**
  * Renders the attributed character iterator of a <tt>TextNode</tt>.
  *
@@ -250,7 +252,8 @@ public class PDFTextPainter implements TextPainter {
 
     public Rectangle2D getPaintedBounds(TextNode node) {
         // System.out.println("PDFText getPaintedBounds");
-        return null;
+        Point2D loc = node.getLocation();
+        return new Rectangle2D.Double(loc.getX(), loc.getY(), 100, 12);
     }
 
 }

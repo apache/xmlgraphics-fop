@@ -465,8 +465,17 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
-    public void renderImage(Image image) {
+    public void renderImage(Image image, Rectangle2D pos) {
         String url = image.getURL();
+
+        PDFXObject xobject = pdfDoc.getImage(url);
+        if(xobject != null) {
+            int w = (int)pos.getWidth() / 1000;
+            int h = (int)pos.getHeight() / 1000;
+            placeImage((int)pos.getX() / 1000, (int)pos.getY() / 1000, w, h, xobject.getXNumber());
+            return;
+        }
+
         ImageFactory fact = ImageFactory.getInstance();
         FopImage fopimage = fact.getImage(url, userAgent);
         if(fopimage == null) {
@@ -484,7 +493,6 @@ public class PDFRenderer extends PrintRenderer {
             String ns = ((XMLImage)fopimage).getNameSpace();
 
             renderDocument(doc, ns);
-
         } else if("image/svg+xml".equals(mime)) {
             if(!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
                 return;
@@ -493,38 +501,35 @@ public class PDFRenderer extends PrintRenderer {
             String ns = ((XMLImage)fopimage).getNameSpace();
 
             renderDocument(doc, ns);
-
         } else if("image/eps".equals(mime)) {
             if(!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
                 return;
             }
-            FopPDFImage pdfimage = new FopPDFImage(fopimage);
+            FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
             int xobj = pdfDoc.addImage(null, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
         } else if("image/jpg".equals(mime)) {
             if(!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
                 return;
             }
-            FopPDFImage pdfimage = new FopPDFImage(fopimage);
+            FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
             int xobj = pdfDoc.addImage(null, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
+
+            int w = (int)pos.getWidth() / 1000;
+            int h = (int)pos.getHeight() / 1000;
+            placeImage((int)pos.getX() / 1000, (int)pos.getY() / 1000, w, h, xobj);
         } else {
             if(!fopimage.load(FopImage.BITMAP, userAgent)) {
                 return;
             }
-            FopPDFImage pdfimage = new FopPDFImage(fopimage);
+            FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
             int xobj = pdfDoc.addImage(null, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
 
-            closeText();
-            int w = fopimage.getWidth();
-            int h = fopimage.getHeight();
-
-            currentStream.add("ET\nq\n" + ((float)w) + " 0 0 "
-                              + ((float)-h) + " "
-                              + (((float)currentBlockIPPosition) / 1000f) + " "
-                              + (((float)(currentBPPosition + 1000 * h)) / 1000f) + " cm\n" + "/Im"
-                              + xobj + " Do\nQ\nBT\n");
+            int w = (int)pos.getWidth() / 1000;
+            int h = (int)pos.getHeight() / 1000;
+            placeImage((int)pos.getX() / 1000, (int)pos.getY() / 1000, w, h, xobj);
         }
 
         // output new data
@@ -535,7 +540,16 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
-    public void renderForeignObject(ForeignObject fo) {
+    protected void placeImage(int x, int y, int w, int h, int xobj) {
+            currentStream.add("q\n" + ((float)w) + " 0 0 "
+                              + ((float)-h) + " "
+                              + (((float)currentBlockIPPosition) / 1000f + x) + " "
+                              + (((float)(currentBPPosition + 1000 * h)) / 1000f + y) + " cm\n" + "/Im"
+                              + xobj + " Do\nQ\n");
+
+    }
+
+    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
         renderDocument(doc, ns);
@@ -566,25 +580,34 @@ public class PDFRenderer extends PrintRenderer {
         context.setProperty(PDFXMLHandler.PDF_FONT_SIZE, new Integer(currentFontSize));
         context.setProperty(PDFXMLHandler.PDF_XPOS, new Integer(currentBlockIPPosition));
         context.setProperty(PDFXMLHandler.PDF_YPOS, new Integer(currentBPPosition));
-        closeText();
-        currentStream.add("ET\n");
         userAgent.renderXML(context, doc, ns);
-        currentStream.add("BT\n");
 
     }
 
     public void renderViewport(Viewport viewport) {
-        /*if (clip && w != 0 && h != 0) {
-            currentStream.add(x / 1000f + " " + y / 1000f + " m\n");
-            currentStream.add((x + w) / 1000f + " " + y / 1000f + " l\n");
-            currentStream.add((x + w) / 1000f + " " + (y - h) / 1000f
-                              + " l\n");
-            currentStream.add(x / 1000f + " " + (y - h) / 1000f + " l\n");
+        closeText();
+        currentStream.add("ET\n");
+        if (viewport.getClip()) {
+            currentStream.add("q\n");
+
+            float x = currentBlockIPPosition / 1000f;
+            float y = (currentBPPosition + viewport.getOffset()) / 1000f;
+            float width = viewport.getWidth() / 1000f;
+            float height = viewport.getHeight() / 1000f;
+            currentStream.add(x + " " + y + " m\n");
+            currentStream.add((x + width) + " " + y + " l\n");
+            currentStream.add((x + width) + " " + (y + height) + " l\n");
+            currentStream.add(x + " " + (y + height) + " l\n");
             currentStream.add("h\n");
             currentStream.add("W\n");
             currentStream.add("n\n");
-        }*/
+        }
         super.renderViewport(viewport);
+
+        if (viewport.getClip()) {
+            currentStream.add("Q\n");
+        }
+        currentStream.add("BT\n");
     }
 
     public void renderLeader(Leader area) {

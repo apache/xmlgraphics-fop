@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * class representing a /Resources object.
@@ -26,10 +27,10 @@ public class PDFResources extends PDFObject {
      */
     protected HashMap fonts = new HashMap();
 
-    protected ArrayList xObjects = null;
+    protected HashSet xObjects = new HashSet();
     protected ArrayList patterns = new ArrayList();
     protected ArrayList shadings = new ArrayList();
-    protected ArrayList gstates = new ArrayList();
+    protected HashSet gstates = new HashSet();
 
     /**
      * create a /Resources object.
@@ -62,8 +63,8 @@ public class PDFResources extends PDFObject {
         this.patterns.add(thePattern);
     }
 
-    public void setXObjects(ArrayList xObjects) {
-        this.xObjects = xObjects;
+    public void addXObject(PDFXObject xObject) {
+        this.xObjects.add(xObject);
     }
 
     /**
@@ -131,9 +132,10 @@ public class PDFResources extends PDFObject {
 
         if (this.xObjects != null && !this.xObjects.isEmpty()) {
             p = p.append("/XObject <<");
-            for (int i = 1; i <= this.xObjects.size(); i++) {
-                p = p.append("/Im" + i + " "
-                             + ((PDFXObject)this.xObjects.get(i - 1)).referencePDF()
+            for (Iterator iter = xObjects.iterator(); iter.hasNext(); ) {
+                PDFXObject xobj = (PDFXObject)iter.next();
+                p = p.append("/Im" + xobj.getXNumber() + " "
+                             + xobj.referencePDF()
                              + "\n");
             }
             p = p.append(" >>\n");
@@ -141,8 +143,8 @@ public class PDFResources extends PDFObject {
 
         if (!this.gstates.isEmpty()) {
             p = p.append("/ExtGState <<");
-            for (int i = 0; i < this.gstates.size(); i++) {
-                PDFGState gs = (PDFGState)this.gstates.get(i);
+            for (Iterator iter = gstates.iterator(); iter.hasNext(); ) {
+                PDFGState gs = (PDFGState)iter.next();
                 p = p.append("/" + gs.getName() + " "
                              + gs.referencePDF()
                              + " ");

@@ -19,11 +19,13 @@ import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 import org.apache.fop.layoutmgr.LayoutInfo;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.datatypes.*;
 
 // Java
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.awt.geom.Rectangle2D;
 
 public class ExternalGraphic extends FObj {
     String url;
@@ -34,9 +36,10 @@ public class ExternalGraphic extends FObj {
     int endIndent;
     int spaceBefore;
     int spaceAfter;
-    String src;
-    int height;
-    int width;
+    int viewWidth = -1;
+    int viewHeight = -1;
+    boolean clip = false;
+    Rectangle2D placement = null;
 
     public ExternalGraphic(FONode parent) {
         super(parent);
@@ -53,23 +56,12 @@ public class ExternalGraphic extends FObj {
         if(url == null) {
             return null;
         }
-        url = ImageFactory.getURL(url);
-        // if we need to load this image to get its size
-        ImageFactory fact = ImageFactory.getInstance();
-        FopImage fopimage = fact.getImage(url, userAgent);
-        if(fopimage == null) {
-            // error
-            return null;
-        }
-        // load dimensions
-        if(!fopimage.load(FopImage.DIMENSIONS, userAgent)) {
-            // error
-            return null;
-        }
         Image imArea = new Image(url);
         Viewport vp = new Viewport(imArea);
-        vp.setWidth((int)fopimage.getWidth() * 1000);
-        vp.setHeight((int)fopimage.getHeight() * 1000);
+        vp.setWidth(viewWidth);
+        vp.setHeight(viewHeight);
+        vp.setClip(clip);
+        vp.setContentPosition(placement);
         vp.setOffset(0);
         vp.info = new LayoutInfo();
         vp.info.alignment = properties.get("vertical-align").getEnum();
@@ -79,6 +71,138 @@ public class ExternalGraphic extends FObj {
     }
 
     public void setup() {
+        url = this.properties.get("src").getString();
+        if(url == null) {
+            return;
+        }
+        url = ImageFactory.getURL(url);
+
+        // assume lr-tb for now
+        Length ipd = properties.get("inline-progression-dimension.optimum").getLength();
+        if(!ipd.isAuto()) {
+            viewWidth = ipd.mvalue();
+        } else {
+            ipd = properties.get("width").getLength();
+            if(!ipd.isAuto()) {
+                viewWidth = ipd.mvalue();
+            }
+        }
+        Length bpd = properties.get("block-progression-dimension.optimum").getLength();
+        if(!bpd.isAuto()) {
+            viewHeight = bpd.mvalue();
+        } else {
+            bpd = properties.get("height").getLength();
+            if(!bpd.isAuto()) {
+                viewHeight = bpd.mvalue();
+            }
+        }
+
+        // if we need to load this image to get its size
+        FopImage fopimage = null;
+
+        int cwidth = -1;
+        int cheight = -1;
+        Length ch = properties.get("content-height").getLength();
+        if(!ch.isAuto()) {
+            /*if(ch.scaleToFit()) {
+                if(viewHeight != -1) {
+                    cheight = viewHeight;
+                }
+            } else {*/
+            cheight = ch.mvalue();
+        }
+        Length cw = properties.get("content-width").getLength();
+        if(!cw.isAuto()) {
+            /*if(cw.scaleToFit()) {
+                if(viewWidth != -1) {
+                    cwidth = viewWidth;
+                }
+            } else {*/
+            cwidth = cw.mvalue();
+        }
+
+        int scaling = properties.get("scaling").getEnum();
+        if((scaling == Scaling.UNIFORM) || (cwidth == -1) || cheight == -1) {
+            ImageFactory fact = ImageFactory.getInstance();
+            fopimage = fact.getImage(url, userAgent);
+            if(fopimage == null) {
+                // error
+                url = null;
+                return;
+            }
+            // load dimensions
+            if(!fopimage.load(FopImage.DIMENSIONS, userAgent)) {
+                // error
+                url = null;
+                return;
+            }
+            if(cwidth == -1) {
+                cwidth = (int)(fopimage.getWidth() * 1000);
+            }
+            if(cheight == -1) {
+                cheight = (int)(fopimage.getHeight() * 1000);
+            }
+            if(scaling == Scaling.UNIFORM) {
+                // adjust the larger 
+                double rat1 = cwidth / (fopimage.getWidth() * 1000f);
+                double rat2 = cheight / (fopimage.getHeight() * 1000f);
+                if(rat1 > rat2) {
+                    // reduce cheight
+                    cheight = (int)(rat1 * fopimage.getHeight() * 1000);
+                } else {
+                    cwidth = (int)(rat2 * fopimage.getWidth() * 1000);
+                }
+            }
+        }
+
+        if(viewWidth == -1) {
+            viewWidth = cwidth;
+        }
+        if(viewHeight == -1) {
+            viewHeight = cheight;
+        }
+
+        int overflow = properties.get("overflow").getEnum();
+        if(overflow == Overflow.HIDDEN) {
+            clip = true;
+        }
+        if(overflow == Overflow.ERROR_IF_OVERFLOW && (cwidth > viewWidth || cheight > viewHeight)) {
+            log.error("Image: " + url + " overflows the viewport");
+            clip = true;
+        }
+
+        int xoffset = 0;
+        int yoffset = 0;
+        int da = properties.get("display-align").getEnum();
+        switch(da) {
+            case DisplayAlign.BEFORE:
+            break;
+            case DisplayAlign.AFTER:
+                yoffset = viewHeight - cheight;
+            break;
+            case DisplayAlign.CENTER:
+                yoffset = (viewHeight - cheight) / 2;
+            break;
+            case DisplayAlign.AUTO:
+            default:
+            break;
+        }
+
+        int ta = properties.get("text-align").getEnum();
+        switch(ta) {
+            case TextAlign.CENTER:
+                xoffset = (viewWidth - cwidth) / 2;
+            break;
+            case TextAlign.END:
+                xoffset = viewWidth - cwidth;
+            break;
+            case TextAlign.START:
+            break;
+            case TextAlign.JUSTIFY:
+            default:
+            break;
+        }
+        placement = new Rectangle2D.Float(xoffset, yoffset, cwidth, cheight);
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
@@ -99,25 +223,14 @@ public class ExternalGraphic extends FObj {
         // this.properties.get("alignment-adjust");
         // this.properties.get("alignment-baseline");
         // this.properties.get("baseline-shift");
-        // this.properties.get("block-progression-dimension");
-        // this.properties.get("content-height");
         // this.properties.get("content-type");
-        // this.properties.get("content-width");
-        // this.properties.get("display-align");
         // this.properties.get("dominant-baseline");
-        // this.properties.get("height");
         setupID();
-        // this.properties.get("inline-progression-dimension");
         // this.properties.get("keep-with-next");
         // this.properties.get("keep-with-previous");
         // this.properties.get("line-height");
         // this.properties.get("line-height-shift-adjustment");
-        // this.properties.get("overflow");
-        // this.properties.get("scaling");
         // this.properties.get("scaling-method");
-        url = this.properties.get("src").getString();
-        // this.properties.get("text-align");
-        // this.properties.get("width");
     }
 
 }

@@ -103,20 +103,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     protected OutputStream outputStream = null;
 
     /**
-     * A registry of images that have already been drawn. They are mapped to 
-     * a structure with the PDF xObjectNum, width and height. This
-     * prevents multiple copies from being stored, which can greatly
-     * reduce the size of a PDF graphic that uses the same image over and over
-     * (e.g. graphic bullets, map icons, etc.).
-     */
-    private HashMap imageInfos = new HashMap();
-    private static class ImageInfo {
-        public int width;
-        public int height;
-        public int xObjectNum;
-    }
-
-    /**
      * Create a new PDFGraphics2D with the given pdf document info.
      * This is used to create a Graphics object for use inside an already
      * existing document.
@@ -197,7 +183,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     public void addJpegImage(JpegImage jpeg, float x, float y, float width, float height) {
-        FopPDFImage fopimage = new FopPDFImage(jpeg);
+        FopPDFImage fopimage = new FopPDFImage(jpeg, jpeg.getURL());
         int xObjectNum = this.pdfDoc.addImage(resourceContext, fopimage).getXNumber();
 
         AffineTransform at = getTransform();
@@ -220,6 +206,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             try {
                 this.pdfDoc.output(outputStream);
             } catch(IOException ioe) {
+                // ignore exception, will be thrown again later
             }
         }
     }
@@ -252,36 +239,39 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                              ImageObserver observer) {
         // System.err.println("drawImage:x, y");
 
+        int width = img.getWidth(observer);
+        int height = img.getHeight(observer);
+
+        if (width == -1 || height == -1) {
+            return false;
+        }
+
         // first we look to see if we've already added this image to 
         // the pdf document. If so, we just reuse the reference;
         // otherwise we have to build a FopImage and add it to the pdf
         // document
-        ImageInfo imageInfo = (ImageInfo)imageInfos.get(img);
+        PDFXObject imageInfo = pdfDoc.getImage("TempImage:" + img.toString());
         if (imageInfo == null) {
             // OK, have to build and add a PDF image
-            imageInfo = new ImageInfo();
-            imageInfo.width = img.getWidth(observer);
-            imageInfo.height = img.getHeight(observer);
-            
-            if (imageInfo.width == -1 || imageInfo.height == -1) {
-                return false;
-            }
-            
-            Dimension size = new Dimension(imageInfo.width * 3, imageInfo.height * 3);
+
+            // scale factor
+            final int scaleFactor = 3;
+
+            Dimension size = new Dimension(width * scaleFactor, height * scaleFactor);
             BufferedImage buf = buildBufferedImage(size);
-            
+
             java.awt.Graphics2D g = buf.createGraphics();
             g.setComposite(AlphaComposite.SrcOver);
             g.setBackground(new Color(1, 1, 1, 0));
             g.setPaint(new Color(1, 1, 1, 0));
-            g.fillRect(0, 0, imageInfo.width * 3, imageInfo.height * 3);
+            g.fillRect(0, 0, width * scaleFactor, height * scaleFactor);
             g.clip(new Rectangle(0, 0, buf.getWidth(), buf.getHeight()));
-            
+
             if (!g.drawImage(img, 0, 0, buf.getWidth(), buf.getHeight(), observer)) {
                 return false;
             }
             g.dispose();
-            
+
             final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3];
             byte[] mask = new byte[buf.getWidth() * buf.getHeight()];
             boolean hasMask = false;
@@ -289,13 +279,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
             Raster raster = buf.getData();
             DataBuffer bd = raster.getDataBuffer();
-                
+
             int count = 0;
             int maskpos = 0;
             int[] iarray;
             int i, j, val, alpha, add, mult;
             switch (bd.getDataType()) {
-            case DataBuffer.TYPE_INT:
+                case DataBuffer.TYPE_INT:
                 int[][] idata = ((DataBufferInt)bd).getBankData();
                 for (i = 0; i < idata.length; i++) {
                     iarray = idata[i];
@@ -328,10 +318,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                     }
                 }
                 break;
-            default:
+                default:
                 // error
                 break;
-                }
+            }
             String ref = null;
             if(hasMask) {
                 // if the mask is binary then we could convert it into a bitmask
@@ -344,6 +334,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                     try {
                         this.pdfDoc.output(outputStream);
                     } catch(IOException ioe) {
+                        // ignore exception, will be thrown again later
                     }
                 }
             } else {
@@ -352,15 +343,18 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
             BitmapImage fopimg = new BitmapImage("TempImage:" + img.toString(), buf.getWidth(), buf.getHeight(), result, ref);
             fopimg.setTransparent(new PDFColor(255, 255, 255));
-            imageInfo.xObjectNum = pdfDoc.addImage(resourceContext, fopimg).getXNumber();
-            imageInfos.put(img, imageInfo);
+            imageInfo = pdfDoc.addImage(resourceContext, fopimg);
+            int xObjectNum = imageInfo.getXNumber();
 
             if(outputStream != null) {
                 try {
                     this.pdfDoc.output(outputStream);
                 } catch(IOException ioe) {
+                    // ignore exception, will be thrown again later
                 }
             }
+        } else {
+            resourceContext.getPDFResources().addXObject(imageInfo);
         }
 
         // now do any transformation required and add the actual image
@@ -374,9 +368,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write("" + matrix[0] + " " + matrix[1] + " "
                             + matrix[2] + " " + matrix[3] + " "
                             + matrix[4] + " " + matrix[5] + " cm\n");
-        currentStream.write("" + imageInfo.width + " 0 0 " + (-imageInfo.height) + " " + x
-                            + " " + (y + imageInfo.height) + " cm\n" + "/Im"
-                            + imageInfo.xObjectNum + " Do\nQ\n");
+        currentStream.write("" + width + " 0 0 " + (-height) + " " + x
+                            + " " + (y + height) + " cm\n" + "/Im"
+                            + imageInfo.getXNumber() + " Do\nQ\n");
         return true;
     }
 
@@ -509,8 +503,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         if(c.getAlpha() != 255) {
-            PDFGState gstate = pdfDoc.makeGState();
-            gstate.setAlpha(c.getAlpha() / 255f, false);
+            HashMap vals = new HashMap();
+            vals.put(PDFGState.CA, new Float(c.getAlpha() / 255f));
+            PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
+            //gstate.setAlpha(c.getAlpha() / 255f, false);
             resourceContext.addGState(gstate);
             currentStream.write("/" + gstate.getName() + " gs\n");
         }
@@ -793,6 +789,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 try {
                     this.pdfDoc.output(outputStream);
                 } catch(IOException ioe) {
+                    // ignore exception, will be thrown again later
                 } 
             }
 
@@ -982,9 +979,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         c = getBackground();
         applyColor(c, false);
         if(salpha != 255/* || c.getAlpha() != 255*/) {
-            PDFGState gstate = pdfDoc.makeGState();
-            gstate.setAlpha(salpha / 255f, true);
-            //gstate.setAlpha(c.getAlpha() / 255f, false);
+            HashMap vals = new HashMap();
+            vals.put(PDFGState.ca, new Float(salpha / 255f));
+            //vals.put(PDFGState.CA, new Float(c.getAlpha() / 255f));
+            PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
             resourceContext.addGState(gstate); 
             currentStream.write("/" + gstate.getName() + " gs\n");
         }
@@ -1213,8 +1211,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         if(c.getAlpha() != 255) {
-            PDFGState gstate = pdfDoc.makeGState();
-            gstate.setAlpha(c.getAlpha() / 255f, true);
+            HashMap vals = new HashMap();
+            vals.put(PDFGState.ca, new Float(c.getAlpha() / 255f));
+            PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
             resourceContext.addGState(gstate);
             currentStream.write("/" + gstate.getName() + " gs\n");
         }

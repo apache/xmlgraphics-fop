@@ -34,15 +34,17 @@ public class FopPDFImage implements PDFImage {
     String softMaskRef;
     boolean isPS = false;
     HashMap filters;
+    String key;
 
-    public FopPDFImage(FopImage im) {
+    public FopPDFImage(FopImage im, String k) {
         fopImage = im;
+        key = k;
         isPS = (fopImage instanceof EPSImage);
     }
 
     // key to look up XObject
     public String getKey() {
-        return fopImage.getURL();
+        return key;
     }
 
     public void setup(PDFDocument doc) {
