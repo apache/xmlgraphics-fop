@@ -294,7 +294,7 @@ public class AddLMVisitor implements FOTreeVisitor {
      public void serveLeader(final Leader node) {
          LeafNodeLayoutManager lm = new LeafNodeLayoutManager() {
              public InlineArea get(LayoutContext context) {
-                 return getLeaderInlineArea(node);
+                 return getLeaderInlineArea(node, this);
              }
 
              protected MinOptMax getAllocationIPD(int refIPD) {
@@ -322,7 +322,7 @@ public class AddLMVisitor implements FOTreeVisitor {
          return new MinOptMax(min, opt, max);
      }
 
-     private InlineArea getLeaderInlineArea(Leader node) {
+     private InlineArea getLeaderInlineArea(Leader node, LayoutManager parentLM) {
          node.setup();
          InlineArea leaderArea = null;
 
@@ -375,6 +375,7 @@ public class AddLMVisitor implements FOTreeVisitor {
              FilledArea fa = new FilledArea();
 
              ContentLayoutManager clm = new ContentLayoutManager(fa);
+             clm.setParent(parentLM);
              clm.setUserAgent(node.getUserAgent());
              lm.setParent(clm);
 
