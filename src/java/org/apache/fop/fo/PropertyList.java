@@ -229,7 +229,8 @@ public class PropertyList extends HashMap {
     public Property getInherited(String propertyName) {
         if (parentPropertyList != null
                 && isInherited(namespace, elementName, propertyName)) {
-            return parentPropertyList.get(propertyName);
+            int propertyId = FOPropertyMapping.getPropertyId(propertyName);
+            return parentPropertyList.get(propertyId);
         } else {
             // return the "initial" value
             try {
@@ -290,12 +291,26 @@ public class PropertyList extends HashMap {
      * this will try to compute it based on other properties, or if it is
      * inheritable, to return the inherited value. If all else fails, it returns
      * the default value.
-     * @param propertyName property name
+     * @param propId The Constants ID of the property whose value is desired.
+     * @return the Property corresponding to that name
+     */
+    public Property get(int propId) {
+        String propertyName = FOPropertyMapping.getPropertyName(propId);
+        return get(propertyName, true, true);
+    }
+
+    /**
+     * TEMPORARY until conversion to int's complete
+     * Return the property on the current FlowObject. If it isn't set explicitly,
+     * this will try to compute it based on other properties, or if it is
+     * inheritable, to return the inherited value. If all else fails, it returns
+     * the default value.
+     * @param propertyName The name of the property whose value is desired.
      * @return the Property corresponding to that name
      */
     public Property get(String propertyName) {
         return get(propertyName, true, true);
-    }
+    } 
 
     /**
      * Return the property on the current FlowObject. Depending on the passed flags,
@@ -381,13 +396,15 @@ public class PropertyList extends HashMap {
     /**
      * Return the value of this property on the parent of this FO.
      * Implements the from-parent function.
-     * @param propertyName The name of the property whose value is desired.
+     * @param propId The Constants ID of the property whose value is desired.
      * @return The computed value on the parent or the initial value if this
      * FO is the root or is in a different namespace from its parent.
      */
-    public Property getFromParent(String propertyName) {
+    public Property getFromParent(int propId) {
+        String propertyName = FOPropertyMapping.getPropertyName(propId);
+        
         if (parentPropertyList != null) {
-            return parentPropertyList.get(propertyName);
+            return parentPropertyList.get(propId);
         } else {
             try {
                 return makeProperty(namespace, elementName, propertyName);

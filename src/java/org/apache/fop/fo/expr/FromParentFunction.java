@@ -51,6 +51,8 @@
 package org.apache.fop.fo.expr;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.properties.FOPropertyMapping;
+
 
 /**
  * Class modelling the from-parent Property Value function. See Sec. 5.10.4 of
@@ -86,7 +88,7 @@ public class FromParentFunction extends FunctionBase {
          * non-inherited properties too. Perhaps the result is different for
          * a property line line-height which "inherits specified"???
          */
-        return pInfo.getPropertyList().getFromParent(propName);
+        return pInfo.getPropertyList().getFromParent(FOPropertyMapping.getPropertyId(propName));
     }
 
 }

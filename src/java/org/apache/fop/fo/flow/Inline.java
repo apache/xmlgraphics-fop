@@ -133,7 +133,7 @@ public class Inline extends FObjMixed {
         // this.propertyList.get("visibility");
         // this.propertyList.get("z-index");
 
-        int textDecoration = this.propertyList.get("text-decoration").getEnum();
+        int textDecoration = this.propertyList.get(PR_TEXT_DECORATION).getEnum();
 
         if (textDecoration == TextDecoration.UNDERLINE) {
             this.underlined = true;

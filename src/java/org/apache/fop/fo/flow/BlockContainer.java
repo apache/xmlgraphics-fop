@@ -93,7 +93,7 @@ public class BlockContainer extends FObj {
      */
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
-        this.span = this.propertyList.get("span").getEnum();
+        this.span = this.propertyList.get(PR_SPAN).getEnum();
         setupID();
     }
 
@@ -126,11 +126,11 @@ public class BlockContainer extends FObj {
             // this.propertyList.get("writing-mode");
 
             this.backgroundColor =
-                this.propertyList.get("background-color").getColorType();
+                this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
-            this.width = this.propertyList.get("width").getLength().getValue();
-            this.height = this.propertyList.get("height").getLength().getValue();
-            span = this.propertyList.get("span").getEnum();
+            this.width = this.propertyList.get(PR_WIDTH).getLength().getValue();
+            this.height = this.propertyList.get(PR_HEIGHT).getLength().getValue();
+            span = this.propertyList.get(PR_SPAN).getEnum();
 
     }
 
