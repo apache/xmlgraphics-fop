@@ -55,6 +55,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.Glyphs;
 import org.apache.fop.layout.FontInfo;
 
 /**
@@ -225,19 +226,52 @@ public final class PSProcSets {
         }
         gen.writeln("end def");
         gen.writeln("%%EndResource");
+        defineWinAnsiEncoding(gen);
+        
+        //Rewrite font encodings
         enum = fonts.keySet().iterator();
         while (enum.hasNext()) {
             String key = (String)enum.next();
             Font fm = (Font)fonts.get(key);
-            gen.writeln("/" + fm.getFontName() + " findfont");
-            gen.writeln("dup length dict begin");
-            gen.writeln("  {1 index /FID ne {def} {pop pop} ifelse} forall");
-            gen.writeln("  /Encoding ISOLatin1Encoding def");
-            gen.writeln("  currentdict");
-            gen.writeln("end");
-            gen.writeln("/" + fm.getFontName() + " exch definefont pop");
+            if (null == fm.getEncoding()) {
+                //ignore (ZapfDingbats and Symbol run through here
+                //TODO: ZapfDingbats and Symbol should get getEncoding() fixed!
+            } else if ("WinAnsiEncoding".equals(fm.getEncoding())) {
+                gen.writeln("/" + fm.getFontName() + " findfont");
+                gen.writeln("dup length dict begin");
+                gen.writeln("  {1 index /FID ne {def} {pop pop} ifelse} forall");
+                gen.writeln("  /Encoding " + fm.getEncoding() + " def");
+                gen.writeln("  currentdict");
+                gen.writeln("end");
+                gen.writeln("/" + fm.getFontName() + " exch definefont pop");
+            } else {
+                System.out.println("Only WinAnsiEncoding is supported. Font '" 
+                    + fm.getFontName() + "' asks for: " + fm.getEncoding());
+            }
         }
     }
 
+    private static void defineWinAnsiEncoding(PSGenerator gen) throws IOException {
+        gen.writeln("/WinAnsiEncoding [");
+        for (int i = 0; i < Glyphs.WINANSI_ENCODING.length; i++) {
+            if (i > 0) {
+                if ((i % 5) == 0) {
+                    gen.newLine();
+                } else {
+                    gen.write(" ");
+                }
+            }
+            final char ch = Glyphs.WINANSI_ENCODING[i];
+            final String glyphname = Glyphs.charToGlyphName(ch);
+            if ("".equals(glyphname)) {
+                gen.write("/" + Glyphs.NOTDEF);
+            } else {
+                gen.write("/");
+                gen.write(glyphname);
+            }
+        }
+        gen.newLine();
+        gen.writeln("] def");
+    }
 
 }
