@@ -63,24 +63,24 @@ public class CondLength implements CompoundDatatype {
     private Property conditionality;
 
     /**
-     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(String, Property, boolean)
+     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
      */
-    public void setComponent(String sCmpnName, Property cmpnValue,
+    public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
-        if (sCmpnName.equals("length")) {
+        if (cmpId == Constants.CP_LENGTH) {
             length = cmpnValue;
-        } else if (sCmpnName.equals("conditionality")) {
+        } else if (cmpId == Constants.CP_CONDITIONALITY) {
             conditionality = cmpnValue;
         }
     }
 
     /**
-     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(String)
+     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
-    public Property getComponent(String sCmpnName) {
-        if (sCmpnName.equals("length")) {
+    public Property getComponent(int cmpId) {
+        if (cmpId == Constants.CP_LENGTH) {
             return length;
-        } else if (sCmpnName.equals("conditionality")) {
+        } else if (cmpId == Constants.CP_CONDITIONALITY) {
             return conditionality;
         } else {
             return null;

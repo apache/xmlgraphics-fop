@@ -566,24 +566,24 @@ public class </xsl:text>
     protected Property setSubprop(Property baseProp, int subpropId,
                                   Property subProp) {
         </xsl:text>
-        String subpropName = FOPropertyMapping.getPropertyName(subpropId);
         <xsl:value-of select="datatype"/>
         <xsl:text> val = baseProp.get</xsl:text>
         <xsl:value-of select="datatype"/>
         <xsl:text>();
         // Do some type checking???
         // Check if one of our subproperties???
-        val.setComponent(subpropName, subProp, false);
+        val.setComponent(subpropId, subProp, false);
         return baseProp;
     }
 
     public Property getSubpropValue(Property baseProp, String subpropName) {
+        int subpropId = org.apache.fop.fo.properties.FOPropertyMapping.getSubPropertyId(subpropName);
         </xsl:text>
         <xsl:value-of select="datatype"/>
         <xsl:text> val = baseProp.get</xsl:text>
         <xsl:value-of select="datatype"/>
         <xsl:text>();
-        return val.getComponent(subpropName);
+        return val.getComponent(subpropId);
     }
 </xsl:text>
       <xsl:choose>
@@ -630,9 +630,11 @@ public class </xsl:text>
         <xsl:text>").make(pList, getDefaultFor</xsl:text>
         <xsl:value-of select='$spname'/>
         <xsl:text>(), fo);
-          p.setComponent("</xsl:text>
-        <xsl:value-of select='.'/>
-        <xsl:text>", subProp, true);</xsl:text>
+       p.setComponent(Constants.CP_</xsl:text>
+        <xsl:call-template name="makeEnumConstant">
+          <xsl:with-param name="propstr" select="."/>
+        </xsl:call-template>
+        <xsl:text>, subProp, true);</xsl:text>
       </xsl:for-each>
       <xsl:text>
         return new </xsl:text>
@@ -695,9 +697,11 @@ public class </xsl:text>
       <xsl:text>();</xsl:text>
       <xsl:for-each select="compound/subproperty[@set-by-shorthand='true']">
         <xsl:text>
-            pval.setComponent("</xsl:text>
-        <xsl:value-of select='name'/>
-        <xsl:text>", p, false);</xsl:text>
+            pval.setComponent(Constants.CP_</xsl:text>
+        <xsl:call-template name="makeEnumConstant">
+          <xsl:with-param name="propstr" select="name"/>
+        </xsl:call-template>
+        <xsl:text>, p, false);</xsl:text>
       </xsl:for-each>
       <xsl:text>
             return prop;

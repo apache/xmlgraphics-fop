@@ -51,6 +51,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.Constants;
 
 /**
  * A "progression-dimension" quantity.
@@ -69,35 +70,28 @@ public class LengthRange implements CompoundDatatype {
     private boolean bChecked = false;
 
     /**
-     * From CompoundDatatype
-     * @param sCmpnName component name ("minimum", "maximum", or "optimum")
-     * which is being set
-     * @param cmpnValue Property object to be set
-     * @param bIsDefault true of this is the default value (??)
+     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
      */
-    public void setComponent(String sCmpnName, Property cmpnValue,
+    public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
-        if (sCmpnName.equals("minimum")) {
+        if (cmpId == Constants.CP_MINIMUM) {
             setMinimum(cmpnValue, bIsDefault);
-        } else if (sCmpnName.equals("optimum")) {
+        } else if (cmpId == Constants.CP_OPTIMUM) {
             setOptimum(cmpnValue, bIsDefault);
-        } else if (sCmpnName.equals("maximum")) {
+        } else if (cmpId == Constants.CP_MAXIMUM) {
             setMaximum(cmpnValue, bIsDefault);
         }
     }
 
     /**
-     * From CompoundDatatype
-     * @param sCmpnName component name ("minimum", "maximum", or "optimum")
-     * for which the length is sought
-     * @return the requested Property, or null if the component name is invalid
+     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
-    public Property getComponent(String sCmpnName) {
-        if (sCmpnName.equals("minimum")) {
+    public Property getComponent(int cmpId) {
+        if (cmpId == Constants.CP_MINIMUM) {
             return getMinimum();
-        } else if (sCmpnName.equals("optimum")) {
+        } else if (cmpId == Constants.CP_OPTIMUM) {
             return getOptimum();
-        } else if (sCmpnName.equals("maximum")) {
+        } else if (cmpId == Constants.CP_MAXIMUM) {
             return getMaximum();
         } else {
             return null;    // SHOULDN'T HAPPEN
