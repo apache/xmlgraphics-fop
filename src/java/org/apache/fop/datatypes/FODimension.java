@@ -57,13 +57,15 @@ package org.apache.fop.datatypes;
  */
 public class FODimension {
 
+    /** distance (in millipoints) on the inline-progression-direction */
     public int ipd;
+    /** distance (in millipoints) on the block-progression-direction */
     public int bpd;
 
     /**
      * Constructor
-     * @param ipd length (in millipoints ??) of the inline-progression-direction
-     * @param bpd length (in millipoints ??) of the block-progression-direction
+     * @param ipd length (in millipoints) of the inline-progression-direction
+     * @param bpd length (in millipoints) of the block-progression-direction
      */
     public FODimension(int ipd, int bpd) {
         this.ipd = ipd;

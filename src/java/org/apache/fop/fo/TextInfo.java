@@ -60,26 +60,37 @@ import org.apache.fop.fo.properties.TextTransform;
  * Collection of properties used in
  */
 public class TextInfo {
+    /** object containing the font information */
     public FontState fs;
+    /** fo:color property */
     public ColorType color;
+    /** fo:wrap-option property */
     public int wrapOption;
-    public boolean bWrap ; // True if wrap-option = WRAP
+    /** fo:wrap-option property: true if wrapOption = WRAP */
+    public boolean bWrap ;
+    /** fo:white-space-collapse property*/
     public int whiteSpaceCollapse;
+    /** fo:vertical-align property */
     public int verticalAlign;
+    /** fo:line-height property */
     public int lineHeight;
+    /** fo:text-transform property */
     public int textTransform = TextTransform.NONE;
 
     // Props used for calculating inline-progression-dimension
+    /** fo:word-spacing property */
     public SpaceVal wordSpacing;
+    /** fo:letter-spacing property */
     public SpaceVal letterSpacing;
 
-    // Add hyphenation props too
+    /** can this text be hyphenated? */
     public boolean bCanHyphenate = true;
 
-    // Textdecoration
+    /** fo:text-decoration property: is text underlined? */
     public boolean underlined = false;
+    /** fo:text-decoration property: is text overlined? */
     public boolean overlined = false;
+    /** fo:text-decoration property: is text overstriked? */
     public boolean lineThrough = false;
 
 }
-
