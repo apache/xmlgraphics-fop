@@ -72,13 +72,12 @@ public class Row extends BlockStackingLayoutManager {
     }
 
     /**
-     * Initialize properties for this layout manager.
-     *
-     * @param propMgr the property manager for the fo
+     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
-    protected void initProperties(PropertyManager propMgr) {
-        borderProps = propMgr.getBorderAndPadding();
-        backgroundProps = propMgr.getBackgroundProps();
+    protected void initProperties() {
+        PropertyManager pm = fobj.getPropertyManager();
+        borderProps = pm.getBorderAndPadding();
+        backgroundProps = pm.getBackgroundProps();
     }
 
     /**

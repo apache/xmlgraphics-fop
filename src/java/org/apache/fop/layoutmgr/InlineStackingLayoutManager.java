@@ -87,14 +87,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
      * Create an inline stacking layout manager.
      * This is used for fo's that create areas that
      * contain inline areas.
-     */
-    public InlineStackingLayoutManager() {
-    }
-
-    /**
-     * Create an inline stacking layout manager.
-     * This is used for fo's that create areas that
-     * contain inline areas.
      *
      * @param node the formatting object that creates the area
      */
@@ -114,6 +106,24 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
     }
 
     /**
+     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
+     */
+    protected void initProperties() {
+        PropertyManager pm = fobj.getPropertyManager();
+        inlineProps = pm.getInlineProps();
+        borderProps = pm.getBorderAndPadding();
+        // Calculdate border and padding size in BPD
+        int iPad = borderProps.getPadding(CommonBorderAndPadding.BEFORE, false);
+        iPad += borderProps.getBorderWidth(CommonBorderAndPadding.BEFORE,
+                                             false);
+        iPad += borderProps.getPadding(CommonBorderAndPadding.AFTER, false);
+        iPad += borderProps.getBorderWidth(CommonBorderAndPadding.AFTER, false);
+        extraBPD = new MinOptMax(iPad);
+
+        backgroundProps = pm.getBackgroundProps();
+    }
+
+    /**
      * Set the iterator.
      *
      * @param iter the iterator for this LM
@@ -130,26 +140,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
      */
     public boolean generatesInlineAreas() {
         return true;
-    }
-
-    /**
-     * Initialize properties for this layout manager.
-     *
-     * @param propMgr the property manager from the fo that created this manager
-     */
-    protected void initProperties(PropertyManager propMgr) {
-        // super.initProperties(propMgr);
-        inlineProps = propMgr.getInlineProps();
-        borderProps = propMgr.getBorderAndPadding();
-        // Calculdate border and padding size in BPD
-        int iPad = borderProps.getPadding(CommonBorderAndPadding.BEFORE, false);
-        iPad += borderProps.getBorderWidth(CommonBorderAndPadding.BEFORE,
-                                             false);
-        iPad += borderProps.getPadding(CommonBorderAndPadding.AFTER, false);
-        iPad += borderProps.getBorderWidth(CommonBorderAndPadding.AFTER, false);
-        extraBPD = new MinOptMax(iPad);
-
-        backgroundProps = propMgr.getBackgroundProps();
     }
 
     private MinOptMax getExtraIPD(boolean bNotFirst, boolean bNotLast) {

@@ -49,6 +49,19 @@ import org.apache.fop.traits.MinOptMax;
 public class LineLayoutManager extends InlineStackingLayoutManager {
 
     /**
+     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
+     */
+    protected void initProperties() {
+        PropertyManager pm = fobj.getPropertyManager();
+        CommonMarginBlock marginProps = pm.getMarginProps();
+        iIndents = marginProps.startIndent + marginProps.endIndent;
+        BlockProps blockProps = pm.getBlockProps();
+        bTextAlignment = blockProps.textAlign;
+        textIndent = blockProps.firstIndent;
+        hyphProps = pm.getHyphenationProps();
+    }
+
+    /**
      * Private class to store information about inline breaks.
      * Each value holds the start and end indexes into a List of
      * inline break positions.
@@ -105,20 +118,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         lead = l;
         follow = f;
         initialize(); // Normally done when started by parent!
-    }
-
-    /**
-     * Initialize the properties for this layout manager.
-     * The properties are from the block area.
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties(PropertyManager)
-     */
-    protected void initProperties(PropertyManager propMgr) {
-        CommonMarginBlock marginProps = propMgr.getMarginProps();
-        iIndents = marginProps.startIndent + marginProps.endIndent;
-        BlockProps blockProps = propMgr.getBlockProps();
-        bTextAlignment = blockProps.textAlign;
-        textIndent = blockProps.firstIndent;
-        hyphProps = propMgr.getHyphenationProps();
     }
 
     /**
