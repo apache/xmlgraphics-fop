@@ -1,5 +1,7 @@
 ==============================================================================
 Done since 0.20.4 release
+- Reduced the size of the PSRenderer output (removed redundant movetos)
+  Submitted by: Arnd Beiﬂner <arnd.beissner@cappelino.de> (see bug #16130)
 - Fixed many (not all) problems with link hotspot positioning and made
   the default behavior to create a single hotspot over all words in each
   line (Karen Lease)
