@@ -71,6 +71,7 @@ import java.io.InputStream;
 
 // FOP
 import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.configuration.Configuration;
 
 /**
  * mainline class.
@@ -85,6 +86,7 @@ public class CommandLine {
     private String pdfFile = null;
     private String userConfigFile = null;
     private String baseDir = null;
+    private boolean dumpConfiguration = false;
 
     /** show a full dump on error */
     private static boolean errorDump = false;
@@ -93,7 +95,10 @@ public class CommandLine {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
                 errorDump = true;
-            } else if ((args[i].charAt(0) == '-') && (args[i].charAt(1) == 'c')) {
+            } else if (args[i].equals("-x")) {
+                dumpConfiguration = true;
+            } else if ((args[i].charAt(0) == '-') &&
+                    (args[i].charAt(1) == 'c')) {
                 userConfigFile = args[i].substring(2);
             } else if (args[i].charAt(0) == '-') {
                 printUsage(args[i]);
@@ -112,29 +117,32 @@ public class CommandLine {
 
     public void printUsage(String arg) {
         if (arg != null) {
-            MessageHandler.errorln("Unkown argument: '"+arg + "'");
-            MessageHandler.errorln("Usage: java [-d] " +
-                                   "[-cMyConfigFile] " +
-                                   "org.apache.fop.apps.CommandLine " + "formatting-object-file pdf-file");
-            MessageHandler.errorln("Options:\n" + "  -d or --full-error-dump    Show stack traces upon error");
-            MessageHandler.errorln("-cMyConfigFile use values in configuration file MyConfigFile instead of default");
+            MessageHandler.errorln("Unknown argument: '"+arg + "'");
+        } 
+        MessageHandler.errorln("Usage: java [-d] [-x]" +
+                               "[-cMyConfigFile] \n" +
+                               "            org.apache.fop.apps.CommandLine " + "formatting-object-file pdf-file");
+        MessageHandler.errorln("Options:\n" + "  -d or --full-error-dump      Show stack traces upon error");
+        MessageHandler.errorln("  -x                           dump configuration information");
+        MessageHandler.errorln("  -cMyConfigFile               use configuration file MyConfigFile");
 
-            System.exit(1);
-        }
+        System.exit(1);
     }
 
     public void run() {
-        Driver driver  = new Driver();
-        if (errorDump)  {
+        Driver driver = new Driver();
+        if (errorDump) {
             driver.setErrorDump(true);
         }
-        driver.loadStandardConfiguration("standard");
-//        driver.loadStandardConfiguration("pdf");
-        if (userConfigFile != null)  {
-            driver.loadUserconfiguration(userConfigFile,"standard");
+        if (userConfigFile != null) {
+            driver.loadUserconfiguration(userConfigFile);
         }
         driver.setBaseDir(foFile);
 
+        if (dumpConfiguration) {
+            Configuration.dumpConfiguration();
+            System.exit(0);
+        }
 
         String version = Version.getVersion();
         MessageHandler.logln(version);
@@ -181,11 +189,11 @@ public class CommandLine {
 
 
     /**
-      * creates a SAX parser, using the value of org.xml.sax.parser
-      * defaulting to org.apache.xerces.parsers.SAXParser
-      *
-      * @return the created SAX parser
-      */
+       * creates a SAX parser, using the value of org.xml.sax.parser
+       * defaulting to org.apache.xerces.parsers.SAXParser
+       *
+       * @return the created SAX parser
+       */
     static XMLReader createParser() {
         String parserClassName = System.getProperty("org.xml.sax.parser");
         if (parserClassName == null) {
@@ -229,11 +237,11 @@ public class CommandLine {
     }
 
     /**
-      * create an InputSource from a file name
-      *
-      * @param filename the name of the file
-      * @return the InputSource created
-      */
+       * create an InputSource from a file name
+       *
+       * @param filename the name of the file
+       * @return the InputSource created
+       */
     public static InputSource fileInputSource(String filename) {
 
         /* this code adapted from James Clark's in XT */
@@ -252,13 +260,13 @@ public class CommandLine {
     }
 
     /**
-      * mainline method
-      *
-      * first command line argument is input file
-      * second command line argument is output file
-      *
-      * @param command line arguments
-      */
+       * mainline method
+       *
+       * first command line argument is input file
+       * second command line argument is output file
+       *
+       * @param command line arguments
+       */
     public static void main(String[] args) {
         CommandLine cmdLine = new CommandLine(args);
         cmdLine.run();
