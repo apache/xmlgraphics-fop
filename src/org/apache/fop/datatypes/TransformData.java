@@ -51,6 +51,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.messaging.MessageHandler;
 
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGTransformImpl;
@@ -238,7 +239,7 @@ public class TransformData {
 					transform.setMatrix(matrix);
 					list.addElement(transform);
 				} else {
-					System.err.println("WARNING Unknown Transform type : " + type);
+					MessageHandler.errorln("WARNING: Unknown Transform type : " + type);
 				}
 			}
 		}

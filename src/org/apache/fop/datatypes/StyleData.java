@@ -51,6 +51,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.messaging.MessageHandler;
 
 import org.apache.fop.dom.svg.*;
 
@@ -175,10 +176,10 @@ public class StyleData {
 				} else if(type.equals("stroke-antialiasing")) {
 //					boolean
 				} else {
-					System.err.println("WARNING Unknown style element : " + type);
+					MessageHandler.logln("WARNING: Unknown style element : " + type);
 				}
 			} else {
-				System.err.println("WARNING Invalid style element " + str);
+				MessageHandler.errorln("ERROR: Invalid style element " + str);
 			}
 		}
 	}

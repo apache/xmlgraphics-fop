@@ -51,6 +51,7 @@
 package org.apache.fop.dom.svg;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.messaging.MessageHandler;
 
 import java.util.*;
 
@@ -190,7 +191,7 @@ public class SVGLengthImpl implements SVGLength {
 		} catch (Exception e) {
 			dvalue = 0;
 			unitType = SVG_LENGTHTYPE_UNKNOWN;
-			System.err.println("ERROR: unknown length units in " + len);
+			MessageHandler.errorln("ERROR: unknown length units in " + len);
 		}
 		return dvalue;
 	}

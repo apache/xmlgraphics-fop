@@ -51,6 +51,7 @@
 package org.apache.fop.dom.svg;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.messaging.MessageHandler;
 
 import java.util.*;
 
@@ -96,7 +97,7 @@ public class SVGLengthListImpl extends SVGListImpl implements SVGLengthList {
 		int l = len.length();
 
 		if (l == 0) {
-			System.err.println("WARNING: empty length");
+			MessageHandler.errorln("WARNING: empty length");
 			this.millipoints = 0;
 		} else {
 			// could be an array of points, as in for svg:text
@@ -154,7 +155,7 @@ public class SVGLengthListImpl extends SVGListImpl implements SVGLengthList {
 			}
 		} catch (Exception e) {
 			dvalue = 0;
-			System.err.println("ERROR: unknown length units in " + len);
+			MessageHandler.errorln("ERROR: unknown length units in " + len);
 		}
 		return dvalue;
 	}
