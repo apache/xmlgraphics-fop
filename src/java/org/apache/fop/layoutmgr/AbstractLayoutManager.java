@@ -382,7 +382,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
                         continue;
                     }
                     rm.bindMarker(marker);
-                    foNode = marker;
+                    foNode = rm;
                 }
                 foNode.addLayoutManager(newLMs);
             }
