@@ -22,6 +22,7 @@ package org.apache.fop.fo.pagination;
 import java.awt.Rectangle;
 
 // XML
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 // FOP
@@ -32,7 +33,7 @@ import org.apache.fop.layoutmgr.AddLMVisitor;
 /**
  * Abstract base class for fo:region-before and fo:region-after.
  */
-public abstract class RegionBA extends RegionBASE {
+public abstract class RegionBA extends Region {
 
     private boolean bPrecedence;
 
@@ -43,20 +44,20 @@ public abstract class RegionBA extends RegionBASE {
         super(parent, regionId);
     }
 
+    protected void addProperties(Attributes attlist) throws SAXParseException {
+        super.addProperties(attlist);
+        
+        bPrecedence =
+            (this.propertyList.get(PR_PRECEDENCE).getEnum() == Precedence.TRUE);
+
+        this.extent = this.propertyList.get(PR_EXTENT).getLength().getValue();
+    }
+
     /**
      * @see org.apache.fop.fo.pagination.Region#getPrecedence()
      */
     public boolean getPrecedence() {
         return bPrecedence;
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#endOfNode()
-     */
-    protected void endOfNode() throws SAXParseException {
-        super.endOfNode();
-        bPrecedence =
-            (this.propertyList.get(PR_PRECEDENCE).getEnum() == Precedence.TRUE);
     }
 
     /**
@@ -87,10 +88,5 @@ public abstract class RegionBA extends RegionBASE {
             }
         }
     }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveRegionBA(this);
-    }
-
 }
 
