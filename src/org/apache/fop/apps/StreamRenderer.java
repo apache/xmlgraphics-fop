@@ -327,7 +327,8 @@ public class StreamRenderer {
         else
             pageIndex = renderQueue.indexOf(current);
         if ((pageIndex + 1) < renderQueue.size()) {
-            nextPage = (Page)renderQueue.elementAt(pageIndex + 1);
+            nextPage = ((RenderQueueEntry)renderQueue
+                        .elementAt(pageIndex + 1)).getPage();
             if (isWithinPageSequence
                     &&!nextPage.getPageSequence().equals(current.getPageSequence())) {
                 nextPage = null;
@@ -344,15 +345,12 @@ public class StreamRenderer {
             pageIndex = renderQueue.size();
         else
             pageIndex = renderQueue.indexOf(current);
-        // System.out.println("Page index = " + pageIndex);
         if ((pageIndex - 1) >= 0) {
-            previousPage = (Page)renderQueue.elementAt(pageIndex - 1);
+            previousPage = ((RenderQueueEntry)renderQueue
+                            .elementAt(pageIndex - 1)).getPage();
             PageSequence currentPS = current.getPageSequence();
-            // System.out.println("Current PS = '" + currentPS + "'");
             PageSequence previousPS = previousPage.getPageSequence();
-            // System.out.println("Previous PS = '" + previousPS + "'");
             if (isWithinPageSequence &&!previousPS.equals(currentPS)) {
-                // System.out.println("Outside page sequence");
                 previousPage = null;
             }
         }
