@@ -39,7 +39,6 @@ import org.apache.fop.configuration.SystemOptions;
 import org.apache.fop.configuration.UserOptions;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.version.Version;
 import org.apache.fop.xml.FoXmlSerialHandler;
 import org.apache.fop.xml.Namespaces;
@@ -48,6 +47,15 @@ import org.apache.fop.xml.XmlEventReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+/**
+ * The startup class for Fop.  Class Fop includes a main method and a
+ * constructor.  The prior Driver class has been merged in as the Fop
+ * constructor and run method, which are called from within main.
+ * Fop can be run from the command line, or instantiated by an external
+ * process.
+ * 
+ * @version $Revision$ $Name$
+ */
 public class Fop {
 
     /** private constant to indicate renderer was not defined.  */
@@ -72,24 +80,6 @@ public class Fop {
     public static final int RENDER_SVG = 9;
     /** Render to RTF. OutputStream must be set */
     public static final int RENDER_RTF = 10;
-    
-    private InputHandler inputHandler;
-    private XMLReader parser;
-    private InputSource saxSource;
-
-    private FoXmlSerialHandler xmlhandler;
-    private SyncedXmlEventsBuffer eventsBuffer;
-    private Namespaces namespaces;
-    private XmlEventReader eventReader;
-    private FOTree foTree;
-    private AreaTree areaTree = new AreaTree();
-    private GraphicsEnvironment gEnv = null;
-
-    private Thread driverThread;
-    private Thread parserThread;
-    private Thread foThread;
-    private Thread areaThread;
-    private Thread renderThread;
 
     /** the renderer type code given by setRenderer  */
     private int rendererType = NOT_SET;
@@ -235,6 +225,41 @@ public class Fop {
         //System.out.println("PC time     : " + (endPCi - startPCi));
     }
 
+    
+    /** Manages the flow of xsl:fo source into FOP */
+    private InputHandler inputHandler;
+    /** Parser for the xsl:fo source */
+    private XMLReader parser;
+    /** The parser's xsl:fo source stream */
+    private InputSource saxSource;
+
+    /** Head process of the parser thread */
+    private FoXmlSerialHandler xmlhandler;
+    /**
+     * XmlEvents buffer which is the link between the parser process and the
+     * FO Tree builder.  It accepts events from the parser, and feeds them to
+     * the FO Tree builder.
+     */
+    private SyncedXmlEventsBuffer eventsBuffer;
+    /** <code>namespaces</code> object required for XMLEvent handling */
+    private Namespaces namespaces;
+    /** The <code>XmlEventReader</code> which supplies events to the FO Tree
+     * builder */
+    private XmlEventReader eventReader;
+    /** Head process of the FO Tree builder thread */
+    private FOTree foTree;
+    private AreaTree areaTree = new AreaTree();
+
+    /** Thread of main Fop process */
+    private Thread fopThread;
+    /** Thread of parser process */
+    private Thread parserThread;
+    /** Thread of FO Tree building process */
+    private Thread foThread;
+    private Thread areaThread;
+    /** Thread of rendering process */
+    private Thread renderThread;
+
     public void run() {
         setupRunStats();
         
@@ -273,27 +298,49 @@ public class Fop {
             xmlhandler = new FoXmlSerialHandler(eventsBuffer, parser, saxSource);
             foTree = new FOTree(eventReader);
 
-            driverThread = Thread.currentThread();
+            fopThread = Thread.currentThread();
+            renderThread = new Thread(renderer, "Renderer");
+            renderThread.setDaemon(true);
             foThread = new Thread(foTree, "FOTreeBuilder");
             foThread.setDaemon(true);
             parserThread = new Thread(xmlhandler, "XMLSerialHandler");
             parserThread.setDaemon(true);
 
             xmlhandler.setFoThread(foThread);
+            xmlhandler.setRenderThread(renderThread);
             foTree.setParserThread(parserThread);
 
-            System.out.println("Starting parserThread");
-            parserThread.start();
-            System.out.println("parserThread started");
+            renderThread.start();
+            logger.info("renderThread started");
             foThread.start();
-            System.out.println("foThread started");
-            try {
-                parserThread.join();
-            } catch (InterruptedException e) {}
-            //System.out.println("Joined to parser.");
-            try {
-                foThread.join();
-            } catch (InterruptedException e) {}
+            logger.info("foThread started");
+            parserThread.start();
+            logger.info("parserThread started");
+            // Wait for the children to die
+            int renderWait = 2000;
+            while (renderThread.isAlive()) {
+                try {
+                    renderThread.join(renderWait);
+                } catch (InterruptedException e) {
+                    logger.warning("Fop thread interrupted");
+                }
+                if ( ! renderThread.isAlive()) {
+                    // render thread has died - kill any remaining
+                    logger.info("Render thread has died");
+                    foThread.interrupt();
+                    parserThread.interrupt();
+                    return;
+                }
+                // Render thread still alive
+                if ( ! foThread.isAlive()) {
+                    // fo thread has died
+                    // - interrupt parser and renderer threads
+                    logger.info("fo thread has died");
+                    parserThread.interrupt();
+                    renderThread.interrupt();
+                    renderWait = 500;
+                }
+            }
         } catch (FOPException e) {
             logger.warning(e.getMessage());
             if (options.isDebugMode()) {
@@ -302,7 +349,7 @@ public class Fop {
         }
 
         printRunStats();
-            
+        return;
     }
 
     /**
@@ -347,7 +394,7 @@ public class Fop {
 //            setRenderer("org.apache.fop.render.pdf.PDFRenderer");
 //            break;
         case RENDER_AWT:
-            setRenderer("org.apache.fop.render.awt.AWTRenderer");
+            this.renderer = getRenderer("org.apache.fop.render.awt.AWTRenderer");
             break;
 //        case RENDER_PRINT:
 //            setRenderer("org.apache.fop.render.awt.AWTPrintRenderer");
@@ -380,21 +427,6 @@ public class Fop {
     }
 
     /**
-     * Set the Renderer to use.
-     * @param renderer the renderer instance to use
-     * (Note: Logger must be set at this point)
-     */
-    public void setRenderer(Renderer renderer) {
-        // AWTStarter calls this function directly
-        if (renderer instanceof AWTRenderer) {
-            rendererType = RENDER_AWT;
-        }
-        renderer.setOption("producer", Version.getVersion());
-        renderer.setUserAgent(getUserAgent());
-        this.renderer = renderer;
-    }
-
-    /**
      * Returns the currently active renderer.
      * @return the renderer
      */
@@ -402,20 +434,32 @@ public class Fop {
         return renderer;
     }
 
+    /** The <code>GraphicsEnvironment</code> in which the renderer operates */
+    private GraphicsEnvironment gEnv = null;
+    
+    /**
+     * Returns the <code>GraphicsEnvironment</code> in which the renderer
+     * performs graphical operations.  This is originally provided by the
+     * renderer after it is initialized by <code>Fop</code>.
+     * 
+     *  @return the operating environment of the renderer
+     */
     public GraphicsEnvironment getGraphicsEnvironment() {
         return gEnv;
     }
 
     /**
-     * Set the class name of the Renderer to use as well as the
+     * Instantiate the Renderer to use.  Set the
      * producer string for those renderers that can make use of it.
      * @param rendererClassName classname of the renderer to use such as
      * "org.apache.fop.render.pdf.PDFRenderer"
+     * @return the instantiated renderer
      * @exception IllegalArgumentException if the classname was invalid.
      * @see #setRenderer(int)
      */
-    public void setRenderer(String rendererClassName)
+    public Renderer getRenderer(String rendererClassName)
                 throws IllegalArgumentException {
+        Renderer renderer = null;
         try {
             renderer = (Renderer)Class.forName(rendererClassName).newInstance();
             renderer.setOption("producer", Version.getVersion());
@@ -433,6 +477,7 @@ public class Fop {
             throw new IllegalArgumentException(rendererClassName
                                                + " is not a renderer");
         }
+        return renderer;
     }
 
     /**
