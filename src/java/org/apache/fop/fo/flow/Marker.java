@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -143,6 +143,13 @@ public class Marker extends FObjMixed {
         return FO_MARKER;
     }
 
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(super.toString());
+        sb.append(" {").append(getMarkerClassName()).append("}");
+        return sb.toString();
+    }
+    
     /**
      * An implementation of PropertyList which only stores the explicit
      * assigned properties. It is memory efficient but slow. 
