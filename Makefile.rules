@@ -1,0 +1,24 @@
+# 
+#
+#
+
+JAVA = java
+JAVAC = javac
+#JAVAC = jikes
+#JAVAC_ARGS = -g $(BASEDIR)/generated:$(CLASSPATH)
+
+# following class path is for CygWin bash
+JAVAC_ARGS = -g:none -classpath "$(BASEDIR)/generated;$(CLASSPATH)"
+
+FIND=find
+TAR=tar
+JAR=jar
+
+XT=${JAVA} com.jclark.xsl.sax.Driver
+
+TARGETS = all clean clobber
+
+.SUFFIXES: .java .class .xml $(SUFFIXES)
+
+.java.class:
+	$(JAVAC) $(JAVAC_ARGS) $<
