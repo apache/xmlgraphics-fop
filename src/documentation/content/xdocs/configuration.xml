@@ -16,11 +16,32 @@ It contains templates for the various configuration options, most of which are c
 Be sure to follow any instructions, including comments which specify the value range.
 Also, since the configuration file is XML, be sure to keep it well-formed.</p>
     <note>Do <strong>not</strong> change <code>{fop-dir}/conf/config.xml</code> or use it as the basis for your configuration file. It has an entirely different purpose.</note>
+    <p>The general structure of the configuration file is a series of &lt;entry> tags, each containing a &lt;key> and a &lt;value. (Fonts use a different format). Here is an example:</p>
+    <source><![CDATA[<entry>
+  <key>strokeSVGText</key>
+  <value>false</value>
+</entry>]]></source>
     <p>After creating your configuration file, you must tell FOP how to find it:</p>
     <ul>
       <li>If running FOP from the command-line, see the "-c" command-line option in <link href="running.html">Running FOP</link>.</li>
       <li>If running FOP as an embedded application, see <link href="embedding.html#config-external">FOP: Embedding, Using a Configuration File</link>.</li>
     </ul>
+    <p>See <link href="embedding.html#config-internal">Setting the Configuration Programmatically</link> for instructions on how to do so in an embedded environment.</p>
+  </section>
+  <section id="summary">
+    <title>Summary of Configuration Options</title>
+    <table>
+      <tr>
+        <th>Option (key)</th>
+        <th>Data Type (for the value)</th>
+        <th>Default Value</th>
+      </tr>
+      <tr>
+        <td><link href="#svg-strokeSVGText">strokeSVGText</link></td>
+        <td>Boolean</td>
+        <td>True</td>
+      </tr>
+    </table>
   </section>
   <section id="hyphenation">
     <title>Setting up hyphenation</title>
@@ -81,6 +102,14 @@ in the userconfig.xml in the entry &lt;hyphenation-dir&gt;.
       a file you have to decide for yourself if you can use (and possibly distribute) the file under 
       these conditions.
     </note>
+  </section>
+  <section id="svg">
+    <title>SVG</title>
+    <section id="svg-strokeSVGText">
+      <title>strokeSVGText (boolean, True)</title>
+      <p>In some cases, some text in SVG documents is converted to graphical shapes instead of retaining its character as text. To force all text to be rendered as text, set strokeSVGText = false. For a discussion of this issue, see <link href="graphics.html#svg-pdf-text">FOP: Graphics, Placing SVG Text into PDF</link>.</p>
+      <note>strokeSVGText is currently only effective in the PDF renderer.</note>
+    </section>
   </section>
   </body>
 </document>
