@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,6 @@
 /* $Id: Block.java,v 1.14 2004/04/02 13:50:52 cbowditch Exp $ */
 
 package org.apache.fop.fo.flow;
-
-// Java
-import java.util.List;
 
 import org.xml.sax.Locator;
 
@@ -45,7 +42,6 @@ import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.util.CharUtilities;
 
 /*
@@ -322,6 +318,15 @@ public class Block extends FObjMixed {
             handleWhiteSpace();
         }
         super.addChildNode(child);
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#notifyChildRemoval(org.apache.fop.fo.FONode)
+     */
+    protected void notifyChildRemoval(FONode node) {
+        if (node != null && node == firstInlineChild) {
+            firstInlineChild = null;
+        }
     }
 
     private void handleWhiteSpace() {
