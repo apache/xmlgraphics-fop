@@ -223,21 +223,34 @@ public class PDFColor extends PDFPathPaint {
 		
 		if(this.colorSpace.getColorSpace()==ColorSpace.DEVICE_RGB)
 		{//colorspace is RGB
-				
+			// according to pdfspec 12.1 p.399
+			// if the colors are the same then just use the g or G operator
+			boolean same = false;
+			if(this.red == this.green && this.red == this.blue) {
+				same = true;
+			}
 			//output RGB
 			if(fillNotStroke)
 			{ //fill
-				p.append(pdfNumber.doubleOut(this.red)+" "
-					+pdfNumber.doubleOut(this.green)+" "
-					+pdfNumber.doubleOut(this.blue)+" "
-					+" rg \n");
+				if(same) {
+					p.append(pdfNumber.doubleOut(this.red) + " g\n");
+				} else {
+					p.append(pdfNumber.doubleOut(this.red)+" "
+						+pdfNumber.doubleOut(this.green)+" "
+						+pdfNumber.doubleOut(this.blue)+" "
+						+" rg \n");
+				}
 			} 
 			else
 			{//stroke/border
-				p.append(pdfNumber.doubleOut(this.red)+" "
-					+pdfNumber.doubleOut(this.green)+" "
-					+pdfNumber.doubleOut(this.blue)+" "
-					+" RG \n");
+				if(same) {
+					p.append(pdfNumber.doubleOut(this.red) + " G\n");
+				} else {
+					p.append(pdfNumber.doubleOut(this.red)+" "
+						+pdfNumber.doubleOut(this.green)+" "
+						+pdfNumber.doubleOut(this.blue)+" "
+						+" RG \n");
+				}
 			}
 		}//end of output RGB
 		else if (this.colorSpace.getColorSpace() == ColorSpace.DEVICE_CMYK)
