@@ -152,7 +152,7 @@ issues should be fixed in the upcoming JDK 1.4</note>
   </section>
     <section id="input">
       <title>Input Sources</title>
-      <p>The input XSL-FO document is always handled internally as SAX (see the <link href="design/parsing.html">Parsing Design Document</link> for the rationale).
+      <p>The input XSL-FO document is always handled internally as SAX (see the <link href="http://xml.apache.org/fop/design/parsing.html">Parsing Design Document</link> for the rationale).
 However, the input itself can be provided in a variety of ways to FOP, which normalizes the input (if necessary) into SAX events:</p>
       <ul>
         <li><strong>SAX Events through SAX Handler</strong>: <code>FOTreeBuilder</code> is the SAX Handler which is obtained through <code>getContentHandler</code> on <code>Driver</code>.</li>
