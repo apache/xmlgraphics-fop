@@ -69,7 +69,8 @@ public class PDFColor extends PDFPathPaint {
 	protected double magenta= -1.0;
 	protected double yellow = -1.0;
 	protected double black	= -1.0;
-
+	
+	private PDFNumber pdfNumber = new PDFNumber();
 	
 	public PDFColor(org.apache.fop.datatypes.ColorType theColor)
 	{
@@ -202,25 +203,22 @@ public class PDFColor extends PDFPathPaint {
 		
 		double tempDouble;
 		
-		//if the color was constructed in a different colorspace,
-		//then we need to convert it.
-		
 		if(this.colorSpace.getColorSpace()==ColorSpace.DEVICE_RGB)
 		{//colorspace is RGB
 				
 			//output RGB
 			if(fillNotStroke)
 			{ //fill
-				p.append(this.doubleOut(this.red)+" "
-					+this.doubleOut(this.green)+" "
-					+this.doubleOut(this.blue)+" "
+				p.append(pdfNumber.doubleOut(this.red)+" "
+					+pdfNumber.doubleOut(this.green)+" "
+					+pdfNumber.doubleOut(this.blue)+" "
 					+" rg \n");
 			} 
 			else
 			{//stroke/border
-				p.append(this.doubleOut(this.red)+" "
-					+this.doubleOut(this.green)+" "
-					+this.doubleOut(this.blue)+" "
+				p.append(pdfNumber.doubleOut(this.red)+" "
+					+pdfNumber.doubleOut(this.green)+" "
+					+pdfNumber.doubleOut(this.blue)+" "
 					+" RG \n");
 			}
 		}//end of output RGB
@@ -229,17 +227,17 @@ public class PDFColor extends PDFPathPaint {
 			
 			if(fillNotStroke)
 			{ //fill
-				p.append(this.doubleOut(this.cyan) + " "
-					+ this.doubleOut(this.magenta) + " "
-					+ this.doubleOut(this.yellow) + " "
-					+ this.doubleOut(this.black) + " k \n");
+				p.append(pdfNumber.doubleOut(this.cyan) + " "
+					+ pdfNumber.doubleOut(this.magenta) + " "
+					+ pdfNumber.doubleOut(this.yellow) + " "
+					+ pdfNumber.doubleOut(this.black) + " k \n");
 			}
 			else
 			{ //fill
-				p.append(this.doubleOut(this.cyan) + " "
-					+ this.doubleOut(this.magenta) + " "
-					+ this.doubleOut(this.yellow) + " "
-					+ this.doubleOut(this.black) + " K \n");
+				p.append(pdfNumber.doubleOut(this.cyan) + " "
+					+ pdfNumber.doubleOut(this.magenta) + " "
+					+ pdfNumber.doubleOut(this.yellow) + " "
+					+ pdfNumber.doubleOut(this.black) + " K \n");
 			}
 			
 		}//end of if CMYK
@@ -248,11 +246,11 @@ public class PDFColor extends PDFPathPaint {
 		
 			if(fillNotStroke)
 			{
-				p.append(this.doubleOut(this.black)	+ " g \n");
+				p.append(pdfNumber.doubleOut(this.black)	+ " g \n");
 			}
 			else
 			{
-				p.append(this.doubleOut(this.black)	+ " G \n");
+				p.append(pdfNumber.doubleOut(this.black)	+ " G \n");
 			}
 		
 		}
@@ -261,37 +259,6 @@ public class PDFColor extends PDFPathPaint {
 
 	
 	
-	public String doubleOut(double doubleDown)
-	{
-		
-		StringBuffer p = new StringBuffer();
-		double trouble = doubleDown % 1;
-		
-		if(trouble > 0.950)
-		{
-			p.append((int)doubleDown+1);
-		}
-		else if (trouble < 0.050)
-		{
-			p.append((int)doubleDown);
-		}
-		else
-		{
-			String doubleString = new String(doubleDown+"");
-			int decimal = doubleString.indexOf(".");
-			p.append(doubleString.substring(0, decimal));
-
-			if ((doubleString.length() - decimal) > 6)
-			{
-				p.append(doubleString.substring(decimal,decimal+6));
-			}
-			else
-			{
-				p.append(doubleString.substring(decimal));
-			}
-		}
-		return(p.toString());
-	}
 	
 	protected void convertCMYKtoRGB()
 	{

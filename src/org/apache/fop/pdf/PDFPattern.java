@@ -68,7 +68,8 @@ import org.apache.fop.datatypes.ColorSpace;
  * All PDF Functions have a FunctionType (0,2,3, or 4), a Domain, and a Range.
  */
 public class PDFPattern extends PDFPathPaint {
-
+	private PDFNumber pdfNumber = new PDFNumber();
+	
 	/**
 	 * The resources associated with this pattern
 	 */
@@ -216,7 +217,6 @@ public class PDFPattern extends PDFPathPaint {
 		return (this.patternName);
 	}
 	
-	
 	public String getColorSpaceOut(boolean fillNotStroke)
 	{
 		if(fillNotStroke)
@@ -227,41 +227,6 @@ public class PDFPattern extends PDFPathPaint {
 		{ //stroke (or border)
 			return("/Pattern CS /"+this.getName()+" SCN \n");
 		}
-	}
-	/**
-	 * Output a Double prettily as a string
-	 * 
-	 * @param doubleDown The Double to output.
-	 * @return String representation of value passed.
-	 */
-	public String doubleOut(Double doubleDown)
-	{
-		StringBuffer p = new StringBuffer();
-		double trouble = doubleDown.doubleValue() % 1;
-		if(trouble > 0.950)
-		{
-			p.append(doubleDown.intValue()+1);
-		}
-		else if (trouble < 0.050)
-		{
-			p.append(doubleDown.intValue());
-		}
-		else
-		{
-			String doubleString = new String(doubleDown+"");
-			int decimal = doubleString.indexOf(".");
-			p.append(doubleString.substring(0, decimal));
-
-			if ((doubleString.length() - decimal) > 6)
-			{
-				p.append(doubleString.substring(decimal,decimal+6));
-			}
-			else
-			{
-				p.append(doubleString.substring(decimal));
-			}
-		}
-		return(p.toString());
 	}
  
 	
@@ -304,12 +269,12 @@ public class PDFPattern extends PDFPathPaint {
 				for (tempInt =0; tempInt < vectorSize; tempInt++)
 				{
 					p.append(
-					this.doubleOut((Double)this.bBox.elementAt(tempInt)));				
+					pdfNumber.doubleOut((Double)this.bBox.elementAt(tempInt)));				
 				}
 				p.append("] \n");
 			}
-			p.append("/XStep "+this.doubleOut(new Double(this.xStep))+" \n");
-			p.append("/YStep "+this.doubleOut(new Double(this.yStep))+" \n");
+			p.append("/XStep "+pdfNumber.doubleOut(new Double(this.xStep))+" \n");
+			p.append("/YStep "+pdfNumber.doubleOut(new Double(this.yStep))+" \n");
 			
 			if(this.matrix != null)
 			{
@@ -317,7 +282,7 @@ public class PDFPattern extends PDFPathPaint {
 				p.append("/Matrix [ ");
 				for (tempInt =0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 						(Double)this.matrix.elementAt(tempInt)));				
 				}
 				p.append("] \n");
@@ -370,7 +335,7 @@ public class PDFPattern extends PDFPathPaint {
 				p.append("/Matrix [ ");
 				for (tempInt =0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.matrix.elementAt(tempInt)));				
 				}
 				p.append("] \n");

@@ -142,6 +142,7 @@ public class PDFFunction extends PDFObject {
    
 	/* *************************TYPE 4************************** */
 	//See 'data' above.
+	private PDFNumber pdfNumber = new PDFNumber();
 	
 	/**
 	 * create an complete Function object of Type 0, A Sampled function.
@@ -360,50 +361,6 @@ public class PDFFunction extends PDFObject {
 
 	}
 	
-	/**
-	 * This converts an Object of type double to a prettily printed
-	 * floating point number that PDF won't choke on. If a number's
-	 * value is close to an integer, it's printed as an integer.
-	 * Excess digits after the decimal place are trimmed (no rounding).
-	 * Always print 0 in front of the decimal point of a number
-	 * that is between 0 and 1.
-	 * Note: Negative values are untested, as I assume they don't
-	 * come up. Should work anyway.
-	 * 
-	 * @param doubleDown Cool name, eh?
-	 * @return String representation of Double that PDF won't choke on.
-	 */
-	public String doubleOut(Double doubleDown)
-	{
-		StringBuffer p = new StringBuffer();
-		double trouble = doubleDown.doubleValue() % 1;
-		if(trouble > 0.950)
-		{
-			p.append(doubleDown.intValue()+1);
-		}
-		else if (trouble < 0.050)
-		{
-			p.append(doubleDown.intValue());
-		}
-		else
-		{
-			String doubleString = new String(doubleDown+"");
-			int decimal = doubleString.indexOf(".");
-			p.append(doubleString.substring(0, decimal));
-
-			if ((doubleString.length() - decimal) > 6)
-			{
-				p.append(doubleString.substring(decimal,decimal+6));
-			}
-			else
-			{
-				p.append(doubleString.substring(decimal));
-			}
-		}
-		return(p.toString());
-	}
-	
-				
 
 	 /**
 	  * represent as PDF. Whatever the FunctionType is, the correct
@@ -434,7 +391,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.domain.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 						(Double)this.domain.elementAt(tempInt))
 						+" ");
 				}
@@ -453,7 +410,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.size.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.size.elementAt(tempInt)) +" ");
 				}
 				p.append("] \n");
@@ -465,7 +422,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.encode.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.encode.elementAt(tempInt)) +" ");
 				}
 				p.append("] \n");
@@ -498,7 +455,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.range.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.range.elementAt(tempInt)) +" ");
 				}
 				
@@ -512,7 +469,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.decode.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.decode.elementAt(tempInt)) +" ");
 				}
 				
@@ -565,7 +522,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.domain.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.domain.elementAt(tempInt)) +" ");
 				}
 				
@@ -584,7 +541,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.range.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.range.elementAt(tempInt)) +" ");
 				}
 				
@@ -600,7 +557,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.cZero.size();
 				for(tempInt = 0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.cZero.elementAt(tempInt))+" ");
 				}
 				p.append("] \n");				
@@ -613,7 +570,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.cOne.size();
 				for(tempInt = 0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.cOne.elementAt(tempInt))+" ");
 				}
 				p.append("] \n");
@@ -621,7 +578,7 @@ public class PDFFunction extends PDFObject {
 			
 			//N: The interpolation Exponent
 			p.append("/N "
-				+this.doubleOut(
+				+pdfNumber.doubleOut(
 					new Double(this.interpolationExponentN))
 				+" \n");
 			
@@ -637,7 +594,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.domain.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.domain.elementAt(tempInt)) +" ");
 				}
 				p.append("] \n");
@@ -654,7 +611,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.range.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.range.elementAt(tempInt)) +" ");
 				}
 				
@@ -682,7 +639,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.encode.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.encode.elementAt(tempInt)) +" ");
 				}
 								
@@ -709,7 +666,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize= this.bounds.size();
 				for(tempInt = 0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.bounds.elementAt(tempInt))+" ");
 				}
 			
@@ -724,7 +681,7 @@ public class PDFFunction extends PDFObject {
 					// of the whole. e.g. if there are 4, then [ 0.25 0.25 0.25 ]
 					
 					String functionsFraction = 
-						this.doubleOut(new Double(
+						pdfNumber.doubleOut(new Double(
 							1.0 / ((double)numberOfFunctions)));
 	
 					for(tempInt =0;tempInt+1 < numberOfFunctions; tempInt++)
@@ -751,7 +708,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.domain.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.domain.elementAt(tempInt)) +" ");
 				}
 				
@@ -769,7 +726,7 @@ public class PDFFunction extends PDFObject {
 				vectorSize = this.range.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.range.elementAt(tempInt)) +" ");
 				}
 				

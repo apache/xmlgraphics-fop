@@ -160,6 +160,8 @@ public class PDFShading extends PDFObject {
 	 */
 	protected int verticesPerRow = 0;
 	
+	private PDFNumber pdfNumber = new PDFNumber();
+	
 	/**
 	 * Constructor for type function based shading
 	 * 
@@ -336,36 +338,6 @@ public class PDFShading extends PDFObject {
 		return (this.shadingName);
    }
    
-	public String doubleOut(Double doubleDown)
-	{
-		StringBuffer p = new StringBuffer();
-		double trouble = doubleDown.doubleValue() % 1;
-		if(trouble > 0.950)
-		{
-			p.append(doubleDown.intValue()+1);
-		}
-		else if (trouble < 0.050)
-		{
-			p.append(doubleDown.intValue());
-		}
-		else
-		{
-			String doubleString = new String(doubleDown+"");
-			int decimal = doubleString.indexOf(".");
-			p.append(doubleString.substring(0, decimal));
-
-			if ((doubleString.length() - decimal) > 6)
-			{
-				p.append(doubleString.substring(decimal,decimal+6));
-			}
-			else
-			{
-				p.append(doubleString.substring(decimal));
-			}
-		}
-		return(p.toString());
-	}
-   
 	 /**
 	  * represent as PDF. Whatever the shadingType is, the correct
 	  * representation spits out. The sets of required and optional
@@ -395,7 +367,7 @@ public class PDFShading extends PDFObject {
 			vectorSize = this.background.size();
 			for(tempInt=0; tempInt < vectorSize; tempInt++)
 			{
-				p.append(this.doubleOut(
+				p.append(pdfNumber.doubleOut(
 				(Double)this.background.elementAt(tempInt)) +" ");
 			}
 			p.append("] \n");
@@ -407,7 +379,7 @@ public class PDFShading extends PDFObject {
 			vectorSize = this.bBox.size();
 			for(tempInt=0; tempInt < vectorSize; tempInt++)
 			{
-				p.append(this.doubleOut(
+				p.append(pdfNumber.doubleOut(
 				(Double)this.bBox.elementAt(tempInt)) +" ");
 			}
 			p.append("] \n");
@@ -427,7 +399,7 @@ public class PDFShading extends PDFObject {
 				vectorSize = this.domain.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.domain.elementAt(tempInt)) +" ");
 				}
 				p.append("] \n");
@@ -443,7 +415,7 @@ public class PDFShading extends PDFObject {
 				vectorSize = this.matrix.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.matrix.elementAt(tempInt)) +" ");
 				}
 				p.append("] \n");
@@ -465,7 +437,7 @@ public class PDFShading extends PDFObject {
 				vectorSize = this.coords.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.coords.elementAt(tempInt)) +" ");
 				}
 				p.append("] \n");
@@ -478,7 +450,7 @@ public class PDFShading extends PDFObject {
 				vectorSize = this.domain.size();
 				for(tempInt=0; tempInt < vectorSize; tempInt++)
 				{
-					p.append(this.doubleOut(
+					p.append(pdfNumber.doubleOut(
 					(Double)this.domain.elementAt(tempInt)) +" ");
 				}
 				p.append("] \n");
