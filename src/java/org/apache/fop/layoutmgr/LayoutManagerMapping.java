@@ -354,12 +354,6 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
             if (columnLMs != null) {
                 tlm.setColumns(columnLMs);
             }
-            if (table.getTableHeader() != null) {
-                tlm.setTableHeader(new Body(table.getTableHeader()));
-            }
-            if (table.getTableFooter() != null) {
-                tlm.setTableFooter(new Body(table.getTableFooter()));
-            }
             lms.add(tlm);
         }
     }

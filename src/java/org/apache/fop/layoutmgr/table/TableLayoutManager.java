@@ -21,8 +21,6 @@ package org.apache.fop.layoutmgr.table;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableBody;
-import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.TableColLength;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -38,7 +36,6 @@ import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,12 +51,10 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
     private Table fobj;
     
     private List columns = null;
-    private Body tableHeader = null;
-    private Body tableFooter = null;
 
     private Block curBlockArea;
 
-    private List bodyBreaks = new ArrayList();
+    private List bodyBreaks = new java.util.ArrayList();
     private BreakPoss headerBreak;
     private BreakPoss footerBreak;
     
@@ -100,26 +95,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
      */
     public void setColumns(List cols) {
         columns = cols;
-    }
-
-    /**
-     * Set the table header.
-     *
-     * @param th the table header layout manager
-     */
-    public void setTableHeader(Body th) {
-        tableHeader = th;
-        tableHeader.setParent(this);
-    }
-
-    /**
-     * Set the table footer.
-     *
-     * @param tf the table footer layout manager
-     */
-    public void setTableFooter(Body tf) {
-        tableFooter = tf;
-        tableFooter.setParent(this);
     }
 
     /** @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties() */
@@ -202,31 +177,40 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
                                       (contentIPD - sumCols) / factors);
             }
         }
-        MinOptMax headerSize = null;
-        if (tableHeader != null) {
-            tableHeader.resetPosition(null);
-            headerBreak = getHeight(tableHeader, context);
-            headerSize = headerBreak.getStackingSize();
-            stackSize.add(headerSize);
-        }
-
-        MinOptMax footerSize = null;
-        if (tableFooter != null) {
-            tableFooter.resetPosition(null);
-            footerBreak = getHeight(tableFooter, context);
-            footerSize = footerBreak.getStackingSize();
-            stackSize.add(footerSize);
-        }
-
-        if (stackSize.opt > context.getStackLimit().max) {
-            BreakPoss breakPoss = new BreakPoss(
-                                    new LeafPosition(this, 0));
-            breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
-            breakPoss.setStackingSize(stackSize);
-            return breakPoss;
-        }
+        
+        boolean headerFooterBuilt = false;
 
         while ((curLM = (Body)getChildLM()) != null) {
+            if (!headerFooterBuilt) {
+                //Calculate the headers and footers only when needed
+                MinOptMax headerSize = null;
+                if (getTable().getTableHeader() != null) {
+                    Body tableHeader = new Body(getTable().getTableHeader());
+                    tableHeader.setParent(this);
+                    headerBreak = getHeight(tableHeader, context);
+                    headerSize = headerBreak.getStackingSize();
+                    stackSize.add(headerSize);
+                }
+
+                MinOptMax footerSize = null;
+                if (getTable().getTableFooter() != null) {
+                    Body tableFooter = new Body(getTable().getTableFooter());
+                    tableFooter.setParent(this);
+                    footerBreak = getHeight(tableFooter, context);
+                    footerSize = footerBreak.getStackingSize();
+                    stackSize.add(footerSize);
+                }
+
+                if (stackSize.opt > context.getStackLimit().max) {
+                    BreakPoss breakPoss = new BreakPoss(
+                                            new LeafPosition(this, 0));
+                    breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
+                    breakPoss.setStackingSize(stackSize);
+                    return breakPoss;
+                }
+                headerFooterBuilt = true;
+            }
+            
             // Make break positions
             // Set up a LayoutContext
             int ipd = context.getRefIPD();
@@ -314,7 +298,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
 
         lm.setColumns(columns);
 
-        List breaks = new ArrayList();
+        List breaks = new java.util.ArrayList();
         while (!lm.isFinished()) {
             if ((bp = lm.getNextBreakPoss(childLC)) != null) {
                 stackSize.add(bp.getStackingSize());
