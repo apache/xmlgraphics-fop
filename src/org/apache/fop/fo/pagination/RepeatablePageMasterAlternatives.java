@@ -11,10 +11,16 @@ import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
 
+/**
+ * A repeatable-page-master-alternatives formatting object.
+ * This contains a list of conditional-page-master-reference
+ * and the page master is found from the reference that
+ * matches the page number and emptyness.
+ */
 public class RepeatablePageMasterAlternatives extends FObj
     implements SubSequenceSpecifier {
 
@@ -29,7 +35,7 @@ public class RepeatablePageMasterAlternatives extends FObj
     private int maximumRepeats;
     private int numberConsumed = 0;
 
-    private Vector conditionalPageMasterRefs;
+    private ArrayList conditionalPageMasterRefs;
 
     public RepeatablePageMasterAlternatives(FONode parent) {
         super(parent);
@@ -38,7 +44,7 @@ public class RepeatablePageMasterAlternatives extends FObj
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
 
-        conditionalPageMasterRefs = new Vector();
+        conditionalPageMasterRefs = new ArrayList();
 
         if (parent.getName().equals("fo:page-sequence-master")) {
             this.pageSequenceMaster = (PageSequenceMaster)parent;
@@ -60,9 +66,12 @@ public class RepeatablePageMasterAlternatives extends FObj
                                        + "'maximum-repeats' property");
             }
         }
-
     }
 
+    /**
+     * Get the next matching page master from the conditional
+     * page master references.
+     */
     public String getNextPageMaster(int currentPageNumber,
                                     boolean thisIsFirstPage,
                                     boolean isEmptyPage) {
@@ -78,7 +87,7 @@ public class RepeatablePageMasterAlternatives extends FObj
 
         for (int i = 0; i < conditionalPageMasterRefs.size(); i++) {
             ConditionalPageMasterReference cpmr =
-                (ConditionalPageMasterReference)conditionalPageMasterRefs.elementAt(i);
+                (ConditionalPageMasterReference)conditionalPageMasterRefs.get(i);
 
             // 0-indexed page number
             if (cpmr.isValid(currentPageNumber + 1, thisIsFirstPage,
@@ -96,7 +105,6 @@ public class RepeatablePageMasterAlternatives extends FObj
         } else {
             this.maximumRepeats = (maximumRepeats < 0) ? 0 : maximumRepeats;
         }
-
     }
 
     private int getMaximumRepeats() {
@@ -104,13 +112,12 @@ public class RepeatablePageMasterAlternatives extends FObj
     }
 
     public void addConditionalPageMasterReference(ConditionalPageMasterReference cpmr) {
-        this.conditionalPageMasterRefs.addElement(cpmr);
+        this.conditionalPageMasterRefs.add(cpmr);
     }
 
     public void reset() {
         this.numberConsumed = 0;
     }
-
 
     protected PageSequenceMaster getPageSequenceMaster() {
         return pageSequenceMaster;

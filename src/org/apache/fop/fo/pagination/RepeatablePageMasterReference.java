@@ -12,6 +12,11 @@ import org.apache.fop.apps.FOPException;
 
 import org.xml.sax.Attributes;
 
+/**
+ * A repeatable-page-master-reference formatting object.
+ * This handles a reference with a specified number of repeating
+ * instances of the referenced page master (may have no limit).
+ */
 public class RepeatablePageMasterReference extends PageMasterReference
     implements SubSequenceSpecifier {
 
@@ -40,7 +45,6 @@ public class RepeatablePageMasterReference extends PageMasterReference
                                        + "'maximum-repeats' property");
             }
         }
-
     }
 
     public String getNextPageMaster(int currentPageNumber,
@@ -68,10 +72,6 @@ public class RepeatablePageMasterReference extends PageMasterReference
 
     private int getMaximumRepeats() {
         return this.maximumRepeats;
-    }
-
-    protected String getElementName() {
-        return "fo:repeatable-page-master-reference";
     }
 
     public void reset() {

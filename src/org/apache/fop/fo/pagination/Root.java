@@ -13,14 +13,12 @@ import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.extensions.ExtensionObj;
 
 // Java
 import java.util.ArrayList;
 
 /**
- * The fo:root formatting object. Contains page masters, root extensions,
- * page-sequences.
+ * The fo:root formatting object. Contains page masters, page-sequences.
  */
 public class Root extends FObj {
 

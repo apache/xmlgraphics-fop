@@ -13,6 +13,14 @@ import org.apache.fop.apps.FOPException;
 
 import org.xml.sax.Attributes;
 
+/**
+ * A conditional-page-master-reference formatting object.
+ * This is a reference to a page master with a set of conditions.
+ * The conditions must be satisfied for the referenced master to
+ * be used.
+ * This element is must be the child of a repeatable-page-master-alternatives
+ * element.
+ */
 public class ConditionalPageMasterReference extends FObj {
 
     private RepeatablePageMasterAlternatives repeatablePageMasterAlternatives;
@@ -25,8 +33,6 @@ public class ConditionalPageMasterReference extends FObj {
 
     public ConditionalPageMasterReference(FONode parent) {
         super(parent);
-
-        this.name = getElementName();
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {
@@ -53,7 +59,11 @@ public class ConditionalPageMasterReference extends FObj {
         return masterName;
     }
 
-
+    /**
+     * Check if the conditions for this reference are met.
+     * checks the page number and emptyness to determine if this
+     * matches.
+     */
     protected boolean isValid(int currentPageNumber, boolean thisIsFirstPage,
                               boolean isEmptyPage) {
         // page-position
@@ -127,11 +137,10 @@ public class ConditionalPageMasterReference extends FObj {
         return this.blankOrNotBlank;
     }
 
-    protected String getElementName() {
-        return "fo:conditional-page-master-reference";
-    }
-
-
+    /**
+     * Check that the parent is the right type of formatting object
+     * repeatable-page-master-alternatives.
+     */
     protected void validateParent(FONode parent) throws FOPException {
         if (parent.getName().equals("fo:repeatable-page-master-alternatives")) {
             this.repeatablePageMasterAlternatives =
@@ -149,6 +158,5 @@ public class ConditionalPageMasterReference extends FObj {
                                    + parent.getName());
         }
     }
-
 
 }

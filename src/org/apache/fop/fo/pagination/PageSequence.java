@@ -26,7 +26,7 @@ import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.layoutmgr.PageLayoutManager;
 
 // Java
-import java.util.*;
+import java.util.HashMap;
 
 import org.xml.sax.Attributes;
 
@@ -286,8 +286,6 @@ public class PageSequence extends FObj {
     }
 
 
-
-
 //     /**
 //      * Return children for layout. Only the main flow is laid out directly.
 //      */
@@ -527,10 +525,9 @@ public class PageSequence extends FObj {
 //     }
 
     /**
-     * Returns the next SubSequenceSpecifier for the given page sequence master. The result
-     * is bassed on the current state of this page sequence.
+     * Returns the next SubSequenceSpecifier for the given page sequence master.
+     * The result is bassed on the current state of this page sequence.
      */
-    // refactored from PageSequenceMaster
     private SubSequenceSpecifier getNextSubsequence(PageSequenceMaster master) {
         if (master.getSubSequenceSpecifierCount()
                 > currentSubsequenceNumber + 1) {
@@ -542,7 +539,6 @@ public class PageSequence extends FObj {
         } else {
             return null;
         }
-
     }
 
     /**
@@ -564,6 +560,12 @@ public class PageSequence extends FObj {
 
     }
 
+    /**
+     * Get the next page master name.
+     * This gets the name of the next page master. If the sequence
+     * is exhausted then an error is indicated and the last page
+     * master name is used.
+     */
     private String getNextPageMasterName(PageSequenceMaster sequenceMaster,
                                          int currentPageNumber,
                                          boolean thisIsFirstPage,
