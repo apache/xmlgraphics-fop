@@ -514,7 +514,7 @@ public class Driver {
         accessible through the API and/or configuration */
         if (foInputHandler instanceof FOTreeHandler) {
             if (currentDocument.getLayoutStrategy() == null) {
-                currentDocument.setLayoutStrategy(new LayoutManagerLS(currentDocument));
+                currentDocument.setLayoutStrategy(new LayoutManagerLS());
             }
         }
 

@@ -19,7 +19,6 @@
 
 package org.apache.fop.layout;
 
-import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.fo.pagination.PageSequence;
@@ -32,10 +31,8 @@ import org.apache.fop.fo.pagination.PageSequence;
 public abstract class LayoutStrategy {
 
     private String name = "undefined";
-    public Document document;
 
-    public LayoutStrategy(Document document) {
-        this.document = document;
+    public LayoutStrategy() {
     }
 
     /**
