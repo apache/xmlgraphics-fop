@@ -132,7 +132,11 @@ public class SVG extends FObj implements GraphicsCreator {
 			FONode fo = (FONode) children.elementAt(i);
 			if(fo instanceof GraphicsCreator) {
 				SVGElement impl = ((GraphicsCreator)fo).createGraphic();
-				svgArea.appendChild((org.w3c.dom.Node)impl);
+				if(impl != null) {
+					if(impl instanceof SVGElementImpl)
+						((SVGElementImpl)impl).setClassName(new SVGAnimatedStringImpl(((FObj)fo).getProperty("class").getString()));
+					svgArea.appendChild((org.w3c.dom.Node)impl);
+				}
 //			} else if(fo instanceof Defs) {
 //				svgArea.addDefs(((Defs)fo).createDefs());
 			}

@@ -114,13 +114,17 @@ public class G extends SVGObj {
 		ggraphic.setTransform(((SVGTransform)this.properties.get("transform")).getTransform());
 		ggraphic.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
 		ggraphic.setId(this.properties.get("id").getString());
+		ggraphic.setClassName(new SVGAnimatedStringImpl(this.properties.get("class").getString()));
 		int numChildren = this.children.size();
 		for (int i = 0; i < numChildren; i++) {
 			FONode child = (FONode) children.elementAt(i);
 			if(child instanceof GraphicsCreator) {
 				SVGElement impl = ((GraphicsCreator)child).createGraphic();
-				if(impl != null)
+				if(impl != null) {
+					if(impl instanceof SVGElementImpl)
+						((SVGElementImpl)impl).setClassName(new SVGAnimatedStringImpl(((FObj)child).getProperty("class").getString()));
 					ggraphic.appendChild(impl);
+				}
 			} else if(child instanceof Defs) {
 //				System.out.println(child);
 //				ggraphic.addDefs(((Defs)child).createDefs());

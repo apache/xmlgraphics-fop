@@ -59,6 +59,9 @@ import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
+
+import org.w3c.dom.svg.*;
+
 /**
  * class representing svg:Style pseudo flow object.
  *
@@ -102,5 +105,21 @@ public class Style extends SVGObj {
 	protected Style(FObj parent, PropertyList propertyList) {
 		super(parent, propertyList);
 		this.name = "svg:style";
+	}
+
+	String styleText = "";
+	protected void addCharacters(char data[], int start, int length)
+	{
+		styleText += new String(data, start, length - start);
+	}
+
+	public SVGElement createGraphic()
+	{
+		SVGStyleElement sse = new SVGStyleElementImpl(styleText);
+//		sse.setType(this.properties.get("type").getString());
+//		sse.setMedia(this.properties.get("media").getString());
+//		sse.setTitle(this.properties.get("title").getString());
+//		sse.setStyle(styleText);
+		return sse;
 	}
 }
