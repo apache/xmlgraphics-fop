@@ -23,14 +23,7 @@ import java.util.List;
  */
 public class FlowLayoutManager extends BlockStackingLayoutManager {
 
-    private static class BlockBreakPosition extends LeafPosition {
-        List blockps;
-
-        BlockBreakPosition(BPLayoutManager lm, int iBreakIndex, List bps) {
-            super(lm, iBreakIndex);
-            blockps = bps;
-        }
-    }
+    ArrayList blockBreaks = new ArrayList();      
 
     /** Array of areas currently being filled stored by area class */
     private BlockParent[] currentAreas = new BlockParent[Area.CLASS_MAX];
@@ -47,40 +40,71 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
                                       Position prevLineBP) {
 
         BPLayoutManager curLM ; // currently active LM
+        MinOptMax stackSize = new MinOptMax();
 
         while ((curLM = getChildLM()) != null) {
-            // Make break positions and return lines!
+            // Make break positions and return page break
             // Set up a LayoutContext
-            int bpd = 0;
+            MinOptMax bpd = context.getStackLimit();
             BreakPoss bp;
-            ArrayList vecBreakPoss = new ArrayList();
 
-            // Force area creation on first call
-            // NOTE: normally not necessary when fully integrated!
             LayoutContext childLC = new LayoutContext(0);
+            boolean breakPage = false;
+            childLC.setStackLimit(MinOptMax.subtract(bpd, stackSize));
 
-            while (!curLM.isFinished()) {
+            if (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC, null)) != null) {
-                    vecBreakPoss.add(bp);
-                    // Reset stackLimit for non-first lines
-                    childLC.setStackLimit(new MinOptMax(bpd));
+                    stackSize.add(bp.getStackingSize());
+                    blockBreaks.add(bp);
+                    // set stackLimit for remaining space
+                    childLC.setStackLimit(MinOptMax.subtract(bpd, stackSize));
+
+                    if(bp.isForcedBreak()) {
+                        breakPage = true;
+                        break;
+                    }
                 }
             }
 
-            return new BreakPoss(
-                     new BlockBreakPosition(curLM, 0, vecBreakPoss));
+            // check the stack bpd and if greater than available
+            // height then go to the last best break and return
+            // break position
+            if(stackSize.min > context.getStackLimit().opt) {
+                breakPage = true;
+            }
+            if(breakPage) {
+                return new BreakPoss(
+			     new LeafPosition(this, blockBreaks.size() - 1));
+            }
         }
         setFinished(true);
+        if(blockBreaks.size() > 0) {
+            return new BreakPoss(
+                             new LeafPosition(this, blockBreaks.size() - 1));
+        }
         return null;
     }
 
-    public void addAreas(PositionIterator parentIter, LayoutContext lc) {
+    public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
+
+        BPLayoutManager childLM ;
+        int iStartPos = 0;
+        LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
-            BlockBreakPosition bbp = (BlockBreakPosition) parentIter.next();
-            bbp.getLM().addAreas( new BreakPossPosIter(bbp.blockps, 0,
-                                  bbp.blockps.size()), null);
+            LeafPosition lfp = (LeafPosition) parentIter.next();
+            // Add the block areas to Area
+            PositionIterator breakPosIter =
+              new BreakPossPosIter(blockBreaks, iStartPos,
+                                   lfp.getLeafPos() + 1);
+            iStartPos = lfp.getLeafPos() + 1; 
+            while ((childLM = breakPosIter.getNextChildLM()) != null) {
+                childLM.addAreas(breakPosIter, lc);
+            }
         }
+
         flush();
+        // clear the breaks for the page to start for the next page
+        blockBreaks.clear();
     }
 
 

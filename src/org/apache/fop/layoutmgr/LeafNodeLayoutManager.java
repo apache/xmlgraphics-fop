@@ -59,7 +59,6 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
         return false;
     }
 
-
     /**
      * This is a leaf-node, so this method is never called.
      */
@@ -77,10 +76,15 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
         BreakPoss bp = new BreakPoss(new LeafPosition(this, 0),
                                      BreakPoss.CAN_BREAK_AFTER |
                                      BreakPoss.CAN_BREAK_BEFORE | BreakPoss.ISFIRST |
-                                     BreakPoss.ISLAST | BreakPoss.REST_ARE_SUPPRESS_AT_LB);
+                                     BreakPoss.ISLAST);
         bp.setStackingSize(curArea.getAllocationIPD());
+        bp.setNonStackingSize(curArea.getAllocationBPD());
         setFinished(true);
         return bp;
+    }
+
+    public void resetPosition(Position resetPos) {
+        setFinished(false);
     }
 
     public void addAreas(PositionIterator posIter, LayoutContext context) {

@@ -149,7 +149,7 @@ public class LayoutContext {
     }
 
     public MinOptMax getStackLimit() {
-        return m_stackLimit ;
+        return m_stackLimit;
     }
 
     public void setHyphContext(HyphContext hyphContext) {

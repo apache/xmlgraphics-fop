@@ -44,9 +44,10 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
     /** Number of columns in current span area. */
     private int curSpanColumns;
 
-
     /** Current flow-reference-area (column) being filled. */
     private Flow curFlow;
+
+    private int flowBPD = 0;
 
     /** Manager which handles a queue of all pages which are completely
      * laid out and ready for rendering, except for resolution of ID
@@ -82,7 +83,7 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
 
     public void doLayout() {
 
-        //ArrayList vecBreakPoss = new ArrayList();
+        makeNewPage(false, false);
 
         BreakPoss bp;
         LayoutContext childLC = new LayoutContext(0);
@@ -92,12 +93,12 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
                 vecBreakPoss.add(bp);
                 addAreas( new BreakPossPosIter(vecBreakPoss, 0,
                                        vecBreakPoss.size()), null);
+                // add static areas and resolve any new id areas
+
+                // finish page and add to area tree
                 finishPage();
             }
         }
-
-        //addAreas( new BreakPossPosIter(vecBreakPoss, 0,
-        //                               vecBreakPoss.size()), null);
 
     }
 
@@ -108,16 +109,11 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
         BPLayoutManager curLM ; // currently active LM
 
         while ((curLM = getChildLM()) != null) {
-            // Make break positions and return lines!
-            // Set up a LayoutContext
-            int bpd = 0;
             BreakPoss bp;
             ArrayList vecBreakPoss = new ArrayList();
 
-            // Force area creation on first call
-            // NOTE: normally not necessary when fully integrated!
             LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimit(new MinOptMax(bpd));
+            childLC.setStackLimit(new MinOptMax(flowBPD));
 
             if (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC, null)) != null) {
@@ -218,8 +214,10 @@ getParentArea(area);
         } catch (FOPException fopex) { /* ???? */
             fopex.printStackTrace();
         }
-        curBody = (BodyRegion) curPage.getPage(). getRegion(
-                    RegionReference.BODY).getRegion();
+        RegionViewport reg = curPage.getPage(). getRegion(
+                    RegionReference.BODY);
+        curBody = (BodyRegion) reg.getRegion();
+        flowBPD = (int)reg.getViewArea().getHeight();
         return curPage;
     }
 
