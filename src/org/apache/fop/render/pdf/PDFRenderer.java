@@ -112,7 +112,9 @@ public class PDFRenderer extends PrintRenderer {
     protected HashMap pageReferences = new HashMap();
     protected HashMap pvReferences = new HashMap();
 
-    private String producer;
+    private String producer = "FOP";
+
+    private String creator = null;
 
     /**
      * The output stream to write the document to
@@ -222,6 +224,15 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
+     * set the document creator
+     *
+     * @param creator string indicating application that is creating the document
+     */
+    public void setCreator(String crea) {
+        creator = crea;
+    }
+
+    /**
      * set the PDF document's producer
      *
      * @param producer string indicating application producing PDF
@@ -240,8 +251,9 @@ public class PDFRenderer extends PrintRenderer {
 
     public void startRenderer(OutputStream stream) throws IOException {
         ostream = stream;
-        this.pdfDoc = new PDFDocument(Version.getVersion());
-        this.pdfDoc.setProducer(producer);
+        producer = "FOP " + Version.getVersion();
+        this.pdfDoc = new PDFDocument(producer);
+        this.pdfDoc.setCreator(creator);
         this.pdfDoc.setFilterMap(filterMap);
         pdfDoc.outputHeader(stream);
     }

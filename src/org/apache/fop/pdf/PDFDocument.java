@@ -193,6 +193,15 @@ public class PDFDocument {
     }
 
     /**
+     * set the creator of the document
+     *
+     * @param creator string indicating application creating the document
+     */
+    public void setCreator(String creator) {
+        this.info.setCreator(creator);
+    }
+
+    /**
      * Set the filter map to use for filters in this document.
      *
      * @param map the map of filter lists for each stream type
