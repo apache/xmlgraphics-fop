@@ -160,6 +160,13 @@ public class SVGElement extends SVGObj {
             }
 
             /**
+             * Returns the transform from the global transform space to pixels.
+             */
+            public AffineTransform getScreenTransform() {
+                throw new UnsupportedOperationException("NYI");
+            }
+
+            /**
              * Sets the transform to be used from the global transform space
              * to pixels.
              */
