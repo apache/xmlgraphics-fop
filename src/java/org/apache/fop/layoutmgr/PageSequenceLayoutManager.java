@@ -25,7 +25,7 @@ import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Flow;
+import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Page;
 import org.apache.fop.area.RegionViewport;
@@ -89,11 +89,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     /** Current span being filled */
     private Span curSpan;
 
-    /** Number of columns in current span area. */
-    private int curSpanColumns;
-
-    /** Current flow-reference-area (column) being filled. */
-    private Flow curFlow;
+    /** Current normal-flow-reference-area being filled. */
+    private NormalFlow curFlow;
 
     private int flowBPD = 0;
     private int flowIPD = 0;
@@ -400,14 +397,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             return;
         }
         if (childArea.getAreaClass() == Area.CLASS_NORMAL) {
-            placeFlowRefArea(childArea);
+            placeNormalFlowRefArea(childArea);
         } else {
              // todo: all the others!
         }
     }
 
     /**
-     * Place a FlowReferenceArea into the current span. The FlowLM is
+     * Place a normal-flow-reference-area into the current span. The FlowLM is
      * responsible for making sure that it will actually fit in the
      * current span area. In fact the area has already been added to the
      * current span, so we are just checking to see if the span is "full",
@@ -415,7 +412,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      *
      * @param area the area to place
      */
-    protected void placeFlowRefArea(Area area) {
+    protected void placeNormalFlowRefArea(Area area) {
         // assert (curSpan != null);
         // assert (area == curFlow);
         // assert (curFlow == curSpan.getFlow(curSpan.getColumnCount()-1));
@@ -434,7 +431,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         //                   ":" + curSpan.getMaxBPD().min);
         /*if (area.getAllocationBPD().max >= curSpan.getMaxBPD().min) {
             // Consider it filled
-            if (curSpan.getColumnCount() == curSpanColumns) {
+            if (curSpan.getColumnCount() == curSpan.getNormalFlowCount()) {
                 finishPage();
             } else
                 curFlow = null; // Create new flow on next getParentArea()
@@ -588,9 +585,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             if (curSpan == null) {
                 createBodyMainReferenceArea();
                 bNeedSpan = true;
-            } else if (numCols != curSpanColumns) {
+            } else if (numCols != curSpan.getNormalFlowCount()) {
                 // todo: BALANCE EXISTING COLUMNS
-                if (curSpanColumns > 1) {
+                if (curSpan.getNormalFlowCount() > 1) {
                     // balanceColumns();
                 }
                 bNeedSpan = true;
@@ -599,7 +596,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 // Make a new span and the first flow
                 createSpan(numCols);
             } else if (curFlow == null) {
-                curFlow = curSpan.addNewFlow();
+                curFlow = curSpan.addNewNormalFlow();
             }
             return curFlow;
         } else {
@@ -636,10 +633,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     private void handleBreak(int breakVal) {
         if (breakVal == Constants.EN_COLUMN) {
-            if (curSpan != null
-                    && curSpan.getColumnCount() != curSpanColumns) {
+            if (curSpan != null // TODO: change below to < or <=
+                    && curSpan.getNormalFlowCount() != curSpan.getColumnCount()) {
                 // Move to next column
-                curFlow = curSpan.addNewFlow();
+                curFlow = curSpan.addNewNormalFlow();
                 return;
             }
             // else need new page
@@ -717,7 +714,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         //}
         //else newpos = new MinOptMax();
         curSpan = new Span(numCols);
-        curSpanColumns = numCols;
         // get Width or Height as IPD for span
 
         RegionViewport rv = curPage.getPage().getRegionViewport(FO_REGION_BODY);
@@ -727,7 +723,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         curSpan.setIPD(ipdWidth);
         //curSpan.setPosition(BPD, newpos);
         curBody.getMainReference().addSpan(curSpan);
-        curFlow = curSpan.addNewFlow();
+        curFlow = curSpan.addNewNormalFlow();
     }
 
     private PageViewport createPageAreas(SimplePageMaster spm) {
