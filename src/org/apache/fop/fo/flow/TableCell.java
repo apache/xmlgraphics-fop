@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -141,6 +141,9 @@ public class TableCell extends FObj {
 			  0, 0, 0);
 	blockArea.setPage(area.getPage());
 	blockArea.start();
+
+	// added by Eric Shaeffer
+	height = 0;
 
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
