@@ -6,6 +6,139 @@
     <title>FOP Graphics Formats</title>
   </header>
   <body>
+    <section>
+      <title>Overview of Graphics Support</title>
+      <p>
+        The table below summarizes the <em>theoretical</em> support for graphical formats within FOP. In other words, within the constraints of the limitations listed here, these formats <em>should</em> work. However, many of them have not been tested, and there may be limitations that have not yet been discovered or documented. The packages needed to support some formats are not included in the FOP distribution and must be installed separately. Follow the links in the "Support Thru" column for more details.
+      </p>
+      <table>
+        <tr>
+          <th>Format</th>
+          <th>Type</th>
+          <th>Support Thru</th>
+        </tr>
+        <tr>
+          <td>BMP</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
+        </tr>
+        <tr>
+          <td>CUR</td>
+          <td>unknown</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
+          <td>GIF</td>
+          <td>bitmap</td>
+          <td>FOP native</td>
+        </tr>
+        <tr>
+          <td>FPX</td>
+          <td>unknown</td>
+          <td><link href="#jai">JAI</link></td>
+        </tr>
+        <tr>
+          <td>ICO (Sun Icon)</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
+          <td>JPEG</td>
+          <td>bitmap</td>
+          <td>FOP native</td>
+        </tr>
+        <tr>
+          <td>PCX</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
+          <td>PICT (Macintosh PICT)</td>
+          <td>metafile</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
+          <td>PNG</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
+        </tr>
+        <tr>
+          <td>PNM</td>
+          <td>bitmap</td>
+          <td><link href="#jai">JAI</link></td>
+        </tr>
+        <tr>
+          <td>PSD (Adobe Photoshop)</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
+          <td>Sunraster</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
+          <td><link href="#svg">SVG</link></td>
+          <td>vector (with embedded bitmaps)</td>
+          <td><link href="#batik">Batik</link></td>
+        </tr>
+        <tr>
+          <td>Targa</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
+          <td>TIFF</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
+        </tr>
+        <tr>
+          <td>XBM</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
+          <td>XPM</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+      </table>
+    </section>
+    <section id="packages">
+      <title>Graphics Packages</title>
+      <section id="native">
+        <title>FOP Native</title>
+        <p>
+          FOP has native ability to handle some graphic file formats.
+        </p>
+      </section>
+      <section id="jimi">
+        <title>JIMI</title>
+        <p>
+          Because of licensing issues, the JIMI image library is not included in the FOP distribution. First, <fork href="http://java.sun.com/products/jimi">download</fork> and install it.
+Then, copy the file "JimiProClasses.zip" from the archive to xml-fop/lib/jimi-1.0.jar. Please note that FOP binary distributions are compiled with JIMI support, so there is no need for you to build FOP to add the support. If jimi-1.0.jar is installed in the right place, it will automatically be used by FOP, otherwise it will not.
+        </p>
+      </section>
+      <section id="jai">
+        <title>JAI</title>
+        <p>
+          FOP has been compiled with JAI support, but JAI is not included in the FOP distribution.
+To use it, simply install <link href="http://java.sun.com/products/java-media/jai">JAI</link>.
+JAI is much faster than JIMI, but is not available for all platforms. See <link href="http://java.sun.com/products/java-media/jai/forDevelopers/jaifaq.html#platforms">What platforms are supported?</link> on the JAI FAQ page for more details.
+        </p>
+      </section>
+      <section id="batik">
+        <title>Batik</title>
+        <p>
+          FOP distributions include a batik.jar file. No installation is required.
+        </p>
+      </section>
+    </section>
+    <section id="jpeg">
+      <title>JPEG</title>
+      <p>Not all variants of JPEG are supported, especially those containing unusual color lookup tables and color profiles. If you have trouble with a JPEG image in FOP, try opening it with an image processing program (such as Photoshop or Gimp) and then saving it. Specifying 24-bit color output may also help.
+      </p>
+    </section>
     <section id="svg">
       <title>SVG</title>
       <section id="svg-intro">
