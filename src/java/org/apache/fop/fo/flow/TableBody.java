@@ -22,11 +22,14 @@ package org.apache.fop.fo.flow;
 import java.util.Iterator;
 import java.util.List;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -34,7 +37,6 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 
 /**
  * Class modelling the fo:table-body object.
- * @todo implement validateChildNode()
  */
 public class TableBody extends FObj {
     // The value of properties relevant for fo:table-body.
@@ -50,6 +52,9 @@ public class TableBody extends FObj {
     // End of property values
     
     private PropertyList savedPropertyList;
+
+    private boolean tableRowsFound = false;
+    private boolean tableColumnsFound = false;   
     
     /**
      * @param parent FONode that is the parent of the object
@@ -88,12 +93,49 @@ public class TableBody extends FObj {
      */
     protected void endOfNode() throws FOPException {
         getFOEventHandler().endBody(this);
-        if (childNodes == null || childNodes.size() == 0) {
-            getLogger().error("fo:table-body must not be empty. "
-                    + "Expected: (table-row+|table-cell+)");
-            getParent().removeChild(this);
+        if (!(tableRowsFound || tableColumnsFound)) {
+            if (getUserAgent().validateStrictly()) {
+                missingChildElementError("marker* (table-row+|table-cell+)");
+            } else {
+                getLogger().error("fo:table-body must not be empty. "
+                        + "Expected: marker* (table-row+|table-cell+)");
+                getParent().removeChild(this);
+            }
         }
         convertCellsToRows();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* (table-row+|table-cell+)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws ValidationException {
+        if (nsURI == FO_URI) {
+            if (localName.equals("marker")) {
+                if (tableRowsFound || tableColumnsFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", "(table-row+|table-cell+)");
+                }
+            } else if (localName.equals("table-row")) {
+                tableRowsFound = true;
+                if (tableColumnsFound) {
+                    invalidChildError(loc, nsURI, localName, "Either fo:table-rows" +
+                      " or fo:table-columns may be children of an fo:table-body" +
+                      " but not both");
+                }
+            } else if (localName.equals("table-column")) {
+                tableColumnsFound = true;
+                if (tableRowsFound) {
+                    invalidChildError(loc, nsURI, localName, "Either fo:table-rows" +
+                      " or fo:table-columns may be children of an fo:table-body" +
+                      " but not both");
+                }  
+            } else {
+                invalidChildError(loc, nsURI, localName);
+            }
+        } else {
+            invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**

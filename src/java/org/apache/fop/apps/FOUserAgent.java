@@ -79,6 +79,13 @@ public class FOUserAgent {
     /* user configuration */
     private Configuration userConfig = null;
     private Log log = LogFactory.getLog("FOP");
+    
+    /* FOP has the ability, for some FO's, to continue processing even if the
+     * input XSL violates that FO's content model.  This is the default  
+     * behavior for FOP.  However, this flag, if set, provides the user the
+     * ability for FOP to halt on all content model violations if desired.   
+     */ 
+    private boolean strictValidation = false;
 
     /* Additional fo.ElementMapping subclasses set by user */
     private ArrayList additionalElementMappings = null;
@@ -173,6 +180,23 @@ public class FOUserAgent {
      */
     public FOEventHandler getFOEventHandlerOverride() {
         return this.foEventHandlerOverride;
+    }
+
+    /**
+     * Activates strict XSL content model validation for FOP
+     * Default is false (FOP will continue processing where it can)
+     * @param validateStrictly true to turn on strict validation
+     */
+    public void setStrictValidation(boolean validateStrictly) {
+        this.strictValidation = validateStrictly;
+    }
+
+    /**
+     * Returns whether FOP is strictly validating input XSL
+     * @return true of strict validation turned on, false otherwise
+     */
+    public boolean validateStrictly() {
+        return strictValidation;
     }
 
     /**
