@@ -79,8 +79,8 @@ Software Foundation, please see <http://www.apache.org/>.
   <xsl:variable name="lcletters" select="'abcdefghijklmnopqrstuvwxyz-:'" />
   <xsl:variable name="ucletters" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ__'" />
   <xsl:variable name="enum" select="translate($prop/name, $lcletters, $ucletters)"/>
-<xsl:text>    </xsl:text><xsl:value-of select="$htname"/>[PR_<xsl:value-of select="$enum"/>] =<xsl:value-of select="$makerclass"/>.maker(PR_<xsl:value-of select="$enum"/>);
 <xsl:text>    addPropertyName("</xsl:text><xsl:value-of select="$prop/name"/>", PR_<xsl:value-of select="$enum"/>);
+<xsl:text>    </xsl:text><xsl:value-of select="$htname"/>[PR_<xsl:value-of select="$enum"/>] =<xsl:value-of select="$makerclass"/>.maker(PR_<xsl:value-of select="$enum"/>);
 </xsl:template>
 
 
