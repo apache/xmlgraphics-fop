@@ -560,7 +560,9 @@ public class Driver implements LogEnabled {
     }
 
     /**
-     * Render the FO document read by a SAX Parser from an InputSource.
+     * This is the main render() method. The other render() methods are for
+     * convenience, and normalize to this form, then run this.
+     * Renders the FO document read by a SAX Parser from an InputSource.
      * @param parser the SAX parser.
      * @param source the input source the parser reads from.
      * @throws FOPException if anything goes wrong.
@@ -586,31 +588,17 @@ public class Driver implements LogEnabled {
     }
 
     /**
-     * Render the FO ducument represented by a DOM Document.
+     * This method overloads the main render() method, adding the convenience
+     * of using a DOM Document as input.
+     * @see render(XMLReader, InputSource)
      * @param document the DOM document to read from
      * @throws FOPException if anything goes wrong.
      */
     public synchronized void render(Document document)
                 throws FOPException {
-        if (!isInitialized()) {
-            initialize();
-        }
-        try {
-            DocumentInputSource source = new DocumentInputSource(document);
-            DocumentReader reader = new DocumentReader();
-            reader.setContentHandler(getContentHandler());
-            reader.parse(source);
-        } catch (SAXException e) {
-            if (e.getException() instanceof FOPException) {
-                // Undo exception tunneling.
-                throw (FOPException)e.getException();
-            } else {
-                throw new FOPException(e);
-            }
-        } catch (IOException e) {
-            throw new FOPException(e);
-        }
-
+        DocumentInputSource source = new DocumentInputSource(document);
+        DocumentReader reader = new DocumentReader();
+        render(reader, source);
     }
 
     /**
