@@ -59,6 +59,15 @@ import java.util.Vector;
 import java.util.Enumeration;
 import java.awt.Rectangle;
 
+import org.apache.fop.fo.properties.WrapOption; // for enumerated
+// values 
+import org.apache.fop.fo.properties.WhiteSpaceTreatment; // for
+// enumerated values 
+import org.apache.fop.fo.properties.TextAlign; // for enumerated
+// values 
+import org.apache.fop.fo.properties.TextAlignLast; // for enumerated
+// values 
+
 /**
  * a set of rectangles on a page that are linked to a common
  * destination
@@ -71,21 +80,31 @@ public class LinkSet {
     /** the set of rectangles */
     Vector rects = new Vector();
 
-    int xoffset = 0;
+    private int xoffset = 0;
+    private int yoffset = 0;
+    
+    // property required for alignment adjustments
+    int contentRectangleWidth = 0;
 
-    int yoffset = 0;
-	
     public LinkSet(String externalDest) {
 	this.externalDestination = externalDest;
     }
     
     public void addRect(Rectangle r) {
-	r.y = yoffset;
+	r.y = this.yoffset;
 	rects.addElement(r);
     }
 	
     public void setYOffset(int y) {
 	this.yoffset = y;
+    }
+	
+    public void setXOffset(int x) {
+	this.xoffset = x;
+    }
+	
+    public void setContentRectangleWidth(int contentRectangleWidth) {
+	this.contentRectangleWidth = contentRectangleWidth;
     }
 	
     public void applyAreaContainerOffsets(AreaContainer ac) {
@@ -122,6 +141,31 @@ public class LinkSet {
 	rects = nv;
     }
 	
+    public void align(int type, int padding) {
+        int offset = 0;
+
+	switch (type) {
+	case TextAlign.START: // left
+	    offset = 0;
+	    break;
+	case TextAlign.END: // right
+	    offset = padding / 2;
+	    break;
+	case TextAlign.CENTERED: // center
+	    offset = padding;
+	    break;
+	case TextAlign.JUSTIFIED: // justify
+            // not yet implemented
+            break;
+        }
+
+	Enumeration re = rects.elements();
+	while (re.hasMoreElements()) {
+	    Rectangle r = (Rectangle)re.nextElement();
+	    r.x += offset;
+	}
+    }
+
     public String getDest() {
 	return this.externalDestination;
     }
