@@ -175,9 +175,12 @@ public class TableCell extends FObj {
 						fo.setIsInTableCell();
 						fo.forceWidth(width); // ???
 
+						// Overflows may cause a row to be re-layedout, need to pass already processed content.
+						this.marker = i;
+
 						Status status;
 						if ((status = fo.layout(cellArea)).isIncomplete()) {
-								this.marker = i;
+								//this.marker = i;
 								if ((i == 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
 										return new Status(Status.AREA_FULL_NONE);
 								} else {
