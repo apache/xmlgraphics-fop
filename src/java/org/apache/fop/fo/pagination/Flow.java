@@ -128,7 +128,7 @@ public class Flow extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void addLayoutManager(List list) { 	 
+    public void addLayoutManager(List list) {
         FlowLayoutManager lm = new FlowLayoutManager(this);
         list.add(lm);
     }

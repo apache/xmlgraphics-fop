@@ -55,13 +55,16 @@ public class InlineContainer extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void addLayoutManager(List list) { 	 
+    public void addLayoutManager(List list) {
         ArrayList childList = new ArrayList();
         super.addLayoutManager(childList);
         LayoutManager lm = new ICLayoutManager(this, childList);
         list.add(lm);
     }
 
+    /**
+     * @see org.apache.fop.fo.FONode#getName()
+     */
     public String getName() {
         return "fo:inline-container";
     }

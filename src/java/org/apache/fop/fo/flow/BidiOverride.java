@@ -113,7 +113,7 @@ public class BidiOverride extends FObjMixed {
      * @todo see if can/should move the child iteration logic 
      *      to BidiLayoutManager
      */
-    public void addLayoutManager(List list) { 	 
+    public void addLayoutManager(List list) {    
         if (false) {
             super.addLayoutManager(list);
         } else {

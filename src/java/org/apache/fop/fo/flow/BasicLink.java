@@ -108,7 +108,7 @@ public class BasicLink extends Inline {
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void addLayoutManager(List list) { 	 
+    public void addLayoutManager(List list) {    
         BasicLinkLayoutManager lm = new BasicLinkLayoutManager(this);
         list.add(lm);
     }

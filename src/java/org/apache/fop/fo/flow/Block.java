@@ -344,11 +344,14 @@ public class Block extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void addLayoutManager(List list) { 	 
+    public void addLayoutManager(List list) {    
         BlockLayoutManager blm = new BlockLayoutManager(this);
         list.add(blm);
     }
      
+    /**
+     * @see org.apache.fop.fo.FONode#getName()
+     */
     public String getName() {
         return "fo:block";
     }

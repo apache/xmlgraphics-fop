@@ -499,7 +499,7 @@ public class FOText extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void addLayoutManager(List list) { 	 
+    public void addLayoutManager(List list) {
         if (endIndex - startIndex > 0) {
             list.add(new TextLayoutManager(this));
         }

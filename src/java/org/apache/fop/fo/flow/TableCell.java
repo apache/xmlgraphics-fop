@@ -327,9 +327,9 @@ public class TableCell extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void addLayoutManager(List list) { 	 
+    public void addLayoutManager(List list) {
         Cell clm = new Cell(this);
-        list.add(clm); 	 
+        list.add(clm);
     }
     
     /**
