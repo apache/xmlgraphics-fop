@@ -380,4 +380,20 @@ public class PDFColor extends PDFPathPaint {
 		return (new byte[0]);
 
 	} //end of toPDF
+
+    public boolean equals(Object obj) 
+    {
+	if (!(obj instanceof PDFColor)) {
+	    return false;
+	}
+	PDFColor color = (PDFColor)obj;
+	
+	if (color.red == this.red &&
+	    color.green == this.green &&
+	    color.blue == this.blue) {
+	    return true;
+	}
+	return false;
+    }
+    
 }
