@@ -64,7 +64,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         setup();
         InlineArea area = getExternalGraphicInlineArea();
         setCurrentArea(area);
-        setAlignment(graphic.getProperty(PR_VERTICAL_ALIGN).getEnum());
+        setAlignment(graphic.getPropEnum(PR_VERTICAL_ALIGN));
         setLead(viewHeight);
     }
 
@@ -121,7 +121,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
             cwidth = cw.getValue();
         }
 
-        int scaling = graphic.getPropertyList().get(PR_SCALING).getEnum();
+        int scaling = graphic.getPropEnum(PR_SCALING);
         if ((scaling == Scaling.UNIFORM) || (cwidth == -1) || cheight == -1) {
             ImageFactory fact = ImageFactory.getInstance();
             fopimage = fact.getImage(url, graphic.getUserAgent());
@@ -164,7 +164,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         }
 
         if (cwidth > viewWidth || cheight > viewHeight) {
-            int overflow = graphic.getPropertyList().get(PR_OVERFLOW).getEnum();
+            int overflow = graphic.getPropEnum(PR_OVERFLOW);
             if (overflow == Overflow.HIDDEN) {
                 clip = true;
             } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {
@@ -176,7 +176,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
 
         int xoffset = 0;
         int yoffset = 0;
-        int da = graphic.getPropertyList().get(PR_DISPLAY_ALIGN).getEnum();
+        int da = graphic.getPropEnum(PR_DISPLAY_ALIGN);
         switch(da) {
             case DisplayAlign.BEFORE:
             break;
@@ -191,7 +191,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
             break;
         }
 
-        int ta = graphic.getPropertyList().get(PR_TEXT_ALIGN).getEnum();
+        int ta = graphic.getPropEnum(PR_TEXT_ALIGN);
         switch(ta) {
             case TextAlign.CENTER:
                 xoffset = (viewWidth - cwidth) / 2;

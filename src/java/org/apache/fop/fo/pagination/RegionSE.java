@@ -40,10 +40,11 @@ public abstract class RegionSE extends Region {
         super(parent);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        
-        this.extent = getPropLength(PR_EXTENT);
     }
 
     /**
@@ -58,14 +59,14 @@ public abstract class RegionSE extends Region {
      */
     protected void adjustIPD(Rectangle vpRefRect, int wm) {
         int offset = 0;
-        Region before = getSiblingRegion(FO_REGION_BEFORE);
+        RegionBefore before = (RegionBefore) getSiblingRegion(FO_REGION_BEFORE);
         if (before != null && before.getPrecedence()) {
-            offset = before.getExtent();
+            offset = before.getPropLength(PR_EXTENT);
             vpRefRect.translate(0, offset);
         }
-        Region after = getSiblingRegion(FO_REGION_AFTER);
+        RegionAfter after = (RegionAfter) getSiblingRegion(FO_REGION_AFTER);
         if (after != null && after.getPrecedence()) {
-            offset += after.getExtent();
+            offset += after.getPropLength(PR_EXTENT);
         }
         if (offset > 0) {
             if (wm == WritingMode.LR_TB || wm == WritingMode.RL_TB) {

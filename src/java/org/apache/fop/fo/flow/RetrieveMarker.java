@@ -58,10 +58,8 @@ public class RetrieveMarker extends FObjMixed {
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         this.retrieveClassName = getPropString(PR_RETRIEVE_CLASS_NAME);
-        this.retrievePosition =
-            this.propertyList.get(PR_RETRIEVE_POSITION).getEnum();
-        this.retrieveBoundary =
-            this.propertyList.get(PR_RETRIEVE_BOUNDARY).getEnum();
+        this.retrievePosition = getPropEnum(PR_RETRIEVE_POSITION);
+        this.retrieveBoundary = getPropEnum(PR_RETRIEVE_BOUNDARY);
     }
 
     /**

@@ -229,7 +229,7 @@ class TextAttributesConverter {
 
 
     private static void attrBlockTextAlign(FObj fobj, RtfAttributes rtfAttr) {
-        int fopValue = fobj.getProperty(Constants.PR_TEXT_ALIGN).getEnum();
+        int fopValue = fobj.getPropEnum(Constants.PR_TEXT_ALIGN);
         String rtfValue = null;
         switch (fopValue) {
             case Constants.CENTER:

@@ -79,7 +79,7 @@ public class PageNumberCitation extends FObj {
         this.green = c.getGreen();
         this.blue = c.getBlue();
 
-        this.wrapOption = this.propertyList.get(PR_WRAP_OPTION).getEnum();
+        this.wrapOption = getPropEnum(PR_WRAP_OPTION);
         this.refId = getPropString(PR_REF_ID);
 
         if (this.refId.equals("")) {

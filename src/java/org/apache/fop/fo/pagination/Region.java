@@ -43,13 +43,12 @@ public abstract class Region extends FObj {
     /** Holds the writing mode */
     protected int wm;
 
-    protected int extent = 0;
-
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     protected Region(FONode parent) {
         super(parent);
+        layoutMaster = (SimplePageMaster) parent;
     }
 
     /**
@@ -61,31 +60,21 @@ public abstract class Region extends FObj {
         // regions may have name, or default
         if (null == this.propertyList.get(PR_REGION_NAME)) {
             setRegionName(getDefaultRegionName());
-        } else if (this.propertyList.get(PR_REGION_NAME).getString().equals("")) {
+        } else if (getPropString(PR_REGION_NAME).equals("")) {
             setRegionName(getDefaultRegionName());
         } else {
-            setRegionName(this.propertyList.get(PR_REGION_NAME).getString());
+            setRegionName(getPropString(PR_REGION_NAME));
             // check that name is OK. Not very pretty.
             if (isReserved(getRegionName())
                     && !getRegionName().equals(getDefaultRegionName())) {
                 throw new SAXParseException("region-name '" + regionName
                         + "' for " + this.getName()
-                        + " not permitted.", locator);
+                        + " is not permitted.", locator);
             }
         }
 
-        if (parent instanceof SimplePageMaster) {
-            layoutMaster = (SimplePageMaster)parent;
-        } else {
-            throw new SAXParseException(this.getName() + " must be child "
-                    + "of simple-page-master, not "
-                    + parent.getName(), locator);
-        }
-        this.wm = this.propertyList.get(PR_WRITING_MODE).getEnum();
-
-        // this.propertyList.get("clip");
-        // this.propertyList.get("display-align");
-        this.overflow = this.propertyList.get(PR_OVERFLOW).getEnum();
+        this.wm = getPropEnum(PR_WRITING_MODE);
+        this.overflow = getPropEnum(PR_OVERFLOW);
     }
 
     /**
@@ -123,14 +112,6 @@ public abstract class Region extends FObj {
     }
 
     /**
-     * Returns the page master associated with this region.
-     * @return a simple-page-master
-     */
-    protected SimplePageMaster getPageMaster() {
-        return this.layoutMaster;
-    }
-
-    /**
      * Checks to see if a given region name is one of the reserved names
      *
      * @param name a region name to check
@@ -159,18 +140,6 @@ public abstract class Region extends FObj {
      */
     protected Region getSiblingRegion(int regionId) {
         // Ask parent for region
-        return  layoutMaster.getRegion(regionId);
-    }
-
-    /**
-     * Indicates if this region gets precedence.
-     * @return True if it gets precedence
-     */
-    public boolean getPrecedence() {
-        return false;
-    }
-
-    public int getExtent() {
-        return extent;
+        return layoutMaster.getRegion(regionId);
     }
 }

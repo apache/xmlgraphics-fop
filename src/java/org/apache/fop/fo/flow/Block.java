@@ -103,28 +103,20 @@ public class Block extends FObjMixed {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        this.span = this.propertyList.get(PR_SPAN).getEnum();
-        this.wsTreatment =
-          this.propertyList.get(PR_WHITE_SPACE_TREATMENT).getEnum();
-        this.bWScollapse =
-          (this.propertyList.get(PR_WHITE_SPACE_COLLAPSE).getEnum()
-           == Constants.TRUE);
-        this.lfTreatment =
-          this.propertyList.get(PR_LINEFEED_TREATMENT).getEnum();
-
-        this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
-        this.alignLast =
-          this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
-        this.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
+        this.span = getPropEnum(PR_SPAN);
+        this.wsTreatment = getPropEnum(PR_WHITE_SPACE_TREATMENT);
+        this.bWScollapse = (getPropEnum(PR_WHITE_SPACE_COLLAPSE) == Constants.TRUE);
+        this.lfTreatment = getPropEnum(PR_LINEFEED_TREATMENT);
+        this.align = getPropEnum(PR_TEXT_ALIGN);
+        this.alignLast = getPropEnum(PR_TEXT_ALIGN_LAST);
+        this.breakAfter = getPropEnum(PR_BREAK_AFTER);
         this.lineHeight = getPropLength(PR_LINE_HEIGHT);
         this.startIndent = getPropLength(PR_START_INDENT);
         this.endIndent = getPropLength(PR_END_INDENT);
         this.spaceBefore = getPropLength(PR_SPACE_BEFORE | CP_OPTIMUM);
         this.spaceAfter = getPropLength(PR_SPACE_AFTER | CP_OPTIMUM);
         this.textIndent = getPropLength(PR_TEXT_INDENT);
-        this.keepWithNext =
-          this.propertyList.get(PR_KEEP_WITH_NEXT).getEnum();
-
+        this.keepWithNext = getPropEnum(PR_KEEP_WITH_NEXT);
         this.blockWidows =
           this.propertyList.get(PR_WIDOWS).getNumber().intValue();
         this.blockOrphans =

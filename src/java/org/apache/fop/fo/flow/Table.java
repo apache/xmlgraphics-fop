@@ -84,8 +84,8 @@ public class Table extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        this.breakBefore = this.propertyList.get(PR_BREAK_BEFORE).getEnum();
-        this.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
+        this.breakBefore = getPropEnum(PR_BREAK_BEFORE);
+        this.breakAfter = getPropEnum(PR_BREAK_AFTER);
         this.spaceBefore = getPropLength(PR_SPACE_BEFORE | CP_OPTIMUM);
         this.spaceAfter = getPropLength(PR_SPACE_AFTER | CP_OPTIMUM);
         this.backgroundColor =
@@ -93,15 +93,12 @@ public class Table extends FObj {
         this.ipd = this.propertyList.get(
                      PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         this.height = getPropLength(PR_HEIGHT);
-        this.bAutoLayout = (this.propertyList.get(
-                PR_TABLE_LAYOUT).getEnum() == TableLayout.AUTO);
+        this.bAutoLayout = (getPropEnum(PR_TABLE_LAYOUT) == TableLayout.AUTO);
 
-        this.omitHeaderAtBreak = this.propertyList.get(
-                PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum()
-                                            == TableOmitHeaderAtBreak.TRUE;
-        this.omitFooterAtBreak = this.propertyList.get(
-                PR_TABLE_OMIT_FOOTER_AT_BREAK).getEnum()
-                                            == TableOmitFooterAtBreak.TRUE;
+        this.omitHeaderAtBreak = getPropEnum(PR_TABLE_OMIT_HEADER_AT_BREAK)
+            == TableOmitHeaderAtBreak.TRUE;
+        this.omitFooterAtBreak = getPropEnum(PR_TABLE_OMIT_FOOTER_AT_BREAK)
+            == TableOmitFooterAtBreak.TRUE;
         getFOInputHandler().startTable(this);
     }
 

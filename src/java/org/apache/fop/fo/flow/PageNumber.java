@@ -75,8 +75,7 @@ public class PageNumber extends FObj {
         this.green = c.getGreen();
         this.blue = c.getBlue();
 
-        this.wrapOption = this.propertyList.get(PR_WRAP_OPTION).getEnum();
-
+        this.wrapOption = getPropEnum(PR_WRAP_OPTION);
         getFOInputHandler().startPageNumber(this);
     }
 

@@ -33,8 +33,6 @@ import org.apache.fop.fo.FONode;
  */
 public abstract class RegionBA extends Region {
 
-    private boolean bPrecedence;
-
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
@@ -42,20 +40,11 @@ public abstract class RegionBA extends Region {
         super(parent);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        
-        bPrecedence =
-            (this.propertyList.get(PR_PRECEDENCE).getEnum() == Precedence.TRUE);
-
-        this.extent = getPropLength(PR_EXTENT);
-    }
-
-    /**
-     * @see org.apache.fop.fo.pagination.Region#getPrecedence()
-     */
-    public boolean getPrecedence() {
-        return bPrecedence;
     }
 
     /**
@@ -71,12 +60,12 @@ public abstract class RegionBA extends Region {
         int offset = 0;
         Region start = getSiblingRegion(FO_REGION_START);
         if (start != null) {
-            offset = start.getExtent();
+            offset = start.getPropLength(PR_EXTENT);
             vpRefRect.translate(offset, 0);
         }
         Region end = getSiblingRegion(FO_REGION_END);
         if (end != null) {
-            offset += end.getExtent();
+            offset += end.getPropLength(PR_EXTENT);
         }
         if (offset > 0) {
             if (wm == WritingMode.LR_TB || wm == WritingMode.RL_TB) {

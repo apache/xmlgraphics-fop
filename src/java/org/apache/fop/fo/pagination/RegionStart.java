@@ -21,6 +21,10 @@ package org.apache.fop.fo.pagination;
 // Java
 import java.awt.Rectangle;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.datatypes.FODimension;
@@ -30,11 +34,21 @@ import org.apache.fop.datatypes.FODimension;
  */
 public class RegionStart extends RegionSE {
 
+    private int extent = 0;
+
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionStart(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws SAXParseException {
+        super.addProperties(attlist);
+        extent = getPropLength(PR_EXTENT);
     }
 
     /**
@@ -46,9 +60,9 @@ public class RegionStart extends RegionSE {
         // writing-mode relative coordinates
         Rectangle vpRect;
         if (this.wm == WritingMode.LR_TB || this.wm == WritingMode.RL_TB) {
-            vpRect = new Rectangle(0, 0, getExtent(), reldims.bpd);
+            vpRect = new Rectangle(0, 0, extent, reldims.bpd);
         } else {
-            vpRect = new Rectangle(0, 0, reldims.bpd, getExtent());
+            vpRect = new Rectangle(0, 0, reldims.bpd, extent);
         }
         adjustIPD(vpRect, this.wm);
         return vpRect;

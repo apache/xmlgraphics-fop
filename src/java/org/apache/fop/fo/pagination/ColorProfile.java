@@ -66,9 +66,9 @@ public class ColorProfile extends FObj {
      * object.
      */
     protected void endOfNode() throws SAXParseException {
-        src = this.propertyList.get(PR_SRC).getString();
-        profileName = this.propertyList.get(PR_COLOR_PROFILE_NAME).getString();
-        intent = this.propertyList.get(PR_RENDERING_INTENT).getEnum();
+        src = getPropString(PR_SRC);
+        profileName = getPropString(PR_COLOR_PROFILE_NAME);
+        intent = getPropEnum(PR_RENDERING_INTENT);
         this.propertyList = null;
     }
 

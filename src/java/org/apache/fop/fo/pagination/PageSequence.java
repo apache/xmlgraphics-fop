@@ -276,13 +276,12 @@ public class PageSequence extends FObj {
 
         // get the 'format' properties
         this.pageNumberGenerator =
-            new PageNumberGenerator(this.propertyList.get(PR_FORMAT).getString(),
+            new PageNumberGenerator(getPropString(PR_FORMAT),
                                     this.propertyList.get(PR_GROUPING_SEPARATOR).getCharacter(),
                                     this.propertyList.get(PR_GROUPING_SIZE).getNumber().intValue(),
-                                    this.propertyList.get(PR_LETTER_VALUE).getEnum());
+                                    getPropEnum(PR_LETTER_VALUE));
 
-        this.forcePageCount =
-            this.propertyList.get(PR_FORCE_PAGE_COUNT).getEnum();
+        this.forcePageCount = getPropEnum(PR_FORCE_PAGE_COUNT);
 
         // this.propertyList.get("country");
         // this.propertyList.get("language");

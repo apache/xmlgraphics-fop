@@ -77,7 +77,7 @@ public class InstreamForeignObject extends FObj {
 
     public int computeXOffset (int ipd, int cwidth) {
         int xoffset = 0;
-        int ta = propertyList.get(PR_TEXT_ALIGN).getEnum();
+        int ta = getPropEnum(PR_TEXT_ALIGN);
         switch (ta) {
             case TextAlign.CENTER:
                 xoffset = (ipd - cwidth) / 2;
@@ -96,7 +96,7 @@ public class InstreamForeignObject extends FObj {
 
     public int computeYOffset(int bpd, int cheight) {
         int yoffset = 0;
-        int da = propertyList.get(PR_DISPLAY_ALIGN).getEnum();
+        int da = getPropEnum(PR_DISPLAY_ALIGN);
         switch (da) {
             case DisplayAlign.BEFORE:
                 break;
