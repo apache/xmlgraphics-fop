@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.IntrinsicSizeAccess;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.XMLObj;
@@ -43,7 +43,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
  * This is an atomic inline object that contains
  * xml data.
  */
-public class InstreamForeignObject extends FObj implements IntrinsicSizeAccess {
+public class InstreamForeignObject extends FObj {
     
     // The value of properties relevant for fo:instream-foreign-object.
     private CommonAccessibility commonAccessibility;
@@ -285,6 +285,19 @@ public class InstreamForeignObject extends FObj implements IntrinsicSizeAccess {
         return FO_INSTREAM_FOREIGN_OBJECT;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getLayoutDimension(org.apache.fop.datatypes.PercentBase.DimensionType)
+     */
+    public Number getLayoutDimension(PercentBase.LayoutDimension key) {
+        if (key == PercentBase.IMAGE_INTRINSIC_WIDTH) {
+            return new Integer(getIntrinsicWidth());
+        } else if (key == PercentBase.IMAGE_INTRINSIC_HEIGHT) {
+            return new Integer(getIntrinsicHeight());
+        } else {
+            return super.getLayoutDimension(key);
+        }
+    }
+    
     /**
      * Preloads the image so the intrinsic size is available.
      */

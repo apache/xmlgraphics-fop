@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.IntrinsicSizeAccess;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
@@ -114,10 +113,10 @@ public class LengthBase implements PercentBase {
         return 1.0;
     }
 
-    /**
-     * @return the base length (in millipoints ??) of this object
-     */
+    /** @see org.apache.fop.datatypes.PercentBase#getBaseLength() */
     public int getBaseLength() throws PropertyException {
+        //TODO Don't use propertyList here
+        //See http://nagoya.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&msgNo=10342
         switch (iBaseType) {
         case FONTSIZE:
             return propertyList.get(Constants.PR_FONT_SIZE).getLength().getValue();
@@ -134,9 +133,11 @@ public class LengthBase implements PercentBase {
             //return (((fo != null) && (fo instanceof FObj)) ? ((FObj)fo).getContentWidth() : 0);
             return 0;
         case IMAGE_INTRINSIC_WIDTH:
-            return ((IntrinsicSizeAccess)propertyList.getFObj()).getIntrinsicWidth();
+            return propertyList.getFObj()
+                .getLayoutDimension(PercentBase.IMAGE_INTRINSIC_WIDTH).intValue();
         case IMAGE_INTRINSIC_HEIGHT:
-            return ((IntrinsicSizeAccess)propertyList.getFObj()).getIntrinsicHeight();
+            return propertyList.getFObj()
+                .getLayoutDimension(PercentBase.IMAGE_INTRINSIC_HEIGHT).intValue();
         case CUSTOM_BASE:
             //log.debug("!!! LengthBase.getBaseLength() called on CUSTOM_BASE type !!!");
             return 0;

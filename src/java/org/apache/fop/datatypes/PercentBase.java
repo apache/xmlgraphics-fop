@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 package org.apache.fop.datatypes;
 
+import org.apache.avalon.framework.Enum;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
@@ -25,19 +26,51 @@ import org.apache.fop.fo.expr.PropertyException;
  * computations
  */
 public interface PercentBase {
-    static Integer TABLE_UNITS = new Integer(1);
-    static Integer BLOCK_IPD = new Integer(2);
-    static Integer BLOCK_BPD = new Integer(3);
-    static Integer REFERENCE_AREA_IPD = new Integer(4);
-    static Integer REFERENCE_AREA_BPD = new Integer(5);
     
+    //Types of values to store in layoutDimension on FObj
+    
+    /** table units */
+    LayoutDimension TABLE_UNITS = new LayoutDimension("table-units");
+    /** Block IPD */
+    LayoutDimension BLOCK_IPD = new LayoutDimension("block-ipd");
+    /** Block BPD */
+    LayoutDimension BLOCK_BPD = new LayoutDimension("block-bpd");
+    /** Reference Area IPD */
+    LayoutDimension REFERENCE_AREA_IPD = new LayoutDimension("reference-area-ipd");
+    /** Reference Area BPD */
+    LayoutDimension REFERENCE_AREA_BPD = new LayoutDimension("reference-area-bpd");
+    /** Intrinsic width of an image or foreign-object */ 
+    LayoutDimension IMAGE_INTRINSIC_WIDTH = new LayoutDimension("image-intrinsic-width");
+    /** Intrinsic height of an image or foreign-object */ 
+    LayoutDimension IMAGE_INTRINSIC_HEIGHT = new LayoutDimension("image-intrinsic-heigth");
+    
+    /**
+     * Determines whether a numeric property is created or one with a percentage
+     * base.
+     * @return 0 for length, 1 for percentage
+     */
     int getDimension();
+    
     double getBaseValue();
 
     /**
-     * @return the integer size of the object (this will be used as the base to
-     * which a percentage will be applied to compute the length of the
-     * referencing item)
+     * @return the integer size in millipoints of the object (this will be used 
+     * as the base to which a percentage will be applied to compute the length 
+     * of the referencing item)
+     * @throws PropertyException if a problem occurs during evaluation of this
+     *     value.
      */
     int getBaseLength() throws PropertyException;
+    
+    /** Enum class for dimension types. */
+    public class LayoutDimension extends Enum {
+        
+        /**
+         * Constructor to add a new named item.
+         * @param name Name of the item.
+         */
+        protected LayoutDimension(String name) {
+            super(name);
+        }
+    }
 }
