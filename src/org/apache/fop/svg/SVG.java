@@ -1,35 +1,35 @@
 /*-- $Id$ --
 
  ============================================================================
-                   The Apache Software License, Version 1.1
+									 The Apache Software License, Version 1.1
  ============================================================================
 
-    Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
+		Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modifica-
  tion, are permitted provided that the following conditions are met:
 
  1. Redistributions of  source code must  retain the above copyright  notice,
-    this list of conditions and the following disclaimer.
+		this list of conditions and the following disclaimer.
 
  2. Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
+		this list of conditions and the following disclaimer in the documentation
+		and/or other materials provided with the distribution.
 
  3. The end-user documentation included with the redistribution, if any, must
-    include  the following  acknowledgment:  "This product includes  software
-    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
-    Alternately, this  acknowledgment may  appear in the software itself,  if
-    and wherever such third-party acknowledgments normally appear.
+		include  the following  acknowledgment:  "This product includes  software
+		developed  by the  Apache Software Foundation  (http://www.apache.org/)."
+		Alternately, this  acknowledgment may  appear in the software itself,  if
+		and wherever such third-party acknowledgments normally appear.
 
  4. The names "FOP" and  "Apache Software Foundation"  must not be used to
-    endorse  or promote  products derived  from this  software without  prior
-    written permission. For written permission, please contact
-    apache@apache.org.
+		endorse  or promote  products derived  from this  software without  prior
+		written permission. For written permission, please contact
+		apache@apache.org.
 
  5. Products  derived from this software may not  be called "Apache", nor may
-    "Apache" appear  in their name,  without prior written permission  of the
-    Apache Software Foundation.
+		"Apache" appear  in their name,  without prior written permission  of the
+		Apache Software Foundation.
 
  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -69,174 +69,175 @@ import org.apache.fop.dom.svg.SVGArea;
  */
 public class SVG extends FObj implements GraphicsCreator {
 
-    /**
-     * inner class for making SVG objects.
-     */
-    public static class Maker extends FObj.Maker {
+		/**
+		 * inner class for making SVG objects.
+		 */
+		public static class Maker extends FObj.Maker {
 
-        /**
-         * make an SVG object.
-         *
-         * @param parent the parent formatting object
-         * @param propertyList the explicit properties of this object
-         *
-         * @return the SVG object
-         */
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new SVG(parent, propertyList);
-        }
-    }
+				/**
+				 * make an SVG object.
+				 *
+				 * @param parent the parent formatting object
+				 * @param propertyList the explicit properties of this object
+				 *
+				 * @return the SVG object
+				 */
+				public FObj make(FObj parent,
+												 PropertyList propertyList) throws FOPException {
+						return new SVG(parent, propertyList);
+				}
+		}
 
-    /**
-     * returns the maker for this object.
-     *
-     * @return the maker for SVG objects
-     */
-    public static FObj.Maker maker() {
-        return new SVG.Maker();
-    }
+		/**
+		 * returns the maker for this object.
+		 *
+		 * @return the maker for SVG objects
+		 */
+		public static FObj.Maker maker() {
+				return new SVG.Maker();
+		}
 
-    FontState fs;
-    float width;
-    float height;
+		FontState fs;
+		float width;
+		float height;
 
-    /**
-     * constructs an SVG object (called by Maker).
-     *
-     * @param parent the parent formatting object
-     * @param propertyList the explicit properties of this object
-     */
-    public SVG(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
-        this.name = "svg:svg";
-    }
+		/**
+		 * constructs an SVG object (called by Maker).
+		 *
+		 * @param parent the parent formatting object
+		 * @param propertyList the explicit properties of this object
+		 */
+		public SVG(FObj parent, PropertyList propertyList) {
+				super(parent, propertyList);
+				this.name = "svg:svg";
+		}
 
-    public SVGElement createGraphic() {
-        SVGSVGElementImpl svgArea = null;
-        SVGLength w = ((SVGLengthProperty) this.properties.get("width")).
-                      getSVGLength();
-        SVGLength h = ((SVGLengthProperty) this.properties.get("height")).
-                      getSVGLength();
-        svgArea = new SVGSVGElementImpl();
-        SVGAnimatedLengthImpl sal;
-        if (w == null)
-            w = new SVGLengthImpl();
-        sal = new SVGAnimatedLengthImpl(w);
-        sal.setBaseVal(w);
-        svgArea.setWidth(sal);
-        if (h == null)
-            h = new SVGLengthImpl();
-        sal = new SVGAnimatedLengthImpl(h);
-        sal.setBaseVal(h);
-        svgArea.setHeight(sal);
-        SVGLength lengthProp =
-          ((SVGLengthProperty) this.properties.get("x")).
-          getSVGLength();
-        SVGLength x = lengthProp == null ? new SVGLengthImpl() : lengthProp;
-        sal = new SVGAnimatedLengthImpl(x);
-        sal.setBaseVal(x);
-        svgArea.setX(sal);
-        lengthProp = ((SVGLengthProperty) this.properties.get("y")).
-                     getSVGLength();
-        SVGLength y = lengthProp == null ? new SVGLengthImpl() : lengthProp;
-        sal = new SVGAnimatedLengthImpl(y);
-        sal.setBaseVal(y);
-        svgArea.setY(sal);
+		public SVGElement createGraphic() {
+				SVGSVGElementImpl svgArea = null;
+				SVGLength w = ((SVGLengthProperty) this.properties.get("width")).
+											getSVGLength();
+				SVGLength h = ((SVGLengthProperty) this.properties.get("height")).
+											getSVGLength();
+				svgArea = new SVGSVGElementImpl();
+				SVGAnimatedLengthImpl sal;
+				if (w == null)
+						w = new SVGLengthImpl();
+				sal = new SVGAnimatedLengthImpl(w);
+				sal.setBaseVal(w);
+				svgArea.setWidth(sal);
+				if (h == null)
+						h = new SVGLengthImpl();
+				sal = new SVGAnimatedLengthImpl(h);
+				sal.setBaseVal(h);
+				svgArea.setHeight(sal);
+				SVGLength lengthProp =
+					((SVGLengthProperty) this.properties.get("x")).
+					getSVGLength();
+				SVGLength x = lengthProp == null ? new SVGLengthImpl() : lengthProp;
+				sal = new SVGAnimatedLengthImpl(x);
+				sal.setBaseVal(x);
+				svgArea.setX(sal);
+				lengthProp = ((SVGLengthProperty) this.properties.get("y")).
+										 getSVGLength();
+				SVGLength y = lengthProp == null ? new SVGLengthImpl() : lengthProp;
+				sal = new SVGAnimatedLengthImpl(y);
+				sal.setBaseVal(y);
+				svgArea.setY(sal);
 
-        svgArea.setStyle(
-          ((SVGStyle) this.properties.get("style")).getStyle());
-        svgArea.setTransform(
-          ((SVGTransform) this.properties.get("transform")).
-          getTransform());
-        svgArea.setId(this.properties.get("id").getString());
-        int numChildren = this.children.size();
-        for (int i = 0; i < numChildren; i++) {
-            FONode fo = (FONode) children.elementAt(i);
-            if (fo instanceof GraphicsCreator) {
-                SVGElement impl = ((GraphicsCreator) fo).createGraphic();
-                if (impl != null) {
-                    if (impl instanceof SVGElementImpl)
-                        ((SVGElementImpl) impl).setClassName(
-                          new SVGAnimatedStringImpl(
-                            ((FObj) fo).getProperty(
-                              "class").getString()));
-                    svgArea.appendChild((org.w3c.dom.Node) impl);
-                }
-                //			} else if(fo instanceof Defs) {
-                //				svgArea.addDefs(((Defs)fo).createDefs());
-            }
-            Status status;
-        }
-        return svgArea;
-    }
+				svgArea.setStyle(
+					((SVGStyle) this.properties.get("style")).getStyle());
+				svgArea.setTransform(
+					((SVGTransform) this.properties.get("transform")).
+					getTransform());
+				svgArea.setId(this.properties.get("id").getString());
+				int numChildren = this.children.size();
+				for (int i = 0; i < numChildren; i++) {
+						FONode fo = (FONode) children.elementAt(i);
+						if (fo instanceof GraphicsCreator) {
+								SVGElement impl = ((GraphicsCreator) fo).createGraphic();
+								if (impl != null) {
+										if (impl instanceof SVGElementImpl)
+												((SVGElementImpl) impl).setClassName(
+													new SVGAnimatedStringImpl(
+														((FObj) fo).getProperty(
+															"class").getString()));
+										svgArea.appendChild((org.w3c.dom.Node) impl);
+								}
+								//			} else if(fo instanceof Defs) {
+								//				svgArea.addDefs(((Defs)fo).createDefs());
+						}
+						Status status;
+				}
+				return svgArea;
+		}
 
-    /**
-     * layout this formatting object.
-     *
-     * @param area the area to layout the object into
-     *
-     * @return the status of the layout
-     */
-    public Status layout(Area area) throws FOPException {
+		/**
+		 * layout this formatting object.
+		 *
+		 * @param area the area to layout the object into
+		 *
+		 * @return the status of the layout
+		 */
+		public Status layout(Area area) throws FOPException {
 
-        if (!(area instanceof ForeignObjectArea)) {
-            // this is an error
-            throw new FOPException("SVG not in fo:instream-foreign-object");
-        }
+				if (!(area instanceof ForeignObjectArea)) {
+						// this is an error
+						throw new FOPException("SVG not in fo:instream-foreign-object");
+				}
 
-        if (this.marker == BREAK_AFTER) {
-            return new Status(Status.OK);
-        }
+				if (this.marker == BREAK_AFTER) {
+						return new Status(Status.OK);
+				}
 
-        if (this.marker == START) {
-            /* retrieve properties */
-            String id = this.properties.get("id").getString();
-            String fontFamily =
-              this.properties.get("font-family").getString();
-            String fontStyle =
-              this.properties.get("font-style").getString();
-            String fontWeight =
-              this.properties.get("font-weight").getString();
-            int fontSize =
-              this.properties.get("font-size").getLength().mvalue();
+				if (this.marker == START) {
+						/* retrieve properties */
+						String id = this.properties.get("id").getString();
+						String fontFamily =
+							this.properties.get("font-family").getString();
+						String fontStyle =
+							this.properties.get("font-style").getString();
+						String fontWeight =
+							this.properties.get("font-weight").getString();
+						int fontSize =
+							this.properties.get("font-size").getLength().mvalue();
 
-            this.fs = new FontState(area.getFontInfo(), fontFamily,
-                                    fontStyle, fontWeight, fontSize);
-            SVGLength length;
-            length = ((SVGLengthProperty) this.properties.get("width")).
-                     getSVGLength();
-            if (length == null)
-                length = new SVGLengthImpl();
-            this.width = length.getValue();
-            length = ((SVGLengthProperty) this.properties.get("height")).
-                     getSVGLength();
-            if (length == null)
-                length = new SVGLengthImpl();
-            this.height = length.getValue();
+						// FIX-ME: should get the font-variant property
+						this.fs = new FontState(area.getFontInfo(), fontFamily,
+																		fontStyle, fontWeight, fontSize, FontVariant.NORMAL);
 
-            this.marker = 0;
-        }
+						SVGLength length;
+						length = ((SVGLengthProperty) this.properties.get("width")).getSVGLength();
+						if (length == null)
+								length = new SVGLengthImpl();
+						this.width = length.getValue();
+						length = ((SVGLengthProperty) this.properties.get("height")).
+										 getSVGLength();
+						if (length == null)
+								length = new SVGLengthImpl();
+						this.height = length.getValue();
 
-        /* create an SVG area */
-        /* if width and height are zero, may want to get the bounds of the content. */
-        SVGArea svg = new SVGArea(fs, width, height);
-        SVGDocument doc = new SVGDocumentImpl();
-        svg.setSVGDocument(doc);
-        svg.start();
+						this.marker = 0;
+				}
 
-        /* add the SVG area to the containing area */
-        ForeignObjectArea foa = (ForeignObjectArea) area;
-        foa.setObject(svg);
-        foa.setIntrinsicWidth(svg.getWidth());
-        foa.setIntrinsicHeight(svg.getHeight());
+				/* create an SVG area */
+				/* if width and height are zero, may want to get the bounds of the content. */
+				SVGArea svg = new SVGArea(fs, width, height);
+				SVGDocument doc = new SVGDocumentImpl();
+				svg.setSVGDocument(doc);
+				svg.start();
 
-        doc.appendChild((SVGSVGElement) createGraphic());
+				/* add the SVG area to the containing area */
+				ForeignObjectArea foa = (ForeignObjectArea) area;
+				foa.setObject(svg);
+				foa.setIntrinsicWidth(svg.getWidth());
+				foa.setIntrinsicHeight(svg.getHeight());
 
-        /* finish off the SVG area */
-        svg.end();
+				doc.appendChild((SVGSVGElement) createGraphic());
 
-        /* return status */
-        return new Status(Status.OK);
-    }
+				/* finish off the SVG area */
+				svg.end();
+
+				/* return status */
+				return new Status(Status.OK);
+		}
 }
