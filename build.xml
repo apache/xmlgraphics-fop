@@ -181,7 +181,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="charlist.xsl" value="${build.codegen}/code-point-mapping.xsl"/>  
     <property name="fontfile.xsl" value="${build.codegen}/font-file.xsl"/>  
     <property name="t1fontfile.xsl" value="${build.codegen}/t1font-file.xsl"/>
-    <property name="ttffontfile.xsl" value="${build.codegen}/ttffont-file.xsl"/>
+    <property name="ttffontfile.xsl" value="${build.codegen}/ttffontfile.xsl"/>
     <property name="Courier.xml" value="${build.codegen}/Courier.xml"/>  
     <property name="Courier-Oblique.xml" value="${build.codegen}/Courier-Oblique.xml"/>
     <property name="Courier-Bold.xml" value="${build.codegen}/Courier-Bold.xml"/>  
