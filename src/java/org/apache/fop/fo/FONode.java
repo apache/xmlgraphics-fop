@@ -58,6 +58,7 @@ package org.apache.fop.fo;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.Node;
@@ -73,7 +74,6 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.fo.flow.FoMarker;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.Namespaces;
@@ -88,6 +88,7 @@ public class FONode extends Node{
     private static final String tag = "$Name:  $";
     private static final String revision = "$Revision: 1.19.2.33 $";
 
+    protected static final Logger logger = Logger.getLogger("org.apache.fop");
     /**
      * State flags: a bit set of states applicable during FO tree build.
      * N.B. States must be powers of 2.
@@ -270,7 +271,7 @@ public class FONode extends Node{
             int property;
             int prop = foKeys[propx].intValue();
             if ( ! attrBitSet.get(prop)) {
-                MessageHandler.logln("Ignoring "
+                logger.info("Ignoring "
                                    + PropNames.getPropertyName(prop)
                                    + " on "
                                    + FObjectNames.getFOName(type)
@@ -301,12 +302,12 @@ public class FONode extends Node{
                     }
                 }
             } catch (FunctionNotImplementedException e) {
-                MessageHandler.logln
+                logger.info
                         ("Function not implemented: " + e.getMessage()
                          + ". Ignoring property '"
                          + PropNames.getPropertyName(prop) + "'.");
             } catch (PropertyException e) {
-                MessageHandler.logln
+                logger.info
                         ("Problem with '" + PropNames.getPropertyName(prop)
                          + "':\n" + e.getMessage() + "\nIgnoring property.");
             }
