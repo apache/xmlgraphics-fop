@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -12,10 +12,11 @@ package org.apache.fop.configuration;
 import java.io.File;
 import java.net.URL;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
+import java.util.List;
 
 // Fop
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.tools.URLBuilder;
 
 /**
  * FontInfo contains meta information on fonts (where is the metrics file etc.)
@@ -25,11 +26,10 @@ public class FontInfo {
 
     private String metricsFile, embedFile, name;
     private boolean kerning;
-    private ArrayList fontTriplets;
-    private String baseDir;
+    private List fontTriplets;
 
     public FontInfo(String name, String metricsFile, boolean kerning,
-                    ArrayList fontTriplets, String embedFile) {
+                    List fontTriplets, String embedFile) {
         this.name = name;
         this.metricsFile = metricsFile;
         this.embedFile = embedFile;
@@ -38,37 +38,26 @@ public class FontInfo {
     }
 
     /**
-     * @return the (absolute) file name of the metrics file
+     * @return the URL to the metrics file
      */
-    public String getMetricsFile() throws FOPException {
-        // check if it's a URL and convert it to a filename
+    public URL getMetricsFile() throws FOPException {
         try {
-            metricsFile = new URL(metricsFile).getFile();
-        } catch (MalformedURLException mue) {}
-
-        // check if filename is absolute
-        if ((new File(metricsFile).isAbsolute())) {
-            return metricsFile;
-        } else {
-            return getBaseDir() + metricsFile;
+            return URLBuilder.buildURL(Configuration.getFontBaseURL(), metricsFile);
+        } catch (Exception e) {
+            throw new FOPException("Invalid font metrics file: "+metricsFile+" ("+e.getMessage()+")");
         }
     }
 
     /**
-     * @return the (absolute) file name of the font
+     * @return the url to the font
      */
-    public String getEmbedFile() throws FOPException {
+    public URL getEmbedFile() throws FOPException {
         // check if it's a URL and convert it to a filename
-	if (embedFile == null) return null;
+        if (embedFile == null) return null;
         try {
-            embedFile = new URL(embedFile).getFile();
-        } catch (MalformedURLException mue) {}
-        
-        // check if filename is absolute
-        if ((new File(embedFile).isAbsolute())) {
-            return embedFile;
-        } else {
-            return getBaseDir() + embedFile;
+            return URLBuilder.buildURL(Configuration.getFontBaseURL(), embedFile);
+        } catch (Exception e) {
+            throw new FOPException("Invalid font file (embedFile): "+metricsFile+" ("+e.getMessage()+")");
         }
     }
 
@@ -76,31 +65,9 @@ public class FontInfo {
         return kerning;
     }
 
-    public ArrayList getFontTriplets() {
+    public List getFontTriplets() {
         return fontTriplets;
     }
-
-    /**
-     * @return BaseDir (path)
-     */
-    private String getBaseDir() throws FOPException {
-        baseDir = Configuration.getStringValue("baseDir");
-        URL baseURL = null;
-        try {
-            baseURL = new URL(baseDir);
-        } catch (MalformedURLException mue) {
-            // if the href contains only a path then file is assumed
-            try {
-                baseURL = new URL("file:" + baseDir);
-            } catch (MalformedURLException mue2) {
-                throw new FOPException("Error with baseDir: "
-                                             + mue2.getMessage());
-            }
-        }
-        baseDir = baseURL.getFile();
-        return baseDir;
-    }
-
 
 }
 

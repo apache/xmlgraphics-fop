@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -22,7 +22,7 @@ import java.io.IOException;
 
 /**
  * interface implement by all renderers.
- * 
+ *
  * a Renderer implementation takes areas/spaces and produces output in
  * some format.
  */
@@ -41,7 +41,7 @@ public interface Renderer {
     /**
      * set up renderer options
      */
-    public void setOptions(java.util.HashMap options);
+    public void setOptions(java.util.Map options);
 
     /**
      * set the producer of the rendering
@@ -53,7 +53,7 @@ public interface Renderer {
      */
     //public void render(AreaTree areaTree, OutputStream stream) throws IOException, FOPException;
     public void render(Page page, OutputStream stream)
-    throws IOException, FOPException;
+        throws IOException, FOPException;
 
     /**
      * render the given area container
@@ -126,9 +126,9 @@ public interface Renderer {
     public void renderLeaderArea(LeaderArea area);
 
     public void startRenderer(OutputStream outputStream)
-    throws IOException;
+        throws IOException;
 
     public void stopRenderer(OutputStream outputStream)
-    throws IOException;
+        throws IOException;
 
 }

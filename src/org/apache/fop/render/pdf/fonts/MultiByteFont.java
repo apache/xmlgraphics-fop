@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -25,7 +25,8 @@ import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.File;
 import java.io.BufferedInputStream;
-import java.util.HashMap;
+import java.util.Map;
+import java.net.URL;
 
 /**
  * Generic MultiByte (CID) font
@@ -43,7 +44,7 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
         0, 0, 0, 0
     };
 
-    public String embedFileName = null;
+    public URL embedFileName = null;
     public String embedResourceName = null;
     public PDFTTFStream embeddedFont = null;
 
@@ -54,7 +55,7 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
     public int defaultWidth = 0;
     public byte cidType = PDFCIDFont.CID_TYPE2;
 
-    public HashMap kerning = new HashMap();
+    public Map kerning = new java.util.HashMap();
     public boolean useKerning = true;
     private String namePrefix = null;    // Quasi unique prefix
     private static int uniqueCounter = 1;
@@ -67,12 +68,12 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
     /**
      * usedGlyphs contains orginal, new glyph index
      */
-    private HashMap usedGlyphs = new HashMap();
+    private Map usedGlyphs = new java.util.HashMap();
 
     /**
      * usedGlyphsIndex contains new glyph, original index
      */
-    private HashMap usedGlyphsIndex = new HashMap();
+    private Map usedGlyphsIndex = new java.util.HashMap();
     int usedGlyphsCount = 0;
 
     public MultiByteFont() {
@@ -100,11 +101,11 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
         return (useKerning & kerning.isEmpty());
     }
 
-    public final java.util.HashMap getKerningInfo() {
+    public final Map getKerningInfo() {
         if (useKerning)
             return kerning;
         else
-            return new HashMap();
+            return new java.util.HashMap();
     }
 
     public byte getSubType() {
@@ -195,7 +196,9 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
 
     public PDFStream getFontFile(int i) {
         try {
-            FontFileReader reader = new FontFileReader(embedFileName);
+            InputStream in = embedFileName.openStream();
+            FontFileReader reader = new FontFileReader(in);
+            in.close();
             TTFSubSetFile subset = new TTFSubSetFile();
 
             byte[] subsetFont = subset.readFont(reader, ttcName, usedGlyphs);

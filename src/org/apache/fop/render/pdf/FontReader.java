@@ -1,25 +1,31 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.render.pdf;
+
+import java.util.List;
+import java.util.Map;
+import java.io.IOException;
+import java.net.URL;
+
 import org.apache.fop.render.pdf.fonts.*;
+import org.apache.fop.pdf.PDFWArray;
+import org.apache.fop.pdf.PDFCIDFont;
+import org.apache.fop.configuration.ConfigurationReader;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.tools.URLBuilder;
+
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.XMLReader;
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.Attributes;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import org.apache.fop.pdf.PDFWArray;
-import org.apache.fop.pdf.PDFCIDFont;
-import org.apache.fop.configuration.ConfigurationReader;
-import org.apache.fop.apps.FOPException;
 
 /**
  * Class for reading a metric.xml file and creating a font object.
@@ -40,14 +46,14 @@ public class FontReader extends DefaultHandler {
     // private SingleByteFont singleFont = null;
     private String text = null;
 
-    private ArrayList cidWidths = null;
+    private List cidWidths = null;
     private int cidWidthIndex = 0;
 
-    private HashMap currentKerning = null;
+    private Map currentKerning = null;
 
-    private ArrayList bfranges = null;
+    private List bfranges = null;
 
-    private void createFont(String path) throws FOPException {
+    private void createFont(URL url) throws FOPException {
         XMLReader parser = ConfigurationReader.createParser();
         if (parser == null)
             throw new FOPException("Unable to create SAX parser");
@@ -63,7 +69,7 @@ public class FontReader extends DefaultHandler {
         parser.setContentHandler(this);
 
         try {
-            parser.parse(path);
+            parser.parse(new InputSource(url.openStream()));
         } catch (SAXException e) {
             throw new FOPException(e);
         } catch (IOException e) {
@@ -75,7 +81,7 @@ public class FontReader extends DefaultHandler {
     /**
      * Sets the path to embed a font. a null value disables font embedding
      */
-    public void setFontEmbedPath(String path) {
+    public void setFontEmbedPath(URL path) {
         if (isCID)
             multiFont.embedFileName = path;
         else
@@ -104,7 +110,7 @@ public class FontReader extends DefaultHandler {
      * Construct a FontReader object from a path to a metric.xml file
      * and read metric data
      */
-    public FontReader(String path) throws FOPException {
+    public FontReader(URL path) throws FOPException {
         createFont(path);
     }
 
@@ -115,7 +121,7 @@ public class FontReader extends DefaultHandler {
     }
 
     public void startElement(String uri, String localName, String qName,
-                             Attributes attributes) {
+                             Attributes attributes) throws SAXException {
         if (localName.equals("font-metrics")) {
             if ("TYPE0".equals(attributes.getValue("type"))) {
                 multiFont = new MultiByteFont();
@@ -134,19 +140,35 @@ public class FontReader extends DefaultHandler {
             }
         } else if ("embed".equals(localName)) {
             if (isCID) {
-                // This *is* annoying... should create a common
-                // interface for sing/multibytefonts...
-                multiFont.embedFileName = attributes.getValue("file");
+                /**@todo This *is* annoying... should create a common
+                  interface for sing/multibytefonts...*/
+                String filename = attributes.getValue("file");
+                if (filename != null) {
+                    try {
+                        multiFont.embedFileName = URLBuilder.buildURL(
+                                Configuration.getFontBaseURL(), filename);
+                    } catch (java.net.MalformedURLException mfue) {
+                        throw new SAXException(mfue);
+                    }
+                }
                 multiFont.embedResourceName = attributes.getValue("class");
             } else {
-                singleFont.embedFileName = attributes.getValue("file");
+                String filename = attributes.getValue("file");
+                if (filename != null) {
+                    try {
+                        singleFont.embedFileName = URLBuilder.buildURL(
+                                Configuration.getFontBaseURL(), filename);
+                    } catch (java.net.MalformedURLException mfue) {
+                        throw new SAXException(mfue);
+                    }
+                }
                 singleFont.embedResourceName = attributes.getValue("class");
             }
         } else if ("cid-widths".equals(localName)) {
             cidWidthIndex = getInt(attributes.getValue("start-index"));
-            cidWidths = new ArrayList();
+            cidWidths = new java.util.ArrayList();
         } else if ("kerning".equals(localName)) {
-            currentKerning = new HashMap();
+            currentKerning = new java.util.HashMap();
             if (isCID)
                 multiFont.kerning.put(new Integer(attributes.getValue("kpx1")),
                                       currentKerning);
@@ -154,7 +176,7 @@ public class FontReader extends DefaultHandler {
                 singleFont.kerning.put(new Integer(attributes.getValue("kpx1")),
                                        currentKerning);
         } else if ("bfranges".equals(localName)) {
-            bfranges = new ArrayList();
+            bfranges = new java.util.ArrayList();
         } else if ("bf".equals(localName)) {
             BFEntry entry = new BFEntry();
             entry.unicodeStart = getInt(attributes.getValue("us"));

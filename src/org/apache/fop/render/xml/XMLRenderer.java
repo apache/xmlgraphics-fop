@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -26,7 +26,7 @@ import org.apache.avalon.framework.logger.Logger;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -60,7 +60,7 @@ public class XMLRenderer implements Renderer {
     /**
      * options
      */
-    protected java.util.HashMap options;
+    protected java.util.Map options;
     private boolean consistentOutput = false;
 
     public XMLRenderer() {}
@@ -68,7 +68,7 @@ public class XMLRenderer implements Renderer {
     /**
      * set up renderer options
      */
-    public void setOptions(java.util.HashMap options) {
+    public void setOptions(java.util.Map options) {
         this.options = options;
         Boolean con = (Boolean)options.get("consistentOutput");
         if(con != null) {
@@ -159,7 +159,7 @@ public class XMLRenderer implements Renderer {
      * Renders an image, scaling it to the given width and height.
      * If the scaled width and height is the same intrinsic size
      * of the image, the image is not scaled.
-     * 
+     *
      * @param x the x position of left edge in millipoints
      * @param y the y position of top edge in millipoints
      * @param w the width in millipoints
@@ -169,14 +169,14 @@ public class XMLRenderer implements Renderer {
      *           in non-bitmapped images.
      */
     protected void drawImageScaled(int x, int y, int w, int h,
-				   FopImage image,
-				   FontState fs) {
-	// XXX: implement this
+                   FopImage image,
+                   FontState fs) {
+    // XXX: implement this
     }
-    
+
     /**
-     * Renders an image, clipping it as specified. 
-     * 
+     * Renders an image, clipping it as specified.
+     *
      * @param x the x position of left edge in millipoints.
      * @param y the y position of top edge in millipoints.
      * @param clipX the left edge of the clip in millipoints
@@ -188,11 +188,11 @@ public class XMLRenderer implements Renderer {
      *           in non-bitmapped images.
      */
     protected void drawImageClipped(int x, int y,
-				    int clipX, int clipY,
-				    int clipW, int clipH,
-				    FopImage image,
-				    FontState fs) {
-	// XXX: implement this
+                    int clipX, int clipY,
+                    int clipW, int clipH,
+                    FopImage image,
+                    FontState fs) {
+    // XXX: implement this
     }
 
     /**
@@ -202,7 +202,7 @@ public class XMLRenderer implements Renderer {
      */
     public void renderAreaContainer(AreaContainer area) {
         writeStartTag("<AreaContainer name=\"" + area.getAreaName() + "\">");
-        ArrayList children = area.getChildren();
+        List children = area.getChildren();
         for (int i = 0; i < children.size(); i++) {
             Box b = (Box)children.get(i);
             b.render(this);
@@ -217,7 +217,7 @@ public class XMLRenderer implements Renderer {
      */
     public void renderBodyAreaContainer(BodyAreaContainer area) {
         writeStartTag("<BodyAreaContainer>");
-        ArrayList children = area.getChildren();
+        List children = area.getChildren();
         for (int i = 0; i < children.size(); i++) {
             Box b = (Box)children.get(i);
             b.render(this);
@@ -241,7 +241,7 @@ public class XMLRenderer implements Renderer {
      */
     public void renderSpanArea(SpanArea area) {
         writeStartTag("<SpanArea>");
-        ArrayList children = area.getChildren();
+        List children = area.getChildren();
         for (int i = 0; i < children.size(); i++) {
             Box b = (Box)children.get(i);
             b.render(this);
@@ -273,7 +273,7 @@ public class XMLRenderer implements Renderer {
         writeStartTag(baText.toString());
 
         // write out marker info
-        ArrayList markers = area.getMarkers();
+        List markers = area.getMarkers();
         if (!markers.isEmpty()) {
             writeStartTag("<Markers>");
             for (int i = 0; i < markers.size(); i++) {
@@ -290,7 +290,7 @@ public class XMLRenderer implements Renderer {
             writeEndTag("</Markers>");
         }
 
-        ArrayList children = area.getChildren();
+        List children = area.getChildren();
         for (int i = 0; i < children.size(); i++) {
             Box b = (Box)children.get(i);
             b.render(this);
@@ -311,7 +311,7 @@ public class XMLRenderer implements Renderer {
         writeStartTag(iaText.toString());
 
         // write out marker info
-        ArrayList markers = area.getMarkers();
+        List markers = area.getMarkers();
         if (!markers.isEmpty()) {
             writeStartTag("<Markers>");
             for (int i = 0; i < markers.size(); i++) {
@@ -328,7 +328,7 @@ public class XMLRenderer implements Renderer {
             writeEndTag("</Markers>");
         }
 
-        ArrayList children = area.getChildren();
+        List children = area.getChildren();
         for (int i = 0; i < children.size(); i++) {
             Box b = (Box)children.get(i);
             b.render(this);
@@ -424,7 +424,7 @@ public class XMLRenderer implements Renderer {
             String fontWeight = area.getFontState().getFontWeight();
             writeStartTag("<LineArea font-weight=\"" + fontWeight + "\">");
         }
-        ArrayList children = area.getChildren();
+        List children = area.getChildren();
         for (int i = 0; i < children.size(); i++) {
             Box b = (Box)children.get(i);
             b.render(this);

@@ -43,8 +43,8 @@ import java.util.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.Point;
@@ -122,7 +122,7 @@ public class PSRenderer extends AbstractRenderer {
 
     protected IDReferences idReferences;
 
-    protected java.util.HashMap options;
+    protected java.util.Map options;
 
 
     /**
@@ -138,7 +138,7 @@ public class PSRenderer extends AbstractRenderer {
     /**
      * set up renderer options
      */
-    public void setOptions(java.util.HashMap options) {
+    public void setOptions(java.util.Map options) {
         this.options = options;
     }
 
@@ -264,7 +264,7 @@ public class PSRenderer extends AbstractRenderer {
         write("/FOPFonts 100 dict dup begin");
         // write("/gfF1{/Helvetica findfont} bd");
         // write("/gfF3{/Helvetica-Bold findfont} bd");
-        HashMap fonts = fontInfo.getFonts();
+        Map fonts = fontInfo.getFonts();
         Iterator enum = fonts.keySet().iterator();
         while (enum.hasNext()) {
             String key = (String)enum.next();
@@ -804,7 +804,7 @@ public class PSRenderer extends AbstractRenderer {
 
         String fontWeight = area.getFontState().getFontWeight();
         //comment("% --- LineArea begin font-weight="+fontWeight);
-        ArrayList children = area.getChildren();
+        List children = area.getChildren();
         for (int i = 0; i < children.size(); i++) {
             Box b = (Box)children.get(i);
             this.currentYPosition = ry - area.getPlacementOffset();

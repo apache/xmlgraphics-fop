@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -11,8 +11,8 @@ package org.apache.fop.pdf;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * class representing a /Resources object.
@@ -25,11 +25,11 @@ public class PDFResources extends PDFObject {
     /**
      * /Font objects keyed by their internal name
      */
-    protected HashMap fonts = new HashMap();
+    protected Map fonts = new java.util.HashMap();
 
-    protected ArrayList xObjects = null;
-    protected ArrayList patterns = new ArrayList();
-    protected ArrayList shadings = new ArrayList();
+    protected List xObjects = null;
+    protected List patterns = new java.util.ArrayList();
+    protected List shadings = new java.util.ArrayList();
 
     /**
      * create a /Resources object.
@@ -60,7 +60,7 @@ public class PDFResources extends PDFObject {
         this.patterns.add(thePattern);
     }
 
-    public void setXObjects(ArrayList xObjects) {
+    public void setXObjects(List xObjects) {
         this.xObjects = xObjects;
     }
 
@@ -143,7 +143,7 @@ public class PDFResources extends PDFObject {
             return p.toString().getBytes(PDFDocument.ENCODING);
         } catch (UnsupportedEncodingException ue) {
             return p.toString().getBytes();
-        }       
+        }
     }
 
 }

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -36,7 +36,7 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
+import java.util.Map;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.io.OutputStream;
@@ -60,8 +60,8 @@ public class SVGRenderer extends AbstractRenderer {
     protected int pageHeight = 0;
     protected int pageNumber = 0;
 
-    protected HashMap fontNames = new HashMap();
-    protected HashMap fontStyles = new HashMap();
+    protected Map fontNames = new java.util.HashMap();
+    protected Map fontStyles = new java.util.HashMap();
     protected Color saveColor = null;
 
     protected IDReferences idReferences = null;
@@ -86,12 +86,12 @@ public class SVGRenderer extends AbstractRenderer {
     /**
      * options
      */
-    protected java.util.HashMap options;
+    protected java.util.Map options;
 
     /**
      * set up renderer options
      */
-    public void setOptions(java.util.HashMap options) {
+    public void setOptions(java.util.Map options) {
         this.options = options;
     }
 
@@ -285,7 +285,7 @@ public class SVGRenderer extends AbstractRenderer {
         w = w + area.getPaddingLeft() + area.getPaddingRight();
         h = h + area.getPaddingTop() + area.getPaddingBottom();
 
-	doBackground(area, rx, ry, w, h);
+    doBackground(area, rx, ry, w, h);
 
         rx = rx - area.getBorderLeftWidth();
         ry = ry + area.getBorderTopWidth();
@@ -347,7 +347,7 @@ public class SVGRenderer extends AbstractRenderer {
      * Renders an image, scaling it to the given width and height.
      * If the scaled width and height is the same intrinsic size
      * of the image, the image is not scaled.
-     * 
+     *
      * @param x the x position of left edge in millipoints
      * @param y the y position of top edge in millipoints
      * @param w the width in millipoints
@@ -357,14 +357,14 @@ public class SVGRenderer extends AbstractRenderer {
      *           in non-bitmapped images.
      */
     protected void drawImageScaled(int x, int y, int w, int h,
-				   FopImage image,
-				   FontState fs) {
-	// XXX: implement this
+                   FopImage image,
+                   FontState fs) {
+    // XXX: implement this
     }
-    
+
     /**
-     * Renders an image, clipping it as specified. 
-     * 
+     * Renders an image, clipping it as specified.
+     *
      * @param x the x position of left edge in millipoints.
      * @param y the y position of top edge in millipoints.
      * @param clipX the left edge of the clip in millipoints
@@ -376,11 +376,11 @@ public class SVGRenderer extends AbstractRenderer {
      *           in non-bitmapped images.
      */
     protected void drawImageClipped(int x, int y,
-				    int clipX, int clipY,
-				    int clipW, int clipH,
-				    FopImage image,
-				    FontState fs) {
-	// XXX: implement this
+                    int clipX, int clipY,
+                    int clipW, int clipH,
+                    FopImage image,
+                    FontState fs) {
+    // XXX: implement this
     }
 
     public void renderImageArea(ImageArea area) {
@@ -606,13 +606,13 @@ public class SVGRenderer extends AbstractRenderer {
               throws IOException {
         DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
         svgDocument = impl.createDocument(svgNS, "svg", null);
-        ProcessingInstruction pi = 
+        ProcessingInstruction pi =
                  svgDocument.createProcessingInstruction(
                          "xml",
                          " version=\"1.0\" encoding=\"ISO-8859-1\"");
-				svgRoot = svgDocument.getDocumentElement();
+                svgRoot = svgDocument.getDocumentElement();
         svgDocument.insertBefore(pi, svgRoot);
-		}
+        }
 
     public void stopRenderer(OutputStream outputStream)
     throws IOException {

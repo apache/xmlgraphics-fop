@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -19,7 +19,8 @@ import org.apache.fop.apps.FOPException;
 // Java
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
+import java.util.List;
+import java.net.URL;
 
 /**
  * sets up the AWT fonts. It is similar to
@@ -45,8 +46,8 @@ public class FontSetup {
      * triplets for lookup
      *
      * @param fontInfo the font info object to set up
-     * @param parent needed, since a live AWT component is needed
-     * to get a valid java.awt.FontMetrics object
+     * @param graphics Graphics2D to work on
+     * @throws FOPException in case of an error during font setup
      */
     public static void setup(FontInfo fontInfo, Graphics2D graphics)
         throws FOPException {
@@ -188,6 +189,10 @@ public class FontSetup {
     /**
      * Add fonts from configuration file starting with
      * internalnames F<num>
+     * @param fontInfo FontInfo from Configuration
+     * @param num starting index
+     * @param graphics Graphics2D to work on
+     * @throws FOPException in case of an error during font setup
      */
     public static void addConfiguredFonts(
                              FontInfo fontInfo, int num, Graphics2D graphics)
@@ -195,7 +200,7 @@ public class FontSetup {
         FontMetricsMapper metric;
         String internalName = null;
 
-        ArrayList fontInfos = Configuration.getFonts();
+        List fontInfos = Configuration.getFonts();
         if (fontInfos == null)
             return;
 
@@ -204,12 +209,12 @@ public class FontSetup {
                 (org.apache.fop.configuration.FontInfo)fontInfos.get(i);
 
             try {
-                String metricsFile = configFontInfo.getMetricsFile();
+                URL metricsFile = configFontInfo.getMetricsFile();
                 if (metricsFile != null) {
                     internalName = "F" + num;
                     num++;
-                    
-                    ArrayList triplets = configFontInfo.getFontTriplets();
+
+                    List triplets = configFontInfo.getFontTriplets();
                     for (int j = 0; j < triplets.size(); j++) {
                         FontTriplet triplet = (FontTriplet)triplets.get(j);
                         boolean embed = configFontInfo.getEmbedFile() != null;
@@ -229,15 +234,17 @@ public class FontSetup {
                     }
                 }
             } catch (Exception ex) {
-                MessageHandler.error("Failed to read font metrics file "
-                                     + configFontInfo.getMetricsFile()
-                                     + " : " + ex.getMessage());
+                MessageHandler.error("Failed to read font metrics file: "
+                                     + ex.getMessage());
             }
         }
     }
 
     /**
      * Return configured font metrics value.
+     *
+     * @param triplet FontTriplet to analyze
+     * @return value indicating font style
      */
     private static int getFontMetrics(FontTriplet triplet) {
         boolean isBold = ("bold".equalsIgnoreCase(triplet.getWeight()));

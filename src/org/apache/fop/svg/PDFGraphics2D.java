@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -30,8 +30,7 @@ import java.awt.image.renderable.*;
 import java.io.*;
 import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -93,13 +92,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     PDFColor currentColour = new PDFColor(0, 0, 0);
 
     /**
-     * A registry of images that have already been drawn. They are mapped to 
+     * A registry of images that have already been drawn. They are mapped to
      * a structure with the PDF xObjectNum, width and height. This
      * prevents multiple copies from being stored, which can greatly
      * reduce the size of a PDF graphic that uses the same image over and over
      * (e.g. graphic bullets, map icons, etc.).
      */
-    private HashMap imageInfos = new HashMap();
+    private Map imageInfos = new java.util.HashMap();
+
     private static class ImageInfo {
         public int width;
         public int height;
@@ -233,7 +233,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                              ImageObserver observer) {
         // System.err.println("drawImage:x, y");
 
-        // first we look to see if we've already added this image to 
+        // first we look to see if we've already added this image to
         // the pdf document. If so, we just reuse the reference;
         // otherwise we have to build a FopImage and add it to the pdf
         // document
@@ -243,32 +243,32 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             imageInfo = new ImageInfo();
             imageInfo.width = img.getWidth(observer);
             imageInfo.height = img.getHeight(observer);
-            
+
             if (imageInfo.width == -1 || imageInfo.height == -1) {
                 return false;
             }
-            
+
             Dimension size = new Dimension(imageInfo.width * 3, imageInfo.height * 3);
             BufferedImage buf = buildBufferedImage(size);
-            
+
             java.awt.Graphics2D g = buf.createGraphics();
             g.setComposite(AlphaComposite.SrcOver);
             g.setBackground(new Color(1, 1, 1, 0));
             g.setPaint(new Color(1, 1, 1, 0));
             g.fillRect(0, 0, imageInfo.width * 3, imageInfo.height * 3);
             g.clip(new Rectangle(0, 0, buf.getWidth(), buf.getHeight()));
-            
+
             if (!g.drawImage(img, 0, 0, buf.getWidth(), buf.getHeight(), observer)) {
                 return false;
             }
             g.dispose();
-            
+
             final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3];
             final byte[] mask = new byte[buf.getWidth() * buf.getHeight()];
-            
+
             Raster raster = buf.getData();
             DataBuffer bd = raster.getDataBuffer();
-                
+
             int count = 0;
             int maskpos = 0;
             int[] iarray;
@@ -308,7 +308,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 // error
                 break;
                 }
-            
+
             try {
                 FopImage fopimg = new TempImage("TempImage:" + img.toString(), buf.getWidth(), buf.getHeight(), result, mask);
                 imageInfo.xObjectNum = this.pdfDoc.addImage(fopimg);
@@ -679,33 +679,33 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             Point2D p2 = gp.getPoint2();
             boolean cyclic = gp.isCyclic();
 
-            ArrayList theCoords = new ArrayList();
+            List theCoords = new java.util.ArrayList();
             theCoords.add(new Double(p1.getX()));
             theCoords.add(new Double(p1.getY()));
             theCoords.add(new Double(p2.getX()));
             theCoords.add(new Double(p2.getY()));
 
-            ArrayList theExtend = new ArrayList();
+            List theExtend = new java.util.ArrayList();
             theExtend.add(new Boolean(true));
             theExtend.add(new Boolean(true));
 
-            ArrayList theDomain = new ArrayList();
+            List theDomain = new java.util.ArrayList();
             theDomain.add(new Double(0));
             theDomain.add(new Double(1));
 
-            ArrayList theEncode = new ArrayList();
+            List theEncode = new java.util.ArrayList();
             theEncode.add(new Double(0));
             theEncode.add(new Double(1));
             theEncode.add(new Double(0));
             theEncode.add(new Double(1));
 
-            ArrayList theBounds = new ArrayList();
+            List theBounds = new java.util.ArrayList();
             theBounds.add(new Double(0));
             theBounds.add(new Double(1));
 
-            ArrayList theFunctions = new ArrayList();
+            List theFunctions = new java.util.ArrayList();
 
-            ArrayList someColors = new ArrayList();
+            List someColors = new java.util.ArrayList();
 
             PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
                                            c1.getBlue());
@@ -884,15 +884,15 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         } else {
             fontState = ovFontState;
             ovFontState = null;
-        }       
+        }
         String name;
         int size;
         name = fontState.getFontName();
         size = fontState.getFontSize() / 1000;
-    
+
         if ((!name.equals(this.currentFontName))
                 || (size != this.currentFontSize)) {
-            this.currentFontName = name; 
+            this.currentFontName = name;
             this.currentFontSize = size;
             currentStream.write("/" + name + " " + size + " Tf\n");
 
@@ -909,7 +909,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         currentStream.write("BT\n");
 
-        HashMap kerning = null;
+        Map kerning = null;
         boolean kerningAvailable = false;
 
         kerning = fontState.getKerning();
@@ -986,9 +986,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     private void addKerning(StringWriter buf, Integer ch1, Integer ch2,
-                            HashMap kerning, String startText,
+                            Map kerning, String startText,
                             String endText) {
-        HashMap kernPair = (HashMap)kerning.get(ch1);
+        Map kernPair = (Map)kerning.get(ch1);
 
         if (kernPair != null) {
             Integer width = (Integer)kernPair.get(ch2);

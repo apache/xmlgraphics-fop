@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -58,7 +58,7 @@ public class PCLRenderer extends PrintRenderer {
     private int xoffset =
         -180;                       // X Offset to allow for PCL implicit 1/4" left margin.
 
-    private java.util.HashMap options;
+    private java.util.Map options;
 
     /**
      * Create the PCL renderer
@@ -68,7 +68,7 @@ public class PCLRenderer extends PrintRenderer {
     /**
      * set up renderer options
      */
-    public void setOptions(java.util.HashMap options) {
+    public void setOptions(java.util.Map options) {
         this.options = options;
     }
 
@@ -248,7 +248,7 @@ public class PCLRenderer extends PrintRenderer {
      * Renders an image, scaling it to the given width and height.
      * If the scaled width and height is the same intrinsic size
      * of the image, the image is not scaled.
-     * 
+     *
      * @param x the x position of left edge in millipoints
      * @param y the y position of top edge in millipoints
      * @param w the width in millipoints
@@ -258,14 +258,14 @@ public class PCLRenderer extends PrintRenderer {
      *           in non-bitmapped images.
      */
     protected void drawImageScaled(int x, int y, int w, int h,
-				   FopImage image,
-				   FontState fs) {
-	// XXX: implement this
+                   FopImage image,
+                   FontState fs) {
+    // XXX: implement this
     }
-    
+
     /**
-     * Renders an image, clipping it as specified. 
-     * 
+     * Renders an image, clipping it as specified.
+     *
      * @param x the x position of left edge in millipoints.
      * @param y the y position of top edge in millipoints.
      * @param clipX the left edge of the clip in millipoints
@@ -277,11 +277,11 @@ public class PCLRenderer extends PrintRenderer {
      *           in non-bitmapped images.
      */
     protected void drawImageClipped(int x, int y,
-				    int clipX, int clipY,
-				    int clipW, int clipH,
-				    FopImage image,
-				    FontState fs) {
-	// XXX: implement this
+                    int clipX, int clipY,
+                    int clipW, int clipH,
+                    FopImage image,
+                    FontState fs) {
+    // XXX: implement this
     }
 
     boolean printBMP(FopImage img, int x, int y, int w,

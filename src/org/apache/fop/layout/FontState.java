@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -11,7 +11,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.FontVariant;
 import org.apache.fop.render.pdf.CodePointMapping;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 public class FontState {
@@ -27,7 +27,7 @@ public class FontState {
     private FontMetric _metric;
     private int _letterSpacing;
 
-    private static HashMap EMPTY_HASHMAP = new HashMap();
+    private static Map EMPTY_MAP = new java.util.HashMap();
 
 
     public FontState(FontInfo fontInfo, String fontFamily, String fontStyle,
@@ -146,13 +146,13 @@ public class FontState {
         return _metric.getXHeight(_fontSize) / 1000;
     }
 
-    public HashMap getKerning() {
+    public Map getKerning() {
         if (_metric instanceof FontDescriptor) {
-            HashMap ret = ((FontDescriptor)_metric).getKerningInfo();
+            Map ret = ((FontDescriptor)_metric).getKerningInfo();
             if (ret != null)
                 return ret;
         }
-        return EMPTY_HASHMAP;
+        return EMPTY_MAP;
     }
 
     public int width(int charnum) {
@@ -173,12 +173,12 @@ public class FontState {
         }
 
         // Use default CodePointMapping
-	char d = CodePointMapping.getMapping("WinAnsiEncoding").mapChar(c);
-	if (d != 0) {
-	    c = d;
-	} else {
-	    c = '#';
-	}
+    char d = CodePointMapping.getMapping("WinAnsiEncoding").mapChar(c);
+    if (d != 0) {
+        c = d;
+    } else {
+        c = '#';
+    }
 
         return c;
     }

@@ -6,8 +6,8 @@
  */
 
 package org.apache.fop.fonts;
-import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -21,38 +21,29 @@ public class FontFileReader {
     private byte[] file;
 
     /**
-     * Initialisez class and reads stream. Init does not close stream
-     * @param stream InputStream to read from
-     * @param start initial size av array to read to
-     * @param inc if initial size isn't enough, create
+     * Initializes class and reads stream. Init does not close stream
+     * @param in InputStream to read from
      * new array with size + inc
      */
-    private void init(InputStream stream, int start,
-                      int inc) throws java.io.IOException {
-        fsize = 0;
-        current = 0;
-
-        file = new byte[start];
-
-        int l = stream.read(file, 0, start);
-        fsize += l;
-
-        if (l == start) {
-            // More to read - needs to extend
-            byte[] tmpbuf;
-
-            while (l > 0) {
-                tmpbuf = new byte[file.length + inc];
-                System.arraycopy(file, 0, tmpbuf, 0, file.length);
-                l = stream.read(tmpbuf, file.length, inc);
-                fsize += l;
-                file = tmpbuf;
-
-                if (l < inc)    // whole file read. No need to loop again
+    private void init(InputStream in) throws java.io.IOException {
+        java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
+        try {
+            copyStream(in, bout);
+            this.file = bout.toByteArray();
+        } finally {
+            bout.close();
+        }
+    }
 
 
-                    l = 0;
-            }
+    /**@todo Use method from Avalon Excalibur IO or Jakarta Commons IO*/
+    private void copyStream(InputStream in, OutputStream out) throws IOException {
+        final int bufferSize = 2048;
+        final byte[] buffer = new byte[bufferSize];
+        byte[] buf = new byte[bufferSize];
+        int bytesRead;
+        while ((bytesRead = in.read(buf)) != -1) {
+            out.write(buf, 0, bytesRead);
         }
     }
 
@@ -61,12 +52,22 @@ public class FontFileReader {
      * @param fileName filename to read
      */
     public FontFileReader(String fileName) throws java.io.IOException {
-
-        // Get estimates for file size and increment
         File f = new File(fileName);
-        FileInputStream ins = new FileInputStream(fileName);
-        init(ins, (int)(f.length() + 1), (int)(f.length() / 10));
-        ins.close();
+        InputStream in = new java.io.FileInputStream(fileName);
+        try {
+            init(in);
+        } finally {
+            in.close();
+        }
+    }
+
+
+    /**
+     * Constructor
+     * @param in InputStream to read from
+     */
+    public FontFileReader(InputStream in) throws java.io.IOException {
+        init(in);
     }
 
 

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -18,7 +18,8 @@ import org.apache.fop.render.pdf.Font;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
-import java.util.HashMap;
+import java.util.Map;
+import java.net.URL;
 
 /**
  * Generic SingleByte font
@@ -37,7 +38,7 @@ public class SingleByteFont extends Font implements FontDescriptor {
         0, 0, 0, 0
     };
 
-    public String embedFileName = null;
+    public URL embedFileName = null;
     public String embedResourceName = null;
     public PDFStream embeddedFont = null;
 
@@ -48,7 +49,7 @@ public class SingleByteFont extends Font implements FontDescriptor {
     public int italicAngle = 0;
     public int missingWidth = 0;
 
-    public HashMap kerning = new HashMap();
+    public Map kerning = new java.util.HashMap();
     public boolean useKerning = true;
 
     public int width[] = null;
@@ -58,11 +59,11 @@ public class SingleByteFont extends Font implements FontDescriptor {
         return (useKerning & kerning.isEmpty());
     }
 
-    public final java.util.HashMap getKerningInfo() {
+    public final Map getKerningInfo() {
         if (useKerning)
             return kerning;
         else
-            return new HashMap();
+            return new java.util.HashMap();
     }
 
     public byte getSubType() {
@@ -109,7 +110,7 @@ public class SingleByteFont extends Font implements FontDescriptor {
         // Get file first
         if (embedFileName != null)
             try {
-                instream = new FileInputStream(embedFileName);
+                instream = embedFileName.openStream();
             } catch (Exception e) {
                 System.out.println("Failed to embed fontfile: "
                                    + embedFileName);
@@ -243,10 +244,10 @@ public class SingleByteFont extends Font implements FontDescriptor {
 
     public char mapChar(char c) {
         char d = mapping.mapChar(c);
-	if(d != 0)
+    if(d != 0)
             return d;
         else
-	    return '#';
+        return '#';
     }
 
 }

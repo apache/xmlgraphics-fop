@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,7 +8,7 @@
 package org.apache.fop.pdf;
 
 // Java...
-import java.util.ArrayList;
+import java.util.List;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -32,12 +32,12 @@ public class PDFFunction extends PDFObject {
     /**
      * Required: 2 * m Array of Double numbers which are possible inputs to the function
      */
-    protected ArrayList domain = null;
+    protected List domain = null;
 
     /**
      * Required: 2 * n Array of Double numbers which are possible outputs to the function
      */
-    protected ArrayList range = null;
+    protected List range = null;
 
     /* ********************TYPE 0***************************** */
     // FunctionType 0 specific function guts
@@ -47,7 +47,7 @@ public class PDFFunction extends PDFObject {
      * Note: This is really more like two seperate integers, sizeDomain, and sizeRange,
      * but since they're expressed as an array in PDF, my implementation reflects that.
      */
-    protected ArrayList size = null;
+    protected List size = null;
 
     /**
      * Required for Type 0: Number of Bits used to represent each sample value. Limited to 1,2,4,8,12,16,24, or 32
@@ -65,12 +65,12 @@ public class PDFFunction extends PDFObject {
      * Required for Type 3: A 2 * k array of Doubles that, taken in pairs, map each subset of the domain defined by Domain and the Bounds array to the domain of the corresponding function.
      * Should be two values per function, usually (0,1), as in [0 1 0 1] for 2 functions.
      */
-    protected ArrayList encode = null;
+    protected List encode = null;
 
     /**
      * Optinoal for Type 0: A 2 * n array of Doubles which provides a linear mapping of sample values to the range. Defaults to Range.
      */
-    protected ArrayList decode = null;
+    protected List decode = null;
 
     /**
      * Optional For Type 0: A stream of sample values
@@ -82,21 +82,21 @@ public class PDFFunction extends PDFObject {
     protected StringBuffer functionDataStream = null;
 
     /**
-     * Required (?) For Type 0: A ArrayList of Strings for the various filters to be used to decode the stream.
+     * Required (?) For Type 0: A List of Strings for the various filters to be used to decode the stream.
      * These are how the string is compressed. Flate, LZW, etc.
      */
-    protected ArrayList filter = null;
+    protected List filter = null;
     /* *************************TYPE 2************************** */
 
     /**
      * Required For Type 2: An Array of n Doubles defining the function result when x=0. Default is [0].
      */
-    protected ArrayList cZero = null;
+    protected List cZero = null;
 
     /**
      * Required For Type 2: An Array of n Doubles defining the function result when x=1. Default is [1].
      */
-    protected ArrayList cOne = null;
+    protected List cOne = null;
 
     /**
      * Required for Type 2: The interpolation exponent.
@@ -108,9 +108,9 @@ public class PDFFunction extends PDFObject {
     /* *************************TYPE 3************************** */
 
     /**
-     * Required for Type 3: An ArrayList of PDFFunctions which form an array of k single input functions making up the stitching function.
+     * Required for Type 3: A List of PDFFunctions which form an array of k single input functions making up the stitching function.
      */
-    protected ArrayList functions = null;
+    protected List functions = null;
 
     /**
      * Optional for Type 3: An array of (k-1) Doubles that, in combination with Domain, define the intervals to which each function from the Functions array apply. Bounds elements must be in order of increasing magnitude, and each value must be within the value of Domain.
@@ -119,7 +119,7 @@ public class PDFFunction extends PDFObject {
      * This makes each function responsible for an equal amount of the stitching function.
      * It makes the gradient even.
      */
-    protected ArrayList bounds = null;
+    protected List bounds = null;
     // See encode above, as it's also part of Type 3 Functions.
 
     /* *************************TYPE 4************************** */
@@ -131,13 +131,13 @@ public class PDFFunction extends PDFObject {
      * Use null for an optional object parameter if you choose not to use it.
      * For optional int parameters, pass the default.
      *
-     * @param theDomain ArrayList objects of Double objects.
+     * @param theDomain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange ArrayList objects of Double objects.
+     * @param theRange List objects of Double objects.
      * This is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theSize A ArrayList object of Integer objects.
+     * @param theSize A List object of Integer objects.
      * This is the number of samples in each input dimension.
      * I can't imagine there being more or less than two input dimensions,
      * so maybe this should be an array of length 2.
@@ -152,14 +152,14 @@ public class PDFFunction extends PDFObject {
      * This attribute is optional.
      *
      * See page 265 in the PDF 1.3 spec.
-     * @param theEncode ArrayList objects of Double objects.
+     * @param theEncode List objects of Double objects.
      * This is the linear mapping of input values intop the domain
      * of the function's sample table. Default is hard to represent in
      * ascii, but basically [0 (Size0 1) 0 (Size1 1)...].
      * This attribute is optional.
      *
      * See page 265 in the PDF 1.3 spec.
-     * @param theDecode ArrayList objects of Double objects.
+     * @param theDecode List objects of Double objects.
      * This is a linear mapping of sample values into the range.
      * The default is just the range.
      *
@@ -170,7 +170,7 @@ public class PDFFunction extends PDFObject {
      * This is optional, but is almost always used.
      *
      * Page 265 of the PDF 1.3 spec has more.
-     * @param theFilter This is a ArrayList of String objects which are the various filters that
+     * @param theFilter This is a List of String objects which are the various filters that
      * have are to be applied to the stream to make sense of it. Order matters,
      * so watch out.
      *
@@ -181,20 +181,20 @@ public class PDFFunction extends PDFObject {
      * @param theFunctionType This is the type of function (0,2,3, or 4).
      * It should be 0 as this is the constructor for sampled functions.
      */
-    public PDFFunction(int theNumber, int theFunctionType, ArrayList theDomain,
-                       ArrayList theRange, ArrayList theSize, int theBitsPerSample,
-                       int theOrder, ArrayList theEncode, ArrayList theDecode,
-                       StringBuffer theFunctionDataStream, ArrayList theFilter) {
+    public PDFFunction(int theNumber, int theFunctionType, List theDomain,
+                       List theRange, List theSize, int theBitsPerSample,
+                       int theOrder, List theEncode, List theDecode,
+                       StringBuffer theFunctionDataStream, List theFilter) {
         super(theNumber);
 
         this.functionType = 0;      // dang well better be 0;
         this.size = theSize;
         this.bitsPerSample = theBitsPerSample;
         this.order = theOrder;      // int
-        this.encode = theEncode;    // ArrayList of int
-        this.decode = theDecode;    // ArrayList of int
+        this.encode = theEncode;    // List of int
+        this.decode = theDecode;    // List of int
         this.functionDataStream = theFunctionDataStream;
-        this.filter = theFilter;    // ArrayList of Strings
+        this.filter = theFilter;    // List of Strings
 
         // the domain and range are actually two dimensional arrays.
         // so if there's not an even number of items, bad stuff
@@ -210,17 +210,17 @@ public class PDFFunction extends PDFObject {
      * For optional int parameters, pass the default.
      *
      * @param theNumber the object's number
-     * @param theDomain ArrayList objects of Double objects.
+     * @param theDomain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange ArrayList of Doubles that is the Range of the function.
+     * @param theRange List of Doubles that is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theCZero This is a ArrayList of Double objects which defines the function result
+     * @param theCZero This is a List of Double objects which defines the function result
      * when x=0.
      *
      * This attribute is optional.
      * It's described on page 268 of the PDF 1.3 spec.
-     * @param theCOne This is a ArrayList of Double objects which defines the function result
+     * @param theCOne This is a List of Double objects which defines the function result
      * when x=1.
      *
      * This attribute is optional.
@@ -231,8 +231,8 @@ public class PDFFunction extends PDFObject {
      * PDF Spec page 268
      * @param theFunctionType The type of the function, which should be 2.
      */
-    public PDFFunction(int theNumber, int theFunctionType, ArrayList theDomain,
-                       ArrayList theRange, ArrayList theCZero, ArrayList theCOne,
+    public PDFFunction(int theNumber, int theFunctionType, List theDomain,
+                       List theRange, List theCZero, List theCOne,
                        double theInterpolationExponentN) {
         super(theNumber);
 
@@ -255,17 +255,17 @@ public class PDFFunction extends PDFObject {
      * For optional int parameters, pass the default.
      *
      * @param theNumber the object's number
-     * @param theDomain ArrayList objects of Double objects.
+     * @param theDomain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange ArrayList objects of Double objects.
+     * @param theRange List objects of Double objects.
      * This is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theFunctions A ArrayList of the PDFFunction objects that the stitching function stitches.
+     * @param theFunctions A List of the PDFFunction objects that the stitching function stitches.
      *
      * This attributed is required.
      * It is described on page 269 of the PDF spec.
-     * @param theBounds This is a ArrayList of Doubles representing the numbers that,
+     * @param theBounds This is a List of Doubles representing the numbers that,
      * in conjunction with Domain define the intervals to which each function from
      * the 'functions' object applies. It must be in order of increasing magnitude,
      * and each must be within Domain.
@@ -274,7 +274,7 @@ public class PDFFunction extends PDFObject {
      *
      * This attributed is required.
      * It's described on page 269 of the PDF 1.3 spec.
-     * @param theEncode ArrayList objects of Double objects.
+     * @param theEncode List objects of Double objects.
      * This is the linear mapping of input values intop the domain
      * of the function's sample table. Default is hard to represent in
      * ascii, but basically [0 (Size0 1) 0 (Size1 1)...].
@@ -284,9 +284,9 @@ public class PDFFunction extends PDFObject {
      * @param theFunctionType This is the function type. It should be 3,
      * for a stitching function.
      */
-    public PDFFunction(int theNumber, int theFunctionType, ArrayList theDomain,
-                       ArrayList theRange, ArrayList theFunctions,
-                       ArrayList theBounds, ArrayList theEncode) {
+    public PDFFunction(int theNumber, int theFunctionType, List theDomain,
+                       List theRange, List theFunctions,
+                       List theBounds, List theEncode) {
         super(theNumber);
 
         this.functionType = 3;    // dang well better be 3;
@@ -305,10 +305,10 @@ public class PDFFunction extends PDFObject {
      * Use null for an optional object parameter if you choose not to use it.
      * For optional int parameters, pass the default.
      *
-     * @param theDomain ArrayList object of Double objects.
+     * @param theDomain List object of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange ArrayList object of Double objects.
+     * @param theRange List object of Double objects.
      * This is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
      * @param theFunctionDataStream This is a stream of arithmetic, boolean, and stack operators and boolean constants.
@@ -321,8 +321,8 @@ public class PDFFunction extends PDFObject {
      * @param theFunctionType The type of function which should be 4, as this is
      * a Postscript calculator function
      */
-    public PDFFunction(int theNumber, int theFunctionType, ArrayList theDomain,
-                       ArrayList theRange, StringBuffer theFunctionDataStream) {
+    public PDFFunction(int theNumber, int theFunctionType, List theDomain,
+                       List theRange, StringBuffer theFunctionDataStream) {
         super(theNumber);
 
         this.functionType = 4;    // dang well better be 4;
@@ -668,7 +668,7 @@ public class PDFFunction extends PDFObject {
             return p.toString().getBytes(PDFDocument.ENCODING);
         } catch (UnsupportedEncodingException ue) {
             return p.toString().getBytes();
-        }       
+        }
     }
 
 }
