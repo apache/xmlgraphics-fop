@@ -464,7 +464,7 @@ public class PSRenderer extends AbstractRenderer {
         for (int i = 0; i < text.length(); i++) {
             final char c = text.charAt(i);
             final char mapped = font.mapChar(c);
-            gen.escapeChar(mapped, sb);
+            PSGenerator.escapeChar(mapped, sb);
         }
         sb.append(") t");
         writeln(sb.toString());
@@ -642,7 +642,7 @@ public class PSRenderer extends AbstractRenderer {
         saveGraphicsState();
         // multiply with current CTM
         //writeln(CTMHelper.toPDFString(ctm) + " cm\n");
-        final double matrix[] = ctm.toArray();
+        final double[] matrix = ctm.toArray();
         concatMatrix(matrix);
         
         // Set clip?
@@ -753,7 +753,7 @@ public class PSRenderer extends AbstractRenderer {
                 //saveGraphicsState();
             }
 
-            float bwidth = bps.width ;
+            float bwidth = bps.width;
             updateColor(bps.color, false, null);
             writeln(bwidth + " setlinewidth");
 
@@ -770,7 +770,7 @@ public class PSRenderer extends AbstractRenderer {
                 //saveGraphicsState();
             }
 
-            float bwidth = bps.width ;
+            float bwidth = bps.width;
             updateColor(bps.color, false, null);
             writeln(bwidth + " setlinewidth");
 
@@ -788,7 +788,7 @@ public class PSRenderer extends AbstractRenderer {
                 //saveGraphicsState();
             }
 
-            float bwidth = bps.width ;
+            float bwidth = bps.width;
             updateColor(bps.color, false, null);
             writeln(bwidth + " setlinewidth");
 
@@ -806,7 +806,7 @@ public class PSRenderer extends AbstractRenderer {
                 //saveGraphicsState();
             }
 
-            float bwidth = bps.width ;
+            float bwidth = bps.width;
             updateColor(bps.color, false, null);
             writeln(bwidth + " setlinewidth");
             drawLine(sx - bwidth / 2, starty, sx - bwidth / 2, endy);
