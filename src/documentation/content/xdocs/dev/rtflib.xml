@@ -15,7 +15,8 @@ By <em>independent</em> we mean:</p>
         <ul>
           <li>Although it is used by FOP to generate FOP's RTF output, it is not dependent on FOP for any of its functionality.</li>
           <li>It does not require FOP as a front-end, nor does it even require XSL-FO for input.
-It can be used anywhere RTF output is required and java is available.</li>
+It essentially exposes an API of relatively high-level RTF construction routines to a host program.
+This means it can be used anywhere RTF output is required and java is available.</li>
         </ul>
         <p>The FOP development team intends to keep the RTFLib package independent so that it can be used for other purposes.</p>
       </section>
@@ -274,7 +275,7 @@ A quick look at the Abstract <link href="http://cvs.apache.org/viewcvs.cgi/xml-f
             <tr>
               <td>Underline</td>
               <td>RtfText.ATTR_UNDERLINE</td>
-              <td>N/A (boolean), or (int) 0 to turn underling off</td>
+              <td>N/A (boolean), or (int) 0 to turn underlining off</td>
               <td>\ul</td>
             </tr>
             <tr>
