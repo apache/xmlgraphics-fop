@@ -67,8 +67,10 @@ public abstract class PDFPathPaint extends PDFObject
 		//do nothing
 	}
 	
-	abstract String getColorSpaceOut(boolean fillNotStroke);
-	
+	public String getColorSpaceOut(boolean fillNotStroke)
+	{
+		return("");
+	}
 	
 	public void setColorSpace(int theColorSpace)
 	{
