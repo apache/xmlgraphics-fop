@@ -13,12 +13,10 @@
       <menu-item label="Examples" href="examples.html"/>
       <menu-item label="Walk-Thru" href="implement.html"/>
     </menu>
-    <menu label="Using">
-      <menu-item label="Extensions" href="extensions.html"/>
-    </menu>
     <menu label="Extras">
       <menu-item label="SVG" href="svg.html"/>
       <menu-item label="Fonts" href="fonts.html"/>
+      <menu-item label="Extensions" href="extensions.html"/>
     </menu>
     <menu label="Output">
       <menu-item label="PDF" href="pdf.html"/>
