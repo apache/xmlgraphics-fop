@@ -18,22 +18,14 @@
 package org.apache.fop.area;
 
 import java.io.Serializable;
-import java.util.Map;
+//import java.util.Map;
 
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
- * The page.
- * This holds the contents of the page. Each region is added.
- * The unresolved references area added so that if the page is
- * serialized then it will handle the resolving properly after
- * being reloaded.
- * This is serializable so it can be saved to cache to save
- * memory if there are forward references.
- * The page is cloneable so the page master can make copies of
- * the top level page and regions.
+ * This holds the contents of the page.
  * 
  * @author The Apache XML-FOP sub-project
  * @author pbw
@@ -49,8 +41,8 @@ implements ReferenceArea, Serializable {
     private RegionStartVport regionStart = null;
     private RegionEndVport regionEnd = null;
 
-    // temporary map of unresolved objects used when serializing the page
-    private Map unresolved = null;
+//    // temporary map of unresolved objects used when serializing the page
+//    private Map unresolved = null;
     
     public PageRefArea(
             FoPageSequence pageSeq,
@@ -60,25 +52,25 @@ implements ReferenceArea, Serializable {
         super(pageSeq, generatedBy, parent, sync);
     }
 
-    /**
-     * Set the unresolved references on this page for serializing.
-     *
-     * @param unres the map of unresolved objects
-     */
-    public void setUnresolvedReferences(Map unres) {
-        unresolved = unres;
-    }
-
-    /**
-     * Get the map unresolved references from this page.
-     * This should be called after deserializing to retrieve
-     * the map of unresolved references that were serialized.
-     *
-     * @return the de-serialized map of unresolved objects
-     */
-    public Map getUnresolvedReferences() {
-        return unresolved;
-    }
+//    /**
+//     * Set the unresolved references on this page for serializing.
+//     *
+//     * @param unres the map of unresolved objects
+//     */
+//    public void setUnresolvedReferences(Map unres) {
+//        unresolved = unres;
+//    }
+//
+//    /**
+//     * Get the map unresolved references from this page.
+//     * This should be called after deserializing to retrieve
+//     * the map of unresolved references that were serialized.
+//     *
+//     * @return the de-serialized map of unresolved objects
+//     */
+//    public Map getUnresolvedReferences() {
+//        return unresolved;
+//    }
     
     /**
      * @return the regionAfter
