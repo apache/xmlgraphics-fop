@@ -58,7 +58,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
-import org.apache.fop.fo.Property;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPage;

@@ -1,5 +1,5 @@
 /*
- * $Id: PercentLength.java,v 1.6 2003/03/05 20:38:23 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,93 +48,110 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.datatypes;
+package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.LengthProperty;
-import org.apache.fop.fo.expr.NumericProperty;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.CompoundDatatype;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
- * a percent specified length quantity in XSL
+ * Superclass for properties wrapping a LengthPair value
  */
-public class PercentLength extends LengthProperty {
+public class LengthPairProperty extends Property implements CompoundDatatype {
+    private Property ipd;
+    private Property bpd;
 
     /**
-     * The percentage itself, expressed as a decimal value, e.g. for 95%, set
-     * the value to .95
+     * Inner class for creating instances of LengthPairProperty
      */
-    private double factor;
+    public static class Maker extends CompoundPropertyMaker {
 
-    /**
-     * A PercentBase implementation that contains the base length to which the
-     * {@link #factor} should be applied to compute the actual length
-     */
-    private PercentBase lbase = null;
+        /**
+         * @param name name of property for which this Maker should be created
+         */
+        public Maker(int propId) {
+            super(propId);
+        }
 
-    /**
-     * Main constructor. Construct an object based on a factor (the percent,
-     * as a factor) and an object which has a method to return the Length which
-     * provides the "base" for the actual length that is modeled.
-     * @param factor the percentage factor, expressed as a decimal (e.g. use
-     * .95 to represent 95%)
-     * @param lbase base property to which the factor should be applied
-     */
-    public PercentLength(double factor, PercentBase lbase) {
-        this.factor = factor;
-        this.lbase = lbase;
+        /**
+         * Create a new empty instance of LengthPairProperty.
+         * @return the new instance. 
+         */
+        public Property makeNewProperty() {
+            return new LengthPairProperty();
+        }
+
+        /**
+         * @see CompoundPropertyMaker#convertProperty
+         */        
+        public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
+            throws FOPException
+        {
+            if (p instanceof LengthPairProperty) {
+                return p;
+            }
+            return super.convertProperty(p, propertyList, fo);
+        }
     }
 
     /**
-     * Convenience constructor when only the factor is known
-     * @param factor the percentage factor, expressed as a decimal (e.g. use
-     * .95 to represent 95%)
+     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
      */
-    public PercentLength(double factor) {
-        this(factor, null);
+    public void setComponent(int cmpId, Property cmpnValue,
+                             boolean bIsDefault) {
+        if (cmpId == CP_BLOCK_PROGRESSION_DIRECTION) {
+            bpd = cmpnValue;
+        } else if (cmpId == CP_INLINE_PROGRESSION_DIRECTION) {
+            ipd = cmpnValue;
+        }
     }
 
     /**
-     * @param lbase the base to set
+     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
-    public void setBaseLength(PercentBase lbase) {
-        this.lbase = lbase;
+    public Property getComponent(int cmpId) {
+        if (cmpId == CP_BLOCK_PROGRESSION_DIRECTION) {
+            return getBPD();
+        } else if (cmpId == CP_INLINE_PROGRESSION_DIRECTION) {
+            return getIPD();
+        } else {
+            return null;    // SHOULDN'T HAPPEN
+        }
     }
 
     /**
-     * @return the base
+     * @return Property holding the ipd length
      */
-    public PercentBase getBaseLength() {
-        return this.lbase;
+    public Property getIPD() {
+        return this.ipd;
     }
 
     /**
-     * Return the computed value in millipoints. This assumes that the
-     * base length has been resolved to an absolute length value.
+     * @return Property holding the bpd length
      */
-    protected void computeValue() {
-        setComputedValue((int)(factor * (double)lbase.getBaseLength()));
+    public Property getBPD() {
+        return this.bpd;
     }
 
-    /**
-     *
-     * @return the factor
-     */
-    public double value() {
-        return factor;
-    }
-
-    /**
-     * @return the String equivalent of this
-     */
     public String toString() {
-        // TODO: What about the base value?
-        return (new Double(factor * 100.0).toString()) + "%";
+        return "LengthPair[" + 
+        "ipd:" + getIPD().getObject() + 
+        ", bpd:" + getBPD().getObject() + "]";
     }
 
     /**
-     * @return new Numeric object that is equivalent to this
+     * @return this.lengthPair
      */
-    public NumericProperty asNumeric() {
-        return new NumericProperty(this);
+    public LengthPairProperty getLengthPair() {
+        return this;
+    }
+
+    /**
+     * @return this.lengthPair cast as an Object
+     */
+    public Object getObject() {
+        return this;
     }
 
 }

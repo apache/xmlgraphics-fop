@@ -54,12 +54,12 @@ package org.apache.fop.render.rtf;
 import org.apache.avalon.framework.logger.Logger;
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.EnumProperty;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.SpaceProperty;
-import org.apache.fop.fo.ColorTypeProperty;
+import org.apache.fop.fo.properties.ColorTypeProperty;
+import org.apache.fop.fo.properties.EnumProperty;
+import org.apache.fop.fo.properties.LengthProperty;
+import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.datatypes.ColorType;
 
 //RTF

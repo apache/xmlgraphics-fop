@@ -52,9 +52,9 @@ package org.apache.fop.render.rtf;
 //FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.Property;
-import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.LengthProperty;
+import org.apache.fop.fo.properties.Property;
 
 //RTF
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;

@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.22 2003/03/05 21:48:02 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,9 +48,10 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
 import org.apache.fop.fo.expr.NumericProperty;
+
 import java.util.Vector;
 
 /**

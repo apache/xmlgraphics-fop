@@ -50,7 +50,7 @@
  */
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.fo.Property;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.datatypes.ColorType;
 
 /**

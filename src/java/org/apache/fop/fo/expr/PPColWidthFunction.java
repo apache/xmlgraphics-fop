@@ -51,8 +51,8 @@
 package org.apache.fop.fo.expr;
 
 
-import org.apache.fop.fo.Property;
-import org.apache.fop.datatypes.TableColLength;
+import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.TableColLength;
 
 /**
  * Class modelling the proportional-column-width function. See Sec. 5.10.4 of

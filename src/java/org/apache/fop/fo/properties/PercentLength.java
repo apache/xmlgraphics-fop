@@ -1,5 +1,5 @@
 /*
- * $Id: ToBeImplementedProperty.java,v 1.6 2003/03/05 20:38:23 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,46 +48,93 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.datatypes;
+package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.Property;
-import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.properties.PropertyMaker;
+import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.fo.expr.NumericProperty;
 
-public class ToBeImplementedProperty extends Property {
+/**
+ * a percent specified length quantity in XSL
+ */
+public class PercentLength extends LengthProperty {
 
-    public static class Maker extends PropertyMaker {
+    /**
+     * The percentage itself, expressed as a decimal value, e.g. for 95%, set
+     * the value to .95
+     */
+    private double factor;
 
-        public Maker(int propId) {
-            super(propId);
-        }
+    /**
+     * A PercentBase implementation that contains the base length to which the
+     * {@link #factor} should be applied to compute the actual length
+     */
+    private PercentBase lbase = null;
 
-        public Property convertProperty(Property p,
-                                        PropertyList propertyList, FObj fo) {
-            if (p instanceof ToBeImplementedProperty) {
-                return p;
-            }
-
-            ToBeImplementedProperty val =
-                new ToBeImplementedProperty(getPropId());
-            return val;
-        }
+    /**
+     * Main constructor. Construct an object based on a factor (the percent,
+     * as a factor) and an object which has a method to return the Length which
+     * provides the "base" for the actual length that is modeled.
+     * @param factor the percentage factor, expressed as a decimal (e.g. use
+     * .95 to represent 95%)
+     * @param lbase base property to which the factor should be applied
+     */
+    public PercentLength(double factor, PercentBase lbase) {
+        this.factor = factor;
+        this.lbase = lbase;
     }
 
     /**
-     * Constructor
-     * @param propName name of Property
+     * Convenience constructor when only the factor is known
+     * @param factor the percentage factor, expressed as a decimal (e.g. use
+     * .95 to represent 95%)
      */
-    public ToBeImplementedProperty(int propId) {
-
-        //XXX: (mjg@recalldesign.com) This is a bit of a kluge, perhaps an
-        //UnimplementedPropertyException or something similar should
-        //get thrown here instead.
-
-//         Logger log = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
-//         log.warn("property - \"" + propName
-//                                + "\" is not implemented yet.");
+    public PercentLength(double factor) {
+        this(factor, null);
     }
-}
 
+    /**
+     * @param lbase the base to set
+     */
+    public void setBaseLength(PercentBase lbase) {
+        this.lbase = lbase;
+    }
+
+    /**
+     * @return the base
+     */
+    public PercentBase getBaseLength() {
+        return this.lbase;
+    }
+
+    /**
+     * Return the computed value in millipoints. This assumes that the
+     * base length has been resolved to an absolute length value.
+     */
+    protected void computeValue() {
+        setComputedValue((int)(factor * (double)lbase.getBaseLength()));
+    }
+
+    /**
+     *
+     * @return the factor
+     */
+    public double value() {
+        return factor;
+    }
+
+    /**
+     * @return the String equivalent of this
+     */
+    public String toString() {
+        // TODO: What about the base value?
+        return (new Double(factor * 100.0).toString()) + "%";
+    }
+
+    /**
+     * @return new Numeric object that is equivalent to this
+     */
+    public NumericProperty asNumeric() {
+        return new NumericProperty(this);
+    }
+
+}

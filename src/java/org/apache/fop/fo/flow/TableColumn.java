@@ -60,10 +60,10 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.fo.Property;
 
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * Class modelling the fo:table-column object. See Sec. 6.7.4 of the XSL-FO

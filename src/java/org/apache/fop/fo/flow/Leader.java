@@ -52,7 +52,6 @@ package org.apache.fop.fo.flow;
 
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.PercentLength;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.FObjMixed;
@@ -62,6 +61,7 @@ import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.PercentLength;
 import org.apache.fop.fonts.Font;
 
 /**

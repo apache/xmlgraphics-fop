@@ -53,16 +53,16 @@ package org.apache.fop.fo.pagination;
 // FOP
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.fo.EnumProperty;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.LengthProperty;
-import org.apache.fop.fo.Property;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.EnumProperty;
+import org.apache.fop.fo.properties.LengthProperty;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonMarginInline;
 

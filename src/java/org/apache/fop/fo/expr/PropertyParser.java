@@ -50,15 +50,15 @@
  */
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.datatypes.FixedLength;
 import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.datatypes.PercentLength;
-import org.apache.fop.fo.Property;
-import org.apache.fop.fo.ColorTypeProperty;
-import org.apache.fop.fo.ListProperty;
-import org.apache.fop.fo.LengthProperty;
-import org.apache.fop.fo.NumberProperty;
-import org.apache.fop.fo.StringProperty;
+import org.apache.fop.fo.properties.ColorTypeProperty;
+import org.apache.fop.fo.properties.FixedLength;
+import org.apache.fop.fo.properties.LengthProperty;
+import org.apache.fop.fo.properties.ListProperty;
+import org.apache.fop.fo.properties.NumberProperty;
+import org.apache.fop.fo.properties.PercentLength;
+import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.StringProperty;
 
 import java.util.HashMap;
 

@@ -1,5 +1,5 @@
 /*
- * $Id: StringProperty.java,v 1.4 2003/03/05 21:48:01 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,87 +48,74 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.properties.PropertyMaker;
+import org.apache.fop.fo.expr.NumericProperty;
 
 /**
- * Exists primarily as a container for its Maker inner class, which is
- * extended by many string-based FO property classes.
+ * A table-column width specification, possibly including some
+ * number of proportional "column-units". The absolute size of a
+ * column-unit depends on the fixed and proportional sizes of all
+ * columns in the table, and on the overall size of the table.
+ * It can't be calculated until all columns have been specified and until
+ * the actual width of the table is known. Since this can be specified
+ * as a percent of its parent containing width, the calculation is done
+ * during layout.
+ * NOTE: this is only supposed to be allowed if table-layout=fixed.
  */
-public class StringProperty extends Property {
+public class TableColLength extends LengthProperty {
 
     /**
-     * Inner class for making instances of StringProperty
+     * Number of table-column proportional units
      */
-    public static class Maker extends PropertyMaker {
+    private double tcolUnits;
 
-        /**
-         * @param propName name of property for which to create a Maker
-         */
-        public Maker(int propId) {
-            super(propId);
+    /**
+     * Construct an object with tcolUnits of proportional measure.
+     * @param tcolUnits number of table-column proportional units
+     */
+    public TableColLength(double tcolUnits) {
+        this.tcolUnits = tcolUnits;
+    }
+
+    /**
+     * Override the method in Length
+     * @return the number of specified proportional table-column units.
+     */
+    public double getTableUnits() {
+        return tcolUnits;
+    }
+
+    /**
+     * Calculate the number of millipoints and set it.
+     * @param mpointsPerUnit density of millipoints per unit
+     */
+    public void resolveTableUnit(double mpointsPerUnit) {
+        setComputedValue((int)(tcolUnits * mpointsPerUnit));
+    }
+
+    //If the table-unit can be resolved, set the computed value
+    /*protected void computeValue() {
+        if (tblUnitBase.canResolveUnit()) {
+            rslt += (int)(tcolUnits * (double)tblUnitBase.getUnitValue());
+            setComputedValue(rslt);
         }
-
-        /**
-         * Make a new StringProperty object
-         * @param propertyList not used
-         * @param value String value of the new object
-         * @param fo not used
-         * @return the StringProperty object
-         */
-        public Property make(PropertyList propertyList, String value,
-                             FObj fo) {
-            // Work around the fact that most String properties are not
-            // specified as actual String literals (with "" or '') since
-            // the attribute values themselves are Strings!
-            // If the value starts with ' or ", make sure it also ends with
-            // this character
-            // Otherwise, just take the whole value as the String
-            int vlen = value.length() - 1;
-            if (vlen > 0) {
-                char q1 = value.charAt(0);
-                if (q1 == '"' || q1 == '\'') {
-                    if (value.charAt(vlen) == q1) {
-                        return new StringProperty(value.substring(1, vlen));
-                    }
-                    System.err.println("Warning String-valued property starts with quote"
-                                       + " but doesn't end with quote: "
-                                       + value);
-                    // fall through and use the entire value, including first quote
-                }
-                String str = checkValueKeywords(value);
-                if (str != null) {
-                    value = str;
-                }
-            }
-            return new StringProperty(value);
-        }
-
-    }    // end String.Maker
-
-    private String str;
+    }*/
 
     /**
-     * @param str String value to place in this object
+     * Convert this to a String
+     * @return the string representation of this
      */
-    public StringProperty(String str) {
-        this.str = str;
-        // System.err.println("Set StringProperty: " + str);
+    public String toString() {
+        return (Double.toString(tcolUnits) + " table-column-units");
     }
 
     /**
-     * @return the Object equivalent of this property
+     * Converts this to a new Numeric object
+     * @return the Numeric object
      */
-    public Object getObject() {
-        return this.str;
+    public NumericProperty asNumeric() {
+        return new NumericProperty(this);
     }
-
-    /**
-     * @return the String equivalent of this property
-     */
-    public String getString() {
-        return this.str;
-    }
-
 }
+

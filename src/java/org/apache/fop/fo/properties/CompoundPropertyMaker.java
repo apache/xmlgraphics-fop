@@ -53,9 +53,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.CompoundDatatype;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.EnumProperty;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.Property;
 import org.apache.fop.fo.PropertyList;
 
 /**

@@ -52,6 +52,7 @@ package org.apache.fop.fo;
 
 // FOP
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonMarginInline;

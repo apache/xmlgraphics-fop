@@ -50,7 +50,7 @@
  */
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.fo.Property;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * Class for managing the "max" Number Function. See Sec. 5.10.1 in the XSL-FO

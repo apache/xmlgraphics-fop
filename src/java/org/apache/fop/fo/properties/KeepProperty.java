@@ -1,5 +1,5 @@
 /*
- * $Id: LengthPairProperty.java,v 1.3 2003/03/05 21:48:02 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,37 +48,39 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.CompoundDatatype;
-import org.apache.fop.fo.properties.CompoundPropertyMaker;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
- * Superclass for properties wrapping a LengthPair value
+ * Superclass for properties that wrap Keep values
  */
-public class LengthPairProperty extends Property implements CompoundDatatype {
-    private Property ipd;
-    private Property bpd;
+public class KeepProperty extends Property implements CompoundDatatype {
+    private Property withinLine;
+    private Property withinColumn;
+    private Property withinPage;
 
     /**
-     * Inner class for creating instances of LengthPairProperty
+     * Inner class for creating instances of KeepProperty
      */
     public static class Maker extends CompoundPropertyMaker {
 
         /**
-         * @param name name of property for which this Maker should be created
+         * @param name name of property for which Maker should be created
          */
-        protected Maker(int propId) {
+        public Maker(int propId) {
             super(propId);
         }
 
         /**
-         * Create a new empty instance of LengthPairProperty.
+         * Create a new empty instance of KeepProperty.
          * @return the new instance. 
          */
         public Property makeNewProperty() {
-            return new LengthPairProperty();
+            return new KeepProperty();
         }
 
         /**
@@ -87,7 +89,7 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
         public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
             throws FOPException
         {
-            if (p instanceof LengthPairProperty) {
+            if (p instanceof KeepProperty) {
                 return p;
             }
             return super.convertProperty(p, propertyList, fo);
@@ -99,10 +101,12 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
-        if (cmpId == CP_BLOCK_PROGRESSION_DIRECTION) {
-            bpd = cmpnValue;
-        } else if (cmpId == CP_INLINE_PROGRESSION_DIRECTION) {
-            ipd = cmpnValue;
+        if (cmpId == CP_WITHIN_LINE) {
+            setWithinLine(cmpnValue, bIsDefault);
+        } else if (cmpId == CP_WITHIN_COLUMN) {
+            setWithinColumn(cmpnValue, bIsDefault);
+        } else if (cmpId == CP_WITHIN_PAGE) {
+            setWithinPage(cmpnValue, bIsDefault);
         }
     }
 
@@ -110,44 +114,83 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
      * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
     public Property getComponent(int cmpId) {
-        if (cmpId == CP_BLOCK_PROGRESSION_DIRECTION) {
-            return getBPD();
-        } else if (cmpId == CP_INLINE_PROGRESSION_DIRECTION) {
-            return getIPD();
+        if (cmpId == CP_WITHIN_LINE) {
+            return getWithinLine();
+        } else if (cmpId == CP_WITHIN_COLUMN) {
+            return getWithinColumn();
+        } else if (cmpId == CP_WITHIN_PAGE) {
+            return getWithinPage();
         } else {
-            return null;    // SHOULDN'T HAPPEN
+            return null;
         }
     }
 
     /**
-     * @return Property holding the ipd length
+     * @param withinLine withinLine property to set
+     * @param bIsDefault not used (??)
      */
-    public Property getIPD() {
-        return this.ipd;
+    public void setWithinLine(Property withinLine, boolean bIsDefault) {
+        this.withinLine = withinLine;
     }
 
     /**
-     * @return Property holding the bpd length
+     * @param withinColumn withinColumn property to set
+     * @param bIsDefault not used (??)
      */
-    public Property getBPD() {
-        return this.bpd;
+    protected void setWithinColumn(Property withinColumn,
+                                   boolean bIsDefault) {
+        this.withinColumn = withinColumn;
     }
 
+    /**
+     * @param withinPage withinPage property to set
+     * @param bIsDefault not used (??)
+     */
+    public void setWithinPage(Property withinPage, boolean bIsDefault) {
+        this.withinPage = withinPage;
+    }
+
+    /**
+     * @return the withinLine property
+     */
+    public Property getWithinLine() {
+        return this.withinLine;
+    }
+
+    /**
+     * @return the withinColumn property
+     */
+    public Property getWithinColumn() {
+        return this.withinColumn;
+    }
+
+    /**
+     * @return the withinPage property
+     */
+    public Property getWithinPage() {
+        return this.withinPage;
+    }
+
+    /**
+     * Not sure what to do here. There isn't really a meaningful single value.
+     * @return String representation
+     */
     public String toString() {
-        return "LengthPair[" + 
-        "ipd:" + getIPD().getObject() + 
-        ", bpd:" + getBPD().getObject() + "]";
+        return "Keep[" + 
+            "withinLine:" + getWithinLine().getObject() + 
+            ", withinColumn:" + getWithinColumn().getObject() + 
+            ", withinPage:" + getWithinPage().getObject() + "]";
     }
 
     /**
-     * @return this.lengthPair
+     * @return this.keep
      */
-    public LengthPairProperty getLengthPair() {
+    public KeepProperty getKeep() {
         return this;
     }
 
     /**
-     * @return this.lengthPair cast as an Object
+     * @return this.keep cast as Object
      */
     public Object getObject() {
         return this;

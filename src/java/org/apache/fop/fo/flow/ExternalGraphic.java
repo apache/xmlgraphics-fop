@@ -58,7 +58,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.fo.LengthProperty;
+import org.apache.fop.fo.properties.LengthProperty;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.FopImage;
 // Java

@@ -1,5 +1,5 @@
 /*
- * $Id: LengthRangeProperty.java,v 1.5 2003/03/05 21:48:02 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,11 +48,12 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.CompoundDatatype;
-import org.apache.fop.fo.properties.CompoundPropertyMaker;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * Superclass for properties that contain LengthRange values
@@ -75,7 +76,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         /**
          * @param name name of property for which to create Maker
          */
-        protected Maker(int propId) {
+        public Maker(int propId) {
             super(propId);
         }
 

@@ -51,13 +51,13 @@
 package org.apache.fop.fo.expr;
 
 import org.apache.fop.datatypes.LengthBase;
-import org.apache.fop.datatypes.LinearCombinationLength;
-import org.apache.fop.datatypes.PercentLength;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.Property;
-import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.properties.LengthProperty;
+import org.apache.fop.fo.properties.LinearCombinationLength;
+import org.apache.fop.fo.properties.PercentLength;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * Class modelling the label-end Property Value function. See Sec. 5.10.4 of the

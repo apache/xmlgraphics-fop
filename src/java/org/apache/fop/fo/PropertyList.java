@@ -56,6 +56,7 @@ import org.xml.sax.Attributes;
 
 // FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 
 /**

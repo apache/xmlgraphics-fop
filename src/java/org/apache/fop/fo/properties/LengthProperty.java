@@ -1,5 +1,5 @@
 /*
- * $Id: LengthProperty.java,v 1.7 2003/03/05 21:48:01 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,13 +48,13 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.AutoLength;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.NumericProperty;
-import org.apache.fop.fo.properties.PropertyMaker;
 
 /**
  * Superclass for properties wrapping a Length value.

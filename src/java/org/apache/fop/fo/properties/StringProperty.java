@@ -1,5 +1,5 @@
 /*
- * $Id: CharacterProperty.java,v 1.3 2003/03/05 21:48:02 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,63 +48,88 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.properties.PropertyMaker;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
- * Superclass for properties that wrap a character value
+ * Exists primarily as a container for its Maker inner class, which is
+ * extended by many string-based FO property classes.
  */
-public class CharacterProperty extends Property {
+public class StringProperty extends Property {
 
     /**
-     * Inner class for creating instances of CharacterProperty
+     * Inner class for making instances of StringProperty
      */
     public static class Maker extends PropertyMaker {
 
         /**
-         * @param propName name of property for which a Maker should be created
+         * @param propName name of property for which to create a Maker
          */
         public Maker(int propId) {
             super(propId);
         }
 
+        /**
+         * Make a new StringProperty object
+         * @param propertyList not used
+         * @param value String value of the new object
+         * @param fo not used
+         * @return the StringProperty object
+         */
         public Property make(PropertyList propertyList, String value,
                              FObj fo) {
-            char c = value.charAt(0);
-            return new CharacterProperty(c);
+            // Work around the fact that most String properties are not
+            // specified as actual String literals (with "" or '') since
+            // the attribute values themselves are Strings!
+            // If the value starts with ' or ", make sure it also ends with
+            // this character
+            // Otherwise, just take the whole value as the String
+            int vlen = value.length() - 1;
+            if (vlen > 0) {
+                char q1 = value.charAt(0);
+                if (q1 == '"' || q1 == '\'') {
+                    if (value.charAt(vlen) == q1) {
+                        return new StringProperty(value.substring(1, vlen));
+                    }
+                    System.err.println("Warning String-valued property starts with quote"
+                                       + " but doesn't end with quote: "
+                                       + value);
+                    // fall through and use the entire value, including first quote
+                }
+                String str = checkValueKeywords(value);
+                if (str != null) {
+                    value = str;
+                }
+            }
+            return new StringProperty(value);
         }
 
-    }    // end Charakter.Maker
+    }    // end String.Maker
 
-    private char character;
+    private String str;
 
     /**
-     * @param character character value to be wrapped in this property
+     * @param str String value to place in this object
      */
-    public CharacterProperty(char character) {
-        this.character = character;
+    public StringProperty(String str) {
+        this.str = str;
+        // System.err.println("Set StringProperty: " + str);
     }
 
     /**
-     * @return this.character cast as an Object
+     * @return the Object equivalent of this property
      */
     public Object getObject() {
-        return new Character(character);
+        return this.str;
     }
 
     /**
-     * @return this.character
-     */
-    public char getCharacter() {
-        return this.character;
-    }
-
-    /**
-     * @return this.character cast as a String
+     * @return the String equivalent of this property
      */
     public String getString() {
-        return new Character(character).toString();
+        return this.str;
     }
 
 }

@@ -50,8 +50,8 @@
  */ 
 package org.apache.fop.datatypes;
 
-import org.apache.fop.fo.Property;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * This interface is used as a base for compound datatypes.

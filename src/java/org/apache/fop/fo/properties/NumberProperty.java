@@ -1,5 +1,5 @@
 /*
- * $Id: CondLengthProperty.java,v 1.5 2003/03/05 21:48:01 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,135 +48,112 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.CompoundDatatype;
-import org.apache.fop.fo.properties.CompoundPropertyMaker;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.NumericProperty;
 
 /**
- * Superclass for properties that have conditional lengths
+ * Class for handling numeric properties
  */
-public class CondLengthProperty extends Property implements CompoundDatatype {
-    private Property length;
-    private Property conditionality;
+public class NumberProperty extends Property {
 
     /**
-     * Inner class for creating instances of CondLengthProperty
+     * Inner class for making NumberProperty objects
      */
-    public static class Maker extends CompoundPropertyMaker {
+    public static class Maker extends PropertyMaker {
 
         /**
-         * @param name of property for which a Maker should be created
+         * Constructor for NumberProperty.Maker
+         * @param propName the name of the property
          */
         public Maker(int propId) {
             super(propId);
         }
 
         /**
-         * Create a new empty instance of CondLengthProperty.
-         * @return the new instance. 
+         * @see Property.Maker#convertProperty
          */
-        public Property makeNewProperty() {
-            return new CondLengthProperty();
-        }
-
-        /**
-         * @see CompoundPropertyMaker#convertProperty
-         */        
-        public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
-            throws FOPException
-        {
-            if (p instanceof KeepProperty) {
+        public Property convertProperty(Property p,
+                                        PropertyList propertyList, FObj fo) {
+            if (p instanceof NumberProperty) {
                 return p;
             }
-            return super.convertProperty(p, propertyList, fo);
+            Number val = p.getNumber();
+            if (val != null) {
+                return new NumberProperty(val);
+            }
+            return convertPropertyDatatype(p, propertyList, fo);
         }
+
     }
 
+    private Number number;
+
     /**
-     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
+     * Constructor for Number input
+     * @param num Number object value for property
      */
-    public void setComponent(int cmpId, Property cmpnValue,
-                             boolean bIsDefault) {
-        if (cmpId == CP_LENGTH) {
-            length = cmpnValue;
-        } else if (cmpId == CP_CONDITIONALITY) {
-            conditionality = cmpnValue;
-        }
+    public NumberProperty(Number num) {
+        this.number = num;
     }
 
     /**
-     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
+     * Constructor for double input
+     * @param num double numeric value for property
      */
-    public Property getComponent(int cmpId) {
-        if (cmpId == CP_LENGTH) {
-            return length;
-        } else if (cmpId == CP_CONDITIONALITY) {
-            return conditionality;
-        } else {
-            return null;
-        }
+    public NumberProperty(double num) {
+        this.number = new Double(num);
     }
 
     /**
-     * Returns the conditionality.
-     * @return the conditionality
+     * Constructor for integer input
+     * @param num integer numeric value for property
      */
-    public Property getConditionality() {
-        return this.conditionality;
+    public NumberProperty(int num) {
+        this.number = new Integer(num);
     }
 
     /**
-     * Returns the length.
-     * @return the length
+     * @return this.number cast as a Number
      */
-    public Property getLengthComponent() {
-        return this.length;
+    public Number getNumber() {
+        return this.number;
     }
 
     /**
-     * Indicates if the length can be discarded on certain conditions.
-     * @return true if the length can be discarded.
+     * public Double getDouble() {
+     * return new Double(this.number.doubleValue());
+     * }
+     * public Integer getInteger() {
+     * return new Integer(this.number.intValue());
+     * }
      */
-    public boolean isDiscard() {
-        return this.conditionality.getEnum() == Constants.DISCARD;
-    }
 
     /**
-     * Returns the computed length value.
-     * @return the length in millipoints
-     */
-    public int getLengthValue() {
-        return this.length.getLength().getValue();
-    }
-
-    public String toString() {
-        return "CondLength[" + (isDiscard() ? "discard, " : "") +
-        length.getObject().toString() + "]";
-    }    
-
-
-    /**
-     * @return this.condLength
-     */
-    public CondLengthProperty getCondLength() {
-        return this;
-    }
-
-    /**
-     * TODO: Should we allow this?
-     * @return this.condLength cast as a Length
-     */
-    public LengthProperty getLength() {
-        return length.getLength();
-    }
-
-    /**
-     * @return this.condLength cast as an Object
+     * @return this.number cast as an Object
      */
     public Object getObject() {
-        return this;
+        return this.number;
+    }
+
+    /**
+     * Convert NumberProperty to Numeric object
+     * @return Numeric object corresponding to this
+     */
+    public NumericProperty getNumeric() {
+        return new NumericProperty(this.number);
+    }
+
+    /**
+     * Convert NumberProperty to a ColorType. Not sure why this is needed.
+     * @return ColorType that corresponds to black
+     */
+    public ColorTypeProperty getColorType() {
+        // Convert numeric value to color ???
+        // Convert to hexadecimal and then try to make it into a color?
+        return new ColorTypeProperty((float)0.0, (float)0.0, (float)0.0);
     }
 
 }
