@@ -20,12 +20,12 @@ package org.apache.fop.fo;
 
 // Java
 import java.util.ListIterator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
-
-import org.apache.commons.logging.Log;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -33,6 +33,8 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.svg.SVGElementMapping;
+
+
 
 /**
  * base class for nodes in the XML tree
@@ -55,6 +57,9 @@ public abstract class FONode {
     /** Marks column number of this object in the input file **/
     public int column;
 
+    /** Logger for fo-tree related messages **/
+    private static Log log = LogFactory.getLog(FONode.class);
+
     /**
      * Main constructor.
      * @param parent parent of this node
@@ -76,11 +81,20 @@ public abstract class FONode {
     }
 
     /**
+     * Recursively goes up the FOTree hierarchy until the fo:root is found,
+     * which returns the parent FOInputHandler.
+     * @return the FOInputHandler object that is the parent of the FO Tree
+     */
+    public FOInputHandler getFOInputHandler() {
+        return parent.getFOInputHandler();
+    }
+
+    /**
      * Returns the user agent for the node.
      * @return FOUserAgent
      */
     public FOUserAgent getUserAgent() {
-        return getFOInputHandler().getDriver().getUserAgent();
+        return getFOInputHandler().getUserAgent();
     }
 
     /**
@@ -88,7 +102,7 @@ public abstract class FONode {
      * @return the logger
      */
     public Log getLogger() {
-        return getFOInputHandler().getDriver().getLogger();
+        return log;
     }
 
     /**
@@ -198,15 +212,6 @@ public abstract class FONode {
      */
     protected boolean isMarker() {
         return false;
-    }
-
-    /**
-     * Recursively goes up the FOTree hierarchy until the fo:root is found,
-     * which returns the parent FOInputHandler.
-     * @return the FOInputHandler object that is the parent of the FO Tree
-     */
-    public FOInputHandler getFOInputHandler() {
-        return parent.getFOInputHandler();
     }
 
     /**

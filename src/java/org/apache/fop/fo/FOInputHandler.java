@@ -21,10 +21,10 @@ package org.apache.fop.fo;
 // Java
 import java.util.HashSet;
 import java.util.Set;
+import org.xml.sax.SAXException;
 
-// FOP
-import org.apache.fop.apps.Document;
-import org.apache.fop.apps.Driver;
+// Apache
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.fo.flow.BasicLink;
@@ -47,8 +47,8 @@ import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import org.xml.sax.SAXException;
 
 /**
  * Abstract class defining what should be done with SAX events that map to
@@ -63,20 +63,18 @@ import org.xml.sax.SAXException;
  */
 public abstract class FOInputHandler {
     
-    /**
-     * The Document object that is controlling the FO Tree being built
+    /** 
+     * The FOUserAgent for this process
      */
-    public Document doc = null;
+    private FOUserAgent foUserAgent;
 
     /** 
      * The Font information relevant for this document
      */
     protected FontInfo fontInfo;
 
-    /**
-     * logging instance
-     */
-    protected Log logger = null;
+    /** Logger for FOInputHandler-related messages **/
+    protected static Log logger = LogFactory.getLog(FOInputHandler.class);
 
     /**
      * The current set of id's in the FO tree.
@@ -86,11 +84,10 @@ public abstract class FOInputHandler {
 
     /**
      * Main constructor
-     * @param document the apps.Document implementation that is controlling
-     * the FO Tree being built
+     * @param FOUserAgent the apps.FOUserAgent instance for this process
      */
-    public FOInputHandler(Document document) {
-        doc = document;
+    public FOInputHandler(FOUserAgent foUserAgent) {
+        this.foUserAgent = foUserAgent;
         this.fontInfo = new FontInfo();
     }
 
@@ -103,14 +100,6 @@ public abstract class FOInputHandler {
     }
 
     /**
-     * Sets the Commons-Logging instance for this class
-     * @param logger The Commons-Logging instance
-     */
-    public void setLogger(Log logger) {
-        this.logger = logger;
-    }
-
-    /**
      * Returns the Commons-Logging instance for this class
      * @return  The Commons-Logging instance
      */
@@ -119,19 +108,11 @@ public abstract class FOInputHandler {
     }
 
     /**
-     * Returns the Document object associated with this FOInputHandler.
-     * @return the Document object
+     * Returns the User Agent object associated with this FOInputHandler.
+     * @return the User Agent object
      */
-    public Document getDocument() {
-        return doc;
-    }
-
-    /**
-     * Returns the Driver object associated with this FOInputHandler.
-     * @return the Driver object
-     */
-    public Driver getDriver() {
-        return doc.getDriver();
+    public FOUserAgent getUserAgent() {
+        return foUserAgent;
     }
 
     /**

@@ -194,8 +194,6 @@ public class Driver {
     private Log log = null;
     private FOUserAgent userAgent = null;
 
-    private Document currentDocument = null;
-
     /**
      * Main constructor for the Driver class.
      */
@@ -469,30 +467,20 @@ public class Driver {
            validateOutputStream();
         }
 
-        /** Document creation is hard-wired for now, but needs to be made
-         accessible through the API and/or configuration */
-        if (currentDocument == null) {
-            currentDocument = new Document(this);
-        }
-
         // TODO: - do this stuff in a better way
         // PIJ: I guess the structure handler should be created by the renderer.
         if (rendererType == RENDER_MIF) {
-            foInputHandler = new MIFHandler(currentDocument, stream);
+            foInputHandler = new MIFHandler(userAgent, stream);
         } else if (rendererType == RENDER_RTF) {
-            foInputHandler = new RTFHandler(currentDocument, stream);
+            foInputHandler = new RTFHandler(userAgent, stream);
         } else {
             if (renderer == null) {
                 throw new IllegalStateException(
                         "Renderer not set when using standard foInputHandler");
             }
 
-            currentDocument.renderer = renderer;
-            foInputHandler = new FOTreeHandler(currentDocument, stream, true);
+            foInputHandler = new FOTreeHandler(userAgent, renderer, stream, true);
         }
-        currentDocument.foInputHandler = foInputHandler;
-
-        foInputHandler.setLogger(getLogger());
 
         treeBuilder.setFOInputHandler(foInputHandler);
 

@@ -18,6 +18,11 @@
 
 package org.apache.fop.fo.pagination;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
+// FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 
@@ -40,6 +45,14 @@ public class SinglePageMasterReference extends PageMasterReference
     public SinglePageMasterReference(FONode parent) {
         super(parent);
         this.state = FIRST;
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL/FOP Content Model: empty
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+       invalidChildError(loc, nsURI, localName);
     }
 
     /**
