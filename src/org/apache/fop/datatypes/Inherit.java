@@ -2,6 +2,7 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropertyConsts;
 
@@ -41,7 +42,7 @@ public class Inherit extends AbstractPropertyValue {
     public Inherit(int property, int sourceProperty)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.INHERIT);
         this.sourceProperty = sourceProperty;
     }
 
@@ -66,7 +67,7 @@ public class Inherit extends AbstractPropertyValue {
     public Inherit(String propertyName, String sourcePropertyName)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.INHERIT);
         property = PropertyConsts.getPropertyIndex(propertyName);
         sourceProperty = PropertyConsts.getPropertyIndex(sourcePropertyName);
     }

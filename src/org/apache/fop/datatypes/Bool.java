@@ -2,6 +2,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.Properties;
 
@@ -39,7 +40,7 @@ public class Bool extends AbstractPropertyValue {
     public Bool (int property, boolean bool)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.BOOL);
         this.bool = bool;
     }
 
@@ -53,7 +54,7 @@ public class Bool extends AbstractPropertyValue {
     public Bool (int property, String boolStr)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.BOOL);
         if (boolStr.equals("true")) bool = true;
         else if (boolStr.equals("false")) bool = false;
         else throw new PropertyException
@@ -70,7 +71,7 @@ public class Bool extends AbstractPropertyValue {
     public Bool (String propertyName, String boolStr)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.BOOL);
         if (boolStr.equals("true")) bool = true;
         else if (boolStr.equals("false")) bool = false;
         else throw new PropertyException
@@ -86,7 +87,7 @@ public class Bool extends AbstractPropertyValue {
     public Bool (String propertyName, boolean bool)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.BOOL);
         this.bool = bool;
     }
 

@@ -4,6 +4,7 @@ package org.apache.fop.datatypes;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.datatypes.StringType;
+import org.apache.fop.fo.expr.PropertyValue;
 
 /*
  * NCName.java
@@ -17,7 +18,8 @@ import org.apache.fop.datatypes.StringType;
  * @version $Revision$ $Name$
  */
 /**
- * An NCName.
+ * An NCName.  NCName may be instantiated directly, and it also serves as a
+ * base class for a number of specific <tt>PropertyValue</tt> types.
  */
 
 public class NCName extends StringType {
@@ -26,6 +28,8 @@ public class NCName extends StringType {
     private static final String revision = "$Revision$";
 
     /**
+     * Used when <tt>NCName</tt> is used directly as the
+     * <tt>PropertyValue</tt> type.
      * @param property the <tt>int</tt> index of the property on which
      * this value is being defined.
      * @param string the <tt>String</tt>.
@@ -34,10 +38,12 @@ public class NCName extends StringType {
     public NCName (int property, String string)
         throws PropertyException
     {
-        super(property, string);
+        super(property, string, PropertyValue.NCNAME);
     }
 
     /**
+     * Used when <tt>NCName</tt> is used directly as the
+     * <tt>PropertyValue</tt> type.
      * @param propertyName the <tt>String</tt< name of the property on which
      * this value is being defined.
      * @param string the <tt>String</tt>.
@@ -46,7 +52,35 @@ public class NCName extends StringType {
     public NCName (String propertyName, String string)
         throws PropertyException
     {
-        super(propertyName, string);
+        super(propertyName, string, PropertyValue.NCNAME);
+    }
+
+    /**
+     * Used when <tt>NCName</tt> is a base class for another type.
+     * @param property the <tt>int</tt> index of the property on which
+     * this value is being defined.
+     * @param string the <tt>String</tt>.
+     * @param type the type of <tt>PropertyValue</tt> being instantiated.
+     * @exception PropertyException
+     */
+    public NCName (int property, String string, int type)
+        throws PropertyException
+    {
+        super(property, string, type);
+    }
+
+    /**
+     * Used when <tt>NCName</tt> is a base class for another type.
+     * @param propertyName the <tt>String</tt< name of the property on which
+     * this value is being defined.
+     * @param string the <tt>String</tt>.
+     * @param type the type of <tt>PropertyValue</tt> being instantiated.
+     * @exception PropertyException
+     */
+    public NCName (String propertyName, String string, int type)
+        throws PropertyException
+    {
+        super(propertyName, string, type);
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.apache.fop.datatypes;
 
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.Properties;
@@ -39,7 +40,7 @@ public class UriType extends AbstractPropertyValue {
     public UriType(int property, String uri)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.URI_TYPE);
         this.uri = uri;
     }
 
@@ -53,7 +54,7 @@ public class UriType extends AbstractPropertyValue {
     public UriType(String propertyName, String uri)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.URI_TYPE);
         this.uri = uri;
     }
 

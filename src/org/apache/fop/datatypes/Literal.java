@@ -4,6 +4,7 @@ package org.apache.fop.datatypes;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropertyConsts;
+import org.apache.fop.fo.expr.PropertyValue;
 
 /*
  * Literal.java
@@ -33,7 +34,7 @@ public class Literal extends StringType {
     public Literal(int property, String string)
         throws PropertyException
     {
-        super(property, string);
+        super(property, string, PropertyValue.LITERAL);
     }
 
     /**

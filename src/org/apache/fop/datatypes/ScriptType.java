@@ -5,6 +5,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.configuration.Configuration;
+import org.apache.fop.fo.expr.PropertyValue;
 
 /*
  * ScriptType.java
@@ -28,7 +29,7 @@ public class ScriptType extends NCName {
 
     public ScriptType(int property, String scriptCode) throws PropertyException
     {
-        super(property, scriptCode);
+        super(property, scriptCode, PropertyValue.SCRIPT);
         // Validate the code
         if (Configuration.getHashMapEntry("scriptsMap", scriptCode)
             == null) throw new PropertyException

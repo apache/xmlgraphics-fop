@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.PropertyConsts;
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
 
 /**
@@ -48,7 +49,7 @@ public class ColorType extends AbstractPropertyValue {
     public ColorType(int property, float red, float green, float blue)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.COLOR_TYPE);
         color[RED] = red;
         color[GREEN] = green;
         color[BLUE] = blue;
@@ -82,7 +83,7 @@ public class ColorType extends AbstractPropertyValue {
     public ColorType(int property, int red, int green, int blue)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.COLOR_TYPE);
         if (red > 255) red = 255;
         if (green > 255) green = 255;
         if (blue > 255) blue = 255;
@@ -116,7 +117,7 @@ public class ColorType extends AbstractPropertyValue {
      * the normalized (0 <= n <= 1) red, green, blue and alpha components.
      */
     public ColorType(int property, float[] color) throws PropertyException {
-        super(property);
+        super(property, PropertyValue.COLOR_TYPE);
         if (color.length != 4) throw new PropertyException
                 ("Attempt to construct a ColorType with array of "
                     + color.length + " elements.");
@@ -146,7 +147,7 @@ public class ColorType extends AbstractPropertyValue {
      * @param value a <tt>String</tt>; the system color name.
      */
     public ColorType(int property, String value) throws PropertyException {
-        super(property);
+        super(property, PropertyValue.COLOR_TYPE);
         if (value.startsWith("#")) {
             try {
                 if (value.length() == 4) {
@@ -209,7 +210,7 @@ public class ColorType extends AbstractPropertyValue {
      * @param colorEnum an <tt>int</tt>; the enumeration index. 
      */
     public ColorType(int property, int colorEnum) throws PropertyException {
-        super(property);
+        super(property, PropertyValue.COLOR_TYPE);
         String enumText = PropertyConsts.getEnumText(property, colorEnum);
         color = (float[])(getStandardColor(enumText).clone());
     }

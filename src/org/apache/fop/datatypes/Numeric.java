@@ -16,6 +16,7 @@ import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.expr.PropertyValue;
 
 
 /**
@@ -162,7 +163,7 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
         (int property, double value, int baseunit, int power, int unit)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.NUMERIC);
         // baseunit must be a power of 2 <= the LAST_BASEUNIT
         if ((baseunit & (baseunit - 1)) != 0
             || baseunit > LAST_BASEUNIT)

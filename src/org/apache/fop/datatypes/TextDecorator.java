@@ -1,5 +1,6 @@
 package org.apache.fop.datatypes;
 
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.Properties;
@@ -46,7 +47,7 @@ public class TextDecorator extends AbstractPropertyValue {
     public TextDecorator(int property, byte onMask, byte offMask)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.TEXT_DECORATOR);
         this.onMask = onMask;
         this.offMask = offMask;
     }
@@ -59,7 +60,7 @@ public class TextDecorator extends AbstractPropertyValue {
     public TextDecorator(String propertyName, byte onMask, byte offMask)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.TEXT_DECORATOR);
         this.onMask = onMask;
         this.offMask = offMask;
     }

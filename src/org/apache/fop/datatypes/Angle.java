@@ -1,6 +1,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.Properties;
 
@@ -52,7 +53,7 @@ public class Angle extends AbstractPropertyValue {
     public Angle(int property, int unit, double value)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.ANGLE);
         units = unit;
         degrees = value * degPerUnit[unit];
     }
@@ -68,7 +69,7 @@ public class Angle extends AbstractPropertyValue {
     public Angle(String propertyName, int unit, double value)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.ANGLE);
         units = unit;
         degrees = value * degPerUnit[unit];
     }

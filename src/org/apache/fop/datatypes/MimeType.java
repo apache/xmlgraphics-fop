@@ -2,6 +2,7 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.Properties;
 
 /*
@@ -40,7 +41,7 @@ public class MimeType extends AbstractPropertyValue {
     public MimeType(int property, String mimetype)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.MIME_TYPE);
         this.mimetype = mimetype;
     }
 
@@ -54,7 +55,7 @@ public class MimeType extends AbstractPropertyValue {
     public MimeType(String propertyName, String mimetype)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.MIME_TYPE);
         this.mimetype = mimetype;
     }
 

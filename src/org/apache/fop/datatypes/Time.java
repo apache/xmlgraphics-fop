@@ -1,6 +1,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.Properties;
 
@@ -52,7 +53,7 @@ public class Time extends AbstractPropertyValue {
     public Time(int property, int unit, double value)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.TIME);
         units = unit;
         time = value * msPerUnit[unit];
     }
@@ -68,7 +69,7 @@ public class Time extends AbstractPropertyValue {
     public Time(String propertyName, int unit, double value)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.TIME);
         units = unit;
         time = value * msPerUnit[unit];
     }
