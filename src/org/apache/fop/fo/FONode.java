@@ -55,27 +55,54 @@ public class FONode extends Node{
     /**
      * State flags: a bit set of states applicable during FO tree build.
      * N.B. States must be powers of 2.
+     * <p><b>BEWARE</b> At what point are these ancestry flags supposed to
+     * apply?  If they are son-of (MC), they should only be expected to
+     * be applied on the children of a particular node type.  I don't think
+     * the higher level FO nodes are making this assumption.
+     * <p>Just changed most of the higher-level flags by removing the MC_
+     * prefix, which remains on some of the lower levels.  Use this convention
+     * for now: unprefixed name (e.g. Root), is a self-or-descendent
+     * indicator, while MC_ prefixed names are descendents only.
+     * <p>TODO: check for consistency of application.
      */
     public static final int
-             NOSTATE = 0
-        // These are used to select the attribute set for the node
-           ,ROOT_SET = 1
-   ,DECLARATIONS_SET = 2
-         ,LAYOUT_SET = 4
-     ,SEQ_MASTER_SET = 8
-        ,PAGESEQ_SET = 16
-           ,FLOW_SET = 32
-         ,STATIC_SET = 64
-          ,TITLE_SET = 128
-         ,MARKER_SET = 256
-        ,OUT_OF_LINE = 512
-            ;
+                     NOSTATE = 0
+                // These are used to select the attribute set for the node
+                       ,ROOT = 1
+               ,DECLARATIONS = 2
+                     ,LAYOUT = 4
+                 ,SEQ_MASTER = 8
+                    ,PAGESEQ = 16
+                       ,FLOW = 32
+                     ,STATIC = 64
+                      ,TITLE = 128
+                  ,MC_MARKER = 256
+                   ,MC_FLOAT = 512
+                ,MC_FOOTNOTE = 1024
+              ,MC_MULTI_CASE = 2048
+   ,MC_ABSOLUTELY_POSITIONED = 4096
+                        ;
+
+    public static final int
+                ROOT_SET = ROOT
+       ,DECLARATIONS_SET = ROOT | DECLARATIONS
+             ,LAYOUT_SET = ROOT | LAYOUT
+         ,SEQ_MASTER_SET = LAYOUT_SET | SEQ_MASTER
+            ,PAGESEQ_SET = ROOT | PAGESEQ
+               ,FLOW_SET = PAGESEQ_SET | FLOW
+             ,STATIC_SET = PAGESEQ_SET | STATIC
+             ,TITLE_SET = PAGESEQ_SET | TITLE
+            ,MARKER_SET = FLOW_SET | MC_MARKER
+                        ;
+
+    public static final int MC_OUT_OF_LINE =
+        MC_FLOAT | MC_FOOTNOTE | MC_ABSOLUTELY_POSITIONED;
 
     /** The subset of <i>stateFlags</i> that select the relevant
         atttribute set or the node. */
     public static final int ATTRIBUTESETS = 
-        ROOT_SET | DECLARATIONS_SET | LAYOUT_SET | SEQ_MASTER_SET |
-        PAGESEQ_SET | FLOW_SET | STATIC_SET | TITLE_SET | MARKER_SET;
+        ROOT | DECLARATIONS | LAYOUT | SEQ_MASTER |
+        PAGESEQ | FLOW | STATIC | TITLE | MC_MARKER;
 
     /** The buffer from which parser events are drawn. */
     protected SyncedFoXmlEventsBuffer xmlevents;
@@ -137,10 +164,7 @@ public class FONode extends Node{
     /** The property expression parser in the FOTree. */
     protected PropertyParser exprParser;
 
-    /** The <i>attrSet</i> argument. */
-    protected int attrSet;
-
-    /** The <tt>ROBitSet</tt> of the <i>attrSet</i> argument. */
+    /** The <tt>ROBitSet</tt> from the <i>stateFlags</i> argument. */
     protected ROBitSet attrBitSet;
 
     /** The state flags passed to this node. */
@@ -182,7 +206,7 @@ public class FONode extends Node{
      * @param sparseindices - an <tt>int[]</tt> holding the set of property
      * indices applicable to this node, in ascending order.
      * <i>sparsePropsMap</i> maps property indices to a position in this array.
-     * Together they paovide a sparse array facility for this node's
+     * Together they provide a sparse array facility for this node's
      * properties.
      */
     public FONode
@@ -193,20 +217,16 @@ public class FONode extends Node{
         super(foTree, parent);
         this.type = type;
         this.stateFlags = stateFlags;
-        attrSet = stateFlags & ATTRIBUTESETS;
-        if ((attrSet & (attrSet - 1)) != 0)
-            throw new PropertyException
-                    ("Invalid attribut set: " + attrSet);
         this.sparsePropsMap = sparsePropsMap;
         this.sparseIndices = sparseIndices;
         this.numProps = sparseIndices.length;
-        attrBitSet = FOPropertySets.getAttrROBitSet(attrSet);
+        attrBitSet = FOPropertySets.getAttrROBitSet(stateFlags);
         xmlevents = foTree.xmlevents;
         namespaces = xmlevents.getNamespaces();
         exprParser = foTree.exprParser;
         propertySet = new PropertyValue[PropNames.LAST_PROPERTY_INDEX + 1];
         foAttributes = new FOAttributes(event, this);
-        if ( ! (attrSet == MARKER_SET)) {
+        if ((stateFlags & MC_MARKER) == 0) {
             processAttributes();
         }
         // Do not set up the remaining properties now.
@@ -233,7 +253,7 @@ public class FONode extends Node{
                                    + " on "
                                    + FObjectNames.getFOName(type)
                                    + " for attribute set "
-                                   + FOPropertySets.getAttrSetName(attrSet)
+                                   + FOPropertySets.getAttrSetName(stateFlags)
                                    + ".");
                 continue;
             }
