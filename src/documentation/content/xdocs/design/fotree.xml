@@ -21,6 +21,7 @@ into the area tree. The complete FO tree should not be held in memory
 since FOP should be able to handle FO documents of any size.</p>
       <p>The FO Tree is simply a heirarchy of java objects that represent the fo elements from xml.
 The traversal is done by the layout or structure process only in the flow elements.</p>
+    </section>
       <section id="fonode">
         <title>FONode</title>
         <p>The base class for all objects in the tree is FONode. The base class for
@@ -64,7 +65,6 @@ automatically during the build process.</p>
         <p>In some cases the element may be moved to have a different parent, for
 example markers, or the inheritance could be different, for example
 initial property set.</p>
-      </section>
       <p>Properties (recall that FO's have properties, areas have traits, and XML
 nodes have attributes) are also a concern of <em>FOTreeBuilder</em>. It
 accomplishes this by using a <em>PropertyListBuilder</em>. There is a
