@@ -24,6 +24,7 @@ import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.Ints;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.BitSet;
 
@@ -40,7 +41,7 @@ public class FoTableCell extends FONode {
         position in the <i>sparsePropsSet</i> array. See
         {@link org.apache.fop.fo.FONode#sparsePropsSet FONode.sparsePropsSet}.
      */
-    private static final HashMap sparsePropsMap;
+    private static final int[] sparsePropsMap;
 
     /** An <tt>int</tt> array of of the applicable property indices, in
         property index order. */
@@ -81,7 +82,8 @@ public class FoTableCell extends FONode {
         // sparsePropsSet is a HashMap containing the indicies of the
         // sparsePropsSet array, indexed by the FO index of the FO slot
         // in sparsePropsSet.
-        sparsePropsMap = new HashMap();
+        sparsePropsMap = new int[PropNames.LAST_PROPERTY_INDEX + 1];
+        Arrays.fill(sparsePropsMap, -1);
         numProps = propsets.cardinality();
         sparseIndices = new int[numProps];
         int propx = 0;
@@ -89,8 +91,7 @@ public class FoTableCell extends FONode {
                 next >= 0;
                 next = propsets.nextSetBit(next + 1)) {
             sparseIndices[propx] = next;
-            sparsePropsMap.put
-                        (Ints.consts.get(next), Ints.consts.get(propx++));
+            sparsePropsMap[next] = propx++;
         }
     }
 

@@ -22,6 +22,7 @@ import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.Ints;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.BitSet;
 
@@ -38,7 +39,7 @@ public class FoNoFo {
         position in the <i>sparsePropsSet</i> array. See
         {@link org.apache.fop.fo.FONode#sparsePropsSet FONode.sparsePropsSet}.
      */
-    //private static final HashMap sparsePropsMap;
+    //private static final int[] sparsePropsMap;
 
     /** An <tt>int</tt> array of of the applicable property indices, in
         property index order. */
@@ -58,10 +59,10 @@ public class FoNoFo {
         // sparsePropsSet array, indexed by the FO index of the FO slot
         // in sparsePropsSet.
         sparsePropsMap = new HashMap(1);
+        Arrays.fill(sparsePropsMap, -1);
         numProps = 1;
         sparseIndices = new int[] { PropNames.NO_PROPERTY };
-        sparsePropsMap.put
-            (Ints.consts.get(PropNames.NO_PROPERTY), Ints.consts.get(0));
+        sparsePropsMap[PropNames.NO_PROPERTY] = 0;
     }
     */
 
