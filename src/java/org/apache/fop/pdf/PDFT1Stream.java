@@ -53,11 +53,10 @@ public class PDFT1Stream extends AbstractPDFStream {
         if (pfb == null) {
             throw new IllegalStateException("pfb must not be null at this point");
         }
-        getDocumentSafely().getLogger().debug("Writing " 
-                + pfb.getLength() + " bytes of Type 1 font data");
+        log.debug("Writing " + pfb.getLength() + " bytes of Type 1 font data");
 
         int length = super.output(stream);
-        getDocumentSafely().getLogger().debug("Embedded Type1 font");
+        log.debug("Embedded Type1 font");
         return length;
     }
 

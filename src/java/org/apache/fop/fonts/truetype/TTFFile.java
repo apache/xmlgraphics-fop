@@ -23,8 +23,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
 
-import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fonts.Glyphs;
 
 /**
@@ -70,7 +70,7 @@ public class TTFFile {
     /**
      * Contains glyph data
      */
-    protected TTFMtxEntry mtxTab[];                  // Contains glyph data
+    protected TTFMtxEntry[] mtxTab;                  // Contains glyph data
     private int[] mtxEncoded = null;
 
     private String fontName = "";
@@ -94,7 +94,7 @@ public class TTFFile {
 
     private short lastChar = 0;
 
-    private int ansiWidth[];
+    private int[] ansiWidth;
     private Map ansiIndex;
 
     private TTFDirTabEntry currentDirTab;
@@ -102,23 +102,7 @@ public class TTFFile {
     /**
      * logging instance
      */
-    protected Log logger = null;
-
-    /**
-     * Sets the Commons-Logging instance for this class
-     * @param logger The Commons-Logging instance
-     */
-    public void setLogger(Log logger) {
-        this.logger = logger;
-    }
-
-    /**
-     * Returns the Commons-Logging instance for this class
-     * @return  The Commons-Logging instance
-     */
-    protected Log getLogger() {
-        return logger;
-    }
+    protected Log log = LogFactory.getLog(TTFFile.class);
 
     /**
      * Position inputstream to position indicated
@@ -128,9 +112,7 @@ public class TTFFile {
                   long offset) throws IOException {
         TTFDirTabEntry dt = (TTFDirTabEntry)dirTabs.get(name);
         if (dt == null) {
-            if (logger != null) {
-                logger.error("Dirtab " + name + " not found.");
-            }
+            log.error("Dirtab " + name + " not found.");
         } else {
             in.seekSet(dt.getOffset() + offset);
             this.currentDirTab = dt;
@@ -175,9 +157,7 @@ public class TTFFile {
         int numCMap = in.readTTFUShort();    // Number of cmap subtables
         long cmapUniOffset = 0;
 
-        if (logger != null) {
-            logger.info(numCMap + " cmap tables");
-        }
+        log.info(numCMap + " cmap tables");
 
         //Read offset for all tables. We are only interested in the unicode table
         for (int i = 0; i < numCMap; i++) {
@@ -185,10 +165,7 @@ public class TTFFile {
             int cmapEID = in.readTTFUShort();
             long cmapOffset = in.readTTFULong();
 
-            if (logger != null) {
-                logger.debug("Platform ID: " + cmapPID
-                    + " Encoding: " + cmapEID);
-            }
+            log.debug("Platform ID: " + cmapPID + " Encoding: " + cmapEID);
 
             if (cmapPID == 3 && cmapEID == 1) {
                 cmapUniOffset = cmapOffset;
@@ -196,10 +173,8 @@ public class TTFFile {
         }
 
         if (cmapUniOffset <= 0) {
-            if (logger != null) {
-                logger.fatal("Unicode cmap table not present");
-                logger.fatal("Unsupported format: Aborting");
-            }
+            log.fatal("Unicode cmap table not present");
+            log.fatal("Unsupported format: Aborting");
             return false;
         }
 
@@ -208,9 +183,7 @@ public class TTFFile {
         int cmapFormat = in.readTTFUShort();
         /*int cmap_length =*/ in.readTTFUShort(); //skip cmap length
 
-        if (logger != null) {
-            logger.info("CMAP format: " + cmapFormat);
-        }
+        log.info("CMAP format: " + cmapFormat);
 
         if (cmapFormat == 4) {
             in.skip(2);    // Skip version number
@@ -219,18 +192,18 @@ public class TTFFile {
             int cmapEntrySelector = in.readTTFUShort();
             int cmapRangeShift = in.readTTFUShort();
 
-            if (logger != null & logger.isDebugEnabled()) {
-                logger.debug("segCountX2   : " + cmapSegCountX2);
-                logger.debug("searchRange  : " + cmapSearchRange);
-                logger.debug("entrySelector: " + cmapEntrySelector);
-                logger.debug("rangeShift   : " + cmapRangeShift);
+            if (log.isDebugEnabled()) {
+                log.debug("segCountX2   : " + cmapSegCountX2);
+                log.debug("searchRange  : " + cmapSearchRange);
+                log.debug("entrySelector: " + cmapEntrySelector);
+                log.debug("rangeShift   : " + cmapRangeShift);
             }
 
 
-            int cmapEndCounts[] = new int[cmapSegCountX2 / 2];
-            int cmapStartCounts[] = new int[cmapSegCountX2 / 2];
-            int cmapDeltas[] = new int[cmapSegCountX2 / 2];
-            int cmapRangeOffsets[] = new int[cmapSegCountX2 / 2];
+            int[] cmapEndCounts = new int[cmapSegCountX2 / 2];
+            int[] cmapStartCounts = new int[cmapSegCountX2 / 2];
+            int[] cmapDeltas = new int[cmapSegCountX2 / 2];
+            int[] cmapRangeOffsets = new int[cmapSegCountX2 / 2];
 
             for (int i = 0; i < (cmapSegCountX2 / 2); i++) {
                 cmapEndCounts[i] = in.readTTFUShort();
@@ -259,10 +232,8 @@ public class TTFFile {
 
             for (int i = 0; i < cmapStartCounts.length; i++) {
 
-                if (logger != null) {
-                    logger.debug(i + ": " + cmapStartCounts[i]
-                        + " - " + cmapEndCounts[i]);
-                }
+                log.debug(i + ": " + cmapStartCounts[i]
+                    + " - " + cmapEndCounts[i]);
 
                 for (int j = cmapStartCounts[i]; j <= cmapEndCounts[i]; j++) {
 
@@ -295,47 +266,39 @@ public class TTFFile {
                                 Iterator e = v.listIterator();
                                 while (e.hasNext()) {
                                     Integer aIdx = (Integer)e.next();
-                                    ansiWidth[aIdx.intValue()] =
-                                        mtxTab[glyphIdx].getWx();
+                                    ansiWidth[aIdx.intValue()] 
+                                        = mtxTab[glyphIdx].getWx();
 
-                                    if (logger != null) {
-                                        logger.debug("Added width "
+                                    log.debug("Added width "
                                             + mtxTab[glyphIdx].getWx()
                                             + " uni: " + j
                                             + " ansi: " + aIdx.intValue());
-                                    }
                                 }
                             }
 
-                            if (logger != null) {
-                                logger.debug("Idx: "
+                            log.debug("Idx: "
                                     + glyphIdx
                                     + " Delta: " + cmapDeltas[i]
                                     + " Unicode: " + j
                                     + " name: " + mtxTab[glyphIdx].getName());
-                            }
                         } else {
                             glyphIdx = (j + cmapDeltas[i]) & 0xffff;
 
                             if (glyphIdx < mtxTab.length) {
                                 mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
                             } else {
-                                if (getLogger().isDebugEnabled()) {
-                                    getLogger().debug("Glyph " + glyphIdx
+                                log.debug("Glyph " + glyphIdx
                                                    + " out of range: "
                                                    + mtxTab.length);
-                                }
                             }
 
                             unicodeMapping.add(new UnicodeMapping(glyphIdx, j));
                             if (glyphIdx < mtxTab.length) {
                                 mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
                             } else {
-                                if (getLogger().isDebugEnabled()) {
-                                    getLogger().debug("Glyph " + glyphIdx
+                                log.debug("Glyph " + glyphIdx
                                                    + " out of range: "
                                                    + mtxTab.length);
-                                }
                             }
 
                             // Also add winAnsiWidth
@@ -382,8 +345,8 @@ public class TTFFile {
                 max = mtxTab[i].getIndex();
             }
         }
-        getLogger().info("Min: " + min);
-        getLogger().info("Max: " + max);
+        log.info("Min: " + min);
+        log.info("Max: " + max);
     }
 
 
@@ -455,7 +418,7 @@ public class TTFFile {
         readDirTabs(in);
         readFontHeader(in);
         getNumGlyphs(in);
-        getLogger().info("Number of glyphs in font: " + numberOfGlyphs);
+        log.info("Number of glyphs in font: " + numberOfGlyphs);
         readHorizontalHeader(in);
         readHorizontalMetrics(in);
         initAnsiWidths();
@@ -711,7 +674,7 @@ public class TTFFile {
 
         dirTabs = new java.util.HashMap();
         TTFDirTabEntry[] pd = new TTFDirTabEntry[ntabs];
-        getLogger().debug("Reading " + ntabs + " dir tables");
+        log.debug("Reading " + ntabs + " dir tables");
         for (int i = 0; i < ntabs; i++) {
             pd[i] = new TTFDirTabEntry();
             dirTabs.put(pd[i].read(in), pd[i]);
@@ -766,7 +729,7 @@ public class TTFFile {
 
         in.skip(2 + 2 + 3 * 2 + 8 * 2);
         nhmtx = in.readTTFUShort();
-        getLogger().debug("Number of horizontal metrics: " + nhmtx);
+        log.debug("Number of horizontal metrics: " + nhmtx);
 
         //Check OS/2 table for ascender/descender if necessary
         if (ascender == 0 || descender == 0) {
@@ -795,7 +758,7 @@ public class TTFFile {
         mtxTab = new TTFMtxEntry[mtxSize];
 
         if (TRACE_ENABLED) {
-            getLogger().debug("*** Widths array: \n");
+            log.debug("*** Widths array: \n");
         }
         for (int i = 0; i < mtxSize; i++) {
             mtxTab[i] = new TTFMtxEntry();
@@ -805,8 +768,8 @@ public class TTFFile {
             mtxTab[i].setLsb(in.readTTFUShort());
 
             if (TRACE_ENABLED) {
-                if (getLogger().isDebugEnabled()) {
-                    getLogger().debug("   width[" + i + "] = "
+                if (log.isDebugEnabled()) {
+                    log.debug("   width[" + i + "] = "
                         + convertTTFUnit2PDFUnit(mtxTab[i].getWx()) + ";");
                 }
             }
@@ -838,16 +801,16 @@ public class TTFFile {
         //Skip memory usage values
         in.skip(4 * 4);
 
-        getLogger().debug("PostScript format: " + postFormat);
+        log.debug("PostScript format: " + postFormat);
         switch (postFormat) {
         case 0x00010000:
-            getLogger().debug("PostScript format 1");
+            log.debug("PostScript format 1");
             for (int i = 0; i < Glyphs.MAC_GLYPH_NAMES.length; i++) {
                 mtxTab[i].setName(Glyphs.MAC_GLYPH_NAMES[i]);
             }
             break;
         case 0x00020000:
-            getLogger().debug("PostScript format 2");
+            log.debug("PostScript format 2");
             int numGlyphStrings = 0;
 
             // Read Number of Glyphs
@@ -862,15 +825,15 @@ public class TTFFile {
                     numGlyphStrings++;
                 }
 
-                if (getLogger().isDebugEnabled()) {
-                    getLogger().debug("PostScript index: " + mtxTab[i].getIndexAsString());
+                if (log.isDebugEnabled()) {
+                    log.debug("PostScript index: " + mtxTab[i].getIndexAsString());
                 }
             }
 
             // firstChar=minIndex;
             String[] psGlyphsBuffer = new String[numGlyphStrings];
-            if (getLogger().isDebugEnabled()) {
-                getLogger().debug("Reading " + numGlyphStrings
+            if (log.isDebugEnabled()) {
+                log.debug("Reading " + numGlyphStrings
                         + " glyphnames, that are not in the standard Macintosh"
                         + " set. Total number of glyphs=" + l);
             }
@@ -886,8 +849,8 @@ public class TTFFile {
                     if (!mtxTab[i].isIndexReserved()) {
                         int k = mtxTab[i].getIndex() - NMACGLYPHS;
 
-                        if (getLogger().isDebugEnabled()) {
-                            getLogger().debug(k + " i=" + i + " mtx=" + mtxTab.length
+                        if (log.isDebugEnabled()) {
+                            log.debug(k + " i=" + i + " mtx=" + mtxTab.length
                                 + " ps=" + psGlyphsBuffer.length);
                         }
 
@@ -899,10 +862,10 @@ public class TTFFile {
             break;
         case 0x00030000:
             // PostScript format 3 contains no glyph names
-            getLogger().debug("PostScript format 3");
+            log.debug("PostScript format 3");
             break;
         default:
-            getLogger().error("Unknown PostScript format: " + postFormat);
+            log.error("Unknown PostScript format: " + postFormat);
         }
     }
 
@@ -987,7 +950,7 @@ public class TTFFile {
                 mtxTab[i].bbox[2] = mtxTab[0].bbox[0];
                 mtxTab[i].bbox[3] = mtxTab[0].bbox[0]; */
             }
-            getLogger().debug(mtxTab[i].toString(this));
+            log.debug(mtxTab[i].toString(this));
         }
     }
 
@@ -1019,7 +982,7 @@ public class TTFFile {
                 in.seekSet(j + in.readTTFUShort());
                 String txt = in.readTTFString(l);
                 
-                getLogger().debug(platformID + " " 
+                log.debug(platformID + " " 
                     + encodingID + " "
                     + languageID + " "
                     + k + " " + txt);
@@ -1201,9 +1164,9 @@ public class TTFFile {
                 dirOffsets[i] = in.readTTFULong();
             }
 
-            getLogger().info("This is a TrueType collection file with "
+            log.info("This is a TrueType collection file with "
                                    + numDirectories + " fonts");
-            getLogger().info("Containing the following fonts: ");
+            log.info("Containing the following fonts: ");
             // Read all the directories and name tables to check
             // If the font exists - this is a bit ugly, but...
             boolean found = false;
@@ -1220,9 +1183,9 @@ public class TTFFile {
                 if (fullName.equals(name)) {
                     found = true;
                     dirTabOffset = dirOffsets[i];
-                    getLogger().info(fullName + " <-- selected");
+                    log.info(fullName + " <-- selected");
                 } else {
-                    getLogger().info(fullName);
+                    log.info(fullName);
                 }
 
                 // Reset names
@@ -1289,12 +1252,8 @@ public class TTFFile {
      * @param args The command line arguments
      */
     public static void main(String[] args) {
-        SimpleLog log = new SimpleLog("FOP/Fonts");
-        log.setLevel(SimpleLog.LOG_LEVEL_WARN);
-        
         try {
             TTFFile ttfFile = new TTFFile();
-            ttfFile.setLogger(log);
 
             FontFileReader reader = new FontFileReader(args[0]);
 
@@ -1307,7 +1266,8 @@ public class TTFFile {
             ttfFile.printStuff();
 
         } catch (IOException ioe) {
-            log.error("Problem reading font: " + ioe.toString(), ioe);
+            System.err.println("Problem reading font: " + ioe.toString());
+            ioe.printStackTrace(System.err);
         }
     }
 
