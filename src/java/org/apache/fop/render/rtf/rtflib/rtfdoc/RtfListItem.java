@@ -28,6 +28,7 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
 import java.io.IOException;
+
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
 
 /**  Model of an RTF list item, which can contain RTF paragraphs
@@ -54,11 +55,12 @@ public class RtfListItem extends RtfContainer
 
         protected void writeRtfPrefix() throws IOException {
             super.writeRtfPrefix();
-            listStyle.writeParagraphPrefix(this);
+            getRtfListStyle().writeParagraphPrefix(this);
         }
-            }
+    }
 
     public class RtfListItemLabel extends RtfTextrun implements IRtfTextrunContainer {
+        
         private RtfListItem rtfListItem;
         
         public RtfListItemLabel(RtfListItem item) throws IOException {
@@ -199,7 +201,11 @@ public class RtfListItem extends RtfContainer
             return listStyle;
         }
     }
-  
+    
+    /**
+     * Get the parent list.
+     * @return the parent list
+     */
     public RtfList getParentList() {
         return parentList;
     }
