@@ -70,6 +70,7 @@ public class StaticContent extends Flow {
         } else if (regionClass.equals(RegionAfter.REGION_CLASS)) {
             area.setAbsoluteHeight(area.getPage().getBody().getMaxHeight());
         }
+	setContentWidth(area.getContentWidth());
 
         for (int i = 0; i < numChildren; i++) {
             FObj fo = (FObj)children.elementAt(i);

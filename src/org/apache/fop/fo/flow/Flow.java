@@ -54,6 +54,11 @@ public class Flow extends FObj {
      */
     private String _flowName;
 
+    /**
+     * Content-width of current column area during layout
+     */
+    private int contentWidth;
+
     private Status _status = new Status(Status.AREA_FULL_NONE);
 
 
@@ -145,6 +150,8 @@ public class Flow extends FObj {
                 this.marker = i;
                 markerSnapshot = this.getMarkerSnapshot(new Vector());
             }
+	    // Set current content width for percent-based lengths in children
+	    setContentWidth(currentArea.getContentWidth());
 
             _status = fo.layout(currentArea);
 
@@ -200,15 +207,15 @@ public class Flow extends FObj {
         return _status;
     }
 
+    protected void setContentWidth(int contentWidth) {
+	this.contentWidth = contentWidth;
+    }
     /**
      * Return the content width of this flow (really of the region
      * in which it is flowing).
      */
     public int getContentWidth() {
-        if (area != null)
-            return area.getContentWidth();    // getAllocationWidth()??
-        else
-            return 0;                         // not laid out yet
+	return this.contentWidth;
     }
 
     protected String getElementName() {
