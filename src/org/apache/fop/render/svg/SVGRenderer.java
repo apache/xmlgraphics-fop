@@ -98,13 +98,6 @@ public class SVGRenderer extends AbstractRenderer {
     protected float currentBlue = 0;
 
     /**
-     * The parent component, used to set up the font.
-     * This is needed as FontSetup needs a live AWT component
-     * in order to generate valid font measures.
-     */
-    protected Component parent;
-
-    /**
      * options
      */
     protected Hashtable options;
@@ -607,9 +600,13 @@ public class SVGRenderer extends AbstractRenderer {
               throws IOException {
         DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
         svgDocument = impl.createDocument(svgNS, "svg", null);
-
-        svgRoot = svgDocument.getDocumentElement();
-    }
+        ProcessingInstruction pi = 
+                 svgDocument.createProcessingInstruction(
+                         "xml",
+                         " version=\"1.0\" encoding=\"ISO-8859-1\"");
+				svgRoot = svgDocument.getDocumentElement();
+        svgDocument.insertBefore(pi, svgRoot);
+		}
 
     public void stopRenderer(OutputStream outputStream)
     throws IOException {

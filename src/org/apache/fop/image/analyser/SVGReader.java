@@ -156,6 +156,11 @@ public class SVGReader extends AbstractImageReader {
             return "en"; // userLanguages;
         }
 
+        public String getMedia() {
+            return "";
+        }
+
+
         /**
          * Returns the user stylesheet uri.
          * @return null if no user style sheet was specified.
