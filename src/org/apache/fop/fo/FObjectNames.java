@@ -86,8 +86,9 @@ public class FObjectNames {
                               TABLE_ROW = 54,
                                   TITLE = 55,
                                 WRAPPER = 56,
+                                 PCDATA = 57,
 
-                                LAST_FO = WRAPPER;
+                                LAST_FO = PCDATA;
 
     /** Index of FO names in foLocalNames array. */
     private static final int NAMEX = 0;
@@ -105,38 +106,38 @@ public class FObjectNames {
      */
     public static final String[][] foLocalNames = {
                                  { "no-fo", ""                }  //0
-                           ,{ "basic-link", "fo.sequences"    }  //1
-                        ,{ "bidi-override", "fo.sequences"    }  //2
-                                ,{ "block", "fo.sequences"    }  //3
-                      ,{ "block-container", "fo.sequences"    }  //4
-                            ,{ "character", "fo.sequences"    }  //5
+                           ,{ "basic-link", "fo.flow"         }  //1
+                        ,{ "bidi-override", "fo.flow"         }  //2
+                                ,{ "block", "fo.flow"         }  //3
+                      ,{ "block-container", "fo.flow"         }  //4
+                            ,{ "character", "fo.flow"         }  //5
                         ,{ "color-profile", "fo.declarations" }  //6
     ,{ "conditional-page-master-reference", "fo.pagination"   }  //7
                          ,{ "declarations", "fo.declarations" }  //8
-                     ,{ "external-graphic", "fo.sequences"    }  //9
-                                ,{ "float", "fo.sequences"    }  //10
-                                 ,{ "flow", "fo.sequences"    }  //11
-                             ,{ "footnote", "fo.sequences"    }  //12
-                        ,{ "footnote-body", "fo.sequences"    }  //13
-                 ,{ "initial-property-set", "fo.sequences"    }  //14
-                               ,{ "inline", "fo.sequences"    }  //15
-                     ,{ "inline-container", "fo.sequences"    }  //16
-              ,{ "instream-foreign-object", "fo.sequences"    }  //17
+                     ,{ "external-graphic", "fo.flow"         }  //9
+                                ,{ "float", "fo.flow"         }  //10
+                                 ,{ "flow", "fo.flow"         }  //11
+                             ,{ "footnote", "fo.flow"         }  //12
+                        ,{ "footnote-body", "fo.flow"         }  //13
+                 ,{ "initial-property-set", "fo.flow"         }  //14
+                               ,{ "inline", "fo.flow"         }  //15
+                     ,{ "inline-container", "fo.flow"         }  //16
+              ,{ "instream-foreign-object", "fo.flow"         }  //17
                     ,{ "layout-master-set", "fo.pagination"   }  //18
-                               ,{ "leader", "fo.sequences"    }  //19
-                           ,{ "list-block", "fo.sequences"    }  //20
-                            ,{ "list-item", "fo.sequences"    }  //21
-                       ,{ "list-item-body", "fo.sequences"    }  //22
-                      ,{ "list-item-label", "fo.sequences"    }  //23
-                               ,{ "marker", "fo.sequences"    }  //24
-                           ,{ "multi-case", "fo.sequences"    }  //25
-                     ,{ "multi-properties", "fo.sequences"    }  //26
-                   ,{ "multi-property-set", "fo.sequences"    }  //27
-                         ,{ "multi-switch", "fo.sequences"    }  //28
-                         ,{ "multi-toggle", "fo.sequences"    }  //29
-                          ,{ "page-number", "fo.sequences"    }  //30
-                 ,{ "page-number-citation", "fo.sequences"    }  //31
-                        ,{ "page-sequence", "fo.sequences"    }  //32
+                               ,{ "leader", "fo.flow"         }  //19
+                           ,{ "list-block", "fo.flow"         }  //20
+                            ,{ "list-item", "fo.flow"         }  //21
+                       ,{ "list-item-body", "fo.flow"         }  //22
+                      ,{ "list-item-label", "fo.flow"         }  //23
+                               ,{ "marker", "fo.flow"         }  //24
+                           ,{ "multi-case", "fo.flow"         }  //25
+                     ,{ "multi-properties", "fo.flow"         }  //26
+                   ,{ "multi-property-set", "fo.flow"         }  //27
+                         ,{ "multi-switch", "fo.flow"         }  //28
+                         ,{ "multi-toggle", "fo.flow"         }  //29
+                          ,{ "page-number", "fo.flow"         }  //30
+                 ,{ "page-number-citation", "fo.flow"         }  //31
+                        ,{ "page-sequence", "fo.flow"         }  //32
                  ,{ "page-sequence-master", "fo.pagination"   }  //33
                          ,{ "region-after", "fo.pagination"   }  //34
                         ,{ "region-before", "fo.pagination"   }  //35
@@ -145,22 +146,23 @@ public class FObjectNames {
                          ,{ "region-start", "fo.pagination"   }  //38
   ,{ "repeatable-page-master-alternatives", "fo.pagination"   }  //39
      ,{ "repeatable-page-master-reference", "fo.pagination"   }  //40
-                      ,{ "retrieve-marker", "fo.sequences"    }  //41
+                      ,{ "retrieve-marker", "fo.flow"         }  //41
                                  ,{ "root", "fo"              }  //42
                    ,{ "simple-page-master", "fo.pagination"   }  //43
          ,{ "single-page-master-reference", "fo.pagination"   }  //44
-                       ,{ "static-content", "fo.sequences"    }  //45
-                                ,{ "table", "fo.sequences"    }  //46
-                    ,{ "table-and-caption", "fo.sequences"    }  //47
-                           ,{ "table-body", "fo.sequences"    }  //48
-                        ,{ "table-caption", "fo.sequences"    }  //49
-                           ,{ "table-cell", "fo.sequences"    }  //50
-                         ,{ "table-column", "fo.sequences"    }  //51
-                         ,{ "table-footer", "fo.sequences"    }  //52
-                         ,{ "table-header", "fo.sequences"    }  //53
-                            ,{ "table-row", "fo.sequences"    }  //54
-                                ,{ "title", "fo.sequences"    }  //55
-                              ,{ "wrapper", "fo.sequences"    }  //56
+                       ,{ "static-content", "fo.flow"         }  //45
+                                ,{ "table", "fo.flow"         }  //46
+                    ,{ "table-and-caption", "fo.flow"         }  //47
+                           ,{ "table-body", "fo.flow"         }  //48
+                        ,{ "table-caption", "fo.flow"         }  //49
+                           ,{ "table-cell", "fo.flow"         }  //50
+                         ,{ "table-column", "fo.flow"         }  //51
+                         ,{ "table-footer", "fo.flow"         }  //52
+                         ,{ "table-header", "fo.flow"         }  //53
+                            ,{ "table-row", "fo.flow"         }  //54
+                                ,{ "title", "fo.flow"         }  //55
+                              ,{ "wrapper", "fo.flow"         }  //56
+                               ,{ "pcdata", "fo.flow"         }  //57
     };
 
     /**
