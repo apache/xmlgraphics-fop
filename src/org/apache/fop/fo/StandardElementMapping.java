@@ -18,7 +18,7 @@ import org.apache.fop.fo.pagination.*;
 public class StandardElementMapping implements ElementMapping {
     private static HashMap foObjs = null;
 
-    public synchronized void addToBuilder(TreeBuilder builder) {
+    private static synchronized void setupFO() {
 
         if(foObjs == null) {
             foObjs = new HashMap();
@@ -107,7 +107,10 @@ public class StandardElementMapping implements ElementMapping {
             foObjs.put("marker", Marker.maker());
             foObjs.put("retrieve-marker", RetrieveMarker.maker());
         }
+    }
 
+    public void addToBuilder(TreeBuilder builder) {
+        setupFO();
         String uri = "http://www.w3.org/1999/XSL/Format";
         builder.addMapping(uri, foObjs);
 
@@ -119,7 +122,6 @@ public class StandardElementMapping implements ElementMapping {
             builder.addElementPropertyList(uri, elem,
                                            FOPropertyMapping.getElementMapping(elem));
         }
-
     }
-
 }
+
