@@ -12,6 +12,7 @@ import org.apache.fop.layout.Area;
 import org.apache.fop.layout.AreaClass;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.IDReferences;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.AreaClass;
@@ -19,6 +20,8 @@ import org.apache.fop.layout.LinkSet;
 import org.apache.fop.system.BufferManager;
 import org.apache.fop.fo.flow.Marker;
 
+// Java
+import java.util.Iterator;
 import org.xml.sax.Attributes;
 
 import java.util.Iterator;
@@ -185,6 +188,19 @@ public class FObj extends FONode {
                 !p.generatesReferenceAreas() && (parent = p.getParent()) != null && (parent instanceof FObj);
                 p = (FObj)parent);
         this.properties.setWritingMode(p.getProperty("writing-mode").getEnum());
+    }
+
+    /**
+     * Return a LayoutManager responsible for laying out this FObj's content.
+     * Must override in subclasses if their content can be laid out.
+     */
+    public LayoutManager getLayoutManager() {
+	return null;
+    }
+
+    
+    public Iterator getChildren() {
+	return children.iterator();
     }
 
     public void setIsInTableCell() {
