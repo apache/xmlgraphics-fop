@@ -26,6 +26,9 @@ import org.apache.fop.fo.flow.FoPageSequence;
  * The body region area.
  * This area contains a main reference area and optionally a
  * before float and footnote area.
+ * 
+ * The region-body-reference-area is the primary context for the layout of
+ * the contents of fo:flow blocks on the page. 
  */
 public class RegionBodyRefArea
 extends RegionRefArea
