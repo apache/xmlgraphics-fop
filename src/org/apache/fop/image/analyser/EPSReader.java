@@ -170,20 +170,29 @@ public class EPSReader implements ImageReader {
     }
 
     private int readLongString(EPSImage.EPSData data, long[] mbbox, int i, int idx) {
-        while (idx < data.epsFile.length && (data.epsFile[idx] == 32))
-            idx++;
+        while (idx < data.epsFile.length && (data.epsFile[idx] == 32)) {
+           idx++;
+        }
 
         int nidx = idx;
 
+        // check also for ANSI46(".") to identify floating point values
         while (nidx < data.epsFile.length &&
                 ((data.epsFile[nidx] >= 48 && data.epsFile[nidx] <= 57) ||
-                (data.epsFile[nidx] == 45)))
+                (data.epsFile[nidx] == 45) || (data.epsFile[nidx] == 46) )) {
             nidx++;
+        }
 
         byte[] num = new byte[nidx - idx];
         System.arraycopy(data.epsFile, idx, num, 0, nidx - idx);
         String ns = new String(num);
-        mbbox[i] = Long.parseLong(ns);
+
+        //if( ns.indexOf(".") != -1 ) {
+            // do something like logging a warning
+        //}
+
+        // then parse the double and round off to the next math. Integer
+        mbbox[i] = (long) Math.ceil( Double.parseDouble( ns ) );
 
         return (1 + nidx - idx);
     }
@@ -191,6 +200,5 @@ public class EPSReader implements ImageReader {
     public String getMimeType() {
         return "image/eps";
     }
-
 }
 
