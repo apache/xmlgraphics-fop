@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE configuration>
 <!--<!DOCTYPE configuration SYSTEM "config.dtd">-->
 <!-- to developers: have a look at the config.dtd to 
      see how to structure your config entries -->
@@ -5,7 +7,7 @@
 <configuration>
   <entry>
     <key>version</key>
-    <value>FOP @version@</value>
+    <value>FOP 0.20.0 Alt-Design</value>
   </entry>
 
   <!-- default values for commandline options -->
@@ -14,8 +16,8 @@
     <key>quiet</key>
     <value>false</value>
   </entry>
-<!-- sets debug mode on/off; debug mode hasm more progress 
-     information and a stacktrace in case of a fatal exception -->
+  <!-- sets debug mode on/off; debug mode hasm more progress 
+  information and a stacktrace in case of a fatal exception -->
   <entry>
     <key>debugMode</key>
     <value>false</value>
@@ -27,14 +29,18 @@
   </entry>
   <!--  -->
   <entry>
-    <key>debugMode</key>
-    <value>false</value>
+    <key>userConfigFileName</key>
+    <value>userconfig.xml</value>
   </entry>
 
+  <entry>
+    <key>languageConfigFileName</key>
+    <value>xml-lang.xml</value>
+  </entry>
 
   <!-- stream-filter-list provides the default filters that are applied to all
-       stream objects within the PDF file. These are normally used for 
-       compression -->
+  stream objects within the PDF file. These are normally used for 
+  compression -->
   <entry role="pdf">
     <key>stream-filter-list</key>
     <list>
@@ -42,11 +48,11 @@
       <value>flate</value>
       
       <!-- encodes binary data into printable ascii characters (default off)
-           This provides about a 4:5 expansion of data size -->
+      This provides about a 4:5 expansion of data size -->
       <value>ascii-85</value>
 
       <!-- encodes binary data with hex representation (default off)
-           This filter is not recommended as it doubles the data size -->
+      This filter is not recommended as it doubles the data size -->
       <!-- <value>ascii-hex</value> -->
     </list>
   </entry>

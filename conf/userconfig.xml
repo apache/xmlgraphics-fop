@@ -7,8 +7,37 @@
      Usage: java org.apache.fop.apps.Fop -c userconfig.xml -fo fo-file -pdf pdf-file
 -->
 
-
 <configuration>
+
+  <entry>
+    <key>debugMode</key>
+    <value>true</value>
+  </entry>
+ 
+  <entry>
+    <key>foFileName</key>
+    <value>/home/pbw/public_html/xml/newtest3.fo</value>
+  </entry>
+
+  <entry>
+    <key>inputMode</key>
+    <value>fo</value>
+  </entry>
+
+  <entry>
+    <key>foFileName</key>
+    <value>/home/pbw/public_html/xml/newtest3.fo</value>
+  </entry>
+
+  <entry>
+    <key>outputMode</key>
+    <value>pdf</value>
+  </entry>
+
+  <entry>
+    <key>outputFileName</key>
+    <value>/home/pbw/public_html/xml/newtest3.pdf</value>
+  </entry>
 
 <!--  NOT IMPLEMENTED
 basedir: normally the base directory is the directory where the fo file is 
