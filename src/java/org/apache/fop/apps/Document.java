@@ -24,22 +24,25 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.HashSet;
 
-
 // FOP
-import org.apache.fop.apps.FOUserAgent;
-
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.AreaTreeControl;
 import org.apache.fop.area.AreaTreeModel;
+import org.apache.fop.area.Title;
 
-import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.FOTreeEvent;
 import org.apache.fop.fo.FOTreeListener;
+import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.layout.LayoutStrategy;
+import org.apache.fop.layoutmgr.AddLMVisitor;
+import org.apache.fop.layoutmgr.ContentLayoutManager;
+import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
+import org.apache.fop.layoutmgr.LMiter;
+import org.apache.fop.layoutmgr.PageLayoutManager;
+
 
 import org.apache.commons.logging.Log;
 
@@ -59,13 +62,6 @@ public class Document implements FOTreeControl, FOTreeListener,
     /** The Font information relevant for this document */
     private FontInfo fontInfo;
     
-    /**
-     * the LayoutStrategy to be used to process this document
-     * TODO: this actually belongs in the RenderContext class, when it is
-     * created
-     */
-    private LayoutStrategy layoutStrategy = null;
-
     /** The current AreaTree for the PageSequence being rendered. */
     public AreaTree areaTree;
 
@@ -73,6 +69,10 @@ public class Document implements FOTreeControl, FOTreeListener,
     public AreaTreeModel atModel;
 
     private Bookmarks bookmarks = null;
+
+    /** Useful only for allowing subclasses of AddLMVisitor to be set by those
+     extending FOP **/
+     private AddLMVisitor addLMVisitor = null;
 
     /**
      * The current set of id's in the FO tree.
@@ -104,21 +104,6 @@ public class Document implements FOTreeControl, FOTreeListener,
     }
 
     /**
-     * Set the LayoutStrategy to be used to process this Document
-     * @param ls the LayoutStrategy object to be used to process this Document
-     */
-    public void setLayoutStrategy(LayoutStrategy ls) {
-        this.layoutStrategy = ls;
-    }
-
-    /**
-     * @return this Document's LayoutStrategy object
-     */
-    public LayoutStrategy getLayoutStrategy () {
-        return layoutStrategy;
-    }
-
-    /**
      * Public accessor for the parent Driver of this Document
      * @return the parent Driver for this Document
      */
@@ -135,7 +120,7 @@ public class Document implements FOTreeControl, FOTreeListener,
     public void foPageSequenceComplete (FOTreeEvent event) throws FOPException {
         PageSequence pageSeq = event.getPageSequence();
         areaTree.addBookmarksToAreaTree();
-        layoutStrategy.format(pageSeq, areaTree);
+        format(pageSeq, areaTree);
     }
 
     /**
@@ -195,4 +180,104 @@ public class Document implements FOTreeControl, FOTreeListener,
         return foInputHandler;
     }
 
+    /**
+     * Runs the formatting of this page sequence into the given area tree
+     *
+     * @param pageSeq the PageSequence to be formatted
+     * @param areaTree the area tree to format this page sequence into
+     * @throws FOPException if there is an error formatting the contents
+     */
+    public void format(PageSequence pageSeq, AreaTree areaTree) throws FOPException {
+        Title title = null;
+        if (pageSeq.getTitleFO() != null) {
+            title = getTitleArea(pageSeq.getTitleFO());
+        }
+        areaTree.startPageSequence(title);
+        // Make a new PageLayoutManager and a FlowLayoutManager
+        // Run the PLM in a thread
+        // Wait for them to finish.
+
+        // If no main flow, nothing to layout!
+        if (pageSeq.getMainFlow() == null) {
+            return;
+        }
+
+        // Initialize if already used?
+        //    this.layoutMasterSet.resetPageMasters();
+        if (pageSeq.getPageSequenceMaster() != null) {
+            pageSeq.getPageSequenceMaster().reset();
+        }
+
+        pageSeq.initPageNumber();
+
+        // This will layout pages and add them to the area tree
+        PageLayoutManager pageLM = new PageLayoutManager(areaTree, pageSeq, this);
+        pageLM.setPageCounting(pageSeq.getCurrentPageNumber(),
+                               pageSeq.getPageNumberGenerator());
+
+        // For now, skip the threading and just call run directly.
+        pageLM.run();
+
+        // Thread layoutThread = new Thread(pageLM);
+        //  layoutThread.start();
+        // log.debug("Layout thread started");
+        
+        // // wait on both managers
+        // try {
+        //     layoutThread.join();
+        //     log.debug("Layout thread done");
+        // } catch (InterruptedException ie) {
+        //     log.error("PageSequence.format() interrupted waiting on layout");
+        // }
+        
+        pageSeq.setCurrentPageNumber(pageLM.getPageCount());
+        // Tell the root the last page number we created.
+        pageSeq.getRoot().setRunningPageNumberCounter(pageSeq.getCurrentPageNumber());
+    }
+
+    /**
+     * @return the Title area
+     */
+    public org.apache.fop.area.Title getTitleArea(org.apache.fop.fo.pagination.Title foTitle) {
+        // use special layout manager to add the inline areas
+        // to the Title.
+        InlineStackingLayoutManager lm;
+        lm = new InlineStackingLayoutManager(foTitle);
+        lm.setLMiter(new LMiter(lm, foTitle.children.listIterator()));
+        lm.initialize();
+
+        // get breaks then add areas to title
+        org.apache.fop.area.Title title =
+                 new org.apache.fop.area.Title();
+
+        ContentLayoutManager clm = new ContentLayoutManager(title);
+        clm.setUserAgent(foTitle.getUserAgent());
+        lm.setParent(clm);
+
+        clm.fillArea(lm);
+
+        return title;
+    }
+
+    /**
+     * Public accessor to set the AddLMVisitor object that should be used.
+     * This allows subclasses of AddLMVisitor to be used, which can be useful
+     * for extensions to the FO Tree.
+     * @param addLMVisitor the AddLMVisitor object that should be used.
+     */
+    public void setAddLMVisitor(AddLMVisitor addLMVisitor) {
+        this.addLMVisitor = addLMVisitor;
+    }
+
+    /**
+     * Public accessor to get the AddLMVisitor object that should be used.
+     * @return the AddLMVisitor object that should be used.
+     */
+    public AddLMVisitor getAddLMVisitor() {
+        if (this.addLMVisitor == null) {
+            this.addLMVisitor = new AddLMVisitor();
+        }
+        return this.addLMVisitor;
+    }
+    
 }
