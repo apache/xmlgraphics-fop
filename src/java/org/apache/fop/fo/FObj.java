@@ -59,7 +59,6 @@ import java.util.Set;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Marker;
-import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.xml.sax.Attributes;
 
 /**
@@ -69,19 +68,12 @@ public class FObj extends FONode {
     private static final String FO_URI = "http://www.w3.org/1999/XSL/Format";
 
     /**
-     * Static property list builder that converts xml attributes
-     * into fo properties. This is static since the underlying
-     * property mappings for fo are also static.
-     */
-    protected static PropertyListBuilder plb = null;
-
-    /**
      * Formatting properties for this fo element.
      */
     public PropertyList properties;
 
     /**
-     * Property manager for handler some common properties.
+     * Property manager for handling some common properties.
      */
     protected PropertyManager propMgr;
 
@@ -127,22 +119,6 @@ public class FObj extends FONode {
         name = "fo:" + str;
     }
 
-    protected PropertyListBuilder getListBuilder() {
-        if (plb == null) {
-            plb = new PropertyListBuilder();
-            plb.addList(FOPropertyMapping.getGenericMappings());
-
-            for (Iterator iter =
-                      FOPropertyMapping.getElementMappings().iterator();
-                    iter.hasNext();) {
-                String elem = (String) iter.next();
-                plb.addElementList(elem,
-                                   FOPropertyMapping.getElementMapping(elem));
-            }
-        }
-        return plb;
-    }
-
     /**
      * Handle the attributes for this element.
      * The attributes must be used immediately as the sax attributes
@@ -151,8 +127,14 @@ public class FObj extends FONode {
      * @throws FOPException for invalid FO data
      */
     public void handleAttrs(Attributes attlist) throws FOPException {
-        properties = getListBuilder().makeList(FO_URI, name, attlist, this);
-        properties.setFObj(this);
+        FObj parentFO = findNearestAncestorFObj();
+        PropertyList parentProperties = null;
+        if (parentFO != null) {
+            parentProperties = parentFO.getPropertiesForNamespace(FO_URI);
+        }
+
+        properties = new PropertyList(this, parentProperties, FO_URI, name);
+        properties.addAttributesToList(attlist);
         this.propMgr = makePropertyManager(properties);
         setWritingMode();
     }
@@ -166,7 +148,7 @@ public class FObj extends FONode {
       while (par != null && !(par instanceof FObj)) {
           par = par.parent;
       }
-      return (FObj)par;
+      return (FObj) par;
     }
 
     /**
