@@ -186,6 +186,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     protected void doLayout() {
 
+        log.debug("Starting layout");
         // this should be done another way
         makeNewPage(false, false);
         createBodyMainReferenceArea();
@@ -206,6 +207,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             }
         }
         pageCount--;
+        log.debug("Ending layout");
     }
 
     /**

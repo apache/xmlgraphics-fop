@@ -19,6 +19,7 @@
 package org.apache.fop.fo;
 
 // Java
+import java.util.Map;
 import java.util.HashMap;
 import org.xml.sax.Attributes;
 
@@ -26,6 +27,9 @@ import org.xml.sax.Attributes;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Class containing the collection of properties for a given FObj.
@@ -96,6 +100,14 @@ public class PropertyList extends HashMap {
     private PropertyList parentPropertyList = null;
     private String namespace = "";
     private FObj fobj = null;
+
+    private Log log = LogFactory.getLog(PropertyList.class);
+
+    /**
+     * Cache for properties looked up via maker.findProperty
+     * with bTryInherit == true
+     */
+    private Map cache = new HashMap();
 
     /**
      * Basic constructor.
@@ -247,7 +259,73 @@ public class PropertyList extends HashMap {
         return null;
     }
 
+    /**
+     * Wrapper around PropertyMaker.findProperty using the cache;
+     * use this method only if bTryInherit == true.
+     * The propertyMaker parameter is there
+     * to avoid repeated lookup of the maker
+     * in an alternating sequence of calls
+     * between findProperty and maker.findProperty.
+     * This would not be valid for FO elements
+     * which have their own list of property makers,
+     * see findMaker(propId).
+     * @param propId the ID of the property
+     * @param propertyMaker the maker of the property
+     * @return the cached property value
+     */
+    public Property findProperty (int propId, PropertyMaker propertyMaker) 
+        throws FOPException {
+        Property p;
+        if (isInCache(propId)) {
+            p = getFromCache(propId);
+        } else {
+            p = propertyMaker.findProperty(this, true);
+            addToCache(propId, p);
+        }
+        return p;
+    }
 
+    /**
+     * Add a property value to the cache.
+     * The cached value may be null,
+     * meaning that no property value has been specified by the user
+     * on this FO element or, in the case of inheritable properties,
+     * on an ancester FO element.
+     * @param propId the ID of the property
+     * @param prop the property value being cached
+     */
+    private void addToCache(int propId, Property prop) {
+        String propertyName = FOPropertyMapping.getPropertyName(propId);
+        log.trace("PropertyList.addToCache: "
+                  + propertyName + ", " + getFObj().getName());
+        cache.put(new Integer(propId), prop);
+    }
+
+    /**
+     * Check whether a property is in the cache.
+     * The presence of a key for a property
+     * means that a value for this property has been cached.
+     * @return whether a property is in the cache
+     */
+    public boolean isInCache(int propId) {
+        // Uncomment one or the other to use/not use the cache
+        return cache.containsKey(new Integer(propId));
+        // return false;
+    }
+
+    /**
+     * Retrieve a property from the cache
+     * @param propId the ID of the property
+     * @return the cached property value
+     */
+    public Property getFromCache(int propId) {
+        Property prop;
+        String propertyName = FOPropertyMapping.getPropertyName(propId);
+        prop = (Property) cache.get(new Integer(propId));
+        log.trace("PropertyList.getFromCache: "
+                  + propertyName + ", " + getFObj().getName());
+        return prop;
+    }
 
     /**
      * Return the "nearest" specified value for the given property.

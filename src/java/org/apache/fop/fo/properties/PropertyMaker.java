@@ -32,6 +32,9 @@ import org.apache.fop.fo.ShorthandParser;
 import org.apache.fop.fo.expr.PropertyInfo;
 import org.apache.fop.fo.expr.PropertyParser;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /**
  * Base class for all property makers
@@ -51,6 +54,8 @@ public class PropertyMaker implements Cloneable {
 
     protected Property defaultProperty;
     protected CorrespondingPropertyMaker corresponding;
+
+    private Log log = LogFactory.getLog(PropertyMaker.class);
 
     /**
      * @return the name of the property for this Maker
@@ -228,11 +233,15 @@ public class PropertyMaker implements Cloneable {
      * we try to compute it from the corresponding relative property: this
      * happens in computeProperty.
      */
-    protected Property findProperty(PropertyList propertyList, 
+    public Property findProperty(PropertyList propertyList, 
                                  boolean bTryInherit)
         throws FOPException
     {
         Property p = null;
+        
+        log.trace("PropertyMaker.findProperty: "
+                  + FOPropertyMapping.getPropertyName(propId)
+                  + ", " + propertyList.getFObj().getName());
 
         if (corresponding != null && corresponding.isCorrespondingForced(propertyList)) {
             p = corresponding.compute(propertyList);
@@ -248,7 +257,12 @@ public class PropertyMaker implements Cloneable {
                 // else inherit (if has parent and is inheritable)
                 PropertyList parentPropertyList = propertyList.getParentPropertyList(); 
                 if (parentPropertyList != null && isInherited()) {
-                    p = findProperty(parentPropertyList, true);
+                    if (!contextDep) {
+                        // use the cache
+                        p = parentPropertyList.findProperty(propId, this);
+                    } else {
+                        p = findProperty(parentPropertyList, bTryInherit);
+                    }
                 }
             }
         }
@@ -270,7 +284,15 @@ public class PropertyMaker implements Cloneable {
                         boolean bTryInherit, boolean bTryDefault)
         throws FOPException
     {
-        Property p = findProperty(propertyList, bTryInherit);
+        Property p;
+
+        if (!contextDep && bTryInherit) {
+            // use the cache
+            p = propertyList.findProperty(propId, this);
+        } else {
+            p = findProperty(propertyList, bTryInherit);
+        }
+
         if (p == null && bTryDefault) {    // default value for this FO!
             try {
                 p = make(propertyList);
@@ -355,8 +377,13 @@ public class PropertyMaker implements Cloneable {
      */
     public Property make(PropertyList propertyList) throws FOPException {
         if (defaultProperty != null) {
+            log.trace("PropertyMaker.make: reusing defaultProperty, "
+                  + FOPropertyMapping.getPropertyName(propId));
             return defaultProperty;
         }
+        log.trace("PropertyMaker.make: making default property value, "
+                  + FOPropertyMapping.getPropertyName(propId)
+                  + ", " + propertyList.getFObj().getName());
         Property p = make(propertyList, defaultValue, propertyList.getParentFObj());
         if (!contextDep) {
             defaultProperty = p;
@@ -368,7 +395,7 @@ public class PropertyMaker implements Cloneable {
      * Create a Property object from an attribute specification.
      * @param propertyList The PropertyList object being built for this FO.
      * @param value The attribute value.
-     * @param fo The current FO whose properties are being set.
+     * @param fo The parent FO for the FO whose property is being made.
      * @return The initialized Property object.
      * @throws FOPException for invalid or inconsistent FO input
      */
@@ -411,7 +438,7 @@ public class PropertyMaker implements Cloneable {
      * @param subpropId The Constants ID of the subproperty (component)
      *        whose value is specified.
      * @param propertyList The propertyList being built.
-     * @param fo The FO whose properties are being set.
+     * @param fo The parent FO for the FO whose property is being made.
      * @param value the value of the
      * @return baseProp (or if null, a new compound property object) with
      * the new subproperty added
@@ -511,7 +538,7 @@ public class PropertyMaker implements Cloneable {
      * It is overridden by subclasses.
      * @param p The Property object return by the expression parser
      * @param propertyList The PropertyList object being built for this FO.
-     * @param fo The current FO whose properties are being set.
+     * @param fo The parent FO for the FO whose property is being made.
      * @return A Property of the correct type or null if the parsed value
      * can't be converted to the correct type.
      * @throws FOPException for invalid or inconsistent FO input
@@ -530,7 +557,7 @@ public class PropertyMaker implements Cloneable {
      * @param p property whose datatype should be converted
      * @param propertyList collection of properties. (TODO: explain why
      * this is needed, or remove it from the signature.)
-     * @param fo the FObj to which this property is attached. (TODO: explain
+     * @param fo The parent FO for the FO whose property is being made.
      * why this is needed, or remove it from the signature).
      * @return an Property with the appropriate datatype used
      */

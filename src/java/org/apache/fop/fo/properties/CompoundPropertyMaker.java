@@ -156,7 +156,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * isn't the right type for this compound property.
      * @param p The Property object return by the expression parser
      * @param propertyList The PropertyList object being built for this FO.
-     * @param fo The current FO whose properties are being set.
+     * @param fo The parent FO for the FO whose property is being made.
      * @return A Property of the correct type or null if the parsed value
      * can't be converted to the correct type.
      * @throws FOPException for invalid or inconsistent FO input
@@ -197,7 +197,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * Create a Property object from an attribute specification.
      * @param propertyList The PropertyList object being built for this FO.
      * @param value The attribute value.
-     * @param fo The current FO whose properties are being set.
+     * @param fo The parent FO for the FO whose property is being made.
      * @return The initialized Property object.
      * @throws FOPException for invalid or inconsistent FO input
      */    
@@ -216,7 +216,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * @param subpropId The Constants ID of the subproperty (component)
      *        whose value is specified.
      * @param propertyList The propertyList being built.
-     * @param fo The FO whose properties are being set.
+     * @param fo The parent FO for the FO whose property is being made.
      * @param value the value of the
      * @return baseProp (or if null, a new compound property object) with
      * the new subproperty added
@@ -260,7 +260,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
         for (int i = 0; i < Constants.COMPOUND_COUNT; i++) {
             PropertyMaker submaker = subproperties[i];
             if (submaker != null) {
-                Property subprop = submaker.make(propertyList, submaker.defaultValue, parentFO);
+                Property subprop = submaker.make(propertyList);
                 data.setComponent(submaker.getPropId() & Constants.COMPOUND_MASK, subprop, true);
             }
         }
