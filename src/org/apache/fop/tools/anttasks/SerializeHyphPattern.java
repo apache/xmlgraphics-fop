@@ -111,7 +111,7 @@ public class SerializeHyphPattern extends MatchingTask {
         // serialize class
         try {
             ObjectOutputStream out =
-                new ObjectOutputStream(new FileOutputStream(outfile));
+                new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(outfile)));
             out.writeObject(hTree);
             out.close();
         } catch (IOException ioe) {
