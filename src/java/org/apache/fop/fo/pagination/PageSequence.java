@@ -169,7 +169,7 @@ public class PageSequence extends FObj {
             pageNumberType = EXPLICIT;
             try {
                 int pageStart = new Integer(ipnValue).intValue();
-                this.explicitFirstNumber = (pageStart > 0) ? pageStart - 1 : 0;
+                this.explicitFirstNumber = (pageStart > 0) ? pageStart : 1;
             } catch (NumberFormatException nfe) {
                 throw new FOPException("\"" + ipnValue
                                        + "\" is not a valid value for initial-page-number");
