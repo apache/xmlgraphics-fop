@@ -89,12 +89,17 @@ After reviewing the instructions there, send your subscribe or unsubscribe reque
           <li><jump href="http://www.w3.org/TR/REC-xml-names/">Namespaces in XML Recommendation</jump></li>
         </ul>
       </section>
-      <section id="other">
+      <section id="specs-java">
+        <title>Java</title>
+        <ul>
+          <li><jump href="http://java.sun.com/j2se/1.3/docs/api/index.html">Java JDK 1.3 Documentation</jump></li>
+        </ul>
+      </section>
+      <section id="specs-other">
         <title>Other</title>
         <ul>
           <li><jump href="http://www.w3.org/TR/SVG/">Supported SVG Recommendation (04 September 2001)</jump></li>
           <li><jump href="http://partners.adobe.com/asn/developer/acrosdk/docs/filefmtspecs/PDFReference.pdf">Portable Document Format (PDF) 1.4 Reference Manual</jump></li>
-          <li><jump href="http://java.sun.com/j2se/1.3/docs/api/index.html">Java JDK 1.3 Documentation</jump></li>
         </ul>
       </section>
     </section>
@@ -111,6 +116,7 @@ After reviewing the instructions there, send your subscribe or unsubscribe reque
           <li>[book] <jump href="http://www.oreilly.com/catalog/xslfo">XSL-FO</jump>, by Dave Pawson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00355-2. See online version above.</li>
           <li>[book] <jump href="http://www.phptr.com/browse/product.asp?product_id={CEA527AF-412D-49DA-8C1F-46E0A519B8D8}">Definitive XSL-FO</jump>, by G. Ken Holman, Prentice Hall PTR, 2003, ISBN 0-131-40374-5.</li>
           <li>[book] <jump href="http://www.sams.com/catalog/product.asp?product_id={F7ADFA46-6AF1-497C-9163-0D6337F727B3}">XSL Formatting Objects Developer's Handbook</jump>, by Doug Lovell, Sams, 2002, ISBN 0-672-32281-1.</li>
+          <li>[book] <jump href="http://www.cranesoftwrights.com/training/index.htm#pfux">Practical Formatting Using XSLFO</jump>, Crane Softwrights Ltd., 2003, ISBN 1-894049-11-X.</li>
         </ul>
       </section>
       <section id="documents-xslt">
@@ -122,6 +128,7 @@ After reviewing the instructions there, send your subscribe or unsubscribe reque
           <li>[article] <jump href="http://www.dpawson.co.uk/xsl/xslfaq.html">Dave Pawson's XSLT FAQ</jump>.</li>
          <li>[book] <jump href="http://www.oreilly.com/catalog/xpathpointer">XPath and XPointer: Locating Content in XML Documents</jump>, by John E. Simpson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00291-2.</li>
           <li>[book] <jump href="http://www.wiley.com/cda/product/0,,0471416207,00.html">XSL Essentials</jump>, by Michael Fitzgerald, John Wiley &amp; Sons, 2001, ISBN 0-471-41620-7.</li>
+          <li>[book] <jump href="http://www.oreilly.com/catalog/javaxslt">Java and XSLT</jump>, by Eric M. Burke, O'Reilly &amp; Associates, 2001, ISBN 0-596-00143-6.</li>
         </ul>
       </section>
       <section id="documents-xml">
@@ -130,6 +137,12 @@ After reviewing the instructions there, send your subscribe or unsubscribe reque
           <li>[online book] <jump href="http://www.ibiblio.org/xml/books/bible2">The XML Bible</jump>, by Elliotte Rusty Harold. See hardcopy version below.</li>
           <li>[book] <jump href="http://www.wiley.com/cda/product/0,,0764547607,00.html">The XML Bible</jump>, by Elliotte Rusty Harold, John Wiley &amp; Sons, ISBN 0-764-54760-7. See online version above.</li>
           <li>[online resource] A great number of additional XML-related books and articles can be found at the <jump href="http://xml.oreilly.com">O'Reilly XML Site</jump>.</li>
+        </ul>
+      </section>
+      <section id="documents-java">
+        <title>Java</title>
+        <ul>
+          <li>[online resource] A great number of Java-related books and articles can be found at the <jump href="http://java.oreilly.com">O'Reilly Java Site</jump>.</li>
         </ul>
       </section>
     </section>
