@@ -525,9 +525,13 @@ public class LineArea extends Area {
       */
     public void addPending() {
         if (spaceWidth > 0) {
-            addChild(new InlineSpace(spaceWidth));
-            finalWidth += spaceWidth;
-            spaceWidth = 0;
+            // this should handle the correct amount of space after
+            // the text if there is no more text, important for right alignment
+            if(this.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE || pendingAreas.size() > 0) {
+                addChild(new InlineSpace(spaceWidth));
+                finalWidth += spaceWidth;
+                spaceWidth = 0;
+            }
         }
 
         Enumeration e = pendingAreas.elements();
