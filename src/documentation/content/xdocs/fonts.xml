@@ -54,14 +54,14 @@
           <td>AWT</td>
           <td>if available from OS</td>
           <td>yes</td>
-          <td>no</td>
+          <td>yes</td>
           <td>n/a (display only)</td>
         </tr>
         <tr>
           <td>Print</td>
           <td>if available from OS</td>
           <td>yes</td>
-          <td>no</td>
+          <td>yes</td>
           <td>controlled by OS printer driver</td>
         </tr>
         <tr>
