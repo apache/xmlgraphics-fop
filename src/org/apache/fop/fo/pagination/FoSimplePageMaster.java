@@ -15,6 +15,7 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
@@ -23,6 +24,10 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.NCName;
+import org.apache.fop.datatypes.Ints;
+
+import java.util.HashMap;
+import java.util.BitSet;
 
 /**
  * Implements the fo:simple-page-master flow object
@@ -31,6 +36,53 @@ public class FoSimplePageMaster extends FONode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
+
+    /** Map of <tt>Integer</tt> indices of <i>sparsePropsSet</i> array.
+        It is indexed by the FO index of the FO associated with a given
+        position in the <i>sparsePropsSet</i> array.  See
+        {@link org.apache.fop.fo.FONode#sparsePropsSet FONode.sparsePropsSet}.
+     */
+    private static final HashMap sparsePropsMap;
+
+    /** An <tt>int</tt> array of of the applicable property indices, in
+        property index order. */
+    private static final int[] sparseIndices;
+
+    /** The number of applicable properties.  This is the size of the
+        <i>sparsePropsSet</i> array. */
+    private static final int numProps;
+
+    static {
+        // Collect the sets of properties that apply
+        BitSet propsets = PropertySets.marginBlockSetClone();
+        propsets.set(PropNames.MASTER_NAME);
+        propsets.set(PropNames.PAGE_HEIGHT);
+        propsets.set(PropNames.PAGE_WIDTH);
+        propsets.set(PropNames.REFERENCE_ORIENTATION);
+        propsets.set(PropNames.WRITING_MODE);
+
+        // Map these properties into sparsePropsSet
+        // sparsePropsSet is a HashMap containing the indicies of the
+        // sparsePropsSet array, indexed by the FO index of the FO slot
+        // in sparsePropsSet.
+        sparsePropsMap = new HashMap();
+        numProps = propsets.cardinality();
+        sparseIndices = new int[numProps];
+        int propx = 0;
+        for (int next = propsets.nextSetBit(0);
+                next >= 0;
+                next = propsets.nextSetBit(next + 1)) {
+            sparseIndices[propx] = next;
+            sparsePropsMap.put
+                        (Ints.consts.get(next), Ints.consts.get(propx++));
+        }
+    }
+
+    private FoRegionBody regionBody;
+    private FoRegionBefore regionBefore;
+    private FoRegionAfter regionAfter;
+    private FoRegionStart regionStart;
+    private FoRegionEnd regionEnd;
 
     /**
      * @param foTree the FO tree being built
@@ -42,7 +94,8 @@ public class FoSimplePageMaster extends FONode {
         throws Tree.TreeException, FOPException
     {
         super(foTree, FObjectNames.SIMPLE_PAGE_MASTER, parent, event,
-              FOPropertySets.LAYOUT_SET);
+              FOPropertySets.LAYOUT_SET, sparsePropsMap, sparseIndices,
+              numProps);
         // Process regions here
         FoXMLEvent regionEv;
         if ((regionEv = xmlevents.expectStartElement
@@ -50,14 +103,51 @@ public class FoSimplePageMaster extends FONode {
             throw new FOPException
                 ("No fo:region-body in simple-page-master: "
                     + getMasterName());
+        // Process region-body
+        regionBody = new FoRegionBody(foTree, this, regionEv);
+        xmlevents.getEndElement(regionEv);
 
-        FoXMLEvent ev = xmlevents.getEndElement(event);
+        // Remaining regions are optional
+        if ((regionEv = xmlevents.expectStartElement
+                    (FObjectNames.REGION_BEFORE, XMLEvent.DISCARD_W_SPACE))
+                != null)
+        {
+            regionBefore = new FoRegionBefore(foTree, this, regionEv);
+            xmlevents.getEndElement(regionEv);
+        }
+
+        if ((regionEv = xmlevents.expectStartElement
+                    (FObjectNames.REGION_AFTER, XMLEvent.DISCARD_W_SPACE))
+                != null)
+        {
+            regionAfter = new FoRegionAfter(foTree, this, regionEv);
+            xmlevents.getEndElement(regionEv);
+        }
+
+        if ((regionEv = xmlevents.expectStartElement
+                    (FObjectNames.REGION_START, XMLEvent.DISCARD_W_SPACE))
+                != null)
+        {
+            regionStart = new FoRegionStart(foTree, this, regionEv);
+            xmlevents.getEndElement(regionEv);
+        }
+
+        if ((regionEv = xmlevents.expectStartElement
+                    (FObjectNames.REGION_END, XMLEvent.DISCARD_W_SPACE))
+                != null)
+        {
+            regionEnd = new FoRegionEnd(foTree, this, regionEv);
+            xmlevents.getEndElement(regionEv);
+        }
+
+        // Clean up the build environment
+        makeSparsePropsSet();
     }
 
     /**
      * @return a <tt>String</tt> with the "master-name" attribute value.
      */
     public String getMasterName() throws PropertyException {
-        return ((NCName)propertySet[PropNames.MASTER_NAME]).getNCName();
+        return ((NCName)getPropertyValue(PropNames.MASTER_NAME)).getNCName();
     }
 }
