@@ -72,6 +72,7 @@ public class PageLayoutManager extends AbstractLayoutManager
      * For now, only handle normal flow areas.
      */
     public void addChild(Area childArea) {
+	if (childArea ==null) return;
 	if (childArea.getAreaClass() == Area.CLASS_NORMAL) {
 	    placeFlowRefArea(childArea);
 	}

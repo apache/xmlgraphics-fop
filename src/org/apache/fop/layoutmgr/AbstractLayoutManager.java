@@ -39,8 +39,8 @@ public abstract class AbstractLayoutManager implements LayoutManager {
 	Iterator children = fobj.getChildren();
 	while (children.hasNext()) {
 	    LayoutManager lm = ((FObj)children.next()).getLayoutManager();
-	    lm.setParentLM(this);
  	    if (lm != null) {
+		lm.setParentLM(this);
 		lm.generateAreas();
 	    }
 	}
