@@ -18,15 +18,23 @@
 
 package org.apache.fop.fo.flow;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
 /**
  * Class modelling the fo:table-caption object.
- * @todo implement validateChildNode()
+ * @todo needs implementation
  */
 public class TableCaption extends FObj {
+
+    /** used for FO validation */
+    private boolean blockItemFound = false;
 
     static boolean notImplementedWarningGiven = false;
 
@@ -39,6 +47,34 @@ public class TableCaption extends FObj {
         if (!notImplementedWarningGiven) {
             getLogger().warn("fo:table-caption is not yet implemented.");
             notImplementedWarningGiven = true;
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* (%block;)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        if (nsURI == FO_URI && localName.equals("marker")) {
+            if (blockItemFound) {
+               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+            }
+        } else if (!isBlockItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        } else {
+            blockItemFound = true;
+        }
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOInputHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (childNodes == null) {
+            missingChildElementError("marker* (%block;)");
         }
     }
 
