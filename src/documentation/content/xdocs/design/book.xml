@@ -2,6 +2,11 @@
 <!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-cocoon2/src/documentation/xdocs/dtd/book-cocoon-v10.dtd">
 
+<!--
+IF YOU MAKE CHANGES TO THIS FILE, PLEASE MAKE CORRESPONDING CHANGES TO
+understanding/book.xml, WHICH SEE FOR AN EXPLANATION.
+-->
+
 <book software="FOP"
     title="FOP Design"
     copyright="@year@ The Apache Software Foundation"
@@ -9,7 +14,6 @@
 
     <menu label="About">
       <menu-item label="Introduction" href="index.html"/>
-      <menu-item label="Understanding" href="understanding/index.html"/>
     </menu>
     <menu label="Sections">
       <menu-item label="FO Tree" href="fotree.html"/>
@@ -17,6 +21,20 @@
       <menu-item label="Layout" href="layout.html"/>
       <menu-item label="Area Tree" href="areas.html"/>
       <menu-item label="Renderers" href="renderers.html"/>
+    </menu>
+    <menu label="Understanding">
+      <menu-item label="Instroduction" href="understanding/index.html"/>
+      <menu-item label="XML Parsing" href="understanding/xml_parsing.html"/>
+      <menu-item label="FO Tree" href="understanding/fo_tree.html"/>
+      <menu-item label="Properties" href="understanding/properties.html"/>
+      <menu-item label="Layout Managers" href="understanding/layout_managers.html"/>
+      <menu-item label="Area Tree" href="understanding/area_tree.html"/>
+      <menu-item label="Renderers" href="understanding/renderers.html"/>
+    </menu>
+    <menu label="Extras">
+      <menu-item label="Images" href="understanding/images.html"/>
+      <menu-item label="PDF Library" href="understanding/pdf_library.html"/>
+      <menu-item label="SVG" href="understanding/svg.html"/>
     </menu>
     <menu label="Miscellaneous">
       <menu-item label="Embedding" href="embedding.html"/>
