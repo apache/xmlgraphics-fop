@@ -126,31 +126,6 @@ public class XmlEventReader {
     }
 
     /**
-     * Get the next event of the given type and with the given <tt>QName</tt>
-     * from the buffer.  Discard intervening events.
-     * @param eventType - the <tt>int</tt> event type.
-     * @param qName a <tt>String</tt> with the <tt>QName</tt> of the
-     * required element.
-     * @return an event of the given type.
-     * @exception FOPException if buffer errors or interrupts occur.
-     * @exception NoSuchElementException if the event is not found.
-     */
-    public XmlEvent getSaxQNameEvent(int eventType, String qName)
-                throws FOPException
-    {
-        XmlEvent ev = source.getEvent();
-        while (ev != null &&
-               ! (ev.type == eventType && ev.qName.equals(qName))) {
-            ev = source.getEvent();
-        }
-        if (ev == null) {
-            throw new NoSuchElementException
-            (XmlEvent.eventTypeName(eventType) + " " + qName + " not found.");
-        }
-        return ev;
-    }
-
-    /**
      * Get the next event of the given SAX type, from the given namespace
      * (<code>uriIndex</code>) with the given local name, from the buffer.
      * Discard intervening events.
@@ -179,6 +154,40 @@ public class XmlEventReader {
                     (XmlEvent.eventTypeName(eventType)
                              + namespaces.getIndexURI(uriIndex)
                                        + ":" + localName + " not found.");
+        return ev;
+    }
+
+    /**
+     * Get the next event of the given SAX type, from the given namespace
+     * (<code>uriIndex</code>) with the given local name, from the buffer.
+     * Discard intervening events.
+     * @param eventType the SAX event type.
+     * @param uriIndex the URI index maintained in the
+     * <tt>Namespaces</tt> object.
+     * @param localName of the required element.
+     * @param buffer into whcih to copy intervening events.
+     * @return an event of the given type.
+     * @exception FOPException if buffer errors or interrupts occur.
+     * @exception NoSuchElementException if the event is not found.
+     */
+    public XmlEvent getSaxUriLocalEvent(
+            int eventType, int uriIndex, String localName,
+            ArrayXmlEventsBuffer buffer)
+    throws FOPException
+    {
+        XmlEvent ev = source.getEvent();
+        while (ev != null &&
+                ! (ev.type == eventType
+                        && ev.uriIndex == uriIndex
+                        && ev.localName.equals(localName))) {
+            buffer.pushEvent(ev);
+            ev = source.getEvent();
+        }
+        if (ev == null)
+            throw new NoSuchElementException
+            (XmlEvent.eventTypeName(eventType)
+                    + namespaces.getIndexURI(uriIndex)
+                    + ":" + localName + " not found.");
         return ev;
     }
     
@@ -230,7 +239,59 @@ public class XmlEventReader {
                     + namespaces.getIndexURI(uriIndex)
                     + " type " + nsType + " not found.");
     }
-
+    
+    /**
+     * Get the next event with of the given SAX type, whose URI is matched
+     * by the namespaces URI indexed by <code>uriIndex</code>, and whose
+     * namespace-specific type matches <code>nsType</code>.
+     * Copy any intervening events into the specified buffer.
+     * @param eventType the SAX event type
+     * @param uriIndex of the URI in namespaces
+     * @param nsType the namespace-specific type
+     * @param buffer into whcih to copy intervening events
+     * @return the matching event
+     * @throws FOPException
+     */
+    public XmlEvent getSaxUriTypedEvent(
+            int eventType, int uriIndex, int nsType,
+            ArrayXmlEventsBuffer buffer)
+    throws FOPException {
+        XmlEvent ev = source.getEvent();
+        while (ev != null) {
+            if (ev.type == eventType && ev.uriIndex == uriIndex) {
+                switch (uriIndex) {
+                case Namespaces.DefAttrNSIndex:
+                    throw new NoSuchElementException
+                    ("No special types for default attribute namespace");
+                case Namespaces.XSLNSpaceIndex:
+                    // The FO namespace
+                    if (ev.getFoType() == nsType) {
+                        return ev;
+                    }
+                    break;
+                case Namespaces.FOXNSpaceIndex:
+                    // The FOX namespace
+                    if (ev.getFoxType() == nsType) {
+                        return ev;
+                    }
+                    break;
+                case Namespaces.SVGNSpaceIndex:
+                    // The SVG namespace
+                    if (ev.getSvgType() == nsType) {
+                        return ev;
+                    }
+                    break;
+                }
+            }
+            buffer.pushEvent(ev);
+            ev = source.getEvent();
+        }
+        throw new NoSuchElementException
+        (XmlEvent.eventTypeName(eventType) + " "
+                + namespaces.getIndexURI(uriIndex)
+                + " type " + nsType + " not found.");
+    }
+    
     /**
      * Get the next event of the given type, from the fo: namespace, with
      * the given FO type.  Discard intervening events.
@@ -247,6 +308,25 @@ public class XmlEventReader {
                 eventType, Namespaces.XSLNSpaceIndex, foType);
     }
 
+    /**
+     * Get the next event of the given type, from the fo: namespace, with
+     * the given FO type.  Copy intervening events into the specified
+     * buffer.
+     * @param eventType - the <tt>int</tt> event type.
+     * @param foType - the <tt>int</tt> FO type.
+     * @param buffer the event buffer into which to copy intervening events
+     * @return an event of the given type.
+     * @exception FOPException if buffer errors or interrupts occur.
+     * @exception NoSuchElementException if the event is not found.
+     */
+    public XmlEvent getSaxFoEvent(
+            int eventType, int foType, ArrayXmlEventsBuffer buffer)
+    throws FOPException
+    {
+        return getSaxUriTypedEvent(
+                eventType, Namespaces.XSLNSpaceIndex, foType, buffer);
+    }
+    
     /**
      * Return the next element if it is of the required type.  If the next
      * element is not of the required type, push it back onto the buffer.
@@ -1007,20 +1087,6 @@ public class XmlEventReader {
         return expectSaxEvent(XmlEvent.ENDELEMENT, discardWhiteSpace);
     }
 
-    /**
-     * Get the next ENDELEMENT event with the given <tt>QName</tt>
-     * from the buffer.  Discard any other events preceding the
-     * ENDELEMENT event.
-     * @param qName a <tt>String</tt> with the <tt>QName</tt> of the
-     * required STARTELEMENT
-     * @return an ENDELEMENT event
-     * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if the event is not found
-     */
-    public XmlEvent getEndElement(String qName) throws FOPException
-    {
-        return getSaxQNameEvent(XmlEvent.ENDELEMENT, qName);
-    }
 
     /**
      * Get the next ENDELEMENT event with the given URI index and local name
@@ -1113,6 +1179,9 @@ public class XmlEventReader {
     public XmlEvent getEndElement(XmlEvent event) throws FOPException
     {
         int foType;
+        if (event.getType() == XmlEvent.CHARACTERS) {
+            throw new FOPException("CHARS event passed to getEndElement");
+        }
         if ((foType = event.getFoType()) != FObjectNames.NO_FO)
             return getSaxFoEvent(XmlEvent.ENDELEMENT, foType);
         return getSaxUriLocalEvent
@@ -1139,6 +1208,9 @@ public class XmlEventReader {
         throws FOPException
     {
         int foType;
+        if (event.getType() == XmlEvent.CHARACTERS) {
+            throw new FOPException("CHARS event passed to getEndElement");
+        }
         if ((foType = event.getFoType()) != FObjectNames.NO_FO)
             return expectSaxFoEvent
                     (XmlEvent.ENDELEMENT, foType, discardWhiteSpace);
@@ -1164,6 +1236,9 @@ public class XmlEventReader {
     {
         XmlEvent ev;
         int foType;
+        if (event.getType() == XmlEvent.CHARACTERS) {
+            throw new FOPException("CHARS event passed to getEndElement");
+        }
         if ((foType = event.getFoType()) != FObjectNames.NO_FO)
             ev = getSaxFoEvent(XmlEvent.ENDELEMENT, foType);
         else
@@ -1176,6 +1251,41 @@ public class XmlEventReader {
         return ev;
     }
 
+    /**
+     * Get the next ENDELEMENT event, with the same URI index and local name
+     * as the <tt>XmlEvent</tt> argument, from the buffer.
+     * Place references to all intervening events in the provided
+     * <code>ArrayXmlEventsBuffer</code>.
+     * @param buffer into which to copy the events
+     * @param discardEvent the argument event may be discarded.
+     * @param event an <tt>XmlEvent</tt>.  Only the uriIndex and the
+     * localName from the event are used.  It is intended that the XmlEvent
+     * returned to the corresponding get/expectStartElement() call be used.
+     * @return an ENDELEMENT event
+     * @exception FOPException if buffer errors or interrupts occur
+     * @exception NoSuchElementException if the event is not found
+     */
+    public XmlEvent getEndElement(
+            ArrayXmlEventsBuffer buffer, boolean discardEvent, XmlEvent event)
+    throws FOPException
+    {
+        XmlEvent ev;
+        int foType;
+        if (event.getType() == XmlEvent.CHARACTERS) {
+            throw new FOPException("CHARS event passed to getEndElement");
+        }
+        if ((foType = event.getFoType()) != FObjectNames.NO_FO)
+            ev = getSaxFoEvent(XmlEvent.ENDELEMENT, foType, buffer);
+        else
+            ev = getSaxUriLocalEvent(
+                    XmlEvent.ENDELEMENT, event.uriIndex, event.localName,
+                    buffer);
+        if (discardEvent) {
+            namespaces.relinquishEvent(event);
+        }
+        return ev;
+    }
+    
     /**
      * Return the next element if it is an ENDELEMENT with the same
      * URI index and local name as the <tt>XmlEvent argument</tt>.  If the
@@ -1198,6 +1308,9 @@ public class XmlEventReader {
     {
         XmlEvent ev;
         int foType;
+        if (event.getType() == XmlEvent.CHARACTERS) {
+            throw new FOPException("CHARS event passed to getEndElement");
+        }
         if ((foType = event.getFoType()) != FObjectNames.NO_FO)
             ev = expectSaxFoEvent
                     (XmlEvent.ENDELEMENT, foType, discardWhiteSpace);
