@@ -269,6 +269,10 @@ public class Driver {
         _renderer = renderer;
     }
 
+    public Renderer getRenderer() {
+        return _renderer;
+    }
+
     /**
      * @deprecated use renderer.setProducer(version) + setRenderer(renderer) or just setRenderer(renderer_type) which will use the default producer string.
      * @see #setRenderer(int)

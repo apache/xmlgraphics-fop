@@ -56,6 +56,8 @@ public class PCLRenderer extends PrintRenderer
 
 	private int xoffset = -180;	// X Offset to allow for PCL implicit 1/4" left margin.
 
+	private java.util.Hashtable options;
+	
 	/**
 	 * Create the PCL renderer
 	 */
@@ -63,6 +65,11 @@ public class PCLRenderer extends PrintRenderer
 	{
 	}
 
+	/** set up renderer options */
+	public void setOptions(java.util.Hashtable options) {
+		this.options = options;
+	}
+	
     /**
        * set the PCL document's producer
        *

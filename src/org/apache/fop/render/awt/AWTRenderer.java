@@ -110,7 +110,14 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
      */
     private int currentAreaContainerXPosition = 0;
 
-
+	/** options */
+	protected Hashtable options;
+	
+	/** set up renderer options */
+	public void setOptions(Hashtable options) {
+		this.options = options;
+	}
+	
     public AWTRenderer(Translator aRes) {
         res = aRes;
     }

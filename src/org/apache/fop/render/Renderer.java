@@ -72,6 +72,9 @@ public interface Renderer {
     /** set up the given FontInfo */
     public void setupFontInfo(FontInfo fontInfo);
 
+	/** set up renderer options */
+	public void setOptions(java.util.Hashtable options);
+	
     /** set the producer of the rendering */
     public void setProducer(String producer);
 

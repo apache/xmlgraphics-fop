@@ -111,16 +111,21 @@ public class MIFRenderer implements Renderer {
 	/* is a table currently open? */
 	private boolean inTable=false;
 
-
-
+	/** options */
+	protected Hashtable options;
+	
 	/**
 	 * create the MIF renderer
 	 */
 	public MIFRenderer() {
-	this.mifDoc = new MIFDocument();
+		this.mifDoc = new MIFDocument();
 	}
 	
-	
+	/** set up renderer options */
+	public void setOptions(Hashtable options) {
+		this.options = options;
+	}
+		
 	/**
 	 * render the areas into MIF
 	 *
