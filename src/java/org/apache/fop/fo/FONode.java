@@ -71,8 +71,10 @@ import org.apache.fop.datatypes.indirect.IndirectValue;
 import org.apache.fop.fo.expr.FunctionNotImplementedException;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
+import org.apache.fop.fo.flow.FoMarker;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.Namespaces;
@@ -115,6 +117,7 @@ public class FONode extends Node{
                 ,MC_FOOTNOTE = 1024
               ,MC_MULTI_CASE = 2048
    ,MC_ABSOLUTELY_POSITIONED = 4096
+                  ,MC_LEADER = 8192
                         ;
 
     public static final int
@@ -207,6 +210,9 @@ public class FONode extends Node{
     /** Ancestor reference area of this FONode. */
     protected FONode ancestorRefArea = null;
 
+    /** The number of markers on this FO. */
+    protected int numMarkers = 0;
+    
     /**
      * @param foTree an <tt>FOTree</tt> to which this node belongs
      * @param type the fo type of this FONode.
@@ -345,26 +351,6 @@ public class FONode extends Node{
         foProperties = null;
         foAttributes = null;
     }
-
-    /**
-     * Get the <i>sparsePropsSet</i> for this node.
-     * @return the <tt>PropertyValue[]</tt>.
-     */
-    /*  DEBUG
-    public PropertyValue[] getSparsePropsSet() {
-        return sparsePropsSet;
-    }
-    */
-
-    /**
-     * Get the <i>sparsePropsMap</i> for this node.
-     * @return the <tt>int[]</tt>.
-     */
-    /*  DEBUG
-    public int[] getSparsePropsMap() {
-        return sparsePropsMap;
-    }
-    */
 
     /**
      * Get the eclosing <tt>FOTree</tt> instance of this <tt>FONode</tt>.
@@ -620,4 +606,25 @@ public class FONode extends Node{
         }
     }
 
+    public int getMarkers() throws FOPException {
+        XmlEvent ev;
+        
+        try {
+            while ((ev = xmlevents.expectStartElement
+                    (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
+            != null) {
+                new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+                numMarkers++;
+                ev = xmlevents.getEndElement(
+                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
+                namespaces.surrenderEvent(ev);
+            }
+        } catch (TreeException e) {
+            throw new FOPException(e);
+        } catch (FOPException e) {
+            throw new FOPException(e);
+        }
+        return numMarkers;
+    }
+    
 }// FONode
