@@ -75,7 +75,7 @@ jefft@apache.org
   <!-- Credits are typically rendered as a set of small clickable images in the
   page footer -->
   <credits>
-    <credit>
+    <!--<credit>
       <name>Built with Cocoon</name>
       <url>http://xml.apache.org/cocoon/</url>
       <image>skin/images/built-with-cocoon.gif</image>
@@ -88,6 +88,6 @@ jefft@apache.org
       <image>skin/images/centipede-logo-small.gif</image>
       <width>138</width>
       <height>31</height>
-    </credit>
+    </credit>-->
   </credits>
 </skinconfig>
