@@ -47,37 +47,40 @@ public class Declarations extends FObj {
      */
     public Declarations(FONode parent) {
         super(parent);
+        ((Root) parent).setDeclarations(this);
     }
 
     /**
-     * At then end of this element sort out the child into
+     * At the end of this element sort out the child into
      * a hashmap of color profiles and a list of external xml.
      */
     public void end() {
-        for (Iterator iter = children.iterator(); iter.hasNext();) {
-            FONode node = (FONode)iter.next();
-            if (node.getName().equals("fo:color-profile")) {
-                ColorProfile cp = (ColorProfile)node;
-                if (!"".equals(cp.getProfileName())) {
-                    if (colorProfiles == null) {
-                        colorProfiles = new java.util.HashMap();
+        if (children != null) {
+            for (Iterator iter = children.iterator(); iter.hasNext();) {
+                FONode node = (FONode)iter.next();
+                if (node.getName().equals("fo:color-profile")) {
+                    ColorProfile cp = (ColorProfile)node;
+                    if (!"".equals(cp.getProfileName())) {
+                        if (colorProfiles == null) {
+                            colorProfiles = new java.util.HashMap();
+                        }
+                        if (colorProfiles.get(cp.getProfileName()) != null) {
+                            // duplicate names
+                            getLogger().warn("Duplicate fo:color-profile profile name : "
+                                    + cp.getProfileName());
+                        }
+                        colorProfiles.put(cp.getProfileName(), cp);
+                    } else {
+                        getLogger().warn("color-profile-name required for color profile");
                     }
-                    if (colorProfiles.get(cp.getProfileName()) != null) {
-                        // duplicate names
-                        getLogger().warn("Duplicate fo:color-profile profile name : "
-                                + cp.getProfileName());
+                } else if (node instanceof XMLObj) {
+                    if (external == null) {
+                        external = new java.util.ArrayList();
                     }
-                    colorProfiles.put(cp.getProfileName(), cp);
+                    external.add(node);
                 } else {
-                    getLogger().warn("color-profile-name required for color profile");
+                    getLogger().warn("invalid element " + node.getName() + "inside declarations");
                 }
-            } else if (node instanceof XMLObj) {
-                if (external == null) {
-                    external = new java.util.ArrayList();
-                }
-                external.add(node);
-            } else {
-                getLogger().warn("invalid element " + node.getName() + "inside declarations");
             }
         }
         children = null;
