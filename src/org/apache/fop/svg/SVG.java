@@ -60,6 +60,7 @@ import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
+import org.w3c.dom.svg.*;
 
 import org.apache.fop.dom.svg.SVGArea;
 /**
@@ -110,45 +111,32 @@ public class SVG extends FObj implements GraphicsCreator {
 	this.name = "svg:svg";
 	}
 
-/*	protected void addChild(FONode child) {
-		super.addChild(child);
-		if(svgArea != null) {
-			Status status;
-			try {
-				if ((status = child.layout(svgArea)).isIncomplete()) {
-				}
-			} catch(FOPException fope) {
-				fope.printStackTrace();
-			}
-		}
-	}*/
-
-	SVGArea svgArea = null;
-	public GraphicImpl createGraphic()
+	public SVGElement createGraphic()
 	{
-		this.width = ((SVGLengthProperty)this.properties.get("width")).getSVGLength().getValue();
-		this.height = ((SVGLengthProperty)this.properties.get("height")).getSVGLength().getValue();
-		svgArea = new SVGArea(null, width, height);
+		SVGSVGElementImpl svgArea = null;
+		SVGLength w = ((SVGLengthProperty)this.properties.get("width")).getSVGLength();
+		SVGLength h = ((SVGLengthProperty)this.properties.get("height")).getSVGLength();
+		svgArea = new SVGSVGElementImpl();
+		SVGAnimatedLength sal;
+		sal = new SVGAnimatedLengthImpl(w);
+		sal.setBaseVal(w);
+		svgArea.setWidth(sal);
+		sal = new SVGAnimatedLengthImpl(h);
+		sal.setBaseVal(h);
+		svgArea.setHeight(sal);
 		svgArea.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
-		svgArea.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
-//		svgArea.setId(this.properties.get("id").getString());
+		svgArea.setTransform(((SVGTransform)this.properties.get("transform")).getTransform());
+		svgArea.setId(this.properties.get("id").getString());
 		int numChildren = this.children.size();
 		for (int i = 0; i < numChildren; i++) {
 			FONode fo = (FONode) children.elementAt(i);
 			if(fo instanceof GraphicsCreator) {
-				GraphicImpl impl = ((GraphicsCreator)fo).createGraphic();
-				svgArea.addGraphic(impl);
-			} else if(fo instanceof Defs) {
-				svgArea.addDefs(((Defs)fo).createDefs());
+				SVGElement impl = ((GraphicsCreator)fo).createGraphic();
+				svgArea.appendChild((org.w3c.dom.Node)impl);
+//			} else if(fo instanceof Defs) {
+//				svgArea.addDefs(((Defs)fo).createDefs());
 			}
 			Status status;
-/*			try {
-				if ((status = fo.layout(svgArea)).isIncomplete()) {
-//				return null;
-				}
-			} catch(FOPException fope) {
-				fope.printStackTrace();
-			}*/
 		}
 		return svgArea;
 	}
@@ -162,11 +150,6 @@ public class SVG extends FObj implements GraphicsCreator {
 	 */
 	public Status layout(Area area) throws FOPException {
 	
-	if (area instanceof SVGArea) {
-		((SVGArea) area).addGraphic(createGraphic());
-		return new Status(Status.OK);
-	}
-
 	if (!(area instanceof ForeignObjectArea)) {
 	    // this is an error
 	    throw new FOPException("SVG not in fo:instream-foreign-object");
@@ -196,8 +179,8 @@ public class SVG extends FObj implements GraphicsCreator {
 	/* create an SVG area */
 	/* if width and height are zero, may want to get the bounds of the content. */
 	SVGArea svg = new SVGArea(fs, width, height);
-	svg.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
-	svg.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
+	SVGDocument doc = new SVGDocumentImpl();
+	svg.setSVGDocument(doc);
 	svg.start();
 
 	/* add the SVG area to the containing area */
@@ -206,16 +189,7 @@ public class SVG extends FObj implements GraphicsCreator {
 	foa.setIntrinsicWidth(svg.getWidth());
 	foa.setIntrinsicHeight(svg.getHeight());
 
-	/* iterate over the child formatting objects and lay them out
-	   into the SVG area */
-	int numChildren = this.children.size();
-	for (int i = 0; i < numChildren; i++) {
-		FONode fo = (FONode) children.elementAt(i);
-		Status status;
-		if ((status = fo.layout(svg)).isIncomplete()) {
-		return status;
-		}
-	}
+	doc.appendChild((SVGSVGElement)createGraphic());
 
 	/* finish off the SVG area */
 	svg.end();

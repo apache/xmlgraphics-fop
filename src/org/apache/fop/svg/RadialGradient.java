@@ -66,7 +66,7 @@ import org.w3c.dom.svg.*;
  * class representing svg:RadialGradient pseudo flow object.
  *
  */
-public class RadialGradient extends FObj implements GraphicsCreator {
+public class RadialGradient extends SVGObj {
 
 	/**
 	 * inner class for making RadialGradient objects.
@@ -117,10 +117,10 @@ public class RadialGradient extends FObj implements GraphicsCreator {
 		}
 	}
 
-	public GraphicImpl createGraphic()
+	public SVGElement createGraphic()
 	{
 		radial.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
-		radial.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
+		radial.setTransform(((SVGTransform)this.properties.get("transform")).getTransform());
 		radial.setId(this.properties.get("id").getString());
 
 		radial.setCx(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("cx")).getSVGLength()));
@@ -129,29 +129,5 @@ public class RadialGradient extends FObj implements GraphicsCreator {
 		radial.setFx(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("fx")).getSVGLength()));
 		radial.setFy(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("fy")).getSVGLength()));
 		return radial;
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-
-		/* retrieve properties */
-		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a RadialGradient to the SVGArea */
-			((SVGArea) area).addGraphic(radial);
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:radialGradient outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

@@ -59,10 +59,13 @@ import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
+
+import org.w3c.dom.svg.SVGElement;
+
 /**
  *
  */
-public class Use extends FObj implements GraphicsCreator {
+public class Use extends SVGObj {
 
 	/**
 	 * inner class for making Use objects.
@@ -103,35 +106,13 @@ public class Use extends FObj implements GraphicsCreator {
 		this.name = "svg:use";
 	}
 
-	public GraphicImpl createGraphic()
+	public SVGElement createGraphic()
 	{
 		String str = this.properties.get("xlink:href").getString();
 		SVGUseElementImpl graph = new SVGUseElementImpl(str);
 		graph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
-		graph.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
+		graph.setTransform(((SVGTransform)this.properties.get("transform")).getTransform());
 		graph.setId(this.properties.get("id").getString());
 		return graph;
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a line to the SVGArea */
-			((SVGArea) area).addGraphic(createGraphic());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:use outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

@@ -59,11 +59,13 @@ import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
 
+import org.w3c.dom.svg.SVGElement;
+
 /**
  * class representing svg:a pseudo flow object.
  *
  */
-public class A extends FObj implements GraphicsCreator {
+public class A extends SVGObj {
 
 	/**
 	 * inner class for making A objects.
@@ -104,7 +106,7 @@ public class A extends FObj implements GraphicsCreator {
 		this.name = "svg:a";
 	}
 
-	public GraphicImpl createGraphic()
+	public SVGElement createGraphic()
 	{
 		String rf = this.properties.get("xlink:href").getString();
 		SVGAElementImpl graphic;
@@ -115,34 +117,12 @@ public class A extends FObj implements GraphicsCreator {
 		for (int i = 0; i < numChildren; i++) {
 			FONode child = (FONode) children.elementAt(i);
 			if(child instanceof GraphicsCreator) {
-				GraphicImpl impl = ((GraphicsCreator)child).createGraphic();
+				SVGElement impl = ((GraphicsCreator)child).createGraphic();
 				graphic.appendChild((GraphicElement)impl);
 			} else if(child instanceof Defs) {
 			}
 		}
 
 		return graphic;
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a line to the SVGArea */
-			((SVGArea) area).addGraphic(createGraphic());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:a outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

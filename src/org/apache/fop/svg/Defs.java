@@ -59,7 +59,7 @@ import org.apache.fop.apps.FOPException;
 
 import java.util.*;
 
-import org.w3c.dom.svg.SVGElement;
+import org.w3c.dom.svg.*;
 
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
@@ -67,7 +67,7 @@ import org.apache.fop.dom.svg.SVGArea;
  * class representing svg:Defs pseudo flow object.
  *
  */
-public class Defs extends FObj {
+public class Defs extends SVGObj {
 
 	/**
 	 * inner class for making Defs objects.
@@ -108,19 +108,21 @@ public class Defs extends FObj {
 		this.name = "svg:defs";
 	}
 
-	Hashtable defs = new Hashtable();
+//	Hashtable defs = new Hashtable();
 
-	public Hashtable createDefs()
+	public SVGElement createGraphic()
 	{
+	    SVGDefsElement defs = new SVGDefsElementImpl();
 		int numChildren = this.children.size();
 		for (int i = 0; i < numChildren; i++) {
 			FONode child = (FONode) children.elementAt(i);
 			if(child instanceof GraphicsCreator) {
-				GraphicImpl gi = ((GraphicsCreator)child).createGraphic();
+				SVGElement gi = ((GraphicsCreator)child).createGraphic();
 				if(gi instanceof SVGElement) {
+				    defs.appendChild((SVGElement)gi);
 					String id = ((SVGElement)gi).getId();
 					if(!id.equals("")) {
-						defs.put(id, gi);
+//						defs.put(id, gi);
 					} else {
 						// no id
 						System.err.println("WARNING No ID for defs element : " + gi);
@@ -129,27 +131,5 @@ public class Defs extends FObj {
 			}
 		}
 		return defs;
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a line to the SVGArea */
-			((SVGArea) area).addDefs(createDefs());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:defs outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

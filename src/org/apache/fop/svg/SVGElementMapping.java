@@ -50,13 +50,15 @@
  */
 package org.apache.fop.svg;
 
+import org.apache.fop.fo.TreeBuilder;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.dom.svg.SVGDocumentImpl;
 
 public class SVGElementMapping implements ElementMapping {
 
-	public void addToBuilder(FOTreeBuilder builder) {
-		String uri = "http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd";
+	public void addToBuilder(TreeBuilder builder) {
+		String uri = SVGDocumentImpl.namespaceURI;
 		builder.addMapping(uri, "svg", SVG.maker());
 		builder.addMapping(uri, "rect", Rect.maker());
 		builder.addMapping(uri, "line", Line.maker());

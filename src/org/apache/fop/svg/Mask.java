@@ -58,11 +58,14 @@ import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
+
+import org.w3c.dom.svg.SVGElement;
+
 /**
  * class representing svg:Mask pseudo flow object.
  *
  */
-public class Mask extends FObj {
+public class Mask extends SVGObj {
 
 	/**
 	 * inner class for making Mask objects.
@@ -109,38 +112,20 @@ public class Mask extends FObj {
 		super.addChild(child);
 		if(child instanceof GraphicsCreator) {
 			GraphicsCreator gc = (GraphicsCreator)child;
-			GraphicImpl graph = gc.createGraphic();
-			mask.addElement(graph);
-			graph.setParent(mask);
+			SVGElement graph = gc.createGraphic();
+			if(graph != null) {
+	    		mask.addElement(graph);
+//    			graph.setParent(mask);
+		    }
 		} else {
 			// error
 		}
 	}
 
-	public GraphicImpl createGraphic()
+	public SVGElement createGraphic()
 	{
 		mask.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
 		mask.setId(this.properties.get("id").getString());
 		return mask;
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:mask outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

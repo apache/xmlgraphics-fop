@@ -57,6 +57,8 @@ import org.apache.fop.apps.FOPException;
 
 import java.util.*;
 
+import org.w3c.dom.css.CSSStyleDeclaration;
+
 /**
  *
  */
@@ -122,7 +124,7 @@ public class SVGStyle extends Property {
 	 *
 	 * @return the length as a Length object
 	 */
-	public Hashtable getStyle()
+	public CSSStyleDeclaration getStyle()
 	{
 		return this.style.getStyle();
 	}

@@ -57,6 +57,7 @@ import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.properties.XMLSpace;
 
 import java.util.*;
 
@@ -64,11 +65,13 @@ import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGTextElementImpl;
 import org.apache.fop.dom.svg.SVGArea;
 
+import org.w3c.dom.svg.SVGElement;
+
 /**
  * class representing svg:text pseudo flow object.
  *
  */
-public class Text extends FObjMixed implements GraphicsCreator {
+public class Text extends SVGObj {
 
 	/**
 	 * inner class for making SVG Text objects.
@@ -125,52 +128,53 @@ public class Text extends FObjMixed implements GraphicsCreator {
 	 */
 	protected void addCharacters(char data[], int start, int length)
 	{
-		textList.addElement(new String(data, start, length - start).trim());
+		textList.addElement(new String(data, start, length - start));
 	}
 
+	/**
+	 * The children need to be added in order so that the text data
+	 * is also added in order.
+	 */
 	protected void addChild(FONode child) {
 		super.addChild(child);
 		if(child instanceof TextElement) {
 			TextElement te = (TextElement)child;
-			GraphicImpl graph = te.createTextElement();
+			SVGElement graph = te.createTextElement();
 			textList.addElement(graph);
-			graph.setParent(textGraph);
 		} else {
 			// error
 		}
 	}
 
-	public GraphicImpl createGraphic()
+	public SVGElement createGraphic()
 	{
+		int numChildren = this.textList.size();
+		for (int i = 0; i < numChildren; i++) {
+			Object obj = textList.elementAt(i);
+			if(obj instanceof SVGElement) {
+				SVGElement child = (SVGElement)obj;
+				textGraph.appendChild(child);
+			} else if(obj instanceof String) {
+				String str = (String)obj;
+				// new CDATANode(str); ??
+			}
+//			System.out.println(child);
+		}
 		/* retrieve properties */
 		textGraph.x = ((SVGLengthProperty)this.properties.get("x")).getSVGLength().getValue();
 		textGraph.y = ((SVGLengthProperty)this.properties.get("y")).getSVGLength().getValue();
 		textGraph.textList = textList;
 		textGraph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
-		textGraph.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
+		textGraph.setTransform(((SVGTransform)this.properties.get("transform")).getTransform());
 		textGraph.setId(this.properties.get("id").getString());
+		switch((this.properties.get("xml:space")).getEnum()) {
+			case XMLSpace.DEFAULT:
+				textGraph.setXMLspace("default");
+			break;
+			case XMLSpace.PRESERVE:
+				textGraph.setXMLspace("preserve");
+			break;
+		}
 		return textGraph;
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-	
-	/* if the area this is being put into is an SVGArea */
-	if (area instanceof SVGArea) {
-		/* add the text to the SVGArea */
-		((SVGArea) area).addGraphic(createGraphic());
-	} else {
-		/* otherwise generate a warning */
-	    MessageHandler.errorln("WARNING: svg:text outside svg:svg");
-	}
-
-	/* return status */
-	return new Status(Status.OK);
 	}
 }

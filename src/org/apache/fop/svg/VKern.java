@@ -62,7 +62,7 @@ import org.apache.fop.dom.svg.SVGArea;
 /**
  *
  */
-public class VKern extends FObj {
+public class VKern extends SVGObj {
 
 	/**
 	 * inner class for making VKern objects.
@@ -101,29 +101,5 @@ public class VKern extends FObj {
 	protected VKern(FObj parent, PropertyList propertyList) {
 		super(parent, propertyList);
 		this.name = "svg:vkern";
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-
-		/* retrieve properties */
-		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a VKern to the SVGArea */
-			((SVGArea) area).addGraphic(new SVGVKernElementImpl());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:vkern outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

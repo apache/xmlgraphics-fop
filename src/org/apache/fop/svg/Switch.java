@@ -65,7 +65,7 @@ import org.w3c.dom.svg.*;
 /**
  *
  */
-public class Switch extends FObj implements GraphicsCreator {
+public class Switch extends SVGObj {
 
 	/**
 	 * inner class for making Line objects.
@@ -106,7 +106,7 @@ public class Switch extends FObj implements GraphicsCreator {
 		this.name = "svg:switch";
 	}
 
-	public GraphicImpl createGraphic()
+	public SVGElement createGraphic()
 	{
 		/*
 		 * There are two options
@@ -138,7 +138,7 @@ public class Switch extends FObj implements GraphicsCreator {
 		for (int i = 0; i < numChildren; i++) {
 			FONode child = (FONode) children.elementAt(i);
 			if(child instanceof GraphicsCreator) {
-				GraphicImpl impl = ((GraphicsCreator)child).createGraphic();
+				SVGElement impl = ((GraphicsCreator)child).createGraphic();
 				if(impl instanceof SVGTests) {
 					SVGTests testable = (SVGTests)impl;
 					rf = child.getProperty("requiredFeatures").getString();
@@ -163,28 +163,5 @@ public class Switch extends FObj implements GraphicsCreator {
 		}
 
 		return graphic;
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-
-		/* retrieve properties */
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a line to the SVGArea */
-			((SVGArea) area).addGraphic(createGraphic());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:switch outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

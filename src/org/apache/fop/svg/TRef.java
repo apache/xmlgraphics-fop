@@ -59,10 +59,13 @@ import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
+
+import org.w3c.dom.svg.SVGElement;
+
 /**
  *
  */
-public class TRef extends FObj implements TextElement {
+public class TRef extends SVGObj implements TextElement {
 
 	/**
 	 * inner class for making Line objects.
@@ -103,7 +106,7 @@ public class TRef extends FObj implements TextElement {
 		this.name = "svg:tref";
 	}
 
-	public GraphicImpl createTextElement()
+	public SVGElement createTextElement()
 	{
 		SVGTRefElementImpl tref = new SVGTRefElementImpl();
 		tref.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
@@ -115,41 +118,20 @@ public class TRef extends FObj implements TextElement {
 		prop = this.properties.get("x");
 		// bit of a hack, but otherwise the svg:text x element could be
 		// returned which is not a list
-		if(prop instanceof SVGLengthListProperty)
+//		if(prop instanceof SVGLengthListProperty)
 			tref.xlist = ((SVGLengthListProperty)prop).getSVGLengthList();
 		prop = this.properties.get("y");
-		if(prop instanceof SVGLengthListProperty)
+//		if(prop instanceof SVGLengthListProperty)
 			tref.ylist = ((SVGLengthListProperty)prop).getSVGLengthList();
 		prop = this.properties.get("dx");
-		if(prop instanceof SVGLengthListProperty)
+//		if(prop instanceof SVGLengthListProperty)
 			tref.dxlist = ((SVGLengthListProperty)prop).getSVGLengthList();
 		prop = this.properties.get("dy");
-		if(prop instanceof SVGLengthListProperty)
+//		if(prop instanceof SVGLengthListProperty)
 			tref.dylist = ((SVGLengthListProperty)prop).getSVGLengthList();
 //		tref.dxlist = ((SVGLengthProperty)this.properties.get("dx")).getSVGLength().valueList();
 		tref.ref = this.properties.get("xlink:href").getString();
 		tref.setId(this.properties.get("id").getString());
 		return tref;
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a line to the SVGArea */
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:tref outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

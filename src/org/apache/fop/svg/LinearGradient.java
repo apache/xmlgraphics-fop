@@ -66,7 +66,7 @@ import org.w3c.dom.svg.*;
  * class representing svg:LinearGradient pseudo flow object.
  *
  */
-public class LinearGradient extends FObj implements GraphicsCreator {
+public class LinearGradient extends SVGObj {
 
 	/**
 	 * inner class for making LinearGradient objects.
@@ -117,10 +117,10 @@ public class LinearGradient extends FObj implements GraphicsCreator {
 		}
 	}
 
-	public GraphicImpl createGraphic()
+	public SVGElement createGraphic()
 	{
 		linear.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
-		linear.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
+		linear.setTransform(((SVGTransform)this.properties.get("transform")).getTransform());
 		linear.setId(this.properties.get("id").getString());
 
 		linear.setX1(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("x1")).getSVGLength()));

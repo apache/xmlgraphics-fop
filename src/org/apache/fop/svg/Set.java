@@ -63,7 +63,7 @@ import org.apache.fop.dom.svg.SVGArea;
  * class representing svg:Set pseudo flow object.
  *
  */
-public class Set extends FObj {
+public class Set extends SVGObj {
 
 	/**
 	 * inner class for making Set objects.
@@ -102,29 +102,5 @@ public class Set extends FObj {
 	protected Set(FObj parent, PropertyList propertyList) {
 		super(parent, propertyList);
 		this.name = "svg:set";
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-
-		/* retrieve properties */
-		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a Set to the SVGArea */
-			((SVGArea) area).addGraphic(new SVGSetElementImpl());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:set outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }
