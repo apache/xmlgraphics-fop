@@ -9,6 +9,11 @@ package org.apache.fop.area.inline;
 
 import org.apache.fop.render.Renderer;
 
+/**
+ * A word inline area.
+ * This is really a collection character inline areas collected together
+ * into a single word.
+ */
 public class Word extends InlineArea {
     /**
      * The word for this word area.

@@ -1,9 +1,9 @@
 /*
-* $Id$
-* Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
-* For details on use and redistribution please refer to the
-* LICENSE file included with these sources.
-*/
+ * $Id$
+ * Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
+ */
 
 package org.apache.fop.area;
 
@@ -94,6 +94,8 @@ public class RenderPagesModel extends StorePagesModel {
 
     /**
      * Check prepared pages
+     *
+     * @param newpage the new page being added
      * @return true if the current page should be rendered
      *         false if the renderer doesn't support out of order
      *         rendering and there are pending pages

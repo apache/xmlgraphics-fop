@@ -19,7 +19,7 @@ public class BodyRegion extends RegionReference {
     private int columnGap;
     private int columnCount;
 
-    /** Referenc inline progression dimension for the body. */
+    /** Reference inline progression dimension for the body. */
     private int refIPD;
 
     /**
@@ -30,46 +30,95 @@ public class BodyRegion extends RegionReference {
         super(BODY);
     }
 
-    // Number of columns when not spanning
+    /**
+     * Set the number of columns for blocks when not spanning
+     *
+     * @param colCount the number of columns
+     */
     public void setColumnCount(int colCount) {
         this.columnCount = colCount;
     }
 
-    // Number of columns when not spanning
+    /**
+     * Get the number of columns when not spanning
+     *
+     * @return the number of columns
+     */
     public int getColumnCount() {
         return this.columnCount;
     }
 
-    // A length (mpoints)
+    /**
+     * Set the column gap between columns
+     * The length is in millipoints.
+     *
+     * @param colGap the column gap in millipoints
+     */
     public void setColumnGap(int colGap) {
         this.columnGap = colGap;
     }
 
+    /**
+     * Set the before float area.
+     *
+     * @param bf the before float area
+     */
     public void setBeforeFloat(BeforeFloat bf) {
         beforeFloat = bf;
     }
 
+    /**
+     * Set the main reference area.
+     *
+     * @param mr the main reference area
+     */
     public void setMainReference(MainReference mr) {
         mainReference = mr;
     }
 
+    /**
+     * Set the footnote area.
+     *
+     * @param foot the footnote area
+     */
     public void setFootnote(Footnote foot) {
         footnote = foot;
     }
 
-
+    /**
+     * Get the before float area.
+     *
+     * @return the before float area
+     */
     public BeforeFloat getBeforeFloat() {
         return beforeFloat;
     }
 
+    /**
+     * Get the main reference area.
+     *
+     * @return the main reference area
+     */
     public MainReference getMainReference() {
         return mainReference;
     }
 
+    /**
+     * Get the footnote area.
+     *
+     * @return the footnote area
+     */
     public Footnote getFootnote() {
         return footnote;
     }
 
+    /**
+     * Clone this object.
+     * This is only used to clone the current object, the child areas
+     * are assumed to be null and are not cloned.
+     *
+     * @return a shallow copy of this object
+     */ 
     public Object clone() {
         BodyRegion br = new BodyRegion();
         br.setCTM(getCTM());

@@ -42,6 +42,8 @@ public class CachedRenderPagesModel extends RenderPagesModel {
      * Check prepared pages
      * If a page is resolved it loads the page contents from
      * the file.
+     *
+     * @param newpage the new page being added
      * @return true if the current page should be rendered
      *         false if the renderer doesn't support out of order
      *         rendering and there are pending pages
@@ -50,7 +52,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
         for (Iterator iter = prepared.iterator(); iter.hasNext();) {
             PageViewport p = (PageViewport)iter.next();
             if (p.isResolved()) {
-                if(p != newpage) {
+                if (p != newpage) {
                     try {
                         // load page from cache
                         String name = (String)pageMap.get(p);
@@ -82,7 +84,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
                 }
             }
         }
-        if(newpage != null && newpage.getPage() != null) {
+        if (newpage != null && newpage.getPage() != null) {
             savePage(newpage);
         }
         return renderer.supportsOutOfOrder() || prepared.isEmpty();
