@@ -18,63 +18,48 @@
 <testcase>
   <info>
     <p>
-      This test checks page-masters (margins part 1).
+      This test checks page-masters (margins part 2).
     </p>
   </info>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="master1" page-width="5in" page-height="5in" margin-left="10pt" margin-top="20pt" margin-right="30pt" margin-bottom="40pt">
-          <fo:region-body margin="0pt" background-color="lightgreen"/>
+        <fo:simple-page-master master-name="master1" page-width="5in" page-height="5in">
+          <fo:region-body margin-left="10pt" margin-top="20pt" margin-right="30pt" margin-bottom="40pt" background-color="lightgreen"/>
         </fo:simple-page-master>
-        <fo:simple-page-master master-name="master2" page-width="5in" page-height="5in" margin="20pt">
-          <fo:region-body margin="0pt" background-color="lightgreen"/>
+        <fo:simple-page-master master-name="master2" page-width="5in" page-height="5in">
+          <fo:region-body margin="20pt" background-color="lightgreen"/>
         </fo:simple-page-master>
-        <fo:simple-page-master master-name="master3" page-width="5in" page-height="5in" margin="20pt 10pt">
-          <fo:region-body margin="0pt" background-color="lightgreen"/>
+        <fo:simple-page-master master-name="master3" page-width="5in" page-height="5in">
+          <fo:region-body margin="20pt 10pt" background-color="lightgreen"/>
         </fo:simple-page-master>
-        <fo:simple-page-master master-name="master4" page-width="5in" page-height="5in" margin="20pt 10pt 30pt">
-          <fo:region-body margin="0pt" background-color="lightgreen"/>
-        </fo:simple-page-master>
-        <fo:simple-page-master master-name="master5" page-width="5in" page-height="5in" margin="20pt 10pt 30pt">
-          <!-- same as previous but with margin="0pt" omitted, so start-indent is inherited -->
-          <fo:region-body background-color="lightgreen"/>
+        <fo:simple-page-master master-name="master4" page-width="5in" page-height="5in">
+          <fo:region-body margin="20pt 10pt 30pt" background-color="lightgreen"/>
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="master1" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block>testing margins</fo:block>
+          <fo:block>testing margins on region-body</fo:block>
         </fo:flow>
       </fo:page-sequence>
       <fo:page-sequence master-reference="master2" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block>testing margin shorthands (with 1 value)</fo:block>
+          <fo:block>testing margin shorthands on region-body (with 1 value)</fo:block>
         </fo:flow>
       </fo:page-sequence>
       <fo:page-sequence master-reference="master3" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block>testing margin shorthands (with 2 values)</fo:block>
+          <fo:block>testing margin shorthands on region-body (with 2 values)</fo:block>
         </fo:flow>
       </fo:page-sequence>
       <fo:page-sequence master-reference="master4" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block>testing margin shorthands (with 3 values)</fo:block>
-        </fo:flow>
-      </fo:page-sequence>
-      <fo:page-sequence master-reference="master5" white-space-collapse="true">
-        <fo:flow flow-name="xsl-region-body">
-          <fo:block>testing margin shorthands (with 3 values), no margin on region-body to test start|end-indent inheritance</fo:block>
+          <fo:block>testing margin shorthands on region-body (with 3 values)</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
-    <true xpath="//pageViewport[1]/page/regionViewport/@is-viewport-area"/>
-    <true xpath="//pageViewport[1]/page/regionViewport//regionBody/@is-reference-area"/>
-    <true xpath="//pageViewport[1]/page/regionViewport//regionBody/mainReference/@is-reference-area"/>
-    <true xpath="//pageViewport[1]/page/regionViewport//regionBody/mainReference/span/@is-reference-area"/>
-    <true xpath="//pageViewport[1]/page/regionViewport//regionBody/mainReference/span/flow/@is-reference-area"/>
-  
     <eval expected="0 0 360000 360000" xpath="//pageViewport[1]/@bounds"/>
     <eval expected="10000 20000 320000 300000" xpath="//pageViewport[1]/page/regionViewport/@rect"/>
     <eval expected="320000" xpath="//pageViewport[1]/page/regionViewport/@ipda"/>
@@ -111,13 +96,5 @@
     <eval expected="340000" xpath="//pageViewport[4]/page/regionViewport/regionBody/mainReference/span/flow/block/@ipda"/>
     <eval expected="340000" xpath="//pageViewport[4]/page/regionViewport/regionBody/mainReference/span/flow/block/@ipd"/>
 
-    <eval expected="0 0 360000 360000" xpath="//pageViewport[5]/@bounds"/>
-    <eval expected="20000 20000 320000 310000" xpath="//pageViewport[5]/page/regionViewport/@rect"/>
-    <eval expected="320000" xpath="//pageViewport[5]/page/regionViewport/@ipda"/>
-    <eval expected="320000" xpath="//pageViewport[5]/page/regionViewport/@ipd"/>
-    <eval expected="310000" xpath="//pageViewport[5]/page/regionViewport/@bpda"/>
-    <eval expected="310000" xpath="//pageViewport[5]/page/regionViewport/@bpd"/>
-    <eval expected="320000" xpath="//pageViewport[5]/page/regionViewport/regionBody/mainReference/span/flow/block/@ipda"/>
-    <eval expected="320000" xpath="//pageViewport[5]/page/regionViewport/regionBody/mainReference/span/flow/block/@ipd"/>
   </checks>
 </testcase>
