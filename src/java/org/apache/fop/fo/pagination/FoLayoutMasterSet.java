@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.Fop;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
@@ -256,7 +255,7 @@ public class FoLayoutMasterSet extends FONode {
     public long makePageId() {
         if (++pageId == 0) {
             ++pageId;   // 0 is invalid
-            Fop.logger.warning("Page ID rollover.");
+            log.warning("Page ID rollover.");
         }
         return pageId;
     }
