@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.tools.anttasks;
 
 // Ant
@@ -88,16 +88,16 @@ import org.apache.avalon.framework.logger.Logger;
  * <li>format -> MIME type of the format to generate ex. "application/pdf"</li>
  * <li>outfile -> output filename</li>
  * <li>baseDir -> directory to work from</li>
- * <li>userconfig -> file with user configuration (same as the "-c" command 
+ * <li>userconfig -> file with user configuration (same as the "-c" command
  *      line option)</li>
- * <li>messagelevel -> (error | warn | info | verbose | debug) level to output 
+ * <li>messagelevel -> (error | warn | info | verbose | debug) level to output
  *      non-error messages</li>
- * <li>logFiles -> Controls whether the names of the files that are processed 
+ * <li>logFiles -> Controls whether the names of the files that are processed
  *      are logged or not</li>
  * </ul>
  */
 public class Fop extends Task {
-    
+
     private File foFile;
     private List filesets = new java.util.ArrayList();
     private File outFile;
@@ -147,7 +147,7 @@ public class Fop extends Task {
     public void addFileset(FileSet set) {
         filesets.add(set);
     }
-    
+
     /**
      * Returns the current list of filesets.
      * @return the filesets
@@ -215,13 +215,13 @@ public class Fop extends Task {
             messageType = Project.MSG_VERBOSE;
         } else if (messageLevel.equalsIgnoreCase("debug")) {
             messageType = Project.MSG_DEBUG;
-        } else if (messageLevel.equalsIgnoreCase("err") 
+        } else if (messageLevel.equalsIgnoreCase("err")
                  || messageLevel.equalsIgnoreCase("error")) {
             messageType = Project.MSG_ERR;
         } else if (messageLevel.equalsIgnoreCase("warn")) {
             messageType = Project.MSG_WARN;
         } else {
-            log("messagelevel set to unknown value \"" + messageLevel 
+            log("messagelevel set to unknown value \"" + messageLevel
                 + "\"", Project.MSG_ERR);
             throw new BuildException("unknown messagelevel");
         }
@@ -249,13 +249,13 @@ public class Fop extends Task {
      * @return the base directory
      */
     public File getBasedir() {
-        return (baseDir != null) ? baseDir : project.resolveFile(".");
+        return (baseDir != null) ? baseDir : getProject().resolveFile(".");
     }
 
     /**
      * Controls whether the filenames of the files that are processed are logged
      * or not.
-     * @param logFiles True if the feature should be enabled 
+     * @param logFiles True if the feature should be enabled
      */
     public void setLogFiles(boolean logFiles) {
         this.logFiles = logFiles;
@@ -295,7 +295,7 @@ public class Fop extends Task {
 }
 
 class FOPTaskStarter extends Starter {
-    
+
     private Fop task;
     private String baseURL = null;
 
@@ -304,28 +304,28 @@ class FOPTaskStarter extends Starter {
     }
 
     private int determineRenderer(String format) {
-        if ((format == null) 
-                || format.equalsIgnoreCase("application/pdf") 
+        if ((format == null)
+                || format.equalsIgnoreCase("application/pdf")
                 || format.equalsIgnoreCase("pdf")) {
             return Driver.RENDER_PDF;
-        } else if (format.equalsIgnoreCase("application/postscript") 
+        } else if (format.equalsIgnoreCase("application/postscript")
                 || format.equalsIgnoreCase("ps")) {
             return Driver.RENDER_PS;
-        } else if (format.equalsIgnoreCase("application/vnd.mif") 
+        } else if (format.equalsIgnoreCase("application/vnd.mif")
                 || format.equalsIgnoreCase("mif")) {
             return Driver.RENDER_MIF;
-        } else if (format.equalsIgnoreCase("application/msword") 
-                || format.equalsIgnoreCase("application/rtf") 
+        } else if (format.equalsIgnoreCase("application/msword")
+                || format.equalsIgnoreCase("application/rtf")
                 || format.equalsIgnoreCase("rtf")) {
             return Driver.RENDER_RTF;
-        } else if (format.equalsIgnoreCase("application/vnd.hp-PCL") 
+        } else if (format.equalsIgnoreCase("application/vnd.hp-PCL")
                 || format.equalsIgnoreCase("pcl")) {
             return Driver.RENDER_PCL;
-        } else if (format.equalsIgnoreCase("text/plain") 
+        } else if (format.equalsIgnoreCase("text/plain")
                 || format.equalsIgnoreCase("txt")) {
             return Driver.RENDER_TXT;
-        } else if (format.equalsIgnoreCase("text/xml") 
-                || format.equalsIgnoreCase("at") 
+        } else if (format.equalsIgnoreCase("text/xml")
+                || format.equalsIgnoreCase("at")
                 || format.equalsIgnoreCase("xml")) {
             return Driver.RENDER_XML;
         } else {
