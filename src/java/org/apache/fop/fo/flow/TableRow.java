@@ -25,6 +25,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
@@ -56,7 +57,7 @@ public class TableRow extends FObj {
     private KeepProperty keepWithPrevious;
     private int visibility;
     // End of property values
-    
+
     private boolean setup = false;
 
     /**
@@ -89,6 +90,19 @@ public class TableRow extends FObj {
         visibility = pList.get(PR_VISIBILITY).getEnum();
     }
 
+    /**
+     * Adds a cell to this row (skips marker handling done by FObj.addChildNode().
+     * Used by TableBody during the row building process when only cells are
+     * used as direct children of a table-body/header/footer.
+     * @param cell cell to add.
+     */
+    protected void addReplacedCell(TableCell cell) {
+        if (childNodes == null) {
+            childNodes = new java.util.ArrayList();
+        }
+        childNodes.add(cell);
+    }
+    
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */

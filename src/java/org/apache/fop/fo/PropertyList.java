@@ -203,7 +203,7 @@ abstract public class PropertyList {
      * Use that from the nearest ancestor, including self, which generates
      * reference areas, or from root FO if no ancestor found.
      */
-    protected void setWritingMode() throws PropertyException {
+    public void setWritingMode() throws PropertyException {
         FObj p = fobj.findNearestAncestorFObj();
         // If this is a RA or the root, use the property value.
         if (fobj.generatesReferenceAreas() || p == null) {
