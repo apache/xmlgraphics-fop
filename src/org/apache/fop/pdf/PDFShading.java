@@ -8,7 +8,7 @@
 package org.apache.fop.pdf;
 
 // Java...
-import java.util.Vector;
+import java.util.ArrayList;
 
 // FOP
 import org.apache.fop.datatypes.ColorSpace;
@@ -46,12 +46,12 @@ public class PDFShading extends PDFObject {
      * The background color. Since shading is opaque,
      * this is very rarely used.
      */
-    protected Vector background = null;
+    protected ArrayList background = null;
 
     /**
-     * Optional: A Vector specifying the clipping rectangle
+     * Optional: A ArrayList specifying the clipping rectangle
      */
-    protected Vector bBox = null;
+    protected ArrayList bBox = null;
 
     /**
      * Optional: A flag whether or not to filter the shading function
@@ -65,12 +65,12 @@ public class PDFShading extends PDFObject {
      * Optional for Type 3: An array of two numbers between which the blend varies between start and end points. Default is 0, 1.
      */
 
-    protected Vector domain = null;
+    protected ArrayList domain = null;
 
     /**
      * Optional for Type 1: A transformation matrix
      */
-    protected Vector matrix = null;
+    protected ArrayList matrix = null;
 
     /**
      * Required for Type 1, 2, and 3:
@@ -84,14 +84,14 @@ public class PDFShading extends PDFObject {
      * Required for Type 3: An Array of six numbers [x0,y0,r0,x1,y1,r1] specifying the centers and radii of
      * the starting and ending circles.
      */
-    protected Vector coords = null;
+    protected ArrayList coords = null;
 
     /**
      * Required for Type 2+3: An Array of two boolean values specifying whether to extend the
      * start and end colors past the start and end points,
      * respectively. Default is false, false.
      */
-    protected Vector extend = null;
+    protected ArrayList extend = null;
 
     /**
      * Required for Type 4,5,6, and 7: Specifies the number of bits used to represent each vertex coordinate.
@@ -110,7 +110,7 @@ public class PDFShading extends PDFObject {
      * Each type has a differing number of decode array members, so check the spec.
      * Page 303 in PDF Spec 1.3
      */
-    protected Vector decode = null;
+    protected ArrayList decode = null;
 
     /**
      * Required for Type 4,5,6, and 7: Specifies the number of bits used to represent each color coordinate.
@@ -135,13 +135,13 @@ public class PDFShading extends PDFObject {
      * @param theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
      * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox Vector of double's representing a rectangle
+     * @param theBBox ArrayList of double's representing a rectangle
      * in the coordinate space that is current at the
      * time of shading is imaged. Temporary clipping
      * boundary.
      * @param theAntiAlias Whether or not to anti-alias.
      * @param theDomain Optional vector of Doubles specifying the domain.
-     * @param theMatrix Vector of Doubles specifying the matrix.
+     * @param theMatrix ArrayList of Doubles specifying the matrix.
      * If it's a pattern, then the matrix maps it to pattern space.
      * If it's a shading, then it maps it to current user space.
      * It's optional, the default is the identity matrix
@@ -149,9 +149,9 @@ public class PDFShading extends PDFObject {
      */
     public PDFShading(int theNumber, String theShadingName,
                       int theShadingType, ColorSpace theColorSpace,
-                      Vector theBackground, Vector theBBox,
-                      boolean theAntiAlias, Vector theDomain,
-                      Vector theMatrix, PDFFunction theFunction) {
+                      ArrayList theBackground, ArrayList theBBox,
+                      boolean theAntiAlias, ArrayList theDomain,
+                      ArrayList theMatrix, PDFFunction theFunction) {
         super(theNumber);
         this.shadingName = theShadingName;
         this.shadingType = theShadingType;    // 1
@@ -177,23 +177,23 @@ public class PDFShading extends PDFObject {
      * @param theBackground theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
      * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox Vector of double's representing a rectangle
+     * @param theBBox ArrayList of double's representing a rectangle
      * in the coordinate space that is current at the
      * time of shading is imaged. Temporary clipping
      * boundary.
      * @param theAntiAlias Default is false
-     * @param theCoords Vector of four (type 2) or 6 (type 3) Double
-     * @param theDomain Vector of Doubles specifying the domain
+     * @param theCoords ArrayList of four (type 2) or 6 (type 3) Double
+     * @param theDomain ArrayList of Doubles specifying the domain
      * @param theFunction the Stitching (PDFfunction type 3) function, even if it's stitching a single function
-     * @param theExtend Vector of Booleans of whether to extend teh start and end colors past the start and end points
+     * @param theExtend ArrayList of Booleans of whether to extend teh start and end colors past the start and end points
      * The default is [false, false]
      */
     public PDFShading(int theNumber, String theShadingName,
                       int theShadingType, ColorSpace theColorSpace,
-                      Vector theBackground, Vector theBBox,
-                      boolean theAntiAlias, Vector theCoords,
-                      Vector theDomain, PDFFunction theFunction,
-                      Vector theExtend) {
+                      ArrayList theBackground, ArrayList theBBox,
+                      boolean theAntiAlias, ArrayList theCoords,
+                      ArrayList theDomain, PDFFunction theFunction,
+                      ArrayList theExtend) {
         super(theNumber);
         this.shadingName = theShadingName;
         this.shadingType = theShadingType;    // 2 or 3
@@ -222,7 +222,7 @@ public class PDFShading extends PDFObject {
      * @param theBackground theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
      * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox Vector of double's representing a rectangle
+     * @param theBBox ArrayList of double's representing a rectangle
      * in the coordinate space that is current at the
      * time of shading is imaged. Temporary clipping
      * boundary.
@@ -230,15 +230,15 @@ public class PDFShading extends PDFObject {
      * @param theBitsPerCoordinate 1,2,4,8,12,16,24 or 32.
      * @param theBitsPerComponent 1,2,4,8,12, and 16
      * @param theBitsPerFlag 2,4,8.
-     * @param theDecode Vector of Doubles see PDF 1.3 spec pages 303 to 312.
+     * @param theDecode ArrayList of Doubles see PDF 1.3 spec pages 303 to 312.
      * @param theFunction the PDFFunction
      */
     public PDFShading(int theNumber, String theShadingName,
                       int theShadingType, ColorSpace theColorSpace,
-                      Vector theBackground, Vector theBBox,
+                      ArrayList theBackground, ArrayList theBBox,
                       boolean theAntiAlias, int theBitsPerCoordinate,
                       int theBitsPerComponent, int theBitsPerFlag,
-                      Vector theDecode, PDFFunction theFunction) {
+                      ArrayList theDecode, PDFFunction theFunction) {
         super(theNumber);
 
         this.shadingType = theShadingType;    // 4,6 or 7
@@ -264,23 +264,23 @@ public class PDFShading extends PDFObject {
      * @param theBackground theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
      * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox Vector of double's representing a rectangle
+     * @param theBBox ArrayList of double's representing a rectangle
      * in the coordinate space that is current at the
      * time of shading is imaged. Temporary clipping
      * boundary.
      * @param theAntiAlias Default is false
      * @param theBitsPerCoordinate 1,2,4,8,12,16, 24, or 32
      * @param theBitsPerComponent 1,2,4,8,12,24,32
-     * @param theDecode Vector of Doubles. See page 305 in PDF 1.3 spec.
+     * @param theDecode ArrayList of Doubles. See page 305 in PDF 1.3 spec.
      * @param theVerticesPerRow number of vertices in each "row" of the lattice.
      * @param theFunction The PDFFunction that's mapped on to this shape
      * @param theNumber the object number of this PDF object.
      */
     public PDFShading(int theNumber, String theShadingName,
                       int theShadingType, ColorSpace theColorSpace,
-                      Vector theBackground, Vector theBBox,
+                      ArrayList theBackground, ArrayList theBBox,
                       boolean theAntiAlias, int theBitsPerCoordinate,
-                      int theBitsPerComponent, Vector theDecode,
+                      int theBitsPerComponent, ArrayList theDecode,
                       int theVerticesPerRow, PDFFunction theFunction) {
         super(theNumber);
         this.shadingName = theShadingName;
@@ -328,7 +328,7 @@ public class PDFShading extends PDFObject {
             p.append("/Background [ ");
             vectorSize = this.background.size();
             for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                p.append(PDFNumber.doubleOut((Double)this.background.elementAt(tempInt))
+                p.append(PDFNumber.doubleOut((Double)this.background.get(tempInt))
                          + " ");
             }
             p.append("] \n");
@@ -339,7 +339,7 @@ public class PDFShading extends PDFObject {
             p.append("/BBox [ ");
             vectorSize = this.bBox.size();
             for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                p.append(PDFNumber.doubleOut((Double)this.bBox.elementAt(tempInt))
+                p.append(PDFNumber.doubleOut((Double)this.bBox.get(tempInt))
                          + " ");
             }
             p.append("] \n");
@@ -355,7 +355,7 @@ public class PDFShading extends PDFObject {
                 p.append("/Domain [ ");
                 vectorSize = this.domain.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.domain.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.domain.get(tempInt))
                              + " ");
                 }
                 p.append("] \n");
@@ -367,7 +367,7 @@ public class PDFShading extends PDFObject {
                 p.append("/Matrix [ ");
                 vectorSize = this.matrix.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.matrix.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.matrix.get(tempInt))
                              + " ");
                 }
                 p.append("] \n");
@@ -385,7 +385,7 @@ public class PDFShading extends PDFObject {
                 p.append("/Coords [ ");
                 vectorSize = this.coords.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.coords.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.coords.get(tempInt))
                              + " ");
                 }
                 p.append("] \n");
@@ -396,7 +396,7 @@ public class PDFShading extends PDFObject {
                 p.append("/Domain [ ");
                 vectorSize = this.domain.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.domain.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.domain.get(tempInt))
                              + " ");
                 }
                 p.append("] \n");
@@ -408,7 +408,7 @@ public class PDFShading extends PDFObject {
                 p.append("/Extend [ ");
                 vectorSize = this.extend.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(((Boolean)this.extend.elementAt(tempInt)) + " ");
+                    p.append(((Boolean)this.extend.get(tempInt)) + " ");
                 }
 
                 p.append("] \n");
@@ -452,7 +452,7 @@ public class PDFShading extends PDFObject {
                 p.append("/Decode [ ");
                 vectorSize = this.decode.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(((Boolean)this.decode.elementAt(tempInt)) + " ");
+                    p.append(((Boolean)this.decode.get(tempInt)) + " ");
                 }
 
                 p.append("] \n");
@@ -484,7 +484,7 @@ public class PDFShading extends PDFObject {
                 p.append("/Decode [ ");
                 vectorSize = this.decode.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(((Boolean)this.decode.elementAt(tempInt)) + " ");
+                    p.append(((Boolean)this.decode.get(tempInt)) + " ");
                 }
 
                 p.append("] \n");

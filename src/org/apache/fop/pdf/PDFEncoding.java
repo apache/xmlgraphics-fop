@@ -8,9 +8,9 @@
 package org.apache.fop.pdf;
 
 // Java
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.Iterator;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * class representing an /Encoding object.
@@ -49,7 +49,7 @@ public class PDFEncoding extends PDFObject {
     /**
      * the differences from the base encoding
      */
-    protected Hashtable differences;
+    protected HashMap differences;
 
     /**
      * create the /Encoding object
@@ -64,7 +64,7 @@ public class PDFEncoding extends PDFObject {
 
         /* set fields using paramaters */
         this.basename = basename;
-        this.differences = new Hashtable();
+        this.differences = new HashMap();
     }
 
     /**
@@ -73,7 +73,7 @@ public class PDFEncoding extends PDFObject {
      * @param code the first index of the sequence to be changed
      * @param sequence the sequence of glyph names (as String)
      */
-    public void addDifferences(int code, Vector sequence) {
+    public void addDifferences(int code, ArrayList sequence) {
         differences.put(new Integer(code), sequence);
     }
 
@@ -92,15 +92,15 @@ public class PDFEncoding extends PDFObject {
         if (!differences.isEmpty()) {
             p.append("\n/Differences [ ");
             Object code;
-            Enumeration codes = differences.keys();
-            while (codes.hasMoreElements()) {
-                code = codes.nextElement();
+            Iterator codes = differences.keySet().iterator();
+            while (codes.hasNext()) {
+                code = codes.next();
                 p.append(" ");
                 p.append(code);
-                Vector sequence = (Vector)differences.get(code);
+                ArrayList sequence = (ArrayList)differences.get(code);
                 for (int i = 0; i < sequence.size(); i++) {
                     p.append(" /");
-                    p.append((String)sequence.elementAt(i));
+                    p.append((String)sequence.get(i));
                 }
             }
             p.append(" ]");

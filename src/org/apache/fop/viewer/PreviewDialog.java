@@ -26,7 +26,7 @@ import java.awt.print.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -592,7 +592,7 @@ public class PreviewDialog extends JFrame implements ProgressListener,
                 showIt = new showProgress(error, true);
             } else {
                 StringTokenizer tok = new StringTokenizer(error, " ");
-                Vector labels = new Vector();
+                ArrayList labels = new ArrayList();
                 StringBuffer buffer = new StringBuffer();
                 String tmp, list[];
 
@@ -609,7 +609,7 @@ public class PreviewDialog extends JFrame implements ProgressListener,
                 labels.add(buffer.toString());
                 list = new String[labels.size()];
                 for (int i = 0; i < labels.size(); i++) {
-                    list[i] = labels.elementAt(i).toString();
+                    list[i] = labels.get(i).toString();
                 }
                 showIt = new showProgress(list, true);
             }

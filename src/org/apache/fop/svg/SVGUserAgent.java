@@ -25,9 +25,6 @@ import org.w3c.dom.svg.SVGLength;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Hashtable;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.Point;

@@ -10,7 +10,7 @@ package org.apache.fop.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.messaging.MessageHandler;
@@ -33,7 +33,7 @@ public class PDFStream extends PDFObject {
     /**
      * the filters that should be applied
      */
-    private Vector _filters;
+    private ArrayList _filters;
 
     /**
      * create an empty stream object
@@ -43,7 +43,7 @@ public class PDFStream extends PDFObject {
     public PDFStream(int number) {
         super(number);
         _data = new ByteArrayOutputStream();
-        _filters = new Vector();
+        _filters = new ArrayList();
     }
 
     /**
@@ -69,7 +69,7 @@ public class PDFStream extends PDFObject {
      */
     public void addFilter(PDFFilter filter) {
         if (filter != null) {
-            _filters.addElement(filter);
+            _filters.add(filter);
         }
 
     }
@@ -94,7 +94,7 @@ public class PDFStream extends PDFObject {
 
 
     protected void addDefaultFilters() {
-        Vector filters = Configuration.getListValue("stream-filter-list",
+        ArrayList filters = Configuration.getListValue("stream-filter-list",
                                                     Configuration.PDF);
         if (filters == null) {
             // try getting it as a String
@@ -108,7 +108,7 @@ public class PDFStream extends PDFObject {
             }
         } else {
             for (int i = 0; i < filters.size(); i++) {
-                String v = (String)filters.elementAt(i);
+                String v = (String)filters.get(i);
                 addFilter(v);
             }
         }
@@ -236,13 +236,12 @@ public class PDFStream extends PDFObject {
      */
     protected String applyFilters() throws IOException {
         if (_filters.size() > 0) {
-            Vector names = new Vector();
-            Vector parms = new Vector();
+            ArrayList names = new ArrayList();
+            ArrayList parms = new ArrayList();
 
             // run the filters
-            Enumeration e = _filters.elements();
-            while (e.hasMoreElements()) {
-                PDFFilter filter = (PDFFilter)e.nextElement();
+            for (int count = 0; count < _filters.size(); count++) {
+                PDFFilter filter = (PDFFilter)_filters.get(count);
                 // apply the filter encoding if neccessary
                 if (!filter.isApplied()) {
                     byte[] tmp = filter.encode(_data.toByteArray());
@@ -251,8 +250,8 @@ public class PDFStream extends PDFObject {
                     filter.setApplied(true);
                 }
                 // place the names in our local vector in reverse order
-                names.insertElementAt(filter.getName(), 0);
-                parms.insertElementAt(filter.getDecodeParms(), 0);
+                names.add(0, filter.getName());
+                parms.add(0, filter.getDecodeParms());
             }
 
             // now build up the filter entries for the dictionary
@@ -262,15 +261,14 @@ public class PDFStream extends PDFObject {
 
     }
 
-    private String buildFilterEntries(Vector names) {
+    private String buildFilterEntries(ArrayList names) {
         StringBuffer sb = new StringBuffer();
         sb.append("/Filter ");
         if (names.size() > 1) {
             sb.append("[ ");
         }
-        Enumeration e = names.elements();
-        while (e.hasMoreElements()) {
-            sb.append((String)e.nextElement());
+        for (int count = 0; count < names.size(); count++) {
+            sb.append((String)names.get(count));
             sb.append(" ");
         }
         if (names.size() > 1) {
@@ -280,7 +278,7 @@ public class PDFStream extends PDFObject {
         return sb.toString();
     }
 
-    private String buildDecodeParms(Vector parms) {
+    private String buildDecodeParms(ArrayList parms) {
         StringBuffer sb = new StringBuffer();
         boolean needParmsEntry = false;
         sb.append("/DecodeParms ");
@@ -288,9 +286,8 @@ public class PDFStream extends PDFObject {
         if (parms.size() > 1) {
             sb.append("[ ");
         }
-        Enumeration e = parms.elements();
-        while (e.hasMoreElements()) {
-            String s = (String)e.nextElement();
+        for (int count = 0; count < parms.size(); count++) {
+            String s = (String)parms.get(count);
             if (s != null) {
                 sb.append(s);
                 needParmsEntry = true;

@@ -50,7 +50,7 @@ import org.apache.fop.configuration.Configuration;
  */
 public class Fop extends Task {
     File foFile;
-    Vector filesets = new Vector();
+    ArrayList filesets = new ArrayList();
     File outFile;
     File outDir;
     String format; //MIME type
@@ -85,7 +85,7 @@ public class Fop extends Task {
      * Adds a set of fo files (nested fileset attribute).
      */
     public void addFileset(FileSet set) {
-        filesets.addElement(set);
+        filesets.add(set);
     }
 
     /**
@@ -315,7 +315,7 @@ class FOPTaskStarter extends Starter {
 
         // deal with the filesets
         for (int i = 0; i < task.filesets.size(); i++) {
-            FileSet fs = (FileSet) task.filesets.elementAt(i);
+            FileSet fs = (FileSet) task.filesets.get(i);
             DirectoryScanner ds = fs.getDirectoryScanner(task.getProject());
             String[] files = ds.getIncludedFiles();
 
