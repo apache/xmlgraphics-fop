@@ -2,52 +2,78 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.AbstractPropertyValue;
+import org.apache.fop.fo.Properties;
 
 /*
  * IntegerType.java
  *
- * Created: Wed Nov 21 15:39:30 2001
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
  * @version $Revision$ $Name$
  */
-/**
- * Constructor for Integer datatype.  Constructs a <tt>Numeric</tt>.
- */
 
-public class IntegerType {
+public class IntegerType extends AbstractPropertyValue {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
     /**
-     * Construct a <tt>Numeric</tt> with a given quantity.
-     * The unit power is assumed as 0.  The base unit is NUMERIC.
+     * The integer value of the type
+     */
+    private int intval = 0;
+
+    /**
      * @param property the index of the property with which this value
      * is associated.
      * @param value the integer value.
-     * @return a <tt>Numeric</tt> representing this <i>IntegerType</i>.
+     * @exception PropertyException
      */
-    public static Numeric makeInteger(int property, long value)
+    public IntegerType (int property, int value)
         throws PropertyException
     {
-        return new Numeric(property, (double)value, Numeric.NUMBER, 0, 0);
+        super(property);
+        intval = value;
     }
 
     /**
-     * Construct a numeric with a given unit and quantity.
-     * The unit power is assumed as 0.  The base unit is NUMERIC.
-     * @param propertyName the name of the property with which this value
-     * is associated.
+     * @param propertyName the <tt>String</tt< name of the property on which
+     * this value is being defined.
      * @param value the integer value.
-     * @return a <tt>Numeric</tt> representing this <i>IntegerType</i>.
+     * @exception PropertyException
      */
-    public static Numeric makeInteger(String propertyName, long value)
+    public IntegerType (String propertyName, int value)
         throws PropertyException
     {
-        return new Numeric(propertyName, (double)value, Numeric.NUMBER, 0, 0);
+        super(propertyName);
+        intval = value;
+    }
+
+    /**
+     * @return <tt>int</tt> integer contents
+     */
+    public int getInt() {
+        return intval;
+    }
+
+    /**
+     * @param value <tt>int</tt> value to set
+     */
+    public void setInt(int value) {
+        intval = value;
+    }
+
+    /**
+     * validate the <i>IntegerType</i> against the associated property.
+     */
+    public void validate() throws PropertyException {
+        super.validate(Properties.INTEGER);
+    }
+
+    public String toString() {
+        return "" + intval + "\n" + super.toString();
     }
 
 }
