@@ -81,9 +81,9 @@ public class FOText extends FObj {
             ca = new char[length];
             System.arraycopy(tmp, 0, ca, 0, length);
         }
-        list.add(new TextLayoutManager(this, ca, textInfo));
+        // list.add(new TextLayoutManager(this, ca, textInfo));
 	// TEST VARIANT USING Karen's BreakPoss scheme
-        // list.add(new TextBPLayoutManager(this, ca, textInfo));
+        list.add(new TextBPLayoutManager(this, ca, textInfo));
     }
 
     public CharIterator charIterator() {

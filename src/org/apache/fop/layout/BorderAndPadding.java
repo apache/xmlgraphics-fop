@@ -12,10 +12,15 @@ import org.apache.fop.datatypes.CondLength;
 
 public class BorderAndPadding implements Cloneable {
 
-    public static final int TOP = 0;
-    public static final int RIGHT = 1;
-    public static final int BOTTOM = 2;
-    public static final int LEFT = 3;
+    public static final int BEFORE = 0;
+    public static final int AFTER = 1;
+    public static final int START = 2;
+    public static final int END = 3;
+
+    public static final int TOP = BEFORE;
+    public static final int BOTTOM = AFTER;
+    public static final int LEFT = START;
+    public static final int RIGHT = END;
 
     private static class ResolvedCondLength implements Cloneable {
         int iLength;    // Resolved length value
@@ -126,7 +131,7 @@ public class BorderAndPadding implements Cloneable {
     }
 
 
-    private int getBorderWidth(int side, boolean bDiscard) {
+    public int getBorderWidth(int side, boolean bDiscard) {
         if ((borderInfo[side] == null)
                 || (bDiscard && borderInfo[side].mWidth.bDiscard)) {
             return 0;
@@ -148,7 +153,7 @@ public class BorderAndPadding implements Cloneable {
             return 0;
     }
 
-    private int getPadding(int side, boolean bDiscard) {
+    public int getPadding(int side, boolean bDiscard) {
         if ((padding[side] == null) || (bDiscard && padding[side].bDiscard)) {
             return 0;
         } else
