@@ -41,6 +41,18 @@
   <p>BTW: The Apache project knows different roles for contributors, namely 'users', 'developers', 'committers' and the 'Project 
      Management Committee' (An explanation of these roles can be found <jump href="http://xml.apache.org/roles.html">here</jump>).</p>
   </s2>
+
+  <s2 title="Coding Conventions">
+  <p>As mentioned in <jump href="http://xml.apache.org/source.html">Apache XML Project Guidelines</jump>,
+  <em>all Java Language source code in the repository must be written in conformance to the
+  <jump href="http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html">Code Conventions
+  for the Java Programming Language</jump> as published by Sun</em>. Additionally we agreed on 4
+  spaces (no tabs) for indenting.</p>
+  <p>If you don't like those conventions, just use your own standards while developing and reformat the source before
+  committing with a tool like <jump href="http://astyle.sourceforge.net/">astyle</jump> (Artistic Style).
+  </p>
+  </s2>
+
   <s2 title="Get familiar with the Fop related standards">
   <p>At the moment Fop is mainly a tool to render XSL:FO files to pdf. Therefore if you want to contribute to Fop you should become
      familiar with these standards. You can find their internet addresses on our <jump href="specs.html">website</jump>.</p>
