@@ -293,28 +293,20 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <target name="init-avail">
     <available property="jimi.present" classname="com.sun.jimi.core.Jimi" classpathref="libs-build-classpath"/>
     <available property="jai.present" classname="javax.media.jai.JAI" classpathref="libs-build-classpath"/>
-
     <available property="trax.present" classname="javax.xml.transform.Transformer" classpathref="libs-build-classpath"/>
     <available property="jdk14.present" classname="java.lang.CharSequence"/>
-
+    <available property="jce.present" classname="javax.crypto.Cipher"/>
   </target>
 
   <target name="init-filters-jdk13" depends="init-avail" unless="jdk14.present">
     <echo message="JDK 1.3 or earlier present."/>
     <copy file="src/codegen/jdk13.filter" toFile="build/src/codegen/filter"/>
-    <copy todir="build/src">
-      <fileset dir="src/java-1.3"/>
-    </copy>
   </target>
 
   <target name="init-filters-jdk14" depends="init-avail" if="jdk14.present">
     <echo message="JDK 1.4 present."/>
     <copy file="src/codegen/jdk14.filter" toFile="build/src/codegen/filter"/>
-    <copy todir="build/src">
-      <fileset dir="src/java-1.4"/>
-    </copy>
   </target>
-
 
   <!-- =================================================================== -->
   <!-- Help on usage                                                       -->
@@ -346,7 +338,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- copies special image class only if Jimi library is present          -->
   <!-- =================================================================== -->
   <target name="prepare-jimi" depends="prepare" if="jimi.present">
-    <echo message="Jimi library is present. Fop installs jimi support."/>
+    <echo message="Jimi library is present. Installing Jimi support."/>
     <copy todir="${build.src}">
       <fileset dir="${src.dir}" includes="**/${jimi}"/>
     </copy>
@@ -356,7 +348,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- copies special image class only if JAI library is present          -->
   <!-- =================================================================== -->
   <target name="prepare-jai" depends="prepare" if="jai.present">
-    <echo message="JAI library is present. Fop installs JAI support."/>
+    <echo message="JAI library is present. Installing JAI support."/>
     <copy todir="${build.src}">
       <fileset dir="${src.dir}" includes="**/${jai}"/>
       <fileset dir="${src.dir}" includes="**/${tiff}"/>
@@ -370,11 +362,24 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </copy>
   </target>
 
+  <target name="prepare-jce" depends="prepare" if="jce.present">
+    <echo message="JCE is present. Installing PDF encryption support."/>
+    <copy todir="build/src">
+      <fileset dir="src/java-1.4"/>
+    </copy>
+  </target>
+
+  <target name="prepare-jce-stub" depends="prepare" unless="jce.present">
+    <echo message="JCE not present. Installing stub."/>
+    <copy todir="build/src">
+      <fileset dir="src/java-1.3"/>
+    </copy>
+  </target>
 
   <!-- =================================================================== -->
   <!-- Prepares the source code                                            -->
   <!-- =================================================================== -->
-  <target name="prepare-src" depends="prepare, prepare-jimi, prepare-jai, prepare-trax">
+  <target name="prepare-src" depends="prepare, prepare-jimi, prepare-jai, prepare-trax, prepare-jce, prepare-jce-stub">
     <!-- copy src files -->
     <copy todir="${build.src}" filtering="yes">
       <fileset dir="${src.dir}"
