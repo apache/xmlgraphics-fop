@@ -13,12 +13,7 @@
     <title>Mailing Lists and Archives</title>
     <section id="mailing-lists-general">
       <title>General Information</title>
-        <p>
-For the Apache mailing lists, see
-<link href="http://xml.apache.org/mail.html">Apache XML Mailing Lists</link>
-for detailed subscription information.
-        </p>
-        <p>Before posting questions to the lists, review "<link href="http://www.catb.org/~esr/faqs/smart-questions.html">How To Ask Questions The Smart Way</link>".</p>
+        <p>Before posting questions to any list, review "<link href="http://www.catb.org/~esr/faqs/smart-questions.html">How To Ask Questions The Smart Way</link>".</p>
     </section>
     <section id="mailing-lists-fop-user">
       <title>FOP User Mailing List</title>
@@ -43,6 +38,11 @@ The <link href="http://nagoya.apache.org/eyebrowse/SummarizeList?listName=fop-us
 The <link href="http://xml.apache.org/mail/fop-user">Apache Mailing List archive</link> (gzip files).
                 </li>
               </ul>
+            </li>
+            <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
+            <li>
+See <link href="http://xml.apache.org/mail.html#fop-user">Apache XML Mailing Lists</link>
+for detailed subscription information.
             </li>
             <li>
 To subscribe (digest only): Send email to <link href="mailto:fop-user-digest-subscribe@xml.apache.org">fop-user-digest-subscribe@xml.apache.org</link>.
@@ -78,6 +78,11 @@ The <link href="http://xml.apache.org/mail/fop-dev/">Apache Mailing List archive
                 </li>
               </ul>
             </li>
+            <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
+            <li>
+See <link href="http://xml.apache.org/mail.html#fop-dev_fop-cvs">Apache XML Mailing Lists</link>
+for detailed subscription information.
+            </li>
             <li>
 To subscribe (digest only): Send email to <link href="mailto:fop-dev-digest-subscribe@xml.apache.org">fop-dev-digest-subscribe@xml.apache.org</link>.
             </li>
@@ -101,6 +106,7 @@ Use this forum to ask general XSL-FO questions.
             <li>
 To review the archive: <link href="http://lists.w3.org/Archives/Public/www-xsl-fo/">W3C XSL-FO Archives</link>.
             </li>
+            <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
             <li>
 Subscription administration information can be found at <link href="http://www.w3.org/Mail/Request">W3C Mailing List Administrativia</link>. After reviewing the instructions there, send your subscribe or unsubscribe request to <link href="mailto:www-xsl-fo-request@w3.org">www-xsl-fo-request@w3.org</link>.
             </li>
