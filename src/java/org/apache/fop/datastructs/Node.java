@@ -181,7 +181,7 @@ public class Node implements Cloneable {
     }
 
     /**
-     * Insert a subtree at a specified index position in the child list.
+     * Inserts a subtree at a specified index position in the child list.
      * @param index position of subtree within children
      * @param subtree to insert
      * @throws IndexOutOfBoundsException
@@ -194,7 +194,7 @@ public class Node implements Cloneable {
     }
 
     /**
-     * Add a subtree to the child list.
+     * Adds a subtree to the child list.
      * @param subtree to insert
      * @throws IndexOutOfBoundsException
      */
@@ -382,7 +382,7 @@ public class Node implements Cloneable {
     }
 
     /**
-     * Delete <code>this</code> subtree and return a count of the deleted
+     * Deletes <code>this</code> subtree and returns a count of the deleted
      * nodes.  The deletion is effected by cutting the references between
      * <code>this</code> and its parent (if any).  All other relationships
      * within the subtree are maintained.
@@ -430,7 +430,7 @@ public class Node implements Cloneable {
     }
 
     /**
-     * Get the parent of this <tt>Node</tt>.
+     * Gets the parent of this <tt>Node</tt>.
      * @return the parent <tt>Node</tt>.
      */
     public Node getParent() {
@@ -443,7 +443,7 @@ public class Node implements Cloneable {
     }
 
     /**
-     * Set the <i>parent</i> field of this node.
+     * Sets the <i>parent</i> field of this node.
      * @param parent the reference to set
      */
     public void setParent(Node parent) {
@@ -457,7 +457,7 @@ public class Node implements Cloneable {
     }
 
     /**
-     * Nullify the parent <tt>Node</tt> of this node.
+     * Nullifies the parent <tt>Node</tt> of this node.
      */
     public void unsetParent() {
         if (synchronize) {
@@ -469,7 +469,7 @@ public class Node implements Cloneable {
     }
 
     /**
-     * Get the n'th child of this node.
+     * Gets the n'th child of this node.
      * @param n - the <tt>int</tt> index of the child to return.
      * @return the <tt>Node</tt> reference to the n'th child.
      */
@@ -485,7 +485,7 @@ public class Node implements Cloneable {
     }
 
     /**
-     * Get an <tt>Iterator</tt> over the children of this node.
+     * Gets an <tt>Iterator</tt> over the children of this node.
      * @return the <tt>Iterator</tt>.
      */
     public Iterator nodeChildren() {
@@ -500,7 +500,7 @@ public class Node implements Cloneable {
     }
 
     /**
-     * Get the number of children of this node.
+     * Gets the number of children of this node.
      * @return the <tt>int</tt> number of children.
      */
     public int numChildren() {
@@ -513,7 +513,148 @@ public class Node implements Cloneable {
         if (children == null) return 0;
         return children.size();
     }
-
+    
+    /**
+     * Gets the preceding sibling of this <code>Node</code>,
+     * or <code>null</code> if none.
+     * @return the sibling node
+     */
+    public Node getPrecedingSibling() {
+        if (synchronize) {
+            synchronized (this) {
+                if (this.parent == null) return null;
+                int thisChild = parent.children.indexOf(this);
+                if (thisChild == 0) return null;
+                return parent.getChild(--thisChild);
+            }
+        }
+        if (this.parent == null) return null;
+        int thisChild = parent.children.indexOf(this);
+        if (thisChild == 0) return null;
+        return parent.getChild(--thisChild);
+    }
+    
+    /**
+     * Gets the following sibling of this <code>Node</code>,
+     * or <code>null</code> if none.
+     * @return the sibling node
+     */
+    public Node getFollowingSibling() {
+        if (synchronize) {
+            synchronized (this) {
+                if (this.parent == null) return null;
+                int thisChild = parent.children.indexOf(this);
+                if (++thisChild >= parent.numChildren()) return null;
+                return parent.getChild(thisChild);
+            }
+        }
+        if (this.parent == null) return null;
+        int thisChild = parent.children.indexOf(this);
+        if (++thisChild >= parent.numChildren()) return null;
+        return parent.getChild(thisChild);
+    }
+    
+    /**
+     * Gets the leaf <code>Node</code> immediately preceding this node in the
+     * pre-order tree rooted on the <code>nominalRoot</code>, or, if the
+     * nominal root is not encountered, the actual root.
+     * In a pre-order tree, all children follow their parent.
+     * @param nominalRoot the root node for the purposes of this operation
+     * @return the preceding leaf node or <code>null</code>
+     */
+    public Node precedingLeaf(Node nominalRoot) {
+        if (synchronize) {
+            synchronized (this) {
+                return getPrecedingLeaf(nominalRoot);
+            }
+        }
+        return getPrecedingLeaf(nominalRoot);
+    }
+    
+    /**
+     * Realizes <code>precedingLeaf()</code>.   Climbs the tree rooted at
+     * <code>nominalRoot</code> from <code>this</code>, searching for an
+     * ancestor with a branch preceding this.
+     * If none is found, there is no preceding leaf node.
+     * If one is found, it is descended to the last pre-order node,
+     * i.e. the leaf most closely preceding <code>this</code>.
+     * @param nominalRoot the root node for the purposes of this operation
+     * @return the preceding leaf node or <code>null</code>
+     */
+    private Node getPrecedingLeaf(Node nominalRoot) {
+        if (this == nominalRoot || this.parent == null) {
+            return null;
+        }
+        Node sibling = null;
+        Node pivot = this.parent;
+        while (pivot != nominalRoot) {
+            if ((sibling = pivot.getPrecedingSibling()) != null) {
+                break;
+            }
+            pivot = pivot.parent;
+        }
+        if (pivot == nominalRoot) { // No preceding leaf node
+            return null;
+        }
+        // We have the pivot preceding sibling - now descend the
+        // preceding subtree to the last leaf
+        int numChildren;
+        while ((numChildren = sibling.numChildren()) > 0) {
+            sibling = sibling.getChild(--numChildren);
+        }
+        return sibling;
+    }
+    
+    /**
+     * Gets the leaf <code>Node</code> immediately following this node in the
+     * post-order tree rooted on the <code>nominalRoot</code>, or, if the
+     * nominal root is not encountered, the actual root.
+     * In a post-order tree, all children precede their parent.
+     * @param nominalRoot the root node for the purposes of this operation
+     * @return the following leaf node or <code>null</code>
+     */
+    public Node followingLeaf(Node nominalRoot) {
+        if (synchronize) {
+            synchronized (this) {
+                return getFollowingLeaf(nominalRoot);
+            }
+        }
+        return getFollowingLeaf(nominalRoot);
+    }
+    
+    /**
+     * Realizes <code>followingLeaf()</code>.   Climbs the tree rooted at
+     * <code>nominalRoot</code> from <code>this</code>, searching for an
+     * ancestor with a branch following this.
+     * If none is found, there is no following leaf node.
+     * If one is found, it is descended to the first post-order node,
+     * i.e. the leaf most closely following <code>this</code>.
+     * @param nominalRoot the root node for the purposes of this operation
+     * @return the following leaf node or <code>null</code>
+     */
+    private Node getFollowingLeaf(Node nominalRoot) {
+        if (this == nominalRoot || this.parent == null) {
+            return null;
+        }
+        Node sibling = null;
+        Node pivot = this.parent;
+        while (pivot != nominalRoot) {
+            if ((sibling = pivot.getFollowingSibling()) != null) {
+                break;
+            }
+            pivot = pivot.parent;
+        }
+        if (pivot == nominalRoot) { // No preceding leaf node
+            return null;
+        }
+        // We have the pivot following sibling - now descend the
+        // following subtree to the first leaf
+        while (sibling.numChildren() > 0) {
+            sibling = sibling.getChild(0);
+        }
+        return sibling;
+    }
+    
     /**
      * Class <tt>PreOrder</tt> is a member class of <tt>Node</tt>.
      *
