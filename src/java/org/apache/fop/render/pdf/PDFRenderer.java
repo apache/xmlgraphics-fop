@@ -257,7 +257,8 @@ public class PDFRenderer extends PrintRenderer {
         this.pdfDoc.outputHeader(stream);
 
         //Setup encryption if necessary
-        PDFEncryptionManager.setupPDFEncryption(userAgent, this.pdfDoc, getLogger());
+        PDFEncryptionManager.setupPDFEncryption(
+                userAgent.getPDFEncryptionParams(), this.pdfDoc, getLogger());
     }
 
     /**
