@@ -39,8 +39,8 @@
     <s3 title="B.2 Block Formatting Objects">
       <ul>
         <li>block </li>
+        <li>block-container (limited)</li>
       </ul>
-      <p>Not implemented: block-container</p>
     </s3>
 
     <s3 title="B.3 Inline Formatting Objects">
@@ -97,8 +97,8 @@
     <s3 title="B.8 Other Formatting Objects">
       <ul>
         <li>wrapper</li>
+        <li>marker, retrieve marker</li>
       </ul>
-      <p>Not implemented: marker, retrieve-marker</p>
     </s3>
   </s2>
 
