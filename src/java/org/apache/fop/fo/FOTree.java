@@ -63,8 +63,8 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
-import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XMLEvent;
 
 /**
  * <tt>FOTree</tt> is the class that generates and maintains the FO Tree.
@@ -80,7 +80,7 @@ public class FOTree extends Tree implements Runnable {
      * The buffer from which the <tt>XMLEvent</tt>s from the parser will
      * be read.  <tt>protected</tt> so that FONode can access it.
      */
-    protected SyncedFoXmlEventsBuffer xmlevents;
+    protected SyncedXmlEventsBuffer xmlevents;
     private Thread parserThread;
     private boolean errorDump;
 
@@ -94,7 +94,7 @@ public class FOTree extends Tree implements Runnable {
      * @param xmlevents the buffer from which <tt>XMLEvent</tt>s from the
      * parser are read.
      */
-    public FOTree(SyncedFoXmlEventsBuffer xmlevents)
+    public FOTree(SyncedXmlEventsBuffer xmlevents)
         throws PropertyException
     {
         super();
@@ -139,7 +139,7 @@ public class FOTree extends Tree implements Runnable {
      * parser events.
      * @return <i>xmlevents</i>.
      */
-    public SyncedFoXmlEventsBuffer getXmlevents() {
+    public SyncedXmlEventsBuffer getXmlevents() {
         return xmlevents;
     }
 
@@ -149,7 +149,7 @@ public class FOTree extends Tree implements Runnable {
      */
     public void run() {
         FoRoot foRoot;
-        FoXMLEvent event;
+        XMLEvent event;
         try {
             // Let the parser look after STARTDOCUMENT and the correct
             // positioning of the root element
@@ -158,7 +158,7 @@ public class FOTree extends Tree implements Runnable {
             foRoot.buildFoTree();
             System.out.println("Back from buildFoTree");
             // Clean up the fo:root event
-            event = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, event);
+            event = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, event);
             // Get the end of document
             xmlevents.getEndDocument();
         } catch (Exception e) {
