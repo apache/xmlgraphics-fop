@@ -9,6 +9,8 @@ SOURCES=FopImageException.java \
 	FopImage.java \
 	ImageArea.java \
 	FopImageFactory.java \
+	FopImageConsumer.java \
+	GifJpegImage.java \
 	JimiImage.java
 
 CLASSES=$(SOURCES:.java=.class)
