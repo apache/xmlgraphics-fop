@@ -10,14 +10,14 @@ package org.apache.fop.layout;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.CondLength;
 
-public class BorderAndPadding {
+public class BorderAndPadding implements Cloneable {
 
     public static final int TOP = 0;
     public static final int RIGHT = 1;
     public static final int BOTTOM = 2;
     public static final int LEFT = 3;
 
-    private static class ResolvedCondLength {
+    private static class ResolvedCondLength implements Cloneable {
         int iLength;    // Resolved length value
         boolean bDiscard;
 
@@ -26,9 +26,33 @@ public class BorderAndPadding {
             iLength = length.mvalue();
         }
 
+	public Object clone() throws CloneNotSupportedException {
+	    return super.clone();
+	}
+
     }
 
-    public static class BorderInfo {
+    /**
+     * Return a full copy of the BorderAndPadding information. This clones all
+     * padding and border information.
+     * @return The copy.
+     */
+    public Object clone() throws CloneNotSupportedException {
+	BorderAndPadding bp = (BorderAndPadding) super.clone();
+	bp.padding = (ResolvedCondLength[])padding.clone();
+	bp.borderInfo = (BorderInfo[])borderInfo.clone();
+	for (int i=0; i<padding.length; i++) {
+	    if (padding[i] != null) {
+		bp.padding[i]=(ResolvedCondLength)padding[i].clone();
+	    }
+	    if (borderInfo[i] != null) {
+		bp.borderInfo[i]=(BorderInfo)borderInfo[i].clone();
+	    }
+	}
+	return bp;
+    }
+
+    public static class BorderInfo implements Cloneable {
         private int mStyle;          // Enum for border style
         private ColorType mColor;    // Border color
         private ResolvedCondLength mWidth;
@@ -39,6 +63,12 @@ public class BorderAndPadding {
             mColor = color;
         }
 
+	public Object clone() throws CloneNotSupportedException {
+	    BorderInfo bi = (BorderInfo) super.clone();
+	    bi.mWidth = (ResolvedCondLength)mWidth.clone();
+	    // do we need to clone the Color too???
+	    return bi;
+	}
     }
 
     private BorderInfo[] borderInfo = new BorderInfo[4];
