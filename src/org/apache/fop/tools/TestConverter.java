@@ -94,7 +94,7 @@ public class TestConverter {
      * The document is read as a dom and each testcase is covered.
      */
     public Hashtable runTests(String fname, String dest, String compDir) {
-        System.out.println("running tests in file:" + fname);
+        //System.out.println("running tests in file:" + fname);
         try {
             if (compDir != null) {
                 compare = new File(baseDir + "/" + compDir);
@@ -118,7 +118,7 @@ public class TestConverter {
             if (testsuite.hasAttributes()) {
                 String profile = testsuite.getAttributes().getNamedItem(
                                    "profile").getNodeValue();
-                System.out.println("testing test suite:" + profile);
+                //System.out.println("testing test suite:" + profile);
             }
             NodeList testcases = testsuite.getChildNodes();
             for (int count = 0; count < testcases.getLength(); count++) {
@@ -143,7 +143,7 @@ public class TestConverter {
         if (tcase.hasAttributes()) {
             String profile = tcase.getAttributes().getNamedItem(
                                "profile").getNodeValue();
-            System.out.println("testing profile:" + profile);
+            //System.out.println("testing profile:" + profile);
         }
         NodeList cases = tcase.getChildNodes();
         for (int count = 0; count < cases.getLength(); count++) {
@@ -182,22 +182,31 @@ public class TestConverter {
 
         String xml =
           test.getAttributes().getNamedItem("xml").getNodeValue();
-        String xsl =
-          test.getAttributes().getNamedItem("xsl").getNodeValue();
-        System.out.println("converting xml:" + xml + " and xsl:" +
-                           xsl + " to area tree");
+        Node xslNode = test.getAttributes().getNamedItem("xsl");
+        String xsl = null;
+        if (xslNode != null) {
+            xsl = xslNode.getNodeValue();
+        }
+        //System.out.println("converting xml:" + xml + " and xsl:" +
+        //                   xsl + " to area tree");
 
         try {
             File xmlFile = new File(baseDir + "/" + xml);
 
             try {
-                Configuration.put("baseDir", xmlFile.getParentFile().toURL().toExternalForm());
+                Configuration.put("baseDir",
+                                  xmlFile.getParentFile().toURL().toExternalForm());
             } catch (Exception e) {
                 System.err.println("Error setting base directory");
             }
 
-            InputHandler inputHandler = new XSLTInputHandler(xmlFile,
-                                        new File(baseDir + "/" + xsl));
+            InputHandler inputHandler = null;
+            if (xsl == null) {
+                inputHandler = new FOInputHandler(xmlFile);
+            } else {
+                inputHandler = new XSLTInputHandler(xmlFile,
+                                                    new File(baseDir + "/" + xsl));
+            }
 
             XMLReader parser = inputHandler.getParser();
             setParserFeatures(parser);
@@ -220,9 +229,9 @@ public class TestConverter {
             if (outname.endsWith(".xml")) {
                 outname = outname.substring(0, outname.length() - 4);
             }
-            driver.setOutputStream(
-              new FileOutputStream(new File(destdir, outname + (outputPDF ? ".pdf" : ".at.xml"))));
-System.out.println("ddir:" + destdir + " on:" + outname + ".pdf");
+            driver.setOutputStream( new FileOutputStream(
+                                      new File(destdir, outname + (outputPDF ? ".pdf" : ".at.xml"))));
+            //System.out.println("ddir:" + destdir + " on:" + outname + ".pdf");
             driver.render();
 
             // check difference
