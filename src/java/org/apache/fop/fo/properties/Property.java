@@ -366,7 +366,7 @@ public class Property {
 
     /**
      * Do the work for the three argument refineParsing method.
-     * @param property - the <tt>int</tt> property index.
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value - <tt>PropertyValue</tt> returned by the parser
      * @param nested - <tt>boolean</tt> indicating whether this method is
@@ -374,17 +374,17 @@ public class Property {
      * method.
      * @see #refineParsing(int,FONode,PropertyValue)
      */
-    public PropertyValue refineParsing(int property,
+    public PropertyValue refineParsing(int propindex,
                         FONode foNode, PropertyValue value, boolean nested)
             throws PropertyException
     {
-        //int property = value.getProperty();
-        if (property != value.getProperty()) // DEBUG
+        //int propindex = value.getProperty();
+        if (propindex != value.getProperty()) // DEBUG
             throw new PropertyException
                 ("Mismatched property and value.property.");
-        String propName = PropNames.getPropertyName(property);
+        String propName = PropNames.getPropertyName(propindex);
         int proptype = value.getType();
-        int dataTypes = PropertyConsts.pconsts.getDataTypes(property);
+        int dataTypes = PropertyConsts.pconsts.getDataTypes(propindex);
         PropertyValue pv;
         if ((dataTypes & AURAL) != 0)
             throw new PropertyNotImplementedException
@@ -411,16 +411,16 @@ public class Property {
             if ((dataTypes & (NCNAME | CHARACTER_T)) != 0)
                 return value;
             if ((dataTypes & COUNTRY_T) != 0)
-                return new CountryType(property, ncname);
+                return new CountryType(propindex, ncname);
             if ((dataTypes & LANGUAGE_T) != 0)
-                return new LanguageType(property, ncname);
+                return new LanguageType(propindex, ncname);
             if ((dataTypes & SCRIPT_T) != 0)
-                return new ScriptType(property, ncname);
+                return new ScriptType(propindex, ncname);
             if ((dataTypes & ENUM) != 0)
-                return new EnumType(property, ncname);
+                return new EnumType(propindex, ncname);
             if ((dataTypes & MAPPED_LENGTH) != 0)
                 return (new MappedNumeric
-                            (foNode, property, ncname)).getMappedNumValue();
+                            (foNode, propindex, ncname)).getMappedNumValue();
             throw new PropertyException
                             ("NCName value invalid  for " + propName);
         case PropertyValue.ENUM:
@@ -480,10 +480,54 @@ public class Property {
                 ("PropertyValueList passed to Property.refineParsing for "
                 + propName + "\n" + value.toString());
         default:
+            // The COMPOUND test was orginally protected by the
+            // if ( ! nested) fence.  Only within Font, Border and
+            // Background shorthands is refineParsing called with a
+            // nested value of 'true'.  This may cause problems, in which case
+            // the COMPOUND processing will have to be repeated within the
+            // (property instanceof CorrespondingProperty) case.
+            if ((dataTypes & COMPOUND) != 0)
+                return ShorthandPropSets.expandCompoundProperty
+                                        (foNode.getFOTree(), value);
             if ( ! nested) {
-                if ((dataTypes & COMPOUND) != 0)
-                    return ShorthandPropSets.expandCompoundProperty
-                                            (foNode.getFOTree(), value);
+                int correspIndex = 0;
+                Property property =
+                    PropertyConsts.pconsts.getProperty(propindex);
+                if (property instanceof CorrespondingProperty) {
+                    correspIndex =
+                        ((CorrespondingProperty)property)
+                        .getCorrespondingProperty(foNode);
+                    // Note - can't call refineParsing recursively to resolve
+                    // corresponding compounds, because the compound is itself
+                    // a corresponding property
+                    // Create a list, containing this PropertyValue on
+                    // the original property, plus the value on the
+                    // expansion of the corresponding property
+                    PropertyValueList newlist =
+                        new PropertyValueList(propindex);
+                    newlist.add(value);
+                    PropertyValue corresPv = null;
+                    try {
+                        corresPv = (PropertyValue)(value.clone());
+                    } catch (CloneNotSupportedException e) {
+                        throw new PropertyException(e.getMessage());
+                    }
+                    corresPv.setProperty(correspIndex);
+                    corresPv = PropertyConsts.pconsts.refineParsing(
+                            corresPv.getProperty(), foNode,
+                            corresPv, IS_NESTED);
+//                  if it's a list, recursively refine.  This will return a list
+                    if (corresPv.getType() == PropertyValue.LIST) {
+                        PropertyValueList pvl =
+                            refineExpansionList(
+                                    corresPv.getProperty(), foNode,
+                                    (PropertyValueList)corresPv);
+                        newlist.addAll(pvl);
+                    } else { // single element
+                        newlist.add(corresPv);
+                    }
+                    return newlist;
+                }
                 if (proptype == PropertyValue.INHERIT) {
                     if ((dataTypes & INHERIT) != 0)
                         return ((Inherit)value).resolve(foNode);
