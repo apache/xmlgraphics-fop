@@ -177,11 +177,11 @@ public class Root extends FObj {
     }
 
     /**
-     * Report additional pages generated to increase the totalPagesGenerated counter
+     * Notify additional pages generated to increase the totalPagesGenerated counter
      * @param lastPageNumber the last page number of the sequence
      * @throws IllegalArgumentException for negative additional page counts
      */
-    public void reportAdditionalPagesGenerated(int additionalPages) {
+    public void notifyAdditionalPagesGenerated(int additionalPages) {
         if (additionalPages >= 0) {
             totalPagesGenerated += additionalPages;
         } else {

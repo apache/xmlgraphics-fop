@@ -31,9 +31,7 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * This provides pagination of flows onto pages. Much of the
- * logic for paginating flows is contained in this class.
- * The main entry point is the format method.
+ * Implementation of the fo:page-sequence formatting object.
  */
 public class PageSequence extends FObj {
     // The value of properties relevant for fo:page-sequence.
@@ -54,11 +52,6 @@ public class PageSequence extends FObj {
      */
     private Root root;
 
-    /**
-     * the set of layout masters (provided by the root object)
-     */
-    private LayoutMasterSet layoutMasterSet;
-
     // There doesn't seem to be anything in the spec requiring flows
     // to be in the order given, only that they map to the regions
     // defined in the page sequence, so all we need is this one hashmap
@@ -69,12 +62,8 @@ public class PageSequence extends FObj {
      */
     public HashMap flowMap;
 
-//  private boolean isFlowSet = false;
-
-    // page number and related formatting variables
     public int startingPageNumber = 0;
     private PageNumberGenerator pageNumberGenerator;
-    private boolean isForcing = false;
 
     /**
      * The currentSimplePageMaster is either the page master for the
@@ -126,14 +115,13 @@ public class PageSequence extends FObj {
      */
     protected void startOfNode() throws FOPException {
         this.root = (Root) parent;
-        layoutMasterSet = root.getLayoutMasterSet();
         flowMap = new HashMap();
 
         this.simplePageMaster =
-                this.layoutMasterSet.getSimplePageMaster(masterReference);
+                root.getLayoutMasterSet().getSimplePageMaster(masterReference);
         if (this.simplePageMaster == null) {
             this.pageSequenceMaster =
-                    this.layoutMasterSet.getPageSequenceMaster(masterReference);
+                    root.getLayoutMasterSet().getPageSequenceMaster(masterReference);
             if (this.pageSequenceMaster == null) {
                 throw new ValidationException("master-reference '" + masterReference
                                        + "' for fo:page-sequence matches no"
@@ -143,7 +131,6 @@ public class PageSequence extends FObj {
             }
         }
 
-        // get the 'format' properties
         this.pageNumberGenerator =
             new PageNumberGenerator(format, groupingSeparator, groupingSize, letterValue);
 
@@ -232,7 +219,7 @@ public class PageSequence extends FObj {
                 + "\" found within fo:page-sequence", flow.locator);
         }
 
-        if (!layoutMasterSet.regionNameExists(flowName) 
+        if (!root.getLayoutMasterSet().regionNameExists(flowName) 
             && !flowName.equals("xsl-before-float-separator") 
             && !flowName.equals("xsl-footnote-separator")) {
                 throw new ValidationException("flow-name \""
@@ -253,10 +240,6 @@ public class PageSequence extends FObj {
             startingPageNumber = root.getEndingPageNumberOfPreviousSequence() + 1;
             pageNumberType = initialPageNumber.getEnum();
             if (pageNumberType == EN_AUTO_ODD) {
-                // Next page but force odd. May force empty page creation!
-                // Whose master is used for this??? Assume no.
-                // Use force-page-count = auto
-                // on preceding page-sequence to make sure that there is no gap!
                 if (startingPageNumber % 2 == 0) {
                     startingPageNumber++;
                 }
@@ -318,7 +301,7 @@ public class PageSequence extends FObj {
 //          if (masterName != null) {
 
 //              SimplePageMaster spm =
-//                  this.layoutMasterSet.getSimplePageMaster(masterName);
+//                  root.getLayoutMasterSet().getSimplePageMaster(masterName);
 //              Region region = spm.getRegion(FO_REGION_BODY);
 
 
@@ -329,14 +312,6 @@ public class PageSequence extends FObj {
 //                  return true;*/
 //          }
 //          return false;
-//      }
-
-//      public boolean isFlowSet() {
-//          return isFlowSet;
-//      }
-
-//      public void setIsFlowSet(boolean isFlowSet) {
-//          this.isFlowSet = isFlowSet;
 //      }
 
     /**

@@ -212,7 +212,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         currentPageNum--;
         log.debug("Ending layout");
         finishPage();
-        pageSeq.getRoot().reportAdditionalPagesGenerated((currentPageNum - startPageNum) + 1);
+        pageSeq.getRoot().notifyAdditionalPagesGenerated((currentPageNum - startPageNum) + 1);
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager#isBogus() */
