@@ -197,7 +197,7 @@ public class Driver implements LogEnabled {
     private Renderer renderer;
 
     /**
-     * the structure handler
+     * the SAX ContentHandler
      */
     private FOInputHandler foInputHandler;
 
@@ -510,12 +510,12 @@ public class Driver implements LogEnabled {
     }
 
     /**
-     * Returns the tree builder (a SAX ContentHandler).
-     *
-     * Used in situations where SAX is used but not via a FOP-invoked
-     * SAX parser. A good example is an XSLT engine that fires SAX
-     * events but isn't a SAX Parser itself.
-     * @return a content handler for handling the SAX events.
+     * Determines which SAX ContentHandler is appropriate for the rendererType.
+     * Structure renderers (e.g. MIF & RTF) each have a specialized
+     * ContentHandler that directly place data into the output stream. Layout
+     * renderers (e.g. PDF & PostScript) use a ContentHandler that builds an FO
+     * Tree.
+     * @return a SAX ContentHandler for handling the SAX events.
      */
     public ContentHandler getContentHandler() {
         if (!isInitialized()) {
