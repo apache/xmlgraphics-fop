@@ -361,7 +361,8 @@ public class Options {
     /**
      * Convenience class for common functionality required by the config
      * files.
-     * @param <tt>Class</tt> object of requesting class.
+     * @param fname the configuration file name.
+     * @param classobj the <tt>Class</tt> object of requesting class.
      * @return an <tt>InputStream</tt> generated through a call to
      * <tt>getResourceAsStream</tt> on the context <tt>ClassLoader</tt>
      * or the <tt>ClassLoader</tt> for the conf class provided as an argument.

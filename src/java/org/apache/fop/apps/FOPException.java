@@ -57,7 +57,6 @@ import org.xml.sax.SAXException;
 
 /**
  * Exception thrown when FOP has a problem
- * @author pbw
  */
 public class FOPException extends Exception {
     private static final String TAG = "$Name$";
@@ -69,8 +68,7 @@ public class FOPException extends Exception {
 
     /**
      * create a new FOP Exception
-     *
-     * @param message descriptive message
+     * @param message description
      */
     public FOPException(String message) {
         super(message);
@@ -78,7 +76,6 @@ public class FOPException extends Exception {
 
     /**
      * create a new FOP Exception
-     *
      * @param e incoming Throwable
      */
     public FOPException(Throwable e) {
@@ -87,8 +84,8 @@ public class FOPException extends Exception {
     }
 
     /**
-     * @param message 
-     * @param e
+     * @param message the description
+     * @param e the exception
      */
     public FOPException(String message, Throwable e) {
         super(message);
@@ -96,21 +93,24 @@ public class FOPException extends Exception {
     }
 
     /**
-     * @param t
+     * Sets this exception to the Throwable parameter
+     * @param t the exception
      */
     protected void setException(Throwable t) {
         exception = t;
     }
 
     /**
-     * @return
+     * Gets this exception.
+     * @return a Throwable
      */
     public Throwable getException() {
         return exception;
     }
 
     /**
-     * @return
+     * Gets the root exception of this exception.
+     * @return the Throwable root exception
      */
     protected Throwable getRootException() {
         Throwable result = exception;
@@ -129,7 +129,7 @@ public class FOPException extends Exception {
     }
 
 
-    /* (non-Javadoc)
+    /**
      * @see java.lang.Throwable#printStackTrace()
      */
     public void printStackTrace() {
@@ -146,6 +146,9 @@ public class FOPException extends Exception {
         }
     }
 
+    /**
+     * @see java.lang.Throwable#printStackTrace(java.io.PrintStream)
+     */
     public void printStackTrace(java.io.PrintStream stream) {
         synchronized (stream) {
             super.printStackTrace(stream);
@@ -160,7 +163,7 @@ public class FOPException extends Exception {
         }
     }
 
-    /* (non-Javadoc)
+    /**
      * @see java.lang.Throwable#printStackTrace(java.io.PrintWriter)
      */
     public void printStackTrace(java.io.PrintWriter writer) {
