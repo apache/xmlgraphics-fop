@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
 
 
    FOP - Frequently Asked Questions
@@ -25,8 +25,8 @@
 
 
 
-   Q: The char "&gt;" is inserted into the page number display like this 
-      "formatting FOs into areas [1] [2] [3&gt;&gt;&gt;&gt;]". Is this a bug?
+   Q: The char ">" is inserted into the page number display like this 
+      "formatting FOs into areas [1] [2] [3>>>>]". Is this a bug?
    A: No, a feature. It simply means that on that page an area 
          overflowed (ie there was not enough room to fit the text in).
 
@@ -45,5 +45,4 @@
 
 Version: 1.0.1 1999/11/29  - 
 Contact: James Tauber (jtauber@jtauber.com)
-
 
