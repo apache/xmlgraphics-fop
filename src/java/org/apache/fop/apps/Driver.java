@@ -7,10 +7,10 @@
  * 
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
  * 
- * Redistribution and use in source and binary forms, with or without modifica-
+ * Redistribution and use in saxSource and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
  * 
- * 1. Redistributions of  source code must  retain the above copyright  notice,
+ * 1. Redistributions of  saxSource code must  retain the above copyright  notice,
  *    this list of conditions and the following disclaimer.
  * 
  * 2. Redistributions in binary form must reproduce the above copyright notice,
@@ -63,7 +63,9 @@ import org.apache.fop.layout.AreaTree;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.version.Version;
 import org.apache.fop.xml.FoXmlSerialHandler;
+import org.apache.fop.xml.Namespaces;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 
 /**
  * Sets up and runs serialized component threads.
@@ -78,10 +80,12 @@ public class Driver {
 
     private InputHandler inputHandler;
     private XMLReader parser;
-    private InputSource source;
+    private InputSource saxSource;
 
     private FoXmlSerialHandler xmlhandler;
-    private SyncedXmlEventsBuffer xmlevents;
+    private SyncedXmlEventsBuffer eventsBuffer;
+    private Namespaces namespaces;
+    private XmlEventReader eventReader;
     private FOTree foTree;
     private AreaTree areaTree = new AreaTree();
 
@@ -105,18 +109,18 @@ public class Driver {
     /**
      * Sets up the environment and start processing threads.
      * The primary elements of the environment include:<br>
-     * the input source, the parser, the
+     * the input saxSource, the parser, the
      * {@link org.apache.fop.xml.SyncedXmlEventsBuffer SyncedXmlEventsBuffer}
-     * (<code>xmlevents</code>), the
+     * (<code>eventsBuffer</code>), the
      * {@link org.apache.fop.xml.FoXmlSerialHandler FoXmlSerialHandler}
      * (<code>xmlhandler</code>) and the
      * {@link org.apache.fop.fo.FOTree FOTree} (<code>foTree</code>).
      * 
-     * <p>The <code>xmlhandler</code> uses the source and the parser to
-     * generate XML events which it stores in <code>xmlevents</code>.
+     * <p>The <code>xmlhandler</code> uses the saxSource and the parser to
+     * generate XML events which it stores in <code>eventsBuffer</code>.
      * <code>FoXmlSerialHandler</code> implements <code>Runnable</code>.
      * 
-     * <p>The <code>foTree</code> reads events from the <code>xmlevents</code>
+     * <p>The <code>foTree</code> reads events from the <code>eventsBuffer</code>
      * buffer, which it interprets to build the FO tree.  <code>FOTree</code>
      * implements <code>Runnable</code>.
      * 
@@ -126,7 +130,7 @@ public class Driver {
      * buffer has emptied.
      * <p>
      * The FO Tree builder thread is passed the runnable <code>foTree</code>,
-     * which blocks on an empty <code>xmlevents</code> buffer, and continues
+     * which blocks on an empty <code>eventsBuffer</code> buffer, and continues
      * when notified that events are available in the buffer.
      * 
      * @throws FOPException
@@ -134,13 +138,15 @@ public class Driver {
     public void run () throws FOPException {
         setInputHandler(Options.getInputHandler());
         parser = inputHandler.getParser();
-        source = inputHandler.getInputSource();
+        saxSource = inputHandler.getInputSource();
         // Setting of namespace-prefixes feature no longer required
         //setParserFeatures(parser);
 
-        xmlevents = new SyncedXmlEventsBuffer();
-        xmlhandler = new FoXmlSerialHandler(xmlevents, parser, source);
-        foTree = new FOTree(xmlevents);
+        namespaces = new Namespaces();
+        eventsBuffer = new SyncedXmlEventsBuffer(namespaces);
+        eventReader = new XmlEventReader(eventsBuffer, namespaces);
+        xmlhandler = new FoXmlSerialHandler(eventsBuffer, parser, saxSource);
+        foTree = new FOTree(eventReader);
 
         driverThread = Thread.currentThread();
         foThread = new Thread(foTree, "FOTreeBuilder");

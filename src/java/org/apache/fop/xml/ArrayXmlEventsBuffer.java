@@ -153,6 +153,9 @@ implements XmlEventSource {
         // TODO Should check for legality of this operation - this will involve
         // a change to the SyncedXmlEventsBuffer implementation and the
         // XmlEventSource interface.
+        if (nextEvent <= 0) {
+            throw new IndexOutOfBoundsException("No events read from buffer");
+        }
         nextEvent--;
     }
     

@@ -67,7 +67,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 import org.apache.fop.xml.XmlEvent;
 
 /**
@@ -214,8 +214,8 @@ public class FoLayoutMasterSet extends FONode {
                     throw new FOPException
                             ("Error seeking page-masters");
                 // Flush the master event
-                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
             // Unexpected end of file

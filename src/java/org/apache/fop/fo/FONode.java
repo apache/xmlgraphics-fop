@@ -76,8 +76,8 @@ import org.apache.fop.fo.properties.Property;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.Namespaces;
+import org.apache.fop.xml.XmlEventReader;
 
 /**
  * Class for nodes in the FO tree.
@@ -142,10 +142,10 @@ public class FONode extends Node{
         PAGESEQ | FLOW | STATIC | TITLE | MC_MARKER;
 
     /** The buffer from which parser events are drawn. */
-    protected final SyncedXmlEventsBuffer xmlevents;
+    protected final XmlEventReader xmlevents;
 
     /** The namespaces object associated with <i>xmlevents</i>. */
-    protected Namespaces namespaces;
+    protected final Namespaces namespaces;
 
     /** The FO type. */
     public final int type;
@@ -616,8 +616,8 @@ public class FONode extends Node{
                 new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numMarkers++;
                 ev = xmlevents.getEndElement(
-                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                        XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
         } catch (TreeException e) {
             throw new FOPException(e);
