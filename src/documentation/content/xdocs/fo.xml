@@ -86,7 +86,7 @@ If you view their output with something not aware of the encoding, like Notepad 
         <title>Vertical Centering</title>
         <p>
           To vertically center an image, table, or other item, use display-align="center".
-FOP implements this for block containers and table cell.
+See <link href="compliance.html#fo-property-display-align">display-align Compliance</link> for implementation status.
 Here is a small, self-contained document centering an image on a page:
         </p>
         <source><![CDATA[<?xml version="1.0"?>

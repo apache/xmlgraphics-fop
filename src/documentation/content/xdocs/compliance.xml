@@ -269,7 +269,9 @@ want it to.</comment>
           <level-3 name="alignment-baseline" citation="§7.13.2" extURL="slice7.html#alignment-baseline" compliance-level="1" comply="no"/>
           <level-3 name="baseline-shift" citation="§7.13.3" extURL="slice7.html#baseline-shift" compliance-level="1" comply="no"/>
           <level-3 name="display-align" citation="§7.13.4" extURL="slice7.html#display-align" compliance-level="2" comply="partial">
-            <comment>works on table-cell</comment>
+            <comment>Implemented only for table-cell and block-container.</comment>
+            <comment>For table-cell, the "height" attribute must be set for the parent table-row; setting the height of the table or the table-cell results in vertical centering having no effect.
+</comment>
           </level-3>
           <level-3 name="dominant-baseline" citation="§7.13.5" extURL="slice7.html#dominant-baseline" compliance-level="1" comply="no"/>
           <level-3 name="relative-align" citation="§7.13.6" extURL="slice7.html#relative-align" compliance-level="2" comply="no"/>
