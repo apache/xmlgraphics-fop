@@ -47,7 +47,7 @@ public class PageSequenceMaster {
     private static final String revision = "$Revision$";
 
     /** Constant representing the <i>no-limit</i> value of the
-	    maximum-repeats property. */
+            maximum-repeats property. */
     public static final int NO_LIMIT = -1;
 
     private String masterName;
@@ -62,18 +62,18 @@ public class PageSequenceMaster {
      * <tt>FoSimplePageMaster</tt>s indexed by master-name.
      */
     public PageSequenceMaster
-		(String masterName, FoPageSequenceMaster pageSeq,
-						HashMap simplePageMasters)
-	throws PropertyException, FOPException
+                (String masterName, FoPageSequenceMaster pageSeq,
+                                                HashMap simplePageMasters)
+        throws PropertyException, FOPException
     {
-	String masterRef;
+        String masterRef;
         FoSimplePageMaster simplePM;
-	PageMasterAlternatives masterAlt;
+        PageMasterAlternatives masterAlt;
         int maxRepeats = 1;
         int enumValue;
         PropertyValue pv;
         Numeric npv;
-	this.masterName = masterName;
+        this.masterName = masterName;
         // Convert the simple-page-masters into page-sequence-masters
         Iterator names = simplePageMasters.keySet().iterator();
         while (names.hasNext()) {
@@ -90,17 +90,17 @@ public class PageSequenceMaster {
                                        PagePosition.ANY));
             masters.add(masterAlt);
         }
-	// Process the sequence of masters.
-	int numChildren = pageSeq.numChildren();
-	for (int child = 0; child < numChildren; child++) {
-	    FONode masterReference = (FONode)(pageSeq.getChild(child));
-	    switch (masterReference.type) {
-	    case FObjectNames.SINGLE_PAGE_MASTER_REFERENCE:
-		// Get the master-reference property value
+        // Process the sequence of masters.
+        int numChildren = pageSeq.numChildren();
+        for (int child = 0; child < numChildren; child++) {
+            FONode masterReference = (FONode)(pageSeq.getChild(child));
+            switch (masterReference.type) {
+            case FObjectNames.SINGLE_PAGE_MASTER_REFERENCE:
+                // Get the master-reference property value
                 simplePM = getMasterReference
                                         (masterReference, simplePageMasters);
-		// Create and add a PageMasterAlternatives
-		masterAlt = new PageMasterAlternatives(1, 1);
+                // Create and add a PageMasterAlternatives
+                masterAlt = new PageMasterAlternatives(1, 1);
                 // Create and add a single default PageCondition
                 masterAlt.addCondition
                             (masterAlt.new PageCondition(simplePM,
@@ -109,8 +109,8 @@ public class PageSequenceMaster {
                                            PagePosition.ANY));
                 masters.add(masterAlt);
                 break;
-	    case FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE:
-		// Get the master-reference property value
+            case FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE:
+                // Get the master-reference property value
                 simplePM = getMasterReference
                                         (masterReference, simplePageMasters);
                 // Get the maximum-repeats
@@ -138,8 +138,8 @@ public class PageSequenceMaster {
                     throw new FOPException
                                         ("MAXIMUM_REPEATS not an integer.");
                 }
-		// Create and add a PageMasterAlternatives
-		masterAlt = new PageMasterAlternatives(0, maxRepeats);
+                // Create and add a PageMasterAlternatives
+                masterAlt = new PageMasterAlternatives(0, maxRepeats);
                 // Create and add a single default PageCondition
                 masterAlt.addCondition
                             (masterAlt.new PageCondition(simplePM,
@@ -148,7 +148,7 @@ public class PageSequenceMaster {
                                            PagePosition.ANY));
                 masters.add(masterAlt);
                 break;
-	    case FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES:
+            case FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES:
                 // Get the maximum-repeats
                 pv = masterReference.getPropertyValue
                                                 (PropNames.MAXIMUM_REPEATS);
@@ -174,8 +174,8 @@ public class PageSequenceMaster {
                     throw new FOPException
                                         ("MAXIMUM_REPEATS not an integer.");
                 }
-		// Create and add a PageMasterAlternatives
-		masterAlt = new PageMasterAlternatives(0, maxRepeats);
+                // Create and add a PageMasterAlternatives
+                masterAlt = new PageMasterAlternatives(0, maxRepeats);
                 // Process the conditional-page-master-alternatives children
                 int numConds = masterReference.numChildren();
                 for (int cond = 0; cond < numConds; cond++) {
@@ -211,8 +211,8 @@ public class PageSequenceMaster {
                 throw new FOPException
                         ("Unknown master reference type: "
                          + masterReference.type);
-	    }
-	}
+            }
+        }
     }
 
     /**
@@ -244,7 +244,7 @@ public class PageSequenceMaster {
      * @param master - a <tt>PageMasterAlternatives</tt>.
      */
     public void addMaster(PageMasterAlternatives master) {
-	masters.add(master);
+        masters.add(master);
     }
 
     /**
@@ -252,7 +252,7 @@ public class PageSequenceMaster {
      * @return - the length.
      */
     public int getMastersLength() {
-	return masters.size();
+        return masters.size();
     }
 
     /**
@@ -261,7 +261,7 @@ public class PageSequenceMaster {
      * @return - the indexed <tt>PageMasterAlternatives</tt> master.
      */
     public PageMasterAlternatives getMaster(int i) {
-	return (PageMasterAlternatives)(masters.get(i));
+        return (PageMasterAlternatives)(masters.get(i));
     }
 
     /**
@@ -270,52 +270,52 @@ public class PageSequenceMaster {
      */
     public class PageMasterAlternatives {
 
-	private static final String tag = "$Name$";
-	private static final String revision = "$Revision$";
+        private static final String tag = "$Name$";
+        private static final String revision = "$Revision$";
 
-	/** The minumum number of repeats for this set of alternatives. */
-	public final int minRepeats;
-	/** The maximum-repeats value for this set of alternatives. */
-	public final int maxRepeats;
+        /** The minumum number of repeats for this set of alternatives. */
+        public final int minRepeats;
+        /** The maximum-repeats value for this set of alternatives. */
+        public final int maxRepeats;
 
-	private ArrayList alternatives = new ArrayList(1);
+        private ArrayList alternatives = new ArrayList(1);
 
-	/**
-	 * @param minRepeats - the <tt>int</tt> minimum number of repeats for
-	 * this alternative.
-	 * @param maxRepeats - the <tt>int</tt> maximum number of repeats for
-	 * this alternative.  Set from the <i>maximum-repeats</i> property.
-	 */
-	public PageMasterAlternatives(int minRepeats, int maxRepeats) {
-	    this.minRepeats = minRepeats;
-	    this.maxRepeats = maxRepeats;
+        /**
+         * @param minRepeats - the <tt>int</tt> minimum number of repeats for
+         * this alternative.
+         * @param maxRepeats - the <tt>int</tt> maximum number of repeats for
+         * this alternative.  Set from the <i>maximum-repeats</i> property.
+         */
+        public PageMasterAlternatives(int minRepeats, int maxRepeats) {
+            this.minRepeats = minRepeats;
+            this.maxRepeats = maxRepeats;
             //System.out.println("New PMA: " + minRepeats + " " + maxRepeats);
-	}
+        }
 
-	/**
-	 * Add a new alternative condition set.
-	 * @param condition - a <tt>PageCondition</tt>.
-	 */
-	public void addCondition(PageCondition condition) {
-	    alternatives.add(condition);
-	}
+        /**
+         * Add a new alternative condition set.
+         * @param condition - a <tt>PageCondition</tt>.
+         */
+        public void addCondition(PageCondition condition) {
+            alternatives.add(condition);
+        }
 
-	/**
-	 * Get the length of the <i>alternatives</i> <tt>ArrayList</tt>.
-	 * @return - the length.
-	 */
-	public int getAlternativesLength() {
-	    return alternatives.size();
-	}
+        /**
+         * Get the length of the <i>alternatives</i> <tt>ArrayList</tt>.
+         * @return - the length.
+         */
+        public int getAlternativesLength() {
+            return alternatives.size();
+        }
 
-	/**
-	 * Get the indexed <tt>PageMasterAlternatives</tt> master.
-	 * @param i - the index of the master to retrieve.
-	 * @return - the indexed <tt>PageMasterAlternatives</tt> master.
-	 */
-	public PageCondition getAlternative(int i) {
-	    return (PageCondition)(alternatives.get(i));
-	}
+        /**
+         * Get the indexed <tt>PageMasterAlternatives</tt> master.
+         * @param i - the index of the master to retrieve.
+         * @return - the indexed <tt>PageMasterAlternatives</tt> master.
+         */
+        public PageCondition getAlternative(int i) {
+            return (PageCondition)(alternatives.get(i));
+        }
 
         /**
          * Encodes a condition set from an FoConditionalPageReferenceMaster.
