@@ -49,7 +49,41 @@ public class Fop {
     public Configuration configuration = new Configuration();
 
     public static void main(String[] args) {
+        Fop fopInstance = new Fop();
+        fopInstance.run();
+    }
 
+    /**
+     * Gets the parser Class name.
+     * 
+     * @return a String with the value of the property
+     * <code>org.xml.sax.parser</code> or the default value
+     * <code>org.apache.xerces.parsers.SAXParser</code>.
+     */
+    public static final String getParserClassName() {
+        String parserClassName = null;
+        try {
+            parserClassName = System.getProperty("org.xml.sax.parser");
+        } catch (SecurityException se) {}
+
+        if (parserClassName == null) {
+            parserClassName = "org.apache.xerces.parsers.SAXParser";
+        }
+        return parserClassName;
+    }
+    
+    String[] args = null;
+
+    public Fop() {
+        run();
+    }
+    
+    public Fop(String[] args) {
+        this.args = args;
+        run();
+    }
+    
+    public void run() {
         long endtotal, endfree, gctotal, gcfree;
         Properties properties;
         try {
@@ -84,8 +118,12 @@ public class Fop {
 
         try {
             configuration = new Configuration();
-            options = new FOPOptions(configuration, args);
-            driver = new Driver(args, configuration, options);
+            if (args == null) {
+                options = new FOPOptions(configuration);
+            } else {
+                options = new FOPOptions(configuration, args);
+            }
+            driver = new Driver(configuration, options);
             driver.run();
             System.out.println("Back from driver.run()");
             System.out.println("Elapsed time: " +
@@ -123,28 +161,6 @@ public class Fop {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Gets the parser Class name.
-     * 
-     * @return a String with the value of the property
-     * <code>org.xml.sax.parser</code> or the default value
-     * <code>org.apache.xerces.parsers.SAXParser</code>.
-     */
-    public static final String getParserClassName() {
-        String parserClassName = null;
-        try {
-            parserClassName = System.getProperty("org.xml.sax.parser");
-        } catch (SecurityException se) {}
-
-        if (parserClassName == null) {
-            parserClassName = "org.apache.xerces.parsers.SAXParser";
-        }
-        return parserClassName;
-    }
-
-    private Fop() {
     }
 
 }

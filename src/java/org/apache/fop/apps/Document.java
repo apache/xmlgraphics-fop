@@ -20,40 +20,22 @@ package org.apache.fop.apps;
 
 // Java
 import java.util.Map;
-import java.io.IOException;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.logging.Logger;
 
 
 // FOP
 import org.apache.fop.apps.FOUserAgent;
 
-import org.apache.fop.area.AreaTree;
-import org.apache.fop.area.AreaTreeControl;
-import org.apache.fop.area.AreaTreeModel;
-
-import org.apache.fop.fo.extensions.Bookmarks;
-import org.apache.fop.fo.FOInputHandler;
-import org.apache.fop.fo.FOTreeControl;
-import org.apache.fop.fo.FOTreeEvent;
-import org.apache.fop.fo.FOTreeListener;
-import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontMetrics;
-import org.apache.fop.layout.LayoutStrategy;
-
-// SAX
-import org.xml.sax.SAXException;
-
-// Avalon
-import org.apache.avalon.framework.logger.Logger;
 
 /**
  * Class storing information for the FOP Document being processed, and managing
  * the processing of it.
  */
-public class Document implements FOTreeControl, FOTreeListener,
-        AreaTreeControl {
+public class Document {
 
     /** The parent Driver object */
     private Driver driver;
@@ -68,31 +50,12 @@ public class Document implements FOTreeControl, FOTreeListener,
     private Map fonts;
 
     /**
-     * the LayoutStrategy to be used to process this document
-     * TODO: this actually belongs in the RenderContext class, when it is
-     * created
-     */
-    private LayoutStrategy layoutStrategy = null;
-
-    /** The current AreaTree for the PageSequence being rendered. */
-    public AreaTree areaTree;
-    /** The AreaTreeModel for the PageSequence being rendered. */
-    public AreaTreeModel atModel;
-
-    private Bookmarks bookmarks = null;
-
-    /**
      * The current set of id's in the FO tree.
      * This is used so we know if the FO tree contains duplicates.
      */
     private Set idReferences = new HashSet();
 
-    /**
-     * Structure handler used to notify structure events
-     * such as start end element.
-     */
-    public FOInputHandler foInputHandler;
-
+    private Logger log;
     /**
      * Main constructor
      * @param driver the Driver object that is the "parent" of this Document
@@ -102,6 +65,7 @@ public class Document implements FOTreeControl, FOTreeListener,
         this.triplets = new java.util.HashMap();
         this.fonts = new java.util.HashMap();
         this.usedFonts = new java.util.HashMap();
+        log = Logger.getLogger(Fop.fopPackage);
     }
 
     /**
@@ -282,80 +246,11 @@ public class Document implements FOTreeControl, FOTreeListener,
     }
 
     /**
-     * Set the LayoutStrategy to be used to process this Document
-     * @param ls the LayoutStrategy object to be used to process this Document
-     */
-    public void setLayoutStrategy(LayoutStrategy ls) {
-        this.layoutStrategy = ls;
-    }
-
-    /**
-     * @return this Document's LayoutStrategy object
-     */
-    public LayoutStrategy getLayoutStrategy () {
-        return layoutStrategy;
-    }
-
-    /**
      * Public accessor for the parent Driver of this Document
      * @return the parent Driver for this Document
      */
     public Driver getDriver() {
         return driver;
-    }
-
-    /**
-     * Required by the FOTreeListener interface. It handles an
-     * FOTreeEvent that is fired when a PageSequence object has been completed.
-     * @param event the FOTreeEvent that was fired
-     * @throws FOPException for errors in building the PageSequence
-     */
-    public void foPageSequenceComplete (FOTreeEvent event) throws FOPException {
-        PageSequence pageSeq = event.getPageSequence();
-        areaTree.addBookmarksToAreaTree();
-        layoutStrategy.format(pageSeq, areaTree);
-    }
-
-    /**
-     * Required by the FOTreeListener interface. It handles an FOTreeEvent that
-     * is fired when the Document has been completely parsed.
-     * @param event the FOTreeEvent that was fired
-     * @throws SAXException for parsing errors
-     */
-    public void foDocumentComplete (FOTreeEvent event) throws SAXException {
-        //processAreaTree(atModel);
-        try {
-            areaTree.endDocument();
-            driver.getRenderer().stopRenderer();
-        } catch (IOException ex) {
-            throw new SAXException(ex);
-        }
-    }
-
-    /**
-     * Get the area tree for this layout handler.
-     *
-     * @return the area tree for this document
-     */
-    public AreaTree getAreaTree() {
-        return areaTree;
-    }
-
-    /**
-     * Set the Bookmarks object for this Document
-     * @param bookmarks the Bookmarks object containing the bookmarks for this
-     * Document
-     */
-    public void setBookmarks(Bookmarks bookmarks) {
-        this.bookmarks = bookmarks;
-    }
-
-    /**
-     * Public accessor for the Bookmarks for this Document
-     * @return the Bookmarks for this Document
-     */
-    public Bookmarks getBookmarks() {
-        return bookmarks;
     }
 
     /**
@@ -367,17 +262,10 @@ public class Document implements FOTreeControl, FOTreeListener,
     }
 
     /**
-     * @return the FOInputHandler for parsing this FO Tree
-     */
-    public FOInputHandler getFOInputHandler() {
-        return foInputHandler;
-    }
-
-    /**
      * @return the Logger to be used for processing this Document
      */
     public Logger getLogger() {
-        return getDriver().getLogger();
+        return log;
     }
 
     /**

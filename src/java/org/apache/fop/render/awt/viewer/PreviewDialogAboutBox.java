@@ -36,7 +36,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 
 //FOP
-import org.apache.fop.apps.Version;
+import org.apache.fop.version.Version;
 
 /**
  * AWT Viewer's "About" dialog.

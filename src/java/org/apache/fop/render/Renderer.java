@@ -27,15 +27,6 @@ import java.util.Map;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Title;
-import org.apache.fop.area.TreeExt;
-import org.apache.fop.area.inline.Container;
-import org.apache.fop.area.inline.InlineParent;
-import org.apache.fop.area.inline.Leader;
-import org.apache.fop.area.inline.Space;
-import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -88,13 +79,6 @@ public interface Renderer {
     void setUserAgent(FOUserAgent agent);
 
     /**
-     * Set up the given FontInfo.
-     *
-     * @param fontInfo  The fonts
-     */
-    void setupFontInfo(FOTreeControl foTreeControl);
-
-    /**
      * Set up renderer options.
      *
      * @param options  The Configuration for the renderer
@@ -143,13 +127,6 @@ public interface Renderer {
     boolean supportsOutOfOrder();
 
     /**
-     * Tells the renderer to render an extension element.
-     *
-     * @param ext  The extension element to be rendered
-     */
-    void renderExtension(TreeExt ext);
-
-    /**
      * This is called if the renderer supports out of order rendering. The
      * renderer should prepare the page so that a page further on in the set of
      * pages can be rendered. The body of the page should not be rendered. The
@@ -159,13 +136,6 @@ public interface Renderer {
      * @param page  The page viewport to use
      */
     void preparePage(PageViewport page);
-
-    /**
-     * Tells the renderer that a new page sequence starts.
-     *
-     * @param seqTitle  The title of the page sequence
-     */
-    void startPageSequence(Title seqTitle);
 
     /**
      * Tells the renderer to render a particular page. A renderer typically
@@ -178,13 +148,6 @@ public interface Renderer {
      */
     void renderPage(PageViewport page)
         throws IOException, FOPException;
-
-    /**
-     * Tells the renderer to render an inline container.
-     *
-     * @param cont  The inline container area
-     */
-    void renderContainer(Container cont);
 
 }
 
