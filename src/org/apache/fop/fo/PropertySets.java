@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Iterator;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -767,9 +768,11 @@ public class PropertySets {
      * override the list element corresponding to the <tt>PropertyValue</tt>.
      * Correspondence is based on the <em>property</em> field of the
      * <tt>PropertyValue</tt>.
-     * @param list the expansion <tt>PropertyValueList</tt>
-     * @param value the overriding <tt>PropertyValue</tt>
-     * @return <tt>PropertyValueList</tt> the new list
+     * @param expansionList the expansion <tt>PropertyValueList</tt>
+     * @param element the overriding <tt>PropertyValue</tt>
+     * @return <tt>PropertyValueList</tt> the expansion list with the
+     *  appropriate element reset
+     * @exception <tt>PropertyException</tt>
      */
     public static PropertyValueList overrideSHandElement
         (PropertyValueList expansionList, PropertyValue element)
@@ -787,6 +790,63 @@ public class PropertySets {
         throw new PropertyException
                 ("Unmatched property " + elementProp +
                  " in expansion list for " + expansionList.getProperty());
+    }
+
+    /**
+     * Given a shorthand expansion list and a <tt>PropertyValueList</tt>,
+     * override the expansion list elements corresponding to the elements
+     * of the <tt>PropertyValueList</tt>.
+     * Correspondence is based on the <em>property</em> field of the
+     * <tt>PropertyValue</tt>.
+     * @param expansionList the expansion <tt>PropertyValueList</tt>
+     * @param list the overriding <tt>PropertyValueList</tt>
+     * @return <tt>PropertyValueList</tt> the new expansion list with
+     *  appropriate elements reset
+     * @exception <tt>PropertyException</tt>
+     */
+    public static PropertyValueList overrideSHandElements
+        (PropertyValueList expansionList, PropertyValueList list)
+        throws PropertyException
+    {
+        // From the overriding list, form an array of PropertyValue references
+        // an array of property indices and an array of booleans,
+        int listsize = list.size();
+        Object[] listrefs = new Object[listsize];
+        int[] listprops = new int[listsize];
+        boolean[] propseen = new boolean[listsize];
+        Iterator listels = list.iterator();
+        int i = 0;
+        while (listels.hasNext()) {
+            listrefs[i] = listels.next();
+            listprops[i] = ((PropertyValue)listrefs[i]).getProperty();
+            i++;
+        }
+
+        ListIterator elements = expansionList.listIterator();
+        while (elements.hasNext()) {
+            PropertyValue next = (PropertyValue)(elements.next());
+            int expprop = next.getProperty();
+            for (i = 0; i < listsize; i++) {
+                if (expprop != listprops[i]) continue;
+                elements.set(listrefs[i]);
+                propseen[i] = true;
+            }
+        }
+        // Check for unmatched override elements
+        String unmatched = "";
+        boolean someunmatched = false;
+        for (i = 0; i < listsize; i++) {
+            if ( ! propseen[i]) {
+                someunmatched = true;
+                unmatched = unmatched + " " +
+                        PropNames.getPropertyName(listprops[i]);
+            }
+        }
+        if (someunmatched)
+            throw new PropertyException
+                ("Unmatched properties:" + unmatched +
+                 " : in expansion list for " + expansionList.getProperty());
+        return expansionList;
     }
 
     private PropertySets (){}
