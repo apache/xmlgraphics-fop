@@ -168,10 +168,6 @@ public class FOText extends FObj {
             } else if (curIndex == length) {
                 curIndex = --length;
             }
-//          Temporary until leading space problem in 1.0 fixed
-//          System.out.println("\n\nremove called: ca = \"" + 
-//              new String(ca) + "\", length/node length: " + length 
-//              + ", " + ca.length);
         }
 
 
