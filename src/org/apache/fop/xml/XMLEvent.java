@@ -107,6 +107,12 @@ public class XMLEvent {
         namespaces = ev.namespaces;
     }
 
+    public XMLEvent(int type, String chars, XMLNamespaces namespaces) {
+        this.type = type;
+        this.chars = chars;
+        this.namespaces = namespaces;
+    }
+
     public int getType() { return type; }
     public void setType(int type) {
         if (type < MIN_XML_EV_TYPE || type > MAX_XML_EV_TYPE) {
@@ -117,9 +123,11 @@ public class XMLEvent {
     }
 
     public String getChars() { return chars; }
+
     public void setChars(String chars) {
         this.chars = chars;
     }
+
     public void setChars(char[] ch, int start, int length) {
         chars = new String(ch, start, length);
     }
