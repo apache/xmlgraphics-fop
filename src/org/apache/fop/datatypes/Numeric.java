@@ -391,10 +391,27 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     }
 
     /**
-     * This object is a length in millipoints.
+     * This object is a length in millipoints. Same as isAbsLength().
      */
     public boolean isLength() {
         return (baseunit == MILLIPOINTS && power == 1);
+    }
+
+    /**
+     * This object is a length in millipoints.
+     */
+    public boolean isAbsLength() {
+        return (baseunit == MILLIPOINTS && power == 1);
+    }
+
+    /**
+     * This object is an absolute or relative length.  I.e., it has a
+     * baseunit of MILLIPOINTS with a power of 1, or a baseunit of
+     * either PERCENTAGE or EMS.
+     */
+    public boolean isAbsOrRelLength() {
+        return ((baseunit == MILLIPOINTS && power == 1)
+                    || baseunit == PERCENTAGE || baseunit == EMS);
     }
 
     /**
