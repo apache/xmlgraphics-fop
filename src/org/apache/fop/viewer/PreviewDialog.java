@@ -624,9 +624,5 @@ public class PreviewDialog extends JFrame implements ProgressListener {
         }*/
     }
 
-    public void dispose() {
-        System.exit(0);
-    }
-
 }    // class PreviewDialog
 
