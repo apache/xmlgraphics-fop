@@ -3,7 +3,7 @@ package org.apache.fop.xml;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.xml.XMLEvent;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /*
  * $Id$
@@ -24,16 +24,30 @@ public class XMLEventPool {
 
     /** Required argument for constructing new <tt>XMLEvent</tt>s. */
     protected XMLNamespaces namespaces;
-    /** The pool realized as a LinkedList. */
-    protected LinkedList pool = new LinkedList();
+    /** The pool realized as a ArrayList. */
+    protected ArrayList pool;
+    /** The number of events in the list. */
+    protected int poolSize = 0;
+    /** The maximum number of events in the list. */
+    protected int maxPoolSize = 0;
 
     /**
-     * The one-argument constructor uses the default initialization values:
-     * NOEVENT for the event <i>type</i>, and null references for all others
-     * except <i>namespaces</i>.
+     * The one-argument constructor requires <i>namespaces</i>.
+     * @param namespaces - an <tt>XMLNamespaces</tt> object.
      */
     public XMLEventPool(XMLNamespaces namespaces) {
         this.namespaces = namespaces;
+        pool = new ArrayList();
+    }
+
+    /**
+     * Construct a pool with a given initial size.
+     * @param namespaces - an <tt>XMLNamespaces</tt> object.
+     * @param initialSize - the initial size of the pool.
+     */
+    public XMLEventPool(XMLNamespaces namespaces, int initialSize) {
+        this.namespaces = namespaces;
+        pool = new ArrayList(initialSize);
     }
 
     /**
@@ -41,18 +55,23 @@ public class XMLEventPool {
      * @return an <tt>XMLEvent</tt>.
      */
     public synchronized XMLEvent acquireXMLEvent() {
-        if (pool.size() == 0)
+        if (poolSize == 0)
             return new XMLEvent(namespaces);
-        return (XMLEvent)(pool.removeLast());
+        return ((XMLEvent)(pool.get(--poolSize))).clear();
     }
 
     /**
      * Return an <tt>XMLEvent</tt> to the pool.
      * @param ev - the event being returned.
      */
-    public synchronized void surrenderXMLEvent(XMLEvent ev) {
-        ev.clear();
-        pool.add(ev);
+    public synchronized void surrenderEvent(XMLEvent ev) {
+        if (maxPoolSize > poolSize)
+            pool.set(poolSize++, ev);
+        else {
+            pool.add(ev);
+            poolSize++;
+            maxPoolSize = poolSize;
+        }
     }
 
     /**
