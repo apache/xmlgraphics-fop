@@ -26,7 +26,6 @@ import java.io.OutputStream;
 //JAXP
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.Source;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamSource;
@@ -79,6 +78,7 @@ public class ExampleXML2PDF {
             // Setup output
             OutputStream out = new java.io.FileOutputStream(pdffile);
             out = new java.io.BufferedOutputStream(out);
+            
             try {
                 driver.setOutputStream(out);
     

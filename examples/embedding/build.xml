@@ -121,7 +121,7 @@
 		</java>
 	</target>
 	<target name="example6" depends="compile" description="Runs the DOM to PDF example">
-		<echo message="Running the Object to PDF example"/>
+		<echo message="Running the DOM to PDF example"/>
 		<java classname="${name}.ExampleDOM2PDF" fork="yes">
 		  <classpath>
 		    <path refid="project.class.path"/>
@@ -130,7 +130,7 @@
 		</java>
 	</target>
 	<target name="example7" depends="compile" description="Runs the SVG to PDF example">
-		<echo message="Running the Object to PDF example"/>
+		<echo message="Running the SVG to PDF example"/>
 		<java classname="${name}.ExampleSVG2PDF" fork="yes">
 		  <classpath>
 		    <path refid="project.class.path"/>

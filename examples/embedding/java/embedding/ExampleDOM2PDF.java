@@ -25,6 +25,14 @@ import java.io.OutputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 
+//JAXP
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.Result;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
+
 // DOM
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,7 +41,7 @@ import org.w3c.dom.Text;
 
 // FOP
 import org.apache.fop.apps.Driver;
-import org.apache.fop.apps.FOPException;
+
 
 /**
  * This class demonstrates the conversion of a DOM Document to PDF
@@ -51,27 +59,46 @@ public class ExampleDOM2PDF {
      * @throws IOException In case of an I/O problem
      * @throws FOPException In case of a FOP problem
      */
-    public void convertDOM2PDF(Document xslfoDoc, File pdf) 
-                throws IOException, FOPException {
-        // Construct driver
-        Driver driver = new Driver();
-        
-        // Setup driver
-        driver.initialize();
-        
-        // Setup Renderer (output format)        
-        driver.setRenderer(Driver.RENDER_PDF);
-        
-        // Setup output
-        OutputStream out = new java.io.FileOutputStream(pdf);
-        out = new java.io.BufferedOutputStream(out);
-        
+    public void convertDOM2PDF(Document xslfoDoc, File pdf) {
         try {
-            driver.setOutputStream(out);
-            driver.render(xslfoDoc);
-        } finally {
-            out.close();
+            // Construct driver
+            Driver driver = new Driver();
+            
+            // Setup driver
+            driver.initialize();
+            
+            // Setup Renderer (output format)        
+            driver.setRenderer(Driver.RENDER_PDF);
+            
+            // Setup output
+            OutputStream out = new java.io.FileOutputStream(pdf);
+            out = new java.io.BufferedOutputStream(out);
+    
+            try {
+                driver.setOutputStream(out);
+                
+                // Setup Identity Transformer
+                TransformerFactory factory = TransformerFactory.newInstance();
+                Transformer transformer = factory.newTransformer(); // identity transformer
+                
+                // Setup input for XSLT transformation
+                Source src = new DOMSource(xslfoDoc);
+                
+                // Resulting SAX events (the generated FO) must be piped through to FOP
+                Result res = new SAXResult(driver.getContentHandler());
+                
+                // Start XSLT transformation and FOP processing
+                transformer.transform(src, res);
+            } finally {
+                out.close();
+            }
+            
+            System.out.println("Success!");
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+            System.exit(-1);
         }
+
     }
 
     /**
