@@ -25,8 +25,8 @@ import java.util.ListIterator;
 import java.util.HashMap;
 
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.PropertyManager;
-import org.apache.fop.traits.InlineProps;
+import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineParent;
@@ -66,9 +66,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
      */
     protected MinOptMax extraBPD;
 
-
-    private InlineProps inlineProps = null;
-
     private Area currentArea; // LineArea or InlineParent
 
     private BreakPoss prevBP;
@@ -97,8 +94,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
     protected void initProperties() {
-        PropertyManager pm = fobj.getPropertyManager();
-        inlineProps = pm.getInlineProps();
         extraBPD = new MinOptMax(0);
     }
 
@@ -132,6 +127,14 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
 
     protected boolean hasTrailingFence(boolean bNotLast) {
         return false;
+    }
+
+    protected SpaceProperty getSpaceStart() {
+        return null;
+    }
+    
+    protected SpaceProperty getSpaceEnd() {
+        return null;
     }
 
     /**
@@ -175,9 +178,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
      * propagate to first child LM
      */
     public boolean canBreakBefore(LayoutContext context) {
-        if (inlineProps.spaceStart.getSpace().min > 0 || hasLeadingFence(false)) {
-            return true;
-        }
         LayoutManager lm = getChildLM();
         if (lm != null) {
             return lm.canBreakBefore(context);
@@ -215,7 +215,9 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
             // First call to this LM in new parent "area", but this may
             // not be the first area created by this inline
             childLC = new LayoutContext(lc);
-            lc.getLeadingSpace().addSpace(inlineProps.spaceStart);
+            if (getSpaceStart() != null) {
+                lc.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart()));
+            }
 
             // Check for "fence"
             if (hasLeadingFence(!lc.isFirstArea())) {
@@ -338,7 +340,9 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
             // call in this LM
             trailingSpace = (SpaceSpecifier) trailingSpace.clone();
         }
-        trailingSpace.addSpace(inlineProps.spaceEnd);
+        if (getSpaceEnd() != null) {
+            trailingSpace.addSpace(new SpaceVal(getSpaceEnd()));
+        }
         myBP.setTrailingSpace(trailingSpace);
 
         // Add start and end borders and padding
@@ -441,7 +445,9 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
                                   false);
         }
 
-        context.getLeadingSpace().addSpace(inlineProps.spaceStart);
+        if (getSpaceStart() != null) {
+            context.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart()));
+        }
 
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list; 
@@ -492,10 +498,11 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
             context.setTrailingSpace(getContext().getTrailingSpace());
         }
         // Add own trailing space to parent context (or set on area?)
-        if (context.getTrailingSpace() != null) {
-            context.getTrailingSpace().addSpace(inlineProps.spaceEnd);
+        if (context.getTrailingSpace() != null  && getSpaceEnd() != null) {
+            context.getTrailingSpace().addSpace(new SpaceVal(getSpaceEnd()));
         }
-
+        setTraits(bAreaCreated, !bIsLast);
+        
         parentLM.addChild(getCurrentArea());
         context.setFlags(LayoutContext.LAST_AREA, bIsLast);
         bAreaCreated = true;
@@ -507,6 +514,10 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
 
     protected void setCurrentArea(Area area) {
         currentArea = area;
+    }
+
+    protected void setTraits(boolean bNotFirst, boolean bNotLast) {
+        
     }
 
     public void addChild(Area childArea) {
@@ -569,7 +580,9 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
             // First call to this LM in new parent "area", but this may
             // not be the first area created by this inline
             childLC = new LayoutContext(lc);
-            lc.getLeadingSpace().addSpace(inlineProps.spaceStart);
+            if (getSpaceStart() != null) {
+                lc.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart()));
+            }
 
             // Check for "fence"
             if (hasLeadingFence(!lc.isFirstArea())) {
