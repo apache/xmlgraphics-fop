@@ -31,6 +31,17 @@
       <li>Logging has been changed from LogKit to Avalon's Logger Interface.
         (see <jump href="embedding.html">Embedding</jump> for details).
       </li>
+      <li>Building under JDK 1.4:
+        <p>You need to add a method in
+         <code>src/org/apache/fop/svg/PDFGraphics2D.java</code>
+         (search for jdk1.4 and remove the comments)
+        </p> 
+      </li>
+      <li>To decrease the size of the distributions, ant, xml-docs, design-docs
+        and the hyphenation sources have been removed from the binary distribution.
+        Javadocs have been removed from the source distribution (use
+        <code>build javadocs</code> to generate them).
+      </li>
       <li>
         <p>For a more detailed list of changes, see the CHANGES file in the root of the FOP distribution.</p>
       </li>

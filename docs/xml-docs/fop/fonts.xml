@@ -22,12 +22,12 @@
 			</p>
 			<p>Windows:</p>
                         <p>
-			<code>java -cp build\fop.jar;lib\xerces.jar;lib\xalan.jar;lib\batik.jar
+			<code>java -cp build\fop.jar;lib\xercesImpl-2.0.1.jar;lib\xml-apis.jar;lib\xalan-2.3.1.jar;lib\batik.jar
 			org.apache.fop.fonts.apps.PFMReader pfm-file xml-file</code>
 			</p>
 			<p>Unix:</p>
 			<p>
-                        <code>java -cp build/fop.jar:lib/xerces.jar:lib/xalan.jar:lib/batik.jar
+                        <code>java -cp build/fop.jar:lib/xercesImpl-2.0.1.jar:lib/xml-apis.jar:lib/xalan-2.3.1.jar:lib/batik.jar
                         org.apache.fop.fonts.apps.PFMReader pfm-file xml-file</code>
 			</p>
 			<note><p>The tool will construct some values (FontBBox, StemV and ItalicAngle) based on assumptions and
@@ -78,7 +78,7 @@
             the name cmr10.ttf and exists in c:\myfonts\):            
 			</p>
 			<p>
-	    <code>java org.apache.fop.fonts.apps.TTFReader C:\myfonts\cmr10.ttf C:\myfonts\cmr10.ttf ttfcm.xml</code></p>
+	    <code>java -cp build\fop.jar;lib\xercesImpl-2.0.1.jar;lib\xml-apis.jar;lib\xalan-2.3.1.jar;lib\batik.jar org.apache.fop.fonts.apps.TTFReader C:\myfonts\cmr10.ttf C:\myfonts\cmr10.ttf ttfcm.xml</code></p>
 	    </s3>
 	    <s3 title="TrueType collections">
 			<p>
@@ -98,7 +98,7 @@
 			</p>
         <p>
 	    <code>
-	    java org.apache.fop.fonts.apps.TTFReader -ttcname "MS Mincho" msmincho.ttc msminch.xml
+	    java -cp build\fop.jar;lib\xercesImpl-2.0.1.jar;lib\xml-apis.jar;lib\xalan-2.3.1.jar;lib\batik.jar org.apache.fop.fonts.apps.TTFReader -ttcname "MS Mincho" msmincho.ttc msminch.xml
 	    </code>
         </p>
 		</s3>

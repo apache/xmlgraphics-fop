@@ -6,8 +6,8 @@
 <s1 title="Examples">
     <p>Examples for the use of xsl:fo can be found in the Fop distribution in 
        the subdirectory xml-fop/docs/examples/fo. You can start transformation of all fo files into pdf
-       files by starting xml-fop/docs/examples/runtests. The resulting test files can be found in 
-       xml-fop/docs/examples/tests
+       files by starting xml-fop/docs/examples/runtests (only source distribution). The resulting test
+       files can be found in xml-fop/docs/examples/tests
     </p>
     <p>At the moment the following files are part of the distribution:</p>
     <ul>
