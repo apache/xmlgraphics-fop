@@ -19,8 +19,10 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * A maker which calculates the line-height property.
@@ -31,7 +33,7 @@ import org.apache.fop.fo.PropertyList;
  * the nearest specified is used to recalculate the line-height.  
  */
 
-public class LineHeightPropertyMaker extends LengthProperty.Maker {
+public class LineHeightPropertyMaker extends SpaceProperty.Maker {
     /**
      * Create a maker for line-height.
      * @param propId the is for linehight.
@@ -76,7 +78,22 @@ public class LineHeightPropertyMaker extends LengthProperty.Maker {
         }
         return null;
     }
-    
+
+    public Property convertProperty(Property p,
+            PropertyList propertyList,
+            FObj fo) throws FOPException {
+        Numeric numval = p.getNumeric();
+        if (numval != null && numval.getDimension() == 0) {
+            try {
+                p = new PercentLength(numval.getNumericValue(), getPercentBase(fo,propertyList));
+            } catch (PropertyException exc) {
+                // log.error("exception", exc);
+            }
+        }
+        return super.convertProperty(p, propertyList, fo);
+    }
+   
+    /*
     protected Property convertPropertyDatatype(Property p, 
                                                PropertyList propertyList,
                                                FObj fo) {
@@ -86,4 +103,5 @@ public class LineHeightPropertyMaker extends LengthProperty.Maker {
         }
         return super.convertPropertyDatatype(p, propertyList, fo);
     }
+    */
 }
