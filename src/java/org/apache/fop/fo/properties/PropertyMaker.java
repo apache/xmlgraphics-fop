@@ -372,7 +372,7 @@ public class PropertyMaker implements Cloneable {
      * @return The initialized Property object.
      * @throws FOPException for invalid or inconsistent FO input
      */
-    public Property make(PropertyList propertyList, String value,
+     public Property make(PropertyList propertyList, String value,
                          FObj fo) throws FOPException {
         try {
             Property newProp = null;
@@ -383,7 +383,7 @@ public class PropertyMaker implements Cloneable {
                 newProp = checkEnumValues(value);
             }
             if (newProp == null) {
-                /* Check for keyword shorthand values to be substituted. */
+                // Check for keyword shorthand values to be substituted. 
                 pvalue = checkValueKeywords(value);
                 // Override parsePropertyValue in each subclass of Property.Maker
                 Property p = PropertyParser.parse(pvalue,

@@ -34,6 +34,7 @@ import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.datatypes.ColorType;
 
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
@@ -115,7 +116,9 @@ public class TableAttributesConverter {
         Property p;
         EnumProperty ep;
         RtfColorTable colorTable = RtfColorTable.getInstance();
-
+        PropertyList propList = fobj.getPropertyList();
+        
+        
         RtfAttributes attrib = null;
 
         attrib = new RtfAttributes();
@@ -123,7 +126,8 @@ public class TableAttributesConverter {
         boolean isBorderPresent = false;
 
         // Cell background color
-        if ((p = fobj.getNearestSpecifiedProperty(Constants.PR_BACKGROUND_COLOR)) != null) {
+        if ((p = propList.getNearestSpecified(
+                Constants.PR_BACKGROUND_COLOR)) != null) {
             ColorType color = p.getColorType();
             if (color != null) {
                 if (color.getAlpha() != 0
@@ -141,7 +145,7 @@ public class TableAttributesConverter {
         }
 
         // Cell borders :
-        if ((p = fobj.getExplicitProperty(Constants.PR_BORDER_COLOR)) != null) {
+        if ((p = propList.getExplicit(Constants.PR_BORDER_COLOR)) != null) {
             ListProperty listprop = (ListProperty) p;
             ColorType color = null;
             if (listprop.getList().get(0) instanceof NCnameProperty) {
@@ -155,28 +159,29 @@ public class TableAttributesConverter {
                 colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
                         (int)color.getBlue()).intValue());
         }
-        if ((p = fobj.getExplicitProperty(Constants.PR_BORDER_TOP_COLOR)) != null) {
+        if ((p = propList.getExplicit(
+                Constants.PR_BORDER_TOP_COLOR)) != null) {
             ColorType color = p.getColorType();
             attrib.set(
                 BorderAttributesConverter.BORDER_COLOR,
                 colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
                         (int)color.getBlue()).intValue());
         }
-        if ((p = fobj.getExplicitProperty(Constants.PR_BORDER_BOTTOM_COLOR)) != null) {
+        if ((p = propList.getExplicit(Constants.PR_BORDER_BOTTOM_COLOR)) != null) {
             ColorType color = p.getColorType();
             attrib.set(
                 BorderAttributesConverter.BORDER_COLOR,
                 colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
                         (int)color.getBlue()).intValue());
         }
-        if ((p = fobj.getExplicitProperty(Constants.PR_BORDER_LEFT_COLOR)) != null) {
+        if ((p = propList.getExplicit(Constants.PR_BORDER_LEFT_COLOR)) != null) {
             ColorType color = p.getColorType();
             attrib.set(
                 BorderAttributesConverter.BORDER_COLOR,
                 colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
                         (int)color.getBlue()).intValue());
         }
-        if ((p = fobj.getExplicitProperty(Constants.PR_BORDER_RIGHT_COLOR)) != null) {
+        if ((p = propList.getExplicit(Constants.PR_BORDER_RIGHT_COLOR)) != null) {
             ColorType color = p.getColorType();
             attrib.set(
                 BorderAttributesConverter.BORDER_COLOR,

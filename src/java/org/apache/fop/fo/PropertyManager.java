@@ -19,6 +19,7 @@
 package org.apache.fop.fo;
 
 // FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
@@ -35,6 +36,7 @@ import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.traits.LayoutProps; // keep, break, span, space?
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fo.properties.CommonHyphenation;
+import org.xml.sax.Attributes;
 
 /**
  * Helper class for managing groups of properties.
@@ -47,6 +49,7 @@ public class PropertyManager implements Constants {
     private CommonBorderAndPadding borderAndPadding = null;
     private CommonHyphenation hyphProps = null;
     private TextInfo textInfo = null;
+    private static final String NONE = "none";
 
     private static final int[] SA_BEFORE = new int[] {
         PR_BORDER_BEFORE_COLOR, PR_BORDER_BEFORE_STYLE, PR_BORDER_BEFORE_WIDTH, PR_PADDING_BEFORE};
@@ -57,14 +60,13 @@ public class PropertyManager implements Constants {
     private static final int[] SA_END = new int[]{
         PR_BORDER_END_COLOR, PR_BORDER_END_STYLE, PR_BORDER_END_WIDTH, PR_PADDING_END};
     
-    private static final String NONE = "none";
-
     /**
      * Main constructor
-     * @param pList property list
+     * @param propList list of properties for the FO, initialized
+     * from the attributes in the input source document
      */
-    public PropertyManager(PropertyList pList) {
-        this.propertyList = pList;
+    public PropertyManager(PropertyList propList) {
+        propertyList = propList;
     }
 
     /**
