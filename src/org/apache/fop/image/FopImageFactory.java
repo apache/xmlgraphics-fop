@@ -11,6 +11,7 @@ package org.apache.fop.image;
 import org.apache.fop.image.analyser.ImageReaderFactory;
 import org.apache.fop.image.analyser.ImageReader;
 import org.apache.fop.configuration.Configuration;
+import org.apache.fop.messaging.MessageHandler;
 
 // Java
 import java.io.IOException;
@@ -169,7 +170,7 @@ public class FopImageFactory {
             try {
                 imgClassName = "org.apache.fop.image.TiffImage";
                 Class.forName(imgClassName);
-            } catch (Exception ex) {
+            } catch (Throwable t) {
                 imgClassName = getGenericImageClassName();
             }
         } else if ("image/svg+xml".equals(imgMimeType)) {
@@ -233,9 +234,11 @@ public class FopImageFactory {
 
         if (m_genericImageClassName == null) {
             try {
+                //this will throw a NoClassDefFoundError if JAI is not installed
                 Class.forName("org.apache.fop.image.JAIImage");
                 m_genericImageClassName = "org.apache.fop.image.JAIImage";
-            } catch (Exception ex) {
+            } catch (Throwable t) {
+                MessageHandler.logln("Failed to load JAI, using Jimi instead");
                 /* on any exception assume Jai is not present and use Jimi instead */
                 m_genericImageClassName = "org.apache.fop.image.JimiImage";
             }
