@@ -56,6 +56,12 @@ public class TextDecoration extends Property  {
                                 ,BLINK
                             };
 
+    private int getAlternativeIndex(String alt) throws PropertyException {
+        for (int i = 1; i < alternatives.length; i++)
+            if (alt.equals(alternatives[i])) return i;
+        throw new PropertyException("Invalid text decoration: " + alt);
+    }
+
     public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue list)
                     throws PropertyException
@@ -93,12 +99,7 @@ public class TextDecoration extends Property  {
                 str2 = str.substring(3);
                 negate = true;
             }
-            try {
-                i = getEnumIndex(str2);
-            } catch (PropertyException e) {
-                throw new PropertyException
-                                ("text-decoration: unknown value " + str);
-            }
+            i = getAlternativeIndex(str2);
             if (negate) offMask |= decorations[i];
             else         onMask |= decorations[i];
         }
