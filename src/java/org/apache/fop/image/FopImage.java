@@ -53,8 +53,8 @@ package org.apache.fop.image;
 import java.io.InputStream;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
+import java.awt.Color;
 
-import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -139,7 +139,7 @@ public interface FopImage {
      * @return the transparent color
      * (todo) Remove the PDF dependency
      */
-    PDFColor getTransparentColor();
+    Color getTransparentColor();
 
     /**
      * Indicates whether the image has a Soft Mask (See section 7.5.4 in the
