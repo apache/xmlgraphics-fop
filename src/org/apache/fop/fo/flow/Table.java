@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.fo.flow;
 
 // FOP
@@ -90,9 +91,9 @@ public class Table extends FObj {
 	this.name = "fo:table";
     }
 
-    public int layout(Area area) throws FOPException {
+    public Status layout(Area area) throws FOPException {
 	if (this.marker == BREAK_AFTER) {
-	    return OK;
+	    return new Status(Status.OK);
 	}
 
 	if (this.marker == START) {
@@ -130,15 +131,15 @@ public class Table extends FObj {
 	    this.marker = 0;
 
 	    if (breakBefore == BreakBefore.PAGE) {
-		return FORCE_PAGE_BREAK;
+		return new Status(Status.FORCE_PAGE_BREAK);
 	    }
 
 	    if (breakBefore == BreakBefore.ODD_PAGE) {
-		return FORCE_PAGE_BREAK_ODD;
+		return new Status(Status.FORCE_PAGE_BREAK_ODD);
 	    }
 	
 	    if (breakBefore == BreakBefore.EVEN_PAGE) {
-		return FORCE_PAGE_BREAK_EVEN;
+		return new Status(Status.FORCE_PAGE_BREAK_EVEN);
 	    }
 	}
 
@@ -173,7 +174,7 @@ public class Table extends FObj {
 	    } else if (fo instanceof TableBody) {
 		if (columns.size() == 0) {
 		    System.err.println("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
-		    return OK;
+		    return new Status(Status.OK);
 		}
 		
 		//if (this.isInListBody) {
@@ -184,11 +185,11 @@ public class Table extends FObj {
 
 		((TableBody) fo).setColumns(columns);
 
-		int status;
-		if ((status = fo.layout(blockArea)) != OK) {
+		Status status;
+		if ((status = fo.layout(blockArea)).isIncomplete()) {
 		    this.marker = i;
-		    if ((i != 0) && (status == AREA_FULL_NONE)) {
-			status = AREA_FULL_SOME;
+		    if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
+			status = new Status(Status.AREA_FULL_SOME);
 		    }
 		    //blockArea.end();
 		    area.addChild(blockArea);
@@ -214,20 +215,20 @@ public class Table extends FObj {
 
 	if (breakAfter == BreakAfter.PAGE) {
 	    this.marker = BREAK_AFTER;
-	    return FORCE_PAGE_BREAK;
+	    return new Status(Status.FORCE_PAGE_BREAK);
 	}
 
 	if (breakAfter == BreakAfter.ODD_PAGE) {
 	    this.marker = BREAK_AFTER;
-	    return FORCE_PAGE_BREAK_ODD;
+	    return new Status(Status.FORCE_PAGE_BREAK_ODD);
 	}
 	
 	if (breakAfter == BreakAfter.EVEN_PAGE) {
 	    this.marker = BREAK_AFTER;
-	    return FORCE_PAGE_BREAK_EVEN;
+	    return new Status(Status.FORCE_PAGE_BREAK_EVEN);
 	}
 
-	return OK;
+	return new Status(Status.OK);
     }
 
     public int getAreaHeight() {

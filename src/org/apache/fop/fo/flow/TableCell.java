@@ -94,9 +94,9 @@ public class TableCell extends FObj {
 	this.width = width;
     }
 
-    public int layout(Area area) throws FOPException {
+    public Status layout(Area area) throws FOPException {
 	if (this.marker == BREAK_AFTER) {
-	    return OK;
+	    return new Status(Status.OK);
 	}
 
 	if (this.marker == START) {
@@ -151,13 +151,13 @@ public class TableCell extends FObj {
 	    fo.setIsInTableCell();
 	    fo.forceStartOffset(startOffset);
 	    fo.forceWidth(width);
-	    int status;
-	    if ((status = fo.layout(blockArea)) != OK) {
+	    Status status;
+	    if ((status = fo.layout(blockArea)).isIncomplete()) {
 		this.marker = i;
-		if ((i == 0) && (status == AREA_FULL_NONE)) {
-		    return AREA_FULL_NONE;
+		if ((i == 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
+		    return new Status(Status.AREA_FULL_NONE);
 		} else {
-		    return AREA_FULL_SOME;
+		    return new Status(Status.AREA_FULL_SOME);
 		}
 	    }
 	    height += blockArea.getHeight();
@@ -166,7 +166,7 @@ public class TableCell extends FObj {
 	blockArea.end();
 	area.addChild(blockArea);
 
-	return OK;
+	return new Status(Status.OK);
     }
 
     public int getHeight() {

@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.fo.flow;
 
 // FOP
@@ -93,7 +94,7 @@ public class ListBlock extends FObj {
 	this.name = "fo:list-block";
     }
 
-    public int layout(Area area) throws FOPException {
+    public Status layout(Area area) throws FOPException {
 	if (this.marker == START) {
 	    String fontFamily =
 		this.properties.get("font-family").getString(); 
@@ -153,22 +154,15 @@ public class ListBlock extends FObj {
 	for (int i = this.marker; i < numChildren; i++) {
 	    if (!(children.elementAt(i) instanceof ListItem)) {
 		System.err.println("WARNING: This version of FOP requires list-items inside list-blocks");
-		return OK;
+		return new Status(Status.OK);
 	    }
 	    ListItem listItem = (ListItem) children.elementAt(i);
 	    listItem.setDistanceBetweenStarts(this.provisionalDistanceBetweenStarts);
 	    listItem.setLabelSeparation(this.provisionalLabelSeparation);
 	    listItem.setBodyIndent(this.bodyIndent);
-	    int status;
-	    if ((status = listItem.layout(blockArea)) != OK) {
-		/* message from child */
-		if (status > OK) {
-		    /* child still successful */
-		    this.marker = i+1;
-		} else {
-		    /* child unsucessful */
-		    this.marker = i;
-		}
+	    Status status;
+	    if ((status = listItem.layout(blockArea)).isIncomplete()) {
+		this.marker = i;
 		blockArea.end();
 		area.addChild(blockArea);
 		area.increaseHeight(blockArea.getHeight());
@@ -188,6 +182,6 @@ public class ListBlock extends FObj {
 	    area.start();
 	}
 	
-	return OK;
+	return new Status(Status.OK);
     }
 }

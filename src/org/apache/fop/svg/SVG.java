@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.svg;
 
 // FOP
@@ -117,10 +118,10 @@ public class SVG extends FObj {
      *
      * @return the status of the layout
      */
-    public int layout(Area area) throws FOPException {
+    public Status layout(Area area) throws FOPException {
 	
 	if (this.marker == BREAK_AFTER) {
-	    return OK;
+	    return new Status(Status.OK);
 	}
 
 	if (this.marker == START) {
@@ -151,15 +152,15 @@ public class SVG extends FObj {
 	    this.marker = 0;
 
 	    if (breakBefore == BreakBefore.PAGE) {
-		return FORCE_PAGE_BREAK;
+		return new Status(Status.FORCE_PAGE_BREAK);
 	    }
 
 	    if (breakBefore == BreakBefore.ODD_PAGE) {
-		return FORCE_PAGE_BREAK_ODD;
+		return new Status(Status.FORCE_PAGE_BREAK_ODD);
 	    }
 
 	    if (breakBefore == BreakBefore.EVEN_PAGE) {
-		return FORCE_PAGE_BREAK_EVEN;
+		return new Status(Status.FORCE_PAGE_BREAK_EVEN);
 	    }
 	}
        
@@ -181,8 +182,8 @@ public class SVG extends FObj {
 	int numChildren = this.children.size();
 	for (int i = 0; i < numChildren; i++) {
 	    FONode fo = (FONode) children.elementAt(i);
-	    int status;
-	    if ((status = fo.layout(svgArea)) != OK) {
+	    Status status;
+	    if ((status = fo.layout(svgArea)).isIncomplete()) {
 		return status;
 	    }
 	}
@@ -207,20 +208,20 @@ public class SVG extends FObj {
 	
 	if (breakAfter == BreakAfter.PAGE) {
 	    this.marker = BREAK_AFTER;
-	    return FORCE_PAGE_BREAK;
+	    return new Status(Status.FORCE_PAGE_BREAK);
 	}
 
 	if (breakAfter == BreakAfter.ODD_PAGE) {
 	    this.marker = BREAK_AFTER;
-	    return FORCE_PAGE_BREAK_ODD;
+	    return new Status(Status.FORCE_PAGE_BREAK_ODD);
 	}
 	
 	if (breakAfter == BreakAfter.EVEN_PAGE) {
 	    this.marker = BREAK_AFTER;
-	    return FORCE_PAGE_BREAK_EVEN;
+	    return new Status(Status.FORCE_PAGE_BREAK_EVEN);
 	}
 
 	/* return status */
-	return OK;
+	return new Status(Status.OK);
     }
 }

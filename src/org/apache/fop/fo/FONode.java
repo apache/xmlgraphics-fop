@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.fo;
 
 // FOP
@@ -133,6 +134,10 @@ abstract public class FONode {
 	}
     }
 
+    public void removeAreas() {
+	// still to do
+    }
+
     protected void addChild(FONode child) {
 	children.addElement(child);
     }
@@ -141,20 +146,6 @@ abstract public class FONode {
 	return this.parent;
     }
 
-    /* status */
-    /* layout was fully completed */
-    public final static int OK = 1;
-    /* none of the formatting object could be laid out because the
-       containing area was full (end of page) */
-    public final static int AREA_FULL_NONE = 2;
-    /* some of the formatting object could not be laid out because the
-       containing area was full (end of page) */
-    public final static int AREA_FULL_SOME = 3;
-    /* force page break */
-    public final static int FORCE_PAGE_BREAK = 4;
-    public final static int FORCE_PAGE_BREAK_EVEN = 5;
-    public final static int FORCE_PAGE_BREAK_ODD = 6;
-
-    abstract public int layout(Area area)
+    abstract public Status layout(Area area)
 	throws FOPException;
 }

@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.fo.flow;
 
 // FOP
@@ -94,9 +95,9 @@ public class TableRow extends FObj {
 	this.columns = columns;
     }
 
-    public int layout(Area area) throws FOPException {
+    public Status layout(Area area) throws FOPException {
 	if (this.marker == BREAK_AFTER) {
-	    return OK;
+	    return new Status(Status.OK);
 	}
 
 	if (this.marker == START) {
@@ -145,7 +146,7 @@ public class TableRow extends FObj {
 	int numChildren = this.children.size();
 	if (numChildren != columns.size()) {
 	    System.err.println("WARNING: Number of children under table-row not equal to number of table-columns");
-	    return OK;
+	    return new Status(Status.OK);
 	}
 
 	// added by Eric Schaeffer
@@ -167,11 +168,11 @@ public class TableRow extends FObj {
 	    cell.setWidth(width);
 	    widthOfCellsSoFar += width;
 
-	    int status;
-	    if ((status = cell.layout(blockArea)) != OK) {
+	    Status status;
+	    if ((status = cell.layout(blockArea)).isIncomplete()) {
 		this.marker = i;
-		if ((i != 0) && (status == AREA_FULL_NONE)) {
-		    status = AREA_FULL_SOME;
+		if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
+		    status = new Status(Status.AREA_FULL_SOME);
 		}
 		//blockArea.end();
 		area.addChild(blockArea);
@@ -200,7 +201,7 @@ public class TableRow extends FObj {
 	    area.start();
 	}
 
-	return OK;
+	return new Status(Status.OK);
     }
 
     public int getAreaHeight() {

@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.fo.flow;
 
 // FOP
@@ -85,10 +86,10 @@ public class PageNumber extends FObj {
 	this.name = "fo:page-number";
     }
 
-    public int layout(Area area) throws FOPException {
+    public Status layout(Area area) throws FOPException {
 	if (!(area instanceof BlockArea)) {
 	    System.err.println("WARNING: page-number outside block area");
-	    return OK;
+	    return new Status(Status.OK);
 	}
 	if (this.marker == START) {
 	    String fontFamily = this.properties.get("font-family").getString();
@@ -111,6 +112,6 @@ public class PageNumber extends FObj {
 	}
 	String p = Integer.toString(area.getPage().getNumber());
 	this.marker = ((BlockArea) area).addText(fs, red, green, blue, wrapOption, whiteSpaceTreatment, p.toCharArray(), 0, p.length());
-	return OK;
+	return new Status(Status.OK);
     }
 }

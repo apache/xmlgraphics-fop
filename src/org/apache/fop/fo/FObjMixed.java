@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.fo;
 
 import org.apache.fop.layout.Area;
@@ -78,7 +79,7 @@ public class FObjMixed extends FObj {
 	children.addElement(new FOText(data,start,length,this));
     }
 
-    public int layout(Area area) throws FOPException {
+    public Status layout(Area area) throws FOPException {
 
 	if (this.marker == START) {
 	    this.marker = 0;
@@ -87,13 +88,13 @@ public class FObjMixed extends FObj {
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
 	    FONode fo = (FONode) children.elementAt(i);
-	    int status;
-	    if ((status = fo.layout(area)) != OK) {
+	    Status status;
+	    if ((status = fo.layout(area)).isIncomplete()) {
 		this.marker = i;
 		return status;
 	    }
 	}
-	return OK;
+	return new Status(Status.OK);
     }
 }
 

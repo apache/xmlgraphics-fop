@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -53,7 +53,7 @@ package org.apache.fop.apps;
 /**
  * class representing the version of FOP.
  *
- * added at the request of Stefano Mazzocchi for use by Fop.
+ * added at the request of Stefano Mazzocchi for use by Cocoon.
  */
 public class Version {
 
@@ -63,6 +63,6 @@ public class Version {
      * @return the version string
      */
     public static String getVersion() {
-	return "FOP 0.12.0pre5";
+	return "FOP 0.11.5";
     }
 }

@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.svg;
 
 // FOP
@@ -108,7 +109,7 @@ public class Line extends FObj {
      *
      * @return the status of the layout
      */
-    public int layout(Area area) throws FOPException {
+    public Status layout(Area area) throws FOPException {
 
 	/* retrieve properties */
 	int x1 = this.properties.get("x1").getLength().mvalue();
@@ -126,6 +127,6 @@ public class Line extends FObj {
 	}
 
 	/* return status */
-	return OK;
+	return new Status(Status.OK);
     }
 }

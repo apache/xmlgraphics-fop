@@ -15,7 +15,8 @@ SOURCES=FONode.java \
 	Property.java \
 	PropertyList.java \
 	PropertyListBuilder.java \
-	StandardElementMapping.java
+	StandardElementMapping.java \
+	Status.java
 
 CLASSES=$(SOURCES:.java=.class)
 
