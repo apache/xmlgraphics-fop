@@ -102,7 +102,7 @@ public class FoFloat extends FONode {
                 ev = xmlevents.expectOutOfLineBlock();
             if (ev == null)
                 throw new FOPException
-                        ("%block; not found in fo:table-cell");
+                        ("%block; not found in fo:float");
             // Generate the flow object
             FObjects.fobjects.makeFlowObject
                     (foTree, this, ev, stateFlags | FONode.MC_FLOAT);
@@ -123,7 +123,7 @@ public class FoFloat extends FONode {
             } while (ev != null);
         } catch(UnexpectedStartElementException e) {
             throw new FOPException
-            ("Block not found or unexpected non-block in fo:table-cell");
+            ("Block not found or unexpected non-block in fo:float");
         }
 
         makeSparsePropsSet();
