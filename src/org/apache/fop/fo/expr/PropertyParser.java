@@ -34,7 +34,6 @@ import org.apache.fop.datatypes.MimeType;
 import org.apache.fop.datatypes.UriType;
 import org.apache.fop.datatypes.FromParent;
 import org.apache.fop.datatypes.FromNearestSpecified;
-//import org.apache.fop.datatypes.*;
 
 import java.util.HashMap;
 
@@ -397,8 +396,9 @@ public class PropertyParser extends PropertyTokenizer {
             break;
 
         case INHERIT:
-            throw new PropertyException("INHERIT not supported");
-            //break;
+            prop = new Inherit(property);
+            //throw new PropertyException("INHERIT not supported");
+            break;
 
         case URI:
             prop = new UriType(property, currentTokenValue);
@@ -459,8 +459,7 @@ public class PropertyParser extends PropertyTokenizer {
             }
             else if (currentTokenValue.equals("rgb-icc")) {
                 PropertyValue[] args = parseArgs(6);
-                throw new PropertyException
-                        ("rgb-icc function is not supported.");
+                throw new FunctionNotImplementedException("rgb-icc");
             }
             else if (currentTokenValue.equals("system-color")) {
                 PropertyValue[] args = parseArgs(1);
@@ -491,13 +490,11 @@ public class PropertyParser extends PropertyTokenizer {
             }
             else if (currentTokenValue.equals("label-end")) {
                 PropertyValue[] args = parseArgs(0);
-                throw new PropertyException
-                        ("label-end function is not supported.");
+                throw new FunctionNotImplementedException("label-end");
             }
             else if (currentTokenValue.equals("body-start")) {
                 PropertyValue[] args = parseArgs(0);
-                throw new PropertyException
-                        ("body-start function is not supported.");
+                throw new FunctionNotImplementedException("body-start");
             }
             // N.B. see comments on classes FromNearestSpecified and
             // FromParent for explanation of this section
@@ -515,9 +512,8 @@ public class PropertyParser extends PropertyTokenizer {
                     if (! PropertyConsts.isShorthand(property)) {
                         // develop the function value and return it as
                         // a property.
-                        throw new PropertyException
-                                (currentTokenValue +
-                                     " function is not supported.");
+                        throw new FunctionNotImplementedException
+                                                         (currentTokenValue);
                     }
                     // else a shorthand - do nothing; prop has been set
                     // to the appropriate pseudo-propertyValue
@@ -546,28 +542,26 @@ public class PropertyParser extends PropertyTokenizer {
                         // pseudo-propertyValue
                     }
                     else {   // An NCName but not a shorthand
-                        // Perform normal from-parent processing
-                        throw new PropertyException
-                                (currentTokenValue +
-                                 " function is not supported.");
+                        // Perform normal from-? processing
+                        throw new FunctionNotImplementedException
+                                                         (currentTokenValue);
                     }
                 }
             }
             else if (currentTokenValue.equals("from-table-column")) {
                 PropertyValue[] args = parseArgs(0, 1);
-                throw new PropertyException
-                        ("from-table-column function is not supported.");
+                throw new FunctionNotImplementedException
+                                                       ("from-table-column");
             }
             else if (currentTokenValue.equals("proportional-column-width")) {
                 PropertyValue[] args = parseArgs(1);
-                throw new PropertyException
-                        ("proportional-column-width "
-                         + "function is not supported.");
+                throw new FunctionNotImplementedException
+                                               ("proportional-column-width");
             }
             else if (currentTokenValue.equals("merge-property-values")) {
                 PropertyValue[] args = parseArgs(0, 1);
-                throw new PropertyException
-                        ("merge-property-values function is not supported.");
+                throw new FunctionNotImplementedException
+                                                    ("merge-property-values");
             }
             else
                 throw new PropertyException("no such function: "
