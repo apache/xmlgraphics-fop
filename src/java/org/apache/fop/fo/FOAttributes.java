@@ -116,7 +116,7 @@ public class FOAttributes {
      * A static array of <tt>Integer</tt> as a template for the generation
      * of the <i>foAttrKeys</i> array.
      */
-    private static Integer[] integerArray
+    private static final Integer[] integerArray
                                     = new Integer[] { Ints.consts.get(0) };
 
     /**
@@ -151,8 +151,8 @@ public class FOAttributes {
         if (attributes == null) throw new FOPException
                                        ("No Attributes in XMLEvent");
         for (int i = 0; i < attributes.getLength(); i++) {
-            String attrUri = attributes.getURI(i).intern();
-            String attrLocalname = attributes.getLocalName(i).intern();
+            String attrUri = attributes.getURI(i);
+            String attrLocalname = attributes.getLocalName(i);
             String attrValue = attributes.getValue(i);
             int attrUriIndex = foNode.namespaces.getURIIndex(attrUri);
 
