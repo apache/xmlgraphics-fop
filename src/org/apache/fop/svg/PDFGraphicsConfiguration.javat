@@ -125,11 +125,11 @@ class PDFGraphicsConfiguration extends GraphicsConfiguration {
         return new PDFGraphicsDevice(this);
     }
 
-    /*
-     // for jdk1.4
-     public java.awt.image.VolatileImage createCompatibleVolatileImage(int width, int height) {
-     return null;
-     }
-     */
+    // needed for compiling under jdk1.4
+    @jdk14codestart@
+    public java.awt.image.VolatileImage createCompatibleVolatileImage(int width, int height) {
+        return null;
+    }
+    @jdk14codeend@
 }
 
