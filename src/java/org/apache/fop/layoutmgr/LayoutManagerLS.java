@@ -139,6 +139,9 @@ public class LayoutManagerLS extends LayoutStrategy {
      * the extension to the area tree.
      */
     public void addBookmarksToAreaTree() {
+        if (document.getBookmarks() == null) {
+            return;
+        }
         document.getDriver().getLogger().debug("adding bookmarks to area tree");
         BookmarkData data = new BookmarkData();
         for (int count = 0; count < document.getBookmarks().getOutlines().size(); count++) {
