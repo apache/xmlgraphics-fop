@@ -71,49 +71,49 @@ import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 abstract class RtfAfterBeforeBase
 extends RtfContainer
 implements IRtfParagraphContainer, IRtfExternalGraphicContainer, IRtfTableContainer {
-    protected RtfAttributes m_attrib;
-    private RtfParagraph m_para;
-    private RtfExternalGraphic m_externalGraphic;
-    private RtfTable m_table;
+    protected RtfAttributes attrib;
+    private RtfParagraph para;
+    private RtfExternalGraphic externalGraphic;
+    private RtfTable table;
 
     RtfAfterBeforeBase(RtfSection parent, Writer w, RtfAttributes attrs) throws IOException {
         super((RtfContainer)parent, w, attrs);
-        m_attrib = attrs;
+        attrib = attrs;
     }
 
     public RtfParagraph newParagraph() throws IOException {
         closeAll();
-        m_para = new RtfParagraph(this, m_writer);
-        return m_para;
+        para = new RtfParagraph(this, m_writer);
+        return para;
     }
 
     public RtfParagraph newParagraph(RtfAttributes attrs) throws IOException {
         closeAll();
-        m_para = new RtfParagraph(this, m_writer, attrs);
-        return m_para;
+        para = new RtfParagraph(this, m_writer, attrs);
+        return para;
     }
 
     public RtfExternalGraphic newImage() throws IOException {
         closeAll();
-        m_externalGraphic = new RtfExternalGraphic(this, m_writer);
-        return m_externalGraphic;
+        externalGraphic = new RtfExternalGraphic(this, m_writer);
+        return externalGraphic;
     }
 
     private void closeCurrentParagraph() throws IOException {
-        if (m_para != null) {
-            m_para.close();
+        if (para != null) {
+            para.close();
         }
     }
 
     private void closeCurrentExternalGraphic() throws IOException {
-        if (m_externalGraphic != null) {
-            m_externalGraphic.close();
+        if (externalGraphic != null) {
+            externalGraphic.close();
         }
     }
 
     private void closeCurrentTable() throws IOException {
-        if (m_table != null) {
-            m_table.close();
+        if (table != null) {
+            table.close();
         }
     }
 
@@ -130,7 +130,7 @@ implements IRtfParagraphContainer, IRtfExternalGraphicContainer, IRtfTableContai
     }
 
     public RtfAttributes getAttributes() {
-        return m_attrib;
+        return attrib;
     }
 
     public void closeAll() throws IOException {
@@ -145,14 +145,14 @@ implements IRtfParagraphContainer, IRtfExternalGraphicContainer, IRtfTableContai
      */
     public RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException {
         closeAll();
-        m_table = new RtfTable(this, m_writer, attrs, tc);
-        return m_table;
+        table = new RtfTable(this, m_writer, attrs, tc);
+        return table;
     }
 
     /** close current table if any and start a new one  */
     public RtfTable newTable(ITableColumnsInfo tc) throws IOException {
         closeAll();
-        m_table = new RtfTable(this, m_writer, tc);
-        return m_table;
+        table = new RtfTable(this, m_writer, tc);
+        return table;
     }
 }

@@ -67,9 +67,9 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 public class ParagraphKeeptogetherContext {
 
-    private static int m_paraKeepTogetherOpen = 0;
-    private static boolean m_paraResetProperties = false;
-    private static ParagraphKeeptogetherContext m_instance = null;
+    private static int paraKeepTogetherOpen = 0;
+    private static boolean paraResetProperties = false;
+    private static ParagraphKeeptogetherContext instance = null;
 
     ParagraphKeeptogetherContext() {
     }
@@ -81,44 +81,46 @@ public class ParagraphKeeptogetherContext {
      * @return The instance of ParagraphKeeptogetherContext
      */
     public static ParagraphKeeptogetherContext getInstance() {
-        if (m_instance == null) {
-            m_instance = new ParagraphKeeptogetherContext();
+        if (instance == null) {
+            instance = new ParagraphKeeptogetherContext();
         }
-        return m_instance;
+        return instance;
     }
 
     /**
      *  @return the level of current "keep whith next" paragraph
      */
     public static int getKeepTogetherOpenValue() {
-        return m_paraKeepTogetherOpen;
+        return paraKeepTogetherOpen;
     }
 
-    /** Open a new "keep whith next" paragraph */
-    public static void KeepTogetherOpen() {
-        m_paraKeepTogetherOpen++;
+    /** Open a new "keep with next" paragraph */
+    public static void keepTogetherOpen() {
+        paraKeepTogetherOpen++;
     }
 
-    /** Close a "keep whith next" paragraph */
-    public static void KeepTogetherClose() {
-        if (m_paraKeepTogetherOpen > 0) {
-            m_paraKeepTogetherOpen--;
+    /** Close a "keep with next" paragraph */
+    public static void keepTogetherClose() {
+        if (paraKeepTogetherOpen > 0) {
+            paraKeepTogetherOpen--;
 
             //If the \pard control word is not present, the current paragraph
             //inherits all paragraph properties.
             //Also the next paragraph must reset the properties otherwise the \keepn don't stop.
-            m_paraResetProperties = (m_paraKeepTogetherOpen == 0);
+            paraResetProperties = (paraKeepTogetherOpen == 0);
         }
     }
 
-    /** Determine if the next paragraph must reset the properites */
+    /**
+     * @return true if the next paragraph must reset the properties
+     */
     public static boolean paragraphResetProperties() {
-        return m_paraResetProperties;
+        return paraResetProperties;
     }
 
     /** Reset the flag if the paragraph properties have been resested */
     public static void setParagraphResetPropertiesUsed() {
-        m_paraResetProperties = false;
+        paraResetProperties = false;
     }
 
 }

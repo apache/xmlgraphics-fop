@@ -99,9 +99,9 @@ public class RtfJforCmd extends RtfContainer {
             final String cmd = (String)it.next();
 
             if (cmd.equals(PARA_KEEP_ON)) {
-                m_paragraphKeeptogetherContext.KeepTogetherOpen();
+                m_paragraphKeeptogetherContext.keepTogetherOpen();
             } else if (cmd.equals(PARA_KEEP_OFF)) {
-                  m_paragraphKeeptogetherContext.KeepTogetherClose();
+                  m_paragraphKeeptogetherContext.keepTogetherClose();
             } else {
 //                this.getRtfFile ().getLog ().logInfo
 //                        ("JFOR-CMD ignored, command not recognised:"+cmd);
