@@ -94,6 +94,7 @@ import org.apache.fop.fo.properties.BackgroundRepeat;
 import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
@@ -295,8 +296,8 @@ public class PDFRenderer extends PrintRenderer {
      * @see org.apache.fop.render.Renderer#stopRenderer()
      */
     public void stopRenderer() throws IOException {
-        FontSetup.addToResources(pdfDoc, pdfDoc.getResources(),
-                                 (org.apache.fop.apps.Document)fontInfo);
+        pdfDoc.getResources().addFonts(pdfDoc, 
+            (org.apache.fop.apps.Document) fontInfo);
         pdfDoc.outputTrailer(ostream);
 
         this.pdfDoc = null;

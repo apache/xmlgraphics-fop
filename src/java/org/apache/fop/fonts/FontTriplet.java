@@ -1,5 +1,5 @@
 /*
- * $Id: FontTriplet.java,v 1.2 2003/03/07 09:46:32 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,7 +48,7 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */ 
-package org.apache.fop.render.pdf;
+package org.apache.fop.fonts;
 
 /**
  * FontTriplet contains information on name, weight, style of one font

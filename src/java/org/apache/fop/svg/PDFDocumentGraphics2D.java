@@ -59,7 +59,7 @@ import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFAnnotList;
-import org.apache.fop.render.pdf.FontSetup;
+import org.apache.fop.fonts.FontSetup;
 import org.apache.avalon.framework.CascadingRuntimeException;
 import org.apache.avalon.framework.activity.Initializable;
 import org.apache.avalon.framework.configuration.Configurable;
@@ -308,7 +308,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
         }
         this.pdfDoc.addObject(currentPage);
         if (fontInfo != null) {
-            FontSetup.addToResources(pdfDoc, pdfDoc.getResources(), fontInfo);
+            pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
         }
         this.pdfDoc.output(outputStream);
         pdfDoc.outputTrailer(outputStream);

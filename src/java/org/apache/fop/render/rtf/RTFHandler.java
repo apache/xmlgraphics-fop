@@ -103,6 +103,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableCell;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTableContainer;
+import org.apache.fop.fonts.FontSetup;
 import org.xml.sax.SAXException;
 
 /**
@@ -143,8 +144,7 @@ public class RTFHandler extends FOInputHandler {
     public RTFHandler(Document doc, OutputStream os) {
         super(doc);
         this.os = os;
-        // use pdf fonts for now, this is only for resolving names
-        org.apache.fop.render.pdf.FontSetup.setup(doc, null);
+        FontSetup.setup(doc, null);
         log.warn(ALPHA_WARNING);
     }
 

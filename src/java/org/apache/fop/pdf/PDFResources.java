@@ -50,6 +50,10 @@
  */ 
 package org.apache.fop.pdf;
 
+import org.apache.fop.apps.Document;
+import org.apache.fop.fonts.Typeface;
+import org.apache.fop.fonts.FontDescriptor;
+
 // Java
 import java.util.Iterator;
 import java.util.Map;
@@ -108,6 +112,27 @@ public class PDFResources extends PDFObject {
      */
     public void addFont(PDFFont font) {
         this.fonts.put(font.getName(), font);
+    }
+
+    /**
+     * Add the fonts in the font info to this PDF document's Font Resources.
+     * 
+     * @param doc PDF document to add fonts to
+     * @param fontInfo font info object to get font information from
+     */
+   public void addFonts(PDFDocument doc, Document fontInfo) {
+        Map fonts = fontInfo.getUsedFonts();
+        Iterator e = fonts.keySet().iterator();
+        while (e.hasNext()) {
+            String f = (String)e.next();
+            Typeface font = (Typeface)fonts.get(f);
+            FontDescriptor desc = null;
+            if (font instanceof FontDescriptor) {
+                desc = (FontDescriptor)font;
+            }
+            addFont(doc.getFactory().makeFont(
+                f, font.getFontName(), font.getEncoding(), font, desc));
+        }
     }
 
     /**

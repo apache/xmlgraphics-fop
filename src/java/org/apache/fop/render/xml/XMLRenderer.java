@@ -92,6 +92,7 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.pagination.Region;
@@ -211,9 +212,7 @@ public class XMLRenderer extends AbstractRenderer {
      * @param fontInfo the font info object to set up
      */
     public void setupFontInfo(FOTreeControl foTreeControl) {
-
-        /* use PDF's font setup to get PDF metrics */
-        org.apache.fop.render.pdf.FontSetup.setup((Document)foTreeControl, null);
+        FontSetup.setup((Document) foTreeControl, null);
     }
 
     private boolean isCoarseXml() {
