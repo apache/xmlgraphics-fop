@@ -34,7 +34,5 @@
       <menu-item label="Examples" href="examples.html"/>
       <menu-item label="Tools" href="tools.html"/>
       <external label="ViewCVS" href="http://cvs.apache.org/viewcvs.cgi/xml-fop"/>
-      <menu-item label="PDF" href="pdf.html"/>
-      <menu-item label="Postscript" href="ps.html"/>
     </menu>
 </book>
