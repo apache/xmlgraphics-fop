@@ -263,7 +263,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
                 returnList.add(new KnuthGlue(0, 0, 0,
                         BlockLevelLayoutManager.SPACE_BEFORE_ADJUSTMENT, 
                         returnPosition, true));
-            } else if (alignment == EN_JUSTIFY) {
+            } else /*if (alignment == EN_JUSTIFY)*/ {
                 returnList.add(new KnuthGlue(
                         spaceBefore.getOptimum().getLength().getValue(),
                         spaceBefore.getMaximum().getLength().getValue()
@@ -272,12 +272,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
                                 - spaceBefore.getMinimum().getLength().getValue(),
                         BlockLevelLayoutManager.SPACE_BEFORE_ADJUSTMENT, 
                         returnPosition, true));
-            } else {
+            } /*else {
                 returnList.add(new KnuthGlue(
                         spaceBefore.getOptimum().getLength().getValue(), 
                         0, 0, BlockLevelLayoutManager.SPACE_BEFORE_ADJUSTMENT,
                         returnPosition, true));
-            }
+            }*/
         }
     }
 
@@ -302,7 +302,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
                 returnList.add(new KnuthGlue(0, 0, 0, 
                         BlockLevelLayoutManager.SPACE_AFTER_ADJUSTMENT,
                         returnPosition, true));
-            } else if (alignment == EN_JUSTIFY) {
+            } else /*if (alignment == EN_JUSTIFY)*/ {
                 returnList.add(new KnuthGlue(
                         spaceAfter.getOptimum().getLength().getValue(),
                         spaceAfter.getMaximum().getLength().getValue()
@@ -311,12 +311,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
                                 - spaceAfter.getMinimum().getLength().getValue(),
                         BlockLevelLayoutManager.SPACE_AFTER_ADJUSTMENT, returnPosition,
                         (!spaceAfter.getSpace().isDiscard()) ? false : true));
-            } else {
+            } /*else {
                 returnList.add(new KnuthGlue(
                         spaceAfter.getOptimum().getLength().getValue(), 0, 0,
                         BlockLevelLayoutManager.SPACE_AFTER_ADJUSTMENT, returnPosition,
                         (!spaceAfter.getSpace().isDiscard()) ? false : true));
-            }
+            }*/
             if (!spaceAfter.getSpace().isDiscard()) {
                 returnList.add(new KnuthBox(0, returnPosition, true));
             }
