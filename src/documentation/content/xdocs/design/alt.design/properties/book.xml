@@ -13,8 +13,11 @@
   </menu>
   <menu label="Alt properties">
     <menu-item label="Introduction" href="index.html"/>
+    <menu-item label="Classes overview" href="classes-overview.html"/>
     <menu-item label="PropertyConsts" href="PropertyConsts-class.html"/>
-    <menu-item label="Data Handling" href="property-data.html"/>
-    <menu-item label="Methods Access" href="property-methods.html"/>
+    <menu-item label="Simple Properties" href="simple-properties.html"/>
+    <menu-item label="getInitialValue" href="getInitialValue.html"/>
+    <menu-item label="Enumerated data" href="enumerated-values.html"/>
+    <menu-item label="Property parsing" href="propertyExpressions.html"/>
   </menu>
 </book>
