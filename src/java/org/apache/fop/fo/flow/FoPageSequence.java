@@ -35,6 +35,10 @@ import java.util.Set;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Page;
+import org.apache.fop.area.PageList;
+import org.apache.fop.area.PageListElement;
+import org.apache.fop.area.PageSet;
+import org.apache.fop.area.PageSetElement;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
@@ -122,6 +126,10 @@ public class FoPageSequence extends FONode {
     public Map staticContents = null;
     /** Child index of fo:flow child. */
     private int flowChild = -1;
+    /** The <code>PageList</code> for this page-sequence */
+    private PageList pagelist = null;
+    /** The index of the current element in the pagelist */
+    private int pgListIndex = -1;
     /** The page currently being processed by this page-sequence */
     private Page page = null;
     /**
@@ -132,6 +140,48 @@ public class FoPageSequence extends FONode {
         return page;
     }
 
+    /**
+     * @return the pagelist
+     */
+    public PageList getPagelist() {
+        return pagelist;
+    }
+    /**
+     * @param pagelist to set
+     */
+    public void setPagelist(PageList pagelist) {
+        this.pagelist = pagelist;
+    }
+    /**
+     * @return the pgListIndex
+     */
+    public int getPgListIndex() {
+        return pgListIndex;
+    }
+    /**
+     * @param pgListIndex to set
+     */
+    public void setPgListIndex(int pgListIndex) {
+        this.pgListIndex = pgListIndex;
+    }
+
+    /**
+     * Gets the current first page
+     * @return the first page
+     */
+    public Page getCurr1stPage() {
+        PageListElement firstPage = pagelist.get(0);
+        while (firstPage.isPageSet()) {
+            PageSet pageset = (PageSet)firstPage;
+            PageSetElement setEl = pageset.get(pageset.getCurrentElement());
+            if (setEl.isPageList()) {
+                firstPage = ((PageList)setEl).get(0);
+            } else {
+                firstPage = (Page)setEl;
+            }
+        }
+        return (Page)firstPage;
+    }
     /**
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
@@ -205,6 +255,9 @@ public class FoPageSequence extends FONode {
             }
             // Generate a null page for the flow(s)
             page = Page.setupNullPage(this, foTree.getNextPageId());
+            // Intialize the PageList for this page-sequence
+            pagelist = new PageList(page);
+            pgListIndex = 0;
 
             // Look for one or more fo:flow
             // must have at least one: N.B. in 1.0, only one is allowed,

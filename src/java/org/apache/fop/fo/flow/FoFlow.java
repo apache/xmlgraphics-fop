@@ -135,7 +135,11 @@ public class FoFlow extends FOPageSeqNode {
         // flow.  Each attempt will generate its own page set, only the first
         // of which contains a region-body-reference-area which qualifies as
         // the reference rectangle for percentages defined on the flow.
-        throw new FOPException("Called from FoFlow");
+        //
+        // Get the first page of the page-sequence
+        // TODO check whether the current page from the page-sequence will be
+        // enough
+        return pageSequence.getCurr1stPage().getRegionBodyRefArea();
     }
 
     public Area getLayoutContext() {

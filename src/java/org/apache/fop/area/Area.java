@@ -370,4 +370,7 @@ public class Area extends AreaNode implements Cloneable  {
         }
     }
 
+    public void registerAreaListener(AreaListener area) {
+        
+    }
 }
