@@ -9,6 +9,7 @@ package org.apache.fop.area;
 
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Region Viewport reference area.
@@ -72,6 +73,7 @@ public class RegionViewport extends Area implements Cloneable {
         out.writeFloat((float) viewArea.getWidth());
         out.writeFloat((float) viewArea.getHeight());
         out.writeBoolean(clip);
+        out.writeObject(props);
         out.writeObject(region);
     }
 
@@ -80,6 +82,7 @@ public class RegionViewport extends Area implements Cloneable {
         viewArea = new Rectangle2D.Float(in.readFloat(), in.readFloat(),
                                          in.readFloat(), in.readFloat());
         clip = in.readBoolean();
+        props = (HashMap)in.readObject();
         setRegion((RegionReference) in.readObject());
     }
 
@@ -92,6 +95,9 @@ public class RegionViewport extends Area implements Cloneable {
     public Object clone() {
         RegionViewport rv = new RegionViewport((Rectangle2D)viewArea.clone());
         rv.region = (RegionReference)region.clone();
+        if(props != null) {
+            rv.props = (HashMap)props.clone();
+        }
         return rv;
     }
 }

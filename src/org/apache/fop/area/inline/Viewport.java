@@ -12,6 +12,7 @@ import org.apache.fop.render.Renderer;
 
 import java.io.IOException;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 
 /**
  * Inline viewport area.
@@ -100,6 +101,7 @@ public class Viewport extends InlineArea {
             out.writeFloat((float) contentPosition.getHeight());
         }
         out.writeBoolean(clip);
+        //out.writeObject(props);
         out.writeObject(content);
     }
 
@@ -112,6 +114,7 @@ public class Viewport extends InlineArea {
                                                     in.readFloat());
         }
         clip = in.readBoolean();
+        //props = (HashMap) in.readObject();
         content = (Area) in.readObject();
     }
 
