@@ -138,7 +138,7 @@ public class FOTree extends Tree implements Runnable {
             event = xmlevents.getStartElement(FObjectNames.ROOT);
             foRoot = new FoRoot(this, event);
             foRoot.buildFoTree();
-            System.out.println("Back from buildFoTree");
+            log.info("Back from buildFoTree");
             // Clean up the fo:root event
             event = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, event);
             // Get the end of document
@@ -156,10 +156,9 @@ public class FOTree extends Tree implements Runnable {
             throw new RuntimeException(e);
         }
 
-        // DEBUG
-        System.out.println("Elapsed time: " +
+        log.fine("Elapsed time: " +
                     (System.currentTimeMillis() - 
-                            org.apache.fop.apps.Fop.startTime)); // DEBUG
+                            org.apache.fop.apps.Fop.startTime)); 
 
         FONode.PreOrder preorder = foRoot.new PreOrder();
         int nodecount = 0;
@@ -175,7 +174,7 @@ public class FOTree extends Tree implements Runnable {
             }
             */
         }
-        System.out.println("# of FONodes: " + nodecount);
+        log.fine("# of FONodes: " + nodecount);
     }
 
     /**
