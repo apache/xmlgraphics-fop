@@ -275,6 +275,10 @@ public class Block extends FObjMixed {
                 return new Status(Status.FORCE_PAGE_BREAK_EVEN);
             }
 
+            if (breakBefore == BreakBefore.COLUMN) {
+                return new Status(Status.FORCE_COLUMN_BREAK);
+            }
+
             int numChildren = this.children.size();
             for (int i = 0; i < numChildren; i++) {
                 FONode fo = (FONode) children.elementAt(i);
@@ -415,6 +419,11 @@ public class Block extends FObjMixed {
         if (breakAfter == BreakAfter.EVEN_PAGE) {
             this.marker = BREAK_AFTER;
             return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+        }
+
+        if (breakAfter == BreakAfter.COLUMN) {
+            this.marker = BREAK_AFTER;
+            return new Status(Status.FORCE_COLUMN_BREAK);
         }
 
         if (keepWithNext != 0) {
