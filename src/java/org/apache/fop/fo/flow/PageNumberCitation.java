@@ -64,8 +64,6 @@ import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.layout.TextState;
-import org.apache.fop.layoutmgr.LayoutProcessor;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -87,7 +85,6 @@ public class PageNumberCitation extends FObj {
     private int wrapOption;
     private String pageNumber;
     private String refId;
-    private TextState ts;
     private boolean unresolved = false;
 
     /**
