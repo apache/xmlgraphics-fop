@@ -1,10 +1,53 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.fo.expr;
 
 
@@ -35,8 +78,8 @@ class PropertyTokenizer {
     static final int TOK_FLOAT = TOK_COLORSPEC + 1;
     static final int TOK_INTEGER = TOK_FLOAT + 1;
 
-    int currentToken = TOK_EOF;
-    String currentTokenValue = null;
+    protected int currentToken = TOK_EOF;
+    protected String currentTokenValue = null;
     protected int currentUnitLength = 0;
 
     private int currentTokenStartIndex = 0;
@@ -246,7 +289,7 @@ class PropertyTokenizer {
     }
 
     /**
-     * Attempt to recognize a valid sequence of decimal digits in the
+     * Attempt to recognize a valid sequence of decimal DIGITS in the
      * input expression.
      */
     private void scanDigits() {
@@ -256,7 +299,7 @@ class PropertyTokenizer {
     }
 
     /**
-     * Attempt to recognize a valid sequence of hexadecimal digits in the
+     * Attempt to recognize a valid sequence of hexadecimal DIGITS in the
      * input expression.
      */
     private void scanHexDigits() {
@@ -288,11 +331,11 @@ class PropertyTokenizer {
     }
 
 
-    private static final String nameStartChars =
+    private static final String NAME_START_CHARS =
         "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final String nameChars = ".-0123456789";
-    private static final String digits = "0123456789";
-    private static final String hexchars = digits + "abcdefABCDEF";
+    private static final String NAME_CHARS = ".-0123456789";
+    private static final String DIGITS = "0123456789";
+    private static final String HEX_CHARS = DIGITS + "abcdefABCDEF";
 
     /**
      * Return a boolean value indicating whether the argument is a
@@ -300,7 +343,7 @@ class PropertyTokenizer {
      * @param c The character to check
      */
     private static final boolean isDigit(char c) {
-        return digits.indexOf(c) >= 0;
+        return DIGITS.indexOf(c) >= 0;
     }
 
     /**
@@ -309,7 +352,7 @@ class PropertyTokenizer {
      * @param c The character to check
      */
     private static final boolean isHexDigit(char c) {
-        return hexchars.indexOf(c) >= 0;
+        return HEX_CHARS.indexOf(c) >= 0;
     }
 
     /**
@@ -334,7 +377,7 @@ class PropertyTokenizer {
      * @param c The character to check
      */
     private static final boolean isNameStartChar(char c) {
-        return nameStartChars.indexOf(c) >= 0 || c >= 0x80;
+        return NAME_START_CHARS.indexOf(c) >= 0 || c >= 0x80;
     }
 
     /**
@@ -343,7 +386,7 @@ class PropertyTokenizer {
      * @param c The character to check
      */
     private static final boolean isNameChar(char c) {
-        return nameStartChars.indexOf(c) >= 0 || nameChars.indexOf(c) >= 0
+        return NAME_START_CHARS.indexOf(c) >= 0 || NAME_CHARS.indexOf(c) >= 0
                || c >= 0x80;
     }
 

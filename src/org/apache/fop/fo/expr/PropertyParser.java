@@ -1,19 +1,66 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.fo.expr;
 
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.FixedLength;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.datatypes.PercentLength;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.ListProperty;
 import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.NumberProperty;
 import org.apache.fop.fo.StringProperty;
 import org.apache.fop.fo.ColorTypeProperty;
-import org.apache.fop.datatypes.*;
 
 import java.util.HashMap;
 
@@ -26,38 +73,38 @@ public class PropertyParser extends PropertyTokenizer {
     private PropertyInfo propInfo;    // Maker and propertyList related info
 
     private static final String RELUNIT = "em";
-    private static final Numeric negOne = new Numeric(new Double(-1.0));
-    private static final HashMap functionTable = new HashMap();
+    private static final Numeric NEGATIVE_ONE = new Numeric(new Double(-1.0));
+    private static final HashMap FUNCTION_TABLE = new HashMap();
 
     static {
         // Initialize the HashMap of XSL-defined functions
-        functionTable.put("ceiling", new CeilingFunction());
-        functionTable.put("floor", new FloorFunction());
-        functionTable.put("round", new RoundFunction());
-        functionTable.put("min", new MinFunction());
-        functionTable.put("max", new MaxFunction());
-        functionTable.put("abs", new AbsFunction());
-        functionTable.put("rgb", new RGBColorFunction());
-        functionTable.put("from-table-column", new FromTableColumnFunction());
-        functionTable.put("inherited-property-value",
+        FUNCTION_TABLE.put("ceiling", new CeilingFunction());
+        FUNCTION_TABLE.put("floor", new FloorFunction());
+        FUNCTION_TABLE.put("round", new RoundFunction());
+        FUNCTION_TABLE.put("min", new MinFunction());
+        FUNCTION_TABLE.put("max", new MaxFunction());
+        FUNCTION_TABLE.put("abs", new AbsFunction());
+        FUNCTION_TABLE.put("rgb", new RGBColorFunction());
+        FUNCTION_TABLE.put("from-table-column", new FromTableColumnFunction());
+        FUNCTION_TABLE.put("inherited-property-value",
                           new InheritedPropFunction());
-        functionTable.put("from-parent", new FromParentFunction());
-        functionTable.put("from-nearest-specified-value",
+        FUNCTION_TABLE.put("from-parent", new FromParentFunction());
+        FUNCTION_TABLE.put("from-nearest-specified-value",
                           new NearestSpecPropFunction());
-        functionTable.put("proportional-column-width",
+        FUNCTION_TABLE.put("proportional-column-width",
                           new PPColWidthFunction());
-        functionTable.put("label-end", new LabelEndFunction());
-        functionTable.put("body-start", new BodyStartFunction());
+        FUNCTION_TABLE.put("label-end", new LabelEndFunction());
+        FUNCTION_TABLE.put("body-start", new BodyStartFunction());
         // NOTE: used from code generated for corresponding properties
-        functionTable.put("_fop-property-value", new FopPropValFunction());
+        FUNCTION_TABLE.put("_fop-property-value", new FopPropValFunction());
 
         /**
          * * NOT YET IMPLEMENTED!!!
-         * functionTable.put("icc-color", new ICCcolorFunction());
-         * functionTable.put("system-color", new SystemColorFunction());
-         * functionTable.put("system-font", new SystemFontFunction());
+         * FUNCTION_TABLE.put("icc-color", new ICCcolorFunction());
+         * FUNCTION_TABLE.put("system-color", new SystemColorFunction());
+         * FUNCTION_TABLE.put("system-font", new SystemFontFunction());
          *
-         * functionTable.put("merge-property-values", new MergePropsFunction());
+         * FUNCTION_TABLE.put("merge-property-values", new MergePropsFunction());
          */
     }
 
@@ -130,7 +177,7 @@ public class PropertyParser extends PropertyTokenizer {
         // Evaluate and put result on the operand stack
         Property prop = parseMultiplicativeExpr();
         loop:
-        for (; ;) {
+        while (true) {
             switch (currentToken) {
             case TOK_PLUS:
                 next();
@@ -157,7 +204,7 @@ public class PropertyParser extends PropertyTokenizer {
     private Property parseMultiplicativeExpr() throws PropertyException {
         Property prop = parseUnaryExpr();
         loop:
-        for (; ;) {
+        while (true) {
             switch (currentToken) {
             case TOK_DIV:
                 next();
@@ -244,9 +291,8 @@ public class PropertyParser extends PropertyTokenizer {
              * Get the length base value object from the Maker. If null, then
              * this property can't have % values. Treat it as a real number.
              */
-            double pcval =
-                new Double(currentTokenValue.substring(0, currentTokenValue.length() - 1)).doubleValue()
-                / 100.0;
+            double pcval = new Double(currentTokenValue.substring(0, 
+                        currentTokenValue.length() - 1)).doubleValue() / 100.0;
             // LengthBase lbase = this.propInfo.getPercentLengthBase();
             PercentBase pcBase = this.propInfo.getPercentBase();
             if (pcBase != null) {
@@ -291,7 +337,7 @@ public class PropertyParser extends PropertyTokenizer {
 
         case TOK_FUNCTION_LPAR: {
             Function function =
-                (Function)functionTable.get(currentTokenValue);
+                (Function)FUNCTION_TABLE.get(currentTokenValue);
             if (function == null) {
                 throw new PropertyException("no such function: "
                                             + currentTokenValue);
@@ -395,7 +441,7 @@ public class PropertyParser extends PropertyTokenizer {
         if (op == null) {
             throw new PropertyException("Non numeric operand to unary minus");
         }
-        return new NumericProperty(op.multiply(negOne));
+        return new NumericProperty(op.multiply(NEGATIVE_ONE));
     }
 
     /**
