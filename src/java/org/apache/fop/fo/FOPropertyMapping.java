@@ -517,28 +517,28 @@ public class FOPropertyMapping implements Constants {
         // top
         l  = new LengthProperty.Maker(PR_TOP);
         l.setInherited(false);
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setDefault("auto");
         addPropertyMaker("top", l);
 
         // right
         l  = new LengthProperty.Maker(PR_RIGHT);
         l.setInherited(false);
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setDefault("auto");
         addPropertyMaker("right", l);
 
         // bottom
         l  = new LengthProperty.Maker(PR_BOTTOM);
         l.setInherited(false);
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setDefault("auto");
         addPropertyMaker("bottom", l);
 
         // left
         l  = new LengthProperty.Maker(PR_LEFT);
         l.setInherited(false);
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setDefault("auto");
         addPropertyMaker("left", l);
     }
@@ -1326,20 +1326,20 @@ public class FOPropertyMapping implements Constants {
         
         l = new LengthProperty.Maker(CP_MINIMUM);
         l.setDefault("auto");
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setPercentBase(LengthBase.CONTAINING_BOX);
         l.setByShorthand(true);
         m.addSubpropMaker(l);
 
         l = new LengthProperty.Maker(CP_OPTIMUM);
         l.setDefault("auto");
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setPercentBase(LengthBase.CONTAINING_BOX);
         l.setByShorthand(true);
         m.addSubpropMaker(l);
 
         l = new LengthProperty.Maker(CP_MAXIMUM);
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setDefault("auto");
         l.setPercentBase(LengthBase.CONTAINING_BOX);
         l.setByShorthand(true);
@@ -1358,21 +1358,21 @@ public class FOPropertyMapping implements Constants {
         // content-height
         l  = new LengthProperty.Maker(PR_CONTENT_HEIGHT);
         l.setInherited(false);
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setDefault("auto");
         addPropertyMaker("content-height", l);
 
         // content-width
         l  = new LengthProperty.Maker(PR_CONTENT_WIDTH);
         l.setInherited(false);
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setDefault("auto");
         addPropertyMaker("content-width", l);
 
         // height
         l  = new LengthProperty.Maker(PR_HEIGHT);
         l.setInherited(false);
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setDefault("auto");
         addPropertyMaker("height", l);
 
@@ -1383,20 +1383,20 @@ public class FOPropertyMapping implements Constants {
         
         l = new LengthProperty.Maker(CP_MINIMUM);
         l.setDefault("auto");
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setPercentBase(LengthBase.CONTAINING_BOX);
         l.setByShorthand(true);
         m.addSubpropMaker(l);
 
         l = new LengthProperty.Maker(CP_OPTIMUM);
         l.setDefault("auto");
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setPercentBase(LengthBase.CONTAINING_BOX);
         l.setByShorthand(true);
         m.addSubpropMaker(l);
 
         l = new LengthProperty.Maker(CP_MAXIMUM);
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setDefault("auto");
         l.setPercentBase(LengthBase.CONTAINING_BOX);
         l.setByShorthand(true);
@@ -1453,7 +1453,7 @@ public class FOPropertyMapping implements Constants {
         // width
         l  = new LengthProperty.Maker(PR_WIDTH);
         l.setInherited(false);
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setPercentBase(LengthBase.BLOCK_WIDTH);
         l.setDefault("auto");
         addPropertyMaker("width", l);
@@ -2036,7 +2036,7 @@ public class FOPropertyMapping implements Constants {
         // column-gap
         l  = new LengthProperty.Maker(PR_COLUMN_GAP);
         l.setInherited(false);
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setDefault("0.25in");
         addPropertyMaker("column-gap", l);
 
@@ -2110,7 +2110,7 @@ public class FOPropertyMapping implements Constants {
         // page-height
         l  = new LengthProperty.Maker(PR_PAGE_HEIGHT);
         l.setInherited(false);
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setDefault("11in");
         addPropertyMaker("page-height", l);
 
@@ -2127,7 +2127,7 @@ public class FOPropertyMapping implements Constants {
         // page-width
         l  = new LengthProperty.Maker(PR_PAGE_WIDTH);
         l.setInherited(false);
-        l.setAutoOk(true);
+        l.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         l.setDefault("8in");
         addPropertyMaker("page-width", l);
 

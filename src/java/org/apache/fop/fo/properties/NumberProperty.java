@@ -48,6 +48,9 @@ public class NumberProperty extends Property implements Numeric {
             if (p instanceof NumberProperty) {
                 return p;
             }
+            if (p instanceof EnumProperty) {
+                return new EnumNumber(p);
+            }
             Number val = p.getNumber();
             if (val != null) {
                 return new NumberProperty(val);

@@ -90,13 +90,6 @@ public class NumericProperty extends Property implements Numeric, Length {
     }
 
     /**
-     * Return false since a numeric can not have the enum value of 'auto'. 
-     */
-    public boolean isAuto() {
-        return false;
-    }
-
-    /**
      * Cast this as a length. That is only possible when the dimension is 
      * one.
      */

@@ -191,7 +191,7 @@ public class TableAttributesConverter {
         }
 
         //Check for height row attribute.
-        if (!fobj.getHeight().isAuto()) {
+        if (fobj.getHeight().getEnum() != Constants.AUTO) {
             attrib.set(ITableAttributes.ROW_HEIGHT, fobj.getHeight().getValue() / (1000 / 20));
         }
 

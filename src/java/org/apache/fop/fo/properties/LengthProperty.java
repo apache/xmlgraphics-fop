@@ -44,30 +44,6 @@ abstract public class LengthProperty extends Property
         }
 
         /**
-         * protected Property checkPropertyKeywords(String value) {
-         * if (isAutoLengthAllowed() && value.equals("auto")) {
-         * return new LengthProperty(Length.AUTO);
-         * }
-         * return null;
-         * }
-         */
-
-        /**
-         * @return false (auto-length is not allowed for Length values)
-         */
-        protected boolean isAutoLengthAllowed() {
-            return autoOk;
-        }
-
-        /**
-         * Set the auto length flag.
-         * @param inherited
-         */
-        public void setAutoOk(boolean autoOk) {
-            this.autoOk = autoOk;
-        }
-
-        /**
          * @see PropertyMaker#convertProperty
          */
         public Property convertProperty(Property p,
@@ -77,11 +53,8 @@ abstract public class LengthProperty extends Property
             if (prop != null) {
                 return prop;
             }
-            if (isAutoLengthAllowed()) {
-                String pval = p.getString();
-                if (pval != null && pval.equals("auto")) {
-                    return new AutoLength();
-                }
+            if (p instanceof EnumProperty) {
+                return new EnumLength(p);
             }
             if (p instanceof LengthProperty) {
                 return p;
@@ -93,14 +66,6 @@ abstract public class LengthProperty extends Property
             return convertPropertyDatatype(p, propertyList, fo);
         }
 
-    }
-
-    /**
-     * Indicates if the length has the "auto" value.
-     * @return True if the length is set to "auto"
-     */
-    public boolean isAuto() {
-        return false;
     }
 
     /**

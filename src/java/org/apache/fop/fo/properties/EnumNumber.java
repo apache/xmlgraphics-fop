@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 2004 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,32 +18,27 @@
  
 package org.apache.fop.fo.properties;
 
-
 /**
- * A length quantity in XSL which is specified as "auto".
+ * A number quantity in XSL which is specified as an enum, such as "no-limit".
  */
-public class AutoLength extends LengthProperty {
-
-    /**
-     * @see org.apache.fop.datatypes.Length#isAuto()
-     */
-    public boolean isAuto() {
-        return true;
+public class EnumNumber extends NumberProperty {
+    private Property enum;
+    
+    public EnumNumber(Property enum) {
+        super(null);
+        this.enum = enum;
     }
 
-    // Should we do something intelligent here to set the actual size?
-    // Would need a reference object!
-    //    protected void computeValue() {
-    //    }
-
-    public boolean isAbsolute() {
-        return false;
+    public int getEnum() {
+        return enum.getEnum();
     }
+
     /**
      * Returns the length in 1/1000ths of a point (millipoints)
      * @return the length in millipoints
      */
     public int getValue() {
+        log.error("getValue() called on " + enum + " number");
         return 0;
     }
 
@@ -52,6 +47,7 @@ public class AutoLength extends LengthProperty {
      * @return the length in millipoints
      */
     public double getNumericValue() {
+        log.error("getNumericValue() called on " + enum + " number");
         return 0;
     }
 
@@ -59,7 +55,15 @@ public class AutoLength extends LengthProperty {
      * @see org.apache.fop.fo.properties.Property#getString()
      */
     public String getString() {
-        return "auto";
+        return enum.toString();
     }
+
+    /**
+     * @see org.apache.fop.fo.properties.Property#getString()
+     */
+    public Object getObject() {
+        return enum.getObject();
+    }
+
 
 }

@@ -74,20 +74,20 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
 
         // assume lr-tb for now and just use the .optimum value of the range
         Length ipd = fobj.getInlineProgressionDimension().getOptimum().getLength();
-        if (!ipd.isAuto()) {
+        if (ipd.getEnum() != AUTO) {
             viewWidth = ipd.getValue();
         } else {
             ipd = fobj.getWidth();
-            if (!ipd.isAuto()) {
+            if (ipd.getEnum() != AUTO) {
                 viewWidth = ipd.getValue();
             }
         }
         Length bpd = fobj.getBlockProgressionDimension().getOptimum().getLength();
-        if (!bpd.isAuto()) {
+        if (bpd.getEnum() != AUTO) {
             viewHeight = bpd.getValue();
         } else {
             bpd = fobj.getHeight();
-            if (!bpd.isAuto()) {
+            if (bpd.getEnum() != AUTO) {
                 viewHeight = bpd.getValue();
             }
         }
@@ -98,7 +98,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         int cwidth = -1;
         int cheight = -1;
         Length ch = fobj.getContentHeight();
-        if (!ch.isAuto()) {
+        if (ch.getEnum() != AUTO) {
             /*if (ch.scaleToFit()) {
                 if (viewHeight != -1) {
                     cheight = viewHeight;
@@ -107,7 +107,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
             cheight = ch.getValue();
         }
         Length cw = fobj.getContentWidth();
-        if (!cw.isAuto()) {
+        if (cw.getEnum() != AUTO) {
             /*if (cw.scaleToFit()) {
                 if (viewWidth != -1) {
                     cwidth = viewWidth;

@@ -91,10 +91,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
         int ipd = context.getRefIPD();
         int bpd = context.getStackLimit().opt;
-        if (!width.isAuto()) {
+        if (width.getEnum() != AUTO) {
             ipd = width.getValue();
         }
-        if (!height.isAuto()) {
+        if (height.getEnum() != AUTO) {
             bpd = height.getValue();
         }
         Rectangle2D rect = new Rectangle2D.Double(0, 0, ipd, bpd);
@@ -111,7 +111,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 relDims.ipd = context.getRefIPD();
             }
             stackLimit = new MinOptMax(relDims.ipd);
-            if (width.isAuto()) {
+            if (width.getEnum() == AUTO) {
                 relDims.bpd = context.getStackLimit().opt;
             }
             absoluteCTM = new CTM(vals[0], vals[1], vals[2], vals[3], 0, 0);
@@ -301,7 +301,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                     // need to set bpd to actual size for rotation
                     // and stacking
                     viewportBlockArea.setIPD(relDims.ipd);
-                    if (!height.isAuto()) {
+                    if (height.getEnum() != AUTO) {
                         viewportBlockArea.setBPD(relDims.bpd);
                         autoHeight = false;
                     }
@@ -309,7 +309,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                     viewportBlockArea.setClip(clip);
                 } else {
                     viewportBlockArea.setIPD(relDims.ipd);
-                    if (!height.isAuto()) {
+                    if (height.getEnum() != AUTO) {
                         viewportBlockArea.setBPD(relDims.bpd);
                         autoHeight = false;
                     }
