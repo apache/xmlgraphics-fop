@@ -9,12 +9,12 @@ import org.apache.fop.datatypes.NCName;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.ShorthandPropSets;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.BorderCommonStyle;
 
 import java.util.Map;
 import java.util.Iterator;
 
-public class BorderStyle extends Property  {
+public class BorderStyle extends BorderCommonStyle  {
     public static final int dataTypes = SHORTHAND;
     public static final int traitMapping = SHORTHAND_MAP;
     public static final int initialValueType = NOTYPE_IT;
