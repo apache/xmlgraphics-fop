@@ -55,10 +55,9 @@ import org.apache.fop.svg.PathPoint;
 
 import java.util.*;
 
-/*
+/**
+ * Parses the points information in polylines and polygons
  *
- *
- * @author Keiron Liddle <keiron@aftexsw.com>
  */
 public class PointsData {
 	Vector table = new Vector();
@@ -70,16 +69,19 @@ public class PointsData {
 
 	protected void convert(String len)
 	{
-		StringTokenizer st = new StringTokenizer(len, " \n\r\t");
+		// need to handle negatives
+		StringTokenizer st = new StringTokenizer(len, ", \n\r\t");
 		while(st.hasMoreTokens()) {
-			String str = st.nextToken().trim();
-			int pos;
-			pos = str.indexOf(",");
-			if(pos != -1) {
-				float x;
-				float y;
-				x = Float.valueOf(str.substring(0, pos).trim()).floatValue();
-				y = Float.valueOf(str.substring(pos + 1, str.length()).trim()).floatValue();
+			String str1 = st.nextToken().trim();
+    		if(st.hasMoreTokens()) {
+    			String str2 = st.nextToken().trim();
+				float x = 0;
+				float y = 0;
+				try {
+    				x = Float.valueOf(str1).floatValue();
+	    			y = Float.valueOf(str2).floatValue();
+	    		} catch(NumberFormatException nfe) {
+	    		}
 				addPoint(new PathPoint(x, y));
 			}
 		}
