@@ -127,7 +127,7 @@ public class ImageFactory {
             // maybe relative
             URL context_url = null;
             if (baseURL == null) {
-                log.error("Error with image URL: " + e.getMessage() + " and no base directory is specified");
+                log.error("Error with image URL: " + e.getMessage() + " and no base directory is specified", e);
                 return null;
             }
             try {
