@@ -188,11 +188,20 @@ public abstract class PrintRenderer implements Renderer
             Box b = (Box) e.nextElement();
             b.render(this);
         }
+	// Restore previous origin
+	this.currentYPosition = saveY;
+	this.currentAreaContainerXPosition = saveX;
+        if (area.getPosition() == Position.STATIC) {
+            this.currentYPosition -= area.getHeight();
+	}
+
+	/****
         if (area.getPosition() != Position.STATIC) {
             this.currentYPosition = saveY;
             this.currentAreaContainerXPosition = saveX;
         } else
             this.currentYPosition -= area.getHeight();
+	*****/
     }
 
 	public void renderBodyAreaContainer(BodyAreaContainer area) {
