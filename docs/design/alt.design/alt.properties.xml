@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!-- $Id$ -->
 <!--
-<!DOCTYPE document SYSTEM "../xml-docs/dtd/document-v10.dtd">
+<!DOCTYPE document SYSTEM "../../xml-docs/dtd/document-v10.dtd">
 -->
 <document>
   <header>
@@ -48,7 +48,6 @@
 	when no value has been assigned.
       </p>
       <s2 title="The history problem">
-      </s2>
       <p>
 	The difficulty and expense of handling properties comes from
 	this univeral inheritance possibility.  The list of properties
@@ -65,6 +64,7 @@
 	specified on an ancestor of this element, and the initial
 	value of the property.
       </p>
+      </s2>
       <s2 title="Data requirement and structure">
 	<p>
 	  This determines the minimum set of properties and associated

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id$ -->
+<!--
+<!DOCTYPE document SYSTEM "file:///home/pbw/src/xml-fop/docs/xml-docs/dtd/document-v10.dtd">
+-->
+
+<document>
+  <header>
+    <title>Traits</title>
+    <authors>
+      <person name="Peter B. West" email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <s1 title="Traits">
+      <table>
+        <tr>
+          <th>Trait</th>
+          <th>Applies to</th>
+          <th>Refs</th>
+          <th>Derived from</th>
+        </tr>
+        <tr>
+          <th>Common Traits</th>
+        </tr>
+        <tr>
+          <td>block-progression-direction</td>
+          <td>All areas</td>
+          <td>
+            <link href=
+            "file:///home/pbw/doc/web/xsl/spec/slice4.html#area-common"
+            >4.2.2 Common Traits</link>
+          </td>
+          <td>
+            <link href=
+            "file:///home/pbw/doc/web/xsl/spec/slice7.html#reference-orientation"
+            >7.27.7 reference-orientation</link>
+          </td>
+        </tr>
+        <tr>
+          <th colspan="2"/>
+          <td>
+            <link href=
+            "file:///home/pbw/doc/web/xsl/spec/slice7.html#writing-mode"
+            >7.27.7 writing-mode</link>
+          </td>
+        </tr>
+        <tr>
+          <td>inline-progression-direction</td>
+          <td>All areas</td>
+          <td>
+            <link href=
+            "file:///home/pbw/doc/web/xsl/spec/slice4.html#area-common"
+            >4.2.2 Common Traits</link>
+          </td>
+          <td>
+            <link href=
+            "file:///home/pbw/doc/web/xsl/spec/slice7.html#reference-orientation"
+            >7.27.7 reference-orientation</link>
+          </td>
+        </tr>
+        <tr>
+          <th colspan="2"/>
+          <td>
+            <link href=
+            "file:///home/pbw/doc/web/xsl/spec/slice7.html#writing-mode"
+            >7.27.7 writing-mode</link>
+          </td>
+        </tr>
+        <tr>
+          <td>shift-direction</td>
+          <td>Inline areas</td>
+        </tr>
+        <tr>
+          <td>glyph-orientation</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>is-reference-area</td>
+          <td>All areas</td>
+          <td>
+            <link href=
+            "file:///home/pbw/doc/web/xsl/spec/slice5.html#section-N6691-Non-property-Based-Trait-Generation"
+            >5.6 Non-property Based Trait Generation</link>
+          </td>
+          <td>Set "true" on:</td>
+        </tr>
+        <tr>
+          <th colspan="3"/>
+          <td>simple-page-master</td>
+        </tr>
+        <tr>
+          <th colspan="3"/>
+          <td>title</td>
+        </tr>
+        <tr>
+          <th colspan="3"/>
+          <td>region-body</td>
+        </tr>
+        <tr>
+          <th colspan="3"/>
+          <td>region-before</td>
+        </tr>
+        <tr>
+          <th colspan="3"/>
+          <td>region-after</td>
+        </tr>
+        <tr>
+          <th colspan="3"/>
+          <td>region-start</td>
+        </tr>
+        <tr>
+          <th colspan="3"/>
+          <td>region-end</td>
+        </tr>
+        <tr>
+          <th colspan="3"/>
+          <td>block-container</td>
+        </tr>
+        <tr>
+          <th colspan="3"/>
+          <td>inline-container</td>
+        </tr>
+        <tr>
+          <th colspan="3"/>
+          <td>table</td>
+        </tr>
+        <tr>
+          <th colspan="3"/>
+          <td>table-caption</td>
+        </tr>
+        <tr>
+          <th colspan="3"/>
+          <td>table-cell</td>
+        </tr>
+        <tr>
+          <td>is-viewport-area</td>
+          <td></td>
+          <td>
+            <link href=
+            "file:///home/pbw/doc/web/xsl/spec/slice4.html#area-common"
+            >4.2.2 Common Traits</link>
+          </td>
+        </tr>
+        <tr>
+          <td>top-position</td>
+        </tr>
+        <tr>
+          <td>bottom-position</td>
+        </tr>
+        <tr>
+          <td>left-position</td>
+        </tr>
+        <tr>
+          <td>right-position</td>
+        </tr>
+        <tr>
+          <td>left-offset</td>
+        </tr>
+        <tr>
+          <td>top-offset</td>
+        </tr>
+        <tr>
+          <td>is-first</td>
+        </tr>
+        <tr>
+          <td>is-last</td>
+        </tr>
+        <tr>
+          <td>generated-by</td>
+        </tr>
+        <tr>
+          <td>returned-by</td>
+        </tr>
+        <tr>
+          <td>nominal-font</td>
+        </tr>
+        <tr>
+          <td>blink</td>
+          <td></td>
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>underline-score</td>
+          <td></td>
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>underline-score-color</td>
+          <td></td>
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>overline-score</td>
+          <td></td>
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>overline-score-color</td>
+          <td></td>
+          
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>through-score</td>
+          <td></td>
+          
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>through-score-color</td>
+          <td></td>
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "file:///home/pbw/doc/web/xsl/spec/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+      </table>
+    </s1>
+  </body>
+</document>
