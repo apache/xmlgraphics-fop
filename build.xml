@@ -133,7 +133,7 @@ list of possible build targets.
     <property name="name" value="fop"/>
     <property name="version" value="1.0dev"/>
     <filter token="version" value="${version}"/>
-    <property name="year" value="1999-2002"/>
+    <property name="year" value="1999-2003"/>
 
     <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
     <echo message="See build.properties and build-local.properties for additional build settings"/>
