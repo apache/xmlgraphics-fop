@@ -1,7 +1,8 @@
 /*
- * $Id: PropertyTokenizer.java,v 1.6 2003/03/05 21:59:47 jeremias Exp $
+ * $Id: PropertyTokenizer.java,v 1.4.4.9 2003/06/12 18:19:36 pbwest Exp $
+ * 
  * ============================================================================
- *                    The Apache Software License, Version 1.1
+ *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
@@ -9,7 +10,7 @@
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
  * 
- * 1. Redistributions of source code must retain the above copyright notice,
+ * 1. Redistributions of  source code must  retain the above copyright  notice,
  *    this list of conditions and the following disclaimer.
  * 
  * 2. Redistributions in binary form must reproduce the above copyright notice,
@@ -17,40 +18,43 @@
  *    and/or other materials provided with the distribution.
  * 
  * 3. The end-user documentation included with the redistribution, if any, must
- *    include the following acknowledgment: "This product includes software
- *    developed by the Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself, if
+ *    include  the following  acknowledgment:  "This product includes  software
+ *    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
+ *    Alternately, this  acknowledgment may  appear in the software itself,  if
  *    and wherever such third-party acknowledgments normally appear.
  * 
- * 4. The names "FOP" and "Apache Software Foundation" must not be used to
- *    endorse or promote products derived from this software without prior
+ * 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
+ *    endorse  or promote  products derived  from this  software without  prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
  * 
- * 5. Products derived from this software may not be called "Apache", nor may
- *    "Apache" appear in their name, without prior written permission of the
+ * 5. Products  derived from this software may not  be called "Apache", nor may
+ *    "Apache" appear  in their name,  without prior written permission  of the
  *    Apache Software Foundation.
  * 
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
- * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
+ * APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
+ * ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
+ * (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ============================================================================
  * 
- * This software consists of voluntary contributions made by many individuals
- * on behalf of the Apache Software Foundation and was originally created by
- * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * This software  consists of voluntary contributions made  by many individuals
+ * on  behalf of the Apache Software  Foundation and was  originally created by
+ * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ *  
+ */
+
 package org.apache.fop.fo.expr;
 
-
+import org.apache.fop.datatypes.Frequency;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.Time;
 
 /**
  * Class to tokenize XSL FO property expression.
@@ -59,44 +63,107 @@ package org.apache.fop.fo.expr;
  */
 class PropertyTokenizer {
 
-    static final int TOK_EOF = 0;
-    static final int TOK_NCNAME = TOK_EOF + 1;
-    static final int TOK_MULTIPLY = TOK_NCNAME + 1;
-    static final int TOK_LPAR = TOK_MULTIPLY + 1;
-    static final int TOK_RPAR = TOK_LPAR + 1;
-    static final int TOK_LITERAL = TOK_RPAR + 1;
-    static final int TOK_NUMBER = TOK_LITERAL + 1;
-    static final int TOK_FUNCTION_LPAR = TOK_NUMBER + 1;
-    static final int TOK_PLUS = TOK_FUNCTION_LPAR + 1;
-    static final int TOK_MINUS = TOK_PLUS + 1;
-    static final int TOK_MOD = TOK_MINUS + 1;
-    static final int TOK_DIV = TOK_MOD + 1;
-    static final int TOK_NUMERIC = TOK_DIV + 1;
-    static final int TOK_COMMA = TOK_NUMERIC + 1;
-    static final int TOK_PERCENT = TOK_COMMA + 1;
-    static final int TOK_COLORSPEC = TOK_PERCENT + 1;
-    static final int TOK_FLOAT = TOK_COLORSPEC + 1;
-    static final int TOK_INTEGER = TOK_FLOAT + 1;
+    private static final String tag = "$Name:  $";
+    private static final String revision = "$Revision: 1.4.4.9 $";
 
-    protected int currentToken = TOK_EOF;
-    protected String currentTokenValue = null;
-    protected int currentUnitLength = 0;
+    /*
+     * Maintain the numbering of this list in (X)Emacs by issuing
+     * a shell command on the region with replacement (M-1 M-|).  Use
+     * the perl command:
+     * perl -p -e 'BEGIN{$n=0};$n++ if s/= [0-9]+/= $n/'
+     *
+     * in vi, set mark `a' at the last line and
+     * !'aperl... etc
+     */
+    static final int
+                 EOF = 0
+             ,NCNAME = 1
+           ,MULTIPLY = 2
+               ,LPAR = 3
+               ,RPAR = 4
+            ,LITERAL = 5
+      ,FUNCTION_LPAR = 6
+               ,PLUS = 7
+              ,MINUS = 8
+                ,MOD = 9
+                ,DIV = 10
+              ,COMMA = 11
+            ,PERCENT = 12
+          ,COLORSPEC = 13
+              ,FLOAT = 14
+            ,INTEGER = 15
+    ,ABSOLUTE_LENGTH = 16
+    ,RELATIVE_LENGTH = 17
+               ,TIME = 18
+               ,FREQ = 19
+              ,ANGLE = 20
+            ,INHERIT = 21
+               ,AUTO = 22
+               ,NONE = 23
+               ,BOOL = 24
+                ,URI = 25
+           ,MIMETYPE = 26
+              ,SLASH = 27
+            // NO_UNIT is a transient token for internal use only.  It is
+            // never set as the end result of parsing a token.
+            ,NO_UNIT = 28
+            //,NSPREFIX = 29
+            //,WHITESPACE = 30
+                     ;
+
+    /*
+     * Absolute unit type constants
+     */
+    int currentToken = EOF;
+    String currentTokenValue = null;
+    protected int currentUnitIndex = 0;
+    protected int currentUnit;
+    protected String unitString;
+    protected String uri;
 
     private int currentTokenStartIndex = 0;
-    private /* final */ String expr;
+    private String expr = null;
     private int exprIndex = 0;
     private int exprLength;
-    private boolean recognizeOperator = false;
+    protected int property;
 
+    protected PropertyTokenizer() {}
 
     /**
-     * Construct a new PropertyTokenizer object to tokenize the passed
-     * String.
-     * @param s The Property expressio to tokenize.
+     * Initialize this tokenizer to tokenize the passed
+     * String as a value of the passed property.
+     * It is assumed that the subclass has made any necessary
+     * synchronization arrangements.
+     * @param property an <tt>int</tt> containing the property index.
+     * @param s The Property expression to tokenize.
      */
-    PropertyTokenizer(String s) {
-        this.expr = s;
-        this.exprLength = s.length();
+    protected void initialize(int property, String s) {
+        expr = s;
+        exprLength = s.length();
+        this.property = property;
+        //System.out.println("-----Tokenizer initialized: " + expr);
+    }
+
+    /**
+     * Reset the tokenizer to null (or equivalent) values.
+     * Synchronization is achieved in the subclass.
+     */
+    protected void reset() {
+        expr = null;
+        exprIndex = 0;
+        exprLength = 0;
+        currentToken = EOF;
+        currentTokenValue = null;
+        property = 0;
+        //System.out.println("-----Tokenizer reset.");
+    }
+
+    /**
+     * Get the current expression
+     * @return - the expression.
+     */
+    public String getExpr() {
+        return expr;
     }
 
     /**
@@ -104,19 +171,18 @@ class PropertyTokenizer {
      * This sets the following package visible variables:
      * currentToken  An enumerated value identifying the recognized token
      * currentTokenValue  A String containing the token contents
-     * currentUnitLength  If currentToken = TOK_NUMERIC, the number of
-     * characters in the unit name.
+     * currentUnit  If currentToken = ABSOLUTE_LENGTH, TIME or FREQUENCY,
+     * an enumerated value identifying the unit.
      * @throws PropertyException If un unrecognized token is encountered.
      */
     void next() throws PropertyException {
+        //System.out.println("expr:" + expr + ":  exprIndex: " + exprIndex);
         currentTokenValue = null;
         currentTokenStartIndex = exprIndex;
-        boolean currentMaybeOperator = recognizeOperator;
         boolean bSawDecimal;
-        recognizeOperator = true;
-        for (; ;) {
+        for (; ; ) {
             if (exprIndex >= exprLength) {
-                currentToken = TOK_EOF;
+                currentToken = EOF;
                 return;
             }
             char c = expr.charAt(exprIndex++);
@@ -125,26 +191,30 @@ class PropertyTokenizer {
             case '\t':
             case '\r':
             case '\n':
+                // Whitespace characters are valid within strings.
+                // in font family names, sequences of whitespace are
+                // compressed into a single space. (Rec 7.8.2)
+                //scanWhitespace();
+                //currentToken = WHITESPACE;
+                //currentTokenValue = expr.substring(currentTokenStartIndex,
+                //                                   exprIndex);
+                //return;
                 currentTokenStartIndex = exprIndex;
                 break;
             case ',':
-                recognizeOperator = false;
-                currentToken = TOK_COMMA;
+                currentToken = COMMA;
                 return;
             case '+':
-                recognizeOperator = false;
-                currentToken = TOK_PLUS;
+                currentToken = PLUS;
                 return;
             case '-':
-                recognizeOperator = false;
-                currentToken = TOK_MINUS;
+                currentToken = MINUS;
                 return;
             case '(':
-                currentToken = TOK_LPAR;
-                recognizeOperator = false;
+                currentToken = LPAR;
                 return;
             case ')':
-                currentToken = TOK_RPAR;
+                currentToken = RPAR;
                 return;
             case '"':
             case '\'':
@@ -155,19 +225,10 @@ class PropertyTokenizer {
                 }
                 currentTokenValue = expr.substring(currentTokenStartIndex
                                                    + 1, exprIndex++);
-                currentToken = TOK_LITERAL;
+                currentToken = LITERAL;
                 return;
             case '*':
-                /*
-                 * if (currentMaybeOperator) {
-                 * recognizeOperator = false;
-                 */
-                currentToken = TOK_MULTIPLY;
-                /*
-                 * }
-                 * else
-                 * throw new PropertyException("illegal operator *");
-                 */
+                currentToken = MULTIPLY;
                 return;
             case '0':
             case '1':
@@ -188,22 +249,21 @@ class PropertyTokenizer {
                         exprIndex++;
                         scanDigits();
                     }
-                } else {
+                } else
                     bSawDecimal = false;
-                }
+                currentUnitIndex = exprIndex;
                 if (exprIndex < exprLength && expr.charAt(exprIndex) == '%') {
+                    currentToken = PERCENT;
+                    unitString = "%";
                     exprIndex++;
-                    currentToken = TOK_PERCENT;
                 } else {
                     // Check for possible unit name following number
-                    currentUnitLength = exprIndex;
-                    scanName();
-                    currentUnitLength = exprIndex - currentUnitLength;
-                    currentToken = (currentUnitLength > 0) ? TOK_NUMERIC
-                                   : (bSawDecimal ? TOK_FLOAT : TOK_INTEGER);
+                    currentToken = scanUnitName();
+                    if (currentToken == NO_UNIT)
+                        currentToken = bSawDecimal ? FLOAT : INTEGER;
                 }
                 currentTokenValue = expr.substring(currentTokenStartIndex,
-                                                   exprIndex);
+                                                   currentUnitIndex);
                 return;
 
             case '.':
@@ -211,20 +271,19 @@ class PropertyTokenizer {
                         && isDigit(expr.charAt(exprIndex))) {
                     ++exprIndex;
                     scanDigits();
+                    currentUnitIndex = exprIndex;
                     if (exprIndex < exprLength
                             && expr.charAt(exprIndex) == '%') {
                         exprIndex++;
-                        currentToken = TOK_PERCENT;
+                        currentToken = PERCENT;
                     } else {
                         // Check for possible unit name following number
-                        currentUnitLength = exprIndex;
-                        scanName();
-                        currentUnitLength = exprIndex - currentUnitLength;
-                        currentToken = (currentUnitLength > 0) ? TOK_NUMERIC
-                                       : TOK_FLOAT;
+                        currentToken = scanUnitName();
+                        if (currentToken == NO_UNIT)
+                            currentToken = FLOAT;
                     }
                     currentTokenValue = expr.substring(currentTokenStartIndex,
-                                                       exprIndex);
+                                                       currentUnitIndex);
                     return;
                 }
                 throw new PropertyException("illegal character '.'");
@@ -232,46 +291,102 @@ class PropertyTokenizer {
             case '#':    // Start of color value
                 if (exprIndex < exprLength
                         && isHexDigit(expr.charAt(exprIndex))) {
+                    int len;
                     ++exprIndex;
                     scanHexDigits();
-                    currentToken = TOK_COLORSPEC;
+                    currentToken = COLORSPEC;
                     currentTokenValue = expr.substring(currentTokenStartIndex,
                                                        exprIndex);
                     // Probably should have some multiple of 3 for length!
-                    return;
+                    len = exprIndex - currentTokenStartIndex;
+                    if (len == 4 || len == 7) return;
+                    throw new PropertyException("color not 3 or 6 hex digits");
                 } else {
                     throw new PropertyException("illegal character '#'");
                 }
 
+            case '/':
+                currentToken = SLASH;
+                return;
+
             default:
                 --exprIndex;
                 scanName();
-                if (exprIndex == currentTokenStartIndex) {
-                    throw new PropertyException("illegal character");
-                }
+                if (exprIndex == currentTokenStartIndex)
+                    // Not a name - must be a <string>
+                    throw new PropertyException
+                            ("illegal character '"
+                             + expr.charAt(exprIndex) + "'");
                 currentTokenValue = expr.substring(currentTokenStartIndex,
-        exprIndex);
-                // if (currentMaybeOperator) {
+                                                   exprIndex);
                 if (currentTokenValue.equals("mod")) {
-                    currentToken = TOK_MOD;
-                    return;
-                } else if (currentTokenValue.equals("div")) {
-                    currentToken = TOK_DIV;
+                    currentToken = MOD;
+                   return;
+                }
+                if (currentTokenValue.equals("div")) {
+                    currentToken = DIV;
                     return;
                 }
-                /*
-                 * else
-                 * throw new PropertyException("unrecognized operator name");
-                 * recognizeOperator = false;
-                 * return;
-                 * }
-                 */
+                if (currentTokenValue.equals("inherit")) {
+                    currentToken = INHERIT;
+                    return;
+                }
+                if (currentTokenValue.equals("auto")) {
+                    currentToken = AUTO;
+                    return;
+                }
+                if (currentTokenValue.equals("none")) {
+                    currentToken = NONE;
+                    return;
+                }
+                if (currentTokenValue.equals("true")
+                    || currentTokenValue.equals("false")) {
+                    currentToken = BOOL;
+                    return;
+                }
+                // Quick and dirty url "parsing".  Assume that a
+                // URI-SPECIFICATION must be the only component of a
+                // property value expression
+                if (currentTokenValue.equals("url")
+                    && expr.charAt(exprIndex) == '(') {
+                    if (! scanUrl()) {
+                        throw new PropertyException
+                                ("Invalid url expression :" +
+                                 expr.substring(exprIndex));
+                    }
+                    currentToken = URI;
+                    return;
+                }
+                if (currentTokenValue.equals("content-type")) {
+                    // content-type attribute value.  Must be followed
+                    // by a mime type
+                    if (expr.charAt(exprIndex) == ':') {
+                        int mimeptr = ++exprIndex;
+                        scanMimeType();
+                        currentToken = MIMETYPE;
+                        currentTokenValue =
+                                expr.substring(mimeptr, exprIndex);
+                        return;
+                    }
+                    // else it's just a name
+                }
+                if (currentTokenValue.equals("namespace-prefix")) {
+                    // content-type attribute value.  Must be followed
+                    // by a declared namespace-prefix or null
+                    if (expr.charAt(exprIndex) == ':') {
+                        int nsptr = ++exprIndex;
+                        scanName();   // Allowed to be empty
+                        currentToken = NCNAME;
+                        currentTokenValue =
+                                expr.substring(nsptr, exprIndex);
+                        return;
+                    }
+                    // else it's just a name
+                }
                 if (followingParen()) {
-                    currentToken = TOK_FUNCTION_LPAR;
-                    recognizeOperator = false;
+                    currentToken = FUNCTION_LPAR;
                 } else {
-                    currentToken = TOK_NCNAME;
-                    recognizeOperator = false;
+                    currentToken = NCNAME;
                 }
                 return;
             }
@@ -279,37 +394,122 @@ class PropertyTokenizer {
     }
 
     /**
+     * Attempt to recognize a valid UnitName token in the input expression.
+     * @return token value appropriate to UnitName: ABSOLUTE_LENGTH,
+     * RELATIVE_LENGTH or NO_UNIT.
+     * @exception PropertyException if an NCName not a UnitName recognized.
+     */
+    private int scanUnitName() throws PropertyException {
+        currentUnitIndex = exprIndex;
+        scanName();
+        if (currentUnitIndex < exprIndex) {
+            unitString = expr.substring(currentUnitIndex, exprIndex);
+            if (unitString.equals("em")) return RELATIVE_LENGTH;
+            if (unitString.equals("cm")) {
+                currentUnit = Length.CM;
+                return ABSOLUTE_LENGTH;
+            }
+            if (unitString.equals("mm")) {
+                currentUnit = Length.MM;
+                return ABSOLUTE_LENGTH;
+            }
+            if (unitString.equals("in")) {
+                currentUnit = Length.IN;
+                return ABSOLUTE_LENGTH;
+            }
+            if (unitString.equals("pt")) {
+                currentUnit = Length.PT;
+                return ABSOLUTE_LENGTH;
+            }
+            if (unitString.equals("pc")) {
+                currentUnit = Length.PC;
+                return ABSOLUTE_LENGTH;
+            }
+            if (unitString.equals("px")) {
+                currentUnit = Length.PX;
+                return ABSOLUTE_LENGTH;
+            }
+            if (unitString.equals("s")) {
+                currentUnit = Time.SEC;
+                return TIME;
+            }
+            if (unitString.equals("ms")) {
+                currentUnit = Time.MSEC;
+                return TIME;
+            }
+            if (unitString.equals("Hz")) {
+                currentUnit = Frequency.HZ;
+                return FREQ;
+            }
+            if (unitString.equals("kHz")) {
+                currentUnit = Frequency.KHZ;
+                return FREQ;
+            }
+            // Not a UnitName
+            throw new PropertyException
+                    ("NCName following a number is not a UnitName");
+        } else { // No NCName found
+            return NO_UNIT;
+        }
+    }
+
+    /**
      * Attempt to recognize a valid NAME token in the input expression.
      */
     private void scanName() {
-        if (exprIndex < exprLength && isNameStartChar(expr.charAt(exprIndex))) {
+        if (exprIndex < exprLength && isNameStartChar(expr.charAt(exprIndex)))
             while (++exprIndex < exprLength
-                   && isNameChar(expr.charAt(exprIndex))) { }
-        }
+                   && isNameChar(expr.charAt(exprIndex)));
     }
 
     /**
-     * Attempt to recognize a valid sequence of decimal DIGITS in the
+     * Attempt to recognize a valid sequence of decimal digits in the
      * input expression.
      */
     private void scanDigits() {
-        while (exprIndex < exprLength && isDigit(expr.charAt(exprIndex))) {
+        while (exprIndex < exprLength && isDigit(expr.charAt(exprIndex)))
             exprIndex++;
-        }
     }
 
     /**
-     * Attempt to recognize a valid sequence of hexadecimal DIGITS in the
+     * Scan to the end of a sequence of whitespace characters in the
+     * input expression.
+     */
+    private void scanWhitespace() {
+        while (exprIndex < exprLength && isSpace(expr.charAt(exprIndex)))
+            exprIndex++;
+    }
+
+    /**
+     * Attempt to recognize a valid sequence of hexadecimal digits in the
      * input expression.
      */
     private void scanHexDigits() {
-        while (exprIndex < exprLength && isHexDigit(expr.charAt(exprIndex))) {
+        while (exprIndex < exprLength && isHexDigit(expr.charAt(exprIndex)))
             exprIndex++;
-        }
     }
 
     /**
-     * Return a boolean value indicating whether the following non-whitespace
+     * Attempt to recognize a mime-type.  Working definition here:
+     * NCName/NCName (NCName as recognized by scanName()).
+     */
+    private void scanMimeType() throws PropertyException {
+        int part1 = exprIndex;
+        scanName();
+        if (part1 != exprIndex) {
+            if (expr.charAt(exprIndex) == '/') {
+                int part2 = ++exprIndex;
+                scanName();
+                if (part2 != exprIndex)
+                    return;
+            }
+        }
+        throw new PropertyException("Mime type expected; found:" +
+                                    expr.substring(part1));
+    }
+
+    /**
+     * @return a boolean value indicating whether the following non-whitespace
      * character is an opening parenthesis.
      */
     private boolean followingParen() {
@@ -330,12 +530,36 @@ class PropertyTokenizer {
         return false;
     }
 
+    /**
+     * Primitive URI extractor.  Assumes that the only contents of a
+     * URI-SPECIFICATION property type is a complete uri-specification.
+     * No checking is done on the syntactical validity of the URI.
+     * @return a boolean indicating whether the remainder of the
+     * characters form the body of a <tt>url(...)</tt> specification.
+     * As a side-effect, sets the <tt>protected</tt> field <i>uri</i>
+     * and sets <i>exprIndex</i> past the end of the expression, when
+     * returning a <tt>true</tt> value.
+     */
+    private boolean scanUrl() {
+        char ch;
+        String str = expr.substring(exprIndex).trim();
+        if (str.charAt(str.length() - 1) != ')') return false;
+        // Remove closing parenthesis and trim
+        str = str.substring(0, str.length() - 1).trim();
+        if ((ch = str.charAt(0)) == '"' || ch == '\'') {
+            if (str.charAt(str.length() - 1) != ch) return false;
+            str = str.substring(1, str.length() - 1);
+        }
+        uri = str.trim();
+        exprIndex = expr.length();
+        return true;
+    }
 
-    private static final String NAME_START_CHARS =
+    static private final String nameStartChars =
         "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final String NAME_CHARS = ".-0123456789";
-    private static final String DIGITS = "0123456789";
-    private static final String HEX_CHARS = DIGITS + "abcdefABCDEF";
+    static private final String nameChars = ".-0123456789";
+    static private final String digits = "0123456789";
+    static private final String hexchars = digits + "abcdefABCDEF";
 
     /**
      * Return a boolean value indicating whether the argument is a
@@ -343,7 +567,7 @@ class PropertyTokenizer {
      * @param c The character to check
      */
     private static final boolean isDigit(char c) {
-        return DIGITS.indexOf(c) >= 0;
+        return digits.indexOf(c) >= 0;
     }
 
     /**
@@ -352,7 +576,7 @@ class PropertyTokenizer {
      * @param c The character to check
      */
     private static final boolean isHexDigit(char c) {
-        return HEX_CHARS.indexOf(c) >= 0;
+        return hexchars.indexOf(c) >= 0;
     }
 
     /**
@@ -377,7 +601,7 @@ class PropertyTokenizer {
      * @param c The character to check
      */
     private static final boolean isNameStartChar(char c) {
-        return NAME_START_CHARS.indexOf(c) >= 0 || c >= 0x80;
+        return nameStartChars.indexOf(c) >= 0 || c >= 0x80;
     }
 
     /**
@@ -386,9 +610,8 @@ class PropertyTokenizer {
      * @param c The character to check
      */
     private static final boolean isNameChar(char c) {
-        return NAME_START_CHARS.indexOf(c) >= 0 || NAME_CHARS.indexOf(c) >= 0
+        return nameStartChars.indexOf(c) >= 0 || nameChars.indexOf(c) >= 0
                || c >= 0x80;
     }
 
 }
-

@@ -1,7 +1,8 @@
 /*
- * $Id: PropertyParser.java,v 1.9 2003/03/05 21:59:47 jeremias Exp $
+ * $Id: PropertyParser.java,v 1.5.2.22 2003/06/12 18:19:36 pbwest Exp $
+ * 
  * ============================================================================
- *                    The Apache Software License, Version 1.1
+ *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
@@ -9,7 +10,7 @@
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
  * 
- * 1. Redistributions of source code must retain the above copyright notice,
+ * 1. Redistributions of  source code must  retain the above copyright  notice,
  *    this list of conditions and the following disclaimer.
  * 
  * 2. Redistributions in binary form must reproduce the above copyright notice,
@@ -17,181 +18,364 @@
  *    and/or other materials provided with the distribution.
  * 
  * 3. The end-user documentation included with the redistribution, if any, must
- *    include the following acknowledgment: "This product includes software
- *    developed by the Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself, if
+ *    include  the following  acknowledgment:  "This product includes  software
+ *    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
+ *    Alternately, this  acknowledgment may  appear in the software itself,  if
  *    and wherever such third-party acknowledgments normally appear.
  * 
- * 4. The names "FOP" and "Apache Software Foundation" must not be used to
- *    endorse or promote products derived from this software without prior
+ * 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
+ *    endorse  or promote  products derived  from this  software without  prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
  * 
- * 5. Products derived from this software may not be called "Apache", nor may
- *    "Apache" appear in their name, without prior written permission of the
+ * 5. Products  derived from this software may not  be called "Apache", nor may
+ *    "Apache" appear  in their name,  without prior written permission  of the
  *    Apache Software Foundation.
  * 
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
- * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
+ * APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
+ * ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
+ * (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ============================================================================
  * 
- * This software consists of voluntary contributions made by many individuals
- * on behalf of the Apache Software Foundation and was originally created by
- * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * This software  consists of voluntary contributions made  by many individuals
+ * on  behalf of the Apache Software  Foundation and was  originally created by
+ * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ *  
+ */
+
 package org.apache.fop.fo.expr;
 
+import org.apache.fop.datatypes.Angle;
+import org.apache.fop.datatypes.Auto;
+import org.apache.fop.datatypes.Bool;
 import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.datatypes.FixedLength;
+import org.apache.fop.datatypes.Ems;
+import org.apache.fop.datatypes.Frequency;
+import org.apache.fop.datatypes.IntegerType;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.datatypes.PercentLength;
-import org.apache.fop.fo.Property;
-import org.apache.fop.fo.ListProperty;
-import org.apache.fop.fo.LengthProperty;
-import org.apache.fop.fo.NumberProperty;
-import org.apache.fop.fo.StringProperty;
-import org.apache.fop.fo.ColorTypeProperty;
-
-import java.util.HashMap;
+import org.apache.fop.datatypes.Literal;
+import org.apache.fop.datatypes.MimeType;
+import org.apache.fop.datatypes.NCName;
+import org.apache.fop.datatypes.None;
+import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.Percentage;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.datatypes.PropertyValueList;
+import org.apache.fop.datatypes.Slash;
+import org.apache.fop.datatypes.StringType;
+import org.apache.fop.datatypes.Time;
+import org.apache.fop.datatypes.UriType;
+import org.apache.fop.datatypes.indirect.FromNearestSpecified;
+import org.apache.fop.datatypes.indirect.FromParent;
+import org.apache.fop.datatypes.indirect.Inherit;
+import org.apache.fop.datatypes.indirect.InheritedValue;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTree;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.PropertyConsts;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * Class to parse XSL FO property expression.
- * This class is heavily based on the epxression parser in James Clark's
+ * This class is heavily based on the expression parser in James Clark's
  * XT, an XSLT processor.
+ *
+ * PropertyParser objects are re-usable.  The constructor simply creates the
+ * object.  To parse an expression, the public method <i>Parse</i> is
+ * called.
  */
 public class PropertyParser extends PropertyTokenizer {
-    private PropertyInfo propInfo;    // Maker and propertyList related info
 
-    private static final String RELUNIT = "em";
-    private static final Numeric NEGATIVE_ONE = new Numeric(new Double(-1.0));
-    private static final HashMap FUNCTION_TABLE = new HashMap();
+    private static final String tag = "$Name:  $";
+    private static final String revision = "$Revision: 1.5.2.22 $";
 
-    static {
-        // Initialize the HashMap of XSL-defined functions
-        FUNCTION_TABLE.put("ceiling", new CeilingFunction());
-        FUNCTION_TABLE.put("floor", new FloorFunction());
-        FUNCTION_TABLE.put("round", new RoundFunction());
-        FUNCTION_TABLE.put("min", new MinFunction());
-        FUNCTION_TABLE.put("max", new MaxFunction());
-        FUNCTION_TABLE.put("abs", new AbsFunction());
-        FUNCTION_TABLE.put("rgb", new RGBColorFunction());
-        FUNCTION_TABLE.put("from-table-column", new FromTableColumnFunction());
-        FUNCTION_TABLE.put("inherited-property-value",
-                          new InheritedPropFunction());
-        FUNCTION_TABLE.put("from-parent", new FromParentFunction());
-        FUNCTION_TABLE.put("from-nearest-specified-value",
-                          new NearestSpecPropFunction());
-        FUNCTION_TABLE.put("proportional-column-width",
-                          new PPColWidthFunction());
-        FUNCTION_TABLE.put("label-end", new LabelEndFunction());
-        FUNCTION_TABLE.put("body-start", new BodyStartFunction());
-        // NOTE: used from code generated for corresponding properties
-        FUNCTION_TABLE.put("_fop-property-value", new FopPropValFunction());
+    /** The FO tree which has initiated this parser */
+    private FOTree foTree;
+    /** The FONode which has initiated this parser */
+    private FONode node;
 
-        /**
-         * * NOT YET IMPLEMENTED!!!
-         * FUNCTION_TABLE.put("icc-color", new ICCcolorFunction());
-         * FUNCTION_TABLE.put("system-color", new SystemColorFunction());
-         * FUNCTION_TABLE.put("system-font", new SystemFontFunction());
-         *
-         * FUNCTION_TABLE.put("merge-property-values", new MergePropsFunction());
-         */
-    }
-
-
-    /**
-     * Public entrypoint to the Property expression parser.
-     * @param expr The specified value (attribute on the xml element).
-     * @param propInfo A PropertyInfo object representing the context in
-     * which the property expression is to be evaluated.
-     * @return A Property object holding the parsed result.
-     * @throws PropertyException If the "expr" cannot be parsed as a Property.
-     */
-    public static Property parse(String expr, PropertyInfo propInfo)
-            throws PropertyException {
-        return new PropertyParser(expr, propInfo).parseProperty();
-    }
-
-
-    /**
-     * Private constructor. Called by the static parse() method.
-     * @param propExpr The specified value (attribute on the xml element).
-     * @param propInfo A PropertyInfo object representing the context in
-     * which the property expression is to be evaluated.
-     */
-    private PropertyParser(String propExpr, PropertyInfo pInfo) {
-        super(propExpr);
-        this.propInfo = pInfo;
+    public PropertyParser(FOTree foTree) {
+        super();
+        this.foTree = foTree;
     }
 
     /**
      * Parse the property expression described in the instance variables.
-     * Note: If the property expression String is empty, a StringProperty
+     * 
+     * <p>The <tt>PropertyValue</tt> returned by this function has the
+     * following characteristics:
+     * If the expression resolves to a single element that object is returned
+     * directly in an object which implements <PropertyValue</tt>.
+     *
+     * <p>If the expression cannot be resolved into a single object, the set
+     * to which it resolves is returned in a <tt>PropertyValueList</tt> object
+     * (which itself implements <tt>PropertyValue</tt>).
+     *
+     * <p>The <tt>PropertyValueList</tt> contains objects whose corresponding
+     * elements in the original expression were separated by <em>commas</em>.
+     *
+     * <p>Objects whose corresponding elements in the original expression
+     * were separated by spaces are composed into a sublist contained in
+     * another <tt>PropertyValueList</tt>.  If all of the elements in the
+     * expression were separated by spaces, the returned
+     * <tt>PropertyValueList</tt> will contain one element, a
+     * <tt>PropertyValueList</tt> containing objects representing each of
+     * the space-separated elements in the original expression.
+     *
+     * <p>E.g., if a <b>font-family</b> property is assigned the string
+     * <em>Palatino, New Century Schoolbook, serif</em>, the returned value
+     * will look like this:
+     * <pre>
+     * PropertyValueList(NCName('Palatino')
+     *                   PropertyValueList(NCName('New')
+     *                                     NCName('Century')
+     *                                     NCName('Schoolbook') )
+     *                   NCName('serif') )
+     * </pre>
+     * <p>If the property had been assigned the string
+     * <em>Palatino, "New Century Schoolbook", serif</em>, the returned value
+     * would look like this:
+     * <pre>
+     * PropertyValueList(NCName('Palatino')
+     *                   NCName('New Century Schoolbook')
+     *                   NCName('serif') )
+     * </pre>
+     * <p>If a <b>background-position</b> property is assigned the string
+     * <em>top center</em>, the returned value will look like this:
+     * <pre>
+     * PropertyValueList(PropertyValueList(NCName('top')
+     *                                     NCName('center') ) )
+     * </pre>
+     *
+     * <p>Note: If the property expression String is empty, a StringProperty
      * object holding an empty String is returned.
-     * @return A Property object holding the parsed result.
-     * @throws PropertyException If the "expr" cannot be parsed as a Property.
+     * @param node - the <tt>FONode</tt> for which the property expression
+     * is being resolved.
+     * @param property - an <tt>int</tt> containing the property index.
+     * which the property expression is to be evaluated.
+     * @param expr - the specified value (attribute on the xml element).
+     * @return a PropertyValue holding the parsed result.
+     * @throws PropertyException if the "expr" cannot be parsed as a
+     * PropertyValue.
      */
-    private Property parseProperty() throws PropertyException {
-        next();
-        if (currentToken == TOK_EOF) {
-            // if prop value is empty string, force to StringProperty
-            return new StringProperty("");
+    public PropertyValue parse(FONode node, int property, String expr)
+        throws PropertyException
+    {
+        //System.out.println("-----Entering parse:"
+        // + PropNames.getPropertyName(property) + " " + expr);
+        synchronized (this) {
+            // make sure this parser is available
+            if (getExpr() != null) // the parser is currently active
+                throw new PropertyException
+                        ("PropertyParser is currently active: " + getExpr());
+            initialize(property, expr);
+            this.node = node;
         }
-        ListProperty propList = null;
+
+        next();
+        if (currentToken == EOF)
+            // prop value is empty
+            throw new PropertyException
+                    ("No token recognized in :" + expr + ":");
+
+        PropertyValueList propList = new PropertyValueList(property);
         while (true) {
-            Property prop = parseAdditiveExpr();
-            if (currentToken == TOK_EOF) {
-                if (propList != null) {
-                    propList.addProperty(prop);
+            PropertyValue prop = parseAdditiveExpr();
+            if (currentToken == EOF) {
+                // end of the expression - add to list and go
+                if (propList.size() != 0) {
+                    propList.add(prop);
+                    reset();
                     return propList;
-                } else {
+                } else { // list is empty
+                    reset();
                     return prop;
                 }
-            } else {
-                if (propList == null) {
-                    propList = new ListProperty(prop);
-                } else {
-                    propList.addProperty(prop);
+            }
+            // throw away commas separating arguments.  These can occur
+            // in font-family and voice-family.  Commas are regarded here
+            // as separators of list and sublist elements.
+            // See 7.16.5 "text-shadow" in the 1.0 Recommendation for an
+            // example of sublists.
+            if (currentToken == COMMA) {
+                next();
+                propList.add(prop);
+            } else { // whitespace separates list elements; make a sublist
+                propList.add(parseSublist(prop));
+                if (currentToken == EOF) {
+                    reset();
+                    return propList;
                 }
             }
-            // throw new PropertyException("unexpected token");
         }
-        // return prop;
+    }
+
+    /**
+     * <p>Parse a property values sublist - a list of whitespace separated
+     * <tt>PropertyValue</tt>s.
+     * <p>
+     * Property value expressions for various properties may contain lists
+     * of values, which may be separated by whitespace or by commas.  See,
+     * e.g., 7.6.17 "voice-family" and 7.8.2 "font-family".  The shorthands
+     * may also contain lists of elements, generally (or exclusively)
+     * whitespace separated.  7.16.5 "text-shadow" allows whitespace
+     * separated length doubles or triples to be specified for individual
+     * shadow effects, with multiple shadow effects, each separated by
+     * commmas.
+     * @param initialValue a <tt>PropertyValue</tt> to assign as the initial
+     * value of the sublist.  The detection of this value, which is
+     * whitespace separated from a subsequent value,  has been the
+     * trigger for the creation of the sublist.
+     * @return a <tt>PropertyValueList</tt> containing the sublist.  The
+     * indicatior for the end of the sublist is the end of the expression,
+     * or a comma.
+     */
+    PropertyValueList parseSublist(PropertyValue initialValue)
+        throws PropertyException
+    {
+        PropertyValueList sublist = new PropertyValueList(property);
+        sublist.add(initialValue);
+        while (true) {
+            PropertyValue prop = parseAdditiveExpr();
+            if (currentToken == EOF) {
+                // end of the expression - add to sublist and go
+                sublist.add(prop);
+                return sublist;
+            }
+            // Comma separates next element - end of sublist
+            if (currentToken == COMMA) {
+                next();
+                sublist.add(prop);
+                return sublist;
+            } else { // whitespace separates next elements; add to sublist
+                sublist.add(prop);
+            }
+        }
+    }
+
+    /**
+     * Reset the parser by resetting the tokenizer to null (or equivalent)
+     * values.
+     */
+    public void resetParser() {
+        synchronized (this) {
+            //elementsSeen = 0;
+            //restrictedValueFunctSeen = null;
+            reset();
+        }
+    }
+
+    /**
+     * Generate an arithmetic error string.
+     * @return arithmetic error message.
+     */
+    private String arithErrorStr() {
+        return "Arithmetic operator not followed by Numeric or integer: "
+                + getExpr();
+    }
+
+
+    /**
+     * Generate an function numeric argument error string.
+     * @return function numeric argument error message.
+     */
+    private String funcNumericErrorStr() {
+        return "Function requires Numeric or integer argument: "
+                + getExpr();
     }
 
     /**
      * Try to parse an addition or subtraction expression and return the
-     * resulting Property.
+     * resulting PropertyValue.
      */
-    private Property parseAdditiveExpr() throws PropertyException {
+    private PropertyValue parseAdditiveExpr() throws PropertyException {
         // Evaluate and put result on the operand stack
-        Property prop = parseMultiplicativeExpr();
-        loop:
-        while (true) {
-            switch (currentToken) {
-            case TOK_PLUS:
-                next();
-                prop = evalAddition(prop.getNumeric(),
-                                    parseMultiplicativeExpr().getNumeric());
-                break;
-            case TOK_MINUS:
-                next();
-                prop =
-                    evalSubtraction(prop.getNumeric(),
-                                    parseMultiplicativeExpr().getNumeric());
-                break;
+        //System.out.println("parseAdd");
+        PropertyValue prop = parseMultiplicativeExpr();
+        PropertyValue pv;
+        outer:
+        for (; ; ) {
+            inner:
+            switch (prop.getType()) {
+            case PropertyValue.NUMERIC: {
+                switch (currentToken) {
+                case PLUS:
+                    next();
+                    pv = parseMultiplicativeExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.NUMERIC:
+                        ((Numeric)prop).add((Numeric)pv);
+                        break inner;
+                    case PropertyValue.INTEGER:
+                        ((Numeric)prop).add((double)
+                                            (((IntegerType)pv).getInt()));
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                case MINUS:
+                    next();
+                    pv = parseMultiplicativeExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.NUMERIC:
+                        ((Numeric)prop).subtract((Numeric)pv);
+                        break inner;
+                    case PropertyValue.INTEGER:
+                        ((Numeric)prop).subtract((double)
+                                             (((IntegerType)pv).getInt()));
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                default:
+                    break outer;
+                }
+            }
+            case PropertyValue.INTEGER: {
+                int intVal = ((IntegerType)prop).getInt();
+                switch (currentToken) {
+                case PLUS:
+                    next();
+                    pv = parseMultiplicativeExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.NUMERIC:
+                        prop = ((Numeric)pv).add((double)intVal);
+                        break inner;
+                    case PropertyValue.INTEGER:
+                        ((IntegerType)prop).setInt(intVal +
+                                            ((IntegerType)pv).getInt());
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                case MINUS:
+                    next();
+                    pv = parseMultiplicativeExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.NUMERIC:
+                        ((Numeric)pv).add((double)(-intVal));
+                        prop = ((Numeric)pv).negate();
+                        break inner;
+                    case PropertyValue.INTEGER:
+                        ((IntegerType)prop).setInt(intVal +
+                                            ((IntegerType)pv).getInt());
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                default:
+                    break outer;
+                }
+            }
             default:
-                break loop;
+                break outer;
             }
         }
         return prop;
@@ -199,30 +383,125 @@ public class PropertyParser extends PropertyTokenizer {
 
     /**
      * Try to parse a multiply, divide or modulo expression and return
-     * the resulting Property.
+     * the resulting PropertyValue.
      */
-    private Property parseMultiplicativeExpr() throws PropertyException {
-        Property prop = parseUnaryExpr();
-        loop:
-        while (true) {
-            switch (currentToken) {
-            case TOK_DIV:
-                next();
-                prop = evalDivide(prop.getNumeric(),
-                                  parseUnaryExpr().getNumeric());
-                break;
-            case TOK_MOD:
-                next();
-                prop = evalModulo(prop.getNumber(),
-                                  parseUnaryExpr().getNumber());
-                break;
-            case TOK_MULTIPLY:
-                next();
-                prop = evalMultiply(prop.getNumeric(),
-                                    parseUnaryExpr().getNumeric());
-                break;
+    private PropertyValue parseMultiplicativeExpr() throws PropertyException {
+        //System.out.println("parseMult");
+        PropertyValue prop = parseUnaryExpr();
+        PropertyValue pv;
+        outer:
+        // Outer loop exists to handle a sequence of multiplicative operations
+        // e.g. 5 * 4 / 2
+        // break outer; will terminate the multiplicative expression parsing
+        // break inner; will look for another trailing multiplicative
+        // operator.
+        for (; ; ) {
+            inner:
+            switch (prop.getType()) {
+            case PropertyValue.NUMERIC:
+                switch (currentToken) {
+                case DIV:
+                    next();
+                    pv = parseUnaryExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.INTEGER:
+                        ((Numeric)prop).divide
+                                        ((double)(((IntegerType)pv).getInt()));
+                        break inner;
+                    case PropertyValue.NUMERIC:
+                        ((Numeric)prop).divide((Numeric)pv);
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                case MOD:
+                    next();
+                    pv = parseUnaryExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.INTEGER:
+                        ((Numeric)prop).mod
+                                        ((double)(((IntegerType)pv).getInt()));
+                        break inner;
+                    case PropertyValue.NUMERIC:
+                        ((Numeric)prop).mod((Numeric)pv);
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                case MULTIPLY:
+                    next();
+                    pv = parseUnaryExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.INTEGER:
+                        ((Numeric)prop).multiply
+                                        ((double)(((IntegerType)pv).getInt()));
+                        break inner;
+                    case PropertyValue.NUMERIC:
+                        ((Numeric)prop).multiply((Numeric)pv);
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                default:
+                    break outer;
+                }
+                // N.B. The above case cannot fall through to here
+            case PropertyValue.INTEGER:
+                // This code treats all multiplicative operations as implicit
+                // operations on doubles.  It might be reasonable to allow
+                // an integer multiply.
+                int intVal = ((IntegerType)prop).getInt();
+                switch (currentToken) {
+                case DIV:
+                    next();
+                    pv = parseUnaryExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.INTEGER:
+                        prop = new Numeric(property,
+                            (double)intVal / ((IntegerType)pv).getInt());
+                        break inner;
+                    case PropertyValue.NUMERIC:
+                        prop = (new Numeric(property, (double)intVal))
+                                                        .divide((Numeric)pv);
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                case MOD:
+                    next();
+                    pv = parseUnaryExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.INTEGER:
+                        prop = new Numeric(property,
+                                ((double)intVal) % ((IntegerType)pv).getInt());
+                        break inner;
+                    case PropertyValue.NUMERIC:
+                        prop = (new Numeric(property, (double)intVal))
+                                                        .mod((Numeric)pv);
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                case MULTIPLY:
+                    next();
+                    pv = parseUnaryExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.INTEGER:
+                        prop = new Numeric(property,
+                            ((double)intVal) * ((IntegerType)pv).getInt());
+                        break inner;
+                    case PropertyValue.NUMERIC:
+                        prop = (new Numeric(property, (double)intVal))
+                                                   .multiply((Numeric)pv);
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                default:
+                    break outer;
+                }
             default:
-                break loop;
+                break outer;
             }
         }
         return prop;
@@ -230,12 +509,22 @@ public class PropertyParser extends PropertyTokenizer {
 
     /**
      * Try to parse a unary minus expression and return the
-     * resulting Property.
+     * resulting PropertyValue.
      */
-    private Property parseUnaryExpr() throws PropertyException {
-        if (currentToken == TOK_MINUS) {
+    private PropertyValue parseUnaryExpr() throws PropertyException {
+        //System.out.println("Unary entry");
+        if (currentToken == MINUS) {
             next();
-            return evalNegate(parseUnaryExpr().getNumeric());
+            PropertyValue pv = parseUnaryExpr();
+            switch (pv.getType()) {
+            case PropertyValue.NUMERIC:
+                return ((Numeric)pv).negate();
+            case PropertyValue.INTEGER:
+                ((IntegerType)pv).setInt( -((IntegerType)pv).getInt());
+                return pv;
+            default:
+                throw new PropertyException(arithErrorStr());
+            }
         }
         return parsePrimaryExpr();
     }
@@ -246,107 +535,400 @@ public class PropertyParser extends PropertyTokenizer {
      * and throws an exception if this isn't the case.
      */
     private final void expectRpar() throws PropertyException {
-        if (currentToken != TOK_RPAR) {
+        if (currentToken != RPAR)
             throw new PropertyException("expected )");
-        }
         next();
     }
 
     /**
      * Try to parse a primary expression and return the
-     * resulting Property.
+     * resulting PropertyValue.
      * A primary expression is either a parenthesized expression or an
-     * expression representing a primitive Property datatype, such as a
+     * expression representing a primitive PropertyValue datatype, such as a
      * string literal, an NCname, a number or a unit expression, or a
      * function call expression.
      */
-    private Property parsePrimaryExpr() throws PropertyException {
-        Property prop;
+    private PropertyValue parsePrimaryExpr() throws PropertyException {
+        PropertyValue prop;
+        //System.out.println("Primary currentToken:" + currentToken + " "
+        //                   + currentTokenValue);
         switch (currentToken) {
-        case TOK_LPAR:
+        case LPAR:
             next();
             prop = parseAdditiveExpr();
             expectRpar();
+            // Do this here, rather than breaking, because expectRpar()
+            // consumes the right parenthesis and calls next().
             return prop;
 
-        case TOK_LITERAL:
-            prop = new StringProperty(currentTokenValue);
+        case LITERAL:
+            prop = new Literal(property, currentTokenValue);
             break;
 
-        case TOK_NCNAME:
+        case NCNAME:
             // Interpret this in context of the property or do it later?
-            prop = new NCnameProperty(currentTokenValue);
+            prop = new NCName(property, currentTokenValue);
             break;
 
-        case TOK_FLOAT:
-            prop = new NumberProperty(new Double(currentTokenValue));
+        case FLOAT:
+            // Do I need to differentiate here between floats and integers?
+            prop = new Numeric
+                    (property, Double.parseDouble(currentTokenValue));
             break;
 
-        case TOK_INTEGER:
-            prop = new NumberProperty(new Integer(currentTokenValue));
+        case INTEGER:
+            prop = new IntegerType
+                    (property, Integer.parseInt(currentTokenValue));
             break;
 
-        case TOK_PERCENT:
+        case PERCENT:
             /*
-             * Get the length base value object from the Maker. If null, then
-             * this property can't have % values. Treat it as a real number.
+             * Generate a Percentage object with the percentage number.
+             * The constructor converts this to a straight multiplicative
+             * factor by dividing by 100.
              */
-            double pcval = new Double(currentTokenValue.substring(0, 
-                        currentTokenValue.length() - 1)).doubleValue() / 100.0;
-            // LengthBase lbase = this.propInfo.getPercentLengthBase();
-            PercentBase pcBase = this.propInfo.getPercentBase();
-            if (pcBase != null) {
-                if (pcBase.getDimension() == 0) {
-                    prop = new NumberProperty(pcval * pcBase.getBaseValue());
-                } else if (pcBase.getDimension() == 1) {
-                    prop = new LengthProperty(new PercentLength(pcval,
-                                                                pcBase));
-                } else {
-                    throw new PropertyException("Illegal percent dimension value");
-                }
-            } else {
-                // WARNING? Interpret as a decimal fraction, eg. 50% = .5
-                prop = new NumberProperty(pcval);
-            }
+            prop = Percentage.makePercentage
+                    (property, Double.parseDouble(currentTokenValue));
             break;
 
-        case TOK_NUMERIC:
-            // A number plus a valid unit name.
-            int numLen = currentTokenValue.length() - currentUnitLength;
-            String unitPart = currentTokenValue.substring(numLen);
-            Double numPart = new Double(currentTokenValue.substring(0,
-                    numLen));
-            Length length = null;
-            if (unitPart.equals(RELUNIT)) {
-                length = new FixedLength(numPart.doubleValue(),
-                                    propInfo.currentFontSize());
-            } else {
-                length = new FixedLength(numPart.doubleValue(), unitPart);
-            }
-            if (length == null) {
-                throw new PropertyException("unrecognized unit name: "
-                                            + currentTokenValue);
-            } else {
-                prop = new LengthProperty(length);
-            }
+        case ABSOLUTE_LENGTH:
+            prop = Length.makeLength(property,
+                              Double.parseDouble(currentTokenValue),
+                              currentUnit);
+            break;
+        case TIME:
+            prop = new Time(property, currentUnit,
+                            Double.parseDouble(currentTokenValue));
+            break;
+        case FREQ:
+            prop = new Frequency(property, currentUnit,
+                                 Double.parseDouble(currentTokenValue));
+            break;
+        case ANGLE:
+            prop = new Angle(property, currentUnit,
+                             Double.parseDouble(currentTokenValue));
+            break;
+        case RELATIVE_LENGTH:
+            prop = Ems.makeEms(node, property,
+                               Double.parseDouble(currentTokenValue));
             break;
 
-        case TOK_COLORSPEC:
-            prop = new ColorTypeProperty(new ColorType(currentTokenValue));
+        case COLORSPEC:
+            prop = new ColorType(property, currentTokenValue);
             break;
 
-        case TOK_FUNCTION_LPAR: {
-            Function function =
-                (Function)FUNCTION_TABLE.get(currentTokenValue);
-            if (function == null) {
-                throw new PropertyException("no such function: "
-                                            + currentTokenValue);
-            }
+        case BOOL:
+            prop = new Bool(property, currentTokenValue);
+            break;
+
+        case AUTO:
+            prop = new Auto(property);
+            break;
+
+        case NONE:
+            prop = new None(property);
+            break;
+
+        case INHERIT:
+            prop = new Inherit(property);
+            //throw new PropertyException("INHERIT not supported");
+            break;
+
+        case URI:
+            prop = new UriType(property, currentTokenValue);
+            break;
+
+        case MIMETYPE:
+            prop = new MimeType(property, currentTokenValue);
+            break;
+
+        case SLASH:
+            prop = new Slash(property);
+            break;
+
+        case FUNCTION_LPAR: {
+            // N.B. parseArgs() invokes expectRpar at the end of argument
+            // processing, so, like LPAR processing, next() is not called
+            // and the return from this method must be premature
+            prop = null;
+            int funcType = PropertyValue.NO_TYPE;
+            String function = currentTokenValue;
             next();
-            // Push new function (for function context: getPercentBase())
-            propInfo.pushFunction(function);
-            prop = function.eval(parseArgs(function.nbArgs()), propInfo);
-            propInfo.popFunction();
+            do {
+                // Numeric functions
+                if (function.equals("floor")) {
+                    PropertyValue[] args = parseArgs(1);
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        args[0] =
+                            new Numeric
+                                (property, ((IntegerType)args[0]).getInt());
+                    case PropertyValue.NUMERIC:
+                        prop = new Numeric
+                                (property, ((Numeric)args[0]).floor());
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
+                    break;
+                }
+                if (function.equals("ceiling")) {
+                    PropertyValue[] args = parseArgs(1);
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        args[0] =
+                            new Numeric
+                                (property, ((IntegerType)args[0]).getInt());
+                    case PropertyValue.NUMERIC:
+                        prop = new Numeric
+                                (property, ((Numeric)args[0]).ceiling());
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
+                    break;
+                }
+                if (function.equals("round")) {
+                    PropertyValue[] args = parseArgs(1);
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        args[0] =
+                            new Numeric
+                                (property, ((IntegerType)args[0]).getInt());
+                    case PropertyValue.NUMERIC:
+                        prop = new Numeric
+                                (property, ((Numeric)args[0]).round());
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
+                    break;
+                }
+                if (function.equals("min")) {
+                    PropertyValue[] args = parseArgs(2);
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        args[0] =
+                            new Numeric
+                                (property, ((IntegerType)args[0]).getInt());
+                    case PropertyValue.NUMERIC:
+                        prop = ((Numeric)args[0]).min((Numeric)args[1]);
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
+                    break;
+                }
+                if (function.equals("max")) {
+                    PropertyValue[] args = parseArgs(2);
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        args[0] =
+                            new Numeric
+                                (property, ((IntegerType)args[0]).getInt());
+                    case PropertyValue.NUMERIC:
+                        prop = ((Numeric)args[0]).max((Numeric)args[1]);
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
+                    break;
+                }
+                if (function.equals("abs")) {
+                    PropertyValue[] args = parseArgs(1);
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        args[0] =
+                            new Numeric
+                                (property, ((IntegerType)args[0]).getInt());
+                    case PropertyValue.NUMERIC:
+                        prop = ((Numeric)args[0]).abs();
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
+                    break;
+                }
+
+                // Color functions
+                if (function.equals("rgb")) {
+                    // Currently arguments must all be integers.
+                    PropertyValue[] args = parseArgs(3);
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        prop = new ColorType
+                                (property, ((IntegerType)args[0]).getInt(),
+                                 ((IntegerType)args[1]).getInt(),
+                                 ((IntegerType)args[2]).getInt());
+                        break;
+                    case PropertyValue.NUMERIC:
+                        prop = new ColorType
+                                (property, ((Numeric)args[0]).asInt(),
+                                 ((Numeric)args[1]).asInt(),
+                                 ((Numeric)args[2]).asInt());
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
+                    break;
+                }
+                if (function.equals("rgb-icc")) {
+                    PropertyValue[] args = parseArgs(6);
+                    throw new FunctionNotImplementedException("rgb-icc");
+                    //break;
+                }
+                if (function.equals("system-color")) {
+                    PropertyValue[] args = parseArgs(1);
+                    prop = new ColorType
+                            (property, ((StringType)args[0]).getString());
+                    break;
+                }
+
+                // Font function
+                if (function.equals("system-font")) {
+                    PropertyValue[] args = parseArgs(1, 2);
+                    if (args.length == 1) {
+                        prop = SystemFontFunction.systemFontCharacteristic
+                                (property,
+                                 ((StringType)args[0]).getString());
+                    } else {
+                        // 2 args
+                        prop = SystemFontFunction.systemFontCharacteristic
+                                (property,
+                                 ((StringType)args[0]).getString(),
+                                 ((StringType)args[1]).getString());
+                    }
+                    break;
+                }
+
+                // Property value functions
+                if (function.equals("label-end")) {
+                    PropertyValue[] args = parseArgs(0);
+                    throw new FunctionNotImplementedException("label-end");
+                    //break;
+                }
+                if (function.equals("body-start")) {
+                    PropertyValue[] args = parseArgs(0);
+                    throw new FunctionNotImplementedException("body-start");
+                    //break;
+                }
+                if (function.equals("inherited-property-value")) {
+                    int propindex = property;
+                    PropertyValue[] args = parseArgs(0, 1);
+                    if (args.length != 0)
+                        propindex = PropNames.getPropertyIndex(
+                                ((StringType)args[0]).getString());
+
+                    // If it's a compound, return an InheritedValue object
+                    if (PropertyConsts.pconsts.isCompound(propindex)) {
+                        prop = new InheritedValue(property, propindex);
+                        break;
+                    }
+                    // Is it an inherited property?
+                    if (PropertyConsts.pconsts.inheritance(propindex)
+                                                            == Property.NO)
+                        throw new PropertyException
+                                ("inherited-property-value: "
+                                 + PropNames.getPropertyName(propindex)
+                                 + " is not inherited.");
+                    // Not a compound, and inherited - try to resolve it
+                    prop = node.fromParent(property, propindex);
+                    break;
+                }
+                // N.B. see comments on classes FromNearestSpecified and
+                // FromParent for explanation of this section
+                if (function.equals("from-parent"))
+                    funcType = PropertyValue.FROM_PARENT;
+                if (function.equals("from-nearest-specified-value"))
+                    funcType = PropertyValue.FROM_NEAREST_SPECIFIED;
+                if (funcType == PropertyValue.FROM_PARENT
+                    || funcType == PropertyValue.FROM_NEAREST_SPECIFIED)
+                {
+                    // Preset the return value in case of a shorthand property
+                    switch (funcType) {
+                    case PropertyValue.FROM_PARENT:
+                        prop = new FromParent(property);
+                    case PropertyValue.FROM_NEAREST_SPECIFIED:
+                        prop = new FromNearestSpecified(property);
+                    }
+
+                    PropertyValue[] args = parseArgs(0, 1);
+                    if (args.length == 0) {
+                        if (! (PropertyConsts.pconsts.isShorthand(property)
+                           || PropertyConsts.pconsts.isCompound(property))) {
+                            // develop the function value and return it as
+                            // a property.
+                            switch (funcType) {
+                            case PropertyValue.FROM_PARENT:
+                                prop = node.fromParent(property);
+                            case PropertyValue.FROM_NEAREST_SPECIFIED:
+                                prop = node.fromNearestSpecified(property);
+                            }
+                        }
+                        // else a shorthand/compound - do nothing;
+                        // prop has been
+                        // set to the appropriate pseudo-propertyValue
+                    } else { // one argument - it must be a property name
+                        if ( ! (args[0] instanceof NCName))
+                            throw new PropertyException
+                                    (function + " function requires"
+                                     + " property name arg.");
+                        // else arg[0] is an NCName
+                        NCName ncname = (NCName)args[0];
+                        String propname = ncname.getNCName();
+                        int nameindex =
+                                PropNames.getPropertyIndex(propname);
+                        if (PropertyConsts.pconsts.isShorthand(nameindex)
+                            || PropertyConsts.pconsts.isCompound(nameindex)) {
+                            // the argument is a shorthand/compound property -
+                            // it must be the same as the property being
+                            // assigned to.
+                            // see 5.10.4 Property Value Functions
+                            if ( ! (nameindex == property))
+                                throw new PropertyException
+                                        (function +
+                                         " argument " + propname +
+                                         " does not match property " +
+                                         PropNames.getPropertyName(property));
+                            // else perform shorthand/compound processing
+                            // i.e. do nothing;
+                            // prop has been set to the correct
+                            // pseudo-propertyValue
+                        }
+                        else {   // An NCName but not a shorthand/compound
+                            // Perform normal from-? processing
+                            switch (funcType) {
+                            case PropertyValue.FROM_PARENT:
+                                prop = node.fromParent(property, nameindex);
+                            case PropertyValue.FROM_NEAREST_SPECIFIED:
+                                prop = node.fromNearestSpecified
+                                                        (property, nameindex);
+                            }
+                        }
+                    }
+                    break;
+                }
+                if (function.equals("from-table-column")) {
+                    PropertyValue[] args = parseArgs(0, 1);
+                    throw new FunctionNotImplementedException
+                            ("from-table-column");
+                    //break;
+                }
+                if (function.equals("proportional-column-width")) {
+                    PropertyValue[] args = parseArgs(1);
+                    throw new FunctionNotImplementedException
+                            ("proportional-column-width");
+                    //break;
+                }
+                if (function.equals("merge-property-values")) {
+                    PropertyValue[] args = parseArgs(0, 1);
+                    throw new FunctionNotImplementedException
+                            ("merge-property-values");
+                    //break;
+                }
+                throw new PropertyException("no such function: "
+                                                        + function);
+            } while (false);
             return prop;
         }
         default:
@@ -361,139 +943,53 @@ public class PropertyParser extends PropertyTokenizer {
      * may itself be an expression. This method consumes the closing right
      * parenthesis of the argument list.
      * @param nbArgs The number of arguments expected by the function.
-     * @return An array of Property objects representing the arguments
-     * found.
-     * @throws PropertyException If the number of arguments found isn't equal
-     * to the number expected.
+     * @return <tt>PropertyValueList</tt> of <tt>PropertyValue</tt> objects
+     * representing the arguments found.
+     * @exception PropertyException
      */
-    Property[] parseArgs(int nbArgs) throws PropertyException {
-        Property[] args = new Property[nbArgs];
-        Property prop;
+    PropertyValue[] parseArgs(int nbArgs) throws PropertyException {
+        return parseArgs(nbArgs, nbArgs);
+    }
+
+    /**
+     * Parse a comma separated list of function arguments. Each argument
+     * may itself be an expression. This method consumes the closing right
+     * parenthesis of the argument list.
+     * @param minArgs The minimum number of arguments expected by the function.
+     * @param maxArgs The maximum number of arguments expected by the function.
+     * @return <tt>PropertyValueList</tt> of <tt>PropertyValue</tt> objects
+     * representing the arguments found.  N.B.  The actual number of arguments
+     * returned is guaranteed to be between minArgs and maxArgs, inclusive,
+     * but the actual list of args found is terminated by the end of the
+     * array, or the first null element.
+     * @exception PropertyException
+     */
+    PropertyValue[] parseArgs(int minArgs, int maxArgs)
+        throws PropertyException
+    {
+        PropertyValue[] args = new PropertyValue[maxArgs];
+        PropertyValue prop;
         int i = 0;
-        if (currentToken == TOK_RPAR) {
+        if (currentToken == RPAR) {
             // No args: func()
             next();
         } else {
             while (true) {
-
                 prop = parseAdditiveExpr();
-                if (i < nbArgs) {
+                if (i < maxArgs) {
                     args[i++] = prop;
                 }
                 // ignore extra args
-                if (currentToken != TOK_COMMA) {
+                if (currentToken != COMMA)
                     break;
-                }
                 next();
             }
             expectRpar();
         }
-        if (nbArgs != i) {
+        if (minArgs > i || i > maxArgs) {
             throw new PropertyException("Wrong number of args for function");
         }
         return args;
-    }
-
-
-    /**
-     * Evaluate an addition operation. If either of the arguments is null,
-     * this means that it wasn't convertible to a Numeric value.
-     * @param op1 A Numeric object (Number or Length-type object)
-     * @param op2 A Numeric object (Number or Length-type object)
-     * @return A new NumericProperty object holding an object which represents
-     * the sum of the two operands.
-     * @throws PropertyException If either operand is null.
-     */
-    private Property evalAddition(Numeric op1,
-                                  Numeric op2) throws PropertyException {
-        if (op1 == null || op2 == null) {
-            throw new PropertyException("Non numeric operand in addition");
-        }
-        return new NumericProperty(op1.add(op2));
-    }
-
-    /**
-     * Evaluate a subtraction operation. If either of the arguments is null,
-     * this means that it wasn't convertible to a Numeric value.
-     * @param op1 A Numeric object (Number or Length-type object)
-     * @param op2 A Numeric object (Number or Length-type object)
-     * @return A new NumericProperty object holding an object which represents
-     * the difference of the two operands.
-     * @throws PropertyException If either operand is null.
-     */
-    private Property evalSubtraction(Numeric op1,
-                                     Numeric op2) throws PropertyException {
-        if (op1 == null || op2 == null) {
-            throw new PropertyException("Non numeric operand in subtraction");
-        }
-        return new NumericProperty(op1.subtract(op2));
-    }
-
-    /**
-     * Evaluate a unary minus operation. If the argument is null,
-     * this means that it wasn't convertible to a Numeric value.
-     * @param op A Numeric object (Number or Length-type object)
-     * @return A new NumericProperty object holding an object which represents
-     * the negative of the operand (multiplication by *1).
-     * @throws PropertyException If the operand is null.
-     */
-    private Property evalNegate(Numeric op) throws PropertyException {
-        if (op == null) {
-            throw new PropertyException("Non numeric operand to unary minus");
-        }
-        return new NumericProperty(op.multiply(NEGATIVE_ONE));
-    }
-
-    /**
-     * Evaluate a multiplication operation. If either of the arguments is null,
-     * this means that it wasn't convertible to a Numeric value.
-     * @param op1 A Numeric object (Number or Length-type object)
-     * @param op2 A Numeric object (Number or Length-type object)
-     * @return A new NumericProperty object holding an object which represents
-     * the product of the two operands.
-     * @throws PropertyException If either operand is null.
-     */
-    private Property evalMultiply(Numeric op1,
-                                  Numeric op2) throws PropertyException {
-        if (op1 == null || op2 == null) {
-            throw new PropertyException("Non numeric operand in multiplication");
-        }
-        return new NumericProperty(op1.multiply(op2));
-    }
-
-
-    /**
-     * Evaluate a division operation. If either of the arguments is null,
-     * this means that it wasn't convertible to a Numeric value.
-     * @param op1 A Numeric object (Number or Length-type object)
-     * @param op2 A Numeric object (Number or Length-type object)
-     * @return A new NumericProperty object holding an object which represents
-     * op1 divided by op2.
-     * @throws PropertyException If either operand is null.
-     */
-    private Property evalDivide(Numeric op1,
-                                Numeric op2) throws PropertyException {
-        if (op1 == null || op2 == null) {
-            throw new PropertyException("Non numeric operand in division");
-        }
-        return new NumericProperty(op1.divide(op2));
-    }
-
-    /**
-     * Evaluate a modulo operation. If either of the arguments is null,
-     * this means that it wasn't convertible to a Number value.
-     * @param op1 A Number object
-     * @param op2 A Number object
-     * @return A new NumberProperty object holding an object which represents
-     * op1 mod op2.
-     * @throws PropertyException If either operand is null.
-     */
-    private Property evalModulo(Number op1,
-                                Number op2) throws PropertyException {
-        if (op1 == null || op2 == null) {
-            throw new PropertyException("Non number operand to modulo");
-        }
-        return new NumberProperty(op1.doubleValue() % op2.doubleValue());
     }
 
 }

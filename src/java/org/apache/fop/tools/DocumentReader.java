@@ -1,7 +1,8 @@
 /*
- * $Id: DocumentReader.java,v 1.4 2003/03/07 10:09:30 jeremias Exp $
+ * $Id: DocumentReader.java,v 1.2.4.3 2003/06/12 18:19:38 pbwest Exp $
+ * 
  * ============================================================================
- *                    The Apache Software License, Version 1.1
+ *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
@@ -9,7 +10,7 @@
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
  * 
- * 1. Redistributions of source code must retain the above copyright notice,
+ * 1. Redistributions of  source code must  retain the above copyright  notice,
  *    this list of conditions and the following disclaimer.
  * 
  * 2. Redistributions in binary form must reproduce the above copyright notice,
@@ -17,48 +18,46 @@
  *    and/or other materials provided with the distribution.
  * 
  * 3. The end-user documentation included with the redistribution, if any, must
- *    include the following acknowledgment: "This product includes software
- *    developed by the Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself, if
+ *    include  the following  acknowledgment:  "This product includes  software
+ *    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
+ *    Alternately, this  acknowledgment may  appear in the software itself,  if
  *    and wherever such third-party acknowledgments normally appear.
  * 
- * 4. The names "FOP" and "Apache Software Foundation" must not be used to
- *    endorse or promote products derived from this software without prior
+ * 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
+ *    endorse  or promote  products derived  from this  software without  prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
  * 
- * 5. Products derived from this software may not be called "Apache", nor may
- *    "Apache" appear in their name, without prior written permission of the
+ * 5. Products  derived from this software may not  be called "Apache", nor may
+ *    "Apache" appear  in their name,  without prior written permission  of the
  *    Apache Software Foundation.
  * 
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
- * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
+ * APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
+ * ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
+ * (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ============================================================================
  * 
- * This software consists of voluntary contributions made by many individuals
- * on behalf of the Apache Software Foundation and was originally created by
- * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * This software  consists of voluntary contributions made  by many individuals
+ * on  behalf of the Apache Software  Foundation and was  originally created by
+ * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ *  
+ */
+
 package org.apache.fop.tools;
 
 import java.io.IOException;
 
-// DOM
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
-// SAX
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
@@ -83,8 +82,8 @@ public class DocumentReader implements XMLReader {
     // //////////////////////////////////////////////////////////////////
     // Configuration.
     // //////////////////////////////////////////////////////////////////
-    private boolean namespaces = true;
-    private boolean namespacePrefixes = true;
+    private boolean _namespaces = true;
+    private boolean _namespace_prefixes = true;
 
 
     /**
@@ -135,9 +134,9 @@ public class DocumentReader implements XMLReader {
      *
      * @param name The feature name, which is a fully-qualified URI.
      * @return The current state of the feature (true or false).
-     * @exception SAXNotRecognizedException When the
+     * @exception org.xml.sax.SAXNotRecognizedException When the
      * XMLReader does not recognize the feature name.
-     * @exception SAXNotSupportedException When the
+     * @exception org.xml.sax.SAXNotSupportedException When the
      * XMLReader recognizes the feature name but
      * cannot determine its value at this time.
      * @see #setFeature
@@ -145,12 +144,12 @@ public class DocumentReader implements XMLReader {
     public boolean getFeature(String name)
             throws SAXNotRecognizedException, SAXNotSupportedException {
         if ("http://xml.org/sax/features/namespaces".equals(name)) {
-            return namespaces;
+            return _namespaces;
         } else if ("http://xml.org/sax/features/namespace-prefixes".equals(name)) {
-            return namespacePrefixes;
+            return _namespace_prefixes;
         } else {
             throw new SAXNotRecognizedException("Feature '" + name
-                    + "' not recognized or supported by Document2SAXAdapter");
+                                                + "' not recognized or supported by Document2SAXAdapter");
         }
 
     }
@@ -176,10 +175,10 @@ public class DocumentReader implements XMLReader {
      * a parse.</p>
      *
      * @param name The feature name, which is a fully-qualified URI.
-     * @param value The requested state of the feature (true or false).
-     * @exception SAXNotRecognizedException When the
+     * @param state The requested state of the feature (true or false).
+     * @exception org.xml.sax.SAXNotRecognizedException When the
      * XMLReader does not recognize the feature name.
-     * @exception SAXNotSupportedException When the
+     * @exception org.xml.sax.SAXNotSupportedException When the
      * XMLReader recognizes the feature name but
      * cannot set the requested value.
      * @see #getFeature
@@ -187,12 +186,12 @@ public class DocumentReader implements XMLReader {
     public void setFeature(String name, boolean value)
             throws SAXNotRecognizedException, SAXNotSupportedException {
         if ("http://xml.org/sax/features/namespaces".equals(name)) {
-            namespaces = value;
+            _namespaces = value;
         } else if ("http://xml.org/sax/features/namespace-prefixes".equals(name)) {
-            namespacePrefixes = value;
+            _namespace_prefixes = value;
         } else {
             throw new SAXNotRecognizedException("Feature '" + name
-                    + "' not recognized or supported by Document2SAXAdapter");
+                                                + "' not recognized or supported by Document2SAXAdapter");
         }
 
     }
@@ -220,9 +219,9 @@ public class DocumentReader implements XMLReader {
      *
      * @param name The property name, which is a fully-qualified URI.
      * @return The current value of the property.
-     * @exception SAXNotRecognizedException When the
+     * @exception org.xml.sax.SAXNotRecognizedException When the
      * XMLReader does not recognize the property name.
-     * @exception SAXNotSupportedException When the
+     * @exception org.xml.sax.SAXNotSupportedException When the
      * XMLReader recognizes the property name but
      * cannot determine its value at this time.
      * @see #setProperty
@@ -230,7 +229,7 @@ public class DocumentReader implements XMLReader {
     public Object getProperty(String name)
             throws SAXNotRecognizedException, SAXNotSupportedException {
         throw new SAXNotRecognizedException("Property '" + name
-                + "' not recognized or supported by Document2SAXAdapter");
+                                            + "' not recognized or supported by Document2SAXAdapter");
     }
 
 
@@ -256,17 +255,17 @@ public class DocumentReader implements XMLReader {
      * extended handlers.</p>
      *
      * @param name The property name, which is a fully-qualified URI.
-     * @param value The requested value for the property.
-     * @exception SAXNotRecognizedException When the
+     * @param state The requested value for the property.
+     * @exception org.xml.sax.SAXNotRecognizedException When the
      * XMLReader does not recognize the property name.
-     * @exception SAXNotSupportedException When the
+     * @exception org.xml.sax.SAXNotSupportedException When the
      * XMLReader recognizes the property name but
      * cannot set the requested value.
      */
     public void setProperty(String name, Object value)
             throws SAXNotRecognizedException, SAXNotSupportedException {
         throw new SAXNotRecognizedException("Property '" + name
-                + "' not recognized or supported by Document2SAXAdapter");
+                                            + "' not recognized or supported by Document2SAXAdapter");
     }
 
 
@@ -274,10 +273,10 @@ public class DocumentReader implements XMLReader {
     // //////////////////////////////////////////////////////////////////
     // Event handlers.
     // //////////////////////////////////////////////////////////////////
-    private EntityResolver entityResolver = null;
-    private DTDHandler dtdHandler = null;
-    private ContentHandler contentHandler = null;
-    private ErrorHandler errorHandler = null;
+    private EntityResolver _entityResolver = null;
+    private DTDHandler _dtdHandler = null;
+    private ContentHandler _contentHandler = null;
+    private ErrorHandler _errorHandler = null;
 
 
     /**
@@ -291,10 +290,12 @@ public class DocumentReader implements XMLReader {
      * resolver immediately.</p>
      *
      * @param resolver The entity resolver.
+     * @exception java.lang.NullPointerException If the resolver
+     * argument is null.
      * @see #getEntityResolver
      */
     public void setEntityResolver(EntityResolver resolver) {
-        entityResolver = resolver;
+        _entityResolver = resolver;
     }
 
 
@@ -307,7 +308,7 @@ public class DocumentReader implements XMLReader {
      * @see #setEntityResolver
      */
     public EntityResolver getEntityResolver() {
-        return entityResolver;
+        return _entityResolver;
     }
 
 
@@ -323,10 +324,12 @@ public class DocumentReader implements XMLReader {
      * handler immediately.</p>
      *
      * @param handler The DTD handler.
+     * @exception java.lang.NullPointerException If the handler
+     * argument is null.
      * @see #getDTDHandler
      */
     public void setDTDHandler(DTDHandler handler) {
-        dtdHandler = handler;
+        _dtdHandler = handler;
     }
 
 
@@ -339,7 +342,7 @@ public class DocumentReader implements XMLReader {
      * @see #setDTDHandler
      */
     public DTDHandler getDTDHandler() {
-        return dtdHandler;
+        return _dtdHandler;
     }
 
 
@@ -356,10 +359,12 @@ public class DocumentReader implements XMLReader {
      * handler immediately.</p>
      *
      * @param handler The content handler.
+     * @exception java.lang.NullPointerException If the handler
+     * argument is null.
      * @see #getContentHandler
      */
     public void setContentHandler(ContentHandler handler) {
-        contentHandler = handler;
+        _contentHandler = handler;
     }
 
 
@@ -372,7 +377,7 @@ public class DocumentReader implements XMLReader {
      * @see #setContentHandler
      */
     public ContentHandler getContentHandler() {
-        return contentHandler;
+        return _contentHandler;
     }
 
 
@@ -391,10 +396,12 @@ public class DocumentReader implements XMLReader {
      * handler immediately.</p>
      *
      * @param handler The error handler.
+     * @exception java.lang.NullPointerException If the handler
+     * argument is null.
      * @see #getErrorHandler
      */
     public void setErrorHandler(ErrorHandler handler) {
-        errorHandler = handler;
+        _errorHandler = handler;
     }
 
     /**
@@ -405,7 +412,7 @@ public class DocumentReader implements XMLReader {
      * @see #setErrorHandler
      */
     public ErrorHandler getErrorHandler() {
-        return errorHandler;
+        return _errorHandler;
     }
 
 
@@ -419,11 +426,11 @@ public class DocumentReader implements XMLReader {
      *
      *
      *
-     * @param input The input source for the top-level of the
+     * @param source The input source for the top-level of the
      * XML document.
-     * @exception SAXException Any SAX exception, possibly
+     * @exception org.xml.sax.SAXException Any SAX exception, possibly
      * wrapping another exception.
-     * @exception IOException An IO exception from the parser,
+     * @exception java.io.IOException An IO exception from the parser,
      * possibly from a byte stream or character stream
      * supplied by the application.
      * @see org.xml.sax.InputSource
@@ -436,7 +443,7 @@ public class DocumentReader implements XMLReader {
     public void parse(InputSource input) throws IOException, SAXException {
         if (input instanceof DocumentInputSource) {
             Document document = ((DocumentInputSource)input).getDocument();
-            if (contentHandler == null) {
+            if (_contentHandler == null) {
                 throw new SAXException("ContentHandler is null. Please use setContentHandler()");
             }
 
@@ -456,7 +463,7 @@ public class DocumentReader implements XMLReader {
             while (currentNode != null) {
                 switch (currentNode.getNodeType()) {
                 case Node.DOCUMENT_NODE:
-                    contentHandler.startDocument();
+                    _contentHandler.startDocument();
                     break;
                 case Node.CDATA_SECTION_NODE:
                 case Node.TEXT_NODE:
@@ -470,10 +477,10 @@ public class DocumentReader implements XMLReader {
                         array = new char[datalen];
                     }
                     data.getChars(0, datalen, array, 0);
-                    contentHandler.characters(array, 0, datalen);
+                    _contentHandler.characters(array, 0, datalen);
                     break;
                 case Node.PROCESSING_INSTRUCTION_NODE:
-                    contentHandler.processingInstruction(currentNode.getNodeName(),
+                    _contentHandler.processingInstruction(currentNode.getNodeName(),
                                                           currentNode.getNodeValue());
                     break;
                 case Node.ELEMENT_NODE:
@@ -486,7 +493,7 @@ public class DocumentReader implements XMLReader {
                                                  att.getName(), "CDATA",
                                                  att.getValue());
                     }
-                    contentHandler.startElement(currentNode.getNamespaceURI(),
+                    _contentHandler.startElement(currentNode.getNamespaceURI(),
                                                  currentNode.getLocalName(),
                                                  currentNode.getNodeName(),
                                                  currentAtts);
@@ -502,10 +509,10 @@ public class DocumentReader implements XMLReader {
                 while (currentNode != null) {
                     switch (currentNode.getNodeType()) {
                     case Node.DOCUMENT_NODE:
-                        contentHandler.endDocument();
+                        _contentHandler.endDocument();
                         break;
                     case Node.ELEMENT_NODE:
-                        contentHandler.endElement(currentNode.getNamespaceURI(),
+                        _contentHandler.endElement(currentNode.getNamespaceURI(),
                                                    currentNode.getLocalName(),
                                                    currentNode.getNodeName());
                         break;
@@ -535,9 +542,9 @@ public class DocumentReader implements XMLReader {
      * instead
      *
      * @param systemId The system identifier (URI).
-     * @exception SAXException Any SAX exception, possibly
+     * @exception org.xml.sax.SAXException Any SAX exception, possibly
      * wrapping another exception.
-     * @exception IOException An IO exception from the parser,
+     * @exception java.io.IOException An IO exception from the parser,
      * possibly from a byte stream or character stream
      * supplied by the application.
      * @see #parse(org.xml.sax.InputSource)
