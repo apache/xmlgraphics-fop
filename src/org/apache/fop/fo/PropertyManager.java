@@ -250,24 +250,50 @@ public class PropertyManager {
         return props;
     }
 
-    public TextState getTextDecoration() throws FOPException {
+    public TextState getTextDecoration(FObj parent) throws FOPException {
+
+        // TextState from parent Block/Inline
+        TextState tsp = null;
+        boolean found = false;
+
+        do {
+            String fname = parent.getName();
+            if (fname.equals("fo:flow") || fname.equals("fo:static-content")) {
+                found = true;
+            } else if (fname.equals("fo:block") || fname.equals("fo:inline")) {
+                FObjMixed fom = (FObjMixed) parent;
+                tsp = fom.getTextState();
+                found = true;
+            }
+            parent = parent.getParent();
+        } while (!found);
+
         TextState ts = new TextState();
+
+        if (tsp != null) {
+            ts.setUnderlined(tsp.getUnderlined());
+            ts.setOverlined(tsp.getOverlined());
+            ts.setLineThrough(tsp.getLineThrough());
+        }
 
         int textDecoration = this.properties.get("text-decoration").getEnum();
 
-        switch (textDecoration) {
-        case TextDecoration.UNDERLINE:
+        if (textDecoration == TextDecoration.UNDERLINE) {
             ts.setUnderlined(true);
-            break;
-        case TextDecoration.OVERLINE:
+        }
+        if (textDecoration == TextDecoration.OVERLINE) {
             ts.setOverlined(true);
-            break;
-        case TextDecoration.LINE_THROUGH:
+        }
+        if (textDecoration == TextDecoration.LINE_THROUGH) {
             ts.setLineThrough(true);
-            break;
-        case TextDecoration.NONE:
+        }
+        if (textDecoration == TextDecoration.NO_UNDERLINE) {
             ts.setUnderlined(false);
+        }
+        if (textDecoration == TextDecoration.NO_OVERLINE) {
             ts.setOverlined(false);
+        }
+        if (textDecoration == TextDecoration.NO_LINE_THROUGH) {
             ts.setLineThrough(false);
         }
 

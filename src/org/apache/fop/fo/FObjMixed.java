@@ -36,6 +36,10 @@ public class FObjMixed extends FObj {
         super(parent, propertyList);
     }
 
+    public TextState getTextState() {
+        return ts;
+    }
+
     protected void addCharacters(char data[], int start, int length) {
         // addChild(new FOText(data, start, length, this));
         FOText ft = new FOText(data, start, length, this);
