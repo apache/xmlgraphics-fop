@@ -1,5 +1,5 @@
 /*
- * $Id: SpaceProperty.java,v 1.5 2003/03/05 21:48:01 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,66 +48,63 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.properties.CompoundPropertyMaker;
+import org.apache.fop.datatypes.CompoundDatatype;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
- * Base class used for handling properties of the fo:space-before and
- * fo:space-after variety. It is extended by org.apache.fop.fo.properties.GenericSpace,
- * which is extended by many other properties.
+ * Superclass for properties that have conditional lengths
  */
-public class SpaceProperty extends LengthRangeProperty {
-    private Property precedence;
+public class CondLengthProperty extends Property implements CompoundDatatype {
+    private Property length;
     private Property conditionality;
 
     /**
-     * Inner class used to create new instances of SpaceProperty
+     * Inner class for creating instances of CondLengthProperty
      */
     public static class Maker extends CompoundPropertyMaker {
 
         /**
-         * @param name name of the property whose Maker is to be created
+         * @param name of property for which a Maker should be created
          */
-        protected Maker(int propId) {
+        public Maker(int propId) {
             super(propId);
         }
 
         /**
-         * Create a new empty instance of SpaceProperty.
+         * Create a new empty instance of CondLengthProperty.
          * @return the new instance. 
          */
         public Property makeNewProperty() {
-            return new SpaceProperty();
+            return new CondLengthProperty();
         }
 
         /**
          * @see CompoundPropertyMaker#convertProperty
-         */
-        public Property convertProperty(Property p,
-                                        PropertyList propertyList,
-                                        FObj fo) throws FOPException {
-            if (p instanceof SpaceProperty) {
+         */        
+        public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
+            throws FOPException
+        {
+            if (p instanceof KeepProperty) {
                 return p;
             }
             return super.convertProperty(p, propertyList, fo);
         }
     }
 
-
-
     /**
      * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
-        if (cmpId == CP_PRECEDENCE) {
-            setPrecedence(cmpnValue, bIsDefault);
+        if (cmpId == CP_LENGTH) {
+            length = cmpnValue;
         } else if (cmpId == CP_CONDITIONALITY) {
-            setConditionality(cmpnValue, bIsDefault);
-        } else {
-            super.setComponent(cmpId, cmpnValue, bIsDefault);
+            conditionality = cmpnValue;
         }
     }
 
@@ -115,74 +112,70 @@ public class SpaceProperty extends LengthRangeProperty {
      * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
     public Property getComponent(int cmpId) {
-        if (cmpId == CP_PRECEDENCE) {
-            return getPrecedence();
+        if (cmpId == CP_LENGTH) {
+            return length;
         } else if (cmpId == CP_CONDITIONALITY) {
-            return getConditionality();
+            return conditionality;
         } else {
-            return super.getComponent(cmpId);
+            return null;
         }
     }
 
     /**
-     *
-     * @param precedence precedence Property to set
-     * @param bIsDefault (is not used anywhere)
-     */
-    protected void setPrecedence(Property precedence, boolean bIsDefault) {
-        this.precedence = precedence;
-    }
-
-    /**
-     *
-     * @param conditionality conditionality Property to set
-     * @param bIsDefault (is not used anywhere)
-     */
-    protected void setConditionality(Property conditionality,
-                                     boolean bIsDefault) {
-        this.conditionality = conditionality;
-    }
-
-    /**
-     * @return precedence Property
-     */
-    public Property getPrecedence() {
-        return this.precedence;
-    }
-
-    /**
-     * @return conditionality Property
+     * Returns the conditionality.
+     * @return the conditionality
      */
     public Property getConditionality() {
         return this.conditionality;
     }
 
+    /**
+     * Returns the length.
+     * @return the length
+     */
+    public Property getLengthComponent() {
+        return this.length;
+    }
+
+    /**
+     * Indicates if the length can be discarded on certain conditions.
+     * @return true if the length can be discarded.
+     */
+    public boolean isDiscard() {
+        return this.conditionality.getEnum() == Constants.DISCARD;
+    }
+
+    /**
+     * Returns the computed length value.
+     * @return the length in millipoints
+     */
+    public int getLengthValue() {
+        return this.length.getLength().getValue();
+    }
+
     public String toString() {
-        return "Space[" +
-        "min:" + getMinimum().getObject() + 
-        ", max:" + getMaximum().getObject() + 
-        ", opt:" + getOptimum().getObject() + 
-        ", precedence:" + precedence.getObject() + 
-        ", conditionality:" + conditionality.getObject() + "]";
-    }
+        return "CondLength[" + (isDiscard() ? "discard, " : "") +
+        length.getObject().toString() + "]";
+    }    
+
 
     /**
-     * @return the Space (datatype) object contained here
+     * @return this.condLength
      */
-    public SpaceProperty getSpace() {
+    public CondLengthProperty getCondLength() {
         return this;
     }
 
     /**
-     * Space extends LengthRange.
-     * @return the Space (datatype) object contained here
+     * TODO: Should we allow this?
+     * @return this.condLength cast as a Length
      */
-    public LengthRangeProperty getLengthRange() {
-        return this;
+    public LengthProperty getLength() {
+        return length.getLength();
     }
 
     /**
-     * @return the Space (datatype) object contained here
+     * @return this.condLength cast as an Object
      */
     public Object getObject() {
         return this;

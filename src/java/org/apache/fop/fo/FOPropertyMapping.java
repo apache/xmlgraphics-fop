@@ -54,13 +54,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.fop.datatypes.LengthBase;
-import org.apache.fop.datatypes.ToBeImplementedProperty;
 import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
+import org.apache.fop.fo.properties.CharacterProperty;
+import org.apache.fop.fo.properties.ColorTypeProperty;
+import org.apache.fop.fo.properties.CondLengthProperty;
 import org.apache.fop.fo.properties.CorrespondingPropertyMaker;
 import org.apache.fop.fo.properties.DimensionPropertyMaker;
+import org.apache.fop.fo.properties.EnumProperty;
 import org.apache.fop.fo.properties.IndentPropertyMaker;
+import org.apache.fop.fo.properties.KeepProperty;
+import org.apache.fop.fo.properties.LengthPairProperty;
+import org.apache.fop.fo.properties.LengthProperty;
+import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.LineHeightPropertyMaker;
+import org.apache.fop.fo.properties.ListProperty;
+import org.apache.fop.fo.properties.NumberProperty;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
+import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.fo.properties.StringProperty;
+import org.apache.fop.fo.properties.ToBeImplementedProperty;
 
 /**
  * This class creates and returns an array of Property.Maker instances

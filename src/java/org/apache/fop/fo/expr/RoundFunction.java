@@ -51,8 +51,8 @@
 package org.apache.fop.fo.expr;
 
 
-import org.apache.fop.fo.Property;
-import org.apache.fop.fo.NumberProperty;
+import org.apache.fop.fo.properties.NumberProperty;
+import org.apache.fop.fo.properties.Property;
 
 class RoundFunction extends FunctionBase {
     public int nbArgs() {

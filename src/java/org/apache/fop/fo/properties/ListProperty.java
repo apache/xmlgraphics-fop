@@ -1,5 +1,5 @@
 /*
- * $Id: NumberProperty.java,v 1.6 2003/03/05 21:48:01 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,24 +48,25 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.expr.NumericProperty;
-import org.apache.fop.fo.properties.PropertyMaker;
+import java.util.Vector;
+
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
- * Class for handling numeric properties
+ * Superclass for properties that are lists of other properties
  */
-public class NumberProperty extends Property {
+public class ListProperty extends Property {
 
     /**
-     * Inner class for making NumberProperty objects
+     * Inner class for creating instances of ListProperty
      */
     public static class Maker extends PropertyMaker {
 
         /**
-         * Constructor for NumberProperty.Maker
-         * @param propName the name of the property
+         * @param name name of property for which Maker should be created
          */
         public Maker(int propId) {
             super(propId);
@@ -76,83 +77,46 @@ public class NumberProperty extends Property {
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList, FObj fo) {
-            if (p instanceof NumberProperty) {
+            if (p instanceof ListProperty) {
                 return p;
+            } else {
+                return new ListProperty(p);
             }
-            Number val = p.getNumber();
-            if (val != null) {
-                return new NumberProperty(val);
-            }
-            return convertPropertyDatatype(p, propertyList, fo);
         }
 
     }
 
-    private Number number;
+    /** Vector containing the list of sub-properties */
+    protected Vector list;
 
     /**
-     * Constructor for Number input
-     * @param num Number object value for property
+     * @param prop the first Property to be added to the list
      */
-    public NumberProperty(Number num) {
-        this.number = num;
+    public ListProperty(Property prop) {
+        list = new Vector();
+        list.addElement(prop);
     }
 
     /**
-     * Constructor for double input
-     * @param num double numeric value for property
+     * Add a new property to the list
+     * @param prop Property to be added to the list
      */
-    public NumberProperty(double num) {
-        this.number = new Double(num);
+    public void addProperty(Property prop) {
+        list.addElement(prop);
     }
 
     /**
-     * Constructor for integer input
-     * @param num integer numeric value for property
+     * @return this.list
      */
-    public NumberProperty(int num) {
-        this.number = new Integer(num);
+    public Vector getList() {
+        return list;
     }
 
     /**
-     * @return this.number cast as a Number
-     */
-    public Number getNumber() {
-        return this.number;
-    }
-
-    /**
-     * public Double getDouble() {
-     * return new Double(this.number.doubleValue());
-     * }
-     * public Integer getInteger() {
-     * return new Integer(this.number.intValue());
-     * }
-     */
-
-    /**
-     * @return this.number cast as an Object
+     * @return this.list cast as an Object
      */
     public Object getObject() {
-        return this.number;
-    }
-
-    /**
-     * Convert NumberProperty to Numeric object
-     * @return Numeric object corresponding to this
-     */
-    public NumericProperty getNumeric() {
-        return new NumericProperty(this.number);
-    }
-
-    /**
-     * Convert NumberProperty to a ColorType. Not sure why this is needed.
-     * @return ColorType that corresponds to black
-     */
-    public ColorTypeProperty getColorType() {
-        // Convert numeric value to color ???
-        // Convert to hexadecimal and then try to make it into a color?
-        return new ColorTypeProperty((float)0.0, (float)0.0, (float)0.0);
+        return list;
     }
 
 }

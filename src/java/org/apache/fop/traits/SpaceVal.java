@@ -50,9 +50,9 @@
  */ 
 package org.apache.fop.traits;
 
-import org.apache.fop.fo.Property;
-import org.apache.fop.fo.SpaceProperty;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
  * Store a single Space property value in simplified form, with all

@@ -1,5 +1,5 @@
 /*
- * $Id: FixedLength.java,v 1.4 2003/03/05 20:38:23 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,81 +48,44 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.datatypes;
+package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.LengthProperty;
-import org.apache.fop.fo.expr.NumericProperty;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
-/**
- * a length quantity in XSL
- */
-public class FixedLength extends LengthProperty {
+public class ToBeImplementedProperty extends Property {
 
-    /**
-     * Set the length given
-     * @param numRelUnits the number of relative units
-     * @param iCurFontSize the current font size in base units.
-     */
-    public FixedLength(double numRelUnits, int iCurFontSize) {
-        setComputedValue((int)(numRelUnits * (double)iCurFontSize));
-    }
+    public static class Maker extends PropertyMaker {
 
-    /**
-     * Set the length given a number of units and a unit name.
-     * @param numUnits quantity of input units
-     * @param units input unit specifier (in, cm, etc.)
-     */
-    public FixedLength(double numUnits, String units) {
-        convert(numUnits, units);
-    }
-
-    /**
-     * @param baseUnits the length as a number of base units (millipoints)
-     */
-    public FixedLength(int baseUnits) {
-        setComputedValue(baseUnits);
-    }
-
-    /**
-     * Convert the given length to a dimensionless integer representing
-     * a whole number of base units (milli-points).
-     * @param dvalue quantity of input units
-     * @param unit input unit specifier (in, cm, etc.)
-     */
-    protected void convert(double dvalue, String unit) {
-
-        int assumedResolution = 1;    // points/pixel
-
-        if (unit.equals("in")) {
-            dvalue = dvalue * 72;
-        } else if (unit.equals("cm")) {
-            dvalue = dvalue * 28.3464567;
-        } else if (unit.equals("mm")) {
-            dvalue = dvalue * 2.83464567;
-        } else if (unit.equals("pt")) {
-            // Do nothing.
-            // dvalue = dvalue;
-        } else if (unit.equals("pc")) {
-            dvalue = dvalue * 12;
-            /*
-             * } else if (unit.equals("em")) {
-             * dvalue = dvalue * fontsize;
-             */
-        } else if (unit.equals("px")) {
-            dvalue = dvalue * assumedResolution;
-        } else {
-            dvalue = 0;
-            //log.error("unknown length unit '" + unit
-            //                       + "'");
+        public Maker(int propId) {
+            super(propId);
         }
-        setComputedValue((int)(dvalue * 1000));
+
+        public Property convertProperty(Property p,
+                                        PropertyList propertyList, FObj fo) {
+            if (p instanceof ToBeImplementedProperty) {
+                return p;
+            }
+
+            ToBeImplementedProperty val =
+                new ToBeImplementedProperty(getPropId());
+            return val;
+        }
     }
 
     /**
-     * @return Numeric equivalent of this
+     * Constructor
+     * @param propName name of Property
      */
-    public NumericProperty asNumeric() {
-        return new NumericProperty(this);
+    public ToBeImplementedProperty(int propId) {
+
+        //XXX: (mjg@recalldesign.com) This is a bit of a kluge, perhaps an
+        //UnimplementedPropertyException or something similar should
+        //get thrown here instead.
+
+//         Logger log = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
+//         log.warn("property - \"" + propName
+//                                + "\" is not implemented yet.");
     }
 }
 

@@ -52,6 +52,8 @@ package org.apache.fop.fo;
 
 import java.util.Enumeration;
 
+import org.apache.fop.fo.properties.ListProperty;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 
 public class GenericShorthandParser implements ShorthandParser {

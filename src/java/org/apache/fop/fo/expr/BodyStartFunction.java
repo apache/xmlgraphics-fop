@@ -51,9 +51,9 @@
 package org.apache.fop.fo.expr;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.Property;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * Class corresponding to the body-start Property Value function. See Sec.

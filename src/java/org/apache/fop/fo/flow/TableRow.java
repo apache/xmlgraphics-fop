@@ -59,7 +59,6 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.KeepValue;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.Property;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.Constants;
 
@@ -68,6 +67,7 @@ import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.Property;
 
 
 /**

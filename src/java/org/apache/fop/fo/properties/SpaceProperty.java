@@ -1,5 +1,5 @@
 /*
- * $Id: KeepProperty.java,v 1.3 2003/03/05 21:48:01 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,64 +48,67 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.CompoundDatatype;
-import org.apache.fop.fo.properties.CompoundPropertyMaker;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
- * Superclass for properties that wrap Keep values
+ * Base class used for handling properties of the fo:space-before and
+ * fo:space-after variety. It is extended by org.apache.fop.fo.properties.GenericSpace,
+ * which is extended by many other properties.
  */
-public class KeepProperty extends Property implements CompoundDatatype {
-    private Property withinLine;
-    private Property withinColumn;
-    private Property withinPage;
+public class SpaceProperty extends LengthRangeProperty {
+    private Property precedence;
+    private Property conditionality;
 
     /**
-     * Inner class for creating instances of KeepProperty
+     * Inner class used to create new instances of SpaceProperty
      */
     public static class Maker extends CompoundPropertyMaker {
 
         /**
-         * @param name name of property for which Maker should be created
+         * @param name name of the property whose Maker is to be created
          */
-        protected Maker(int propId) {
+        public Maker(int propId) {
             super(propId);
         }
 
         /**
-         * Create a new empty instance of KeepProperty.
+         * Create a new empty instance of SpaceProperty.
          * @return the new instance. 
          */
         public Property makeNewProperty() {
-            return new KeepProperty();
+            return new SpaceProperty();
         }
 
         /**
          * @see CompoundPropertyMaker#convertProperty
-         */        
-        public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
-            throws FOPException
-        {
-            if (p instanceof KeepProperty) {
+         */
+        public Property convertProperty(Property p,
+                                        PropertyList propertyList,
+                                        FObj fo) throws FOPException {
+            if (p instanceof SpaceProperty) {
                 return p;
             }
             return super.convertProperty(p, propertyList, fo);
         }
     }
 
+
+
     /**
      * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
-        if (cmpId == CP_WITHIN_LINE) {
-            setWithinLine(cmpnValue, bIsDefault);
-        } else if (cmpId == CP_WITHIN_COLUMN) {
-            setWithinColumn(cmpnValue, bIsDefault);
-        } else if (cmpId == CP_WITHIN_PAGE) {
-            setWithinPage(cmpnValue, bIsDefault);
+        if (cmpId == CP_PRECEDENCE) {
+            setPrecedence(cmpnValue, bIsDefault);
+        } else if (cmpId == CP_CONDITIONALITY) {
+            setConditionality(cmpnValue, bIsDefault);
+        } else {
+            super.setComponent(cmpId, cmpnValue, bIsDefault);
         }
     }
 
@@ -113,83 +116,74 @@ public class KeepProperty extends Property implements CompoundDatatype {
      * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
     public Property getComponent(int cmpId) {
-        if (cmpId == CP_WITHIN_LINE) {
-            return getWithinLine();
-        } else if (cmpId == CP_WITHIN_COLUMN) {
-            return getWithinColumn();
-        } else if (cmpId == CP_WITHIN_PAGE) {
-            return getWithinPage();
+        if (cmpId == CP_PRECEDENCE) {
+            return getPrecedence();
+        } else if (cmpId == CP_CONDITIONALITY) {
+            return getConditionality();
         } else {
-            return null;
+            return super.getComponent(cmpId);
         }
     }
 
     /**
-     * @param withinLine withinLine property to set
-     * @param bIsDefault not used (??)
+     *
+     * @param precedence precedence Property to set
+     * @param bIsDefault (is not used anywhere)
      */
-    public void setWithinLine(Property withinLine, boolean bIsDefault) {
-        this.withinLine = withinLine;
+    protected void setPrecedence(Property precedence, boolean bIsDefault) {
+        this.precedence = precedence;
     }
 
     /**
-     * @param withinColumn withinColumn property to set
-     * @param bIsDefault not used (??)
+     *
+     * @param conditionality conditionality Property to set
+     * @param bIsDefault (is not used anywhere)
      */
-    protected void setWithinColumn(Property withinColumn,
-                                   boolean bIsDefault) {
-        this.withinColumn = withinColumn;
+    protected void setConditionality(Property conditionality,
+                                     boolean bIsDefault) {
+        this.conditionality = conditionality;
     }
 
     /**
-     * @param withinPage withinPage property to set
-     * @param bIsDefault not used (??)
+     * @return precedence Property
      */
-    public void setWithinPage(Property withinPage, boolean bIsDefault) {
-        this.withinPage = withinPage;
+    public Property getPrecedence() {
+        return this.precedence;
     }
 
     /**
-     * @return the withinLine property
+     * @return conditionality Property
      */
-    public Property getWithinLine() {
-        return this.withinLine;
+    public Property getConditionality() {
+        return this.conditionality;
     }
 
-    /**
-     * @return the withinColumn property
-     */
-    public Property getWithinColumn() {
-        return this.withinColumn;
-    }
-
-    /**
-     * @return the withinPage property
-     */
-    public Property getWithinPage() {
-        return this.withinPage;
-    }
-
-    /**
-     * Not sure what to do here. There isn't really a meaningful single value.
-     * @return String representation
-     */
     public String toString() {
-        return "Keep[" + 
-            "withinLine:" + getWithinLine().getObject() + 
-            ", withinColumn:" + getWithinColumn().getObject() + 
-            ", withinPage:" + getWithinPage().getObject() + "]";
+        return "Space[" +
+        "min:" + getMinimum().getObject() + 
+        ", max:" + getMaximum().getObject() + 
+        ", opt:" + getOptimum().getObject() + 
+        ", precedence:" + precedence.getObject() + 
+        ", conditionality:" + conditionality.getObject() + "]";
     }
 
     /**
-     * @return this.keep
+     * @return the Space (datatype) object contained here
      */
-    public KeepProperty getKeep() {
+    public SpaceProperty getSpace() {
         return this;
     }
 
     /**
-     * @return this.keep cast as Object
+     * Space extends LengthRange.
+     * @return the Space (datatype) object contained here
+     */
+    public LengthRangeProperty getLengthRange() {
+        return this;
+    }
+
+    /**
+     * @return the Space (datatype) object contained here
      */
     public Object getObject() {
         return this;

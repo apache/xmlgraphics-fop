@@ -50,7 +50,7 @@
  */
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.fo.Property;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * Class modelling the from-table-column Property Value function. See Sec.

@@ -1,5 +1,5 @@
 /*
- * $Id: TableColLength.java,v 1.6 2003/03/05 20:38:24 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,75 +48,64 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.datatypes;
+package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.LengthProperty;
-import org.apache.fop.fo.expr.NumericProperty;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
- * A table-column width specification, possibly including some
- * number of proportional "column-units". The absolute size of a
- * column-unit depends on the fixed and proportional sizes of all
- * columns in the table, and on the overall size of the table.
- * It can't be calculated until all columns have been specified and until
- * the actual width of the table is known. Since this can be specified
- * as a percent of its parent containing width, the calculation is done
- * during layout.
- * NOTE: this is only supposed to be allowed if table-layout=fixed.
+ * Superclass for properties that wrap a character value
  */
-public class TableColLength extends LengthProperty {
+public class CharacterProperty extends Property {
 
     /**
-     * Number of table-column proportional units
+     * Inner class for creating instances of CharacterProperty
      */
-    private double tcolUnits;
+    public static class Maker extends PropertyMaker {
 
-    /**
-     * Construct an object with tcolUnits of proportional measure.
-     * @param tcolUnits number of table-column proportional units
-     */
-    public TableColLength(double tcolUnits) {
-        this.tcolUnits = tcolUnits;
-    }
-
-    /**
-     * Override the method in Length
-     * @return the number of specified proportional table-column units.
-     */
-    public double getTableUnits() {
-        return tcolUnits;
-    }
-
-    /**
-     * Calculate the number of millipoints and set it.
-     * @param mpointsPerUnit density of millipoints per unit
-     */
-    public void resolveTableUnit(double mpointsPerUnit) {
-        setComputedValue((int)(tcolUnits * mpointsPerUnit));
-    }
-
-    //If the table-unit can be resolved, set the computed value
-    /*protected void computeValue() {
-        if (tblUnitBase.canResolveUnit()) {
-            rslt += (int)(tcolUnits * (double)tblUnitBase.getUnitValue());
-            setComputedValue(rslt);
+        /**
+         * @param propName name of property for which a Maker should be created
+         */
+        public Maker(int propId) {
+            super(propId);
         }
-    }*/
+
+        public Property make(PropertyList propertyList, String value,
+                             FObj fo) {
+            char c = value.charAt(0);
+            return new CharacterProperty(c);
+        }
+
+    }    // end Charakter.Maker
+
+    private char character;
 
     /**
-     * Convert this to a String
-     * @return the string representation of this
+     * @param character character value to be wrapped in this property
      */
-    public String toString() {
-        return (Double.toString(tcolUnits) + " table-column-units");
+    public CharacterProperty(char character) {
+        this.character = character;
     }
 
     /**
-     * Converts this to a new Numeric object
-     * @return the Numeric object
+     * @return this.character cast as an Object
      */
-    public NumericProperty asNumeric() {
-        return new NumericProperty(this);
+    public Object getObject() {
+        return new Character(character);
     }
+
+    /**
+     * @return this.character
+     */
+    public char getCharacter() {
+        return this.character;
+    }
+
+    /**
+     * @return this.character cast as a String
+     */
+    public String getString() {
+        return new Character(character).toString();
+    }
+
 }
-
