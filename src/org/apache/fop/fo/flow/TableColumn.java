@@ -64,6 +64,9 @@ public class TableColumn extends FObj {
 
 		int columnWidth;
 		int columnOffset;
+		int numColumnsRepeated;
+
+		boolean setup = false;
 
 		AreaContainer areaContainer;
 
@@ -91,22 +94,38 @@ public class TableColumn extends FObj {
 	return 0; // not implemented yet
 		}
 
+		public int getNumColumnsRepeated() {
+			return numColumnsRepeated;
+		}
+
+		public void doSetup(Area area) throws FOPException {
+		
+			this.numColumnsRepeated =
+				this.properties.get("number-columns-repeated").getNumber().intValue();
+				
+			this.backgroundColor =
+				this.properties.get("background-color").getColorType();
+
+			this.columnWidth =
+				this.properties.get("column-width").getLength().mvalue();
+
+			// initialize id
+			String id = this.properties.get("id").getString();
+			area.getIDReferences().initializeID(id,area);
+
+			setup = true;
+		}
+
 		public Status layout(Area area) throws FOPException {
 	if (this.marker == BREAK_AFTER) {
 			return new Status(Status.OK);
 	}
 
-	if (this.marker == START) {
-			this.backgroundColor =
-		this.properties.get("background-color").getColorType();
-
-						this.columnWidth =
-								this.properties.get("column-width").getLength().mvalue();
-
-						// initialize id
-						String id = this.properties.get("id").getString();
-						area.getIDReferences().initializeID(id,area);
+			if (this.marker == START) {
+				if (!setup) {
+					doSetup(area);
 				}
+			}
 
 	this.areaContainer =
 			new AreaContainer(propMgr.getFontState(area.getFontInfo()),
