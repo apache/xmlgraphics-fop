@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
 <!-- This file uses the question and answer dtd
      QAML Version 2.4. More info about it can be found in the dtd file. 
      There should be some xslt stylesheets in this distribution
@@ -15,8 +16,8 @@ Usage of attributes:
 <faq>
 
 <head>
-   <title>FOP</title>
-   <version>1.0 1999/11/24 </version>
+   <title>FOP: An Open-Source XSL Formatter and Renderer</title>
+   <version>1.3 1999/11/23 03:31:30</version>
    <maintain>
       <name>James Tauber</name> 
       <name>Fotis Jannidis</name> 
@@ -29,13 +30,13 @@ Usage of attributes:
 
 <section class="level1">
   <title>What is FOP?</title>
-  <p>FOP is the world's first print formatter driven by XSL
-     formatting objects. It is a Java 1.1 application that reads a
-     formatting object tree and then turns it into a PDF document.
-     The formatting object tree, can be in the form of an XML
-     document (output by an XSLT engine like XT or Xalan) or can be
-     passed in memory as a DOM Document or (in the case of
-     XT or Xalan) SAX events.
+  <p>FOP is the world's first print formatter driven by XSL formatting
+     objects. It is a Java 1.1 application that reads a formatting object
+     tree and then turns it into a PDF document. The formatting object
+     tree, can be in the form of an XML document (output by an XSLT engine
+     like XT or Xalan) or can be passed in memory as a DOM Document or (in
+     the case of XT) SAX events.
+
   </p>
   <p>FOP is part of Apache's XML project. The homepage of FOP is 
      <link href="http:/xml.apache.org/fop">http:/xml.apache.org/fop</link>. 
@@ -132,6 +133,7 @@ Usage of attributes:
 
 <section  class="level1">
   <title>What's Implemented?</title>
+      <p>Also see STATUS for what is being worked on.</p>
   <section class="level2">
     <title>a) Formatting Objects</title>
     <div class="list">
@@ -158,7 +160,13 @@ Usage of attributes:
       <p class="li">inline-sequence </p>
       <p class="li">display-rule </p>
       <p class="li">display-graphic </p>
-    </div>
+      <p class="li">table (minimal support)</p>
+      <p class="li">table-column (minimal support)</p>
+      <p class="li">table-body (minimal support)</p>
+      <p class="li">table-row (minimal support)</p>
+      <p class="li">table-cell (minimal support)</p>
+
+</div>
   </section>
   <section class="level2">
     <title>b) Properties</title>
@@ -169,10 +177,10 @@ Usage of attributes:
       <p class="li">page-master-repeating </p>
       <p class="li">page-master-odd </p>
       <p class="li">page-master-even </p>
-      <p class="li">margin-top </p>
-      <p class="li">margin-bottom </p>
-      <p class="li">margin-left </p>
-      <p class="li">margin-right </p>
+      <p class="li">margin-top (only on pages and regions)</p>
+      <p class="li">margin-bottom (only on pages and regions)</p>
+      <p class="li">margin-left (only on pages and regions)</p>
+      <p class="li">margin-right (only on pages and regions)</p>
       <p class="li">extent </p>
       <p class="li">page-width </p>
       <p class="li">page-height </p>
@@ -198,13 +206,14 @@ Usage of attributes:
       <p class="li">break-after </p>
       <p class="li">text-indent </p>
       <p class="li">href</p>
+      <p class="li">column-width</p>
     </div>
   </section>
 </section>
 
 <section class="level1">
   <title>Bugs</title>
-  <p> </p>
+  <p>see STATUS file</p>
 </section>
 
 <section class="level1">
