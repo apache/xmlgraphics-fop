@@ -152,7 +152,8 @@ class FOPTaskStarter extends Starter {
 
     public void run () throws FOPException {
         try {
-            Configuration.put("baseDir", task.getBasedir().toURL().toExternalForm());
+            //Configuration.put("baseDir", task.getBasedir().toURL().toExternalForm());
+            Configuration.put("baseDir", task.getFofile().getParentFile().toURL().toExternalForm());
         } catch (Exception e) {
             task.log("Error setting base directory", Project.MSG_DEBUG);
         }
