@@ -1,0 +1,155 @@
+/*
+ * $Id$
+ *
+ * ============================================================================
+ *                   The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of  source code must  retain the above copyright  notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include  the following  acknowledgment:  "This product includes  software
+ *    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
+ *    Alternately, this  acknowledgment may  appear in the software itself,  if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
+ *    endorse  or promote  products derived  from this  software without  prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products  derived from this software may not  be called "Apache", nor may
+ *    "Apache" appear  in their name,  without prior written permission  of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
+ * APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
+ * ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
+ * (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * This software  consists of voluntary contributions made  by many individuals
+ * on  behalf of the Apache Software  Foundation and was  originally created by
+ * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
+ * Software Foundation, please see <http://www.apache.org/>.
+ *  
+ */
+package org.apache.fop.fo.properties;
+
+import org.apache.fop.datatypes.Auto;
+import org.apache.fop.datatypes.EnumType;
+import org.apache.fop.datatypes.NCName;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.datatypes.PropertyValueList;
+import org.apache.fop.datatypes.indirect.FromNearestSpecified;
+import org.apache.fop.datatypes.indirect.FromParent;
+import org.apache.fop.datatypes.indirect.Inherit;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.ShorthandPropSets;
+import org.apache.fop.fo.expr.PropertyException;
+
+public class Position extends Property  {
+    public static final int dataTypes = SHORTHAND | ENUM | INHERIT;
+    public static final int traitMapping = SHORTHAND_MAP;
+    public static final int initialValueType = ENUM_IT;
+    public static final int STATIC = 1;
+    public static final int RELATIVE = 2;
+    public static final int ABSOLUTE = 3;
+    public static final int FIXED = 4;
+    public PropertyValue getInitialValue(int property)
+        throws PropertyException
+    {
+        return new EnumType(PropNames.POSITION, STATIC);
+    }
+    public static final int inherited = NO;
+
+    private static final String[] rwEnums = {
+        null
+        ,"static"
+        ,"relative"
+        ,"absolute"
+        ,"fixed"
+    };
+
+    /*
+     * @param propindex - the <tt>int</tt> property index.
+     * @param foNode - the <tt>FONode</tt> being built
+     * @param value <tt>PropertyValue</tt> returned by the parser
+     * @return <tt>PropertyValue</tt> the verified value
+     */
+    public PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
+                    throws PropertyException
+    {
+        if (value instanceof Inherit |
+                value instanceof FromParent |
+                    value instanceof FromNearestSpecified)
+        {
+            return refineExpansionList(PropNames.POSITION, foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
+        }
+        if (value instanceof NCName) {
+            EnumType enum = null;
+            String ncname = ((NCName)value).getNCName();
+            try {
+                enum = new EnumType(value.getProperty(), ncname);
+            } catch (PropertyException e) {
+                throw new PropertyException
+                ("Unrecognized NCName in position: " + ncname);
+            }
+            PropertyValueList list =
+                        new PropertyValueList(PropNames.POSITION);
+            switch (enum.getEnumValue()) {
+            case STATIC:
+                list.add(new EnumType
+                            (PropNames.RELATIVE_POSITION, "static"));
+                list.add(new Auto(PropNames.ABSOLUTE_POSITION));
+                return list;
+            case RELATIVE:
+                list.add(new EnumType
+                            (PropNames.RELATIVE_POSITION, "relative"));
+                list.add(new Auto(PropNames.ABSOLUTE_POSITION));
+                return list;
+            case ABSOLUTE:
+                list.add(new EnumType
+                            (PropNames.RELATIVE_POSITION, "static"));
+                list.add(new EnumType
+                            (PropNames.ABSOLUTE_POSITION, "absolute"));
+                return list;
+            case FIXED:
+                list.add(new EnumType
+                            (PropNames.RELATIVE_POSITION, "static"));
+                list.add(new EnumType
+                            (PropNames.ABSOLUTE_POSITION, "fixed"));
+                return list;
+            }
+        }
+
+        throw new PropertyException
+            ("Invalid value for 'position': "
+                + value.getClass().getName());
+    }
+    public int getEnumIndex(String enum) throws PropertyException {
+        return enumValueToIndex(enum, rwEnums);
+    }
+    public String getEnumText(int index) {
+        return rwEnums[index];
+    }
+}
+
