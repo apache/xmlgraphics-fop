@@ -84,7 +84,6 @@ public class PageNumber extends FObj {
     private float green;
     private float blue;
     private int wrapOption;
-    private int whiteSpaceCollapse;
     private TextState ts;
 
     public PageNumber(FONode parent) {
@@ -176,8 +175,6 @@ public class PageNumber extends FObj {
         this.blue = c.getBlue();
 
         this.wrapOption = this.properties.get("wrap-option").getEnum();
-        this.whiteSpaceCollapse =
-                this.properties.get("white-space-collapse").getEnum();
         ts = new TextState();
 
     }
