@@ -203,7 +203,6 @@ public class FopServlet extends HttpServlet {
         //Setup FOP
         Driver driver = new Driver();
         driver.setRenderer(Driver.RENDER_PDF);
-        driver.initialize();
 
         //Setup output
         ByteArrayOutputStream out = new ByteArrayOutputStream();
