@@ -38,8 +38,10 @@ list of possible build targets.
 
   <!-- used to set values for testing etc. -->
   <!-- build-local.properties is not stored in CVS and overrides values from build.properties -->
-  <property file="build-local.properties"/>
-  <property file="build.properties"/>
+  <property file="${basedir}/build-local.properties"/>
+  <property file="${basedir}/build.properties"/>
+  
+  <property name="optional.lib.dir" value="${basedir}/lib"/>  
 
   <fileset dir="${basedir}" id="dist.bin">
     <include name="conf/**"/>
@@ -83,23 +85,36 @@ list of possible build targets.
   </fileset>
 
   <path id="libs-build-classpath">
-    <fileset dir="lib">
+    <fileset dir="${basedir}/lib">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${optional.lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="libs-basic-run-classpath">
+    <fileset dir="${basedir}/lib">
+      <include name="*.jar"/>
+      <exclude name="ant.jar"/>
+    </fileset>
+    <fileset dir="${optional.lib.dir}">
       <include name="*.jar"/>
     </fileset>
   </path>
 
   <path id="libs-run-classpath">
-    <fileset dir="lib">
-      <include name="*.jar"/>
-      <exclude name="ant.jar"/>
-    </fileset>
-    <fileset dir="build">
+    <path refid="libs-basic-run-classpath"/>
+    <fileset dir="${basedir}/build">
       <include name="fop.jar"/>
     </fileset>
   </path>
 
   <path id="checkstylepath">
-    <fileset dir="lib">
+    <fileset dir="${basedir}/lib">
+      <include name="checkstyle-all-*.jar"/>
+    </fileset>
+    <fileset dir="${optional.lib.dir}">
       <include name="checkstyle-all-*.jar"/>
     </fileset>
   </path>
@@ -228,6 +243,8 @@ list of possible build targets.
   </target>
 
   <target name="init-avail">
+    <echo message="${ant.version}"/>
+    
     <available property="jimi.present" classname="com.sun.jimi.core.Jimi"
         classpathref="libs-build-classpath"/>
     <condition property="jimi.message" value="Jimi Support PRESENT">
@@ -239,6 +256,7 @@ list of possible build targets.
       </not>
     </condition>
     <echo message="${jimi.message}"/>
+    
     <available property="jai.present" classname="javax.media.jai.JAI"
         classpathref="libs-build-classpath"/>
     <condition property="jai.message" value="JAI Support PRESENT">
@@ -250,6 +268,7 @@ list of possible build targets.
       </not>
     </condition>
     <echo message="${jai.message}"/>
+    
     <available property="jce.present" classname="javax.crypto.Cipher"
         classpathref="libs-build-classpath"/>
     <condition property="jce.message" value="JCE Support PRESENT">
@@ -261,7 +280,20 @@ list of possible build targets.
       </not>
     </condition>
     <echo message="${jce.message}"/>
-    <available property="jdk14.present" classname="java.awt.image.VolatileImage"/>
+    
+    <available property="jdk14.present" classname="java.lang.CharSequence"/>
+    
+    <available property="junit.present" classname="junit.framework.TestCase"
+        classpathref="libs-build-classpath"/>
+    <condition property="junit.message" value="JUnit Support PRESENT">
+      <equals arg1="${junit.present}" arg2="true"/>
+    </condition>
+    <condition property="junit.message" value="JUnit Support NOT Present">
+      <not>
+        <equals arg1="${junit.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${junit.message}"/>
   </target>
 
   <target name="init-filters-jdk13" depends="init-avail" unless="jdk14.present">
@@ -313,12 +345,12 @@ list of possible build targets.
     <!-- generate the java files from xml resources -->
     <echo message="Generating the java files from xml resources"/>
     <dependset>
-      <srcfilelist dir="./" files="${foproperties.xml},${colorkw.xml}"/>
-      <targetfilelist dir="./" files="${build.gensrc}/${replacestring}/fo/properties/Constants.java,${build.gensrc}/${replacestring}/fo/properties/fo_${ignore_this}"/>
+      <srcfilelist dir="${basedir}" files="${foproperties.xml},${colorkw.xml}"/>
+      <targetfilelist dir="${basedir}" files="${build.gensrc}/${replacestring}/fo/properties/Constants.java,${build.gensrc}/${replacestring}/fo/properties/fo_${ignore_this}"/>
     </dependset>
     <dependset>
-      <srcfilelist dir="./" files="${propinc.xsl}"/>
-      <targetfilelist dir="./" files="${build.gensrc}/${replacestring}/fo/properties/fo_${ignore_this},${build.gensrc}/${replacestring}/fo/properties/FOPropertyMapping.java,${build.gensrc}/${replacestring}/fo/properties/foenums_${ignore_this}"/>
+      <srcfilelist dir="${basedir}" files="${propinc.xsl}"/>
+      <targetfilelist dir="${basedir}" files="${build.gensrc}/${replacestring}/fo/properties/fo_${ignore_this},${build.gensrc}/${replacestring}/fo/properties/FOPropertyMapping.java,${build.gensrc}/${replacestring}/fo/properties/foenums_${ignore_this}"/>
     </dependset>
 
     <style in="${allprops.xml}" style="${genconst.xsl}"
@@ -482,6 +514,7 @@ list of possible build targets.
       <lib dir="${lib.dir}">
         <include name="avalon-framework*.jar"/>
         <include name="batik*.jar"/>
+        <include name="commons-io*.jar"/>
       </lib>
       <lib dir="${build.dir}">
         <include name="fop.jar"/>
@@ -489,41 +522,94 @@ list of possible build targets.
     </war>
   </target>
 
-  <target name="pdf-transcoder" depends="compile" description="Generates the jar for the pdf transcoder for Batik">
-    <echo message="Creating the jar file ${build.dir}/pdf-transcoder.jar"/>
+  <target name="transcoder-pkg" depends="compile" description="Generates the jar for the transcoder package for Batik">
+    <echo message="Creating the jar file ${build.dir}/fop-transcoder.jar"/>
 
-    <property name="pdf-transcoder.name" value="FOP PDF Transcoder"/>
-    <property name="pdf-transcoder.version" value="1.0beta2"/>
+    <property name="fop-transcoder.name" value="FOP Transcoder Package"/>
+    <property name="fop-transcoder.version" value="1.0beta2"/>
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
 
-    <jar jarfile="${build.dir}/pdf-transcoder.jar">
-      <fileset dir="${build.dest}" includes="org/apache/fop/pdf/**"/>
-      <fileset dir="${build.dest}" includes="org/apache/fop/svg/**"/>
-      <fileset dir="${build.dest}">
-        <include name="org/apache/fop/render/pdf/**"/>
-        <exclude name="org/apache/fop/render/pdf/PDFRenderer.class"/>
-        <exclude name="org/apache/fop/render/pdf/PDFXMLHandler*"/>
-      </fileset>
-      <fileset dir="${build.dest}">
+    <patternset id="transcoder-classes">
+      <!-- General classes -->
+      <patternset>
+        <include name="org/apache/fop/svg/**"/>
         <include name="org/apache/fop/fonts/**"/>
         <include name="org/apache/fop/layout/Font*.class"/>
         <include name="org/apache/fop/image/FopImag*.class"/>
         <include name="org/apache/fop/image/Jpeg*"/>
         <include name="org/apache/fop/image/Abstract*"/>
         <include name="org/apache/fop/util/StreamUtilities.class"/>
+        <include name="org/apache/fop/util/*OutputStream.class"/>
+        <include name="org/apache/fop/util/Finalizable.class"/>
+      </patternset>
+      <!-- PDF transcoder -->
+      <patternset>
+        <include name="org/apache/fop/render/pdf/**"/>
+        <exclude name="org/apache/fop/render/pdf/PDFRenderer.class"/>
+        <exclude name="org/apache/fop/render/pdf/PDFXMLHandler*"/>
+        <include name="org/apache/fop/pdf/**"/>
+      </patternset>
+      <!-- PS transcoder -->
+      <patternset>
+        <include name="org/apache/fop/render/ps/**"/>
+        <exclude name="org/apache/fop/render/pdf/PSRenderer.class"/>
+        <exclude name="org/apache/fop/render/pdf/PSXMLHandler*"/>
+      </patternset>
+    </patternset>
+
+    <!-- lean transcoder jar -->
+    <jar jarfile="${build.dir}/fop-transcoder.jar">
+      <fileset dir="${build.dest}">
+        <patternset refid="transcoder-classes"/>
       </fileset>
       <manifest>
-        <attribute name="Implementation-Title" value="${pdf-transcoder.name}"/>
-        <attribute name="Implementation-Version" value="${pdf-transcoder.version}"/>
+        <attribute name="Implementation-Title" value="${fop-transcoder.name}"/>
+        <attribute name="Implementation-Version" value="${fop-transcoder.version}"/>
+        <attribute name="Implementation-Vendor" value="Apache Software Foundation (http://xml.apache.org/fop/)"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+      </manifest>
+    </jar>
+
+    <!-- all-in-one transcoder jar -->
+    <property name="transcoder-deps" value="${build.dir}/transcoder-dependencies"/>
+    <mkdir dir="${transcoder-deps}"/>
+    <unjar dest="${transcoder-deps}">
+      <patternset>
+        <include name="org/apache/avalon/framework/*"/>
+        <include name="org/apache/commons/io/IOUtil.class"/>
+        <include name="org/apache/commons/io/ProxyOutputStream.class"/>
+        <include name="org/apache/commons/io/output/ByteArrayOutputStream.class"/>
+        <include name="org/apache/commons/io/output/CountingOutputStream.class"/>
+      </patternset>
+      <fileset dir="${lib.dir}">
+        <include name="commons-io*.jar"/>
+        <include name="avalon-framework*.jar"/>
+      </fileset>
+    </unjar>
+    <mkdir dir="${transcoder-deps}/legal"/>
+    <copy todir="${transcoder-deps}/legal">
+      <fileset dir="${lib.dir}">
+        <include name="avalon.LICENSE.txt"/>
+        <include name="commons-io.LICENSE.txt"/>
+      </fileset>
+    </copy>
+    <jar jarfile="${build.dir}/fop-transcoder-allinone.jar">
+      <fileset dir="${build.dest}">
+        <patternset refid="transcoder-classes"/>
+      </fileset>
+      <fileset dir="${build.dir}/transcoder-dependencies"/>
+      <manifest>
+        <attribute name="Implementation-Title" value="${fop-transcoder.name}"/>
+        <attribute name="Implementation-Version" value="${fop-transcoder.version}"/>
         <attribute name="Implementation-Vendor" value="Apache Software Foundation (http://xml.apache.org/fop/)"/>
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
       </manifest>
     </jar>
   </target>
 
-  <target name="all" depends="package, servlet, pdf-transcoder"/> <!-- "all" target for us Makefile converts ;-) -->
+  <target name="all" depends="package, servlet, transcoder-pkg, junit"/> <!-- "all" target for us Makefile converts ;-) -->
 
   <!-- =================================================================== -->
   <!-- Testing                                                             -->
@@ -552,6 +638,75 @@ list of possible build targets.
     <runTest testSuite="testsuite.xml" basedir="TestSuite/contrib/XSLFormatter/" reference="test/reference/fop.jar"
          refVersion="${ref-version}"/>
 -->
+  </target>
+  <target name="junit" depends="package, transcoder-pkg" description="Runs FOP's JUnit tests" if="junit.present">
+    <mkdir dir="${build.dir}/test-classes"/> 
+    <javac destdir="${build.dir}/test-classes" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
+      <src path="${basedir}/test/java"/>
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <fileset dir="${build.dir}">
+          <include name="fop.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+    <echo message="Running basic functionality tests for fop-transcoder.jar"/>
+    <mkdir dir="${build.dir}/test-reports/fop-transcoder"/> 
+    <junit>
+      <sysproperty key="basedir" value="${basedir}"/>
+      <formatter type="plain"/>
+      <classpath>
+        <pathelement location="${build.dir}/test-classes"/>
+        <path refid="libs-basic-run-classpath"/>
+        <fileset dir="${build.dir}">
+          <include name="fop-transcoder.jar"/>
+        </fileset>
+      </classpath>
+      <batchtest todir="${build.dir}/test-reports/fop-transcoder">
+        <fileset dir="${build.dir}/test-classes">
+          <include name="org/apache/fop/BasicTranscoderTestSuite.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+    <echo message="Running basic functionality tests for fop-transcoder-allinone.jar"/>
+    <mkdir dir="${build.dir}/test-reports/fop-transcoder-allinone"/> 
+    <junit>
+      <sysproperty key="basedir" value="${basedir}"/>
+      <formatter type="plain"/>
+      <classpath>
+        <pathelement location="${build.dir}/test-classes"/>
+        <fileset dir="build">
+          <include name="fop-transcoder-allinone.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}">
+          <include name="batik*.jar"/>
+        </fileset>
+      </classpath>
+      <batchtest todir="${build.dir}/test-reports/fop-transcoder-allinone">
+        <fileset dir="${build.dir}/test-classes">
+          <include name="org/apache/fop/BasicTranscoderTestSuite.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+    <echo message="Running basic functionality tests for fop.jar"/>
+    <mkdir dir="${build.dir}/test-reports/fop"/> 
+    <junit>
+      <sysproperty key="basedir" value="${basedir}"/>
+      <formatter type="plain"/>
+      <classpath>
+        <pathelement location="${build.dir}/test-classes"/>
+        <path refid="libs-build-classpath"/>
+        <fileset dir="build">
+          <include name="fop.jar"/>
+        </fileset>
+      </classpath>
+      <batchtest todir="${build.dir}/test-reports/fop">
+        <fileset dir="${build.dir}/test-classes">
+          <include name="org/apache/fop/BasicDriverTestSuite.class"/>
+          <include name="org/apache/fop/UtilityCodeTestSuite.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
   </target>
 
   <!-- =================================================================== -->
