@@ -32,9 +32,7 @@ public class LineArea extends Area {
     // contains inline areas
     // has start indent and length, dominant baseline, height
     private int startIndent;
-    private int length;
 
-    private int lineHeight;
     // this is the offset for the dominant baseline
     private int baseLine;
 
@@ -42,24 +40,6 @@ public class LineArea extends Area {
     // this means that many renderers can optimise a bit
 
     private List inlineAreas = new ArrayList();
-
-    /**
-     * Set the height of this line area.
-     *
-     * @param height the height of the line area
-     */
-    public void setHeight(int height) {
-        lineHeight = height;
-    }
-
-    /**
-     * Get the height of this line area.
-     *
-     * @return the height of the line area
-     */
-    public int getHeight() {
-        return lineHeight;
-    }
 
     /**
      * Add a child area to this line area.

@@ -75,7 +75,7 @@ public class Block extends BlockParent {
             children = new ArrayList();
         }
         if (autoHeight) {
-            height += block.getHeight();
+            bpd += block.getAllocBPD();
         }
         children.add(block);
     }
@@ -89,7 +89,7 @@ public class Block extends BlockParent {
         if (children == null) {
             children = new ArrayList();
         }
-        height += line.getHeight();
+        bpd += line.getBPD();
         children.add(line);
     }
 

@@ -53,10 +53,10 @@ public class BeforeFloat extends BlockParent {
      *
      * @return the height of the before float including separator
      */
-    public int getHeight() {
-        int h = super.getHeight();
+    public int getBPD() {
+        int h = super.getBPD();
         if (separator != null) {
-            h += separator.getHeight();
+            h += separator.getBPD();
         }
         return h;
     }
