@@ -21,7 +21,6 @@
 package org.apache.fop.apps;
 
 //import java.util.logging.Handler;
-import java.awt.GraphicsEnvironment;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +37,7 @@ import org.apache.fop.configuration.FOUserAgent;
 import org.apache.fop.configuration.SystemOptions;
 import org.apache.fop.configuration.UserOptions;
 import org.apache.fop.fo.FOTree;
+import org.apache.fop.render.FontData;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.version.Version;
 import org.apache.fop.xml.FoXmlSerialHandler;
@@ -57,6 +57,9 @@ import org.xml.sax.XMLReader;
  * @version $Revision$ $Name$
  */
 public class Fop {
+
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
 
     /** private constant to indicate renderer was not defined.  */
     private static final int NOT_SET = 0;
@@ -104,7 +107,7 @@ public class Fop {
     /** The version string */
     public final String version = Version.getVersion();
     /** The version revision string */
-    public final String revision = Version.getRevision();
+    public final String rev = Version.getRevision();
     /** The version name string */
     public final String name = Version.getName();
 
@@ -246,8 +249,11 @@ public class Fop {
     /** The <code>XmlEventReader</code> which supplies events to the FO Tree
      * builder */
     private XmlEventReader eventReader;
+    /** The font database from the renderer */
+    private FontData fontData;
     /** Head process of the FO Tree builder thread */
     private FOTree foTree;
+    /** The area tree constructed from the FO tree */
     private AreaTree areaTree = new AreaTree();
 
     /** Thread of main Fop process */
@@ -256,7 +262,7 @@ public class Fop {
     private Thread parserThread;
     /** Thread of FO Tree building process */
     private Thread foThread;
-    private Thread areaThread;
+    // private Thread areaThread;
     /** Thread of rendering process */
     private Thread renderThread;
 
@@ -291,12 +297,12 @@ public class Fop {
 
             rendererType = options.getRenderer();
             setRenderer(rendererType);
-            gEnv = renderer.getGraphicsEnvironment();
+            fontData = renderer.getFontData();
             namespaces = new Namespaces();
             eventsBuffer = new SyncedXmlEventsBuffer(namespaces);
             eventReader = new XmlEventReader(eventsBuffer, namespaces);
             xmlhandler = new FoXmlSerialHandler(eventsBuffer, parser, saxSource);
-            foTree = new FOTree(eventReader);
+            foTree = new FOTree(eventReader, fontData);
 
             fopThread = Thread.currentThread();
             renderThread = new Thread(renderer, "Renderer");
@@ -432,20 +438,6 @@ public class Fop {
      */
     public Renderer getRenderer() {
         return renderer;
-    }
-
-    /** The <code>GraphicsEnvironment</code> in which the renderer operates */
-    private GraphicsEnvironment gEnv = null;
-    
-    /**
-     * Returns the <code>GraphicsEnvironment</code> in which the renderer
-     * performs graphical operations.  This is originally provided by the
-     * renderer after it is initialized by <code>Fop</code>.
-     * 
-     *  @return the operating environment of the renderer
-     */
-    public GraphicsEnvironment getGraphicsEnvironment() {
-        return gEnv;
     }
 
     /**
