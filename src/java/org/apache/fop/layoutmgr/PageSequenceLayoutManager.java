@@ -65,7 +65,7 @@ import org.apache.fop.traits.MinOptMax;
  * It manages all page-related layout.
  */
 public class PageSequenceLayoutManager extends AbstractLayoutManager {
-    private PageSequence fobj;
+    private PageSequence pageSeq;
 
     private static class BlockBreakPosition extends LeafPosition {
         protected BreakPoss breakps;
@@ -128,11 +128,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      *
      * @param pageseq the page sequence fo
      */
-    public PageSequenceLayoutManager(PageSequence pageseq) {
-        super(pageseq);
-        fobj = pageseq;
-        if (fobj.getPageSequenceMaster() != null) {
-            fobj.getPageSequenceMaster().reset();
+    public PageSequenceLayoutManager(PageSequence pageSeq) {
+        super(pageSeq);
+        this.pageSeq = pageSeq;
+        if (pageSeq.getPageSequenceMaster() != null) {
+            pageSeq.getPageSequenceMaster().reset();
         }
     }
 
@@ -151,19 +151,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     public AreaTreeHandler getAreaTreeHandler() {
         return areaTreeHandler;
-    }
-
-    /**
-     * Set the page counting for this page sequence.
-     * This sets the initial page number and the page number formatter.
-     *
-     * @param pc the starting page number
-     * @param generator the page number generator
-     */
-    private void setPageCounting(int pc, PageNumberGenerator generator) {
-        pageCount = pc;
-        pageNumberGenerator = generator;
-        pageNumberString = pageNumberGenerator.makeFormattedPageNumber(pageCount);
     }
 
     /**
@@ -205,13 +192,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * which creates and adds all the pages to the area tree.
      */
     public void activateLayout() {
-        fobj.initPageNumber();
-        setPageCounting(fobj.getCurrentPageNumber(),
-                fobj.getPageNumberGenerator());
+        pageSeq.initPageNumber();
+        pageCount = pageSeq.getCurrentPageNumber();
+        pageNumberGenerator = pageSeq.getPageNumberGenerator();
+        pageNumberString = pageNumberGenerator.makeFormattedPageNumber(pageCount);
 
         LineArea title = null;
-        if (fobj.getTitleFO() != null) {
-            title = getTitleArea(fobj.getTitleFO());
+        if (pageSeq.getTitleFO() != null) {
+            title = getTitleArea(pageSeq.getTitleFO());
         }
 
         areaTreeModel.startPageSequence(title);
@@ -239,7 +227,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         pageCount--;
         log.debug("Ending layout");
         flush();
-        fobj.setCurrentPageNumber(getPageCount());
+        pageSeq.setCurrentPageNumber(getPageCount());
     }
 
     /**
@@ -262,8 +250,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             childLC.setRefIPD(flowIPD);
 
             if (!curLM.isFinished()) {
-                fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
-                fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, flowBPD);
+                pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
+                pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, flowBPD);
                 bp = curLM.getNextBreakPoss(childLC);
             }
             if (bp != null) {
@@ -496,7 +484,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         if (log.isDebugEnabled()) {
             log.debug("[" + curPage.getPageNumber() + "]");
         }
-        areaTreeHandler.notifyNewPage(curPage.getPageNumber());
         RegionViewport rv = curPage.getPage().getRegionViewport(
                     FO_REGION_BODY);
         curBody = (BodyRegion) rv.getRegion();
@@ -510,7 +497,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         if (region == null) {
             return;
         }
-        StaticContent flow = fobj.getStaticContent(region.getRegionName());
+        StaticContent flow = pageSeq.getStaticContent(region.getRegionName());
         if (flow == null) {
             return;
         }
@@ -775,8 +762,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                                    throws FOPException {
         currentSimplePageMaster = getSimplePageMasterToUse(bIsBlank);
         Region body = currentSimplePageMaster.getRegion(FO_REGION_BODY);
-        if (!fobj.getMainFlow().getFlowName().equals(body.getRegionName())) {
-          throw new FOPException("Flow '" + fobj.getMainFlow().getFlowName()
+        if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
+          throw new FOPException("Flow '" + pageSeq.getMainFlow().getFlowName()
                                  + "' does not map to the region-body in page-master '"
                                  + currentSimplePageMaster.getMasterName() + "'");
         }
@@ -796,11 +783,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
     private SimplePageMaster getSimplePageMasterToUse(boolean bIsBlank)
             throws FOPException {
-        if (fobj.getPageSequenceMaster() == null) {
-            return fobj.getSimplePageMaster();
+        if (pageSeq.getPageSequenceMaster() == null) {
+            return pageSeq.getSimplePageMaster();
         }
         boolean isOddPage = ((pageCount % 2) == 1);
-        return fobj.getPageSequenceMaster()
+        return pageSeq.getPageSequenceMaster()
               .getNextSimplePageMaster(isOddPage, isFirstPage, bIsBlank);
     }
 
@@ -809,8 +796,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         int pageHeight = spm.getPageHeight().getValue();
 
         // Set the page dimension as the toplevel containing block for margin.
-        ((FObj) fobj.getParent()).setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
-        ((FObj) fobj.getParent()).setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
+        ((FObj) pageSeq.getParent()).setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
+        ((FObj) pageSeq.getParent()).setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
 
         // Get absolute margin properties (top, left, bottom, right)
         CommonMarginBlock mProps = spm.getCommonMarginBlock();
