@@ -25,6 +25,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.AbstractRenderer;
@@ -87,6 +88,17 @@ public class PSRenderer extends AbstractRenderer {
     }
 
     /**
+     * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
+     */
+    public void setUserAgent(FOUserAgent agent) {
+        super.setUserAgent(agent);
+        PSXMLHandler xmlHandler = new PSXMLHandler();
+        //userAgent.setDefaultXMLHandler(MIME_TYPE, xmlHandler);
+        String svg = "http://www.w3.org/2000/svg";
+        userAgent.addXMLHandler(MIME_TYPE, svg, xmlHandler);
+    }
+
+    /**
      * Write out a command
      * @param cmd PostScript command
      */
@@ -98,6 +110,10 @@ public class PSRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * Central exception handler for I/O exceptions.
+     * @param ioe IOException to handle
+     */
     protected void handleIOTrouble(IOException ioe) {
         if (!ioTrouble) {
             getLogger().error("Error while writing to target file", ioe);
@@ -166,13 +182,23 @@ public class PSRenderer extends AbstractRenderer {
     }
 
     /** Saves the graphics state of the rendering engine. */
-    protected void saveGraphicsState() {
-        writeln("gsave");
+    public void saveGraphicsState() {
+        try {
+            //delegate
+            gen.saveGraphicsState();
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
     }
     
     /** Restores the last graphics state of the rendering engine. */
-    protected void restoreGraphicsState() {
-        writeln("grestore");
+    public void restoreGraphicsState() {
+        try {
+            //delegate
+            gen.restoreGraphicsState();
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
     }
     
     /** Indicates the beginning of a text object. */
@@ -184,7 +210,38 @@ public class PSRenderer extends AbstractRenderer {
     protected void endTextObject() {
         writeln("ET");
     }
-        
+
+    /**
+     * Concats the transformation matrix.
+     * @param a A part
+     * @param b B part
+     * @param c C part
+     * @param d D part
+     * @param e E part
+     * @param f F part
+     */
+    protected void concatMatrix(double a, double b,
+                                double c, double d, 
+                                double e, double f) {
+        try {
+            gen.concatMatrix(a, b, c, d, e, f);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
+    }
+    
+    /**
+     * Concats the transformations matrix.
+     * @param matrix Matrix to use
+     */
+    protected void concatMatrix(double[] matrix) {
+        try {
+            gen.concatMatrix(matrix);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
+    }
+                                
     /**
      * Set up the font info
      *
@@ -210,6 +267,13 @@ public class PSRenderer extends AbstractRenderer {
         writeln(x + " " + y + " " + w + " " + h + " rectfill");
     }
 
+    /**
+     * Draws a stroked rectangle with the current stroke settings.
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @param w width
+     * @param h height
+     */
     protected void drawRect(int x, int y, int w, int h) {
         writeln(x + " " + y + " " + w + " " + h + " rectstroke");
     }
@@ -315,7 +379,7 @@ public class PSRenderer extends AbstractRenderer {
                 {zero, zero, pagewidth, pageheight});
         gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);         
         gen.writeln("FOPFonts begin");
-        gen.writeln("[1 0 0 -1 0 " + pageheight + "] concat");
+        concatMatrix(1, 0, 0, -1, 0, pageheight.doubleValue());
         gen.writeln("0.001 0.001 scale");
         gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);         
         
@@ -327,6 +391,13 @@ public class PSRenderer extends AbstractRenderer {
         gen.writeDSCComment(DSCConstants.END_PAGE);
     }
 
+    /**
+     * Paints text.
+     * @param rx X coordinate
+     * @param bl Y coordinate
+     * @param text Text to paint
+     * @param font Font to use
+     */
     protected void paintText(int rx, int bl, String text, Font font) {
         saveGraphicsState();
         writeln("1 0 0 -1 " + rx + " " + bl + " Tm");
@@ -366,7 +437,8 @@ public class PSRenderer extends AbstractRenderer {
 /*
         String psString = null;
         if (area.getFontState().getLetterSpacing() > 0) {
-            //float f = area.getFontState().getLetterSpacing() * 1000 / this.currentFontSize;
+            //float f = area.getFontState().getLetterSpacing() 
+            //    * 1000 / this.currentFontSize;
             float f = area.getFontState().getLetterSpacing();
             psString = (new StringBuffer().append(f).append(" 0.0 (")
               .append(sb.toString()).append(") A")).toString();
@@ -511,17 +583,12 @@ public class PSRenderer extends AbstractRenderer {
         // Set the given CTM in the graphics state
         //currentState.push();
         //currentState.setTransform(new AffineTransform(CTMHelper.toPDFArray(ctm)));
-
+        
         saveGraphicsState();
         // multiply with current CTM
         //currentStream.add(CTMHelper.toPDFString(ctm) + " cm\n");
         final double matrix[] = ctm.toArray();
-        writeln("[" + gen.formatDouble(matrix[0]) 
-                + " " + gen.formatDouble(matrix[1])
-                + " " + gen.formatDouble(matrix[2]) 
-                + " " + gen.formatDouble(matrix[3])
-                + " " + gen.formatDouble(matrix[4])
-                + " " + gen.formatDouble(matrix[5]) + "] concat");
+        concatMatrix(matrix);
         
         // Set clip?
         beginTextObject();        
@@ -551,6 +618,16 @@ public class PSRenderer extends AbstractRenderer {
         context = new RendererContext(MIME_TYPE);
         context.setUserAgent(userAgent);
 
+        context.setProperty(PSXMLHandler.PS_GENERATOR, this.gen);
+        context.setProperty(PSXMLHandler.PS_FONT_INFO, fontInfo);
+        context.setProperty(PSXMLHandler.PS_WIDTH,
+                            new Integer((int) pos.getWidth()));
+        context.setProperty(PSXMLHandler.PS_HEIGHT,
+                            new Integer((int) pos.getHeight()));
+        context.setProperty(PSXMLHandler.PS_XPOS,
+                            new Integer(currentBlockIPPosition + (int) pos.getX()));
+        context.setProperty(PSXMLHandler.PS_YPOS,
+                            new Integer(currentBPPosition + (int) pos.getY()));
         /*
         context.setProperty(PDFXMLHandler.PDF_DOCUMENT, pdfDoc);
         context.setProperty(PDFXMLHandler.OUTPUT_STREAM, ostream);

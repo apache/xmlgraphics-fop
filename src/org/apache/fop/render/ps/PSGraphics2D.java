@@ -103,31 +103,12 @@ public class PSGraphics2D extends AbstractGraphics2D {
     /**
      * Create a new Graphics2D that generates PostScript code.
      * @param textAsShapes True if text should be rendered as graphics
-     * @param fs currently valid FontState object
      * @param gen PostScript generator to use for output
-     * @param font current font name
-     * @param size current font size
-     * @param xpos current x pos
-     * @param ypos current y pos
      * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D#AbstractGraphics2D(boolean)
      */
-    public PSGraphics2D(boolean textAsShapes, FontState fs, PSGenerator gen,
-                        String font, int size, int xpos, int ypos) {
+    public PSGraphics2D(boolean textAsShapes, PSGenerator gen) {
         super(textAsShapes);
         this.gen = gen;
-        currentFontName = font;
-        currentFontSize = size;
-        currentYPosition = ypos;
-        currentXPosition = xpos;
-        fontState = fs;
-    }
-
-    /**
-     * Create a new Graphics2D that generates PostScript code.
-     * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D#AbstractGraphics2D(boolean)
-     */
-    public PSGraphics2D(boolean textAsShapes) {
-        super(textAsShapes);
     }
 
     /**
@@ -473,7 +454,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
     public void draw(Shape s) {
         try {
             // System.out.println("draw(Shape)");
-            gen.writeln("gsave");
+            gen.saveGraphicsState();
             Shape imclip = getClip();
             writeClip(imclip);
             Color c = getColor();
@@ -523,7 +504,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
                 iter.next();
             }
             doDrawing(false, true, false);
-            gen.writeln("grestore");
+            gen.restoreGraphicsState();
         } catch (IOException ioe) {
             handleIOException(ioe);
         }
