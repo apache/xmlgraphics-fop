@@ -57,13 +57,6 @@ import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 
-import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
-import org.apache.fop.layoutmgr.LayoutProcessor;
-import org.apache.fop.area.inline.InlineArea;
-
-import java.util.List;
-import java.util.ArrayList;
-
 /**
  * fo:bidi-override element.
  */
@@ -108,6 +101,12 @@ public class BidiOverride extends FObjMixed {
         return true;
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

@@ -50,10 +50,6 @@
  */
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-import java.util.ArrayList;
-
 // XML
 import org.xml.sax.Attributes;
 
@@ -66,9 +62,6 @@ import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
-import org.apache.fop.area.inline.InlineArea;
 
 /**
  * Class modelling the fo:inline-container object. See Sec. 6.6.8 of the XSL-FO
@@ -127,6 +120,12 @@ public class InlineContainer extends FObj {
         return true;
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

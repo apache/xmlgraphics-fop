@@ -50,12 +50,8 @@
  */
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 // FOP
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
@@ -74,11 +70,7 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.layout.TextState;
-import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LayoutProcessor;
-import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
-import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -112,7 +104,7 @@ public class PageNumberCitation extends FObj {
     }
 
     /**
-     * @param st StuctureHandler object to set
+     * @param foih the FOInputHandler object to set
      */
     public void setFOInputHandler(FOInputHandler foih) {
         super.setFOInputHandler(foih);

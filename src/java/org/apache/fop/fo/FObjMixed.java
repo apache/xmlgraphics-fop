@@ -50,12 +50,6 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.fo.FOTreeControl;
-import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
-import org.apache.fop.layoutmgr.LMiter;
-
-import java.util.List;
-
 /**
  * Base class for representation of mixed content formatting objects
  * and their processing
@@ -113,6 +107,12 @@ public class FObjMixed extends FObj {
         return new RecursiveCharIterator(this);
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

@@ -142,6 +142,12 @@ public class Title extends FObjMixed {
 
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

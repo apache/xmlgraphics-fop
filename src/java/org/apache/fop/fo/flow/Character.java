@@ -50,9 +50,6 @@
  */
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 // FOP
 import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
@@ -67,7 +64,6 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 
 /**
  * This class represents the flow object 'fo:character'. Its use is defined by
@@ -164,6 +160,12 @@ public class Character extends FObj {
         // But what it the character is ignored due to white space handling?
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

@@ -63,14 +63,12 @@ import org.apache.fop.fo.properties.Scaling;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.Length;
 
 // Java
-import java.util.List;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -270,10 +268,19 @@ public class ExternalGraphic extends FObj {
         placement = new Rectangle2D.Float(xoffset, yoffset, cwidth, cheight);
     }
 
+    /**
+     * @return the ViewHeight (in millipoints??)
+     */
     public int getViewHeight() {
         return viewHeight;
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }
