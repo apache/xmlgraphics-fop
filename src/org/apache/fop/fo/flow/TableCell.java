@@ -142,7 +142,7 @@ public class TableCell extends FObj {
 	blockArea.setPage(area.getPage());
 	blockArea.start();
 
-	// added by Eric Shaeffer
+	// added by Eric Schaeffer
 	height = 0;
 
 	int numChildren = this.children.size();
