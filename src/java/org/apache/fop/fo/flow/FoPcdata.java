@@ -147,10 +147,12 @@ public class FoPcdata extends FOPageSeqNode {
     // parent block area.
     // Generate a text-layout for the PCDATA.
     /**
-     * Generate a  
+     * Generates a TextMeasurer from the PCDATA text.  The font and text
+     * attributes of the text are applied.
      */
     private void processText() {
-        
+        // Get the font
+        // 
     }
 
 }

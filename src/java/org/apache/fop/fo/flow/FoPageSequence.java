@@ -20,10 +20,6 @@
 
 package org.apache.fop.fo.flow;
 
-// FOP
-import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
-import java.awt.font.FontRenderContext;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -186,6 +182,18 @@ public class FoPageSequence extends FONode {
         }
         return (Page)firstPage;
     }
+
+    /** An image on which to draw areas */
+    private BufferedImage pageSpread = null;
+    /**
+     * Gets the page spread image from which the <code>Graphics2D</code> and
+     * <code>FontRenderContext</code> have been derived.
+     * @return the page spread
+     */
+    public BufferedImage getPageSpread() {
+        return pageSpread;
+    }
+
     /**
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
@@ -202,8 +210,6 @@ public class FoPageSequence extends FONode {
         // Set up the graphics environment
         pageSpread =
             new BufferedImage(20*72, 12*72, BufferedImage.TYPE_INT_RGB);
-        g2D = pageSpread.createGraphics();
-        frcontext = g2D.getFontRenderContext();
 
         XmlEvent ev;
         // Look for optional title
@@ -301,23 +307,6 @@ public class FoPageSequence extends FONode {
         }
 
         makeSparsePropsSet();
-    }
-
-    private GraphicsEnvironment gEnv = null;
-    public GraphicsEnvironment getGraphicsEnvironment() {
-        return gEnv;
-    }
-    private BufferedImage pageSpread = null;
-    public BufferedImage getPageSpread() {
-        return pageSpread;
-    }
-    private Graphics2D g2D = null;
-    public Graphics2D getGraphics2D() {
-        return g2D;
-    }
-    private FontRenderContext frcontext = null;
-    public FontRenderContext getFontRenderContext() {
-        return frcontext;
     }
 
     public Area getReferenceRectangle() throws FOPException {
