@@ -50,10 +50,11 @@ public class FOPropertySets {
            ,ROOT_SET = 1
    ,DECLARATIONS_SET = 2
          ,LAYOUT_SET = 3
-        ,PAGESEQ_SET = 4
-           ,FLOW_SET = 5
-         ,STATIC_SET = 6
-         ,MARKER_SET = 7
+     ,SEQ_MASTER_SET = 4
+        ,PAGESEQ_SET = 5
+           ,FLOW_SET = 6
+         ,STATIC_SET = 7
+         ,MARKER_SET = 8
 
            ,LAST_SET = MARKER_SET
                      ;
@@ -66,6 +67,8 @@ public class FOPropertySets {
             return "DECLARATIONS";
         case LAYOUT_SET:
             return "LAYOUT";
+        case SEQ_MASTER_SET:
+            return "SEQ_MASTER";
         case PAGESEQ_SET:
             return "PAGESEQ";
         case FLOW_SET:
@@ -88,6 +91,8 @@ public class FOPropertySets {
             return declarationsAll;
         case LAYOUT_SET:
             return layoutMasterSet;
+        case SEQ_MASTER_SET:
+            return seqMasterSet;
         case PAGESEQ_SET:
             return pageSeqSet;
         case FLOW_SET:
@@ -110,6 +115,8 @@ public class FOPropertySets {
             return declarationsInherited;
         case LAYOUT_SET:
             return inheritedLayoutSet;
+        case SEQ_MASTER_SET:
+            return inheritedSeqMasterSet;
         case PAGESEQ_SET:
             return inheritedPageSeqSet;
         case FLOW_SET:
@@ -132,6 +139,8 @@ public class FOPropertySets {
             return declarationsNonInherited;
         case LAYOUT_SET:
             return nonInheritedLayoutSet;
+        case SEQ_MASTER_SET:
+            return nonInheritedSeqMasterSet;
         case PAGESEQ_SET:
             return nonInheritedPageSeqSet;
         case FLOW_SET:
@@ -1926,6 +1935,22 @@ public class FOPropertySets {
 
     /**
      * set of all properties which are
+     * usable within the page-sequence-master-set subtree.
+     */
+    public static final ROBitSet seqMasterSet;
+    /**
+     * set of all inherited properties which are
+     * usable within the page-sequence-master-set subtree.
+     */
+    public static final ROBitSet inheritedSeqMasterSet;
+    /**
+     * set of all non-inherited properties which are
+     * usable within the page-sequence-master-set subtree.
+     */
+    public static final ROBitSet nonInheritedSeqMasterSet;
+
+    /**
+     * set of all properties which are
      * usable within the layout-master-set subtree.
      */
     public static final ROBitSet layoutMasterSet;
@@ -2046,33 +2071,43 @@ public class FOPropertySets {
 
         //declarations only set of properties - properties for exclusive use
         // in the declarations SUBTREE
-        BitSet declarationsonly =
-                                new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        BitSet declarationsonly = new BitSet();
         declarationsonly.set(PropNames.COLOR_PROFILE_NAME);
         declarationsonly.set(PropNames.RENDERING_INTENT);
 
         // set of all declarations properties - properties which may be
         // used in the declarations SUBTREE
-        BitSet declarationsall =
-                                new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        BitSet declarationsall = (BitSet)declarationsonly.clone();
         declarationsall.set(PropNames.SRC);
-        declarationsall.or(declarationsonly);
 
         declarationsAll = new ROBitSet(declarationsall);
         // None of the declarations properties are inherited
         declarationsInherited = new ROBitSet(new BitSet(1));
         declarationsNonInherited = new ROBitSet(declarationsall);
 
+        // seq-master-only set of properties for exclusive use within
+        // the page-sequence-master subtree
+        BitSet seqmasteronly = new BitSet();
+        seqmasteronly.set(PropNames.MAXIMUM_REPEATS);
+        seqmasteronly.set(PropNames.PAGE_POSITION);
+        seqmasteronly.set(PropNames.ODD_OR_EVEN);
+        seqmasteronly.set(PropNames.BLANK_OR_NOT_BLANK);
+
+        // seq-master-set set of properties for use within
+        // the page-sequence-master subtree
+        BitSet seqmasterset = (BitSet)seqmasteronly.clone();
+        seqmasterset.set(PropNames.MASTER_NAME);
+        seqmasterset.set(PropNames.MASTER_REFERENCE);
+
+        seqMasterSet = new ROBitSet(seqmasterset);
+        inheritedSeqMasterSet = new ROBitSet(makeInheritedSet(seqmasterset));
+        nonInheritedSeqMasterSet
+                            = new ROBitSet(makeNonInheritedSet(seqmasterset));
+
         //layout-master-set only set of properties - properties for exclusive
         // use within the layout-master-set SUBTREE
-        BitSet layoutmasteronly =
-                                new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        BitSet layoutmasteronly = (BitSet)seqmasteronly.clone();
         layoutmasteronly.set(PropNames.MASTER_NAME);
-        layoutmasteronly.set(PropNames.MASTER_REFERENCE);
-        layoutmasteronly.set(PropNames.MAXIMUM_REPEATS);
-        layoutmasteronly.set(PropNames.PAGE_POSITION);
-        layoutmasteronly.set(PropNames.ODD_OR_EVEN);
-        layoutmasteronly.set(PropNames.BLANK_OR_NOT_BLANK);
         layoutmasteronly.set(PropNames.PAGE_HEIGHT);
         layoutmasteronly.set(PropNames.PAGE_WIDTH);
         layoutmasteronly.set(PropNames.COLUMN_COUNT);
@@ -2083,12 +2118,10 @@ public class FOPropertySets {
 
         // set of all layout-master-set properties - properties which may be
         // used in the layout-master-set SUBTREE
-        BitSet layoutmasterset =
-                                new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
-
         // Add the layout-master-set exclusive properties
-        layoutmasterset.or(layoutmasteronly);
+        BitSet layoutmasterset = (BitSet)layoutmasteronly.clone();
 
+        layoutmasterset.set(PropNames.MASTER_REFERENCE);
         layoutmasterset.set(PropNames.REFERENCE_ORIENTATION);
         layoutmasterset.set(PropNames.WRITING_MODE);
         layoutmasterset.set(PropNames.CLIP);
@@ -2121,19 +2154,28 @@ public class FOPropertySets {
         nonInheritedLayoutSet =
             new ROBitSet(makeNonInheritedSet(layoutmasterset));
 
-        BitSet flowonlyset = new BitSet(PropNames.MARKER_CLASS_NAME + 1);
+        BitSet flowonlyset = new BitSet();
         flowonlyset.set(PropNames.MARKER_CLASS_NAME);
 
-        BitSet staticonlyset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        BitSet staticonlyset = new BitSet();
         staticonlyset.set(PropNames.RETRIEVE_CLASS_NAME);
         staticonlyset.set(PropNames.RETRIEVE_POSITION);
         staticonlyset.set(PropNames.RETRIEVE_BOUNDARY);
 
+        // pageseqonly contains the properties which are exclusive to
+        // fo:pagesequence
+        BitSet pageseqonly = new BitSet();
+        pageseqonly.set(PropNames.FORMAT);
+        pageseqonly.set(PropNames.LETTER_VALUE);
+        pageseqonly.set(PropNames.GROUPING_SEPARATOR);
+        pageseqonly.set(PropNames.GROUPING_SIZE);
+        pageseqonly.set(PropNames.INITIAL_PAGE_NUMBER);
+        pageseqonly.set(PropNames.FORCE_PAGE_COUNT);
+
         // pageseqset may contain any of the exclusive elements of the
         // flow set or the static-content set, which may be accessed by
         // the from-nearest-specified-property() function.
-        BitSet pageseqset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
-        pageseqset.or(allprops);
+        BitSet pageseqset = (BitSet)allprops.clone();
         pageseqset.andNot(rootonly);
         pageseqset.andNot(declarationsonly);
         pageseqset.andNot(layoutmasteronly);
@@ -2143,8 +2185,8 @@ public class FOPropertySets {
         nonInheritedPageSeqSet =
                 new ROBitSet(makeNonInheritedSet(pageseqset));
 
-        BitSet flowallset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
-        flowallset.or(pageseqset);
+        BitSet flowallset = (BitSet)pageseqset.clone();
+        flowallset.andNot(pageseqonly);
         flowallset.andNot(staticonlyset);
 
         flowAllSet = new ROBitSet(flowallset);
@@ -2153,8 +2195,8 @@ public class FOPropertySets {
         nonInheritedFlowSet =
                 new ROBitSet(makeNonInheritedSet(flowallset));
 
-        BitSet staticallset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
-        staticallset.or(pageseqset);
+        BitSet staticallset = (BitSet)pageseqset.clone();
+        staticallset.andNot(pageseqonly);
         staticallset.andNot(flowonlyset);
 
         staticAllSet = new ROBitSet(staticallset);
@@ -2163,8 +2205,7 @@ public class FOPropertySets {
         nonInheritedStaticSet =
             new ROBitSet(makeNonInheritedSet(staticallset));
 
-        BitSet markerallset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
-        markerallset.or(flowallset);
+        BitSet markerallset = (BitSet)flowallset.clone();
         markerallset.clear(PropNames.MARKER_CLASS_NAME);
 
         markerAllSet = new ROBitSet(markerallset);
