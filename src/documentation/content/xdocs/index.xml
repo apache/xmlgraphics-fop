@@ -15,6 +15,9 @@
        Print, AWT, MIF and TXT.
        The primary output target is PDF. 
     </p>
+    <note>
+      The PDF files on this site are created using current CVS.
+    </note>
         <figure width="480" height="260" src="images/document.jpg" alt="Render Diagram" /> 
     <p>The latest version of Fop is 0.20.4 and it supports the
        <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0

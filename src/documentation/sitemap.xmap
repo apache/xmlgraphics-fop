@@ -10,7 +10,7 @@
    <map:generator  name="file"        src="org.apache.cocoon.generation.FileGenerator" label="content"/>
    <map:generator  name="directory"   src="org.apache.cocoon.generation.DirectoryGenerator" label="content"/>
    <map:generator  name="html"        src="org.apache.cocoon.generation.HTMLGenerator" label="content"/>
-   <map:generator  name="libre"       src="org.outerj.yer.use.cocoon.HierarchyGenerator" label="content"/>
+   <map:generator  name="libre"       src="org.apache.forrest.yer.use.cocoon.HierarchyGenerator" label="content"/>
    <map:generator  name="nekodtd"     src="org.apache.forrest.components.generator.XNIConfigurableFileGenerator" label="content"/>
    <!-- FIXME: Change this once better view handling is implemented -->
    <map:generator  name="file-nolabel" src="org.apache.cocoon.generation.FileGenerator"/>
@@ -87,9 +87,10 @@
 
   </map:selectors>
 -->
-  <!--map:actions>
-    <map:action logger="sitemap.action.request" name="request" src="org.apache.cocoon.acting.RequestParamAction"/>
-  </map:actions-->
+  <map:actions>
+   <!-- <map:action logger="sitemap.action.request" name="request" src="org.apache.cocoon.acting.RequestParamAction"/> -->
+    <map:action logger="sitemap.action.resource-exists" name="resource-exists" src="org.apache.cocoon.acting.ResourceExistsAction"/>
+  </map:actions>
 
   <!--
      The different pipeline implementations
@@ -148,45 +149,10 @@
 <!-- =========================== Pipelines ================================= -->
 
  <map:pipelines>
-
-  <map:pipeline>
-
-<!-- ========================== FOP Additions ========================== -->
-
-   <map:match pattern="*/svg/*.svg">
-    <map:read src="content/xdocs/{1}/svg/{2}.svg" mime-type="image/svg"/>
-   </map:match>
-   <map:match pattern="*/svg/*.png">
-    <map:generate src="content/xdocs/{1}/svg/{2}.svg"/>
-    <map:serialize type="svg2png"/>
-   </map:match>
-   <map:match pattern="*/svg/*.pdf">
-    <map:generate src="content/xdocs/{1}/svg/{2}.svg"/>
-    <map:serialize type="svg2pdf"/>
-   </map:match>
-
-   <map:match pattern="*/fo/*.fo">
-    <map:read src="content/xdocs/{1}/fo/{2}.fo" mime-type="text/xml"/>
-   </map:match>
-   <map:match pattern="*/fo/*.fo.pdf">
-    <map:generate src="content/xdocs/{1}/fo/{2}.fo"/>
-    <map:serialize type="fo2pdf"/>
-   </map:match>
-
-<!-- ======================= End FOP Additions ======================== -->
-
-   <map:match pattern="">
-    <map:redirect-to uri="index.html"/>
-   </map:match>
-
-  <map:match pattern="apachestats">
-    <map:generate type="html"
-                  src="http://www.apache.org/~rubys/stats/xml.apache.org/">
-      <map:parameter name="xpath"
-                     value="/html/body//a[contains(@href,'.xml')]"/>
-    </map:generate>
-    <map:serialize type="xml"/>
-  </map:match>
+  
+  <!-- Pipeline that manages the internal URI space
+       For the external URI space manager, see the next pipeline. -->
+  <map:pipeline internal-only="true">
 
   <map:match pattern="**tab-**.xml">
     <map:generate src="content/xdocs/tabs.xml"/>
@@ -367,6 +333,59 @@
     </map:call>
    </map:match>
 
+  </map:pipeline>
+
+
+  <map:pipeline internal-only="false">
+
+<!-- ========================== FOP Additions ========================== -->
+
+   <map:match pattern="*/svg/*.svg">
+    <map:read src="content/xdocs/{1}/svg/{2}.svg" mime-type="image/svg"/>
+   </map:match>
+   <map:match pattern="*/svg/*.png">
+    <map:generate src="content/xdocs/{1}/svg/{2}.svg"/>
+    <map:serialize type="svg2png"/>
+   </map:match>
+   <map:match pattern="*/svg/*.pdf">
+    <map:generate src="content/xdocs/{1}/svg/{2}.svg"/>
+    <map:serialize type="svg2pdf"/>
+   </map:match>
+
+   <map:match pattern="*/fo/*.fo">
+    <map:read src="content/xdocs/{1}/fo/{2}.fo" mime-type="text/xml"/>
+   </map:match>
+   <map:match pattern="*/fo/*.fo.pdf">
+    <map:generate src="content/xdocs/{1}/fo/{2}.fo"/>
+    <map:serialize type="fo2pdf"/>
+   </map:match>
+
+<!-- ======================= End FOP Additions ======================== -->
+
+   <map:match pattern="">
+    <map:redirect-to uri="/{context:context}/index.html"/>
+   </map:match>
+
+   <map:match pattern="**">
+   
+    <!-- if the file is present verbatim as content, give that to the user... -->
+    <map:act type="resource-exists">
+     <map:parameter name="url" value="content/{1}"/>
+     <map:read src="content/{../1}"/>
+    </map:act>
+   
+   <!-- ... otherwise try to generate it using these rules.  -->
+  
+  <map:match pattern="apachestats">
+    <map:generate type="html"
+                  src="http://www.apache.org/~rubys/stats/xml.apache.org/">
+      <map:parameter name="xpath"
+                     value="/html/body//a[contains(@href,'.xml')]"/>
+    </map:generate>
+    <map:serialize type="xml"/>
+  </map:match>
+
+     
    <map:match pattern="*.html">
     <map:aggregate element="site">
      <map:part src="cocoon:/book-{1}.xml"/>
@@ -537,6 +556,8 @@
     </map:call>
    </map:match>
 
+   </map:match>
+   
   </map:pipeline>
  </map:pipelines>
 
