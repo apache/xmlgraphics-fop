@@ -86,6 +86,7 @@ public class Area extends AreaNode implements Cloneable  {
     /** Geometrical area embraced by the content rectangle of this area */
     protected ContentRectangle content = null;
     /**
+     * Gets the <i>content-rectangle</i> of this 
      * @return the content
      */
     protected ContentRectangle getContent() {
@@ -114,7 +115,7 @@ public class Area extends AreaNode implements Cloneable  {
 		this.translation = translation;
 	}
     /** The writing-mode of the generating FO */
-    protected int contentWritingMode = 0;
+    protected int contentWritingMode;
     /** True if the <code>writing-mode</code> of the content area is
      * horizontal */
     protected boolean contentIsHorizontal = true;
@@ -122,11 +123,11 @@ public class Area extends AreaNode implements Cloneable  {
      * left-to-right */
     protected boolean contentLeftToRight = true;
     /** The rotation trait for the content rectangle of this area */
-    protected int contentRotation = 0;
+    protected int contentRotation;
     /** The writing-mode of the parent of the generating FO.  This may
      * differ from the writing mode of the generating FO if this is a
      * <code>reference-area</code>. */
-    protected int frameWritingMode = 0;
+    protected int frameWritingMode;
     /** True if the <code>writing-mode</code> of the frames of this area is
      * horizontal.  May differ from contentIsHorizontal if this is a
      * <code>reference-area</code>. */
@@ -136,8 +137,11 @@ public class Area extends AreaNode implements Cloneable  {
      * <code>reference-area</code>. */
     protected boolean frameLeftToRight = true;
     /** The rotation trait for the framing rectangles of this area */
-    protected int frameRotation = 0;
-
+    protected int frameRotation;
+    /** Rotation from content to frame.  One of 0, 90, 180, 270. */
+    protected int rotateToFrame;
+    /** Rotation from frame to content. One of 0, 90, 180, 270. */
+    protected int rotateToContent;
 
     protected void setup() {
         try {
@@ -153,6 +157,17 @@ public class Area extends AreaNode implements Cloneable  {
                 ((FONode)generatedBy.getParent()).getRefOrientation();
         } catch (PropertyException e) {
             throw new RuntimeException(e.getMessage());
+        }
+        rotateToFrame = frameRotation - contentRotation;
+        if (rotateToFrame == 0) {
+            rotateToContent = 0;
+        } else {
+            if (rotateToFrame < 0) {
+                rotateToContent = -rotateToFrame;
+                rotateToFrame +=360;
+            } else {
+                rotateToContent = 360 - rotateToFrame;
+            }
         }
         content = new ContentRectangle(this);
         padding = content.getPadding();
@@ -239,11 +254,24 @@ public class Area extends AreaNode implements Cloneable  {
         }
     }
 
+    /**
+     * A nested class of Area, representing the geometry of one of the frames
+     * associated with this area.  These include the content-rectangle,
+     * border-rectangle, padding-rectangle, spaces-rectangle and
+     * allocation-rectangle.
+     * @author pbw
+     * @version $Revision$ $Name$
+     */
     public class AreaGeometry extends Rectangle2D.Double {
         protected int writingMode;
         protected boolean isLeftToRight;
         protected boolean isHorizontal;
 
+        /**
+         * Creates an empty rectangle, with height and width of 0.0 at an
+         * offset of 0.0,0.0, with the given writing-mode
+         * @param writingMode
+         */
         public AreaGeometry(int writingMode) {
             super();
             this.writingMode = writingMode;
@@ -255,10 +283,31 @@ public class Area extends AreaNode implements Cloneable  {
             }
         }
 
+        /**
+         * Creates a rectangle with an origin determined by the parameters
+         * <code>ipOrigin</code> and <code>bpOrigin</code>, and with width and
+         * height determined by the parameters <code>ipDim</code> and
+         * <code>bpDim</code>.  The translation of the relative offsets and
+         * dimensions into absolute directions is determined by the parameter
+         * <code>writingMode</code>.
+         * @param writingMode the <i>writing-mode</i> of the instantiated
+         * rectangular area, expressed as an enumerated constant from the
+         * set given in <code>WritingMode</code>.
+         * @param ipOrigin the origin point along the
+         * <i>inline-progression-direction</i> axis
+         * @param bpOrigin the origin point along the
+         * <i>block-progression-direction</i> axis
+         * @param ipDim the size of the rectangular area along the
+         * <i>inline-progression-direction</i> axis
+         * @param bpDim the size of the rectangular area along the
+         * i>block-progression-direction</i> axis
+         */
         public AreaGeometry(int writingMode,
                 double ipOrigin, double bpOrigin, double ipDim, double bpDim) {
             this(writingMode);
             try {
+                // TODO move rectRelToAbs from WritingMode to a more suitable
+                // place
                 setRect(WritingMode.rectRelToAbs(
                         ipOrigin, bpOrigin, ipDim, bpDim, writingMode));
             } catch (PropertyException e) {
@@ -266,11 +315,36 @@ public class Area extends AreaNode implements Cloneable  {
             }
         }
 
+        /**
+         * Creates a rectangle whose dimensions and offset are expressed in the
+         * parameter <code>geometry</code>.  The rectangular area has the
+         * given <i>writing-mode</i>
+         * @param writingMode the <i>writing-mode</i> of the instantiated
+         * rectangular area, expressed as an enumerated constant from the
+         * set given in <code>WritingMode</code>.
+         * @param geometry the dimensions and offset of the geometrical area
+         * represented by <code>this</code>.
+         */
         public AreaGeometry(int writingMode, Rectangle2D geometry) {
             this(writingMode);
             setRect(geometry);
         }
 
+        /**
+         * Overrides <code>Rectangle2D</code> method to set the dimensions
+         * and offset of the rectangular area.  The dimensions and offset are
+         * expressed in relative terms, which must be translated into absolute
+         * terms according to the <i>writing-mode</i> of <code>this</code>.
+         * @param ipOrigin the origin point along the
+         * <i>inline-progression-direction</i> axis
+         * @param bpOrigin the origin point along the
+         * <i>block-progression-direction</i> axis
+         * @param ipDim the size of the rectangular area along the
+         * <i>inline-progression-direction</i> axis
+         * @param bpDim the size of the rectangular area along the
+         * i>block-progression-direction</i> axis
+         * @see java.awt.geom.Rectangle2D#setRect(double, double, double, double)
+         */
         public void setRect(
                 double ipOrigin, double bpOrigin, double ipDim, double bpDim) {
             // Now work out what belongs where
@@ -282,18 +356,88 @@ public class Area extends AreaNode implements Cloneable  {
             }
         }
 
+        /**
+         * Gets the writing-mode of this rectangular area, expressed as an
+         * enumerated constant from <code>WritingMode</code>
+         * @return the emnumerated writing-mode
+         */
         public int getWritingMode() {
             return writingMode;
         }
 
+        /**
+         * Gets the writing-mode of the <i>content-rectangle</i> of
+         * <code>this</code> <code>Area</code>
+         * @return the writing-mode of the <i>content-rectangle</i>
+         */
         public int getContentWritingMode() {
             return contentWritingMode;
         }
 
+        /**
+         * Gets the writing-mode of the framing rectangles of the content of
+         * <code>this</code> <code>Area</code>
+         * @return the writing-mode of the framing rectangles
+         */
         public int getFrameWritingMode() {
             return frameWritingMode;
         }
 
+        /**
+         * Gets the reference-orientation applying to the contents of this
+         * area, expressed as a normalized angle; one of 0, 90, 180 or 270.
+         * @return the reference-orientation
+         */
+        public int getContentRotation() {
+            return contentRotation;
+        }
+
+        public int getRotationToFrame() {
+            return rotateToFrame;
+        }
+
+        /**
+         * Gets the reference-oroientation applying to the parent
+         * <code>FONode</code> of the generating <code>FONode</code>.  This
+         * rotation applied to frames surrounding the <i>content-rectangle</i>. 
+         * @return the parent's reference-orientation
+         */
+        public int getFrameRotation() {
+            return frameRotation;
+        }
+
+        public int getRotationToContent() {
+            return rotateToContent;
+        }
+
+        /**
+         * Gets the dimensions of this <code>AreaGeometry</code> as seen
+         * from any surrounding frame within this <code>Area</code>.  For all
+         * <code>AreaGeometry</code>s except <code>ContentRectangle</code>s,
+         * the relative dimensions are the same for frame and contents; i.e.
+         * height is height and width is width.
+         * @return the adjusted dimensions
+         */
+        protected DimensionDbl getFrameRelativeDimensions() {
+            return new DimensionDbl(getWidth(), getHeight());
+        }
+
+        /**
+         * Gets the width of this <code>AreaGeometry</code> as seen from any
+         * enclosing frame
+         * @return the frame-view width
+         */
+        protected double getFrameRelativeWidth() {
+            return getFrameRelativeDimensions().getWidth();
+        }
+        /**
+         * Gets the height of this <code>AreaGeometry</code> as seen from any
+         * enclosing frame
+         * @return the frame-view height
+         */
+        protected double getFrameRelativeHeight() {
+            return getFrameRelativeDimensions().getHeight();
+        }
         /**
          * Gets the <code>block-progression-dimension</code> of the area
          * geometry in millipoints.  This value is taken from the appropriate
@@ -316,8 +460,8 @@ public class Area extends AreaNode implements Cloneable  {
                 // TODO - check this.  Should the rectangle just be rotated as
                 // required?  This is incompatible with transform in space
                 // requests at block reference-areas.  OK if the transform is
-                // only for area rotations.  This depnds on how Java handles the
-                // layout of text in horizontal locales.
+                // only for area rotations.  This depends on how Java handles
+                // the layout of text in horizontal locales.
                 if (isHorizontal) {
                     return getHeight();
                 } else {
