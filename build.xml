@@ -484,10 +484,15 @@ list of possible build targets.
              targetDir="${user.hyphdest.dir}"/>
   </target>
 
+  <target name="uptodate-jar" depends="compile, hyphenation">
+    <uptodate property="jar.uptodate" targetfile="${build.dir}/${name}.jar">
+      <srcfiles dir= "${build.dest}"/>
+    </uptodate>
+  </target>
   <!-- =================================================================== -->
   <!-- Creates the class package                                           -->
   <!-- =================================================================== -->
-  <target name="package" depends="compile,hyphenation" description="Generates the jar files">
+  <target name="package" depends="compile,hyphenation,uptodate-jar" description="Generates the jar files" unless="jar.uptodate">
     <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
 
     <tstamp>
