@@ -63,17 +63,30 @@ package org.apache.fop.apps;
 
 import org.xml.sax.XMLReader;
 
+
+
 import java.awt.print.PrinterJob;
+
 import java.awt.print.PrinterException;
+
 import java.io.OutputStream;
+
 import java.io.IOException;
+
 import java.util.ArrayList;
 
+
+
 import org.apache.fop.render.awt.AWTRenderer;
+
 import org.apache.fop.layout.Page;
 
+
+
 // Avalon
+
 import org.apache.avalon.framework.logger.ConsoleLogger;
+
 
 /**
  * This class prints a xsl-fo dokument without interaction.
@@ -113,6 +126,7 @@ public class PrintStarter extends CommandLineStarter {
         PrintRenderer renderer = new PrintRenderer(pj);
         int copies = getIntProperty("copies", 1);
         pj.setCopies(copies);
+        pj.setJobName("FOP Document");
 
         //renderer.setCopies(copies);
 
