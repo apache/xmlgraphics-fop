@@ -278,11 +278,13 @@ into a raster graphic are not drawn properly in PDF. The image is opaque.
     </section>
     <section id="resolution">
       <title>Graphics Resolution</title>
-      <p>This is an important issue when creating output for printing.
-The dpi is used to convert measurements into points. For example 1in
-= 2.54cm = 72 points. It is also used when determining the size of
-images and the rendering of certain graphics in the output. Currently
-FOP uses a value of 72dpi.</p>
+      <p>Some bitmapped image file formats store a dots-per-inch (dpi) or other resolution value. Since PDF and most output formats do not have a concept of resolution, but only of absolute image units (i.e. pixels) FOP ignores the resolution values as well. Instead, FOP uses the dimensions of the image as specified in the fo:external-graphic element to render the image:</p>
+      <ul>
+        <li>If no dimensions are given, FOP uses a default value of 72 dpi to compute the graphic's dimensions. For example, suppose a graphic 300 pixels wide and 400 pixels high. FOP will render the graphic at 4.167 inches wide, 5.555 inches high, with an apparent resolution of 72 dpi.</li>
+        <li>If only one dimension is given, FOP by default uses the same aspect ratio to compute the other dimension (to avoid the appearance of stretching). For example, suppose a graphic 300 pixels wide and 400 pixels high, for which content-width = ".5in". FOP will compute the content-height = .667 inches, and will render the graphic at that size, with an apparent resolution of 600 dpi.</li>
+        <li>If both dimensions are given, FOP simply renders the image in that space. For example, suppose a graphic 300 pixels wide and 400 pixels high, for which content-width = "3in" and content-height = "4in". FOP will render the graphic at that size, with an apparent resolution of 100 dpi.</li>
+      </ul>
+      <note>The explanation above describes only the basic default behavior. There are other attributes of the fo:external-graphic element that can affect the behavior described above.</note>
     </section>
   </body>
 </document>
