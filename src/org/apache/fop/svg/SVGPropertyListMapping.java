@@ -106,13 +106,13 @@ public class SVGPropertyListMapping implements PropertyListMapping {
 
 	propertyTable.put("id",Id.maker());			// attribute for objects
 
-//	builder.addPropertyList(uri, propertyTable);
+	builder.addPropertyList(uri, propertyTable);
 	propertyTable = new Hashtable();
 		propertyTable.put("x",SVGLengthListProperty.maker());
 		propertyTable.put("y",SVGLengthListProperty.maker());
 		propertyTable.put("dx",SVGLengthListProperty.maker());
 		propertyTable.put("dy",SVGLengthListProperty.maker());
-//		builder.addElementPropertyList(uri, "tref", propertyTable);
-//		builder.addElementPropertyList(uri, "tspan", propertyTable);
+		builder.addElementPropertyList(uri, "tref", propertyTable);
+		builder.addElementPropertyList(uri, "tspan", propertyTable);
     }
 }
