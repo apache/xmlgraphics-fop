@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xlink="http://www.w3.org/1999/xlink">
   <fo:layout-master-set>
     <fo:simple-page-master
   margin-right="1.5cm"
@@ -79,7 +79,7 @@ This inline svg document (
      <image xlink:href="file:boxes.svg" x="10" y="10" width="20" height="20"/>
   </g>
   <g>
-    <use xlink:href="file:ref.svg#FOP" transform="scale(1.5)" x="18" y="40"/>
+    <use xlink:href="file:ref.svg#FOP" transform="scale(1.5)" x="12" y="25"/>
   </g>
 </svg>
 </fo:instream-foreign-object>
