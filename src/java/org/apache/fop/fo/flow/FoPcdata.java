@@ -20,8 +20,12 @@
 package org.apache.fop.fo.flow;
 
 // FOP
+import java.awt.Font;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Map;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
@@ -31,6 +35,8 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fonts.FontException;
 import org.apache.fop.render.FontData;
 import org.apache.fop.xml.XmlEvent;
 
@@ -134,7 +140,7 @@ public class FoPcdata extends FOPageSeqNode {
         super(foTree, FObjectNames.PCDATA, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         characters = event.getChars();
-        fontData = foTree.getFontData();
+
         makeSparsePropsSet();
     }
 
@@ -153,9 +159,25 @@ public class FoPcdata extends FOPageSeqNode {
      * Generates a TextMeasurer from the PCDATA text.  The font and text
      * attributes of the text are applied.
      */
-    private void processText() {
-        // Get the font
-        
+    private void processText() throws PropertyException, FontException {
+        // Get the font, size, style and weight attributes
+        Map attributes = getFontAttributes();
+        Font font = getFopFont(attributes);
+        // Add the text decorations
+        // TODO separate color support for text decorations
+        if (decorations.underlined()) {
+            attributes.put(TextAttribute.UNDERLINE,
+                    TextAttribute.UNDERLINE_LOW_ONE_PIXEL);
+        }
+        if (decorations.overlined()) {
+            // Not supported yet
+        }
+        if (decorations.struckthrough()) {
+            attributes.put(TextAttribute.STRIKETHROUGH,
+                    TextAttribute.STRIKETHROUGH_ON);
+        }
+        AttributedString attText =
+            new AttributedString(characters, attributes);
     }
 
 }
