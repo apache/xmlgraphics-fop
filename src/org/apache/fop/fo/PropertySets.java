@@ -10,10 +10,16 @@
 
 package org.apache.fop.fo;
 
+import java.lang.CloneNotSupportedException;
+
 import java.util.Set;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Collections;
 
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.PropertyValue;
+import org.apache.fop.fo.expr.PropertyValueList;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datatypes.Ints;
@@ -576,8 +582,7 @@ public class PropertySets {
      * Shorthand properties.  Where properties interact, they are listed
      * in increasing precision.
      */
-    public static final ROIntArray shorthands =
-        new ROIntArray(new int[] {
+    private static final int[] shorthands = {
             PropNames.BACKGROUND
             ,PropNames.BACKGROUND_POSITION
             ,PropNames.BORDER
@@ -602,7 +607,26 @@ public class PropertySets {
             ,PropNames.VERTICAL_ALIGN
             ,PropNames.WHITE_SPACE
             ,PropNames.XML_LANG
-        });
+        };
+
+    /**
+     * Map property index to shorthand array index
+     */
+    private static final HashMap shorthandMap;
+    static {
+        shorthandMap = new HashMap(shorthands.length);
+        for (int i = 0; i < shorthands.length; i++) {
+            shorthandMap.put
+                    ((Object)(Ints.consts.get(shorthands[i])), 
+                     (Object)(Ints.consts.get(i)));
+        }
+    }
+
+    /**
+     * RO Shorthand properties.
+     */
+    public static final ROIntArray roShorthands =
+        new ROIntArray(shorthands);
 
     /**
      * Array of <i>ROIntArray</i> <b>in same order as <i>shorthands</></b>
@@ -610,7 +634,7 @@ public class PropertySets {
      * <p><b>TODO:</b> Full paranoia mode requires that this array
      * be expressed in a new data type <i>ROIntROArray</i>.
      */
-    public static final ROIntArray[] shorthandExpansions = {
+    private static final ROIntArray[] shorthandExpansions = {
         backgroundExpansion
         ,backgroundPositionExpansion
         ,borderExpansion
@@ -636,6 +660,50 @@ public class PropertySets {
         ,whiteSpaceExpansion
         ,xmlLangExpansion
     };
+
+    /**
+     * Expand the shorthand property associated with the
+     * <tt>PropertyValue</tt> argument by copying the given value for each
+     * property in the expansion.  The <em>property</em> field of each
+     * <tt>PropertyValue</tt> will be set to one of the proeprties in the
+     * shorthand expansion.
+     * @param value a <tt>propertyValue</tt> whose <em>property</em> field
+     *  is assumed to be set to a shorthand property.
+     * @return <tt>PropertyValueList</tt> containing a list of
+     *  <tt>PropertyValue</tt>s, one for each property in the expansion of
+     *  the shorthand property.
+     * @exception PropertyException
+     */
+    public static PropertyValueList expandAndCopySHand(PropertyValue value)
+        throws PropertyException
+    {
+        int property;
+        // Is the property of the argument a shorthand?
+        Integer sHIndex = (Integer)shorthandMap.get
+                (Ints.consts.get(value.getProperty()));
+        if (sHIndex == null)
+            throw new PropertyException
+                    ("" + value.getProperty() + " not a shorthand property");
+        property = sHIndex.intValue();
+        String sHPropertyName = PropNames.getPropertyName(property);
+        ROIntArray expansion = shorthandExpansions[property];
+        PropertyValueList list = new PropertyValueList(property);
+        for (int i = 0; i < expansion.length; i++) {
+            int expandedProp = expansion.get(i);
+            PropertyValue expandedPropValue;
+
+            try {
+                expandedPropValue = (PropertyValue)(value.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new PropertyException
+                        (sHPropertyName + ": " + e.getMessage());
+            }
+
+            expandedPropValue.setProperty(expandedProp);
+            list.add(expandedPropValue);
+        }
+        return list;
+    }
 
     private PropertySets (){}
 
