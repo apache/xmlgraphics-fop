@@ -76,6 +76,14 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action dev="JM" type="update" context="code"
+            due-to="Stephen Wolke" due-to-email="smwolke@geistig.com">
+      Added a RunLengthEncode filter for the PostScript renderer.
+    </action>
+    <action dev="JM" type="update" context="code">
+      Replaced the PostScript filters with the refactored ones from the maintenance 
+      branch.
+    </action>
     <action dev="JM" type="update" context="code">
       First batch of changes in preparation for adoption of Avalon patterns. 
       Only changes on logging for now. Mostly usage of LogEnabled contract interface.
