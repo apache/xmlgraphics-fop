@@ -20,6 +20,16 @@ loaded to create the reference output.
     </p>
   </s2>
 
+  <s2 title="W3C TestSuite">
+    <p>
+The testing is set up so that you can download the testsuite from
+<jump href="http://www.w3.org/Style/XSL/TestSuite/">http://www.w3.org/Style/XSL/TestSuite/</jump>,
+unzip the file into the base directory of FOP.
+Then you can uncomment the lines in the build.xml file in the test target and it
+will run through all the tests in the testsuite distribution.
+    </p>
+  </s2>
+
   <s2 title="Writing a Test">
     <p>
 A test belongs to one of a few catagories. A basic test should excercise one
