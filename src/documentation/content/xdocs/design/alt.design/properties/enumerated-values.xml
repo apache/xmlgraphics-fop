@@ -15,8 +15,8 @@
         must provide a way of translating between the tokens and the
         integers, and <em>vice versa</em>.  Depending on the number of
         tokens in an enumeration set, the mapping from token to
-        integer is maintained in an array or a <code >HashMap</code >.
-        The switch-over point from array to <code >HashMap</code > was
+        integer is maintained in an array or a <code>HashMap</code>.
+        The switch-over point from array to <code>HashMap</code> was
         determined by some highly implementation-dependent testing to
         be in the region of four to five elements.
       </p>
@@ -33,34 +33,34 @@
 
         <p>
           <fork href= "Direction.html" ><code
-          >org.apache.fop.fo.properties.Direction</code ></fork > is an
+          >org.apache.fop.fo.properties.Direction</code></fork > is an
           example of a class which supports an enumerated value with a
           small set of tokens.  The <fork href=
-          "Direction.html#dataTypes" ><code >dataTypes</code ></fork >
+          "Direction.html#dataTypes" ><code>dataTypes</code></fork >
           field contains the <fork href= "Property.html#NOTYPE" ><code
-          >ENUM</code > data type constant, defined in <code
-          >Property</code ></fork >.  The enumeration integer constants
-          are defined as <code >public static final int</code >
-          values, <fork href= "Direction.html#LTR" ><code >LTR</code >
-          and <code >RTL</code ></fork >.  Associating enumeration
+          >ENUM</code> data type constant, defined in <code
+          >Property</code></fork >.  The enumeration integer constants
+          are defined as <code>public static final int</code>
+          values, <fork href= "Direction.html#LTR" ><code>LTR</code>
+          and <code>RTL</code></fork >.  Associating enumeration
           tokens with these integer constants occurs in the array
-          <fork href= "Direction.html#rwEnums" ><code >String[]
-          rwEnums</code ></fork >, which is initialized with the token
+          <fork href= "Direction.html#rwEnums" ><code>String[]
+          rwEnums</code></fork >, which is initialized with the token
           strings.  By convention, zero is never used to represent a
           valid enumeration constant, anywhere in this code.  It is,
           of course, critical that synchronization between <code
-          >rwEnums</code > and the enumeration constants be
+          >rwEnums</code> and the enumeration constants be
           maintained.`
         </p>
         <p>
           The publicly accessible mapping from enumeration token to
           enumeration constant is achieved through the method <fork
-          href= "Direction.html#getEnumIndex" ><code >int
-          getEnumIndex(String)</code ></fork >.  The corresponding
+          href= "Direction.html#getEnumIndex" ><code>int
+          getEnumIndex(String)</code></fork >.  The corresponding
           mapping from enumeration constant to enumeration token is
           achieved through the method <fork href=
-          "Direction.html#getEnumText" ><code >String
-          getEnumText(int)</code ></fork >.
+          "Direction.html#getEnumText" ><code>String
+          getEnumText(int)</code></fork >.
         </p>
         
       </section>
@@ -70,37 +70,37 @@
 
         <p>
           <fork href= "RenderingIntent.html" ><code
-          >org.apache.fop.fo.properties.RenderingIntent</code ></fork >
+          >org.apache.fop.fo.properties.RenderingIntent</code></fork >
           is an example of a class which supports an enumerated value
           with a larger set of tokens.  The <fork href=
-          "RenderingIntent.html#dataTypes" ><code >dataTypes</code
+          "RenderingIntent.html#dataTypes" ><code>dataTypes</code
           ></fork > field contains the <fork href=
-          "Property.html#NOTYPE" ><code >ENUM</code > data type
-          constant, defined in <code >Property</code ></fork >.
+          "Property.html#NOTYPE" ><code>ENUM</code> data type
+          constant, defined in <code>Property</code></fork >.
           Enumeration integer constants are defined as <fork
-          href= "RenderingIntent.html#PERCEPTUAL" ><code >public static
-          final int</code ></fork > values.  Zero is never used to
+          href= "RenderingIntent.html#PERCEPTUAL" ><code>public static
+          final int</code></fork > values.  Zero is never used to
           represent a valid enumeration constant.  The enumeration
           tokens are stored in the array <fork href=
-          "RenderingIntent.html#rwEnums" ><code >String[] rwEnums</code
+          "RenderingIntent.html#rwEnums" ><code>String[] rwEnums</code
           ></fork >, which is initialized with the token strings.
           Association of enumeration tokens with the integer constants
-          occurs in the <code >HashMap</code > <fork href=
-          "RenderingIntent.html#rwEnumHash" ><code > rwEnumHash</code
+          occurs in the <code>HashMap</code> <fork href=
+          "RenderingIntent.html#rwEnumHash" ><code> rwEnumHash</code
           ></fork >, which is initialized from the token array in a
-          <code >static {}</code > initializer.  It is, of course,
-          critical that synchronization between <code >rwEnums</code >
+          <code>static {}</code> initializer.  It is, of course,
+          critical that synchronization between <code>rwEnums</code>
           and the enumeration constants be maintained.`
         </p>
         <p>
           The publicly accessible mapping from enumeration token to
           enumeration constant is achieved through the method <fork
-          href= "RenderingIntent.html#getEnumIndex" ><code >int
-          getEnumIndex(String)</code ></fork >.  The corresponding
+          href= "RenderingIntent.html#getEnumIndex" ><code>int
+          getEnumIndex(String)</code></fork >.  The corresponding
           mapping from enumeration constant to enumeration token is
           achieved through the method <fork href=
-          "RenderingIntent.html#getEnumText" ><code >String
-          getEnumText(int)</code ></fork >.
+          "RenderingIntent.html#getEnumText" ><code>String
+          getEnumText(int)</code></fork >.
         </p>
       </section>
       <section>
@@ -113,23 +113,23 @@
           factored out to a new class, which each of the properties
           then extends.  An example of such a common super-class is
           <fork href= "BorderCommonStyle.html" ><code
-          >BorderCommonStyle</code ></fork >.  Like a property with a
+          >BorderCommonStyle</code></fork >.  Like a property with a
           normal HashMap representation of an enumerated value,
           BorderCommonStyle defines <fork href=
-          "BorderCommonStyle.html#PERCEPTUAL" ><code >public static
-          final int</code ></fork > enumeration integer constants.
+          "BorderCommonStyle.html#PERCEPTUAL" ><code>public static
+          final int</code></fork > enumeration integer constants.
           Similarly, the enumeration tokens are stored in the array
           <fork href= "BorderCommonStyle.html#rwEnums" ><code
-          >String[] rwEnums</code ></fork >, and the association of
+          >String[] rwEnums</code></fork >, and the association of
           enumeration tokens with the integer constants occurs in the
-          <code >HashMap</code > <fork href=
-          "BorderCommonStyle.html#rwEnumHash" ><code >
-          rwEnumHash</code ></fork >, initialized in a <code >static
-          {}</code > initializer.  The mapping methods <fork href=
-          "BorderCommonStyle.html#getEnumIndex" ><code >int
-          getEnumIndex(String)</code ></fork > and <fork href=
-          "BorderCommonStyle.html#getEnumText" ><code >String
-          getEnumText(int)</code ></fork > are also present.
+          <code>HashMap</code> <fork href=
+          "BorderCommonStyle.html#rwEnumHash" ><code>
+          rwEnumHash</code></fork >, initialized in a <code>static
+          {}</code> initializer.  The mapping methods <fork href=
+          "BorderCommonStyle.html#getEnumIndex" ><code>int
+          getEnumIndex(String)</code></fork > and <fork href=
+          "BorderCommonStyle.html#getEnumText" ><code>String
+          getEnumText(int)</code></fork > are also present.
         </p>
 
         <p>
@@ -138,11 +138,11 @@
           "simple-properties.html" >simple properties</link>.  These
           values are defined in the individual sub-classes of this
           class, e.g. <fork href= "BorderLeftStyle.html" ><code
-          >BorderLeftStyle</code ></fork >.  None of the above fields
-          or methods occur, and <code >BorderLeftStyle</code > is left
+          >BorderLeftStyle</code></fork >.  None of the above fields
+          or methods occur, and <code>BorderLeftStyle</code> is left
           looking like an example of a simple property.  The
           enumeration mapping methods are, however, available through
-          the super-class <code >BorderCommonStyle</code >.
+          the super-class <code>BorderCommonStyle</code>.
         </p>
 
       </section>
@@ -153,50 +153,50 @@
           In "normal" enumerated values, the token is, effectively,
           passed directly into the layout operation of the flow object
           to which the property is applied.  Some enumerated values,
-          however, generate a <code >Numeric</code > result.  Their
+          however, generate a <code>Numeric</code> result.  Their
           resolution involves mapping the token to the indicated
-          <code >Numeric</code > value.
+          <code>Numeric</code> value.
         </p>
         <p>
           An example is the <fork href= "BorderCommonWidth.html"
-          ><code >BorderCommonWidth</code ></fork > property.  This,
+          ><code>BorderCommonWidth</code></fork > property.  This,
           like the example of <link href= "#common-enum-values" ><code
-          >BorderCommonStyle</code ></link > above, also represents
+          >BorderCommonStyle</code></link > above, also represents
           common enumerated values which have been factored out to
           form a super-class for particular properties.  <code
-          >BorderCommonWidth</code >, therefore, also defines <fork
-          href= "BorderCommonWidth.html#THIN" ><code >enumeration
-          constant values</code ></fork > and an array of tokens.  In
-          this case, there is no <code >HashMap</code >, because of the
+          >BorderCommonWidth</code>, therefore, also defines <fork
+          href= "BorderCommonWidth.html#THIN" ><code>enumeration
+          constant values</code></fork > and an array of tokens.  In
+          this case, there is no <code>HashMap</code>, because of the
           limited number of tokens, but the mapping methods <fork
-          href= "BorderCommonWidth.html#getEnumIndex" ><code >int
-          getEnumIndex(String)</code ></fork > and <fork href=
-          "BorderCommonWidth.html#getEnumText" ><code >String
-          getEnumText(int)</code ></fork > are present.
+          href= "BorderCommonWidth.html#getEnumIndex" ><code>int
+          getEnumIndex(String)</code></fork > and <fork href=
+          "BorderCommonWidth.html#getEnumText" ><code>String
+          getEnumText(int)</code></fork > are present.
         </p>
 
         <p>
           The added element in this property is the array <fork href=
-          "BorderCommonWidth.html#mappedPoints" ><code >double[]
-          mappedPoints</code ></fork >.  The entries in this array
+          "BorderCommonWidth.html#mappedPoints" ><code>double[]
+          mappedPoints</code></fork >.  The entries in this array
           must by maintained in syncronization with the <fork href=
-          "BorderCommonWidth.html#rwEnums" ><code >String[]
-          rwEnums</code ></fork > array of tokens and the set of <fork
+          "BorderCommonWidth.html#rwEnums" ><code>String[]
+          rwEnums</code></fork > array of tokens and the set of <fork
           href= "BorderCommonWidth.html#THIN" >enumeration
           constants</fork >.  The mapping from token to Numeric value
           is achieved by the <fork href=
-          "BorderCommonWidth.html#getMappedLength" ><code >Numeric
-          getMappedLength(FONode, int, int)</code ></fork > method.
+          "BorderCommonWidth.html#getMappedLength" ><code>Numeric
+          getMappedLength(FONode, int, int)</code></fork > method.
         </p>
         <p>
           <fork href= "BorderLeftWidth.html" ><code
-          >BorderLeftWidth</code ></fork > extends <fork href=
-          "BorderCommonWidth.html" ><code >BorderCommonWidth</code
+          >BorderLeftWidth</code></fork > extends <fork href=
+          "BorderCommonWidth.html" ><code>BorderCommonWidth</code
           ></fork >.  It includes the basic static data, like <link
           href= "simple-properties.html" >simple properties</link>,
           and, in this case, the <fork href=
-          "BorderLeftWidth.html#getInitialValue" ><code >PropertyValue
-          getInitialValue(int)</code ></fork > method to derive the
+          "BorderLeftWidth.html#getInitialValue" ><code>PropertyValue
+          getInitialValue(int)</code></fork > method to derive the
           initial value.
         </p>
         <section>
@@ -205,13 +205,13 @@
             As usual with property values, the usual method of
             deriving a mapped numeric value is by calling the <fork
             href= "../PropertyConsts.html#getMappedNumeric" ><code
-            >Numeric getMappedNumeric(FONode, int, int)</code ></fork
+            >Numeric getMappedNumeric(FONode, int, int)</code></fork
             > method in <fork href= "../PropertyConsts.html#pconsts"
-            ><code >pconsts</code ></fork >.  All properties which
-            support a mapped numeric value must have a <code.>Numeric
-            getMappedNumeric(FONode, int)</code > method, which will
+            ><code>pconsts</code></fork >.  All properties which
+            support a mapped numeric value must have a <code>Numeric
+            getMappedNumeric(FONode, int)</code> method, which will
             be called through its singleton instance by the <code
-            >PropertyConsts</code > method.
+            >PropertyConsts</code> method.
           </p>
         </section>
       </section>
