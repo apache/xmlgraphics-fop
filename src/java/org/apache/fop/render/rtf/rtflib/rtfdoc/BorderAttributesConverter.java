@@ -27,7 +27,6 @@
 package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.render.rtf.FOPRtfAttributes;
 
@@ -112,26 +111,11 @@ public class BorderAttributesConverter {
     /**
      * Create a border control word in attributes, with border properties 
      * as specified in color, style and width.
-     * @param propList The property list to get properties from.
+     * @param border The CommonBorderPaddingBackground object.
+     * @param side The START, END, BEFORE, AFTER enum from CommonBorderPaddingBackground. 
      * @param attributes The attributes list to set the border control word.
      * @param controlWord The border control word.
-     * @param color The PR_BORDER_X_COLOR constants for the color,
-     * @param style The PR_BORDER_X_STYLE constants for the border style.
-     * @param width The PR_BORDER_X_WIDTH constants for the width.
      */
-    public static void makeBorder(PropertyList propList, 
-            RtfAttributes attributes, String controlWord,
-            int color, int style, int width) {
-        int styleEnum = propList.get(style).getEnum();
-        if (styleEnum != Constants.NONE) {
-            FOPRtfAttributes attrs = new FOPRtfAttributes();
-            attrs.set(BORDER_COLOR, propList.get(color).getColorType());
-            attrs.set(convertAttributetoRtf(styleEnum));
-            attrs.set(BORDER_WIDTH, propList.get(width).getLength());
-            attributes.set(controlWord, attrs);
-        }
-    }
-
     public static void makeBorder(CommonBorderPaddingBackground border, int side,
             RtfAttributes attributes, String controlWord) {
         int styleEnum = border.getBorderStyle(side);

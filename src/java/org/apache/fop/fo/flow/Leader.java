@@ -39,7 +39,6 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.fo.properties.PercentLength;
 import org.apache.fop.layoutmgr.LeaderLayoutManager;
 
 /**
@@ -140,20 +139,7 @@ public class Leader extends FObjMixed {
     protected void startOfNode() throws SAXParseException {
         checkId(id);
     }
-
-    /**
-     * @todo check need for each of these accessors (should be LM instead?)
-     */
-    public int getLength(Length maxlength, int dim) {
-        int length;
-        if (maxlength instanceof PercentLength) {
-            length = (int)(((PercentLength)maxlength).value() * dim);
-        } else {
-            length = maxlength.getValue();
-        }
-        return length;
-    }
-
+ 
     /**
      * Return the Common Font Properties.
      */
