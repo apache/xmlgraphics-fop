@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+	<fo:layout-master-set>
+	    <fo:simple-page-master master-name="simplePM"
+	                  page-height="25cm" 
+	                  page-width="20cm"
+	                  margin-top="1cm" 
+	                  margin-bottom="1cm" 
+	                  margin-left="1.5cm" 
+	                  margin-right="1.5cm">
+	      <fo:region-before extent="2.5cm"/>
+	      <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
+	      <fo:region-after extent="2.5cm"/>
+	    </fo:simple-page-master>
+	</fo:layout-master-set>
+
+	<fo:page-sequence master-name="simplePM">
+	    <fo:flow flow-name="xsl-region-body">
+			<fo:block>
+				This is a simple fo block.
+			</fo:block>
+			<fo:block break-before="page">
+				This is a simple fo block on a new page due to page-break using break-before="page".
+			</fo:block>
+		</fo:flow>
+	</fo:page-sequence>
+</fo:root>

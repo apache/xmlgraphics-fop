@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+	<fo:layout-master-set>
+	    <fo:simple-page-master master-name="simplePM"
+	                  page-height="25cm" 
+	                  page-width="20cm"
+	                  margin-top="1cm" 
+	                  margin-bottom="1cm" 
+	                  margin-left="1.5cm" 
+	                  margin-right="1.5cm">
+	      <fo:region-before extent="2.5cm"/>
+	      <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
+	      <fo:region-after extent="2.5cm"/>
+	    </fo:simple-page-master>
+	</fo:layout-master-set>
+
+	<fo:page-sequence master-name="simplePM">
+	    <fo:flow flow-name="xsl-region-body">
+			<fo:block text-align="start" space-before.optimum="6pt" text-indent="1in"> 
+			  This text is formatted into a left-justified paragraph.
+			  The first line has an indent of 1 inch from the left.
+			
+			  This text is formatted into a left-justified paragraph.
+			  The first line has an indent of 1 inch from the left.
+			</fo:block>
+
+			<fo:block space-before.optimum="6pt" text-indent="40%"> 
+			  This text is formatted into a left-justified paragraph.
+			  The first line has an indent of 30% from the left.
+			
+			  This text is formatted into a left-justified paragraph.
+			  The first line has an indent of 30% inch from the left.
+			</fo:block>
+		</fo:flow>
+	</fo:page-sequence>
+</fo:root>
