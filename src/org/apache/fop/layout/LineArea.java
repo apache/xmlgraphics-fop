@@ -381,8 +381,8 @@ public class LineArea extends Area {
 	pendingAreas = new Vector();
     }
 
-    public void align(int type) {
-	int padding;
+    public int align(int type) {
+	int padding = 0;
 	
 	switch (type) {
 	case TextAlign.START: // left
@@ -424,6 +424,7 @@ public class LineArea extends Area {
 		space2.setSize(i + padding);
 	    }
 	}
+        return padding;
     }
     
     public void changeColor(float red, float green, float blue) {
@@ -479,4 +480,5 @@ public class LineArea extends Area {
     public void setPendingWidth(int width) {
 	pendingWidth = width;
     }
+
 }
