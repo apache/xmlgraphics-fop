@@ -92,8 +92,8 @@ public class PDFOutline extends PDFObject {
      */
     public void addOutline(PDFOutline outline) {
         if (subentries.size() > 0) {
-            outline.prev =
-                (PDFOutline)subentries.get(subentries.size() - 1);
+            outline.prev
+                = (PDFOutline)subentries.get(subentries.size() - 1);
             outline.prev.next = outline;
         } else {
             first = outline;
@@ -163,7 +163,7 @@ public class PDFOutline extends PDFObject {
             }
             bout.write(encode(">> endobj\n"));
         } catch (IOException ioe) {
-            getDocumentSafely().getLogger().error("Ignored I/O exception", ioe);
+            log.error("Ignored I/O exception", ioe);
         }
         return bout.toByteArray();
     }

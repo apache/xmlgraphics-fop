@@ -57,8 +57,8 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             this.encryption = encryption;
             this.number  = number;
             this.generation = generation;
-            //System.out.println("new encryption filter for number "
-            //    +number+" and generation "+generation);
+            log.debug("new encryption filter for number "
+                + number + " and generation " + generation);
         }
 
         /** 
@@ -108,11 +108,11 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
 
     }
 
-    private static final char [] PAD = 
-                               { 0x28, 0xBF, 0x4E, 0x5E, 0x4E, 0x75, 0x8A, 0x41,
-                                 0x64, 0x00, 0x4E, 0x56, 0xFF, 0xFA, 0x01, 0x08, 
-                                 0x2E, 0x2E, 0x00, 0xB6, 0xD0, 0x68, 0x3E, 0x80, 
-                                 0x2F, 0x0C, 0xA9, 0xFE, 0x64, 0x53, 0x69, 0x7A };
+    private static final char [] PAD 
+                             = {0x28, 0xBF, 0x4E, 0x5E, 0x4E, 0x75, 0x8A, 0x41,
+                                0x64, 0x00, 0x4E, 0x56, 0xFF, 0xFA, 0x01, 0x08, 
+                                0x2E, 0x2E, 0x00, 0xB6, 0xD0, 0x68, 0x3E, 0x80, 
+                                0x2F, 0x0C, 0xA9, 0xFE, 0x64, 0x53, 0x69, 0x7A};
                                   
     /** Value of PRINT permission */                                  
     public static final int PERMISSION_PRINT            =  4;
@@ -357,7 +357,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         if (this.encryptionKey == null) {
             throw new IllegalStateException("PDF Encryption has not been initialized");
         }
-        //getDocument().getLogger().debug("encrypting with for "+number+" "+generation);
+        log.debug("encrypting with for " + number + " " + generation);
 
         byte[] hash = calcHash(number, generation);        
         return encryptWithHash(data, hash, hash.length);

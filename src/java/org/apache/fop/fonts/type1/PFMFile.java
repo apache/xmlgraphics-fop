@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 // FOP
@@ -65,24 +66,7 @@ public class PFMFile {
     /**
      * logging instance
      */
-    protected Log logger = null;
-
-
-    /**
-     * Sets the Commons-Logging instance for this class
-     * @param logger The Commons-Logging instance
-     */
-    public void setLogger(Log logger) {
-        this.logger = logger;
-    }
-
-    /**
-     * Returns the Commons-Logging instance for this class
-     * @return  The Commons-Logging instance
-     */
-    protected Log getLogger() {
-        return logger;
-    }
+    protected Log log = LogFactory.getLog(PFMFile.class);
 
     /**
      * Parses a PFM file
@@ -97,7 +81,7 @@ public class PFMFile {
         /*final int version =*/ in.readShort();
         final long filesize = in.readInt();
         if (filesize != buf.length) {
-            logger.warn("Effective file size is not the same as indicated in the header.");
+            log.warn("Effective file size is not the same as indicated in the header.");
         }
         bufin.reset();
 
@@ -142,7 +126,7 @@ public class PFMFile {
     private void loadExtension(PFMInputStream inStream) throws IOException {
         final int size = inStream.readShort();
         if (size != 30) {
-            logger.warn("Size of extension block was expected to be "
+            log.warn("Size of extension block was expected to be "
                 + "30 bytes, but was " + size + " bytes.");
         }
         final long extMetricsOffset = inStream.readInt();
@@ -184,7 +168,7 @@ public class PFMFile {
         int i = inStream.readShort();
 
 
-        logger.info(i + " kerning pairs");
+        log.info(i + " kerning pairs");
         while (i > 0) {
             int g1 = (int)inStream.readByte();
             i--;
@@ -195,12 +179,12 @@ public class PFMFile {
             if (adj > 0x8000) {
                 adj = -(0x10000 - adj);
             }
-            logger.debug("Char no: (" + g1 + ", " + g2 + ") kern: " + adj);
+            log.debug("Char no: (" + g1 + ", " + g2 + ") kern: " + adj);
 
-            if (logger.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 final String glyph1 = Glyphs.TEX8R_GLYPH_NAMES[g1];
                 final String glyph2 = Glyphs.TEX8R_GLYPH_NAMES[g2];
-                logger.debug("glyphs: " + glyph1 + ", " + glyph2);
+                log.debug("glyphs: " + glyph1 + ", " + glyph2);
             }
 
             Map adjTab = (Map)kerningTab.get(new Integer(g1));
@@ -220,7 +204,7 @@ public class PFMFile {
     private void loadExtMetrics(PFMInputStream inStream) throws IOException {
         final int size = inStream.readShort();
         if (size != 52) {
-            logger.warn("Size of extension block was expected to be "
+            log.warn("Size of extension block was expected to be "
                 + "52 bytes, but was " + size + " bytes.");
         }
         inStream.skip(12); //Skip etmPointSize, etmOrientation, etmMasterHeight,

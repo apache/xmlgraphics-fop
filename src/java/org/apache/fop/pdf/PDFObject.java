@@ -22,6 +22,9 @@ package org.apache.fop.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * generic PDF object.
  *
@@ -30,6 +33,9 @@ import java.io.OutputStream;
  * be 0 in new documents).
  */
 public abstract class PDFObject {
+
+    /** logger for all PDFObjects (and descendants) */
+    protected static Log log = LogFactory.getLog(PDFObject.class.getPackage().getName());
 
     /**
      * the object's number
@@ -60,7 +66,6 @@ public abstract class PDFObject {
     public int getObjectNumber() {
         if (this.objnum == 0) {
             throw new IllegalStateException("Object has no number assigned: " + this.toString());
-            //System.out.println("Object has no number assigned: " + this.toString());
         }
         return this.objnum;
     }
@@ -80,7 +85,7 @@ public abstract class PDFObject {
      */
     public void setObjectNumber(int objnum) {
         this.objnum = objnum;
-        //System.out.println("Assigning "+this+" object number "+objnum);
+        log.trace("Assigning " + this + " object number " + objnum);
     }
 
     /**

@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /* image support modified from work of BoBoGi */
 /* font support based on work by Takayuki Takeuchi */
@@ -67,7 +68,7 @@ public class PDFDocument {
      */
     public static final String ENCODING = "ISO-8859-1";
 
-    private Log logger;
+    private Log log = LogFactory.getLog("org.apache.fop.pdf");
 
     /**
      * the current character position
@@ -234,14 +235,6 @@ public class PDFDocument {
     }
 
     /**
-     * Sets the Commons-Logging instance for this class
-     * @param logger The Commons-Logging instance
-     */
-    public void setLogger(Log logger) {
-        this.logger = logger;
-    }
-
-    /**
      * Returns the factory for PDF objects.
      * @return PDFFactory the factory
      */
@@ -257,17 +250,6 @@ public class PDFDocument {
      */
     public boolean isEncodingOnTheFly() {
         return this.encodingOnTheFly;
-    }
-
-    /**
-     * Helper method to allow sub-classes to aquire logger.
-     *
-     * <p>There is no performance penalty as this is a final method
-     * and will be inlined by the JVM.</p>
-     * @return the Logger
-     */
-    protected final Log getLogger() {
-        return this.logger;
     }
 
     /**
@@ -485,7 +467,7 @@ public class PDFDocument {
             /**@todo this cast is ugly. PDFObject should be transformed to an interface. */
             addTrailerObject((PDFObject)this.encryption);
         } else {
-            getLogger().warn(
+            log.warn(
                 "PDF encryption is unavailable. PDF will be "
                     + "generated without encryption.");
         }

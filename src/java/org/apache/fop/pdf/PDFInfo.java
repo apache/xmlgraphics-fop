@@ -153,7 +153,7 @@ public class PDFInfo extends PDFObject {
             bout.write(encode("\n"));
     
             // creation date in form (D:YYYYMMDDHHmmSSOHH'mm')
-            if(creationDate==null) {
+            if (creationDate == null) {
                 creationDate = new Date();
             }
             final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -162,7 +162,7 @@ public class PDFInfo extends PDFObject {
             bout.write(encodeString("D:" + str));
             bout.write(encode("\n>>\nendobj\n"));
         } catch (IOException ioe) {
-            getDocumentSafely().getLogger().error("Ignored I/O exception", ioe);
+            log.error("Ignored I/O exception", ioe);
         }
         return bout.toByteArray();
     }

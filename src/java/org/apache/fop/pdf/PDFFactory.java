@@ -28,6 +28,8 @@ import java.util.Map;
 // Apache libs
 import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 // FOP
 import org.apache.fop.fonts.CIDFont;
@@ -49,6 +51,8 @@ import org.apache.fop.fonts.type1.PFBParser;
 public class PDFFactory {
 
     private PDFDocument document;
+
+    private Log log = LogFactory.getLog("org.apache.fop.pdf");
 
     /**
      * Creates a new PDFFactory.
@@ -1103,7 +1107,7 @@ public class PDFFactory {
                 try {
                     in = getDocument().resolveURI(font.getEmbedFileName());
                 } catch (Exception e) {
-                    getDocument().getLogger().error("Failed to embed fontfile: "
+                    log.error("Failed to embed fontfile: "
                                        + font.getEmbedFileName()
                                        + "(" + e.getMessage() + ")");
                 }
@@ -1116,7 +1120,7 @@ public class PDFFactory {
                             this.getClass().getResourceAsStream(
                                 font.getEmbedResourceName()));
                 } catch (Exception e) {
-                    getDocument().getLogger().error(
+                    log.error(
                                          "Failed to embed fontresource: "
                                        + font.getEmbedResourceName()
                                        + "(" + e.getMessage() + ")");
@@ -1133,8 +1137,6 @@ public class PDFFactory {
                         FontFileReader reader = new FontFileReader(in);
 
                         TTFSubSetFile subset = new TTFSubSetFile();
-                        subset.setLogger(getDocument().getLogger());
-
                         byte[] subsetFont = subset.readFont(reader,
                                              mbfont.getTTCName(), mbfont.getUsedGlyphs());
                         // Only TrueType CID fonts are supported now
@@ -1166,7 +1168,7 @@ public class PDFFactory {
                 }
             }
         } catch (IOException ioe) {
-            getDocument().getLogger().error(
+            log.error(
                     "Failed to embed font [" + desc + "] "
                     + desc.getFontName(), ioe);
             return (PDFStream) null;

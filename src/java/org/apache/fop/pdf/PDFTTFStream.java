@@ -43,11 +43,10 @@ public class PDFTTFStream extends PDFStream {
      */
     protected int output(java.io.OutputStream stream)
             throws java.io.IOException {
-        getDocumentSafely().getLogger().debug("Writing " 
-                + origLength + " bytes of TTF font data");
+        log.debug("Writing " + origLength + " bytes of TTF font data");
 
         int length = super.output(stream);
-        getDocumentSafely().getLogger().debug("Embedded TrueType/OpenType font");
+        log.debug("Embedded TrueType/OpenType font");
         return length;
     }
 
