@@ -24,6 +24,9 @@ import java.util.List;
 // XML
 import org.xml.sax.SAXException;
 
+// Apache
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class stores all the pages in the document
@@ -34,6 +37,8 @@ public class StorePagesModel extends AreaTreeModel {
     private List pageSequence = null;
     private List currSequence;
     private List offDocumentItems = new java.util.ArrayList();
+
+    protected static Log log = LogFactory.getLog(StorePagesModel.class);
 
     /**
      * Create a new store pages model

@@ -31,6 +31,8 @@ import java.util.Iterator;
 import org.xml.sax.SAXException;
 
 // Apache
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOEventHandler;
@@ -38,8 +40,6 @@ import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Area tree handler for formatting objects.
@@ -193,22 +193,6 @@ public class AreaTreeHandler extends FOEventHandler {
      * @throws SAXException if there is some error
      */
     public void endDocument() throws SAXException {
-        /* 
-         * inform Resolveable objects that certain idrefs
-         * could not be found
-         * @todo unsure if this block is needed. 
-         */
-        for (Iterator iter = unresolvedIDRefs.keySet().iterator(); 
-                iter.hasNext();) {
-            String idref = (String) iter.next();
-            Set list = (Set) unresolvedIDRefs.get(idref);
-            for (Iterator resIter = list.iterator(); resIter.hasNext();) {
-                Resolvable res = (Resolvable) resIter.next();
-                if (!res.isResolved()) {
-                    res.resolveIDRef(idref, null);
-                }
-            }
-        }
         model.endDocument();
 
         if (outputStatistics) {
