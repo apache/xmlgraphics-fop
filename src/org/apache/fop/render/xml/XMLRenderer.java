@@ -59,6 +59,7 @@ import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.fo.properties.LeaderPattern;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.IDReferences;
 
 // Avalon
 import org.apache.avalon.framework.logger.Logger;
@@ -104,6 +105,8 @@ public class XMLRenderer implements Renderer {
     protected java.util.Map options;
     private boolean consistentOutput = false;
 
+    protected IDReferences idReferences;
+
     public XMLRenderer() {}
 
     /**
@@ -129,6 +132,7 @@ public class XMLRenderer implements Renderer {
 
     public void render(Page page, OutputStream outputStream)
     throws IOException {
+        idReferences = page.getIDReferences();
         this.renderPage(page);
     }
 
@@ -576,5 +580,9 @@ public class XMLRenderer implements Renderer {
         writeEndTag("</AreaTree>");
         this.writer.flush();
         log.debug("written out XML");
+    }
+
+    public IDReferences getIDReferences() {
+        return idReferences;
     }
 }

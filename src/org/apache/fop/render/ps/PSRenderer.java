@@ -149,8 +149,6 @@ public class PSRenderer extends AbstractRenderer {
 
     private int psLevel = 3;
 
-    protected IDReferences idReferences;
-
     protected java.util.Map options;
 
 
@@ -720,16 +718,7 @@ public class PSRenderer extends AbstractRenderer {
         FontState fs = area.getFontState();
         String fontWeight = fs.getFontWeight();
         StringBuffer sb = new StringBuffer();
-        String s;
-        if (area.getPageNumberID()
-                != null) {    // this text is a page number, so resolve it
-            s = idReferences.getPageNumber(area.getPageNumberID());
-            if (s == null) {
-                s = "";
-            }
-        } else {
-            s = area.getText();
-        }
+        String s = area.getText();
         int l = s.length();
 
         for (int i = 0; i < l; i++) {

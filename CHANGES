@@ -1,5 +1,7 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fixed text alingment for lines containing forward pointing page number
+  citations. This should greatly improve TOC layout. (J.Pietschmann)
 - Fixed repeatedly laid out small caps text (for example in static
   content or due ot keeps). (J.Pietschmann)
 - Fixed marker handling thouroughly. All retrieving boundaries and

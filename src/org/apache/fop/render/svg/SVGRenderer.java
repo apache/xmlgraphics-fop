@@ -106,8 +106,6 @@ public class SVGRenderer extends AbstractRenderer {
     protected Map fontStyles = new java.util.HashMap();
     protected Color saveColor = null;
 
-    protected IDReferences idReferences = null;
-
     /**
      * The current (internal) font name
      */
@@ -503,16 +501,7 @@ public class SVGRenderer extends AbstractRenderer {
         int rx = this.currentXPosition;
         int bl = this.currentYPosition;
 
-        String s;    // = area.getText();
-        if (area.getPageNumberID()
-                != null) {    // this text is a page number, so resolve it
-            s = idReferences.getPageNumber(area.getPageNumberID());
-            if (s == null) {
-                s = "";
-            }
-        } else {
-            s = area.getText();
-        }
+        String s = area.getText();
 
         if (saveColor != null) {
             if (saveColor.getRed() != red || saveColor.getGreen() != green

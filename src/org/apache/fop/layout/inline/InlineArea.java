@@ -63,7 +63,6 @@ public abstract class InlineArea extends Area {
     private int xOffset = 0;
     protected int height = 0;
     private int verticalAlign = 0;
-    protected String pageNumberId = null;
     private float red, green, blue;
 
     // Textdecoration
@@ -123,10 +122,6 @@ public abstract class InlineArea extends Area {
 
     public int getXOffset() {
         return this.xOffset;
-    }
-
-    public String getPageNumberID() {
-        return pageNumberId;
     }
 
     public void setUnderlined(boolean ul) {
