@@ -939,7 +939,7 @@ Sizing
     <fo:table-row>
       <fo:table-cell number-columns-spanned="2">
         <fo:block space-before.optimum="5pt">
-Specify the size on the instream-foreign-object element. <fo:inline color="red">Note: currently not functional, bug.</fo:inline>
+Specify the size on the instream-foreign-object element.
         </fo:block>
       </fo:table-cell>
     </fo:table-row>
@@ -948,7 +948,7 @@ Specify the size on the instream-foreign-object element. <fo:inline color="red">
       <fo:table-cell>
         <fo:block font-size="8pt" white-space-collapse="false" space-before.optimum="5pt">
 <![CDATA[
-<fo:instream-foreign-object width="20pt" height="20pt">
+<fo:instream-foreign-object content-width="20pt" content-height="20pt">
 <svg:svg>
   <svg:g style="fill:red; stroke:#000000">
      <svg:rect x="0" y="0" width="15" height="15"/>
@@ -962,8 +962,8 @@ Specify the size on the instream-foreign-object element. <fo:inline color="red">
       </fo:table-cell>
       <fo:table-cell>
         <fo:block space-before.optimum="15pt">
-<!--
-<fo:instream-foreign-object width="20pt" height="20pt">
+
+<fo:instream-foreign-object content-width="20pt" content-height="20pt">
 <svg:svg>
   <svg:g style="fill:red; stroke:#000000">
      <svg:rect x="0" y="0" width="15" height="15"/>
@@ -971,7 +971,7 @@ Specify the size on the instream-foreign-object element. <fo:inline color="red">
   </svg:g>
 </svg:svg>
 </fo:instream-foreign-object>
--->
+
         </fo:block>
       </fo:table-cell>
     </fo:table-row>

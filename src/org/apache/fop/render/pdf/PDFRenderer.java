@@ -387,6 +387,7 @@ public class PDFRenderer extends PrintRenderer {
         SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
         int w = (int)(svg.getWidth().getBaseVal().getValue() * 1000);
         int h = (int)(svg.getHeight().getBaseVal().getValue() * 1000);
+
         float sx = 1, sy = -1;
         int xOffset = x, yOffset = y;
 
@@ -412,6 +413,17 @@ public class PDFRenderer extends PrintRenderer {
         currentStream.add(sx + " 0 0 " + sy + " " + xOffset / 1000f + " "
                           + yOffset / 1000f + " cm\n");
 
+        AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg, w / 1000f, h / 1000f);
+        if(!at.isIdentity()) {
+            double[] vals = new double[6];
+            at.getMatrix(vals);
+            currentStream.add(PDFNumber.doubleOut(vals[0]) + " "
+                            + PDFNumber.doubleOut(vals[1]) + " "
+                            + PDFNumber.doubleOut(vals[2]) + " "
+                            + PDFNumber.doubleOut(vals[3]) + " "
+                            + PDFNumber.doubleOut(vals[4]) + " "
+                            + PDFNumber.doubleOut(vals[5]) + " cm\n");
+        }
 
         UserAgent userAgent = new MUserAgent(new AffineTransform());
 

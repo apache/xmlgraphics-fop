@@ -26,6 +26,8 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * class representing svg:svg pseudo flow object.
@@ -80,7 +82,7 @@ public class SVGElement extends Svg {
      *
      * @return the status of the layout
      */
-    public Status layout(Area area) throws FOPException {
+    public Status layout(final Area area) throws FOPException {
 
         if (!(area instanceof ForeignObjectArea)) {
             // this is an error
@@ -100,7 +102,7 @@ public class SVGElement extends Svg {
         String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
         Document doc = impl.createDocument(svgNS, "svg", null);
 
-        Element svgRoot = doc.getDocumentElement();
+        final Element svgRoot = doc.getDocumentElement();
 
         try {
             String baseDir = Configuration.getStringValue("baseDir");
@@ -109,18 +111,33 @@ public class SVGElement extends Svg {
 
         DefaultSVGContext dc = new DefaultSVGContext() {
             public float getPixelToMM() {
-                return 0.264583333333333333333f;
                 // 72 dpi
+                return 0.35277777777777777778f;
             }
 
-            public float getViewportWidth() {
-                return 100;
+            public float getViewportWidth(Element e) throws IllegalStateException {
+                if(e == svgRoot) {
+                    ForeignObjectArea foa = (ForeignObjectArea)area;
+                    if(!foa.isContentWidthAuto()) {
+                        return foa.getContentWidth();
+                    }
+                }
+                return super.getViewportWidth(e);
             }
 
-            public float getViewportHeight() {
-                return 100;
+            public float getViewportHeight(Element e) throws IllegalStateException {
+                if(e == svgRoot) {
+                    ForeignObjectArea foa = (ForeignObjectArea)area;
+                    if(!foa.isContentHeightAuto()) {
+                        return foa.getContentHeight();
+                    }
+                }
+                return super.getViewportHeight(e);
             }
 
+            public List getDefaultFontFamilyValue() {
+                return FONT_FAMILY;
+            }
         };
         ((SVGOMDocument)doc).setSVGContext(dc);
         buildTopLevel(doc, svgRoot);
@@ -143,6 +160,16 @@ public class SVGElement extends Svg {
 
         /* return status */
         return new Status(Status.OK);
+    }
+
+    public final static List FONT_FAMILY;
+    static {
+        FONT_FAMILY = new ArrayList();
+        FONT_FAMILY.add("Helvetica");
+        FONT_FAMILY.add("Times");
+        FONT_FAMILY.add("Courier");
+        FONT_FAMILY.add("sans-serif");
+        FONT_FAMILY.add("serif");
     }
 
 }

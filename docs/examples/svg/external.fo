@@ -120,6 +120,11 @@ and
 
       </fo:block>
 
+      <fo:block space-before.optimum="10pt">
+This example is an svg from an external image:
+<fo:external-graphic src="file:view.svg"/>
+it has a viewbox that resizes the contents.
+      </fo:block>
 
     </fo:flow>
   </fo:page-sequence>
