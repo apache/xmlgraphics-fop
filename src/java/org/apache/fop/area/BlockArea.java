@@ -19,6 +19,8 @@
  */
 package org.apache.fop.area;
 
+import java.awt.geom.Rectangle2D;
+
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
@@ -39,6 +41,43 @@ public class BlockArea extends Area {
             Object sync) {
         super(pageSeq, generatedBy, parent, sync);
         // TODO Auto-generated constructor stub
+    }
+
+    /** The page space allocation for layout of the block */
+    private Rectangle2D pageSpace;
+
+//    /**
+//     * Receives an allocation of page space from area parent
+//     * @param pageSpace
+//     */
+//    public void receivePageSpace(Rectangle2D pageSpace) {
+//        this.pageSpace = pageSpace;
+//    }
+
+    /**
+     * An allocation of page space has been requested by the currently active
+     * child area.  <i>N.B.</i> <code>reference-area</code>s must override
+     * this method to apply an <code>AffineTransform</code> to areas passed
+     * up and returned.
+     * @return
+     */
+    public Rectangle2D pageSpaceRequest(AreaRange spaceRange) {
+        AreaRange request = adjustedRequest(spaceRange);
+        return null;
+    }
+
+    private AreaRange adjustedRequest(AreaRange request) {
+        // TODO Adjust the request for padding, borders and margins on this
+        // block
+        // For now, do nothing.
+        return request;
+    }
+    /**
+     * Accepts a laid-out block from an area child
+     * @param layout
+     */
+    public void acceptLayout(Rectangle2D layout) {
+        
     }
 
 }
