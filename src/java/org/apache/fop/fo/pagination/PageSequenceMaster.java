@@ -68,12 +68,12 @@ public class PageSequenceMaster extends FObj {
 
         if (parent.getName().equals("fo:layout-master-set")) {
             this.layoutMasterSet = (LayoutMasterSet)parent;
-            String pm = this.propertyList.get(Constants.PR_MASTER_NAME).getString();
-            if (pm == null) {
+            masterName = this.propertyList.get(Constants.PR_MASTER_NAME).getString();
+            if (masterName == null) {
                 getLogger().warn("page-sequence-master does not have "
                                        + "a master-name and so is being ignored");
             } else {
-                this.layoutMasterSet.addPageSequenceMaster(pm, this);
+                this.layoutMasterSet.addPageSequenceMaster(masterName, this);
             }
         } else {
             throw new FOPException("fo:page-sequence-master must be child "
@@ -147,7 +147,7 @@ public class PageSequenceMaster extends FObj {
                 }
                 getLogger().warn("subsequences exhausted in page-sequence-master '"
                                  + masterName
-                                 + "', use previous subsequence");
+                                 + "', using previous subsequence");
                 currentSubSequence.reset();
                 canRecover = false;
             } else {
