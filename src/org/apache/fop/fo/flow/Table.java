@@ -140,6 +140,7 @@ public class Table extends FObj {
             if (breakBefore == BreakBefore.EVEN_PAGE) {
                 return new Status(Status.FORCE_PAGE_BREAK_EVEN);
             }
+
         }
 
         if ((spaceBefore != 0) && (this.marker == 0)) {
@@ -170,7 +171,9 @@ public class Table extends FObj {
         int numChildren = this.children.size();
 
 	// Set up the column vector
-	findColumns(areaContainer);
+	if (columns.size()==0) {
+	    findColumns(areaContainer);
+	}
 	// Now layout all the columns and get total offset
         areaContainer.setAllocationWidth( layoutColumns(areaContainer));
 
