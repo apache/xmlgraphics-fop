@@ -202,6 +202,9 @@ public class PageSequence extends FObj {
      * Runs the formatting of this page sequence into the given area tree
      */
     public void format(AreaTree areaTree) throws FOPException {
+        if (flow == null) {
+            throw new FOPException("No flow in page-sequence");
+        }
         PageSequence previousPageSequence=this.root.getPageSequence();
         if( previousPageSequence!=null ) {
             if (previousPageSequence.forcePageCountType == ForcePageCount.AUTO) {
@@ -310,11 +313,11 @@ public class PageSequence extends FObj {
      * @return a Page layout object based on the page master selected from the params
      */
     private Page makePage(AreaTree areaTree,
-                              boolean isBlankPage,
-                              Page currentPage)
+                          boolean isBlankPage,
+                          Page currentPage)
       throws FOPException {
         if (this.pageSequenceMaster!=null) {
-            this.currentSimplePageMaster=this.pageSequenceMaster
+            this.currentSimplePageMaster = this.pageSequenceMaster
               .getNextSimplePageMaster(((this.currentPageNumber % 2)==1),
                                        isBlankPage);
             Region region = currentSimplePageMaster
