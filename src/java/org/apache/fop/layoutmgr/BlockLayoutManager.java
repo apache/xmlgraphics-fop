@@ -170,7 +170,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
     public void setBlockTextInfo(TextInfo ti) {
         lead = ti.fs.getAscender();
-        follow = ti.fs.getDescender();
+        follow = -ti.fs.getDescender();
         lineHeight = ti.lineHeight;
     }
 
