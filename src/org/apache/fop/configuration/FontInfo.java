@@ -59,6 +59,7 @@ public class FontInfo {
      */
     public String getEmbedFile() throws FOPException {
         // check if it's a URL and convert it to a filename
+	if (embedFile == null) return null;
         try {
             embedFile = new URL(embedFile).getFile();
         } catch (MalformedURLException mue) {}
