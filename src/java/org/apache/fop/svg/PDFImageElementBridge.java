@@ -59,7 +59,6 @@ import org.apache.fop.image.analyser.ImageReaderFactory;
 import java.awt.Shape;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.net.URL;
 
 import org.w3c.dom.Element;
 
