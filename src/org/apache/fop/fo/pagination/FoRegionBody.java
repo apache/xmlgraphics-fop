@@ -10,9 +10,7 @@
 package org.apache.fop.fo.pagination;
 
 // FOP
-import org.apache.fop.fo.FOAttributes;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
@@ -92,8 +90,7 @@ public class FoRegionBody extends FONode {
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.REGION_BODY, parent, event,
-              FOPropertySets.LAYOUT_SET, sparsePropsMap, sparseIndices,
-              numProps);
+              FONode.LAYOUT_SET, sparsePropsMap, sparseIndices);
         makeSparsePropsSet();
     }
 

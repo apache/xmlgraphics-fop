@@ -11,7 +11,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
@@ -80,8 +79,7 @@ public class FoStaticContent extends FONode {
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.STATIC_CONTENT, parent, event,
-              FOPropertySets.STATIC_SET, sparsePropsMap, sparseIndices,
-              numProps);
+              FONode.STATIC_SET, sparsePropsMap, sparseIndices);
         xmlevents = foTree.getXmlevents();
         FoXMLEvent ev;
         try {
@@ -92,7 +90,9 @@ public class FoStaticContent extends FONode {
             // Generate the flow object
             System.out.println("Generating first block for static-content.");
             FObjects.fobjects.makeFlowObject
-                            (foTree, this, ev, FOPropertySets.STATIC_SET);
+                            (foTree, this, ev, FONode.STATIC_SET);
+            // Clear the blockage
+            ev = xmlevents.getEndElement(ev);
             // Get the rest of the %block;s
             do {
                 ev = xmlevents.expectBlock();
@@ -101,7 +101,8 @@ public class FoStaticContent extends FONode {
                     System.out.println
                         ("Generating subsequent block for static-content.");
                     FObjects.fobjects.makeFlowObject
-                            (foTree, this, ev, FOPropertySets.STATIC_SET);
+                            (foTree, this, ev, FONode.STATIC_SET);
+                    ev = xmlevents.getEndElement(ev);
                 }
             } while (ev != null);
         } catch(UnexpectedStartElementException e) {

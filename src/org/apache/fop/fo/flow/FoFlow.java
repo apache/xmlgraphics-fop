@@ -11,7 +11,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
@@ -79,8 +78,7 @@ public class FoFlow extends FONode {
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.FLOW, parent, event,
-              FOPropertySets.FLOW_SET, sparsePropsMap, sparseIndices,
-              numProps);
+              FONode.FLOW_SET, sparsePropsMap, sparseIndices);
         xmlevents = foTree.getXmlevents();
         FoXMLEvent ev;
         try {
@@ -90,7 +88,9 @@ public class FoFlow extends FONode {
             // Generate the flow object
             System.out.println("Generating first block for flow.");
             FObjects.fobjects.makeFlowObject
-                            (foTree, this, ev, FOPropertySets.FLOW_SET);
+                            (foTree, this, ev, FONode.FLOW_SET);
+            // Clear the blockage
+            ev = xmlevents.getEndElement(ev);
             // Get the rest of the %block;s
             do {
                 ev = xmlevents.expectBlock();
@@ -99,7 +99,8 @@ public class FoFlow extends FONode {
                     System.out.println
                         ("Generating subsequent block for flow.");
                     FObjects.fobjects.makeFlowObject
-                            (foTree, this, ev, FOPropertySets.FLOW_SET);
+                            (foTree, this, ev, FONode.FLOW_SET);
+                    ev = xmlevents.getEndElement(ev);
                 }
             } while (ev != null);
         } catch(UnexpectedStartElementException e) {

@@ -11,7 +11,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
@@ -76,7 +75,7 @@ public class FoNoFo extends FONode {
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.NO_FO, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices, numProps);
+                          attrSet, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
         String nowProcessing;
 

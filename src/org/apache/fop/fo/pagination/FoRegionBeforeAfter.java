@@ -12,7 +12,6 @@ package org.apache.fop.fo.pagination;
 // FOP
 import org.apache.fop.fo.FOAttributes;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
@@ -90,8 +89,8 @@ public class FoRegionBeforeAfter extends FONode {
                 (FOTree foTree, int foType, FONode parent, FoXMLEvent event)
         throws TreeException, FOPException
     {
-        super(foTree, foType, parent, event, FOPropertySets.LAYOUT_SET,
-                sparsePropsMap, sparseIndices, numProps);
+        super(foTree, foType, parent, event, FONode.LAYOUT_SET,
+                sparsePropsMap, sparseIndices);
     }
 
 }

@@ -11,7 +11,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
@@ -99,8 +98,7 @@ public class FoPageSequence extends FONode {
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.PAGE_SEQUENCE, parent, event,
-              FOPropertySets.PAGESEQ_SET, sparsePropsMap, sparseIndices,
-              numProps);
+              FONode.PAGESEQ_SET, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
         String nowProcessing;
         // Look for optional title

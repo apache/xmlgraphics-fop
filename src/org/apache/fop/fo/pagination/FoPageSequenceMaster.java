@@ -23,7 +23,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
@@ -191,8 +190,7 @@ public class FoPageSequenceMaster extends FONode {
         throws TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.PAGE_SEQUENCE_MASTER, parent, event,
-              FOPropertySets.SEQ_MASTER_SET, sparsePropsMap, sparseIndices,
-              numProps);
+              FONode.SEQ_MASTER_SET, sparsePropsMap, sparseIndices);
         // Process sequence members here
         try {
             do {
@@ -244,8 +242,8 @@ public class FoPageSequenceMaster extends FONode {
             throws TreeException, FOPException, PropertyException
         {
             super(foTree, FObjectNames.SINGLE_PAGE_MASTER_REFERENCE, parent,
-                    event, FOPropertySets.SEQ_MASTER_SET, s_p_m_r_PropsMap,
-                    s_p_m_r_Indices, s_p_m_r_numProps);
+                    event, FONode.SEQ_MASTER_SET, s_p_m_r_PropsMap,
+                    s_p_m_r_Indices);
             this.makeSparsePropsSet();
         }
 
@@ -266,8 +264,8 @@ public class FoPageSequenceMaster extends FONode {
             throws TreeException, FOPException, PropertyException
         {
             super(foTree, FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE,
-                    parent, event, FOPropertySets.SEQ_MASTER_SET,
-                    r_p_m_r_PropsMap, r_p_m_r_Indices, r_p_m_r_numProps);
+                    parent, event, FONode.SEQ_MASTER_SET,
+                    r_p_m_r_PropsMap, r_p_m_r_Indices);
             this.makeSparsePropsSet();
         }
 
@@ -292,8 +290,8 @@ public class FoPageSequenceMaster extends FONode {
             throws TreeException, FOPException, PropertyException
         {
             super(foTree, FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES,
-                    parent, event, FOPropertySets.SEQ_MASTER_SET,
-                    r_p_m_a_PropsMap, r_p_m_a_Indices, r_p_m_a_numProps);
+                    parent, event, FONode.SEQ_MASTER_SET,
+                    r_p_m_a_PropsMap, r_p_m_a_Indices);
 
             // Process conditional-page-master-references here
             try {
@@ -325,8 +323,8 @@ public class FoPageSequenceMaster extends FONode {
             throws TreeException, FOPException, PropertyException
             {
                 super(foTree, FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE,
-                        parent, event, FOPropertySets.SEQ_MASTER_SET,
-                        c_p_m_r_PropsMap, c_p_m_r_Indices, c_p_m_r_numProps);
+                        parent, event, FONode.SEQ_MASTER_SET,
+                        c_p_m_r_PropsMap, c_p_m_r_Indices);
                 this.makeSparsePropsSet();
             }
 

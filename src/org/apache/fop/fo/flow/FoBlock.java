@@ -11,7 +11,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
@@ -51,6 +50,7 @@ public class FoBlock extends FONode {
 
     static {
         // Collect the sets of properties that apply
+        System.out.println("In static block of FoBlock.");
         BitSet propsets = new BitSet();
         propsets.or(PropertySets.accessibilitySet);
         propsets.or(PropertySets.auralSet);
@@ -105,6 +105,7 @@ public class FoBlock extends FONode {
             sparsePropsMap.put
                         (Ints.consts.get(next), Ints.consts.get(propx++));
         }
+        System.out.println("End of static block of FoBlock.");
     }
 
     /**
@@ -119,7 +120,8 @@ public class FoBlock extends FONode {
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.BLOCK, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices, numProps);
+                          attrSet, sparsePropsMap, sparseIndices);
+        System.out.println("Back from super constructor of FoBlock.");
         FoXMLEvent ev;
         String nowProcessing;
 
