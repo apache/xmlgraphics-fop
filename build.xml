@@ -153,6 +153,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="fonts.dir" value="org/apache/fop/render/pdf/fonts"/>
     <property name="replacestring" value="org/apache/fop"/>
     <property name="ignore_this" value="ignore_this.java"/>
+    <property name="jimi" value="JimiImage.java"/>
 
     <property name="xslt" value="org.apache.xalan.xslt.Process"/>
     <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
@@ -177,6 +178,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <taskdef name="xslt" classname="Xslt"/>
     <available property="xt.present" classname="com.jclark.xsl.sax.XSLProcessor"/>
+    <available property="jimi.present" classname="com.sun.jimi.core.Jimi"/>
 
     <filter token="${replacestring}" value="${build.src}/${replacestring}"/>
   </target>
@@ -221,22 +223,32 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </target>
 
   <!-- =================================================================== -->
-  <!-- Prepares the build directory                                        -->
+  <!-- copies some source files if xt is present                           -->
   <!-- =================================================================== -->
   <target name="prepare-xt" depends="prepare" if="xt.present">
     <copydir src="${src.dir}"
              dest="${build.src}"
-             includes="**/XT*"/>
+             includes="**/XT*,**/PDFOutputHandler.java"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- copies special image class only if Jimi library is present          -->
+  <!-- =================================================================== -->
+  <target name="prepare-jimi" depends="prepare" if="jimi.present">
+    <echo message="Jimi library is present. Fop installs jimi support."/>
+    <copydir src="${src.dir}"
+             dest="${build.src}"
+             includes="**/${jimi}"/>
   </target>
 
   <!-- =================================================================== -->
   <!-- Prepares the source code                                            -->
   <!-- =================================================================== -->
-  <target name="prepare-src" depends="prepare, prepare-xt">
+  <target name="prepare-src" depends="prepare, prepare-xt, prepare-jimi">
     <!-- copy src files -->
     <copydir src="${src.dir}"
              dest="${build.src}"
-             excludes="**/Makefile*, **/package.html, **/XT*"/>
+             excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi}"/>
   </target>
 
   <!-- =================================================================== -->
@@ -295,7 +307,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
            debug="${debug}"
            deprecation="${deprecation}"
            optimize="${optimize}"
-           excludes="**/${ignore_this}"/>
+           excludes="**/${ignore_this},${jimi}"/>
   </target>
 
   <!-- =================================================================== -->
@@ -313,6 +325,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <target name="prepare-docs" depends="init">
     <mkdir dir="${build.docs}"/>
+    <!-- sets exec permission for antRun on Unix systems. necessary for javadoc-->
+    <chmod src="${lib.dir}/bin/antRun" perm="ugo+rx" />
   </target>
 
   <!-- =================================================================== -->
