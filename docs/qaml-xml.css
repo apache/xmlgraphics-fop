@@ -1,0 +1,139 @@
+/* the "state of the art" xml browser don't support 
+   xlink and list-item */
+
+faq {
+	display:block;
+	font-family:"Times Roman",Times,serif;
+	font-size:12pt;
+	margin-left:15%;
+	margin-right:15%;
+}
+
+a {
+	display:block;
+}
+
+address {
+	display:block;
+}
+
+althdr {
+	display:block;
+}
+
+archive {
+	display:block;
+}
+
+author {
+	display:block;
+}
+
+body {
+	display:block;
+}
+
+content {
+	display:block;
+}
+
+contributor {
+	display:block;
+}
+
+div {
+	display:block;
+}
+
+email {
+	display:block;
+}
+
+head {
+	display:block;
+}
+
+hdr {
+	display:block;
+}
+
+label {
+	display:block;
+}
+
+link {
+	display:inline;
+}
+
+logo {
+	display:inline;
+}
+
+maintain {
+	display:block;
+}
+
+name {
+	display:block;
+}
+
+p {
+	display:block;
+	font-style:monospace;
+}
+
+/*not supported by mozilla 5 and ie 5 */
+p.li {
+	display:list-item;
+}
+
+p.pre {
+	display:block;
+	font-family:Monospace;
+	font-size:10pt;
+	margin-top:5pt;
+	margin-bottom:5pt;
+
+}
+
+q {
+	display:block;
+}
+
+qna {
+	display:block;
+}
+
+section {
+	display:block;
+}
+
+
+span {
+	display:block;
+}
+
+subject {
+	display:block;
+}
+
+title {
+	display:block;
+	margin-top:9pt;
+	margin-bottom:6pt;
+	font-size:14pt;
+	font-weight:bold;
+}
+
+topic {
+	display:block;
+}
+
+type {
+	display:block;
+}
+
+version {
+	display:block;
+}
+
