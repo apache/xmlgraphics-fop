@@ -124,7 +124,7 @@ public abstract class AbstractTableBody extends FObj {
         area.spaceLeft(), Position.RELATIVE);
         areaContainer.foCreator = this;                  // G Seshadri
         areaContainer.setPage(area.getPage());
-	areaContainer.setParent(area);
+        areaContainer.setParent(area);
         areaContainer.setBackground(propMgr.getBackgroundProps());
         areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
         areaContainer.start();
@@ -152,11 +152,29 @@ public abstract class AbstractTableBody extends FObj {
                                                    == -1) {
                 keepWith.add(lastRow);
             } else {
+                /* This row has no keep-with-previous, or it is the first
+                 * row in this area.
+                 */
                 if (endKeepGroup && keepWith.size() > 0) {
                     keepWith = new ArrayList();
                 }
+                // If we have composed at least one complete row which is not part
+                // of a keep set, we can take following keeps into account again
+                if (endKeepGroup && i > this.marker) {
+                   rowSpanMgr.setIgnoreKeeps(false);
+                }
             }
-
+            
+            /* Tell the row whether it is at the top of this area: if so, the row
+             * should not honor keep-together.
+             */
+            boolean bRowStartsArea = (i == this.marker);
+            if (bRowStartsArea == false && keepWith.size() > 0) {
+                if (children.indexOf(keepWith.get(0)) == this.marker) {
+                   bRowStartsArea = true;
+                }
+            }
+            row.setIgnoreKeepTogether(bRowStartsArea  && startsAC(area));
             int status;
             if (Status.isIncomplete((status = row.layout(areaContainer)))) {
                 // BUG!!! don't distinguish between break-before and after!
@@ -250,5 +268,24 @@ public abstract class AbstractTableBody extends FObj {
         this.resetMarker();
         this.removeID(area.getIDReferences());
     }
-
+    
+    /**
+     * Return true if the passed area is on the left edge of its nearest
+     * absolute AreaContainer (generally a page column).
+     */
+    private boolean startsAC(Area area) {
+        Area parent=null;
+        
+        while ((parent = area.getParent()) != null &&
+               parent.hasNonSpaceChildren() == false) {
+            // The area will be the first non-space child in its parent
+            // Note: it's not added yet!
+            if (parent instanceof AreaContainer &&
+                ((AreaContainer)parent).getPosition() == Position.ABSOLUTE) {
+                return true;
+            }
+            area = parent;
+        }
+        return false;
+    }
 }
