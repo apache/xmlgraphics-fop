@@ -83,7 +83,7 @@ public abstract class InputHandler {
         try {
             return new InputSource(new URL("file", null, path).toString());
         } catch (java.net.MalformedURLException e) {
-            throw new Error("unexpected MalformedURLException");
+            throw new RuntimeException("unexpected MalformedURLException");
         }
     }
 
