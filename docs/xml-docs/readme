@@ -1,0 +1,10 @@
+Fop documentation (xml version)
+
+The files in these directory contain the Fop documentation as xml files. 
+The directory xml-docs/fop is a mirror of the files in the cvs repository 
+modul 'xml-site' /sources/fop. These files are used to create the html documentation 
+on xml.apache.org.
+
+With makedoc.bat (win32) or makedoc.sh (unix) you can create a pdf file containing 
+the complete Fop documentation. These scripts use ant. If you have any trouble running them,
+please look into build.xml in the root directory of this distribution.

@@ -1,0 +1,20 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "sbk:/style/dtd/document.dtd">
+
+
+<!-- Bugs -->
+
+<s1 title="Bugs">
+  <s2 title="How to report bugs">
+    <p>Please use the bug reporting system <jump href="http://xml.apache.org/bugs/">bugzilla
+    </jump>, which is part of xml.apache.org.</p>
+  </s2>
+  <s2 title="Some bugs">
+    <p>Colour not continued onto subsequent pages, if coloured block goes over page.
+    </p>
+    <p>Each page-sequence begins its page numbering with the number 1 (unless another integer is 
+       specified in the initial-page-number attribute). The W3C recommendations says that
+       the default (auto) for initial-page-number is: The first page sequence starts with 1. For any further
+       fo:page-sequence the initial number will be one greater than the last number for that sequence.</p>
+  </s2>
+</s1>

@@ -1,0 +1,30 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "sbk:/style/dtd/document.dtd">
+
+<!-- Examples -->
+
+<s1 title="Examples">
+    <p>Examples for the use of xsl:fo can be found in the Fop distribution in 
+       the subdirectory /docs/examples/fo. 
+    </p>
+    <p>Please be warned: At the moment FOP only supports the 
+       XSL Working Draft 21 April 1999 and the examples are also following this version. 
+    </p>
+    <p>At the moment the following files are part of the distribution:</p>
+    <ul>
+      <li>normal.fo - a very simple file showing the use of a 2 level of headings, normal text and a header.
+      </li>
+      <li>table.fo - a simple table
+      </li>
+      <li>list.fo - a simple list
+      </li>
+      <li>images.fo - shows how to embed gif and jpg images into the xsl:fo file using inline-graphic.
+      </li>
+      <li>border.fo - a not so simple example how to use borders in tables 
+      </li>
+      <li>extensive.fo - a longer test file containing a lot of different flow objects and properties. 
+          A good candidate to test your bugfix or new Fop code. 
+      </li>
+    </ul>
+</s1>
+
