@@ -176,7 +176,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     }
 
     /**
-     * @param ext  <todo> Description of the Parameter
+     * @param ext  (todo) Description of the Parameter
      * @see        org.apache.fop.render.Renderer
      */
     public void renderExtension(TreeExt ext) { }
@@ -293,7 +293,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     }
 
     /**
-     * <todo> Description of the Method
+     * (todo) Description of the Method
      *
      * @param ctm  The coordinate transformation matrix to use
      */
@@ -311,7 +311,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     }
 
     /**
-     * <todo> Description of the Method
+     * (todo) Description of the Method
      */
     protected void endVParea() { }
 
@@ -550,7 +550,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
      *
      * @param image  The image
      * @param pos    The target position of the image
-     * <todo> Make renderImage() protected
+     * (todo) Make renderImage() protected
      */
     public void renderImage(Image image, Rectangle2D pos) {
         // Default: do nothing.
@@ -576,7 +576,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
      *
      * @param fo   The foreign object area
      * @param pos  The target position of the foreign object
-     * <todo> Make renderForeignObject() protected
+     * (todo) Make renderForeignObject() protected
      */
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         // Default: do nothing.

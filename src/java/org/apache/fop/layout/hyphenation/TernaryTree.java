@@ -123,7 +123,7 @@ public class TernaryTree implements Cloneable, Serializable {
     protected char[] eq;
 
     /**
-     * <P>The character stored in this node: splitchar
+     * <P>The character stored in this node: splitchar.
      * Two special values are reserved:</P>
      * <ul><li>0x0000 as string terminator</li>
      * <li>0xFFFF to indicate that the branch starting at

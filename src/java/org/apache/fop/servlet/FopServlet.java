@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.servlet;
 
 import java.io.ByteArrayOutputStream;
@@ -91,22 +91,22 @@ import org.apache.fop.apps.FOPException;
  * <br/>
  * Example URL: http://servername/fop/servlet/FopServlet?xml=data.xml&xslt=format.xsl
  * <br/>
- * For this to work with Internet Explorer, you might need to append "&ext=.pdf" 
+ * For this to work with Internet Explorer, you might need to append "&ext=.pdf"
  * to the URL.
- * 
+ *
  * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
  * @version $Id: FopServlet.java,v 1.2 2003/03/07 09:48:05 jeremias Exp $
- * @todo Ev. add caching mechanism for Templates objects
+ * (todo) Ev. add caching mechanism for Templates objects
  */
 public class FopServlet extends HttpServlet {
-    
+
     /** Name of the parameter used for the XSL-FO file */
     protected static final String FO_REQUEST_PARAM = "fo";
     /** Name of the parameter used for the XML file */
     protected static final String XML_REQUEST_PARAM = "xml";
     /** Name of the parameter used for the XSLT file */
     protected static final String XSLT_REQUEST_PARAM = "xslt";
-    
+
     /** Logger to give to FOP */
     protected Logger log = null;
     /** The TransformerFactory to use to create Transformer instances */
@@ -130,7 +130,7 @@ public class FopServlet extends HttpServlet {
             String foParam = request.getParameter(FO_REQUEST_PARAM);
             String xmlParam = request.getParameter(XML_REQUEST_PARAM);
             String xsltParam = request.getParameter(XSLT_REQUEST_PARAM);
-            
+
             //Analyze parameters and decide with method to use
             byte[] content = null;
             if (foParam != null) {
@@ -167,24 +167,24 @@ public class FopServlet extends HttpServlet {
     }
 
     /**
-     * Renders an XSL-FO file into a PDF file. The PDF is written to a byte 
+     * Renders an XSL-FO file into a PDF file. The PDF is written to a byte
      * array that is returned as the method's result.
      * @param fo the XSL-FO file
      * @return byte[] the rendered PDF file
-     * @throws FOPException If an error occurs during the rendering of the 
+     * @throws FOPException If an error occurs during the rendering of the
      * XSL-FO
      * @throws TransformerException If an error occurs while parsing the input
      * file
      */
     protected byte[] renderFO(String fo)
                 throws FOPException, TransformerException {
-                    
+
         //Setup source
         Source foSrc = convertString2Source(fo);
 
         //Setup the identity transformation
         Transformer transformer = this.transFactory.newTransformer();
-        
+
         //Start transformation and rendering process
         return render(foSrc, transformer);
     }
@@ -196,12 +196,12 @@ public class FopServlet extends HttpServlet {
      * @param xml the XML file
      * @param xslt the XSLT file
      * @return byte[] the rendered PDF file
-     * @throws FOPException If an error occurs during the rendering of the 
+     * @throws FOPException If an error occurs during the rendering of the
      * XSL-FO
      * @throws TransformerException If an error occurs during XSL
      * transformation
      */
-    protected byte[] renderXML(String xml, String xslt) 
+    protected byte[] renderXML(String xml, String xslt)
                 throws FOPException, TransformerException {
 
         //Setup sources
@@ -218,18 +218,18 @@ public class FopServlet extends HttpServlet {
     /**
      * Renders an input file (XML or XSL-FO) into a PDF file. It uses the JAXP
      * transformer given to optionally transform the input document to XSL-FO.
-     * The transformer may be an identity transformer in which case the input 
+     * The transformer may be an identity transformer in which case the input
      * must already be XSL-FO. The PDF is written to a byte array that is
      * returned as the method's result.
      * @param src Input XML or XSL-FO
      * @param transformer Transformer to use for optional transformation
      * @return byte[] the rendered PDF file
-     * @throws FOPException If an error occurs during the rendering of the 
+     * @throws FOPException If an error occurs during the rendering of the
      * XSL-FO
      * @throws TransformerException If an error occurs during XSL
      * transformation
      */
-    protected byte[] render(Source src, Transformer transformer) 
+    protected byte[] render(Source src, Transformer transformer)
                 throws FOPException, TransformerException {
 
         //Setup FOP
@@ -241,10 +241,10 @@ public class FopServlet extends HttpServlet {
         //Setup output
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         driver.setOutputStream(out);
-        
+
         //Make sure the XSL transformation's result is piped through to FOP
         Result res = new SAXResult(driver.getContentHandler());
-        
+
         //Start the transformation and rendering process
         transformer.transform(src, res);
 

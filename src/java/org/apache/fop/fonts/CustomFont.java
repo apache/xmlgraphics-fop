@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.fonts;
 
 import java.util.Map;
@@ -56,7 +56,7 @@ import java.util.Map;
 /**
  * Abstract base class for custom fonts loaded from files, for example.
  */
-public abstract class CustomFont extends Font 
+public abstract class CustomFont extends Font
             implements FontDescriptor, MutableFont {
 
     private String fontName = null;
@@ -75,9 +75,9 @@ public abstract class CustomFont extends Font
     private FontType fontType = FontType.TYPE1;
     private int firstChar = 0;
     private int lastChar = 255;
-    
+
     private Map kerning = new java.util.HashMap();
-   
+
 
     private boolean useKerning = true;
 
@@ -99,9 +99,9 @@ public abstract class CustomFont extends Font
     }
 
     /**
-     * Returns the lookup name to an embeddable font file available as a 
+     * Returns the lookup name to an embeddable font file available as a
      * resource.
-     * @todo Remove this method, this should be done using a resource: URI.
+     * (todo) Remove this method, this should be done using a resource: URI.
      * @return the lookup name
      */
     public String getEmbedResourceName() {
@@ -187,7 +187,7 @@ public abstract class CustomFont extends Font
 
     /**
      * Returns the width to be used when no width is available.
-     * @return a character width 
+     * @return a character width
      */
     public int getMissingWidth() {
         return missingWidth;
@@ -199,7 +199,7 @@ public abstract class CustomFont extends Font
     public FontType getFontType() {
         return fontType;
     }
-    
+
     /**
      * Returns the index of the first character defined in this font.
      * @return the index of the first character
@@ -207,7 +207,7 @@ public abstract class CustomFont extends Font
     public int getFirstChar() {
         return 0;
         // return firstChar;
-        /**@todo Why is this hardcoded??? This code was in SingleByteFont.java */
+        /**(todo) Why is this hardcoded??? This code was in SingleByteFont.java */
     }
 
     /**
@@ -246,35 +246,35 @@ public abstract class CustomFont extends Font
 
 
     /* ---- MutableFont interface ---- */
-    
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setFontName(String)
      */
     public void setFontName(String name) {
         this.fontName = name;
     }
-    
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setEmbedFileName(String)
      */
     public void setEmbedFileName(String path) {
         this.embedFileName = path;
     }
-        
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setEmbedResourceName(String)
      */
     public void setEmbedResourceName(String name) {
         this.embedResourceName = name;
     }
-        
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setCapHeight(int)
      */
     public void setCapHeight(int capHeight) {
         this.capHeight = capHeight;
     }
-    
+
     /**
      * Returns the XHeight value of the font.
      * @param xHeight the XHeight value
@@ -282,56 +282,56 @@ public abstract class CustomFont extends Font
     public void setXHeight(int xHeight) {
         this.xHeight = xHeight;
     }
-    
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setAscender(int)
      */
     public void setAscender(int ascender) {
         this.ascender = ascender;
     }
-    
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setDescender(int)
      */
     public void setDescender(int descender) {
         this.descender = descender;
     }
-    
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setFontBBox(int[])
      */
     public void setFontBBox(int[] bbox) {
         this.fontBBox = bbox;
     }
-    
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setFlags(int)
      */
     public void setFlags(int flags) {
         this.flags = flags;
     }
-    
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setStemV(int)
      */
     public void setStemV(int stemV) {
         this.stemV = stemV;
     }
-    
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setItalicAngle(int)
      */
     public void setItalicAngle(int italicAngle) {
         this.italicAngle = italicAngle;
     }
-    
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setMissingWidth(int)
      */
     public void setMissingWidth(int width) {
         this.missingWidth = width;
     }
- 
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setFontType(FontType)
      */
@@ -345,14 +345,14 @@ public abstract class CustomFont extends Font
     public void setFirstChar(int index) {
         this.firstChar = index;
     }
-    
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setLastChar(int)
      */
     public void setLastChar(int index) {
         this.lastChar = index;
     }
-    
+
     /**
      * @see org.apache.fop.fonts.MutableFont#setKerningEnabled(boolean)
      */

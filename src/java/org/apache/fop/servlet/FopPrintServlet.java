@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.servlet;
 
 import java.io.File;
@@ -94,13 +94,13 @@ import org.apache.fop.render.awt.AWTRenderer;
  * Example URL: http://servername/fop/servlet/FopPrintServlet?fo=readme.fo
  * <br/>
  * Example URL: http://servername/fop/servlet/FopPrintServlet?xml=data.xml&xsl=format.xsl
- * 
+ *
  * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
  * @version $Id: FopPrintServlet.java,v 1.2 2003/03/07 09:48:05 jeremias Exp $
- * @todo Doesn't work since there's no AWTRenderer at the moment. Revisit when 
+ * (todo) Doesn't work since there's no AWTRenderer at the moment. Revisit when
  * available.
- * @todo Don't use XSLTInputHandler anymore
- * @todo Ev. add caching mechanism for Templates objects
+ * (todo) Don't use XSLTInputHandler anymore
+ * (todo) Ev. add caching mechanism for Templates objects
  */
 public class FopPrintServlet extends HttpServlet {
 
@@ -110,7 +110,7 @@ public class FopPrintServlet extends HttpServlet {
     protected static final String XML_REQUEST_PARAM = "xml";
     /** Name of the parameter used for the XSLT file */
     protected static final String XSLT_REQUEST_PARAM = "xslt";
-    
+
     /** Logger to give to FOP */
     protected Logger log = null;
     /** The TransformerFactory to use to create Transformer instances */
@@ -213,8 +213,8 @@ public class FopPrintServlet extends HttpServlet {
     // private helper, tell (browser) user that file printed
     private void reportOK(HttpServletResponse response)
                 throws ServletException {
-        String sMsg = "<html><title>Success</title>\n" 
-                + "<body><h1>FopPrintServlet: </h1>" 
+        String sMsg = "<html><title>Success</title>\n"
+                + "<body><h1>FopPrintServlet: </h1>"
                 + "<h3>The requested data was printed</h3></body></html>";
 
         response.setContentType("text/html");
@@ -270,12 +270,12 @@ public class FopPrintServlet extends HttpServlet {
                 //removePage(
                 //  Integer.parseInt((String) numbers.elementAt(i)));
             }
-            
+
             try {
                 printerJob.print();
             } catch (PrinterException e) {
                 e.printStackTrace();
-                throw new IOException("Unable to print: " 
+                throw new IOException("Unable to print: "
                                     + e.getClass().getName() + ": " + e.getMessage());
             }
         }
