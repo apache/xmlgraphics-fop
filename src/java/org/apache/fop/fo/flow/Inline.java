@@ -20,34 +20,23 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.InlineCharIterator;
-import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonMarginInline;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 
 /**
- * Class modelling the fo:inline object. See Sec. 6.6.7 of the XSL-FO Standard.
+ * Class modelling the fo:inline formatting object.
  */
 public class Inline extends FObjMixed {
 
-    // Textdecoration
-    /** is this text underlined? */
-    protected boolean underlined = false;
-    /** is this text overlined? */
-    protected boolean overlined = false;
-    /** is this text lined through? */
-    protected boolean lineThrough = false;
+    // used for FO validation
+    private boolean blockOrInlineItemFound = false;
+    private boolean canHaveBlockLevelChildren = true;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -62,27 +51,55 @@ public class Inline extends FObjMixed {
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
 
-        if (parent.getName().equals("fo:flow")) {
-            throw new SAXParseException("inline formatting objects cannot"
-                                   + " be directly under flow", locator);
-        }
+       /* Check to see if this node can have block-level children.
+        * See validateChildNode() below.
+        */
+       int lvlLeader = findAncestor("fo:leader");
+       int lvlFootnote = findAncestor("fo:footnote");
+       int lvlInCntr = findAncestor("fo:inline-container");
 
-        int textDecoration = this.propertyList.get(PR_TEXT_DECORATION).getEnum();
+       if (lvlLeader > 0) {
+           if (lvlInCntr < 0 ||
+               (lvlInCntr > 0 && lvlInCntr > lvlLeader)) {
+               canHaveBlockLevelChildren = false;
+           }
+       } else if (lvlFootnote > 0) {
+           if (lvlInCntr < 0 || lvlInCntr > lvlFootnote) {
+               canHaveBlockLevelChildren = false;
+           }
+       }
 
-        if (textDecoration == TextDecoration.UNDERLINE) {
-            this.underlined = true;
-        }
-
-        if (textDecoration == TextDecoration.OVERLINE) {
-            this.overlined = true;
-        }
-
-        if (textDecoration == TextDecoration.LINE_THROUGH) {
-            this.lineThrough = true;
-        }
-        
         getFOInputHandler().startInline(this);
     }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
+     * Additionally: " An fo:inline that is a descendant of an fo:leader
+     *  or fo:footnote may not have block-level children, unless it has a
+     *  nearer ancestor that is an fo:inline-container." (paraphrased)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        if (nsURI == FO_URI && localName.equals("marker")) {
+            if (blockOrInlineItemFound) {
+               nodesOutOfOrderError(loc, "fo:marker", 
+                    "(#PCDATA|%inline;|%block;)");
+            }
+        } else if (!isBlockOrInlineItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        } else if (!canHaveBlockLevelChildren && isBlockItem(nsURI, localName)) {
+            String ruleViolated = 
+                " An fo:inline that is a descendant of an fo:leader" +
+                " or fo:footnote may not have block-level children," +
+                " unless it has a nearer ancestor that is an" +
+                " fo:inline-container.";
+            invalidChildError(loc, nsURI, localName, ruleViolated);
+        } else {
+            blockOrInlineItemFound = true;
+        }
+    }
+
 
     /**
      * @see org.apache.fop.fo.FONode#end
@@ -98,6 +115,9 @@ public class Inline extends FObjMixed {
         return new InlineCharIterator(this, propMgr.getBorderAndPadding());
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:inline";
     }
