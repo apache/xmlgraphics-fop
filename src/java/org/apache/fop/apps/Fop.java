@@ -36,7 +36,7 @@ public class Fop {
      */
     public static final String fopPackage = "org.apache.fop";
     
-    protected static final Logger logger = Logger.getLogger(fopPackage);
+    public static final Logger logger = Logger.getLogger(fopPackage);
 
     public static void main(String[] args) {
 
