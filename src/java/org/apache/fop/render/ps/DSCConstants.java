@@ -66,6 +66,8 @@ public class DSCConstants {
     
     /** Bounding box for the document */
     public static final String BBOX              = "BoundingBox";
+    /** High-resolution bounding box for the document */
+    public static final String HIRES_BBOX        = "HiResBoundingBox";
     /** Copyright information associated with the document or resource */
     public static final String COPYRIGHT         = "Copyright";
     /** Creator of the document */
@@ -151,6 +153,8 @@ public class DSCConstants {
     public static final String PAGE              = "Page";
     /** Bounding box for a page */
     public static final String PAGE_BBOX         = "PageBoundingBox";
+    /** High-resolution bounding box for a page */
+    public static final String PAGE_HIRES_BBOX   = "PageHiResBoundingBox";
     /** Bounding box for a page */
     public static final String PAGE_ORIENTATION  = "PageOrientation";
 

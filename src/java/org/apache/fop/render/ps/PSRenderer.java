@@ -54,11 +54,11 @@ package org.apache.fop.render.ps;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 // FOP
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.fop.fo.properties.BackgroundRepeat;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.RegionViewport;
@@ -96,7 +96,6 @@ import org.w3c.dom.Document;
  * <br>
  * The PS renderer operates in millipoints as the layout engine. Since PostScript
  * initially uses points, scaling is applied as needed.
- * @todo Rebuild the PostScript renderer
  * 
  * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
  * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
@@ -112,6 +111,7 @@ public class PSRenderer extends AbstractRenderer {
     private int currentPageNumber = 0;
 
     private boolean enableComments = true;
+    private boolean autoRotateLandscape = false;
 
     /** The PostScript generator used to output the PostScript */
     protected PSGenerator gen;
@@ -119,14 +119,20 @@ public class PSRenderer extends AbstractRenderer {
 
     private String currentFontName;
     private int currentFontSize;
-    private int pageHeight;
-    private int pageWidth;
     private float currRed;
     private float currGreen;
     private float currBlue;
 
     private FontInfo fontInfo;
 
+    /**
+     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
+     */
+    public void configure(Configuration cfg) throws ConfigurationException {
+        super.configure(cfg);
+        this.autoRotateLandscape = cfg.getChild("auto-rotate-landscape").getValueAsBoolean(false);
+    }
+    
     /**
      * Set the document's producer
      *
@@ -177,43 +183,6 @@ public class PSRenderer extends AbstractRenderer {
     protected void comment(String comment) {
         if (this.enableComments) {
             writeln(comment);
-        }
-    }
-
-    /**
-     * Generates the PostScript code for the font dictionary.
-     * @param gen PostScript generator to use for output
-     * @param fontInfo available fonts
-     * @throws IOException in case of an I/O problem
-     */
-    public static void writeFontDict(PSGenerator gen, FontInfo fontInfo) 
-                throws IOException {
-        gen.writeln("%%BeginResource: procset FOPFonts");
-        gen.writeln("%%Title: Font setup (shortcuts) for this file");
-        gen.writeln("/FOPFonts 100 dict dup begin");
-
-        // write("/gfF1{/Helvetica findfont} bd");
-        // write("/gfF3{/Helvetica-Bold findfont} bd");
-        Map fonts = fontInfo.getFonts();
-        Iterator enum = fonts.keySet().iterator();
-        while (enum.hasNext()) {
-            String key = (String)enum.next();
-            Font fm = (Font)fonts.get(key);
-            gen.writeln("/" + key + " /" + fm.getFontName() + " def");
-        }
-        gen.writeln("end def");
-        gen.writeln("%%EndResource");
-        enum = fonts.keySet().iterator();
-        while (enum.hasNext()) {
-            String key = (String)enum.next();
-            Font fm = (Font)fonts.get(key);
-            gen.writeln("/" + fm.getFontName() + " findfont");
-            gen.writeln("dup length dict begin");
-            gen.writeln("  {1 index /FID ne {def} {pop pop} ifelse} forall");
-            gen.writeln("  /Encoding ISOLatin1Encoding def");
-            gen.writeln("  currentdict");
-            gen.writeln("end");
-            gen.writeln("/" + fm.getFontName() + " exch definefont pop");
         }
     }
 
@@ -399,7 +368,7 @@ public class PSRenderer extends AbstractRenderer {
         gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
         PSProcSets.writeFOPStdProcSet(gen);
         PSProcSets.writeFOPEPSProcSet(gen);
-        writeFontDict(gen, fontInfo);
+        PSProcSets.writeFontDict(gen, fontInfo);
         gen.writeDSCComment(DSCConstants.END_SETUP);
     }
 
@@ -425,14 +394,47 @@ public class PSRenderer extends AbstractRenderer {
                 {page.getPageNumber(),
                  new Integer(this.currentPageNumber)});
         final Integer zero = new Integer(0);
-        final Long pagewidth = new Long(Math.round(page.getViewArea().getWidth()));
-        final Long pageheight = new Long(Math.round(page.getViewArea().getHeight()));
-        gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[]
-                {zero, zero, pagewidth, pageheight});
+        final long pagewidth = Math.round(page.getViewArea().getWidth());
+        final long pageheight = Math.round(page.getViewArea().getHeight());
+        final double pspagewidth = pagewidth / 1000f;
+        final double pspageheight = pageheight / 1000f;
+        boolean rotate = false;
+        if (this.autoRotateLandscape && (pageheight < pagewidth)) {
+            rotate = true;
+            gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[]
+                    {zero,
+                     zero,
+                     new Long(Math.round(pspageheight)),
+                     new Long(Math.round(pspagewidth))});
+            gen.writeDSCComment(DSCConstants.PAGE_HIRES_BBOX, new Object[]
+                    {zero,
+                     zero,
+                     new Double(pspageheight),
+                     new Double(pspagewidth)});
+            gen.writeDSCComment(DSCConstants.PAGE_ORIENTATION, "Landscape");
+        } else {
+            gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[]
+                    {zero,
+                     zero,
+                     new Long(Math.round(pspagewidth)),
+                     new Long(Math.round(pspageheight))});
+            gen.writeDSCComment(DSCConstants.PAGE_HIRES_BBOX, new Object[]
+                    {zero,
+                     zero,
+                     new Double(pspagewidth),
+                     new Double(pspageheight)});
+            if (this.autoRotateLandscape) {
+                gen.writeDSCComment(DSCConstants.PAGE_ORIENTATION, "Portrait");
+            }                
+        }
         gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);         
         gen.writeln("FOPFonts begin");
+        if (rotate) {
+            gen.writeln(Math.round(pspageheight) + " 0 translate");
+            gen.writeln("90 rotate");
+        }
         gen.writeln("0.001 0.001 scale");
-        concatMatrix(1, 0, 0, -1, 0, pageheight.doubleValue());
+        concatMatrix(1, 0, 0, -1, 0, pageheight);
         
         gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);         
         
@@ -836,10 +838,6 @@ public class PSRenderer extends AbstractRenderer {
                         + gen.formatDouble(col.getBlue()) + " setrgbcolor");
     }
 
-    private void updateFont(String name, int size, StringBuffer pdf) {
-
-    }
-   
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
      */

@@ -53,6 +53,7 @@ package org.apache.fop.render.ps;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Stack;
@@ -76,6 +77,7 @@ public class PSGenerator {
     
     private Stack graphicsStateStack = new Stack();
     private PSState currentState;
+    private DecimalFormat df = new DecimalFormat("0.000");
 
     private StringBuffer tempBuffer = new StringBuffer(256);
 
@@ -287,6 +289,8 @@ public class PSGenerator {
                     tempBuffer.append(convertStringToDSC((String)params[i]));
                 } else if (params[i] instanceof AtendIndicator) {
                     tempBuffer.append("(atend)");
+                } else if (params[i] instanceof Double) {
+                    tempBuffer.append(df.format(params[i]));
                 } else if (params[i] instanceof Number) {
                     tempBuffer.append(params[i].toString());
                 } else if (params[i] instanceof Date) {
