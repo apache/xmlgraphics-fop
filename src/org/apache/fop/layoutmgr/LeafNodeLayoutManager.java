@@ -48,10 +48,6 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
         curArea = ia;
     }
 
-    public boolean generateAreas() {
-        return flush();
-    }
-
     protected boolean flush() {
         return false;
     }

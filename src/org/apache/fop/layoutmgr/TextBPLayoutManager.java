@@ -22,7 +22,7 @@ import org.apache.fop.fo.properties.VerticalAlign;
 
 //import org.apache.fop.fo.properties.*;
 
-import java.util.Vector; // or use ArrayList ???
+import java.util.ArrayList;
 
 /**
  * LayoutManager for text (a sequence of characters) which generates one
@@ -52,7 +52,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 
 
     // Hold all possible breaks for the text in this LM's FO.
-    private Vector m_vecAreaInfo;
+    private ArrayList m_vecAreaInfo;
 
     /** Non-space characters on which we can end a line. */
     static private final String s_breakChars = "-/" ;
@@ -90,7 +90,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
         super(fobj);
         this.chars = chars;
         this.textInfo = textInfo;
-        this.m_vecAreaInfo = new Vector(chars.length / 5); // Guess
+        this.m_vecAreaInfo = new ArrayList();
 
         // With CID fonts, space isn't neccesary currentFontState.width(32)
         m_spaceIPD = CharUtilities.getCharWidth(' ', textInfo.fs);
@@ -118,24 +118,11 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
         return null;
     }
 
-    /**
-     * Generate inline areas for words in text.
-     */
-    public boolean generateAreas() {
-        // Handle white-space characteristics. Maybe there is no area to
-        // generate....
-
-        // Iterate over characters and make text areas.
-        // Add each one to parent. Handle word-space.
-        return false;
-    }
-
-
     public void getWordChars(StringBuffer sbChars, Position bp1,
                              Position bp2) {
         LeafPosition endPos = (LeafPosition) bp2;
         AreaInfo ai =
-          (AreaInfo) m_vecAreaInfo.elementAt(endPos.getLeafPos());
+          (AreaInfo) m_vecAreaInfo.get(endPos.getLeafPos());
         // Skip all leading spaces for hyphenation
         int i;
         for (i = ai.m_iStartIndex; i < ai.m_iBreakIndex &&
@@ -163,15 +150,15 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
         if (prevPos != null) {
             // ASSERT (prevPos.getLM() == this)
             if (prevPos.getLM() != this) {
-                System.err.println(
-                  "TextBPLayoutManager.resetPosition: " + "LM mismatch!!!");
+                //log.error(
+                //  "TextBPLayoutManager.resetPosition: " + "LM mismatch!!!");
             }
             LeafPosition tbp = (LeafPosition) prevPos;
             AreaInfo ai =
-              (AreaInfo) m_vecAreaInfo.elementAt(tbp.getLeafPos());
+              (AreaInfo) m_vecAreaInfo.get(tbp.getLeafPos());
             if (ai.m_iBreakIndex != m_iNextStart) {
                 m_iNextStart = ai.m_iBreakIndex;
-                m_vecAreaInfo.setSize(tbp.getLeafPos() + 1);
+                m_vecAreaInfo.ensureCapacity(tbp.getLeafPos() + 1);
                 // TODO: reset or recalculate total IPD = sum of all word IPD
                 // up to the break position
                 m_ipdTotal = ai.m_ipdArea;
@@ -179,7 +166,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
             }
         } else {
             // Reset to beginning!
-            m_vecAreaInfo.setSize(0);
+            m_vecAreaInfo.clear();
             m_iNextStart = 0;
             setFinished(false);
         }
@@ -453,7 +440,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
          */
         while (posIter.hasNext()) {
             LeafPosition tbpNext = (LeafPosition) posIter.next();
-            ai = (AreaInfo) m_vecAreaInfo.elementAt(tbpNext.getLeafPos());
+            ai = (AreaInfo) m_vecAreaInfo.get(tbpNext.getLeafPos());
             if (iStart == -1) {
                 iStart = ai.m_iStartIndex;
             }
@@ -483,8 +470,8 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
                       new String(chars, iStart, ai.m_iBreakIndex - iStart),
                       ai.m_ipdArea.opt + iAdjust);
         if (iWScount > 0) {
-            System.err.println("Adjustment per word-space= " +
-                               iAdjust / iWScount);
+            //log.error("Adjustment per word-space= " +
+            //                   iAdjust / iWScount);
             word.setWSadjust(iAdjust / iWScount);
         }
         if ((chars[iStart] == SPACE || chars[iStart] == NBSPACE) &&

@@ -94,9 +94,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                 return m_curChildLM;
             } else {
                 m_childLMiter.remove();
-                System.err.println(
-                  "WARNING: child LM not a BPLayoutManager: " +
-                  lm.getClass().getName());
+                //log.warn(
+                //  "child LM not a BPLayoutManager: " +
+                //  lm.getClass().getName());
             }
         }
         return null;
@@ -158,72 +158,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         }
         flush();
     }
-
-
-    /**
-     * Generate areas by telling all layout managers for its FO's
-     * children to generate areas.
-     */
-    public boolean generateAreas() {
-        ArrayList lms = new ArrayList();
-        LayoutManager lm = null;
-        FObj curFobj = fobj;
-        if (fobj != null) {
-            ListIterator children = fobj.getChildren();
-            while (children.hasNext()) {
-                Object childFO = children.next();
-                if (childFO instanceof FObj) {
-                    ((FObj) childFO).addLayoutManager(lms);
-                }
-            }
-            //fobj = null;
-        }
-
-        ArrayList vecBreakPoss = new ArrayList();
-
-        BreakPoss bp;
-        LayoutContext childLC = new LayoutContext(0);
-        while (!isFinished()) {
-            if ((bp = getNextBreakPoss(childLC, null)) != null) {
-                vecBreakPoss.add(bp);
-            }
-        }
-
-        addAreas( new BreakPossPosIter(vecBreakPoss, 0,
-                                       vecBreakPoss.size()), null);
-
-
-        /*
-                for (int count = 0; count < lms.size(); count++) {
-                    lm = (LayoutManager) lms.get(count);
-                    if (lm.generatesInlineAreas()) {
-                        ArrayList inlines = new ArrayList();
-                        inlines.add(lm);
-                        //lms.remove(count);
-                        while (count + 1 < lms.size()) {
-                            lm = (LayoutManager) lms.get(count + 1);
-                            if (lm.generatesInlineAreas()) {
-                                inlines.add(lm);
-                                lms.remove(count + 1);
-                            } else {
-                                break;
-                            }
-                        }
-                        lm = new LineBPLayoutManager(curFobj, inlines,
-                                                     lineHeight, lead, follow);
-                        lms.set(count, lm);
-                    }
-                    lm.setParentLM(this);
-                    if (lm.generateAreas()) {
-                        if (flush()) {
-                            return true;
-                        }
-                    }
-                }
-         */
-        return flush(); // Add last area to parent
-    }
-
 
     /**
      * Return an Area which can contain the passed childArea. The childArea

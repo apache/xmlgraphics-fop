@@ -29,7 +29,6 @@ import org.apache.fop.area.inline.Character;
 import java.util.ListIterator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import java.util.ArrayList;
 
 
@@ -59,7 +58,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
 
 
     /** Break positions returned by inline content. */
-    private Vector m_vecInlineBreaks = new Vector(100);
+    private ArrayList m_vecInlineBreaks = new ArrayList();
 
     private BreakPoss m_prevBP = null; // Last confirmed break position
     private boolean m_bJustify = false; // True if fo:block text-align=JUSTIFY
@@ -113,7 +112,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
         BreakPoss prevBP = null;
         BreakPoss bp = null; // proposed BreakPoss
 
-        Vector vecPossEnd = new Vector();
+        ArrayList vecPossEnd = new ArrayList();
 
         // IPD remaining in line
         MinOptMax availIPD = context.getStackLimit();
@@ -130,12 +129,12 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
             // INITIALIZE LAYOUT CONTEXT FOR CALL TO CHILD LM
             // First break for the child LM in each of its areas
             boolean bFirstBPforLM = (m_vecInlineBreaks.isEmpty() ||
-                                     (((BreakPoss) m_vecInlineBreaks.lastElement()).
+                                     (((BreakPoss) m_vecInlineBreaks.get(m_vecInlineBreaks.size() - 1)).
                                       getLayoutManager() != curLM));
 
             // Need previous breakpoint! ATTENTION when backing up for hyphenation!
             prevBP = (m_vecInlineBreaks.isEmpty()) ? null :
-                     (BreakPoss) m_vecInlineBreaks.lastElement();
+                     (BreakPoss) m_vecInlineBreaks.get(m_vecInlineBreaks.size() - 1);
             initChildLC(inlineLC, prevBP,
                         (m_vecInlineBreaks.size() == iPrevLineEnd),
                         bFirstBPforLM, new SpaceSpecifier(true));
@@ -148,7 +147,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
             inlineLC.setFlags(LayoutContext.SUPPRESS_LEADING_SPACE,
                               (m_vecInlineBreaks.size() == iPrevLineEnd &&
                                !m_vecInlineBreaks.isEmpty() &&
-                               ((BreakPoss) m_vecInlineBreaks.lastElement()).
+                               ((BreakPoss) m_vecInlineBreaks.get(m_vecInlineBreaks.size() - 1)).
                                isForcedBreak() == false));
 
             // GET NEXT POSSIBLE BREAK FROM CHILD LM
@@ -280,9 +279,9 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
         // ATTENTION: make sure this hasn't gotten start space for next
         // LM added onto it!
         actual.add(m_prevBP.resolveTrailingSpace(true));
-        System.err.println("Target opt=" + availIPD.opt + " bp.opt=" +
-                           actual.opt + " bp.max=" + actual.max + " bm.min=" +
-                           actual.min);
+        //log.error("Target opt=" + availIPD.opt + " bp.opt=" +
+        //                   actual.opt + " bp.max=" + actual.max + " bm.min=" +
+        //                   actual.min);
 
         // Don't justify last line in the sequence or if forced line-end
         boolean bJustify = (m_bJustify && !m_prevBP.isForcedBreak() &&
@@ -292,7 +291,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
 
 
     private void reset() {
-        while (m_vecInlineBreaks.lastElement() != m_prevBP) {
+        while (m_vecInlineBreaks.get(m_vecInlineBreaks.size() - 1) != m_prevBP) {
             m_vecInlineBreaks.remove(m_vecInlineBreaks.size() - 1);
         }
         reset(m_prevBP.getPosition());
@@ -317,9 +316,9 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
 
 
 
-    private BreakPoss getBestBP(Vector vecPossEnd) {
+    private BreakPoss getBestBP(ArrayList vecPossEnd) {
         if (vecPossEnd.size() == 1) {
-            return ((BreakCost) vecPossEnd.elementAt(0)).getBP();
+            return ((BreakCost) vecPossEnd.get(0)).getBP();
         }
         // Choose the best break (use a sort on cost!)
         Iterator iter = vecPossEnd.iterator();
@@ -359,7 +358,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
         while (bpIter.hasPrevious() && bpIter.previous() != prevBP)
             ;
         if (bpIter.next() != prevBP) {
-            System.err.println("findHyphenPoss: problem!");
+            //log.error("findHyphenPoss: problem!");
             return null;
         }
         StringBuffer sbChars = new StringBuffer(30);
@@ -375,7 +374,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
             prevBP = bp;
         }
         m_vecInlineBreaks.remove(m_vecInlineBreaks.size() - 1); // remove last
-        System.err.println("Word to hyphenate: " + sbChars.toString());
+        //log.debug("Word to hyphenate: " + sbChars.toString());
 
         // Now find all hyphenation points in this word (get in an array of offsets)
         // hyphProps are from the block level?. Note that according to the spec,
@@ -422,7 +421,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
                           (double)(actual.opt - actual.min);
             }
         }
-        System.err.println("Adjustment factor=" + dAdjust);
+        //log.debug("Adjustment factor=" + dAdjust);
         BreakPoss curLineBP = new BreakPoss( new LineBreakPosition(this,
                                              m_vecInlineBreaks.size() - 1, dAdjust));
 
@@ -472,47 +471,6 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
         }
         setCurrentArea(null); // ?? necessary
     }
-
-
-    // NOTE: PATCHED FOR NOW TO ADD BreakPoss stuff to Kerion's changes
-    public boolean generateAreas() {
-        // Make break positions and return lines!
-        // Set up a LayoutContext
-        int ipd = 0;
-        BreakPoss bp;
-        Vector vecBreakPoss = new Vector(20);
-
-        // Force area creation on first call
-        // NOTE: normally not necessary when fully integrated!
-        LayoutContext childLC =
-          new LayoutContext(LayoutContext.CHECK_REF_AREA);
-
-        while (!isFinished()) {
-            if ((bp = getNextBreakPoss(childLC, null)) != null) {
-                if (bp.checkIPD()) {
-                    // Need IPD in order to layout lines!
-                    // This is supposed to bubble up to PageLM to
-                    // make the necessary flow reference area, depending
-                    // on span and break-before flags set as the BreakPoss
-                    // makes its way back up the call stack.
-                    // Fake it for now!
-                    parentLM.getParentArea(null);
-                    ipd = parentLM.getContentIPD();
-                    childLC.flags &= ~LayoutContext.CHECK_REF_AREA;
-                    childLC.setStackLimit( new MinOptMax(ipd - m_iIndents -
-                                                         m_iTextIndent));
-                } else {
-                    vecBreakPoss.add(bp);
-                    // Reset stackLimit for non-first lines
-                    childLC.setStackLimit(new MinOptMax(ipd - m_iIndents));
-                }
-            }
-        }
-        addAreas( new BreakPossPosIter(vecBreakPoss, 0,
-                                       vecBreakPoss.size()), 0.0);
-        return false;
-    }
-
 
 }
 
