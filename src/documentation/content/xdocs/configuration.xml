@@ -10,7 +10,7 @@
   <body>
   <section id="general">
     <title>Configuration File Basics</title>
-    <p>The FOP configuration file is an XML file contains a variety of settings that are useful for controlling FOP's behavior, and for helping it find resources that you wish it to use.</p>
+    <p>The FOP configuration file is an XML file containing a variety of settings that are useful for controlling FOP's behavior, and for helping it find resources that you wish it to use.</p>
     <p>The easiest way to get started using a FOP configuration file is to copy the sample found at <code>{fop-dir}/conf/userconfig.xml</code> to a location of your choice, and then to edit it according to your needs.
 It contains templates for the various configuration options, most of which are commented out. Remove the comments and change the settings for entries that you wish to use.
 Be sure to follow any instructions, including comments which specify the value range.
