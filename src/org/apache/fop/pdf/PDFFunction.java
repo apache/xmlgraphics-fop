@@ -667,4 +667,104 @@ public class PDFFunction extends PDFObject {
 
     }
 
+    public boolean equals(Object obj) {
+        if(obj == null) {
+            return false;
+        }
+        if(!(obj instanceof PDFFunction)) {
+            return false;
+        }
+        PDFFunction func = (PDFFunction)obj;
+        if(functionType != func.functionType) {
+            return false;
+        }
+        if(bitsPerSample != func.bitsPerSample) {
+            return false;
+        }
+        if(order != func.order) {
+            return false;
+        }
+        if(interpolationExponentN != func.interpolationExponentN) {
+            return false;
+        }
+        if(domain != null) {
+            if(!domain.equals(func.domain)) {
+                return false;
+            }
+        } else if(func.domain != null) {
+            return false;
+        }
+        if(range != null) {
+            if(!range.equals(func.range)) {
+                return false; 
+            }
+        } else if(func.range != null) {
+            return false;
+        }
+        if(size != null) {
+            if(!size.equals(func.size)) {
+                return false; 
+            }
+        } else if(func.size != null) {
+            return false;
+        }
+        if(encode != null) {
+            if(!encode.equals(func.encode)) {
+                return false; 
+            }
+        } else if(func.encode != null) {
+            return false;
+        }
+        if(decode != null) {
+            if(!decode.equals(func.decode)) {
+                return false; 
+            }
+        } else if(func.decode != null) {
+            return false;
+        }
+        if(functionDataStream != null) {
+            if(!functionDataStream.equals(func.functionDataStream)) {
+                return false; 
+            }
+        } else if(func.functionDataStream != null) {
+            return false;
+        }
+        if(filter != null) {
+            if(!filter.equals(func.filter)) {
+                return false;
+            }
+        } else if(func.filter != null) {
+            return false;
+        }
+        if(cZero != null) {
+            if(!cZero.equals(func.cZero)) {
+                return false;
+            }
+        } else if(func.cZero != null) {
+            return false;
+        }
+        if(cOne != null) {
+            if(!cOne.equals(func.cOne)) {
+                return false;
+            }
+        } else if(func.cOne != null) {
+            return false;
+        }
+        if(functions != null) {
+            if(!functions.equals(func.functions)) {
+                return false;
+            }
+        } else if(func.functions != null) {
+            return false;
+        }
+        if(bounds != null) {
+            if(!bounds.equals(func.bounds)) {
+                return false;
+            }
+        } else if(func.bounds != null) {
+            return false;
+        }
+        return true;
+    }
+
 }
