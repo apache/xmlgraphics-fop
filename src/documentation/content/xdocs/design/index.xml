@@ -1,51 +1,86 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
-
 <document>
-    <header>
-        <title>FOP Design</title>
-        <subtitle>Design Approach to FOP</subtitle>
-        <authors>
-            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
-        </authors>
-    </header>
-
-    <body>
-<section>
-  <title>Introduction</title>
-<p>
-The information here describes the design and architecture details for FOP.
-Currently this is part of a redesign process for some of the core parts of
-FOP.
-  </p>
-  <p>
-The redesign is mainly focusing on some particular process involved
-with the layout process when converting the FO tree into the Area Tree.
-  </p>
-<section>
-  <title>Aims</title>
-  <p>
-The main aim for FOP is to comply with the spec and to be able to
-process files of any size.
-   </p>
-  <p>
-In achieving this aim we need to understand the problem and break it
-into small problems that can be solved.
-   </p>
-<ul>
-<li>use SAX as input</li>
-<li>process FO elements ASAP</li>
-<li>dispose of unused memory, keep memory minimal</li>
-<li>layout handles floats, footnotes and keeps in a simple straight forward way</li>
-<li>id references are kept simple</li>
-<li>pages are rendered ASAP, can be cached until resolved</li>
-<li>renderers are totally responsible for their output format</li>
-<li>output is sent to a stream</li>
-</ul>
-</section>
-  </section>
-
-    </body>
+  <header>
+    <title>Introduction to FOP Design</title>
+    <authors>
+      <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+    </authors>
+  </header>
+  <body>
+    <section id="intro">
+      <title>Introduction</title>
+      <p>The articles in this section describe the design and architecture details for FOP.</p>
+      <note>The articles in this section pertain to the <em>redesign</em> or <em>trunk</em> line of development.
+The redesign is mainly focusing on parts of the layout process (converting the FO tree into the Area Tree).</note>
+    </section>
+    <section id="primary_goals">
+      <title>Primary Design Goals</title>
+      <p>The primary design goals for FOP are:</p>
+      <ul>
+        <li>Comply with the spec.</li>
+        <li>Process files of arbitrary size (limited only by storage).</li>
+      </ul>
+    </section>
+    <section id="secondary_goals">
+      <title>Secondary Design Goals</title>
+      <section id="memory">
+        <title>Keep Memory Minimal</title>
+        <p>Many FOP design decisions revolve around trying to minimize the use of memory.
+The primary purpose here is to reduce the amount of data that must be serialized to storage during processing.
+Since our primary design goals include the ability to process files of arbitrary size, there is no way to avoid the need to serialize.
+However, many FOP users provide web access to documents that are created in real time.
+Performance is therefore an important issue in these real-world applications.
+To the extent that it can be done so without jeopardizing the primary design goals, FOP developers have identified keeping a small memory footprint as being an important secondary goal.</p>
+      </section>
+    </section>
+    <section id="issues">
+      <title>Design Issues</title>
+      <p>As with any significant programming project, we need to first understand the big problem, then break it into smaller solvable problems.
+To achieve our design goals, we have identified and attempted to resolve some design issues.
+Since they are in support of the primary and secondary goals, they are not necessarily written in stone.
+However, most of them have been discussed at length among the developers, and are reasonably well settled.</p>
+      <section id="input">
+        <title>Use SAX as Input</title>
+        <p>The two standard ways of dealing with XML input are SAX and DOM. SAX basically creates events as it parses an XML document in a serial fashion; a program using SAX (and not storing anything internally) will only see a small window of the document at any point in time, and can never look forward in the document. DOM creates and stores a tree representation of the document, allowing a view of the entire document as an integrated whole. One issue that may seem counter-intuitive to some new FOP developers, and which has from time to time been contentious, is that FOP uses SAX for input. (DOM can be used as input as well, but it is converted into SAX events before entering FOP, effectively negating its advantages).</p>
+        <p>Since FOP essentially needs a tree representation of the FO input, at first glance it seems to make sense to use DOM. Instead, FOP takes SAX events and builds its own tree-like structure. Why?</p>
+        <ul>
+          <li>DOM has a relatively large memory footprint. FOP's FO Tree is a lighter-weight structure.</li>
+          <li>DOM contains an entire document. FOP is able to process individual fo:page-sequence objects discretely, without the need to have the entire document in memory. For documents that have only one fo:page-sequence object, FOP's approach is no advantage, but in other cases it is a huge advantage. A 500-page book that is broken into 100 5-page chapters, each in its own fo:page-sequence, essentially needs only 1% of the document memory that would be required if using DOM as input.</li>
+        </ul>
+      </section>
+      <section>
+        <title>Process FO Elements ASAP</title>
+        <p>The issue here is that we wish to recycle FO Tree memory as much as possible. There are at least three possible places that FO Tree fragments can be passed to the Layout process, and their memory recycled:</p>
+        <ul>
+          <li><strong>fo:block</strong> It might be tempting to start laying out pages as soon as the first fo:block object is finished. However, there are many downstream things that can affect the placement of that block on a page, such as graphics and footnotes. So, in order to maintain conformance to the XSL-FO specification, and create high-quality output, we must see more of the document.</li>
+          <li><strong>fo:root</strong> The other extreme is to wait until the entire document is read in before processing any of it. This essentially means that there is no memory recycling. Processing the document correctly is more important than saving memory, so this option would be used if there were no better alternative.</li>
+          <li><strong>fo:page-sequence</strong> The page-sequence object provides a nice clean break in the document. Content from one page-sequence will never interfere with nor affect the placement of the content of another. FOP uses this option as the optimum way to maintain compliance with the standard and to minimize memory consumption.</li>
+        </ul>
+      </section>
+      <section>
+        <title>Serialize FO Tree as Necessary</title>
+        <p>This issue is implied by the requirement to process documents of arbitrary size. Unless some arbitrary limit is placed on the size of page-sequence objects, FOP must be able to serialize FO tree fragments as necessary.</p>
+      </section>
+      <section>
+        <title>Keep Layouts Simple</title>
+        <p>Layout should handle floats, footnotes and keeps in a simple, straightforward way.</p>
+      </section>
+      <section>
+        <title>Keep ID References Simple</title>
+      </section>
+      <section>
+        <title>Render Pages ASAP</title>
+        <p>The issue here is that we wish to recycle the Area Tree memory as much as possible. The problem is that forward references prevent pages from being resolved until the forward references are resolved. If memory is insufficient to store unresolved pages, Area Tree fragments must be serialized until resolved.</p>
+      </section>
+      <section>
+        <title>Renderers are Responsible</title>
+        <p>Each renderer is totally responsible for its output format.</p>
+      </section>
+      <section>
+        <title>Send Output to a Stream</title>
+      </section>
+    </section>
+  </body>
 </document>
-
