@@ -9,8 +9,8 @@ package org.apache.fop.render.pdf;
 
 // FOP
 import org.apache.fop.render.PrintRenderer;
-import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
+import org.apache.fop.image.FopImageException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.inline.*;
@@ -268,43 +268,91 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-     * render image area to PDF
-     *
-     * @param area the image area to render
+     * Renders an image, scaling it to the given width and height.
+     * If the scaled width and height is the same intrinsic size
+     * of the image, the image is not scaled.
+     * 
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     * @param image the image to be rendered
+     * @param fs the font state to use when rendering text
+     *           in non-bitmapped images.
      */
-    public void renderImageArea(ImageArea area) {
-        // adapted from contribution by BoBoGi
-        int x = this.currentXPosition + area.getXOffset();
-        int y = this.currentYPosition;
-        int w = area.getContentWidth();
-        int h = area.getHeight();
-
-        this.currentYPosition -= h;
-
-        FopImage img = area.getImage();
-        if (img instanceof SVGImage) {
-            try {
-                closeText();
-
-                SVGDocument svg = ((SVGImage)img).getSVGDocument();
-                currentStream.add("ET\nq\n");
-                renderSVGDocument(svg, (int)x, (int)y, area.getFontState());
-                currentStream.add("Q\nBT\n");
-            } catch (FopImageException e) {}
-
-        } else {
-            int xObjectNum = this.pdfDoc.addImage(img);
-            closeText();
-
-            currentStream.add("ET\nq\n" + (((float)w) / 1000f) + " 0 0 "
-                              + (((float)h) / 1000f) + " "
-                              + (((float)x) / 1000f) + " "
-                              + (((float)(y - h)) / 1000f) + " cm\n" + "/Im"
-                              + xObjectNum + " Do\nQ\nBT\n");
-        }
-        this.currentXPosition += area.getContentWidth();
+    protected void drawImageScaled(int x, int y, int w, int h,
+				   FopImage image,
+				   FontState fs) {
+	if (image instanceof SVGImage) {
+	    try {
+		closeText();
+  
+		SVGDocument svg = ((SVGImage)image).getSVGDocument();
+		currentStream.add("ET\nq\n");
+		renderSVGDocument(svg, x, y, fs);
+		currentStream.add("Q\nBT\n");
+	    } catch (FopImageException e) {}
+  
+	} else {
+	    int xObjectNum = this.pdfDoc.addImage(image);
+	    closeText();
+	    currentStream.add("ET\nq\n" + (((float)w) / 1000f) + " 0 0 "
+			      + (((float)h) / 1000f) + " "
+			      + (((float)x) / 1000f) + " "
+			      + (((float)y - h) / 1000f) + " cm\n" + "/Im"
+			      + xObjectNum + " Do\nQ\nBT\n");
+	}
     }
+ 
+    /**
+     * Renders an image, clipping it as specified. 
+     * 
+     * @param x the x position of left edge in millipoints.
+     * @param y the y position of top edge in millipoints.
+     * @param clipX the left edge of the clip in millipoints
+     * @param clipY the top edge of the clip in millipoints
+     * @param clipW the clip width in millipoints
+     * @param clipH the clip height in millipoints
+     * @param fill the image to be rendered
+     * @param fs the font state to use when rendering text
+     *           in non-bitmapped images.
+     */
+    protected void drawImageClipped(int x, int y,
+				    int clipX, int clipY,
+				    int clipW, int clipH,
+				    FopImage image,
+				    FontState fs) {
+	
+	PDFRectangle clip = new PDFRectangle(clipX / 1000,
+					     clipY / 1000,
+					     (clipX + clipW) / 1000,
+					     (clipY + clipW) / 1000);
 
+	if (image instanceof SVGImage) {
+	    try {
+		closeText();
+  
+		SVGDocument svg = ((SVGImage)image).getSVGDocument();
+		currentStream.add("ET\nq\n");
+		renderSVGDocument(svg, x, y, fs);
+		currentStream.add("Q\nBT\n");
+	    } catch (FopImageException e) {}
+  
+	} else {
+	    int xObjectNum = this.pdfDoc.addImage(image);
+	    closeText();
+	    currentStream.add("ET\nq\n" +
+			      // image matrix
+			      (((float)clipW) / 1000f) + " 0 0 " +
+			      (((float)clipH) / 1000f) + " " +
+		              (((float)x) / 1000f) + " " +
+			      (((float)y - clipH) / 1000f) + " cm\n" +
+			      "s\n" +
+			      // the image itself
+			      "/Im" + xObjectNum + " Do\nQ\nBT\n");
+	}
+    }
+  
     /**
      * render a foreign object area
      */
