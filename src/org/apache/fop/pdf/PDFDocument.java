@@ -825,6 +825,7 @@ public class PDFDocument {
             PDFFont font = new PDFFont(++this.objectcount, fontname,
                                        PDFFont.TYPE1, basefont, encoding);
             this.objects.add(font);
+            fontMap.put(basefont, font);
             return font;
         } else {
             byte subtype = PDFFont.TYPE1;
@@ -891,6 +892,8 @@ public class PDFDocument {
                                      metrics.getLastChar(),
                                      makeArray(metrics.getWidths(1)));
             }
+
+            fontMap.put(basefont, font);
 
             return font;
         }
@@ -1005,7 +1008,6 @@ public class PDFDocument {
                                    pagewidth, pageheight);
 
         /* add it to the list of objects */
-        this.objects.add(page);
         pages.addPage(page);
         return page;
     }

@@ -10,7 +10,7 @@ package org.apache.fop.pdf;
 // Java...
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.io.IOException;
 
 /**
@@ -191,8 +191,7 @@ public class PDFPattern extends PDFPathPaint {
      *
      * @return the PDF string.
      */
-    public byte[] toPDF() {
-
+    protected int output(OutputStream stream) throws IOException {
 
         int vectorSize = 0;
         int tempInt = 0;
@@ -251,11 +250,7 @@ public class PDFPattern extends PDFPathPaint {
                 dataStream.add(this.patternDataStream.toString());
                 // TODO get the filters from the doc
                 dataStream.addDefaultFilters(new HashMap(), PDFStream.CONTENT_FILTER);
-                try {
-                    p.append(dataStream.applyFilters());
-                } catch(IOException e) {
-
-                }
+                p.append(dataStream.applyFilters());
                 p.append("/Length " + (dataStream.getDataLength() + 1)
                          + " \n");
             }
@@ -292,26 +287,25 @@ public class PDFPattern extends PDFPathPaint {
 
         p.append(">> \n");
 
+        String dict = p.toString();
+        int length = dict.length();
+
+        stream.write(dict.getBytes());
+
         // stream representing the function
         if (dataStream != null) {
-            try {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                baos.write(p.toString().getBytes());
-                int length = dataStream.outputStreamData(baos);
-
-                baos.write(("endobj\n").getBytes());
-                return baos.toByteArray();
-            } catch(IOException e) {
-
-            }
+            length += dataStream.outputStreamData(stream);
         }
 
-        p.append("endobj\n");
+        String end = "endobj\n";
+        stream.write(end.getBytes());
+        length += end.length();
 
 
-
-        return (p.toString().getBytes());
+        return length;
 
     }
+
+    public byte[] toPDF() { return null; }
 
 }

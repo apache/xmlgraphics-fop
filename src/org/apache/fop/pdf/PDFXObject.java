@@ -62,7 +62,7 @@ public class PDFXObject extends PDFObject {
             p = p + "<</Type /XObject\n";
             p = p + "/Subtype /Image\n";
             p = p + "/Name /Im" + Xnum + "\n";
-            p = p + "/Length " + imgStream.getDataLength() + "\n";
+            p = p + "/Length " + (imgStream.getDataLength() + 1) + "\n";
             p = p + "/Width " + pdfimage.getWidth() + "\n";
             p = p + "/Height " + pdfimage.getHeight() + "\n";
             p = p + "/BitsPerComponent " + pdfimage.getBitsPerPixel() +
@@ -133,7 +133,7 @@ public class PDFXObject extends PDFObject {
         String p = this.number + " " + this.generation + " obj\n";
         p = p + "<</Type /XObject\n";
         p = p + "/Subtype /PS\n";
-        p = p + "/Length " + imgStream.getDataLength();
+        p = p + "/Length " + (imgStream.getDataLength() + 1);
 
         p = p + dictEntries;
         p = p + ">>\n";
