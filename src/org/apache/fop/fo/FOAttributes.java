@@ -39,7 +39,7 @@ public class FOAttributes {
     private static final String revision = "$Revision$";
 
     /**
-     * <i>nSpaceAttrLists</i> is an <tt>ArrayList</tt> to hold the array of 
+     * <i>nSpaceAttrMaps</i> is an <tt>ArrayList</tt> to hold the array of 
      * <tt>HashMap</tt>s which contain the attribute lists for each
      * namespace which may be active for a particular FO element.  The
      * <tt>ArrayList</tt> is indexed by the URIIndex for this namespace
@@ -49,18 +49,18 @@ public class FOAttributes {
      * The <tt>ArrayList</tt> will not be created for a particular instance
      * of <tt>FOAttributes</tt> unless a namespace other than the standard
      * XSL namespace is activated for this instance.
-     * See <i>foAttrList</i>.
+     * See <i>foAttrMap</i>.
      */
-    private ArrayList nSpaceAttrLists;
+    private ArrayList nSpaceAttrMaps;
 
     /**
-     * <i>foAttrList</i> is a <tt>HashMap</tt> to hold the FO namespace
+     * <i>foAttrMap</i> is a <tt>HashMap</tt> to hold the FO namespace
      * attribute list specified in the FO element with which this list is
      * associated.  The <tt>String</tt> attribute value is stored
      * indexed by the integer constant property identifier from
      * <tt>PropertyConsts</tt>.
      */
-    private HashMap foAttrList = new HashMap(0);
+    private HashMap foAttrMap = new HashMap(0);
 
     private int DefAttrNSIndex = XMLEvent.DefAttrNSIndex;
 
@@ -71,11 +71,11 @@ public class FOAttributes {
      * <p>The <tt>Attributes</tt> object on the event is scanned, and each
      * attribute is examined.  If the attribute is in the default namespace
      * for fo: attributes, it is an fo: property, and its value is entered
-     * into the <i>foAttrList</i> <tt>Hashmap>/tt> indexed by the property
+     * into the <i>foAttrMap</i> <tt>Hashmap>/tt> indexed by the property
      * index.
      * <p>If the attribute does not belong to the default namespace, its
      * value is entered into the appropriate <tt>HashMap</tt> in the
-     * <tt>ArrayList</tt> <i>nSpaceAttrLists</i>, indexed by the attribute's
+     * <tt>ArrayList</tt> <i>nSpaceAttrMaps</i>, indexed by the attribute's
      * local name.
      * <p>
      */
@@ -83,10 +83,10 @@ public class FOAttributes {
         // If the event is null, there is no event associated with this
         // node, probably because this is a manufactured node; e.g.,
         // an "invented" FopageSequenceMaster.  The default initialisation
-        // includes an empty foAttrList HashMap.
+        // includes an empty foAttrMap HashMap.
         if (event == null) return;
             
-        // Create the foAttrList.
+        // Create the foAttrMap.
         Attributes attributes = event.attributes;
         if (attributes == null) throw new FOPException
                                        ("No Attributes in XMLEvent");
@@ -109,7 +109,7 @@ public class FOAttributes {
                     propIndex =
                             PropertyConsts.getPropertyIndex(attrLocalname);
                     // Known attribute name
-                    foAttrList.put(Ints.consts.get(propIndex), attrValue);
+                    foAttrMap.put(Ints.consts.get(propIndex), attrValue);
                 } catch (PropertyException e) {
                     // Not known - ignore
                     MessageHandler.errorln(event.qName + " "
@@ -118,27 +118,27 @@ public class FOAttributes {
                 }
             } else { // Not the XSL FO namespace
                 int j;
-                if (nSpaceAttrLists == null) {
+                if (nSpaceAttrMaps == null) {
                     //Create the list
-                    System.out.println("Creating nSpaceAttrLists");
-                    nSpaceAttrLists = new ArrayList(attrUriIndex + 1);
+                    System.out.println("Creating nSpaceAttrMaps");
+                    nSpaceAttrMaps = new ArrayList(attrUriIndex + 1);
                     // Add the fo list
                     for (j = 0; j < DefAttrNSIndex; j++)
-                        nSpaceAttrLists.add(new HashMap(0));
+                        nSpaceAttrMaps.add(new HashMap(0));
 
-                    System.out.println("Adding foAttrList");
-                    nSpaceAttrLists.add(foAttrList);
+                    System.out.println("Adding foAttrMap");
+                    nSpaceAttrMaps.add(foAttrMap);
                 }
                 // Make sure there are elements between the last current
                 // and the one to be added
-                for (j = nSpaceAttrLists.size(); j <= attrUriIndex; j++)
-                    nSpaceAttrLists.add(new HashMap(0));
+                for (j = nSpaceAttrMaps.size(); j <= attrUriIndex; j++)
+                    nSpaceAttrMaps.add(new HashMap(0));
                 
                 // Does a HashMap exist for this namespace?
                 if ((tmpHash =
-                     (HashMap)nSpaceAttrLists.get(attrUriIndex)) == null) {
+                     (HashMap)nSpaceAttrMaps.get(attrUriIndex)) == null) {
                     tmpHash = new HashMap(1);
-                    nSpaceAttrLists.set(attrUriIndex, tmpHash);
+                    nSpaceAttrMaps.set(attrUriIndex, tmpHash);
                 }
                 // Now put this value in the HashMap
                 tmpHash.put(attrLocalname, attrValue);
@@ -152,8 +152,19 @@ public class FOAttributes {
      * attribute list, indexed by the property name index from
      * <tt>PropNames</tt>.
      */
-    public Map getFoAttrList() {
-        return Collections.unmodifiableMap((Map)foAttrList);
+    public Map getFixedFoAttrMap() {
+        return Collections.unmodifiableMap((Map)foAttrMap);
+    }
+
+    /**
+     * @return <tt>HashMap</tt> <i>foAttrMap</i> containing the the attribute
+     * values for all of the default attribute namespace attributes in this
+     * attribute list, indexed by the property name index from
+     * <tt>PropNames</tt>.  This HashMap may be changed by the calling
+     * process.
+     */
+    public HashMap getFoAttrMap() {
+        return foAttrMap;
     }
 
     /**
@@ -164,7 +175,7 @@ public class FOAttributes {
      * @return a <tt>String</tt> containing the associated property value.
      */
     public String getFoAttrValue(int property) {
-        return (String)(foAttrList.get(Ints.consts.get(property)));
+        return (String)(foAttrMap.get(Ints.consts.get(property)));
     }
 
     /**
@@ -187,15 +198,15 @@ public class FOAttributes {
      * @return an unmodifiable <tt>Map</tt> of the attribute values
      * within the indexed namespace, for this attribute list, indexed by the
      * local name of the attribute.  The <tt>Map</tt> returned is
-     * derived from the one maintained in <i>nSpaceAttrLists</i>.
+     * derived from the one maintained in <i>nSpaceAttrMaps</i>.
      */
-    public Map getAttrList(int uriIndex) {
+    public Map getAttrMap(int uriIndex) {
         if (uriIndex == DefAttrNSIndex)
-            return Collections.unmodifiableMap((Map)foAttrList);
-        if (nSpaceAttrLists != null) {
-            if (uriIndex >= nSpaceAttrLists.size()) return null;
+            return Collections.unmodifiableMap((Map)foAttrMap);
+        if (nSpaceAttrMaps != null) {
+            if (uriIndex >= nSpaceAttrMaps.size()) return null;
             return Collections.unmodifiableMap
-                    ((Map)(nSpaceAttrLists.get(uriIndex)));
+                    ((Map)(nSpaceAttrMaps.get(uriIndex)));
         } else {
             return null;
         }
@@ -215,43 +226,57 @@ public class FOAttributes {
         if (uriIndex == DefAttrNSIndex)
             return getFoAttrValue(PropertyConsts.getPropertyIndex(localName));
         return (String)
-                (((HashMap)nSpaceAttrLists.get(uriIndex)).get(localName));
+                (((HashMap)nSpaceAttrMaps.get(uriIndex)).get(localName));
     }
 
     /**
-     * Get the size of the <i>nSpaceAttrLists</i> <tt>ArrayList</tt>
+     * Get the size of the <i>foAttrMap</i> <tt>HashMap</tt>
+     * containing attributes for the default fo: namespace
+     * @return an <tt>int</tt> containing the size.
+     */
+    public int getFoAttrMapSize() {
+        return foAttrMap.size();
+    }
+
+    /**
+     * Get the size of the <i>nSpaceAttrMaps</i> <tt>ArrayList</tt>
      * containing attribute namespaces active in this set of attributes.
      * <i>N.B.</i> this may be zero if only the default attribute
      * namespace has been seen in the attribute set.
      * @return an <tt>int</tt> containing the size.
      */
-    public int getNSpaceAttrListsSize() {
-        if (nSpaceAttrLists == null)
+    public int getNSpaceAttrMapsSize() {
+        if (nSpaceAttrMaps == null)
             return 0;
-        return nSpaceAttrLists.size();
+        return nSpaceAttrMaps.size();
     }
 
     /**
+     * Merge attributes from another <tt>FOAttributes</tt> into <i>this</i>.
+     * @param foAttrs the <tt>FOAttributes</tt> containing the attributes
+     * to merge.
      */
     public void merge(FOAttributes foAttrs) {
-        foAttrList.putAll(foAttrs.getFoAttrList());
-        int attrLen = foAttrs.getNSpaceAttrListsSize();
+        foAttrMap.putAll(foAttrs.getFoAttrMap());
+        int attrLen = foAttrs.getNSpaceAttrMapsSize();
         if (attrLen != 0) {
             // something to copy
-            if (nSpaceAttrLists == null) {
+            if (nSpaceAttrMaps == null) {
                 // no "foreign" attribute lists in this
                 // copy the others in
-                nSpaceAttrLists = new ArrayList(attrLen);
+                nSpaceAttrMaps = new ArrayList(attrLen);
             }
-            for (int i = nSpaceAttrLists.size(); i < attrLen; i++)
-                nSpaceAttrLists.add(new HashMap(0));
+            // If the merging ArrayList of namespaces is larger, add the
+            // extra elements and initialise each to an empty HashMap
+            for (int i = nSpaceAttrMaps.size(); i < attrLen; i++)
+                nSpaceAttrMaps.add(new HashMap(0));
             // Except for foAttrs, which has already been merged, merge
             // the entries from the merging foAttrs
             for (int i = 0; i < attrLen; i++) {
-                // skip foAttrList
+                // skip foAttrMap
                 if (i == DefAttrNSIndex) continue;
-               ((HashMap) nSpaceAttrLists.get(i))
-                       .putAll(foAttrs.getAttrList(i));
+               ((HashMap) nSpaceAttrMaps.get(i))
+                       .putAll(foAttrs.getAttrMap(i));
             }
         }
     }
