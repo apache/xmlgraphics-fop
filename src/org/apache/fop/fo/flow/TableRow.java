@@ -93,6 +93,10 @@ public class TableRow extends FObj {
     ColorType borderRightColor;
     int borderRightWidth;
     int borderRightStyle;
+    int paddingTop;
+    int paddingBottom;
+    int paddingLeft;
+    int paddingRight;
 
     int widthOfCellsSoFar = 0;
     int largestCellHeight = 0;
@@ -178,6 +182,21 @@ public class TableRow extends FObj {
 		this.borderRightStyle = 
 		    this.properties.get("border-right-style").getEnum();
 	    }
+	    this.paddingTop =
+		this.properties.get("padding").getLength().mvalue();
+            this.paddingLeft = this.paddingTop;
+            this.paddingRight = this.paddingTop;
+            this.paddingBottom = this.paddingTop;
+            if (this.paddingTop == 0) {
+	      this.paddingTop =
+		  this.properties.get("padding-top").getLength().mvalue();
+	      this.paddingLeft =
+		  this.properties.get("padding-left").getLength().mvalue();
+	      this.paddingBottom =
+		  this.properties.get("padding-bottom").getLength().mvalue();
+	      this.paddingRight =
+		  this.properties.get("padding-right").getLength().mvalue();
+            }
             this.id=
                  this.properties.get("id").getString();
 
@@ -205,6 +224,8 @@ public class TableRow extends FObj {
                            area.getAllocationWidth(), 
 			  area.spaceLeft(), Position.RELATIVE);
 	areaContainer.setPage(area.getPage());
+ 	areaContainer.setPadding(paddingTop, paddingLeft, paddingBottom,
+ 				 paddingRight);
 	areaContainer.setBackgroundColor(backgroundColor);
         areaContainer.setBorderStyle(borderTopStyle, borderLeftStyle, borderBottomStyle, borderRightStyle); 
         areaContainer.setBorderWidth(borderTopWidth, borderLeftWidth, borderBottomWidth, borderRightWidth); 
@@ -265,7 +286,11 @@ public class TableRow extends FObj {
 
 	area.addChild(areaContainer);
 	areaContainer.end();
-        area.addDisplaySpace(largestCellHeight);
+        area.addDisplaySpace(largestCellHeight
+			     + areaContainer.getPaddingTop()
+ 			     + areaContainer.borderWidthTop
+ 			     + areaContainer.getPaddingBottom()
+ 			     + areaContainer.borderWidthBottom);
 
 	// bug fix from Eric Schaeffer
 	//area.increaseHeight(largestCellHeight);

@@ -74,6 +74,11 @@ public class TableColumn extends FObj {
     ColorType borderRightColor;
     int borderRightWidth;
     int borderRightStyle;
+    int paddingTop;
+    int paddingBottom;
+    int paddingLeft;
+    int paddingRight;
+
     int columnWidth;
     int columnOffset;
     
@@ -167,6 +172,21 @@ public class TableColumn extends FObj {
 		this.borderRightStyle = 
 		    this.properties.get("border-right-style").getEnum();
 	    }
+	    this.paddingTop =
+		this.properties.get("padding").getLength().mvalue();
+            this.paddingLeft = this.paddingTop;
+            this.paddingRight = this.paddingTop;
+            this.paddingBottom = this.paddingTop;
+            if (this.paddingTop == 0) {
+	      this.paddingTop =
+		  this.properties.get("padding-top").getLength().mvalue();
+	      this.paddingLeft =
+		  this.properties.get("padding-left").getLength().mvalue();
+	      this.paddingBottom =
+		  this.properties.get("padding-bottom").getLength().mvalue();
+	      this.paddingRight =
+		  this.properties.get("padding-right").getLength().mvalue();
+            }
             this.columnWidth = 
                 this.properties.get("column-width").getLength().mvalue();
             
@@ -179,6 +199,8 @@ public class TableColumn extends FObj {
 	    new AreaContainer(fs, columnOffset - area.borderWidthLeft, -area.borderWidthTop, columnWidth, 
 			  area.getHeight(), Position.RELATIVE);
 	areaContainer.setPage(area.getPage());
+ 	areaContainer.setPadding(paddingTop, paddingLeft, paddingBottom,
+ 				 paddingRight);
 	areaContainer.setBackgroundColor(backgroundColor);
         areaContainer.setBorderStyle(borderTopStyle, borderLeftStyle, 
 				     borderBottomStyle, borderRightStyle); 
