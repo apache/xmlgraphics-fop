@@ -102,7 +102,9 @@ public class SVGDocumentImpl extends ElementImpl implements SVGDocument {
 
 	public SVGSVGElement getRootElement()
 	{
-		return (SVGSVGElement)childs.elementAt(0);
+		if(childs.size() > 0)
+    		return (SVGSVGElement)childs.elementAt(0);
+    	return null;
 	}
 
 	public Element getElementById(String elementId)

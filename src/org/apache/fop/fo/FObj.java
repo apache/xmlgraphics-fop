@@ -165,6 +165,8 @@ public class FObj extends FONode {
    */
   public void removeID(IDReferences idReferences)
   {
+      if(((FObj)this).properties.get("id") == null)
+          return;
       idReferences.removeID( ((FObj)this).properties.get("id").getString());                            
       int numChildren = this.children.size();
     for (int i = 0; i < numChildren; i++) 
