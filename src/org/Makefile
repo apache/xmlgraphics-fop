@@ -1,6 +1,6 @@
 
 
-BASEDIR:=..
+BASEDIR:=../..
 include $(BASEDIR)/Makefile.rules
 
 SUBDIRS=apache

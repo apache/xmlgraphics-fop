@@ -6,9 +6,9 @@ BASEDIR=.
 
 include $(BASEDIR)/Makefile.rules
 
-SUBDIRS=org
+SUBDIRS=src
 
-CODEGEN=codegen
+CODEGEN=src/codegen
 
 GENDIR=generated
 
@@ -65,8 +65,8 @@ compilegen: properties charlist fonts
 	done
 
 $(GENDIR): 
-	mkdir -p $(GENDIR)/org/apache/xml/fop/fo/properties;
-	mkdir -p $(GENDIR)/org/apache/xml/fop/render/pdf/fonts;
+	mkdir -p $(GENDIR)/org/apache/fop/fo/properties;
+	mkdir -p $(GENDIR)/org/apache/fop/render/pdf/fonts;
 
 properties: $(PROPERTIESXML) $(PROPERTIESXSL)
 	cd $(GENDIR) && $(XT) ../$(PROPERTIESXML) ../$(PROPERTIESXSL)

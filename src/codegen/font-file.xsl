@@ -3,10 +3,10 @@
  version="1.0">
 <template match="font-metrics">
 <variable name="class-name" select="class-name"/>
-<xt:document method="text" href="org/apache/xml/fop/render/pdf/fonts/{$class-name}.java">
-package org.apache.xml.fop.render.pdf.fonts;
+<xt:document method="text" href="org/apache/fop/render/pdf/fonts/{$class-name}.java">
+package org.apache.fop.render.pdf.fonts;
 
-import org.apache.xml.fop.render.pdf.Font;
+import org.apache.fop.render.pdf.Font;
 
 public class <value-of select="class-name"/> extends Font {
     private final static String fontName = "<value-of select="font-name"/>";
