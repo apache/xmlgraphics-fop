@@ -51,7 +51,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
-import org.apache.fop.fo.Constants;
+
 
 /**
  * Models a pair of lengths, one specifiying the dimensions for the

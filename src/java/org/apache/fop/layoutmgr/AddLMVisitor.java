@@ -356,9 +356,9 @@ public class AddLMVisitor implements FOTreeVisitor {
 
      public MinOptMax getLeaderAllocIPD(Leader node, int ipd) {
          // length of the leader
-         int opt = node.getLength("leader-length.optimum", ipd);
-         int min = node.getLength("leader-length.minimum", ipd);
-         int max = node.getLength("leader-length.maximum", ipd);
+         int opt = node.getLength(Constants.PR_LEADER_LENGTH | Constants.CP_OPTIMUM, ipd);
+         int min = node.getLength(Constants.PR_LEADER_LENGTH | Constants.CP_MINIMUM, ipd);
+         int max = node.getLength(Constants.PR_LEADER_LENGTH | Constants.CP_MAXIMUM, ipd);
 
          return new MinOptMax(min, opt, max);
      }
