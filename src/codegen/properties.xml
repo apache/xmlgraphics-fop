@@ -966,6 +966,14 @@
     </datatype>
     <default>auto</default>
   </property>
+  <property>
+    <name>region-name</name>
+    <class-name>RegionName</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+	<!-- default depends on region type -->
+    <default></default>
+  </property>
 
   <!-- svg properties, or should these be in another file -->
   <property>

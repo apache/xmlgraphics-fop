@@ -58,6 +58,8 @@ import org.apache.fop.layout.PageMaster;
 import org.apache.fop.layout.Region;
 import org.apache.fop.apps.FOPException;				   
 
+import java.util.Hashtable;
+
 public class SimplePageMaster extends FObj {
 	
     public static class Maker extends FObj.Maker {
@@ -74,6 +76,8 @@ public class SimplePageMaster extends FObj {
     RegionBody regionBody;
     RegionBefore regionBefore;
     RegionAfter regionAfter;
+	private Hashtable regions;
+	private String masterName;
 	
     LayoutMasterSet layoutMasterSet;
     PageMaster pageMaster;
@@ -83,14 +87,17 @@ public class SimplePageMaster extends FObj {
 	super(parent, propertyList);
 	this.name = "fo:simple-page-master";
 
+	this.regions = new Hashtable();
+	
 	if (parent.getName().equals("fo:layout-master-set")) {
 	    this.layoutMasterSet = (LayoutMasterSet) parent;
 	    String pm = this.properties.get("master-name").getString();
-	    if (pm == null) {
+	    if (pm.equals("")) {
 		MessageHandler.errorln("WARNING: simple-page-master does not have "
 				   + "a master-name and so is being ignored");
 	    } else {
 		this.layoutMasterSet.addSimplePageMaster(pm, this);
+		this.masterName = pm;
 	    }
 	} else {
 	    throw new FOPException("fo:simple-page-master must be child "
@@ -130,15 +137,59 @@ public class SimplePageMaster extends FObj {
 	return this.pageMaster;
     }
 
-    protected void setRegionAfter(RegionAfter region) {
-	this.regionAfter = region;
+    protected void setRegionAfter(RegionAfter region)
+		throws FOPException {
+		if (regions.containsKey(region.getRegionName()))
+		{
+			throw new FOPException("region names must be unique"
+			+ " within simple-page-master '"
+			+ getMasterName() + "'");
+		}
+		else
+		{
+			regions.put(region.getRegionName(), region.getName());
+		}
+		this.regionAfter = region;
     }
 
-    protected void setRegionBefore(RegionBefore region) {
-	this.regionBefore = region;
+    protected void setRegionBefore(RegionBefore region)
+		throws FOPException {
+		if (regions.containsKey(region.getRegionName()))
+		{
+			throw new FOPException("region names must be unique"
+			+ " within simple-page-master '"
+			+ getMasterName() + "'");
+		}
+		else
+		{
+			regions.put(region.getRegionName(), region.getName());
+		}
+		this.regionBefore = region;
     }
 
-    protected void setRegionBody(RegionBody region) {
-	this.regionBody = region;
+    protected void setRegionBody(RegionBody region)
+		throws FOPException {
+		if (regions.containsKey(region.getRegionName()))
+		{
+			throw new FOPException("region names must be unique"
+			+ " within simple-page-master '"
+			+ getMasterName() + "'");
+		}
+		else
+		{
+			regions.put(region.getRegionName(), region.getName());
+		}
+		this.regionBody = region;
     }
+	
+	public Hashtable getRegions()
+	{
+		return regions;
+	}
+
+	public String getMasterName()
+	{
+		return masterName;
+	}
+
 }

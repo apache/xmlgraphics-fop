@@ -59,6 +59,8 @@ import org.apache.fop.apps.FOPException;
 
 // Java
 import java.util.Hashtable;
+import java.util.Enumeration;
+import java.util.Vector;
 
 public class LayoutMasterSet extends FObj {
 
@@ -76,6 +78,8 @@ public class LayoutMasterSet extends FObj {
     private Hashtable simplePageMasters;
 	private Hashtable pageSequenceMasters;
 	private Root root;
+	private String currentPageMasterName;
+	private Hashtable allRegions;
 	
     protected LayoutMasterSet(FObj parent, PropertyList propertyList)
 	throws FOPException {
@@ -84,6 +88,7 @@ public class LayoutMasterSet extends FObj {
 
 	this.simplePageMasters = new Hashtable();
 	this.pageSequenceMasters = new Hashtable();
+	this.allRegions = new Hashtable();
 	
 	if (parent.getName().equals("fo:root")) {
 	    this.root = (Root)parent;
@@ -105,6 +110,8 @@ public class LayoutMasterSet extends FObj {
 		if (null != psm)
 		{
 			pm = psm.getNextPageMaster( currentPageNumber, thisIsFirstPage );
+			// call in this sequence
+			currentPageMasterName = psm.getNextPageMasterName();
 		} else {
 			SimplePageMaster spm = getSimplePageMaster( pageSequenceName );
 			if (null == spm)
@@ -112,6 +119,7 @@ public class LayoutMasterSet extends FObj {
 				throw new FOPException( "'master-name' for 'fo:page-sequence'" +
 					"matches no 'simple-page-master' or 'page-sequence-master'" );
 			}
+			currentPageMasterName = spm.getMasterName();
 			pm = spm.getNextPageMaster();
 		}
 		return pm;
@@ -124,6 +132,7 @@ public class LayoutMasterSet extends FObj {
 	if (existsName(masterName))
 		throw new FOPException( "'master-name' must be unique" +
 			"across page-masters and page-sequence-masters" );
+			
 	this.simplePageMasters.put(masterName, simplePageMaster);
     }
 
@@ -152,5 +161,57 @@ public class LayoutMasterSet extends FObj {
 			return true;
 		else
 			return false;
+	}
+	
+	public Vector findPageMasterNames( String flowName )
+	{
+		Vector results = new Vector();
+    	for (Enumeration e = simplePageMasters.elements(); e.hasMoreElements(); )
+		{
+			SimplePageMaster spm = (SimplePageMaster)e.nextElement();
+			if (spm.getRegions().containsKey(flowName))
+			{
+				results.addElement(spm.getMasterName());
+			}
+		}
+		return results;
+	}
+	
+	public String regionNameMapsTo( String pageMasterName, String flowName)
+	{
+		SimplePageMaster spm = (SimplePageMaster)simplePageMasters.get(pageMasterName);
+		Hashtable regions = spm.getRegions();
+		return (String)regions.get(flowName);
+	}
+	
+	public String getCurrentPageMasterName()
+	{
+		return currentPageMasterName;
+	}
+	
+	public void checkRegionNames() throws FOPException
+	{
+		// Section 7.33.15 check to see that if a region-name is a
+		// duplicate, that it maps to the same region-class.
+		for (Enumeration spm = simplePageMasters.elements(); spm.hasMoreElements(); )
+		{
+			SimplePageMaster simplePageMaster = (SimplePageMaster)spm.nextElement();
+			Hashtable spmRegions = simplePageMaster.getRegions();
+			for (Enumeration e = spmRegions.keys(); e.hasMoreElements(); )
+			{
+				String regionName = (String)e.nextElement();
+				String regionClass = (String)spmRegions.get(regionName);
+				if (allRegions.containsKey(regionName))
+				{
+					String localClass = (String)allRegions.get(regionName);
+					if (!localClass.equals(regionClass))
+					{
+						throw new FOPException("Duplicate region-names must map "
+							+ "to the same region-class");
+					}
+				}
+				allRegions.put(regionName,regionClass);
+			}
+		}
 	}
 }

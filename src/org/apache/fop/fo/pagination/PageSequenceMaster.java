@@ -77,7 +77,11 @@ public class PageSequenceMaster extends FObj {
     LayoutMasterSet layoutMasterSet;
     Vector subSequenceSpecifiers;
     SubSequenceSpecifier currentPmr;
-
+	
+	// SimplePageMasters are not exposed outside this class. Hence, this
+	// variable tracks the current master-name for the last SPM.
+	String currentPageMasterName;
+	
     // The terminology may be confusing. A 'page-sequence-master' consists
     // of a sequence of what the XSL spec refers to as
     // 'sub-sequence-specifiers'. These are, in fact, simple or complex
@@ -94,7 +98,7 @@ public class PageSequenceMaster extends FObj {
 	if (parent.getName().equals("fo:layout-master-set")) {
 	    this.layoutMasterSet = (LayoutMasterSet) parent;
 	    String pm = this.properties.get("master-name").getString();
-	    if (pm == null) {
+	    if (pm.equals("")) {
 		System.err.println("WARNING: page-sequence-master does not have "
 				   + "a page-master-name and so is being ignored");
 	    } else {
@@ -109,12 +113,13 @@ public class PageSequenceMaster extends FObj {
     
     protected void addSubsequenceSpecifier( SubSequenceSpecifier pageMasterReference )
     {
-		subSequenceSpecifiers.add( pageMasterReference );
+		subSequenceSpecifiers.addElement( pageMasterReference );
     }
 
     protected SubSequenceSpecifier getNextSubsequenceSpecifier()
     {
-		currentPmr = (SubSequenceSpecifier)subSequenceSpecifiers.remove( 0 );
+		currentPmr = (SubSequenceSpecifier)subSequenceSpecifiers.elementAt( 0 );
+		subSequenceSpecifiers.removeElementAt(0);
 		return currentPmr;
     }
 
@@ -135,6 +140,18 @@ public class PageSequenceMaster extends FObj {
 				currentPmr.getNextPageMaster( currentPageNumber, thisIsFirstPage );
 		}
 		
-		return this.layoutMasterSet.getSimplePageMaster( nextPageMaster ).getPageMaster();
+		SimplePageMaster spm = this.layoutMasterSet.getSimplePageMaster( nextPageMaster );
+		currentPageMasterName = spm.getMasterName();	// store for outside access
+		return spm.getPageMaster();
     }
+	
+	/**
+	  * Return the 'master-name' for the last SimplePageMaster
+	  * processed in this class
+	  * @returns String master name for last SPM
+	  */
+	public String getNextPageMasterName()
+	{
+		return currentPageMasterName;
+	}
 }

@@ -86,7 +86,7 @@ public class RepeatablePageMasterReference extends PageMasterReference
 	if (parent.getName().equals("fo:page-sequence-master")) {
 	    this.pageSequenceMaster = (PageSequenceMaster) parent;
 	    setMasterName( this.properties.get("master-name").getString() );
-	    if (getMasterName() == null) {
+	    if (getMasterName().equals("")) {
 		System.err.println("WARNING: repeatable-page-master-reference" +
 		    "does not have a master-name and so is being ignored");
 	    } else {

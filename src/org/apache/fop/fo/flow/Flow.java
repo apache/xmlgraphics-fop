@@ -76,12 +76,16 @@ public class Flow extends FObj {
     }
 
     PageSequence pageSequence;
-
+	protected String flowName;
+	protected Status currentStatus;
+	
     protected Flow(FObj parent, PropertyList propertyList)
 	throws FOPException {
 	super(parent, propertyList);
 	this.name =  "fo:flow";
 
+	currentStatus = new Status(Status.AREA_FULL_NONE);
+	
 	if (parent.getName().equals("fo:page-sequence")) {
 	    this.pageSequence = (PageSequence) parent;
 	} else {
@@ -89,7 +93,13 @@ public class Flow extends FObj {
 				   + "page-sequence, not "
 				   + parent.getName());
 	}
-	pageSequence.setFlow(this);
+	flowName = this.properties.get("flow-name").getString();
+	if (flowName.equals(""))
+	{
+	    throw new FOPException("A 'flow-name' is required for fo:flow");
+	}
+	
+	pageSequence.setFlow(flowName, this);
     }
 	
     public Status layout(Area area) throws FOPException {
@@ -128,4 +138,19 @@ public class Flow extends FObj {
 	}
 	return new Status(Status.OK);
     }
+	
+	public Status getCurrentStatus()
+	{
+		return currentStatus;
+	}
+
+	public void setCurrentStatus(Status currentStatus)
+	{
+		this.currentStatus = currentStatus;
+	}
+	
+	public String getFlowName()
+	{
+		return flowName;
+	}
 }

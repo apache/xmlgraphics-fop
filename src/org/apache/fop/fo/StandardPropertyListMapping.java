@@ -165,6 +165,8 @@ public class StandardPropertyListMapping implements PropertyListMapping {
 	propertyTable.put("scaling",Scaling.maker());
 	propertyTable.put("vertical-align",VerticalAlign.maker());
 	propertyTable.put("overflow",Overflow.maker());
+	propertyTable.put("region-name",RegionName.maker());
+	
 	builder.addPropertyList(uri, propertyTable); 
     }
 }

@@ -68,11 +68,32 @@ public class RegionBody extends FObj {
 	return new RegionBody.Maker();
     }	
     
+	String regionName;
+	
     protected RegionBody(FObj parent, PropertyList propertyList)
 	throws FOPException {
 	super(parent, propertyList);
 	this.name = "fo:region-body";
 
+	// regions may have name, or default
+	if (null == this.properties.get("region-name"))
+		regionName = "xsl-region-body";
+	else if (this.properties.get("region-name").getString().equals(""))
+		regionName = "xsl-region-body";
+	else
+	{
+		regionName = this.properties.get("region-name").getString();
+		// check that name is OK. Not very pretty.
+		if (regionName.equals( "xsl-region-before" ) || regionName.equals( "xsl-region-start" )
+			|| regionName.equals( "xsl-region-end" ) || regionName.equals( "xsl-region-after" )
+			|| regionName.equals( "xsl-before-float-separator" )
+			|| regionName.equals( "xsl-footnote-separator" ))
+			{
+	    		throw new FOPException("region-name '" + regionName
+				   + "' for fo:region-body not permitted."); 
+			}
+	}
+	
 	if (parent.getName().equals("fo:simple-page-master")) {
 	    ((SimplePageMaster) parent).setRegionBody(this);
 	} else {
@@ -97,4 +118,9 @@ public class RegionBody extends FObj {
 			  marginRight, allocationRectangleHeight -
 			  marginTop - marginBottom); 
     }
+	
+	public String getRegionName()
+	{
+		return regionName;
+	}
 }

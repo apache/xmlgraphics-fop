@@ -67,6 +67,7 @@ import org.apache.fop.apps.FOPException;
 // Java
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.Enumeration;
 
 public class PageSequence extends FObj
 {
@@ -89,12 +90,22 @@ public class PageSequence extends FObj
     static final int AUTO_ODD = 3;
 
     protected Root root;
-    protected Flow flow;
+    // protected Flow flow;
+	// (001008) language in spec suggests that page sequence must have at
+	// least one flow, but may have more. The contents BNF in section
+	// 6.4.5 of the spec is likely incorrect.
+	protected Hashtable flows;
     // protected Title title;
-    protected StaticContent staticBefore;
-    protected StaticContent staticAfter;
+	
+	protected Hashtable beforeStaticContents;
+	protected Hashtable afterStaticContents;
     protected LayoutMasterSet layoutMasterSet;
 	protected String masterName;
+	
+	// used for mapping regions <=> static contents in correct SPM
+	protected String currentPageMasterName;
+	
+	protected Hashtable flowNames;
 	
     protected Page currentPage;
     protected int currentPageNumber = 0;
@@ -107,6 +118,12 @@ public class PageSequence extends FObj
         super(parent, propertyList);
         this.name = "fo:page-sequence";
 
+		// region support
+		flowNames = new Hashtable();	// all 'flow-name's in this page sequence
+		beforeStaticContents = new Hashtable();
+		afterStaticContents = new Hashtable();
+		flows = new Hashtable();	// all Flow's in this page sequence
+		
         if ( parent.getName().equals("fo:root") )
         {
             this.runningPageNumberCounter=0; //else not initialized correctly
@@ -121,6 +138,9 @@ public class PageSequence extends FObj
         }
 	
         layoutMasterSet = root.getLayoutMasterSet();
+		// best time to run some checks on LayoutMasterSet
+		layoutMasterSet.checkRegionNames();
+		
         thisIsFirstPage=true; // we are now on the first page of the page sequence
         InitialPageNumber ipn = (InitialPageNumber) this.properties.get("initial-page-number");
         String ipnValue=ipn.getString();
@@ -164,7 +184,10 @@ public class PageSequence extends FObj
         PageMaster pageMaster =
 			this.layoutMasterSet.getNextPageMaster(
 			masterName, currentPageNumber, thisIsFirstPage );
-
+			
+		// store the current 'master-name' for access by format()
+		currentPageMasterName = this.layoutMasterSet.getCurrentPageMasterName();
+		
 		// a legal alternative is to use the last sub-sequence
 		// specification. That's not done here.
         if ( pageMaster == null )
@@ -210,57 +233,153 @@ public class PageSequence extends FObj
             this.runningPageNumberCounter=this.currentPageNumber;            
 
             MessageHandler.log(" [" + currentPageNumber);
-            if ( (this.staticBefore != null) &&
+            if ( (!this.beforeStaticContents.isEmpty()) &&
             (currentPage.getBefore() != null) )
             {
                 AreaContainer beforeArea = currentPage.getBefore();
                 beforeArea.setIDReferences(areaTree.getIDReferences());
-                this.staticBefore.layout(beforeArea);
+				// locate the correct fo:static-content from the "beforeStaticContents"
+				// Hashtable, using the "currentPageMasterName" as the key.
+				StaticContent before =
+					(StaticContent)this.beforeStaticContents.get(currentPageMasterName);
+				if (null == before)
+					MessageHandler.errorln("No static-content found for region-before "
+					+ "in page-master '" + currentPageMasterName + "'");
+				else
+                	before.layout(beforeArea);
             }
-            if ( (this.staticAfter != null) &&
+            if ( (!this.beforeStaticContents.isEmpty()) &&
             (currentPage.getAfter() != null) )
             {
                 AreaContainer afterArea = currentPage.getAfter();
                 afterArea.setIDReferences(areaTree.getIDReferences());
-                this.staticAfter.layout(afterArea);
+				// locate the correct fo:static-content from the "afterStaticContents"
+				// Hashtable, using the "currentPageMasterName" as the key.
+				StaticContent after =
+					(StaticContent)this.afterStaticContents.get(currentPageMasterName);
+				if (null == after)
+					MessageHandler.errorln("No static-content found for region-after "
+					+ "in page-master '" + currentPageMasterName + "'");
+				else
+                	after.layout(afterArea);
             }
             if ( (status.getCode() == Status.FORCE_PAGE_BREAK_EVEN) &&
             ((currentPageNumber % 2) == 1) )
             {
+				// linkage to ConditionalPageMasterReference for blank pages?
             }
             else if ( (status.getCode() == Status.FORCE_PAGE_BREAK_ODD) &&
             ((currentPageNumber % 2) == 0) )
             {
+				// linkage to ConditionalPageMasterReference for blank pages?
             }
             else
             {
                 AreaContainer bodyArea = currentPage.getBody();
                 bodyArea.setIDReferences(areaTree.getIDReferences());
-                status = this.flow.layout(bodyArea);
+				// locate the correct fo:flow from the "flows"
+				// Hashtable, using the "currentPageMasterName" as the key.
+				Flow flow =
+					(Flow)this.flows.get(currentPageMasterName);
+				if (null == flow)
+					MessageHandler.errorln("No flow found for region-body "
+					+ "in page-master '" + currentPageMasterName + "'");
+				else
+				{
+                	status = flow.layout(bodyArea);
+					flow.setCurrentStatus(status);
+				}
             }
             MessageHandler.log("]");
             areaTree.addPage(currentPage);
-        } while ( status.isIncomplete() );
+        } while ( flowsAreIncomplete() );
         MessageHandler.errorln("");
     }
 
-    public void setFlow(Flow flow) {
-        this.flow = flow;
+    public void setFlow(String name, Flow flow)
+		throws FOPException {
+
+		if (flowNames.containsKey(name))
+		{
+        	throw new FOPException("flow-names must be unique within an fo:page-sequence");
+		}
+		
+		// store the Flow against the SimplePageMaster(s) that contain(s) it
+		Vector pageMasterNames = this.layoutMasterSet.findPageMasterNames(name);
+		if (pageMasterNames.isEmpty())
+		{
+        	MessageHandler.errorln("flow-name maps to no region(s) in page-masters");
+		}
+		else
+		{
+			for (Enumeration e = pageMasterNames.elements(); e.hasMoreElements(); )
+			{
+				String pageMasterName = (String)e.nextElement();
+				if (this.layoutMasterSet.regionNameMapsTo(pageMasterName,name).equals("fo:region-body"))
+				{
+					flows.put(pageMasterName,flow);
+					flowNames.put(name,"body");
+				}
+				else
+				{
+					MessageHandler.errorln("Flow flow-name does not map to fo:region-body");
+					flowNames.put(name,"unsupported");
+				}
+			}
+		}
     }
 
-    public void setStaticContent(String name, StaticContent staticContent) {
-        if ( name.equals("xsl-region-before") )
-        {
-            this.staticBefore = staticContent;
-        }
-        else if ( name.equals("xsl-region-after") )
-        {
-            this.staticAfter = staticContent;
-        }
-        else
-        {
-            MessageHandler.errorln("WARNING: this version of FOP only supports "
-            + "static-content in xsl-region-before and xsl-region-after"); 
-        }
+    public String setStaticContent(String name, StaticContent staticContent)
+		throws FOPException {
+
+		// region class that static content maps to
+		String regionClass = null;
+		
+		// store the flow name
+		if (flowNames.containsKey(name))
+		{
+        	throw new FOPException("flow-names must be unique within an fo:page-sequence");
+		}
+		
+		// store the StaticContent against the SimplePageMaster(s) that contain(s) it
+		Vector pageMasterNames = this.layoutMasterSet.findPageMasterNames(name);
+		if (pageMasterNames.isEmpty())
+		{
+        	MessageHandler.errorln("flow-name maps to no region(s) in page-masters");
+		}
+		else
+		{
+			for (Enumeration e = pageMasterNames.elements(); e.hasMoreElements(); )
+			{
+				String pageMasterName = (String)e.nextElement();
+				if (this.layoutMasterSet.regionNameMapsTo(pageMasterName,name).equals("fo:region-before"))
+				{
+					beforeStaticContents.put(pageMasterName,staticContent);
+					regionClass = "before";
+				}
+				else if (this.layoutMasterSet.regionNameMapsTo(pageMasterName,name).equals("fo:region-after"))
+				{
+					afterStaticContents.put(pageMasterName,staticContent);
+					regionClass = "after";
+				}
+				else
+				{
+					MessageHandler.errorln("StaticContent flow-name maps to unsupported region");
+					regionClass = "unsupported";
+				}
+				flowNames.put(name,regionClass);
+			}
+		}
+		return regionClass;
     }
+	
+	public boolean flowsAreIncomplete()
+	{
+		boolean isIncomplete = false;
+    	for (Enumeration e = flows.elements(); e.hasMoreElements(); )
+		{
+			isIncomplete = ((Flow)e.nextElement()).getCurrentStatus().isIncomplete();
+		}
+		return isIncomplete;
+	}
 }

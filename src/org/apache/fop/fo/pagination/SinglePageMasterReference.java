@@ -86,7 +86,7 @@ public class SinglePageMasterReference extends PageMasterReference
 	    this.pageSequenceMaster = (PageSequenceMaster) parent;
 	    setMasterName( this.properties.get("master-name").getString() );
 
-	    if (getMasterName() == null) {
+	    if (getMasterName().equals("")) {
 		MessageHandler.error("WARNING: single-page-master-reference" +
 		    "does not have a master-name and so is being ignored");
 	    } else {

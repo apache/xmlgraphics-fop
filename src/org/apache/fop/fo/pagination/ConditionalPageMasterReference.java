@@ -85,8 +85,8 @@ public class ConditionalPageMasterReference
 	    this.repeatablePageMasterAlternatives =
 			(RepeatablePageMasterAlternatives) parent;
 	    setMasterName( this.properties.get("master-name").getString() );
-	    if (getMasterName() == null) {
-		System.err.println("WARNING: single-page-master-reference" +
+	    if (getMasterName().equals("")) {
+		System.err.println("WARNING: conditional-page-master-reference" +
 		    "does not have a master-name and so is being ignored");
 	    } else {
 		this.repeatablePageMasterAlternatives.addConditionalPageMasterReference(this);

@@ -74,7 +74,8 @@ public class StaticContent extends FObj {
     }
 
     PageSequence pageSequence;
-
+	String regionClass;
+	
     protected StaticContent(FObj parent, PropertyList propertyList)
 	throws FOPException {
 	super(parent, propertyList);
@@ -88,14 +89,20 @@ public class StaticContent extends FObj {
 				   + parent.getName());  
 	}
 	String flowName = this.properties.get("flow-name").getString();
+	if (flowName.equals(""))
+	{
+	    throw new FOPException("A 'flow-name' is required for "
+		+ "fo:static-content");
+	}
 
-	pageSequence.setStaticContent(flowName, this);
+	regionClass = pageSequence.setStaticContent(flowName, this);
     }
     
     public Status layout(Area area) throws FOPException {
 
 	int numChildren = this.children.size();
 	// Set area absolute height so that link rectangles will be drawn correctly in xsl-before and xsl-after
+	/*
 	String flowName = this.properties.get("flow-name").getString();
 	if(flowName.equals("xsl-region-before"))
 	{
@@ -105,7 +112,16 @@ public class StaticContent extends FObj {
 	{
 		area.setAbsoluteHeight(area.getPage().getBody().getMaxHeight());
 	}
-       
+    */
+	if(regionClass.equals("before"))
+	{
+		area.setAbsoluteHeight(-area.getMaxHeight());
+	}
+	else if(regionClass.equals("after"))
+	{
+		area.setAbsoluteHeight(area.getPage().getBody().getMaxHeight());
+	}
+	
 	for (int i = 0; i < numChildren; i++) {
 	    FObj fo = (FObj) children.elementAt(i);
 	    

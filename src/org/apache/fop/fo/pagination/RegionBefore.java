@@ -69,12 +69,32 @@ public class RegionBefore extends FObj {
     }	
 	
     SimplePageMaster layoutMaster;
-
+	String regionName;
+	
     protected RegionBefore(FObj parent, PropertyList propertyList)
 	throws FOPException {
 	super(parent, propertyList);
 	this.name = "fo:region-before";
 
+	// regions may have name, or default
+	if (null == this.properties.get("region-name"))
+		regionName = "xsl-region-before";
+	else if (this.properties.get("region-name").getString().equals(""))
+		regionName = "xsl-region-before";
+	else
+	{
+		regionName = this.properties.get("region-name").getString();
+		// check that name is OK. Not very pretty.
+		if (regionName.equals( "xsl-region-after" ) || regionName.equals( "xsl-region-start" )
+			|| regionName.equals( "xsl-region-end" ) || regionName.equals( "xsl-region-body" )
+			|| regionName.equals( "xsl-before-float-separator" )
+			|| regionName.equals( "xsl-footnote-separator" ))
+			{
+	    		throw new FOPException("region-name '" + regionName
+				   + "' for fo:region-before not permitted."); 
+			}
+	}
+	
 	if (parent.getName().equals("fo:simple-page-master")) {
 	    this.layoutMaster = (SimplePageMaster) parent;
 	    this.layoutMaster.setRegionBefore(this);
@@ -100,4 +120,9 @@ public class RegionBefore extends FObj {
 			  allocationRectangleWidth - marginLeft -
 			  marginRight, extent);
     }
+
+	public String getRegionName()
+	{
+		return regionName;
+	}
 }
