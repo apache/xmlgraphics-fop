@@ -39,14 +39,8 @@ inactive??
     </action>
     <action context="code" dev="open">
       Retrieve markers from page.
-      When doing the static areas the markers wil need to be available for
+      When doing the static areas the markers will need to be available for
       retrieving. The marker can then be layed out as normal.
-    </action>
-    <action context="code" dev="open">
-      implement the caching mechanism to store pages
-      when a page contains a forward reference that has not been
-      resolved then we need to be able to save the page contents to
-      disk to save memory
     </action>
     <action context="code" dev="KLL">
       Implement table layout.
@@ -123,6 +117,40 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action context="code" dev="KLL" type="update"
+            due-to="Oleg Tkachenko" due-to-email="olegt@multiconn.com">
+      Awt viewer improvements - uses java PropertyResourceBundle
+      for locale strings, cleaned up code and removed old classes
+      and other small improvements
+    </action>
+    <action context="code" dev="KLL" type="update">
+      Started list layout implementation.
+    </action>
+    <action context="code" dev="KLL" type="update">
+      Improved pagination and page number for page sequences.
+    </action>
+    <action context="code" dev="KLL" type="update">
+      Implemented border and background for many areas.
+    </action>
+    <action context="code" dev="KLL" type="update">
+      Started table layout implementation.
+    </action>
+    <action context="docs" dev="KLL" type="update"
+            due-to="Victor Mote" due-to-email="vic@outfitr.com">
+      Added link for patch queue.
+    </action>
+    <action context="code" dev="KLL" type="update"
+            due-to="Rainer Garus" due-to-email="rainer.garus@arcor.de">
+      Fixed npe when a page has several forward links.
+      Use HashSet to store unresolved references (pages) in area tree
+      to prevent duplication.
+    </action>
+    <action context="code" dev="KLL" type="update">
+      Implemented example caching mechanism to store pages.
+      When a page contains a forward reference that has not been
+      resolved then it can save the page contents to
+      disk to save memory.
+    </action>
     <action dev="CG" type="add" context="code"
             due-to="Bernd Brandstetter" due-to-email="bbrand@freenet.de">
       Linking to a specific page and a named destinations of an
