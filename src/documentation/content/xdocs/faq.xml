@@ -957,10 +957,10 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
             for adding security features, document properties, watermarks, and
             many other features to PDF files. FOP and iText can be integrated
             into one Java application, see sample code for <link
-              href="pdf-security">encryption</link>.
+              href="#pdf-security">encryption</link>.
             The bad news is that iText swallows PDF bookmarks.
           </li>
-          
+
           <li>
             You can use Adobe Acrobat (the full version, not the Reader) to
             process the file manually or with scripting that it supports.
@@ -996,7 +996,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
     int n = reader.getNumberOfPages();
     Document document = new Document(reader.getPageSizeWithRotation(1));
     PdfWriter writer = PdfWriter.getInstance(document, outfile);
-    writer.setEncryption(PdfWriter.STRENGTH40BITS, "pdf", null, 
+    writer.setEncryption(PdfWriter.STRENGTH40BITS, "pdf", null,
       PdfWriter.AllowCopy);
     document.open();
     PdfContentByte cb = writer.getDirectContent();
