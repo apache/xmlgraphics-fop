@@ -110,8 +110,13 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
-    <action context="fonts" dev="KL" type="fix">
-      Correct ordering of loca table in embedded true type fonts (Bug 14290). 
+    <action context="build" dev="JM" type="update">
+      Updated to Xerces 2.2.1 and Xalan 2.4.1. Updated all the related files 
+      and made sure all contrib builds work again. Removed necessity for a 
+      buildtools.jar.
+    </action>
+    <action context="code" dev="KL" type="fix" fixes-bug="14290">
+      Correct ordering of loca table in embedded true type fonts. 
       Fix taken over from maintenance branch.
     </action>
     <action context="docs" dev="KLL" type="update"

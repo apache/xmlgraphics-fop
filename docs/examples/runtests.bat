@@ -1,13 +1,24 @@
 @echo off
 
-echo Fop Test 
+echo Fop Test
 echo ----------------
 
 if "%JAVA_HOME%" == "" goto error
 
 
 set LIBDIR=..\..\lib
-set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;%LIBDIR%\ant.jar;%LIBDIR%\batik.jar;%LIBDIR%\buildtools.jar;%LIBDIR%\xerces-1.2.3.jar;%LIBDIR%\xalan-2.0.0.jar;%LIBDIR%\xalanj1compat.jar;%LIBDIR%\bsf.jar;%LIBDIR%\avalon-framework-4.0.jar;%LIBDIR%\logkit-1.0b4.jar;%LIBDIR%\jimi-1.0.jar;%LIBDIR%\..\build\fop.jar
+set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\ant.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xml-apis.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xercesImpl-2.2.1.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xalan-2.4.1.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\batik.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\avalon-framework-cvs-20020806.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\bsf.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jimi-1.0.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jai_core.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jai_codec.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\..\build\fop.jar
 set ANT_HOME=%LIBDIR%
 
 echo Starting Tests ...
