@@ -33,7 +33,7 @@
             is a Java/VB Programmer from England.</li>
         <li id="ad"><link href="mailto:adelmelle@apache.org">Andreas Delmelle</link> (AD)</li>
         <!-- Luca prefers the mail address with "AT", to stop spam, etc. -->
-        <li><link href="mailto:lfurini AT cs.unibo.it">Luca Furini</link>
+        <li><link href="mailto:lfurini AT cs.unibo.it">Luca Furini</link> (LF)
            is a student of Computer Studies at the University of Bologna (Italy)</li>
         <li id="cg"><link href="mailto:chrisg@apache.org">Christian Geisert</link> (CG)</li>
         <li id="ph"><link href="mailto:pherweg@web.de">Peter Herweg</link> (PH) is helping to 
@@ -52,7 +52,7 @@
         <li id="gm"><link href="mailto:gmazza@apache.org">Glen Mazza</link> (GM) is an information
             systems analyst with EDS in Arlington, Virginia, USA.</li>
         <!-- Simon prefers the mail address with "AT", to stop spam, etc. -->
-        <li id="sp"><link href="mailto:spepping AT leverkruid.nl">Simon Pepping</link>
+        <li id="sp"><link href="mailto:spepping AT leverkruid.nl">Simon Pepping</link> (SP)
             is a TeX/LaTeX and XML expert with Elsevier at its
             Amsterdam office. See his <fork href="http://www.leverkruid.nl">home
             page</fork> for some of his private projects.</li>
@@ -64,11 +64,7 @@
     <section id="contribute-active">
       <title>Active Contributors</title>
       <ul>
-        <li><link href="mailto:jwaustin@sympatico.ca">John Austin</link> is an 
-            is an independent software developer currently based in St John's, 
-            Newfoundland.  While developing a taste for good seafood, he still isn't ready
-            for seal flipper (even if it's fresh).  He is currently assisting the FOP
-            project on memory and performance issues.</li>
+        <li>Your name here!</li>
       </ul>
     </section>
     <section id="founder">
@@ -99,27 +95,15 @@
       <table>
         <tr>
           <th/>
-          <th>CG </th>
+          <th>CG</th>
           <th>FB</th>
           <th>CL</th>
           <th>JM</th>
           <th>GM</th>
           <th>PH</th>
           <th>JP</th>
-          <th>OT</th>
-          <th>PBW</th>
-        </tr>
-        <tr>
-          <td>PMC representation</td>
-          <td/>
-          <td/>
-          <td/>
-          <td>X</td>
-          <td/>
-          <td/>
-          <td>X</td>
-          <td/>
-          <td/>
+          <th>SP</th>
+          <th>LF</th>
         </tr>
         <tr>
           <td>Release manager</td>
@@ -138,24 +122,36 @@
           <td/>
           <td>X</td>
           <td/>
+          <td>X</td>
+          <td>X</td>
           <td/>
           <td/>
+          <td>X</td>
+          <td/>
+        </tr>
+        <tr>
+          <td>Properties</td>
+          <td/>
+          <td>X</td>
+          <td/>
+          <td>X</td>
           <td/>
           <td/>
           <td/>
           <td>X</td>
+          <td/>
         </tr>
         <tr>
           <td>Layout</td>
           <td/>
           <td/>
-          <td/>
+          <td>X</td>
           <td/>
           <td/>
           <td/>
           <td>X</td>
-          <td/>
-          <td/>
+          <td>X</td>
+          <td>X</td>
         </tr>
         <tr>
           <td>Fonts</td>
