@@ -134,7 +134,6 @@ public class FopPrintServlet extends HttpServlet {
             Driver driver = new Driver(foFile, null);
             AWTPrintRenderer renderer = new AWTPrintRenderer();
 
-            driver.setLogger(log);
             driver.setRenderer(renderer);
             driver.run();
 
@@ -156,7 +155,6 @@ public class FopPrintServlet extends HttpServlet {
             Driver driver = new Driver();
             AWTPrintRenderer renderer = new AWTPrintRenderer();
 
-            driver.setLogger(log);
             driver.setRenderer(renderer);
             driver.render(input.getParser(), input.getInputSource());
 

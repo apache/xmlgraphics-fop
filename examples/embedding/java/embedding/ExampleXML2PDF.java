@@ -32,9 +32,6 @@ import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
 
-// Commons-Logging
-import org.apache.commons.logging.impl.SimpleLog;
-
 //FOP
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
@@ -74,9 +71,6 @@ public class ExampleXML2PDF {
             Driver driver = new Driver();
             
             // Setup logger
-            SimpleLog logger = new SimpleLog("log");
-            logger.setLevel(SimpleLog.LOG_LEVEL_INFO);
-            driver.setLogger(logger);
             driver.initialize();
     
             // Setup Renderer (output format)        

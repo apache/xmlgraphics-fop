@@ -18,19 +18,16 @@
  
 package embedding;
 
-//Java
+// Java
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-//SAX
+// SAX
 import org.xml.sax.InputSource;
 
-// Commons-Logging
-import org.apache.commons.logging.impl.SimpleLog;
-
-//FOP
+// FOP
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 
@@ -51,10 +48,7 @@ public class ExampleFO2PDF {
         // Construct driver
         Driver driver = new Driver();
         
-        // Setup logger
-        SimpleLog logger = new SimpleLog("log");
-        logger.setLevel(SimpleLog.LOG_LEVEL_INFO);
-        driver.setLogger(logger);
+        // Setup driver
         driver.initialize();
 
         // Setup Renderer (output format)        

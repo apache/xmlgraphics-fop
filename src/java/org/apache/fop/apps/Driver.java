@@ -18,21 +18,9 @@
 
 package org.apache.fop.apps;
 
-// FOP
-import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.fo.FOTreeBuilder;
-
-import org.apache.fop.fo.FOInputHandler;
-import org.apache.fop.fo.FOTreeHandler;
-import org.apache.fop.render.Renderer;
-import org.apache.fop.render.awt.AWTRenderer;
-import org.apache.fop.render.mif.MIFHandler;
-import org.apache.fop.render.rtf.RTFHandler;
-import org.apache.fop.tools.DocumentInputSource;
-import org.apache.fop.tools.DocumentReader;
-
-import org.apache.commons.logging.impl.SimpleLog;
-import org.apache.commons.logging.Log;
+// Java
+import java.io.IOException;
+import java.io.OutputStream;
 
 // XML
 import org.xml.sax.ContentHandler;
@@ -41,9 +29,17 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.w3c.dom.Document;
 
-// Java
-import java.io.IOException;
-import java.io.OutputStream;
+// FOP
+import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.fo.FOTreeBuilder;
+import org.apache.fop.fo.FOInputHandler;
+import org.apache.fop.fo.FOTreeHandler;
+import org.apache.fop.render.Renderer;
+import org.apache.fop.render.awt.AWTRenderer;
+import org.apache.fop.render.mif.MIFHandler;
+import org.apache.fop.render.rtf.RTFHandler;
+import org.apache.fop.tools.DocumentInputSource;
+import org.apache.fop.tools.DocumentReader;
 
 /**
  * Primary class that drives overall FOP process.
@@ -57,7 +53,6 @@ import java.io.OutputStream;
  * <PRE>
  * Driver driver = new Driver(new InputSource (args[0]),
  * new FileOutputStream(args[1]));
- * driver.setLogger(myLogger); //optional
  * driver.setRenderer(RENDER_PDF);
  * driver.run();
  * </PRE>
@@ -87,7 +82,6 @@ import java.io.OutputStream;
  *
  * <PRE>
  * Driver driver = new Driver();
- * driver.setLogger(myLogger); //optional
  * driver.setRenderer(new org.apache.fop.render.awt.AWTRenderer(translator));
  * driver.render(parser, fileInputSource(args[0]));
  * </PRE>
@@ -185,9 +179,8 @@ public class Driver {
     private XMLReader reader;
 
     /**
-     * the system resources that FOP will use
+     * The system resources that FOP will use
      */
-    private Log log = null;
     private FOUserAgent userAgent = null;
 
     /**
@@ -236,33 +229,6 @@ public class Driver {
             userAgent = new FOUserAgent();
         }
         return userAgent;
-    }
-
-    /**
-     * Provide the Driver instance with a logger.
-     * @param log the logger. Must not be <code>null</code>.
-     */
-    public void setLogger(Log log) {
-        if (this.log == null) {
-            this.log = log;
-        } else {
-            getLogger().warn("Logger is already set! Won't use the new logger.");
-        }
-    }
-
-
-    /**
-     * Returns the logger for use by FOP.
-     * @return the logger
-     */
-    public Log getLogger() {
-        if (this.log == null) {
-            // use SimpleLog as default when logger not explicitly set
-            log = new SimpleLog("FOP");
-            ((SimpleLog) log).setLevel(SimpleLog.LOG_LEVEL_INFO);
-        }
-
-        return this.log;
     }
 
     /**
@@ -377,7 +343,7 @@ public class Driver {
 
     /**
      * Set the Renderer to use.
-     * @param renderer the renderer instance to use (Note: Logger must be set at this point)
+     * @param renderer the renderer instance to use
      */
     public void setRenderer(Renderer renderer) {
         // AWTStarter calls this function directly
@@ -584,5 +550,4 @@ public class Driver {
             render(reader, source);
         }
     }
-
 }

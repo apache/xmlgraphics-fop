@@ -87,7 +87,7 @@ public abstract class AbstractRenderer
     /**
      * logging instance
      */
-    protected static Log logger = LogFactory.getLog("Renderer");
+    protected static Log logger = LogFactory.getLog("FOP");
     
     /**
      * producer (usually "FOP")

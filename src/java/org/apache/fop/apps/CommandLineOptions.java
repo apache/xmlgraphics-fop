@@ -174,6 +174,8 @@ public class CommandLineOptions {
                 i = i + parseUnknownOption(args, i);
             } else if (args[i].equals("-at")) {
                 i = i + parseAreaTreeOption(args, i);
+            } else if (args[i].equals("-v")) {
+                System.out.println("FOP Version " + Version.getVersion());
             } else if (args[i].equals("-param")) {
                   if (i + 2 < args.length) {
                       if (xsltParams == null) {
@@ -575,7 +577,8 @@ public class CommandLineOptions {
             + "  -x          dump configuration settings  \n"
             + "  -c cfg.xml  use additional configuration file cfg.xml\n"
             + "  -l lang     the language to use for user information \n"
-            + "  -s          for area tree XML, down to block areas only\n\n"
+            + "  -s          for area tree XML, down to block areas only\n"
+            + "  -v          to show FOP version being used\n\n"
             + " [INPUT]  \n"
             + "  infile            xsl:fo input file (the same as the next) \n"
             + "  -fo  infile       xsl:fo input file  \n"
@@ -608,13 +611,12 @@ public class CommandLineOptions {
     /**
      * shows the options for print output
      */
-    public void printUsagePrintOutput() {
+    private void printUsagePrintOutput() {
         System.err.println("USAGE: -print [-Dstart=i] [-Dend=i] [-Dcopies=i] [-Deven=true|false] "
                            + " org.apache.fop.apps.Fop (..) -print \n"
                            + "Example:\n"
                            + "java -Dstart=1 -Dend=2 org.apache.Fop.apps.Fop infile.fo -print ");
     }
-
 
     /**
      * Outputs all commandline settings
