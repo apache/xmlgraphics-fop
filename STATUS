@@ -75,18 +75,18 @@ Support XSL Working Draft 27 March 2000
    25.white-space-treatment (Dropped/Changed) 
 
   b) NEW 
-    1.alignment-adjust 26.min-width 
-    2.baseline-identifier 27.number-columns-repeated 
-    3.baseline-shift 28.number-columns-spanned 
-    4.block-progression-dimension 29.number-rows-spanned 
-    5.character 30.orphans 
-    6.clip 31.overflow 
-    7.column-number 32.page-break-after 
-    8.content-type 33.page-break-before 
-    9.direction 34.precedence 
-   10.display-align 35.ref-id 
-   11.dominant-baseline 36.reference-orientation 
-   12.font-variant 37.region-name 
+    1.alignment-adjust                                       26.min-width 
+    2.baseline-identifier                                    27.number-columns-repeated 
+    3.baseline-shift                                         28.number-columns-spanned 
+    4.block-progression-dimension                            29.number-rows-spanned 
+    5.character                                              30.orphans 
+    6.clip                                                   31.overflow 
+    7.column-number                                          32.page-break-after 
+    8.content-type                                           33.page-break-before 
+    9.direction                                              34.precedence 
+   10.display-align                                          35.ref-id 
+   11.dominant-baseline                                      36.reference-orientation 
+   12.font-variant                                           37.region-name 
    13.format 38.relative-align 
    14.grouping-separator 39.role 
    15.grouping-size 40.rule-style 
@@ -109,10 +109,15 @@ write
   c) update the examples to the new spec 
   d) add examples so that all the FOs supported are used in some example 
 
-Other Bugs to fix: 
+**** Bugs ****
 
 - colour not continued onto subsequent pages if coloured block goes over page 
 - no SVG support in AWTCommandLine 
+- keep-next doesn't work and doubles the text lines which should be moved to the next page
+- pdf files created with Fop don't print correctly on postscript printers
+- lists containing list do not keep their indentation correctly over a page boundary
+- id references are marked as illegally doubled, if they are first layouted at the bottom of a page
+  and then moved to the next page
 
 with AWT Previewer: 
 
@@ -129,9 +134,12 @@ with AWT Previewer:
 **** HISTORY **** 
 
 Done since 0.13 release 
-- added support for fo page-number-citation [Mike Crowe]
+- added support for fo page-number-citation [Mike Crowe, Jordan Naftolin]
 - added image support using Jimi [Eric Schaeffer]
 - added support for external and internal simple-links [Jordan Naftolin]
+- added support for the fonts Symbol and ZapfDingbats [Fotis Jannidis]
+- added a MessageHandler  [Fotis Jannidis]
+
 
 Done since 0.12.1 release 
 - using Ant to build Fop instead of make [Giacomo Pati] 
