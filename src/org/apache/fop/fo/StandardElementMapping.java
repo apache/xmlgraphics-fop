@@ -105,5 +105,6 @@ public class StandardElementMapping implements ElementMapping {
 	builder.addMapping(uri, "table-cell", TableCell.maker());
 	builder.addMapping(uri, "simple-link", SimpleLink.maker());
 	builder.addMapping(uri, "instream-foreign-object", InstreamForeignObject.maker());
+	builder.addMapping(uri, "leader", Leader.maker());
     }
 }
