@@ -622,7 +622,7 @@ public class CountryLanguageScript {
   
         // Aleut
         iso639_2T_ToENLang.put("ale", "Aleut");
-        iso639_2T_ToFRLang.put("ale", "aléoute");
+        iso639_2T_ToFRLang.put("ale", "alÃ©oute");
     
         // Algonquian languages
         iso639_2T_ToENLang.put("alg", "Algonquian languages");
@@ -652,11 +652,11 @@ public class CountryLanguageScript {
   
         // Aramaic
         iso639_2T_ToENLang.put("arc", "Aramaic");
-        iso639_2T_ToFRLang.put("arc", "araméen");
+        iso639_2T_ToFRLang.put("arc", "aramÃ©en");
     
         // Armenian
         iso639_2T_ToENLang.put("hye", "Armenian");
-        iso639_2T_ToFRLang.put("hye", "arménien");
+        iso639_2T_ToFRLang.put("hye", "armÃ©nien");
     
         iso639_2B_To_639_2T.put("arm", "hye");
   
@@ -722,7 +722,7 @@ public class CountryLanguageScript {
   
         // Azerbaijani
         iso639_2T_ToENLang.put("aze", "Azerbaijani");
-        iso639_2T_ToFRLang.put("aze", "azéri");
+        iso639_2T_ToFRLang.put("aze", "azÃ©ri");
     
         iso639_1_To_639_2T.put("az", "aze");
         iso639_2T_To_639_1.put("aze", "az");
@@ -733,7 +733,7 @@ public class CountryLanguageScript {
     
         // Bamileke languages
         iso639_2T_ToENLang.put("bai", "Bamileke languages");
-        iso639_2T_ToFRLang.put("bai", "bamilékés, langues");
+        iso639_2T_ToFRLang.put("bai", "bamilÃ©kÃ©s, langues");
     
         // Bashkir
         iso639_2T_ToENLang.put("bak", "Bashkir");
@@ -777,7 +777,7 @@ public class CountryLanguageScript {
     
         // Belarusian
         iso639_2T_ToENLang.put("bel", "Belarusian");
-        iso639_2T_ToFRLang.put("bel", "biélorusse");
+        iso639_2T_ToFRLang.put("bel", "biÃ©lorusse");
     
         iso639_1_To_639_2T.put("be", "bel");
         iso639_2T_To_639_1.put("bel", "be");
@@ -795,7 +795,7 @@ public class CountryLanguageScript {
   
         // Berber (Other)
         iso639_2T_ToENLang.put("ber", "Berber (Other)");
-        iso639_2T_ToFRLang.put("ber", "berbères, autres langues");
+        iso639_2T_ToFRLang.put("ber", "berbÃ¨res, autres langues");
     
         // Bhojpuri
         iso639_2T_ToENLang.put("bho", "Bhojpuri");
@@ -833,7 +833,7 @@ public class CountryLanguageScript {
     
         // Tibetan
         iso639_2T_ToENLang.put("bod", "Tibetan");
-        iso639_2T_ToFRLang.put("bod", "tibétain");
+        iso639_2T_ToFRLang.put("bod", "tibÃ©tain");
     
         iso639_2B_To_639_2T.put("tib", "bod");
   
@@ -860,7 +860,7 @@ public class CountryLanguageScript {
   
         // Batak (Indonesia)
         iso639_2T_ToENLang.put("btk", "Batak (Indonesia)");
-        iso639_2T_ToFRLang.put("btk", "batak (Indonésie)");
+        iso639_2T_ToFRLang.put("btk", "batak (IndonÃ©sie)");
     
         // Buriat
         iso639_2T_ToENLang.put("bua", "Buriat");
@@ -892,7 +892,7 @@ public class CountryLanguageScript {
     
         // Central American Indian (Other)
         iso639_2T_ToENLang.put("cai", "Central American Indian (Other)");
-        iso639_2T_ToFRLang.put("cai", "indiennes d'Amérique centrale, autres langues");
+        iso639_2T_ToFRLang.put("cai", "indiennes d'AmÃ©rique centrale, autres langues");
     
         // Carib
         iso639_2T_ToENLang.put("car", "Carib");
@@ -919,7 +919,7 @@ public class CountryLanguageScript {
     
         // Czech
         iso639_2T_ToENLang.put("ces", "Czech");
-        iso639_2T_ToFRLang.put("ces", "tchèque");
+        iso639_2T_ToFRLang.put("ces", "tchÃ¨que");
     
         iso639_2B_To_639_2T.put("cze", "ces");
   
@@ -939,14 +939,14 @@ public class CountryLanguageScript {
     
         // Chechen 
         iso639_2T_ToENLang.put("che", "Chechen ");
-        iso639_2T_ToFRLang.put("che", "tchétchène");
+        iso639_2T_ToFRLang.put("che", "tchÃ©tchÃ¨ne");
     
         iso639_1_To_639_2T.put("ce", "che");
         iso639_2T_To_639_1.put("che", "ce");
   
         // Chagatai
         iso639_2T_ToENLang.put("chg", "Chagatai");
-        iso639_2T_ToFRLang.put("chg", "djaghataï");
+        iso639_2T_ToFRLang.put("chg", "djaghataÃ¯");
     
         // Chinese
         iso639_2T_ToENLang.put("zho", "Chinese");
@@ -983,7 +983,7 @@ public class CountryLanguageScript {
     
         // Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic
         iso639_2T_ToENLang.put("chu", "Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic");
-        iso639_2T_ToFRLang.put("chu", "slavon d'église; vieux slave; slavon liturgique; vieux bulgare");
+        iso639_2T_ToFRLang.put("chu", "slavon d'Ã©glise; vieux slave; slavon liturgique; vieux bulgare");
     
         iso639_1_To_639_2T.put("cu", "chu");
         iso639_2T_To_639_1.put("chu", "cu");
@@ -1023,15 +1023,15 @@ public class CountryLanguageScript {
   
         // Creoles and pidgins, English based (Other)
         iso639_2T_ToENLang.put("cpe", "Creoles and pidgins, English based (Other)");
-        iso639_2T_ToFRLang.put("cpe", "créoles et pidgins anglais, autres");
+        iso639_2T_ToFRLang.put("cpe", "crÃ©oles et pidgins anglais, autres");
     
         // Creoles and pidgins, French-based (Other)
         iso639_2T_ToENLang.put("cpf", "Creoles and pidgins, French-based (Other)");
-        iso639_2T_ToFRLang.put("cpf", "créoles et pidgins français, autres");
+        iso639_2T_ToFRLang.put("cpf", "crÃ©oles et pidgins franÃ§ais, autres");
     
         // Creoles and pidgins, Portuguese-based (Other)
         iso639_2T_ToENLang.put("cpp", "Creoles and pidgins, Portuguese-based (Other)");
-        iso639_2T_ToFRLang.put("cpp", "créoles et pidgins portugais, autres");
+        iso639_2T_ToFRLang.put("cpp", "crÃ©oles et pidgins portugais, autres");
     
         // Cree
         iso639_2T_ToENLang.put("cre", "Cree");
@@ -1039,7 +1039,7 @@ public class CountryLanguageScript {
     
         // Creoles and pidgins (Other)
         iso639_2T_ToENLang.put("crp", "Creoles and pidgins (Other)");
-        iso639_2T_ToFRLang.put("crp", "créoles et pidgins divers");
+        iso639_2T_ToFRLang.put("crp", "crÃ©oles et pidgins divers");
     
         // Cushitic (Other)
         iso639_2T_ToENLang.put("cus", "Cushitic (Other)");
@@ -1056,7 +1056,7 @@ public class CountryLanguageScript {
   
         // Czech
         iso639_2T_ToENLang.put("ces", "Czech");
-        iso639_2T_ToFRLang.put("ces", "tchèque");
+        iso639_2T_ToFRLang.put("ces", "tchÃ¨que");
     
         iso639_2B_To_639_2T.put("cze", "ces");
   
@@ -1121,11 +1121,11 @@ public class CountryLanguageScript {
     
         // Dutch, Middle (ca.1050-1350)
         iso639_2T_ToENLang.put("dum", "Dutch, Middle (ca.1050-1350)");
-        iso639_2T_ToFRLang.put("dum", "néerlandais moyen (ca. 1050-1350)");
+        iso639_2T_ToFRLang.put("dum", "nÃ©erlandais moyen (ca. 1050-1350)");
     
         // Dutch
         iso639_2T_ToENLang.put("nld", "Dutch");
-        iso639_2T_ToFRLang.put("nld", "néerlandais");
+        iso639_2T_ToFRLang.put("nld", "nÃ©erlandais");
     
         iso639_2B_To_639_2T.put("dut", "nld");
   
@@ -1149,7 +1149,7 @@ public class CountryLanguageScript {
     
         // Egyptian (Ancient)
         iso639_2T_ToENLang.put("egy", "Egyptian (Ancient)");
-        iso639_2T_ToFRLang.put("egy", "égyptien");
+        iso639_2T_ToFRLang.put("egy", "Ã©gyptien");
     
         // Ekajuk
         iso639_2T_ToENLang.put("eka", "Ekajuk");
@@ -1157,7 +1157,7 @@ public class CountryLanguageScript {
     
         // Greek, Modern (1453-)
         iso639_2T_ToENLang.put("ell", "Greek, Modern (1453-)");
-        iso639_2T_ToFRLang.put("ell", "grec moderne (après 1453)");
+        iso639_2T_ToFRLang.put("ell", "grec moderne (aprÃ¨s 1453)");
     
         iso639_2B_To_639_2T.put("gre", "ell");
   
@@ -1166,7 +1166,7 @@ public class CountryLanguageScript {
   
         // Elamite
         iso639_2T_ToENLang.put("elx", "Elamite");
-        iso639_2T_ToFRLang.put("elx", "élamite");
+        iso639_2T_ToFRLang.put("elx", "Ã©lamite");
     
         // English
         iso639_2T_ToENLang.put("eng", "English");
@@ -1181,7 +1181,7 @@ public class CountryLanguageScript {
     
         // Esperanto
         iso639_2T_ToENLang.put("epo", "Esperanto");
-        iso639_2T_ToFRLang.put("epo", "espéranto");
+        iso639_2T_ToFRLang.put("epo", "espÃ©ranto");
     
         iso639_1_To_639_2T.put("eo", "epo");
         iso639_2T_To_639_1.put("epo", "eo");
@@ -1204,11 +1204,11 @@ public class CountryLanguageScript {
   
         // Ewe
         iso639_2T_ToENLang.put("ewe", "Ewe");
-        iso639_2T_ToFRLang.put("ewe", "éwé");
+        iso639_2T_ToFRLang.put("ewe", "Ã©wÃ©");
     
         // Ewondo
         iso639_2T_ToENLang.put("ewo", "Ewondo");
-        iso639_2T_ToFRLang.put("ewo", "éwondo");
+        iso639_2T_ToFRLang.put("ewo", "Ã©wondo");
     
         // Fang
         iso639_2T_ToENLang.put("fan", "Fang");
@@ -1216,7 +1216,7 @@ public class CountryLanguageScript {
     
         // Faroese
         iso639_2T_ToENLang.put("fao", "Faroese");
-        iso639_2T_ToFRLang.put("fao", "féroïen");
+        iso639_2T_ToFRLang.put("fao", "fÃ©roÃ¯en");
     
         iso639_1_To_639_2T.put("fo", "fao");
         iso639_2T_To_639_1.put("fao", "fo");
@@ -1258,7 +1258,7 @@ public class CountryLanguageScript {
     
         // French
         iso639_2T_ToENLang.put("fra", "French");
-        iso639_2T_ToFRLang.put("fra", "français");
+        iso639_2T_ToFRLang.put("fra", "franÃ§ais");
     
         iso639_2B_To_639_2T.put("fre", "fra");
   
@@ -1267,11 +1267,11 @@ public class CountryLanguageScript {
   
         // French, Middle (ca.1400-1800)
         iso639_2T_ToENLang.put("frm", "French, Middle (ca.1400-1800)");
-        iso639_2T_ToFRLang.put("frm", "français moyen (1400-1800)");
+        iso639_2T_ToFRLang.put("frm", "franÃ§ais moyen (1400-1800)");
     
         // French, Old (842-ca.1400)
         iso639_2T_ToENLang.put("fro", "French, Old (842-ca.1400)");
-        iso639_2T_ToFRLang.put("fro", "français ancien (842-ca.1400)");
+        iso639_2T_ToFRLang.put("fro", "franÃ§ais ancien (842-ca.1400)");
     
         // Frisian
         iso639_2T_ToENLang.put("fry", "Frisian");
@@ -1306,7 +1306,7 @@ public class CountryLanguageScript {
     
         // Georgian
         iso639_2T_ToENLang.put("kat", "Georgian");
-        iso639_2T_ToFRLang.put("kat", "géorgien");
+        iso639_2T_ToFRLang.put("kat", "gÃ©orgien");
     
         iso639_2B_To_639_2T.put("geo", "kat");
   
@@ -1324,7 +1324,7 @@ public class CountryLanguageScript {
   
         // Geez
         iso639_2T_ToENLang.put("gez", "Geez");
-        iso639_2T_ToFRLang.put("gez", "guèze");
+        iso639_2T_ToFRLang.put("gez", "guÃ¨ze");
     
         // Gilbertese
         iso639_2T_ToENLang.put("gil", "Gilbertese");
@@ -1332,7 +1332,7 @@ public class CountryLanguageScript {
     
         // Gaelic; Scottish Gaelic
         iso639_2T_ToENLang.put("gla", "Gaelic; Scottish Gaelic");
-        iso639_2T_ToFRLang.put("gla", "gaélique; gaélique écossais");
+        iso639_2T_ToFRLang.put("gla", "gaÃ©lique; gaÃ©lique Ã©cossais");
     
         iso639_1_To_639_2T.put("gd", "gla");
         iso639_2T_To_639_1.put("gla", "gd");
@@ -1384,11 +1384,11 @@ public class CountryLanguageScript {
     
         // Greek, Ancient (to 1453)
         iso639_2T_ToENLang.put("grc", "Greek, Ancient (to 1453)");
-        iso639_2T_ToFRLang.put("grc", "grec ancien (jusqu'à 1453)");
+        iso639_2T_ToFRLang.put("grc", "grec ancien (jusqu'Ã  1453)");
     
         // Greek, Modern (1453-)
         iso639_2T_ToENLang.put("ell", "Greek, Modern (1453-)");
-        iso639_2T_ToFRLang.put("ell", "grec moderne (après 1453)");
+        iso639_2T_ToFRLang.put("ell", "grec moderne (aprÃ¨s 1453)");
     
         iso639_2B_To_639_2T.put("gre", "ell");
   
@@ -1409,9 +1409,9 @@ public class CountryLanguageScript {
         iso639_1_To_639_2T.put("gu", "guj");
         iso639_2T_To_639_1.put("guj", "gu");
   
-        // Gwich´in
-        iso639_2T_ToENLang.put("gwi", "Gwich´in");
-        iso639_2T_ToFRLang.put("gwi", "gwich´in");
+        // GwichÂ´in
+        iso639_2T_ToENLang.put("gwi", "GwichÂ´in");
+        iso639_2T_ToFRLang.put("gwi", "gwichÂ´in");
     
         // Haida
         iso639_2T_ToENLang.put("hai", "Haida");
@@ -1426,11 +1426,11 @@ public class CountryLanguageScript {
   
         // Hawaiian
         iso639_2T_ToENLang.put("haw", "Hawaiian");
-        iso639_2T_ToFRLang.put("haw", "hawaïen");
+        iso639_2T_ToFRLang.put("haw", "hawaÃ¯en");
     
         // Hebrew
         iso639_2T_ToENLang.put("heb", "Hebrew");
-        iso639_2T_ToFRLang.put("heb", "hébreu");
+        iso639_2T_ToFRLang.put("heb", "hÃ©breu");
     
         iso639_1_To_639_2T.put("he", "heb");
         iso639_2T_To_639_1.put("heb", "he");
@@ -1494,7 +1494,7 @@ public class CountryLanguageScript {
     
         // Armenian
         iso639_2T_ToENLang.put("hye", "Armenian");
-        iso639_2T_ToFRLang.put("hye", "arménien");
+        iso639_2T_ToFRLang.put("hye", "armÃ©nien");
     
         iso639_2B_To_639_2T.put("arm", "hye");
   
@@ -1560,14 +1560,14 @@ public class CountryLanguageScript {
     
         // Indonesian
         iso639_2T_ToENLang.put("ind", "Indonesian");
-        iso639_2T_ToFRLang.put("ind", "indonésien");
+        iso639_2T_ToFRLang.put("ind", "indonÃ©sien");
     
         iso639_1_To_639_2T.put("id", "ind");
         iso639_2T_To_639_1.put("ind", "id");
   
         // Indo-European (Other)
         iso639_2T_ToENLang.put("ine", "Indo-European (Other)");
-        iso639_2T_ToFRLang.put("ine", "indo-européennes, autres langues");
+        iso639_2T_ToFRLang.put("ine", "indo-europÃ©ennes, autres langues");
     
         // Inupiaq
         iso639_2T_ToENLang.put("ipk", "Inupiaq");
@@ -1616,11 +1616,11 @@ public class CountryLanguageScript {
   
         // Judeo-Persian
         iso639_2T_ToENLang.put("jpr", "Judeo-Persian");
-        iso639_2T_ToFRLang.put("jpr", "judéo-persan");
+        iso639_2T_ToFRLang.put("jpr", "judÃ©o-persan");
     
         // Judeo-Arabic
         iso639_2T_ToENLang.put("jrb", "Judeo-Arabic");
-        iso639_2T_ToFRLang.put("jrb", "judéo-arabe");
+        iso639_2T_ToFRLang.put("jrb", "judÃ©o-arabe");
     
         // Kara-Kalpak
         iso639_2T_ToENLang.put("kaa", "Kara-Kalpak");
@@ -1665,7 +1665,7 @@ public class CountryLanguageScript {
   
         // Georgian
         iso639_2T_ToENLang.put("kat", "Georgian");
-        iso639_2T_ToFRLang.put("kat", "géorgien");
+        iso639_2T_ToFRLang.put("kat", "gÃ©orgien");
     
         iso639_2B_To_639_2T.put("geo", "kat");
   
@@ -1748,7 +1748,7 @@ public class CountryLanguageScript {
     
         // Korean
         iso639_2T_ToENLang.put("kor", "Korean");
-        iso639_2T_ToFRLang.put("kor", "coréen");
+        iso639_2T_ToFRLang.put("kor", "corÃ©en");
     
         iso639_1_To_639_2T.put("ko", "kor");
         iso639_2T_To_639_1.put("kor", "ko");
@@ -1759,7 +1759,7 @@ public class CountryLanguageScript {
     
         // Kpelle
         iso639_2T_ToENLang.put("kpe", "Kpelle");
-        iso639_2T_ToFRLang.put("kpe", "kpellé");
+        iso639_2T_ToFRLang.put("kpe", "kpellÃ©");
     
         // Kru
         iso639_2T_ToENLang.put("kro", "Kru");
@@ -1793,7 +1793,7 @@ public class CountryLanguageScript {
     
         // Ladino
         iso639_2T_ToENLang.put("lad", "Ladino");
-        iso639_2T_ToFRLang.put("lad", "judéo-espagnol");
+        iso639_2T_ToFRLang.put("lad", "judÃ©o-espagnol");
     
         // Lahnda
         iso639_2T_ToENLang.put("lah", "Lahnda");
@@ -1894,7 +1894,7 @@ public class CountryLanguageScript {
     
         // Macedonian
         iso639_2T_ToENLang.put("mkd", "Macedonian");
-        iso639_2T_ToFRLang.put("mkd", "macédonien");
+        iso639_2T_ToFRLang.put("mkd", "macÃ©donien");
     
         iso639_2B_To_639_2T.put("mac", "mkd");
   
@@ -1946,7 +1946,7 @@ public class CountryLanguageScript {
   
         // Austronesian (Other)
         iso639_2T_ToENLang.put("map", "Austronesian (Other)");
-        iso639_2T_ToFRLang.put("map", "malayo-polynésiennes,autres langues");
+        iso639_2T_ToFRLang.put("map", "malayo-polynÃ©siennes,autres langues");
     
         // Marathi
         iso639_2T_ToENLang.put("mar", "Marathi");
@@ -1957,7 +1957,7 @@ public class CountryLanguageScript {
   
         // Masai
         iso639_2T_ToENLang.put("mas", "Masai");
-        iso639_2T_ToFRLang.put("mas", "massaï");
+        iso639_2T_ToFRLang.put("mas", "massaÃ¯");
     
         // Malay
         iso639_2T_ToENLang.put("msa", "Malay");
@@ -1974,7 +1974,7 @@ public class CountryLanguageScript {
     
         // Mende
         iso639_2T_ToENLang.put("men", "Mende");
-        iso639_2T_ToFRLang.put("men", "mendé");
+        iso639_2T_ToFRLang.put("men", "mendÃ©");
     
         // Irish, Middle (900-1200)
         iso639_2T_ToENLang.put("mga", "Irish, Middle (900-1200)");
@@ -1994,7 +1994,7 @@ public class CountryLanguageScript {
     
         // Macedonian
         iso639_2T_ToENLang.put("mkd", "Macedonian");
-        iso639_2T_ToFRLang.put("mkd", "macédonien");
+        iso639_2T_ToFRLang.put("mkd", "macÃ©donien");
     
         iso639_2B_To_639_2T.put("mac", "mkd");
   
@@ -2003,7 +2003,7 @@ public class CountryLanguageScript {
   
         // Mon-Khmer (Other)
         iso639_2T_ToENLang.put("mkh", "Mon-Khmer (Other)");
-        iso639_2T_ToFRLang.put("mkh", "môn-khmer, autres langues");
+        iso639_2T_ToFRLang.put("mkh", "mÃ´n-khmer, autres langues");
     
         // Malagasy
         iso639_2T_ToENLang.put("mlg", "Malagasy");
@@ -2051,7 +2051,7 @@ public class CountryLanguageScript {
   
         // Mossi
         iso639_2T_ToENLang.put("mos", "Mossi");
-        iso639_2T_ToFRLang.put("mos", "moré");
+        iso639_2T_ToFRLang.put("mos", "morÃ©");
     
         // Maori
         iso639_2T_ToENLang.put("mri", "Maori");
@@ -2106,7 +2106,7 @@ public class CountryLanguageScript {
     
         // North American Indian
         iso639_2T_ToENLang.put("nai", "North American Indian");
-        iso639_2T_ToFRLang.put("nai", "indiennes d'Amérique du Nord, autres langues");
+        iso639_2T_ToFRLang.put("nai", "indiennes d'AmÃ©rique du Nord, autres langues");
     
         // Neapolitan
         iso639_2T_ToENLang.put("nap", "Neapolitan");
@@ -2128,14 +2128,14 @@ public class CountryLanguageScript {
   
         // Ndebele, South; South Ndebele
         iso639_2T_ToENLang.put("nbl", "Ndebele, South; South Ndebele");
-        iso639_2T_ToFRLang.put("nbl", "ndébélé du Sud");
+        iso639_2T_ToFRLang.put("nbl", "ndÃ©bÃ©lÃ© du Sud");
     
         iso639_1_To_639_2T.put("nr", "nbl");
         iso639_2T_To_639_1.put("nbl", "nr");
   
         // Ndebele, North; North Ndebele
         iso639_2T_ToENLang.put("nde", "Ndebele, North; North Ndebele");
-        iso639_2T_ToFRLang.put("nde", "ndébélé du Nord");
+        iso639_2T_ToFRLang.put("nde", "ndÃ©bÃ©lÃ© du Nord");
     
         iso639_1_To_639_2T.put("nd", "nde");
         iso639_2T_To_639_1.put("nde", "nd");
@@ -2153,7 +2153,7 @@ public class CountryLanguageScript {
     
         // Nepali
         iso639_2T_ToENLang.put("nep", "Nepali");
-        iso639_2T_ToFRLang.put("nep", "népalais");
+        iso639_2T_ToFRLang.put("nep", "nÃ©palais");
     
         iso639_1_To_639_2T.put("ne", "nep");
         iso639_2T_To_639_1.put("nep", "ne");
@@ -2168,15 +2168,15 @@ public class CountryLanguageScript {
     
         // Niger-Kordofanian (Other)
         iso639_2T_ToENLang.put("nic", "Niger-Kordofanian (Other)");
-        iso639_2T_ToFRLang.put("nic", "nigéro-congolaises, autres langues");
+        iso639_2T_ToFRLang.put("nic", "nigÃ©ro-congolaises, autres langues");
     
         // Niuean
         iso639_2T_ToENLang.put("niu", "Niuean");
-        iso639_2T_ToFRLang.put("niu", "niué");
+        iso639_2T_ToFRLang.put("niu", "niuÃ©");
     
         // Dutch
         iso639_2T_ToENLang.put("nld", "Dutch");
-        iso639_2T_ToFRLang.put("nld", "néerlandais");
+        iso639_2T_ToFRLang.put("nld", "nÃ©erlandais");
     
         iso639_2B_To_639_2T.put("dut", "nld");
   
@@ -2189,21 +2189,21 @@ public class CountryLanguageScript {
     
         // Norwegian
         iso639_2T_ToENLang.put("nor", "Norwegian");
-        iso639_2T_ToFRLang.put("nor", "norvégien");
+        iso639_2T_ToFRLang.put("nor", "norvÃ©gien");
     
         iso639_1_To_639_2T.put("no", "nor");
         iso639_2T_To_639_1.put("nor", "no");
   
         // Norwegian Nynorsk; Nynorsk, Norwegian
         iso639_2T_ToENLang.put("nno", "Norwegian Nynorsk; Nynorsk, Norwegian");
-        iso639_2T_ToFRLang.put("nno", "norvégien nynorsk; nynorsk, norvégien ");
+        iso639_2T_ToFRLang.put("nno", "norvÃ©gien nynorsk; nynorsk, norvÃ©gien ");
     
         iso639_1_To_639_2T.put("nn", "nno");
         iso639_2T_To_639_1.put("nno", "nn");
   
-        // Norwegian Bokmål; Bokmål, Norwegian
-        iso639_2T_ToENLang.put("nob", "Norwegian Bokmål; Bokmål, Norwegian");
-        iso639_2T_ToFRLang.put("nob", "norvégien bokmål; bokmål, norvégien");
+        // Norwegian BokmÃ¥l; BokmÃ¥l, Norwegian
+        iso639_2T_ToENLang.put("nob", "Norwegian BokmÃ¥l; BokmÃ¥l, Norwegian");
+        iso639_2T_ToFRLang.put("nob", "norvÃ©gien bokmÃ¥l; bokmÃ¥l, norvÃ©gien");
     
         iso639_1_To_639_2T.put("nb", "nob");
         iso639_2T_To_639_1.put("nob", "nb");
@@ -2229,7 +2229,7 @@ public class CountryLanguageScript {
     
         // Nyankole
         iso639_2T_ToENLang.put("nyn", "Nyankole");
-        iso639_2T_ToFRLang.put("nyn", "nyankolé");
+        iso639_2T_ToFRLang.put("nyn", "nyankolÃ©");
     
         // Nyoro
         iso639_2T_ToENLang.put("nyo", "Nyoro");
@@ -2239,9 +2239,9 @@ public class CountryLanguageScript {
         iso639_2T_ToENLang.put("nzi", "Nzima");
         iso639_2T_ToFRLang.put("nzi", "nzema");
     
-        // Occitan (post 1500); Provençal
-        iso639_2T_ToENLang.put("oci", "Occitan (post 1500); Provençal");
-        iso639_2T_ToFRLang.put("oci", "occitan (après 1500); provençal");
+        // Occitan (post 1500); ProvenÃ§al
+        iso639_2T_ToENLang.put("oci", "Occitan (post 1500); ProvenÃ§al");
+        iso639_2T_ToFRLang.put("oci", "occitan (aprÃ¨s 1500); provenÃ§al");
     
         iso639_1_To_639_2T.put("oc", "oci");
         iso639_2T_To_639_1.put("oci", "oc");
@@ -2270,7 +2270,7 @@ public class CountryLanguageScript {
     
         // Ossetian; Ossetic
         iso639_2T_ToENLang.put("oss", "Ossetian; Ossetic");
-        iso639_2T_ToFRLang.put("oss", "ossète");
+        iso639_2T_ToFRLang.put("oss", "ossÃ¨te");
     
         iso639_1_To_639_2T.put("os", "oss");
         iso639_2T_To_639_1.put("oss", "os");
@@ -2333,7 +2333,7 @@ public class CountryLanguageScript {
     
         // Phoenician
         iso639_2T_ToENLang.put("phn", "Phoenician");
-        iso639_2T_ToFRLang.put("phn", "phénicien");
+        iso639_2T_ToFRLang.put("phn", "phÃ©nicien");
     
         // Pali
         iso639_2T_ToENLang.put("pli", "Pali");
@@ -2362,11 +2362,11 @@ public class CountryLanguageScript {
   
         // Prakrit languages
         iso639_2T_ToENLang.put("pra", "Prakrit languages");
-        iso639_2T_ToFRLang.put("pra", "prâkrit");
+        iso639_2T_ToFRLang.put("pra", "prÃ¢krit");
     
-        // Provençal, Old (to 1500)
-        iso639_2T_ToENLang.put("pro", "Provençal, Old (to 1500)");
-        iso639_2T_ToFRLang.put("pro", "provençal ancien (jusqu'à 1500)");
+        // ProvenÃ§al, Old (to 1500)
+        iso639_2T_ToENLang.put("pro", "ProvenÃ§al, Old (to 1500)");
+        iso639_2T_ToFRLang.put("pro", "provenÃ§al ancien (jusqu'Ã  1500)");
     
         // Pushto
         iso639_2T_ToENLang.put("pus", "Pushto");
@@ -2400,7 +2400,7 @@ public class CountryLanguageScript {
     
         // Raeto-Romance
         iso639_2T_ToENLang.put("roh", "Raeto-Romance");
-        iso639_2T_ToFRLang.put("roh", "rhéto-roman");
+        iso639_2T_ToFRLang.put("roh", "rhÃ©to-roman");
     
         iso639_1_To_639_2T.put("rm", "roh");
         iso639_2T_To_639_1.put("roh", "rm");
@@ -2449,7 +2449,7 @@ public class CountryLanguageScript {
     
         // South American Indian (Other)
         iso639_2T_ToENLang.put("sai", "South American Indian (Other)");
-        iso639_2T_ToFRLang.put("sai", "indiennes d'Amérique du Sud,autres langues");
+        iso639_2T_ToFRLang.put("sai", "indiennes d'AmÃ©rique du Sud,autres langues");
     
         // Salishan languages 
         iso639_2T_ToENLang.put("sal", "Salishan languages ");
@@ -2485,7 +2485,7 @@ public class CountryLanguageScript {
   
         // Scots
         iso639_2T_ToENLang.put("sco", "Scots");
-        iso639_2T_ToFRLang.put("sco", "écossais");
+        iso639_2T_ToFRLang.put("sco", "Ã©cossais");
     
         // Croatian
         iso639_2T_ToENLang.put("hrv", "Croatian");
@@ -2502,11 +2502,11 @@ public class CountryLanguageScript {
     
         // Semitic (Other) 
         iso639_2T_ToENLang.put("sem", "Semitic (Other) ");
-        iso639_2T_ToFRLang.put("sem", "sémitiques, autres langues");
+        iso639_2T_ToFRLang.put("sem", "sÃ©mitiques, autres langues");
     
         // Irish, Old (to 900) 
         iso639_2T_ToENLang.put("sga", "Irish, Old (to 900) ");
-        iso639_2T_ToFRLang.put("sga", "irlandais ancien (jusqu'à 900)");
+        iso639_2T_ToFRLang.put("sga", "irlandais ancien (jusqu'Ã  900)");
     
         // Sign Languages
         iso639_2T_ToENLang.put("sgn", "Sign Languages");
@@ -2533,7 +2533,7 @@ public class CountryLanguageScript {
     
         // Sino-Tibetan (Other)
         iso639_2T_ToENLang.put("sit", "Sino-Tibetan (Other)");
-        iso639_2T_ToFRLang.put("sit", "sino-tibétaines, autres langues");
+        iso639_2T_ToFRLang.put("sit", "sino-tibÃ©taines, autres langues");
     
         // Slavic (Other)
         iso639_2T_ToENLang.put("sla", "Slavic (Other)");
@@ -2550,7 +2550,7 @@ public class CountryLanguageScript {
   
         // Slovenian
         iso639_2T_ToENLang.put("slv", "Slovenian");
-        iso639_2T_ToFRLang.put("slv", "slovène");
+        iso639_2T_ToFRLang.put("slv", "slovÃ¨ne");
     
         iso639_1_To_639_2T.put("sl", "slv");
         iso639_2T_To_639_1.put("slv", "sl");
@@ -2605,7 +2605,7 @@ public class CountryLanguageScript {
   
         // Soninke 
         iso639_2T_ToENLang.put("snk", "Soninke ");
-        iso639_2T_ToFRLang.put("snk", "soninké");
+        iso639_2T_ToFRLang.put("snk", "soninkÃ©");
     
         // Sogdian
         iso639_2T_ToENLang.put("sog", "Sogdian");
@@ -2663,7 +2663,7 @@ public class CountryLanguageScript {
   
         // Serer
         iso639_2T_ToENLang.put("srr", "Serer");
-        iso639_2T_ToFRLang.put("srr", "sérère");
+        iso639_2T_ToFRLang.put("srr", "sÃ©rÃ¨re");
     
         // Nilo-Saharan (Other)
         iso639_2T_ToENLang.put("ssa", "Nilo-Saharan (Other)");
@@ -2693,7 +2693,7 @@ public class CountryLanguageScript {
     
         // Sumerian
         iso639_2T_ToENLang.put("sux", "Sumerian");
-        iso639_2T_ToFRLang.put("sux", "sumérien");
+        iso639_2T_ToFRLang.put("sux", "sumÃ©rien");
     
         // Swahili
         iso639_2T_ToENLang.put("swa", "Swahili");
@@ -2704,7 +2704,7 @@ public class CountryLanguageScript {
   
         // Swedish
         iso639_2T_ToENLang.put("swe", "Swedish");
-        iso639_2T_ToFRLang.put("swe", "suédois");
+        iso639_2T_ToFRLang.put("swe", "suÃ©dois");
     
         iso639_1_To_639_2T.put("sv", "swe");
         iso639_2T_To_639_1.put("swe", "sv");
@@ -2722,7 +2722,7 @@ public class CountryLanguageScript {
   
         // Tai (Other)
         iso639_2T_ToENLang.put("tai", "Tai (Other)");
-        iso639_2T_ToFRLang.put("tai", "thaïes, autres langues");
+        iso639_2T_ToFRLang.put("tai", "thaÃ¯es, autres langues");
     
         // Tamil
         iso639_2T_ToENLang.put("tam", "Tamil");
@@ -2740,7 +2740,7 @@ public class CountryLanguageScript {
   
         // Telugu
         iso639_2T_ToENLang.put("tel", "Telugu");
-        iso639_2T_ToFRLang.put("tel", "télougou");
+        iso639_2T_ToFRLang.put("tel", "tÃ©lougou");
     
         iso639_1_To_639_2T.put("te", "tel");
         iso639_2T_To_639_1.put("tel", "te");
@@ -2773,14 +2773,14 @@ public class CountryLanguageScript {
   
         // Thai
         iso639_2T_ToENLang.put("tha", "Thai");
-        iso639_2T_ToFRLang.put("tha", "thaï");
+        iso639_2T_ToFRLang.put("tha", "thaÃ¯");
     
         iso639_1_To_639_2T.put("th", "tha");
         iso639_2T_To_639_1.put("tha", "th");
   
         // Tibetan
         iso639_2T_ToENLang.put("bod", "Tibetan");
-        iso639_2T_ToFRLang.put("bod", "tibétain");
+        iso639_2T_ToFRLang.put("bod", "tibÃ©tain");
     
         iso639_2B_To_639_2T.put("tib", "bod");
   
@@ -2789,7 +2789,7 @@ public class CountryLanguageScript {
   
         // Tigre
         iso639_2T_ToENLang.put("tig", "Tigre");
-        iso639_2T_ToFRLang.put("tig", "tigré");
+        iso639_2T_ToFRLang.put("tig", "tigrÃ©");
     
         // Tigrinya
         iso639_2T_ToENLang.put("tir", "Tigrinya");
@@ -2820,7 +2820,7 @@ public class CountryLanguageScript {
     
         // Tonga (Tonga Islands)
         iso639_2T_ToENLang.put("ton", "Tonga (Tonga Islands)");
-        iso639_2T_ToFRLang.put("ton", "tongan (Îles Tonga)");
+        iso639_2T_ToFRLang.put("ton", "tongan (ÃŽles Tonga)");
     
         iso639_1_To_639_2T.put("to", "ton");
         iso639_2T_To_639_1.put("ton", "to");
@@ -2849,7 +2849,7 @@ public class CountryLanguageScript {
   
         // Turkmen
         iso639_2T_ToENLang.put("tuk", "Turkmen");
-        iso639_2T_ToFRLang.put("tuk", "turkmène");
+        iso639_2T_ToFRLang.put("tuk", "turkmÃ¨ne");
     
         iso639_1_To_639_2T.put("tk", "tuk");
         iso639_2T_To_639_1.put("tuk", "tk");
@@ -2871,7 +2871,7 @@ public class CountryLanguageScript {
   
         // Altaic (Other)
         iso639_2T_ToENLang.put("tut", "Altaic (Other)");
-        iso639_2T_ToFRLang.put("tut", "altaïques, autres langues");
+        iso639_2T_ToFRLang.put("tut", "altaÃ¯ques, autres langues");
     
         // Tuvalu
         iso639_2T_ToENLang.put("tvl", "Tuvalu");
@@ -2894,7 +2894,7 @@ public class CountryLanguageScript {
     
         // Uighur
         iso639_2T_ToENLang.put("uig", "Uighur");
-        iso639_2T_ToFRLang.put("uig", "ouïgour");
+        iso639_2T_ToFRLang.put("uig", "ouÃ¯gour");
     
         iso639_1_To_639_2T.put("ug", "uig");
         iso639_2T_To_639_1.put("uig", "ug");
@@ -2912,7 +2912,7 @@ public class CountryLanguageScript {
     
         // Undetermined 
         iso639_2T_ToENLang.put("und", "Undetermined ");
-        iso639_2T_ToFRLang.put("und", "indéterminée");
+        iso639_2T_ToFRLang.put("und", "indÃ©terminÃ©e");
     
         // Urdu
         iso639_2T_ToENLang.put("urd", "Urdu");
@@ -2930,7 +2930,7 @@ public class CountryLanguageScript {
   
         // Vai
         iso639_2T_ToENLang.put("vai", "Vai");
-        iso639_2T_ToFRLang.put("vai", "vaï");
+        iso639_2T_ToFRLang.put("vai", "vaÃ¯");
     
         // Venda
         iso639_2T_ToENLang.put("ven", "Venda");
@@ -2943,9 +2943,9 @@ public class CountryLanguageScript {
         iso639_1_To_639_2T.put("vi", "vie");
         iso639_2T_To_639_1.put("vie", "vi");
   
-        // Volapük
-        iso639_2T_ToENLang.put("vol", "Volapük");
-        iso639_2T_ToFRLang.put("vol", "volapük");
+        // VolapÃ¼k
+        iso639_2T_ToENLang.put("vol", "VolapÃ¼k");
+        iso639_2T_ToFRLang.put("vol", "volapÃ¼k");
     
         iso639_1_To_639_2T.put("vo", "vol");
         iso639_2T_To_639_1.put("vol", "vo");
@@ -3032,7 +3032,7 @@ public class CountryLanguageScript {
     
         // Zapotec
         iso639_2T_ToENLang.put("zap", "Zapotec");
-        iso639_2T_ToFRLang.put("zap", "zapotèque");
+        iso639_2T_ToFRLang.put("zap", "zapotÃ¨que");
     
         // Zenaga
         iso639_2T_ToENLang.put("zen", "Zenaga");
@@ -3056,7 +3056,7 @@ public class CountryLanguageScript {
   
         // Zande
         iso639_2T_ToENLang.put("znd", "Zande");
-        iso639_2T_ToFRLang.put("znd", "zandé");
+        iso639_2T_ToFRLang.put("znd", "zandÃ©");
     
         // Zulu
         iso639_2T_ToENLang.put("zul", "Zulu");
@@ -3241,7 +3241,7 @@ public class CountryLanguageScript {
   
         iso15924ToName.put("Pq", "Klingon pIQaD");
   
-        iso15924ToName.put("Hu", "Kök Turki runes");
+        iso15924ToName.put("Hu", "KÃ¶k Turki runes");
   
         iso15924ToName.put("Kl", "Koleruttu");
   
@@ -3263,7 +3263,7 @@ public class CountryLanguageScript {
   
         iso15924ToName.put("Lg", "Latin (Gaelic variant)");
   
-        iso15924ToName.put("Lp", "Lepcha (Róng)");
+        iso15924ToName.put("Lp", "Lepcha (RÃ³ng)");
   
         iso15924ToName.put("Na", "Linear A");
   
