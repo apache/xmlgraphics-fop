@@ -36,6 +36,7 @@
                 text-align="start"
                 background-color="blue"
                 color="white"
+                id="start"
                 >
         Leader examples
       </fo:block>
@@ -365,6 +366,7 @@
 
       <fo:block text-align="center"
                    font-size="15pt"
+                   id="toc"
                    space-before.optimum="16pt"
                    space-after.optimum="12pt"> 
       Table of Content
@@ -674,6 +676,7 @@
 
       <fo:block text-align="center"
                    font-size="15pt"
+                   id="just"
                    space-before.optimum="16pt"
                    space-after.optimum="12pt"> 
       Using leader in combination with justified text
@@ -718,7 +721,35 @@
       Here is some longer text. Here is some longer text. Here is some longer text. 
       </fo:block>
 
+      <fo:block text-align="center"
+                   font-size="15pt"
+                   space-before.optimum="16pt"
+                   space-after.optimum="12pt"> 
+      Test for bug #15936
+      </fo:block>
 
+      <fo:block text-align-last="justify" end-indent="24pt" last-line-end-indent="-24pt">
+        <fo:inline keep-with-next.within-line="always">Start of Document
+        </fo:inline>
+        <fo:inline keep-together.within-line="always">
+          <fo:leader leader-pattern="dots" leader-pattern-width="3pt" leader-alignment="reference-area"
+          keep-with-next.within-line="always"/><fo:page-number-citation ref-id="start"/></fo:inline>
+      </fo:block>
+      <fo:block text-align-last="justify" end-indent="24pt" last-line-end-indent="-24pt">
+        <fo:inline keep-with-next.within-line="always">Part 2 of Document
+        </fo:inline>
+        <fo:inline keep-together.within-line="always">
+          <fo:leader leader-pattern="dots" leader-pattern-width="3pt" leader-alignment="reference-area"
+          keep-with-next.within-line="always"/><fo:page-number-citation ref-id="toc"/></fo:inline>
+      </fo:block>
+      <fo:block text-align-last="justify" end-indent="24pt" last-line-end-indent="-24pt">
+        <fo:inline keep-with-next.within-line="always">Part 3 of Document
+        </fo:inline>
+        <fo:inline keep-together.within-line="always">
+          <fo:leader leader-pattern="dots" leader-pattern-width="3pt" leader-alignment="reference-area"
+          keep-with-next.within-line="always"/><fo:page-number-citation ref-id="just"/>
+        </fo:inline>
+      </fo:block>
 
     </fo:flow>
   </fo:page-sequence>
