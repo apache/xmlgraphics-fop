@@ -102,48 +102,85 @@ endobj
 /Encoding /WinAnsiEncoding >>
 endobj
 17 0 obj
-<< /Length 1420 >>
+<< /Length 1827 >>
 stream
 BT
 /F3 10 Tf
+0 0 0  rg 
 1 0 0 1 85.875 721.415 Tm (Content) Tj
 /F1 10 Tf
+0 0 0  rg 
 1 0 0 1 86.445 708.165 Tm (A\)) Tj
+0 0 0  rg 
 1 0 0 1 99.225 708.165 Tm (What) Tj
+0 0 0  rg 
 1 0 0 1 125.345 708.165 Tm (is) Tj
+0 0 0  rg 
 1 0 0 1 135.345 708.165 Tm (FOP?) Tj
+0 0 0  rg 
 1 0 0 1 86.445 696.915 Tm (B\)) Tj
+0 0 0  rg 
 1 0 0 1 99.225 696.915 Tm (Downloading) Tj
+0 0 0  rg 
 1 0 0 1 159.805 696.915 Tm (FOP) Tj
+0 0 0  rg 
 1 0 0 1 85.895 685.665 Tm (C\)) Tj
+0 0 0  rg 
 1 0 0 1 99.225 685.665 Tm (Running) Tj
+0 0 0  rg 
 1 0 0 1 139.245 685.665 Tm (FOP) Tj
+0 0 0  rg 
 1 0 0 1 85.895 674.415 Tm (D\)) Tj
+0 0 0  rg 
 1 0 0 1 99.225 674.415 Tm (Embedding) Tj
+0 0 0  rg 
 1 0 0 1 152.585 674.415 Tm (FOP) Tj
+0 0 0  rg 
 1 0 0 1 86.445 663.165 Tm (E\)) Tj
+0 0 0  rg 
 1 0 0 1 99.225 663.165 Tm (What's) Tj
+0 0 0  rg 
 1 0 0 1 132.255 663.165 Tm (Implemented?) Tj
+0 0 0  rg 
 1 0 0 1 87.005 651.915 Tm (F\)) Tj
+0 0 0  rg 
 1 0 0 1 99.225 651.915 Tm (Limitations) Tj
+0 0 0  rg 
 1 0 0 1 85.335 640.665 Tm (G\)) Tj
+0 0 0  rg 
 1 0 0 1 99.225 640.665 Tm (Bugs) Tj
+0 0 0  rg 
 1 0 0 1 85.895 629.415 Tm (H\)) Tj
+0 0 0  rg 
 1 0 0 1 99.225 629.415 Tm (Compiling) Tj
+0 0 0  rg 
 1 0 0 1 146.455 629.415 Tm (FOP) Tj
+0 0 0  rg 
 1 0 0 1 90.335 618.165 Tm (I\)) Tj
+0 0 0  rg 
 1 0 0 1 99.225 618.165 Tm (Getting) Tj
+0 0 0  rg 
 1 0 0 1 134.245 618.165 Tm (involved) Tj
+0 0 0  rg 
 1 0 0 1 88.115 606.915 Tm (J\)) Tj
+0 0 0  rg 
 1 0 0 1 99.225 606.915 Tm (FOP) Tj
+0 0 0  rg 
 1 0 0 1 122.565 606.915 Tm (Relevant) Tj
+0 0 0  rg 
 1 0 0 1 164.805 606.915 Tm (Specifications) Tj
+0 0 0  rg 
 1 0 0 1 86.445 595.665 Tm (K\)) Tj
+0 0 0  rg 
 1 0 0 1 99.225 595.665 Tm (Licence) Tj
 /F5 10 Tf
+0 0 0  rg 
 1 0 0 1 480.305 804.815 Tm (FOP) Tj
+0 0 0  rg 
 1 0 0 1 501.145 804.815 Tm (-) Tj
+0 0 0  rg 
 1 0 0 1 506.975 804.815 Tm (p.) Tj
+0 0 0  rg 
 1 0 0 1 516.975 804.815 Tm (1) Tj
 ET
 
@@ -177,7 +214,7 @@ xref
 0000001499 00000 n 
 0000001607 00000 n 
 0000001726 00000 n 
-0000003198 00000 n 
+0000003605 00000 n 
 trailer
 <<
 /Size 19
@@ -185,5 +222,5 @@ trailer
 /Info 3 0 R
 >>
 startxref
-3306
+3713
 %%EOF
