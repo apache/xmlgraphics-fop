@@ -12,6 +12,7 @@ import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.Title;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.LayoutMasterSet;
 
 import org.apache.avalon.framework.logger.Logger;
 
@@ -141,6 +142,14 @@ public class LayoutHandler extends StructureHandler {
         log.debug("Total time used: " + timeUsed + "ms");
         log.debug("Pages rendered: " + pageCount);
         //log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+    }
+
+    public void startPageSequence(PageSequence pageSeq, org.apache.fop.fo.Title seqTitle, LayoutMasterSet lms) {
+        Title title = null;
+        if(seqTitle != null) {
+            title = seqTitle.getTitleArea();
+        }
+        areaTree.startPageSequence(title);
     }
 
     /**

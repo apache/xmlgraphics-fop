@@ -23,6 +23,14 @@ public class Title extends ToBeImplementedElement {
         super(parent);
     }
 
+    public org.apache.fop.area.Title getTitleArea() {
+        org.apache.fop.area.Title title =
+                 new org.apache.fop.area.Title();
+        // use special layout manager to add the inline areas
+        // to the Title.
+        return title;
+    }
+
     public void setup() {
 
         // Common Accessibility Properties
@@ -57,3 +65,4 @@ public class Title extends ToBeImplementedElement {
 
     }
 }
+

@@ -74,7 +74,7 @@ public class MIFHandler extends StructureHandler {
      * This creates the pages in the MIF document that will be used
      * by the following flows and static areas.
      */
-    public void startPageSequence(PageSequence pageSeq, LayoutMasterSet lms) {
+    public void startPageSequence(PageSequence pageSeq, Title seqTitle, LayoutMasterSet lms) {
         // get the layout master set
         // setup the pages for this sequence
         String name = pageSeq.getProperty("master-reference").getString();
