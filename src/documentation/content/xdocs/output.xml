@@ -3,7 +3,7 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <!-- Output Formats: Renderers -->
-<document> 
+<document>
     <header>
         <title>Output</title>
         <subtitle>Notes about Output Formats: Renderers</subtitle>
@@ -27,7 +27,7 @@ different renderers.
     </p>
 <section>
   <title>Common Information</title>
-    <p> 
+    <p>
 Each renderer is given an area tree to render to its output format.
 The area tree is simply a representation of the pages and the placement
 of text and graphical objects on those pages.
@@ -39,7 +39,7 @@ output format and associated data and flow.
     </p>
     <p>
 Fonts and Layout - some formats (eg. PDF and AWT) rely on different
-font information. The fonts for these outputs have different sizes 
+font information. The fonts for these outputs have different sizes
 for the same point size. This means that the layout can be quite
 different for the same fo document.
     </p>

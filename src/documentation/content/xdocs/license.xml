@@ -12,7 +12,7 @@
   <section>
     <title>The Apache Software License, Version 1.1</title>
     <p> Copyright (C) 1999-2001 The Apache Software Foundation. All rights reserved.</p>
-    <p> Redistribution and use in source and binary forms, with or without modification, 
+    <p> Redistribution and use in source and binary forms, with or without modification,
         are permitted provided that the following conditions are met:</p>
     <p>1. Redistributions of  source code must  retain the above copyright  notice,
         this list of conditions and the following disclaimer.
@@ -54,7 +54,7 @@
     <p>
        This software  consists of voluntary contributions made  by many individuals
        on  behalf of the Apache Software  Foundation and was  originally created by
-       James Tauber &lt;jtauber@jtauber.com>. For more  information on the Apache 
+       James Tauber &lt;jtauber@jtauber.com>. For more  information on the Apache
        Software Foundation, please see <link href="http://www.apache.org/">http://www.apache.org/</link>.
     </p>
   </section>

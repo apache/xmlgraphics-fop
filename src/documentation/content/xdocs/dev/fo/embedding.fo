@@ -1089,7 +1089,7 @@ Clipping
       </fo:block>
 
       <fo:block>
-      
+
       </fo:block>
 
       <fo:block space-before.optimum="5pt" space-after.optimum="5pt" font-weight="bold" font-size="12pt">
@@ -1097,7 +1097,7 @@ Interesting Functionality
       </fo:block>
 
       <fo:block>
-      
+
       </fo:block>
 
     </fo:flow>

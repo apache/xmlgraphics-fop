@@ -2,11 +2,11 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
-<document> 
-  <header> 
-    <title>SVG in FOP</title> 
-  </header> 
-  <body> 
+<document>
+  <header>
+    <title>SVG in FOP</title>
+  </header>
+  <body>
     <section>
       <title>Introduction</title>
       <p>
@@ -70,13 +70,13 @@ to PDF:
     <caption>SVG to PDF examples</caption>
     <tr>
       <th></th>
-      <th>svg file</th> 
-      <th>png file</th> 
-      <th>pdf result</th> 
+      <th>svg file</th>
+      <th>png file</th>
+      <th>pdf result</th>
     </tr>
     <tr>
-      <td>images</td> 
-      <td><link href="svg/images.svg">images.svg</link></td> 
+      <td>images</td>
+      <td><link href="svg/images.svg">images.svg</link></td>
       <td><!--link href="svg/images.png"-->images.png<!--/link--></td>
       <td><link href="svg/images.pdf">images.pdf</link></td>
     </tr>
@@ -123,7 +123,7 @@ You will need Acrobat 5.0 to see transparency.
       <td><link href="fo/embedding.fo">embedding.fo</link></td>
       <td><link href="fo/embedding.fo.pdf">embedding.fo.pdf</link></td>
     </tr>
-  </table> 
+  </table>
           </section>
           <section>
             <title>Important Notes</title>

@@ -14,11 +14,11 @@
   <section>
     <title>Running and Using Tests</title>
     <p>
-Testing is an important part of getting FOP to operate correctly and conform to the 
+Testing is an important part of getting FOP to operate correctly and conform to the
 necessary standards.
     </p>
     <p>
-A testing system has been set up that works with as a build target when developing  
+A testing system has been set up that works with as a build target when developing
 with FOP. A developer can run the tests after making changes to the code, the aim
 is to have the tests run to verfiy that nothing working has been broken.
     </p>
@@ -26,7 +26,7 @@ is to have the tests run to verfiy that nothing working has been broken.
 To setup the testing the developer must place a reference fop.jar in the
 "&lt;cvs_repository>/test/reference/" directory. This jar will be dynamically
 loaded to create the reference output.
-    </p> 
+    </p>
   </section>
 
   <section>
@@ -42,9 +42,9 @@ Then you can uncomment the lines in the build.xml file in the test target and it
   <section>
     <title>Writing a Test</title>
     <p>
-A test belongs to one of a few catagories. A basic test should excercise one 
+A test belongs to one of a few catagories. A basic test should excercise one
 element in a number of situations such as changing a property. This should have
-at least one normal value, one border value and one invalid value. If the property  
+at least one normal value, one border value and one invalid value. If the property
 can be of different types then this should also be included.
     </p>
     <p>

@@ -2,7 +2,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
-<document> 
+<document>
     <header>
         <title>Properties</title>
         <subtitle>Properties overview</subtitle>
@@ -11,7 +11,7 @@
         </authors>
     </header>
 
-    <body> 
+    <body>
 
 <section>
   <title>Properties</title>
@@ -19,7 +19,7 @@
     <title>Property datatypes</title>
 <p>The property datatypes are defined in the
 org.apache.fop.datatypes package, except Number and String which are java
-primitives. The FOP datatypes are:</p> 
+primitives. The FOP datatypes are:</p>
 <ul>
 <li>Number</li>
 <li>String</li>

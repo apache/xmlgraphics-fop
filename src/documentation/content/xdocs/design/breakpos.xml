@@ -35,11 +35,11 @@ non-stacking direction (at least for inline areas, it must have both). Flags
 indicating various conditions (ISFIRST, ISLAST, CAN_BREAK_AFTER,
 FORCE_BREAK_AFTER, ANCHORS etc). A BreakPoss contains a reference to
 the top-level LayoutManager which generated it.
-</p> 
+</p>
 <p>A BreakPoss contains an object implementing
 the BreakPoss.Position interface. This object is specific to the layout
 manager which created the BreakPoss. It should indicate where the
-break occurs and allow the LM to 
+break occurs and allow the LM to
 create an area corresponding to the BP. A higher level LM Position
 must somehow reference or wrap the Position returned by its child LM in its
 BreakPoss object. The layout manager  modifies the flags and dimension
@@ -59,7 +59,7 @@ create the corresponding areas.</p>
   </section>
 <section>
   <title>A walk-through</title>
-<p>Layout Managers are created from the top down. First the 
+<p>Layout Managers are created from the top down. First the
 page sequence creates a PageLM and a FlowLM. The PageLM will manage
 finding the right page model (with help from the PageSequenceMaster)
 and managing the balancing act between before-floats, footnotes and

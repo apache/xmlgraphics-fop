@@ -2,11 +2,11 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
-      <document> 
-        <header> 
-          <title>FOP 1.0 development</title> 
-        </header> 
-        <body> 
+      <document>
+        <header>
+          <title>FOP 1.0 development</title>
+        </header>
+        <body>
           <section>
             <title>Introduction</title>
             <p>
@@ -56,13 +56,13 @@ This image is a demonstration of a two page document. The xml data on the left
 is formatted into the two pages on the right. The document contains static areasthat appear on every page, an external graphic in this case an svg document.
 There is a footnote on the first page and a table that goes across both pages.
 </p>
-<p> 
+<p>
 The advantage of XSL is the ability to take an XML document and to format
 the information into a page layout. The XML document can be generated
 in any way, the most common would be to use XSLT. FOP takes the XML
 and formats the data into pages. The pages are then rendered to the
 requested output.
-</p> 
+</p>
 <p>
 This is a real document. The image was created by rendering the document
 to the svg renderer then putting the rendered pages into an svg document
@@ -80,7 +80,7 @@ The goals of the Apache XML FOP Project are to deliver an XSL FO->PDF formatter 
     <p>Conformance to the XML 1.0 Recommendation, XSLT 1.0 Recommendation and the XML Namespaces Recommendation is
        understood. Other relevant documents, such as the XPath and XLink Working Drafts, are referenced as necessary. The FOP
        Project will attempt to use the latest version of evolving specifications.
-    </p> 
+    </p>
 
    <p>To reach this aim currently the layout system is being redesigned to
 better handle the formatting of all different types of formatting objects.

@@ -44,8 +44,8 @@ Please see the <link href="svg.html">SVG page</link> for more details.
     </fox:outline>
   <fox:outline>
 </fo:root>]]></source>
-    <p>It works similarly to a basic-link. There is also an external-destination 
-       property, but it isn't supported currently. See the pdfoutline.fo file in 
+    <p>It works similarly to a basic-link. There is also an external-destination
+       property, but it isn't supported currently. See the pdfoutline.fo file in
       docs/examples/fo for a more complete example.</p>
   </section>
   </section>

@@ -50,7 +50,7 @@ Object.</p>
         The FO Tree is simply a heirarchy of java objects that
         represent the fo elements from xml. The traversal is done by
         the layout or structure process only in the flow elements.
-      </p> 
+      </p>
 
 <section>
   <title>Properties</title>

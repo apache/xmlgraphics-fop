@@ -883,7 +883,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       <question>Watermarks</question>
       <answer>
         <p>  Answer: see 3.3, or use a a region overlapping the flowing text and put
-  an image there: 
+  an image there:
 </p>
         <p>   > From: Trevor_Campbell@kaz.com.au
     Use the region-before.  Make it large enough to contain your image and then

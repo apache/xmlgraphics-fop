@@ -43,7 +43,7 @@
       </li>
       <li>readme.fo - uses an old version of Fop documentation for a longer example
       </li>
-  
+
       <li>Look also into the directory examples/svg. There you find some very extensive svg examples.
           Just start makedoc.
       </li>

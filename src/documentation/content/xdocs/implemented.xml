@@ -18,7 +18,7 @@
   </section>
   <section>
     <title>1) Formatting Objects</title>
-    <p>This section follows the table "B Formatting Object Summary" in the xsl:fo specification. At the  
+    <p>This section follows the table "B Formatting Object Summary" in the xsl:fo specification. At the
        end of each sub-section you find listed what is not implemented.</p>
 
     <section>
@@ -37,7 +37,7 @@
         <li>region-before</li>
         <li>region-after</li>
         <li>region-start</li>
-        <li>region-end</li> 
+        <li>region-end</li>
         <li>flow</li>
         <li>static-content</li>
       </ul>
