@@ -97,17 +97,17 @@
   </fo>
   <checks>
     <!-- First check that the page breaking is correct -->
-    <eval expected="Part 1" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[1]/lineArea/text"/>
-    <eval expected="text1" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[2]/lineArea/text"/>
-    <eval expected="text1" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[3]/lineArea/text"/>
+    <eval expected="Part 1" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[1]/lineArea"/>
+    <eval expected="text1" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[2]/lineArea"/>
+    <eval expected="text1" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[3]/lineArea"/>
     <!-- etc... -->
-    <eval expected="text1" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[1]/lineArea/text"/>
-    <eval expected="Part 2" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[2]/block[1]/lineArea/text"/>
-    <eval expected="text2" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[2]/block[2]/lineArea/text"/>
-    <eval expected="text2" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[2]/block[3]/lineArea/text"/>
+    <eval expected="text1" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[1]/lineArea"/>
+    <eval expected="Part 2" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[2]/block[1]/lineArea"/>
+    <eval expected="text2" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[2]/block[2]/lineArea"/>
+    <eval expected="text2" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[2]/block[3]/lineArea"/>
     <!-- etc... -->
-    <eval expected="Part 3" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[3]/block[1]/lineArea/text"/>
-    <eval expected="text3" xpath="//pageViewport[3]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[1]/lineArea/text"/>
+    <eval expected="Part 3" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[3]/block[1]/lineArea"/>
+    <eval expected="text3" xpath="//pageViewport[3]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[1]/lineArea"/>
 
     <!-- Now we can check the markers -->
     <eval expected="1" xpath="//pageViewport[1]/page/regionViewport[2]/regionEnd/block[1]/descendant::lineArea/text"/> 

@@ -50,19 +50,19 @@ line3
     </fo:root>
   </fo>
   <checks>
-    <eval expected="word1 word2 word3" xpath="//flow/block[1]/lineArea[1]/text"/>
-    <eval expected="word1 word2 word3" xpath="//flow/block[2]/lineArea[1]/text"/>
+    <eval expected="word1 word2 word3" xpath="//flow/block[1]/lineArea[1]"/>
+    <eval expected="word1 word2 word3" xpath="//flow/block[2]/lineArea[1]"/>
     
-    <eval expected="line1" xpath="//flow/block[3]/lineArea[1]/text"/>
-    <eval expected="line2" xpath="//flow/block[3]/lineArea[2]/text"/>
-    <eval expected="line3" xpath="//flow/block[3]/lineArea[3]/text"/>
+    <eval expected="line1" xpath="//flow/block[3]/lineArea[1]"/>
+    <eval expected="line2" xpath="//flow/block[3]/lineArea[2]"/>
+    <eval expected="line3" xpath="//flow/block[3]/lineArea[3]"/>
     
     <true xpath="boolean(//flow/block[4]/lineArea[1])"/>
     <true xpath="not(boolean(//flow/block[4]/lineArea[1]/text))"/>
-    <eval expected="line1" xpath="//flow/block[4]/lineArea[2]/text"/>
-    <eval expected="line2" xpath="//flow/block[4]/lineArea[3]/text"/>
+    <eval expected="line1" xpath="//flow/block[4]/lineArea[2]"/>
+    <eval expected="line2" xpath="//flow/block[4]/lineArea[3]"/>
     <true xpath="boolean(//flow/block[4]/lineArea[4])"/>
     <true xpath="not(boolean(//flow/block[4]/lineArea[4]/text))"/>
-    <eval expected="line3" xpath="//flow/block[4]/lineArea[5]/text"/>
+    <eval expected="line3" xpath="//flow/block[4]/lineArea[5]"/>
   </checks>
 </testcase>
