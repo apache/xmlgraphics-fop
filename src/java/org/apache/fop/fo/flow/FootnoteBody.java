@@ -20,7 +20,7 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
@@ -28,17 +28,9 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
 /**
- * Class modelling the fo:footnote-body object. See Sec. 6.10.4 of the XSL-FO
- * Standard.
+ * Class modelling the fo:footnote-body object.
  */
 public class FootnoteBody extends FObj {
-
-    private int align;
-    private int alignLast;
-    private int lineHeight;
-    private int startIndent;
-    private int endIndent;
-    private int textIndent;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -55,11 +47,32 @@ public class FootnoteBody extends FObj {
         getFOInputHandler().startFootnoteBody(this);
     }
 
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: (%block;)+
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+            if (!isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            }
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * StructureRenderer that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#end
+     */
     protected void endOfNode() throws SAXParseException {
-        super.endOfNode();
+        if (childNodes == null) {
+            missingChildElementError("(%block;)+");
+        }
         getFOInputHandler().endFootnoteBody(this);
     }
-    
+
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:footnote-body";
     }

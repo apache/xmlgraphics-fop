@@ -18,6 +18,9 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -28,8 +31,7 @@ import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.OneCharIterator;
-import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.fo.LMVisited;
+import org.apache.fop.layoutmgr.CharacterLayoutManager;
 
 /**
  * This class represents the flow object 'fo:character'. Its use is defined by
@@ -44,7 +46,7 @@ import org.apache.fop.fo.LMVisited;
  * Overrides may be specified in an implementation-specific manner." (6.6.3)
  *
  */
-public class Character extends FObj implements LMVisited {
+public class Character extends FObj {
 
     /** constant indicating that the character is OK */
     public static final int OK = 0;
@@ -78,12 +80,14 @@ public class Character extends FObj implements LMVisited {
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveCharacter(this);
+    public void addLayoutManager(List list) { 	 
+        String str = getProperty(PR_CHARACTER).getString();
+        if (str.length() == 1) {
+            CharacterLayoutManager lm = new CharacterLayoutManager(this);
+            list.add(lm);
+        }
     }
 
     /**
