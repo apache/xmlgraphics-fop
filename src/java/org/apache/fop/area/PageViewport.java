@@ -104,6 +104,16 @@ public class PageViewport implements Resolvable, Cloneable {
     }    
 
     /**
+     * Convenience method to get the span-reference-area currently
+     * being processed
+     * 
+     * @return span currently being processed.
+     */
+    public Span getCurrentSpan() {
+        return getBodyRegion().getMainReference().getCurrentSpan();
+    }    
+
+    /**
      * Set if this viewport should clip.
      * @param c true if this viewport should clip
      */
