@@ -424,21 +424,23 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         MinOptMax range = new MinOptMax(relDims.ipd);
         BlockContainerBreaker breaker = new BlockContainerBreaker(this, range);
         breaker.doLayout(relDims.bpd);
-        boolean contentOverflows = (breaker.deferredAlg.getPageBreaks().size() > 1);
-        usedBPD = relDims.bpd - breaker.getDifferenceOfFirstPart(); 
-
-        Position bcPosition = new BlockContainerPosition(this, breaker);
+        boolean contentOverflows = breaker.isOverflow();
         LinkedList returnList = new LinkedList();
-        returnList.add(new KnuthBox(0, bcPosition, false));
+        if (!breaker.isEmpty()) {
+            usedBPD = relDims.bpd - breaker.getDifferenceOfFirstPart(); 
 
-        //TODO Maybe check for page overflow when autoHeight=true
-        if (!autoHeight & (contentOverflows/*usedBPD > relDims.bpd*/)) {
-            log.warn("Contents overflow block-container viewport: clipping");
-            if (fobj.getOverflow() == EN_HIDDEN) {
-                clip = true;
-            } else if (fobj.getOverflow() == EN_ERROR_IF_OVERFLOW) {
-                //TODO Throw layout exception
-                clip = true;
+            Position bcPosition = new BlockContainerPosition(this, breaker);
+            returnList.add(new KnuthBox(0, bcPosition, false));
+    
+            //TODO Maybe check for page overflow when autoHeight=true
+            if (!autoHeight & (contentOverflows/*usedBPD > relDims.bpd*/)) {
+                log.warn("Contents overflow block-container viewport: clipping");
+                if (fobj.getOverflow() == EN_HIDDEN) {
+                    clip = true;
+                } else if (fobj.getOverflow() == EN_ERROR_IF_OVERFLOW) {
+                    //TODO Throw layout exception
+                    clip = true;
+                }
             }
         }
 
@@ -479,6 +481,14 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         public int getDifferenceOfFirstPart() {
             PageBreakPosition pbp = (PageBreakPosition)this.deferredAlg.getPageBreaks().getFirst();
             return pbp.difference;
+        }
+        
+        public boolean isOverflow() {
+            if (isEmpty()) {
+                return false;
+            } else {
+                return (deferredAlg.getPageBreaks().size() > 1);
+            }
         }
         
         protected LayoutManager getTopLevelLM() {
