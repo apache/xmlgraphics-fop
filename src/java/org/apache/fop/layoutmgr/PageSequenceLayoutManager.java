@@ -31,7 +31,6 @@ import org.apache.fop.area.Page;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.BodyRegion;
-import org.apache.fop.area.MainReference;
 import org.apache.fop.area.Span;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Footnote;
@@ -119,9 +118,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     //private HashMap staticContentLMs = new HashMap(4);
 
     /**
-     * Constructor
-     * 
-     * @param pageseq the page sequence fo to be laid out
+     * Constructor - activated by AreaTreeHandler for each
+     * fo:page-sequence in the input FO stream
+     *
+     * @param pageseq the page-sequence formatting object
      */
     public PageSequenceLayoutManager(PageSequence pageSeq) {
         super(pageSeq);
@@ -130,7 +130,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
     /**
      * Set the AreaTreeHandler
-     * @param areaTreeHandler the area tree handler to add pages to
+     * @param areaTreeHandler the area tree handler object
      */
     public void setAreaTreeHandler(AreaTreeHandler areaTreeHandler) {
         this.areaTreeHandler = areaTreeHandler;
@@ -146,6 +146,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     /**
+     * Each fo:page-sequence may have an fo:title object.
      * @return the Title area
      */
     private LineArea getTitleArea(Title foTitle) {
@@ -186,7 +187,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         log.debug("Starting layout");
 
         makeNewPage(false, false);
-        createSpan(1);
         flowIPD = curFlow.getIPD();
 
         BreakPoss bp;
@@ -484,7 +484,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                     FO_REGION_BODY);
         curBody = (BodyRegion) rv.getRegion();
         flowBPD = (int) curBody.getBPD();
-
+        createSpan(1); // todo determine actual # of NormalFlows needed
         return curPage;
     }
 
@@ -532,6 +532,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
     private void finishPage() {
         if (curPage == null) {
+            curBody = null;
+            curSpan = null;
+            curFlow = null;
             return;
         }
         // Layout static content into the regions
@@ -798,7 +801,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground());
     }
 
-    private RegionReference makeRegionBodyReferenceArea(RegionBody r,
+    private BodyRegion makeRegionBodyReferenceArea(RegionBody r,
             Rectangle2D absRegVPRect) {
         // Should set some column stuff here I think, or put it elsewhere
         BodyRegion body = new BodyRegion();
@@ -812,9 +815,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             columnCount = 1;
         }
         body.setColumnCount(columnCount);
-
-        int columnGap = r.getColumnGap();
-        body.setColumnGap(columnGap);
+        body.setColumnGap(r.getColumnGap());
         return body;
     }
 
