@@ -42,7 +42,7 @@ public class Bookmark extends FObj {
     private CommonAccessibility commonAccessibility;
     private String internalDestination;
     private String externalDestination;
-    private int startingState;
+    private boolean bShow = true; // from starting-state property
 
     /**
      * Create a new bookmark object.
@@ -60,7 +60,7 @@ public class Bookmark extends FObj {
         commonAccessibility = pList.getAccessibilityProps();
         externalDestination = pList.get(PR_EXTERNAL_DESTINATION).getString();
         internalDestination = pList.get(PR_INTERNAL_DESTINATION).getString();
-        // startingState = pList.get(PR_STARTING_STATE);
+        bShow = (pList.get(PR_STARTING_STATE).getEnum() == EN_SHOW);
 
         // per spec, internal takes precedence if both specified        
         if (internalDestination.length() > 0) { 
@@ -130,8 +130,14 @@ public class Bookmark extends FObj {
         return externalDestination;
     }
 
-    public int getStartingState() {
-        return startingState;
+    /**
+     * Determines if this fo:bookmark's subitems should be initially displayed
+     * or hidden, based on the starting-state property set on this FO.
+     *
+     * @return true if this bookmark's starting-state is "show", false if "hide".
+     */
+    public boolean showChildItems() {
+        return bShow;
     }
 
     public ArrayList getChildBookmarks() {

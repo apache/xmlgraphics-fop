@@ -125,6 +125,7 @@ public class PDFRenderer extends PrintRenderer {
      * for pdf this means we need the pdf page reference
      */
     protected Map pageReferences = new java.util.HashMap();
+
     /** Page viewport references */
     protected Map pvReferences = new java.util.HashMap();
 
@@ -316,10 +317,14 @@ public class PDFRenderer extends PrintRenderer {
             if (parentBookmarkItem == null) {
                 PDFOutline outlineRoot = pdfDoc.getOutlineRoot();
                 pdfOutline = pdfDoc.getFactory().makeOutline(outlineRoot,
-                                        bookmarkItem.getBookmarkTitle(), intDest, yoffset);
+                                        bookmarkItem.getBookmarkTitle(), 
+                                        intDest, yoffset,
+                                        bookmarkItem.showChildItems());
             } else {
                 pdfOutline = pdfDoc.getFactory().makeOutline(parentBookmarkItem,
-                                        bookmarkItem.getBookmarkTitle(), intDest, yoffset);
+                                        bookmarkItem.getBookmarkTitle(), 
+                                        intDest, yoffset, 
+                                        bookmarkItem.showChildItems());
             }
         }
 
