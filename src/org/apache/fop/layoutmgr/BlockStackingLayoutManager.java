@@ -184,7 +184,7 @@ public abstract class BlockStackingLayoutManager
      * @param childArea the area to add: will be some block-stacked Area.
      */
     public void addChild(Area childArea) {
-	addChildToArea((Block)childArea, getCurrentArea());
+	addChildToArea(childArea, getCurrentArea());
     }
 
     /** 

@@ -19,7 +19,6 @@ import org.apache.fop.fo.properties.Constants;
 public class PageLayoutManager extends AbstractLayoutManager
   implements Runnable{
 
-    private PageSequence pageseq;
     /** True if haven't yet laid out any pages.*/
     private boolean bFirstPage;
     /** Current page being worked on. */
@@ -136,7 +135,7 @@ public class PageLayoutManager extends AbstractLayoutManager
      private PageViewport makeNewPage(boolean bIsBlank, boolean bIsLast) {
  	finishPage();
 	try {
-	    curPage = pageseq.createPage(bIsBlank, bIsLast);
+	    curPage = ((PageSequence)fobj).createPage(bIsBlank, bIsLast);
 	} catch (FOPException fopex) { /* ???? */ }
 	curBody = (BodyRegion) curPage.getPage().
 	    getRegion(RegionReference.BODY).getRegion();
@@ -339,6 +338,8 @@ public class PageLayoutManager extends AbstractLayoutManager
     }
 
     // See finishPage...
-    protected void flush() {}
+    protected void flush() {
+	finishPage();
+    }
 
 }

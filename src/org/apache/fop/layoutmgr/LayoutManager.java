@@ -15,6 +15,7 @@ import org.apache.fop.area.Area;
  */
 public interface LayoutManager {
     public void generateAreas();
+    public boolean generatesInlineAreas();
     public Area getParentArea (Area childArea);
     public void addChild (Area childArea);
     public boolean splitArea(Area areaToSplit, SplitContext context);

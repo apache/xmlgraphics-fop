@@ -10,7 +10,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.area.Area;
 
-import java.util.Iterator;
+import java.util.ListIterator;
 
 /**
  * The base class for all LayoutManagers.
@@ -36,7 +36,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * its generateAreas method.
      */
     public void generateAreas() {
-	Iterator children = fobj.getChildren();
+	ListIterator children = fobj.getChildren();
 	while (children.hasNext()) {
 	    LayoutManager lm = ((FObj)children.next()).getLayoutManager();
  	    if (lm != null) {
@@ -84,15 +84,13 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * BPD.
      */
     abstract public Area getParentArea(Area childArea);
+	
 
 
     public boolean generatesInlineAreas() {
 	return false;
     }
 
-    public boolean generatesLineAreas() {
-	return false;
-    }
 
     /**
      * Add a child area to the current area. If this causes the maximum
