@@ -1,72 +1,46 @@
 **** COMMITTERS **** 
 
-Arved Sandstrom (release coordinator) 
-James Tauber (started it all and wrote most of the code) 
+(in strict alphabetic order)
 
-Kelly Campbell
-Steven Coffman
+Active committers
+
 Bertrand Delacretaz
-Tore Engvig
-Christian Geisert
-Stanislav Gorkhover
-Fotis Jannidis 
+Christian Geisert (release coordinator)
 Karen Lease
 Keiron Liddle
 Jeremias Maerki
-Jordan Naftolin
 Joerg Pietschmann
+Arved Sandstrom
+Oleg Tkachenko
+Peter B. West
+
+
+Emeritus committers
+(They have not committed anything for six months, and so are considered
+to have retired from active duty. We wish them well and hope to see 
+them return.)
+
+Kelly Campbell
+Steven Coffman
+Tore Engvig
+Stanislav Gorkhover
+Fotis Jannidis 
+Jordan Naftolin
 Eric Schaeffer 
 Jon Smirl 
+James Tauber (who started it all)
 Art Welch
-Peter B. West
+
 
 **** THINGS WORKED ON ***** 
 
+This is the FOP maintenance branch. We currently build releases from 
+here but only bugfixing is done. FOP is currently being redesigned and 
+all new functionality should go into the main branch.
 
-redesign/refactoring - layout [Karen Lease]
-redesign/refactoring - page layout [Arved Sandstrom]
-svg, testing [Keiron Liddle]
-
+- Bugfixing
 
 **** THINGS TO DO ****
 
-
-1)
-The immediate list of things that need to be done. These include things
-that may prevent other activity or could be done independantly.
-
-* Redesign of flow layout handling, breaks keeps, spacing etc.
-* Redesign/factoring of line area handling.
-* Testing system, moving old tests to new system etc.
-* SVG
-- integrating Avalon and Fop
-- Documentation / website needs to better help users understand how to use FOP
-- examples (a separate set of user fo examples)
-
-(* being worked on,  - no current activity)
-
-2)
-After the the layout handling is redesigned then these items should be
-promoted to first priority.
-These should be done with the aim of getting to basic conformance.
-
-- Implement all remaining formatting objects
-- improve property handling for types not currently supported (eg. 'large' font)
-- implement all required properties
-
-3)
-Nail down external interfaces (the main part is fairly stable).
-Setting base directory, using config, logging, extensions etc.
-
-Interfaces to include:
-how does FOP get called
-how does the formatter interface to renderers
-how do people write new plug-ins: handlers for new image types
-processors for fo:instream-foreign-object
-
-4)
-Improve the code. Follow the Sun Java coding guidelines.
-Have better comments and correlation between spec terms
-and methods etc.
-
-
+- Bugfixing
+- Improving documentation
