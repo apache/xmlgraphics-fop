@@ -93,7 +93,7 @@ public class PDFT1Stream extends PDFStream {
         p = "endobj\n".getBytes();
         stream.write(p);
         length += p.length;
-        System.out.println("Embedded Type1 font");
+        //System.out.println("Embedded Type1 font");
         return length;
     }
 

@@ -15,6 +15,7 @@ import java.io.IOException;
 
 // FOP
 import org.apache.fop.apps.Driver;
+import org.apache.fop.messaging.*;
 import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.analyser.ImageReader;
@@ -31,42 +32,42 @@ import org.xml.sax.XMLReader;
 public class EPSImage extends AbstractFopImage {
     private String docName;
     private int[] bbox;
-    
+
     private byte[] epsImage = null;
     private EPSReader epsReader = null;
-    
-	/**
-         * Initialize docName and bounding box
-         */
+
+    /**
+    * Initialize docName and bounding box
+    */
     private void init(URL href) {
         bbox = new int[4];
         bbox[0] = 0;
         bbox[1] = 0;
         bbox[2] = 0;
         bbox[3] = 0;
-        
+
         docName = href.toString();
     }
-    
-	/**
-         * Return the name of the eps
-         */
+
+    /**
+    * Return the name of the eps
+    */
     public String getDocName() {
         return docName;
     }
-    
-	/**
-         * Return the bounding box
-         */
+
+    /**
+    * Return the bounding box
+    */
     public int[] getBBox() {
         return bbox;
     }
-    
+
     public EPSImage(URL href) throws FopImageException {
         super(href);
         init(href);
     }
-    
+
     public EPSImage(URL href,
                     ImageReader imgReader) throws FopImageException {
         super(href, imgReader);
@@ -79,16 +80,15 @@ public class EPSImage extends AbstractFopImage {
             bbox = eimgReader.getBBox();
         }
     }
-    
+
     protected void loadImage() throws FopImageException {
-            // Image is loaded in reader
+        // Image is loaded in reader
     }
-    
+
     public byte[] getEPSImage() throws FopImageException {
-       	if (epsImage == null) {
-            //log.error("ERROR LOADING EXTERNAL EPS");
-        }
+        if (epsImage == null)
+            MessageHandler.errorln("ERROR LOADING EXTERNAL EPS");
         return epsImage;
     }
-    
+
 }

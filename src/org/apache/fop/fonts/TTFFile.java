@@ -669,7 +669,7 @@ public class TTFFile {
             mtx_tab[i] = new TTFMtxEntry();
         for (int i = 0; i < nhmtx; i++) {
             mtx_tab[i].wx = in.readTTFUShort();
-            mtx_tab[i].lsb = in.readTTFUShort();
+            mtx_tab[i].lsb = in.readTTFShort();
             /*
              * System.out.println("   width["+i+"] = "+
              * get_ttf_funit(mtx_tab[i].wx)+";");
@@ -681,7 +681,7 @@ public class TTFFile {
             int lastWidth = mtx_tab[nhmtx - 1].wx;
             for (int i = nhmtx; i < mtx_size; i++) {
                 mtx_tab[i].wx = lastWidth;
-                mtx_tab[i].lsb = in.readTTFUShort();
+                mtx_tab[i].lsb = in.readTTFShort();
             }
         }
     }

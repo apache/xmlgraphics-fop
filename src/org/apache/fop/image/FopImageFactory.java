@@ -77,11 +77,13 @@ public class FopImageFactory {
             // maybe relative
             URL context_url = null;
             String base = Configuration.getStringValue("baseDir");
+
             if(base == null) {
                 throw new FopImageException("Error with image URL: "
                                              + e.getMessage()
                                              + " and no base directory is specified");
             }
+
             try {
                 absoluteURL = new URL(Configuration.getStringValue("baseDir")
                                       + absoluteURL.getFile());
@@ -138,6 +140,8 @@ public class FopImageFactory {
         } else if ("image/tga".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.JimiImage";
             // imgClassName = "org.apache.fop.image.JAIImage";
+        } else if ("image/eps".equals(imgMimeType)) {
+            imgClassName = "org.apache.fop.image.EPSImage";
         } else if ("image/tiff".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.JimiImage";
             // imgClassName = "org.apache.fop.image.JAIImage";

@@ -13,6 +13,7 @@ import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
+import org.apache.fop.image.JpegImage;
 import org.apache.fop.image.FopImageException;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
@@ -156,6 +157,7 @@ public class PSRenderer extends AbstractRenderer {
         write("/M/moveto ld");
         write("/RM/rmoveto ld");
         write("/t/show ld");
+        write("/A/ashow ld");
 
         write("/ux 0.0 def");
         write("/uy 0.0 def");
@@ -303,11 +305,11 @@ public class PSRenderer extends AbstractRenderer {
         BridgeContext ctx = new BridgeContext(userAgent);
 
         GraphicsNode root;
-        try {        
+        try {
             root = builder.build(ctx, doc);
-        } catch (Exception e) {        
+        } catch (Exception e) {
             log.error("svg graphic could not be built: "
-                                   + e.getMessage(), e);        
+                                   + e.getMessage(), e);
             return;
         }
         // get the 'width' and 'height' attributes of the SVG document
@@ -355,6 +357,34 @@ public class PSRenderer extends AbstractRenderer {
         movetoCurrPosition();
     }
 
+    public void renderEPS(FopImage img, int x, int y, int w, int h) {
+        try {
+            EPSImage eimg = (EPSImage)img;
+            int[] bbox = eimg.getBBox();
+            int bboxw = bbox[2] - bbox[0];
+            int bboxh = bbox[3] - bbox[1];
+
+
+            write("%%BeginDocument: " + eimg.getDocName());
+            write("BeginEPSF");
+
+            write(x + " " + (y - h) + " translate");
+            write("0.0 rotate");
+            write((long)(w/bboxw) + " " + (long)(h/bboxh) + " scale");
+            write(-bbox[0] + " " + (-bbox[1]) + " translate");
+            write(bbox[0] + " " + bbox[1] + " " + bboxw + " " + bboxh + " rectclip");
+            write("newpath");
+            out.writeByteArr(img.getBitmaps());
+            write("%%EndDocument");
+            write("EndEPSF");
+            write("");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("PSRenderer.renderImageArea(): Error rendering bitmap ("
+                                   + e.getMessage() + ")", e);
+        }
+    }
+
     public void renderBitmap(FopImage img, int x, int y, int w, int h) {
         try {
             boolean iscolor = img.getColorSpace().getColorSpace()
@@ -362,7 +392,11 @@ public class PSRenderer extends AbstractRenderer {
             byte[] imgmap = img.getBitmaps();
 
             write("gsave");
-            write("/DeviceRGB setcolorspace");
+            if (img.getColorSpace().getColorSpace() == ColorSpace.DEVICE_CMYK)
+                write("/DeviceCMYK setcolorspace");
+            else
+                write("/DeviceRGB setcolorspace");
+
             write(x + " " + (y - h) + " translate");
             write(w + " " + h + " scale");
             write("<<");
@@ -370,7 +404,12 @@ public class PSRenderer extends AbstractRenderer {
             write("  /Width " + img.getWidth());
             write("  /Height " + img.getHeight());
             write("  /BitsPerComponent 8");
-            if (iscolor) {
+            if (img.getColorSpace().getColorSpace() == ColorSpace.DEVICE_CMYK) {
+                if (img.invertImage())
+                    write("  /Decode [1 0 1 0 1 0 1 0]");
+                else
+                    write("  /Decode [0 1 0 1 0 1 0 1]");
+            } else if (iscolor) {
                 write("  /Decode [0 1 0 1 0 1]");
             } else {
                 write("  /Decode [0 1]");
@@ -378,7 +417,11 @@ public class PSRenderer extends AbstractRenderer {
             // Setup scanning for left-to-right and top-to-bottom
             write("  /ImageMatrix [" + img.getWidth() + " 0 0 -"
                   + img.getHeight() + " 0 " + img.getHeight() + "]");
-            write("  /DataSource currentfile /ASCII85Decode filter /FlateDecode filter");
+
+            if (img instanceof JpegImage)
+                write("  /DataSource currentfile /ASCII85Decode filter /DCTDecode filter");
+            else
+                write("  /DataSource currentfile /ASCII85Decode filter /FlateDecode filter");
             // write("  /DataSource currentfile /ASCIIHexDecode filter /FlateDecode filter");
             // write("  /DataSource currentfile /ASCII85Decode filter /RunLengthDecode filter");
             // write("  /DataSource currentfile /ASCIIHexDecode filter /RunLengthDecode filter");
@@ -408,7 +451,8 @@ public class PSRenderer extends AbstractRenderer {
                 InputStream bain = new ByteArrayInputStream(imgmap);
                 InputStream in;
                 in = bain;
-                in = FlateEncodeFilter.filter(in);
+                if (!(img instanceof JpegImage))
+                    in = FlateEncodeFilter.filter(in);
                 // in = RunLengthEncodeFilter.filter(in);
                 // in = ASCIIHexEncodeFilter.filter(in);
                 in = ASCII85EncodeFilter.filter(in);
@@ -442,9 +486,11 @@ public class PSRenderer extends AbstractRenderer {
         imagecount++;
         // if (imagecount!=4) return;
 
-        comment("% --- ImageArea");
+                comment("% --- ImageArea");
         if (area.getImage() instanceof SVGImage) {}
-        else {
+        else if (area.getImage() instanceof EPSImage) {
+            renderEPS(area.getImage(), x, y, w, h);
+        } else {
             renderBitmap(area.getImage(), x, y, w, h);
         }
         comment("% --- ImageArea end");
@@ -488,7 +534,7 @@ public class PSRenderer extends AbstractRenderer {
             s = area.getText();
         }
         int l = s.length();
-        
+
         for (int i = 0; i < l; i++) {
             char ch = s.charAt(i);
             char mch = fs.mapChar(ch);
@@ -502,6 +548,17 @@ public class PSRenderer extends AbstractRenderer {
                 sb = sb.append(mch);
             }
         }
+
+        String psString = null;
+        if (area.getFontState().getLetterSpacing() > 0) {
+            float f = area.getFontState().getLetterSpacing() * 1000 / this.currentFontSize;
+            psString = (new StringBuffer().append(f).append(" 0.0 (").append(sb).
+                        append(") A")).toString();
+        } else {
+            psString = (new StringBuffer("(").append(sb).append(") t")).toString();
+        }
+
+
         // System.out.println("["+s+"] --> ["+sb.toString()+"]");
 
         // comment("% --- InlineArea font-weight="+fontWeight+": " + sb.toString());
@@ -510,7 +567,7 @@ public class PSRenderer extends AbstractRenderer {
         if (area.getUnderlined() || area.getLineThrough()
                 || area.getOverlined())
             write("ULS");
-        write("(" + sb.toString() + ") t");
+        write(psString);
         if (area.getUnderlined())
             write("ULE");
         if (area.getLineThrough())
@@ -824,6 +881,35 @@ public class PSRenderer extends AbstractRenderer {
         write("%%EndProlog");
         write("%%BeginSetup");
         writeFontDict(fontInfo);
+
+        /* Write proc for including EPS */
+        write("%%BeginResource: procset EPSprocs");
+        write("%%Title: EPS encapsulation procs");
+
+        write("/BeginEPSF { %def");
+        write("/b4_Inc_state save def         % Save state for cleanup");
+        write("/dict_count countdictstack def % Count objects on dict stack");
+        write("/op_count count 1 sub def      % Count objects on operand stack");
+        write("userdict begin                 % Push userdict on dict stack");
+        write("/showpage { } def              % Redefine showpage, { } = null proc");
+        write("0 setgray 0 setlinecap         % Prepare graphics state");
+        write("1 setlinewidth 0 setlinejoin");
+        write("10 setmiterlimit [ ] 0 setdash newpath");
+        write("/languagelevel where           % If level not equal to 1 then");
+        write("{pop languagelevel             % set strokeadjust and");
+        write("1 ne                           % overprint to their defaults.");
+        write("{false setstrokeadjust false setoverprint");
+        write("} if");
+        write("} if");
+        write("} bind def");
+
+        write("/EndEPSF { %def");
+        write("count op_count sub {pop} repeat            % Clean up stacks");
+        write("countdictstack dict_count sub {end} repeat");
+        write("b4_Inc_state restore");
+        write("} bind def");
+        write("%%EndResource");
+
         write("%%EndSetup");
         write("FOPFonts begin");
     }
