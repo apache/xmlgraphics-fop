@@ -25,9 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.fop.area.LinkResolver;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.ForeignObject;
@@ -43,10 +40,8 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.XMLObj;
-import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.Character;
-import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
@@ -54,7 +49,6 @@ import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
-import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableAndCaption;
@@ -126,38 +120,21 @@ public class AddLMVisitor {
     }
 
     /**
-     * Add start and end properties for the link
+     * @param node Wrapper object to process
      */
-    public void serveBasicLink(final BasicLink node) {
-        InlineStackingLayoutManager lm;
-        lm = new InlineStackingLayoutManager(node) {
-            protected InlineParent createArea() {
-                InlineParent area = super.createArea();
-                setupBasicLinkArea(node, parentLM, area);
-                return area;
+    public void serveWrapper(Wrapper node) {
+        ListIterator baseIter;
+        baseIter = node.getChildNodes();
+        if (baseIter == null) return;
+        while (baseIter.hasNext()) {
+            FObj child = (FObj) baseIter.next();
+            if (child instanceof LMVisited) {
+                ((LMVisited) child).acceptVisitor(this);
+            } else {
+                child.addLayoutManager(currentLMList);
             }
-        };
-        lm.setLMiter(new LMiter(lm, node.getChildNodes()));
-        currentLMList.add(lm);
+        }
     }
-
-    protected void setupBasicLinkArea(BasicLink node, LayoutManager parentLM,
-                                      InlineParent area) {
-         if (node.getLink() == null) {
-             return;
-         }
-         if (node.getExternal()) {
-             area.addTrait(Trait.EXTERNAL_LINK, node.getLink());
-         } else {
-             PageViewport page = parentLM.resolveRefID(node.getLink());
-             if (page != null) {
-                 area.addTrait(Trait.INTERNAL_LINK, page.getKey());
-             } else {
-                 LinkResolver res = new LinkResolver(node.getLink(), area);
-                 parentLM.addUnresolvedArea(node.getLink(), res);
-             }
-         }
-     }
 
      public void serveLeader(final Leader node) {
          LeafNodeLayoutManager lm = new LeafNodeLayoutManager(node) {
@@ -283,49 +260,6 @@ public class AddLMVisitor {
              return ch;
          }
          return null;
-     }
-
-     /**
-      * This adds a leafnode layout manager that deals with the
-      * created viewport/image area.
-      */
-     public void serveExternalGraphic(ExternalGraphic node) {
-         InlineArea area = getExternalGraphicInlineArea(node);
-         if (area != null) {
-             node.setupID();
-             LeafNodeLayoutManager lm = new LeafNodeLayoutManager(node);
-             lm.setCurrentArea(area);
-             lm.setAlignment(node.getProperty(Constants.PR_VERTICAL_ALIGN).getEnum());
-             lm.setLead(node.getViewHeight());
-             currentLMList.add(lm);
-         }
-     }
-
-     /**
-      * Get the inline area for this external grpahic.
-      * This creates the image area and puts it inside a viewport.
-      *
-      * @return the viewport containing the image area
-      */
-     public InlineArea getExternalGraphicInlineArea(ExternalGraphic node) {
-         if (node.getURL() == null) {
-             return null;
-         }
-         Image imArea = new Image(node.getURL());
-         Viewport vp = new Viewport(imArea);
-         vp.setWidth(node.getViewWidth());
-         vp.setHeight(node.getViewHeight());
-         vp.setClip(node.getClip());
-         vp.setContentPosition(node.getPlacement());
-         vp.setOffset(0);
-
-         // Common Border, Padding, and Background Properties
-         CommonBorderAndPadding bap = node.getPropertyManager().getBorderAndPadding();
-         CommonBackground bProps = node.getPropertyManager().getBackgroundProps();
-         TraitSetter.addBorders(vp, bap);
-         TraitSetter.addBackground(vp, bProps);
-
-         return vp;
      }
 
      public void serveInstreamForeignObject(InstreamForeignObject node) {
@@ -552,73 +486,6 @@ public class AddLMVisitor {
          currentLMList.add(lm);
      }
 
-     public void servePageNumberCitation(final PageNumberCitation node) {
-         LayoutManager lm;
-         lm = new LeafNodeLayoutManager(node) {
-                     public InlineArea get(LayoutContext context) {
-                         curArea = getPageNumberCitationInlineArea(node, parentLM);
-                         return curArea;
-                     }
-
-                     public void addAreas(PositionIterator posIter,
-                                          LayoutContext context) {
-                         super.addAreas(posIter, context);
-                         if (node.getUnresolved()) {
-                             parentLM.addUnresolvedArea(node.getRefId(),
-                                                        (Resolveable) curArea);
-                         }
-                     }
-
-                     protected void offsetArea(LayoutContext context) {
-                         curArea.setOffset(context.getBaseline());
-                     }
-                 };
-         currentLMList.add(lm);
-     }
-
-     // if id can be resolved then simply return a word, otherwise
-     // return a resolveable area
-     public InlineArea getPageNumberCitationInlineArea(PageNumberCitation node,
-             LayoutManager parentLM) {
-         if (node.getRefId().equals("")) {
-             node.getLogger().error("page-number-citation must contain \"ref-id\"");
-             return null;
-         }
-         PageViewport page = parentLM.resolveRefID(node.getRefId());
-         InlineArea inline = null;
-         if (page != null) {
-             String str = page.getPageNumber();
-             // get page string from parent, build area
-             TextArea text = new TextArea();
-             inline = text;
-             int width = node.getStringWidth(str);
-             text.setTextArea(str);
-             inline.setIPD(width);
-             inline.setHeight(node.getFontState().getAscender()
-                              - node.getFontState().getDescender());
-             inline.setOffset(node.getFontState().getAscender());
-
-             inline.addTrait(Trait.FONT_NAME, node.getFontState().getFontName());
-             inline.addTrait(Trait.FONT_SIZE,
-                             new Integer(node.getFontState().getFontSize()));
-             node.setUnresolved(false);
-         } else {
-             node.setUnresolved(true);
-             inline = new UnresolvedPageNumber(node.getRefId());
-             String str = "MMM"; // reserve three spaces for page number
-             int width = node.getStringWidth(str);
-             inline.setIPD(width);
-             inline.setHeight(node.getFontState().getAscender()
-                              - node.getFontState().getDescender());
-             inline.setOffset(node.getFontState().getAscender());
-
-             inline.addTrait(Trait.FONT_NAME, node.getFontState().getFontName());
-             inline.addTrait(Trait.FONT_SIZE,
-                             new Integer(node.getFontState().getFontSize()));
-         }
-         return inline;
-     }
-
      public void serveTable(Table node) {
          TableLayoutManager tlm = new TableLayoutManager(node);
          ArrayList columns = node.getColumns();
@@ -666,22 +533,5 @@ public class AddLMVisitor {
      */
     public void serveTableHeader(TableHeader node) {
         serveTableBody((TableBody)node);
-    }
-
-    /**
-     * @param node Wrapper object to process
-     */
-    public void serveWrapper(Wrapper node) {
-        ListIterator baseIter;
-        baseIter = node.getChildNodes();
-        if (baseIter == null) return;
-        while (baseIter.hasNext()) {
-            FObj child = (FObj) baseIter.next();
-            if (child instanceof LMVisited) {
-                ((LMVisited) child).acceptVisitor(this);
-            } else {
-                child.addLayoutManager(currentLMList);
-            }
-        }
     }
 }

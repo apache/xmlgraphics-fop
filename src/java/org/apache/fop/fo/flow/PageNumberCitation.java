@@ -18,6 +18,9 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -25,7 +28,6 @@ import org.xml.sax.SAXParseException;
 
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
@@ -34,8 +36,16 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fo.LMVisited;
-
+import org.apache.fop.layoutmgr.LayoutContext; 	 
+import org.apache.fop.layoutmgr.LayoutManager; 	 
+import org.apache.fop.layoutmgr.LeafNodeLayoutManager; 	 
+import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.area.PageViewport; 	 
+import org.apache.fop.area.Resolveable; 	 
+import org.apache.fop.area.Trait; 	 
+import org.apache.fop.area.inline.InlineArea; 	 
+import org.apache.fop.area.inline.UnresolvedPageNumber; 	 
+import org.apache.fop.area.inline.TextArea;
 
 /**
  * Class modelling the fo:page-number-citation object. See Sec. 6.6.11 of the
@@ -44,7 +54,7 @@ import org.apache.fop.fo.LMVisited;
  * The page number used is the page that contains the start of the
  * block referenced with the ref-id attribute.
  */
-public class PageNumberCitation extends FObj implements LMVisited {
+public class PageNumberCitation extends FObj {
     /** Fontstate for this object **/
     protected Font fontState;
 
@@ -106,22 +116,7 @@ public class PageNumberCitation extends FObj implements LMVisited {
         CommonRelativePosition mRelProps =
           propMgr.getRelativePositionProps();
 
-        // this.propertyList.get("alignment-adjust");
-        // this.propertyList.get("alignment-baseline");
-        // this.propertyList.get("baseline-shift");
-        // this.propertyList.get("dominant-baseline");
         setupID();
-        // this.propertyList.get("keep-with-next");
-        // this.propertyList.get("keep-with-previous");
-        // this.propertyList.get("letter-spacing");
-        // this.propertyList.get("line-height");
-        // this.propertyList.get("line-height-shift-adjustment");
-        // this.propertyList.get("ref-id");
-        // this.propertyList.get("score-spaces");
-        // this.propertyList.get("text-decoration");
-        // this.propertyList.get("text-shadow");
-        // this.propertyList.get("text-transform");
-        // this.propertyList.get("word-spacing");
 
         ColorType c = this.propertyList.get(PR_COLOR).getColorType();
         this.red = c.getRed();
@@ -157,8 +152,75 @@ public class PageNumberCitation extends FObj implements LMVisited {
         return "fo:page-number-citation";
     }
 
-    public void acceptVisitor(AddLMVisitor aLMV) {
-       setup();
-       aLMV.servePageNumberCitation(this);
+    /**
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     * @todo create a subclass for LeafNodeLayoutManager, moving the formatting
+     *  logic to the layoutmgr package
+     */
+    public void addLayoutManager(List list) { 	 
+        setup();
+        LayoutManager lm;
+        lm = new LeafNodeLayoutManager(this) {
+                 public InlineArea get(LayoutContext context) {
+                     curArea = getPageNumberCitationInlineArea(parentLM);
+                     return curArea;
+                 }
+    
+                 public void addAreas(PositionIterator posIter,
+                                      LayoutContext context) {
+                     super.addAreas(posIter, context);
+                     if (getUnresolved()) {
+                         parentLM.addUnresolvedArea(getRefId(),
+                                                    (Resolveable) curArea);
+                     }
+                 }
+    
+                 protected void offsetArea(LayoutContext context) {
+                     curArea.setOffset(context.getBaseline());
+                 }
+             };
+        list.add(lm); 	 
     }
+
+     // if id can be resolved then simply return a word, otherwise
+     // return a resolveable area
+     public InlineArea getPageNumberCitationInlineArea(LayoutManager parentLM) {
+         if (getRefId().equals("")) {
+             getLogger().error("page-number-citation must contain \"ref-id\"");
+             return null;
+         }
+         PageViewport page = parentLM.resolveRefID(getRefId());
+         InlineArea inline = null;
+         if (page != null) {
+             String str = page.getPageNumber();
+             // get page string from parent, build area
+             TextArea text = new TextArea();
+             inline = text;
+             int width = getStringWidth(str);
+             text.setTextArea(str);
+             inline.setIPD(width);
+             inline.setHeight(getFontState().getAscender()
+                              - getFontState().getDescender());
+             inline.setOffset(getFontState().getAscender());
+
+             inline.addTrait(Trait.FONT_NAME, getFontState().getFontName());
+             inline.addTrait(Trait.FONT_SIZE,
+                             new Integer(getFontState().getFontSize()));
+             setUnresolved(false);
+         } else {
+             setUnresolved(true);
+             inline = new UnresolvedPageNumber(getRefId());
+             String str = "MMM"; // reserve three spaces for page number
+             int width = getStringWidth(str);
+             inline.setIPD(width);
+             inline.setHeight(getFontState().getAscender()
+                              - getFontState().getDescender());
+             inline.setOffset(getFontState().getAscender());
+
+             inline.addTrait(Trait.FONT_NAME, getFontState().getFontName());
+             inline.addTrait(Trait.FONT_SIZE,
+                             new Integer(getFontState().getFontSize()));
+         }
+         return inline;
+     }
 }

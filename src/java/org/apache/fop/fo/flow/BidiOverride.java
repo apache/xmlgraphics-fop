@@ -119,9 +119,7 @@ public class BidiOverride extends FObjMixed {
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
     public void addLayoutManager(List list) { 	 
         if (false) {

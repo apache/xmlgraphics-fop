@@ -19,6 +19,7 @@
 package org.apache.fop.fo.flow;
 
 // Java
+import java.util.List;
 import java.awt.geom.Rectangle2D;
 
 // XML
@@ -26,21 +27,25 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
+import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
-import org.xml.sax.Attributes;
-import org.apache.fop.fo.LMVisited;
+import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
+import org.apache.fop.layoutmgr.TraitSetter;
 
 /**
  * External graphic formatting object.
  * This FO node handles the external graphic. It creates an image
  * inline area that can be added to the area tree.
  */
-public class ExternalGraphic extends FObj implements LMVisited {
+public class ExternalGraphic extends FObj {
     private String url;
     private int breakAfter;
     private int breakBefore;
@@ -85,6 +90,7 @@ public class ExternalGraphic extends FObj implements LMVisited {
      * This gets the sizes for the image and the dimensions and clipping.
      */
     private void setup() {
+        setupID();
         url = this.propertyList.get(PR_SRC).getString();
         if (url == null) {
             return;
@@ -251,12 +257,46 @@ public class ExternalGraphic extends FObj implements LMVisited {
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-       setup();
-       aLMV.serveExternalGraphic(this);
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+    */
+    public void addLayoutManager(List list) {
+        setup();
+        InlineArea area = getExternalGraphicInlineArea();
+        if (area != null) {
+            LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
+            lm.setCurrentArea(area);
+            lm.setAlignment(getProperty(PR_VERTICAL_ALIGN).getEnum());
+            lm.setLead(getViewHeight());
+            list.add(lm);
+        }
     }
+
+     /**
+      * Get the inline area for this external grpahic.
+      * This creates the image area and puts it inside a viewport.
+      *
+      * @return the viewport containing the image area
+      * @todo see if can move to LM classes.
+      */
+     public InlineArea getExternalGraphicInlineArea() {
+         if (getURL() == null) {
+             return null;
+         }
+         Image imArea = new Image(getURL());
+         Viewport vp = new Viewport(imArea);
+         vp.setWidth(getViewWidth());
+         vp.setHeight(getViewHeight());
+         vp.setClip(getClip());
+         vp.setContentPosition(getPlacement());
+         vp.setOffset(0);
+
+         // Common Border, Padding, and Background Properties
+         CommonBorderAndPadding bap = getPropertyManager().getBorderAndPadding();
+         CommonBackground bProps = getPropertyManager().getBackgroundProps();
+         TraitSetter.addBorders(vp, bap);
+         TraitSetter.addBackground(vp, bProps);
+
+         return vp;
+     }
+    
 }
