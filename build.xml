@@ -141,7 +141,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <include name="lib/batik.LICENSE.txt"/>
        <include name="lib/avalon-framework-cvs-20020315.jar"/>
        <include name="lib/avalon.LICENSE.txt"/>
-       <include name="lib/ant.jar"/>
+       <include name="lib/ant-1.4.1.jar"/>
        <include name="lib/ant.license.txt"/>
     </fileset>
 
