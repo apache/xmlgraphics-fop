@@ -338,14 +338,16 @@ class FOPTaskStarter extends Starter {
         task.log(foFile + " -> " + outFile, Project.MSG_INFO);
 
         try {
-            Driver driver = new Driver(inputHandler.getInputSource(), out);
+            Driver driver = new Driver();
             setupLogger(driver);
+            driver.initialize();
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(baseURL);
+            userAgent.enableLogging(getLogger());
             driver.setUserAgent(userAgent);
             driver.setRenderer(renderer);
-            driver.setXMLReader(parser);
-            driver.run();
+            driver.setOutputStream(out);
+            driver.render(parser, inputHandler.getInputSource());
             out.close();
         } catch (Exception ex) {
             getLogger().error("Couldn't render file: " + ex.getMessage());
