@@ -358,10 +358,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
     /**
      * For now, only handle normal flow areas.
-     *
-     * @param childArea the child area to add
+     * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(org.apache.fop.area.Area)
      */
-    public void addChild(Area childArea) {
+    public void addChildArea(Area childArea) {
         if (childArea == null) {
             return;
         }

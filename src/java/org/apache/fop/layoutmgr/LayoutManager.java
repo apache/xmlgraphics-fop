@@ -155,7 +155,7 @@ public interface LayoutManager {
      *
      * @param childArea the child area to add
      */
-    void addChild(Area childArea);
+    void addChildArea(Area childArea);
 
     /**
      * Tell the layout manager to add all the child areas implied

@@ -622,7 +622,7 @@ public class TextLayoutManager extends AbstractLayoutManager
         
         word = t;
         if (word != null) {
-            parentLM.addChild(word);
+            parentLM.addChildArea(word);
         }
     }
 

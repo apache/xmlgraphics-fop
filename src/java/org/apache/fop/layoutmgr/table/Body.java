@@ -238,8 +238,8 @@ public class Body extends BlockStackingLayoutManager {
      *
      * @param childArea the child area to add
      */
-    public void addChild(Area childArea) {
-        parentLM.addChild(childArea);
+    public void addChildArea(Area childArea) {
+        parentLM.addChildArea(childArea);
     }
 
     /**

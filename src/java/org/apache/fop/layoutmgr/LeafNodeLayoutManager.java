@@ -135,7 +135,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager
      * This is a leaf-node, so this method is never called.
      * @param childArea the childArea to add
      */
-    public void addChild(Area childArea) {
+    public void addChildArea(Area childArea) {
     }
 
     /**
@@ -168,7 +168,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager
 
         offsetArea(context);
         widthAdjustArea(context);
-        parentLM.addChild(curArea);
+        parentLM.addChildArea(curArea);
 
         while (posIter.hasNext()) {
             posIter.next();

@@ -102,9 +102,9 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             }
             FilledArea fa = new FilledArea();
             fa.setUnitWidth(width);
-            fa.addChild(t);
+            fa.addChildArea(t);
             if (spacer != null) {
-                fa.addChild(spacer);
+                fa.addChildArea(spacer);
             }
             fa.setBPD(font.getAscender());
 
@@ -139,7 +139,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             }
             fa.setUnitWidth(width);
             if (spacer != null) {
-                fa.addChild(spacer);
+                fa.addChildArea(spacer);
             }
             leaderArea = fa;
         }
@@ -222,7 +222,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             clm.addAreas(contentIter, context);
             offsetArea(context);
 
-            parentLM.addChild(curArea);
+            parentLM.addChildArea(curArea);
 
             while (posIter.hasNext()) {
                 posIter.next();

@@ -548,9 +548,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     /**
      * Add the child to the block container.
      *
-     * @see org.apache.fop.layoutmgr.LayoutManager#addChild(Area)
+     * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(Area)
      */
-    public void addChild(Area childArea) {
+    public void addChildArea(Area childArea) {
         if (referenceArea != null) {
             referenceArea.addBlock((Block) childArea);
         }

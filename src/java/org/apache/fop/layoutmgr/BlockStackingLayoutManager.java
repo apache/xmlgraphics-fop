@@ -88,7 +88,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
         if (sp != 0) {
             Block spacer = new Block();
             spacer.setBPD(sp);
-            parentLM.addChild(spacer);
+            parentLM.addChildArea(spacer);
         }
     }
 
@@ -122,7 +122,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
      * If so, add it. Otherwise initiate breaking.
      * @param childArea the area to add: will be some block-stacked Area.
      */
-    public void addChild(Area childArea) {
+    public void addChildArea(Area childArea) {
         addChildToArea(childArea, getCurrentArea());
     }
 
@@ -131,7 +131,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
      */
     protected void flush() {
         if (getCurrentArea() != null) {
-            parentLM.addChild(getCurrentArea());
+            parentLM.addChildArea(getCurrentArea());
         }
     }
 

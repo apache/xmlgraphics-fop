@@ -457,7 +457,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
      *
      * @param childArea the child area to add
      */
-    public void addChild(Area childArea) {
+    public void addChildArea(Area childArea) {
         if (curBlockArea != null) {
             curBlockArea.addBlock((Block) childArea);
         }

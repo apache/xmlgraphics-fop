@@ -133,7 +133,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     //     protected void flush(Area area, boolean bFinished) {
     // if (area != null) {
     //     // area.setFinished(true);
-    //     parentLM.addChild(area, bFinished); // ????
+    //     parentLM.addChildArea(area, bFinished); // ????
     //     if (bFinished) {
     // setCurrentArea(null);
     //     }
@@ -306,7 +306,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     protected void flush() {
     }
 
-    public void addChild(Area childArea) {
+    public void addChildArea(Area childArea) {
     }
 
     /**
