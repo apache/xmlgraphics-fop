@@ -83,7 +83,7 @@ public class CompoundPropertyMaker extends Property.Maker {
     }
 
     /**
-     * @see org.apache.fop.fo.Property#useGeneric(Property.Maker)
+     * @see org.apache.fop.fo.Property.Maker#useGeneric(Property.Maker)
      */
     public void useGeneric(Property.Maker generic) {
         super.useGeneric(generic);

@@ -55,8 +55,7 @@ import java.util.Enumeration;
 public class GenericShorthandParser implements ShorthandParser {
 
     /**
-     * Constructor. The listprop to operate on must b set with setList().
-     * @see #setList(ListProperty) 
+     * Constructor. 
      */
     public GenericShorthandParser() {
     }

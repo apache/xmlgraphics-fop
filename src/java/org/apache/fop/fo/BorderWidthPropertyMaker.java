@@ -79,7 +79,7 @@ public class BorderWidthPropertyMaker extends LengthProperty.Maker {
     /**
      * Check the value of the style property and return a length of 0 when
      * the style is NONE.
-     * @see org.apacge.fo.Property.Maker.get(int, PropertyList, boolean, boolean)
+     * @see org.apache.fo.Property.Maker#get(int, PropertyList, boolean, boolean)
      */
    
     public Property get(int subpropId, PropertyList propertyList,

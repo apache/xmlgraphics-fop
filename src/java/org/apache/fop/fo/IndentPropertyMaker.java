@@ -96,7 +96,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
     
     /**
      * Calculate the corresponding value for start-indent and end-indent.  
-     * @see CorrespondingPropertyMaker.compute(PropertyList)
+     * @see CorrespondingPropertyMaker#compute(PropertyList)
      */
     public Property compute(PropertyList propertyList) throws FOPException {
         // TODO: bckfnn reenable

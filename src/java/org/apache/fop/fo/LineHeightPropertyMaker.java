@@ -73,7 +73,7 @@ public class LineHeightPropertyMaker extends LengthProperty.Maker {
 
     /**
      * Make a property as normal, and save the specified value.
-     * @see Property.Maker.make(propertyList, String, FObj)
+     * @see Property.Maker#make(PropertyList, String, FObj)
      */
     public Property make(PropertyList propertyList, String value,
                          FObj fo) throws FOPException {
@@ -85,7 +85,7 @@ public class LineHeightPropertyMaker extends LengthProperty.Maker {
     /**
      * Recalculate the line-height value based on the nearest specified
      * value.
-     * @see Property.Maker.compute(propertyList)
+     * @see Property.Maker#compute(PropertyList)
      */
     protected Property compute(PropertyList propertyList) throws FOPException {
         // recalculate based on last specified value
