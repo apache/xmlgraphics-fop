@@ -169,6 +169,7 @@ public class LineArea extends Area {
         pendingAreas.addElement(pia);
         pendingWidth += width;
         wordWidth = 0;
+        prev = TEXT;
 
         return -1;
     }
