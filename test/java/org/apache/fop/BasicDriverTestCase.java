@@ -172,7 +172,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
     }
 
     /**
-     * Tests Driver with JAXP and OutputStream.
+     * Tests Driver with JAXP and OutputStream generating PDF.
      * @throws Exception if anything fails
      */
     public void testFO2PDFWithJAXP() throws Exception {
@@ -190,6 +190,48 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         transformer.transform(src, res);
         
         assertTrue("Generated PDF has zero length", baout.size() > 0);
+    }
+
+    /**
+     * Tests Driver with JAXP and OutputStream generating PostScript.
+     * @throws Exception if anything fails
+     */
+    public void testFO2PSWithJAXP() throws Exception {
+        File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
+        ByteArrayOutputStream baout = new ByteArrayOutputStream();
+        Driver driver = new Driver();
+        ContainerUtil.enableLogging(driver, this.logger);
+        driver.setOutputStream(baout);
+        driver.setRenderer(Driver.RENDER_PS);
+        
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer transformer = factory.newTransformer(); //Identity transf.
+        Source src = new StreamSource(foFile);
+        Result res = new SAXResult(driver.getContentHandler());
+        transformer.transform(src, res);
+        
+        assertTrue("Generated PostScript has zero length", baout.size() > 0);
+    }
+
+    /**
+     * Tests Driver with JAXP and OutputStream generating RTF.
+     * @throws Exception if anything fails
+     */
+    public void testFO2RTFWithJAXP() throws Exception {
+        File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
+        ByteArrayOutputStream baout = new ByteArrayOutputStream();
+        Driver driver = new Driver();
+        ContainerUtil.enableLogging(driver, this.logger);
+        driver.setOutputStream(baout);
+        driver.setRenderer(Driver.RENDER_RTF);
+        
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer transformer = factory.newTransformer(); //Identity transf.
+        Source src = new StreamSource(foFile);
+        Result res = new SAXResult(driver.getContentHandler());
+        transformer.transform(src, res);
+        
+        assertTrue("Generated RTF has zero length", baout.size() > 0);
     }
 
     /**
