@@ -39,9 +39,7 @@ public class FObjects {
     public static final String XSLNamespace =
                                         "http://www.w3.org/1999/XSL/Format";
 
-    private static final String packageName = "org.apache.fop.fo";
-    //private static final String fobsPackageName = packageName + ".fobs";
-    private static final String fobsPackageName = packageName;
+    public static final String packageNamePrefix = "org.apache.fop";
 
     public static int getFoIndex(String name) {
         return ((Integer)(foToIndex.get(name))).intValue();
@@ -70,9 +68,24 @@ public class FObjects {
      * fo names from the array FObjectNames.foLocalNames into class names by
      * converting the first character of every component word to upper case,
      * removing all punctuation characters and prepending the prefix 'Fo'.
-     *  It can be indexed by the fo name constants defined in this file.
+     *  It can be indexed by the fo name constants defined in the
+     * <tt>FObjectNames</tt> class.
      */
     private static final String[] foClassNames;
+
+    /**
+     * A String[] array of the fo class package names.  This array is
+     * effectively 1-based, with the first element being unused.
+     * The array is initialized in a static initializer by constructing
+     * the package name from the common package prefix set in the field
+     * <tt>packageNamePrefix</tt>, the package name suffix associated with
+     * the fo local names in the <tt>FObjectNames.foLocalNames</tt> array,
+     * the the class name whcih has been constructed in the
+     * <tt>foClassNames</tt> array here.
+     *  It can be indexed by the fo name constants defined in the
+     * <tt>FObjectNames</tt> class.
+     */
+    private static final String[] foClassPackages;
 
     /**
      * An Class[] array containing Class objects corresponding to each of the
@@ -1783,20 +1796,6 @@ public class FObjects {
     public static final ROBitSet allProps;
 
     /**
-     * root only set of properties - properties for exclusive use on the
-     * root element.  These properties make no sense anywhere below the
-     * root element.
-     */
-    //public static final ROBitSet rootOnly;
-
-    /**
-     * declarations only set of properties - properties for exclusive
-     * use within the declarations subtree.  These properties make no
-     * sense in or under layout-master-set or page-sequences.
-     */
-    //public static final ROBitSet declarationsOnly;
-
-    /**
      * set of all declarations properties - properties which are
      * usable within the declarations subtree.
      */
@@ -1822,22 +1821,10 @@ public class FObjects {
     public static final ROBitSet pageSeqSet;
 
     /**
-     * fo:flow only set of properties - properties for exclusive
-     * use within the fo:flow subtree.
-     */
-    //public static final ROBitSet flowOnlySet;
-
-    /**
      * set of all fo:flow subtree properties - properties which are
      * usable within the fo:flow subtree.
      */
     public static final ROBitSet flowAllSet;
-
-    /**
-     * fo:static-content only set of properties - properties for exclusive
-     * use within the fo:static-content subtree.
-     */
-    //public static final ROBitSet staticOnlySet;
 
     /**
      * set of all fo:static-content subtree properties - properties which are
@@ -1872,8 +1859,6 @@ public class FObjects {
         declarationsonly.set(PropNames.COLOR_PROFILE_NAME);
         declarationsonly.set(PropNames.RENDERING_INTENT);
 
-        //declarationsOnly = new ROBitSet(declarationsonly);
-
         // set of all declarations properties - properties which may be
         // used in the declarations SUBTREE
         BitSet declarationsall =
@@ -1900,8 +1885,6 @@ public class FObjects {
         layoutmasteronly.set(PropNames.REGION_NAME);
         layoutmasteronly.set(PropNames.EXTENT);
         layoutmasteronly.set(PropNames.PRECEDENCE);
-
-        //layoutMasterOnly = new ROBitSet(layoutmasteronly);
 
         // set of all layout-master-set properties - properties which may be
         // used in the layout-master-set SUBTREE
@@ -1969,11 +1952,37 @@ public class FObjects {
         staticAllSet = new ROBitSet(staticallset);
     }
 
+    /**
+     * ReferenceArea trait mappings.  Immutable BitSet of FOs for which
+     * the <tt>reference-area</tt> trait is true.
+     */
+    public static final ROBitSet isReferenceArea;
     static {
-        String prefix = fobsPackageName + ".";
+        BitSet refareas = new BitSet(FObjectNames.LAST_FO + 1);
+        refareas.set(FObjectNames.SIMPLE_PAGE_MASTER);
+        refareas.set(FObjectNames.REGION_AFTER);
+        refareas.set(FObjectNames.REGION_BEFORE);
+        refareas.set(FObjectNames.REGION_BODY);
+        refareas.set(FObjectNames.REGION_END);
+        refareas.set(FObjectNames.REGION_START);
+        refareas.set(FObjectNames.BLOCK_CONTAINER);
+        refareas.set(FObjectNames.INLINE_CONTAINER);
+        refareas.set(FObjectNames.TABLE);
+        refareas.set(FObjectNames.TABLE_CAPTION);
+        refareas.set(FObjectNames.TABLE_CELL);
+        refareas.set(FObjectNames.TITLE);
+
+        isReferenceArea = new ROBitSet(refareas);
+    }
+
+    static {
+        String prefix = packageNamePrefix + ".";
         String foPrefix = "Fo";
+        int namei = 0;	// Index of localName in FObjectNames.foLocalNames
+        int pkgi = 1;	// Index of package suffix in foLocalNames
 
         foClassNames    = new String[FObjectNames.foLocalNames.length];
+        foClassPackages = new String[FObjectNames.foLocalNames.length];
         foClasses       = new Class[FObjectNames.foLocalNames.length];
         foToIndex       = new HashMap(FObjectNames.foLocalNames.length);
         foClassToIndex  = new HashMap(FObjectNames.foLocalNames.length);
@@ -1981,7 +1990,8 @@ public class FObjects {
         for (int i = 1;i < FObjectNames.foLocalNames.length; i++) {
             String cname = foPrefix;
             StringTokenizer stoke =
-                    new StringTokenizer(FObjectNames.foLocalNames[i], "-");
+                    new StringTokenizer(FObjectNames.foLocalNames[i][namei],
+                                        "-");
             while (stoke.hasMoreTokens()) {
                 String token = stoke.nextToken();
                 String pname = new Character(
@@ -1990,6 +2000,9 @@ public class FObjects {
                 cname = cname + pname;
             }
             foClassNames[i] = cname;
+
+            // Set up the array of class package names
+            String pkgname = prefix + FObjectNames.foLocalNames[i][pkgi];
 
             // Set up the array of Class objects, indexed by the fo
             // constants.
@@ -2000,11 +2013,11 @@ public class FObjects {
 
             // Set up the foToIndex Hashmap with the name of the
             // flow object as a key, and the integer index as a value
-            if (foToIndex.put((Object) FObjectNames.foLocalNames[i],
+            if (foToIndex.put((Object) FObjectNames.foLocalNames[i][namei],
                                         Ints.consts.get(i)) != null) {
                 throw new RuntimeException(
                     "Duplicate values in propertyToIndex for key " +
-                    FObjectNames.foLocalNames[i]);
+                    FObjectNames.foLocalNames[i][namei]);
             }
 
             // Set up the foClassToIndex Hashmap with the name of the
