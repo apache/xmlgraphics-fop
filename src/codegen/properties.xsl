@@ -563,9 +563,10 @@ public class </xsl:text>
         return super.getSubpropMaker(subprop);
     }
 
-    protected Property setSubprop(Property baseProp, String subpropName,
+    protected Property setSubprop(Property baseProp, int subpropId,
                                   Property subProp) {
         </xsl:text>
+        String subpropName = FOPropertyMapping.getPropertyName(subpropId);
         <xsl:value-of select="datatype"/>
         <xsl:text> val = baseProp.get</xsl:text>
         <xsl:value-of select="datatype"/>
@@ -769,14 +770,12 @@ public class </xsl:text>
         <xsl:if test=".//corresponding/@use-if-specified='true'">
           <xsl:text>
     public boolean isCorrespondingForced(PropertyList propertyList) {
-        FObj parentFO = propertyList.getParentFObj();
-        StringBuffer sbExpr=new StringBuffer();</xsl:text>
+        FObj parentFO = propertyList.getParentFObj();</xsl:text>
           <xsl:for-each select=".//corresponding/propval">
             <xsl:text>
-        sbExpr.setLength(0);</xsl:text>
+        if (propertyList.getExplicit(</xsl:text>
             <xsl:apply-templates select="."/>
-            <xsl:text>
-        if (propertyList.getExplicit(sbExpr.toString()) != null)
+            <xsl:text>) != null)
             return true;</xsl:text>
           </xsl:for-each>
           <xsl:text>
@@ -788,24 +787,26 @@ public class </xsl:text>
 
     public Property compute(PropertyList propertyList) throws FOPException {
         FObj parentFO = propertyList.getParentFObj();
-        StringBuffer sbExpr=new StringBuffer();
         Property p=null;</xsl:text>
       <xsl:choose>
         <xsl:when test="corresponding/propexpr">
-          <xsl:apply-templates select="corresponding/propval"/>
           <xsl:text>
         // Make sure the property is set before calculating it!
-        if (propertyList.getExplicitOrShorthand(sbExpr.toString()) == null)
+        if (propertyList.getExplicitOrShorthand(</xsl:text>
+          <xsl:apply-templates select="corresponding/propval"/>
+          <xsl:text>) == null)
             return p;
+        StringBuffer sbExpr=new StringBuffer();
         sbExpr.setLength(0);</xsl:text>
           <xsl:apply-templates select="corresponding/propexpr"/>
           <xsl:text>
         p = make(propertyList, sbExpr.toString(), propertyList.getParentFObj());</xsl:text>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:apply-templates select="corresponding/propval"/>
           <xsl:text>
-        p= propertyList.getExplicitOrShorthand(sbExpr.toString());</xsl:text>
+        p= propertyList.getExplicitOrShorthand(</xsl:text>
+          <xsl:apply-templates select="corresponding/propval"/>
+          <xsl:text>);</xsl:text>
         </xsl:otherwise>
       </xsl:choose>
       <xsl:text>
@@ -818,8 +819,6 @@ public class </xsl:text>
 
         Property subprop;</xsl:text>
         <xsl:for-each select="compound/subproperty/corresponding">
-          <xsl:text>
-        sbExpr.setLength(0);</xsl:text>
           <xsl:choose>
             <xsl:when test="propexpr">
               <xsl:apply-templates select="propexpr"/>
@@ -830,16 +829,19 @@ public class </xsl:text>
                   make(propertyList, sbExpr.toString(), parentFO);</xsl:text>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:apply-templates select="propval"/>
             <xsl:text>
-        subprop = propertyList.getExplicitOrShorthand(sbExpr.toString());</xsl:text>
+        subprop = propertyList.getExplicitOrShorthand(</xsl:text>
+          <xsl:apply-templates select="propval"/>
+          <xsl:text>);</xsl:text>
           </xsl:otherwise>
         </xsl:choose>
         <xsl:text>
         if (subprop != null) {
-            setSubprop(p, "</xsl:text>
-        <xsl:value-of select='../name'/>
-        <xsl:text>", subprop);
+            setSubprop(p, Constants.CP_</xsl:text>
+        <xsl:call-template name="makeEnumConstant">
+          <xsl:with-param name="propstr" select="../name"/>
+        </xsl:call-template>
+        <xsl:text>, subprop);
         }</xsl:text>
       </xsl:for-each>
     </xsl:if>
@@ -860,9 +862,11 @@ public class </xsl:text>
     <xsl:text>
         if (p == null) {
             listprop =
-                (ListProperty)propertyList.getExplicit("</xsl:text>
-    <xsl:value-of select='$shprop'/>
-    <xsl:text>");
+                (ListProperty)propertyList.getExplicit(Constants.PR_</xsl:text>
+    <xsl:call-template name="makeEnumConstant">
+      <xsl:with-param name="propstr" select="$shprop"/>
+    </xsl:call-template>
+    <xsl:text>);
             if (listprop != null) {
                // Get a parser for the shorthand to set the individual properties
                ShorthandParser shparser =
@@ -899,6 +903,83 @@ public class </xsl:text>
 </xsl:template>
 
 
+<xsl:template match="propval">
+  <xsl:choose>
+    <xsl:when test="wmabs2rel[@dir='LEFT']">
+      <xsl:call-template name="makeMap">
+        <xsl:with-param name="lrtb" select='"START"'/>
+        <xsl:with-param name="rltb" select='"END"'/>
+        <xsl:with-param name="tbrl" select='"AFTER"'/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="wmabs2rel[@dir='RIGHT']">
+      <xsl:call-template name="makeMap">
+        <xsl:with-param name="lrtb" select='"END"'/>
+        <xsl:with-param name="rltb" select='"START"'/>
+        <xsl:with-param name="tbrl" select='"BEFORE"'/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="wmabs2rel[@dir='TOP']">
+      <xsl:call-template name="makeMap">
+        <xsl:with-param name="lrtb" select='"BEFORE"'/>
+        <xsl:with-param name="rltb" select='"BEFORE"'/>
+        <xsl:with-param name="tbrl" select='"START"'/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="wmabs2rel[@dir='BOTTOM']">
+      <xsl:call-template name="makeMap">
+        <xsl:with-param name="lrtb" select='"AFTER"'/>
+        <xsl:with-param name="rltb" select='"AFTER"'/>
+        <xsl:with-param name="tbrl" select='"END"'/>
+      </xsl:call-template>
+    </xsl:when>
+
+    <xsl:when test="wmrel2abs[@dir='START']">
+      <xsl:call-template name="makeMap">
+        <xsl:with-param name="lrtb" select='"LEFT"'/>
+        <xsl:with-param name="rltb" select='"RIGHT"'/>
+        <xsl:with-param name="tbrl" select='"TOP"'/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="wmrel2abs[@dir='END']">
+      <xsl:call-template name="makeMap">
+        <xsl:with-param name="lrtb" select='"RIGHT"'/>
+        <xsl:with-param name="rltb" select='"LEFT"'/>
+        <xsl:with-param name="tbrl" select='"BOTTOM"'/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="wmrel2abs[@dir='BEFORE'] or parwmrel2abs[@dir='BEFORE']">
+      <xsl:call-template name="makeMap">
+        <xsl:with-param name="lrtb" select='"TOP"'/>
+        <xsl:with-param name="rltb" select='"TOP"'/>
+        <xsl:with-param name="tbrl" select='"RIGHT"'/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="wmrel2abs[@dir='AFTER'] or parwmrel2abs[@dir='AFTER']">
+      <xsl:call-template name="makeMap">
+        <xsl:with-param name="lrtb" select='"BOTTOM"'/>
+        <xsl:with-param name="rltb" select='"BOTTOM"'/>
+        <xsl:with-param name="tbrl" select='"LEFT"'/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="wmrel2abs[@dir='BLOCKPROGDIM']">
+      <xsl:call-template name="makeMap">
+        <xsl:with-param name="lrtb" select='"HEIGHT"'/>
+        <xsl:with-param name="rltb" select='"HEIGHT"'/>
+        <xsl:with-param name="tbrl" select='"WIDTH"'/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="wmrel2abs[@dir='INLINEPROGDIM']">
+      <xsl:call-template name="makeMap">
+        <xsl:with-param name="lrtb" select='"WIDTH"'/>
+        <xsl:with-param name="rltb" select='"WIDTH"'/>
+        <xsl:with-param name="tbrl" select='"HEIGHT"'/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise>UNKNOWN <xsl:value-of select="."/></xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
 <xsl:template match="corresponding//text()">
   <xsl:variable name="tval" select='normalize-space(.)'/>
   <xsl:if test="$tval != ''">
@@ -906,6 +987,34 @@ public class </xsl:text>
         sbExpr.append("</xsl:text>
     <xsl:value-of select='$tval'/>
     <xsl:text>");</xsl:text>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template name="makeMap">
+  <xsl:param name="lrtb"/>
+  <xsl:param name="rltb"/>
+  <xsl:param name="tbrl"/>
+  <xsl:text>propertyList.wmMap(Constants.PR_</xsl:text>
+  <xsl:apply-templates mode="x">
+    <xsl:with-param name="dir" select='$lrtb'/>
+  </xsl:apply-templates>
+  <xsl:text>, Constants.PR_</xsl:text>
+  <xsl:apply-templates mode="x">
+    <xsl:with-param name="dir" select='$rltb'/>
+  </xsl:apply-templates>
+  <xsl:text>, Constants.PR_</xsl:text>
+  <xsl:apply-templates mode="x">
+    <xsl:with-param name="dir" select='$tbrl'/>
+  </xsl:apply-templates>
+  <xsl:text>)</xsl:text>
+</xsl:template>
+
+<xsl:template match="corresponding//text()" mode="x">
+  <xsl:variable name="tval" select='normalize-space(.)'/>
+  <xsl:if test="$tval != ''">
+    <xsl:call-template name="makeEnumConstant">
+      <xsl:with-param name="propstr" select="$tval"/>
+    </xsl:call-template>
   </xsl:if>
 </xsl:template>
 
@@ -928,6 +1037,21 @@ public class </xsl:text>
         sbExpr.append(propertyList.wmAbsToRel(PropertyList.</xsl:text>
   <xsl:value-of select="@dir"/>
   <xsl:text>));</xsl:text>
+</xsl:template>
+
+<xsl:template match="propval/wmrel2abs" mode="x">
+  <xsl:param name="dir"/>
+  <xsl:value-of select="$dir"/>
+</xsl:template>
+
+<xsl:template match="propval/parwmrel2abs" mode="x">
+  <xsl:param name="dir"/>
+  <xsl:value-of select="$dir"/>
+</xsl:template>
+
+<xsl:template match="propval/wmabs2rel" mode="x">
+  <xsl:param name="dir"/>
+  <xsl:value-of select="$dir"/>
 </xsl:template>
 
 <!-- avoid unwanted output to placeholder file -->

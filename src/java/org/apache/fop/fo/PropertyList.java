@@ -68,6 +68,7 @@ public class PropertyList extends HashMap {
 
     // writing-mode values
     private byte[] wmtable = null;
+    private int writingMode;
 
     // absolute directions and dimensions
     /** constant for direction "left" */
@@ -181,9 +182,9 @@ public class PropertyList extends HashMap {
      * @return The value if the property is explicitly set or set by
      * a shorthand property, otherwise null.
      */
-    public Property getExplicitOrShorthand(String propertyName) {
+    public Property getExplicitOrShorthand(int propId) {
         /* Handle request for one part of a compound property */
-        int propId = FOPropertyMapping.getPropertyId(propertyName);
+        String propertyName = FOPropertyMapping.getPropertyName(propId);
 
         int sepchar = propertyName.indexOf('.');
         String baseName;
@@ -194,7 +195,7 @@ public class PropertyList extends HashMap {
         }
         Property p = getExplicitBaseProp(baseName);
         if (p == null) {
-            p = getShorthand(namespace, elementName, baseName);
+            p = getShorthand(propId & Constants.PROPERTY_MASK);
         }
         if (p != null && sepchar > -1) {
             return getSubpropValue(p, propId);
@@ -208,8 +209,8 @@ public class PropertyList extends HashMap {
      * It may be a compound name, such as space-before.optimum.
      * @return The value if the property is explicitly set, otherwise null.
      */
-    public Property getExplicit(String propertyName) {
-        int propId = FOPropertyMapping.getPropertyId(propertyName);
+    public Property getExplicit(int propId) {
+        String propertyName = FOPropertyMapping.getPropertyName(propId);
 
         /* Handle request for one part of a compound property */
         int sepchar = propertyName.indexOf('.');
@@ -326,7 +327,7 @@ public class PropertyList extends HashMap {
                 p = this.computeProperty(propId);
             }
             if (p == null) {    // check for shorthand specification
-                p = getShorthand(namespace, elementName, propertyName);
+                p = getShorthand(propId);
             }
             if (p == null && bTryInherit) {    
                 // else inherit (if has parent and is inheritable)
@@ -346,13 +347,13 @@ public class PropertyList extends HashMap {
      * @return The computed value if the property is explicitly set on some
      * ancestor of the current FO, else the initial value.
      */
-    public Property getNearestSpecified(String propertyName) {
-        int propId = FOPropertyMapping.getPropertyId(propertyName);
+    public Property getNearestSpecified(int propId) {
+        String propertyName = FOPropertyMapping.getPropertyName(propId);
 
         Property p = null;
         for (PropertyList plist = this; p == null && plist != null;
                 plist = plist.parentPropertyList) {
-            p = plist.getExplicit(propertyName);
+            p = plist.getExplicit(propId);
         }
         if (p == null) {
             // If no explicit setting found, return initial (default) value.
@@ -374,8 +375,7 @@ public class PropertyList extends HashMap {
      * FO is the root or is in a different namespace from its parent.
      */
     public Property getFromParent(int propId) {
-        String propertyName = FOPropertyMapping.getPropertyName(propId);
-        
+
         if (parentPropertyList != null) {
             return parentPropertyList.get(propId);
         } else {
@@ -387,6 +387,21 @@ public class PropertyList extends HashMap {
             }
         }
         return null;    // Exception in makeProperty!
+    }
+
+    /**
+     * Uses the stored writingMode.
+     * @param absdir an absolute direction (top, bottom, left, right)
+     * @return the corresponding writing model relative direction name
+     * for the flow object.
+     */
+    public int wmMap(int lrtb, int rltb, int tbrl) {
+        switch (writingMode) {
+        case WritingMode.LR_TB: return lrtb;
+        case WritingMode.RL_TB: return lrtb;
+        case WritingMode.TB_RL: return lrtb;
+        }
+        return -1;
     }
 
     /**
@@ -424,6 +439,7 @@ public class PropertyList extends HashMap {
      * @param writingMode the writing-mode property to be set for this object
      */
     public void setWritingMode(int writingMode) {
+        this.writingMode = writingMode;
         this.wmtable = (byte[])WRITING_MODE_TABLES.get(new Integer(writingMode));
     }
 
@@ -554,7 +570,7 @@ public class PropertyList extends HashMap {
      * @param attributeName String to be atomized
      * @return the base portion of the attribute
      */
-    public static String findBasePropertyName(String attributeName) {
+    private static String findBasePropertyName(String attributeName) {
         int sepCharIndex = attributeName.indexOf('.');
         String basePropName = attributeName;
         if (sepCharIndex > -1) {
@@ -570,7 +586,7 @@ public class PropertyList extends HashMap {
      * @param attributeName String to be atomized
      * @return the sub portion of the attribute
      */
-    public static String findSubPropertyName(String attributeName) {
+    private static String findSubPropertyName(String attributeName) {
         int sepCharIndex = attributeName.indexOf('.');
         String subPropName = null;
         if (sepCharIndex > -1) {
@@ -615,13 +631,10 @@ public class PropertyList extends HashMap {
     }
 
     /**
-     * @param propertyName name of property
+     * @param propId ID of property
      * @return new Property object
      */
-    private Property getShorthand(String space, String element,
-        String propertyName) {
-        int propId = FOPropertyMapping.getPropertyId(propertyName);
-
+    private Property getShorthand(int propId) {
         Property.Maker propertyMaker = findMaker(propId);
         
         if (propertyMaker != null) {

@@ -51,6 +51,7 @@
 package org.apache.fop.fo.expr;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.properties.FOPropertyMapping;
 
 /**
  * Class modelling the from-nearest-specified-value function. See Sec. 5.10.4
@@ -82,7 +83,8 @@ public class NearestSpecPropFunction extends FunctionBase {
         }
         // NOTE: special cases for shorthand property
         // Should return COMPUTED VALUE
-        return pInfo.getPropertyList().getNearestSpecified(propName);
+        int propId = FOPropertyMapping.getPropertyId(propName);
+        return pInfo.getPropertyList().getNearestSpecified(propId);
     }
 
 }
