@@ -85,7 +85,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
        used in rendering the fo:block.
     */
     private MinOptMax foBlockSpaceBefore = null;
-    private MinOptMax foBlockSpaceAfter = null;  // not currently implemented
+    // need to retain foBlockSpaceAfter from previous instantiation
+    private static MinOptMax foBlockSpaceAfter = null;
+    private MinOptMax prevFoBlockSpaceAfter = null;
 
     private int lead = 12000;
     private int lineHeight = 14000;
@@ -181,6 +183,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         borderProps = pm.getBorderAndPadding();
         backgroundProps = pm.getBackgroundProps();
         foBlockSpaceBefore = layoutProps.spaceBefore.getSpace();
+        prevFoBlockSpaceAfter = foBlockSpaceAfter;
     }
 
     public BreakPoss getNextBreakPoss(LayoutContext context) {
@@ -190,9 +193,14 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         MinOptMax stackSize = new MinOptMax();
 
+        if (prevFoBlockSpaceAfter != null) {
+            stackSize.add(prevFoBlockSpaceAfter);
+            prevFoBlockSpaceAfter = null;
+        }
+
         if (foBlockSpaceBefore != null) {
             // this function called before addAreas(), so
-            // setting foBlockSpaceBefore = null *in* addAreas()
+            // resetting foBlockSpaceBefore = null in addAreas()
             stackSize.add(foBlockSpaceBefore);
         }
         
@@ -308,7 +316,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         flush();
 
         // if adjusted space after
-        addBlockSpacing(adjust, layoutProps.spaceAfter.getSpace());
+        foBlockSpaceAfter = layoutProps.spaceAfter.getSpace();
+        addBlockSpacing(adjust, foBlockSpaceAfter);
 
         curBlockArea = null;
     }
