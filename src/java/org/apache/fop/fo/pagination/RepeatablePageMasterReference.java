@@ -25,18 +25,19 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 
 /**
  * A repeatable-page-master-reference formatting object.
  * This handles a reference with a specified number of repeating
  * instances of the referenced page master (may have no limit).
  */
-public class RepeatablePageMasterReference extends PageMasterReference {
+public class RepeatablePageMasterReference extends FObj
+    implements SubSequenceSpecifier {
 
     private static final int INFINITE = -1;
 
     private PageSequenceMaster pageSequenceMaster;
-
     private int maximumRepeats;
     private int numberConsumed = 0;
 
@@ -48,20 +49,22 @@ public class RepeatablePageMasterReference extends PageMasterReference {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * XSL Content Model: empty
-     */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
-       invalidChildError(loc, nsURI, localName);
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#addProperties
+     * @todo need to 
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
+
+        PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
+
+        if (getPropString(PR_MASTER_REFERENCE) == null) {
+            missingPropertyError("master-reference");
+        } else {
+            pageSequenceMaster.addSubsequenceSpecifier(this);
+        }
+
         String mr = getPropString(PR_MAXIMUM_REPEATS);
+
         if (mr.equals("no-limit")) {
             this.maximumRepeats = INFINITE;
         } else {
@@ -80,6 +83,15 @@ public class RepeatablePageMasterReference extends PageMasterReference {
     }
 
     /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: empty
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        invalidChildError(loc, nsURI, localName);
+    }
+
+    /**
      * @see org.apache.fop.fo.pagination.SubSequenceSpecifier
      */
     public String getNextPageMasterName(boolean isOddPage,
@@ -92,7 +104,7 @@ public class RepeatablePageMasterReference extends PageMasterReference {
                 return null;
             }
         }
-        return getMasterName();
+        return getPropString(PR_MASTER_REFERENCE);
     }
 
     /**
@@ -102,6 +114,9 @@ public class RepeatablePageMasterReference extends PageMasterReference {
         this.numberConsumed = 0;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:repeatable-page-master-reference";
     }

@@ -48,11 +48,21 @@ public abstract class XMLObj extends FONode {
     protected String name;
 
     /**
-     *
      * @param parent the parent formatting object
      */
     public XMLObj(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * here, blocks XSL FO's from having non-FO parents.
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        if (nsURI == FO_URI) {
+            invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**
