@@ -142,9 +142,6 @@ public class FoTable extends FONode {
         }
     }
 
-    /** The number of markers on this FO. */
-    private int numMarkers = 0;
-
     /** The number of table-columns on this FO. */
     private int numColumns = 0;
 
@@ -179,19 +176,9 @@ public class FoTable extends FONode {
                                   stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev;
         // Look for zero or more markers
-        String nowProcessing = "marker";
+        getMarkers();
         try {
-            while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
-                   != null) {
-                new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
-                numMarkers++;
-                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
-            }
-
             // Look for zero or more table-columns
-            nowProcessing = "table-column";
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.TABLE_COLUMN, XmlEvent.DISCARD_W_SPACE))
                    != null) {
@@ -204,7 +191,6 @@ public class FoTable extends FONode {
             }
 
             // Look for optional table-header
-            nowProcessing = "table-header";
             if ((ev = xmlevents.expectStartElement
                     (FObjectNames.TABLE_HEADER, XmlEvent.DISCARD_W_SPACE))
                    != null) {
@@ -217,7 +203,6 @@ public class FoTable extends FONode {
             }
 
             // Look for optional table-footer
-            nowProcessing = "table-footer";
             if ((ev = xmlevents.expectStartElement
                     (FObjectNames.TABLE_FOOTER, XmlEvent.DISCARD_W_SPACE))
                    != null) {
@@ -231,7 +216,6 @@ public class FoTable extends FONode {
 
             // Look for one or more table-body
             // must have at least one
-            nowProcessing = "table-body";
             ev = xmlevents.expectStartElement
                         (FObjectNames.TABLE_BODY, XmlEvent.DISCARD_W_SPACE);
             if (ev == null)
@@ -253,11 +237,6 @@ public class FoTable extends FONode {
                 namespaces.surrenderEvent(ev);
             }
 
-            /*
-        } catch (NoSuchElementException e) {
-            throw new FOPException
-                ("Unexpected EOF while processing " + nowProcessing + ".");
-            */
         } catch(TreeException e) {
             throw new FOPException("TreeException: " + e.getMessage());
         } catch(PropertyException e) {
