@@ -219,7 +219,8 @@ public class TableCell extends FObj {
     }
 
     public Status layout(Area area) throws FOPException {
-	if (this.marker == BREAK_AFTER) {
+	int originalAbsoluteHeight = area.getAbsoluteHeight();
+        if (this.marker == BREAK_AFTER) {
 	    return new Status(Status.OK);
 	}
 
@@ -297,7 +298,7 @@ public class TableCell extends FObj {
  	top = areaContainer.getCurrentYPosition();
  	area.setHeight(getHeight());
  	// reset absoluteHeight to beginning of row
- 	area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
+ 	area.setAbsoluteHeight(originalAbsoluteHeight);
 
 	return new Status(Status.OK);
     }
