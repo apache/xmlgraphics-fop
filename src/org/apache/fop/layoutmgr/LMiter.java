@@ -10,35 +10,36 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.fo.FObj;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 public class LMiter implements ListIterator {
 
 
-    private ListIterator m_baseIter;
-    private FObj m_curFO;
-    protected ArrayList m_listLMs;
-    protected int m_curPos = 0;
+    private ListIterator baseIter;
+    private FObj curFO;
+    protected List listLMs;
+    protected int curPos = 0;
 
-    public LMiter(ListIterator baseIter) {
-        m_baseIter = baseIter;
-        m_listLMs = new ArrayList(10);
+    public LMiter(ListIterator bIter) {
+        baseIter = bIter;
+        listLMs = new ArrayList(10);
     }
 
     public boolean hasNext() {
-        return (m_curPos < m_listLMs.size()) ? true : preLoadNext();
+        return (curPos < listLMs.size()) ? true : preLoadNext();
     }
 
     protected boolean preLoadNext() {
         // skip over child FObj's that don't add lms
-        while (m_baseIter.hasNext()) {
-            Object theobj = m_baseIter.next();
+        while (baseIter.hasNext()) {
+            Object theobj = baseIter.next();
             if(theobj instanceof FObj) {
                 FObj fobj = (FObj) theobj;
-                //m_listLMs.add(fobj.getLayoutManager());
-                fobj.addLayoutManager(m_listLMs);
-                if(m_curPos < m_listLMs.size()) {
+                //listLMs.add(fobj.getLayoutManager());
+                fobj.addLayoutManager(listLMs);
+                if(curPos < listLMs.size()) {
                     return true;
                 }
             }
@@ -47,26 +48,26 @@ public class LMiter implements ListIterator {
     }
 
     public boolean hasPrevious() {
-        return (m_curPos > 0);
+        return (curPos > 0);
     }
 
     public Object previous() throws NoSuchElementException {
-        if (m_curPos > 0) {
-            return m_listLMs.get(--m_curPos);
+        if (curPos > 0) {
+            return listLMs.get(--curPos);
         } else
             throw new NoSuchElementException();
     }
 
     public Object next() throws NoSuchElementException {
-        if (m_curPos < m_listLMs.size()) {
-            return m_listLMs.get(m_curPos++);
+        if (curPos < listLMs.size()) {
+            return listLMs.get(curPos++);
         } else
             throw new NoSuchElementException();
     }
 
     public void remove() throws NoSuchElementException {
-        if (m_curPos > 0) {
-            m_listLMs.remove(--m_curPos);
+        if (curPos > 0) {
+            listLMs.remove(--curPos);
             // Note: doesn't actually remove it from the base!
         } else
             throw new NoSuchElementException();
@@ -83,11 +84,11 @@ public class LMiter implements ListIterator {
     }
 
     public int nextIndex() {
-        return m_curPos;
+        return curPos;
     }
 
     public int previousIndex() {
-        return m_curPos - 1;
+        return curPos - 1;
     }
 
 }

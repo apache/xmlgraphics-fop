@@ -82,11 +82,11 @@ public class Row extends BlockStackingLayoutManager {
     private void setupCells() {
         cellList = new ArrayList();
         // add cells to list
-        while (m_childLMiter.hasNext()) {
-            m_curChildLM = (LayoutManager) m_childLMiter.next();
-            m_curChildLM.setParentLM(this);
-            m_curChildLM.init();
-            cellList.add(m_curChildLM);
+        while (childLMiter.hasNext()) {
+            curChildLM = (LayoutManager) childLMiter.next();
+            curChildLM.setParentLM(this);
+            curChildLM.init();
+            cellList.add(curChildLM);
         }
     }
 
@@ -118,7 +118,7 @@ public class Row extends BlockStackingLayoutManager {
         LayoutManager curLM; // currently active LM
 
         BreakPoss lastPos = null;
-        ArrayList breakList = new ArrayList();
+        List breakList = new ArrayList();
 
         int min = 0;
         int opt = 0;
@@ -127,7 +127,7 @@ public class Row extends BlockStackingLayoutManager {
         int cellcount = 0;
         while ((curLM = getCellLM(cellcount++)) != null) {
 
-            ArrayList childBreaks = new ArrayList();
+            List childBreaks = new ArrayList();
             MinOptMax stackSize = new MinOptMax();
 
             // Set up a LayoutContext
@@ -289,8 +289,8 @@ public class Row extends BlockStackingLayoutManager {
      * @param childArea the child area
      * @return unused
      */
-    public boolean addChild(Area childArea) {
-        return parentLM.addChild(childArea);
+    public void addChild(Area childArea) {
+        parentLM.addChild(childArea);
     }
 
     /**

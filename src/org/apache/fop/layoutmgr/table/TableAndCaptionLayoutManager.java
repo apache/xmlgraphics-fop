@@ -21,6 +21,7 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.MinOptMax;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * LayoutManager for a table-and-caption FO.
@@ -33,7 +34,7 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
 
-    private ArrayList childBreaks = new ArrayList();
+    private List childBreaks = new ArrayList();
 
     /**
      * Create a new table and caption layout manager.
@@ -168,14 +169,10 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
      * @param childArea the area to add
      * @return unused
      */
-    public boolean addChild(Area childArea) {
+    public void addChild(Area childArea) {
         if (curBlockArea != null) {
-                curBlockArea.addBlock((Block) childArea);
-                //return super.addChild(childArea);
-
-                return false;
+            curBlockArea.addBlock((Block) childArea);
         }
-        return false;
     }
 
     /**

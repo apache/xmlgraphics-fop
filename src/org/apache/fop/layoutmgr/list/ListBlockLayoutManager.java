@@ -27,22 +27,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * LayoutManager for a table FO.
- * A table consists of columns, table header, table footer and multiple
- * table bodies.
- * The header, footer and body add the areas created from the table cells.
- * The table then creates areas for the columns, bodies and rows
- * the render background.
+ * LayoutManager for a list-block FO.
+ * A list block contains list items which are stacked within
+ * the list block area..
  */
 public class ListBlockLayoutManager extends BlockStackingLayoutManager {
-    private List columns = null;
-
     private BorderAndPadding borderProps = null;
     private BackgroundProps backgroundProps;
 
     private Block curBlockArea;
 
-    private ArrayList bodyBreaks = new ArrayList();
+    private List bodyBreaks = new ArrayList();
 
     private class SectionPosition extends LeafPosition {
         protected List list;
@@ -75,14 +70,14 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
      * @return the next break possibility
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
-        ListItemLayoutManager curLM; // currently active LM
+        LayoutManager curLM; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
         // stackSize.add(spaceBefore);
         BreakPoss lastPos = null;
 
-        while ((curLM = (ListItemLayoutManager)getChildLM()) != null) {
+        while ((curLM = (LayoutManager)getChildLM()) != null) {
             // Make break positions
             // Set up a LayoutContext
             int ipd = context.getRefIPD();
@@ -138,7 +133,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
 
         int listHeight = 0;
 
-        ListItemLayoutManager childLM;
+        LayoutManager childLM;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
@@ -148,15 +143,10 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
               new BreakPossPosIter(bodyBreaks, iStartPos,
                                    lfp.getLeafPos() + 1);
             iStartPos = lfp.getLeafPos() + 1;
-            while ((childLM = (ListItemLayoutManager)breakPosIter.getNextChildLM()) != null) {
+            while ((childLM = (LayoutManager)breakPosIter.getNextChildLM()) != null) {
                 childLM.addAreas(breakPosIter, lc);
-                listHeight += childLM.getListItemHeight();
             }
         }
-
-        // add footer areas
-
-        curBlockArea.setHeight(listHeight);
 
         if(borderProps != null) { 
             addBorders(curBlockArea, borderProps);
@@ -204,13 +194,10 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
      * @param childArea the child area to add
      * @return unused
      */
-    public boolean addChild(Area childArea) {
+    public void addChild(Area childArea) {
         if (curBlockArea != null) {
-                curBlockArea.addBlock((Block) childArea);
-
-                return false;
+            curBlockArea.addBlock((Block) childArea);
         }
-        return false;
     }
 
     /**
@@ -220,6 +207,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
      */
     public void resetPosition(Position resetPos) {
         if (resetPos == null) {
+            bodyBreaks.clear();
             reset(null);
         }
     }

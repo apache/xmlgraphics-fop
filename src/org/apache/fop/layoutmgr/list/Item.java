@@ -24,6 +24,7 @@ import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.BackgroundProps;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * LayoutManager for a table-cell FO.
@@ -36,7 +37,7 @@ public class Item extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
 
-    private ArrayList childBreaks = new ArrayList();
+    private List childBreaks = new ArrayList();
 
     private int xoffset;
     private int itemIPD;
@@ -205,12 +206,10 @@ public class Item extends BlockStackingLayoutManager {
      * @param childArea the child to add to the cell
      * @return unused
      */
-    public boolean addChild(Area childArea) {
+    public void addChild(Area childArea) {
         if (curBlockArea != null) {
             curBlockArea.addBlock((Block) childArea);
-            return false;
         }
-        return false;
     }
 
     /**

@@ -9,15 +9,15 @@ package org.apache.fop.layoutmgr;
 
 public class LeafPosition extends Position {
 
-    private int m_iLeafPos;
+    private int iLeafPos;
 
-    public LeafPosition(LayoutManager lm, int iLeafPos) {
+    public LeafPosition(LayoutManager lm, int pos) {
         super(lm);
-        m_iLeafPos = iLeafPos;
+        iLeafPos = pos;
     }
 
     public int getLeafPos() {
-        return m_iLeafPos;
+        return iLeafPos;
     }
 }
 

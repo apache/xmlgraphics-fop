@@ -38,6 +38,10 @@ public class BreakPoss {
      * in the lowest level text LM will be suppressed.
      */
     public static final int REST_ARE_SUPPRESS_AT_LB = 0x200;
+    /**
+     * Next area for LM overflows
+     */
+    public static final int NEXT_OVERFLOWS = 0x400;
 
     /** The opaque position object used by m_lm to record its
      *  break position.

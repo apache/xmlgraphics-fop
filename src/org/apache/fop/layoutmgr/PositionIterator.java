@@ -12,24 +12,24 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public abstract class PositionIterator implements Iterator {
-    Iterator m_parentIter;
-    Object m_nextObj;
-    LayoutManager m_childLM;
-    boolean m_bHasNext;
+    Iterator parentIter;
+    Object nextObj;
+    LayoutManager childLM;
+    boolean bHasNext;
 
-    PositionIterator(Iterator parentIter) {
-        m_parentIter = parentIter;
+    PositionIterator(Iterator pIter) {
+        parentIter = pIter;
         lookAhead();
         //checkNext();
     }
 
     public LayoutManager getNextChildLM() {
         // Move to next "segment" of iterator, ie: new childLM
-        if (m_childLM == null && m_nextObj != null) {
-            m_childLM = getLM(m_nextObj);
-            m_bHasNext = true;
+        if (childLM == null && nextObj != null) {
+            childLM = getLM(nextObj);
+            bHasNext = true;
         }
-        return m_childLM;
+        return childLM;
     }
 
     protected abstract LayoutManager getLM(Object nextObj);
@@ -37,41 +37,41 @@ public abstract class PositionIterator implements Iterator {
     protected abstract Position getPos(Object nextObj);
 
     private void lookAhead() {
-        if (m_parentIter.hasNext()) {
-            m_bHasNext = true;
-            m_nextObj = m_parentIter.next();
+        if (parentIter.hasNext()) {
+            bHasNext = true;
+            nextObj = parentIter.next();
         } else {
             endIter();
         }
     }
 
     protected boolean checkNext() {
-        LayoutManager lm = getLM(m_nextObj);
-        if (m_childLM == null) {
-            m_childLM = lm;
-        } else if (m_childLM != lm) {
+        LayoutManager lm = getLM(nextObj);
+        if (childLM == null) {
+            childLM = lm;
+        } else if (childLM != lm) {
             // End of this sub-sequence with same child LM
-            m_bHasNext = false;
-            m_childLM = null;
+            bHasNext = false;
+            childLM = null;
             return false;
         }
         return true;
     }
 
     protected void endIter() {
-        m_bHasNext = false;
-        m_nextObj = null;
-        m_childLM = null;
+        bHasNext = false;
+        nextObj = null;
+        childLM = null;
     }
 
     public boolean hasNext() {
-        return (m_bHasNext && checkNext());
+        return (bHasNext && checkNext());
     }
 
 
     public Object next() throws NoSuchElementException {
-        if (m_bHasNext) {
-            Object retObj = getPos(m_nextObj);
+        if (bHasNext) {
+            Object retObj = getPos(nextObj);
             lookAhead();
             return retObj;
         } else {
@@ -80,7 +80,7 @@ public abstract class PositionIterator implements Iterator {
     }
 
     protected Object peekNext() {
-        return m_nextObj;
+        return nextObj;
     }
 
     public void remove() throws UnsupportedOperationException {

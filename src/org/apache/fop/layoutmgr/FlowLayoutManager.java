@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class FlowLayoutManager extends BlockStackingLayoutManager {
 
-    ArrayList blockBreaks = new ArrayList();      
+    protected List blockBreaks = new ArrayList();      
 
     /** Array of areas currently being filled stored by area class */
     private BlockParent[] currentAreas = new BlockParent[Area.CLASS_MAX];
@@ -119,9 +119,9 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
      * area class. A Flow can fill at most one area container of any class
      * at any one time. The actual work is done by BlockStackingLM.
      */
-    public boolean addChild(Area childArea) {
-        return addChildToArea(childArea,
-                              this.currentAreas[childArea.getAreaClass()]);
+    public void addChild(Area childArea) {
+        addChildToArea(childArea,
+                          this.currentAreas[childArea.getAreaClass()]);
     }
 
     public Area getParentArea(Area childArea) {

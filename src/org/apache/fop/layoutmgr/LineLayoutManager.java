@@ -52,19 +52,19 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
      * inline break positions.
      */
     private static class LineBreakPosition extends LeafPosition {
-        // int m_iPos;
-        double m_dAdjust; // Percentage to adjust (stretch or shrink)
+        // int iPos;
+        double dAdjust; // Percentage to adjust (stretch or shrink)
         double ipdAdjust; // Percentage to adjust (stretch or shrink)
         int startIndent;
         int lineHeight;
         int baseline;
 
         LineBreakPosition(LayoutManager lm, int iBreakIndex,
-                          double ipdA, double dAdjust, int ind, int lh, int bl) {
+                          double ipdA, double adjust, int ind, int lh, int bl) {
             super(lm, iBreakIndex);
-            // m_iPos = iBreakIndex;
+            // iPos = iBreakIndex;
             ipdAdjust = ipdA;
-            m_dAdjust = dAdjust;
+            dAdjust = adjust;
             startIndent = ind;
             lineHeight = lh;
             baseline = bl;
@@ -73,13 +73,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
 
     /** Break positions returned by inline content. */
-    private ArrayList m_vecInlineBreaks = new ArrayList();
+    private List vecInlineBreaks = new ArrayList();
 
-    private BreakPoss m_prevBP = null; // Last confirmed break position
+    private BreakPoss prevBP = null; // Last confirmed break position
     private int bTextAlignment = TextAlign.JUSTIFY;
-    private int m_iTextIndent = 0;
-    private int m_iIndents = 0;
-    private HyphenationProps m_hyphProps;
+    private int iTextIndent = 0;
+    private int iIndents = 0;
+    private HyphenationProps hyphProps;
 
     private int lineHeight;
     private int lead;
@@ -113,11 +113,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
      */
     protected void initProperties(PropertyManager propMgr) {
         MarginProps marginProps = propMgr.getMarginProps();
-        m_iIndents = marginProps.startIndent + marginProps.endIndent;
+        iIndents = marginProps.startIndent + marginProps.endIndent;
         BlockProps blockProps = propMgr.getBlockProps();
         bTextAlignment = blockProps.textAlign;
-        m_iTextIndent = blockProps.firstIndent;
-        m_hyphProps = propMgr.getHyphenationProps();
+        iTextIndent = blockProps.firstIndent;
+        hyphProps = propMgr.getHyphenationProps();
     }
 
     /**
@@ -132,7 +132,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         // Set up constraints for inline level managers
 
         LayoutManager curLM ; // currently active LM
-        BreakPoss prevBP = null;
+        BreakPoss prev = null;
         BreakPoss bp = null; // proposed BreakPoss
 
         ArrayList vecPossEnd = new ArrayList();
@@ -146,22 +146,22 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         LayoutContext inlineLC = new LayoutContext(context);
 
         clearPrevIPD();
-        int iPrevLineEnd = m_vecInlineBreaks.size();
+        int iPrevLineEnd = vecInlineBreaks.size();
 
-        m_prevBP = null;
+        prevBP = null;
 
         while ((curLM = getChildLM()) != null) {
             // INITIALIZE LAYOUT CONTEXT FOR CALL TO CHILD LM
             // First break for the child LM in each of its areas
-            boolean bFirstBPforLM = (m_vecInlineBreaks.isEmpty() ||
-                                     (((BreakPoss) m_vecInlineBreaks.get(m_vecInlineBreaks.size() - 1)).
+            boolean bFirstBPforLM = (vecInlineBreaks.isEmpty() ||
+                                     (((BreakPoss) vecInlineBreaks.get(vecInlineBreaks.size() - 1)).
                                       getLayoutManager() != curLM));
 
             // Need previous breakpoint! ATTENTION when backing up for hyphenation!
-            prevBP = (m_vecInlineBreaks.isEmpty()) ? null :
-                     (BreakPoss) m_vecInlineBreaks.get(m_vecInlineBreaks.size() - 1);
-            initChildLC(inlineLC, prevBP,
-                        (m_vecInlineBreaks.size() == iPrevLineEnd),
+            prev = (vecInlineBreaks.isEmpty()) ? null :
+                     (BreakPoss) vecInlineBreaks.get(vecInlineBreaks.size() - 1);
+            initChildLC(inlineLC, prev,
+                        (vecInlineBreaks.size() == iPrevLineEnd),
                         bFirstBPforLM, new SpaceSpecifier(true));
 
 
@@ -170,17 +170,17 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
              * then set the SUPPRESS_LEADING_SPACE flag.
              */
             inlineLC.setFlags(LayoutContext.SUPPRESS_LEADING_SPACE,
-                              (m_vecInlineBreaks.size() == iPrevLineEnd &&
-                               !m_vecInlineBreaks.isEmpty() &&
-                               ((BreakPoss) m_vecInlineBreaks.get(m_vecInlineBreaks.size() - 1)).
+                              (vecInlineBreaks.size() == iPrevLineEnd &&
+                               !vecInlineBreaks.isEmpty() &&
+                               ((BreakPoss) vecInlineBreaks.get(vecInlineBreaks.size() - 1)).
                                isForcedBreak() == false));
 
             // GET NEXT POSSIBLE BREAK FROM CHILD LM
             // prevBP = bp;
             if ((bp = curLM.getNextBreakPoss(inlineLC)) != null) {
                 // Add any space before and previous content dimension
-                MinOptMax prevIPD = updatePrevIPD(bp, prevBP,
-                                                  (m_vecInlineBreaks.size() == iPrevLineEnd),
+                MinOptMax prevIPD = updatePrevIPD(bp, prev,
+                                                  (vecInlineBreaks.size() == iPrevLineEnd),
                                                   inlineLC.isFirstArea());
                 MinOptMax bpDim =
                   MinOptMax.add(bp.getStackingSize(), prevIPD);
@@ -206,7 +206,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
                     // This break position doesn't fit
                     // TODO: If we are in nowrap, we use it as is!
-                    if (bTextAlignment == TextAlign.JUSTIFY || m_prevBP == null) {
+                    if (bTextAlignment == TextAlign.JUSTIFY || prevBP == null) {
                         // If we are already in a hyphenation loop, then stop.
 
                         if (inlineLC.tryHyphenate()) {
@@ -215,12 +215,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                         // Otherwise, prepare to try hyphenation
                         if (!bBreakOK) {
                             // Make sure we collect the entire word!
-                            m_vecInlineBreaks.add(bp);
+                            vecInlineBreaks.add(bp);
                             continue;
                         }
 
                         inlineLC.setHyphContext(
-                          getHyphenContext(m_prevBP, bp));
+                          getHyphenContext(prevBP, bp));
                         if (inlineLC.getHyphContext() == null)
                             break;
                         inlineLC.setFlags(LayoutContext.TRY_HYPHENATE,
@@ -236,10 +236,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                     }
                 } else {
                     // Add the BP to the list whether or not we can break
-                    m_vecInlineBreaks.add(bp);
+                    vecInlineBreaks.add(bp);
                     // Handle end of this LM's areas
                     if (bBreakOK) {
-                        m_prevBP = bp; // Save reference to this BP
+                        prevBP = bp; // Save reference to this BP
                         if (bp.isForcedBreak()) {
                             break;
                         }
@@ -279,22 +279,22 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
         if (bp == null)
             return null;
-        if (m_prevBP == null)
-            m_prevBP = bp;
+        if (prevBP == null)
+            prevBP = bp;
 
         // Choose the best break
         if (!bp.isForcedBreak() && vecPossEnd.size() > 0) {
-            m_prevBP = getBestBP(vecPossEnd);
+            prevBP = getBestBP(vecPossEnd);
         }
         // Backup child LM if necessary
-        if (bp != m_prevBP && !bp.couldEndLine()) {
+        if (bp != prevBP && !bp.couldEndLine()) {
             reset();
         }
 
         // Don't justify last line in the sequence or if forced line-end
         int talign = bTextAlignment;
         if ((bTextAlignment == TextAlign.JUSTIFY
-                             && (m_prevBP.isForcedBreak()
+                             && (prevBP.isForcedBreak()
                              || isFinished()))) {
             talign = TextAlign.START;
         }
@@ -303,10 +303,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
 
     private void reset() {
-        while (m_vecInlineBreaks.get(m_vecInlineBreaks.size() - 1) != m_prevBP) {
-            m_vecInlineBreaks.remove(m_vecInlineBreaks.size() - 1);
+        while (vecInlineBreaks.get(vecInlineBreaks.size() - 1) != prevBP) {
+            vecInlineBreaks.remove(vecInlineBreaks.size() - 1);
         }
-        reset(m_prevBP.getPosition());
+        reset(prevBP.getPosition());
     }
 
     protected boolean couldEndLine(BreakPoss bp) {
@@ -354,34 +354,34 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         return true;
     }
 
-    private HyphContext getHyphenContext(BreakPoss prevBP,
+    private HyphContext getHyphenContext(BreakPoss prev,
                                          BreakPoss newBP) {
         // Get a "word" to hyphenate by getting characters from all
-        // pending break poss which are in m_vecInlineBreaks, starting
-        // with the position just AFTER prevBP.getPosition()
+        // pending break poss which are in vecInlineBreaks, starting
+        // with the position just AFTER prev.getPosition()
 
-        m_vecInlineBreaks.add(newBP);
+        vecInlineBreaks.add(newBP);
         ListIterator bpIter =
-          m_vecInlineBreaks. listIterator(m_vecInlineBreaks.size());
-        while (bpIter.hasPrevious() && bpIter.previous() != prevBP)
-            ;
-        if (bpIter.next() != prevBP) {
+          vecInlineBreaks. listIterator(vecInlineBreaks.size());
+        while (bpIter.hasPrevious() && bpIter.previous() != prev) {
+        }
+        if (bpIter.next() != prev) {
             //log.error("findHyphenPoss: problem!");
             return null;
         }
         StringBuffer sbChars = new StringBuffer(30);
         while (bpIter.hasNext()) {
             BreakPoss bp = (BreakPoss) bpIter.next();
-            if (bp.getLayoutManager() == prevBP.getLayoutManager()) {
+            if (bp.getLayoutManager() == prev.getLayoutManager()) {
                 bp.getLayoutManager().getWordChars(sbChars,
-                                                   prevBP.getPosition(), bp.getPosition());
+                                                   prev.getPosition(), bp.getPosition());
             } else {
                 bp.getLayoutManager().getWordChars(sbChars, null,
                                                    bp.getPosition());
             }
-            prevBP = bp;
+            prev = bp;
         }
-        m_vecInlineBreaks.remove(m_vecInlineBreaks.size() - 1); // remove last
+        vecInlineBreaks.remove(vecInlineBreaks.size() - 1); // remove last
         //log.debug("Word to hyphenate: " + sbChars.toString());
 
         // Now find all hyphenation points in this word (get in an array of offsets)
@@ -393,12 +393,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         // TextLM which generate the hyphenation buffer, since these properties
         // inherit and could be specified on an inline or wrapper below the block
         // level.
-        Hyphenation hyph = Hyphenator.hyphenate(m_hyphProps.language,
-                                                m_hyphProps.country, sbChars.toString(),
-                                                m_hyphProps.hyphenationRemainCharacterCount,
-                                                m_hyphProps.hyphenationPushCharacterCount);
+        Hyphenation hyph = Hyphenator.hyphenate(hyphProps.language,
+                                                hyphProps.country, sbChars.toString(),
+                                                hyphProps.hyphenationRemainCharacterCount,
+                                                hyphProps.hyphenationPushCharacterCount);
         // They hyph structure contains the information we need
-        // Now start from prevBP: reset to that position, ask that LM to get
+        // Now start from prev: reset to that position, ask that LM to get
         // a Position for the first hyphenation offset. If the offset isn't in
         // its characters, it returns null, but must tell how many chars it had.
         // Keep looking at currentBP using next hyphenation point until the
@@ -442,7 +442,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         MinOptMax actual = new MinOptMax();
         BreakPoss lastBP = null;
         LayoutManager lastLM = null;
-        for(Iterator iter = m_vecInlineBreaks.listIterator(prevLineEnd);
+        for(Iterator iter = vecInlineBreaks.listIterator(prevLineEnd);
                 iter.hasNext(); ) {
             BreakPoss bp = (BreakPoss)iter.next();
             if (bp.getLead() > lineLead) {
@@ -530,7 +530,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
         LineBreakPosition lbp;
         lbp = new LineBreakPosition(this,
-                                    m_vecInlineBreaks.size() - 1,
+                                    vecInlineBreaks.size() - 1,
                                     ipdAdjust, dAdjust, indent,
                                     lineLead + middlefollow, lineLead);
         BreakPoss curLineBP = new BreakPoss(lbp);
@@ -549,15 +549,15 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         if (resetPos == null) {
             iStartPos = 0;
             reset(null);
-            m_vecInlineBreaks.clear();
-            m_prevBP = null;
+            vecInlineBreaks.clear();
+            prevBP = null;
         } else {
-            m_prevBP = (BreakPoss)m_vecInlineBreaks.get(((LineBreakPosition)resetPos).getLeafPos());
-            while (m_vecInlineBreaks.get(m_vecInlineBreaks.size() - 1) != m_prevBP)
+            prevBP = (BreakPoss)vecInlineBreaks.get(((LineBreakPosition)resetPos).getLeafPos());
+            while (vecInlineBreaks.get(vecInlineBreaks.size() - 1) != prevBP)
 {
-                m_vecInlineBreaks.remove(m_vecInlineBreaks.size() - 1);
+                vecInlineBreaks.remove(vecInlineBreaks.size() - 1);
             }
-            reset(m_prevBP.getPosition());
+            reset(prevBP.getPosition());
         }
     }
 
@@ -571,8 +571,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                          LayoutContext context) {
         addAreas(parentIter, 0.0);
 
-        //m_vecInlineBreaks.clear();
-        m_prevBP = null;
+        //vecInlineBreaks.clear();
+        prevBP = null;
     }
 
     // Generate and add areas to parent area
@@ -598,10 +598,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             setCurrentArea(lineArea);
             // Add the inline areas to lineArea
             PositionIterator inlinePosIter =
-              new BreakPossPosIter(m_vecInlineBreaks, iStartPos,
+              new BreakPossPosIter(vecInlineBreaks, iStartPos,
                                    lbp.getLeafPos() + 1);
             iStartPos = lbp.getLeafPos() + 1;
-            lc.setSpaceAdjust(lbp.m_dAdjust);
+            lc.setSpaceAdjust(lbp.dAdjust);
             lc.setIPDAdjust(lbp.ipdAdjust);
             lc.setLeadingSpace(new SpaceSpecifier(true));
             lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);

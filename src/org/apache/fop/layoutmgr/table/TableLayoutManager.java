@@ -44,7 +44,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
 
-    private ArrayList bodyBreaks = new ArrayList();
+    private List bodyBreaks = new ArrayList();
     private BreakPoss headerBreak;
     private BreakPoss footerBreak;
 
@@ -186,7 +186,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
 
         lm.setColumns(columns);
 
-        ArrayList breaks = new ArrayList();
+        List breaks = new ArrayList();
         while (!lm.isFinished()) {
             if ((bp = lm.getNextBreakPoss(childLC)) != null) {
                 stackSize.add(bp.getStackingSize());
@@ -286,13 +286,10 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
      * @param childArea the child area to add
      * @return unused
      */
-    public boolean addChild(Area childArea) {
+    public void addChild(Area childArea) {
         if (curBlockArea != null) {
-                curBlockArea.addBlock((Block) childArea);
-
-                return false;
+            curBlockArea.addBlock((Block) childArea);
         }
-        return false;
     }
 
     /**

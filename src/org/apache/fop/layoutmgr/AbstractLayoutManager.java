@@ -28,10 +28,10 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     protected String foID = null;
 
     /** True if this LayoutManager has handled all of its content. */
-    private boolean m_bFinished = false;
-    protected LayoutManager m_curChildLM = null;
-    protected ListIterator m_childLMiter;
-    protected boolean m_bInited = false;
+    private boolean bFinished = false;
+    protected LayoutManager curChildLM = null;
+    protected ListIterator childLMiter;
+    protected boolean bInited = false;
 
     protected LayoutPos curPos = new LayoutPos();
 
@@ -48,7 +48,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
         this.fobj = fobj;
         foID = fobj.getID();
         this.parentLM = null;
-        m_childLMiter = lmIter;
+        childLMiter = lmIter;
     }
 
     public void setParentLM(LayoutManager lm) {
@@ -104,26 +104,26 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * and print a warning.
      */
     protected LayoutManager getChildLM() {
-        if (m_curChildLM != null && !m_curChildLM.isFinished()) {
-            return m_curChildLM;
+        if (curChildLM != null && !curChildLM.isFinished()) {
+            return curChildLM;
         }
-        while (m_childLMiter.hasNext()) {
-            m_curChildLM = (LayoutManager) m_childLMiter.next();
-            m_curChildLM.setParentLM(this);
-            m_curChildLM.init();
-            return m_curChildLM;
+        while (childLMiter.hasNext()) {
+            curChildLM = (LayoutManager) childLMiter.next();
+            curChildLM.setParentLM(this);
+            curChildLM.init();
+            return curChildLM;
         }
         return null;
     }
 
     protected boolean hasMoreLM(LayoutManager prevLM) {
-        // prevLM should = m_curChildLM
-        if (prevLM != m_curChildLM) {
+        // prevLM should = curChildLM
+        if (prevLM != curChildLM) {
             //log.debug("AbstractLayoutManager.peekNextLM: " + 
             //                   "passed LM is not current child LM!");
             return false;
         }
-        return !m_childLMiter.hasNext();
+        return !childLMiter.hasNext();
     }
 
 
@@ -138,20 +138,20 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     protected void reset(Position pos) {
         //if (lm == null) return; 
         LayoutManager lm = (pos != null) ? pos.getLM() : null;
-        if (m_curChildLM != lm) {
-            // ASSERT m_curChildLM == (LayoutManager)m_childLMiter.previous()
-            if (m_childLMiter.hasPrevious() && m_curChildLM !=
-                    (LayoutManager) m_childLMiter.previous()) {
+        if (curChildLM != lm) {
+            // ASSERT curChildLM == (LayoutManager)childLMiter.previous()
+            if (childLMiter.hasPrevious() && curChildLM !=
+                    (LayoutManager) childLMiter.previous()) {
                 //log.error("LMiter problem!");
             }
-            while (m_curChildLM != lm && m_childLMiter.hasPrevious()) {
-                m_curChildLM.resetPosition(null);
-                m_curChildLM = (LayoutManager) m_childLMiter.previous();
+            while (curChildLM != lm && childLMiter.hasPrevious()) {
+                curChildLM.resetPosition(null);
+                curChildLM = (LayoutManager) childLMiter.previous();
             }
-            m_childLMiter.next(); // Otherwise next returns same object
+            childLMiter.next(); // Otherwise next returns same object
         }
-        if(m_curChildLM != null) {
-            m_curChildLM.resetPosition(pos);
+        if(curChildLM != null) {
+            curChildLM.resetPosition(pos);
         }
         if (isFinished()) {
             setFinished(false);
@@ -170,9 +170,9 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * for the areas it will create, based on Properties set on its FO.
      */
     public void init() { 
-        if (fobj != null && m_bInited == false) {
+        if (fobj != null && bInited == false) {
             initProperties(fobj.getPropertyManager());
-            m_bInited = true;
+            bInited = true;
         }
     }
 
@@ -191,11 +191,11 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * ie. the last one returned represents the end of the content.
      */
     public boolean isFinished() {
-        return m_bFinished;
+        return bFinished;
     }
 
-    public void setFinished(boolean bFinished) {
-        m_bFinished = bFinished;
+    public void setFinished(boolean fin) {
+        bFinished = fin;
     }
 
 
@@ -243,12 +243,10 @@ public abstract class AbstractLayoutManager implements LayoutManager {
         return null;
     }
 
-    protected boolean flush() {
-        return false;
+    protected void flush() {
     }
 
-    public boolean addChild(Area childArea) {
-        return false;
+    public void addChild(Area childArea) {
     }
 
     /**

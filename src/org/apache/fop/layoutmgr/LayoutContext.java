@@ -48,7 +48,7 @@ public class LayoutContext {
      * These LM <b>may</b> wish to pass this information down to lower
      * level LM to allow them to optimize returned break possibilities.
      */
-    MinOptMax m_stackLimit;
+    MinOptMax stackLimit;
 
 
     /** True if current top-level reference area is spanning. */
@@ -58,42 +58,42 @@ public class LayoutContext {
     int refIPD;
 
     /** Current pending space-after or space-end from preceding area */
-    SpaceSpecifier m_trailingSpace;
+    SpaceSpecifier trailingSpace;
 
     /** Current pending space-before or space-start from ancestor areas */
-    SpaceSpecifier m_leadingSpace;
+    SpaceSpecifier leadingSpace;
 
     /** Current hyphenation context. May be null. */
-    private HyphContext m_hyphContext = null;
+    private HyphContext hyphContext = null;
 
     /** Stretch or shrink value when making areas. */
     private double ipdAdjust = 0.0;
 
     /** Stretch or shrink value when adding spaces. */
-    private double m_dSpaceAdjust = 0.0;
+    private double dSpaceAdjust = 0.0;
 
-    private int m_iLineHeight;
-    private int m_iBaseline;
+    private int iLineHeight;
+    private int iBaseline;
 
     public LayoutContext(LayoutContext parentLC) {
         this.flags = parentLC.flags;
         this.refIPD = parentLC.refIPD;
-        this.m_stackLimit = null; // Don't reference parent MinOptMax!
-        this.m_leadingSpace = parentLC.m_leadingSpace; //???
-        this.m_trailingSpace = parentLC.m_trailingSpace; //???
-        this.m_hyphContext = parentLC.m_hyphContext;
-        this.m_dSpaceAdjust = parentLC.m_dSpaceAdjust;
-        this.m_iLineHeight = parentLC.m_iLineHeight;
-        this.m_iBaseline = parentLC.m_iBaseline;
+        this.stackLimit = null; // Don't reference parent MinOptMax!
+        this.leadingSpace = parentLC.leadingSpace; //???
+        this.trailingSpace = parentLC.trailingSpace; //???
+        this.hyphContext = parentLC.hyphContext;
+        this.dSpaceAdjust = parentLC.dSpaceAdjust;
+        this.iLineHeight = parentLC.iLineHeight;
+        this.iBaseline = parentLC.iBaseline;
         // Copy other fields as necessary. Use clone???
     }
 
     public LayoutContext(int flags) {
         this.flags = flags;
         this.refIPD = 0;
-        m_stackLimit = new MinOptMax(0);
-        m_leadingSpace = null;
-        m_trailingSpace = null;
+        stackLimit = new MinOptMax(0);
+        leadingSpace = null;
+        trailingSpace = null;
     }
 
     public void setFlags(int flags) {
@@ -117,7 +117,7 @@ public class LayoutContext {
     }
 
     public boolean startsNewArea() {
-        return ((this.flags & NEW_AREA) != 0 && m_leadingSpace != null);
+        return ((this.flags & NEW_AREA) != 0 && leadingSpace != null);
     }
 
     public boolean isFirstArea() {
@@ -133,11 +133,11 @@ public class LayoutContext {
     }
 
     public void setLeadingSpace(SpaceSpecifier space) {
-        m_leadingSpace = space;
+        leadingSpace = space;
     }
 
     public SpaceSpecifier getLeadingSpace() {
-        return m_leadingSpace;
+        return leadingSpace;
     }
 
     public boolean resolveLeadingSpace() {
@@ -145,19 +145,19 @@ public class LayoutContext {
     }
 
     public void setTrailingSpace(SpaceSpecifier space) {
-        m_trailingSpace = space;
+        trailingSpace = space;
     }
 
     public SpaceSpecifier getTrailingSpace() {
-        return m_trailingSpace;
+        return trailingSpace;
     }
 
-    public void setStackLimit(MinOptMax stackLimit) {
-        m_stackLimit = stackLimit;
+    public void setStackLimit(MinOptMax limit) {
+        stackLimit = limit;
     }
 
     public MinOptMax getStackLimit() {
-        return m_stackLimit;
+        return stackLimit;
     }
 
     public void setRefIPD(int ipd) {
@@ -168,24 +168,24 @@ public class LayoutContext {
         return refIPD;
     }
 
-    public void setHyphContext(HyphContext hyphContext) {
-        m_hyphContext = hyphContext;
+    public void setHyphContext(HyphContext hyph) {
+        hyphContext = hyph;
     }
 
     public HyphContext getHyphContext() {
-        return m_hyphContext;
+        return hyphContext;
     }
 
     public boolean tryHyphenate() {
         return ((this.flags & TRY_HYPHENATE) != 0);
     }
 
-    public void setSpaceAdjust(double dSpaceAdjust) {
-        m_dSpaceAdjust = dSpaceAdjust ;
+    public void setSpaceAdjust(double adjust) {
+        dSpaceAdjust = adjust;
     }
 
     public double getSpaceAdjust() {
-        return m_dSpaceAdjust;
+        return dSpaceAdjust;
     }
 
     public void setIPDAdjust(double ipdA) {
@@ -197,19 +197,19 @@ public class LayoutContext {
     }
 
     public void setLineHeight(int lh) {
-        m_iLineHeight = lh;
+        iLineHeight = lh;
     }
 
     public int getLineHeight() {
-        return m_iLineHeight;
+        return iLineHeight;
     }
 
     public void setBaseline(int bl) {
-        m_iBaseline = bl;
+        iBaseline = bl;
     }
 
     public int getBaseline() {
-        return m_iBaseline;
+        return iBaseline;
     }
 }
 

@@ -37,7 +37,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     private BlockViewport viewportBlockArea;
     private Block curBlockArea;
 
-    ArrayList childBreaks = new ArrayList();
+    List childBreaks = new ArrayList();
 
     AbsolutePositionProps abProps;
     FODimension relDims;
@@ -275,12 +275,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     }
 
 
-    public boolean addChild(Area childArea) {
+    public void addChild(Area childArea) {
         if (curBlockArea != null) {
             curBlockArea.addBlock((Block) childArea);
-            //return super.addChild(childArea);
         }
-        return false;
     }
 
     public void resetPosition(Position resetPos) {

@@ -89,19 +89,16 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
      * @param childArea the area to add: will be some block-stacked Area.
      * @param parentArea the area in which to add the childArea
      */
-    protected boolean addChildToArea(Area childArea,
+    protected void addChildToArea(Area childArea,
                                      BlockParent parentArea) {
         // This should be a block-level Area (Block in the generic sense)
         if (!(childArea instanceof Block)) {
             //log.error("Child not a Block in BlockStackingLM!");
-            return false;
         }
 
         MinOptMax spaceBefore = resolveSpaceSpecifier(childArea);
         parentArea.addBlock((Block) childArea);
         flush(); // hand off current area to parent
-
-        return true;
     }
 
 
@@ -113,18 +110,17 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
      * If so, add it. Otherwise initiate breaking.
      * @param childArea the area to add: will be some block-stacked Area.
      */
-    public boolean addChild(Area childArea) {
-        return addChildToArea(childArea, getCurrentArea());
+    public void addChild(Area childArea) {
+        addChildToArea(childArea, getCurrentArea());
     }
 
     /**
      * Force current area to be added to parent area.
      */
-    protected boolean flush() {
+    protected void flush() {
         if (getCurrentArea() != null) {
-            return parentLM.addChild(getCurrentArea());
+            parentLM.addChild(getCurrentArea());
         }
-        return false;
     }
 
 }

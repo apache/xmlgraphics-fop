@@ -8,14 +8,14 @@
 package org.apache.fop.layoutmgr;
 
 public class Position {
-    private LayoutManager m_lm;
+    private LayoutManager layoutManager;
 
     public Position(LayoutManager lm) {
-        m_lm = lm;
+        layoutManager = lm;
     }
 
     public LayoutManager getLM() {
-        return m_lm;
+        return layoutManager;
     }
 
     /**

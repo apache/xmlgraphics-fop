@@ -293,16 +293,15 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      *
      * @param childArea the child area to add
      */
-    public boolean addChild(Area childArea) {
+    public void addChild(Area childArea) {
         if (childArea == null) {
-            return false;
+            return;
         }
         if (childArea.getAreaClass() == Area.CLASS_NORMAL) {
             placeFlowRefArea(childArea);
         } else {
             ; // todo: all the others!
         }
-        return false;
     }
 
     /**
@@ -399,7 +398,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                 while (!lm.isFinished()) {
                     BreakPoss bp = lm.getNextBreakPoss(childLC);
                     if (bp != null) {
-                        ArrayList vecBreakPoss = new ArrayList();
+                        List vecBreakPoss = new ArrayList();
                         vecBreakPoss.add(bp);
                         lm.addAreas(new BreakPossPosIter(vecBreakPoss, 0,
                                                           vecBreakPoss.size()), null);
@@ -614,9 +613,8 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     }
 
     // See finishPage...
-    protected boolean flush() {
+    protected void flush() {
         finishPage();
-        return false;
     }
 
 }

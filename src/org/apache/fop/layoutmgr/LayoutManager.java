@@ -18,7 +18,7 @@ import org.apache.fop.area.PageViewport;
 public interface LayoutManager {
     public boolean generatesInlineAreas();
     public Area getParentArea (Area childArea);
-    public boolean addChild (Area childArea);
+    public void addChild (Area childArea);
     public void setParentLM(LayoutManager lm);
 
     /**

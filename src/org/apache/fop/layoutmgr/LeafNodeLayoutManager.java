@@ -96,8 +96,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
      * @param childArea the childArea to add
      * @return not used
      */
-    public boolean addChild(Area childArea) {
-        return false;
+    public void addChild(Area childArea) {
     }
 
     /**
