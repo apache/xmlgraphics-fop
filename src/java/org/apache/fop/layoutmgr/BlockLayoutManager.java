@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: BlockLayoutManager.java,v 1.17 2004/05/15 21:51:59 gmazza Exp $ */
+/* $Id: BlockLayoutManager.java,v 1.19 2004/05/26 04:22:39 gmazza Exp $ */
 
 package org.apache.fop.layoutmgr;
 
@@ -315,6 +315,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             TraitSetter.addBorders(curBlockArea, borderProps);
             TraitSetter.addBackground(curBlockArea, backgroundProps);
             TraitSetter.addMargins(curBlockArea, borderProps, marginProps);
+            TraitSetter.addBreaks(curBlockArea, layoutProps);
 
             // Set up dimensions
             // Must get dimensions from parent area

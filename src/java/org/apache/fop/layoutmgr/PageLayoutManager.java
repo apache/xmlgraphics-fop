@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: PageLayoutManager.java,v 1.38 2004/05/22 21:44:38 gmazza Exp $ */
 
 package org.apache.fop.layoutmgr;
 
@@ -36,6 +36,7 @@ import org.apache.fop.area.Span;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.Trait;
 
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.datatypes.FODimension;
@@ -51,6 +52,8 @@ import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
+
+import org.apache.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -520,7 +523,11 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         if (aclass == Area.CLASS_NORMAL) {
             // todo: how to get properties from the Area???
             // Need span, break
-            int breakVal = Constants.AUTO; // childArea.getBreakBefore();
+            int breakVal = Constants.AUTO;
+            Integer breakBefore = (Integer)childArea.getTrait(Trait.BREAK_BEFORE);
+            if (breakBefore != null) {
+                breakVal = breakBefore.intValue();
+            }
             if (breakVal != Constants.AUTO) {
                 // We may be forced to make new page
                 handleBreak(breakVal);
@@ -612,45 +619,42 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * block until the queue of layoutable stuff is empty!
      */
     private boolean needEmptyPage(int breakValue) {
-        return false;
-        // if (breakValue == Constants.PAGE || curPage.isEmpty()) {
-        //     // any page is OK or we already have an empty page
-        //     return false;
-        // }
-        // else {
-        //     /* IF we are on the kind of page we need, we'll need a new page. */
-        //     if (curPage.getPageNumber()%2 != 0) {
-        // // Current page is odd
-        // return (breakValue == Constants.ODD_PAGE);
-        //     }
-        //     else {
-        // return (breakValue == Constants.EVEN_PAGE);
-        //     }
-        // }
+
+        if (breakValue == Constants.PAGE || curPage.getPage().isEmpty()) {
+            // any page is OK or we already have an empty page
+            return false;
+        }
+        else {
+            /* IF we are on the kind of page we need, we'll need a new page. */
+            if (pageCount%2 != 0) {
+                // Current page is odd
+                return (breakValue == Constants.ODD_PAGE);
+            }
+            else {
+                return (breakValue == Constants.EVEN_PAGE);
+            }
+        }
     }
 
     /**
      * See if need to generate a new page for a forced break condition.
-     * todo: methods to see if the current page is empty and to get
-     * its number.
      */
     private boolean needNewPage(int breakValue) {
-        return false;
-        //if (curPage.isEmpty()) {
-        //if (breakValue == Constants.PAGE) {
-        //return false;
-        //}
-        //else if (curPage.getPageNumber()%2 != 0) {
-        //// Current page is odd
-        //return (breakValue == Constants.EVEN_PAGE);
-        //}
-        //else {
-        //return (breakValue == Constants.ODD_PAGE);
-        //}
-        //}
-        //else {
-        //    return true;
-        //}
+        if (curPage.getPage().isEmpty()) {
+            if (breakValue == Constants.PAGE) {
+                return false;
+            }
+            else if (pageCount%2 != 0) {
+                // Current page is odd
+                return (breakValue == Constants.EVEN_PAGE);
+            }
+            else {
+                return (breakValue == Constants.ODD_PAGE);
+            }
+        }
+        else {
+            return true;
+        }
     }
 
     private void createBodyMainReferenceArea() {
@@ -680,7 +684,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         //else newpos = new MinOptMax();
         curSpan = new Span(numCols);
         // get Width or Height as IPD for span
-        
+
         RegionViewport rv = curPage.getPage().getRegionViewport(Region.BODY_CODE);
         int ipdWidth = (int) rv.getRegion().getIPD() -
             rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
@@ -745,7 +749,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         // Set the page dimension as the toplevel containing block for margin.
         ((FObj) fobj.getParent()).setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
         ((FObj) fobj.getParent()).setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
-        
+
         // Get absolute margin properties (top, left, bottom, right)
         CommonMarginBlock mProps = spm.getPropertyManager().getMarginProps();
 
@@ -895,7 +899,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         staticContentLMs.put(sc.getFlowName(), lm);
         return lm;
     }
-    
+
     /**
      * @return the apps.Document object controlling this generation
      */
