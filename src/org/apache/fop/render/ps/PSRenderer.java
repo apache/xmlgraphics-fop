@@ -334,7 +334,6 @@ public class PSRenderer extends AbstractRenderer {
     public void renderDisplaySpace(DisplaySpace space) {
         // write("% --- DisplaySpace size="+space.getSize());
         this.currentYPosition -= space.getSize();
-        movetoCurrPosition();
     }
 
     /**
@@ -352,7 +351,6 @@ public class PSRenderer extends AbstractRenderer {
         area.getObject().render(this);
         this.currentXPosition += area.getEffectiveWidth();
         this.currentYPosition -= plOffset;
-        movetoCurrPosition();
     }
 
     /**
@@ -649,7 +647,6 @@ public class PSRenderer extends AbstractRenderer {
         } else {
             drawImageScaled(x, y, w, h, img, area.getFontState());
         }
-        movetoCurrPosition();
     }
 
 
@@ -800,7 +797,6 @@ public class PSRenderer extends AbstractRenderer {
 
         int bl = this.currentYPosition;
         // method is identical to super method except next line
-        movetoCurrPosition();
 
         String fontWeight = area.getFontState().getFontWeight();
         //comment("% --- LineArea begin font-weight="+fontWeight);
