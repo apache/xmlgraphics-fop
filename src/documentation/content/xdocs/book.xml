@@ -23,7 +23,7 @@
         <menu label="Using FOP">
           <menu-item label="Release Notes" href="relnotes.html"/>
           <menu-item label="Download" href="download.html"/>
-          <menu-item label="Compile" href="compiling.html"/>
+          <menu-item label="Build" href="compiling.html"/>
           <menu-item label="Configure" href="configuration.html"/>
           <menu-item label="Run" href="running.html"/>
           <menu-item label="Embed" href="embedding.html"/>
