@@ -10,8 +10,35 @@ package org.apache.fop.util;
 import org.apache.fop.layout.FontState;
 
 /**
+ * This class provides utilities to distinguish various kinds of Unicode
+ * whitespace and to get character widths in a given FontState.
  */
 public class CharUtilities {
+
+    /** Character code used to signal a character boundary in
+     * inline content, such as an inline with borders and padding
+     * or a nested block object.
+     */
+    public static final char CODE_EOT=0;
+
+    public static final int UCWHITESPACE=0; // unicode white space
+    public static final int LINEFEED=1;
+    public static final int EOT=2; // Boundary beteween text runs
+    public static final int NONWHITESPACE=3;
+    public static final int XMLWHITESPACE=4;
+
+
+    /**
+     * Return the appropriate CharClass constant for the type
+     * of the passed character.
+     */
+    public static int classOf(char c) {
+	if (c == CODE_EOT) return EOT;
+	if (c == '\n') return LINEFEED;
+	if ( c==' '|| c == '\r' || c=='\t' ) return XMLWHITESPACE;
+	if (isAnySpace(c)) return UCWHITESPACE;
+	return NONWHITESPACE;
+    }
 
     /**
      * Helper method for getting the width of a unicode char
@@ -76,21 +103,20 @@ public class CharUtilities {
      * it's not non-breaking
      */
     public static boolean isSpace(char c) {
-        if (c == ' ' || c == '\u2000' ||    // en quad
-        c == '\u2001' ||                    // em quad
-        c == '\u2002' ||                    // en space
-        c == '\u2003' ||                    // em space
-        c == '\u2004' ||                    // three-per-em space
-        c == '\u2005' ||                    // four--per-em space
-        c == '\u2006' ||                    // six-per-em space
-        c == '\u2007' ||                    // figure space
-        c == '\u2008' ||                    // punctuation space
-        c == '\u2009' ||                    // thin space
-        c == '\u200A' ||                    // hair space
-        c == '\u200B')                      // zero width space
-            return true;
-        else
-            return false;
+        return (c == ' ' ||
+		(c >= '\u2000' && c <= '\u200B'));
+//         c == '\u2000'                   // en quad
+//         c == '\u2001'                   // em quad
+//         c == '\u2002'                   // en space
+//         c == '\u2003'                   // em space
+//         c == '\u2004'                   // three-per-em space
+//         c == '\u2005'                   // four--per-em space
+//         c == '\u2006'                   // six-per-em space
+//         c == '\u2007'                   // figure space
+//         c == '\u2008'                   // punctuation space
+//         c == '\u2009'                   // thin space
+//         c == '\u200A'                   // hair space
+//         c == '\u200B'                   // zero width space
     }
 
     /**
