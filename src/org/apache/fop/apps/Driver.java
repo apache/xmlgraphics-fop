@@ -21,11 +21,9 @@ import org.apache.fop.render.pdf.PDFRenderer;
 
 import org.apache.fop.system.BufferManager;
 
-import org.apache.log.*;
-import org.apache.log.format.*;
-import org.apache.log.output.io.*;
-import org.apache.log.output.*;
-import org.apache.avalon.framework.logger.Loggable;
+// Avalon
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 
 // DOM
 import org.w3c.dom.Document;
@@ -89,7 +87,7 @@ import java.util.*;
  * driver.render(parser, fileInputSource(args[0]));
  * </PRE>
  */
-public class Driver implements Loggable {
+public class Driver {
 
     /**
      * Render to PDF. OutputStream must be set
@@ -213,18 +211,10 @@ public class Driver implements Loggable {
 
     private Logger getLogger() {
         if(log == null) {
-            Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
-            PatternFormatter formatter = new PatternFormatter(
-               "[%{priority}]: %{message}\n%{throwable}" );
+	    log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+	    log.error("Logger not set");
+	}
 
-            LogTarget target = null;
-            target = new StreamTarget(System.out, formatter);
-
-            hierarchy.setDefaultLogTarget(target);
-            log = hierarchy.getLoggerFor("fop");
-            log.setPriority(Priority.INFO);
-            log.error("Logger not set");
-        }
         return log;
     }
 

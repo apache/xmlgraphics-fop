@@ -1,4 +1,11 @@
 ==============================================================================
+Done since 0.20.3 release
+
+- Moved from org.apache.log.Logger to org.apache.avalon.framework.logger.Logger
+  (this removes dependency from logkit)
+  Submitted by: Michael Gratton <mjg@recalldesign.com>
+
+==============================================================================
 Done since 0.20.2 release
 *** General
 - Added correct metrics for euro sign in standard fonts

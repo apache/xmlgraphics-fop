@@ -7,10 +7,11 @@
 
 package org.apache.fop.messaging;
 
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
+
 import java.io.*;
 import java.util.*;
-
-import org.apache.log.*;
 
 /**
  * The class MessageHandler contains the static methods log and error which
@@ -90,7 +91,7 @@ public class MessageHandler {
     public static void log(String message) {
         if (!quiet) {
             if(logger == null) {
-                logger = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
+                logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
             }
             setMessage(message);
             switch (outputMethod) {
@@ -138,7 +139,7 @@ public class MessageHandler {
 
     public static void error(String errorMessage) {
         if(logger == null) {
-            logger = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
+            logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
         }
         setMessage(errorMessage);
         switch (outputMethod) {

@@ -139,9 +139,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <include name="lib/xalan.LICENSE.txt"/>
        <include name="lib/batik.jar"/>
        <include name="lib/batik.LICENSE.txt"/>
-       <include name="lib/logkit-1.0.jar"/>
-       <include name="lib/logkit.LICENSE.txt"/>
-       <include name="lib/avalon-framework-4.0.jar"/>
+       <include name="lib/avalon-framework-cvs-20020315.jar"/>
        <include name="lib/avalon.LICENSE.txt"/>
        <include name="lib/ant.jar"/>
        <include name="lib/ant.license.txt"/>
@@ -182,7 +180,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.20.3"/>
+    <property name="version" value="0.20.4cvs"/>
     <filter  token="version" value="${version}"/>
     <property name="year" value="1999-2002"/>
 
@@ -288,7 +286,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest"/>
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
-    <property name="runtime.classpath" value="lib/xerces-1.2.3.jar lib/xalan-2.0.0.jar lib/xalanj1compat.jar lib/batik.jar lib/jimi-1.0.jar lib/logkit-1.0.jar lib/avalon-framework-4.0.jar"/>
+    <property name="runtime.classpath" value="lib/xerces-1.2.3.jar lib/xalan-2.0.0.jar lib/xalanj1compat.jar lib/batik.jar lib/jimi-1.0.jar lib/avalon-framework-cvs-20020315.jar"/>
    
     <filter filtersfile="${build.src}/codegen/filter"/>
 

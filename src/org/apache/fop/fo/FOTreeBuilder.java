@@ -16,7 +16,8 @@ import org.apache.fop.system.BufferManager;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.extensions.ExtensionObj;
 
-import org.apache.log.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // SAX
 import org.xml.sax.helpers.DefaultHandler;

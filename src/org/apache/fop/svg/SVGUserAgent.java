@@ -7,8 +7,6 @@
 
 package org.apache.fop.svg;
 
-import org.apache.log.Logger;
-
 import org.apache.batik.bridge.*;
 import org.apache.batik.swing.svg.*;
 import org.apache.batik.swing.gvt.*;
@@ -16,6 +14,8 @@ import org.apache.batik.gvt.*;
 import org.apache.batik.gvt.renderer.*;
 import org.apache.batik.gvt.filter.*;
 import org.apache.batik.gvt.event.*;
+
+import org.apache.avalon.framework.logger.Logger;
 
 import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
