@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,6 @@
 
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -35,7 +32,6 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.layoutmgr.table.Row;
 
 /**
  * Class modelling the fo:table-row object.
@@ -123,14 +119,14 @@ public class TableRow extends FObj {
     }
 
     /**
-     * Return the "id" property.
+     * @return the "id" property.
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Return the "keep-with-previous" property.
+     * @return the "keep-with-previous" property.
      */
     public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
@@ -151,29 +147,32 @@ public class TableRow extends FObj {
     }
 
     /**
-     * Return the "height" property.
+     * @return the "block-progression-dimension" property.
+     */
+    public LengthRangeProperty getBlockProgressionDimension() {
+        return blockProgressionDimension;
+    }
+
+    /**
+     * @return the "height" property.
      */
     public Length getHeight() {
         return height;
     }
 
     /**
-     * Return the Common Border, Padding, and Background Properties.
+     * @return the Common Border, Padding, and Background Properties.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
     
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
+    /** @see org.apache.fop.fo.FObj#getName() */
     public String getName() {
         return "fo:table-row";
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_TABLE_ROW;
     }

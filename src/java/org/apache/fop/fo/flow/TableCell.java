@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,6 @@
 
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -36,7 +33,6 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.layoutmgr.table.Cell;
 
 /**
  * Class modelling the fo:table-cell object.
@@ -282,38 +278,50 @@ public class TableCell extends FObj {
     }
 
     /**
-     * Return the Common Border, Padding, and Background Properties.
+     * @return the Common Border, Padding, and Background Properties.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
     /**
-     * Return the "column-number" property.
+     * @return the "column-number" property.
      */
     public int getColumnNumber() {
         return Math.max(columnNumber.getValue(), 0);
     }
 
     /**
-     * Return the "id" property.
+     * @return the "id" property.
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Return the "number-columns-spanned" property.
+     * @return the "number-columns-spanned" property.
      */
     public int getNumberColumnsSpanned() {
         return Math.max(numberColumnsSpanned.getValue(), 1);
     }
 
     /**
-     * Return the "number-rows-spanned" property.
+     * @return the "number-rows-spanned" property.
      */
     public int getNumberRowsSpanned() {
         return Math.max(numberRowsSpanned.getValue(), 1);
+    }
+    
+    /**
+     * @return the "block-progression-dimension" property.
+     */
+    public LengthRangeProperty getBlockProgressionDimension() {
+        return blockProgressionDimension;
+    }
+
+    /** @return the display-align property. */
+    public int getDisplayAlign() {
+        return displayAlign;
     }
     
     /**
