@@ -1,3 +1,188 @@
+==============================================================================
+Done since 0.19 release
+
+==============================================================================
+Done since 0.18 release
+
+*** Building
+- improvements and fixes to build.xml (ASandstrom,KCampbell)
+
+*** General
+- Changes to support Batik (KLiddle)
+{ FOP now uses Batik to render svg
+This is handled for awt - using batik to render to a graphic
+and pdf.
+Pdf still requires better image support.
+The elements and properties are generated from the svgelements.xml
+document.
+The version of batik is 17/05/2001 cvs. }
+- memory buffering (Seshadri G.K.)
+
+*** Examples
+- Added Norwegian hyphenation based on Rune Kleveland's original
+nohyphb.tex TeX patterns from the ispell-norsk-2.0 package (TEngvig)
+adds Danish text (Lars Michael Johnsen)
+- fixed up fills and borders for better appearance (KLiddle)
+- Fixed basic-link horizontal position with justification turned on. (KCampbell)
+- add border-collapse property (KLease)
+- Added CID Font example (KCampbell)
+
+*** Hyphenation
+- corrected danish hyphenation (Carlos Villegas)
+- adds Danish hyphenation file (Carlos Villegas)
+- Added Norwegian hyphenation based on Rune Kleveland's original
+nohyphb.tex TeX patterns from the ispell-norsk-2.0 package (TEngvig)
+- Hyphenation patterns for russian (TEngvig)
+
+*** codegen
+- The elements and properties are generated from the svgelements.xml
+document. (KLiddle)
+
+*** Package org.apache.fop.apps:
+- support for XMLRenderer (ASandstrom)
+- Removed uses of System.out where throwing a FOPException should suffice.
+Refactored code to throw FOPExceptions so embedding FOP wont' cause app
+server JVMs to exit. (KCampbell)
+- adding -text and -pcl options to help text (FJannidis)
+- sets baseDir to a URL string rather than a file path string (KLiddle)
+
+*** Package org.apache.fop.datatypes:
+- New datatype to represent the property border-separation (KLease)
+
+*** Package org.apache.fop.fo:
+- fixed a couple of problems when placing foreign objects near
+page break (KLiddle)
+- Support for LengthPair property type (KLease)
+- restored support for external svg images (KLiddle)
+
+*** Package org.apache.fop.fo.flow:
+- inlining of images (ASandstrom, Seshadri G.K.)
+- footnote height problem fix (KLiddle)
+- fixed a couple of problems when placing foreign objects near
+page break (KLiddle)
+- added support for 'number-columns-repeated' (G. Pretterhofer)
+- fixes a null pointer ex if area is removed before creating area (KLiddle)
+- footnote height/id reference problem fixes (KLiddle)
+- Fix body positioning; remove widow and orphan handling for rows (KLease)
+- Make borders closer to CR spec (KLease)
+- Improves cell borders when border-collapse=collapse (the default). Note that
+this doesn't implement the full CR, but it's a big improvement and will handle
+many common cases. (KLease)
+- Stop tables from breaking too early, but make sure that all cells are
+composed with the same maxHeight and that absolute Height is set correctly.
+In TableRow.java, remove old commented out stuff and put back space-before
+(for now) and fix a potential bug involving space-before. (KLease)
+- Overflows may cause a row to be re-laid out, need to skip cell content
+that has already been processed. (AWelch)
+- Put back background on table-column and table-cell (KLease)
+- increasing padding problem fix (KLiddle)
+- Each column in the row should start with the same height available. (AWelch)
+- For borders to be drawn properly on overflowed rows must process all
+children. (AWelch)
+- Use Constants values. (KLease)
+
+*** Package org.apache.fop.fo.pagination:
+- running page num ctr now instance variable for servlet use (KLiddle)
+- Made logging go to the same stream (out) for pages and the newline
+after a page sequence. The newline was previously going to the err stream.
+(KCampbell)
+
+*** Package org.apache.fop.fonts:
+- Patch from westbay@seaple.icc.ne.jp to use unicode escape char instead of
+pound sign because it was interpreted as an invalid double byte char in
+Japanese locale (ja_JP.EUC) and wouldn't compile. (TEngvig)
+- Fixes a signedness bug in handling cmaps that caused some fonts to be
+invalid. (TEngvig)
+- Some fonts contains malformed composite glyphs which used to make fop crash.
+This adds an errormessage and tries to embed the font without the composite
+glyph. (TEngvig)
+- Made some tables in the TTF embedding optional to be compatible with more
+fonts. This adheres to the TrueType spec, and makes the MS OpenType
+extras optional. (KCampbell)
+- Bugfix for font headers with long datatype (KCampbell)
+
+*** Package org.apache.fop.fonts.apps:
+- Fixes NumberFormatExceptions when reading .pfm files with kerning values.
+(TEngvig)
+
+*** Package org.apache.fop.image[.analyser]:
+- now passes in url string to the analyser; some readers may need the url
+eg. svg document creator (KLiddle)
+- inlining of images (ASandstrom, Seshadri G.K.)
+- restored support for external svg images (KLiddle)
+- gives SVGReader the correct size (KLiddle)
+
+*** Package org.apache.fop.layout:
+- Fix table breaking bug (KLease)
+- (AreaContainer) Remove offset of X and Y position by border and
+padding (KLease)
+- (FontInfo, FontState) Refactored FontState so it doesn't do excessive font
+lookups per character. (KCampbell)
+- (LineArea) Moved mapping from character to cid from LineArea to PDFRenderer.
+This fixes bug no 1681 and other issues with wrong characters being displayed
+when using CID fonts. (TEngvig)
+- (LineArea) vertical align amount modified (KLiddle)
+- (LineArea) Fixes hyphenation for CID fonts (TEngvig)
+- (basic-link) Fixed basic-link horizontal position with justification
+turned on. (KCampbell)
+
+*** Package org.apache.fop.layout.hyphenation:
+- Fixed an array out of bounds that caused some combinations of word/pattern
+to crash (TEngvig)
+
+*** Package org.apache.fop.layout.inline:
+- Fixed basic-link horizontal position with justification turned on. (Campbell)
+
+*** Package org.apache.fop.pdf:
+- Changed encoding of CID fonts from customized CMap to predefined Identity-H
+encoding. (TEngvig)
+- Fixed some bugs in PDF rendering when font embedding fails.
+FontDescriptor is now written out anyway to produce a valid PDF
+and acrobat reports that the font can't be displayed. (KCampbell)
+- Added default producer to fix a bug where the PDF producer is
+set to null in the default commandline usage. (KCampbell)
+- (PrintRenderer) Correct border positions on absolutely positioned
+AreaContainers (fo:block-container) (KLease)
+
+*** Package org.apache.fop.render[.*]:
+- ps renderer (JMaerki)
+- improved support for XMLRenderer (ASandstrom)
+- fixes for -print option (DBradby)
+- restored support for external svg images (KLiddle)
+- Moved mapping from character to cid from LineArea to PDFRenderer. This
+fixes bug no 1681 and other issues with wrong characters being displayed when
+using CID fonts. (TEngvig)
+- Fix for color carrying over page breaks (ASandstrom)
+- Cleaned up renderWordArea. removed unused code. optimized object creation
+a little. (KCampbell)
+- Fix disappearing text when using text-anchor != start (KLease)
+- Fix for using embedded TrueType fonts in SVG. This fix adds the use of
+FontState.mapChar to ensure that glyphs used in the SVG document are included
+in the embedded font. (TEngvig)
+- Fixed some bugs in PDF rendering when font embedding fails.
+FontDescriptor is now written out anyway to produce a valid PDF
+and acrobat reports that the font can't be displayed. (KCampbell)
+
+*** Package src.org.apache.fop.svg:
+- svg handled with batik, supported in pdf, awt and ps
+- svg->pdf transcoder, PDFGraphics2D for drawing into pdf
+- (PDFDocumentGraphics2D) now supports size setting properly (KLiddle)
+- (PDFGraphics2D) fixes a line colouring problem (Liddle)
+- (PDFGraphics2D) better svg rendering; stroke style for lines (KLiddle)
+- (PDFGraphics2D) now supports size setting properly (KLiddle)
+- (SVG) Add viewBox support to svg element. (KLease)
+
+*** Package src.org.apache.fop.tools:
+- (TestConverter.java) fixes a problem relating to rendering options for xml
+renderer (KLiddle)
+
+test/Testing: 
+- testing system, for use with the w3c defined testsuite.dtd including our
+tests (KLiddle)
+- added some simple test files with blocks (KLiddle)
+- also a script to create pdf from test suites (KLiddle)
+
+==============================================================================
 Done since 0.17 release
 
 - added: improved Fop task for Ant, added basedir attribute [Will Holcomb]
