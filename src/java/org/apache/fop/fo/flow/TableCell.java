@@ -324,6 +324,16 @@ public class TableCell extends FObj {
         return displayAlign;
     }
     
+    /** @return true if the cell starts a row. */
+    public boolean startsRow() {
+        return (startsRow == EN_TRUE);
+    }
+    
+    /** @return true if the cell ends a row. */
+    public boolean endsRow() {
+        return (endsRow == EN_TRUE);
+    }
+    
     /**
      * @see org.apache.fop.fo.FObj#getName()
      */

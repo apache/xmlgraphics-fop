@@ -200,6 +200,11 @@ public class Table extends FObj {
         return breakBefore;
     }
     
+    /** @return the "border-collapse" property. */
+    public int getBorderCollapse() {
+        return borderCollapse;
+    }
+
     /** @return the "border-separation" property. */
     public LengthPairProperty getBorderSeparation() {
         return borderSeparation;
