@@ -267,6 +267,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern"/> 
     <taskdef name="xslt" classname="org.apache.fop.tools.anttasks.Xslt"/>
     <taskdef name="manifest" classname="org.apache.fop.tools.anttasks.Manifest"/>
+    <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest"/>
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
     <property name="runtime.classpath" value="lib/xerces-1.2.3.jar lib/xalan-2.0.0.jar lib/xalanj1compat.jar lib/w3c.jar lib/jimi-1.0.jar"/>
@@ -555,6 +556,12 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <jar jarfile="${build.dir}/${name}.jar" manifest="${build.dir}/Manifest.txt"
          basedir="${build.dest}"
          includes="org/**,conf/**,hyph/**"/>
+  </target>
+
+  <target name="test" depends="package">
+    <echo message="Testing build in jar file ${build.dir}/${name}.jar against reference"/>
+    <runTest testSuite="basictests.xml" basedir="test/" reference="reference/fop.jar"
+         refVersion="FOP 0.19.0-CVS"/>
   </target>
 
   <target name="all" depends="package"/> <!-- "all" target for us Makefile converts ;-) -->
