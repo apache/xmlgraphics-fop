@@ -2,6 +2,7 @@ package org.apache.fop.fo;
 
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.datastructs.SyncedCircularBuffer;
+import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.Auto;
 import org.apache.fop.datatypes.None;
@@ -51,14 +52,6 @@ public class FOTree extends Tree implements Runnable {
     private static final String revision = "$Revision$";
 
     /**
-     * A <tt>Numeric[]</tt> array of the values to which the
-     * <em>BorderCommonWidth</em> MappedNumeric enumeration tokens map.
-     * These values are used in common by the various border-?-width
-     * properties.
-     */
-    private Numeric[] borderCommonWidthMap = null;
-
-    /**
      * The buffer from which the <tt>XMLEvent</tt>s from the parser will
      * be read.  <tt>protected</tt> so that FONode can access it.
      */
@@ -84,10 +77,18 @@ public class FOTree extends Tree implements Runnable {
     protected LinkedList[] propertyStacks;
 
     /**
+     * A <tt>HashMap</tt> of arrays of <tt>Numeric[]</tt> keyed on the
+     * index of properties which support MAPPED_NUMERIC data types.
+     */
+    private HashMap mappedNumericArrays = new HashMap();
+
+    /**
      * @param xmlevents the buffer from which <tt>XMLEvent</tt>s from the
      * parser are read.
      */
-    public FOTree(SyncedCircularBuffer xmlevents) {
+    public FOTree(SyncedCircularBuffer xmlevents)
+        throws PropertyException
+    {
         super();
         errorDump = Configuration.getBooleanValue("debugMode").booleanValue();
         this.xmlevents = xmlevents;
@@ -101,38 +102,11 @@ public class FOTree extends Tree implements Runnable {
         // be resolved relative to the current font size.  This may happen
         // during setup of initial values.
         try {
-            try {
-                // Set the initial value
-                propertyStacks[PropNames.FONT_SIZE].addLast
-                        (new PropertyTriplet
-                         (PropNames.FONT_SIZE,
-                          (PropertyValue)
-                          (((Method)
-                            (PropertyConsts
-                             .initialValueMethods.get(PropNames.FONT_SIZE)
-                             )
-                            )
-                           .invoke(null, new Object[]{this})
-                           )
-                          )
-                         );
-            }
-            catch (IllegalArgumentException e) {
-                throw new RuntimeException(
-                    "Illegal argument on \"" + e.getMessage()
-                    + "\" in class FontSize");
-            }
-            catch (IllegalAccessException e) {
-                throw new RuntimeException(
-                    "Illegal access on \"" + e.getMessage()
-                    + "\" in class FontSize");
-            }
-            catch (InvocationTargetException e) {
-                Throwable targetex = e.getTargetException();
-                throw new RuntimeException(
-                    "Invocation target exception on \""
-                    + targetex.getMessage() + "\" in class FontSize");
-            }
+            // Set the initial value
+            propertyStacks[PropNames.FONT_SIZE].addLast
+                    (new PropertyTriplet
+                     (PropNames.FONT_SIZE,
+                      PropertyConsts.getInitialValue(PropNames.FONT_SIZE)));
             PropertyValue prop =
                     getInitialSpecifiedValue(PropNames.FONT_SIZE);
             if ( ! (prop instanceof Numeric)
@@ -151,98 +125,38 @@ public class FOTree extends Tree implements Runnable {
             String cname = "";
             if (i == PropNames.FONT_SIZE) continue;
             try {
-                Class vclass = (Class)(PropertyConsts.propertyClasses.get(i));
-                cname = vclass.getName();
                 // Set up the initial values for each property
-                // Note that initial (specified) values are stored as
-                // unprocessed strings which can then be subject to the same
-                // processing as actual specified strings.
-                switch (PropertyConsts.getInitialValueType(i)) {
-                case Properties.NOTYPE_IT:
-                    propertyStacks[i].addLast(new PropertyTriplet(i, null));
-                    break;
-                case Properties.ENUM_IT:
-                case Properties.BOOL_IT:
-                case Properties.INTEGER_IT:
-                case Properties.NUMBER_IT:
-                case Properties.LENGTH_IT:
-                case Properties.ANGLE_IT:
-                case Properties.PERCENTAGE_IT:
-                case Properties.CHARACTER_IT:
-                case Properties.LITERAL_IT:
-                case Properties.NAME_IT:
-                case Properties.URI_SPECIFICATION_IT:
-                case Properties.COLOR_IT:
-                case Properties.TEXT_DECORATION_IT:
-                    // Set the initial value
-                    // This returns an initial value for the propertyStacks
-                    try {
-                        propertyStacks[i].addLast
-                                (new PropertyTriplet
-                                 (i,
-                                  (PropertyValue)
-                                  (((Method)
-                                    (PropertyConsts
-                                     .initialValueMethods.get(i))).invoke
-                                   (null, new Object[]{this})
-                                   )
-                                  )
-                                 );
-                    }
-                    catch (IllegalArgumentException e) {
-                        throw new PropertyException(
-                            "Illegal argument on \"" + e.getMessage()
-                            + "\" in class " + cname);
-                    }
-                    catch (IllegalAccessException e) {
-                        throw new PropertyException(
-                            "Illegal access on \"" + e.getMessage()
-                            + "\" in class " + cname);
-                    }
-                    catch (InvocationTargetException e) {
-                        Throwable targetex = e.getTargetException();
-                        throw new PropertyException(
-                            "Invocation target exception on \""
-                            + targetex.getMessage() + "\" in class " + cname);
-                    }
-
-                    break;
-                case Properties.AUTO_IT:
-                    propertyStacks[i].addLast
-                        (new PropertyTriplet(i, new Auto(i)));
-                    break;
-                case Properties.NONE_IT:
-                    propertyStacks[i].addLast
-                        (new PropertyTriplet(i, new None(i)));
-                    break;
-                case Properties.AURAL_IT:
-                    propertyStacks[i].addLast(new PropertyTriplet(i, null));
-                    break;
-                default:
-                    throw new RuntimeException
-                            ("Unknown initial value type "
-                             + PropertyConsts.getInitialValueType(i)
-                             + " for class " + cname);
-                }
+                propertyStacks[i].addLast
+                        (new PropertyTriplet
+                         (i, PropertyConsts.getInitialValue(i)));
             }
-            /*
-            catch (NoSuchFieldException e) {
-                throw new RuntimeException(
-                            "Missing field \"" + e.getMessage() + "\""
-                            + " in class " + cname);
-            }
-            catch (IllegalAccessException e) {
-                throw new RuntimeException(
-                    "Illegal access on \"" + e.getMessage() + "\" in class " +
-                    cname);
-            }
-            */
             catch (PropertyException e) {
                 throw new RuntimeException
                     ("PropertyException: " + e.getMessage());
             }
         }
 
+        // Initialise the Numeric arrays for properties with
+        // MAPPED_NUMERIC datatypes
+        for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++ ) {
+            if ((PropertyConsts.dataTypes.get(i)
+                 & Properties.MAPPED_NUMERIC) != 0) {
+                try {
+                    Numeric[] numarray =
+                            (Numeric[])
+                                ((Method) (
+                                    PropertyConsts.mappedNumMethods
+                                      .get(Ints.consts.get(i))
+                                    ))
+                                .invoke(null, null);
+                    mappedNumericArrays.put(Ints.consts.get(i),numarray);
+                } catch (IllegalAccessException e) {
+                    throw new PropertyException(e.getMessage());
+                } catch (InvocationTargetException e) {
+                    throw new PropertyException(e.getMessage());
+                }
+            }
+        }
     }
 
     /**
@@ -265,8 +179,7 @@ public class FOTree extends Tree implements Runnable {
 
     /**
      * Set the initial value of a particular property
-     * @param property <tt>int</tt> index of the property
-     * @initialValue <tt>PropertyValue</tt>
+     * @param value <tt>PropertyValue</tt> to set
      * @exception <tt>PropertyException</tt>
      */
     public void setInitialValue(PropertyValue value)
@@ -275,6 +188,21 @@ public class FOTree extends Tree implements Runnable {
         int property = value.getProperty();
         propertyStacks[property].addLast
                 (new PropertyTriplet(property, value));
+    }
+
+    /**
+     * @param property <tt>int</t> property index
+     * @param enumIndex <tt>int</t> enumerated value index into array
+     *  of mapped <tt>Numeric</tt> values
+     * @return <tt>Numeric</tt> corresponding to the <tt>MAPPED_NUMERIC</tt>
+     *  enumeration token for this property
+     */
+    public Numeric getMappedNumArrayValue(int property, int enumIndex)
+    {
+        return
+            ((Numeric[])
+                (mappedNumericArrays.get(Ints.consts.get(property)))
+             )[enumIndex];
     }
 
     /**
@@ -324,7 +252,7 @@ public class FOTree extends Tree implements Runnable {
      * @return a <tt>PropertyTriplet</tt> containing the property
      * value elements at the bottom of the stack for the indexed property.
      */
-    public PropertyTriplet getInitialValue(int index)
+    public PropertyTriplet getInitialValueTriplet(int index)
             throws PropertyException
     {
         return (PropertyTriplet)(propertyStacks[index].getFirst());
