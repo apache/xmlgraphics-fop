@@ -1,12 +1,15 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" standalone="yes" ?>
 <property-list family="FO">
  <generic-property-list>
 	<property type="generic">
 		<name>generic-color</name>
 		<class-name>GenericColor</class-name>
 		<datatype>ColorType</datatype>
+		<extfile href="colorkw.xml"/>
+<!--
 		<datatype-conversion from-type="String" varname="strval">
 			 new ColorType(strval)</datatype-conversion>
+-->
 	</property>
 	<property type="generic">
 		<name>generic-boolean</name>
@@ -83,6 +86,7 @@
 		<datatype>Length</datatype>
 		<inherited>false</inherited>
 		<default>0pt</default>
+                <shorthand>padding</shorthand>
 	</property>
 
 <!-- Before, After, Start, End border width props -->
@@ -93,18 +97,18 @@
 	<property type="generic">
 		<name>border-cond-width-template</name>
 		<class-name>GenericCondBorderWidth</class-name>
-		<keyword-equiv match="thin" eval="true">0.5pt</keyword-equiv>
-		<keyword-equiv match="medium" eval="true">1pt</keyword-equiv>
-		<keyword-equiv match="thick" eval="true">2pt</keyword-equiv>
+		<keyword-equiv match="thin">0.5pt</keyword-equiv>
+		<keyword-equiv match="medium">1pt</keyword-equiv>
+		<keyword-equiv match="thick">2pt</keyword-equiv>
 		<inherited>false</inherited>
 		<datatype>CondLength</datatype>
 		<compound>
 			<subproperty set-by-shorthand="true">
 				<name>length</name>
 				<datatype>Length</datatype>
-				<keyword-equiv match="thin" eval="true">0.5pt</keyword-equiv>
-				<keyword-equiv match="medium" eval="true">1pt</keyword-equiv>
-				<keyword-equiv match="thick" eval="true">2pt</keyword-equiv>
+				<keyword-equiv match="thin">0.5pt</keyword-equiv>
+				<keyword-equiv match="medium">1pt</keyword-equiv>
+				<keyword-equiv match="thick">2pt</keyword-equiv>
 				<default>medium</default>
 			</subproperty>
 			<subproperty>
@@ -122,11 +126,12 @@
 		<name>border-width-template</name>
 		<class-name>GenericBorderWidth</class-name>
 		<datatype>Length</datatype>
-		<keyword-equiv match="thin" eval="true">0.5pt</keyword-equiv>
-		<keyword-equiv match="medium" eval="true">1pt</keyword-equiv>
-		<keyword-equiv match="thick" eval="true">2pt</keyword-equiv>
+		<keyword-equiv match="thin">0.5pt</keyword-equiv>
+		<keyword-equiv match="medium">1pt</keyword-equiv>
+		<keyword-equiv match="thick">2pt</keyword-equiv>
 		<inherited>false</inherited>
 		<default>0pt</default>
+		<shorthand>border-width</shorthand>
 	</property>
 	<property type="generic">
 		<name>border-style-template</name>
@@ -146,6 +151,7 @@
 				<value const="OUTSET">outset</value>
 			</enumeration>
 		<default>none</default>
+		<shorthand>border-style</shorthand>
 	</property>
 	<property type="generic">
 		<name>break-template</name>
@@ -450,7 +456,7 @@
 		<inherited type="specified">true</inherited>
 		<datatype>Length</datatype>
 		<default contextdep="true">normal</default>
-		<keyword-equiv match="normal" eval="true">1.2em</keyword-equiv>
+		<keyword-equiv match="normal">1.2em</keyword-equiv>
 		<datatype-conversion from-type="Number" varname="numval">
 		new PercentLength(numval.doubleValue(),
 				 getPercentBase(fo,propertyList))</datatype-conversion>
@@ -498,13 +504,16 @@
 		<inherited>false</inherited>
 		<use-generic>GenericColor</use-generic>
 		<default>transparent</default>
+		<!-- Handle transparent -->
+		<datatype-conversion from-type="NCname" vartype="String" varname="nameval">
+			 new ColorType(nameval)</datatype-conversion>
 	</property>
 <!-- shorthand class for all padding.... -->
 	<property>
 		<name>padding</name>
 		<inherited>false</inherited>
-		<datatype>Length</datatype>
-		<default>0pt</default>
+		<datatype>List</datatype>
+		<datatype-parser>BoxPropShorthandParser</datatype-parser>
 	</property>
 	<property>
 		<name>padding-before</name>
@@ -682,6 +691,9 @@
 		<corresponding>
 			<propval>border-<wmabs2rel dir="TOP"/>-color</propval>
 		</corresponding>
+                <shorthand>border-top</shorthand>
+                <shorthand>border-color</shorthand>
+                <shorthand>border</shorthand>
 	</property>
 	<property>
 		<name>border-top-style</name>
@@ -689,6 +701,9 @@
 		<corresponding>
 			<propval>border-<wmabs2rel dir="TOP"/>-style</propval>
 		</corresponding>
+                <shorthand>border-top</shorthand>
+                <shorthand>border-style</shorthand>
+                <shorthand>border</shorthand>
 	</property>
 	<property>
 		<name>border-top-width</name>
@@ -696,6 +711,9 @@
 		<corresponding>
 			<propval>border-<wmabs2rel dir="TOP"/>-width</propval>
 		</corresponding>
+                <shorthand>border-top</shorthand>
+                <shorthand>border-width</shorthand>
+                <shorthand>border</shorthand>
 	</property>
 	<property>
 		<name>border-bottom-color</name>
@@ -705,6 +723,9 @@
 			<propval>border-<wmabs2rel dir="BOTTOM"/>-color</propval>
 		</corresponding>
 		<default>black</default>
+                <shorthand>border-bottom</shorthand>
+                <shorthand>border-color</shorthand>
+                <shorthand>border</shorthand>
 	</property>
 	<property>
 		<name>border-bottom-style</name>
@@ -712,6 +733,9 @@
 		<corresponding>
 			<propval>border-<wmabs2rel dir="BOTTOM"/>-style</propval>
 		</corresponding>
+                <shorthand>border-bottom</shorthand>
+                <shorthand>border-style</shorthand>
+                <shorthand>border</shorthand>
 	</property>
 	<property>
 		<name>border-bottom-width</name>
@@ -719,6 +743,9 @@
 		<corresponding>
 			<propval>border-<wmabs2rel dir="BOTTOM"/>-width</propval>
 		</corresponding>
+                <shorthand>border-bottom</shorthand>
+                <shorthand>border-width</shorthand>
+                <shorthand>border</shorthand>
 	</property>
 	<property>
 		<name>border-left-color</name>
@@ -728,6 +755,9 @@
 		<corresponding>
 			<propval>border-<wmabs2rel dir="LEFT"/>-color</propval>
 		</corresponding>
+                <shorthand>border-left</shorthand>
+                <shorthand>border-color</shorthand>
+                <shorthand>border</shorthand>
 	</property>
 	<property>
 		<name>border-left-style</name>
@@ -735,6 +765,9 @@
 		<corresponding>
 			<propval>border-<wmabs2rel dir="LEFT"/>-style</propval>
 		</corresponding>
+                <shorthand>border-left</shorthand>
+                <shorthand>border-style</shorthand>
+                <shorthand>border</shorthand>
 	</property>
 	<property>
 		<name>border-left-width</name>
@@ -742,6 +775,9 @@
 		<corresponding>
 			<propval>border-<wmabs2rel dir="LEFT"/>-width</propval>
 		</corresponding>
+                <shorthand>border-left</shorthand>
+                <shorthand>border-width</shorthand>
+                <shorthand>border</shorthand>
 	</property>
 	<property>
 		<name>border-right-color</name>
@@ -751,6 +787,9 @@
 		<corresponding>
 			<propval>border-<wmabs2rel dir="RIGHT"/>-color</propval>
 		</corresponding>
+                <shorthand>border-right</shorthand>
+                <shorthand>border-color</shorthand>
+                <shorthand>border</shorthand>
 	</property>
 	<property>
 		<name>border-right-style</name>
@@ -758,6 +797,9 @@
 		<corresponding>
 			<propval>border-<wmabs2rel dir="RIGHT"/>-style</propval>
 		</corresponding>
+                <shorthand>border-right</shorthand>
+                <shorthand>border-style</shorthand>
+                <shorthand>border</shorthand>
 	</property>
 	<property>
 		<name>border-right-width</name>
@@ -765,46 +807,57 @@
 		<corresponding>
 			<propval>border-<wmabs2rel dir="RIGHT"/>-width</propval>
 		</corresponding>
+                <shorthand>border-right</shorthand>
+                <shorthand>border-width</shorthand>
+                <shorthand>border</shorthand>
 	</property>
 	<property>
 		<name>border-color</name>
 		<inherited>false</inherited>
-		<use-generic>GenericColor</use-generic>
-		<default>black</default>
+		<datatype>List</datatype>
+		<datatype-parser>BoxPropShorthandParser</datatype-parser>
 	</property>
 	<property>
 		<name>border-style</name>
-		<use-generic>GenericBorderStyle</use-generic>
+		<inherited>false</inherited>
+		<datatype>List</datatype>
+		<datatype-parser>BoxPropShorthandParser</datatype-parser>
 	</property>
 	<property>
 		<name>border-width</name>
 		<inherited>false</inherited>
-		<datatype>Length</datatype>
-		<default>0pt</default>
+		<datatype>List</datatype>
+		<datatype-parser>BoxPropShorthandParser</datatype-parser>
 	</property>
 	<property>
 		<name>border-top</name>
 		<inherited>false</inherited>
-		<datatype>String</datatype>
-		<default>normal</default>
+		<datatype>List</datatype>
+		<datatype-parser>GenericShorthandParser</datatype-parser>
 	</property>
 	<property>
 		<name>border-bottom</name>
 		<inherited>false</inherited>
-		<datatype>String</datatype>
-		<default>normal</default>
+		<datatype>List</datatype>
+		<datatype-parser>GenericShorthandParser</datatype-parser>
 	</property>
 	<property>
 		<name>border-left</name>
 		<inherited>false</inherited>
-		<datatype>String</datatype>
-		<default>normal</default>
+		<datatype>List</datatype>
+		<datatype-parser>GenericShorthandParser</datatype-parser>
 	</property>
 	<property>
 		<name>border-right</name>
 		<inherited>false</inherited>
-		<datatype>String</datatype>
-		<default>normal</default>
+		<datatype>List</datatype>
+		<datatype-parser>GenericShorthandParser</datatype-parser>
+	</property>
+	<property>
+		<name>border</name>
+		<inherited>false</inherited>
+		<datatype>List</datatype>
+		<datatype-parser>GenericShorthandParser</datatype-parser>
 	</property>
 	<property>
 		<name>position</name>
@@ -980,7 +1033,7 @@
 		<inherited>true</inherited>
 		<datatype>Length</datatype>
 		<default contextdep="true">use-font-metrics</default>
-		<keyword-equiv match="use-font-metrics" eval="true">0pt</keyword-equiv>
+		<keyword-equiv match="use-font-metrics">0pt</keyword-equiv>
 		<percent-ok base="CONTAINING_BOX"/>
 
 	 </property>
