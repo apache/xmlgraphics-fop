@@ -216,6 +216,11 @@ public class PropertySets {
         elem.addProperty(Constants.PR_FONT_STYLE);
         elem.addProperty(Constants.PR_FONT_WEIGHT);
 
+        elem = elements[Constants.FO_PAGE_SEQUENCE_WRAPPER];
+        elem.addProperty(Constants.PR_ID);
+        elem.addProperty(Constants.PR_INDEX_CLASS);
+        elem.addProperty(Constants.PR_INDEX_KEY);
+
         elem = elements[Constants.FO_PAGE_SEQUENCE];
         elem.addProperty(Constants.PR_COUNTRY);
         elem.addProperty(Constants.PR_FORMAT);

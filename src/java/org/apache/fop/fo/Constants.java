@@ -113,10 +113,11 @@ public interface Constants {
     int FO_TABLE_ROW = 54;
     int FO_TITLE = 55;
     int FO_WRAPPER = 56;
-    int FO_BOOKMARK_TREE = 57;
-    int FO_BOOKMARK = 58;
-    int FO_BOOKMARK_TITLE = 59;
-    int FRM_OBJ_COUNT = 59;
+    int FO_BOOKMARK_TREE = 57;          // XSL 1.1
+    int FO_BOOKMARK = 58;               // XSL 1.1
+    int FO_BOOKMARK_TITLE = 59;         // XSL 1.1
+    int FO_PAGE_SEQUENCE_WRAPPER = 60;  // XSL 1.1
+    int FRM_OBJ_COUNT = 60;
     
     // Masks
     int COMPOUND_SHIFT = 9;
@@ -372,7 +373,9 @@ public interface Constants {
     int PR_XML_LANG = 245;
     int PR_Z_INDEX = 246;
     int PR_INTRUSION_DISPLACE = 247;
-    int PROPERTY_COUNT = 247;
+    int PR_INDEX_CLASS = 248;   // XSL 1.1
+    int PR_INDEX_KEY = 249;     // XSL 1.1
+    int PROPERTY_COUNT = 249;
 
     // compound property constants
 
