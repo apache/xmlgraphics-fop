@@ -100,6 +100,7 @@
               <xsl:text>-</xsl:text>
               <xsl:value-of select="@ref-name"/>
             </xsl:variable>
+            <strong>
             <a>
               <xsl:attribute name="href">
                 <xsl:value-of select="$href-level-2"/>
@@ -107,6 +108,7 @@
               <xsl:value-of select="@name"/>
             </a>
             <xsl:text>: </xsl:text>
+            </strong>
             <xsl:for-each select="level-3">
               <xsl:variable name="href-level-3">
                 <xsl:text>#</xsl:text>
