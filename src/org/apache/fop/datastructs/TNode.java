@@ -16,23 +16,23 @@ package org.apache.fop.datastructs;
 //import Tree;
 
 /**
- * A testbed for <tt>Tree.Node</tt>.
+ * A testbed for <tt>Node</tt>.
  */
-public class TNode extends Tree.Node {
+public class TNode extends Node {
 
     private Object content = null;
 
-    public TNode (Tree tree) throws Tree.TreeException {
-        tree.super();
+    public TNode (Tree tree) throws TreeException {
+        super(tree);
     }
 
     public TNode(Tree tree, TNode parent, int index)
-        throws Tree.TreeException {
-        tree.super(parent, index);
+        throws TreeException {
+        super(tree, parent, index);
     }
 
-    public TNode(Tree tree, TNode parent) throws Tree.TreeException {
-        tree.super(parent);
+    public TNode(Tree tree, TNode parent) throws TreeException {
+        super(tree, parent);
     }
 
     /**
@@ -45,8 +45,8 @@ public class TNode extends Tree.Node {
      */
 
     public TNode(Tree tree, TNode parent, Object content)
-        throws Tree.TreeException {
-        tree.super(parent);
+        throws TreeException {
+        super(tree, parent);
         this.content = content;
     }
 
@@ -61,8 +61,8 @@ public class TNode extends Tree.Node {
      */
 
     public TNode(Tree tree, TNode parent, int index, Object content)
-        throws Tree.TreeException, IndexOutOfBoundsException {
-        tree.super(parent, index);
+        throws TreeException, IndexOutOfBoundsException {
+        super(tree, parent, index);
         this.content = content;
     }
 
