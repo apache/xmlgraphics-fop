@@ -50,13 +50,16 @@ public class CommandLineStarter extends Starter {
             driver.setRenderer(commandLineOptions.getRenderer());
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(
                                       commandLineOptions.getOutputFile()));
-            driver.setOutputStream(bos);
-            if (driver.getRenderer() != null) {
-                driver.getRenderer().setOptions(
-              commandLineOptions.getRendererOptions());
+            try {
+                driver.setOutputStream(bos);
+                if (driver.getRenderer() != null) {
+                    driver.getRenderer().setOptions(
+                  commandLineOptions.getRendererOptions());
+                }
+                driver.render(parser, inputHandler.getInputSource());
+            } finally {
+                bos.close();
             }
-            driver.render(parser, inputHandler.getInputSource());
-            bos.close();
             System.exit(0);
         } catch (Exception e) {
             if (e instanceof FOPException) {
