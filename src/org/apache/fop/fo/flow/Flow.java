@@ -56,12 +56,14 @@ import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.fo.pagination.*;
 import org.apache.fop.layout.Area;
+import org.apache.fop.layout.BodyAreaContainer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.messaging.MessageHandler;
 
 // Java
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Vector;
 
 public class Flow extends FObj {
 	
@@ -81,6 +83,9 @@ public class Flow extends FObj {
 
     /**  Area in which we lay out our kids */
     private Area area; 
+
+    /**  Vector to store snapshot */
+    private Vector markerSnapshot; 
 
     /** flow-name attribute */
     private String _flowName;
@@ -128,41 +133,85 @@ public class Flow extends FObj {
     }
     
     public Status layout(Area area, Region region) throws FOPException {
-	if (this.marker == START) {
-	    this.marker = 0;
-	}
-        this.area = area;
-	boolean prevChildMustKeepWithNext = false;
-
-	int numChildren = this.children.size();
-	for (int i = this.marker; i < numChildren; i++) {
-	    FObj fo = (FObj) children.elementAt(i);
-	    if ((_status = fo.layout(area)).isIncomplete()) {
-		if ((prevChildMustKeepWithNext) && (_status.laidOutNone())) {
-		    this.marker = i - 1;
-		    FObj prevChild = (FObj) children.elementAt(this.marker);
-		    prevChild.removeAreas();
-		    prevChild.resetMarker();
-		    prevChild.removeID(area.getIDReferences());
-		    _status = new Status(Status.AREA_FULL_SOME);
-		    return _status;
-		    // should probably return AREA_FULL_NONE if first
-		    // or perhaps an entirely new status code
-		} else {
-		    this.marker = i;
-		    return _status;
+		if (this.marker == START) {
+			this.marker = 0;
 		}
-	    }
-	    if (_status.getCode() == Status.KEEP_WITH_NEXT) {
-		prevChildMustKeepWithNext = true;
-	    }
-	    else {
-	    	prevChildMustKeepWithNext = false;
-	    }
-	    
-	}
-	_status = new Status(Status.OK);
-	return _status;
+	
+		boolean prevChildMustKeepWithNext = false;
+	
+		int numChildren = this.children.size();
+		for (int i = this.marker; i < numChildren; i++) {
+			FObj fo = (FObj) children.elementAt(i);
+			
+			// if the area is a BodyAreaContainer, we need to perform an iterative
+			// layout over each span area, and the columns in each of those
+			Area currentArea;
+			if (area instanceof BodyAreaContainer)
+			{
+				BodyAreaContainer bac = (BodyAreaContainer)area;
+				if (bac.isBalancingRequired(fo))
+				{
+					// reset the the just-done span area in preparation
+					// for a backtrack for balancing
+					bac.resetSpanArea();
+					
+					this.rollback(markerSnapshot);
+					// one less because of the "continue"
+					i = this.marker - 1;
+					continue;
+				}
+				currentArea = bac.getNextArea(fo);
+				// temporary hack
+				currentArea.setIDReferences(bac.getIDReferences());
+				if (bac.isNewSpanArea())
+				{
+					this.marker = i;
+					markerSnapshot = this.getMarkerSnapshot(new Vector());
+				}
+			}
+			else
+				currentArea = area;
+			if (null == currentArea)
+				throw new FOPException("Bad BodyAreaContainer");
+			
+			_status = fo.layout(currentArea);
+			if (_status.isIncomplete()) {
+				if (area instanceof BodyAreaContainer)
+				{
+					if (((BodyAreaContainer)area).isLastColumn())
+					{
+						this.marker = i;
+						return getStatus();
+					}
+					else
+					{
+						// I don't much like exposing this. (AHS 001217)
+						((org.apache.fop.layout.ColumnArea)currentArea).incrementSpanIndex();
+						i--;
+					}
+				}
+				else if ((prevChildMustKeepWithNext) && (_status.laidOutNone())) {
+					this.marker = i - 1;
+					FObj prevChild = (FObj) children.elementAt(this.marker);
+					prevChild.removeAreas();
+					prevChild.resetMarker();
+					prevChild.removeID(area.getIDReferences());
+					return setStatus(new Status(Status.AREA_FULL_SOME));
+					// should probably return AREA_FULL_NONE if first
+					// or perhaps an entirely new status code
+				} else {
+					this.marker = i;
+					return getStatus();
+				}
+			}
+			if (_status.getCode() == Status.KEEP_WITH_NEXT) {
+				prevChildMustKeepWithNext = true;
+			}
+			else {
+				prevChildMustKeepWithNext = false;
+			}
+		}
+		return setStatus(new Status(Status.OK));
     }
 
   /**
@@ -185,6 +234,9 @@ public class Flow extends FObj {
 	return _status;
     }
     
-
-
+	public Status setStatus(Status status)
+	{
+		_status = status;
+		return _status;		// shortcut
+	}
 }
