@@ -50,7 +50,9 @@ import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.awt.Rectangle;
 import java.util.Iterator;
@@ -71,6 +73,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             breakps = bp;
         }
     }
+
 
     private int startPageNum = 0;
     private int currentPageNum = 0;
@@ -108,10 +111,18 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private SimplePageMaster currentSimplePageMaster;
 
     /**
+     * The collection of StaticContentLayoutManager objects that are associated
+     * with this Page Sequence, keyed by flow-name.
+     */
+    //private HashMap staticContentLMs = new HashMap(4);
+
+    private FlowLayoutManager childFLM = null;
+
+    /**
      * Constructor - activated by AreaTreeHandler for each
      * fo:page-sequence in the input FO stream
      *
-     * @param pageseq the page-sequence formatting object
+     * @param pageSeq the page-sequence formatting object
      */
     public PageSequenceLayoutManager(PageSequence pageSeq) {
         super(pageSeq);
@@ -148,8 +159,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         LineArea title = null;
 
         if (pageSeq.getTitleFO() != null) {
-            ContentLayoutManager clm = 
-                new ContentLayoutManager(pageSeq.getTitleFO(), this);
+            ContentLayoutManager clm = new ContentLayoutManager(pageSeq
+                    .getTitleFO(), this);
             title = (LineArea) clm.getParentArea(null); // can improve
         }
 
@@ -157,27 +168,69 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         log.debug("Starting layout");
 
         makeNewPage(false, false);
+        isFirstPage = true;
         flowIPD = curFlow.getIPD();
 
-        BreakPoss bp;
-        LayoutContext childLC = new LayoutContext(0);
-        while (!isFinished()) {
-            if ((bp = getNextBreakPoss(childLC)) != null) {
-                addAreas((BlockBreakPosition)bp.getPosition());
-                // add static areas and resolve any new id areas
-                // finish page and add to area tree
-                finishPage();
-                currentPageNum++;
-                pageNumberString = pageSeq.makeFormattedPageNumber(currentPageNum);
-            }
-        }
+        PageBreaker breaker = new PageBreaker(this);
+        breaker.doLayout(flowBPD);
+        
         // TODO: Don't decrement currentPageNum when no pages are generated
         currentPageNum--;
         finishPage();
-        pageSeq.getRoot().notifyPageSequenceFinished(currentPageNum, (currentPageNum - startPageNum) + 1);
+        pageSeq.getRoot().notifyPageSequenceFinished(currentPageNum,
+                (currentPageNum - startPageNum) + 1);
         log.debug("Ending layout");
     }
 
+    private class PageBreaker extends AbstractBreaker {
+        
+        private PageSequenceLayoutManager pslm;
+        
+        public PageBreaker(PageSequenceLayoutManager pslm) {
+            this.pslm = pslm;
+        }
+        
+        protected LayoutManager getTopLevelLM() {
+            return pslm;
+        }
+        
+        protected LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+            return pslm.getNextKnuthElements(context, alignment);
+        }
+        
+        protected int getCurrentDisplayAlign() {
+            return currentSimplePageMaster.getRegion(Constants.FO_REGION_BODY).getDisplayAlign();
+        }
+        
+        protected boolean hasMoreContent() {
+            return !isFinished();
+        }
+        
+        protected void addAreas(PositionIterator posIter, LayoutContext context) {
+            getCurrentChildLM().addAreas(posIter, context);    
+        }
+        
+        protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
+                KnuthSequence originalList, KnuthSequence effectiveList) {
+            //Directly add areas after finding the breaks
+            addAreas(alg, partCount, originalList, effectiveList);
+        }
+        
+        protected void finishPart() {
+            // add static areas and resolve any new id areas
+            // finish page and add to area tree
+            finishPage();
+            currentPageNum++;
+            pageNumberString = pageSeq
+                    .makeFormattedPageNumber(currentPageNum);
+        }
+        
+        protected LayoutManager getCurrentChildLM() {
+            return childFLM;
+        }
+        
+    }
+    
     /** @see org.apache.fop.layoutmgr.LayoutManager#isBogus() */
     public boolean isBogus() {
         return false;
@@ -191,12 +244,19 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @param context the layout context for finding breaks
      * @return the break for the page
      */
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
+    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
 
         LayoutManager curLM; // currently active LM
 
         while ((curLM = getChildLM()) != null) {
-            BreakPoss bp = null;
+/*LF*/      LinkedList returnedList = null;
+/*LF*/      if (childFLM == null && (curLM instanceof FlowLayoutManager)) {
+/*LF*/          childFLM = (FlowLayoutManager)curLM;
+/*LF*/      } else {
+/*LF*/          if (curLM != childFLM) {
+/*LF*/              System.out.println("PLM> figlio sconosciuto (invalid child LM)");
+/*LF*/          }
+/*LF*/      }
 
             LayoutContext childLC = new LayoutContext(0);
             childLC.setStackLimit(new MinOptMax(flowBPD));
@@ -205,11 +265,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             if (!curLM.isFinished()) {
                 pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
                 pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, flowBPD);
-                bp = curLM.getNextBreakPoss(childLC);
+/*LF*/          returnedList = curLM.getNextKnuthElements(childLC, alignment);
             }
-            if (bp != null) {
-                return new BreakPoss(
-                         new BlockBreakPosition(curLM, bp));
+            if (returnedList != null) {
+                return returnedList;
             }
         }
         setFinished(true);
@@ -248,20 +307,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             return (PageViewport) list.get(0);
         }
         return null;
-    }
-
-    /**
-     * Add the areas to the current page.
-     * Given the page break position this adds the areas to the current
-     * page.
-     *
-     * @param bbp the block break position
-     */
-    public void addAreas(BlockBreakPosition bbp) {
-        List list = new java.util.ArrayList();
-        list.add(bbp.breakps);
-        bbp.getLM().addAreas(new BreakPossPosIter(list, 0,
-                              1), null);
     }
 
     /**
@@ -603,7 +648,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         else {
             /* IF we are on the kind of page we need, we'll need a new page. */
-            if (currentPageNum%2 != 0) {
+            if (currentPageNum % 2 != 0) {
                 // Current page is odd
                 return (breakValue == Constants.EN_ODD_PAGE);
             }
@@ -628,8 +673,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             else {
                 return (breakValue == Constants.EN_ODD_PAGE);
             }
-        }
-        else {
+        } else {
             return true;
         }
     }

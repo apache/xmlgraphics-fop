@@ -31,6 +31,7 @@ import org.apache.fop.fo.flow.Marker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -295,6 +296,43 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      * PROVIDE NULL IMPLEMENTATIONS OF METHODS from LayoutManager
      * interface which are declared abstract in AbstractLayoutManager.
      * ---------------------------------------------------------*/
+
+    public LinkedList getNextKnuthElements(LayoutContext context,
+                                           int alignment) {
+        log.warn("null implementation of getNextKnuthElements() called!");
+        setFinished(true);
+        return null;
+    }
+
+    public KnuthElement addALetterSpaceTo(KnuthElement element) {
+        log.warn("null implementation of addALetterSpaceTo() called!");
+        return element;
+    }
+
+    public void getWordChars(StringBuffer sbChars, Position pos) {
+        log.warn("null implementation of getWordChars() called!");
+    }
+
+    public void hyphenate(Position pos, HyphContext hc) {
+        log.warn("null implementation of hyphenate called!");
+    }
+
+    public boolean applyChanges(List oldList) {
+        log.warn("null implementation of applyChanges() called!");
+        return false;
+    }
+
+    public LinkedList getChangedKnuthElements(List oldList,
+                                              /*int flaggedPenalty,*/
+                                              int alignment) {
+        log.warn("null implementation of getChangeKnuthElement() called!");
+        return null;
+    }
+
+    public int getWordSpaceIPD() {
+        log.warn("null implementation of getWordSpaceIPD() called!");
+        return 0;
+    }
 
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(org.apache.fop.area.Area)

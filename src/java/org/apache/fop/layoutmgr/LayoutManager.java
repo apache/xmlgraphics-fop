@@ -18,6 +18,7 @@
  
 package org.apache.fop.layoutmgr;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -254,4 +255,29 @@ public interface LayoutManager {
      * @param newLMs the list of LMs to be added
      */
     void addChildLMs(List newLMs);
+
+    /**
+     * Get a sequence of KnuthElements representing the content 
+     * of the node assigned to the LM
+     * 
+     * @param context   the LayoutContext used to store layout information
+     * @param alignment the desired text alignement
+     * @return          the list of KnuthElements
+     */
+    LinkedList getNextKnuthElements(LayoutContext context, int alignment);
+
+    /**
+     * Get a sequence of KnuthElements representing the content 
+     * of the node assigned to the LM, after changes have been applied
+     *
+     * @param oldList        the elements to replace
+     * @param flaggedPenalty the penalty value for hyphenated lines
+     * @param alignment      the desired text alignment
+     * @return               the updated list of KnuthElements
+     */
+    LinkedList getChangedKnuthElements(List oldList, /*int flaggedPenalty,*/
+                                       int alignment);
+
+    public static final int FLAGGED_PENALTY = 50;
+
 }

@@ -15,9 +15,10 @@
  */
 
 /* $Id$ */
+
 package org.apache.fop.layoutmgr;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -60,7 +61,7 @@ public class KnuthParagraph {
     /**
      * The paragraph of KnuthElements.
      */
-    private ArrayList par;
+    private List par;
     
     /**
      * The width of a line.
@@ -114,7 +115,7 @@ public class KnuthParagraph {
     
     protected static Log log = LogFactory.getLog(KnuthParagraph.class);
     
-    public KnuthParagraph(ArrayList par) {
+    public KnuthParagraph(List par) {
         this.best = new BestRecords();
         this.par = par;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
  
 package org.apache.fop.layoutmgr;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -27,24 +26,14 @@ import java.util.List;
 public interface InlineLevelLayoutManager extends LayoutManager {
 
     /**
-     * Get a sequence of KnuthElements representing the content 
-     * of the node assigned to the LM
-     * 
-     * @param context   the LayoutContext used to store layout information
-     * @param alignment the desired text alignement
-     * @return          the list of KnuthElements
-     */
-    LinkedList getNextKnuthElements(LayoutContext context, int alignment);
-
-    /**
      * Tell the LM to modify its data, adding a letter space 
-     * to the word fragment represented by the given element,
-     * and returning a corrected element
+     * to the word fragment represented by the given elements,
+     * and returning the corrected elements
      *
-     * @param element the element which must be given one more letter space
-     * @return        the new element replacing the old one
+     * @param oldList the elements which must be given one more letter space
+     * @return        the new elements replacing the old ones
      */
-    KnuthElement addALetterSpaceTo(KnuthElement element);
+    List addALetterSpaceTo(List oldList);
 
     /**
      * Get the word chars corresponding to the given position
@@ -70,15 +59,4 @@ public interface InlineLevelLayoutManager extends LayoutManager {
      */
     boolean applyChanges(List oldList);
 
-    /**
-     * Get a sequence of KnuthElements representing the content 
-     * of the node assigned to the LM, after changes have been applied
-     *
-     * @param oldList        the elements to replace
-     * @param flaggedPenalty the penalty value for hyphenated lines
-     * @param alignment      the desired text alignment
-     * @return               the updated list of KnuthElements
-     */
-    LinkedList getChangedKnuthElements(List oldList, int flaggedPenalty,
-                                       int alignment);
 }

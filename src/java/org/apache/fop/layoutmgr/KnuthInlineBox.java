@@ -18,34 +18,47 @@
 
 package org.apache.fop.layoutmgr;
 
-/**
- * An instance of this class represents an unbreakable piece of content with
- * fixed width: for example an image, a syllable (but only if letter spacing
- * is constant), ...
- * 
- * A KnuthBox is never a feasible breaking point.
- * 
- * The represented piece of content is never suppressed.
- * 
- * Besides the inherited methods and attributes, this class has some more
- * attributes to store information about the content height and its vertical
- * positioning, and the methods used to get them.
- */
-public class KnuthBox extends KnuthElement {
+public class KnuthInlineBox extends KnuthBox {
+    
+    private int lead;
+    private int total;
+    private int middle;
 
     /**
      * Create a new KnuthBox.
      *
      * @param w    the width of this box
+     * @param l    the height of this box above the main baseline
+     * @param t    the total height of this box
+     * @param m    the height of this box above and below the middle baseline
      * @param pos  the Position stored in this box
      * @param bAux is this box auxiliary?
      */
-    public KnuthBox(int w, Position pos, boolean bAux) {
+    public KnuthInlineBox(int w, int l, int t, int m, Position pos, boolean bAux) {
         super(w, pos, bAux);
+        lead = l;
+        total = t;
+        middle = m;
     }
 
-    public boolean isBox() {
-        return true;
+    /**
+     * @return the height of this box above the main baseline.
+     */
+    public int getLead() {
+        return lead;
     }
 
+    /**
+     * @return the total height of this box.
+     */
+    public int getTotal() {
+        return total;
+    }
+
+    /**
+     * @return the height of this box above and below the middle baseline.
+     */
+    public int getMiddle() {
+        return middle;
+    }
 }

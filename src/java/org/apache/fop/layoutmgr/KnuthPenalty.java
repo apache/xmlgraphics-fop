@@ -37,8 +37,10 @@ package org.apache.fop.layoutmgr;
  * be chosen as breaking points for consecutive lines.
  */
 public class KnuthPenalty extends KnuthElement {
+
     private int penalty;
     private boolean bFlagged; 
+    private int breakClass = -1;
 
     /**
      * Create a new KnuthPenalty.
@@ -53,6 +55,14 @@ public class KnuthPenalty extends KnuthElement {
         super(w, pos, bAux);
         penalty = p;
         bFlagged = f;
+    }
+
+    public KnuthPenalty(int w, int p, boolean f,
+            int iBreakClass, Position pos, boolean bAux) {
+        super(w, pos, bAux);
+        penalty = p;
+        bFlagged = f;
+        breakClass = iBreakClass;
     }
 
     public boolean isPenalty() {
@@ -76,4 +86,9 @@ public class KnuthPenalty extends KnuthElement {
     public boolean isForcedBreak() {
         return penalty == -KnuthElement.INFINITE;
     }
+    
+    public int getBreakClass() {
+        return breakClass;
+    }
+    
 }

@@ -117,7 +117,7 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
         while (contentIter.hasNext()) {
             KnuthElement element = (KnuthElement) contentIter.next();
             if (element.isBox()) {
-                KnuthBox box = (KnuthBox) element;
+                KnuthInlineBox box = (KnuthInlineBox) element;
                 if (box.getLead() > lineLead) {
                     lineLead = box.getLead();
                 }
@@ -358,8 +358,8 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
         return contentList;
     }
 
-    public KnuthElement addALetterSpaceTo(KnuthElement element) {
-        return element;
+    public List addALetterSpaceTo(List oldList) {
+        return oldList;
     }
 
     public void getWordChars(StringBuffer sbChars, Position pos) {
@@ -373,7 +373,7 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     }
 
     public LinkedList getChangedKnuthElements(List oldList,
-                                              int flaggedPenalty,
+                                              /*int flaggedPenalty,*/
                                               int alignment) {
         return null;
     }
