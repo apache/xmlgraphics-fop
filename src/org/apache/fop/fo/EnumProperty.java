@@ -8,7 +8,6 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.messaging.MessageHandler;
 
 public class EnumProperty extends Property {
 
@@ -23,8 +22,8 @@ public class EnumProperty extends Property {
          * Called by subclass if no match found.
          */
         public Property checkEnumValues(String value) {
-            MessageHandler.errorln("Unknown enumerated value for property '"
-                                   + getPropName() + "': " + value);
+            //log.error("Unknown enumerated value for property '"
+            //                       + getPropName() + "': " + value);
             return null;
         }
 

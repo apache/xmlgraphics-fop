@@ -13,7 +13,6 @@ package org.apache.fop.mif;
 // referenced and I'd rather not do it
 
 import org.apache.fop.image.FopImage;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.LinkSet;
 import org.apache.fop.datatypes.ColorSpace;
 
@@ -993,7 +992,7 @@ public class MIFDocument {
         } else if (bookComponent.document.height != height
                    || bookComponent.document.width != width) {
 
-            MessageHandler.logln("Warning : FrameMaker doesnt support different page-sizes   in a document");
+            //log.warn("FrameMaker doesnt support different page-sizes   in a document");
         }
 
     }

@@ -9,7 +9,6 @@ package org.apache.fop.layout;
 
 // fop
 import org.apache.fop.render.Renderer;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.IDNode;
 import org.apache.fop.fo.properties.WrapOption;
@@ -391,8 +390,9 @@ public class LineArea extends Area {
                     wordWidth = charWidth;
                     if ((finalWidth + spaceWidth + wordWidth)
                             > this.getContentWidth()) {
-                        if (overrun)
-                            MessageHandler.log("area contents overflows area");
+                        if (overrun) {
+                            //log.debug("area contents overflows area");
+                        }
                         if (this.wrapOption == WrapOption.WRAP) {
                             return i;
                         }
@@ -443,7 +443,7 @@ public class LineArea extends Area {
                                 (wordStart == start) &&
                                 (finalWidth == 0)) {
 
-                                MessageHandler.log("area contents overflows area");
+                                //log.debug("area contents overflows area");
                                 addSpacedWord(new String(data, wordStart, wordLength - 1),
                                               ls,
                                               finalWidth + spaceWidth
@@ -501,8 +501,9 @@ public class LineArea extends Area {
             wordWidth = 0;
         }
 
-        if (overrun)
-            MessageHandler.log("area contents overflows area");
+        if (overrun) {
+            //log.debug("area contents overflows area");
+        }
         return -1;
     }
 
@@ -619,8 +620,8 @@ public class LineArea extends Area {
             break;
         // leader pattern use-content not implemented.
         case LeaderPattern.USECONTENT:
-            MessageHandler.errorln("leader-pattern=\"use-content\" not "
-                                   + "supported by this version of Fop");
+            //log.error("leader-pattern=\"use-content\" not "
+            //                       + "supported by this version of Fop");
             return;
         }
         // adds leader length to length of pending inline areas
@@ -821,8 +822,8 @@ public class LineArea extends Area {
     private InlineArea buildSimpleLeader(char c, int leaderLength) {
         int width = this.currentFontState.width(currentFontState.mapChar(c));
         if (width == 0) {
-            MessageHandler.errorln("char " + c
-                                   + " has width 0. Using width 100 instead.");
+            //log.error("char " + c
+            //                       + " has width 0. Using width 100 instead.");
             width = 100;
         }
         int factor = (int)Math.floor(leaderLength / width);
@@ -896,7 +897,7 @@ public class LineArea extends Area {
                              int remainingWidth) {
         // check whether the language property has been set
         if (this.hyphProps.language.equalsIgnoreCase("none")) {
-            MessageHandler.errorln("if property 'hyphenate' is used, a language must be specified");
+            //log.error("if property 'hyphenate' is used, a language must be specified");
             return wordStart;
         }
 

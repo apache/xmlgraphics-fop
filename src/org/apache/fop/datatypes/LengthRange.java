@@ -101,7 +101,7 @@ public class LengthRange implements CompoundDatatype {
              * // if minimum is explicit, force max to min
              * if ((bfSet&MAXSET)!=0) {
              * // Warning: min>max, resetting max to min
-             * MessageHandler.errorln("forcing max to min in LengthRange");
+             * log.error("forcing max to min in LengthRange");
              * }
              * maximum = minimum ;
              * }
@@ -114,7 +114,7 @@ public class LengthRange implements CompoundDatatype {
              * if ((bfSet&OPTSET)!=0) {
              * if ((bfSet&MAXSET)!=0) {
              * // Warning: opt > max, resetting opt to max
-             * MessageHandler.errorln("forcing opt to max in LengthRange");
+             * log.error("forcing opt to max in LengthRange");
              * optimum = maximum ;
              * }
              * else {
@@ -130,7 +130,7 @@ public class LengthRange implements CompoundDatatype {
              * if ((bfSet&MINSET)!=0) {
              * // if minimum is explicit, force opt to min
              * if ((bfSet&OPTSET)!=0) {
-             * MessageHandler.errorln("forcing opt to min in LengthRange");
+             * log.error("forcing opt to min in LengthRange");
              * }
              * optimum = minimum ;
              * }

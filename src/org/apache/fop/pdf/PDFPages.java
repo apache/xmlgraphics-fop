@@ -9,7 +9,6 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.PrintWriter;
-import org.apache.fop.messaging.MessageHandler;
 import java.util.ArrayList;
 
 /**
@@ -72,7 +71,7 @@ public class PDFPages extends PDFObject {
      */
     public void incrementCount() {
         this.count++;
-        // MessageHandler.logln("Incrementing count to " + this.getCount());
+        // log.debug("Incrementing count to " + this.getCount());
     }
 
     /**

@@ -41,7 +41,6 @@ public class Character extends FObj {
 
     public Character(FONode parent) {
         super(parent);
-        this.name = "fo:character";
     }
 
     public Status layout(Area area) throws FOPException {

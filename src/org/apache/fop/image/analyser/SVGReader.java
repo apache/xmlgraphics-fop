@@ -96,12 +96,12 @@ public class SVGReader extends AbstractImageReader {
 
             return true;
         } catch (NoClassDefFoundError ncdfe) {
-            MessageHandler.errorln("Batik not in class path");
+            //log.error("Batik not in class path");
             return false;
         }
         catch (Exception e) {
-            MessageHandler.errorln("Could not load external SVG: " +
-                                   e.getMessage());
+            //log.error("Could not load external SVG: " +
+            //                       e.getMessage());
             // assuming any exception means this document is not svg
             // or could not be loaded for some reason
             return false;

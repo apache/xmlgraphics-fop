@@ -27,7 +27,6 @@ public class RetrieveMarker extends FObjMixed {
 
     public RetrieveMarker(FONode parent) {
         super(parent);
-        this.name = "fo:retrieve-marker";
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {

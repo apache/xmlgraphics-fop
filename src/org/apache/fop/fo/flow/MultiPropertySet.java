@@ -20,7 +20,6 @@ public class MultiPropertySet extends ToBeImplementedElement {
 
     public MultiPropertySet(FONode parent) {
         super(parent);
-        this.name = "fo:multi-property-set";
     }
 
     public Status layout(Area area) throws FOPException {

@@ -18,8 +18,6 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
-import org.apache.fop.messaging.MessageHandler;
-
 public class GoToPageDialog extends JDialog {
     JPanel panel1 = new JPanel();
     GridBagLayout gridBagLayout1 = new GridBagLayout();
@@ -36,8 +34,8 @@ public class GoToPageDialog extends JDialog {
             jbInit();
             pack();
         } catch (Exception ex) {
-            MessageHandler.errorln("GoToPageDialog: Konstruktor: "
-                                   + ex.getMessage());
+            //log.error("GoToPageDialog: Konstruktor: "
+            //                       + ex.getMessage(), ex);
         }
     }
 

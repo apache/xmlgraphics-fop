@@ -50,6 +50,11 @@ public abstract class XMLObj extends FONode {
     public void handleAttrs(Attributes attlist) throws FOPException {
         attr = attlist;
     }
+
+    public Document getDocument() {
+         return doc;
+    }
+
     public abstract String getNameSpace();
 
     protected static HashMap ns = new HashMap();

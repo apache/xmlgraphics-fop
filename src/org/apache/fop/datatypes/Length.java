@@ -9,7 +9,6 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.Numeric;
 import org.apache.fop.fo.Property;
-import org.apache.fop.messaging.MessageHandler;
 
 /**
  * a length quantity in XSL

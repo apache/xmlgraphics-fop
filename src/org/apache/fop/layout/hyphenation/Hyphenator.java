@@ -10,7 +10,6 @@ package org.apache.fop.layout.hyphenation;
 import java.io.*;
 import java.util.Hashtable;
 import org.apache.fop.configuration.*;
-import org.apache.fop.messaging.MessageHandler;
 
 /**
  * This class is the main entry point to the hyphenation package.
@@ -57,8 +56,8 @@ public class Hyphenator {
         if (hTree != null) {
             hyphenTrees.put(key, hTree);
         } else {
-            MessageHandler.errorln("Couldn't find hyphenation pattern "
-                                   + key);
+            //log.error("Couldn't find hyphenation pattern "
+            //                       + key);
         }
         return hTree;
     }
@@ -96,24 +95,24 @@ public class Hyphenator {
                 if (key.length() == 5) {
                     is = getResourceStream(key.substring(0, 2));
                     if (is != null) {
-                        MessageHandler.errorln("Couldn't find hyphenation pattern  "
-                                               + key
-                                               + "\nusing general language pattern "
-                                               + key.substring(0, 2)
-                                               + " instead.");
+                        //log.error("Couldn't find hyphenation pattern  "
+                        //                       + key
+                        //                       + "\nusing general language pattern "
+                        //                       + key.substring(0, 2)
+                        //                       + " instead.");
                     } else {
                         if (errorDump) {
-                            MessageHandler.errorln("Couldn't find precompiled "
-                                                   + "fop hyphenation pattern "
-                                                   + key + ".hyp");
+                            //log.error("Couldn't find precompiled "
+                            //                       + "fop hyphenation pattern "
+                            //                       + key + ".hyp");
                         }
                         return null;
                     }
                 } else {
                     if (errorDump) {
-                        MessageHandler.errorln("Couldn't find precompiled "
-                                               + "fop hyphenation pattern "
-                                               + key + ".hyp");
+                        //log.error("Couldn't find precompiled "
+                        //                       + "fop hyphenation pattern "
+                        //                       + key + ".hyp");
                     }
                     return null;
                 }
@@ -128,7 +127,7 @@ public class Hyphenator {
                 try {
                     ois.close();
                 } catch (IOException e) {
-                    MessageHandler.errorln("can't close hyphenation object stream");
+                    //log.error("can't close hyphenation object stream");
                 }
             }
         }
@@ -172,8 +171,8 @@ public class Hyphenator {
             if (hyphenFile.exists()) {
                 hTree = new HyphenationTree();
                 if (errorDump) {
-                    MessageHandler.errorln("reading " + hyphenDir + key
-                                           + ".xml");
+                    //log.error("reading " + hyphenDir + key
+                    //                       + ".xml");
                 }
                 try {
                     hTree.loadPatterns(hyphenFile.getPath());
@@ -184,18 +183,18 @@ public class Hyphenator {
                     return hTree;
                 } catch (HyphenationException ex) {
                     if (errorDump) {
-                        MessageHandler.errorln("Can't load user patterns "
-                                               + "from xml file " + hyphenDir
-                                               + key + ".xml");
+                        //log.error("Can't load user patterns "
+                        //                       + "from xml file " + hyphenDir
+                        //                       + key + ".xml");
                     }
                     return null;
                 }
             } else {
                 if (errorDump) {
-                    MessageHandler.errorln("Tried to load "
-                                           + hyphenFile.toString()
-                                           + "\nCannot find compiled nor xml file for "
-                                           + "hyphenation pattern" + key);
+                    //log.error("Tried to load "
+                    //                       + hyphenFile.toString()
+                    //                       + "\nCannot find compiled nor xml file for "
+                    //                       + "hyphenation pattern" + key);
                 }
                 return null;
             }
@@ -207,8 +206,8 @@ public class Hyphenator {
                                         int rightMin) {
         HyphenationTree hTree = getHyphenationTree(lang, country);
         if (hTree == null) {
-            MessageHandler.errorln("Error building hyphenation tree for language "
-                                   + lang);
+            //log.error("Error building hyphenation tree for language "
+            //                       + lang);
             return null;
         }
         return hTree.hyphenate(word, leftMin, rightMin);
@@ -219,8 +218,8 @@ public class Hyphenator {
                                         int leftMin, int rightMin) {
         HyphenationTree hTree = getHyphenationTree(lang, country);
         if (hTree == null) {
-            MessageHandler.errorln("Error building hyphenation tree for language "
-                                   + lang);
+            //log.error("Error building hyphenation tree for language "
+            //                       + lang);
             return null;
         }
         return hTree.hyphenate(word, offset, len, leftMin, rightMin);

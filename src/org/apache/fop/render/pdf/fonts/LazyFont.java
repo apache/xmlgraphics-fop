@@ -10,7 +10,6 @@ package org.apache.fop.render.pdf.fonts;
 import org.apache.fop.render.pdf.Font;
 import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.pdf.PDFStream;
-import org.apache.fop.messaging.MessageHandler;
 import java.util.HashMap;
 
 import org.apache.fop.render.pdf.FontReader;
@@ -44,9 +43,9 @@ public class LazyFont extends Font implements FontDescriptor {
                 }
                 // System.out.println("Metrics " + metricsFileName + " loaded.");
             } catch (Exception ex) {
-                MessageHandler.error("Failed to read font metrics file "
-                                     + metricsFileName
-                                     + " : " + ex.getMessage());
+                //log.error("Failed to read font metrics file "
+                //                     + metricsFileName
+                //                     + " : " + ex.getMessage());
             }
         }
     }

@@ -29,7 +29,6 @@ public class FootnoteBody extends FObj {
 
     public FootnoteBody(FONode parent) {
         super(parent);
-        this.name = "fo:footnote-body";
     }
 
     public Status layout(Area area) throws FOPException {

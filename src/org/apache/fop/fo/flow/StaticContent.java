@@ -14,9 +14,6 @@ import org.apache.fop.fo.pagination.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.apps.FOPException;
 
-// Java
-import java.util.Enumeration;
-
 public class StaticContent extends Flow {
 
     public StaticContent(FONode parent) {
@@ -77,15 +74,11 @@ public class StaticContent extends Flow {
          return new Status(Status.OK);
     }
 
-    protected String getElementName() {
-        return "fo:static-content";
-    }
-
     // flowname checking is more stringient for static content currently
     protected void setFlowName(String name) throws FOPException {
         if (name == null || name.equals("")) {
             throw new FOPException("A 'flow-name' is required for "
-                                   + getElementName() + ".");
+                                   + getName() + ".");
         } else {
             super.setFlowName(name);
         }

@@ -17,7 +17,6 @@ import org.apache.fop.fo.properties.*;
 // Java
 import java.util.Vector;
 import java.util.Enumeration;
-import org.apache.fop.messaging.MessageHandler;
 
 /**
  * This class represents a Block Area.

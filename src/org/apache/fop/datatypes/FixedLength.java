@@ -9,7 +9,6 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.expr.Numeric;
-import org.apache.fop.messaging.MessageHandler;
 
 /**
  * a length quantity in XSL
@@ -64,8 +63,8 @@ public class FixedLength extends Length {
             dvalue = dvalue * assumed_resolution;
         else {
             dvalue = 0;
-            MessageHandler.errorln("unknown length unit '" + unit
-                                   + "'");
+            //log.error("unknown length unit '" + unit
+            //                       + "'");
         }
         setComputedValue((int)(dvalue * 1000));
     }

@@ -8,7 +8,6 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
-import org.apache.fop.messaging.MessageHandler;
 
 /**
  * a length quantity in XSL which is specified as "auto"

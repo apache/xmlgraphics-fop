@@ -21,7 +21,6 @@ public class ListItemLabel extends FObj {
 
     public ListItemLabel(FONode parent) {
         super(parent);
-        this.name = "fo:list-item-label";
     }
 
     public Status layout(Area area) throws FOPException {

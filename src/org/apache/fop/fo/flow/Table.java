@@ -49,7 +49,6 @@ public class Table extends FObj {
 
     public Table(FONode parent) {
         super(parent);
-        this.name = "fo:table";
     }
 
     public Status layout(Area area) throws FOPException {

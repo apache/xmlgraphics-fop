@@ -8,7 +8,6 @@
 package org.apache.fop.render.awt;
 
 // FOP
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontDescriptor;
 
@@ -40,8 +39,6 @@ public class FontSetup {
     public static void setup(FontInfo fontInfo, Graphics2D graphics) {
         FontMetricsMapper metric;
         int normal, bold, bolditalic, italic;
-
-        MessageHandler.logln("setting up fonts");
 
         /*
          * available java fonts are:

@@ -176,7 +176,7 @@ public class FontSetup {
                     }
                 }
             } catch (Exception ex) {
-                //MessageHandler.error("Failed to read font metrics file "
+                //log.error("Failed to read font metrics file "
                 //                     + configFontInfo.getMetricsFile()
                 //                     + " : " + ex.getMessage());
             }

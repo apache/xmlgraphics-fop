@@ -12,7 +12,6 @@ package org.apache.fop.image;
 
 // Java
 import java.util.Hashtable;
-import org.apache.fop.messaging.MessageHandler;
 import java.awt.image.*;
 import java.awt.*;
 
@@ -34,25 +33,25 @@ public class FopImageConsumer implements ImageConsumer {
 
     public void imageComplete(int status) {
         /*
-         * MessageHandler.error("Status ");
+         * log.error("Status ");
          * if (status == ImageConsumer.COMPLETESCANLINES) {
-         * MessageHandler.errorln("CompleteScanLines");
+         * log.error("CompleteScanLines");
          * } else if (status == ImageConsumer.IMAGEABORTED) {
-         * MessageHandler.errorln("ImageAborted");
+         * log.error("ImageAborted");
          * } else if (status == ImageConsumer.IMAGEERROR) {
-         * MessageHandler.errorln("ImageError");
+         * log.error("ImageError");
          * } else if (status == ImageConsumer.RANDOMPIXELORDER) {
-         * MessageHandler.errorln("RandomPixelOrder");
+         * log.error("RandomPixelOrder");
          * } else if (status == ImageConsumer.SINGLEFRAME) {
-         * MessageHandler.errorln("SingleFrame");
+         * log.error("SingleFrame");
          * } else if (status == ImageConsumer.SINGLEFRAMEDONE) {
-         * MessageHandler.errorln("SingleFrameDone");
+         * log.error("SingleFrameDone");
          * } else if (status == ImageConsumer.SINGLEPASS) {
-         * MessageHandler.errorln("SinglePass");
+         * log.error("SinglePass");
          * } else if (status == ImageConsumer.STATICIMAGEDONE) {
-         * MessageHandler.errorln("StaticImageDone");
+         * log.error("StaticImageDone");
          * } else if (status == ImageConsumer.TOPDOWNLEFTRIGHT) {
-         * MessageHandler.errorln("TopDownLeftRight");
+         * log.error("TopDownLeftRight");
          * }
          */
         synchronized (this.imageStatus) {
@@ -63,23 +62,23 @@ public class FopImageConsumer implements ImageConsumer {
     }
 
     public void setColorModel(ColorModel model) {
-        // MessageHandler.errorln("setColorModel: " + model);
+        // log.error("setColorModel: " + model);
         this.cm = model;
     }
 
     public void setDimensions(int width, int height) {
-        // MessageHandler.errorln("setDimension: w=" + width + " h=" + height);
+        // log.error("setDimension: w=" + width + " h=" + height);
         this.width = width;
         this.height = height;
     }
 
     public void setHints(int hintflags) {
-        // MessageHandler.errorln("setHints: " + hintflags);
+        // log.error("setHints: " + hintflags);
         this.hints = hintflags;
     }
 
     public void setProperties(Hashtable props) {
-        // MessageHandler.errorln("setProperties: " + props);
+        // log.error("setProperties: " + props);
         this.properties = props;
     }
 

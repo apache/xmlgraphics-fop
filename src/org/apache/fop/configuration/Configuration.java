@@ -10,7 +10,6 @@ package org.apache.fop.configuration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import org.apache.fop.messaging.MessageHandler;
 
 /**
  * a configuration class for all general configuration aspects except those
@@ -254,7 +253,7 @@ public class Configuration {
             awtConfiguration = config;
             break;
         default:
-            MessageHandler.errorln("Can't setup configuration. Unknown configuration role/target");
+            //log.error("Can't setup configuration. Unknown configuration role/target");
         }
     }
 
@@ -278,9 +277,9 @@ public class Configuration {
             break;
         default:
             standardConfiguration.put(key, value);
-            MessageHandler.errorln("Unknown role for new configuration entry. "
-                                   + "Putting key:" + key + " - value:"
-                                   + value + " into standard configuration.");
+            //log.error("Unknown role for new configuration entry. "
+            //                       + "Putting key:" + key + " - value:"
+            //                       + value + " into standard configuration.");
         }
     }
 
@@ -312,31 +311,29 @@ public class Configuration {
             standardConfiguration, pdfConfiguration, awtConfiguration
         };
         for (int i = 0; i < configs.length; i++) {
-            MessageHandler.logln("----------------------");
+            //log.debug("----------------------");
             configuration = configs[i];
             Iterator iterator = configuration.keySet().iterator();
             while (iterator.hasNext()) {
                 key = (String)iterator.next();
-                MessageHandler.logln("key: " + key);
+                //log.debug("key: " + key);
                 value = configuration.get(key);
                 if (value instanceof String) {
-                    MessageHandler.logln("   value: " + value);
+                    //log.debug("   value: " + value);
                 } else if (value instanceof ArrayList) {
                     list = (ArrayList)value;
-                    MessageHandler.log("   values: ");
+                    //log.debug("   values: ");
                     for (int count = 0; count < list.size(); count++) {
-                        MessageHandler.log(list.get(count) + " - ");
+                        //log.debug(list.get(count) + " - ");
                     }
-                    MessageHandler.logln("");
                 } else if (value instanceof HashMap) {
                     map = (HashMap)value;
                     Iterator iter = map.keySet().iterator();
-                    MessageHandler.log("   values: ");
+                    //log.debug("   values: ");
                     while (iter.hasNext()) {
                         tmp = (String)iter.next();
-                        MessageHandler.log(" " + tmp + ":" + map.get(tmp));
+                        //log.debug(" " + tmp + ":" + map.get(tmp));
                     }
-                    MessageHandler.logln("");
                 }
             }
         }

@@ -26,7 +26,6 @@ public class TableFooter extends TableBody {
 
     public TableFooter(FONode parent) {
         super(parent);
-        this.name = "fo:table-footer";
     }
 
 }

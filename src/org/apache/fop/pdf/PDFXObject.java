@@ -12,7 +12,6 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.IOException;
-import org.apache.fop.messaging.MessageHandler;
 import java.io.OutputStream;
 
 // FOP
@@ -52,7 +51,7 @@ public class PDFXObject extends PDFObject {
         isPS = false;
         this.Xnum = Xnumber;
         if (img == null)
-            MessageHandler.errorln("FISH");
+            //log.error("FISH");
         fopimage = img;
         this.pdfDoc = pdfdoc;
         pdfICCStream = null;
@@ -71,9 +70,9 @@ public class PDFXObject extends PDFObject {
                 }
             }
         } catch (Exception e) {
-            MessageHandler.errorln("Error while reading image " +
-                                   fopimage.getURL() +
-                                   ": " + e.getMessage());
+            //log.error("Error while reading image " +
+            //                       fopimage.getURL() +
+            //                       ": " + e.getMessage());
         }
     }
     
@@ -224,8 +223,8 @@ public class PDFXObject extends PDFObject {
                 length += pdfBytes.length;
             }
         } catch (FopImageException imgex) {
-            MessageHandler.errorln("Error in XObject : "
-                                   + imgex.getMessage());
+            //log.error("Error in XObject : "
+            //                       + imgex.getMessage());
         }
         
         return length;
