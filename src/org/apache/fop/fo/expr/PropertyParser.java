@@ -85,6 +85,8 @@ public class PropertyParser extends PropertyTokenizer {
     functionTable.put("from-parent", new FromParentFunction());
     functionTable.put("from-nearest-specified-value", new NearestSpecPropFunction());
     functionTable.put("proportional-column-width", new PPColWidthFunction());
+    functionTable.put("label-end", new LabelEndFunction());
+    functionTable.put("body-start", new BodyStartFunction());
     // NOTE: used from code generated for corresponding properties
     functionTable.put("_fop-property-value", new FopPropValFunction());
 
@@ -94,8 +96,6 @@ public class PropertyParser extends PropertyTokenizer {
 
     functionTable.put("system-font", new SystemFontFunction());
     
-    functionTable.put("label-end", new LabelEndFunction());
-    functionTable.put("body-start", new BodyStartFunction());
     functionTable.put("merge-property-values", new MergePropsFunction());
     ***/
   }

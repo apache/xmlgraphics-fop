@@ -35,46 +35,46 @@
 <fo:block space-before.optimum="12pt" space-after.optimum="12pt" start-indent="50pt">Text before<fo:block space-before.optimum="12pt" space-after.optimum="12pt" start-indent="100pt">A block with 100pt start-indent within a block with 50pt start-intent</fo:block>Text after</fo:block>
 <fo:list-block provisional-distance-between-starts="12pt" space-before.optimum="12pt" text-align="justify">
 <fo:list-item>
-<fo:list-item-label><fo:block>&#x2022;</fo:block></fo:list-item-label>
-<fo:list-item-body><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block></fo:list-item-body>
+<fo:list-item-label end-indent="label-end()"><fo:block>&#x2022;</fo:block></fo:list-item-label>
+<fo:list-item-body start-indent="body-start()"><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block></fo:list-item-body>
 </fo:list-item>
 <fo:list-item>
-<fo:list-item-label><fo:block>&#x2022;</fo:block></fo:list-item-label>
-<fo:list-item-body><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block></fo:list-item-body>
+<fo:list-item-label end-indent="label-end()"><fo:block>&#x2022;</fo:block></fo:list-item-label>
+<fo:list-item-body start-indent="body-start()"><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block></fo:list-item-body>
 </fo:list-item>
 </fo:list-block>
 <fo:list-block start-indent="50pt" provisional-distance-between-starts="12pt" space-before.optimum="12pt" text-align="justify">
 <fo:list-item>
-<fo:list-item-label><fo:block>&#x2022;</fo:block></fo:list-item-label>
-<fo:list-item-body><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks. The list-block has a start-indent of 50pt and a text-align of justified.</fo:block></fo:list-item-body>
+<fo:list-item-label end-indent="label-end()"><fo:block>&#x2022;</fo:block></fo:list-item-label>
+<fo:list-item-body start-indent="body-start()"><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks. The list-block has a start-indent of 50pt and a text-align of justified.</fo:block></fo:list-item-body>
 </fo:list-item>
 <fo:list-item>
-<fo:list-item-label><fo:block>&#x2022;</fo:block></fo:list-item-label>
-<fo:list-item-body><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block><fo:block>This is a second multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block><fo:block>This is a third multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block></fo:list-item-body>
+<fo:list-item-label end-indent="label-end()"><fo:block>&#x2022;</fo:block></fo:list-item-label>
+<fo:list-item-body start-indent="body-start()"><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block><fo:block>This is a second multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block><fo:block>This is a third multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block></fo:list-item-body>
 </fo:list-item>
 </fo:list-block>
 <fo:list-block provisional-distance-between-starts="12pt" space-before.optimum="12pt" text-align="justify">
 <fo:list-item>
-<fo:list-item-label><fo:block>&#x2022;</fo:block></fo:list-item-label>
-<fo:list-item-body><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block><fo:block start-indent="100pt">This is a multiple line block with start-indent 100pt that extends over more than one line. There should be appropriate line breaks.</fo:block><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block></fo:list-item-body>
+<fo:list-item-label end-indent="label-end()"><fo:block>&#x2022;</fo:block></fo:list-item-label>
+<fo:list-item-body start-indent="body-start()"><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block><fo:block start-indent="100pt">This is a multiple line block with start-indent 100pt that extends over more than one line. There should be appropriate line breaks.</fo:block><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block></fo:list-item-body>
 </fo:list-item>
 <fo:list-item>
-<fo:list-item-label><fo:block>&#x2022;</fo:block></fo:list-item-label>
-<fo:list-item-body><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.<fo:block>This is an embedded multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block></fo:list-item-body>
+<fo:list-item-label end-indent="label-end()"><fo:block>&#x2022;</fo:block></fo:list-item-label>
+<fo:list-item-body start-indent="body-start()"><fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.<fo:block>This is an embedded multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block>This is a multiple line block that extends over more than one line. There should be appropriate line breaks.</fo:block></fo:list-item-body>
 </fo:list-item>
 </fo:list-block>
       <fo:list-block provisional-distance-between-starts="12pt" space-before.optimum="12pt">
         <fo:list-item>
-          <fo:list-item-label><fo:block>&#x2022;</fo:block></fo:list-item-label>
-          <fo:list-item-body><fo:block>A block in a list-item-body</fo:block></fo:list-item-body>
+          <fo:list-item-label end-indent="label-end()"><fo:block>&#x2022;</fo:block></fo:list-item-label>
+          <fo:list-item-body start-indent="body-start()"><fo:block>A block in a list-item-body</fo:block></fo:list-item-body>
         </fo:list-item>
         <fo:list-item>
-          <fo:list-item-label><fo:block>&#x2022;</fo:block></fo:list-item-label>
-          <fo:list-item-body>
+          <fo:list-item-label end-indent="label-end()"><fo:block>&#x2022;</fo:block></fo:list-item-label>
+          <fo:list-item-body start-indent="body-start()">
             <fo:list-block provisional-distance-between-starts="12pt">
               <fo:list-item>
-                <fo:list-item-label><fo:block>&#x2022;</fo:block></fo:list-item-label>
-                <fo:list-item-body><fo:block>This is a list item in a list that is itself a list item</fo:block></fo:list-item-body>
+                <fo:list-item-label end-indent="label-end()"><fo:block>&#x2022;</fo:block></fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()"><fo:block>This is a list item in a list that is itself a list item</fo:block></fo:list-item-body>
               </fo:list-item>
             </fo:list-block>
           </fo:list-item-body>

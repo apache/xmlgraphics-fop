@@ -90,10 +90,7 @@ public class ListItemBody extends FObj {
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
 	    FObj fo = (FObj) children.elementAt(i);
-	    fo.setIsInListBody();
-	    fo.setDistanceBetweenStarts(this.distanceBetweenStarts);
-	    fo.setLabelSeparation(this.labelSeparation);
-	    fo.setBodyIndent(this.bodyIndent);
+
 	    Status status;
 	    if ((status = fo.layout(area)).isIncomplete()) {
 		this.marker = i;

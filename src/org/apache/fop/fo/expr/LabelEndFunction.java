@@ -48,53 +48,49 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+package org.apache.fop.fo.expr;
 
-package org.apache.fop.fo.flow;
+import org.apache.fop.datatypes.*;
+import org.apache.fop.fo.Property;
+import org.apache.fop.fo.LengthProperty;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.flow.ListItem;
 
-// FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.Area;
-import org.apache.fop.layout.FontState;
-import org.apache.fop.apps.FOPException;
+public class LabelEndFunction extends FunctionBase {
 
-// Java
-import java.util.Enumeration;
+    public int nbArgs() { return 0; }
 
-public class ListItemLabel extends FObj {
+    public Property eval(Property[] args, PropertyInfo pInfo)
+	throws PropertyException {
 
-    public static class Maker extends FObj.Maker {
-	public FObj make(FObj parent, PropertyList propertyList)
-	    throws FOPException {
-	    return new ListItemLabel(parent, propertyList);
+	Length distance
+	    = pInfo.getPropertyList()
+	    .get("provisional-distance-between-starts").getLength();
+	Length separation
+	    = pInfo.getPropertyList()
+	    .getNearestSpecified("provisional-label-separation").getLength();
+
+	FObj item = pInfo.getFO();
+	while(item != null && !(item instanceof ListItem)) {
+	    item = item.getParent();
 	}
-    }
-
-    public static FObj.Maker maker() {
-	return new ListItemLabel.Maker();
-    }
-
-    public ListItemLabel(FObj parent, PropertyList propertyList) {
-	super(parent, propertyList);
-	this.name = "fo:list-item-label";
-    }
-
-    public Status layout(Area area) throws FOPException {
-	int numChildren = this.children.size();
-
-	if (numChildren != 1) {
-	    throw new FOPException("list-item-label must have exactly one block in this version of FOP");
+	if(item == null) {
+	    throw new PropertyException("label-end() called from outside an fo:list-item");
 	}
-        
-        // initialize id                       
-        String id = this.properties.get("id").getString();            
-        area.getIDReferences().initializeID(id,area);                        
-        
-	Block block = (Block) children.elementAt(0);
+	Length startIndent = item.properties.get("start-indent").getLength();
+	
+	LinearCombinationLength labelEnd = new LinearCombinationLength();
 
-	Status status;
-	status = block.layout(area);
-	area.addDisplaySpace(-block.getAreaHeight());
-	return status;
+	// Should be CONTAINING_REFAREA but that doesn't work
+	LengthBase base = new LengthBase(item, pInfo.getPropertyList(),
+					 LengthBase.CONTAINING_BOX);
+	PercentLength refWidth = new PercentLength(1.0, base);
+
+	labelEnd.addTerm(1.0, refWidth);
+	labelEnd.addTerm(-1.0, distance);
+	labelEnd.addTerm(-1.0, startIndent);
+	labelEnd.addTerm(1.0, separation);
+
+	return new LengthProperty(labelEnd);
     }
 }

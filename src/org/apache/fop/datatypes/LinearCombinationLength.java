@@ -1,4 +1,4 @@
-/*-- $Id$ -- 
+/*-- $Id$ --
 
  ============================================================================
                    The Apache Software License, Version 1.1
@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
+ 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,53 +48,42 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+package org.apache.fop.datatypes;
 
-package org.apache.fop.fo.flow;
+import java.util.Vector;
+import org.apache.fop.messaging.MessageHandler;
 
-// FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.Area;
-import org.apache.fop.layout.FontState;
-import org.apache.fop.apps.FOPException;
+/**
+ * a percent specified length quantity in XSL
+ */
+public class LinearCombinationLength extends Length {
 
-// Java
-import java.util.Enumeration;
+    protected Vector factors;
+    protected Vector lengths;
 
-public class ListItemLabel extends FObj {
-
-    public static class Maker extends FObj.Maker {
-	public FObj make(FObj parent, PropertyList propertyList)
-	    throws FOPException {
-	    return new ListItemLabel(parent, propertyList);
-	}
+    public LinearCombinationLength() {
+        super(0);
+        factors = new Vector();
+        lengths = new Vector();
+        super.setIsComputed(false);
     }
 
-    public static FObj.Maker maker() {
-	return new ListItemLabel.Maker();
+    public void addTerm(double factor, Length length) {
+        factors.addElement(new Double(factor));
+        lengths.addElement(length);
     }
 
-    public ListItemLabel(FObj parent, PropertyList propertyList) {
-	super(parent, propertyList);
-	this.name = "fo:list-item-label";
+    /**
+     * Return the computed value in millipoints.
+     */
+    protected int computeValue() {
+        int result = 0;
+        int numFactors = factors.size();
+        for(int i = 0; i < numFactors; ++i) {
+            result += (int)(((Double)factors.elementAt(i)).doubleValue()
+                            * (double)((Length)lengths.elementAt(i)).mvalue());
+        }
+        return result;
     }
 
-    public Status layout(Area area) throws FOPException {
-	int numChildren = this.children.size();
-
-	if (numChildren != 1) {
-	    throw new FOPException("list-item-label must have exactly one block in this version of FOP");
-	}
-        
-        // initialize id                       
-        String id = this.properties.get("id").getString();            
-        area.getIDReferences().initializeID(id,area);                        
-        
-	Block block = (Block) children.elementAt(0);
-
-	Status status;
-	status = block.layout(area);
-	area.addDisplaySpace(-block.getAreaHeight());
-	return status;
-    }
 }

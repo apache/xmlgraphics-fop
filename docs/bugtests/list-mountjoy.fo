@@ -53,11 +53,11 @@
         <!-- list item -->
         <fo:list-item>
           <!-- insert a bullet -->
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or 
             </fo:block>
@@ -67,11 +67,11 @@
         <!-- list item -->
         <fo:list-item>
           <!-- insert a bullet -->
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               entities (other than amp, lt, gt, apos, quot), if references to those entities appear in the document, or 
             </fo:block>
@@ -81,11 +81,11 @@
         <!-- list entry -->
         <fo:list-item>
           <!-- insert a bullet -->
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               attributes with values subject to normalization, where the attribute appears in the document with a value which will
             </fo:block>
@@ -95,11 +95,11 @@
         <!-- list entry -->
         <fo:list-item>
           <!-- insert a bullet -->
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               change as a result of normalization, or 
             </fo:block>
@@ -109,11 +109,11 @@
         <!-- list entry -->
         <fo:list-item>
           <!-- insert a bullet -->
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
 
               element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white spaceadsfadsfsssssssssssssss thin any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white spaceadsfadsfssssssssthin any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white spaceadsfadsfssssssssthin any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white spaceadsfadsfssssssssthin any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white spaceadsfadsfssssssss
@@ -126,18 +126,18 @@
 
 
  <fo:list-item>
-  <fo:list-item-label> <fo:block/></fo:list-item-label>  
-   <fo:list-item-body>
+  <fo:list-item-label end-indent="label-end()"> <fo:block/></fo:list-item-label>  
+   <fo:list-item-body start-indent="body-start()">
    <fo:list-block>
         
          <!-- list item -->
         <fo:list-item>
           <!-- insert a bullet -->
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or 
             </fo:block>
@@ -146,11 +146,11 @@
   <!-- list item -->
         <fo:list-item>
           <!-- insert a bullet -->
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or 
             </fo:block>
@@ -159,11 +159,11 @@
   <!-- list item -->
         <fo:list-item>
           <!-- insert a bullet -->
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or 
             </fo:block>
@@ -172,11 +172,11 @@
   <!-- list item -->
         <fo:list-item>
           <!-- insert a bullet -->
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or 
             </fo:block>
@@ -190,11 +190,11 @@
         <!-- list entry -->
         <fo:list-item>
           <!-- insert a bullet -->
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. elementtance of those types. 
             </fo:block>
@@ -203,11 +203,11 @@
         <!-- list entry -->
         <fo:list-item>
           <!-- insert a bullet -->
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. elementtance of those types. 
             </fo:block>
@@ -216,11 +216,11 @@
         <!-- list entry -->
         <fo:list-item>
           <!-- insert a bullet -->
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. element types with element content, if white space occurs directly within any instance of those types. elementtance of those types. 
             </fo:block>

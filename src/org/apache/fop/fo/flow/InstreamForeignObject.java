@@ -250,17 +250,6 @@ public class InstreamForeignObject extends FObj {
             area.increaseHeight(areaCurrent.getEffectiveHeight());
 		}
 
-		if (this.isInLabel) {
-	startIndent += bodyIndent;
-/*	endIndent += (areaCurrent.getEffectiveWidth()
-					- distanceBetweenStarts - startIndent)
-			+ labelSeparation;*/
-		}
-
-		if (this.isInListBody) {
-	startIndent += bodyIndent + distanceBetweenStarts;
-		}
-
 		if (this.isInTableCell) {
 	startIndent += forcedStartOffset;
 /*	endIndent = areaCurrent.getEffectiveWidth() - forcedWidth -

@@ -267,10 +267,10 @@ TBD: - The faq doesn't show in the content
 <!-- li (list item) in unordered list -->
 <xsl:template match ="ul/li">
     <fo:list-item>
-      <fo:list-item-label>
+      <fo:list-item-label end-indent="label-end()">
         <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
       </fo:list-item-label>
-      <fo:list-item-body>
+      <fo:list-item-body start-indent="body-start()">
         <fo:block space-after.optimum="4pt"
               text-align="justify"
               padding-top="3pt">
@@ -284,12 +284,12 @@ TBD: - The faq doesn't show in the content
 <!-- li (list item) in ordered list -->
 <xsl:template match ="ol/li">
     <fo:list-item>
-      <fo:list-item-label>
+      <fo:list-item-label end-indent="label-end()">
         <fo:block>
           <xsl:number level="multiple" count="li" format="1"/>)
         </fo:block>
       </fo:list-item-label>
-      <fo:list-item-body>
+      <fo:list-item-body start-indent="body-start()">
         <fo:block space-after.optimum="4pt"
               text-align="justify"
               padding-top="3pt">

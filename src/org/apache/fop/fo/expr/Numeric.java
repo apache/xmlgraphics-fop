@@ -54,6 +54,7 @@ package org.apache.fop.fo.expr;
 import org.apache.fop.fo.Property;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentLength;
+import org.apache.fop.datatypes.LinearCombinationLength;
 import org.apache.fop.datatypes.MixedLength;
 import org.apache.fop.datatypes.TableColLength;
 import org.apache.fop.datatypes.PercentBase;
