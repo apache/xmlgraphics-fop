@@ -786,13 +786,13 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             regenum.hasNext();) {
            Region r = (Region)regenum.next();
            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM);
-           if (r.getRegionAreaClass() == RegionReference.BODY) {
+           if (r.getRegionClassCode() == Region.BODY_CODE) {
                rvp.setRegion(makeRegionBodyReferenceArea(r, rvp.getViewArea()));
            } else {
                rvp.setRegion(makeRegionReferenceArea(r, rvp.getViewArea()));
            }
-           page.setRegion(r.getRegionAreaClass(), rvp);
-           if (r.getRegionAreaClass() == RegionReference.BODY) {
+           page.setRegion(r.getRegionClassCode(), rvp);
+           if (r.getRegionClassCode() == RegionReference.BODY) {
                bHasBody = true;
            }
        }
@@ -871,7 +871,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     public RegionReference makeRegionReferenceArea(Region r,
             Rectangle2D absRegVPRect) {
-        RegionReference rr = new RegionReference(r.getRegionAreaClass());
+        RegionReference rr = new RegionReference(r.getRegionClassCode());
         setRegionPosition(r, rr, absRegVPRect);
         return rr;
     }

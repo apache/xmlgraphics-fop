@@ -63,8 +63,6 @@ import org.apache.fop.fo.Property;
 import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.area.RegionReference;
-import org.apache.fop.area.BodyRegion;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
 /**
@@ -139,10 +137,10 @@ public class RegionBody extends Region {
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.Region#getRegionAreaClass()
+     * @see org.apache.fop.fo.pagination.Region#getRegionClassCode()
      */
-    public int getRegionAreaClass() {
-        return RegionReference.BODY;
+    public int getRegionClassCode() {
+        return Region.BODY_CODE;
     }
 
     /**

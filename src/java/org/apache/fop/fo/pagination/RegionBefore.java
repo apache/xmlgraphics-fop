@@ -55,7 +55,6 @@ import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.area.RegionReference;
 
 // Java
 import java.awt.Rectangle;
@@ -87,10 +86,10 @@ public class RegionBefore extends RegionBA {
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.Region#getRegionAreaClass()
+     * @see org.apache.fop.fo.pagination.Region#getRegionClassCode()
      */
-    public int getRegionAreaClass() {
-        return RegionReference.BEFORE;
+    public int getRegionClassCode() {
+        return Region.BEFORE_CODE;
     }
 
     /**

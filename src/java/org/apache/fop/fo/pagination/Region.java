@@ -82,6 +82,18 @@ public abstract class Region extends FObj {
     /** Key for body regions */
     public static final String BODY =   "body";
 
+    /* The following codes correspond to those found in area/RegionReference */
+    /** Integer Code for before regions */
+    public static final int BEFORE_CODE = 0;
+    /** Integer Code for start regions */
+    public static final int START_CODE = 1;
+    /** Integer Code for body regions */
+    public static final int BODY_CODE = 2;
+    /** Integer Code for end regions */
+    public static final int END_CODE = 3;
+    /** Integer Code for after regions */
+    public static final int AFTER_CODE = 4;
+
     private SimplePageMaster layoutMaster;
     private String regionName;
 
@@ -136,13 +148,6 @@ public abstract class Region extends FObj {
     public abstract Rectangle getViewportRectangle(FODimension pageRefRect);
 
     /**
-     * Return the enumerated value designating this type of region in the
-     * Area tree.
-     * @return the region area class
-     */
-    public abstract int getRegionAreaClass();
-
-    /**
      * Returns the default region name (xsl-region-before, xsl-region-start,
      * etc.)
      * @return the default region name
@@ -156,6 +161,11 @@ public abstract class Region extends FObj {
      */
     public abstract String getRegionClass();
 
+    /**
+     * Returns the region class code.
+     * @return the region class code
+     */
+    public abstract int getRegionClassCode();
 
     /**
      * Returns the name of this region.
