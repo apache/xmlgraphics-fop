@@ -64,8 +64,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.XMLEvent;
 
 /**
@@ -111,20 +110,20 @@ public class FoDeclarations extends FONode {
      * this node
      */
     public FoDeclarations
-        (FOTree foTree, FONode parent, FoXMLEvent event)
+        (FOTree foTree, FONode parent, XMLEvent event)
         throws TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.DECLARATIONS, parent, event,
               FONode.DECLARATIONS_SET, sparsePropsMap, sparseIndices);
         try {
-            FoXMLEvent ev =
+            XMLEvent ev =
                 xmlevents.expectStartElement
                     (FObjectNames.COLOR_PROFILE, XMLEvent.DISCARD_W_SPACE);
             if (ev == null)
                 throw new FOPException
                         ("No fo:color-profile in fo:declarations.");
             new FoColorProfile(foTree, this, ev);
-            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
             do {
                 ev = xmlevents.expectStartElement
@@ -132,7 +131,7 @@ public class FoDeclarations extends FONode {
                 if (ev == null) break; // No instance of these elements found
                 new FoColorProfile(foTree, this, ev);
                 // Flush the master event
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
