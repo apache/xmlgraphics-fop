@@ -9,7 +9,6 @@ package org.apache.fop.apps;
 
 public class Fop {
     public static void main(String[] args) {
-        System.out.println("CVS FOP DOES NOT WORK - DO NOT EXPECT ANYTHING");
         CommandLineOptions options = null;
 
         try {
