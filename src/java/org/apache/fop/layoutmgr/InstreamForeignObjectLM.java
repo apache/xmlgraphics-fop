@@ -77,7 +77,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
             // this property does not apply when the line-height applies
             // isn't the block-progression-dimension always in the same
             // direction as the line height?
-            len = ifoNode.getProperty(PR_BLOCK_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
+            len = ifoNode.getProperty(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
             if (!len.isAuto()) {
                 bpd = len.getValue();
             } else {
@@ -88,7 +88,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
             }
         }
 
-        len = ifoNode.getProperty(PR_INLINE_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
+        len = ifoNode.getProperty(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
         if (!len.isAuto()) {
             ipd = len.getValue();
         } else {

@@ -61,9 +61,9 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
 
     private MinOptMax getLeaderAllocIPD(int ipd) {
         // length of the leader
-        int opt = ldrNode.getLength(PR_LEADER_LENGTH | CP_OPTIMUM, ipd);
-        int min = ldrNode.getLength(PR_LEADER_LENGTH | CP_MINIMUM, ipd);
-        int max = ldrNode.getLength(PR_LEADER_LENGTH | CP_MAXIMUM, ipd);
+        int opt = ldrNode.getLength(ldrNode.getProperty(PR_LEADER_LENGTH).getLengthRange().getOptimum().getLength(), ipd);
+        int min = ldrNode.getLength(ldrNode.getProperty(PR_LEADER_LENGTH).getLengthRange().getMinimum().getLength(), ipd);
+        int max = ldrNode.getLength(ldrNode.getProperty(PR_LEADER_LENGTH).getLengthRange().getMaximum().getLength(), ipd);
         return new MinOptMax(min, opt, max);
     }
 
