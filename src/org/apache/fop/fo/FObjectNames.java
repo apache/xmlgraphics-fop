@@ -10,6 +10,8 @@
 
 package org.apache.fop.fo;
 
+import org.apache.fop.apps.FOPException;
+
 /**
  * Data class containing the Flow Object names and associated integer
  * constants.
@@ -153,4 +155,19 @@ public class FObjectNames {
                                 ,{ "title", "fo.sequences"    }  //55
                               ,{ "wrapper", "fo.sequences"    }  //56
     };
+
+    /**
+     * @param foType <tt>int</tt> index of the FO type.
+     * @return <tt>String</tt> name of the FO.
+     * @exception FOPException if the FO index is invalid.
+     */
+    public static String getFOName(int foType)
+                throws FOPException
+    {
+        if (foType < 0 || foType > LAST_FO)
+                throw new FOPException
+                        ("getFOName: type is invalid: " + foType);
+        return foLocalNames[foType][0];
+    }
+
 }
