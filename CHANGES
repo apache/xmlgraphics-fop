@@ -1,6 +1,9 @@
 ==============================================================================
 Done since 0.20.4 release
 
+- Added support for CCITT Group 4 encoded TIFF files
+  Made JAI support dynamic (no recompile needed anymore)
+  Submitted by: Manuel Mall <mm@arcus.com.au> (see bug #13866)
 - Fixed problem with jpegs with icc profile and acrobat reader 5 (Bug #11301)
   Submitted by: Stephan Neuhaus <stephan.neuhaus@myview.de>
 - Fix bug in LinkSet.mergeLinks() (ArrayOutOfBoundsException when number of 

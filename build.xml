@@ -212,7 +212,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <property name="viewer.resources.src.dir" value="./src/org/apache/fop/viewer/resources"/>
     <property name="viewer.images.src.dir" value="./src/org/apache/fop/viewer/Images"/>
-	
+        
     <property name="build.dir" value="./build"/>
     <property name="build.src" value="./build/src"/>
     <property name="build.codegen" value="./build/src/codegen"/>
@@ -223,7 +223,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/viewer/resources"/>
     <property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/viewer/Images"/>
 
-	<!-- <property name="dist.dir" value="./dist"/> -->
+        <!-- <property name="dist.dir" value="./dist"/> -->
     <property name="dist.bin.dir" value="./dist-bin"/>
     <property name="dist.src.dir" value="./dist-src"/>
     <property name="dist.bin.result.dir" value="${dist.bin.dir}/${name}-${version}"/>
@@ -236,6 +236,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="ignore_this" value="ignore_this.java"/>
     <property name="jimi" value="JimiImage.java"/>
     <property name="jai" value="JAIImage.java"/>
+    <property name="tiff" value="TiffImage.java"/>
 
     <!--property name="xslt" value="org.apache.xalan.xslt.Process"/-->
     <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
@@ -356,6 +357,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <echo message="JAI library is present. Fop installs JAI support."/>
     <copy todir="${build.src}">
       <fileset dir="${src.dir}" includes="**/${jai}"/>
+      <fileset dir="${src.dir}" includes="**/${tiff}"/>
     </copy>
   </target>
 
@@ -374,7 +376,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <!-- copy src files -->
     <copy todir="${build.src}" filtering="yes">
       <fileset dir="${src.dir}" 
-        excludes="**/${jimi},**/${jai},**/${xsltransform},**/${trax},**/apps/TraxInputHandler.java"/>
+        excludes="**/${jimi},**/${jai},**/${tiff},**/${xsltransform},**/${trax},**/apps/TraxInputHandler.java"/>
       <filterset>
         <filter token="XSLFO-STD" value="${xslfo.std}"/>
         <filter token="XSLFO-STDID" value="${xslfo.std.id}"/>

@@ -187,12 +187,19 @@ public class PDFXObject extends PDFObject {
                  * Added by Eric Dalquist
                  * If the DCT filter hasn't been added to the object we add it here
                  */
+                /*
+                 * Added by Manuel Mall
+                 * Only add the default filters if we don't have an image filter to
+                 * avoid double encoding of images
+                 */
+                 
                 if (fopimage.getPDFFilter() != null) {
                     imgStream.addFilter(fopimage.getPDFFilter());
+                } else {
+                    imgStream.addDefaultFilters();
                 }
 
-                imgStream.addDefaultFilters();
-
+                
                 String dictEntries = imgStream.applyFilters();
 
                 String p = this.number + " " + this.generation + " obj\n";
