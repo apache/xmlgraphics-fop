@@ -25,7 +25,7 @@ import java.util.HashMap;
  * LayoutManager for objects which stack children in the inline direction,
  * such as Inline or Line
  */
-public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
+public class InlineStackingLayoutManager extends AbstractLayoutManager {
 
 
     private static class StackingIter extends PositionIterator {
@@ -34,7 +34,7 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
             super(parentIter);
         }
 
-        protected BPLayoutManager getLM(Object nextObj) {
+        protected LayoutManager getLM(Object nextObj) {
             return ((Position) nextObj).getPosition().getLM();
         }
 
@@ -64,13 +64,13 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
     private BreakPoss m_prevBP;
     private LayoutContext m_childLC ;
 
-    private BPLayoutManager m_lastChildLM = null; // Set when return last breakposs
+    private LayoutManager m_lastChildLM = null; // Set when return last breakposs
     private boolean m_bAreaCreated = false;
 
     /** Used to store previous content IPD for each child LM. */
     private HashMap m_hmPrevIPD = new HashMap();
 
-    public InlineStackingBPLayoutManager(FObj fobj,
+    public InlineStackingLayoutManager(FObj fobj,
                                          ListIterator childLMiter) {
         super(fobj, childLMiter);
         // Initialize inline properties (borders, padding, space)
@@ -131,7 +131,7 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
             // ASSERT (prevPos.getLM() == this)
             if (prevPos.getLM() != this) {
                 //log.error(
-                //  "InlineStackingBPLayoutManager.resetPosition: " +
+                //  "InlineStackingLayoutManager.resetPosition: " +
                 //  "LM mismatch!!!");
             }
             // Back up the child LM Position
@@ -167,7 +167,7 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
                 hasLeadingFence(false)) {
             return true;
         }
-        BPLayoutManager lm = getChildLM();
+        LayoutManager lm = getChildLM();
         if (lm != null) {
             return lm.canBreakBefore(context);
         } else
@@ -187,7 +187,7 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
     public BreakPoss getNextBreakPoss(LayoutContext lc) {
         // Get a break from currently active child LM
         BreakPoss bp = null;
-        BPLayoutManager curLM ;
+        LayoutManager curLM ;
         SpaceSpecifier leadingSpace = lc.getLeadingSpace();
 
         if (lc.startsNewArea()) {
@@ -249,7 +249,7 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
         }
     }
 
-    /** ATTENTION: ALSO USED BY LineBPLayoutManager! */
+    /** ATTENTION: ALSO USED BY LineLayoutManager! */
     protected void initChildLC(LayoutContext childLC, BreakPoss prevBP,
                                boolean bStartParent, boolean bFirstChildBP,
                                SpaceSpecifier leadingSpace) {
@@ -328,7 +328,7 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
     }
 
 
-    /** ATTENTION: ALSO USED BY LineBPLayoutManager! */
+    /** ATTENTION: ALSO USED BY LineLayoutManager! */
     protected MinOptMax updatePrevIPD(BreakPoss bp, BreakPoss prevBP,
                                       boolean bStartParent, boolean bFirstArea) {
         MinOptMax prevIPD = new MinOptMax(0);
@@ -410,8 +410,8 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
 
         // posIter iterates over positions returned by this LM
         StackingIter childPosIter = new StackingIter(parentIter);
-        BPLayoutManager prevLM = null;
-        BPLayoutManager childLM ;
+        LayoutManager prevLM = null;
+        LayoutManager childLM ;
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             //getContext().setTrailingSpace(new SpaceSpecifier(false));
             childLM.addAreas(childPosIter, getContext());

@@ -28,7 +28,7 @@ import java.util.ArrayList;
  * LayoutManager for text (a sequence of characters) which generates one
  * or more inline areas.
  */
-public class TextBPLayoutManager extends AbstractBPLayoutManager {
+public class TextLayoutManager extends AbstractLayoutManager {
 
     /**
      * Store information about each potential word area.
@@ -86,7 +86,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
     private int m_iNbSpacesPending;
 
 
-    public TextBPLayoutManager(FObj fobj, char[] chars, TextInfo textInfo) {
+    public TextLayoutManager(FObj fobj, char[] chars, TextInfo textInfo) {
         super(fobj);
         this.chars = chars;
         this.textInfo = textInfo;
@@ -151,7 +151,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
             // ASSERT (prevPos.getLM() == this)
             if (prevPos.getLM() != this) {
                 //log.error(
-                //  "TextBPLayoutManager.resetPosition: " + "LM mismatch!!!");
+                //  "TextLayoutManager.resetPosition: " + "LM mismatch!!!");
             }
             LeafPosition tbp = (LeafPosition) prevPos;
             AreaInfo ai =

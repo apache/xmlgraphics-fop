@@ -10,6 +10,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.area.Area;
+import org.apache.fop.fo.PropertyManager;
 
 import java.util.ListIterator;
 import java.util.ArrayList;
@@ -21,6 +22,12 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     protected LayoutManager parentLM;
     protected FObj fobj;
 
+    /** True if this LayoutManager has handled all of its content. */
+    private boolean m_bFinished = false;
+    protected LayoutManager m_curChildLM = null;
+    protected ListIterator m_childLMiter;
+    protected boolean m_bInited = false;
+
     protected LayoutPos curPos = new LayoutPos();
 
     static class LayoutPos {
@@ -29,8 +36,13 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     }
 
     public AbstractLayoutManager(FObj fobj) {
+        this(fobj, new LMiter(fobj.getChildren()));
+    }
+
+    public AbstractLayoutManager(FObj fobj, ListIterator lmIter) {
         this.fobj = fobj;
         this.parentLM = null;
+        m_childLMiter = lmIter;
     }
 
     public void setParentLM(LayoutManager lm) {
@@ -62,12 +74,6 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     //     }
 
     /**
-     * Force current area to be added to parent area.
-     */
-    abstract protected boolean flush();
-
-
-    /**
      * Return an Area which can contain the passed childArea. The childArea
      * may not yet have any content, but it has essential traits set.
      * In general, if the LayoutManager already has an Area it simply returns
@@ -77,7 +83,6 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * its own area. This includes setting the content IPD and the maximum
      * BPD.
      */
-    abstract public Area getParentArea(Area childArea);
 
 
     public boolean generatesInlineAreas() {
@@ -89,7 +94,167 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * dimension of the current area to be exceeded, the parent LM is called
      * to add it.
      */
-    abstract public boolean addChild(Area childArea);
 
+    /**
+     * Return currently active child LayoutManager or null if
+     * all children have finished layout.
+     * Note: child must implement LayoutManager! If it doesn't, skip it
+     * and print a warning.
+     */
+    protected LayoutManager getChildLM() {
+        if (m_curChildLM != null && !m_curChildLM.isFinished()) {
+            return m_curChildLM;
+        }
+        while (m_childLMiter.hasNext()) {
+            Object obj = m_childLMiter.next();
+            if (obj instanceof LayoutManager) {
+                m_curChildLM = (LayoutManager) obj;
+                m_curChildLM.setParentLM(this);
+                m_curChildLM.init();
+                return m_curChildLM;
+            } else {
+                m_childLMiter.remove();
+                //log.warn(
+                //  "child LM not a LayoutManager: " +
+                //  obj.getClass().getName());
+            }
+        }
+        return null;
+    }
+
+    protected boolean hasMoreLM(LayoutManager prevLM) {
+        // prevLM should = m_curChildLM
+        if (prevLM != m_curChildLM) {
+            //log.debug("AbstractLayoutManager.peekNextLM: " + 
+            //                   "passed LM is not current child LM!");
+            return false;
+        }
+        return !m_childLMiter.hasNext();
+    }
+
+
+    /**
+     * Reset the layoutmanager "iterator" so that it will start
+     * with the passed Position's generating LM
+     * on the next call to getChildLM.
+     * @param pos a Position returned by a child layout manager
+     * representing a potential break decision.
+     * If pos is null, then back up to the first child LM.
+     */
+    protected void reset(Position pos) {
+        //if (lm == null) return; 
+        LayoutManager lm = (pos != null) ? pos.getLM() : null;
+        if (m_curChildLM != lm) {
+            // ASSERT m_curChildLM == (LayoutManager)m_childLMiter.previous()
+            if (m_childLMiter.hasPrevious() && m_curChildLM !=
+                    (LayoutManager) m_childLMiter.previous()) {
+                //log.error("LMiter problem!");
+            }
+            while (m_curChildLM != lm && m_childLMiter.hasPrevious()) {
+                m_curChildLM.resetPosition(null);
+                m_curChildLM = (LayoutManager) m_childLMiter.previous();
+            }
+            m_childLMiter.next(); // Otherwise next returns same object
+        }
+        if(m_curChildLM != null) {
+            m_curChildLM.resetPosition(pos);
+        }
+        if (isFinished()) {
+            setFinished(false);
+        }
+    }
+
+    public void resetPosition(Position resetPos) {
+        //  if (resetPos == null) {
+        //      reset(null);
+        //  }
+    }
+
+
+    /**
+     * This method provides a hook for a LayoutManager to intialize traits
+     * for the areas it will create, based on Properties set on its FO.
+     */
+    public void init() { 
+        if (fobj != null && m_bInited == false) {
+            initProperties(fobj.getPropertyManager());
+            m_bInited = true;
+        }
+    }
+
+    /**
+     * This method provides a hook for a LayoutManager to intialize traits
+     * for the areas it will create, based on Properties set on its FO.
+     */
+    protected void initProperties(PropertyManager pm) {
+        //log.debug("AbstractLayoutManager.initProperties");
+    }
+    
+
+    /**
+     * Tell whether this LayoutManager has handled all of its content.
+     * @return True if there are no more break possibilities,
+     * ie. the last one returned represents the end of the content.
+     */
+    public boolean isFinished() {
+        return m_bFinished;
+    }
+
+    public void setFinished(boolean bFinished) {
+        m_bFinished = bFinished;
+    }
+
+
+    /**
+     * Generate and return the next break possibility.
+     * Each layout manager must implement this.
+     * TODO: should this be abstract or is there some reasonable
+     * default implementation?
+     */
+    public BreakPoss getNextBreakPoss(LayoutContext context) {
+        return null;
+    }
+
+
+    /**
+     * Return value indicating whether the next area to be generated could
+     * start a new line or flow area.
+     * In general, if can't break at the current level, delegate to
+     * the first child LM.
+     * NOTE: should only be called if the START_AREA flag is set in context,
+     * since the previous sibling LM must have returned a BreakPoss which
+     * does not allow break-after.
+     * QUESTION: in block-stacked areas, does this mean some kind of keep
+     * condition, or is it only used for inline-stacked areas?
+     * Default implementation always returns true.
+     */
+    public boolean canBreakBefore(LayoutContext context) {
+        return true;
+    }
+
+
+    public void addAreas(PositionIterator posIter, LayoutContext context) {
+    }
+
+
+    public void getWordChars(StringBuffer sbChars, Position bp1,
+                             Position bp2) {
+    }
+
+    /* ---------------------------------------------------------
+     * PROVIDE NULL IMPLEMENTATIONS OF METHODS from LayoutManager
+     * interface which are declared abstract in AbstractLayoutManager.
+     * ---------------------------------------------------------*/
+    public Area getParentArea(Area childArea) {
+        return null;
+    }
+
+    protected boolean flush() {
+        return false;
+    }
+
+    public boolean addChild(Area childArea) {
+        return false;
+    }
 }
 

@@ -18,7 +18,7 @@ import org.apache.fop.fo.properties.VerticalAlign;
  * These are all inline objects. Most of them cannot be split (Text is
  * an exception to this rule.)
  */
-public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
+public class LeafNodeLayoutManager extends AbstractLayoutManager {
 
     private InlineArea curArea = null;
     private int alignment;

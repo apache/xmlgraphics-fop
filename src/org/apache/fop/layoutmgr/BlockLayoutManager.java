@@ -51,7 +51,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             while (proxy.hasNext()) {
                 LayoutManager lm = (LayoutManager) proxy.next();
                 if(lm.generatesInlineAreas()) {
-                    LineBPLayoutManager lineLM = createLineManager(lm);
+                    LineLayoutManager lineLM = createLineManager(lm);
                     m_listLMs.add(lineLM);
                 } else {
                     m_listLMs.add(lm);
@@ -63,7 +63,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             return false;
         }
 
-        protected LineBPLayoutManager createLineManager(
+        protected LineLayoutManager createLineManager(
           LayoutManager firstlm) {
             LayoutManager lm;
             ArrayList inlines = new ArrayList();
@@ -77,8 +77,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                     break;
                 }
             }
-            LineBPLayoutManager child;
-            child = new LineBPLayoutManager(fobj, inlines, lineHeight,
+            LineLayoutManager child;
+            child = new LineLayoutManager(fobj, inlines, lineHeight,
                                             lead, follow);
             return child;
 
@@ -109,7 +109,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     }
 
     public BreakPoss getNextBreakPoss(LayoutContext context) {
-        BPLayoutManager curLM ; // currently active LM
+        LayoutManager curLM ; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
@@ -173,7 +173,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                          LayoutContext layoutContext) {
         getParentArea(null);
 
-        BPLayoutManager childLM ;
+        LayoutManager childLM ;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {

@@ -26,7 +26,7 @@ public class ContentLayoutManager implements LayoutManager {
         holder = area;
     }
 
-    public void fillArea(BPLayoutManager curLM) {
+    public void fillArea(LayoutManager curLM) {
 
         ArrayList childBreaks = new ArrayList();
         MinOptMax stack = new MinOptMax();
@@ -81,5 +81,32 @@ public class ContentLayoutManager implements LayoutManager {
         return 10000000;
     }
 
+    public boolean canBreakBefore(LayoutContext lc) {
+        return false;
+    }
+
+    public BreakPoss getNextBreakPoss(LayoutContext context) {
+        return null;
+    }
+
+    public boolean isFinished() {
+        return false;
+    }
+
+    public void setFinished(boolean isFinished) {
+    }
+
+    public void addAreas(PositionIterator posIter, LayoutContext context) {
+    }
+
+    public void init() {
+    }
+
+    public void resetPosition(Position position) {
+    }
+
+    public void getWordChars(StringBuffer sbChars, Position bp1,
+                             Position bp2) {
+    }
 }
 

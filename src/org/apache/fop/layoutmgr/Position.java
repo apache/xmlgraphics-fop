@@ -8,13 +8,13 @@
 package org.apache.fop.layoutmgr;
 
 public class Position {
-    private BPLayoutManager m_lm;
+    private LayoutManager m_lm;
 
-    public Position(BPLayoutManager lm) {
+    public Position(LayoutManager lm) {
         m_lm = lm;
     }
 
-    public BPLayoutManager getLM() {
+    public LayoutManager getLM() {
         return m_lm;
     }
 

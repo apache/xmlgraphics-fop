@@ -12,7 +12,7 @@ import org.apache.fop.layout.FontInfo;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.layoutmgr.InlineStackingBPLayoutManager;
+import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.LMiter;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class FObjMixed extends FObj {
     }
 
     public void addLayoutManager(List lms) {
-         lms.add(new InlineStackingBPLayoutManager(this,
+         lms.add(new InlineStackingLayoutManager(this,
                      new LMiter(children.listIterator())));
       // set start and end properties for this element, id, etc.
 //         int numChildren = this.children.size();

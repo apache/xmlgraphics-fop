@@ -22,12 +22,12 @@ import java.util.List;
  * LayoutManager for a PageSequence and its flow.
  * It manages all page-related layout.
  */
-public class PageLayoutManager extends AbstractBPLayoutManager implements Runnable {
+public class PageLayoutManager extends AbstractLayoutManager implements Runnable {
 
     private static class BlockBreakPosition extends LeafPosition {
         BreakPoss breakps;
 
-        BlockBreakPosition(BPLayoutManager lm, BreakPoss bp) {
+        BlockBreakPosition(LayoutManager lm, BreakPoss bp) {
             super(lm, 0);
             breakps = bp;
         }
@@ -110,7 +110,7 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
 
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
-        BPLayoutManager curLM ; // currently active LM
+        LayoutManager curLM ; // currently active LM
 
         while ((curLM = getChildLM()) != null) {
             BreakPoss bp = null;

@@ -19,7 +19,7 @@ import java.util.Iterator;
  * Base LayoutManager class for all areas which stack their child
  * areas in the block-progression direction, such as Flow, Block, ListBlock.
  */
-public abstract class BlockStackingLayoutManager extends AbstractBPLayoutManager {
+public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
     /** Reference to FO whose areas it's managing or to the traits
      * of the FO.
      */

@@ -83,11 +83,11 @@ public class BreakPoss {
     /**
      * The top-level layout manager responsible for this break
      */
-    public BPLayoutManager getLayoutManager() {
+    public LayoutManager getLayoutManager() {
         return m_position.getLM();
     }
 
-    //     public void setLayoutManager(BPLayoutManager lm) {
+    //     public void setLayoutManager(LayoutManager lm) {
     //         m_lm = lm;
     //     }
 
