@@ -29,6 +29,13 @@ import java.util.BitSet;
 public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
 
     /**
+     * Constant for <i>discardEvent</i> field of
+     * <i>getEndElement(boolean discardEvent, FoXMLEvent(, boolean)).
+     */
+    public static final boolean DISCARD_EV = true,
+                                 RETAIN_EV = false;
+
+    /**
      * Maintains an index of namespace URIs.  These can then be referred to
      * by an <tt>int</tt> index.
      */
@@ -1151,6 +1158,67 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
         return expectTypedEvent
                 (XMLEvent.ENDELEMENT, event.uriIndex, event.localName,
                                                          discardWhiteSpace);
+    }
+
+    /**
+     * Get the next ENDELEMENT event, with the same URI index and local name
+     * as the <tt>FoXMLEvent</tt> argument, from the buffer.
+     * Discard any other events preceding the ENDELEMENT event.
+     * @param discardEvent the argument event may be discarded.
+     * @param event an <tt>FoXMLEvent</tt>.  Only the uriIndex and the
+     * localName from the event are used.  It is intended that the FoXMLEvent
+     * returned to the corresponding get/expectStartElement() call be used.
+     * @return an ENDELEMENT event
+     * @exception FOPException if buffer errors or interrupts occur
+     * @exception NoSuchElementException if the event is not found
+     */
+    public FoXMLEvent getEndElement(boolean discardEvent, FoXMLEvent event)
+        throws FOPException
+    {
+        FoXMLEvent ev;
+        if (event.foType != FObjectNames.NO_FO)
+            ev = getTypedEvent(XMLEvent.ENDELEMENT, event.foType);
+        else
+            ev = getTypedEvent
+                    (XMLEvent.ENDELEMENT, event.uriIndex, event.localName);
+        if (discardEvent) {
+            //System.out.println("discardEvent");
+            pool.surrenderEvent(event);
+        }
+        return ev;
+    }
+
+    /**
+     * Return the next element if it is an ENDELEMENT with the same
+     * URI index and local name as the <tt>FoXMLEvent argument</tt>.  If the
+     * next element is not of the required type, push it back onto the buffer.
+     * @param discardEvent the argument event may be discarded.
+     * @param event an <tt>FoXMLEvent</tt>.  Only the uriIndex and the
+     * localName from the event are used.  It is intended that the FoXMLEvent
+     * returned to the corresponding get/expectStartElement() call be used.
+     * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
+     * events which contain only whitespace.
+     * @return a matching ENDELEMENT event.  If the next
+     * event detected is not an ENDELEMENT, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
+     * @exception FOPException if buffer errors or interrupts occur
+     * @exception NoSuchElementException if end of buffer detected.
+     */
+    public FoXMLEvent expectEndElement
+        (boolean discardEvent, FoXMLEvent event, boolean discardWhiteSpace)
+        throws FOPException
+    {
+        FoXMLEvent ev;
+        if (event.foType != FObjectNames.NO_FO)
+            ev = expectTypedEvent
+                    (XMLEvent.ENDELEMENT, event.foType, discardWhiteSpace);
+        else
+            ev = expectTypedEvent
+                (XMLEvent.ENDELEMENT, event.uriIndex, event.localName,
+                                                         discardWhiteSpace);
+        if (discardEvent)
+            pool.surrenderEvent(event);
+        return ev;
     }
 
     /**
