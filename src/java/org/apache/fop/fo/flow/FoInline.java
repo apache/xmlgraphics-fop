@@ -120,7 +120,6 @@ public class FoInline extends FOPageSeqNode {
         propsets.set(PropNames.KEEP_WITH_PREVIOUS);
         propsets.set(PropNames.LINE_HEIGHT);
         propsets.set(PropNames.TEXT_DECORATION);
-        propsets.set(PropNames.USAGE_CONTEXT_OF_SUPPRESS_AT_LINE_BREAK);
         propsets.set(PropNames.VISIBILITY);
         propsets.set(PropNames.WIDTH);
         propsets.set(PropNames.WRAP_OPTION);

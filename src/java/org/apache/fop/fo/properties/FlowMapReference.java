@@ -1,9 +1,6 @@
 /*
- * None.java
  * $Id$
  *
- * Created: Tue Nov 20 22:18:11 2001
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -51,59 +48,43 @@
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
  *  
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
- * @version $Revision$ $Name$
  */
-package org.apache.fop.datatypes;
+package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.None;
+import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.Property;
 
-/**
- * Class for dummy property values; e.g. unsupported properties or null
- * initial values.
- */
+public class FlowMapReference extends Property  {
+    public static final int dataTypes = NCNAME;
 
-public class NoType extends AbstractPropertyValue {
-
-    private static final String tag = "$Name$";
-    private static final String revision = "$Revision$";
-
-    /**
-     * @param property the <tt>int</tt> index of the property on which
-     * this value is being defined.
-     * @exception PropertyException
-     */
-    public NoType(int property)
-        throws PropertyException
-    {
-        super(property, PropertyValue.NO_TYPE);
+    public int getDataTypes() {
+        return dataTypes;
     }
 
-    /**
-     * @param propertyName the <tt>String</tt> name of the property on which
-     * this value is being defined.
-     * @exception PropertyException
-     */
-    public NoType(String propertyName)
-        throws PropertyException
-    {
-        super(propertyName, PropertyValue.NO_TYPE);
+    public static final int traitMapping = SPECIFICATION;
+
+    public int getTraitMapping() {
+        return traitMapping;
     }
 
-    /**
-     * validate the <i>None</i> against the associated property.
-     */
-    public void validate() throws PropertyException {
-        if ((propertyConsts.getDataTypes(property) & Property.AURAL) != 0)
-            return;
-        if (propertyConsts.getInitialValueType(property)
-                                                    == Property.NOTYPE_IT)
-            return;
-        throw new PropertyException
-                ("NoType property is invalid for property "
-                 + property + " " + PropNames.getPropertyName(property));
+    public static final int initialValueType = NONE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
+    public PropertyValue getInitialValue(int property)
+        throws PropertyException
+    {
+        return new None(PropNames.FLOW_MAP_REFERENCE);
+    }
+    public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
     }
 
 }
+
