@@ -60,7 +60,7 @@
                 </fo:table-cell>
                 <fo:table-cell>
                   <fo:block>
-                    <fo:marker marker-class-name="previous-total">0</fo:marker>
+                    <fo:marker marker-class-name="previous-total">0.00</fo:marker>
                     <fo:marker marker-class-name="total">1.00</fo:marker>
                   </fo:block>
                 </fo:table-cell>
@@ -142,5 +142,18 @@
     </fo:root>
   </fo>
   <checks>
+    <!-- page 1 -->
+    <eval expected="0.00" xpath="//pageViewport[1]/page/regionViewport[1]/regionBefore/block[2]/lineArea"/>
+    <eval expected="4.00" xpath="//pageViewport[1]/page/regionViewport[2]/regionAfter/block[1]/lineArea"/>
+    <eval expected="1" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/lineArea"/>
+    <eval expected="2" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[4]/block[1]/lineArea"/>
+    <eval expected="3" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[7]/block[1]/lineArea"/>
+    <eval expected="4" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[10]/block[1]/lineArea"/>
+
+    <!-- page 2 -->
+    <eval expected="4.00" xpath="//pageViewport[2]/page/regionViewport[1]/regionBefore/block[2]/lineArea"/>
+    <eval expected="6.00" xpath="//pageViewport[2]/page/regionViewport[2]/regionAfter/block[1]/lineArea"/>
+    <eval expected="5: 1.00" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/lineArea"/>
+    <eval expected="6: 1.00" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[4]/block[1]/lineArea"/>
   </checks>
 </testcase>
