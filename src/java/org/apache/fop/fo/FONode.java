@@ -34,6 +34,7 @@ import org.apache.fop.datastructs.SyncedNode;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.CountryType;
 import org.apache.fop.datatypes.EnumType;
+import org.apache.fop.datatypes.IntegerType;
 import org.apache.fop.datatypes.LanguageType;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PropertyValue;
@@ -603,10 +604,19 @@ public class FONode extends SyncedNode implements AreaListener {
      * @return an enumerated constant representing the writing-mode
      * @throws PropertyException
      */
-    public int getWritingMode()
-    throws PropertyException {
+    public int getWritingMode() throws PropertyException {
         PropertyValue wm = getPropertyValue(PropNames.WRITING_MODE);
         return EnumType.getEnumValue(wm);
+    }
+
+    /**
+     * Gets the <code>reference-orientation</code> applying to this node.
+     * @return the orientation as a positive integer quadrant angle
+     * @throws PropertyException
+     */
+    public int getRefOrientation() throws PropertyException {
+        PropertyValue rot = getPropertyValue(PropNames.REFERENCE_ORIENTATION);
+        return IntegerType.getIntValue(rot);
     }
 
     /**
