@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,15 +42,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.tools;
 
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.Session;
 import org.apache.fop.apps.FOInputHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.InputHandler;
@@ -84,10 +84,10 @@ import org.xml.sax.SAXException;
  * pdf rendering.
  *
  * Modified by Mark Lillywhite mark-fop@inomial.com to use the new Driver
- * interface.
+ * (now Session) interface.
  */
 public class TestConverter extends AbstractLogEnabled {
-    
+
     private boolean failOnly = false;
     private boolean outputPDF = false;
     private File destdir;
@@ -141,7 +141,7 @@ public class TestConverter extends AbstractLogEnabled {
     }
 
     /**
-     * Controls whether to process only the tests which are specified as fail 
+     * Controls whether to process only the tests which are specified as fail
      * in the test results.
      * @param fail True if only fail tests should be processed
      */
@@ -266,7 +266,7 @@ public class TestConverter extends AbstractLogEnabled {
         if (xslNode != null) {
             xsl = xslNode.getNodeValue();
         }
-        getLogger().debug("converting xml:" + xml + " and xsl:" 
+        getLogger().debug("converting xml:" + xml + " and xsl:"
                   + xsl + " to area tree");
 
         try {
@@ -290,33 +290,33 @@ public class TestConverter extends AbstractLogEnabled {
             XMLReader parser = inputHandler.getParser();
             setParserFeatures(parser);
 
-            Driver driver = new Driver();
-            setupLogger(driver, "fop");
-            driver.initialize();
+            Session session = new Session();
+            setupLogger(session, "fop");
+            session.initialize();
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(baseURL);
-            driver.setUserAgent(userAgent);
+            session.setUserAgent(userAgent);
             if (outputPDF) {
-                driver.setRenderer(Driver.RENDER_PDF);
+                session.setRenderer(Session.RENDER_PDF);
             } else {
-                driver.setRenderer(Driver.RENDER_XML);
+                session.setRenderer(Session.RENDER_XML);
             }
 
             Map rendererOptions = new java.util.HashMap();
             rendererOptions.put("fineDetail", new Boolean(false));
             rendererOptions.put("consistentOutput", new Boolean(true));
-            driver.getRenderer().setOptions(rendererOptions);
-            driver.getRenderer().setProducer("Testsuite Converter");
+            session.getRenderer().setOptions(rendererOptions);
+            session.getRenderer().setProducer("Testsuite Converter");
 
             String outname = xmlFile.getName();
             if (outname.endsWith(".xml")) {
                 outname = outname.substring(0, outname.length() - 4);
             }
-            driver.setOutputStream(new java.io.BufferedOutputStream(
+            session.setOutputStream(new java.io.BufferedOutputStream(
                                        new java.io.FileOutputStream(new File(destdir,
                                        outname + (outputPDF ? ".pdf" : ".at.xml")))));
             getLogger().debug("ddir:" + destdir + " on:" + outname + ".pdf");
-            driver.render(parser, inputHandler.getInputSource());
+            session.render(parser, inputHandler.getInputSource());
 
             // check difference
             if (compare != null) {

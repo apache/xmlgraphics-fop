@@ -72,7 +72,7 @@ import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
 
 // FOP
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.Session;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.apps.XSLTInputHandler;
@@ -171,13 +171,13 @@ public class FopPrintServlet extends HttpServlet {
     public void renderFO(InputSource foFile,
                          HttpServletResponse response) throws ServletException {
         try {
-            Driver driver = new Driver(foFile, null);
+            Session session = new Session(foFile, null);
             PrinterJob pj = PrinterJob.getPrinterJob();
             PrintRenderer renderer = new PrintRenderer(pj);
 
-            driver.enableLogging(log);
-            driver.setRenderer(renderer);
-            driver.run();
+            session.enableLogging(log);
+            session.setRenderer(renderer);
+            session.run();
 
             reportOK (response);
         } catch (Exception ex) {
@@ -194,15 +194,15 @@ public class FopPrintServlet extends HttpServlet {
     public void renderXML(XSLTInputHandler input,
                           HttpServletResponse response) throws ServletException {
         try {
-            Driver driver = new Driver();
+            Session session = new Session();
             PrinterJob pj = PrinterJob.getPrinterJob();
             PrintRenderer renderer = new PrintRenderer(pj);
 
             pj.setCopies(1);
 
-            driver.enableLogging(log);
-            driver.setRenderer(renderer);
-            driver.render(input.getParser(), input.getInputSource());
+            session.enableLogging(log);
+            session.setRenderer(renderer);
+            session.render(input.getParser(), input.getInputSource());
 
             reportOK (response);
         } catch (Exception ex) {
