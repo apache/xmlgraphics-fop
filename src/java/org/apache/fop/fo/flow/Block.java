@@ -256,7 +256,8 @@ public class Block extends FObjMixed {
             LFchecker lfCheck = new LFchecker(charIter);
 
             while (charIter.hasNext()) {
-                switch (CharUtilities.classOf(charIter.nextChar())) {
+                char currentChar = charIter.nextChar();
+                switch (CharUtilities.classOf(currentChar)) {
                     case CharUtilities.XMLWHITESPACE:
                         /* Some kind of whitespace character, except linefeed. */
                         boolean bIgnore = false;
@@ -275,8 +276,11 @@ public class Block extends FObjMixed {
                             case Constants.IGNORE_IF_AFTER_LINEFEED:
                                 bIgnore = bPrevWasLF;
                                 break;
+                            case Constants.PRESERVE:
+                                // nothing to do now, replacement takes place later
+                                break;
                         }
-                        // Handle ignore
+                        // Handle ignore and replacement
                         if (bIgnore) {
                             charIter.remove();
                         } else if (bWScollapse) {
@@ -290,7 +294,16 @@ public class Block extends FObjMixed {
                                 // encountered yet
                                 if (!bSeenNonWSYet) {
                                     charIter.remove();
+                                } else {
+                                    if (currentChar != '\u0020') {
+                                        charIter.replaceChar('\u0020');
+                                    }
                                 }
+                            }
+                        } else {
+                            // !bWScollapse
+                            if (currentChar != '\u0020') {
+                                charIter.replaceChar('\u0020');
                             }
                         }
                         break;
