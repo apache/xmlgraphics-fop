@@ -524,6 +524,19 @@ public class Driver implements LogEnabled {
            validateOutputStream();
         }
 
+        /** Document creation is hard-wired for now, but needs to be made
+         accessible through the API and/or configuration */
+        if (currentDocument == null) {
+            currentDocument = new Document(this);
+        }
+        /** LayoutStrategy is hard-wired for now, but needs to be made
+        accessible through the API and/or configuration */
+        if (foInputHandler instanceof FOTreeHandler) {
+            if (currentDocument.getLayoutStrategy() == null) {
+                currentDocument.setLayoutStrategy(new LayoutManagerLS(currentDocument));
+            }
+        }
+
         // TODO: - do this stuff in a better way
         // PIJ: I guess the structure handler should be created by the renderer.
         if (rendererType == RENDER_MIF) {
@@ -537,22 +550,9 @@ public class Driver implements LogEnabled {
             }
             foInputHandler = new FOTreeHandler(currentDocument, true);
         }
+        currentDocument.foInputHandler = foInputHandler;
 
         foInputHandler.enableLogging(getLogger());
-
-        /** Document creation is hard-wired for now, but needs to be made
-         accessible through the API and/or configuration */
-        if (currentDocument == null) {
-            currentDocument = new Document(this);
-        }
-        currentDocument.foInputHandler = foInputHandler;
-        /** LayoutStrategy is hard-wired for now, but needs to be made
-        accessible through the API and/or configuration */
-        if (foInputHandler instanceof FOTreeHandler) {
-            if (currentDocument.getLayoutStrategy() == null) {
-                currentDocument.setLayoutStrategy(new LayoutManagerLS(currentDocument));
-            }
-        }
 
         treeBuilder.setUserAgent(getUserAgent());
         treeBuilder.setFOInputHandler(foInputHandler);
