@@ -218,10 +218,28 @@ public class PDFRenderer extends PrintRenderer {
     protected void addRect(int x, int y, int w, int h,
                            PDFPathPaint stroke, PDFPathPaint fill) {
         closeText();
-        currentStream.add("ET\nq\n" + fill.getColorSpaceOut(true) +
+	currentStream.add("ET\nq\n" + fill.getColorSpaceOut(true) +
                           stroke.getColorSpaceOut(false) + (x / 1000f) + " " +
                           (y / 1000f) + " " + (w / 1000f) + " " + (h / 1000f) +
                           " re b\n" + "Q\nBT\n");
+    }
+
+    /**
+       * add a filled rectangle to the current stream
+       *
+       * @param x the x position of left edge in millipoints
+       * @param y the y position of top edge in millipoints
+       * @param w the width in millipoints
+       * @param h the height in millipoints
+       * @param fill the fill color/gradient
+       */
+    protected void addFilledRect(int x, int y, int w, int h,
+                            PDFPathPaint fill) {
+        closeText();
+	currentStream.add("ET\nq\n" + fill.getColorSpaceOut(true) +
+                          (x / 1000f) + " " +
+                          (y / 1000f) + " " + (w / 1000f) + " " + (h / 1000f) +
+                          " re f\n" + "Q\nBT\n");
     }
 
     /**
