@@ -54,7 +54,7 @@ import org.apache.fop.fo.Property;
 
 
 /**
- * This appearst to be an artificial function (??), which handles the specified
+ * This appears to be an artificial function, which handles the specified
  * or initial value of the property on this object.
  */
 public class FopPropValFunction extends FunctionBase {
