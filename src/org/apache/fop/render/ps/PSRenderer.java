@@ -118,6 +118,8 @@ public class PSRenderer extends AbstractRenderer {
 
     private FontInfo fontInfo;
 
+    private int psLevel = 3;
+
     protected IDReferences idReferences;
 
     protected java.util.HashMap options;
@@ -139,6 +141,29 @@ public class PSRenderer extends AbstractRenderer {
     public void setOptions(java.util.HashMap options) {
         this.options = options;
     }
+
+
+    /**
+     * Sets the PostScript Level to generate.
+     *
+     * @param level You can specify either 2 or 3 for the PostScript Level
+     */
+    public void setPSLevel(int level) {
+        switch (level) {
+            case 2:
+            case 3:
+                this.psLevel = level;
+                break;
+            default:
+                throw new IllegalArgumentException("Only PostScript Levels 2 and 3 are supported");
+        }
+    }
+
+
+    public int getPSLevel() {
+        return this.psLevel;
+    }
+
 
     /**
      * write out a command
@@ -539,12 +564,16 @@ public class PSRenderer extends AbstractRenderer {
             write("  /ImageMatrix [" + img.getWidth() + " 0 0 -"
                   + img.getHeight() + " 0 " + img.getHeight() + "]");
 
-            if (img instanceof JpegImage)
+            if (img instanceof JpegImage) {
                 write("  /DataSource currentfile /ASCII85Decode filter /DCTDecode filter");
-            else
-                write("  /DataSource currentfile /ASCII85Decode filter /FlateDecode filter");
+            } else {
+                if (this.psLevel >= 3) {
+                    write("  /DataSource currentfile /ASCII85Decode filter /FlateDecode filter");
+                } else {
+                    write("  /DataSource currentfile /ASCII85Decode filter /RunLengthDecode filter");
+                }
+            }
             // write("  /DataSource currentfile /ASCIIHexDecode filter /FlateDecode filter");
-            // write("  /DataSource currentfile /ASCII85Decode filter /RunLengthDecode filter");
             // write("  /DataSource currentfile /ASCIIHexDecode filter /RunLengthDecode filter");
             // write("  /DataSource currentfile /ASCIIHexDecode filter");
             // write("  /DataSource currentfile /ASCII85Decode filter");
@@ -572,7 +601,11 @@ public class PSRenderer extends AbstractRenderer {
                 OutputStream out = this.out;
                 out = new ASCII85OutputStream(out);
                 if (!(img instanceof JpegImage)) {
-                    out = new FlateEncodeOutputStream(out);
+                    if (this.psLevel >= 3) {
+                        out = new FlateEncodeOutputStream(out);
+                    } else {
+                        out = new RunLengthEncodeOutputStream(out);
+                    }
                 }
                 out.write(imgmap);
                 ((Finalizable)out).finalizeStream();
