@@ -298,4 +298,16 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         MessageHandler.logln("formatting FOs into areas");
         ((Root) this.rootFObj).format(areaTree);
     }
+
+    public void reset() 
+    {
+	currentFObj = null;
+	rootFObj = null;
+    }
+    
+    public boolean hasData() 
+    {
+	return (rootFObj != null);
+    }
+    
 }
