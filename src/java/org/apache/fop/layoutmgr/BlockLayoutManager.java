@@ -23,14 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.LineArea;
-import org.apache.fop.traits.LayoutProps;
-import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -42,9 +40,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     private Block curBlockArea;
 
     protected ListIterator proxyLMiter;
-
-    private LayoutProps layoutProps;
-    private CommonMarginBlock marginProps;
 
     /* holds the (one-time use) fo:block space-before
        and -after properties.  Large fo:blocks are split
@@ -85,10 +80,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      *      if defined for the block.
      */
     protected void initProperties() {
-        PropertyManager pm = fobj.getPropertyManager();
-        layoutProps = pm.getLayoutProps();
-        marginProps = pm.getMarginProps();
-        foBlockSpaceBefore = layoutProps.spaceBefore.getSpace();
+        foBlockSpaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore).getSpace();
         prevFoBlockSpaceAfter = foBlockSpaceAfter;
     }
 
@@ -170,7 +162,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         LayoutManager curLM; // currently active LM
 
         int ipd = context.getRefIPD();
-        int iIndents = marginProps.startIndent + marginProps.endIndent;
+        int iIndents = fobj.getCommonMarginBlock().startIndent.getValue() + fobj.getCommonMarginBlock().endIndent.getValue();
         int bIndents = fobj.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
         ipd -= iIndents;
 
@@ -249,7 +241,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             if (getChildLM() == null || over) {
                 if (getChildLM() == null) {
                     setFinished(true);
-                    stackSize.add(layoutProps.spaceAfter.getSpace());
+                    stackSize.add(new SpaceVal(fobj.getCommonMarginBlock().spaceAfter).getSpace());
                 }
                 BreakPoss breakPoss = new BreakPoss(
                                     new LeafPosition(this, childBreaks.size() - 1));
@@ -275,7 +267,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         addBlockSpacing(adjust, foBlockSpaceBefore);
         foBlockSpaceBefore = null;
 
-        addID();
+        addID(fobj.getId());
         addMarkers(true, true);
 
         LayoutManager childLM;
@@ -297,14 +289,12 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             }
         }
 
-        int bIndents = fobj.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
-
         addMarkers(false, true);
 
         flush();
 
         // if adjusted space after
-        foBlockSpaceAfter = layoutProps.spaceAfter.getSpace();
+        foBlockSpaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter).getSpace();
         addBlockSpacing(adjust, foBlockSpaceAfter);
 
         curBlockArea = null;
@@ -327,8 +317,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             // set traits
             TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
             TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
-            TraitSetter.addMargins(curBlockArea, fobj.getCommonBorderPaddingBackground(), marginProps);
-            TraitSetter.addBreaks(curBlockArea, layoutProps);
+            TraitSetter.addMargins(curBlockArea, fobj.getCommonBorderPaddingBackground(), fobj.getCommonMarginBlock());
+            TraitSetter.addBreaks(curBlockArea, fobj.getBreakBefore(), fobj.getBreakAfter());
 
             // Set up dimensions
             // Must get dimensions from parent area
@@ -347,7 +337,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             if (parentwidth == 0) {
                 parentwidth = referenceIPD;
             }
-            parentwidth -= marginProps.startIndent + marginProps.endIndent;
+            parentwidth -= fobj.getCommonMarginBlock().startIndent.getValue() + fobj.getCommonMarginBlock().endIndent.getValue();
             curBlockArea.setIPD(parentwidth);
             setCurrentArea(curBlockArea); // ??? for generic operations
         }

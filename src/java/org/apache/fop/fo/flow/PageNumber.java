@@ -137,7 +137,7 @@ public class PageNumber extends FObj {
      * @return the FontState object for this PageNumber
      */
     public Font getFontState() {
-        return propMgr.getFontState(getFOEventHandler().getFontInfo());
+        return commonFont.getFontState(getFOEventHandler().getFontInfo());
 
     }
 

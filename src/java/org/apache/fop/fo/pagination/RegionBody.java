@@ -94,10 +94,13 @@ public class RegionBody extends Region {
         * writing-mode on the page (not on the region-body!). If that's not
         * set but indent is explicitly set, it will return that.
         */
-        CommonMarginBlock mProps = propMgr.getMarginProps();
-        return new Rectangle(mProps.startIndent, mProps.spaceBefore,
-                    reldims.ipd - mProps.startIndent - mProps.endIndent,
-                    reldims.bpd - mProps.spaceBefore - mProps.spaceAfter);
+        int start = commonMarginBlock.startIndent.getValue();
+        int end = commonMarginBlock.endIndent.getValue();
+        int before = commonMarginBlock.spaceBefore.getOptimum().getLength().getValue();
+        int after = commonMarginBlock.spaceAfter.getOptimum().getLength().getValue();
+        return new Rectangle(start, before,
+                    reldims.ipd - start - end,
+                    reldims.bpd - before - after);
     }
 
     /**

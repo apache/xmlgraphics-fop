@@ -137,7 +137,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
         // With CID fonts, space isn't neccesary currentFontState.width(32)
         spaceCharIPD = fs.getCharWidth(' ');
         // Use hyphenationChar property
-        hyphIPD = fs.getCharWidth(foText.getCommonHyphenation().hyphenationChar);
+        hyphIPD = fs.getCharWidth(foText.getCommonHyphenation().hyphenationCharacter);
         // Make half-space: <space> on either side of a word-space)
         SpaceVal ls = SpaceVal.makeLetterSpacing(foText.getLetterSpacing());
         SpaceVal ws = SpaceVal.makeWordSpacing(foText.getWordSpacing(), ls, fs);
@@ -532,7 +532,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
         // add hyphenation character if the last word is hyphenated
         if (context.isLastArea() && ai.bHyphenated) {
-            str += foText.getCommonHyphenation().hyphenationChar;
+            str += foText.getCommonHyphenation().hyphenationCharacter;
             realWidth.add(new MinOptMax(hyphIPD));
         }
 

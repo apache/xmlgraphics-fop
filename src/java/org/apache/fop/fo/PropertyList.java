@@ -488,7 +488,7 @@ abstract public class PropertyList {
      * @return a HyphenationProps object
      */
     public CommonHyphenation getHyphenationProps() {
-        return new CommonHyphenation();
+        return new CommonHyphenation(this);
     }
     
     /**
@@ -496,7 +496,7 @@ abstract public class PropertyList {
      * @return a MarginProps object
      */
     public CommonMarginBlock getMarginBlockProps() {
-        return new CommonMarginBlock();
+        return new CommonMarginBlock(this);
     }
     
     /**
@@ -504,7 +504,7 @@ abstract public class PropertyList {
      * @return a MarginInlineProps object
      */
     public CommonMarginInline getMarginInlineProps() {
-        return new CommonMarginInline();
+        return new CommonMarginInline(this);
     }
     
     /**
@@ -512,7 +512,7 @@ abstract public class PropertyList {
      * @return a AccessibilityProps object
      */
     public CommonAccessibility getAccessibilityProps() {
-        return new CommonAccessibility();
+        return new CommonAccessibility(this);
     }
 
     /**
@@ -520,7 +520,7 @@ abstract public class PropertyList {
      * @return a AuralProps object
      */
     public CommonAural getAuralProps() {
-        CommonAural props = new CommonAural();
+        CommonAural props = new CommonAural(this);
         return props;
     }
 
@@ -529,7 +529,7 @@ abstract public class PropertyList {
      * @return a RelativePositionProps object
      */
     public CommonRelativePosition getRelativePositionProps() {
-        return new CommonRelativePosition();
+        return new CommonRelativePosition(this);
     }
     
     /**
@@ -537,7 +537,7 @@ abstract public class PropertyList {
      * @return a AbsolutePositionProps object
      */
     public CommonAbsolutePosition getAbsolutePositionProps() {
-        return new CommonAbsolutePosition();
+        return new CommonAbsolutePosition(this);
     }    
     
 

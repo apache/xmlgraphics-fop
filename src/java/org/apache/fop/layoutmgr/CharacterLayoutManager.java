@@ -52,7 +52,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
 
         SpaceVal ls = SpaceVal.makeLetterSpacing(fobj.getLetterSpacing());
         letterSpaceIPD = ls.getSpace();
-        hyphIPD = fs.getCharWidth(fobj.getCommonHyphenation().hyphenationChar);
+        hyphIPD = fs.getCharWidth(fobj.getCommonHyphenation().hyphenationCharacter);
     }
 
     private InlineArea getCharacterInlineArea(Character node) {

@@ -781,7 +781,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         ((FObj) fobj.getParent()).setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
 
         // Get absolute margin properties (top, left, bottom, right)
-        CommonMarginBlock mProps = spm.getPropertyManager().getMarginProps();
+        CommonMarginBlock mProps = spm.getCommonMarginBlock();
 
       /* Create the page reference area rectangle (0,0 is at top left
        * of the "page media" and y increases
@@ -789,17 +789,17 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
        * The media rectangle itself is (0,0,pageWidth,pageHeight).
        */
        Rectangle pageRefRect =
-               new Rectangle(mProps.marginLeft, mProps.marginTop,
-                       pageWidth - mProps.marginLeft - mProps.marginRight,
-                       pageHeight - mProps.marginTop - mProps.marginBottom);
+               new Rectangle(mProps.marginLeft.getValue(), mProps.marginTop.getValue(),
+                       pageWidth - mProps.marginLeft.getValue() - mProps.marginRight.getValue(),
+                       pageHeight - mProps.marginTop.getValue() - mProps.marginBottom.getValue());
 
        Page page = new Page();  // page reference area
 
        // Set up the CTM on the page reference area based on writing-mode
        // and reference-orientation
        FODimension reldims = new FODimension(0, 0);
-       CTM pageCTM = CTM.getCTMandRelDims(spm.getPropertyManager().getAbsRefOrient(),
-               spm.getPropertyManager().getWritingMode(), pageRefRect, reldims);
+       CTM pageCTM = CTM.getCTMandRelDims(spm.getReferenceOrientation(),
+               spm.getWritingMode(), pageRefRect, reldims);
 
        // Create a RegionViewport/ reference area pair for each page region
        for (Iterator regenum = spm.getRegions().values().iterator();
@@ -894,8 +894,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
     private void setRegionPosition(Region r, RegionReference rr,
                                   Rectangle2D absRegVPRect) {
         FODimension reldims = new FODimension(0, 0);
-        rr.setCTM(CTM.getCTMandRelDims(r.getPropertyManager().getAbsRefOrient(),
-                r.getPropertyManager().getWritingMode(), absRegVPRect, reldims));
+        rr.setCTM(CTM.getCTMandRelDims(r.getReferenceOrientation(),
+                r.getWritingMode(), absRegVPRect, reldims));
         rr.setIPD(reldims.ipd);
         rr.setBPD(reldims.bpd);
     }

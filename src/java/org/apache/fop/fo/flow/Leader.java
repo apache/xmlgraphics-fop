@@ -160,7 +160,7 @@ public class Leader extends FObjMixed {
     }
 
     public Font getFontState() {
-        return propMgr.getFontState(getFOEventHandler().getFontInfo());
+        return commonFont.getFontState(getFOEventHandler().getFontInfo());
     }
 
     public int getPatternWidth() {
