@@ -245,7 +245,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         
         addKnuthElementForBorderPaddingBefore(returnList, returnPosition, 
                 fobj.getCommonBorderPaddingBackground());
-
+        
         while ((curLM = (BlockLevelLayoutManager) getChildLM()) != null) {
             LayoutContext childLC = new LayoutContext(0);
             if (curLM instanceof LineLayoutManager) {
@@ -314,11 +314,11 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                         // a penalty
                     }
                 }
-                contentList.addAll(returnedList);
                 if (returnedList.size() == 0) {
                     //Avoid NoSuchElementException below (happens with empty blocks)
                     continue;
                 }
+                contentList.addAll(returnedList);
                 if (((KnuthElement) returnedList.getLast()).isPenalty()
                         && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
                     // a descendant of this block has break-after
@@ -340,6 +340,11 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
                     return returnList;
                 }
+                /*
+                if (allocatedSpace.min > context.getStackLimit().max) {
+                    log.debug("Allocated space exceeds stack limit, returning early.");
+                    return returnList;
+                }*/
             }
             prevLM = curLM;
         }
@@ -1169,8 +1174,12 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         boolean bSpaceAfter = false;
         while (parentIter.hasNext()) {
             pos = (Position) parentIter.next();
-            /* LF *///System.out.println("pos = " + pos.getClass().getName());
-            Position innerPosition = ((NonLeafPosition) pos).getPosition();
+            //log.trace("pos = " + pos.getClass().getName() + "; " + pos);
+            Position innerPosition = pos;
+            if (pos instanceof NonLeafPosition) {
+                //Not all elements are wrapped
+                innerPosition = ((NonLeafPosition) pos).getPosition();
+            }
             if (innerPosition == null) {
                 // pos was created by this BlockLM and was inside an element
                 // representing space before or after
@@ -1178,24 +1187,23 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                 if (positionList.size() == 0) {
                     // pos was in the element representing space-before
                     bSpaceBefore = true;
-                    /* LF *///System.out.println(" spazio prima");
+                    //log.trace(" space before");
                 } else {
                     // pos was in the element representing space-after
                     bSpaceAfter = true;
-                    /* LF *///System.out.println(" spazio dopo");
+                    //log.trace(" space-after");
                 }
             } else if (innerPosition.getLM() == this
                     && !(innerPosition instanceof MappingPosition)) {
                 // pos was created by this BlockLM and was inside a penalty
                 // allowing or forbidding a page break
                 // nothing to do
-                /* LF *///System.out.println(" penalty");
+                //log.trace(" penalty");
             } else {
                 // innerPosition was created by another LM
                 positionList.add(innerPosition);
                 lastLM = innerPosition.getLM();
-                /* LF *///System.out.println(" " +
-                      // innerPosition.getClass().getName());
+                //log.trace(" " + innerPosition.getClass().getName());
             }
         }
 

@@ -238,6 +238,14 @@ public class Table extends FObj {
     public List getColumns() {
         return columns;
     }
+    
+    /**
+     * @param index index of the table-body element.
+     * @return the requested table-body element
+     */
+    public TableBody getBody(int index) {
+        return (TableBody)childNodes.get(index);
+    }
 
     public TableBody getTableHeader() {
         return tableHeader;

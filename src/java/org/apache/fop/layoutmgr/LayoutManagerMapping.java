@@ -114,12 +114,12 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                    new PageNumberCitationLayoutManagerMaker());
         makers.put(PageSequence.class, new PageSequenceLayoutManagerMaker());
         makers.put(Table.class, new TableLayoutManagerMaker());
-        makers.put(TableBody.class, new TableBodyLayoutManagerMaker());
-        makers.put(TableColumn.class, new TableColumnLayoutManagerMaker());
-        makers.put(TableRow.class, new TableRowLayoutManagerMaker());
-        makers.put(TableCell.class, new TableCellLayoutManagerMaker());
-        makers.put(TableFooter.class, new TableBodyLayoutManagerMaker());
-        makers.put(TableHeader.class, new TableBodyLayoutManagerMaker());
+        makers.put(TableBody.class, new /*TableBodyLayoutManager*/Maker());
+        makers.put(TableColumn.class, new /*TableColumnLayoutManager*/Maker());
+        makers.put(TableRow.class, new /*TableRowLayoutManager*/Maker());
+        makers.put(TableCell.class, new /*TableCellLayoutManager*/Maker());
+        makers.put(TableFooter.class, new /*TableBodyLayoutManager*/Maker());
+        makers.put(TableHeader.class, new /*TableBodyLayoutManager*/Maker());
         makers.put(Flow.class, new FlowLayoutManagerMaker());
         makers.put(StaticContent.class, new StaticContentLayoutManagerMaker());
         makers.put(Wrapper.class, new WrapperLayoutManagerMaker());
@@ -313,6 +313,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 
     public static class TableLayoutManagerMaker extends Maker {
         
+        /*
         private List getColumnLayoutManagerList(Table table, TableLayoutManager tlm) {
             List columnLMs = null;
             List columns = table.getColumns();
@@ -347,19 +348,21 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                 }
             }
             return columnLMs;
-        }
+        }*/
         
         public void make(FONode node, List lms) {
             Table table = (Table) node;
             TableLayoutManager tlm = new TableLayoutManager(table);
+            /*
             List columnLMs = getColumnLayoutManagerList(table, tlm);
             if (columnLMs != null) {
                 tlm.setColumns(columnLMs);
-            }
+            }*/
             lms.add(tlm);
         }
     }
-        
+     
+    /*
     public static class TableBodyLayoutManagerMaker extends Maker {
          public void make(FONode node, List lms) {
              lms.add(new Body((TableBody) node));
@@ -383,7 +386,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         public void make(FONode node, List lms) {
             lms.add(new Cell((TableCell) node));
         }
-    }
+    }*/
 
     public static class FlowLayoutManagerMaker extends Maker {
          public void make(FONode node, List lms) {
