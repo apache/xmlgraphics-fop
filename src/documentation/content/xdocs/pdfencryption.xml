@@ -6,7 +6,7 @@
   <header>
     <title>PDF encryption.</title>
     <authors>
-      <person name="Patrick C. Lankswert" email=""/>
+      <person name="J.Pietschmann" email="pietsch@apache.org"/>
     </authors>
   </header>
   <body>
@@ -15,7 +15,7 @@
       <p>
         FOP supports encryption of PDF output, thanks to Patrick
         C. Lankswert. This feature is commonly used to prevent unauthorized
-        printing, editing and copying text from the document or to forbid
+        viewing, printing, editing and copying text from the document
         annotations. It is also possible to ask the user for a password in order
         to view the contents. Note that there already exist third party
         applications which can decrypt an encrypted PDF without effort and allow
@@ -31,11 +31,17 @@
     <section>
       <title>Usage</title>
       <p>
-        Encryption is enabled by supplying an owner password with the
-        <code>-o</code> option. The owner password can be used to disregard
-        any restriction imposed on the PDF document. If no owner password has
-        been supplied but FOP was asked to apply some restrictions, a random
-        password is used.
+        Encryption is enabled by supplying any of the encryption related
+        options.
+      </p>
+      <p>
+        An owner password with the <code>-o</code> option. This password is
+        actually used as encryption key. Usually it is also used by most tools
+        to disregard any restriction imposed on the PDF document.
+      </p>
+      <p>
+        If no owner password has been supplied but FOP was asked to apply some
+        restrictions, a random password is used.
       </p>
       <p>
         A user password, supplied with the <code>-u</code> option, will
@@ -44,11 +50,10 @@
         supplied, viewing the content is not restricted.
       </p>
       <p>
-        Further restrictions can be imposed by using the
-        <code>-noprint</code>, <code>-nocopy</code>,
-        <code>-noedit</code> and <code>-noannotations</code> options,
-        which disable printing, copy text, editing in Adobe Acrobat and making
-        annotations, respectively.
+        Further restrictions can be imposed by using the <code>-noprint</code>,
+        <code>-nocopy</code>, <code>-noedit</code> and
+        <code>-noannotations</code> options, which disable printing, copying
+        text, editing in Adobe Acrobat and making annotations, respectively.
       </p>
     </section>
     <section>
@@ -58,8 +63,9 @@
         support. Currently, only <link
         href="http://java.sun.com/j2se/1.4/docs/guide/security/jce/JCERefGuide.html">JCE</link>
         is supported. JCE is part of JDK 1.4. For earlier JDKs, it can be
-        installed separately, however, the build process currently recognizes
-        JCE from JDK 1.4.
+        installed separately. The build process automatically senses JCE
+        presence and installs PDF support if possible, otherwise, a stub is
+        compiled in.
       </p>
       <p>
         Cryptography support must also be present at run time. In particular, a
@@ -69,7 +75,7 @@
       </p>
       <source>"Cannot find any provider supporting RC4"</source>
       <p>
-        you don't have the needed support.
+        then you don't have the needed support.
       </p>
       <p>
         There are several commercial and a few Open Source packages which
@@ -80,7 +86,7 @@
         JSS</link> is an interface to a native implementation.
       </p>
     </section>
-    <section>
+    <section id="install_crypto">
       <title>Installing a crypto provider</title>
       <p>
         The pure Java implementation from <link
@@ -90,7 +96,7 @@
       <ol>
         <li>
           Download the binary distribution for your JDK version. If you have JDK
-          1.3 or earlier you must alos download a JCE from the same page.
+          1.3 or earlier you must also download a JCE from the same page.
         </li>
         <li>
           Unpack the distribution. Add the jar file to your classpath. A
