@@ -1,10 +1,4 @@
 /*
- * SyncedCircularBuffer.java
- * $Id$
- * 
- * Created: Tue Nov  6 10:19:03 2001
- * 
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -53,8 +47,8 @@
  * Software Foundation, please see <http://www.apache.org/>.
  *  
  *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
- * @version $Revision$ $Name$
+ * $Id$
+ * Created: Tue Nov  6 10:19:03 2001
  */
 package org.apache.fop.datastructs;
 
@@ -70,6 +64,9 @@ import java.lang.IndexOutOfBoundsException;
  * <b>Warning</b>: if the producer or consumer thread dies unexpectedly,
  * without interrupting the complementary thread's <tt>wait()</tt>, that
  * process will hang on the <tt>wait()</tt>.
+ * 
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * @version $Revision$ $Name$
  */
 public class SyncedCircularBuffer {
 
@@ -234,7 +231,8 @@ public class SyncedCircularBuffer {
 
     /**
      * Notifies the consumer that the producer has terminated.
-     * The <tt>notifyAll()</tt> call allows for processing of the buffer before it fills.
+     * The <tt>notifyAll()</tt> call allows for processing of the buffer before
+     * it fills.
      */
     public void producerExhausted() {
         synchronized (this) {
@@ -244,6 +242,15 @@ public class SyncedCircularBuffer {
                 notifyAll();
             }
         }
+    }
+    
+    /**
+     * Is this source of XmlEvents exhausted?
+     * @return true if the last event from the input stream (END_DOCUMENT)
+     * has been processed, and the buffer is empty.
+     */
+    public boolean isExhausted() {
+        return producerFinished && isEmpty(); 
     }
 
 }
