@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <!-- $Id$ -->
@@ -32,7 +32,7 @@
      from the input file
      xml-lang.xml
      found in the conf directory. -->
-<xsl:output method="text" encoding="iso-8859-1"/>
+<xsl:output method="text" encoding="utf-8"/>
 <xsl:template match="xml-lang">
   <xsl:value-of select="$licence"/>
   <xsl:variable name="languages">
