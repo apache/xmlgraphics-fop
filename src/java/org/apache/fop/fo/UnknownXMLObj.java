@@ -82,11 +82,11 @@ public class UnknownXMLObj extends XMLObj {
      *  @see XMLObj#addCharacters
      */
     protected void addCharacters(char data[], int start, int length,
-                                 Locator locator) {
+                                 PropertyList pList, Locator locator) {
         if (doc == null) {
             createBasicDocument();
         }
-        super.addCharacters(data, start, length, locator);
+        super.addCharacters(data, start, length, pList, locator);
     }
 }
 

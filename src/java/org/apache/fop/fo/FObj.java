@@ -97,9 +97,12 @@ public class FObj extends FONode implements Constants {
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, 
-                            Attributes attlist) throws SAXParseException {
+                            Attributes attlist, PropertyList pList) throws SAXParseException {
         setLocator(locator);
-        addProperties(attlist);
+        propertyList.addAttributesToList(attlist);
+        propertyList.setWritingMode();
+        bind(propertyList);
+        propMgr = new PropertyManager(propertyList);
     }
 
     /**
@@ -107,7 +110,8 @@ public class FObj extends FONode implements Constants {
      */
     protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws SAXParseException {
         //return foEventHandler.getPropertyListMaker().make(this, parent);
-        return null;
+        propertyList = new StaticPropertyList(this, parent);
+        return propertyList;
     }
 
     /**
@@ -135,49 +139,6 @@ public class FObj extends FONode implements Constants {
                 throw new SAXParseException("Property id \"" + id + 
                         "\" previously used; id values must be unique" +
                         " in document.", locator);
-            }
-        }
-    }
-
-    /**
-     * Set properties for this FO based on node attributes
-     * @param attlist Collection of attributes passed to us from the parser.
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        FObj parentFO = findNearestAncestorFObj();
-        PropertyList parentPL = null;
-
-        if (parentFO != null) {
-            parentPL = parentFO.getPropertiesForNamespace(FO_URI);
-        }
-
-        propertyList = new PropertyList(this, parentPL, FO_URI);
-        propertyList.addAttributesToList(attlist);
-        propMgr = new PropertyManager(propertyList);
-        setWritingMode();
-        
-        // if this FO can have a PR_ID, make sure it is unique
-        if (PropertySets.canHaveId(getNameId())) {
-            setupID();
-        }
-    }
-
-    /**
-     * Setup the id for this formatting object.
-     * Most formatting objects can have an id that can be referenced.
-     * This methods checks that the id isn't already used by another
-     * fo and sets the id attribute of this object.
-     */
-    private void setupID() throws SAXParseException {
-        String str = getPropString(PR_ID);
-        if (str != null && !str.equals("")) {
-            Set idrefs = getFOEventHandler().getIDReferences();
-            if (!idrefs.contains(str)) {
-                idrefs.add(str);
-            } else {
-                throw new SAXParseException("Property id \"" + str + 
-                    "\" previously used; id values must be unique" +
-                    " in document.", locator);
             }
         }
     }
@@ -280,61 +241,6 @@ public class FObj extends FONode implements Constants {
         return (FObj) par;
     }
 
-    /**
-     * Find nearest ancestor which generates Reference Areas.
-     *
-     * @param includeSelf Set to true to consider the current FObj as an
-     * "ancestor". Set to false to only return a true ancestor.
-     * @param returnRoot Supposing a condition where no appropriate ancestor
-     * FObj is found, setting returnRoot to true will return the FObj with no
-     * parent (presumably the root FO). Otherwise, null will be returned.
-     * Note that this will override a false setting for includeSelf, and return
-     * the current node if it is the root FO. Setting returnRoot to true should
-     * always return a valid FObj.
-     * @return FObj of the nearest ancestor that generates Reference Areas
-     * and fits the parameters.
-     */
-    private FObj findNearestAncestorGeneratingRAs(boolean includeSelf,
-                                                  boolean returnRoot) {
-        FObj p = this;
-        if (includeSelf && p.generatesReferenceAreas()) {
-            return p;
-        }
-        FObj parent = p.findNearestAncestorFObj();
-        if (parent == null && returnRoot) {
-            return p;
-        }
-        do {
-            p = parent;
-            parent = p.findNearestAncestorFObj();
-        } while (parent != null && !p.generatesReferenceAreas());
-        if (p.generatesReferenceAreas()) {
-            return p;
-        }
-        // if we got here, it is because parent is null
-        if (returnRoot) {
-            return p;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * For a given namespace, determine whether the properties of this object
-     * match that namespace.
-     * @param nameSpaceURI the namespace URI to be tested against
-     * @return this.propertyList, if the namespaces match; otherwise, null
-     */
-    public PropertyList getPropertiesForNamespace(String nameSpaceURI) {
-        if (this.propertyList == null) {
-            return null;
-        }
-        if (!nameSpaceURI.equals(this.propertyList.getNameSpace())) {
-            return null;
-        }
-        return this.propertyList;
-    }
-
     /* This section is the implemenation of the property context. */
 
     /**
@@ -386,17 +292,6 @@ public class FObj extends FONode implements Constants {
      */
     public boolean generatesReferenceAreas() {
         return false;
-    }
-
-    /**
-     * Set writing mode for this FO.
-     * Use that from the nearest ancestor, including self, which generates
-     * reference areas, or from root FO if no ancestor found.
-     */
-    protected void setWritingMode() {
-        FObj p = findNearestAncestorGeneratingRAs(true, true);
-        this.propertyList.setWritingMode(
-          p.getPropEnum(PR_WRITING_MODE));
     }
 
     /**

@@ -69,7 +69,7 @@ public abstract class XMLObj extends FONode {
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, 
-        Attributes attlist) throws SAXParseException {
+        Attributes attlist, PropertyList propertyList) throws SAXParseException {
             setLocator(locator);
             name = elementName;
             attr = attlist;
@@ -211,7 +211,7 @@ public abstract class XMLObj extends FONode {
      * @param locator location in fo source file.
      */
     protected void addCharacters(char data[], int start, int length,
-                                 Locator locator) {
+                                 PropertyList pList, Locator locator) {
         String str = new String(data, start, length - start);
         org.w3c.dom.Text text = doc.createTextNode(str);
         element.appendChild(text);

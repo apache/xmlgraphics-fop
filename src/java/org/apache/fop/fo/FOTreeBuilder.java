@@ -80,6 +80,11 @@ public class FOTreeBuilder extends DefaultHandler {
     protected FONode currentFObj = null;
 
     /**
+     * Current propertyList for the node being handled.
+     */
+    protected PropertyList currentPropertyList;
+
+    /**
      * The class that handles formatting and rendering to a stream
      * (mark-fop@inomial.com)
      */
@@ -188,7 +193,7 @@ public class FOTreeBuilder extends DefaultHandler {
     public void characters(char[] data, int start, int length) 
         throws SAXParseException {
             if (currentFObj != null) {
-                currentFObj.addCharacters(data, start, start + length, locator);
+                currentFObj.addCharacters(data, start, start + length, currentPropertyList, locator);
             }
     }
 
@@ -226,6 +231,7 @@ public class FOTreeBuilder extends DefaultHandler {
 
         /* the node found in the FO document */
         FONode foNode;
+        PropertyList propertyList;
 
         // Check to ensure first node encountered is an fo:root
         if (rootFObj == null) {
@@ -250,7 +256,9 @@ public class FOTreeBuilder extends DefaultHandler {
 
         try {
             foNode = fobjMaker.make(currentFObj);
-            foNode.processNode(localName, locator, attlist);
+            propertyList = foNode.createPropertyList(currentPropertyList, foEventHandler);
+            foNode.processNode(localName, locator, attlist, propertyList);
+            foNode.startOfNode();
         } catch (IllegalArgumentException e) {
             throw new SAXException(e);
         }
@@ -263,6 +271,9 @@ public class FOTreeBuilder extends DefaultHandler {
         }
 
         currentFObj = foNode;
+        if (propertyList != null) {
+            currentPropertyList = propertyList;
+        }
     }
 
     /**
@@ -277,6 +288,9 @@ public class FOTreeBuilder extends DefaultHandler {
             throw e;
         }
 
+        if (currentPropertyList.getFObj() == currentFObj) {
+            currentPropertyList = currentPropertyList.getParentPropertyList();
+        }
         currentFObj = currentFObj.getParent();
     }
 
@@ -341,7 +355,6 @@ public class FOTreeBuilder extends DefaultHandler {
         rootFObj = null;
         foEventHandler = null;
     }
-
 }
 
 // code stolen from org.apache.batik.util and modified slightly
