@@ -947,14 +947,15 @@ public class LineArea extends Area {
         // we will only handle hard hyphens and slashes
         if (getWordWidth(wordToHyphenate) < remainingWidth) {
             inwordPunctuation =
-                characters[wordStart + wordToHyphenate.length()];
+                characters[wordStart + remainingString.length()
+                    + wordToHyphenate.length()];
             if (inwordPunctuation == '-' || inwordPunctuation == '/') {
                 preString = new StringBuffer(wordToHyphenate);
                 preString = preString.append(inwordPunctuation);
                 wordToHyphenate =
                     getHyphenationWord(characters,
-                                       wordStart + wordToHyphenate.length()
-                                       + 1);
+                                       wordStart + remainingString.length()
+                                       + wordToHyphenate.length() + 1);
                 remainingWidth -=
                     (getWordWidth(wordToHyphenate)
                      + this.currentFontState.width(currentFontState.mapChar(inwordPunctuation)));
