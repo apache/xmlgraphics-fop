@@ -14,6 +14,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.fo.properties.VerticalAlign;
 
 import org.apache.fop.fo.properties.*;
 
@@ -226,6 +227,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         curWordArea.setWidth(width);
         curWordArea.setHeight(textInfo.fs.getAscender() - textInfo.fs.getDescender());
         curWordArea.setOffset(textInfo.fs.getAscender());
+        curWordArea.info = new LayoutInfo();
+        curWordArea.info.lead = textInfo.fs.getAscender();
+        curWordArea.info.alignment = VerticalAlign.BASELINE;
+        curWordArea.info.blOffset = true;
 
         curWordArea.setWord(str);
         Trait prop = new Trait();
