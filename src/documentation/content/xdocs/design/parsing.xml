@@ -29,17 +29,13 @@ Instead, FOP takes SAX events and builds its own tree-like structure. Why?</p>
       <title>Validation</title>
       <p>If the input XML is not well-formed, that will be reported.</p>
       <p>There is no DTD for XSL-FO, so no formal validation is possible at the parser level.</p>
-      <p>The SAX handler will report an error for unrecognized namespaces.</p>
+      <p>The SAX handler will report an error for unrecognized <link href="#namespaces">namespaces</link>.</p>
     </section>
     <section id="namespaces">
       <title>Namespaces</title>
-      <p>The element mapping is a hashmap of all the elements in a particular namespace.
-This makes it easy to create a different object for each element.
-Element mappings are static to save on memory.</p>
-      <p>To add an extension a developer can put in the classpath a jar that contains the file <code>/META-INF/services/org.apache.fop.fo.ElementMapping</code>.
-This must contain a line with the fully qualified name of a class that implements the <em>org.apache.fop.fo.ElementMapping</em> interface.
-This will then be loaded automatically at the start.
-Internal mappings are: FO, SVG and Extension (pdf bookmarks).</p>
+      <p>To allow for extensions to the XSL-FO language, FOP provides a mechanism for handling foreign namespaces.</p>
+      <p>See <link href="../extensions.html">User Extensions</link> for a discussion of standard extensions shipped with FOP, and their related namespaces.</p>
+      <p>See <link href="../dev/extenstions.html">Developer Extensions</link> for a discussion of the mechanisms in place to allow developers to add their own extensions, including how to tell FOP about the foreign namespace.</p>
     </section>
     <section>
       <title>Tree Building</title>
