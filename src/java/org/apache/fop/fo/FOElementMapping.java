@@ -46,6 +46,7 @@ public class FOElementMapping extends ElementMapping {
             foObjs.put("declarations", new DeclarationsMaker());
             foObjs.put("color-profile", new ColorProfileMaker());
             foObjs.put("bookmark-tree", new BookmarkTreeMaker());
+            foObjs.put("bookmark", new BookmarkMaker());
             foObjs.put("page-sequence", new PageSequenceMaker());
             foObjs.put("layout-master-set", new LayoutMasterSetMaker());
             foObjs.put("page-sequence-master",
@@ -149,6 +150,12 @@ public class FOElementMapping extends ElementMapping {
     static class BookmarkTreeMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.bookmarks.BookmarkTree(parent);
+        }
+    }
+
+    static class BookmarkMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new org.apache.fop.fo.pagination.bookmarks.Bookmark(parent);
         }
     }
 

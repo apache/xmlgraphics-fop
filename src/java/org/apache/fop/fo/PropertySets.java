@@ -202,7 +202,15 @@ public class PropertySets {
         elem.addProperty(Constants.PR_RENDERING_INTENT);
 
         elem = elements[Constants.FO_BOOKMARK_TREE];
-//      elem.addContent(Constants.FO_BOOKMARK);
+        elem.addContent(Constants.FO_BOOKMARK);
+
+        elem = elements[Constants.FO_BOOKMARK];
+//      elem.addContent(Constants.FO_BOOKMARK_TITLE);
+        elem.addContent(Constants.FO_BOOKMARK);
+        elem.addProperties(CommonAccessibilityProperties);
+        elem.addProperty(Constants.PR_EXTERNAL_DESTINATION);
+        elem.addProperty(Constants.PR_INTERNAL_DESTINATION);
+        elem.addProperty(Constants.PR_STARTING_STATE);
 
         elem = elements[Constants.FO_PAGE_SEQUENCE];
         elem.addProperty(Constants.PR_COUNTRY);

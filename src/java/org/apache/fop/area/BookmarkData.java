@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.HashMap;
 
 import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
-import org.apache.fop.fo.extensions.Outline;
+import org.apache.fop.fo.pagination.bookmarks.Bookmark;
 
 /**
  * An instance of this class is either a PDF bookmark-tree and
@@ -33,8 +33,8 @@ import org.apache.fop.fo.extensions.Outline;
 public class BookmarkData extends OffDocumentItem implements Resolvable {
     private ArrayList subData = new ArrayList();
 
-    // bookmark label
-    private String label = null;
+    // bookmark-title for this bookmark
+    private String bookmarkTitle = null;
 
     // ID Reference for this bookmark
     private String idRef;
@@ -57,8 +57,8 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
         whenToProcess = END_OF_DOC;
         
         for (int count = 0; count < bookmarkTree.getBookmarks().size(); count++) {
-            Outline out = (Outline)(bookmarkTree.getBookmarks()).get(count);
-            addSubData(createBookmarkData(out));
+            Bookmark bkmk = (Bookmark)(bookmarkTree.getBookmarks()).get(count);
+            addSubData(createBookmarkData(bkmk));
         }
     }
 
@@ -100,21 +100,21 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
     }
 
     /**
-     * Set the label for this bookmark.
+     * Set the title for this bookmark.
      *
-     * @param l the string label
+     * @param title the bookmark title
      */
-    public void setLabel(String l) {
-        label = l;
+    public void setBookmarkTitle(String title) {
+        bookmarkTitle = title;
     }
 
     /**
-     * Get the label for this bookmark object.
+     * Get the title for this bookmark object.
      *
-     * @return the label string
+     * @return the bookmark title
      */
-    public String getLabel() {
-        return label;
+    public String getBookmarkTitle() {
+        return bookmarkTitle;
     }
 
     /**
@@ -195,20 +195,20 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
     }
 
     /**
-     * Create and return the bookmark data for this outline.
+     * Create and return the bookmark data for this bookmark
      * This creates a bookmark data with the destination
-     * and adds all the data from child outlines.
+     * and adds all the data from child bookmarks
      *
-     * @param outline the Outline object for which a bookmark entry should be
+     * @param bookmark the Bookmark object for which a bookmark entry should be
      * created
      * @return the new bookmark data
      */
-    private BookmarkData createBookmarkData(Outline outline) {
-        BookmarkData data = new BookmarkData(outline.getInternalDestination());
-        data.setLabel(outline.getLabel());
-        for (int count = 0; count < outline.getOutlines().size(); count++) {
-            Outline out = (Outline)(outline.getOutlines()).get(count);
-            data.addSubData(createBookmarkData(out));
+    private BookmarkData createBookmarkData(Bookmark bookmark) {
+        BookmarkData data = new BookmarkData(bookmark.getInternalDestination());
+        data.setBookmarkTitle(bookmark.getBookmarkTitle());
+        for (int count = 0; count < bookmark.getChildBookmarks().size(); count++) {
+            Bookmark bkmk = (Bookmark)(bookmark.getChildBookmarks()).get(count);
+            data.addSubData(createBookmarkData(bkmk));
         }
         return data;
     }

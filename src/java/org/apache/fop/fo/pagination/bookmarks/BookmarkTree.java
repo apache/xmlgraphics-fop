@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
-import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -52,7 +50,7 @@ public class BookmarkTree extends FObj {
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
     protected void addChildNode(FONode obj) {
-        if (obj instanceof Outline) {
+        if (obj instanceof Bookmark) {
             bookmarks.add(obj);
         }
     }
@@ -62,7 +60,7 @@ public class BookmarkTree extends FObj {
      */
     protected void endOfNode() throws FOPException {
         if (bookmarks == null) {
-           missingChildElementError("(fox:outline+)");
+           missingChildElementError("(fo:bookmark+)");
         }
         ((Root) parent).setBookmarkTree(this);
     }
@@ -73,8 +71,8 @@ public class BookmarkTree extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (!(nsURI == ExtensionElementMapping.URI &&
-            localName.equals("outline"))) {
+        if (!(nsURI == FO_URI &&
+            localName.equals("bookmark"))) {
                 invalidChildError(loc, nsURI, localName);
         }
     }

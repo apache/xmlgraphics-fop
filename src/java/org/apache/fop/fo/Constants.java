@@ -114,7 +114,8 @@ public interface Constants {
     int FO_TITLE = 55;
     int FO_WRAPPER = 56;
     int FO_BOOKMARK_TREE = 57;
-    int FRM_OBJ_COUNT = 57;
+    int FO_BOOKMARK = 58;
+    int FRM_OBJ_COUNT = 58;
     
     // Masks
     int COMPOUND_SHIFT = 9;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id $ */
 
-package org.apache.fop.fo.extensions;
+package org.apache.fop.fo.pagination.bookmarks;
 
 import java.util.ArrayList;
 
@@ -24,35 +24,39 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.extensions.Label;
 
 
 /**
- * The outline object for the pdf bookmark extension.
- * The outline element contains a label and optionally more outlines.
+ * The fo:bookmark formatting object, first introduced in the 
+ * XSL 1.1 WD.  Prototype version only, subject to change as
+ * XSL 1.1 WD evolves.
  */
-public class Outline extends ExtensionObj {
-    private Label label;
-    private ArrayList outlines = new ArrayList();
+public class Bookmark extends FObj {
+    private Label bookmarkTitle;
+    private ArrayList childBookmarks = new ArrayList();
 
     private String internalDestination;
     private String externalDestination;
 
     /**
-     * Create a new outline object.
+     * Create a new bookmark object.
      *
      * @param parent the parent fo node
      */
-    public Outline(FONode parent) {
+    public Bookmark(FONode parent) {
         super(parent);
     }
 
     /**
-     * The attributes on the outline object are the internal and external
+     * The attributes on the bookmark object are the internal and external
      * destination. One of these is required.
      *
      * @see org.apache.fop.fo.FObj#processNode
+     * @todo to include all properties of fo:bookmark
      */
     public void processNode(String elementName, Locator locator, 
             Attributes attlist, PropertyList propertyList) throws FOPException 
@@ -62,11 +66,11 @@ public class Outline extends ExtensionObj {
         externalDestination =
             attlist.getValue("external-destination");
         if (externalDestination != null && !externalDestination.equals("")) {
-            getLogger().warn("fox:outline external-destination not supported currently.");
+            getLogger().warn("fo:bookmark external-destination not supported currently.");
         }
 
         if (internalDestination == null || internalDestination.equals("")) {
-            getLogger().warn("fox:outline requires an internal-destination.");
+            getLogger().warn("fo:bookmark requires an internal-destination.");
         }
 
     }
@@ -76,20 +80,19 @@ public class Outline extends ExtensionObj {
      */
     protected void addChildNode(FONode obj) {
         if (obj instanceof Label) {
-            label = (Label)obj;
-        } else if (obj instanceof Outline) {
-            outlines.add(obj);
+            bookmarkTitle = (Label)obj;
+        } else if (obj instanceof Bookmark) {
+            childBookmarks.add(obj);
         }
     }
 
     /**
-     * Get the label string.
-     * This gets the label string from the child label element.
+     * Get the bookmark title for this bookmark
      *
-     * @return the label string or empty if not found
+     * @return the bookmark title string or an empty string if not found
      */
-    public String getLabel() {
-        return label == null ? "" : label.toString();
+    public String getBookmarkTitle() {
+        return bookmarkTitle == null ? "" : bookmarkTitle.toString();
     }
 
     public String getInternalDestination() {
@@ -100,11 +103,21 @@ public class Outline extends ExtensionObj {
         return externalDestination;
     }
 
-    public ArrayList getOutlines() {
-        return outlines;
+    public ArrayList getChildBookmarks() {
+        return childBookmarks;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
-        return "(http://xml.apache.org/fop/extensions) outline";
+        return "fo:bookmark";
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_BOOKMARK;
     }
 }
