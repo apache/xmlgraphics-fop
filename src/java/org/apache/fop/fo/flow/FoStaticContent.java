@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.Area;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.NCName;
 import org.apache.fop.fo.FONode;
@@ -150,6 +151,15 @@ public class FoStaticContent extends FOPageSeqNode {
      */
     public String getFlowName() {
         return flowName;
+    }
+
+    public Area getReferenceRectangle() throws FOPException {
+        // TODO Reference rectangle is assumed to be the content rectangle of
+        // the first region into which the content is flowed.  For region-body
+        // it is normal-flow reference-area; for other regions it is the
+        // region-reference-area.  See
+        // 7.3 Reference Rectangle for Percentage Computations
+        throw new FOPException("Called from FoStaticContent");
     }
     
 }

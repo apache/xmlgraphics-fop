@@ -147,7 +147,7 @@ public class FoBlock extends FOPageSeqNode {
                     ev = xmlevents.expectOutOfLinePcdataOrInlineOrBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makePageSeqFOChild(
+                    FObjects.makePageSeqFOChild(
                             foTree, pageSequence, this, ev, stateFlags);
                     if (ev.getType() != XmlEvent.CHARACTERS) {
                         ev = xmlevents.getEndElement(

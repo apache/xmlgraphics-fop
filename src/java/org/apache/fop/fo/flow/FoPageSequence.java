@@ -33,6 +33,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.Area;
 import org.apache.fop.area.Page;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
@@ -121,6 +122,15 @@ public class FoPageSequence extends FONode {
     public Map staticContents = null;
     /** Child index of fo:flow child. */
     private int flowChild = -1;
+    /** The page currently being processed by this page-sequence */
+    private Page page = null;
+    /**
+     * Gets the current page of this page-sequence
+     * @return the page
+     */
+    public Page getPage() {
+        return page;
+    }
 
     /**
      * @param foTree the FO tree being built
@@ -137,6 +147,7 @@ public class FoPageSequence extends FONode {
               FONode.PAGESEQ_SET, sparsePropsMap, sparseIndices);
         XmlEvent ev;
         // Look for optional title
+        log.finer("page-sequence title");
         String nowProcessing = "title";
         try {
             ev = xmlevents.expectStartElement
@@ -150,6 +161,7 @@ public class FoPageSequence extends FONode {
             } // else ignore
 
             // Look for zero or more static-content subtrees
+            log.finer("static-content");
             nowProcessing = "static-content";
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.STATIC_CONTENT, XmlEvent.DISCARD_W_SPACE))
@@ -192,12 +204,13 @@ public class FoPageSequence extends FONode {
                 staticContents = Collections.unmodifiableMap(staticSubtrees);
             }
             // Generate a null page for the flow(s)
-            Page page = Page.setupNullPage(this, foTree.getNextPageId());
+            page = Page.setupNullPage(this, foTree.getNextPageId());
 
             // Look for one or more fo:flow
             // must have at least one: N.B. in 1.0, only one is allowed,
             // but in 1.1. multiple flows are allowed with different 
             // flow maps
+            log.finer("flow");
             nowProcessing = "flow";
             ev = xmlevents.expectStartElement
                         (FObjectNames.FLOW, XmlEvent.DISCARD_W_SPACE);
@@ -225,6 +238,17 @@ public class FoPageSequence extends FONode {
         }
 
         makeSparsePropsSet();
+    }
+
+    public Area getReferenceRectangle() throws FOPException {
+        // TODO Reference rectangle is assumed to be equivalent to the
+        // "auto" value on "page-height" and "page-width".  The
+        // inline-progression-dimension and block-progression-dimension are
+        // calculated according to the computed values of the
+        // reference-orientation and writing-mode of the FO for which the
+        // percentage is calculated.  See
+        // 7.3 Reference Rectangle for Percentage Computations
+        throw new FOPException("Called from FoPageSequence");
     }
 
 }

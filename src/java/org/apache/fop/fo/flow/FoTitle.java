@@ -27,6 +27,7 @@ package org.apache.fop.fo.flow;
 import java.util.Arrays;
 import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.Area;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOPageSeqNode;
@@ -119,7 +120,7 @@ public class FoTitle extends FOPageSeqNode {
                 ev = xmlevents.expectOutOfLinePcdataOrInline();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makePageSeqFOChild(
+                    FObjects.makePageSeqFOChild(
                             foTree, parent, this, ev, FONode.TITLE_SET);
                     if (ev.getType() != XmlEvent.CHARACTERS)
                         ev = xmlevents.getEndElement(
@@ -138,6 +139,20 @@ public class FoTitle extends FOPageSeqNode {
         } while (ev != null);
 
         makeSparsePropsSet();
+    }
+
+    public Area getReferenceRectangle() throws FOPException {
+        // TODO Reference rectangle is assumed to be equivalent to the
+        // "auto" value on "page-height" and "page-width".  The
+        // inline-progression-dimension and block-progression-dimension are
+        // calculated according to the computed values of the
+        // reference-orientation and writing-mode of the FO for which the
+        // percentage is calculated.  See
+        // 7.3 Reference Rectangle for Percentage Computations
+        // This applies to all descendants of fo:title, except that for
+        // descendants, the relevant reference-orientation and writing-mode are
+        // those applying to fo:title.
+        throw new FOPException("Called from FoTitle");
     }
 
 }
