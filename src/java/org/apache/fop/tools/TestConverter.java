@@ -50,16 +50,6 @@
  */ 
 package org.apache.fop.tools;
 
-import org.apache.fop.apps.Driver;
-import org.apache.fop.apps.FOFileHandler;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.InputHandler;
-import org.apache.fop.apps.XSLTInputHandler;
-import org.apache.fop.apps.FOUserAgent;
-
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
@@ -67,6 +57,13 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.FOFileHandler;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.InputHandler;
+import org.apache.fop.apps.XSLTInputHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
