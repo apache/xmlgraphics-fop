@@ -172,7 +172,7 @@ public class XmlEventReader {
      */
     public XmlEvent getSaxUriLocalEvent(
             int eventType, int uriIndex, String localName,
-            ArrayXmlEventsBuffer buffer)
+            XmlEventsArrayBuffer buffer)
     throws FOPException
     {
         XmlEvent ev = source.getEvent();
@@ -180,7 +180,7 @@ public class XmlEventReader {
                 ! (ev.type == eventType
                         && ev.uriIndex == uriIndex
                         && ev.localName.equals(localName))) {
-            buffer.pushEvent(ev);
+            buffer.addEvent(ev);
             ev = source.getEvent();
         }
         if (ev == null)
@@ -254,7 +254,7 @@ public class XmlEventReader {
      */
     public XmlEvent getSaxUriTypedEvent(
             int eventType, int uriIndex, int nsType,
-            ArrayXmlEventsBuffer buffer)
+            XmlEventsArrayBuffer buffer)
     throws FOPException {
         XmlEvent ev = source.getEvent();
         while (ev != null) {
@@ -283,7 +283,7 @@ public class XmlEventReader {
                     break;
                 }
             }
-            buffer.pushEvent(ev);
+            buffer.addEvent(ev);
             ev = source.getEvent();
         }
         throw new NoSuchElementException
@@ -320,7 +320,7 @@ public class XmlEventReader {
      * @exception NoSuchElementException if the event is not found.
      */
     public XmlEvent getSaxFoEvent(
-            int eventType, int foType, ArrayXmlEventsBuffer buffer)
+            int eventType, int foType, XmlEventsArrayBuffer buffer)
     throws FOPException
     {
         return getSaxUriTypedEvent(
@@ -1255,7 +1255,7 @@ public class XmlEventReader {
      * Get the next ENDELEMENT event, with the same URI index and local name
      * as the <tt>XmlEvent</tt> argument, from the buffer.
      * Place references to all intervening events in the provided
-     * <code>ArrayXmlEventsBuffer</code>.
+     * <code>XmlEventsArrayBuffer</code>.
      * @param buffer into which to copy the events
      * @param discardEvent the argument event may be discarded.
      * @param event an <tt>XmlEvent</tt>.  Only the uriIndex and the
@@ -1266,7 +1266,7 @@ public class XmlEventReader {
      * @exception NoSuchElementException if the event is not found
      */
     public XmlEvent getEndElement(
-            ArrayXmlEventsBuffer buffer, boolean discardEvent, XmlEvent event)
+            XmlEventsArrayBuffer buffer, boolean discardEvent, XmlEvent event)
     throws FOPException
     {
         XmlEvent ev;
