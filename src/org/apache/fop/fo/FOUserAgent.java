@@ -73,7 +73,7 @@ public class FOUserAgent {
                 handler.handleXML(ctx, doc, namespace);
             } catch (Throwable t) {
                 // could not handle document
-                t.printStackTrace();
+                ctx.getLogger().error("Could not render XML", t);
             }
         } else {
             // no handler found for document

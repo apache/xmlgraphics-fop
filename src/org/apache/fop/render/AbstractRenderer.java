@@ -134,8 +134,8 @@ public abstract class AbstractRenderer implements Renderer {
     protected void renderRegionViewport(RegionViewport port) {
         if (port != null) {
             Rectangle2D view = port.getViewArea();
-            currentBPPosition = (int) view.getY();
-            currentIPPosition = (int) view.getX();
+            currentBPPosition = (int) (view.getY() / 1000);
+            currentIPPosition = (int) (view.getX() / 1000);
             currentBlockIPPosition = currentIPPosition;
 
             RegionReference region = port.getRegion();
@@ -224,24 +224,11 @@ public abstract class AbstractRenderer implements Renderer {
     }
 
     protected void renderBlock(Block block) {
-        boolean childrenblocks = block.isChildrenBlocks();
         List children = block.getChildAreas();
-        if (childrenblocks) {
-            renderBlocks(children);
+        if (children == null) {
+            // simply move position
         } else {
-            if (children == null) {
-                // simply move position
-            } else {
-                // a line area is rendered from the top left position
-                // of the line, each inline object is offset from there
-                for (int count = 0; count < children.size(); count++) {
-                    LineArea line = (LineArea) children.get(count);
-                    currentBlockIPPosition = currentIPPosition;
-                    renderLineArea(line);
-                    currentBPPosition += line.getHeight();
-                }
-
-            }
+            renderBlocks(children);
         }
     }
 
@@ -311,8 +298,17 @@ public abstract class AbstractRenderer implements Renderer {
 
     protected void renderBlocks(List blocks) {
         for (int count = 0; count < blocks.size(); count++) {
-            Block block = (Block) blocks.get(count);
-            renderBlock(block);
+            Object obj = blocks.get(count);
+            if(obj instanceof Block) {
+                renderBlock((Block)obj);
+            } else {
+                // a line area is rendered from the top left position
+                // of the line, each inline object is offset from there
+                LineArea line = (LineArea) obj;
+                currentBlockIPPosition = currentIPPosition;
+                renderLineArea(line);
+                currentBPPosition += line.getHeight();
+            }
         }
     }
 }

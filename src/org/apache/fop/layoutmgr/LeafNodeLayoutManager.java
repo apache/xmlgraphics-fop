@@ -22,16 +22,16 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
     private InlineArea curArea;
 
     public LeafNodeLayoutManager(FObj fobj) {
-	super(fobj);
+        super(fobj);
     }
 
 
     protected void setCurrentArea(InlineArea ia) {
-	curArea = ia;
+        curArea = ia;
     }
 
     protected void flush() {
-	parentLM.addChild(curArea);
+        parentLM.addChild(curArea);
     }
 
     /**
@@ -44,8 +44,8 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
      * This is a leaf-node, so this method is never called.
      */
     public Area getParentArea(Area childArea) {
-	return null;
+        return null;
     }
-	
+
 
 }

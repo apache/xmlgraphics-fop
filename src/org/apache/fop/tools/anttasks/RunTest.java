@@ -76,15 +76,15 @@ public class RunTest extends Task {
             ClassLoader loader = new URLClassLoader(new URL[] {
                 new URL("file:build/fop.jar")
             });
-            Hashtable diff = runConverter(loader, "areatree",
+            HashMap diff = runConverter(loader, "areatree",
                                           "reference/output/");
             if (diff != null &&!diff.isEmpty()) {
                 System.out.println("====================================");
                 System.out.println("The following files differ:");
                 boolean broke = false;
-                for (Enumeration keys = diff.keys();
-                        keys.hasMoreElements(); ) {
-                    Object fname = keys.nextElement();
+                for (Iterator keys = diff.keySet().iterator();
+                        keys.hasNext(); ) {
+                    Object fname = keys.next();
                     Boolean pass = (Boolean)diff.get(fname);
                     System.out.println("file: " + fname
                                        + " - reference success: " + pass);
@@ -165,11 +165,11 @@ public class RunTest extends Task {
      * file in the base directory.
      * @param loader the class loader to use to run the tests with
      */
-    protected Hashtable runConverter(ClassLoader loader, String dest,
+    protected HashMap runConverter(ClassLoader loader, String dest,
                                      String compDir) {
         String converter = "org.apache.fop.tools.TestConverter";
 
-        Hashtable diff = null;
+        HashMap diff = null;
         try {
             Class cla = Class.forName(converter, true, loader);
             Object tc = cla.newInstance();
@@ -185,7 +185,7 @@ public class RunTest extends Task {
             meth = cla.getMethod("runTests", new Class[] {
                 String.class, String.class, String.class
             });
-            diff = (Hashtable)meth.invoke(tc, new Object[] {
+            diff = (HashMap)meth.invoke(tc, new Object[] {
                 testsuite, dest, compDir
             });
         } catch (Exception e) {

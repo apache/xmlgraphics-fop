@@ -29,6 +29,8 @@ public class Property implements Serializable {
     public static final int OFFSET = 13;
     public static final int SHADOW = 14;
 
+    public static final int FONT_STATE = 100;
+
     public int propType;
     public Object data;
 

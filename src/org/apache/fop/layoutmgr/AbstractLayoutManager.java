@@ -8,6 +8,7 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.area.Area;
 
 import java.util.ListIterator;
@@ -21,12 +22,12 @@ public abstract class AbstractLayoutManager implements LayoutManager {
 
 
     public AbstractLayoutManager(FObj fobj) {
-	this.fobj = fobj;
-	this.parentLM = null;
+        this.fobj = fobj;
+        this.parentLM = null;
     }
 
     public void setParentLM(LayoutManager lm) {
-	this.parentLM = lm;
+        this.parentLM = lm;
     }
 
 
@@ -36,38 +37,41 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * its generateAreas method.
      */
     public void generateAreas() {
-	ListIterator children = fobj.getChildren();
-	while (children.hasNext()) {
-	    LayoutManager lm = ((FObj)children.next()).getLayoutManager();
- 	    if (lm != null) {
-		lm.setParentLM(this);
-		lm.generateAreas();
-	    }
-	}
-	flush(); // Add last area to parent
+        ListIterator children = fobj.getChildren();
+        while (children.hasNext()) {
+            FONode node = (FONode) children.next();
+            if (node instanceof FObj) {
+                LayoutManager lm = ((FObj) node).getLayoutManager();
+                if (lm != null) {
+                    lm.setParentLM(this);
+                    lm.generateAreas();
+                }
+            }
+        }
+        flush(); // Add last area to parent
     }
 
-//     /**
-//      * Ask the parent LayoutManager to add the current (full) area to the
-//      * appropriate parent area.
-//      * @param bFinished If true, this area is finished, either because it's
-//      * completely full or because there is no more content to put in it.
-//      * If false, we are in the middle of this area. This can happen,
-//      * for example, if we find floats in a line. We stop the current area,
-//      * and add it (temporarily) to its parent so that we can see if there
-//      * is enough space to place the float(s) anchored in the line.
-//      */
-//     protected void flush(Area area, boolean bFinished) {
-// 	if (area != null) {
-// 	    // area.setFinished(true);
-// 	    parentLM.addChild(area, bFinished); // ????
-// 	    if (bFinished) {
-// 		setCurrentArea(null);
-// 	    }
-// 	}
-//     }
+    //     /**
+    //      * Ask the parent LayoutManager to add the current (full) area to the
+    //      * appropriate parent area.
+    //      * @param bFinished If true, this area is finished, either because it's
+    //      * completely full or because there is no more content to put in it.
+    //      * If false, we are in the middle of this area. This can happen,
+    //      * for example, if we find floats in a line. We stop the current area,
+    //      * and add it (temporarily) to its parent so that we can see if there
+    //      * is enough space to place the float(s) anchored in the line.
+    //      */
+    //     protected void flush(Area area, boolean bFinished) {
+    // 	if (area != null) {
+    // 	    // area.setFinished(true);
+    // 	    parentLM.addChild(area, bFinished); // ????
+    // 	    if (bFinished) {
+    // 		setCurrentArea(null);
+    // 	    }
+    // 	}
+    //     }
 
-    /** 
+    /**
      * Force current area to be added to parent area.
      */
     abstract protected void flush();
@@ -84,12 +88,12 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * BPD.
      */
     abstract public Area getParentArea(Area childArea);
-	
 
 
-//     public boolean generatesInlineAreas() {
-// 	return false;
-//     }
+
+    //     public boolean generatesInlineAreas() {
+    // 	return false;
+    //     }
 
 
     /**
@@ -97,12 +101,12 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * dimension of the current area to be exceeded, the parent LM is called
      * to add it.
      */
-    abstract public void addChild(Area childArea) ;
+    abstract public void addChild(Area childArea);
 
     /** Do nothing */
     public boolean splitArea(Area areaToSplit, SplitContext context) {
-	context.nextArea = areaToSplit;
-	return false;
+        context.nextArea = areaToSplit;
+        return false;
     }
-
 }
+

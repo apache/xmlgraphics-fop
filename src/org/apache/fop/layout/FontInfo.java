@@ -8,7 +8,6 @@
 package org.apache.fop.layout;
 
 import java.util.HashMap;
-import java.util.Enumeration;
 
 import org.apache.fop.apps.FOPException;
 

@@ -33,7 +33,6 @@ public class Block extends BlockParent implements Serializable {
     // available markers, markers are discarded once page complete
     private ArrayList markers = null;
 
-    boolean blocks = false;
     // a block with may contain the dominant styling info in
     // terms of most lines or blocks with info
 
@@ -44,25 +43,15 @@ public class Block extends BlockParent implements Serializable {
     public void addBlock(Block block) {
         if (children == null) {
             children = new ArrayList();
-        } else if (!blocks) {
-            // error
         }
-        blocks = true;
         children.add(block);
     }
 
     public void addLineArea(LineArea line) {
         if (children == null) {
             children = new ArrayList();
-        } else if (blocks) {
-            // error
         }
         children.add(line);
-
-    }
-
-    public boolean isChildrenBlocks() {
-        return blocks;
     }
 
     public int getPositioning() {

@@ -21,6 +21,11 @@ import org.apache.fop.image.analyser.ImageReaderFactory;
 import org.apache.fop.image.analyser.ImageReader;
 import org.apache.fop.configuration.Configuration;
 
+/*
+handle context: base dir, logger, caching
+
+*/
+
 /**
  * create FopImage objects (with a configuration file - not yet implemented).
  * @author Eric SCHAEFFER

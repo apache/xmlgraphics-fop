@@ -17,14 +17,22 @@ public class Fop {
             Starter starter = options.getStarter();
             starter.run();
         } catch (FOPException e) {
-            System.err.println("" + e.getMessage());
+            if("null".equals(e.getMessage())) {
+                System.err.println("NullPointerException");
+            } else {
+                System.err.println("" + e.getMessage());
+            }
             if (options != null && options.isDebugMode().booleanValue()) {
                 e.printStackTrace();
+            } else {
+                System.err.println("Turn on debugging for more information");
             }
         } catch (java.io.FileNotFoundException e) {
             System.err.println("" + e.getMessage());
             if (options != null && options.isDebugMode().booleanValue()) {
                 e.printStackTrace();
+            } else {
+                System.err.println("Turn on debugging for more information");
             }
         }
     }
