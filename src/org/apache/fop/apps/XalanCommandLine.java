@@ -183,10 +183,22 @@ public class XalanCommandLine {
 
 
     try {
+      java.io.Writer writer;
+      java.io.Reader reader;
+      boolean usefile = false;
 
       MessageHandler.logln("transforming to xsl:fo markup");
-      // create a Writer
-      StringWriter writer = new StringWriter();
+
+
+      // create a Writer      
+      // the following is an ugly hack to allow processing of larger files
+      // if xml file size is larger than 700 kb write the fo:file to disk
+      if ((new File(args[0]).length()) > 500000) {
+        writer = new FileWriter(args[2]+".tmp");
+        usefile = true;
+      } else {
+        writer = new StringWriter();
+      }
 
       // Use XSLTProcessorFactory to instantiate an XSLTProcessor.
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
@@ -198,9 +210,15 @@ public class XalanCommandLine {
 
       // Perform the transformation.
       processor.process(xmlSource, xslSheet, xmlResult);
-
-      // create a input source containing the xsl:fo file which can be fed to Fop  
-      StringReader reader = new StringReader(writer.toString());   
+      
+      if (usefile) {
+        reader = new FileReader(args[2]+".tmp");
+      } else {
+        // create a input source containing the xsl:fo file which can be fed to Fop  
+        reader = new StringReader(writer.toString());   
+      }
+      writer.flush();
+      writer.close();
 
       //set Driver methods to start Fop processing
       Driver driver = new Driver();
@@ -209,8 +227,12 @@ public class XalanCommandLine {
       driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
       driver.setWriter(new PrintWriter(new FileWriter(args[2])));
       driver.buildFOTree(parser, new InputSource(reader));
+      reader.close();
       driver.format();
       driver.render();
+      if (usefile) {
+        new File (args[2]+".tmp").delete();
+      }
     } catch (Exception e) {
       MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
       System.exit(1);
