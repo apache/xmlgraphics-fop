@@ -8,6 +8,8 @@
   <page id="index" label="co-routines" source="coroutines.xml"/>
   <page id="galleys" label="galleys" source="galleys.xml"/>
   <page id="footnotes" label="footnotes" source="footnotes.xml"/>
+  <page id="keeps" label="keeps" source="keeps.xml"/>
+  <page id="spaces" label="space-specifiers" source="spaces.xml"/>
   <separator/>
   <page id="alt.properties" label="alt.properties"  source="alt.properties.xml"/>
   <page id="classes-overview" label="Classes overview"  source="classes-overview.xml"/>
