@@ -106,6 +106,7 @@ public class ExampleObj2PDF {
 
         //Setup output
         OutputStream out = new java.io.FileOutputStream(pdf);
+        out = new java.io.BufferedOutputStream(out);
         try {
             driver.setOutputStream(out);
 
