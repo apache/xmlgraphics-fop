@@ -1278,7 +1278,7 @@ public class PropertySets {
         for (int i = 0; i < expansion.length; i++) {
             int expandedProp = expansion.get(i);
             PropertyValue specified
-                    = foTree.getInitialSpecifiedValue(expandedProp);
+                    = foTree.getInitialValue(expandedProp);
             list.add(specified);
         }
         return list;
