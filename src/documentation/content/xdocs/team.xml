@@ -38,9 +38,8 @@
             Born in 1978, he has been serving as an application developer for a small 
             industrial company in Germany since 1999.</li>
         <li id="jm"><link href="mailto:jeremias@apache.org">Jeremias M&#x00E4;rki</link> (JM)
-          is a software engineer from Lucerne, Switzerland. He is currently enjoying a longer period of
-          "independence" and is having fun working on open source projects like Apache FOP. He's also
-          the creator of <fork href="http://www.krysalis.org/barcode">Krysalis Barcode</fork>.
+          is a software engineer from Lucerne, Switzerland. He's also
+          the creator of <fork href="http://barcode4j.krysalis.org">Barcode4J</fork>.
         </li>
         <li id="gm"><link href="mailto:gmazza@apache.org">Glen Mazza</link> (GM) is an information
             systems analyst with EDS in Arlington, Virginia, USA.</li>
