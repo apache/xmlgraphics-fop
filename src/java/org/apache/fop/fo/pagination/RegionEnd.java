@@ -35,7 +35,7 @@ public class RegionEnd extends RegionSE {
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionEnd(FONode parent) {
-        super(parent, Region.END_CODE);
+        super(parent, FO_REGION_END);
     }
 
     /**
@@ -63,12 +63,8 @@ public class RegionEnd extends RegionSE {
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.Region#getRegionClassCode()
+     * @see org.apache.fop.fo.FObj#getName()
      */
-    public int getRegionClassCode() {
-        return Region.END_CODE;
-    }
-
     public String getName() {
         return "fo:region-end";
     }

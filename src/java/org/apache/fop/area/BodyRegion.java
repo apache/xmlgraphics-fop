@@ -18,7 +18,7 @@
 
 package org.apache.fop.area;
 
-import org.apache.fop.fo.pagination.Region;
+import org.apache.fop.fo.Constants;
 
 /**
  * The body region area.
@@ -40,7 +40,7 @@ public class BodyRegion extends RegionReference {
      * This sets the region reference area class to BODY.
      */
     public BodyRegion() {
-        super(Region.BODY_CODE);
+        super(Constants.FO_REGION_BODY);
     }
 
     /**

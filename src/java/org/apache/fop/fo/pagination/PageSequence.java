@@ -555,7 +555,7 @@ public class PageSequence extends FObj {
 
 //              SimplePageMaster spm =
 //                  this.layoutMasterSet.getSimplePageMaster(masterName);
-//              Region region = spm.getRegion(Region.BODY);
+//              Region region = spm.getRegion(FO_REGION_BODY);
 
 
 //              Flow flow = (Flow)flowMap.get(region.getRegionName());
@@ -741,6 +741,9 @@ public class PageSequence extends FObj {
         return root;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:page-sequence";
     }

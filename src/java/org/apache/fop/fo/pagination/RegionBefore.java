@@ -34,7 +34,7 @@ public class RegionBefore extends RegionBA {
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionBefore(FONode parent) {
-        super(parent, Region.BEFORE_CODE);
+        super(parent, FO_REGION_BEFORE);
     }
 
     /**
@@ -42,13 +42,6 @@ public class RegionBefore extends RegionBA {
      */
     protected String getDefaultRegionName() {
         return "xsl-region-before";
-    }
-
-    /**
-     * @see org.apache.fop.fo.pagination.Region#getRegionClassCode()
-     */
-    public int getRegionClassCode() {
-        return Region.BEFORE_CODE;
     }
 
     /**
@@ -73,6 +66,9 @@ public class RegionBefore extends RegionBA {
         return vpRect;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:region-before";
     }

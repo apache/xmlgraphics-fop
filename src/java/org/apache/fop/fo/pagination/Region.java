@@ -35,18 +35,6 @@ import org.apache.fop.fo.FObj;
  */
 public abstract class Region extends FObj {
 
-    /* The following codes correspond to those found in area/RegionReference */
-    /** Integer Code for before regions */
-    public static final int BEFORE_CODE = 0;
-    /** Integer Code for start regions */
-    public static final int START_CODE = 1;
-    /** Integer Code for body regions */
-    public static final int BODY_CODE = 2;
-    /** Integer Code for end regions */
-    public static final int END_CODE = 3;
-    /** Integer Code for after regions */
-    public static final int AFTER_CODE = 4;
-
     private SimplePageMaster layoutMaster;
     private int regionId = -1;
     private String regionName;
@@ -119,12 +107,6 @@ public abstract class Region extends FObj {
      * @return the default region name
      */
     protected abstract String getDefaultRegionName();
-
-    /**
-     * Returns the region class code.
-     * @return the region class code
-     */
-    public abstract int getRegionClassCode();
 
     /**
      * Returns the name of this region.

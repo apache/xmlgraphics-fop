@@ -34,7 +34,7 @@ public class RegionStart extends RegionSE {
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionStart(FONode parent) {
-        super(parent, Region.START_CODE);
+        super(parent, FO_REGION_START);
     }
 
     /**
@@ -62,12 +62,8 @@ public class RegionStart extends RegionSE {
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.Region#getRegionClassCode()
+     * @see org.apache.fop.fo.FObj#getName()
      */
-    public int getRegionClassCode() {
-        return Region.START_CODE;
-    }
-
     public String getName() {
         return "fo:region-start";
     }
