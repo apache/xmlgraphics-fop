@@ -65,8 +65,6 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.ViewBox;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.gvt.TextPainter;
-
 // FOP
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
