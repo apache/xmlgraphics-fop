@@ -321,7 +321,7 @@ public class Driver implements LogEnabled, FOTreeListener {
      * @return the logger
      * @see #enableLogging(Logger)
      */
-    protected Logger getLogger() {
+    public Logger getLogger() {
         if (this.log == null) {
             // use ConsoleLogger as default when logger not explicitly set
             this.log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);

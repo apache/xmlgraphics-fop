@@ -57,6 +57,7 @@ import java.util.List;
 import org.apache.fop.control.Document;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 
 /**
  * The fo:root formatting object. Contains page masters, page-sequences.
@@ -159,6 +160,10 @@ public class Root extends FObj {
      */
     public Document getDocument() {
         return document;
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

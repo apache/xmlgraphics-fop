@@ -61,6 +61,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.BorderCollapse;
 import org.apache.fop.fo.properties.DisplayAlign;
 
@@ -162,16 +163,6 @@ public class TableCell extends FObj {
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
         doSetup();    // init some basic property values
-    }
-
-    /**
-     * @param list the list to which the layout manager(s) should be added
-     */
-    public void addLayoutManager(List list) {
-        Cell clm = new Cell();
-        clm.setUserAgent(getUserAgent());
-        clm.setFObj(this);
-        list.add(clm);
     }
 
     /**
@@ -389,5 +380,8 @@ public class TableCell extends FObj {
         return true;
     }
 
-}
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
 
+}

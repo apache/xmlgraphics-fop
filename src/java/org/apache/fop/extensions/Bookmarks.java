@@ -52,6 +52,7 @@ package org.apache.fop.extensions;
 
 import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.area.AreaTree;
 
 import java.util.ArrayList;
@@ -114,5 +115,10 @@ public class Bookmarks extends ExtensionObj {
             data.setAreaTree(at);
         }
     }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
 }
 

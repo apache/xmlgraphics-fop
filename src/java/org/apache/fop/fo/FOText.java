@@ -76,10 +76,10 @@ import org.apache.fop.fo.properties.TextTransform;
  */
 public class FOText extends FObj {
 
-    private char[] ca;
+    public char[] ca;
     private int start;
-    private int length;
-    private TextInfo textInfo;
+    public int length;
+    public TextInfo textInfo;
     private TextState ts;
 
     /**
@@ -163,22 +163,6 @@ public class FOText extends FObj {
             }
         }
         return false;
-    }
-
-    public void addLayoutManager(List list) {
-        // if nothing left (length=0)?
-        if (length == 0) {
-            return;
-        }
-
-        if (length < ca.length) {
-            char[] tmp = ca;
-            ca = new char[length];
-            System.arraycopy(tmp, 0, ca, 0, length);
-        }
-        LayoutManager lm = new TextLayoutManager(ca, textInfo);
-        lm.setFObj(this);
-        list.add(lm);
     }
 
     /**
@@ -503,4 +487,7 @@ public class FOText extends FObj {
         }
     }
 
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
 }

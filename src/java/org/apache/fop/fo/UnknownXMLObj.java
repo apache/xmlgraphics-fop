@@ -118,5 +118,9 @@ public class UnknownXMLObj extends XMLObj {
         super.addCharacters(data, start, length);
     }
 
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
 }
 

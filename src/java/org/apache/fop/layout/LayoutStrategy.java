@@ -51,8 +51,6 @@
 
 package org.apache.fop.layout;
 
-import org.apache.fop.fo.FOTreeExternal;
-
 /**
  * Abstract class defining the highest-level information for a layout strategy.
  * Subclasses implement a layout strategy that converts an FO Tree into an
@@ -61,7 +59,6 @@ import org.apache.fop.fo.FOTreeExternal;
 public abstract class LayoutStrategy {
 
     private String name = "undefined";
-    private FOTreeExternal fote = null;
 
     /**
      * Returns the name of this LayoutStrategy.
@@ -71,14 +68,4 @@ public abstract class LayoutStrategy {
         return name;
     }
 
-    /**
-     *
-     * @return the FOTreeExternal object for this LayoutStrategy
-     */
-    public FOTreeExternal getFOTreeExternal() {
-        if (fote == null) {
-            fote = new FOTreeExternal();
-        }
-        return fote;
-    }
 }

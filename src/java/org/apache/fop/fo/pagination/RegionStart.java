@@ -55,6 +55,7 @@ import java.awt.Rectangle;
 
 // FOP
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.area.RegionReference;
@@ -108,5 +109,10 @@ public class RegionStart extends RegionSE {
     public int getRegionAreaClass() {
         return RegionReference.START;
     }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
 }
 

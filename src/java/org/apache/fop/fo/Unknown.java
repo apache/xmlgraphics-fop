@@ -83,4 +83,9 @@ public class Unknown extends FONode {
     private void setup() {
         getLogger().debug("Layout Unknown element");
     }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
 }

@@ -65,6 +65,7 @@ import org.apache.fop.datatypes.PercentLength;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FOInputHandler;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.LeaderPattern;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
@@ -97,7 +98,7 @@ public class Leader extends FObjMixed {
     protected Document fontInfo = null;
     /** FontState for this object */
     protected Font fontState;
-    protected InlineArea leaderArea = null;
+    public InlineArea leaderArea = null;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -106,111 +107,6 @@ public class Leader extends FObjMixed {
         super(parent);
     }
 
-    /**
-     *
-     * @param list the list to which the layout manager(s) should be added
-     */
-    public void addLayoutManager(List list) {
-        LeafNodeLayoutManager lm = new LeafNodeLayoutManager() {
-                public InlineArea get(LayoutContext context) {
-                    return getInlineArea();
-                }
-
-                protected MinOptMax getAllocationIPD(int refIPD) {
-                   return getAllocIPD(refIPD);
-                }
-
-                /*protected void offsetArea(LayoutContext context) {
-                    if(leaderPattern == LeaderPattern.DOTS) {
-                        curArea.setOffset(context.getBaseline());
-                    }
-                }*/
-            };
-        lm.setUserAgent(getUserAgent());
-        lm.setFObj(this);
-        lm.setAlignment(properties.get("leader-alignment").getEnum());
-        list.add(lm);
-    }
-
-    protected InlineArea getInlineArea() {
-        if (leaderArea == null) {
-            createLeaderArea();
-        }
-        return leaderArea;
-    }
-
-    protected void createLeaderArea() {
-        setup();
-
-        if (leaderPattern == LeaderPattern.RULE) {
-            org.apache.fop.area.inline.Leader leader = new org.apache.fop.area.inline.Leader();
-
-            leader.setRuleStyle(ruleStyle);
-            leader.setRuleThickness(ruleThickness);
-
-            leaderArea = leader;
-        } else if (leaderPattern == LeaderPattern.SPACE) {
-            leaderArea = new Space();
-        } else if (leaderPattern == LeaderPattern.DOTS) {
-            Word w = new Word();
-            char dot = '.'; // userAgent.getLeaderDotCharacter();
-
-            w.setWord("" + dot);
-            w.addTrait(Trait.FONT_NAME, fontState.getFontName());
-            w.addTrait(Trait.FONT_SIZE,
-                             new Integer(fontState.getFontSize()));
-            // set offset of dot within inline parent
-            w.setOffset(fontState.getAscender());
-            int width = CharUtilities.getCharWidth(dot, fontState);
-            Space spacer = null;
-            if (patternWidth > width) {
-                spacer = new Space();
-                spacer.setWidth(patternWidth - width);
-                width = patternWidth;
-            }
-            FilledArea fa = new FilledArea();
-            fa.setUnitWidth(width);
-            fa.addChild(w);
-            if (spacer != null) {
-                fa.addChild(spacer);
-            }
-            fa.setHeight(fontState.getAscender());
-
-            leaderArea = fa;
-        } else if (leaderPattern == LeaderPattern.USECONTENT) {
-            if (children == null) {
-                getLogger().error("Leader use-content with no content");
-                return;
-            }
-            InlineStackingLayoutManager lm;
-            lm = new InlineStackingLayoutManager();
-            lm.setUserAgent(getUserAgent());
-            lm.setFObj(this);
-            lm.setLMiter(new LMiter(children.listIterator()));
-            lm.init();
-
-            // get breaks then add areas to FilledArea
-            FilledArea fa = new FilledArea();
-
-            ContentLayoutManager clm = new ContentLayoutManager(fa);
-            clm.setUserAgent(getUserAgent());
-            lm.setParent(clm);
-
-            clm.fillArea(lm);
-            int width = clm.getStackingSize();
-            Space spacer = null;
-            if (patternWidth > width) {
-                spacer = new Space();
-                spacer.setWidth(patternWidth - width);
-                width = patternWidth;
-            }
-            fa.setUnitWidth(width);
-            if (spacer != null) {
-                fa.addChild(spacer);
-            }
-            leaderArea = fa;
-        }
-    }
 
     /**
      * @param foih FOInputHandler to set
@@ -220,7 +116,7 @@ public class Leader extends FObjMixed {
         fontInfo = foih.getFontInfo();
     }
 
-    private void setup() {
+    public void setup() {
 
         // Common Accessibility Properties
         CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
@@ -297,7 +193,7 @@ public class Leader extends FObjMixed {
 
     }
 
-    protected MinOptMax getAllocIPD(int ipd) {
+    public MinOptMax getAllocIPD(int ipd) {
         // length of the leader
         int opt = getLength("leader-length.optimum", ipd);
         int min = getLength("leader-length.minimum", ipd);
@@ -317,5 +213,28 @@ public class Leader extends FObjMixed {
         }
         return length;
     }
-}
 
+    public int getRuleStyle() {
+        return ruleStyle;
+    }
+
+    public int getRuleThickness() {
+        return ruleThickness;
+    }
+
+    public int getLeaderPattern() {
+        return leaderPattern;
+    }
+
+    public Font getFontState() {
+        return fontState;
+    }
+
+    public int getPatternWidth() {
+        return patternWidth;
+    }
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
+}

@@ -65,6 +65,7 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
     private String name;
     private int position;
     private int boundary;
+    private AddLMVisitor addLMVisitor = new AddLMVisitor();
 
     /**
      * Create a new block container layout manager.
@@ -123,7 +124,7 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
             List list = new ArrayList();
             Marker marker = retrieveMarker(name, position, boundary);
             if (marker != null) {
-                marker.addLayoutManager(list);
+                addLMVisitor.addLayoutManager(marker, list);
                 if (list.size() > 0) {
                     replaceLM =  (LayoutProcessor)list.get(0);
                     replaceLM.setParent(this);

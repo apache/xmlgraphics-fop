@@ -60,6 +60,7 @@ import org.xml.sax.Attributes;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.FlowLayoutManager;
 
@@ -178,14 +179,7 @@ public class Flow extends FObj {
         return true;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager
-     */
-    public void addLayoutManager(List list) {
-        FlowLayoutManager lm = new FlowLayoutManager();
-        lm.setUserAgent(getUserAgent());
-        lm.setFObj(this);
-        list.add(lm);
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
-
 }

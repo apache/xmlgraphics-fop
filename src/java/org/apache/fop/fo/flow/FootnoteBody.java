@@ -53,6 +53,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 
 /**
  * Class modelling the fo:footnote-body object. See Sec. 6.10.4 of the XSL-FO
@@ -72,6 +73,10 @@ public class FootnoteBody extends FObj {
      */
     public FootnoteBody(FONode parent) {
         super(parent);
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

@@ -61,6 +61,7 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOInputHandler;
@@ -118,39 +119,9 @@ public class PageNumberCitation extends FObj {
         fontInfo = foih.getFontInfo();
     }
 
-    /**
-     * Overridden from FObj
-     * @param lms the list to which the layout manager(s) should be added
-     */
-    public void addLayoutManager(List lms) {
-        setup();
-        LayoutManager lm;
-        lm = new LeafNodeLayoutManager() {
-                    public InlineArea get(LayoutContext context) {
-                        return getInlineArea(parentLM);
-                    }
-
-                    public void addAreas(PositionIterator posIter,
-                                         LayoutContext context) {
-                        super.addAreas(posIter, context);
-                        if (unresolved) {
-                            parentLM.addUnresolvedArea(refId,
-                                                       (Resolveable) inline);
-                        }
-                    }
-
-                    protected void offsetArea(LayoutContext context) {
-                        curArea.setOffset(context.getBaseline());
-                    }
-                };
-        lm.setUserAgent(getUserAgent());
-        lm.setFObj(this);
-        lms.add(lm);
-    }
-
     // if id can be resolved then simply return a word, otherwise
     // return a resolveable area
-    private InlineArea getInlineArea(LayoutProcessor parentLM) {
+    public InlineArea getInlineArea(LayoutProcessor parentLM) {
         if (refId.equals("")) {
             getLogger().error("page-number-citation must contain \"ref-id\"");
             return null;
@@ -202,7 +173,7 @@ public class PageNumberCitation extends FObj {
         return width;
     }
 
-    private void setup() {
+    public void setup() {
 
         // Common Accessibility Properties
         CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
@@ -255,5 +226,20 @@ public class PageNumberCitation extends FObj {
 
     }
 
-}
+    public String getRefId() {
+        return refId;
+    }
 
+    public InlineArea getInline() {
+        return inline;
+    }
+
+    public boolean getUnresolved() {
+        return unresolved;
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
+}

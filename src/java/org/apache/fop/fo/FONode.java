@@ -97,7 +97,7 @@ public abstract class FONode {
      * Returns the logger for the node.
      * @return the logger
      */
-    protected Logger getLogger() {
+    public Logger getLogger() {
         return userAgent.getLogger();
     }
 
@@ -113,7 +113,7 @@ public abstract class FONode {
      * Returns the user agent for the node.
      * @return FOUserAgent
      */
-    protected FOUserAgent getUserAgent() {
+    public FOUserAgent getUserAgent() {
         return userAgent;
     }
 
@@ -211,8 +211,23 @@ public abstract class FONode {
         return false;
     }
 
+    /**
+     * Recursively goes up the FOTree hierarchy until the FONode is found,
+     * which returns the parent Document.
+     * @return the Document object that is the parent of this node.
+     */
     public Document getDocument() {
         return parent.getDocument();
+    }
+
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

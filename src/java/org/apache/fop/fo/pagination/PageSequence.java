@@ -53,6 +53,7 @@ package org.apache.fop.fo.pagination;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.layout.PageMaster;
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.PageViewport;
@@ -819,6 +820,10 @@ public class PageSequence extends FObj {
      */
     public Title getTitleFO() {
         return titleFO;
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

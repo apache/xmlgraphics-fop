@@ -56,6 +56,7 @@ import java.util.List;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
@@ -88,22 +89,6 @@ public class ListItem extends FObj {
      */
     public ListItem(FONode parent) {
         super(parent);
-    }
-
-    /**
-     * @param list the list to which the layout manager(s) should be added
-     */
-    public void addLayoutManager(List list) {
-        if (label != null && body != null) {
-            ListItemLayoutManager blm = new ListItemLayoutManager();
-            blm.setUserAgent(getUserAgent());
-            blm.setFObj(this);
-            blm.setLabel(label.getItemLayoutManager());
-            blm.setBody(body.getItemLayoutManager());
-            list.add(blm);
-        } else {
-            getLogger().error("list-item requires list-item-label and list-item-body");
-        }
     }
 
     private void setup() {
@@ -171,6 +156,18 @@ public class ListItem extends FObj {
      */
     protected boolean containsMarkers() {
         return true;
+    }
+
+    public ListItemLabel getLabel() {
+        return label;
+    }
+
+    public ListItemBody getBody() {
+        return body;
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

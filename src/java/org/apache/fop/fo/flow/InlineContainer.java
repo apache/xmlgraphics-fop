@@ -60,6 +60,7 @@ import org.xml.sax.Attributes;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
@@ -80,18 +81,6 @@ public class InlineContainer extends FObj {
      */
     public InlineContainer(FONode parent) {
         super(parent);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager
-     */
-    public void addLayoutManager(List lms) {
-        ArrayList childList = new ArrayList();
-        super.addLayoutManager(childList);
-        LayoutManager lm = new ICLayoutManager(childList);
-        lm.setUserAgent(getUserAgent());
-        lm.setFObj(this);
-        lms.add(lm);
     }
 
     /**
@@ -138,21 +127,8 @@ public class InlineContainer extends FObj {
         return true;
     }
 
-    /**
-     * This creates a single inline container area after
-     * laying out the child block areas. All footnotes, floats
-     * and id areas are maintained for later retrieval.
-     */
-    class ICLayoutManager extends LeafNodeLayoutManager {
-
-        private List childrenLM;
-
-        ICLayoutManager(List childLM) {
-            childrenLM = childLM;
-        }
-
-        public InlineArea get(int index) {
-            return null;
-        }
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
+
 }

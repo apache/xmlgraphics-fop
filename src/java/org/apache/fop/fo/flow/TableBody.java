@@ -58,6 +58,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
@@ -81,22 +82,6 @@ public class TableBody extends FObj {
      */
     public TableBody(FONode parent) {
         super(parent);
-    }
-
-    /**
-     * Return a LayoutManager responsible for laying out this FObj's content.
-     * Must override in subclasses if their content can be laid out.
-     * @param list the list to which the layout manager(s) should be added
-     */
-    public void addLayoutManager(List list) {
-        list.add(getLayoutManager());
-    }
-
-    public Body getLayoutManager() {
-        Body blm = new Body();
-        blm.setUserAgent(getUserAgent());
-        blm.setFObj(this);
-        return blm;
     }
 
     private void setup() throws FOPException {
@@ -130,6 +115,10 @@ public class TableBody extends FObj {
      */
     protected boolean containsMarkers() {
         return true;
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

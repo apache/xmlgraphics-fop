@@ -276,7 +276,7 @@ public class FObj extends FONode {
      * This methods checks that the id isn't already used by another
      * fo and sets the id attribute of this object.
      */
-    protected void setupID() {
+    public void setupID() {
         Property prop = this.properties.get("id");
         if (prop != null) {
             String str = prop.getString();
@@ -338,14 +338,6 @@ public class FObj extends FONode {
         FObj p = findNearestAncestorGeneratingRAs(true, true);
         this.properties.setWritingMode(
           p.getProperty("writing-mode").getEnum());
-    }
-
-    /**
-     * Return a LayoutManager responsible for laying out this FObj's content.
-     * Must override in subclasses if their content can be laid out.
-     * @param list the list to which the layout manager(s) should be added
-     */
-    public void addLayoutManager(List list) {
     }
 
     /**
@@ -436,5 +428,8 @@ public class FObj extends FONode {
         return this.propMgr;
     }
 
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
 }
 

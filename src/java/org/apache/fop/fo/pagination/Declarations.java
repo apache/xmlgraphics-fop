@@ -58,6 +58,7 @@ import java.util.Iterator;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.XMLObj;
 
 
@@ -113,4 +114,9 @@ public class Declarations extends FObj {
         }
         children = null;
     }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
 }

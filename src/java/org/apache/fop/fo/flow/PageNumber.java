@@ -54,6 +54,7 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // FOP
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
@@ -107,47 +108,7 @@ public class PageNumber extends FObj {
         fontInfo = foih.getFontInfo();
     }
 
-    /**
-     * Overridden from FObj
-     * @param lms the list to which the layout manager(s) should be added
-     */
-    public void addLayoutManager(List lms) {
-        setup();
-        LayoutManager lm;
-        lm = new LeafNodeLayoutManager() {
-                    public InlineArea get(LayoutContext context) {
-                        // get page string from parent, build area
-                        Word inline = new Word();
-                        String str = parentLM.getCurrentPageNumber();
-                        int width = 0;
-                    for (int count = 0; count < str.length(); count++) {
-                            width += CharUtilities.getCharWidth(
-                                       str.charAt(count), fontState);
-                        }
-                        inline.setWord(str);
-                        inline.setIPD(width);
-                        inline.setHeight(fontState.getAscender()
-                                         - fontState.getDescender());
-                        inline.setOffset(fontState.getAscender());
-
-                        inline.addTrait(Trait.FONT_NAME,
-                                        fontState.getFontName());
-                        inline.addTrait(Trait.FONT_SIZE,
-                                        new Integer(fontState.getFontSize()));
-
-                        return inline;
-                    }
-
-                    protected void offsetArea(LayoutContext context) {
-                        curArea.setOffset(context.getBaseline());
-                    }
-                };
-        lm.setUserAgent(getUserAgent());
-        lm.setFObj(this);
-        lms.add(lm);
-    }
-
-    private void setup() {
+    public void setup() {
 
         // Common Accessibility Properties
         CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
@@ -193,6 +154,14 @@ public class PageNumber extends FObj {
         this.wrapOption = this.properties.get("wrap-option").getEnum();
         ts = new TextState();
 
+    }
+
+    public Font getFontState() {
+        return fontState;
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

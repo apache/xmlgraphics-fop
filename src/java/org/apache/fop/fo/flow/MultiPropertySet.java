@@ -52,6 +52,7 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.ToBeImplementedElement;
 
 /**
@@ -73,4 +74,9 @@ public class MultiPropertySet extends ToBeImplementedElement {
         // this.properties.get("active-state");
 
     }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
 }
