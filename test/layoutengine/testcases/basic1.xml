@@ -37,6 +37,16 @@
     </fo:root>
   </fo>
   <checks>
-    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block/@ipd = '360000'"/>
+    <!-- Check page -->
+    <eval expected="0 0 360000 360000" xpath="/areaTree/pageSequence/pageViewport/@bounds" desc="page size"/>
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]"/>
+    <true xpath="not(/areaTree/pageSequence/pageViewport/page[2])"/>
+    <eval expected="0 0 360000 360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/@rect" desc="region body area"/>
+    <!-- Check for first paragraph -->
+    <eval expected="360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ipd"/>
+    <eval expected="14400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@bpd"/>
+    <!-- Check for second paragraph -->
+    <eval expected="360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@ipd"/>
+    <eval expected="28800" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@bpd"/>
   </checks>
 </testcase>
