@@ -91,6 +91,7 @@ public class AWTStarter extends CommandLineStarter {
         AWTRenderer renderer = new AWTRenderer(translator);
         frame = createPreviewDialog(renderer, translator);
         renderer.setComponent(frame);
+        renderer.setOptions(commandLineOptions.getRendererOptions());
         driver = new Driver();
         driver.setRenderer(renderer);
     }
