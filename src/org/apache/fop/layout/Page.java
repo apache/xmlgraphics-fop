@@ -75,6 +75,8 @@ public class Page {
 
     protected Vector linkSets = new Vector();
 
+    private Vector idList = new Vector();
+
     Page(AreaTree areaTree, int height, int width) {
 	this.areaTree = areaTree;
 	this.height = height;
@@ -152,5 +154,13 @@ public class Page {
 
     public boolean hasLinks() {
 	return (!this.linkSets.isEmpty());
+    }
+
+    public void addToIDList(String id){
+        idList.addElement(id);
+    }
+
+    public Vector getIDList(){
+        return idList;
     }
 }
