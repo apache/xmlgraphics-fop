@@ -17,21 +17,25 @@ By having a mechanism for supporting extensions, FOP is able to add features tha
 Please see the <link href="graphics.html#svg">SVG documentation</link> for more details.
         </p>
       </section>
+    <section id="fo-extensions">
+      <title>FO Extentions</title>
+      <section id="fox-namespace">
+        <title>Namespace</title>
+        <p>By convention, FO extensions in FOP use the "fox:" namespace identifier.
+To use any of the FO extensions, add a namespace entry for http://xml.apache.org/fop/extensions
+to the root element:</p>
+<source><![CDATA[<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+               xmlns:fox="http://xml.apache.org/fop/extensions">]]></source>
+      </section>
       <section id="bookmarks">
         <title>PDF Bookmarks</title>
-        <p>
-To use this standard FOP extension, you need to add a namespace entry for
-http://xml.apache.org/fop/extensions on the root element.
-        </p>
         <p>
 You can provide outlines inside the root object (but outside any
 page-sequences or other formatting objects). Here's an example of an outline
 entry:
         </p>
         <source>
-<![CDATA[<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
-               xmlns:fox="http://xml.apache.org/fop/extensions">
-  <fox:outline internal-destination="sec3">
+<![CDATA[<fox:outline internal-destination="sec3">
     <fox:label>Running FOP</fox:label>
 
     <fox:outline internal-destination="sec3-1">
@@ -45,12 +49,30 @@ property, but it isn't supported currently. See the pdfoutline.fo file in
 examples/fo/basic for a more complete example.
         </p>
       </section>
+      <section id="named-destinations">
+        <title>Anchors or Named Destinations</title>
+        <p>Use the fox:destination element to define "named destinations" inside a PDF document.
+These are useful as fragment identifiers, e.g. "http://server/document.pdf#anchor-name".
+fox:destination elements can be placed almost anywhere in the fo document, including a child of
+root, a block-level element, or an inline-level element.
+For the destination to actually work, it must correspond to an "id" attribute on some fo element
+within the document. In other words, the "id" attribute actually creates the "view" within the
+PDF document. The fox:destination simply gives that view an independent name.
+</p>
+        <source><![CDATA[<fox:destination internal-destination="table-of-contents"/>
+...
+<fo:block id="table-of-contents">Table of Contents</fo:block>]]></source>
+        <warning>It is possible that in some future release of FOP, <em>all </em>elements with
+"id" attributes will generate named-destinations, which will eliminate the need for
+fox:destination.</warning>
+      </section>
       <section id="table-continue-label">
-        <title>Continued-label (for table-header/-footer</title>
+        <title>Continued-label (for table-header/-footer)</title>
         <p>
 Please see examples/fo/basic/contlabel.fo
         </p>
       </section>
+    </section>
   </body>
 </document>
 
