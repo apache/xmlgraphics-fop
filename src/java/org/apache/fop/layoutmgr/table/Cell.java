@@ -311,9 +311,38 @@ public class Cell extends BlockStackingLayoutManager {
                 //Can set the borders directly if there's no span
                 CommonBorderPaddingBackground effBorders =
                     ((GridUnit)((List)rows.get(0)).get(0)).effBorders;
+                //TODO Next line is a temporary hack!
+                TraitSetter.addCollapsingBorders(curBlockArea, 
+                        fobj.getCommonBorderPaddingBackground(), outer);
                 TraitSetter.addCollapsingBorders(curBlockArea, 
                         effBorders, outer);
             } else {
+                int dy = yoffset;
+                for (int y = 0; y < rows.size(); y++) {
+                    List gridUnits = (List)rows.get(y);
+                    int dx = xoffset;
+                    int lastRowHeight = 0;
+                    for (int x = 0; x < gridUnits.size(); x++) {
+                        GridUnit gu = (GridUnit)gridUnits.get(x);
+                        //Blocks for painting grid unit borders
+                        Block block = new Block();
+                        block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+                        block.setPositioning(Block.ABSOLUTE);
+                        block.setBPD(gu.row.getRowHeight());
+                        lastRowHeight = gu.row.getRowHeight();
+                        int ipd = gu.column.getWidth().getValue();
+                        int borderStartWidth = gu.effBorders.getBorderStartWidth(false) / 2; 
+                        ipd -= borderStartWidth;
+                        ipd -= gu.effBorders.getBorderEndWidth(false) / 2;
+                        block.setIPD(ipd);
+                        block.setXOffset(dx + borderStartWidth);
+                        block.setYOffset(dy);
+                        TraitSetter.addCollapsingBorders(block, gu.effBorders, outer);
+                        parentLM.addChild(block);
+                        dx += gu.column.getWidth().getValue();
+                    }
+                    dy += lastRowHeight;
+                }
                 log.warn("TODO Add collapsed border painting for spanned cells");
             }
         }
