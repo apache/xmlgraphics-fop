@@ -99,12 +99,7 @@ public class BlockArea extends Area {
     protected boolean hasLines = false;
 
     /*hyphenation*/
-    protected int hyphenate;
-    protected char hyphenationChar;
-    protected int hyphenationPushCharacterCount;
-    protected int hyphenationRemainCharacterCount;
-    protected String language;
-    protected String country;
+    protected HyphenationProps hyphProps;
 
     protected Vector pendingFootnotes = null;
 
@@ -174,9 +169,7 @@ public class BlockArea extends Area {
         if (currentHeight + this.currentLineArea.getHeight() > maxHeight) {
             return null;
         }
-        this.currentLineArea.changeHyphenation(language, country,
-                                               hyphenate, hyphenationChar, hyphenationPushCharacterCount,
-                                               hyphenationRemainCharacterCount);
+        this.currentLineArea.changeHyphenation(hyphProps);
         this.hasLines = true;
         return this.currentLineArea;
     }
@@ -199,9 +192,7 @@ public class BlockArea extends Area {
         this.currentLineArea =
           new LineArea(fontState, lineHeight, halfLeading,
                        allocationWidth, startIndent, endIndent, currentLineArea);
-        this.currentLineArea.changeHyphenation(language, country,
-                                               hyphenate, hyphenationChar, hyphenationPushCharacterCount,
-                                               hyphenationRemainCharacterCount);
+        this.currentLineArea.changeHyphenation(hyphProps);
         if (currentHeight + lineHeight > maxHeight) {
             return null;
         }
@@ -239,7 +230,8 @@ public class BlockArea extends Area {
 
     // KL: I think we should just return startIndent here!
     public int getStartIndent() {
-        return startIndent + paddingLeft + borderWidthLeft;
+      //return startIndent + paddingLeft + borderWidthLeft;
+      return startIndent ;
     }
 
     public void setIndents(int startIndent, int endIndent) {
@@ -257,17 +249,8 @@ public class BlockArea extends Area {
         return halfLeading;
     }
 
-    public void setHyphenation(String language, String country,
-                               int hyphenate, char hyphenationChar,
-                               int hyphenationPushCharacterCount,
-                               int hyphenationRemainCharacterCount) {
-        this.language = language;
-        this.country = country;
-        this.hyphenate = hyphenate;
-        this.hyphenationChar = hyphenationChar;
-        this.hyphenationPushCharacterCount = hyphenationPushCharacterCount;
-        this.hyphenationRemainCharacterCount =
-          hyphenationRemainCharacterCount;
+    public void setHyphenation(HyphenationProps hyphProps) {
+        this.hyphProps = hyphProps;
     }
 
     public void addFootnote(FootnoteBody fb) {

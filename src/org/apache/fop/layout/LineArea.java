@@ -96,12 +96,7 @@ public class LineArea extends Area {
     int vAlign;
 
     /*hyphenation*/
-    protected int hyphenate;
-    protected char hyphenationChar;
-    protected int hyphenationPushCharacterCount;
-    protected int hyphenationRemainCharacterCount;
-    protected String language;
-    protected String country;
+    HyphenationProps hyphProps;
 
     /* the width of text that has definitely made it into the line
        area */
@@ -421,7 +416,7 @@ public class LineArea extends Area {
                             return wordStart;
                         }
                     } else if (this.wrapOption == WrapOption.WRAP) {
-                      if (this.hyphenate == Hyphenate.TRUE) {
+                      if (this.hyphProps.hyphenate == Hyphenate.TRUE) {
                         return this.doHyphenation(data,i,wordStart,this.getContentWidth() - (finalWidth + spaceWidth + pendingWidth));
                       } else {
                         return wordStart;
@@ -781,18 +776,8 @@ public class LineArea extends Area {
       * and minimum number of character to remain one the previous line and to be on the
       * next line.
       */
-    public void changeHyphenation(String language, String country,
-                                  int hyphenate, char hyphenationChar,
-                                  int hyphenationPushCharacterCount,
-                                  int hyphenationRemainCharacterCount) {
-        this.language = language;
-        this.country = country;
-        this.hyphenate = hyphenate;
-        this.hyphenationChar = hyphenationChar;
-        this.hyphenationPushCharacterCount = hyphenationPushCharacterCount;
-        this.hyphenationRemainCharacterCount =
-          hyphenationRemainCharacterCount;
-
+    public void changeHyphenation(HyphenationProps hyphProps) {
+        this.hyphProps = hyphProps;
     }
 
 
@@ -875,7 +860,7 @@ public class LineArea extends Area {
      */
     public int doHyphenation (char [] characters, int position, int wordStart, int remainingWidth) {
         //check whether the language property has been set
-        if (this.language.equalsIgnoreCase("none")) {
+        if (this.hyphProps.language.equalsIgnoreCase("none")) {
           MessageHandler.errorln("if property 'hyphenate' is used, a language must be specified");
           return wordStart;
         }
@@ -896,7 +881,7 @@ public class LineArea extends Area {
         String wordToHyphenate;
 
         //width of hyphenation character
-        int hyphCharWidth = this.currentFontState.width(currentFontState.mapChar(this.hyphenationChar));
+        int hyphCharWidth = this.currentFontState.width(currentFontState.mapChar(this.hyphProps.hyphenationChar));
         remainingWidth -= hyphCharWidth;
 
         //handles ' or " at the beginning of the word
@@ -924,7 +909,8 @@ public class LineArea extends Area {
         }
 
         //are there any hyphenation points
-        Hyphenation hyph = Hyphenator.hyphenate(language,country,wordToHyphenate,hyphenationRemainCharacterCount,hyphenationPushCharacterCount);
+        Hyphenation hyph = Hyphenator.hyphenate(hyphProps.language,
+						hyphProps.country, wordToHyphenate,hyphProps.hyphenationRemainCharacterCount,hyphProps.hyphenationPushCharacterCount);
         //no hyphenation points and no inword non letter character
         if (hyph == null && preString == null) {
             if (remainingString.length() > 0) {
@@ -943,7 +929,7 @@ public class LineArea extends Area {
             int index = getFinalHyphenationPoint(hyph,remainingWidth);
             if (index != -1) {
                 remainingString.append(hyph.getPreHyphenText(index));
-                remainingString.append(this.hyphenationChar);
+                remainingString.append(this.hyphProps.hyphenationChar);
                 this.addWord(startChar,remainingString);
                 return wordStart + remainingString.length()-1;
             }
@@ -952,7 +938,7 @@ public class LineArea extends Area {
             int index = getFinalHyphenationPoint(hyph,remainingWidth);
             if (index != -1) {
               remainingString.append(preString.append(hyph.getPreHyphenText(index)));
-              remainingString.append(this.hyphenationChar);
+              remainingString.append(this.hyphProps.hyphenationChar);
               this.addWord(startChar,remainingString);
               return wordStart + remainingString.length()-1;
             } else {
