@@ -71,9 +71,13 @@ public class AWTStarter extends CommandLineStarter {
 
         String language = commandLineOptions.getLanguage();
 
-        if (language == null)
-            language = System.getProperty("user.language");
-
+        if (language == null) {
+            try {
+                language = System.getProperty("user.language");
+            } catch(SecurityException se) {
+                // if this is running in a secure place
+            }
+        }
         resource = getResourceBundle(TRANSLATION_PATH + "resources."
                                      + language);
 
