@@ -15,26 +15,26 @@
 	<fo:page-sequence master-name="simplePM">
 	    <fo:flow flow-name="xsl-region-body">
 			<fo:block>
-				<fo:external-graphic src="file:../page.gif"/>
+				<fo:external-graphic src="file:../graphics/page.gif"/>
 			</fo:block>
 
 			<fo:block>
-				<fo:external-graphic height="3in" width="3in" src="file:../page.gif"/>
+				<fo:external-graphic height="3in" width="3in" src="file:../graphics/page.gif"/>
 				height=3in width=3in
 			</fo:block>
 
 			<fo:block>
-				<fo:external-graphic height="3in" src="file:../page.gif"/>
+				<fo:external-graphic height="3in" src="file:../graphics/page.gif"/>
 				height="3in"
 			</fo:block>
 			
 			<fo:block>
-				<fo:external-graphic width="1.5in" src="file:../page.gif"/>
+				<fo:external-graphic width="1.5in" src="file:../graphics/page.gif"/>
 				width="1.5in" 
 			</fo:block>
 
 			<fo:block>
-				<fo:external-graphic height="6in" width="4in" src="file:../page.gif"/>
+				<fo:external-graphic height="6in" width="4in" src="file:../graphics/page.gif"/>
 				height="6in" width="4in"
 			</fo:block>
 

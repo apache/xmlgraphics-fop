@@ -53,8 +53,7 @@
     <fop fofile="${foDir}/font-family.fo" pdffile="${testDir}/font-family.pdf"/>
     <fop fofile="${foDir}/font-size.fo" pdffile="${testDir}/font-size.pdf"/>
     <fop fofile="${foDir}/font.fo" pdffile="${testDir}/font.pdf"/>
-    <fop fofile="${foDir}/header_foorter.fo" pdffile="${testDir}/header_footer.pdf"/>
-    <fop fofile="${foDir}/image.fo" pdffile="${testDir}/image.pdf"/>
+    <fop fofile="${foDir}/header_footer.fo" pdffile="${testDir}/header_footer.pdf"/>
     <fop fofile="${foDir}/indent.fo" pdffile="${testDir}/indent.pdf"/>
     <fop fofile="${foDir}/inline.fo" pdffile="${testDir}/inline.pdf"/>
     <fop fofile="${foDir}/keep-with-next.fo" pdffile="${testDir}/keep-with-next.pdf"/>
@@ -72,6 +71,7 @@
     <fop fofile="${foDir}/text-indent.fo" pdffile="${testDir}/text-indent.pdf"/>
     <fop fofile="${foDir}/word-spacing.fo" pdffile="${testDir}/word-spacing.pdf"/>
     <fop fofile="${foDir}/wrap.fo" pdffile="${testDir}/wrap.pdf"/>
+    <fop fofile="${foDir}/image.fo" pdffile="${testDir}/image.pdf"/>
   </target>
 
 
@@ -104,7 +104,6 @@
     <fop fofile="${foDir}/font-size.fo" pdffile="${referenceDir}/font-size.pdf"/>
     <fop fofile="${foDir}/font.fo" pdffile="${referenceDir}/font.pdf"/>
     <fop fofile="${foDir}/header_foorter.fo" pdffile="${referenceDir}/header_footer.pdf"/>
-    <fop fofile="${foDir}/image.fo" pdffile="${referenceDir}/image.pdf"/>
     <fop fofile="${foDir}/indent.fo" pdffile="${referenceDir}/indent.pdf"/>
     <fop fofile="${foDir}/inline.fo" pdffile="${referenceDir}/inline.pdf"/>
     <fop fofile="${foDir}/keep-with-next.fo" pdffile="${referenceDir}/keep-with-next.pdf"/>
@@ -122,6 +121,7 @@
     <fop fofile="${foDir}/text-indent.fo" pdffile="${referenceDir}/text-indent.pdf"/>
     <fop fofile="${foDir}/word-spacing.fo" pdffile="${referenceDir}/word-spacing.pdf"/>
     <fop fofile="${foDir}/wrap.fo" pdffile="${referenceDir}/wrap.pdf"/>
+    <fop fofile="${foDir}/image.fo" pdffile="${referenceDir}/image.pdf"/>
   </target>
 
 
