@@ -31,7 +31,7 @@ pattern which isn't included in the distribution, do the following:
 the following hyphenation patterns are part of the Fop distribution
 
 de      German (traditional)
-de_DR   German (new - no 'DR' doesn't mean anything)
+de_DR   German (new spelling)
 en      American English
 en_GB   British English
 en_US   American English
@@ -39,3 +39,4 @@ es      Spanish
 fi      Finnish
 fr      French
 it      Italian
+nl      Dutch (new official Dutch spelling)
