@@ -137,71 +137,70 @@ public class Flow extends FObj {
 			this.marker = 0;
 		}
 	
+		// flow is *always* laid out into a BodyAreaContainer
+		BodyAreaContainer bac = (BodyAreaContainer)area;
+		
 		boolean prevChildMustKeepWithNext = false;
 	
 		int numChildren = this.children.size();
 		for (int i = this.marker; i < numChildren; i++) {
 			FObj fo = (FObj) children.elementAt(i);
 			
-			// if the area is a BodyAreaContainer, we need to perform an iterative
-			// layout over each span area, and the columns in each of those
-			Area currentArea;
-			if (area instanceof BodyAreaContainer)
+			if (bac.isBalancingRequired(fo))
 			{
-				BodyAreaContainer bac = (BodyAreaContainer)area;
-				if (bac.isBalancingRequired(fo))
-				{
-					// reset the the just-done span area in preparation
-					// for a backtrack for balancing
-					bac.resetSpanArea();
-					
-					this.rollback(markerSnapshot);
-					// one less because of the "continue"
-					i = this.marker - 1;
-					continue;
-				}
-				currentArea = bac.getNextArea(fo);
-				// temporary hack
-				currentArea.setIDReferences(bac.getIDReferences());
-				if (bac.isNewSpanArea())
-				{
-					this.marker = i;
-					markerSnapshot = this.getMarkerSnapshot(new Vector());
-				}
+				// reset the the just-done span area in preparation
+				// for a backtrack for balancing
+				bac.resetSpanArea();
+				
+				this.rollback(markerSnapshot);
+				// one less because of the "continue"
+				i = this.marker - 1;
+				continue;
 			}
-			else
-				currentArea = area;
-			if (null == currentArea)
-				throw new FOPException("Bad BodyAreaContainer");
+			// current column area
+			Area currentArea = bac.getNextArea(fo);
+			// temporary hack for IDReferences
+			currentArea.setIDReferences(bac.getIDReferences());
+			if (bac.isNewSpanArea())
+			{
+				this.marker = i;
+				markerSnapshot = this.getMarkerSnapshot(new Vector());
+			}
 			
 			_status = fo.layout(currentArea);
 			if (_status.isIncomplete()) {
-				if (area instanceof BodyAreaContainer)
-				{
-					if (((BodyAreaContainer)area).isLastColumn())
-					{
-						this.marker = i;
-						return getStatus();
-					}
-					else
-					{
-						// I don't much like exposing this. (AHS 001217)
-						((org.apache.fop.layout.ColumnArea)currentArea).incrementSpanIndex();
-						i--;
-					}
-				}
-				else if ((prevChildMustKeepWithNext) && (_status.laidOutNone())) {
+				if ((prevChildMustKeepWithNext) && (_status.laidOutNone())) {
 					this.marker = i - 1;
 					FObj prevChild = (FObj) children.elementAt(this.marker);
 					prevChild.removeAreas();
 					prevChild.resetMarker();
 					prevChild.removeID(area.getIDReferences());
-					return setStatus(new Status(Status.AREA_FULL_SOME));
+					_status = new Status(Status.AREA_FULL_SOME);
+					return _status;
 					// should probably return AREA_FULL_NONE if first
 					// or perhaps an entirely new status code
-				} else {
-					this.marker = i;
-					return getStatus();
+				}
+				if (bac.isLastColumn())
+					if (_status.getCode() == Status.FORCE_COLUMN_BREAK) {
+						this.marker = i;
+						_status = new Status(Status.FORCE_PAGE_BREAK);	// same thing
+						return _status;
+					}
+					else {
+						this.marker = i;
+						return _status;
+					}
+				else
+				{
+					// not the last column, but could be page breaks
+					if (_status.isPageBreak())
+					{
+						this.marker = i;
+						return _status;
+					}
+					// I don't much like exposing this. (AHS 001217)
+					((org.apache.fop.layout.ColumnArea)currentArea).incrementSpanIndex();
+					i--;
 				}
 			}
 			if (_status.getCode() == Status.KEEP_WITH_NEXT) {
@@ -211,7 +210,7 @@ public class Flow extends FObj {
 				prevChildMustKeepWithNext = false;
 			}
 		}
-		return setStatus(new Status(Status.OK));
+		return _status;
     }
 
   /**
@@ -229,14 +228,8 @@ public class Flow extends FObj {
 	return "fo:flow";
     }
     
-    public Status getStatus() 
-    {
-	return _status;
-    }
-    
-	public Status setStatus(Status status)
+	public Status getStatus()
 	{
-		_status = status;
-		return _status;		// shortcut
+		return _status;
 	}
 }
