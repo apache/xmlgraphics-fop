@@ -25,6 +25,7 @@ public class FObjMixed extends FObj {
 
     protected void addCharacters(char data[], int start, int length) {
         if(textInfo == null) {
+	    textInfo = new FOText.TextInfo();
             String fontFamily =
                 getProperty("font-family").getString();
             String fontStyle =
