@@ -41,6 +41,30 @@ public class FoLayoutMasterSet extends FONode {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
+    /** Map of <tt>Integer</tt> indices of <i>sparsePropsSet</i> array.
+        It is indexed by the FO index of the FO associated with a given
+        position in the <i>sparsePropsSet</i> array.  See
+        {@link org.apache.fop.fo.FONode#sparsePropsSet FONode.sparsePropsSet}.
+     */
+    private static final HashMap sparsePropsMap;
+
+    /** An <tt>int</tt> array of of the applicable property indices, in
+        property index order. */
+    private static final int[] sparseIndices;
+
+    /** The number of applicable properties.  This is the size of the
+        <i>sparsePropsSet</i> array. */
+    private static final int numProps;
+
+    static {
+        // applicableProps is a HashMap containing the indicies of the
+        // sparsePropsSet array, indexed by the FO index of the FO slot
+        // in sparsePropsSet.
+        sparsePropsMap = new HashMap(0);
+        numProps = 0;
+        sparseIndices = new int[] {};
+    }
+
     /**
      * An array with <tt>int</tt>s identifying
      * <tt>simple-page-master</tt> and <tt>page-sequence-master</tt>
@@ -81,8 +105,15 @@ public class FoLayoutMasterSet extends FONode {
         throws Tree.TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.LAYOUT_MASTER_SET, parent, event,
-              FOPropertySets.LAYOUT_SET);
-	setupPageMasters(event);
+              FOPropertySets.LAYOUT_SET, sparsePropsMap, sparseIndices,
+              numProps);
+        setupPageMasters(event);
+        // No need to clean up the build tree, because the whole subtree
+        // will be deleted.
+        // This is problematical: while Node is obliged to belong to a Tree,
+        // any remaining references to elements of the subtree will keep the
+        // whole subtree from being GCed.
+        makeSparsePropsSet();
     }
 
     /**
@@ -93,12 +124,12 @@ public class FoLayoutMasterSet extends FONode {
      * @throws <tt>FOPException</tt>.
      */
     public void setupPageMasters(FoXMLEvent event)
-	    throws FOPException, PropertyException
+            throws FOPException, PropertyException
     {
-	FoSimplePageMaster simple;
-	String masterName;
+        FoSimplePageMaster simple;
+        String masterName;
         int foType;
-	FoPageSequenceMaster foPageSeq;
+        FoPageSequenceMaster foPageSeq;
         try {
             do {
                 FoXMLEvent ev =
@@ -125,7 +156,7 @@ public class FoLayoutMasterSet extends FONode {
                     //System.out.println("Found page-sequence-master");
                     try {
                         foPageSeq =
-				new FoPageSequenceMaster(foTree, this, ev);
+                                new FoPageSequenceMaster(foTree, this, ev);
                     } catch (Tree.TreeException e) {
                         throw new FOPException
                                 ("TreeException: " + e.getMessage());
@@ -143,6 +174,8 @@ public class FoLayoutMasterSet extends FONode {
                 } else
                     throw new FOPException
                             ("Aargh! expectStartElement(events, list)");
+                // Flush the master event
+                xmlevents.getEndElement(ev);
             } while (true);
         } catch (NoSuchElementException e) {
             // Unexpected end of file
@@ -155,26 +188,25 @@ public class FoLayoutMasterSet extends FONode {
             throw new FOPException(e);
         }
         if (pageMasters.size() == 0)
-            throw new FOPException("No pageg masters defined in layout-master-set.");
-	// Create the master set structures.
-	// Scan the page-sequence-masters
-	// N.B. Processing of the page-sequence-masters must be deferred until
-	// now because contained master-references may be to
-	// simple-page-masters which follow the page-sequence-master in the
-	// input tree.
-	Set pageSeqSet = pageMasters.keySet();
-	Iterator pageSeqNames = pageSeqSet.iterator();
-	while (pageSeqNames.hasNext()) {
-	    masterName = (String)(pageSeqNames.next());
-	    // Get the FoPageSequenceMaster
-	    foPageSeq = (FoPageSequenceMaster)(pageMasters.get(masterName));
-	    // Create a new PageSequenceMaster object - NOT an foPageSeqM
-	    PageSequenceMaster pageSeq = new PageSequenceMaster
-				(masterName, foPageSeq, simplePageMasters);
+            throw new FOPException
+                        ("No page masters defined in layout-master-set.");
+        // Create the master set structures.
+        // Scan the page-sequence-masters
+        // N.B. Processing of the page-sequence-masters must be deferred until
+        // now because contained master-references may be to
+        // simple-page-masters which follow the page-sequence-master in the
+        // input tree.
+        Set pageSeqSet = pageMasters.keySet();
+        Iterator pageSeqNames = pageSeqSet.iterator();
+        while (pageSeqNames.hasNext()) {
+            masterName = (String)(pageSeqNames.next());
+            // Get the FoPageSequenceMaster
+            foPageSeq = (FoPageSequenceMaster)(pageMasters.get(masterName));
+            // Create a new PageSequenceMaster object - NOT an foPageSeqM
+            PageSequenceMaster pageSeq = new PageSequenceMaster
+                                (masterName, foPageSeq, simplePageMasters);
             pageSequenceMasters.put(masterName, pageSeq);
-	}
-	// Flush to the layout-master-set end event
-	xmlevents.getEndElement(event);
+        }
     }
 
     /**
