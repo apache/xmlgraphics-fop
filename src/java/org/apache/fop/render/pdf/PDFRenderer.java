@@ -114,7 +114,7 @@ import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.InlineParent;
-import org.apache.fop.layout.FontState;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.datatypes.ColorType;
 
@@ -920,7 +920,7 @@ public class PDFRenderer extends PrintRenderer {
         String s = word.getWord();
 
         FontMetrics metrics = fontInfo.getMetricsFor(name);
-        FontState fs = new FontState(name, metrics, size);
+        Font fs = new Font(name, metrics, size);
         escapeText(s, fs, useMultiByte, pdf);
         pdf.append(endText);
 
@@ -936,7 +936,7 @@ public class PDFRenderer extends PrintRenderer {
      * @param useMultiByte Indicates the use of multi byte convention
      * @param pdf target buffer for the escaped text
      */
-    public void escapeText(String s, FontState fs,
+    public void escapeText(String s, Font fs,
                            boolean useMultiByte, StringBuffer pdf) {
         String startText = useMultiByte ? "<" : "(";
         String endText = useMultiByte ? "> " : ") ";

@@ -48,18 +48,18 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */ 
-package org.apache.fop.layout;
+package org.apache.fop.fonts;
 
 import java.util.Map;
 
-import org.apache.fop.fonts.CodePointMapping;
-import org.apache.fop.fonts.FontMetrics;
+
+
 
 /**
  * This class holds font state information and provides access to the font 
  * metrics.
  */
-public class FontState {
+public class Font {
 
     private String fontName;
     private int fontSize;
@@ -80,7 +80,7 @@ public class FontState {
      * @param met font metrics
      * @param fontSize font size
      */
-    public FontState(String key, FontMetrics met, int fontSize) {
+    public Font(String key, FontMetrics met, int fontSize) {
         this.fontName = key;
         this.metric = met;
         this.fontSize = fontSize;

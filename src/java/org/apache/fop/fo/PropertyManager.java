@@ -57,7 +57,7 @@ import java.awt.geom.Rectangle2D;
 // FOP
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.layout.FontState;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.control.Document;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -84,7 +84,7 @@ public class PropertyManager {
 
     private PropertyList properties;
     private Document fontInfo = null;
-    private FontState fontState = null;
+    private Font fontState = null;
     private CommonBorderAndPadding borderAndPadding = null;
     private CommonHyphenation hyphProps = null;
     private TextInfo textInfo = null;
@@ -133,7 +133,7 @@ public class PropertyManager {
      * @param fontInfo FontInfo to work with
      * @return a FontState object
      */
-    public FontState getFontState(Document fontInfo) {
+    public Font getFontState(Document fontInfo) {
         if (fontState == null) {
             if (fontInfo == null) {
                 fontInfo = this.fontInfo;
@@ -170,7 +170,7 @@ public class PropertyManager {
             String fname = fontInfo.fontLookup(fontFamily, fontStyle,
                                                fontWeight);
             FontMetrics metrics = fontInfo.getMetricsFor(fname);
-            fontState = new FontState(fname, metrics, fontSize);
+            fontState = new Font(fname, metrics, fontSize);
         }
         return fontState;
     }

@@ -51,7 +51,7 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.layout.FontState;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.fo.properties.TextTransform;
@@ -61,7 +61,7 @@ import org.apache.fop.fo.properties.TextTransform;
  */
 public class TextInfo {
     /** object containing the font information */
-    public FontState fs;
+    public Font fs;
     /** fo:color property */
     public ColorType color;
     /** fo:wrap-option property */

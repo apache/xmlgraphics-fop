@@ -50,7 +50,7 @@
  */ 
 package org.apache.fop.util;
 
-import org.apache.fop.layout.FontState;
+import org.apache.fop.fonts.Font;
 
 /**
  * This class provides utilities to distinguish various kinds of Unicode
@@ -117,7 +117,7 @@ public class CharUtilities {
      * @param fs FontState to use
      * @return the width of the character
      */
-    public static int getCharWidth(char c, FontState fs) {
+    public static int getCharWidth(char c, Font fs) {
         int width;
 
         if ((c == '\n') || (c == '\r') || (c == '\t') || (c == '\u00A0')) {

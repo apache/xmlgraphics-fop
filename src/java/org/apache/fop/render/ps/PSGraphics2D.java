@@ -58,7 +58,8 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
+/* java.awt.Font is not imported to avoid confusion with
+   org.apache.fop.fonts.Font */
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -84,7 +85,7 @@ import java.io.IOException;
 
 // FOP
 import org.apache.fop.control.Document;
-import org.apache.fop.layout.FontState;
+import org.apache.fop.fonts.Font;
 
 // Batik
 import org.apache.batik.ext.awt.g2d.AbstractGraphics2D;
@@ -113,10 +114,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
     protected PSGenerator gen;
 
     /** Currently valid FontState */
-    protected FontState fontState;
+    protected Font fontState;
 
     /** Overriding FontState */
-    protected FontState overrideFontState = null;
+    protected Font overrideFontState = null;
 
     /**
      * the current (internal) font name
@@ -826,7 +827,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
     public void drawString(String s, float x, float y) {
       try {
         if (overrideFontState == null) {
-            Font gFont = getFont();
+            java.awt.Font gFont = getFont();
             String n = gFont.getFamily();
             if (n.equals("sanserif")) {
                 n = "sans-serif";
@@ -1088,7 +1089,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * Sets the overrideing font state.
      * @param infont FontState to set
      */
-    public void setOverrideFontState(FontState infont) {
+    public void setOverrideFontState(Font infont) {
         overrideFontState = infont;
     }
 
@@ -1100,7 +1101,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @see       java.awt.FontMetrics
      * @see       java.awt.Graphics#getFontMetrics()
      */
-    public java.awt.FontMetrics getFontMetrics(Font f) {
+    public java.awt.FontMetrics getFontMetrics(java.awt.Font f) {
         return fmg.getFontMetrics(f);
     }
 
