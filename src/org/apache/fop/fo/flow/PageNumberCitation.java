@@ -60,9 +60,6 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
-// Java
-import java.util.Enumeration;
-
 
 /**
 * 6.6.11 fo:page-number-citation
@@ -118,11 +115,9 @@ import java.util.Enumeration;
 *             [7.14.6 "text-transform"] 
 *             [7.14.8 "word-spacing"] 
 */
-public class PageNumberCitation extends FObj 
-{
+public class PageNumberCitation extends FObj {
 
-    public static class Maker extends FObj.Maker 
-    {
+    public static class Maker extends FObj.Maker {
         public FObj make(FObj parent, PropertyList propertyList) throws FOPException
         {
             return new PageNumberCitation(parent, propertyList);
@@ -140,7 +135,10 @@ public class PageNumberCitation extends FObj
     float blue;
     int wrapOption;
     int whiteSpaceTreatment;
-    Area area;    
+    Area area;
+    String pageNumber;
+    String refId;
+    String id;    
 
 
     public PageNumberCitation(FObj parent, PropertyList propertyList) 
@@ -151,15 +149,15 @@ public class PageNumberCitation extends FObj
 
 
     public Status layout(Area area) throws FOPException 
-    {
-        if ( !(area instanceof BlockArea) )
-        {
+    {                
+        if ( !(area instanceof BlockArea) ) {
             MessageHandler.errorln("WARNING: page-number-citation outside block area");
             return new Status(Status.OK);
         }
+
+        IDReferences idReferences = area.getIDReferences();        
         this.area = area;
-        if ( this.marker == START )
-        {
+        if ( this.marker == START ) {
             String fontFamily = this.properties.get("font-family").getString();
             String fontStyle = this.properties.get("font-style").getString();
             String fontWeight = this.properties.get("font-weight").getString();
@@ -173,48 +171,40 @@ public class PageNumberCitation extends FObj
             this.blue = c.blue();
 
             this.wrapOption = this.properties.get("wrap-option").getEnum();
-            this.whiteSpaceTreatment = this.properties.get("white-space-treatment").getEnum();
+            this.whiteSpaceTreatment = this.properties.get("white-space-treatment").getEnum();            
+
+            this.refId = this.properties.get("ref-id").getString();
+
+            if ( this.refId.equals("") ) {
+                throw new FOPException("page-number-citation must contain \"ref-id\""); 
+            }
+
+            // create id                       
+            this.id = this.properties.get("id").getString();            
+            idReferences.createID(id);                        
 
             this.marker = 0;
-
-            // initialize id                       
-            String id = this.properties.get("id").getString();            
-            area.getIDReferences().initializeID(id,area);                        
         }
 
-        String refId = this.properties.get("ref-id").getString();
-        
-        if(refId.equals(""))
-        {
-        	throw new FOPException("page-number-citation must contain \"ref-id\"");	
+        if ( marker == 0 ) {
+            idReferences.configureID(id,area);                          
         }
-        IDReferences idReferences= area.getIDReferences();       
 
-        String pageNumber=idReferences.getPageNumber(refId);                
 
-        int orig_start = this.marker;
+        pageNumber=idReferences.getPageNumber(refId);                        
 
-        if(pageNumber!=null)  // if we already know the page number
-        {
-            String output=pageNumber;
-            this.marker = ((BlockArea) area).addText(fs, red, green, blue, wrapOption, null, whiteSpaceTreatment, output.toCharArray(), 0, output.length());
+        if ( pageNumber!=null ) {  // if we already know the page number
+            this.marker = ((BlockArea) area).addText(fs, red, green, blue, wrapOption, null, whiteSpaceTreatment, pageNumber.toCharArray(), 0, pageNumber.length());
         }
-        else  // add pageNumberCitation to area to be resolved during rendering
-        {        
+        else {  // add pageNumberCitation to area to be resolved during rendering
             this.marker = ((BlockArea) area).addPageNumberCitation(fs, red, green, blue, wrapOption, null, whiteSpaceTreatment, refId);        
         }
-                
 
-        if ( this.marker == -1 )
-        {
+
+        if ( this.marker == -1 ) {
             return new Status(Status.OK);
         }
-        else if ( this.marker != orig_start )
-        {
-            return new Status(Status.AREA_FULL_SOME);
-        }
-        else
-        {
+        else {
             return new Status(Status.AREA_FULL_NONE);
         }
 
