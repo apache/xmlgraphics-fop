@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,21 @@ package org.apache.fop.render.xml;
 
 // Java
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
 import java.awt.geom.Rectangle2D;
 
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 // FOP
 import org.apache.fop.render.AbstractRenderer;
@@ -35,6 +42,7 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.Area;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BodyRegion;
@@ -69,31 +77,29 @@ import org.apache.fop.fonts.FontInfo;
 public class XMLRenderer extends AbstractRenderer {
 
     /** XML MIME type */
-    public static final String XML_MIME_TYPE = "text/xml";
+    public static final String XML_MIME_TYPE = "application/x-fop-areatree";
 
+    /** Main namespace in use. */
+    public static final String NS = "";
+    
+    /** CDATA type */
+    public static final String CDATA = "CDATA";
+    
+    /** An empty Attributes object used when no attributes are needed. */
+    public static final Attributes EMPTY_ATTS = new AttributesImpl();
+    
     private boolean startedSequence = false;
     private RendererContext context;
 
-    /**
-     * indentation to use for pretty-printing the XML
-     */
-    protected int indent = 0;
-
-    /**
-     * the application producing the XML
-     */
-    protected String producer;
-
-    /**
-     * the writer used to output the XML
-     */
-    protected PrintWriter writer;
-
-    /**
-     * options
-     */
-    private boolean consistentOutput = false;
-
+    /** TransformerHandler that the generated XML is written to */
+    protected TransformerHandler handler;
+    
+    /** AttributesImpl instance that can be used during XML generation. */
+    protected AttributesImpl atts = new AttributesImpl();
+    
+    /** The OutputStream to write the generated XML to. */
+    protected OutputStream out;
+    
     /**
      * Creates a new XML renderer.
      */
@@ -116,56 +122,12 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     /**
-     * write out spaces to make indent
+     * Sets an outside TransformerHandler to use instead of the default one
+     * create in this class in startRenderer().
+     * @param handler Overriding TransformerHandler
      */
-    protected void writeIndent() {
-        StringBuffer s = new StringBuffer();
-        for (int i = 0; i < this.indent; i++) {
-            s = s.append("  ");
-        }
-        this.writer.write(s.toString());
-    }
-
-    /**
-     * write out an element
-     *
-     * @param element the full text of the element including tags
-     */
-    protected void writeElement(String element) {
-        writeIndent();
-        this.writer.write(element + "\n");
-    }
-
-    /**
-     * write out an empty-element-tag
-     *
-     * @param tag the text of the tag
-     */
-    protected void writeEmptyElementTag(String tag) {
-        writeIndent();
-        this.writer.write(tag + "\n");
-    }
-
-    /**
-     * write out an end tag
-     *
-     * @param tag the text of the tag
-     */
-    protected void writeEndTag(String tag) {
-        this.indent--;
-        writeIndent();
-        this.writer.write(tag + "\n");
-    }
-
-    /**
-     * write out a start tag
-     *
-     * @param tag the text of the tag
-     */
-    protected void writeStartTag(String tag) {
-        writeIndent();
-        this.writer.write(tag + "\n");
-        this.indent++;
+    public void setTransformerHandler(TransformerHandler handler) {
+        this.handler = handler;
     }
 
     /**
@@ -183,42 +145,171 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     /**
+     * Handles SAXExceptions.
+     * @param saxe the SAXException to handle
+     */
+    protected void handleSAXException(SAXException saxe) {
+        throw new RuntimeException(saxe.getMessage());
+    }
+    
+    /**
+     * Writes a comment to the generated XML.
+     * @param comment the comment
+     */
+    protected void comment(String comment) {
+        try {
+            handler.comment(comment.toCharArray(), 0, comment.length());
+        } catch (SAXException saxe) {
+            handleSAXException(saxe);
+        }
+    }
+    
+    /**
+     * Starts a new element (without attributes).
+     * @param tagName tag name of the element
+     */
+    protected void startElement(String tagName) {
+        startElement(tagName, EMPTY_ATTS);
+    }
+    
+    /**
+     * Starts a new element.
+     * @param tagName tag name of the element
+     * @param atts attributes to add
+     */
+    protected void startElement(String tagName, Attributes atts) {
+        try {
+            handler.startElement(NS, tagName, tagName, atts);
+        } catch (SAXException saxe) {
+            handleSAXException(saxe);
+        }
+    }
+    
+    /**
+     * Ends an element.
+     * @param tagName tag name of the element
+     */
+    protected void endElement(String tagName) {
+        try {
+            handler.endElement(NS, tagName, tagName);
+        } catch (SAXException saxe) {
+            handleSAXException(saxe);
+        }
+    }
+    
+    /**
+     * Sends plain text to the XML
+     * @param text the text
+     */
+    protected void characters(String text) {
+        try {
+            char[] ca = text.toCharArray();
+            handler.characters(ca, 0, ca.length);
+        } catch (SAXException saxe) {
+            handleSAXException(saxe);
+        }
+    }
+    
+    /**
+     * Adds a new attribute to the protected member variable "atts".
+     * @param name name of the attribute
+     * @param value value of the attribute
+     */
+    protected void addAttribute(String name, String value) {
+        atts.addAttribute(NS, name, name, CDATA, value);
+    }
+    
+    /**
+     * Adds a new attribute to the protected member variable "atts".
+     * @param name name of the attribute
+     * @param value value of the attribute
+     */
+    protected void addAttribute(String name, int value) {
+        addAttribute(name, Integer.toString(value));
+    }
+    
+    /**
+     * Adds a new attribute to the protected member variable "atts".
+     * @param name name of the attribute
+     * @param rect a Rectangle2D to format and use as attribute value
+     */
+    protected void addAttribute(String name, Rectangle2D rect) {
+        addAttribute(name, createString(rect));
+    }
+    
+    /**
+     * Adds the general Area attributes.
+     * @param area Area to extract attributes from
+     */
+    protected void addAreaAttributes(Area area) {
+        addAttribute("ipd", area.getIPD());
+        addAttribute("bpd", area.getBPD());
+    }
+    
+    private String createString(Rectangle2D rect) {
+        return "" + (int) rect.getX() + " " + (int) rect.getY() + " "
+                  + (int) rect.getWidth() + " " + (int) rect.getHeight();
+    }
+
+    /**
      * @see org.apache.fop.render.Renderer#startRenderer(OutputStream)
      */
     public void startRenderer(OutputStream outputStream)
                 throws IOException {
-        getLogger().debug("rendering areas to XML");
-        this.writer = new PrintWriter(outputStream);
-        this.writer.write("<?xml version=\"1.0\"?>\n"
-                + "<!-- produced by " + this.producer + " -->\n");
-        writeStartTag("<areaTree>");
+        getLogger().debug("Rendering areas to Area Tree XML");
+    
+        if (this.handler == null) {
+            SAXTransformerFactory factory 
+                = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
+            try {
+                this.handler = factory.newTransformerHandler();
+                StreamResult res = new StreamResult(outputStream);
+                handler.setResult(res);
+            } catch (TransformerConfigurationException tce) {
+                throw new RuntimeException(tce.getMessage());
+            }
+            
+            this.out = outputStream;
+        }
+        
+        try {
+            handler.startDocument();
+        } catch (SAXException saxe) {
+            handleSAXException(saxe);
+        }
+        comment("Produced by " 
+            + (userAgent.getProducer() != null ? userAgent.getProducer() : ""));
+        startElement("areaTree");
     }
 
     /**
      * @see org.apache.fop.render.Renderer#stopRenderer()
      */
     public void stopRenderer() throws IOException {
-        writeEndTag("</pageSequence>");
-        writeEndTag("</areaTree>");
-        this.writer.flush();
-        getLogger().debug("written out XML");
+        endElement("pageSequence");
+        endElement("areaTree");
+        try {
+            handler.endDocument();
+        } catch (SAXException saxe) {
+            handleSAXException(saxe);
+        }
+        if (this.out != null) {
+            this.out.flush();
+        }
+        getLogger().debug("Written out Area Tree XML");
     }
 
     /**
      * @see org.apache.fop.render.Renderer#renderPage(PageViewport)
      */
     public void renderPage(PageViewport page) throws IOException, FOPException {
-        writeStartTag("<pageViewport bounds=\""
-                      + createString(page.getViewArea()) + "\">");
-        writeStartTag("<page>");
+        atts.clear();
+        addAttribute("bounds", page.getViewArea());
+        startElement("pageViewport", atts);
+        startElement("page");
         super.renderPage(page);
-        writeEndTag("</page>");
-        writeEndTag("</pageViewport>");
-    }
-
-    private String createString(Rectangle2D rect) {
-        return "" + (int) rect.getX() + " " + (int) rect.getY() + " "
-                  + (int) rect.getWidth() + " " + (int) rect.getHeight();
+        endElement("page");
+        endElement("pageViewport");
     }
 
     /**
@@ -226,12 +317,12 @@ public class XMLRenderer extends AbstractRenderer {
      */
     public void startPageSequence(LineArea seqTitle) {
         if (startedSequence) {
-            writeEndTag("</pageSequence>");
+            endElement("pageSequence");
         }
         startedSequence = true;
-        writeStartTag("<pageSequence>");
+        startElement("pageSequence");
         if (seqTitle != null) {
-            writeStartTag("<title>");
+            startElement("title");
             List children = seqTitle.getInlineAreas();
 
             for (int count = 0; count < children.size(); count++) {
@@ -239,7 +330,7 @@ public class XMLRenderer extends AbstractRenderer {
                 renderInlineArea(inline);
             }
 
-            writeEndTag("</title>");
+            endElement("title");
         }
     }
 
@@ -248,31 +339,32 @@ public class XMLRenderer extends AbstractRenderer {
      */
     protected void renderRegionViewport(RegionViewport port) {
         if (port != null) {
-            writeStartTag("<regionViewport rect=\""
-                          + createString(port.getViewArea()) + "\">");
+            atts.clear();
+            addAttribute("rect", port.getViewArea());
+            startElement("regionViewport", atts);
             RegionReference region = port.getRegion();
             if (region.getRegionClass() == FO_REGION_BEFORE) {
-                writeStartTag("<regionBefore>");
+                startElement("regionBefore");
                 renderRegion(region);
-                writeEndTag("</regionBefore>");
+                endElement("regionBefore");
             } else if (region.getRegionClass() == FO_REGION_START) {
-                writeStartTag("<regionStart>");
+                startElement("regionStart");
                 renderRegion(region);
-                writeEndTag("</regionStart>");
+                endElement("regionStart");
             } else if (region.getRegionClass() == FO_REGION_BODY) {
-                writeStartTag("<regionBody>");
+                startElement("regionBody");
                 renderBodyRegion((BodyRegion) region);
-                writeEndTag("</regionBody>");
+                endElement("regionBody");
             } else if (region.getRegionClass() == FO_REGION_END) {
-                writeStartTag("<regionEnd>");
+                startElement("regionEnd");
                 renderRegion(region);
-                writeEndTag("</regionEnd>");
+                endElement("regionEnd");
             } else if (region.getRegionClass() == FO_REGION_AFTER) {
-                writeStartTag("<regionAfter>");
+                startElement("regionAfter");
                 renderRegion(region);
-                writeEndTag("</regionAfter>");
+                endElement("regionAfter");
             }
-            writeEndTag("</regionViewport>");
+            endElement("regionViewport");
         }
     }
 
@@ -280,40 +372,42 @@ public class XMLRenderer extends AbstractRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderBeforeFloat(BeforeFloat)
      */
     protected void renderBeforeFloat(BeforeFloat bf) {
-        writeStartTag("<beforeFloat>");
+        startElement("<beforeFloat>");
         super.renderBeforeFloat(bf);
-        writeEndTag("</beforeFloat>");
+        endElement("beforeFloat");
     }
 
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderFootnote(Footnote)
      */
     protected void renderFootnote(Footnote footnote) {
-        writeStartTag("<footnote>");
+        startElement("footnote");
         super.renderFootnote(footnote);
-        writeEndTag("</footnote>");
+        endElement("footnote");
     }
 
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderMainReference(MainReference)
      */
     protected void renderMainReference(MainReference mr) {
-        writeStartTag("<mainReference columnGap=\""
-                      + mr.getColumnGap() + "\" width=\"" + mr.getWidth() + "\">");
+        atts.clear();
+        addAttribute("columnGap", mr.getColumnGap());
+        addAttribute("width", mr.getWidth());
+        startElement("mainReference", atts);
 
         Span span = null;
         List spans = mr.getSpans();
         for (int count = 0; count < spans.size(); count++) {
             span = (Span) spans.get(count);
-            writeStartTag("<span>");
+            startElement("span");
             for (int c = 0; c < span.getColumnCount(); c++) {
                 Flow flow = (Flow) span.getFlow(c);
 
                 renderFlow(flow);
             }
-            writeEndTag("</span>");
+            endElement("span");
         }
-        writeEndTag("</mainReference>");
+        endElement("mainReference");
     }
 
     /**
@@ -321,48 +415,48 @@ public class XMLRenderer extends AbstractRenderer {
      */
     protected void renderFlow(Flow flow) {
         // the normal flow reference area contains stacked blocks
-        writeStartTag("<flow>");
+        startElement("flow");
         super.renderFlow(flow);
-        writeEndTag("</flow>");
+        endElement("flow");
     }
 
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderBlock(Block)
      */
     protected void renderBlock(Block block) {
-        String prop = " ipd=\"" + block.getIPD() +
-                      "\" bpd=\"" + block.getBPD() + "\"";
+        atts.clear();
+        addAreaAttributes(block);
         Map map = block.getTraits();
         if (map != null) {
-            prop = prop + " props=\"" + getPropString(map) + "\"";
+            addAttribute("props", getPropString(map));
         }
-        writeStartTag("<block" + prop + ">");
+        startElement("block", atts);
         super.renderBlock(block);
-        writeEndTag("</block>");
+        endElement("block");
     }
 
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderLineArea(LineArea)
      */
     protected void renderLineArea(LineArea line) {
-        String prop = "";
+        atts.clear();
+        addAreaAttributes(line);
         Map map = line.getTraits();
         if (map != null) {
-            prop = " props=\"" + getPropString(map) + "\"";
+            addAttribute("props", getPropString(map));
         }
-        writeStartTag("<lineArea bpd=\"" + line.getBPD() + "\""
-                      + prop + ">");
+        startElement("lineArea", atts);
         super.renderLineArea(line);
-        writeEndTag("</lineArea>");
+        endElement("lineArea");
     }
 
     /**
      * @see org.apache.fop.render.Renderer#renderViewport(Viewport)
      */
     protected void renderViewport(Viewport viewport) {
-        writeStartTag("<viewport>");
+        startElement("viewport");
         super.renderViewport(viewport);
-        writeEndTag("</viewport>");
+        endElement("viewport");
     }
 
     /**
@@ -370,17 +464,20 @@ public class XMLRenderer extends AbstractRenderer {
      * @param image the image
      */
     public void renderImage(Image image) {
-        writeElement("<image url=\"" + image.getURL() + "\"/>");
+        atts.clear();
+        addAreaAttributes(image);
+        addAttribute("url", image.getURL());
+        startElement("image", atts);
+        endElement("image");
     }
 
     /**
      * @see org.apache.fop.render.Renderer#renderContainer(Container)
      */
     public void renderContainer(Container cont) {
-        writeStartTag("<container>");
-
+        startElement("container");
         super.renderContainer(cont);
-        writeEndTag("</container>");
+        endElement("container");
     }
 
     /**
@@ -388,45 +485,54 @@ public class XMLRenderer extends AbstractRenderer {
      * @param fo the foreign object
      */
     public void renderForeignObject(ForeignObject fo) {
-        writeStartTag("<foreignObject>");
+        atts.clear();
+        addAreaAttributes(fo);
+        startElement("foreignObject", atts);
         Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
-        context.setProperty(XMLXMLHandler.WRITER, writer);
+        context.setProperty(XMLXMLHandler.HANDLER, handler);
         renderXML(userAgent, context, doc, ns);
-        writeEndTag("</foreignObject>");
+        endElement("foreignObject");
     }
 
     /**
      * @see org.apache.fop.render.Renderer#renderCharacter(Character)
      */
     protected void renderCharacter(org.apache.fop.area.inline.Character ch) {
-        String prop = "";
+        atts.clear();
         Map map = ch.getTraits();
         if (map != null) {
-            prop = " props=\"" + getPropString(map) + "\"";
+            addAttribute("props", getPropString(map));
         }
-        writeElement("<char" + prop + ">" + ch.getChar() + "</char>");
+        startElement("char", atts);
+        characters(ch.getChar());
+        endElement("char");
     }
 
     /**
      * @see org.apache.fop.render.Renderer#renderInlineSpace(Space)
      */
     protected void renderInlineSpace(Space space) {
-        writeElement("<space ipd=\"" + space.getIPD() + "\"/>");
+        atts.clear();
+        addAreaAttributes(space);
+        startElement("space", atts);
+        endElement("space");
     }
 
     /**
      * @see org.apache.fop.render.Renderer#renderText(TextArea)
      */
     protected void renderText(TextArea text) {
-        String prop = "";
+        atts.clear();
+        addAttribute("twsadjust", text.getTextWordSpaceAdjust());
+        addAttribute("tlsadjust", text.getTextLetterSpaceAdjust());
         Map map = text.getTraits();
         if (map != null) {
-            prop = " props=\"" + getPropString(map) + "\"";
+            addAttribute("props", getPropString(map));
         }
-       writeElement("<text twsadjust=\"" + text.getTextWordSpaceAdjust() + "\""
-             + " tlsadjust=\"" + text.getTextLetterSpaceAdjust() + "\""
-             + prop + ">" + text.getTextArea() + "</text>");
+        startElement("text", atts);
+        characters(text.getTextArea());
+        endElement("text");
         super.renderText(text);
     }
 
@@ -434,14 +540,14 @@ public class XMLRenderer extends AbstractRenderer {
      * @see org.apache.fop.render.Renderer#renderInlineParent(InlineParent)
      */
     protected void renderInlineParent(InlineParent ip) {
-        String prop = "";
+        atts.clear();
         Map map = ip.getTraits();
         if (map != null) {
-            prop = " props=\"" + getPropString(map) + "\"";
+            addAttribute("props", getPropString(map));
         }
-        writeStartTag("<inlineparent" + prop + ">");
+        startElement("inlineparent", atts);
         super.renderInlineParent(ip);
-        writeEndTag("</inlineparent>");
+        endElement("inlineparent");
     }
 
     /**
@@ -467,11 +573,15 @@ public class XMLRenderer extends AbstractRenderer {
             case EN_RIDGE:
                 style = "ridge";
                 break;
+            default:
+                style = "--NYI--";
         }
-        writeElement("<leader ipd=\"" + area.getIPD()
-                        + "\" ruleStyle=\"" + style
-                        + "\" ruleThickness=\"" + area.getRuleThickness()
-                        + "\"/>");
+        atts.clear();
+        addAreaAttributes(area);
+        addAttribute("ruleStyle", style);
+        addAttribute("ruleThickness", area.getRuleThickness());
+        startElement("leader", atts);
+        endElement("leader");
         super.renderLeader(area);
     }
 
