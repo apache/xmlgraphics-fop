@@ -150,7 +150,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
                 if (rat1 < rat2) {
                     // reduce cheight
                     cheight = (int)(rat1 * fopimage.getHeight() * 1000);
-                } else {
+                } else if (rat1 > rat2) {
                     cwidth = (int)(rat2 * fopimage.getWidth() * 1000);
                 }
             }
