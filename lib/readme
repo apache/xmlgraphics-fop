@@ -8,6 +8,7 @@ the test scripts. see build.xml in root for more information
 
 batik.jar
 cvs 29/10/2001
+created from all-jar build target
 the svg library from Batik at xml.apache.org
 
 
