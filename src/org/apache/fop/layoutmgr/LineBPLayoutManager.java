@@ -47,14 +47,18 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
     private static class LineBreakPosition extends LeafPosition {
         // int m_iPos;
         double m_dAdjust; // Percentage to adjust (stretch or shrink)
+        double ipdAdjust; // Percentage to adjust (stretch or shrink)
+        int startIndent;
         int lineHeight;
         int baseline;
 
         LineBreakPosition(BPLayoutManager lm, int iBreakIndex,
-                          double dAdjust, int lh, int bl) {
+                          double ipdA, double dAdjust, int ind, int lh, int bl) {
             super(lm, iBreakIndex);
             // m_iPos = iBreakIndex;
+            ipdAdjust = ipdA;
             m_dAdjust = dAdjust;
+            startIndent = ind;
             lineHeight = lh;
             baseline = bl;
         }
@@ -65,7 +69,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
     private ArrayList m_vecInlineBreaks = new ArrayList();
 
     private BreakPoss m_prevBP = null; // Last confirmed break position
-    private boolean m_bJustify = false; // True if fo:block text-align=JUSTIFY
+    private int bTextAlignment = TextAlign.JUSTIFY;
     private int m_iTextIndent = 0;
     private int m_iIndents = 0;
     private HyphenationProps m_hyphProps;
@@ -90,7 +94,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
         MarginProps marginProps = propMgr.getMarginProps();
         m_iIndents = marginProps.startIndent + marginProps.endIndent;
         BlockProps blockProps = propMgr.getBlockProps();
-        m_bJustify = (blockProps.textAlign == TextAlign.JUSTIFY);
+        bTextAlignment = blockProps.textAlign;
         m_iTextIndent = blockProps.firstIndent;
         m_hyphProps = propMgr.getHyphenationProps();
     }
@@ -177,7 +181,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
 
                     // This break position doesn't fit
                     // TODO: If we are in nowrap, we use it as is!
-                    if (m_bJustify || m_prevBP == null) {
+                    if (bTextAlignment == TextAlign.JUSTIFY || m_prevBP == null) {
                         // If we are already in a hyphenation loop, then stop.
 
                         if (inlineLC.tryHyphenate()) {
@@ -261,29 +265,15 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
         if (bp != m_prevBP && !bp.couldEndLine()) {
             reset();
         }
-        // Distribute space in the line
-        MinOptMax actual;
-        if (bp != m_prevBP) {
-            MinOptMax mom = getPrevIPD(m_prevBP.getLayoutManager());
-            if (mom != null) {
-                actual = MinOptMax.add(m_prevBP.getStackingSize(), mom);
-            } else {
-                actual = m_prevBP.getStackingSize();
-            }
-        } else {
-            actual = m_prevBP.getStackingSize();
-        }
-        // ATTENTION: make sure this hasn't gotten start space for next
-        // LM added onto it!
-        actual.add(m_prevBP.resolveTrailingSpace(true));
-        //log.error("Target opt=" + availIPD.opt + " bp.opt=" +
-        //                   actual.opt + " bp.max=" + actual.max + " bm.min=" +
-        //                   actual.min);
 
         // Don't justify last line in the sequence or if forced line-end
-        boolean bJustify = (m_bJustify && !m_prevBP.isForcedBreak() &&
-                            !isFinished());
-        return makeLineBreak(iPrevLineEnd, availIPD, actual, bJustify);
+        int talign = bTextAlignment;
+        if((bTextAlignment == TextAlign.JUSTIFY
+                             && (m_prevBP.isForcedBreak()
+                             || isFinished()))) {
+            talign = TextAlign.START;
+        }
+        return makeLineBreak(iPrevLineEnd, availIPD, talign);
     }
 
 
@@ -399,23 +389,9 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
 
 
     private BreakPoss makeLineBreak(int prevLineEnd, MinOptMax target,
-                                    MinOptMax actual, boolean bJustify) {
+                                    int textalign) {
         // make a new BP
         // Store information needed to make areas in the LineBreakPosition!
-        // Calculate stretch or shrink factor
-
-        double dAdjust = 0.0;
-        if (bJustify) {
-            if (actual.opt < target.opt) {
-                // Stretch
-                dAdjust = (double)(target.opt - actual.opt) /
-                          (double)(actual.max - actual.opt);
-            } else {
-                // Shrink
-                dAdjust = (double)(target.opt - actual.opt) /
-                          (double)(actual.opt - actual.min);
-            }
-        }
 
         // lead to baseline is
         // max of: baseline fixed alignment and middle/2
@@ -428,6 +404,11 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
         int maxtb = follow + halfLeading;
         // max size of middle alignment below baseline
         int middlefollow = maxtb;
+
+        // calculate actual ipd
+        MinOptMax actual = new MinOptMax();
+        BreakPoss lastBP = null;
+        LayoutManager lastLM = null;
         for(Iterator iter = m_vecInlineBreaks.listIterator(prevLineEnd);
                 iter.hasNext(); ) {
             BreakPoss bp = (BreakPoss)iter.next();
@@ -439,15 +420,87 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
             }
             if(bp.getMiddle() > middlefollow) {
                 middlefollow = bp.getMiddle();
-            } 
+            }
+
+            // the stacking size of textLM accumulate for each break
+            // so the ipd is only added at the end of each LM
+            if(bp.getLayoutManager() != lastLM) {
+                if(lastLM != null) {
+                    actual.add(lastBP.getStackingSize());
+                }
+                lastLM = bp.getLayoutManager();
+            }
+            lastBP = bp;
         }
+        if(lastBP != null) {
+            // add final ipd
+            actual.add(lastBP.getStackingSize());
+            // ATTENTION: make sure this hasn't gotten start space for next
+            // LM added onto it!
+            actual.add(lastBP.resolveTrailingSpace(true));
+        }
+
         if(maxtb - lineLead > middlefollow) {
             middlefollow = maxtb - lineLead;
         }
 
-        //log.debug("Adjustment factor=" + dAdjust);
-        BreakPoss curLineBP = new BreakPoss( new LineBreakPosition(this,
-                                             m_vecInlineBreaks.size() - 1, dAdjust, lineLead + middlefollow, lineLead));
+        // in 7.21.4 the spec suggests that the leader and other
+        // similar min/opt/max areas should be adjusted before
+        // adjusting word spacing
+
+        // Calculate stretch or shrink factor
+        double ipdAdjust = 0;
+        int targetWith = target.opt;
+        int realWidth = actual.opt;
+        if (actual.opt > targetWith) {
+            if (actual.opt - targetWith <
+                    (actual.opt - actual.min)) {
+                ipdAdjust = -(actual.opt - targetWith) /
+                                (float)(actual.opt - actual.min);
+                realWidth = targetWith;
+            } else {
+                ipdAdjust = -1;
+                realWidth = actual.max;
+            }
+        } else {
+            if (targetWith - actual.opt <
+                    actual.max - actual.opt) {
+                ipdAdjust = (targetWith - actual.opt) /
+                                (float)(actual.max - actual.opt);
+                realWidth = targetWith;
+            } else {
+                ipdAdjust = 1;
+                realWidth = actual.min;
+            }
+        }
+
+        // if justifying then set the space adjustment
+        // after the normal ipd adjustment
+        double dAdjust = 0.0;
+        int indent = 0;
+        switch (textalign) {
+            case TextAlign.JUSTIFY:
+                if(realWidth != 0) {
+                    dAdjust = (targetWith - realWidth) / realWidth;
+                }
+            break;
+            case TextAlign.START:
+                //indent = 0;
+            break;
+            case TextAlign.CENTER:
+                indent = (targetWith - realWidth) / 2;
+            break;
+            case TextAlign.END:
+                indent = targetWith - realWidth;
+            break;
+        }
+
+        LineBreakPosition lbp;
+        lbp = new LineBreakPosition(this,
+                                    m_vecInlineBreaks.size() - 1,
+                                    ipdAdjust, dAdjust, indent,
+                                    lineLead + middlefollow, lineLead);
+        BreakPoss curLineBP = new BreakPoss(lbp);
 
         curLineBP.setFlag(BreakPoss.ISLAST, isFinished());
         curLineBP.setStackingSize(new MinOptMax(lineLead + middlefollow));
@@ -488,6 +541,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
         while (parentIter.hasNext()) {
             LineBreakPosition lbp = (LineBreakPosition) parentIter.next();
             LineArea lineArea = new LineArea();
+            lineArea.setStartIndent(lbp.startIndent);
             lineArea.setHeight(lbp.lineHeight);
             lc.setBaseline(lbp.baseline);
             lc.setLineHeight(lbp.lineHeight);
@@ -498,6 +552,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
                                    lbp.getLeafPos() + 1);
             iStartPos = lbp.getLeafPos() + 1;
             lc.setSpaceAdjust(lbp.m_dAdjust);
+            lc.setIPDAdjust(lbp.ipdAdjust);
             lc.setLeadingSpace(new SpaceSpecifier(true));
             lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
             setChildContext(lc);

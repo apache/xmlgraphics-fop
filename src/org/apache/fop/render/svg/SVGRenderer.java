@@ -15,6 +15,7 @@ import org.apache.fop.image.*;
 import org.apache.fop.svg.SVGUtilities;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.fo.properties.RuleStyle;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.ProcessingInstruction;
@@ -316,19 +317,19 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
         String style = "stroke:black;stroke-width:" +
                        (area.getRuleThickness() / 1000) + ";";
         switch (area.getRuleStyle()) {
-            case Leader.DOTTED:
+            case RuleStyle.DOTTED:
                 style += "stroke-dasharray:1,1";
                 break;
-            case Leader.DASHED:
+            case RuleStyle.DASHED:
                 style += "stroke-dasharray:5,1";
                 break;
-            case Leader.SOLID:
+            case RuleStyle.SOLID:
                 break;
-            case Leader.DOUBLE:
+            case RuleStyle.DOUBLE:
                 break;
-            case Leader.GROOVE:
+            case RuleStyle.GROOVE:
                 break;
-            case Leader.RIDGE:
+            case RuleStyle.RIDGE:
                 break;
         }
         Element line = SVGUtilities.createLine(svgDocument,

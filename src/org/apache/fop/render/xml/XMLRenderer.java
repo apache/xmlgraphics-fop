@@ -20,6 +20,7 @@ import org.apache.fop.fo.properties.LeaderPattern;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.properties.RuleStyle;
 
 // Avalon
 import org.apache.avalon.framework.logger.Logger;
@@ -364,21 +365,21 @@ public class XMLRenderer extends AbstractRenderer {
     public void renderLeader(Leader area) {
         String style = "solid";
         switch (area.getRuleStyle()) {
-            case Leader.DOTTED:
+            case RuleStyle.DOTTED:
                 style = "dotted";
                 break;
-            case Leader.DASHED:
+            case RuleStyle.DASHED:
                 style = "dashed";
                 break;
-            case Leader.SOLID:
+            case RuleStyle.SOLID:
                 break;
-            case Leader.DOUBLE:
+            case RuleStyle.DOUBLE:
                 style = "double";
                 break;
-            case Leader.GROOVE:
+            case RuleStyle.GROOVE:
                 style = "groove";
                 break;
-            case Leader.RIDGE:
+            case RuleStyle.RIDGE:
                 style = "ridge";
                 break;
         }

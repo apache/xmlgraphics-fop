@@ -67,6 +67,9 @@ public class LayoutContext {
     private HyphContext m_hyphContext = null;
 
     /** Stretch or shrink value when making areas. */
+    private double ipdAdjust = 0.0;
+
+    /** Stretch or shrink value when adding spaces. */
     private double m_dSpaceAdjust = 0.0;
 
     private int m_iLineHeight;
@@ -183,6 +186,14 @@ public class LayoutContext {
 
     public double getSpaceAdjust() {
         return m_dSpaceAdjust;
+    }
+
+    public void setIPDAdjust(double ipdA) {
+        ipdAdjust = ipdA;
+    }
+
+    public double getIPDAdjust() {
+        return ipdAdjust;
     }
 
     public void setLineHeight(int lh) {
