@@ -137,7 +137,7 @@ public class RtfStringConverter {
                 w.write('\\');
                 w.write(replacement);
                 w.write(' ');
-            } else if (c.charValue() > 255) {
+            } else if (c.charValue() > 127) {
                 // write unicode representation - contributed by Michel Jacobson
                 // <jacobson@idf.ext.jussieu.fr>
                 w.write("\\u");
