@@ -66,24 +66,24 @@ import java.net.URL;
 /**
  * Manages input if it is an XSL-FO file.
  */
-public class FOInputHandler extends InputHandler {
+public class FOFileHandler extends InputHandler {
     
     private File fofile = null;
     private URL foURL = null;
 
     /**
-     * Create a FOInputHandler for a file.
+     * Create a FOFileHandler for a file.
      * @param fofile the file to read the FO document.
      */
-    public FOInputHandler(File fofile) {
+    public FOFileHandler(File fofile) {
         this.fofile = fofile;
     }
 
     /**
-     * Create a FOInputHandler for an URL.
+     * Create a FOFileHandler for an URL.
      * @param url the URL to read the FO document.
      */
-    public FOInputHandler(URL url) {
+    public FOFileHandler(URL url) {
         this.foURL = url;
     }
 

@@ -54,7 +54,7 @@ package org.apache.fop.image;
 import org.w3c.dom.Document;
 
 // FOP
-import org.apache.fop.apps.FOInputHandler;
+import org.apache.fop.apps.FOFileHandler;
 
 /**
  * This is an implementation for XML-based images such as SVG.
@@ -86,7 +86,7 @@ public class XMLImage extends AbstractFopImage {
      * @return the created SAX parser
      */
     public static String getParserName() {
-        String parserClassName = FOInputHandler.getParserClassName();
+        String parserClassName = FOFileHandler.getParserClassName();
         return parserClassName;
     }
 

@@ -648,8 +648,7 @@ public class Driver implements LogEnabled, FOTreeListener {
 
         if (reader == null) {
             if (!(source instanceof DocumentInputSource)) {
-                //TODO: (gm) rename to FOFileHandler or similar
-                reader = org.apache.fop.apps.FOInputHandler.createParser();
+                reader = FOFileHandler.createParser();
             }
         }
 
