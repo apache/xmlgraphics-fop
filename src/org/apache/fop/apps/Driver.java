@@ -235,7 +235,7 @@ public class Driver {
     private Logger getLogger() {
         if(log == null) {
             log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-            log.error("Logger not set");
+//          log.error("Logger not set");
         }
 
         return log;
