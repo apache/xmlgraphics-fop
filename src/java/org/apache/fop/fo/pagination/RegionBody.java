@@ -60,7 +60,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.fo.properties.FOPropertyMapping;
+import org.apache.fop.fo.FOPropertyMapping;
 
 /**
  * The fo:region-body element.

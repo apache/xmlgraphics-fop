@@ -49,7 +49,6 @@
  * Software Foundation, please see <http://www.apache.org/>.
  */
 package org.apache.fop.fo;
-import org.apache.fop.fo.properties.FOPropertyMapping;
 
 /**
  * Shorthand property parser for Box properties
