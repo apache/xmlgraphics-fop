@@ -54,6 +54,9 @@ package org.apache.fop.apps;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 
+// Avalon
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
+
 // FOP
 import org.apache.fop.render.awt.AWTRenderer;
 
@@ -62,10 +65,13 @@ import org.apache.fop.render.awt.AWTRenderer;
  *
  * Modified to use new streaming API by Mark Lillywhite, mark-fop@inomial.com
  */
-public class CommandLineStarter extends Starter {
+public class CommandLineStarter extends AbstractLogEnabled {
 
     /** the command-line options associated with this starter */
     protected CommandLineOptions commandLineOptions;
+
+    /** InputHandler associated with this Starter */
+    protected InputHandler inputHandler;
 
     /**
      * Main constructor
@@ -75,7 +81,7 @@ public class CommandLineStarter extends Starter {
     public CommandLineStarter(CommandLineOptions commandLineOptions)
                 throws FOPException {
         this.commandLineOptions = commandLineOptions;
-        super.setInputHandler(commandLineOptions.getInputHandler());
+        inputHandler = commandLineOptions.getInputHandler();
     }
 
     /**
