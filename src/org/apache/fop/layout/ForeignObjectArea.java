@@ -59,6 +59,7 @@ import java.util.Enumeration;
 
 public class ForeignObjectArea extends Area {
 	
+    protected int xOffset = 0;
     /* text-align of contents */
     protected int align;
     /* vertical align of contents */
@@ -92,6 +93,16 @@ public class ForeignObjectArea extends Area {
     public void render(Renderer renderer) {
 	if(foreignObject != null)
 		renderer.renderForeignObjectArea(this);
+    }
+
+    public int getXOffset()
+    {
+        return this.xOffset;
+    }
+
+    public void setStartIndent(int startIndent)
+    {
+	    xOffset = startIndent;
     }
 
     public void setObject(Area fobject) {
