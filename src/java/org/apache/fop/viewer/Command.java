@@ -70,7 +70,7 @@ import java.net.URL;
  */
 public class Command extends AbstractAction {
 
-    private static final String IMAGE_DIR = "Images/";
+    private static final String IMAGE_DIR = "images/";
 
     /**
      * Creates <code>Command</code> object with a given name and
