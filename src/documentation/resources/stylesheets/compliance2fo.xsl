@@ -1,52 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- $Id$ -->
+<!-- This stylesheet is based on the forrest document2fo.xsl and attempts
+     to mimic its style-->
 
 <xsl:stylesheet
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
+<xsl:import href="document2fo.xsl"/>
+
+<xsl:output method="xml"/>
+
 <xsl:preserve-space elements="*"/>
 
-<xsl:template match="/compliance">
-	<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<xsl:variable name="cell-yes" select="'rgb(153, 204, 255)'"/>
+<xsl:variable name="cell-no" select="'rgb(255, 153, 204)'"/>
+<xsl:variable name="cell-partial" select="'rgb(192, 192, 192)'"/>
+<xsl:variable name="cell-normal" select="'transparent'"/>
 
-<!--
-
-		<fo:layout-master-set>
-			<fo:simple-page-master master-name="simple"
-										page-height="29.7cm"
-										page-width="21cm"
-										margin-top="1.5cm"
-										margin-bottom="1.5cm"
-										margin-left="2.5cm"
-										margin-right="2.5cm">
-				<fo:region-body margin-top="1.5cm"/>
-				<fo:region-before extent="1.5cm"/>
-				<fo:region-after extent="1.5cm"/>
-			</fo:simple-page-master>
-		</fo:layout-master-set>
-		<fo:page-sequence master-reference="simple"
-			    font-family="serif"
-			    font-size="11pt">
-			<fo:static-content flow-name="xsl-region-before">
-				<fo:block text-align="end"
-							font-size="10pt"
-							font-family="serif"
-							line-height="14pt" >
-					XSL-FO Compliance - p. <fo:page-number/>
-				</fo:block>
-			</fo:static-content>
-			<fo:flow flow-name="xsl-region-body">
-        <xsl:apply-templates select="head"/>
-        <xsl:apply-templates select="body"/>
-			</fo:flow>
-		</fo:page-sequence>
+<xsl:template match="compliance">
+<!-- Contents of this template are copied verbatim from Forrest document2fo.xsl
 -->
-	</fo:root>
-</xsl:template>
-<!--
+<!--  <xsl:template match="document"> -->
+    <fo:title><xsl:value-of select="head/title"/></fo:title>
+
+    <fo:static-content flow-name="first-footer">
+      <fo:block
+        border-top="0.25pt solid"
+        padding-before="6pt"
+        text-align="center">
+        <xsl:apply-templates select="footer"/>
+      </fo:block>
+      <fo:block
+        text-align="start">
+        Page <fo:page-number/>
+      </fo:block>
+      <xsl:call-template name="info"/>
+    </fo:static-content>
+
+    <fo:static-content flow-name="even-header">
+      <fo:block
+        text-align="end"
+        font-style="italic">
+        <xsl:value-of select="header/title"/>
+      </fo:block>
+    </fo:static-content>
+
+    <fo:static-content flow-name="even-footer">
+      <fo:block
+        border-top="0.25pt solid"
+        padding-before="6pt"
+        text-align="center">
+        <xsl:apply-templates select="footer"/>
+      </fo:block>
+      <fo:block
+        text-align="end">
+        Page <fo:page-number/>
+      </fo:block>
+      <xsl:call-template name="info"/>
+    </fo:static-content>
+
+    <fo:static-content flow-name="odd-header">
+      <fo:block
+        text-align="start"
+        font-style="italic">
+        <xsl:value-of select="header/title"/>
+      </fo:block>
+    </fo:static-content>
+
+    <fo:static-content flow-name="odd-footer">
+      <fo:block
+        border-top="0.25pt solid"
+        padding-before="6pt"
+        text-align="center">
+        <xsl:apply-templates select="footer"/>
+      </fo:block>
+      <fo:block
+        text-align="start">
+        Page <fo:page-number/>
+      </fo:block>
+      <xsl:call-template name="info"/>
+    </fo:static-content>
+
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block
+        padding-before="24pt"
+        padding-after="24pt"
+        font-size="24pt"
+        font-weight="bold"
+        id="{generate-id()}">
+
+        <xsl:value-of select="header/title"/>
+      </fo:block>
+
+      <fo:block
+        text-align="justify"
+        padding-before="18pt"
+        padding-after="18pt">
+        <xsl:apply-templates/>
+      </fo:block>
+    </fo:flow>
+  </xsl:template>
+<!-- End of material copied from Forrest document2fo.xsl -->
 
 <xsl:template match="head">
   <fo:block
@@ -77,32 +133,52 @@
     <xsl:value-of select="@name"/>
   </fo:block>
   <xsl:apply-templates select="explanatory"/>
-  <fo:table width="16mm">
+  <fo:table table-layout="fixed" width="6.0in">
+    <!-- FIXME: Apache FOP must have column widths specified at present,
+         this section can be removed when this limitation is removed from Fop.
+         Unfortunately, this means that each column is a fixed width,
+         but at least the table displays! -->
+    <fo:table-column column-width="1.5in"/>
+    <fo:table-column column-width=".5in"/>
+    <fo:table-column column-width=".5in"/>
+    <fo:table-column column-width=".5in"/>
+    <fo:table-column column-width="2.5in"/>
+
     <fo:table-header>
       <fo:table-row>
         <fo:table-cell number-rows-spanned="2">
-          <xsl:value-of select="@compliance-item-desc"/>
+          <fo:block>
+            <xsl:value-of select="@compliance-item-desc"/>
+          </fo:block>
         </fo:table-cell>
-        <fo:table-cell number-cols-spanned="3">
-          Support
+        <fo:table-cell number-columns-spanned="3">
+          <fo:block>Support</fo:block>
         </fo:table-cell>
         <fo:table-cell number-rows-spanned="2">
-          Comments
+          <fo:block>Comments</fo:block>
         </fo:table-cell>
       </fo:table-row>
       <fo:table-row>
         <fo:table-cell>
-          <xsl:value-of select="/compliance/body/standard/@compliance-level-1-desc"/>
+          <fo:block>
+            <xsl:value-of select="/compliance/body/standard/@compliance-level-1-desc"/>
+          </fo:block>
         </fo:table-cell>
         <fo:table-cell>
-          <xsl:value-of select="/compliance/body/standard/@compliance-level-2-desc"/>
+          <fo:block>
+            <xsl:value-of select="/compliance/body/standard/@compliance-level-2-desc"/>
+          </fo:block>
         </fo:table-cell>
         <fo:table-cell>
-          <xsl:value-of select="/compliance/body/standard/@compliance-level-3-desc"/>
+          <fo:block>
+            <xsl:value-of select="/compliance/body/standard/@compliance-level-3-desc"/>
+          </fo:block>
         </fo:table-cell>
       </fo:table-row>
     </fo:table-header>
+    <fo:table-body>
     <xsl:apply-templates select="level-2"/>
+    </fo:table-body>
   </fo:table>
 </xsl:template>
 
@@ -116,8 +192,10 @@
 
 <xsl:template match="level-2">
   <fo:table-row>
-    <fo:table-cell number-cols-spanned="5">
-      <xsl:value-of select="@name"/>
+    <fo:table-cell number-columns-spanned="5" background-color="rgb(255, 204, 102)">
+      <fo:block>
+        <xsl:value-of select="@name"/>
+      </fo:block>
     </fo:table-cell>
   </fo:table-row>
   <xsl:apply-templates select="level-3"/>
@@ -126,150 +204,174 @@
 <xsl:template match="level-3">
   <fo:table-row>
     <fo:table-cell>
-      <xsl:value-of select="@name"/>
+      <fo:block>
+        <xsl:value-of select="@name"/>
+      </fo:block>
     </fo:table-cell>
-    <fo:table-cell>
-      <xsl:attribute name="class">
-        <xsl:choose>
-          <xsl:when test="@comply='yes'">
-            <xsl:text>yes</xsl:text>
-          </xsl:when>
-          <xsl:when test="@comply='no'">
-            <xsl:choose>
-              <xsl:when test="@compliance-level > 1">
-                <xsl:text>yes</xsl:text>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:text>no</xsl:text>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:when test="@comply='partial'">
-            <xsl:choose>
-              <xsl:when test="@compliance-level > 1">
-                <xsl:text>yes</xsl:text>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:text>partial</xsl:text>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:text></xsl:text>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:attribute>
+    <xsl:variable name="cell-attributes-level-1">
       <xsl:choose>
-        <xsl:when test="@compliance-level=1">
-          <xsl:value-of select="@comply"/>
+        <xsl:when test="@comply='yes'">
+          <xsl:value-of select="$cell-yes"/>
+        </xsl:when>
+        <xsl:when test="@comply='no'">
+          <xsl:choose>
+            <xsl:when test="@compliance-level > 1">
+              <xsl:value-of select="$cell-yes"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$cell-no"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+        <xsl:when test="@comply='partial'">
+          <xsl:choose>
+            <xsl:when test="@compliance-level > 1">
+              <xsl:value-of select="$cell-yes"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$cell-partial"/>
+            </xsl:otherwise>
+          </xsl:choose>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:text>.</xsl:text>
+          <xsl:value-of select="$cell-normal"/>
         </xsl:otherwise>
       </xsl:choose>
-    </fo:table-cell>
+    </xsl:variable>
     <fo:table-cell>
-      <xsl:attribute name="class">
+      <xsl:attribute name="background-color">
+        <xsl:value-of select="$cell-attributes-level-1"/>
+      </xsl:attribute>
+      <fo:block>
         <xsl:choose>
-          <xsl:when test="@comply='yes'">
-            <xsl:text>yes</xsl:text>
-          </xsl:when>
-          <xsl:when test="@comply='no'">
-            <xsl:choose>
-              <xsl:when test="@compliance-level > 2">
-                <xsl:text>yes</xsl:text>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:text>no</xsl:text>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:when test="@comply='partial'">
-            <xsl:choose>
-              <xsl:when test="@compliance-level > 2">
-                <xsl:text>yes</xsl:text>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:text>partial</xsl:text>
-              </xsl:otherwise>
-            </xsl:choose>
+          <xsl:when test="@compliance-level=1">
+            <xsl:value-of select="@comply"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:text></xsl:text>
+            <xsl:text>.</xsl:text>
           </xsl:otherwise>
         </xsl:choose>
-      </xsl:attribute>
+      </fo:block>
+    </fo:table-cell>
+    <xsl:variable name="cell-attributes-level-2">
       <xsl:choose>
-        <xsl:when test="@compliance-level=2">
-          <xsl:value-of select="@comply"/>
+        <xsl:when test="@comply='yes'">
+          <xsl:value-of select="$cell-yes"/>
+        </xsl:when>
+        <xsl:when test="@comply='no'">
+          <xsl:choose>
+            <xsl:when test="@compliance-level > 2">
+              <xsl:value-of select="$cell-yes"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$cell-no"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+        <xsl:when test="@comply='partial'">
+          <xsl:choose>
+            <xsl:when test="@compliance-level > 2">
+              <xsl:value-of select="$cell-yes"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$cell-partial"/>
+            </xsl:otherwise>
+          </xsl:choose>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:text>.</xsl:text>
+          <xsl:value-of select="$cell-normal"/>
         </xsl:otherwise>
       </xsl:choose>
-    </fo:table-cell>
+    </xsl:variable>
     <fo:table-cell>
-      <xsl:attribute name="class">
+      <xsl:attribute name="background-color">
+        <xsl:value-of select="$cell-attributes-level-2"/>
+      </xsl:attribute>
+      <fo:block>
         <xsl:choose>
-          <xsl:when test="@comply='yes'">
-            <xsl:text>yes</xsl:text>
-          </xsl:when>
-          <xsl:when test="@comply='no'">
-            <xsl:choose>
-              <xsl:when test="@compliance-level > 3">
-                <xsl:text>yes</xsl:text>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:text>no</xsl:text>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:when test="@comply='partial'">
-            <xsl:choose>
-              <xsl:when test="@compliance-level > 3">
-                <xsl:text>yes</xsl:text>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:text>partial</xsl:text>
-              </xsl:otherwise>
-            </xsl:choose>
+          <xsl:when test="@compliance-level=2">
+            <xsl:value-of select="@comply"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:text></xsl:text>
+            <xsl:text>.</xsl:text>
           </xsl:otherwise>
         </xsl:choose>
-      </xsl:attribute>
+      </fo:block>
+    </fo:table-cell>
+    <xsl:variable name="cell-attributes-level-3">
       <xsl:choose>
-        <xsl:when test="@compliance-level=3">
-          <xsl:value-of select="@comply"/>
+        <xsl:when test="@comply='yes'">
+          <xsl:value-of select="$cell-yes"/>
+        </xsl:when>
+        <xsl:when test="@comply='no'">
+          <xsl:choose>
+            <xsl:when test="@compliance-level > 3">
+              <xsl:value-of select="$cell-yes"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$cell-no"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+        <xsl:when test="@comply='partial'">
+          <xsl:choose>
+            <xsl:when test="@compliance-level > 3">
+              <xsl:value-of select="$cell-yes"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$cell-partial"/>
+            </xsl:otherwise>
+          </xsl:choose>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:text>.</xsl:text>
+          <xsl:value-of select="$cell-normal"/>
         </xsl:otherwise>
       </xsl:choose>
+    </xsl:variable>
+    <fo:table-cell>
+      <xsl:attribute name="background-color">
+        <xsl:value-of select="$cell-attributes-level-3"/>
+      </xsl:attribute>
+      <fo:block>
+        <xsl:choose>
+          <xsl:when test="@compliance-level=3">
+            <xsl:value-of select="@comply"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:text>.</xsl:text>
+          </xsl:otherwise>
+        </xsl:choose>
+      </fo:block>
     </fo:table-cell>
     <xsl:choose>
       <xsl:when test="count(comment) > 0">
-        <fo:table-cell align="left">
-          <fo:list>
+        <fo:table-cell text-align="left">
+          <fo:list-block>
             <xsl:for-each select="comment">
               <fo:list-item>
-                <xsl:value-of select="."/>
+                <fo:list-item-label>
+                  <fo:block>*</fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body>
+                  <fo:block>
+                    <xsl:value-of select="."/>
+                  </fo:block>
+                </fo:list-item-body>
              </fo:list-item>
            </xsl:for-each>
-          </fo:list>
+          </fo:list-block>
         </fo:table-cell>
       </xsl:when>
       <xsl:otherwise>
-        <fo:table-cell align="center">
-          <xsl:text>.</xsl:text>
+        <fo:table-cell text-align="center">
+          <fo:block>
+            <xsl:text>.</xsl:text>
+          </fo:block>
         </fo:table-cell>
       </xsl:otherwise>
     </xsl:choose>
   </fo:table-row>
 </xsl:template>
-
--->
 
 </xsl:stylesheet>
 
