@@ -25,6 +25,7 @@ public class ColumnArea extends AreaContainer {
 		super(fontState, xPosition, yPosition, allocationWidth,
 			maxHeight, Position.ABSOLUTE);
 		this.maxColumns = columnCount;
+		this.setAreaName("normal-flow-ref.-area");
     }
 
     public void render(Renderer renderer) {

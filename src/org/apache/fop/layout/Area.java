@@ -361,11 +361,19 @@ abstract public class Area extends Box {
     return bp;
   }
 
+  public void addMarker(Marker marker) {
+	  markers.addElement(marker);
+  }
+  
   public void addMarkers(Vector markers) {
 	  markers.addAll(markers);
   }
   
   public void addLineagePair(org.apache.fop.fo.FObj fo, int areaPosition) {
 	  returnedBy.put(fo, new Integer(areaPosition));
+  }
+  
+  public Vector getMarkers() {
+	  return markers;
   }
 }

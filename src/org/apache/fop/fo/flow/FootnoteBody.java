@@ -54,6 +54,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.layout.Area;
+import org.apache.fop.layout.AreaClass;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
@@ -85,6 +86,7 @@ public class FootnoteBody extends FObj {
 			throws FOPException {
 		super(parent, propertyList);
 		this.name = "fo:footnote-body";
+		this.areaClass = AreaClass.setAreaClass(AreaClass.XSL_FOOTNOTE);
 	}
 
     public Status layout(Area area) throws FOPException {
@@ -96,6 +98,7 @@ public class FootnoteBody extends FObj {
 		      area.getAllocationWidth(),
 		      area.spaceLeft(), startIndent, endIndent, textIndent,
 		      align, alignLast, lineHeight);
+	  blockArea.generatedBy = this;
       blockArea.setPage(area.getPage());
       blockArea.start();
 

@@ -20,6 +20,10 @@ public class AreaContainer extends Area {
     private int yPosition; // should be able to take value 'top' and 'bottom' too
     private int position;
 
+	// use this for identifying the general usage of the area,
+	// like 'main-reference-area' or 'region-before'
+	private String areaName;
+	
     public AreaContainer(FontState fontState, int xPosition,
                          int yPosition, int allocationWidth, int maxHeight,
                          int position) {
@@ -63,4 +67,12 @@ public class AreaContainer extends Area {
     public void shiftYPosition(int value) {
         yPosition += value;
     }
+  
+  public String getAreaName() {
+	  return areaName;
+  }
+  
+  public void setAreaName(String areaName) {
+	  this.areaName = areaName;
+  }
 }

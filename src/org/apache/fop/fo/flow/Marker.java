@@ -50,6 +50,7 @@ public class Marker extends FObjMixed {
 	  public Status layout(Area area) throws FOPException {
 		// no layout action desired
 		this.registryArea = area;
+		area.addMarker(this);
 		area.getPage().registerMarker(this);
 		// System.out.println("Marker being registered in area '" + area + "'");
 		return new Status(Status.OK);
