@@ -1,0 +1,1065 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  * Copyright 2004 The Apache Software Foundation.
+  * 
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  * 
+  *      http://www.apache.org/licenses/LICENSE-2.0
+  * 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  -->
+
+<!-- $Id$ -->
+
+<!--
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                         "docbookx.dtd">
+  -->
+
+  <chapter>
+	<title>The trees in FOP</title>
+
+	<section>
+	  <title>Overview</title>
+
+	  <orderedlist>
+		<listitem>
+		  <simpara>The FO document. Each XML document and therefore
+also an FO document has a hierarchical structure that can be modeled
+as a tree.</simpara>
+		</listitem>
+
+		<listitem>
+		  <simpara>The FO DOM tree. This tree has the same
+hierarchical structure as an FO document, and is often built from an
+XML document.</simpara>
+		</listitem>
+	  </orderedlist>
+
+	  <para>FOP can work from either an FO document or an FO DOM tree.
+FOP does not build a DOM tree from an FO document.</para>
+
+	  <orderedlist continuation="continues">
+		<listitem>
+		  <simpara>The FO tree. FOP builds this tree from either the FO document or
+the FO DOM tree. The FO nodes in this tree correspond to the
+elements in the FO document or the XML nodes in the FO DOM
+tree. Note, however, that they are different from DOM tree
+nodes.</simpara>
+		</listitem>
+	  </orderedlist>
+
+	  <para>When a sufficient part of the FO tree has been built (in
+current FOP the subtree of a PageSequence FO node), the layout process
+is started. This process builds three trees.</para>
+
+	  <orderedlist continuation="continues">
+		<listitem>
+		  <simpara>The LM tree. This tree corresponds closely to the FO
+tree because each FO node creates a layout manager. But there are
+deviations. For example, a BlockLayoutManager creates a
+LineLayoutManager for each consecutive sequence of child FO nodes that
+generate inline areas.</simpara>
+		</listitem>
+
+		<listitem>
+		  <simpara>The BP tree. Each layout manager returns zero or more
+BreakPoss to its parent. These BreakPoss are connected to BreakPoss
+that the layout manager received from its child layout managers. This
+is not a real tree. There are many BP without a parent BP. They are
+connected to their siblings by their LM.</simpara>
+		</listitem>
+
+		<listitem>
+		  <simpara>The Area tree. Using the information stored in the BP
+tree and in the LMs connected with the BPs, layout areas are
+constructed. These areas are placed within other areas, which is
+expressed in a tree hierarchy.</simpara>
+		</listitem>
+	  </orderedlist>
+
+	</section>
+
+	<section>
+	  <title>The tree of BreakPoss</title>
+
+	  <para>Each LM contains a list of BPs belonging to and returned
+to it by the childLMs during the <literal>getNextBreakPoss</literal>
+stack. These are the BPs that end an area of the childLM. The BP
+contains an index <literal>position.iLeafPos</literal>, which connects
+it to the BP with that index in the list of BPs of its own LM (the
+childLM).</para>
+
+	  <para>For example, BlockLM's list <literal>childBreaks</literal>
+contains the BPs that end a line (if the childLM is a LineLM).
+LineLM's list <literal>vecInlineBreaks</literal> contains the BPs that
+were returned to it as possible linebreaks by TextLM (if the childLM
+is a TextLM). TextLM's list <literal>vecAreaInfo</literal> contains
+<literal>AreaInfo</literal> objects. A BP in BlockLM's list
+<literal>childBreaks</literal> belongs e.g. to a LineLM. Its index
+<literal>position.iLeafPos</literal> points to the BP with that index
+in <literal>vecInlineBreaks</literal> in ListLM. That BP belongs e.g.
+to a TextLM, and its index <literal>position.iLeafPos</literal> points
+to the <literal>AreaInfo</literal> object with that index in
+<literal>vecAreaInfo</literal> in TextLM.</para>
+
+	  <screen>
+                        +-----------------+
+                     LM | bp0 bp1 bp2 bp3 |
+                        +-++--++--++--++--+
+   .......................:|..:|  :|  :|
+   :            +----------+   |  :|  :|
+   :            |   +----------+  :|  :+----------------------+
+   :            |   |     ........:|  :.......                |
+   :            |   |     :        |         :                |
+   : +----------+---+--+  : +------+------+  : +--------------+------+
+  LM | bp0 bp1 bp2 bp3 | LM | bp0 bp1 bp2 | LM | bp0 bp1 bp2 bp3 bp4 |
+     +-----------------+    +-------------+    +---------------------+
+</screen>
+
+	  <para>The BPs are held in a list by the LM shown in front of
+them. They are associated with one of the childLMs, which is shown by
+the dotted lines. Their member <literal>position.iLeafPos</literal>
+connects them with the BP in their LM's list with that index, as shown
+by the dashed lines.</para>
+
+	</section>
+
+
+  <section>
+	<title>Example of an FO and area tree</title>
+
+	<section>
+	  <title>The FO file</title>
+
+	  <literallayout><![CDATA[<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+    xmlns:svg="http://www.w3.org/2000/svg">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="simpleA4"
+        page-height="29.7cm" page-width="21cm"
+        margin-top="2cm"
+        margin-bottom="2cm" margin-left="2cm"
+        margin-right="2cm">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="simpleA4">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block font-size="16pt" font-weight="bold"
+         space-after="5mm">Test FO
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>]]></literallayout>
+
+	</section>
+
+	<section>
+	  <title>The corresponding FO tree</title>
+
+	  <para>In the listing below the notation has been shortened;
+<literal>.[n]</literal> denotes the nth child, for which the full
+notation is <literal>.children.elementData[n]</literal> . A number of
+static members are not shown.</para>
+
+	  <para>The root:
+
+<screen>
+ root = "fo:root at line 2:44"
+
+ root = {
+    layoutMasterSet: instance of org.apache.fop.fo.pagination.LayoutMasterSet(id=1089)
+    pageSequences: instance of java.util.ArrayList(id=1102)
+    runningPageNumberCounter: 0
+    foTreeControl: instance of org.apache.fop.apps.Document(id=1103)
+    org.apache.fop.fo.FObj.propertyListTable: instance of org.apache.fop.fo.Property$Maker[248] (id=1094)
+    org.apache.fop.fo.FObj.propertyList: instance of org.apache.fop.fo.PropertyList(id=1104)
+    org.apache.fop.fo.FObj.propMgr: instance of org.apache.fop.fo.PropertyManager(id=1105)
+    org.apache.fop.fo.FObj.id: null
+    org.apache.fop.fo.FObj.children: instance of java.util.ArrayList(id=1106)
+    org.apache.fop.fo.FObj.markers: null
+    org.apache.fop.fo.FObj.systemId: "file:/path/to/fo-file"
+    org.apache.fop.fo.FObj.line: 2
+    org.apache.fop.fo.FObj.column: 44
+    org.apache.fop.fo.FONode.parent: null
+    org.apache.fop.fo.FONode.name: "fo:root"
+}
+</screen>
+</para>
+
+	  <para>The root has no properties; the namespace nodes do not result in
+properties:
+
+<screen>
+ root.propertyList = "{}"
+</screen>
+</para>
+
+	  <para>The root has two children:
+
+<screen>
+ root.children = "[
+  fo:layout-master-set at line 3:25
+  fo:page-sequence at line 12:49
+]"
+</screen>
+</para>
+
+	  <para>The first child of root is the layout master set:
+
+<screen>
+ root.[0] = "fo:layout-master-set at line 3:25"
+
+ root.[0] = {
+    simplePageMasters: instance of java.util.HashMap(id=1111)
+    pageSequenceMasters: instance of java.util.HashMap(id=1112)
+    org.apache.fop.fo.FObj.propertyListTable: instance of org.apache.fop.fo.Property$Maker[248] (id=1094)
+    org.apache.fop.fo.FObj.propertyList: instance of org.apache.fop.fo.PropertyList(id=1113)
+    org.apache.fop.fo.FObj.propMgr: instance of org.apache.fop.fo.PropertyManager(id=1114)
+    org.apache.fop.fo.FObj.id: null
+    org.apache.fop.fo.FObj.children: instance of java.util.ArrayList(id=1115)
+    org.apache.fop.fo.FObj.markers: null
+    org.apache.fop.fo.FObj.systemId: "file:/path/to/fo-file"
+    org.apache.fop.fo.FObj.line: 3
+    org.apache.fop.fo.FObj.column: 25
+    org.apache.fop.fo.FONode.parent: instance of org.apache.fop.fo.pagination.Root(id=1088)
+    org.apache.fop.fo.FONode.name: "fo:layout-master-set"
+}
+
+ root.[0].propertyList = "{}"
+</screen>
+</para>
+
+	  <para>The layout master set contains a simple page master:
+
+<screen>
+ root.[0].children = "[
+  fo:simple-page-master at line 8:28
+]"
+
+ root.[0].[0] = "fo:simple-page-master at line 8:28"
+
+ root.[0].[0] = {
+    regions: instance of java.util.HashMap(id=1120)
+    masterName: "simpleA4"
+    org.apache.fop.fo.FObj.propertyListTable: instance of org.apache.fop.fo.Property$Maker[248] (id=1094)
+    org.apache.fop.fo.FObj.propertyList: instance of org.apache.fop.fo.PropertyList(id=1122)
+    org.apache.fop.fo.FObj.propMgr: instance of org.apache.fop.fo.PropertyManager(id=1123)
+    org.apache.fop.fo.FObj.id: null
+    org.apache.fop.fo.FObj.children: null
+    org.apache.fop.fo.FObj.markers: null
+    org.apache.fop.fo.FObj.systemId: "file:/path/to/fo-file"
+    org.apache.fop.fo.FObj.line: 8
+    org.apache.fop.fo.FObj.column: 28
+    org.apache.fop.fo.FONode.parent: instance of org.apache.fop.fo.pagination.LayoutMasterSet(id=1089)
+    org.apache.fop.fo.FONode.name: "fo:simple-page-master"
+}
+</screen>
+</para>
+
+	  <para>The properties of the simple page master:
+
+<screen>
+ root.[0].[0].propertyList = "{
+  master-name=org.apache.fop.fo.StringProperty@1958bf9
+  margin-top=org.apache.fop.fo.LengthProperty@118958e
+  margin-right=org.apache.fop.fo.LengthProperty@102b2b6
+  margin-bottom=org.apache.fop.fo.LengthProperty@22d166
+  margin-left=org.apache.fop.fo.LengthProperty@1e1962d
+  page-width=org.apache.fop.fo.LengthProperty@14a75bb
+  page-height=org.apache.fop.fo.LengthProperty@17779e3
+}"
+
+ root.[0].[0].propertyList.get("master-name") = {
+    str: "simpleA4"
+    org.apache.fop.fo.Property.specVal: null
+}
+
+ root.[0].[0].propertyList.get("page-height") = {
+    length: instance of org.apache.fop.datatypes.FixedLength(id=1329)
+    org.apache.fop.fo.Property.specVal: null
+}
+
+ root.[0].[0].propertyList.get("page-height").length = "841889mpt"
+</screen>
+</para>
+
+	  <para>The simple page master has only one region, the body:
+
+<screen>
+ root.[0].[0].regions = "{body=fo:region-body at line 9:24}"
+</screen>
+</para>
+
+	  <para>The region body:
+
+<screen>
+ root.[0].[0].regions.get("body") = "fo:region-body at line 9:24"
+
+ root.[0].[0].regions.get("body") = {
+    backgroundColor: null
+    org.apache.fop.fo.pagination.Region.layoutMaster: instance of org.apache.fop.fo.pagination.SimplePageMaster(id=1082)
+    org.apache.fop.fo.pagination.Region.regionName: "xsl-region-body"
+    org.apache.fop.fo.pagination.Region.overflow: 8
+    org.apache.fop.fo.pagination.Region.wm: 49
+    org.apache.fop.fo.FObj.propertyListTable: instance of org.apache.fop.fo.Property$Maker[248] (id=1094)
+    org.apache.fop.fo.FObj.propertyList: instance of org.apache.fop.fo.PropertyList(id=1344)
+    org.apache.fop.fo.FObj.propMgr: instance of org.apache.fop.fo.PropertyManager(id=1345)
+    org.apache.fop.fo.FObj.id: null
+    org.apache.fop.fo.FObj.children: null
+    org.apache.fop.fo.FObj.markers: null
+    org.apache.fop.fo.FObj.systemId: "file:/path/to/fo-file"
+    org.apache.fop.fo.FObj.line: 9
+    org.apache.fop.fo.FObj.column: 24
+    org.apache.fop.fo.FONode.parent: instance of org.apache.fop.fo.pagination.SimplePageMaster(id=1082)
+    org.apache.fop.fo.FONode.name: "fo:region-body"
+}
+
+ root.[0].[0].regions.get("body").propertyList = "{}"
+</screen>
+</para>
+
+	  <para>The second child of root is the page sequence:
+
+<screen>
+ root.[1] = "fo:page-sequence at line 12:49"
+
+ root.[1] = {
+    root: instance of org.apache.fop.fo.pagination.Root(id=1088)
+    layoutMasterSet: instance of org.apache.fop.fo.pagination.LayoutMasterSet(id=1089)
+    flowMap: instance of java.util.HashMap(id=1090)
+    sequenceStarted: true
+    ipnValue: "auto"
+    currentPageNumber: 1
+    explicitFirstNumber: 0
+    firstPageNumber: 1
+    pageNumberGenerator: instance of org.apache.fop.fo.pagination.PageNumberGenerator(id=1074)
+    forcePageCount: 8
+    pageCount: 0
+    isForcing: false
+    pageNumberType: 1
+    thisIsFirstPage: true
+    simplePageMaster: instance of org.apache.fop.fo.pagination.SimplePageMaster(id=1082)
+    pageSequenceMaster: null
+    mainFlow: instance of org.apache.fop.fo.pagination.Flow(id=1092)
+    titleFO: null
+    org.apache.fop.fo.FObj.propertyListTable: instance of org.apache.fop.fo.Property$Maker[248] (id=1094)
+    org.apache.fop.fo.FObj.propertyList: instance of org.apache.fop.fo.PropertyList(id=1096)
+    org.apache.fop.fo.FObj.propMgr: instance of org.apache.fop.fo.PropertyManager(id=1097)
+    org.apache.fop.fo.FObj.id: null
+    org.apache.fop.fo.FObj.children: instance of java.util.ArrayList(id=1098)
+    org.apache.fop.fo.FObj.markers: null
+    org.apache.fop.fo.FObj.systemId: "file:/path/to/fo-file"
+    org.apache.fop.fo.FObj.line: 12
+    org.apache.fop.fo.FObj.column: 49
+    org.apache.fop.fo.FONode.parent: instance of org.apache.fop.fo.pagination.Root(id=1088)
+    org.apache.fop.fo.FONode.name: "fo:page-sequence"
+}
+</screen>
+</para>
+
+	  <para>The page-sequence has one property, the reference to the page master:
+
+<screen>
+ root.[1].propertyList = "{
+  master-reference=org.apache.fop.fo.StringProperty@104e28b
+}"
+
+ root.[1].propertyList.get("master-reference") = {
+    str: "simpleA4"
+    org.apache.fop.fo.Property.specVal: null
+}
+</screen>
+</para>
+
+	  <para>The page-sequence has one child, the flow:
+
+<screen>
+ root.[1].children = "[
+  fo:flow at line 13:42
+]"
+
+ root.[1].[0] = "fo:flow at line 13:42"
+
+ root.[1].[0] = {
+    pageSequence: instance of org.apache.fop.fo.pagination.PageSequence(id=1081)
+    markerSnapshot: null
+    flowName: "xsl-region-body"
+    contentWidth: 0
+    org.apache.fop.fo.FObj.propertyListTable: instance of org.apache.fop.fo.Property$Maker[248] (id=1094)
+    org.apache.fop.fo.FObj.propertyList: instance of org.apache.fop.fo.PropertyList(id=1367)
+    org.apache.fop.fo.FObj.propMgr: instance of org.apache.fop.fo.PropertyManager(id=1368)
+    org.apache.fop.fo.FObj.id: null
+    org.apache.fop.fo.FObj.children: instance of java.util.ArrayList(id=1369)
+    org.apache.fop.fo.FObj.markers: null
+    org.apache.fop.fo.FObj.systemId: "file:/path/to/fo-file"
+    org.apache.fop.fo.FObj.line: 13
+    org.apache.fop.fo.FObj.column: 42
+    org.apache.fop.fo.FONode.parent: instance of org.apache.fop.fo.pagination.PageSequence(id=1081)
+    org.apache.fop.fo.FONode.name: "fo:flow"
+}
+</screen>
+</para>
+
+	  <para>The flow has one property, the flow name:
+
+<screen>
+ root.[1].[0].propertyList = "{
+  flow-name=org.apache.fop.fo.StringProperty@6458a6
+}"
+
+ root.[1].[0].propertyList.get("flow-name") = {
+    str: "xsl-region-body"
+    org.apache.fop.fo.Property.specVal: null
+}
+</screen>
+</para>
+
+	  <para>The flow has one child, a block:
+
+<screen>
+ root.children.elementData[1].children.elementData[0].children = "[
+  fo:block at line 15:28
+]"
+
+ root.[1].[0].[0] = "fo:block at line 15:28"
+
+ root.[1].[0].[0] = {
+    align: 0
+    alignLast: 0
+    breakAfter: 0
+    lineHeight: 0
+    startIndent: 0
+    endIndent: 0
+    spaceBefore: 0
+    spaceAfter: 0
+    textIndent: 0
+    keepWithNext: 0
+    backgroundColor: null
+    blockWidows: 0
+    blockOrphans: 0
+    id: null
+    span: 59
+    wsTreatment: 41
+    lfTreatment: 98
+    bWScollapse: true
+    anythingLaidOut: false
+    firstInlineChild: null
+    org.apache.fop.fo.FObjMixed.textInfo: instance of org.apache.fop.fo.TextInfo(id=1377)
+    org.apache.fop.fo.FObj.propertyListTable: instance of org.apache.fop.fo.Property$Maker[248] (id=1094)
+    org.apache.fop.fo.FObj.propertyList: instance of org.apache.fop.fo.PropertyList(id=1378)
+    org.apache.fop.fo.FObj.propMgr: instance of org.apache.fop.fo.PropertyManager(id=1379)
+    org.apache.fop.fo.FObj.id: null
+    org.apache.fop.fo.FObj.children: instance of java.util.ArrayList(id=1380)
+    org.apache.fop.fo.FObj.markers: null
+    org.apache.fop.fo.FObj.systemId: "file:/path/to/fo-file"
+    org.apache.fop.fo.FObj.line: 15
+    org.apache.fop.fo.FObj.column: 28
+    org.apache.fop.fo.FONode.parent: instance of org.apache.fop.fo.pagination.Flow(id=1092)
+    org.apache.fop.fo.FONode.name: "fo:block"
+}
+
+ root.[1].[0].[0].propertyList = "{
+  font-size=org.apache.fop.fo.LengthProperty@ae4646
+  font-weight=org.apache.fop.fo.StringProperty@187b287
+  space-after=org.apache.fop.fo.SpaceProperty@1d9e2c7
+}"
+</screen>
+</para>
+
+	  <para>The block has two children:
+
+<screen>
+ root.[1].[0].[0].children = "[
+  fo:text at line 15:35
+  fo:text at line 16:7
+]"
+
+ root.[1].[0].[0].[0] = "fo:text at line 15:35"
+
+ root.[1].[0].[0].[0] = {
+    ca: instance of char[7] (id=1386)
+    start: 0
+    length: 7
+    textInfo: instance of org.apache.fop.fo.TextInfo(id=1377)
+    lastFOTextProcessed: instance of org.apache.fop.fo.FOText(id=1387)
+    prevFOTextThisBlock: null
+    nextFOTextThisBlock: instance of org.apache.fop.fo.FOText(id=1387)
+    ancestorBlock: instance of org.apache.fop.fo.flow.Block(id=1375)
+    org.apache.fop.fo.FObj.propertyListTable: instance of org.apache.fop.fo.Property$Maker[248] (id=1094)
+    org.apache.fop.fo.FObj.propertyList: null
+    org.apache.fop.fo.FObj.propMgr: null
+    org.apache.fop.fo.FObj.id: null
+    org.apache.fop.fo.FObj.children: null
+    org.apache.fop.fo.FObj.markers: null
+    org.apache.fop.fo.FObj.systemId: "file:/path/to/fo-file"
+    org.apache.fop.fo.FObj.line: 15
+    org.apache.fop.fo.FObj.column: 35
+    org.apache.fop.fo.FONode.parent: instance of org.apache.fop.fo.flow.Block(id=1375)
+    org.apache.fop.fo.FONode.name: "fo:text"
+}
+</screen>
+</para>
+
+	  <para>This text node contains the text "Test FO":
+
+<screen>
+ root.[1].[0].[0].[0].ca = {
+T, e, s, t,  , F, O
+}
+
+ root.[1].[0].[0].[1] = "fo:text at line 16:7"
+
+ root.[1].[0].[0].[1] = {
+    ca: instance of char[1] (id=1390)
+    start: 0
+    length: 1
+    textInfo: instance of org.apache.fop.fo.TextInfo(id=1377)
+    lastFOTextProcessed: instance of org.apache.fop.fo.FOText(id=1387)
+    prevFOTextThisBlock: instance of org.apache.fop.fo.FOText(id=1384)
+    nextFOTextThisBlock: null
+    ancestorBlock: instance of org.apache.fop.fo.flow.Block(id=1375)
+    org.apache.fop.fo.FObj.propertyListTable: instance of org.apache.fop.fo.Property$Maker[248] (id=1094)
+    org.apache.fop.fo.FObj.propertyList: null
+    org.apache.fop.fo.FObj.propMgr: null
+    org.apache.fop.fo.FObj.id: null
+    org.apache.fop.fo.FObj.children: null
+    org.apache.fop.fo.FObj.markers: null
+    org.apache.fop.fo.FObj.systemId: "file:/path/to/fo-file"
+    org.apache.fop.fo.FObj.line: 16
+    org.apache.fop.fo.FObj.column: 7
+    org.apache.fop.fo.FONode.parent: instance of org.apache.fop.fo.flow.Block(id=1375)
+    org.apache.fop.fo.FONode.name: "fo:text"
+}
+</screen>
+</para>
+
+	  <para>This text node contains the text "\n":
+
+<screen>
+ root.[1].[0].[0].[1].ca = {
+}
+</screen>
+</para>
+	</section>
+
+	<section>
+	  <title>The corresponding area tree</title>
+
+	  <para><itemizedlist>
+		  <listitem>
+			<simpara>PageViewport has a Page page and a Rectangle2D
+viewArea (reference/viewport pair).</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>Page has five RegionViewports.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>RegionViewport has a RegionReference region and a
+Rectangle2D viewArea (reference/viewport pair).</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>BodyRegion has a MainReference mainReference, a
+BeforeFloat beforeFloat, and a Footnote footnote.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>MainReference has a list of Spans.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>Span has a list of Flows.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>Flow has a list of Blocks.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>Block has a list of Blocks or LineAreas.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>LineArea has a list of InlineAreas.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>Text Area (subclass of InlineArea) has text.</simpara>
+		  </listitem>
+		</itemizedlist></para>
+
+	  <para>The structure of the area tree is as follows:
+
+<screen>
+PageViewport
+|
++-Page
+  |
+  +-RegionViewport
+    |
+    +-BodyRegion
+      |
+      +-MainReference
+      | |
+      | +-Span
+      | | |
+      | | +-Flow
+      | |
+      | +-Span
+      | | |
+      | | +-Flow
+      | |   |
+      | |   +-Block
+      | |   | |
+      | |   | +-LineArea
+      | |   |   |
+      | |   |   +-TextArea
+      | |   |
+      | |   +-Block
+      | |
+      | +-Span
+      | | |
+      | | +-Flow
+      | |
+      | +-Span
+      | | |
+      | | +-Flow
+      | |
+      | +-Span
+      |   |
+      |   +-Flow
+      |
+      +blocks
+      |
+      +CTM
+</screen>
+</para>
+
+	  <para>In the listing below members of an
+<literal>arraylist</literal> are indicated by <literal>[n]</literal>,
+which stands for <literal>get(n)</literal>. If the
+<literal>arraylist</literal> is called <literal>children</literal>,
+the word <literal>children</literal> has been omitted, so that
+<literal>[n]</literal> then stands for
+<literal>children.get(n)</literal>.</para>
+
+	  <para>Type: <literal>org.apache.fop.area.PageViewport</literal>:
+<screen>
+ curPage = "PageViewport: page=1"
+
+ curPage = {
+    page: instance of org.apache.fop.area.Page(id=1394)
+    viewArea: instance of java.awt.Rectangle(id=1395)
+    clip: false
+    pageNumber: "1"
+    idReferences: null
+    unresolved: null
+    pendingResolved: null
+    markerFirstStart: null
+    markerLastStart: null
+    markerFirstAny: null
+    markerLastEnd: null
+    markerLastAny: null
+}
+</screen>
+</para>
+
+	  <para>Type: <literal>org.apache.fop.area.Page</literal>:
+<screen>
+ curPage.page = {
+    regionBefore: null
+    regionStart: null
+    regionBody: instance of org.apache.fop.area.RegionViewport(id=1397)
+    regionEnd: null
+    regionAfter: null
+    unresolved: null
+}
+</screen>
+</para>
+
+	  <para>Type: <literal>org.apache.fop.area.RegionViewport</literal>:
+<screen>
+ curPage.page.regionBody = {
+    region: instance of org.apache.fop.area.BodyRegion(id=1077)
+    viewArea: instance of java.awt.Rectangle(id=1399)
+    clip: false
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 0
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <para>Type: <literal>org.apache.fop.area.BodyRegion</literal>:
+<screen>
+ curPage.page.regionBody.region = {
+    beforeFloat: null
+    mainReference: instance of org.apache.fop.area.MainReference(id=1401)
+    footnote: null
+    columnGap: 18000
+    columnCount: 1
+    refIPD: 0
+    org.apache.fop.area.RegionReference.regionClass: 2
+    org.apache.fop.area.RegionReference.ctm: instance of org.apache.fop.area.CTM(id=1402)
+    org.apache.fop.area.RegionReference.blocks: instance of java.util.ArrayList(id=1403)
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 0
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <para>Type: <literal>org.apache.fop.area.MainReference</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference = {
+    spanAreas: instance of java.util.ArrayList(id=1405)
+    columnGap: 0
+    width: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 0
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <para>The main reference contains five span areas. Four are
+empty. Number 1 contains the text of this page.
+
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas = "[
+  org.apache.fop.area.Span@53c3f5
+  org.apache.fop.area.Span@101ac93
+  org.apache.fop.area.Span@125d61e
+  org.apache.fop.area.Span@155d3a3
+  org.apache.fop.area.Span@718242
+]"
+</screen>
+</para>
+
+	  <para>Type: <literal>org.apache.fop.area.Span</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[0] = {
+    flowAreas: instance of java.util.ArrayList(id=1409)
+    height: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 481891
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[0].flowAreas = "[
+  org.apache.fop.area.Flow@e33e18
+]"
+</screen>
+
+	  <para>Type: <literal>org.apache.fop.area.Flow</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[0].flowAreas[0] = {
+    stacking: 2
+    width: 0
+    org.apache.fop.area.BlockParent.xOffset: 0
+    org.apache.fop.area.BlockParent.yOffset: 0
+    org.apache.fop.area.BlockParent.width: 0
+    org.apache.fop.area.BlockParent.height: 0
+    org.apache.fop.area.BlockParent.children: null
+    org.apache.fop.area.BlockParent.orientation: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 481891
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <para>Type: <literal>org.apache.fop.area.Span</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[1] = {
+    flowAreas: instance of java.util.ArrayList(id=1412)
+    height: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 481891
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[0].flowAreas = "[
+  org.apache.fop.area.Flow@e33e18
+]"
+</screen>
+
+	  <para>Type: <literal>org.apache.fop.area.Flow</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[1].flowAreas[0] = {
+    stacking: 2
+    width: 0
+    org.apache.fop.area.BlockParent.xOffset: 0
+    org.apache.fop.area.BlockParent.yOffset: 0
+    org.apache.fop.area.BlockParent.width: 0
+    org.apache.fop.area.BlockParent.height: 0
+    org.apache.fop.area.BlockParent.children: instance of java.util.ArrayList(id=1416)
+    org.apache.fop.area.BlockParent.orientation: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 481891
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[1].flowAreas[0].children = "[
+  org.apache.fop.area.Block@61f533
+  org.apache.fop.area.Block@12922f6
+]"
+</screen>
+
+	  <para>Type: <literal>org.apache.fop.area.Block</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[1].flowAreas[0].[0] = {
+    stacking: 2
+    positioning: 0
+    org.apache.fop.area.BlockParent.xOffset: 0
+    org.apache.fop.area.BlockParent.yOffset: 0
+    org.apache.fop.area.BlockParent.width: 481891
+    org.apache.fop.area.BlockParent.height: 19200
+    org.apache.fop.area.BlockParent.children: instance of java.util.ArrayList(id=1419)
+    org.apache.fop.area.BlockParent.orientation: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 481891
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[1].flowAreas[0].[0].children = "[
+  org.apache.fop.area.LineArea@9f0d
+]"
+</screen>
+
+	  <para>Type: <literal>org.apache.fop.area.LineArea</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[1].flowAreas[0].[0].[0] = {
+    stacking: 0
+    startIndent: 0
+    length: 0
+    lineHeight: 19200
+    baseLine: 0
+    inlineAreas: instance of java.util.ArrayList(id=1422)
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 0
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[1].flowAreas[0].[0].[0].inlineAreas = "[
+  org.apache.fop.area.inline.TextArea@21d23b
+]"
+</screen>
+
+	  <para>Type: <literal>org.apache.fop.area.inline.TextArea</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[1].flowAreas[0].[0].[0].inlineAreas[0] = {
+    text: "Test FO"
+    iTSadjust: 0
+    org.apache.fop.area.inline.InlineArea.height: 14800
+    org.apache.fop.area.inline.InlineArea.contentIPD: 59568
+    org.apache.fop.area.inline.InlineArea.verticalPosition: 13688
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 0
+    org.apache.fop.area.Area.props: instance of java.util.HashMap(id=1426)
+}
+</screen>
+</para>
+
+	  <para>
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[1].flowAreas[0].[0].[0].inlineAreas[0].props = "{
+  4=16000
+  3=F3
+  7=#000000
+}"
+</screen>
+<variablelist>
+		  <varlistentry>
+			<term>3</term>
+			<listitem>
+			  <simpara><literal>org.apache.fop.area.Trait.FONT_NAME</literal></simpara>
+			</listitem>
+		  </varlistentry>
+		  <varlistentry>
+			<term>4</term>
+			<listitem>
+			  <simpara><literal>org.apache.fop.area.Trait.FONT_SIZE</literal></simpara>
+			</listitem>
+		  </varlistentry>
+		  <varlistentry>
+			<term>7</term>
+			<listitem>
+			  <simpara><literal>org.apache.fop.area.Trait.COLOR</literal></simpara>
+			</listitem>
+		  </varlistentry>
+		</variablelist>
+</para>
+
+	  <para>Type: <literal>org.apache.fop.area.Block</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[1].flowAreas[0].[1] = {
+    stacking: 2
+    positioning: 0
+    org.apache.fop.area.BlockParent.xOffset: 0
+    org.apache.fop.area.BlockParent.yOffset: 0
+    org.apache.fop.area.BlockParent.width: 0
+    org.apache.fop.area.BlockParent.height: 14173
+    org.apache.fop.area.BlockParent.children: null
+    org.apache.fop.area.BlockParent.orientation: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 0
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <para>Type: <literal>org.apache.fop.area.Span</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[2] = {
+    flowAreas: instance of java.util.ArrayList(id=1429)
+    height: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 481891
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[2].flowAreas = "[
+  org.apache.fop.area.Flow@c72243
+]"
+</screen>
+
+	  <para>Type: <literal>org.apache.fop.area.Flow</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[2].flowAreas[0] = {
+    stacking: 2
+    width: 0
+    org.apache.fop.area.BlockParent.xOffset: 0
+    org.apache.fop.area.BlockParent.yOffset: 0
+    org.apache.fop.area.BlockParent.width: 0
+    org.apache.fop.area.BlockParent.height: 0
+    org.apache.fop.area.BlockParent.children: null
+    org.apache.fop.area.BlockParent.orientation: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 481891
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <para>Type: <literal>org.apache.fop.area.Span</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[3] = {
+    flowAreas: instance of java.util.ArrayList(id=1433)
+    height: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 481891
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[3].flowAreas = "[
+  org.apache.fop.area.Flow@dc9766
+]"
+</screen>
+
+	  <para>Type: <literal>org.apache.fop.area.Flow</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[3].flowAreas[0] = {
+    stacking: 2
+    width: 0
+    org.apache.fop.area.BlockParent.xOffset: 0
+    org.apache.fop.area.BlockParent.yOffset: 0
+    org.apache.fop.area.BlockParent.width: 0
+    org.apache.fop.area.BlockParent.height: 0
+    org.apache.fop.area.BlockParent.children: null
+    org.apache.fop.area.BlockParent.orientation: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 481891
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <para>Type: <literal>org.apache.fop.area.Span</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[4] = {
+    flowAreas: instance of java.util.ArrayList(id=1436)
+    height: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 481891
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[4].flowAreas = "[
+  org.apache.fop.area.Flow@1ec58a
+]"
+</screen>
+
+	  <para>Type: <literal>org.apache.fop.area.Flow</literal>:
+<screen>
+ curPage.page.regionBody.region.mainReference.spanAreas[4].flowAreas[0] = {
+    stacking: 2
+    width: 0
+    org.apache.fop.area.BlockParent.xOffset: 0
+    org.apache.fop.area.BlockParent.yOffset: 0
+    org.apache.fop.area.BlockParent.width: 0
+    org.apache.fop.area.BlockParent.height: 0
+    org.apache.fop.area.BlockParent.children: null
+    org.apache.fop.area.BlockParent.orientation: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 481891
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+</para>
+
+	  <screen>
+ curPage.page.regionBody.region.blocks = "[]"
+</screen>
+
+	  <para>Type: <literal>org.apache.fop.area.CTM</literal>:
+<screen>
+ curPage.page.regionBody.region.ctm = {
+    a: 1.0
+    b: 0.0
+    c: 0.0
+    d: 1.0
+    e: 56692.0
+    f: 56692.0
+    CTM_LRTB: instance of org.apache.fop.area.CTM(id=1439)
+    CTM_RLTB: instance of org.apache.fop.area.CTM(id=1440)
+    CTM_TBRL: instance of org.apache.fop.area.CTM(id=1441)
+}
+</screen>
+</para>
+
+	</section>
+  </section>
+
+  </chapter>
+
+<!-- Local Variables: --> 
+<!-- current-language-environment: UTF-8 -->
+<!-- coding: utf-8 --> 
+<!-- default-input-method: TeX --> 
+<!-- End: -->
