@@ -50,14 +50,14 @@
  */
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.expr.NumericProperty;
 
 /**
  * Class for handling numeric properties
  */
-public class NumberProperty extends Property {
+public class NumberProperty extends Property implements Numeric {
 
     /**
      * Inner class for making NumberProperty objects
@@ -116,20 +116,38 @@ public class NumberProperty extends Property {
     }
 
     /**
+     * Plain number always has a dimension of 0.
+     * @return a dimension of 0.
+     * @see Numeric#getDimension()
+     */
+    public int getDimension() {
+        return 0;
+    }
+
+    /**
+     * Return the value of this Numeric.
+     * @return The value as a double.
+     * @see Numeric#getNumericValue()
+     */
+    public double getNumericValue() {
+        return number.doubleValue();
+    }
+
+    /**
+     * Return true because all numbers are absolute.
+     * @return true.
+     * @see Numeric#isAbsolute()
+     */
+    public boolean isAbsolute() {
+        return true;
+    }
+
+    /**
      * @return this.number cast as a Number
      */
     public Number getNumber() {
         return this.number;
     }
-
-    /**
-     * public Double getDouble() {
-     * return new Double(this.number.doubleValue());
-     * }
-     * public Integer getInteger() {
-     * return new Integer(this.number.intValue());
-     * }
-     */
 
     /**
      * @return this.number cast as an Object
@@ -142,8 +160,8 @@ public class NumberProperty extends Property {
      * Convert NumberProperty to Numeric object
      * @return Numeric object corresponding to this
      */
-    public NumericProperty getNumeric() {
-        return new NumericProperty(this.number);
+    public Numeric getNumeric() {
+        return this;
     }
 
     /**

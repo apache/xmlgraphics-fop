@@ -50,6 +50,7 @@
  */
 package org.apache.fop.fo.expr;
 
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -73,12 +74,12 @@ public class AbsFunction extends FunctionBase {
      */
     public Property eval(Property[] args,
                          PropertyInfo propInfo) throws PropertyException {
-        NumericProperty num = args[0].getNumeric();
+        Numeric num = args[0].getNumeric();
         if (num == null) {
             throw new PropertyException("Non numeric operand to abs function");
         }
         // TODO: What if it has relative components (percent, table-col units)?
-        return num.abs();
+        return (Property) NumericOp.abs(num);
     }
 
 }

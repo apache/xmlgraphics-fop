@@ -89,7 +89,7 @@ public class PPColWidthFunction extends FunctionBase {
                     + "may only be used on table-column FO");
         }
         // Check if table-layout is "fixed"...
-        return new TableColLength(d.doubleValue());
+        return new TableColLength(d.doubleValue(), pInfo.getFO());
     }
 
 }

@@ -53,12 +53,16 @@ package org.apache.fop.datatypes;
 /**
  * A length quantity in XSL
  */
-public interface Length {
-
+public interface Length extends Numeric {
     /**
      * Returns the length in 1/1000ths of a point (millipoints)
      * @return the length in millipoints
      */
     public int getValue();
+
+    /**
+     * Return true if the length has the "auto" value.
+     * @return true when length is auto.
+     */
     public boolean isAuto();
 }

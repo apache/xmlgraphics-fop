@@ -50,12 +50,11 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.expr.NumericProperty;
-
 /**
- * a length quantity in XSL
+ * An absolute length quantity in XSL
  */
 public class FixedLength extends LengthProperty {
+    private int millipoints;
 
     /**
      * Set the length given
@@ -63,7 +62,7 @@ public class FixedLength extends LengthProperty {
      * @param iCurFontSize the current font size in base units.
      */
     public FixedLength(double numRelUnits, int iCurFontSize) {
-        setComputedValue((int)(numRelUnits * (double)iCurFontSize));
+        millipoints = (int) (numRelUnits * (double)iCurFontSize);
     }
 
     /**
@@ -79,7 +78,7 @@ public class FixedLength extends LengthProperty {
      * @param baseUnits the length as a number of base units (millipoints)
      */
     public FixedLength(int baseUnits) {
-        setComputedValue(baseUnits);
+        millipoints = baseUnits;
     }
 
     /**
@@ -114,14 +113,39 @@ public class FixedLength extends LengthProperty {
             //log.error("unknown length unit '" + unit
             //                       + "'");
         }
-        setComputedValue((int)(dvalue * 1000));
+        millipoints = (int)(dvalue * 1000);
     }
 
     /**
-     * @return Numeric equivalent of this
+     * Returns the length in 1/1000ths of a point (millipoints)
+     * @return the length in millipoints
      */
-    public NumericProperty asNumeric() {
-        return new NumericProperty(this);
+    public int getValue() {
+        return millipoints;
     }
+
+    /**
+     * Returns the value as numeric.
+     * @return the length in millipoints
+     */
+    public double getNumericValue() {
+        return millipoints;
+    }
+
+    /**
+     * Return true since FixedLength are always absolute.
+     * @see org.apache.fop.datatypes.Numeric#isAbsolute()
+     */
+    public boolean isAbsolute() {
+        return true;
+    }
+
+    /**
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return millipoints + "mpt";
+    }
+
 }
 

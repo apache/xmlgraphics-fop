@@ -68,6 +68,25 @@ public class AutoLength extends LengthProperty {
     //    protected void computeValue() {
     //    }
 
+    public boolean isAbsolute() {
+        return false;
+    }
+    /**
+     * Returns the length in 1/1000ths of a point (millipoints)
+     * @return the length in millipoints
+     */
+    public int getValue() {
+        return 0;
+    }
+
+    /**
+     * Returns the value as numeric.
+     * @return the length in millipoints
+     */
+    public double getNumericValue() {
+        return 0;
+    }
+
     /**
      * @see org.apache.fop.fo.properties.Property#getString()
      */
