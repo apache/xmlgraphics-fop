@@ -55,9 +55,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-// Avalon
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
-
 // SAX
 import org.xml.sax.SAXException;
 
@@ -67,16 +64,11 @@ import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.StorePagesModel;
 import org.apache.fop.area.Title;
 import org.apache.fop.area.TreeExt;
-import org.apache.fop.fo.pagination.LayoutMasterSet;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.Flow;
-import org.apache.fop.fo.pagination.PageSequenceMaster;
-import org.apache.fop.fo.pagination.SimplePageMaster;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
@@ -282,6 +274,9 @@ public class LayoutHandler extends StructureHandler {
         pageSequence.format(areaTree);
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startFlow(Flow)
+     */
     public void startFlow(Flow fl) {
     }
 
@@ -303,101 +298,197 @@ public class LayoutHandler extends StructureHandler {
     public void endBlock(Block bl) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startTable(Table)
+     */
     public void startTable(Table tbl) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#endTable(Table)
+     */
     public void endTable(Table tbl) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startHeader(TableBody)
+     */
     public void startHeader(TableBody th) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#endHeader(TableBody)
+     */
     public void endHeader(TableBody th) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startFooter(TableBody)
+     */
     public void startFooter(TableBody tf) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#endFooter(TableBody)
+     */
     public void endFooter(TableBody tf) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startBody(TableBody)
+     */
     public void startBody(TableBody tb) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#endBody(TableBody)
+     */
     public void endBody(TableBody tb) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startRow(TableRow)
+     */
     public void startRow(TableRow tr) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#endRow(TableRow)
+     */
     public void endRow(TableRow tr) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startCell(TableCell)
+     */
     public void startCell(TableCell tc) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#endCell(TableCell)
+     */
     public void endCell(TableCell tc) {
     }
 
     // Lists
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startList(ListBlock)
+     */
     public void startList(ListBlock lb) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#endList(ListBlock)
+     */
     public void endList(ListBlock lb) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startListItem(ListItem)
+     */
     public void startListItem(ListItem li) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#endListItem(ListItem)
+     */
     public void endListItem(ListItem li) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startListLabel()
+     */
     public void startListLabel() {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#endListLabel()
+     */
     public void endListLabel() {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startListBody()
+     */
     public void startListBody() {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#endListBody()
+     */
     public void endListBody() {
     }
 
     // Static Regions
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startStatic()
+     */
     public void startStatic() {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#endStatic()
+     */
     public void endStatic() {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startMarkup()
+     */
     public void startMarkup() {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#endMarkup()
+     */
     public void endMarkup() {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#startLink()
+     */
     public void startLink() {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#endLink()
+     */
     public void endLink() {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#image(ExternalGraphic)
+     */
     public void image(ExternalGraphic eg) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#pageRef()
+     */
     public void pageRef() {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#foreignObject(InstreamForeignObject)
+     */
     public void foreignObject(InstreamForeignObject ifo) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#footnote()
+     */
     public void footnote() {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#leader(Leader)
+     */
     public void leader(Leader l) {
     }
 
+    /**
+     * @see org.apache.fop.apps.StructureHandler#characters(char[], int, int)
+     */
     public void characters(char data[], int start, int length) {
     }
 

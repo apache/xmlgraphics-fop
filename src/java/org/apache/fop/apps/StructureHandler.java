@@ -58,7 +58,6 @@ import java.util.HashSet;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
 // FOP
-import org.apache.fop.fo.Title;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.Flow;
@@ -70,7 +69,6 @@ import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
-import org.apache.fop.fo.pagination.LayoutMasterSet;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.layout.FontInfo;
 
@@ -81,7 +79,7 @@ import org.xml.sax.SAXException;
  * Sub-classes can then implement various methods to handle
  * the FO Tree when the SAX events occur.
  */
-abstract public class StructureHandler extends AbstractLogEnabled {
+public abstract class StructureHandler extends AbstractLogEnabled {
     /**
      * The current set of id's in the FO tree.
      * This is used so we know if the FO tree contains duplicates.
@@ -114,100 +112,237 @@ abstract public class StructureHandler extends AbstractLogEnabled {
      * This method is called to indicate the start of a new document run.
      * @throws SAXException In case of a problem
      */
-    abstract public void startDocument() throws SAXException;
+    public abstract void startDocument() throws SAXException;
 
     /**
      * This method is called to indicate the end of a document run.
      * @throws SAXException In case of a problem
      */
-    abstract public void endDocument() throws SAXException;
+    public abstract void endDocument() throws SAXException;
 
-    abstract public void startPageSequence(PageSequence pageSeq);
+    /**
+     *
+     * @param pageSeq PageSequence that is starting.
+     */
+    public abstract void startPageSequence(PageSequence pageSeq);
 
-    abstract public void endPageSequence(PageSequence pageSeq) throws FOPException;
+    /**
+     *
+     * @param pageSeq PageSequence that is ending.
+     * @throws FOPException For errors encountered.
+     */
+    public abstract void endPageSequence(PageSequence pageSeq) throws FOPException;
 
-    abstract public void startFlow(Flow fl);
+    /**
+     *
+     * @param fl Flow that is starting.
+     */
+    public abstract void startFlow(Flow fl);
 
-    abstract public void endFlow(Flow fl);
+    /**
+     *
+     * @param fl Flow that is ending.
+     */
+    public abstract void endFlow(Flow fl);
 
-    abstract public void startBlock(Block bl);
+    /**
+     *
+     * @param bl Block that is starting.
+     */
+    public abstract void startBlock(Block bl);
 
-    abstract public void endBlock(Block bl);
+    /**
+     *
+     * @param bl Block that is ending.
+     */
+    public abstract void endBlock(Block bl);
 
 
     // Tables
-    abstract public void startTable(Table tbl);
+    /**
+     *
+     * @param tbl Table that is starting.
+     */
+    public abstract void startTable(Table tbl);
 
-    abstract public void endTable(Table tbl);
+    /**
+     *
+     * @param tbl Table that is ending.
+     */
+    public abstract void endTable(Table tbl);
 
-    abstract public void startHeader(TableBody th);
+    /**
+     *
+     * @param th TableBody that is starting;
+     */
+    public abstract void startHeader(TableBody th);
 
-    abstract public void endHeader(TableBody th);
+    /**
+     *
+     * @param th TableBody that is ending.
+     */
+    public abstract void endHeader(TableBody th);
 
-    abstract public void startFooter(TableBody tf);
+    /**
+     *
+     * @param tf TableFooter that is starting.
+     */
+    public abstract void startFooter(TableBody tf);
 
-    abstract public void endFooter(TableBody tf);
+    /**
+     *
+     * @param tf TableFooter that is ending.
+     */
+    public abstract void endFooter(TableBody tf);
 
-    abstract public void startBody(TableBody tb);
+    /**
+     *
+     * @param tb TableBody that is starting.
+     */
+    public abstract void startBody(TableBody tb);
 
-    abstract public void endBody(TableBody tb);
+    /**
+     *
+     * @param tb TableBody that is ending.
+     */
+    public abstract void endBody(TableBody tb);
 
-    abstract public void startRow(TableRow tr);
+    /**
+     *
+     * @param tr TableRow that is starting.
+     */
+    public abstract void startRow(TableRow tr);
 
-    abstract public void endRow(TableRow tr);
+    /**
+     *
+     * @param tr TableRow that is ending.
+     */
+    public abstract void endRow(TableRow tr);
 
-    abstract public void startCell(TableCell tc);
+    /**
+     *
+     * @param tc TableCell that is starting.
+     */
+    public abstract void startCell(TableCell tc);
 
-    abstract public void endCell(TableCell tc);
+    /**
+     *
+     * @param tc TableCell that is ending.
+     */
+    public abstract void endCell(TableCell tc);
 
 
     // Lists
-    abstract public void startList(ListBlock lb);
+    /**
+     *
+     * @param lb ListBlock that is starting.
+     */
+    public abstract void startList(ListBlock lb);
 
-    abstract public void endList(ListBlock lb);
+    /**
+     *
+     * @param lb ListBlock that is ending.
+     */
+    public abstract void endList(ListBlock lb);
 
-    abstract public void startListItem(ListItem li);
+    /**
+     *
+     * @param li ListItem that is starting.
+     */
+    public abstract void startListItem(ListItem li);
 
-    abstract public void endListItem(ListItem li);
+    /**
+     *
+     * @param li ListItem that is ending.
+     */
+    public abstract void endListItem(ListItem li);
 
-    abstract public void startListLabel();
+    /**
+     * Process start of a ListLabel.
+     */
+    public abstract void startListLabel();
 
-    abstract public void endListLabel();
+    /**
+     * Process end of a ListLabel.
+     */
+    public abstract void endListLabel();
 
-    abstract public void startListBody();
+    /**
+     * Process start of a ListBody.
+     */
+    public abstract void startListBody();
 
-    abstract public void endListBody();
+    /**
+     * Process end of a ListBody.
+     */
+    public abstract void endListBody();
 
     // Static Regions
-    abstract public void startStatic();
+    /**
+     * Process start of a Static.
+     */
+    public abstract void startStatic();
 
-    abstract public void endStatic();
+    /**
+     * Process end of a Static.
+     */
+    public abstract void endStatic();
 
-    abstract public void startMarkup();
+    /**
+     * Process start of a Markup.
+     */
+    public abstract void startMarkup();
 
-    abstract public void endMarkup();
+    /**
+     * Process end of a Markup.
+     */
+    public abstract void endMarkup();
 
+    /**
+     * Process start of a Link.
+     */
+    public abstract void startLink();
 
-    abstract public void startLink();
+    /**
+     * Process end of a Link.
+     */
+    public abstract void endLink();
 
-    abstract public void endLink();
+    /**
+     * Process an ExternalGraphic.
+     * @param eg ExternalGraphic to process.
+     */
+    public abstract void image(ExternalGraphic eg);
 
+    /**
+     * Process a pageRef.
+     */
+    public abstract void pageRef();
 
-    abstract public void image(ExternalGraphic eg);
+    /**
+     * Process an InstreamForeignObject.
+     * @param ifo InstreamForeignObject to process.
+     */
+    public abstract void foreignObject(InstreamForeignObject ifo);
 
-    abstract public void pageRef();
+    /**
+     * Process a footnote.
+     */
+    public abstract void footnote();
 
-    abstract public void foreignObject(InstreamForeignObject ifo);
+    /**
+     * Process a Leader.
+     * @param l Leader to process.
+     */
+    public abstract void leader(Leader l);
 
-    abstract public void footnote();
-
-    abstract public void leader(Leader l);
-
-    abstract public void characters(char data[], int start, int length);
-
-    public void pageBreak() {
-
-    }
+    /**
+     * Process character data.
+     * @param data Array of characters to process.
+     * @param start Offset for characters to process.
+     * @param length Portion of array to process.
+     */
+    public abstract void characters(char data[], int start, int length);
 
 }
 
