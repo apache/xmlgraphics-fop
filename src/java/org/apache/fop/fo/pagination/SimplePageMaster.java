@@ -130,15 +130,6 @@ public class SimplePageMaster extends FObj {
     }
 
     /**
-     * Returns the next page master. For simple-page-master this is always the
-     * same as the previous.
-     * @return the page master
-     */
-    public PageMaster getNextPageMaster() {
-        return this.pageMaster;
-    }
-
-    /**
      * Returns the name of the simple-page-master.
      * @return the page master name
      */
