@@ -11,6 +11,7 @@ package org.apache.fop.pdf;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * class representing a Root (/Catalog) object
@@ -26,6 +27,11 @@ public class PDFRoot extends PDFObject {
      * Root outline object
      */
     private PDFOutline _outline;
+
+    /**
+     * Collection of destinations
+     */
+    private Collection _destinations;
 
     /**
      * create a Root (/Catalog) object. NOTE: The PDFRoot
@@ -76,6 +82,13 @@ public class PDFRoot extends PDFObject {
         return _outline;
     }
 
+    public Collection getDestinations() {
+        if (_destinations == null) {
+            _destinations = new ArrayList();
+        }
+        return _destinations;
+    }
+ 
 
     /**
      * represent the object as PDF.
@@ -95,6 +108,14 @@ public class PDFRoot extends PDFObject {
             p.append(" /Outlines " + _outline.referencePDF() + "\n");
             p.append(" /PageMode /UseOutlines\n");
 
+        }
+        if (_destinations != null) {
+           p.append(" /Names << /Dests << /Names [ ");
+          for (Iterator i = _destinations.iterator(); i.hasNext(); ) {
+              PDFDestination dest = (PDFDestination)i.next();
+              p.append(dest.toPDF());
+           }
+           p.append(" ] >> >>\n");
         }
         p.append(" >>\nendobj\n");
 

@@ -344,4 +344,24 @@ public class IDReferences {
     public Iterator getInvalidElements() {
         return idValidation.keySet().iterator();
     }
+    
+    /**
+     * Returns a destination reference for the node with the
+     * specified id.  If id does not exist, returns null.
+     * Destination format is: [ ?objectId 0 R /XYZ ?x ?y null ]
+     *
+     * @param id The id whose destination reference to return
+     * @return Destination reference for this node
+     */
+    public String getDestinationRef(String id) {
+        if (doesIDExist(id)) {
+            IDNode node = (IDNode)idReferences.get(id);
+            return "[ " + node.getPageReference() + " /XYZ " +
+            node.getXPosition()/1000f + " " + node.getYPosition()/1000f + " null ]";
+        } else {
+            addToIdValidationList(id);
+            return null;
+        }
+    }
+    
 }

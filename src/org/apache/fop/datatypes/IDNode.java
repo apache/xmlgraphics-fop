@@ -49,6 +49,26 @@ public class IDNode {
         return pageNumber;
     }
 
+    /**
+     * Returns the page reference.
+     *
+     * @return page reference of this node.
+     */
+    public String getPageReference() {
+       if (null != internalLinkGoTo) {
+         return internalLinkGoTo.getPageReference();
+       } else {
+         return internalLinkGoToPageReference;
+       }
+    }
+
+    public int getXPosition() {
+       return xPosition;
+    }
+    
+    public int getYPosition() {
+       return yPosition;
+    }
 
     /**
      * creates a new GoTo object for an internal link

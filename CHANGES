@@ -1,5 +1,12 @@
 ==============================================================================
 Done since 0.20.4 release
+- Added support for url()-syntax to the fo:basic-link-Element
+  Submitted by: Stefan Wachter <Stefan.Wachter@gmx.de>
+- Added new extension element for defining named destinations (PDF)
+  Submitted by: Lloyd McKenzie <lmckenzi@ca.ibm.com> and Stefan Wachter
+- Added support for linking to a specific page and a named destinations
+  of an external PDF file
+  Submitted by: Bernd Brandstetter <bbrand@freenet.de>
 - Added Turkish messages for AWT Viewer
   Submitted by: Togan Muftuoglu <toganm@users.sourceforge.net>
 - Fixed leader expansion and leader alignment to reference area to some

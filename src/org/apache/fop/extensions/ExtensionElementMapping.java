@@ -26,6 +26,7 @@ public class ExtensionElementMapping implements ElementMapping {
             foObjs.put("outline", Outline.maker());
             foObjs.put("label", Label.maker());
             foObjs.put("continued-label", ContinuedLabel.maker());
+            foObjs.put("destination", Destination.maker());
         }
     }
 

@@ -84,6 +84,14 @@ public class BasicLink extends Inline {
         } else if (!(destination =
         this.properties.get("external-destination").getString()).equals("")) {
             linkType = LinkSet.EXTERNAL;
+            if (destination.startsWith("url(") && destination.endsWith(")")) {
+                destination = destination.substring(4, destination.length() - 1).trim();
+                if (destination.startsWith("\"") && destination.endsWith("\"")) {
+                    destination = destination.substring(1, destination.length() - 1);
+                } else if (destination.startsWith("'") && destination.endsWith("'")) {
+                    destination = destination.substring(1, destination.length() - 1);
+                }
+            }            
         } else {
             throw new FOPException("internal-destination or external-destination must be specified in basic-link");
         }

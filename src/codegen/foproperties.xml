@@ -1644,6 +1644,13 @@
       <default></default>
     </property>
     <property>
+      <!-- Property of destination extension element -->
+      <name>destination-name</name>
+      <inherited>false</inherited>
+      <datatype>String</datatype>
+      <default></default>
+    </property>
+    <property>
       <name>show-destination</name>
       <inherited>false</inherited>
       <datatype>ToBeImplemented</datatype>
