@@ -63,8 +63,11 @@ import java.util.HashMap;
  */
 public class PlanElementMapping extends ElementMapping {
 
+    /** Plan Namespace */
+    public static final String NAMESPACE = "http://xml.apache.org/fop/plan"; 
+
     public PlanElementMapping() {
-        URI = "http://xml.apache.org/fop/plan";
+        this.namespaceURI = NAMESPACE;
     }
 
     protected void initialize() {
@@ -73,7 +76,7 @@ public class PlanElementMapping extends ElementMapping {
             foObjs.put("plan", new PE());
             foObjs.put(DEFAULT, new PlanMaker());
 
-            XMLReader.setConverter(URI, new PlanConverter());
+            XMLReader.setConverter(this.namespaceURI, new PlanConverter());
         }
     }
 

@@ -119,7 +119,7 @@ public class PlanElement extends PlanObj {
      */
     public String getDocumentNamespace() {
         if (svgDoc == null) {
-            return PlanElementMapping.URI;
+            return PlanElementMapping.NAMESPACE;
         }
         return "http://www.w3.org/2000/svg";
     }
