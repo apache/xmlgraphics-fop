@@ -71,14 +71,33 @@ public abstract class GraphicElement extends SVGElementImpl implements SVGTransf
 	SVGAnimatedTransformList transform;
 	String xmlspace = "default";
 
-	public SVGElement getNearestViewportElement( )
+	public SVGElement getNearestViewportElement()
 	{
+	    Node node = getParentNode();
+	    while(node != null) {
+	        if(node instanceof SVGGElement) {
+	            return (SVGElement)node;
+	        } else if(node instanceof SVGSVGElement) {
+	            return (SVGElement)node;
+	        }
+	        node = getParentNode();
+	    }
 		return null;
 	}
 
-	public SVGElement getFarthestViewportElement( )
+	public SVGElement getFarthestViewportElement()
 	{
-		return null;
+	    Node node = getParentNode();
+	    SVGElement viewport = null;
+	    while(node != null) {
+	        if(node instanceof SVGGElement) {
+	            viewport = (SVGElement)node;
+	        } else if(node instanceof SVGSVGElement) {
+	            viewport = (SVGElement)node;
+	        }
+	        node = getParentNode();
+	    }
+		return viewport;
 	}
 
 	public SVGAnimatedTransformList getTransform()
@@ -104,14 +123,42 @@ public abstract class GraphicElement extends SVGElementImpl implements SVGTransf
 		return null;
 	}
 
+	/**
+	 * Returns the transformation matrix from current user units (i.e., after
+	 * application of the transform attribute) to the viewport coordinate system
+	 * for the nearestViewportElement.
+	 */
 	public SVGMatrix getCTM()
 	{
-		return null;
+		return transform.getBaseVal().consolidate().getMatrix();
 	}
 
+	/**
+	 * Returns the transformation matrix from current user units (i.e., after
+	 * application of the transform attribute) to the parent user agent's notice
+	 * of a "pixel". For display devices, ideally this represents a physical
+	 * screen pixel. For other devices or environments where physical pixel sizes
+	 * are not known, then an algorithm similar to the CSS2 definition of a "pixel"
+	 * can be used instead.
+	 * This is the matrix that converts from the user space to the position
+	 * on the screen.
+	 */
 	public SVGMatrix getScreenCTM()
 	{
-		return null;
+		if(transform == null) {
+		    return new SVGMatrixImpl();
+		}
+	    Node node = getParentNode();
+	    SVGMatrix matrix = null;
+	    if(node != null && node instanceof SVGTransformable) {
+	        matrix = ((SVGTransformable)node).getScreenCTM();
+	    }
+	    if(matrix != null) {
+	        matrix = transform.getBaseVal().consolidate().getMatrix().multiply(matrix);
+	    } else {
+	        matrix = transform.getBaseVal().consolidate().getMatrix();
+	    }
+		return matrix;
 	}
 
 	public SVGMatrix getTransformToElement(SVGElement element)
