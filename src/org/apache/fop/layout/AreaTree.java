@@ -65,12 +65,12 @@ public class AreaTree {
 
     public Page getNextPage(Page current, boolean isWithinPageSequence,
                             boolean isFirstCall) {
-        return current;
+        return streamRenderer.getNextPage(current, isWithinPageSequence,isFirstCall);
     }
 
     public Page getPreviousPage(Page current, boolean isWithinPageSequence,
                                 boolean isFirstCall) {
-        return current;
+        return streamRenderer.getPreviousPage(current,isWithinPageSequence,isFirstCall);
     }
 
     public void addPage(Page page)
