@@ -97,18 +97,18 @@ public class Title extends FObjMixed {
         CommonMarginInline mProps = propMgr.getMarginInlineProps();
 
         Property prop;
-        prop = this.propertyList.get("baseline-shift");
+        prop = this.propertyList.get(PR_BASELINE_SHIFT);
         if (prop instanceof LengthProperty) {
             Length bShift = prop.getLength();
         } else if (prop instanceof EnumProperty) {
             int bShift = prop.getEnum();
         }
-        ColorType col = this.propertyList.get("color").getColorType();
-        Length lHeight = this.propertyList.get("line-height").getLength();
+        ColorType col = this.propertyList.get(PR_COLOR).getColorType();
+        Length lHeight = this.propertyList.get(PR_LINE_HEIGHT).getLength();
         int lShiftAdj = this.propertyList.get(
-                          "line-height-shift-adjustment").getEnum();
-        int vis = this.propertyList.get("visibility").getEnum();
-        Length zIndex = this.propertyList.get("z-index").getLength();
+                          PR_LINE_HEIGHT_SHIFT_ADJUSTMENT).getEnum();
+        int vis = this.propertyList.get(PR_VISIBILITY).getEnum();
+        Length zIndex = this.propertyList.get(PR_Z_INDEX).getLength();
 
     }
 

@@ -86,9 +86,9 @@ public class ColorProfile extends FObj {
      * object.
      */
     public void end() {
-        src = this.propertyList.get("src").getString();
-        profileName = this.propertyList.get("color-profile-name").getString();
-        intent = this.propertyList.get("rendering-intent").getEnum();
+        src = this.propertyList.get(PR_SRC).getString();
+        profileName = this.propertyList.get(PR_COLOR_PROFILE_NAME).getString();
+        intent = this.propertyList.get(PR_RENDERING_INTENT).getEnum();
         this.propertyList = null;
     }
 

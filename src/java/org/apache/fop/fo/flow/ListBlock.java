@@ -118,21 +118,21 @@ public class ListBlock extends FObj {
             // this.propertyList.get("provisional-distance-between-starts");
             // this.propertyList.get("provisional-label-separation");
 
-            this.align = this.propertyList.get("text-align").getEnum();
-            this.alignLast = this.propertyList.get("text-align-last").getEnum();
+            this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
+            this.alignLast = this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
             this.lineHeight =
-                this.propertyList.get("line-height").getLength().getValue();
+                this.propertyList.get(PR_LINE_HEIGHT).getLength().getValue();
             this.startIndent =
-                this.propertyList.get("start-indent").getLength().getValue();
+                this.propertyList.get(PR_START_INDENT).getLength().getValue();
             this.endIndent =
-                this.propertyList.get("end-indent").getLength().getValue();
+                this.propertyList.get(PR_END_INDENT).getLength().getValue();
             this.spaceBefore =
-                this.propertyList.get("space-before.optimum").getLength().getValue();
+                this.propertyList.get(PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
             this.spaceAfter =
-                this.propertyList.get("space-after.optimum").getLength().getValue();
+                this.propertyList.get(PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
             this.spaceBetweenListRows = 0;    // not used at present
             this.backgroundColor =
-                this.propertyList.get("background-color").getColorType();
+                this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
     }
 

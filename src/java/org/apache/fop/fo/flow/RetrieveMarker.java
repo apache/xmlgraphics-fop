@@ -85,11 +85,11 @@ public class RetrieveMarker extends FObjMixed {
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
         this.retrieveClassName =
-            this.propertyList.get("retrieve-class-name").getString();
+            this.propertyList.get(PR_RETRIEVE_CLASS_NAME).getString();
         this.retrievePosition =
-            this.propertyList.get("retrieve-position").getEnum();
+            this.propertyList.get(PR_RETRIEVE_POSITION).getEnum();
         this.retrieveBoundary =
-            this.propertyList.get("retrieve-boundary").getEnum();
+            this.propertyList.get(PR_RETRIEVE_BOUNDARY).getEnum();
     }
 
     public String getRetrieveClassName() {

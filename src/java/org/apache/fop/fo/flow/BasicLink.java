@@ -102,10 +102,10 @@ public class BasicLink extends Inline {
         // this.propertyList.get("baseline-shift");
         // this.propertyList.get("destination-place-offset");
         // this.propertyList.get("dominant-baseline");
-        String ext =  propertyList.get("external-destination").getString();
+        String ext =  propertyList.get(PR_EXTERNAL_DESTINATION).getString();
         setupID();
         // this.propertyList.get("indicate-destination");
-        String internal = propertyList.get("internal-destination").getString();
+        String internal = propertyList.get(PR_INTERNAL_DESTINATION).getString();
         if (ext.length() > 0) {
             link = ext;
             external = true;

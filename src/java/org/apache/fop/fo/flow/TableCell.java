@@ -233,41 +233,41 @@ public class TableCell extends FObj {
         // this.propertyList.get("width");
 
         this.iColNumber =
-            propertyList.get("column-number").getNumber().intValue();
+            propertyList.get(PR_COLUMN_NUMBER).getNumber().intValue();
         if (iColNumber < 0) {
             iColNumber = 0;
         }
         this.numColumnsSpanned =
-            this.propertyList.get("number-columns-spanned").getNumber().intValue();
+            this.propertyList.get(PR_NUMBER_COLUMNS_SPANNED).getNumber().intValue();
         if (numColumnsSpanned < 1) {
             numColumnsSpanned = 1;
         }
         this.numRowsSpanned =
-            this.propertyList.get("number-rows-spanned").getNumber().intValue();
+            this.propertyList.get(PR_NUMBER_ROWS_SPANNED).getNumber().intValue();
         if (numRowsSpanned < 1) {
             numRowsSpanned = 1;
         }
 
         this.backgroundColor =
-            this.propertyList.get("background-color").getColorType();
+            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
-        bSepBorders = (this.propertyList.get("border-collapse").getEnum()
+        bSepBorders = (this.propertyList.get(PR_BORDER_COLLAPSE).getEnum()
                        == BorderCollapse.SEPARATE);
 
         calcBorders(propMgr.getBorderAndPadding());
 
         // Vertical cell alignment
-        verticalAlign = this.propertyList.get("display-align").getEnum();
+        verticalAlign = this.propertyList.get(PR_DISPLAY_ALIGN).getEnum();
         if (verticalAlign == DisplayAlign.AUTO) {
             // Depends on all cells starting in row
             bRelativeAlign = true;
-            verticalAlign = this.propertyList.get("relative-align").getEnum();
+            verticalAlign = this.propertyList.get(PR_RELATIVE_ALIGN).getEnum();
         } else {
             bRelativeAlign = false;    // Align on a per-cell basis
         }
 
         this.minCellHeight =
-            this.propertyList.get("height").getLength().getValue();
+            this.propertyList.get(PR_HEIGHT).getLength().getValue();
     }
 
     /**
@@ -285,7 +285,7 @@ public class TableCell extends FObj {
              * but it inherits.
              */
             int iSep = propertyList.get(
-                    "border-separation.inline-progression-direction").getLength().getValue();
+                    PR_BORDER_SEPARATION | CP_INLINE_PROGRESSION_DIRECTION).getLength().getValue();
             this.startAdjust = iSep / 2 + bp.getBorderStartWidth(false)
                                + bp.getPaddingStart(false);
 
@@ -295,7 +295,7 @@ public class TableCell extends FObj {
 
             // Offset of content rectangle in the block-progression direction
             borderSeparation = propertyList.get(
-                    "border-separation.block-progression-direction").getLength().getValue();
+                    PR_BORDER_SEPARATION | CP_BLOCK_PROGRESSION_DIRECTION).getLength().getValue();
             this.beforeOffset = borderSeparation / 2
                                 + bp.getBorderBeforeWidth(false)
                                 + bp.getPaddingBefore(false);

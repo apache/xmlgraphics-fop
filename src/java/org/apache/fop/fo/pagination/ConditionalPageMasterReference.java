@@ -98,9 +98,9 @@ public class ConditionalPageMasterReference extends FObj {
 
         validateParent(parent);
 
-        this.pagePosition = this.propertyList.get("page-position").getEnum();
-        this.oddOrEven = this.propertyList.get("odd-or-even").getEnum();
-        this.blankOrNotBlank = this.propertyList.get("blank-or-not-blank").getEnum();
+        this.pagePosition = this.propertyList.get(PR_PAGE_POSITION).getEnum();
+        this.oddOrEven = this.propertyList.get(PR_ODD_OR_EVEN).getEnum();
+        this.blankOrNotBlank = this.propertyList.get(PR_BLANK_OR_NOT_BLANK).getEnum();
     }
 
     /**
@@ -136,7 +136,7 @@ public class ConditionalPageMasterReference extends FObj {
             if (pagePosition == PagePosition.REST) {
                 return false;
             } else if (pagePosition == PagePosition.LAST) {
-                // how the hell do you know at this point?
+                // ?? how can one know at this point?
                 getLogger().debug("LAST PagePosition NYI");
                 return false;
             }
@@ -144,7 +144,7 @@ public class ConditionalPageMasterReference extends FObj {
             if (pagePosition == PagePosition.FIRST) {
                 return false;
             } else if (pagePosition == PagePosition.LAST) {
-                // how the hell do you know at this point?
+                // ?? how can one know at this point?
                 getLogger().debug("LAST PagePosition NYI");
                 // potentially valid, don't return
             }

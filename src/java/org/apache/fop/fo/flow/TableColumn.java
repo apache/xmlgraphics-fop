@@ -138,17 +138,17 @@ public class TableColumn extends FObj {
         // this.propertyList.get("number-columns-spanned");
         // this.propertyList.get("visibility");
 
-        iColumnNumber = propertyList.get("column-number").getNumber().intValue();
+        iColumnNumber = propertyList.get(PR_COLUMN_NUMBER).getNumber().intValue();
 
         numColumnsRepeated =
-            propertyList.get("number-columns-repeated").getNumber().intValue();
+            propertyList.get(PR_NUMBER_COLUMNS_REPEATED).getNumber().intValue();
 
         this.backgroundColor =
-            this.propertyList.get("background-color").getColorType();
+            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
-        Property prop = this.propertyList.get("column-width");
+        Property prop = this.propertyList.get(PR_COLUMN_WIDTH);
         if (prop != null) {
-            columnWidthPropVal = propertyList.get("column-width").getLength();
+            columnWidthPropVal = propertyList.get(PR_COLUMN_WIDTH).getLength();
 
             // This won't include resolved table-units or % values yet.
             columnWidth = columnWidthPropVal.getValue();

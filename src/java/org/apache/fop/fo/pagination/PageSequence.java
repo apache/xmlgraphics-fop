@@ -189,7 +189,7 @@ public class PageSequence extends FObj {
 
         // we are now on the first page of the page sequence
         thisIsFirstPage = true;
-        ipnValue = this.propertyList.get("initial-page-number").getString();
+        ipnValue = this.propertyList.get(PR_INITIAL_PAGE_NUMBER).getString();
 
         if (ipnValue.equals("auto")) {
             pageNumberType = AUTO;
@@ -209,7 +209,7 @@ public class PageSequence extends FObj {
         }
 
 
-        String masterName = this.propertyList.get("master-reference").getString();
+        String masterName = this.propertyList.get(PR_MASTER_REFERENCE).getString();
         this.simplePageMaster =
                 this.layoutMasterSet.getSimplePageMaster(masterName);
         if (this.simplePageMaster == null) {
@@ -224,14 +224,14 @@ public class PageSequence extends FObj {
 
         // get the 'format' properties
         this.pageNumberGenerator =
-            new PageNumberGenerator(this.propertyList.get("format").getString(),
-                                    this.propertyList.get("grouping-separator").getCharacter(),
-                                    this.propertyList.get("grouping-size").getNumber().intValue(),
-                                    this.propertyList.get("letter-value").getEnum());
+            new PageNumberGenerator(this.propertyList.get(PR_FORMAT).getString(),
+                                    this.propertyList.get(PR_GROUPING_SEPARATOR).getCharacter(),
+                                    this.propertyList.get(PR_GROUPING_SIZE).getNumber().intValue(),
+                                    this.propertyList.get(PR_LETTER_VALUE).getEnum());
         this.pageNumberGenerator.enableLogging(getLogger());
 
         this.forcePageCount =
-            this.propertyList.get("force-page-count").getEnum();
+            this.propertyList.get(PR_FORCE_PAGE_COUNT).getEnum();
 
         // this.propertyList.get("country");
         // this.propertyList.get("language");

@@ -117,14 +117,14 @@ public class ListItem extends FObj {
         // this.propertyList.get("keep-with-previous");
         // this.propertyList.get("relative-align");
 
-        this.align = this.propertyList.get("text-align").getEnum();
-        this.alignLast = this.propertyList.get("text-align-last").getEnum();
+        this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
+        this.alignLast = this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
         this.lineHeight =
-            this.propertyList.get("line-height").getLength().getValue();
+            this.propertyList.get(PR_LINE_HEIGHT).getLength().getValue();
         this.spaceBefore =
-            this.propertyList.get("space-before.optimum").getLength().getValue();
+            this.propertyList.get(PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
         this.spaceAfter =
-            this.propertyList.get("space-after.optimum").getLength().getValue();
+            this.propertyList.get(PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
 
     }
 

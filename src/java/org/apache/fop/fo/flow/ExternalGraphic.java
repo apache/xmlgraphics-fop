@@ -102,27 +102,27 @@ public class ExternalGraphic extends FObj {
      * This gets the sizes for the image and the dimensions and clipping.
      */
     public void setup() {
-        url = this.propertyList.get("src").getString();
+        url = this.propertyList.get(PR_SRC).getString();
         if (url == null) {
             return;
         }
         url = ImageFactory.getURL(url);
 
         // assume lr-tb for now
-        Length ipd = propertyList.get("inline-progression-dimension.optimum").getLength();
+        Length ipd = propertyList.get(PR_INLINE_PROGRESSION_DIMENSION).getLength();
         if (!ipd.isAuto()) {
             viewWidth = ipd.getValue();
         } else {
-            ipd = propertyList.get("width").getLength();
+            ipd = propertyList.get(PR_WIDTH).getLength();
             if (!ipd.isAuto()) {
                 viewWidth = ipd.getValue();
             }
         }
-        Length bpd = propertyList.get("block-progression-dimension.optimum").getLength();
+        Length bpd = propertyList.get(PR_BLOCK_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
         if (!bpd.isAuto()) {
             viewHeight = bpd.getValue();
         } else {
-            bpd = propertyList.get("height").getLength();
+            bpd = propertyList.get(PR_HEIGHT).getLength();
             if (!bpd.isAuto()) {
                 viewHeight = bpd.getValue();
             }
@@ -133,7 +133,7 @@ public class ExternalGraphic extends FObj {
 
         int cwidth = -1;
         int cheight = -1;
-        Length ch = propertyList.get("content-height").getLength();
+        Length ch = propertyList.get(PR_CONTENT_HEIGHT).getLength();
         if (!ch.isAuto()) {
             /*if (ch.scaleToFit()) {
                 if (viewHeight != -1) {
@@ -142,7 +142,7 @@ public class ExternalGraphic extends FObj {
             } else {*/
             cheight = ch.getValue();
         }
-        Length cw = propertyList.get("content-width").getLength();
+        Length cw = propertyList.get(PR_CONTENT_WIDTH).getLength();
         if (!cw.isAuto()) {
             /*if (cw.scaleToFit()) {
                 if (viewWidth != -1) {
@@ -152,7 +152,7 @@ public class ExternalGraphic extends FObj {
             cwidth = cw.getValue();
         }
 
-        int scaling = propertyList.get("scaling").getEnum();
+        int scaling = propertyList.get(PR_SCALING).getEnum();
         if ((scaling == Scaling.UNIFORM) || (cwidth == -1) || cheight == -1) {
             ImageFactory fact = ImageFactory.getInstance();
             fopimage = fact.getImage(url, getUserAgent());
@@ -195,7 +195,7 @@ public class ExternalGraphic extends FObj {
         }
 
         if (cwidth > viewWidth || cheight > viewHeight) {
-            int overflow = propertyList.get("overflow").getEnum();
+            int overflow = propertyList.get(PR_OVERFLOW).getEnum();
             if (overflow == Overflow.HIDDEN) {
                 clip = true;
             } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {
@@ -207,7 +207,7 @@ public class ExternalGraphic extends FObj {
 
         int xoffset = 0;
         int yoffset = 0;
-        int da = propertyList.get("display-align").getEnum();
+        int da = propertyList.get(PR_DISPLAY_ALIGN).getEnum();
         switch(da) {
             case DisplayAlign.BEFORE:
             break;
@@ -222,7 +222,7 @@ public class ExternalGraphic extends FObj {
             break;
         }
 
-        int ta = propertyList.get("text-align").getEnum();
+        int ta = propertyList.get(PR_TEXT_ALIGN).getEnum();
         switch(ta) {
             case TextAlign.CENTER:
                 xoffset = (viewWidth - cwidth) / 2;
