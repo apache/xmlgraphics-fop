@@ -44,7 +44,7 @@ import org.apache.fop.fo.Properties;
  * <p>
  * This pseudo-datatype is also used as the first stage of shorthand
  * expansion.  After a shorthand's expression is parsed, the next stage of
- * resolution will generate a FromNearestSpecified object for each property
+ * resolution will generate a FromParent object for each property
  * in the expansion of the shorthand.
  *
  * @see FromNearestSpecified
