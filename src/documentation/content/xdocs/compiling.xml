@@ -8,40 +8,44 @@
   </header>
   <body>
     <section>
-    <title>Compiling FOP</title>
-    <p>Compilation is started by executing build, either as a batch file on win32 (build.bat) or as a shell script on unix. Before you
-       can start one of these scripts, you have to setup your classpath and the environment variable JAVA_HOME (see below).</p>
-     <p> The compilation uses Ant,
-       a replacement of make (you can find more information about Ant at
-       <link href="http://jakarta.apache.org/ant/">jakarta.apache.org</link>).
-        build.xml is the replacement of makefile. Look there for detailed information on the build
-        process and different targets. </p>
-       <p>A help screen is shown by calling "build usage".</p>
-       <p>If you only want to use FOP, you don't need to build it. A fop.jar comes with the distribution.</p>
-   <section>
-     <title>Setting up your classpath</title>
-     <note>You don't have to setup your classpath; all libraries needed to compile FOP are coming with
-              the distribution and are referenced by the build script, so you only need to care about them,
-              if you build FOP in any other way. See build.bat/build.sh for details. </note>
+      <title>Do You Need To Compile?</title>
+      <p>FOP distributions are either pre-compiled binary or source.
+If you are using a binary distribution, it is already compiled and there is no need to compile it again. See the <link href="download.html">Download Instructions</link> for information about whether a binary or source distribution is best for your needs.
+      </p>
     </section>
     <section>
-      <title>Setting of JAVA_HOME</title>
-      <p>You have to set the enviroment variable JAVA_HOME. It must point to your local JDK
-      root directory. This is true, even if you use JDK 1.2 or above, which normally don't need this
-      setting. It is used by Ant, the compilation software.</p>
-    </section>
-  <section>
-    <title>Problems</title>
-    <p>If you have problems compiling FOP, please try this first: </p>
-    <ul>
-      <li>delete the build directory completely and try a new build from scratch</li>
-      <li>check, whether you have an older version of xerces.jar, xalan.jar, batik.jar somewhere in
-          you classpath.</li>
-      </ul>
-      <p>If you still have problems, please look at the
-         page <link href="bugs.html">bugs</link>, for further help.</p>
+      <title>Set Up Your Environment</title>
+      <section>
+        <title>CLASSPATH</title>
+        <p>There is no generally no need to setup a classpath.
+All libraries needed to compile FOP are included in the source distribution and are referenced by the build script.
+You will only need to adjust the classpath if you build FOP in some other way. See the build scripts (build.bat for Windows, and build.sh for Unix) for details.</p>
+      </section>
+      <section>
+        <title>JAVA_HOME</title>
+        <p>Ant, which is used by the build script, requires that the enviroment variable JAVA_HOME point to your local JDK root directory.
+This is true even if you use JDK 1.2 or above, which normally don't need this setting.</p>
+      </section>
   </section>
-</section>
-</body>
+  <section>
+    <title>Run the "build" Script</title>
+    <p>Build FOP by executing the "build" script, which is located in the FOP root directory.
+The Windows batch file is build.bat, and the Unix shell script is build.sh.</p>
+    <p>The build script uses <link href="http://jakarta.apache.org/ant/">Ant</link>, a popular java-based build tool.
+The file build.xml in the FOP root directory is the blueprint that Ant uses for the build.
+Consult its contents for detailed information on the build process and the various build targets.</p>
+    <p>A help screen is shown by calling "build usage".</p>
+  </section>
+  <section>
+    <title>Troubleshooting</title>
+    <p>If you have problems building FOP, please try the following:</p>
+    <ul>
+      <li>Run the build with the target of "clean", then rerun the build.</li>
+      <li>Delete the build directory completely, then rerun the build.</li>
+      <li>Make sure you do not have a non-FOP version of xerces.jar, xalan.jar, batik.jar, or another dependency product somewhere in your CLASSPATH.</li>
+      <li>If the build still fails, see the <link href="gethelp.html">Getting Help</link> page for further help.</li>
+    </ul>
+  </section>
+  </body>
 </document>
 
