@@ -42,6 +42,9 @@ public class CommandLineOptions {
     /* output: text file  */
     private static final int TXT_OUTPUT = 6;
 
+	/* System buffers */
+	private static final int BUFFER_FILE = 7;
+	
     /* use debug mode*/
     Boolean errorDump = new Boolean(false);
     /* show configuration information */
@@ -58,10 +61,14 @@ public class CommandLineOptions {
     File xmlfile = null;
     /* name of output file  */
     File outfile = null;
+    /* name of buffer file */
+    File bufferFile = null;
     /* input mode */
     int inputmode = NOT_SET;
     /*output mode */
     int outputmode = NOT_SET;
+    /* buffer mode */
+    int buffermode = NOT_SET;
     /* language for user information */
     String language = null;
 
@@ -205,6 +212,21 @@ public class CommandLineOptions {
                     outfile = new File(args[i]);
                 } else {
                     throw new FOPException("Don't know what to do with " + args[i]);
+                }
+            }	else if (args[i].equals("-buf")) {
+                if (buffermode == NOT_SET) {
+                    buffermode = BUFFER_FILE;
+                } else {
+                    MessageHandler.errorln("ERROR: you can only set one buffer method");
+                    printUsage();
+                }
+                if ((i + 1 == args.length) ||
+                        (args[i + 1].charAt(0) == '-')) {
+                    MessageHandler.errorln("ERROR: you must specify the buffer output file");
+                    printUsage();
+                } else {
+                    bufferFile = new File (args[i + 1]);
+                    i++;
                 }
             } else {
                 printUsage();
@@ -392,6 +414,10 @@ public class CommandLineOptions {
         return language;
     }
 
+     public File getBufferFile() {
+        		return bufferFile;
+     }
+     
     public Boolean isQuiet() {
         return quiet;
     }

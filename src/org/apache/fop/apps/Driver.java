@@ -1,4 +1,4 @@
-/* 
+/* $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the 
  * LICENSE file included with these sources."
@@ -20,6 +20,7 @@ import org.apache.fop.configuration.Configuration;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
 
+import org.apache.fop.system.BufferManager;
 
 // DOM
 import org.w3c.dom.Document;
@@ -130,10 +131,15 @@ public class Driver {
     /** If true, full error stacks are reported */
     private boolean _errorDump = false;
 
+    /** the system resources that FOP will use    */
+    private BufferManager _bufferManager;
+
     /** create a new Driver */
     public Driver() {
  	_stream = null;
-	_treeBuilder = new FOTreeBuilder();
+  	_bufferManager = new BufferManager();
+ 	_treeBuilder = new FOTreeBuilder();
+  	_treeBuilder.setBufferManager(_bufferManager);
 	setupDefaultMappings();
     }
 
@@ -451,6 +457,12 @@ public class Driver {
         }
     }
 
+    /* Set up the system buffers */
+   
+    public void setBufferFile(File bufferFile) {
+    	this._bufferManager.addBufferFile(bufferFile);
+    }
+    
     /**
      * format the formatting object tree into an area tree
      */
