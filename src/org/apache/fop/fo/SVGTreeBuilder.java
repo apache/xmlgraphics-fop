@@ -105,7 +105,7 @@ public class SVGTreeBuilder extends DefaultHandler implements TreeBuilder {
     protected Hashtable unknownFOs = new Hashtable();
 
     // namespace implementation ideas pinched from John Cowan
-    protected static class NSMap {
+/*    protected static class NSMap {
 	String prefix;
 	String uri;
 	int level;
@@ -153,7 +153,7 @@ public class SVGTreeBuilder extends DefaultHandler implements TreeBuilder {
 	    }
 	}
 	return uri + "^" + localPart;
-    }
+    }*/
 
     /**
      * add a mapping from element name to maker.
@@ -215,10 +215,10 @@ public class SVGTreeBuilder extends DefaultHandler implements TreeBuilder {
 		String uri, String localName, String rawName) {
 	currentFObj.end();
 	currentFObj = (FObj) currentFObj.getParent();
-	level--;
+/*	level--;
 	while (((NSMap) namespaceStack.peek()).level > level) {
 	    namespaceStack.pop();
-	}
+	}*/
     }
 
     /** SAX Handler for the start of the document */
@@ -233,13 +233,13 @@ public class SVGTreeBuilder extends DefaultHandler implements TreeBuilder {
 	/* the formatting object started */
 	FObj fobj;
 	if(uri.equals("")) {
-		uri = "http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd";
+		uri = "http://www.w3.org/2000/svg";
 	}
 
 	/* the maker for the formatting object started */
 	FObj.Maker fobjMaker;
 
-	level++;
+/*	level++;
 	int length = attlist.getLength();
 	for (int i = 0; i < length; i++) {
 	    String att = attlist.getQName(i);
@@ -252,10 +252,10 @@ public class SVGTreeBuilder extends DefaultHandler implements TreeBuilder {
 		namespaceStack.push(new NSMap(att.substring(6), value,
 					      level));
 	    }
-	}
+	}*/
 
-	String fullName = mapName(rawName);
-
+//	String fullName = mapName(rawName);
+	String fullName = uri + "^" + localName;
 	fobjMaker = (FObj.Maker) fobjTable.get(fullName);
     PropertyListBuilder currentListBuilder = (PropertyListBuilder)this.propertylistTable.get(uri);
 
