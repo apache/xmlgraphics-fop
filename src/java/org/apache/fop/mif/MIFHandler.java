@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.mif;
 
 // Java
@@ -68,6 +68,15 @@ import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.flow.ExternalGraphic;
+import org.apache.fop.fo.flow.InstreamForeignObject;
+import org.apache.fop.fo.flow.Leader;
+import org.apache.fop.fo.flow.ListBlock;
+import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.TableBody;
+import org.apache.fop.fo.flow.TableCell;
+import org.apache.fop.fo.flow.TableRow;
 
 // TODO: do we really want every method throwing a SAXException
 
@@ -78,7 +87,7 @@ import org.apache.fop.apps.FOPException;
  * This builds an MIF file and writes it to the output.
  */
 public class MIFHandler extends StructureHandler {
-    
+
     /** the MIFFile instance */
     protected MIFFile mifFile;
     /** the OutputStream to write to */
@@ -221,6 +230,101 @@ public class MIFHandler extends StructureHandler {
     public void endBlock(Block bl) {
         para.finish(true);
         para = null;
+    }
+
+    public void startTable(Table tbl) {
+    }
+
+    public void endTable(Table tbl) {
+    }
+
+    public void startHeader(TableBody th) {
+    }
+
+    public void endHeader(TableBody th) {
+    }
+
+    public void startFooter(TableBody tf) {
+    }
+
+    public void endFooter(TableBody tf) {
+    }
+
+    public void startBody(TableBody tb) {
+    }
+
+    public void endBody(TableBody tb) {
+    }
+
+    public void startRow(TableRow tr) {
+    }
+
+    public void endRow(TableRow tr) {
+    }
+
+    public void startCell(TableCell tc) {
+    }
+
+    public void endCell(TableCell tc) {
+    }
+
+    // Lists
+    public void startList(ListBlock lb) {
+    }
+
+    public void endList(ListBlock lb) {
+    }
+
+    public void startListItem(ListItem li) {
+    }
+
+    public void endListItem(ListItem li) {
+    }
+
+    public void startListLabel() {
+    }
+
+    public void endListLabel() {
+    }
+
+    public void startListBody() {
+    }
+
+    public void endListBody() {
+    }
+
+    // Static Regions
+    public void startStatic() {
+    }
+
+    public void endStatic() {
+    }
+
+    public void startMarkup() {
+    }
+
+    public void endMarkup() {
+    }
+
+    public void startLink() {
+    }
+
+    public void endLink() {
+    }
+
+    public void image(ExternalGraphic eg) {
+    }
+
+    public void pageRef() {
+    }
+
+    public void foreignObject(InstreamForeignObject ifo) {
+    }
+
+    public void footnote() {
+    }
+
+    public void leader(Leader l) {
     }
 
     /**
