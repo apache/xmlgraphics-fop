@@ -18,6 +18,9 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -26,8 +29,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.fo.LMVisited;
+import org.apache.fop.layoutmgr.RetrieveMarkerLayoutManager;
 
 
 /**
@@ -35,7 +37,7 @@ import org.apache.fop.fo.LMVisited;
  * This will create a layout manager that will retrieve
  * a marker based on the information.
  */
-public class RetrieveMarker extends FObjMixed implements LMVisited {
+public class RetrieveMarker extends FObjMixed {
 
     private String retrieveClassName;
     private int retrievePosition;
@@ -51,15 +53,6 @@ public class RetrieveMarker extends FObjMixed implements LMVisited {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * XSL Content Model: empty
-     */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
-            invalidChildError(loc, nsURI, localName);
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
@@ -70,6 +63,15 @@ public class RetrieveMarker extends FObjMixed implements LMVisited {
             this.propertyList.get(PR_RETRIEVE_POSITION).getEnum();
         this.retrieveBoundary =
             this.propertyList.get(PR_RETRIEVE_BOUNDARY).getEnum();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: empty
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+            invalidChildError(loc, nsURI, localName);
     }
 
     public String getRetrieveClassName() {
@@ -85,14 +87,16 @@ public class RetrieveMarker extends FObjMixed implements LMVisited {
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveRetrieveMarker(this);
+    public void addLayoutManager(List list) { 	 
+        RetrieveMarkerLayoutManager lm = new RetrieveMarkerLayoutManager(this);
+        list.add(lm);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:retrieve-marker";
     }
@@ -103,5 +107,4 @@ public class RetrieveMarker extends FObjMixed implements LMVisited {
     public int getNameId() {
         return FO_RETRIEVE_MARKER;
     }
-
 }
