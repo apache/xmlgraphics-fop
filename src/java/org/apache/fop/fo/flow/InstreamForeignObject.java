@@ -37,8 +37,6 @@ import org.apache.fop.fo.FObj;
  */
 public class InstreamForeignObject extends FObj {
 
-    boolean hasNonXSLNamespaceElement = false;
-
     /**
      * constructs an instream-foreign-object object (called by Maker).
      *
@@ -56,10 +54,8 @@ public class InstreamForeignObject extends FObj {
         throws SAXParseException {
         if (nsURI == FO_URI) {
             invalidChildError(loc, nsURI, localName);
-        } else if (hasNonXSLNamespaceElement) {
+        } else if (childNodes != null) {
             tooManyNodesError(loc, "child element");
-        } else {
-            hasNonXSLNamespaceElement = true;
         }
     }
 
@@ -69,7 +65,7 @@ public class InstreamForeignObject extends FObj {
      * @see org.apache.fop.fo.FONode#end
      */
     protected void endOfNode() throws SAXParseException {
-        if (!hasNonXSLNamespaceElement) {
+        if (childNodes == null) {
             missingChildElementError("one (1) non-XSL namespace child");
         }
     }

@@ -28,6 +28,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.Bookmarks;
 
@@ -49,6 +50,11 @@ public class Root extends FObj {
     private int runningPageNumberCounter = 0;
 
     /**
+     * FOEventHandler object for this FO Tree
+     */
+    private FOEventHandler foEventHandler = null;
+     
+     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public Root(FONode parent) {
@@ -107,6 +113,25 @@ public class Root extends FObj {
     }
 
     /**
+     * Sets the FOEventHandler object that this Root is attached to
+     * @param foEventHandler the FOEventHandler object
+     */
+    public void setFOEventHandler(FOEventHandler foEventHandler) {
+        this.foEventHandler = foEventHandler;
+    }
+
+    /** 	 
+     * This method overrides the FONode version. The FONode version calls the 	 
+     * method by the same name for the parent object. Since Root is at the top 	 
+     * of the tree, it returns the actual FOEventHandler object. Thus, any FONode 	 
+     * can use this chain to find which FOEventHandler it is being built for. 	 
+     * @return the FOEventHandler implementation that this Root is attached to 	 
+     */ 	 
+    public FOEventHandler getFOEventHandler() { 	 
+        return foEventHandler; 	 
+    }
+
+     /**
      * Returns the number of pages generated (over all PageSequence instances).
      * @return the number of pages
      */

@@ -218,7 +218,6 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     public void startDocument() throws SAXException {
         rootFObj = null;    // allows FOTreeBuilder to be reused
-        FONode.setFOEventHandler(foEventHandler);
         if (log.isDebugEnabled()) {
             log.debug("Building formatting object tree");
         }
@@ -278,6 +277,7 @@ public class FOTreeBuilder extends DefaultHandler {
 
         if (rootFObj == null) {
             rootFObj = (Root) foNode;
+            rootFObj.setFOEventHandler(foEventHandler);
         } else {
             currentFObj.addChildNode(foNode);
         }
