@@ -93,6 +93,42 @@ public class LayoutMasterSet extends FObj {
         if (childNodes == null) {
             missingChildElementError("(simple-page-master|page-sequence-master)+");
         }
+        checkRegionNames();
+    }
+
+    /**
+     * Section 7.25.7: check to see that if a region-name is a
+     * duplicate, that it maps to the same fo region-class.
+     * @throws SAXParseException if there's a name duplication
+     */
+    private void checkRegionNames() throws SAXParseException {
+        // (user-entered) region-name to default region map.
+        Map allRegions = new java.util.HashMap();
+        for (Iterator spm = simplePageMasters.values().iterator();
+                spm.hasNext();) {
+            SimplePageMaster simplePageMaster =
+                (SimplePageMaster)spm.next();
+            Map spmRegions = simplePageMaster.getRegions();
+            for (Iterator e = spmRegions.values().iterator();
+                    e.hasNext();) {
+                Region region = (Region) e.next();
+                if (allRegions.containsKey(region.getRegionName())) {
+                    String defaultRegionName =
+                        (String) allRegions.get(region.getRegionName());
+                    if (!defaultRegionName.equals(region.getDefaultRegionName())) {
+                        throw new SAXParseException("Region-name ("
+                                               + region.getRegionName()
+                                               + ") is being mapped to multiple "
+                                               + "region-classes ("
+                                               + defaultRegionName + " and "
+                                               + region.getDefaultRegionName()
+                                               + ")", locator);
+                    }
+                }
+                allRegions.put(region.getRegionName(),
+                               region.getDefaultRegionName());
+            }
+        }
     }
 
     /**
@@ -164,41 +200,6 @@ public class LayoutMasterSet extends FObj {
      */
     public PageSequenceMaster getPageSequenceMaster(String masterName) {
         return (PageSequenceMaster)this.pageSequenceMasters.get(masterName);
-    }
-
-    /**
-     * Section 7.25.7: check to see that if a region-name is a
-     * duplicate, that it maps to the same fo region-class.
-     * @throws SAXParseException if there's a name duplication
-     */
-    public void checkRegionNames() throws SAXParseException {
-        // (user-entered) region-name to default region map.
-        Map allRegions = new java.util.HashMap();
-        for (Iterator spm = simplePageMasters.values().iterator();
-                spm.hasNext();) {
-            SimplePageMaster simplePageMaster =
-                (SimplePageMaster)spm.next();
-            Map spmRegions = simplePageMaster.getRegions();
-            for (Iterator e = spmRegions.values().iterator();
-                    e.hasNext();) {
-                Region region = (Region) e.next();
-                if (allRegions.containsKey(region.getRegionName())) {
-                    String defaultRegionName =
-                        (String) allRegions.get(region.getRegionName());
-                    if (!defaultRegionName.equals(region.getDefaultRegionName())) {
-                        throw new SAXParseException("Region-name ("
-                                               + region.getRegionName()
-                                               + ") is being mapped to multiple "
-                                               + "region-classes ("
-                                               + defaultRegionName + " and "
-                                               + region.getDefaultRegionName()
-                                               + ")", locator);
-                    }
-                }
-                allRegions.put(region.getRegionName(),
-                               region.getDefaultRegionName());
-            }
-        }
     }
 
     /**

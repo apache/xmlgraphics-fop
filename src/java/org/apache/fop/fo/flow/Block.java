@@ -166,7 +166,7 @@ public class Block extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    public void addChildNode(FONode child) {
+    public void addChildNode(FONode child) throws SAXParseException {
         // Handle whitespace based on values of properties
         // Handle a sequence of inline-producing child nodes in
         // one pass

@@ -116,9 +116,9 @@ public class MIFHandler extends FOInputHandler {
         // get the layout master set
         // setup the pages for this sequence
         String name = pageSeq.getPropString(Constants.PR_MASTER_REFERENCE);
-        SimplePageMaster spm = pageSeq.getLayoutMasterSet().getSimplePageMaster(name);
+        SimplePageMaster spm = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(name);
         if (spm == null) {
-            PageSequenceMaster psm = pageSeq.getLayoutMasterSet().getPageSequenceMaster(name);
+            PageSequenceMaster psm = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(name);
         } else {
             // create simple master with regions
             MIFElement prop = new MIFElement("PageType");
@@ -159,8 +159,7 @@ public class MIFHandler extends FOInputHandler {
     /**
      * @see org.apache.fop.fo.FOInputHandler#endPageSequence(PageSequence)
      */
-    public void endPageSequence(PageSequence pageSeq) throws FOPException {
-
+    public void endPageSequence(PageSequence pageSeq) {
     }
 
     /**

@@ -351,8 +351,7 @@ public class AreaTreeHandler extends FOInputHandler {
      * @param pageSequence the page sequence ending
      * @throws FOPException if there is an error formatting the pages
      */
-    public void endPageSequence(PageSequence pageSequence)
-                throws FOPException {
+    public void endPageSequence(PageSequence pageSequence) {
         //areaTree.setFontInfo(fontInfo);
 
         if (collectStatistics) {
@@ -377,8 +376,7 @@ public class AreaTreeHandler extends FOInputHandler {
      * @param areaTree the area tree to format this page sequence into
      * @throws FOPException if there is an error formatting the contents
      */
-    private void formatPageSequence(PageSequence pageSeq) 
-            throws FOPException {
+    private void formatPageSequence(PageSequence pageSeq) {
         Title title = null;
         if (pageSeq.getTitleFO() != null) {
             title = getTitleArea(pageSeq.getTitleFO());

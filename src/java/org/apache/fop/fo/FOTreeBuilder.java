@@ -204,10 +204,11 @@ public class FOTreeBuilder extends DefaultHandler {
      * SAX Handler for characters
      * @see org.xml.sax.ContentHandler#characters(char[], int, int)
      */
-    public void characters(char[] data, int start, int length) {
-        if (currentFObj != null) {
-            currentFObj.addCharacters(data, start, start + length, locator);
-        }
+    public void characters(char[] data, int start, int length) 
+        throws SAXParseException {
+            if (currentFObj != null) {
+                currentFObj.addCharacters(data, start, start + length, locator);
+            }
     }
 
     /**

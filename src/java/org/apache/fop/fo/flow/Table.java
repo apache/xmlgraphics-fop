@@ -109,7 +109,7 @@ public class Table extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    protected void addChildNode(FONode child) {
+    protected void addChildNode(FONode child) throws SAXParseException {
         if (child.getName().equals("fo:table-column")) {
             if (columns == null) {
                 columns = new ArrayList();

@@ -34,24 +34,14 @@ import org.apache.fop.layoutmgr.FlowLayoutManager;
 
 /**
  * Class modelling the fo:flow object.
+ * @todo check need for markerSnapshot, contentWidth
  */
 public class Flow extends FObj {
-
-    /**
-     * PageSequence container
-     */
-    private PageSequence pageSequence;
 
     /**
      * ArrayList to store snapshot
      */
     private ArrayList markerSnapshot;
-
-    /**
-     * flow-name attribute: indicates the region the content of this
-     * flow should go to.
-     */
-    protected String flowName;
 
     /**
      * Content-width of current column area during layout
@@ -74,16 +64,13 @@ public class Flow extends FObj {
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
 
-        this.pageSequence = (PageSequence) parent;
-
-        flowName = getPropString(PR_FLOW_NAME);
+        // check flow_name property
+        String flowName = getPropString(PR_FLOW_NAME);
 
         if (flowName == null || flowName.equals("")) {
             missingPropertyError("flow-name");
         }
-        
-        // Now done in addChild of page-sequence
-        //pageSequence.addFlow(this);
+
         getFOInputHandler().startFlow(this);
     }
 
