@@ -1,5 +1,7 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fix for bug #20239 (Failure while generating XML metrics files from TT
+  collections when names are in Unicode (JM)
 - Fix for bug #19797 (image elements in SVG may produce blank output) (JM)
   Submitted by: Zhong(George) Yi <yidaomao@yahoo.com>
 - Teach FOP under NT/2000/XP to start when the user is in any directory,
