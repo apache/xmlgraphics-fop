@@ -52,6 +52,7 @@ package org.apache.fop.fo.expr;
 
 import java.util.Stack;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.FObj;
@@ -107,7 +108,7 @@ public class PropertyInfo {
      * @return the current font-size value as base units (milli-points).
      */
     public int currentFontSize() {
-        return plist.get("font-size").getLength().getValue();
+        return plist.get(Constants.PR_FONT_SIZE).getLength().getValue();
     }
 
     /**

@@ -183,7 +183,7 @@ public class RTFHandler extends FOInputHandler {
 
             //read page size and margins, if specified
             Property prop;
-            if ((prop = pageSeq.propertyList.get("master-reference")) != null) {
+            if ((prop = pageSeq.propertyList.get(Constants.PR_MASTER_REFERENCE)) != null) {
                 String reference = prop.getString();
 
                 SimplePageMaster pagemaster 
@@ -580,7 +580,7 @@ public class RTFHandler extends FOInputHandler {
 
             //process number-rows-spanned attribute
             Property p = null;
-            if ((p = tc.propertyList.get("number-rows-spanned")) != null) {
+            if ((p = tc.propertyList.get(Constants.PR_NUMBER_ROWS_SPANNED)) != null) {
                 // Start vertical merge
                 cell.setVMerge(RtfTableCell.MERGE_START);
 
@@ -757,7 +757,7 @@ public class RTFHandler extends FOInputHandler {
             Property p = null; 
                
             //get source file
-            if ((p = eg.propertyList.get("src")) != null) {
+            if ((p = eg.propertyList.get(Constants.PR_SRC)) != null) {
                 newGraphic.setURL (p.getString());
             } else {
                 log.error("The attribute 'src' of <fo:external-graphic> is required.");
@@ -765,7 +765,7 @@ public class RTFHandler extends FOInputHandler {
             }
             
             //get scaling
-            if ((p = eg.propertyList.get("scaling")) != null) {
+            if ((p = eg.propertyList.get(Constants.PR_SCALING)) != null) {
                 EnumProperty e = (EnumProperty)p;
                 if (p.getEnum() == Constants.UNIFORM) {
                     newGraphic.setScaling ("uniform");
@@ -773,7 +773,7 @@ public class RTFHandler extends FOInputHandler {
             }
             
             //get width
-            if ((p = eg.propertyList.get("width")) != null) {
+            if ((p = eg.propertyList.get(Constants.PR_WIDTH)) != null) {
                 LengthProperty lengthProp = (LengthProperty)p;
                 if (lengthProp.getLength() instanceof FixedLength) {
                     Float f = new Float(lengthProp.getLength().getValue() / 1000f);
@@ -783,7 +783,7 @@ public class RTFHandler extends FOInputHandler {
             }
             
             //get height
-            if ((p = eg.propertyList.get("height")) != null) {
+            if ((p = eg.propertyList.get(Constants.PR_HEIGHT)) != null) {
                 LengthProperty lengthProp = (LengthProperty)p;
                 if (lengthProp.getLength() instanceof FixedLength) {
                     Float f = new Float(lengthProp.getLength().getValue() / 1000f);

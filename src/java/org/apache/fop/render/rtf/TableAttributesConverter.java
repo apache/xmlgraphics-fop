@@ -120,7 +120,7 @@ public class TableAttributesConverter {
 
         LengthProperty lengthProp = null;
         // margin-left
-        lengthProp = (LengthProperty)propertyList.get("margin-left");
+        lengthProp = (LengthProperty)propertyList.get(Constants.PR_MARGIN_LEFT);
         if (lengthProp != null) {
             Float f = new Float(lengthProp.getLength().getValue() / 1000f);
             final String sValue = f.toString() + "pt";
@@ -218,7 +218,7 @@ public class TableAttributesConverter {
         }
 
         // Border styles do not inherit from parent
-        if ((p = props.get("border-style")) != null) {
+        if ((p = props.get(Constants.PR_BORDER_STYLE)) != null) {
             log.warn("border-style not implemented. Please use border-style-left, "
                      + "...-right, ...-top or ...-bottom");
             /*
@@ -254,7 +254,7 @@ public class TableAttributesConverter {
             isBorderPresent = true;
         }
 
-        if ((p = props.get("border-width")) != null) {
+        if ((p = props.get(Constants.PR_BORDER_WIDTH)) != null) {
             ListProperty listprop = (ListProperty)p;
             LengthProperty lengthprop = (LengthProperty)listprop.getList().get(0);
 
@@ -312,26 +312,26 @@ public class TableAttributesConverter {
         //need to set a default width
 
         //check for keep-together row attribute
-        if ((p = props.get("keep-together.within-page")) != null) {
+        if ((p = props.get(Constants.PR_KEEP_TOGETHER | Constants.CP_WITHIN_PAGE)) != null) {
             attrib.set(ITableAttributes.ROW_KEEP_TOGETHER);
         }
 
-        if ((p = props.get("keep-together")) != null) {
+        if ((p = props.get(Constants.PR_KEEP_TOGETHER)) != null) {
             attrib.set(ITableAttributes.ROW_KEEP_TOGETHER);
         }
 
         //Check for keep-with-next row attribute.
-        if ((p = props.get("keep-together")) != null) {
+        if ((p = props.get(Constants.PR_KEEP_WITH_NEXT)) != null) {
             attrib.set(ITableAttributes.ROW_KEEP_WITH_NEXT);
         }
 
         //Check for keep-with-previous row attribute.
-        if ((p = props.get("keep-with-previous")) != null) {
+        if ((p = props.get(Constants.PR_KEEP_WITH_PREVIOUS)) != null) {
             attrib.set(ITableAttributes.ROW_KEEP_WITH_PREVIOUS);
         }
 
         //Check for height row attribute.
-        if ((p = props.get("height")) != null) {
+        if ((p = props.get(Constants.PR_HEIGHT)) != null) {
             Float f = new Float(p.getLength().getValue() / 1000);
             attrValue = f.toString() + "pt";
             attrib.set(ITableAttributes.ROW_HEIGHT,
@@ -351,7 +351,7 @@ public class TableAttributesConverter {
          * it is implemented that the border type is the value of the border
          * place.
          */
-        if ((p = props.get("border-style")) != null) {
+        if ((p = props.get(Constants.PR_BORDER_STYLE)) != null) {
             log.warn("border-style not implemented. Please use border-style-left, "
                      + "...-right, ...-top or ...-bottom");
 /*
@@ -424,7 +424,7 @@ public class TableAttributesConverter {
             isBorderPresent = true;
         }
 
-        if ((p = props.get("border-width")) != null) {
+        if ((p = props.get(Constants.PR_BORDER_WIDTH)) != null) {
             ListProperty listprop = (ListProperty)p;
             LengthProperty lengthprop = (LengthProperty)listprop.getList().get(0);
 

@@ -70,8 +70,8 @@ import org.apache.fop.area.Resolveable;
 
 import org.apache.fop.datatypes.FODimension;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
-
 import org.apache.fop.fo.pagination.PageNumberGenerator;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
@@ -81,7 +81,6 @@ import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.Overflow;
 
 import java.util.ArrayList;
@@ -770,9 +769,9 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
     private PageViewport createPageAreas(SimplePageMaster spm) {
         int pageWidth =
-                spm.propertyList.get("page-width").getLength().getValue();
+                spm.propertyList.get(PR_PAGE_WIDTH).getLength().getValue();
         int pageHeight =
-                spm.propertyList.get("page-height").getLength().getValue();
+                spm.propertyList.get(PR_PAGE_HEIGHT).getLength().getValue();
         // Get absolute margin properties (top, left, bottom, right)
         CommonMarginBlock mProps = spm.getPropertyManager().getMarginProps();
 
@@ -858,7 +857,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         BodyRegion body = new BodyRegion();
         setRegionPosition(r, body, absRegVPRect);
         int columnCount =
-                r.propertyList.get("column-count").getNumber().intValue();
+                r.propertyList.get(PR_COLUMN_COUNT).getNumber().intValue();
         if ((columnCount > 1) && (r.overflow == Overflow.SCROLL)) {
             // recover by setting 'column-count' to 1. This is allowed but
             // not required by the spec.
@@ -869,7 +868,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         body.setColumnCount(columnCount);
 
         int columnGap =
-                r.propertyList.get("column-gap").getLength().getValue();
+                r.propertyList.get(PR_COLUMN_GAP).getLength().getValue();
         body.setColumnGap(columnGap);
         return body;
     }

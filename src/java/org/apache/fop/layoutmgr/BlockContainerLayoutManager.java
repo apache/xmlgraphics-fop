@@ -107,14 +107,14 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             absoluteCTM = CTM.getCTMandRelDims(pm.getAbsRefOrient(),
                 pm.getWritingMode(), rect, relDims);
         }
-        height = pm.getPropertyList().get("height").getLength();
-        width = pm.getPropertyList().get("width").getLength();
+        height = pm.getPropertyList().get(PR_HEIGHT).getLength();
+        width = pm.getPropertyList().get(PR_WIDTH).getLength();
     }
 
     protected int getRotatedIPD() {
         PropertyList props = propManager.getPropertyList();
-        int height = props.get("height").getLength().getValue();
-        height = props.get("inline-progression-dimension.optimum").getLength().getValue();
+        int height = props.get(PR_HEIGHT).getLength().getValue();
+        height = props.get(PR_INLINE_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength().getValue();
 
         return height;
     }

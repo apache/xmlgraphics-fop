@@ -56,6 +56,7 @@ import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyManager;
 
 import org.apache.avalon.framework.logger.Logger;
@@ -66,7 +67,7 @@ import java.util.Map;
 /**
  * The base class for all LayoutManagers.
  */
-public abstract class AbstractLayoutManager implements LayoutProcessor {
+public abstract class AbstractLayoutManager implements LayoutProcessor, Constants {
     protected FOUserAgent userAgent;
     protected LayoutProcessor parentLM = null;
     protected FObj fobj;

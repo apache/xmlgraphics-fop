@@ -55,7 +55,6 @@ import org.xml.sax.Attributes;
 
 // FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FOTreeVisitor;
@@ -90,7 +89,7 @@ public class Marker extends FObjMixed {
         super.handleAttrs(attlist);
 
         this.markerClassName =
-            this.propertyList.get(Constants.PR_MARKER_CLASS_NAME).getString();
+            this.propertyList.get(PR_MARKER_CLASS_NAME).getString();
     }
 
     /**

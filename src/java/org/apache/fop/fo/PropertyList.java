@@ -310,7 +310,7 @@ public class PropertyList extends HashMap {
      */
     public Property get(String propertyName) {
         return get(propertyName, true, true);
-    } 
+    }
 
     /**
      * Return the property on the current FlowObject. Depending on the passed flags,

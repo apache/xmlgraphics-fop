@@ -57,6 +57,7 @@ import java.util.List;
 import org.xml.sax.Attributes;
 
 // FOP
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
@@ -99,7 +100,7 @@ public class PageSequenceMaster extends FObj {
 
         if (parent.getName().equals("fo:layout-master-set")) {
             this.layoutMasterSet = (LayoutMasterSet)parent;
-            String pm = this.propertyList.get("master-name").getString();
+            String pm = this.propertyList.get(Constants.PR_MASTER_NAME).getString();
             if (pm == null) {
                 getLogger().warn("page-sequence-master does not have "
                                        + "a master-name and so is being ignored");

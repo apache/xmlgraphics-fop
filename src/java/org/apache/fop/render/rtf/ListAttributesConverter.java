@@ -51,6 +51,7 @@ package org.apache.fop.render.rtf;
 
 //FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.PropertyList;
@@ -83,7 +84,7 @@ public class ListAttributesConverter {
         int iStartIndentInTwips = 0;
         
         //start-indent
-        if ((prop = propertyList.get("start-indent")) != null) {
+        if ((prop = propertyList.get(Constants.PR_START_INDENT)) != null) {
             LengthProperty lengthprop = (LengthProperty)prop;
 
             Float f = new Float(lengthprop.getLength().getValue() / 1000f);
@@ -97,7 +98,7 @@ public class ListAttributesConverter {
         attrib.set(RtfListTable.LIST_INDENT, iStartIndentInTwips);
         
         //end-indent
-        if ((prop = propertyList.get("end-indent")) != null) {
+        if ((prop = propertyList.get(Constants.PR_END_INDENT)) != null) {
             LengthProperty lengthprop = (LengthProperty)prop;
 
             Float f = new Float(lengthprop.getLength().getValue() / 1000f);

@@ -50,6 +50,7 @@
  */
 package org.apache.fop.fo.expr;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.ListItem;
@@ -77,7 +78,7 @@ public class BodyStartFunction extends FunctionBase {
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
         Numeric distance =
-            pInfo.getPropertyList().get("provisional-distance-between-starts").getNumeric();
+            pInfo.getPropertyList().get(Constants.PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getNumeric();
 
         FONode item = pInfo.getFO();
         while (item != null && !(item instanceof ListItem)) {
@@ -88,7 +89,7 @@ public class BodyStartFunction extends FunctionBase {
         }
 
         Numeric startIndent =
-            ((ListItem)item).propertyList.get("start-indent").getNumeric();
+            ((ListItem)item).propertyList.get(Constants.PR_START_INDENT).getNumeric();
 
         return new NumericProperty(distance.add(startIndent));
     }
