@@ -442,6 +442,9 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
             }
             iWScount += ai.m_iWScount;
         }
+        if(ai == null) {
+            return;
+        }
         // Calculate total adjustment
         int iAdjust = 0;
         double dSpaceAdjust = context.getSpaceAdjust();
