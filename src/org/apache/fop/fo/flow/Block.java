@@ -257,6 +257,9 @@ public class Block extends FObjMixed {
 				}
 
 				blockArea.end();
+
+				area.setMaxHeight(area.getMaxHeight() - spaceLeft + blockArea.getMaxHeight());
+
 				area.addChild(blockArea);
 
 				/* should this be combined into above? */

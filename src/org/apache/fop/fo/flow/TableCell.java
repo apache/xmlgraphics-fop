@@ -163,6 +163,7 @@ public class TableCell extends FObj {
 						area.getIDReferences().configureID(id,area);
 				}
 
+				int spaceLeft = area.spaceLeft();
 	this.areaContainer =
 			new AreaContainer(propMgr.getFontState(area.getFontInfo()),
 												startOffset - area.getBorderLeftWidth(),
@@ -195,6 +196,7 @@ public class TableCell extends FObj {
 				return new Status(Status.AREA_FULL_SOME);
 		}
 			}
+		area.setMaxHeight(area.getMaxHeight() - spaceLeft + this.areaContainer.getMaxHeight());
 	}
 	areaContainer.end();
 	area.addChild(areaContainer);

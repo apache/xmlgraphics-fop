@@ -155,6 +155,7 @@ public class Table extends FObj {
 						area.getIDReferences().configureID(id, area);
 				}
 
+				int spaceLeft = area.spaceLeft();
 				this.areaContainer =
 					new AreaContainer(propMgr.getFontState(area.getFontInfo()), 0, 0, area.getAllocationWidth(),
 														area.spaceLeft(), Position.STATIC);
@@ -223,6 +224,7 @@ public class Table extends FObj {
 										}
 										addedHeader = true;
 										tableHeader.resetMarker();
+        								area.setMaxHeight(area.getMaxHeight() - spaceLeft + this.areaContainer.getMaxHeight());
 								}
 								if (tableFooter != null && !this.omitFooterAtBreak && !addedFooter) {
 										if ((status = tableFooter.layout(areaContainer)).
@@ -271,6 +273,7 @@ public class Table extends FObj {
 								} else {
 										bodyCount++;
 								}
+								area.setMaxHeight(area.getMaxHeight() - spaceLeft + this.areaContainer.getMaxHeight());
 								if (tableFooter != null && !this.omitFooterAtBreak) {
 										// move footer to bottom of area and move up body
 										// space before and after footer will make this wrong

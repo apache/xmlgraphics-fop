@@ -143,6 +143,7 @@ public class TableBody extends FObj {
 						area.getIDReferences().configureID(id, area);
 				}
 
+				int spaceLeft = area.spaceLeft();
 				this.areaContainer = new AreaContainer(propMgr.getFontState(area.getFontInfo()),
 																							 -area.getBorderLeftWidth(),
 																							 -area.getBorderTopWidth() + area.getHeight(),
@@ -260,6 +261,7 @@ public class TableBody extends FObj {
 								endKeepGroup = true;
 						}
 						lastRow = row;
+						area.setMaxHeight(area.getMaxHeight() - spaceLeft + this.areaContainer.getMaxHeight());
 				}
 				area.addChild(areaContainer);
 				areaContainer.end();
