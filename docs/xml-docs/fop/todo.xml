@@ -41,6 +41,12 @@ Currently all properties are in the xml file. We need to handle all default
 values properly (including ones that change depending on the element) and
 all possible values.
     </p>
+    <p>
+To see if a property is implemented then look in the src/codegen/foproperties.xml file.
+    </p>
+    <p>
+To see if a particular element uses this property then look in the element code. This is generally found in the package org.apache.fop.fo.flow.*.
+    </p>
 </s3>
 <s3 title="Property Resolution">
     <p>
@@ -118,8 +124,9 @@ suggested by Vincent Hardy.
 </s3>
 <s3 title="stream encoding">
     <p>
-support for different encoding on different types of streams
+Support for different encoding on different types of streams
 in pdf document.
+For example images.
     </p>
 </s3>
 <s3 title="svg features">

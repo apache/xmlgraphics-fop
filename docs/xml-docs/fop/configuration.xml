@@ -12,7 +12,8 @@
        configuration files are xml files, so keep them at least well-formed ;-)
     </p>
     <p>The file userconfig.xml is not read automatically, but the user must specify its use on 
-       the command line. See <jump href="running.html">Running Fop</jump> for details. 
+       the command line. See <jump href="running.html">Running Fop</jump>
+       or <jump href="embedding.html">Embedding Fop</jump> for details. 
     </p>
   </s2>
   <s2 title="setting up hyphenation">
