@@ -50,14 +50,18 @@
  */ 
 package org.apache.fop.pdf;
 
+// Java
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.fop.util.StreamUtilities;
+// Apache libs
 import org.apache.avalon.framework.container.ContainerUtil;
+import org.apache.commons.io.IOUtil;
+
+// FOP
 import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.Font;
@@ -1163,7 +1167,7 @@ public class PDFFactory {
                         embeddedFont = new PDFT1Stream();
                         ((PDFT1Stream)embeddedFont).setData(pfb);
                     } else {
-                        byte[] file = StreamUtilities.toByteArray(in, 128000);
+                        byte[] file = IOUtil.toByteArray(in);
                         embeddedFont = new PDFTTFStream(file.length);
                         ((PDFTTFStream)embeddedFont).setData(file, file.length);
                     }
