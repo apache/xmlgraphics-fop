@@ -248,6 +248,19 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="fontfile.xsl" value="${build.codegen}/font-file.xsl"/>  
     <property name="t1fontfile.xsl" value="${build.codegen}/t1font-file.xsl"/>
     <property name="ttffontfile.xsl" value="${build.codegen}/ttffontfile.xsl"/>
+
+    <property name="Courier.xml" value="${build.codegen}/Courier.xml"/>  
+    <property name="Courier-Oblique.xml" value="${build.codegen}/CourierOblique.xml"/>
+    <property name="Courier-Bold.xml" value="${build.codegen}/CourierBold.xml"/>  
+    <property name="Courier-BoldOblique.xml" value="${build.codegen}/CourierBoldOblique.xml"/>
+    <property name="Helvetica.xml" value="${build.codegen}/Helvetica.xml"/>
+    <property name="Helvetica-Oblique.xml" value="${build.codegen}/HelveticaOblique.xml"/> 
+    <property name="Helvetica-Bold.xml" value="${build.codegen}/HelveticaBold.xml"/>
+    <property name="Helvetica-BoldOblique.xml" value="${build.codegen}/HelveticaBoldOblique.xml"/>
+    <property name="Times-Roman.xml" value="${build.codegen}/TimesRoman.xml"/>
+    <property name="Times-Italic.xml" value="${build.codegen}/TimesItalic.xml"/>  
+    <property name="Times-Bold.xml" value="${build.codegen}/TimesBold.xml"/>  
+    <property name="Times-BoldItalic.xml" value="${build.codegen}/TimesBoldItalic.xml"/>
     <property name="ZapfDingbats.xml" value="${build.codegen}/ZapfDingbats.xml"/>
     <property name="Symbol.xml" value="${build.codegen}/Symbol.xml"/>
 
@@ -387,11 +400,96 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <style in="${encodings.xml}" style="${charlist.xsl}" 
         out="${build.src}/${replacestring}/render/pdf/CodePointMapping.java"/>
 
+    <!--
     <style basedir="src/codegen" includes="Helvetica*.xml,Times*.xml,Courier*.xml"
         style="${fontfile.xsl}"
         destdir="${build.src}/${replacestring}/render/pdf/fonts" extension=".java">
         <param name="encoding" expression="${textfontencoding}"/>
     </style>
+    -->
+
+    <style
+       in="${Courier.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/Courier.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Courier-Oblique.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/CourierOblique.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Courier-Bold.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/CourierBold.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Courier-BoldOblique.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/CourierBoldOblique.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Helvetica.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/Helvetica.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Helvetica-Bold.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBold.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Helvetica-Oblique.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/HelveticaOblique.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Helvetica-BoldOblique.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBoldOblique.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Times-Roman.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/TimesRoman.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Times-Italic.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/TimesItalic.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Times-Bold.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/TimesBold.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Times-BoldItalic.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/TimesBoldItalic.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Symbol.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/Symbol.java"/>
+    <style
+       in="${ZapfDingbats.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/ZapfDingbats.java"/>
+
+    
     <style
         in="${Symbol.xml}" style="${fontfile.xsl}"
         out="${build.src}/${replacestring}/render/pdf/fonts/Symbol.java"/>
