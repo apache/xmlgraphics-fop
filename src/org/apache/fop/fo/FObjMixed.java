@@ -41,7 +41,7 @@ public abstract class FObjMixed extends FObj {
     }
 
     private final void finalizeText() {
-        if (textBuffer!=null) {
+        if (textBuffer != null && textBuffer.length() > 0) {
             FOText ft = new FOText(textBuffer, this);
             ft.setTextState(textState);
             super.addChild(ft);
