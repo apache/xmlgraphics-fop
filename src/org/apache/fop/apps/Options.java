@@ -98,8 +98,11 @@ public class Options {
 	//set base directory
         String baseDir = Configuration.getStringValue("baseDir");
         if (baseDir == null) {
-            baseDir = new File(clOptions.getInputFile().getAbsolutePath()).getParent();
-            Configuration.put("baseDir",baseDir);
+            try {
+                baseDir = new File(clOptions.getInputFile().getAbsolutePath()).getParentFile().toURL().toExternalForm();
+                Configuration.put("baseDir", baseDir);
+            } catch(Exception e) {
+            }
         }
         if (errorDump) {
             MessageHandler.logln("base directory: " + baseDir);
