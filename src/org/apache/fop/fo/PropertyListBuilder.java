@@ -178,7 +178,7 @@ public class PropertyListBuilder {
 		Hashtable table = new Hashtable();
 		table.put("height",SVGLengthProperty.maker());
 		table.put("width",SVGLengthProperty.maker());
-		spaceTable.put("http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd", table);
+		spaceTable.put("http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd", table);
 
 		propertyTable.put("rx",SVGLengthProperty.maker());
 		propertyTable.put("ry",SVGLengthProperty.maker());
@@ -212,8 +212,8 @@ public class PropertyListBuilder {
 		table.put("dx",SVGLengthListProperty.maker());
 		table.put("dy",SVGLengthListProperty.maker());
 //		table.put("id",SVGStringProperty.maker());
-		elementTable.put("http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd^tref", table);
-		elementTable.put("http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd^tspan", table);
+		elementTable.put("http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd^tref", table);
+		elementTable.put("http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd^tspan", table);
 	}
 
     public Property computeProperty(PropertyList propertyList, String propertyName) {
