@@ -68,7 +68,6 @@ public class AWTPrintRenderer extends AWTRenderer {
     private PrinterJob printerJob;
 
     public AWTPrintRenderer() {
-        super();
         initialize();
     }
 
@@ -83,6 +82,7 @@ public class AWTPrintRenderer extends AWTRenderer {
         }
         
         printerJob = PrinterJob.getPrinterJob();
+        printerJob.setJobName("FOP Document");
         printerJob.setCopies(copies);
         if (System.getProperty("dialog") != null) {
             if (!printerJob.printDialog()) {
