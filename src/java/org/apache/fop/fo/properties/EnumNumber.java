@@ -22,15 +22,15 @@ package org.apache.fop.fo.properties;
  * A number quantity in XSL which is specified as an enum, such as "no-limit".
  */
 public class EnumNumber extends NumberProperty {
-    private Property enum;
+    private Property enumProperty;
     
-    public EnumNumber(Property enum) {
+    public EnumNumber(Property enumProperty) {
         super(null);
-        this.enum = enum;
+        this.enumProperty = enumProperty;
     }
 
     public int getEnum() {
-        return enum.getEnum();
+        return enumProperty.getEnum();
     }
 
     /**
@@ -38,7 +38,7 @@ public class EnumNumber extends NumberProperty {
      * @return the length in millipoints
      */
     public int getValue() {
-        log.error("getValue() called on " + enum + " number");
+        log.error("getValue() called on " + enumProperty + " number");
         return 0;
     }
 
@@ -47,7 +47,7 @@ public class EnumNumber extends NumberProperty {
      * @return the length in millipoints
      */
     public double getNumericValue() {
-        log.error("getNumericValue() called on " + enum + " number");
+        log.error("getNumericValue() called on " + enumProperty + " number");
         return 0;
     }
 
@@ -55,14 +55,14 @@ public class EnumNumber extends NumberProperty {
      * @see org.apache.fop.fo.properties.Property#getString()
      */
     public String getString() {
-        return enum.toString();
+        return enumProperty.toString();
     }
 
     /**
      * @see org.apache.fop.fo.properties.Property#getString()
      */
     public Object getObject() {
-        return enum.getObject();
+        return enumProperty.getObject();
     }
 
 

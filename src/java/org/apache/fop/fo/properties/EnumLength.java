@@ -22,17 +22,17 @@ package org.apache.fop.fo.properties;
  * A length quantity in XSL which is specified as an enum, such as "auto"
  */
 public class EnumLength extends LengthProperty {
-    private Property enum;
+    private Property enumProperty;
     
-    public EnumLength(Property enum) {
-        this.enum = enum;
+    public EnumLength(Property enumProperty) {
+        this.enumProperty = enumProperty;
     }
 
     /**
      * @see org.apache.fop.datatypes.Numeric#getEnum()
      */
     public int getEnum() {
-        return enum.getEnum();
+        return enumProperty.getEnum();
     }
 
     public boolean isAbsolute() {
@@ -43,7 +43,7 @@ public class EnumLength extends LengthProperty {
      * @return the length in millipoints
      */
     public int getValue() {
-        log.error("getValue() called on " + enum + " length");
+        log.error("getValue() called on " + enumProperty + " length");
         return 0;
     }
 
@@ -52,7 +52,7 @@ public class EnumLength extends LengthProperty {
      * @return the length in millipoints
      */
     public double getNumericValue() {
-        log.error("getNumericValue() called on " + enum + " number");
+        log.error("getNumericValue() called on " + enumProperty + " number");
         return 0;
     }
 
@@ -60,14 +60,14 @@ public class EnumLength extends LengthProperty {
      * @see org.apache.fop.fo.properties.Property#getString()
      */
     public String getString() {
-        return enum.toString();
+        return enumProperty.toString();
     }
 
     /**
      * @see org.apache.fop.fo.properties.Property#getString()
      */
     public Object getObject() {
-        return enum.getObject();
+        return enumProperty.getObject();
     }
 
 
