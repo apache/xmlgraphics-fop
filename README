@@ -31,15 +31,23 @@
 
 
 
+
+
   2) Compiling FOP
   
     1. Prerequisites
-
+    
       a) Java 1.1.x or later
       
     
     
-      b) XT from James Clark
+      b) An XML parser
+      An XML parser which supports DOM like 
+         Xerces-J (http://xml.apache.org/xerces-j/index.html)
+.
+    
+    
+      c) XT from James Clark
       Some of the Java source code in FOP is generated from XML using
          XSLT. XT must be used to generate this code.
       XT is an XSL stylesheet processor written in java. At the moment you
@@ -58,7 +66,7 @@
       
     
     
-      c) make
+      d) make
       Under windows it has been reported that the use of the cygnus solutions port 
          of the GNU utilities works. You can find it at 
          Cygnus Solutions (http://sourceware.cygnus.com/cygwin/)
@@ -69,12 +77,15 @@
 
 
 
+
+
   3) Running FOP
   
     1) Prerequisites
     Following software must be installed:
     a) Java 1.1.x or later
-    b) A sax parser like XP (http://www.jclark.com/xml/xp/index.html)
+    b) An XML parser which supports SAX and DOM like 
+          Xerces-J (http://xml.apache.org/xerces-j/index.html)
 .
     c) If you have to produce the flow objects files, which are the input for FOP, 
        you need a transformation utility to create this files from your xml files. 
@@ -87,7 +98,15 @@
   
   
     2) Starting FOP as an standalone application
-    There are two ways of running FOP from the command line.
+    There are three ways of running FOP from the command line.
+    a) Batch processing formatting object files: 
+    java org.apache.fop.apps.CommandLine fo-file pdf-file
+    b) Batch processing xml files (includes production of the fo-files):
+    java org.apache.fop.apps.CommandLine xml-file xsl-file pdf-file
+    c) Previewing the fo-file:
+    java org.apache.fop.apps.AWTCommandLine fo-file
+    Each method uses next to the fop classes other packages. The following describes 
+       each method in detail.
     
       a) Method One
       One is to first use an XSLT engine to produce the formatting object tree as an 
@@ -98,8 +117,12 @@
       java -cp fop_x_xx_x.jar;sax.jar;xp.jar
       org.apache.fop.apps.CommandLine formatting-tree-file pdf-file
       If your SAX Parser is other than XP, you will need to set the property 
-         org.xml.sax.parser to the SAX Parser class to use.
+         org.xml.sax.parser to the SAX Parser class to use. The following example shows 
+         the command line, if you use Xerces, the xml parser from xml.apache.org: 
       
+      java -Dorg.xml.sax.parser=org.apache.xerces.parsers.SAXParser 
+      -cp fop_x_xx_x.jar;xerces.jar
+      org.apache.fop.apps.AWTCommandLine formatting-tree-file pdf-file
     
     
       b) Method Two
@@ -115,13 +138,23 @@
       Again, if your SAX Parser is other than XP, you will need to set the property
          org.xml.sax.parser to the SAX Parser class to use.
       
+    
+    
+      c) Method Three
+      If you already produced the FO file, you can preview the results of your 
+         transformation without using any pdf viewer by invoking FOP with the viewer 
+         application. You will need to include FOP, SAX and your SAX Parser in your classpath 
+      
+      java org.apache.fop.apps.AWTCommandLine formatting-tree-file 
       Note: If you are using java 2 or later (i.e. jdk 1.2. or later) you can put all 
          needed jar files into the subdirectory jdk1.2.x\jre\lib\ext (windows example). Then 
          FOP can be started without classpath: 
       
-      java org.apache.fop.apps.CommandLine formatting-tree-file pdf-file
+      java org.apache.fop.apps.CommandLine fo-file pdf-file
     
   
+
+
 
 
 
@@ -200,13 +233,22 @@
       text-indent 
       href
       column-width
+      background-color
+      padding-top (only in conjunction with background color)
+      padding-left (only in conjunction with background color)
+      padding-bottom (only in conjunction with background color)
+      padding-right (only in conjunction with background color)
     
   
 
 
 
+
+
   5) Bugs
   see STATUS file
+
+
 
 
 
@@ -235,6 +277,6 @@
 
 
 
-Version: 1.3 1999/11/23 03:31:30 - 
+Version: 1.4 1999/11/29 19:45 - 
 Contact: James Tauber (jtauber@jtauber.com)
 
