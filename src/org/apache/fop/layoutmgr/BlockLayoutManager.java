@@ -130,6 +130,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             if (curLM.generatesInlineAreas()) {
                 // set stackLimit for lines
                 childLC.setStackLimit(new MinOptMax(ipd/* - m_iIndents - m_iTextIndent*/));
+                childLC.setRefIPD(ipd);
             } else {
                 childLC.setStackLimit(
                   MinOptMax.subtract(context.getStackLimit(),

@@ -17,6 +17,7 @@ import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
+import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.area.MinOptMax;
 
 import java.util.List;
@@ -27,24 +28,39 @@ import java.util.List;
  * The pattern use-content is ignored, i.e. it still must be implemented.
  */
 public class Leader extends FObjMixed {
+    int ruleStyle;
+    int ruleThickness;
+    int leaderPattern;
 
     public Leader(FONode parent) {
         super(parent);
     }
 
     public void addLayoutManager(List list) {
-        list.add(new LeafNodeLayoutManager(this) {
-            public InlineArea get() {
-                int contentIPD = parentLM.getContentIPD();
-                return getInlineArea(contentIPD);
-            }
-        });
+        LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this) {
+                public InlineArea get(LayoutContext context) {
+                    int refIPD = context.getRefIPD();
+                    return getInlineArea(refIPD);
+                }
+            };
+        lm.setAlignment(properties.get("leader-alignment").getEnum());
+        list.add(lm);
     }
 
-    protected InlineArea getInlineArea(int maxIPD) {
+    protected InlineArea getInlineArea(int refIPD) {
+        setup();
+
         org.apache.fop.area.inline.Leader leader = new org.apache.fop.area.inline.Leader();
-        leader.setWidth(maxIPD / 2);
-        leader.setAllocationIPD(new MinOptMax(0, maxIPD / 2, maxIPD));
+
+        MinOptMax alloc = getAllocationIPD(refIPD);
+        leader.setAllocationIPD(alloc);
+        leader.setWidth(alloc.opt);
+
+        if(leaderPattern == LeaderPattern.RULE) {
+            leader.setRuleStyle(ruleStyle);
+            leader.setRuleThickness(ruleThickness);
+        }
+
         return leader;
     }
 
@@ -99,40 +115,51 @@ public class Leader extends FObjMixed {
 
         // fo:leader specific properties
         // determines the pattern of leader; allowed values: space, rule,dots, use-content
-        int leaderPattern = this.properties.get("leader-pattern").getEnum();
-        // length of the leader
-        int leaderLengthOptimum =
-            this.properties.get("leader-length.optimum").getLength().mvalue();
-        int leaderLengthMinimum =
-            this.properties.get("leader-length.minimum").getLength().mvalue();
-        Length maxlength = this.properties.get("leader-length.maximum").getLength();
-        int leaderLengthMaximum;
-        if(maxlength instanceof PercentLength) {
-            //leaderLengthMaximum = (int)(((PercentLength)maxlength).value()
-            //                          * area.getAllocationWidth());
-        } else {
-            leaderLengthMaximum = maxlength.mvalue();
+        leaderPattern = this.properties.get("leader-pattern").getEnum();
+        switch(leaderPattern) {
+            case LeaderPattern.SPACE:
+                // use Space
+            break;
+            case LeaderPattern.RULE:
+                // the following properties only apply
+                // for leader-pattern = "rule"
+                ruleThickness =
+                         properties.get("rule-thickness").getLength().mvalue();
+                ruleStyle = properties.get("rule-style").getEnum();
+            break;
+            case LeaderPattern.DOTS:
+            break;
+            case LeaderPattern.USECONTENT:
+                // use inline layout manager to create inline areas
+                // add the inline parent multiple times until leader full
+            break;
         }
-        // the following properties only apply for leader-pattern = "rule"
-        int ruleThickness =
-            this.properties.get("rule-thickness").getLength().mvalue();
-        int ruleStyle = this.properties.get("rule-style").getEnum();
+
         // if leaderPatternWidth = 0 = default = use-font-metric
         int leaderPatternWidth =
             this.properties.get("leader-pattern-width").getLength().mvalue();
-        int leaderAlignment =
-            this.properties.get("leader-alignment").getEnum();
 
     }
 
-    /*
-     * //should only be necessary for use-content
-     * protected void addCharacters(char data[], int start, int length) {
-     * FOText textNode = new FOText(data,start,length, this);
-     * textNode.setLogger(log);
-     * children.addElement(textNode);
-     * }
-     */
+    protected MinOptMax getAllocationIPD(int ipd) {
+        // length of the leader
+        int opt = getLength("leader-length.optimum", ipd);
+        int min = getLength("leader-length.minimum", ipd);
+        int max = getLength("leader-length.maximum", ipd);
 
+        return new MinOptMax(min, opt, max);
+    }
+
+    protected int getLength(String prop, int dim) {
+        int length;
+        Length maxlength = properties.get(prop).getLength();
+        if(maxlength instanceof PercentLength) {
+            length = (int)(((PercentLength)maxlength).value()
+                                      * dim);
+        } else {
+            length = maxlength.mvalue();
+        }
+        return length;
+    }
 }
 

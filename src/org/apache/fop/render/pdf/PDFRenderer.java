@@ -618,15 +618,79 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     public void renderLeader(Leader area) {
+        closeText();
         currentStream.add("ET\n");
-        currentStream.add((((float) currentBlockIPPosition) / 1000f) +
-                          " " + ((currentBPPosition + area.getOffset()) /
-                                 1000f) + " m\n");
-        currentStream.add(
-          ((currentBlockIPPosition + area.getWidth()) / 1000f) +
-          " " + ((currentBPPosition + area.getOffset()) /
-                 1000f) + " l\n");
-        currentStream.add("S\n");
+        currentStream.add("q\n");
+        int style = area.getRuleStyle();
+        boolean alt = false;
+        switch(style) {
+            case RuleStyle.SOLID:
+                currentStream.add("[] 0 d\n");
+            break;
+            case RuleStyle.DOTTED:
+                currentStream.add("[2] 0 d\n");
+            break;
+            case RuleStyle.DASHED:
+                currentStream.add("[6 4] 0 d\n");
+            break;
+            case RuleStyle.DOUBLE:
+            case RuleStyle.GROOVE:
+            case RuleStyle.RIDGE:
+                alt = true;
+            break;
+        }
+        float startx = ((float) currentBlockIPPosition) / 1000f;
+        float starty = ((currentBPPosition + area.getOffset()) / 1000f);
+        float endx = (currentBlockIPPosition + area.getWidth()) / 1000f;
+        if(!alt) {
+            currentStream.add(area.getRuleThickness() / 1000f + " w\n");
+
+            currentStream.add(startx + " " + starty + " m\n");
+            currentStream.add(endx + " " + starty + " l\n");
+            currentStream.add("S\n");
+        } else {
+            if(style == RuleStyle.DOUBLE) {
+                float third = area.getRuleThickness() / 3000f;
+                currentStream.add(third + " w\n");
+                currentStream.add(startx + " " + starty + " m\n");
+                currentStream.add(endx + " " + starty + " l\n");
+                currentStream.add("S\n");
+
+                currentStream.add(startx + " " + (starty + 2 * third) + " m\n");
+                currentStream.add(endx + " " + (starty + 2 * third) + " l\n");
+                currentStream.add("S\n");
+            } else {
+                float half = area.getRuleThickness() / 2000f;
+
+                currentStream.add("1 g\n");
+                currentStream.add(startx + " " + starty + " m\n");
+                currentStream.add(endx + " " + starty + " l\n");
+                currentStream.add(endx + " " + (starty + 2 * half) + " l\n");
+                currentStream.add(startx + " " + (starty + 2 * half) + " l\n");
+                currentStream.add("h\n");
+                currentStream.add("f\n");
+                if(style == RuleStyle.GROOVE) {
+                    currentStream.add("0 g\n");
+                    currentStream.add(startx + " " + starty + " m\n");
+                    currentStream.add(endx + " " + starty + " l\n");
+                    currentStream.add(endx + " " + (starty + half) + " l\n");
+                    currentStream.add((startx + half) + " " + (starty + half) + " l\n");
+                    currentStream.add(startx + " " + (starty + 2 * half) + " l\n");
+                } else {
+                    currentStream.add("0 g\n");
+                    currentStream.add(endx + " " + starty + " m\n");
+                    currentStream.add(endx + " " + (starty + 2 * half) + " l\n");
+                    currentStream.add(startx + " " + (starty + 2 * half) + " l\n");
+                    currentStream.add(startx + " " + (starty + half) + " l\n");
+                    currentStream.add((endx - half) + " " + (starty + half) + " l\n");
+                }
+                currentStream.add("h\n");
+                currentStream.add("f\n");
+            }
+
+        }
+
+        currentStream.add("Q\n");
         currentStream.add("BT\n");
         super.renderLeader(area);
     }

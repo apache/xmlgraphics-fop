@@ -10,7 +10,7 @@ package org.apache.fop.area.inline;
 import org.apache.fop.area.MinOptMax;
 
 public class Stretch extends InlineArea {
-    MinOptMax contentIPD;
+    MinOptMax contentIPD = null;
 
     public void setAllocationIPD(MinOptMax mom) {
         contentIPD = mom;

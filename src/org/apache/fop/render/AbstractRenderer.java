@@ -320,7 +320,8 @@ public abstract class AbstractRenderer extends AbstractLogEnabled implements Ren
                 // a line area is rendered from the top left position
                 // of the line, each inline object is offset from there
                 LineArea line = (LineArea) obj;
-                currentBlockIPPosition = currentIPPosition;
+                currentBlockIPPosition = currentIPPosition
+                                         + line.getStartIndent();
                 renderLineArea(line);
                 currentBPPosition += line.getHeight();
             }

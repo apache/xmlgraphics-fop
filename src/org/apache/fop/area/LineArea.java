@@ -45,9 +45,9 @@ public class LineArea extends Area {
     }
 
     public void addChild(Area childArea) {
-	if (childArea instanceof InlineArea) {
-	    addInlineArea((InlineArea)childArea);
-	}
+        if (childArea instanceof InlineArea) {
+            addInlineArea((InlineArea)childArea);
+        }
     }
 
     public void addInlineArea(InlineArea area) {
@@ -56,6 +56,14 @@ public class LineArea extends Area {
 
     public List getInlineAreas() {
         return inlineAreas;
+    }
+
+    public void setStartIndent(int si) {
+        startIndent = si;
+    }
+
+    public int getStartIndent() {
+        return startIndent;
     }
 }
 

@@ -8,6 +8,7 @@
 package org.apache.fop.area.inline;
 
 import org.apache.fop.render.Renderer;
+import org.apache.fop.fo.properties.RuleStyle;
 
 public class Leader extends Stretch {
 
@@ -18,14 +19,7 @@ public class Leader extends Stretch {
     // if space replaced with a space
     // otherwise this is a holder for a line
 
-    public static final int DOTTED = 0;
-    public static final int DASHED = 1;
-    public static final int SOLID = 2;
-    public static final int DOUBLE = 3;
-    public static final int GROOVE = 4;
-    public static final int RIDGE = 5;
-
-    int ruleStyle = SOLID;
+    int ruleStyle = RuleStyle.SOLID;
     int ruleThickness = 1000;
 
     public Leader() {

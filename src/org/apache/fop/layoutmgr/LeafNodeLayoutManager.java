@@ -28,7 +28,7 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
         super(fobj);
     }
 
-    public InlineArea get() {
+    public InlineArea get(LayoutContext context) {
         return curArea;
     }
 
@@ -68,7 +68,7 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
 
     public BreakPoss getNextBreakPoss(LayoutContext context,
                                       Position prevBreakPoss) {
-        curArea = get();
+        curArea = get(context);
         if (curArea == null) {
             setFinished(true);
             return null;
@@ -127,6 +127,16 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
                 curArea.setOffset(context.getBaseline() - bpd);
             break;
         }
+
+        double dAdjust = context.getIPDAdjust();
+        MinOptMax ipd = curArea.getAllocationIPD();
+        int width = ipd.opt;
+        if(dAdjust < 0) {
+            width = (int)(width + dAdjust * (ipd.opt - ipd.min));
+        } else if(dAdjust > 0) {
+            width = (int)(width + dAdjust * (ipd.max - ipd.opt));
+        }
+        curArea.setWidth(width);
 
         while (posIter.hasNext()) {
             posIter.next();
