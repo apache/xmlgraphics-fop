@@ -173,7 +173,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         rect.y = rect.y * 1000;
         rect.height = -rect.height * 1000;
         rect.width = rect.width * 1000;
-        if(linkType == LinkSet.EXTERNAL) {
+        if(linkType != LinkSet.EXTERNAL) {
             String pdfdest = "/XYZ " + dest;
             currentAnnotList.addLink(pdfDoc.makeLinkCurrentPage(rect, pdfdest));
         } else {

@@ -21,6 +21,7 @@ Done since 0.20.3 release
 - Fixed PDF-Renderer to work on EBCDIC systems 
   (Actually on systems where file.encoding != ASCII/ISO-8859)
   Submitted by: Jason West <Jason.West@mail.state.ky.us>
+- Fixed svg links to external url (Keiron)
   
 ==============================================================================
 Done since 0.20.2 release
