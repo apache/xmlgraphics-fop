@@ -684,6 +684,7 @@ public /*abstract*/ class Property {
      *  or, in any order;
      * border-width
      *     a parsed NCName value containing a standard border width
+     *     or a Numeric length value (including a percentage)
      * border-style
      *     a parsed NCName value containing a standard border style
      * border-color
@@ -771,10 +772,16 @@ public /*abstract*/ class Property {
             int type = pval.getType();
             switch (type) {
             case PropertyValue.COLOR_TYPE:
-                if (color != null) MessageHandler.log(propName +
+                if (color != null) MessageHandler.logln(propName +
                             ": duplicate color overrides previous color");
                 color = pval;
                 color.setProperty(colorProp);
+                continue scanning_elements;
+            case PropertyValue.NUMERIC:
+                if (width != null) MessageHandler.logln(propName +
+                            ": duplicate width overrides previous width");
+                width = pval;
+                width.setProperty(widthProp);
                 continue scanning_elements;
             case PropertyValue.NCNAME:
                 // Could be standard color, style Enum or width MappedNumeric
@@ -787,7 +794,7 @@ public /*abstract*/ class Property {
                     styleFound = new EnumType(styleProp, ncname);
                 } catch (PropertyException e) {}
                 if (styleFound != null) {
-                    if (style != null) MessageHandler.log(propName +
+                    if (style != null) MessageHandler.logln(propName +
                             ": duplicate style overrides previous style");
                     style = styleFound;
                     continue scanning_elements;
@@ -799,7 +806,7 @@ public /*abstract*/ class Property {
                             (foNode, widthProp, ncname)).getMappedNumValue();
                 } catch (PropertyException e) {}
                 if (widthFound != null) {
-                    if (width != null) MessageHandler.log(propName +
+                    if (width != null) MessageHandler.logln(propName +
                             ": duplicate width overrides previous width");
                     width = widthFound;
                     continue scanning_elements;
@@ -809,7 +816,7 @@ public /*abstract*/ class Property {
                     colorFound = new ColorType(colorProp, ncname);
                 } catch (PropertyException e) {};
                 if (colorFound != null) {
-                    if (color != null) MessageHandler.log(propName +
+                    if (color != null) MessageHandler.logln(propName +
                             ": duplicate color overrides previous color");
                     color = colorFound;
                     continue scanning_elements;
