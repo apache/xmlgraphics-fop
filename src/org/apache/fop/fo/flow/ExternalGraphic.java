@@ -3,34 +3,34 @@
  ============================================================================
                    The Apache Software License, Version 1.1
  ============================================================================
- 
+
     Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without modifica-
  tion, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of  source code must  retain the above copyright  notice,
     this list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binary form must reproduce the above copyright notice,
     this list of conditions and the following disclaimer in the documentation
     and/or other materials provided with the distribution.
- 
+
  3. The end-user documentation included with the redistribution, if any, must
     include  the following  acknowledgment:  "This product includes  software
     developed  by the  Apache Software Foundation  (http://www.apache.org/)."
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
- 
+
  4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
- 
+
  5. Products  derived from this software may not  be called "Apache", nor may
     "Apache" appear  in their name,  without prior written permission  of the
     Apache Software Foundation.
- 
+
  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
@@ -41,12 +41,12 @@
  ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
  (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
+
  This software  consists of voluntary contributions made  by many individuals
  on  behalf of the Apache Software  Foundation and was  originally created by
- James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
+ James Tauber <jtauber@jtauber.com>. For more  information on the Apache
  Software Foundation, please see <http://www.apache.org/>.
- 
+
  */
 /* Modified by Eric SCHAEFFER */
 
@@ -70,15 +70,15 @@ import java.net.MalformedURLException;
 
 public class ExternalGraphic extends FObj {
 
-    public static class Maker extends FObj.Maker { 
-	public FObj make(FObj parent, PropertyList propertyList)
-	    throws FOPException {
-	    return new ExternalGraphic(parent, propertyList);
-	}
+    public static class Maker extends FObj.Maker {
+        public FObj make(FObj parent,
+                         PropertyList propertyList) throws FOPException {
+            return new ExternalGraphic(parent, propertyList);
+        }
     }
 
     public static FObj.Maker maker() {
-	return new ExternalGraphic.Maker();
+        return new ExternalGraphic.Maker();
     }
 
     FontState fs;
@@ -95,136 +95,134 @@ public class ExternalGraphic extends FObj {
     ImageArea imageArea;
 
     public ExternalGraphic(FObj parent, PropertyList propertyList) {
-	super(parent, propertyList);
-	this.name = "fo:external-graphic";
+        super(parent, propertyList);
+        this.name = "fo:external-graphic";
     }
 
     public Status layout(Area area) throws FOPException {
-	
-	if (this.marker == START) {
-	    String fontFamily =
-		this.properties.get("font-family").getString();
-	    String fontStyle =
-		this.properties.get("font-style").getString();
-	    String fontWeight =
-		this.properties.get("font-weight").getString();
-	    int fontSize =
-		this.properties.get("font-size").getLength().mvalue();
-		
-	    this.fs = new FontState(area.getFontInfo(), fontFamily,
-				    fontStyle, fontWeight, fontSize);
 
-	    // FIXME
-	    this.align = this.properties.get("text-align").getEnum();
+        if (this.marker == START) {
+            String fontFamily =
+              this.properties.get("font-family").getString();
+            String fontStyle =
+              this.properties.get("font-style").getString();
+            String fontWeight =
+              this.properties.get("font-weight").getString();
+            int fontSize =
+              this.properties.get("font-size").getLength().mvalue();
 
-	    this.startIndent =
-	       		this.properties.get("start-indent").getLength().mvalue();
-	    this.endIndent =
-			this.properties.get("end-indent").getLength().mvalue();
+            this.fs = new FontState(area.getFontInfo(), fontFamily,
+                                    fontStyle, fontWeight, fontSize);
 
-	    this.spaceBefore =
-			this.properties.get("space-before.optimum").getLength().mvalue();
-	    this.spaceAfter = 
-	     		this.properties.get("space-after.optimum").getLength().mvalue();
+            // FIXME
+            this.align = this.properties.get("text-align").getEnum();
 
-	    this.src = this.properties.get("src").getString();
+            this.startIndent = this.properties.get(
+                                 "start-indent").getLength().mvalue();
+            this.endIndent = this.properties.get(
+                               "end-indent").getLength().mvalue();
 
-	    this.width =
-		this.properties.get("width").getLength().mvalue();
+            this.spaceBefore = this.properties.get(
+                                 "space-before.optimum").getLength().mvalue();
+            this.spaceAfter = this.properties.get(
+                                "space-after.optimum").getLength().mvalue();
 
-	    this.height =
-		this.properties.get("height").getLength().mvalue();
+            this.src = this.properties.get("src").getString();
+
+            this.width = this.properties.get("width").getLength().mvalue();
+
+            this.height =
+              this.properties.get("height").getLength().mvalue();
             this.id = this.properties.get("id").getString();
 
-            area.getIDReferences().createID(id);                                
+            area.getIDReferences().createID(id);
 
-	    if (area instanceof BlockArea) {
-		area.end();
-	    }
+            if (area instanceof BlockArea) {
+                area.end();
+            }
 
-	    if (this.isInLabel) {
-		startIndent += bodyIndent;
-		endIndent += (area.getAllocationWidth()
-			      - distanceBetweenStarts - startIndent)
-		    + labelSeparation;
-	    }
+            if (this.isInLabel) {
+                startIndent += bodyIndent;
+                endIndent += (area.getAllocationWidth() -
+                              distanceBetweenStarts - startIndent) +
+                             labelSeparation;
+            }
 
-	    if (this.isInListBody) {
-		startIndent += bodyIndent + distanceBetweenStarts;
-	    }
+            if (this.isInListBody) {
+                startIndent += bodyIndent + distanceBetweenStarts;
+            }
 
-	    if (this.isInTableCell) {
-		startIndent += forcedStartOffset;
-		endIndent = area.getAllocationWidth() - forcedWidth -
-		    forcedStartOffset;
-	    }
+            if (this.isInTableCell) {
+                startIndent += forcedStartOffset;
+                endIndent = area.getAllocationWidth() - forcedWidth -
+                            forcedStartOffset;
+            }
 
-	    this.marker = 0;
-	}
-	
-	try {
-		FopImage img = FopImageFactory.Make(src);
-		// if width / height needs to be computed
-		if ((width == 0) || (height == 0)) {
-			// aspect ratio
-			double imgWidth = img.getWidth();
-			double imgHeight = img.getHeight();
-			if ((width == 0) && (height == 0)) {
-				width = (int) ((imgWidth * 1000d) / 2d);
-				height = (int) ((imgHeight * 1000d) / 2d);
-			} else if (height == 0) {
-				height = (int) ((imgHeight * ((double) width)) / imgWidth);
-			} else if (width == 0) {
-				width = (int) ((imgWidth * ((double) height)) / imgHeight);
-			}
-//MessageHandler.errorln("DisplayGraphic: imgW=" + imgWidth + " imgH=" + imgHeight + " w=" + width + " h=" + height);
-		}
+            this.marker = 0;
+        }
 
-		if (area.spaceLeft() < (height + spaceBefore)) {
-			return new Status(Status.AREA_FULL_NONE);
-		}
-
-		this.imageArea = new ImageArea(
-										fs,
-										img,
-										area.getAllocationWidth(),
-										width,
-										height,
-										startIndent,
-										endIndent,
-										align
-										);
-
-		if ((spaceBefore != 0) && (this.marker == 0)) {
-		    area.addDisplaySpace(spaceBefore);
-		}
-
-                if (marker == 0) {
-                // configure id                                                   
-                area.getIDReferences().configureID(id,area);                                
+        try {
+            FopImage img = FopImageFactory.Make(src);
+            // if width / height needs to be computed
+            if ((width == 0) || (height == 0)) {
+                // aspect ratio
+                double imgWidth = img.getWidth();
+                double imgHeight = img.getHeight();
+                if ((width == 0) && (height == 0)) {
+                    width = (int) ((imgWidth * 1000d));
+                    height = (int) ((imgHeight * 1000d));
+                } else if (height == 0) {
+                    height = (int)((imgHeight * ((double) width)) /
+                                   imgWidth);
+                } else if (width == 0) {
+                    width = (int)((imgWidth * ((double) height)) /
+                                  imgHeight);
                 }
+                //MessageHandler.errorln("DisplayGraphic: imgW=" + imgWidth + " imgH=" + imgHeight + " w=" + width + " h=" + height);
+            }
 
-		imageArea.start();
-		imageArea.end();
-		area.addChild(imageArea);
-		area.increaseHeight(imageArea.getHeight());
+            if (area.spaceLeft() < (height + spaceBefore)) {
+                return new Status(Status.AREA_FULL_NONE);
+            }
 
-		if (spaceAfter != 0) {
-		    area.addDisplaySpace(spaceAfter);
-		}
+            this.imageArea =
+              new ImageArea(fs, img, area.getAllocationWidth(),
+                            width, height, startIndent, endIndent, align);
 
-	} catch (MalformedURLException urlex) {
-		// bad URL
-MessageHandler.errorln("Error while creating area : " + urlex.getMessage());
-	} catch (FopImageException imgex) {
-		// image error
-MessageHandler.errorln("Error while creating area : " + imgex.getMessage());
-	}
+            if ((spaceBefore != 0) && (this.marker == 0)) {
+                area.addDisplaySpace(spaceBefore);
+            }
 
-	if (area instanceof BlockArea) {
-	    area.start();
-	}
+            if (marker == 0) {
+                // configure id
+                area.getIDReferences().configureID(id, area);
+            }
 
-	return new Status(Status.OK);
+            imageArea.start();
+            imageArea.end();
+            area.addChild(imageArea);
+            area.increaseHeight(imageArea.getHeight());
+
+            if (spaceAfter != 0) {
+                area.addDisplaySpace(spaceAfter);
+            }
+
+        }
+        catch (MalformedURLException urlex) {
+            // bad URL
+            MessageHandler.errorln("Error while creating area : " +
+                                   urlex.getMessage());
+        }
+        catch (FopImageException imgex) {
+            // image error
+            MessageHandler.errorln("Error while creating area : " +
+                                   imgex.getMessage());
+        }
+
+        if (area instanceof BlockArea) {
+            area.start();
+        }
+
+        return new Status(Status.OK);
     }
 }
