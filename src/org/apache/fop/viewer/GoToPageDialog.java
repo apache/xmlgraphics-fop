@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -21,6 +21,8 @@ import java.awt.event.*;
 import org.apache.fop.messaging.MessageHandler;
 
 public class GoToPageDialog extends JDialog {
+    private Translator res;
+
     JPanel panel1 = new JPanel();
     GridBagLayout gridBagLayout1 = new GridBagLayout();
     JLabel pgNbLabel = new JLabel();
@@ -30,9 +32,10 @@ public class GoToPageDialog extends JDialog {
 
     int pageNumber = -1;
 
-    public GoToPageDialog(Frame frame, String title, boolean modal) {
+    public GoToPageDialog(Frame frame, String title, boolean modal, Translator resource) {
         super(frame, title, modal);
         try {
+            res = resource;
             jbInit();
             pack();
         } catch (Exception ex) {
@@ -42,13 +45,13 @@ public class GoToPageDialog extends JDialog {
     }
 
     public GoToPageDialog() {
-        this(null, "", false);
+        this(null, "", false, null);
     }
 
     void jbInit() throws Exception {
         panel1.setLayout(gridBagLayout1);
-        pgNbLabel.setText("Page number");
-        okButton.setText("Ok");
+        pgNbLabel.setText(res.getString("Page number"));
+        okButton.setText(res.getString("Ok"));
         okButton.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -56,7 +59,7 @@ public class GoToPageDialog extends JDialog {
             }
 
         });
-        cancelButton.setText("Cancel");
+        cancelButton.setText(res.getString("Cancel"));
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
