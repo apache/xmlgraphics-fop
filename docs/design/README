@@ -1,0 +1,11 @@
+These documents are written for docbook
+http://sourceforge.net/projects/docbook
+
+To convert to pdf:
+- place the docbook files in a directory name "docbook"
+- place docbookx package in a directory name "docbookx"
+the files are avaialable here:
+http://www.oasis-open.org/docbook/xml/4.1.2/index.shtml
+
+- run the build script
+

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbookx/docbookx.dtd" [
+	<!ENTITY intro.xml SYSTEM "intro.xml">
+  <!ENTITY layout.xml SYSTEM "layout.xml">
+  <!ENTITY areas.xml SYSTEM "areas.xml">
+  <!ENTITY optimise.xml SYSTEM "optimise.xml">
+  <!ENTITY useragent.xml SYSTEM "useragent.xml">
+]>
+<book>
+	<bookinfo>
+		<title>FOP documentation</title>
+		<copyright>
+			<year>2001</year>
+			<holder>The Apache Software Foundation. All rights reserved.</holder>
+		</copyright>
+	</bookinfo>
+&intro.xml;
+<chapter id="fop">
+  <title>FOP</title>
+&layout.xml;
+</chapter>
+<chapter id="areas">
+  <title>Areas</title>
+&areas.xml;
+</chapter>
+<chapter id="areas">
+  <title>Optimising</title>
+&optimise.xml;
+</chapter>
+<chapter id="useragent">
+  <title>User Agent</title>
+&useragent.xml;
+</chapter>
+</book>

@@ -1,0 +1,37 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<section id="optimise">
+ <title>Process Optimisations</title>
+	<para>
+FOP should be able to handle very large documents. A document can be
+supplied using SAX and the information should be passed entirely through
+the system, from fo elements to rendered output as soon as possible.
+  </para>
+  <para>
+A top level block area, immediately below the flow, can be added to the
+page layout as soon as the element is complete.
+  </para>
+  <para>
+The fo elements used to construct a page can be discarded as soon as the
+layout for the page is complete. Some information may be stored in the
+area tree of the page in order to handle unresolved page references
+and links.
+  </para>
+  <para>
+Once the layout of a page has been completed, all elements are fully
+resolved, then the page can be rendered. Some renderers may support
+out of order rendering of pages.
+  </para>
+  <para>
+The main problem that will remain is that any page with forward
+references will need to be stored until the refence is resolved.
+This means that the information contained in the page should be 
+as minimal as possible.
+  </para>
+  <para>
+Line areas can be optimised once the layout for the line has
+been finalised. Consecutive characters with the same properties
+can be combined into a "word" to hold the infomration with
+limited overhead.
+  </para>
+
+</section>

@@ -1,0 +1,48 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20001102//EN"
+	"http://www.w3.org/TR/2000/CR-SVG-20001102/DTD/svg-20001102.dtd">
+<svg width="420" height="300">
+	<defs>
+		<marker id="measure" viewBox="0 0 10 10" refX="0" refY="5" markerWidth="4"
+			markerHeight="3" orient="auto">
+			<path d="M0 0 L5 10 L10 0 z"/>
+			<path d="M0 10 L10 10 L10 9 L0 9 z"/>
+		</marker>
+	</defs>
+	<rect x="12" y="-29" width="307" height="371" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="12" y="19" width="307" height="170" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(58,53,255);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="13" y="201" width="307" height="126" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(33,75,255);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="13" y="71" width="140" height="202" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(255,169,33);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<path d="M11.5 219 L320.5 219" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-linecap:round;stroke-width:1;stroke-opacity:1;
+		stroke:rgb(36,239,21);fill-opacity:1;fill:rgb(0,0,0);opacity:1"/>
+	<text x="0" y="216" style="font-family:Arial;font-size:12;stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);
+		fill-opacity:1;fill:rgb(0,0,0);opacity:1">flow limit</text>
+	<text x="72" y="139" style="font-family:Arial;font-size:12;stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);
+		fill-opacity:1;fill:rgb(0,0,0);opacity:1">float</text>
+	<text x="337.565" y="144" style="font-family:Arial;font-size:12;stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);
+		fill-opacity:1;fill:rgb(0,0,0);opacity:1">effective height</text>
+	<path d="M330.5 63 L330.5 271" style="marker-end:url(#measure);marker-start:url(#measure);stroke-miterlimit:4;stroke-linejoin:miter;
+		stroke-linecap:round;stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);fill-opacity:1;
+		fill:rgb(0,0,0);opacity:1"/>
+	<text x="349" y="157" style="font-family:Arial;font-size:12;stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);
+		fill-opacity:1;fill:rgb(0,0,0);opacity:1">of float line</text>
+	<rect x="12" y="18" width="306" height="22" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(166,166,166);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="12" y="45" width="306" height="20" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(166,166,166);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="154" y="72" width="164" height="16" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(166,166,166);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="153" y="97" width="166" height="15" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(166,166,166);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="154" y="123" width="132" height="16" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(166,166,166);
+		fill-opacity:0;fill:rgb(0,0,0);opacity:1"/>
+	<rect x="220" y="71" width="6" height="17" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:1;stroke:rgb(247,255,9);
+		fill-opacity:1;fill:rgb(255,255,0);opacity:1"/>
+	<text x="232" y="91" style="font-family:Arial;font-size:12;stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);
+		fill-opacity:1;fill:rgb(0,0,0);opacity:1">float anchor</text>
+</svg>
+
