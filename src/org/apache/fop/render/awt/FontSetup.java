@@ -59,7 +59,7 @@ import org.apache.fop.layout.FontDescriptor;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.awt.Font;
-import java.awt.Component;
+import java.awt.Graphics2D;
 
 /**
  * sets up the AWT fonts. It is similar to
@@ -79,7 +79,7 @@ public class FontSetup {
     * @param parent needed, since a live AWT component is needed
     *               to get a valid java.awt.FontMetrics object
     */
-    public static void setup(FontInfo fontInfo, Component parent) {
+    public static void setup(FontInfo fontInfo, Graphics2D graphics) {
         FontMetricsMapper metric;
         int normal, bold, bolditalic, italic;
 
@@ -95,47 +95,47 @@ public class FontSetup {
         italic = java.awt.Font.ITALIC;
         bolditalic = java.awt.Font.BOLD + java.awt.Font.ITALIC;
 
-        metric = new FontMetricsMapper("SansSerif", normal, parent);
+        metric = new FontMetricsMapper("SansSerif", normal, graphics);
         // --> goes to  F1
         fontInfo.addMetrics("F1", metric);
-        metric = new FontMetricsMapper("SansSerif",italic, parent);
+        metric = new FontMetricsMapper("SansSerif",italic, graphics);
         // --> goes to  F2
         fontInfo.addMetrics("F2", metric);
-        metric = new FontMetricsMapper("SansSerif", bold, parent);
+        metric = new FontMetricsMapper("SansSerif", bold, graphics);
         // --> goes to  F3
         fontInfo.addMetrics("F3", metric);
-        metric = new FontMetricsMapper("SansSerif", bolditalic, parent);
+        metric = new FontMetricsMapper("SansSerif", bolditalic, graphics);
         // --> goes to  F4
         fontInfo.addMetrics("F4", metric);
 
 
-        metric = new FontMetricsMapper("Serif", normal, parent);
+        metric = new FontMetricsMapper("Serif", normal, graphics);
         // --> goes to  F5
         fontInfo.addMetrics("F5", metric);
-        metric = new FontMetricsMapper("Serif", italic, parent);
+        metric = new FontMetricsMapper("Serif", italic, graphics);
         // --> goes to  F6
         fontInfo.addMetrics("F6", metric);
-        metric = new FontMetricsMapper("Serif", bold, parent);
+        metric = new FontMetricsMapper("Serif", bold, graphics);
         // --> goes to  F7
         fontInfo.addMetrics("F7", metric);
-        metric = new FontMetricsMapper("Serif", bolditalic, parent);
+        metric = new FontMetricsMapper("Serif", bolditalic, graphics);
         // --> goes to  F8
         fontInfo.addMetrics("F8", metric);
 
-        metric = new FontMetricsMapper("MonoSpaced", normal, parent);
+        metric = new FontMetricsMapper("MonoSpaced", normal, graphics);
         // --> goes to  F9
         fontInfo.addMetrics("F9", metric);
-        metric = new FontMetricsMapper("MonoSpaced", italic, parent);
+        metric = new FontMetricsMapper("MonoSpaced", italic, graphics);
         // --> goes to  F10
         fontInfo.addMetrics("F10", metric);
-        metric = new FontMetricsMapper("MonoSpaced", bold, parent);
+        metric = new FontMetricsMapper("MonoSpaced", bold, graphics);
         // --> goes to  F11
         fontInfo.addMetrics("F11", metric);
-        metric = new FontMetricsMapper("MonoSpaced", bolditalic, parent);
+        metric = new FontMetricsMapper("MonoSpaced", bolditalic, graphics);
         // --> goes to  F12
         fontInfo.addMetrics("F12", metric);
 
-        metric = new FontMetricsMapper("Symbol", bolditalic, parent);
+        metric = new FontMetricsMapper("Symbol", bolditalic, graphics);
         // --> goes to  F13 and F14
         fontInfo.addMetrics("F13", metric);
         fontInfo.addMetrics("F14", metric);

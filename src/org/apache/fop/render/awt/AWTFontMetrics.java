@@ -87,7 +87,6 @@ public class AWTFontMetrics {
     */
     public static final int FONT_FACTOR = (1000 * 1000) / FONT_SIZE;
 
-
     /**
     * The width of all 256 character, if requested
     */
@@ -126,19 +125,18 @@ public class AWTFontMetrics {
     private FontMetrics fmt = null;
 
     /**
-    *  Component parent is needed to have an AWT reference from which to get
-    *  the font metrics
+    *  Temp graphics object needed to get the font metrics
     */
-    Component parent;
+    Graphics2D graphics;
 
     /**
     *  Constructs a new Font-metrics.
-    * @param parent  an AWT component - this is needed  so
+    * @param parent  an temp graphics object - this is needed  so
     *                that we can get an instance of
     *                java.awt.FontMetrics
     */
-    public AWTFontMetrics(Component parent) {
-        this.parent = parent;
+    public AWTFontMetrics(Graphics2D graphics) {
+        this.graphics = graphics;
     }
 
     /**
@@ -150,7 +148,12 @@ public class AWTFontMetrics {
      */
     public int getAscender(String family, int style, int size) {
         setFont(family, style, size);
-        return (FONT_FACTOR * fmt.getAscent());
+        //return (int)(FONT_FACTOR * fmt.getAscent());
+
+        // workaround for sun bug on FontMetric.getAscent()
+        // http://developer.java.sun.com/developer/bugParade/bugs/4399887.html
+        int realAscent = fmt.getAscent() - (fmt.getDescent() + fmt.getLeading());
+        return FONT_FACTOR * realAscent;
     }
 
 
@@ -158,8 +161,9 @@ public class AWTFontMetrics {
      * The size of a capital letter measured from the font's baseline
      */
     public int getCapHeight(String family, int style, int size) {
-        setFont(family, style, size);
-        return (FONT_FACTOR * fmt.getAscent());
+        // currently just gets Ascent value but maybe should use
+        // getMaxAcent() at some stage
+        return getAscender(family, style, size);
     }
 
     /**
@@ -239,11 +243,10 @@ public class AWTFontMetrics {
         Rectangle2D rect;
         TextLayout layout;
         int s = (int)(size / 1000f);
-        Graphics2D g;
 
         if (f1 == null) {
             f1 = new Font(family, style, s);
-            fmt = parent.getFontMetrics(f1);
+            fmt = graphics.getFontMetrics(f1);
             changed = true;
         } else {
             if ((this.style != style) || !this.family.equals(family) ||
@@ -252,14 +255,13 @@ public class AWTFontMetrics {
                     f1 = f1.deriveFont(style, (float) s);
                 } else
                     f1 = new Font(family, style, s);
-                fmt = parent.getFontMetrics(f1);
+                fmt = graphics.getFontMetrics(f1);
                 changed = true;
             }
             // else the font is unchanged from last time
         }
         if (changed) {
-            g = (Graphics2D) parent.getGraphics();
-            layout = new TextLayout("m", f1, g.getFontRenderContext());
+            layout = new TextLayout("m", f1, graphics.getFontRenderContext());
             rect = layout.getBounds();
             xHeight = (int) rect.getHeight();
         }
