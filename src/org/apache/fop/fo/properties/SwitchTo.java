@@ -3,7 +3,6 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.datatypes.PropertyValueList;
 import org.apache.fop.datatypes.NCName;
 import org.apache.fop.datatypes.EnumType;
-import org.apache.fop.datastructs.ROStringArray;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.PropNames;
@@ -19,7 +18,7 @@ public class SwitchTo extends Property  {
     public static final int XSL_PRECEDING = 1;
     public static final int XSL_FOLLOWING = 2;
     public static final int XSL_ANY = 3;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.SWITCH_TO, XSL_ANY);
@@ -33,15 +32,15 @@ public class SwitchTo extends Property  {
         ,"xsl-any"
     };
 
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue list)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue list)
                     throws PropertyException
     {
         // Check for the enumeration.  Look for a list of NCNames.
         // N.B. it may be possible to perform further checks on the
         // validity of the NCNames - do they match multi-case case names.
         if ( ! (list instanceof PropertyValueList))
-            return Property.refineParsing(foNode, list);
+            return super.refineParsing(PropNames.SWITCH_TO, foNode, list);
 
         PropertyValueList ssList =
                             spaceSeparatedList((PropertyValueList)list);
@@ -54,10 +53,10 @@ public class SwitchTo extends Property  {
         }
         return list;
     }
-    public /**/static/**/ int getEnumIndex(String enum) throws PropertyException {
+    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 }

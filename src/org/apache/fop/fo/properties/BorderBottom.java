@@ -30,15 +30,20 @@ public class BorderBottom extends Property  {
      *  N.B. this is the order of elements defined in
      *       ShorthandPropSets.borderRightExpansion
      *
+     * @param propindex - the <tt>int</tt> proeprty index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                 throws PropertyException
     {
-        return borderEdge(foNode, value,
+        int property = PropNames.BORDER_BOTTOM;
+        if (property != propindex) // DEBUG
+            throw new PropertyException
+                ("Mismatch between propindex and BORDER_BOTTOM.");
+        return borderEdge(property, foNode, value,
                                 PropNames.BORDER_BOTTOM_STYLE,
                                 PropNames.BORDER_BOTTOM_COLOR,
                                 PropNames.BORDER_BOTTOM_WIDTH

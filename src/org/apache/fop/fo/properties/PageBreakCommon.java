@@ -42,22 +42,25 @@ public class PageBreakCommon extends Property  {
                                 (Object) Ints.consts.get(i));
         }
     }
-    public /**/static/**/ int getEnumIndex(String enum) {
+    public /*static*/ int getEnumIndex(String enum) {
         return ((Integer)(rwEnumHash.get(enum))).intValue();
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 
     /*
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
     {
+        // Ignore the argument value - always assume the PropertyValue
+        // is set up with the property index from the correct subclass
 	int property = value.getProperty();
 	int beforeAfter, previousNext;
 	switch (property) {
@@ -79,8 +82,8 @@ public class PageBreakCommon extends Property  {
                     value instanceof FromNearestSpecified |
                         value instanceof Auto)
         {
-            return refineExpansionList
-                (foNode, ShorthandPropSets.expandAndCopySHand(value));
+            return refineExpansionList(property , foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
         }
         if (value instanceof NCName) {
             EnumType enum = null;

@@ -331,32 +331,38 @@ public /*abstract*/ class Property {
      *
      * <p>This method is overriden by individual property classes which
      * require specific processing.
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value - <tt>PropertyValue</tt> returned by the parser
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                        (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
             throws PropertyException
     {
-        return refineParsing(foNode, value, NOT_NESTED);
+        return refineParsing(propindex, foNode, value, NOT_NESTED);
     }
 
     /**
-     * Do the work for the two argument refineParsing method.
+     * Do the work for the three argument refineParsing method.
+     * @param property - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value - <tt>PropertyValue</tt> returned by the parser
      * @param nested - <tt>boolean</tt> indicating whether this method is
      * called normally (false), or as part of another <i>refineParsing</i>
      * method.
-     * @see #refineParsing(FOTree,PropertyValue)
+     * @see #refineParsing(int,FOTree,PropertyValue)
      */
-    protected /**/static/**/ PropertyValue refineParsing
-                        (FONode foNode, PropertyValue value, boolean nested)
+    public /*static*/ PropertyValue refineParsing(int property,
+                        FONode foNode, PropertyValue value, boolean nested)
             throws PropertyException
     {
-        int property = value.getProperty();
+        //int property = value.getProperty();
+        if (property != value.getProperty()) // DEBUG
+            throw new PropertyException
+                ("Mismatched property and value.property.");
         String propName = PropNames.getPropertyName(property);
         int proptype = value.getType();
+        int dataTypes = PropertyConsts.pconsts.getDataTypes(property);
         PropertyValue pv;
         if ((dataTypes & AURAL) != 0)
             throw new PropertyNotImplementedException
@@ -368,6 +374,8 @@ public /*abstract*/ class Property {
             if ((dataTypes & (INTEGER | FLOAT | LENGTH | PERCENTAGE
                                 | ANGLE | FREQUENCY | TIME)) != 0)
                 return value;
+            throw new PropertyException
+                            ("Numeric value invalid  for " + propName);
         case PropertyValue.NCNAME:
             String ncname = ((NCName)value).getNCName();
             // Can by any of
@@ -387,6 +395,8 @@ public /*abstract*/ class Property {
                 return (new MappedNumeric
                             (property, ncname, foNode.getFOTree()))
                                                         .getMappedNumValue();
+            throw new PropertyException
+                            ("NCName value invalid  for " + propName);
         case PropertyValue.LITERAL:
             // Can be LITERAL or CHARACTER_T
             if ((dataTypes & (LITERAL | CHARACTER_T)) != 0) return value;
@@ -464,27 +474,31 @@ public /*abstract*/ class Property {
      * The set of properties will, in general, be different from the
      * generating property, which will be the one associated with the list
      * itself.
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> for which the properties are
      * being processed.
      * @param list - the list of <tt>PropertyValues</tt> to be refined.
      * @return a <tt>PropertyValueList>/tt> containing the refined property
      * values.
      */
-    public /**/static/**/ PropertyValueList refineExpansionList
-                                    (FONode foNode, PropertyValueList list)
+    public /*static*/ PropertyValueList refineExpansionList
+                        (int propindex, FONode foNode, PropertyValueList list)
             throws PropertyException
     {
+        if (propindex != list.getProperty()) // DEBUG
+            throw new PropertyException
+                ("Mismatch between propindex and list property.");
         PropertyValueList newlist = new PropertyValueList(list.getProperty());
         Iterator properties = list.iterator();
         while (properties.hasNext()) {
             // refine the next element
-            PropertyValue pv =
-                    foNode.propertyConsts.refineParsing
-                                (foNode, (PropertyValue)(properties.next()));
+            PropertyValue pv = (PropertyValue)(properties.next());
+            pv = PropertyConsts.pconsts.refineParsing
+                                            (pv.getProperty(), foNode, pv);
             // if it's a list, recursively refine.  This will return a list
             if (pv.getType() == PropertyValue.LIST) {
-                PropertyValueList pvl =
-                        refineExpansionList(foNode, (PropertyValueList)pv);
+                PropertyValueList pvl = refineExpansionList
+                        (pv.getProperty(), foNode, (PropertyValueList)pv);
                 newlist.addAll(pvl);
             } else { // single element
                 newlist.add(pv);
@@ -504,7 +518,7 @@ public /*abstract*/ class Property {
      * @throws <tt>PropertyException</tt> if <i>list</i> contains more than
      * one element or if the contained element is not a list.
      */
-    protected /**/static/**/ PropertyValueList spaceSeparatedList
+    protected /*static*/ PropertyValueList spaceSeparatedList
                                                     (PropertyValueList list)
             throws PropertyException
     {
@@ -531,7 +545,7 @@ public /*abstract*/ class Property {
      * @return <tt>EnumValue</tt> equivalent of the argument
      * @exception <tt>PropertyException</tt>
      */
-    protected /**/static/**/ EnumType getEnum(PropertyValue value,
+    protected /*static*/ EnumType getEnum(PropertyValue value,
                                             int property, String type)
             throws PropertyException
     {
@@ -559,7 +573,7 @@ public /*abstract*/ class Property {
      * @return <tt>int</tt> constant representing the enumeration value.
      * @exception PropertyException
      */
-    public /**/static/**/ int getEnumIndex(String enum)
+    public /*static*/ int getEnumIndex(String enum)
             throws PropertyException
     {
         throw new PropertyException("ENUM not supported.");
@@ -570,7 +584,7 @@ public /*abstract*/ class Property {
      * @return <tt>String</tt> containing the enumeration text.
      * @exception PropertyException
      */
-    public /**/static/**/ String getEnumText(int enumIndex)
+    public /*static*/ String getEnumText(int enumIndex)
                     throws PropertyException
     {
         throw new PropertyException("ENUM not supported.");
@@ -584,7 +598,7 @@ public /*abstract*/ class Property {
      * @return the integer equivalent of the enum text
      * @exception PropertyException if the enum text is not valid.
      */
-    public /**/static/**/ int enumValueToIndex(String value, String[] values)
+    public /*static*/ int enumValueToIndex(String value, String[] values)
                 throws PropertyException
     {
         for (int i = 1; i < values.length; i++) {
@@ -604,11 +618,11 @@ public /*abstract*/ class Property {
      * @return a <tt>Numeric</tt>.  This implementation never returns.
      * @throws <tt>PropertyException</tt>.
      */
-    public /**/static/**/ Numeric getMappedLength(int enum)
+    public /*static*/ Numeric getMappedLength(int enum)
             throws PropertyException
     {
         throw new PropertyException
-            ("No MAPPED_LENGTH not supported.");
+            ("MAPPED_LENGTH not supported.");
     }
 
     /**
@@ -621,10 +635,13 @@ public /*abstract*/ class Property {
      * @exception <tt>PropertyException</tt>
      * @exception <tt>PropertyNotImplementedException</tt>
      */
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
             throws PropertyException
     {
-        Method method = null;
+        int initialValueType =
+                    PropertyConsts.pconsts.getInitialValueType(property);
+        //System.out.println("In Property getInitialValue property "
+                            //+ property);
         if ((initialValueType & Property.USE_GET_IT_FUNCTION) != 0)
              throw new PropertyException
                  ("Property.getInitialValue() called for property with "
@@ -675,31 +692,32 @@ public /*abstract*/ class Property {
      *  N.B. this is the order of elements defined in
      *       ShorthandPropSets.borderRightExpansion
      */
-    protected /**/static/**/ PropertyValue borderEdge(FONode foNode,
-            PropertyValue value, int styleProp, int colorProp, int widthProp)
+    protected /*static*/ PropertyValue borderEdge
+                        (int propindex, FONode foNode, PropertyValue value,
+                                int styleProp, int colorProp, int widthProp)
                 throws PropertyException
     {
-        return borderEdge
-                (foNode, value, styleProp, colorProp, widthProp, NOT_NESTED);
+        return borderEdge(propindex, foNode, value, styleProp,
+                                            colorProp, widthProp, NOT_NESTED);
     }
 
-    protected /**/static/**/ PropertyValue borderEdge
-            (FONode foNode, PropertyValue value, int styleProp,
-                int colorProp, int widthProp, boolean nested)
+    protected /*static*/ PropertyValue borderEdge
+            (int propindex, FONode foNode, PropertyValue value, int styleProp,
+                                int colorProp, int widthProp, boolean nested)
                 throws PropertyException
     {
         if (value.getType() != PropertyValue.LIST) {
-            return processEdgeValue
-                    (foNode, value, styleProp, colorProp, widthProp, nested);
+            return processEdgeValue(propindex, foNode, value,
+                                    styleProp, colorProp, widthProp, nested);
         } else {
-            return processEdgeList
-                (foNode, spaceSeparatedList((PropertyValueList)value),
+            return processEdgeList(propindex, foNode,
+                        spaceSeparatedList((PropertyValueList)value),
                                             styleProp, colorProp, widthProp);
         }
     }
 
-    private /**/static/**/ PropertyValueList processEdgeValue
-            (FONode foNode, PropertyValue value, int styleProp,
+    private /*static*/ PropertyValueList processEdgeValue
+            (int propindex, FONode foNode, PropertyValue value, int styleProp,
                 int colorProp, int widthProp, boolean nested)
             throws PropertyException
     {
@@ -710,23 +728,23 @@ public /*abstract*/ class Property {
                         type == PropertyValue.FROM_NEAREST_SPECIFIED)
             {
                 // Copy the value to each member of the shorthand expansion
-                return refineExpansionList
-                        (foNode, ShorthandPropSets.expandAndCopySHand(value));
+                return refineExpansionList(propindex, foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
             }
         }
         // Make a list and pass to processList
-        PropertyValueList tmpList
-                = new PropertyValueList(value.getProperty());
+        PropertyValueList tmpList = new PropertyValueList(propindex);
         tmpList.add(value);
         return processEdgeList
-                    (foNode, tmpList, styleProp, colorProp, widthProp);
+                (propindex, foNode, tmpList, styleProp, colorProp, widthProp);
     }
 
-    private /**/static/**/ PropertyValueList processEdgeList(FONode foNode,
-        PropertyValueList value, int styleProp, int colorProp, int widthProp)
+    private /*static*/ PropertyValueList processEdgeList
+            (int property, FONode foNode, PropertyValueList value,
+                                int styleProp, int colorProp, int widthProp)
                     throws PropertyException
     {
-        int property = value.getProperty();
+        //int property = value.getProperty();
         String propName = PropNames.getPropertyName(property);
         PropertyValue   color= null,
                         style = null,
@@ -747,6 +765,7 @@ public /*abstract*/ class Property {
                 if (color != null) MessageHandler.log(propName +
                             ": duplicate color overrides previous color");
                 color = pval;
+                color.setProperty(colorProp);
                 continue scanning_elements;
             case PropertyValue.NCNAME:
                 // Could be standard color, style Enum or width MappedNumeric

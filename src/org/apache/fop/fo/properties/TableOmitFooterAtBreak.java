@@ -10,7 +10,7 @@ public class TableOmitFooterAtBreak extends Property  {
     public static final int dataTypes = BOOL;
     public static final int traitMapping = FORMATTING;
     public static final int initialValueType = BOOL_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new Bool (PropNames.TABLE_OMIT_FOOTER_AT_BREAK, false);

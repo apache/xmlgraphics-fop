@@ -10,7 +10,7 @@ public class PaddingEndConditionality extends Conditionality {
     public static final int dataTypes = ENUM;
     public static final int traitMapping = FORMATTING | RENDERING;
     public static final int initialValueType = ENUM_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType(PropNames.PADDING_END_CONDITIONALITY, DISCARD);

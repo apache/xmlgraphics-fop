@@ -13,7 +13,7 @@ public class Direction extends Property  {
     public static final int initialValueType = ENUM_IT;
     public static final int LTR = 1;
     public static final int RTL = 2;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType(PropNames.DIRECTION, LTR);
@@ -25,10 +25,10 @@ public class Direction extends Property  {
         ,"ltr"
         ,"rtl"
     };
-    public /**/static/**/ int getEnumIndex(String enum) throws PropertyException {
+    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 }

@@ -12,7 +12,7 @@ public class TargetPresentationContext extends Property  {
     public static final int traitMapping = ACTION;
     public static final int initialValueType = ENUM_IT;
     public static final int USE_TARGET_PROCESSING_CONTEXT = 1;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType(PropNames.TARGET_PRESENTATION_CONTEXT,
@@ -24,10 +24,10 @@ public class TargetPresentationContext extends Property  {
         null
         ,"use-target-processing-context"
     };
-    public /**/static/**/ int getEnumIndex(String enum) throws PropertyException {
+    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 }

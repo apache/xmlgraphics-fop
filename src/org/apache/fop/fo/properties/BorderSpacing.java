@@ -28,12 +28,13 @@ public class BorderSpacing extends Property  {
      *   Note: the Lengths cannot be percentages (what about relative
      *         lengths?)
      *
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                 throws PropertyException
     {
         int type = value.getType();
@@ -41,13 +42,13 @@ public class BorderSpacing extends Property  {
             if (type == PropertyValue.INHERIT ||
                     type == PropertyValue.FROM_PARENT ||
                         type == PropertyValue.FROM_NEAREST_SPECIFIED)
-                return refineExpansionList
-                    (foNode, ShorthandPropSets.expandAndCopySHand(value));
+                return refineExpansionList(PropNames.BORDER_SPACING, foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
 
             if (type == PropertyValue.NUMERIC &&
                                             ((Numeric)value).isLength())
-                return refineExpansionList
-                    (foNode, ShorthandPropSets.expandAndCopySHand(value));
+                return refineExpansionList(PropNames.BORDER_SPACING, foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
 
             throw new PropertyException
                 ("Invalid " + value.getClass().getName() +

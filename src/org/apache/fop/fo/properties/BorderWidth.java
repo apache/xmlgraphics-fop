@@ -40,19 +40,21 @@ public class BorderWidth extends BorderCommonWidth {
      * the third element is a value for border-bottom-width,
      * the fourth element is a value for border-left-width.
      *
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                 throws PropertyException
     {
-        return refineParsing(foNode, value, NOT_NESTED);
+        return refineParsing(propindex, foNode, value, NOT_NESTED);
     }
 
     /**
      * Do the work for the two argument refineParsing method.
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @param nested <tt>boolean</tt> indicating whether this method is
@@ -61,8 +63,8 @@ public class BorderWidth extends BorderCommonWidth {
      * @return <tt>PropertyValue</tt> the verified value
      * @see #refineParsing(FONode,PropertyValue)
      */
-    public /**/static/**/ PropertyValue refineParsing
-                    (FONode foNode, PropertyValue value, boolean nested)
+    public /*static*/ PropertyValue refineParsing
+        (int propindex, FONode foNode, PropertyValue value, boolean nested)
                 throws PropertyException
     {
         int type = value.getType();
@@ -71,7 +73,7 @@ public class BorderWidth extends BorderCommonWidth {
                 if (type == PropertyValue.INHERIT ||
                         type == PropertyValue.FROM_PARENT ||
                             type == PropertyValue.FROM_NEAREST_SPECIFIED)
-                    return refineExpansionList(foNode,
+                    return refineExpansionList(PropNames.BORDER_WIDTH, foNode,
                             ShorthandPropSets.expandAndCopySHand(value));
             }
             if (type == PropertyValue.NCNAME) {
@@ -92,8 +94,8 @@ public class BorderWidth extends BorderCommonWidth {
                 }
                 // Correct the property in the mapped Numeric
                 mapped.setProperty(PropNames.BORDER_WIDTH);
-                return refineExpansionList
-                    (foNode, ShorthandPropSets.expandAndCopySHand(mapped));
+                return refineExpansionList(PropNames.BORDER_WIDTH, foNode,
+                                ShorthandPropSets.expandAndCopySHand(mapped));
             }
             else throw new PropertyException
                 ("Invalid " + value.getClass().getName() +

@@ -11,13 +11,13 @@ public class BorderEndWidth extends BorderCommonWidth {
                             COMPOUND | MAPPED_LENGTH | LENGTH | INHERIT;
     public static final int traitMapping = FORMATTING | RENDERING;
     public static final int initialValueType = LENGTH_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return getMappedLength(MEDIUM);
     }
 
-    public static Numeric getMappedLength(int enum)
+    public /*static*/ Numeric getMappedLength(int enum)
         throws PropertyException
     {
         return getMappedLength(PropNames.BORDER_END_WIDTH, enum);

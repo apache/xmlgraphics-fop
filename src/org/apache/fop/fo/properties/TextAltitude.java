@@ -12,7 +12,7 @@ public class TextAltitude extends Property  {
     public static final int traitMapping = FORMATTING;
     public static final int initialValueType = ENUM_IT;
     public static final int USE_FONT_METRICS = 1;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.TEXT_ALTITUDE, USE_FONT_METRICS);
@@ -24,10 +24,10 @@ public class TextAltitude extends Property  {
         ,"use-font-metrics"
     };
 
-    public /**/static/**/ int getEnumIndex(String enum) throws PropertyException {
+    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 

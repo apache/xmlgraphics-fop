@@ -13,7 +13,7 @@ public class Scaling extends Property  {
     public static final int initialValueType = ENUM_IT;
     public static final int UNIFORM = 1;
     public static final int NON_UNIFORM = 2;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType(PropNames.SCALING, UNIFORM);
@@ -25,10 +25,10 @@ public class Scaling extends Property  {
         ,"uniform"
         ,"non-uniform"
     };
-    public /**/static/**/ int getEnumIndex(String enum) throws PropertyException {
+    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 }

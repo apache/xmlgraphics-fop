@@ -6,27 +6,21 @@ import org.apache.fop.datastructs.ROStringArray;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.WordSpacingCommon;
 
-public class WordSpacing extends Property  {
+public class WordSpacing extends WordSpacingCommon  {
     public static final int dataTypes =
                             COMPOUND | LENGTH | MAPPED_LENGTH | INHERIT;
     public static final int traitMapping = DISAPPEARS;
     public static final int initialValueType = LENGTH_IT;
-    public static final int NORMAL = 1;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return getMappedLength(NORMAL); //normal
     }
     public static final int inherited = NO;
 
-    private static final String[] rwEnums = {
-        null
-        ,"normal"
-    };
-
-    public static Numeric getMappedLength(int enum)
+    public /*static*/ Numeric getMappedLength(int enum)
         throws PropertyException
     {
         if (enum != NORMAL)

@@ -17,7 +17,7 @@ public class FontWeight extends Property  {
     public static final int BOLDER = 3;
     public static final int LIGHTER = 4;
 
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new IntegerType(PropNames.FONT_WEIGHT, 400);
@@ -34,19 +34,21 @@ public class FontWeight extends Property  {
     };
 
     /*
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
     {
-        return refineParsing(foNode, value, NOT_NESTED);
+        return refineParsing(propindex, foNode, value, NOT_NESTED);
     }
 
     /**
-     * Do the work for the two argument refineParsing method.
+     * Do the work for the three argument refineParsing method.
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @param nested <tt>boolean</tt> indicating whether this method is
@@ -55,13 +57,14 @@ public class FontWeight extends Property  {
      * @return <tt>PropertyValue</tt> the verified value
      * @see #refineParsing(FONode,PropertyValue)
      */
-    public /**/static/**/ PropertyValue refineParsing
-                    (FONode foNode, PropertyValue value, boolean nested)
+    public /*static*/ PropertyValue refineParsing
+        (int propindex, FONode foNode, PropertyValue value, boolean nested)
                     throws PropertyException
     {
         // Override the shadowed method to ensure that Integer values
         // are limited to the valid numbers
-        PropertyValue fw = Property.refineParsing(foNode, value, nested);
+        PropertyValue fw =
+                    super.refineParsing(propindex, foNode, value, nested);
         // If the result is an IntegerType, restrict the values
         if (fw instanceof IntegerType) {
             int weight = ((IntegerType)fw).getInt();
@@ -71,10 +74,10 @@ public class FontWeight extends Property  {
         }
         return fw;
     }
-    public /**/static/**/ int getEnumIndex(String enum) throws PropertyException {
+    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 }

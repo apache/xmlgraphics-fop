@@ -37,17 +37,17 @@ public class BorderCommonWidth extends Property  {
      * @return <tt>Numeric[]</tt> containing the values corresponding
      * to the MappedNumeric enumeration constants for border width
      */
-    public static Numeric getMappedLength(int property, int enum)
+    public /*static*/ Numeric getMappedLength(int property, int enum)
 	throws PropertyException
     {
 	return 
 	    Length.makeLength(property, mappedPoints[enum], Length.PT);
     }
 
-    public /**/static/**/ int getEnumIndex(String enum) throws PropertyException {
+    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 

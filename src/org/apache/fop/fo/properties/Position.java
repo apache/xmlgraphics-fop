@@ -23,7 +23,7 @@ public class Position extends Property  {
     public static final int RELATIVE = 2;
     public static final int ABSOLUTE = 3;
     public static final int FIXED = 4;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType(PropNames.POSITION, STATIC);
@@ -39,20 +39,21 @@ public class Position extends Property  {
     };
 
     /*
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
     {
         if (value instanceof Inherit |
                 value instanceof FromParent |
                     value instanceof FromNearestSpecified)
         {
-            return refineExpansionList
-                (foNode, ShorthandPropSets.expandAndCopySHand(value));
+            return refineExpansionList(PropNames.POSITION, foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
         }
         if (value instanceof NCName) {
             EnumType enum = null;
@@ -95,10 +96,10 @@ public class Position extends Property  {
             ("Invalid value for 'position': "
                 + value.getClass().getName());
     }
-    public /**/static/**/ int getEnumIndex(String enum) throws PropertyException {
+    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 }

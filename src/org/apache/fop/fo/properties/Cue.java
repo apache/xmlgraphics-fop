@@ -32,12 +32,13 @@ public class Cue extends Property  {
      * The first element is a value for cue-before,
      * the second element is a value for cue-after.
      *
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                 throws PropertyException
     {
         int type = value.getType();
@@ -46,8 +47,8 @@ public class Cue extends Property  {
                     type == PropertyValue.FROM_PARENT ||
                         type == PropertyValue.FROM_NEAREST_SPECIFIED ||
                             type == PropertyValue.URI_TYPE)
-                return refineExpansionList
-                    (foNode, ShorthandPropSets.expandAndCopySHand(value));
+                return refineExpansionList(PropNames.CUE, foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
             throw new PropertyException
                 ("Invalid " + value.getClass().getName() +
                     " object for cue");

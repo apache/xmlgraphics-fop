@@ -21,7 +21,7 @@ public class WritingMode extends Property  {
     public static final int LR = 4;
     public static final int RL = 5;
     public static final int TB = 6;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.WRITING_MODE, LR_TB);
@@ -45,10 +45,10 @@ public class WritingMode extends Property  {
                                 (Object) Ints.consts.get(i));
         }
     }
-    public /**/static/**/ int getEnumIndex(String enum) {
+    public /*static*/ int getEnumIndex(String enum) {
         return ((Integer)(rwEnumHash.get(enum))).intValue();
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 }

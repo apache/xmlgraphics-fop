@@ -10,7 +10,7 @@ public class NumberRowsSpanned extends Property  {
     public static final int dataTypes = NUMBER;
     public static final int traitMapping = FORMATTING;
     public static final int initialValueType = INTEGER_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new IntegerType(PropNames.NUMBER_ROWS_SPANNED, 1);

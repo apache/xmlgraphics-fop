@@ -6,6 +6,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.ShadowEffect;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.properties.ColorNonTransparent;
 
 import java.util.Iterator;
@@ -27,13 +28,13 @@ public class TextShadow extends ColorNonTransparent  {
      * <tt>Length</tt>s may be preceded or followed by a color
      * specifier.
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue list)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue list)
                     throws PropertyException
     {
         int property = list.getProperty();
         if ( ! (list instanceof PropertyValueList)) {
-            return Property.refineParsing(foNode, list);
+            return super.refineParsing(PropNames.TEXT_SHADOW, foNode, list);
         }
         if (((PropertyValueList)list).size() == 0)
             throw new PropertyException
@@ -41,7 +42,7 @@ public class TextShadow extends ColorNonTransparent  {
         PropertyValueList newlist = new PropertyValueList(property);
         Iterator effects = ((PropertyValueList)list).iterator();
         while (effects.hasNext()) {
-            newlist.add(new ShadowEffect(property,
+            newlist.add(new ShadowEffect(PropNames.TEXT_SHADOW,
                         (PropertyValueList)(effects.next())));
         }
         return newlist;

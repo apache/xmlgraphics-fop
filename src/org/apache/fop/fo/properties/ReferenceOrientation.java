@@ -10,7 +10,7 @@ public class ReferenceOrientation extends Property  {
     public static final int dataTypes = INTEGER | INHERIT;
     public static final int traitMapping = NEW_TRAIT;
     public static final int initialValueType = INTEGER_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new IntegerType(PropNames.REFERENCE_ORIENTATION, 0);

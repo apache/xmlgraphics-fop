@@ -10,7 +10,7 @@ public class InternalDestination extends Property  {
     public static final int dataTypes = LITERAL | NCNAME;
     public static final int traitMapping = ACTION;
     public static final int initialValueType = LITERAL_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new Literal(PropNames.INTERNAL_DESTINATION, "");

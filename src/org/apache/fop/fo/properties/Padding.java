@@ -41,12 +41,13 @@ public class Padding extends Property  {
      * the third element is a value for padding-bottom,
      * the fourth element is a value for padding-left.
      *
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                 throws PropertyException
     {
         if ( ! (value instanceof PropertyValueList)) {
@@ -56,8 +57,8 @@ public class Padding extends Property  {
                 || (value instanceof Numeric
                         && ((Numeric)value).isDistance())
                 )
-                return refineExpansionList
-                    (foNode, ShorthandPropSets.expandAndCopySHand(value));
+                return refineExpansionList(PropNames.PADDING, foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
             throw new PropertyException
                 ("Invalid property value for 'padding': "
                     + value.getClass().getName());

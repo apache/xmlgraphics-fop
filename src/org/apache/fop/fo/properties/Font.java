@@ -16,6 +16,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.SystemFontFunction;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ShorthandPropSets;
 import org.apache.fop.fo.properties.Property;
@@ -167,12 +168,13 @@ public class Font extends Property  {
      * <p>The setup of the shorthand expansion list is determined by the
      * above considerations.
      *
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
     {
         PropertyValueList startList = null;
@@ -215,7 +217,7 @@ public class Font extends Property  {
         }
     }
 
-    private /**/static/**/ PropertyValueList processValue
+    private /*static*/ PropertyValueList processValue
         (FONode foNode, PropertyValue value)
                     throws PropertyException
     {
@@ -226,8 +228,8 @@ public class Font extends Property  {
                 type == PropertyValue.FROM_PARENT ||
                     type == PropertyValue.FROM_NEAREST_SPECIFIED)
         {
-            return refineExpansionList
-                (foNode, ShorthandPropSets.expandAndCopySHand(value));
+            return refineExpansionList(PropNames.FONT, foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
         }
         // else not Inherit/From../From..
         FontFamilySet family = null;
@@ -327,14 +329,13 @@ public class Font extends Property  {
             // font-family begins at slash + 2
             familyStart = slash + 2;
             fontsize = slash - 1;
-            // FIXME NOW !!!!!!!
-            size = (new FontSize()).refineParsing
-                                (foNode, propvals[fontsize], IS_NESTED);
+            size = PropertyConsts.pconsts.refineParsing
+                (PropNames.FONT_SIZE, foNode, propvals[fontsize], IS_NESTED);
             // derive the line-height
             // line-height is at slash + 1
-            // FIXME NOW !!!!!!!
-            height = (new LineHeight()).refineParsing
-                                (foNode, propvals[slash + 1], IS_NESTED);
+            height = PropertyConsts.pconsts.refineParsing
+                        (PropNames.LINE_HEIGHT,
+                                    foNode, propvals[slash + 1], IS_NESTED);
         } else {
             // Don''t know where slash is.  If anything precedes the
             // font-family, it must be a font-size.  Look for that.
@@ -389,8 +390,9 @@ public class Font extends Property  {
         // and that list is prepended to fontList.
         if (fontList.size() == 0
                             && familyStart == (propvals.length - 1)) {
-            fontset = (new FontFamily()).refineParsing
-                            (foNode, propvals[familyStart], IS_NESTED);
+            fontset = PropertyConsts.pconsts.refineParsing
+                            (PropNames.FONT_FAMILY, foNode,
+                                            propvals[familyStart], IS_NESTED);
         } else {
             // Must develop a list to prepend to fontList
             PropertyValueList tmpList =
@@ -399,16 +401,18 @@ public class Font extends Property  {
                 tmpList.add(propvals[i]);
             fontList.addFirst(tmpList);
             // Get a FontFamilySet
-            fontset = (new FontFamily()).refineParsing
-                                        (foNode, fontList, IS_NESTED);
+            fontset = PropertyConsts.pconsts.refineParsing
+                                (PropNames.FONT_FAMILY, foNode,
+                                                        fontList, IS_NESTED);
         }
         // Only font-style font-variant and font-weight, in any order
         // remain as possibilities at the front of the expression
         for (int i = 0; i < fontsize; i++) {
             PropertyValue pv = null;
             try {
-                pv = (new FontStyle()).refineParsing
-                                        (foNode, propvals[i], IS_NESTED);
+                pv = PropertyConsts.pconsts.refineParsing
+                                (PropNames.FONT_STYLE, foNode,
+                                                    propvals[i], IS_NESTED);
                 if (style != null)
                     MessageHandler.log("font: duplicate" +
                     "style overrides previous style");
@@ -417,8 +421,9 @@ public class Font extends Property  {
             } catch(PropertyException e) {}
 
             try {
-                pv = (new FontVariant()).refineParsing
-                                        (foNode, propvals[i], IS_NESTED);
+                pv = PropertyConsts.pconsts.refineParsing
+                                (PropNames.FONT_VARIANT, foNode,
+                                                    propvals[i], IS_NESTED);
                 if (variant != null)
                     MessageHandler.log("font: duplicate" +
                     "variant overrides previous variant");
@@ -427,8 +432,9 @@ public class Font extends Property  {
             } catch(PropertyException e) {}
 
             try {
-                pv = (new FontWeight()).refineParsing
-                                        (foNode, propvals[i], IS_NESTED);
+                pv = PropertyConsts.pconsts.refineParsing
+                                (PropNames.FONT_WEIGHT, foNode,
+                                                    propvals[i], IS_NESTED);
                 if (weight != null)
                     MessageHandler.log("font: duplicate" +
                     "weight overrides previous weight");

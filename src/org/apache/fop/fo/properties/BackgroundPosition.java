@@ -66,19 +66,21 @@ public class BackgroundPosition extends Property  {
      * containing the expansion of the shorthand.  I.e. the first
      * element is a value for BackgroundPositionHorizontal, and the
      * second is for BackgroundPositionVertical.
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
     {
-        return refineParsing(foNode, value, NOT_NESTED);
+        return refineParsing(propindex, foNode, value, NOT_NESTED);
     }
 
     /**
-     * Do the work for the two argument refineParsing method.
+     * Do the work for the three argument refineParsing method.
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @param nested <tt>boolean</tt> indicating whether this method is
@@ -87,24 +89,24 @@ public class BackgroundPosition extends Property  {
      * @return <tt>PropertyValue</tt> the verified value
      * @see #refineParsing(FOTree,PropertyValue)
      */
-    public /**/static/**/ PropertyValue refineParsing
-                    (FONode foNode, PropertyValue value, boolean nested)
+    public /*static*/ PropertyValue refineParsing
+        (int propindex, FONode foNode, PropertyValue value, boolean nested)
                     throws PropertyException
     {
         if ( ! (value instanceof PropertyValueList)) {
             return processValue(foNode, value, nested);
         } else {
             return processList
-                        (spaceSeparatedList((PropertyValueList)value));
+                    (spaceSeparatedList((PropertyValueList)value));
         }
     }
 
-    private /**/static/**/ PropertyValueList processValue
-                    (FONode foNode, PropertyValue value, boolean nested)
+    private /*static*/ PropertyValueList processValue
+        (FONode foNode, PropertyValue value, boolean nested)
                 throws PropertyException
     {
-        PropertyValueList newlist
-                        = new PropertyValueList(value.getProperty());
+        int property = value.getProperty();
+        PropertyValueList newlist = new PropertyValueList(property);
         // Can only be Inherit, NCName (i.e. enum token)
         // or Numeric (i.e. Length or Percentage)
         int type = value.getType();
@@ -114,7 +116,8 @@ public class BackgroundPosition extends Property  {
                         type == PropertyValue.FROM_NEAREST_SPECIFIED) {
                 // Copy the value to each member of the shorthand
                 newlist = refineExpansionList
-                    (foNode, ShorthandPropSets.expandAndCopySHand(value));
+                        (PropNames.BACKGROUND_POSITION, foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
             }
         }
 
@@ -236,11 +239,13 @@ public class BackgroundPosition extends Property  {
             String enumval2 = ((NCName)posn2).getNCName();
             double percent1 = 50.0d, percent2 = 50.0d;
             try {
-                enum1 = BackgroundPositionHorizontal.getEnumIndex(enumval1);
+                enum1 = PropertyConsts.pconsts.getEnumIndex
+                        (PropNames.BACKGROUND_POSITION_HORIZONTAL, enumval1);
             } catch (PropertyException e) {
                 // Not a horizontal element - try vertical
                 try {
-                    enum1 = BackgroundPositionVertical.getEnumIndex(enumval1);
+                    enum1 = PropertyConsts.pconsts.getEnumIndex
+                        (PropNames.BACKGROUND_POSITION_VERTICAL, enumval1);
                     enum1 += RIGHT;
                 } catch (PropertyException e2) {
                     throw new PropertyException
@@ -249,12 +254,13 @@ public class BackgroundPosition extends Property  {
                 }
             }
             try {
-                enum2 = BackgroundPositionVertical.getEnumIndex(enumval2);
+                enum2 = PropertyConsts.pconsts.getEnumIndex
+                        (PropNames.BACKGROUND_POSITION_VERTICAL, enumval2);
                 enum2 += RIGHT;
             } catch (PropertyException e) {
                 try {
-                    enum2 =
-                        BackgroundPositionHorizontal.getEnumIndex(enumval2);
+                    enum2 = PropertyConsts.pconsts.getEnumIndex
+                        (PropNames.BACKGROUND_POSITION_HORIZONTAL, enumval2);
                 } catch (PropertyException e2) {
                     throw new PropertyException
                         ("Unrecognised value for BackgroundPosition: "

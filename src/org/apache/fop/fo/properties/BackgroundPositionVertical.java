@@ -15,7 +15,7 @@ public class BackgroundPositionVertical extends Property  {
     public static final int TOP = 1;
     public static final int CENTER = 2;
     public static final int BOTTOM = 3;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return Percentage.makePercentage
@@ -29,10 +29,10 @@ public class BackgroundPositionVertical extends Property  {
         ,"center"
         ,"bottom"
     };
-    public /**/static/**/ int getEnumIndex(String enum) throws PropertyException {
+    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 }
