@@ -47,11 +47,11 @@
 
         <menu label="Project">
           <menu-item label="News" href="news.html"/>
-          <menu-item label="Logo contest" href="logocontest.html"/>
+          <menu-item label="Who We Are" href="team.html"/>
           <menu-item label="Status" href="status.html"/>
+          <menu-item label="Logo contest" href="logocontest.html"/>
           <menu-item label="Changes" href="changes.html"/>
           <menu-item label="Todo" href="todo.html"/>
-          <menu-item label="Team" href="team.html"/>
         </menu>
 
     </book>
