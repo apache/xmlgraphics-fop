@@ -1,9 +1,0 @@
-<font-metrics>
-    <class-name>MSMinchoItalic</class-name>
-    <extends-name>MSMincho</extends-name>
-
-    <font-name>#82l#82r#96#BE#92#A9,Italic</font-name>
-    <cid-basefont>#82l#82r#96#BE#92#A9,Italic</cid-basefont>
-    <flags>71</flags>
-    <italicangle>-11</italicangle>
-</font-metrics>
