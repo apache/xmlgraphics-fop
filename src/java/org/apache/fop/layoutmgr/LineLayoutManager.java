@@ -1053,11 +1053,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 /* ALLINEAMENTO NON GIUSTIFICATO, elementi con Position effettive */
                 Position returnPosition = new LeafPosition(this, p);
                 for (int i = 0;
-                     i < lineLayouts.getChosenLineNumber();
-                     i ++) {
+                        i < lineLayouts.getChosenLineNumber();
+                        i++) {
                     if (!((BlockLevelLayoutManager) parentLM).mustKeepTogether()
                         && i >= fobj.getOrphans()
-                        && i <= lineLayouts.getChosenLineNumber() - fobj.getWidows()) {
+                        && i <= lineLayouts.getChosenLineNumber() - fobj.getWidows()
+                        && returnList.size() > 0) {
                         // null penalty allowing a page break between lines
                         returnList.add(new KnuthPenalty(0, 0, false, returnPosition, false));
                     }
