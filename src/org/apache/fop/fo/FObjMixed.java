@@ -44,9 +44,11 @@ public class FObjMixed extends FObj {
         // addChild(new FOText(data, start, length, this));
         FOText ft = new FOText(data, start, length, this);
         ft.setLogger(log);
-        ft.setUnderlined(ts.getUnderlined());
-        ft.setOverlined(ts.getOverlined());
-        ft.setLineThrough(ts.getLineThrough());
+        if (ts != null) {
+            ft.setUnderlined(ts.getUnderlined());
+            ft.setOverlined(ts.getOverlined());
+            ft.setLineThrough(ts.getLineThrough());
+        }
         addChild(ft);
 
     }
