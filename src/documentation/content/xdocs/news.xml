@@ -8,6 +8,32 @@
   </header>
   <body>
     <section>
+      <title>18 July 2003 FOP 0.20.5 released</title>
+      <p>Changes since 0.20.4 include:</p>
+      <ul>
+        <li>Added support for PDF encryption</li>
+        <li>Perfomance tuning</li>
+        <li>Fixed link hotspot positioning</li>
+        <li>Fixed multi-threading issues</li>
+        <li>Added support for CCITT Group 4 encoded TIFF files</li>
+        <li>Dynamic JAI support</li>
+        <li>Added autoselecting portrait/landscape for PCL and PS Renderer</li>
+        <li>Added continued-label extension for tables</li>
+        <li>Improved AWT Font-measuring/rendering</li>
+        <li>Improved marker handling</li>
+        <li>Fixed problem with jpegs with icc profile and acrobat reader 5</li>
+        <li>Added a fontBaseDir property</li>
+        <li>TXTRenderer output encoding</li>
+        <li>border-spacing support</li>
+        <li>and a lot more bugfixes</li>
+      </ul>
+      <p>
+      See also the full text of the
+      <link href="http://archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=6067">
+      announcement</link> and the <link href="relnotes.html#FOP+0.20.5">release notes</link>.
+      </p>
+    </section>
+    <section>
       <title>29 June 2003 - New Committer</title>
       <p>Welcome Glen Mazza!</p>
     </section>
