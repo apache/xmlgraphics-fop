@@ -148,7 +148,7 @@ public class FontReader extends DefaultHandler {
      * Get the generated font object
      * @return the font
      */
-    public Font getFont() {
+    public Typeface getFont() {
         return returnFont;
     }
 

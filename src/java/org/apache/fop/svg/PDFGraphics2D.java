@@ -1259,8 +1259,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         boolean useMultiByte = false;
-        org.apache.fop.fonts.Font f =
-            (org.apache.fop.fonts.Font)fontInfo.getFonts().get(name);
+        org.apache.fop.fonts.Typeface f =
+            (org.apache.fop.fonts.Typeface)fontInfo.getFonts().get(name);
         if (f instanceof LazyFont) {
             if (((LazyFont) f).getRealFont() instanceof CIDFont) {
                 useMultiByte = true;

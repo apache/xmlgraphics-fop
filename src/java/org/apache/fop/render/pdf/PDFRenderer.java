@@ -77,7 +77,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Version;
 import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fo.properties.BackgroundRepeat;
-import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFFilterList;
@@ -867,7 +867,7 @@ public class PDFRenderer extends PrintRenderer {
         int size = ((Integer) word.getTrait(Trait.FONT_SIZE)).intValue();
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Font f = (Font) fontInfo.getFonts().get(name);
+        Typeface f = (Typeface) fontInfo.getFonts().get(name);
         boolean useMultiByte = f.isMultiByte();
 
         // String startText = useMultiByte ? "<FEFF" : "(";

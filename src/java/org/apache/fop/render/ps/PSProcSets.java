@@ -54,7 +54,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.Glyphs;
 import org.apache.fop.control.Document;
 
@@ -221,7 +221,7 @@ public final class PSProcSets {
         Iterator enum = fonts.keySet().iterator();
         while (enum.hasNext()) {
             String key = (String)enum.next();
-            Font fm = (Font)fonts.get(key);
+            Typeface fm = (Typeface)fonts.get(key);
             gen.writeln("/" + key + " /" + fm.getFontName() + " def");
         }
         gen.writeln("end def");
@@ -232,7 +232,7 @@ public final class PSProcSets {
         enum = fonts.keySet().iterator();
         while (enum.hasNext()) {
             String key = (String)enum.next();
-            Font fm = (Font)fonts.get(key);
+            Typeface fm = (Typeface)fonts.get(key);
             if (null == fm.getEncoding()) {
                 //ignore (ZapfDingbats and Symbol run through here
                 //TODO: ZapfDingbats and Symbol should get getEncoding() fixed!

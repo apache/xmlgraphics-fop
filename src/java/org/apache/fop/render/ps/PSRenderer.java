@@ -72,7 +72,7 @@ import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FOUserAgent;
-import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.control.Document;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.RendererContext;
@@ -445,7 +445,7 @@ public class PSRenderer extends AbstractRenderer {
      * @param text Text to paint
      * @param font Font to use
      */
-    protected void paintText(int rx, int bl, String text, Font font) {
+    protected void paintText(int rx, int bl, String text, Typeface font) {
         saveGraphicsState();
         writeln("1 0 0 -1 " + rx + " " + bl + " Tm");
 
@@ -471,7 +471,7 @@ public class PSRenderer extends AbstractRenderer {
         int fontsize = area.getTraitAsInteger(Trait.FONT_SIZE);
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Font f = (Font)fontInfo.getFonts().get(fontname);
+        Typeface f = (Typeface)fontInfo.getFonts().get(fontname);
 
         //Determine position
         int rx = currentBlockIPPosition;
