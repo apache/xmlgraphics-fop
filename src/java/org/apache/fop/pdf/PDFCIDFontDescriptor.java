@@ -72,7 +72,6 @@ public class PDFCIDFontDescriptor extends PDFFontDescriptor {
     /**
      * create the /FontDescriptor object
      *
-     * @param number the object's number
      * @param basefont the base font name
      * @param fontBBox the bounding box for the described font
      * @param flags various characteristics of the font
@@ -81,11 +80,11 @@ public class PDFCIDFontDescriptor extends PDFFontDescriptor {
      * @param italicAngle the angle of the vertical dominant strokes
      * @param lang the language
      */
-    public PDFCIDFontDescriptor(int number, String basefont, int[] fontBBox,
+    public PDFCIDFontDescriptor(String basefont, int[] fontBBox,
                                 int capHeight, int flags, int italicAngle,
                                 int stemV, String lang) {
 
-        super(number, basefont, fontBBox[3], fontBBox[1], capHeight, flags,
+        super(basefont, fontBBox[3], fontBBox[1], capHeight, flags,
               new PDFRectangle(fontBBox), italicAngle, stemV);
 
         this.lang = lang;

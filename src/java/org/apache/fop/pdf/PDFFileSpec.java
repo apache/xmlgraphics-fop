@@ -64,27 +64,24 @@ public class PDFFileSpec extends PDFObject {
     /**
      * create a /FileSpec object.
      *
-     * @param number the object's number
      * @param filename the filename represented by this object
      */
-    public PDFFileSpec(int number, String filename) {
+    public PDFFileSpec(String filename) {
 
         /* generic creation of object */
-        super(number);
+        super();
 
         this.filename = filename;
     }
 
     /**
-     * represent the object in PDF
-     *
-     * @return the PDF string
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
-        String p = new String(this.number + " " + this.generation
-                              + " obj\n<<\n/Type /FileSpec\n" + "/F ("
-                              + this.filename + ")\n" + ">>\nendobj\n");
-        return p.getBytes();
+    public String toPDFString() {
+        return getObjectID() 
+                + "<<\n/Type /FileSpec\n" 
+                + "/F (" + this.filename + ")\n" 
+                + ">>\nendobj\n";
     }
 
     /*

@@ -63,17 +63,16 @@ public class PDFFontTrueType extends PDFFontNonBase14 {
     /**
      * create the /Font object
      *
-     * @param number the object's number
      * @param fontname the internal name for the font
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
      */
-    public PDFFontTrueType(int number, String fontname, 
+    public PDFFontTrueType(String fontname, 
                            String basefont,
                            Object encoding) {
 
         /* generic creation of PDF object */
-        super(number, fontname, FontType.TRUETYPE, basefont, encoding /* , mapping */);
+        super(fontname, FontType.TRUETYPE, basefont, encoding /* , mapping */);
     }
 
 }

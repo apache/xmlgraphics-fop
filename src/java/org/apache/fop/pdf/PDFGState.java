@@ -118,7 +118,7 @@ public class PDFGState extends PDFObject {
     public static final PDFGState DEFAULT;
 
     static {
-        DEFAULT = new PDFGState(0);
+        DEFAULT = new PDFGState();
         Map vals = DEFAULT.values;
         /*vals.put(LW, new Float(1.0));
         vals.put(LC, new Integer(0));
@@ -138,21 +138,11 @@ public class PDFGState extends PDFObject {
     private Map values = new java.util.HashMap();
 
     /**
-     * Create a /ExtGState object.
-     *
-     * @param number the object's number
-     */
-    public PDFGState(int number) {
-        /* generic creation of object */
-        super(number);
-    }
-
-    /**
      * Returns the name of this object
      * @return the name
      */
     public String getName() {
-        return "GS" + this.number;
+        return "GS" + getObjectNumber();
     }
 
     /**
@@ -186,18 +176,17 @@ public class PDFGState extends PDFObject {
     }
 
     /**
-     * Represent the object in PDF.
-     *
-     * @return the PDF string
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
-        StringBuffer sb = new StringBuffer(this.number + " " + this.generation
-                              + " obj\n<<\n/Type /ExtGState\n");
+    public String toPDFString() {
+        StringBuffer sb = new StringBuffer(64);
+        sb.append(getObjectID());
+        sb.append("<<\n/Type /ExtGState\n");
         appendVal(sb, GSTATE_ALPHA_NONSTROKE);
         appendVal(sb, GSTATE_ALPHA_STROKE);
 
         sb.append(">>\nendobj\n");
-        return sb.toString().getBytes();
+        return sb.toString();
     }
 
     private void appendVal(StringBuffer sb, String name) {

@@ -77,12 +77,11 @@ public class PDFLink extends PDFObject {
     /**
      * create objects associated with a link annotation (GoToR)
      *
-     * @param number the object's number
      * @param r the rectangle of the link hotspot in absolute coordinates
      */
-    public PDFLink(int number, Rectangle2D r) {
+    public PDFLink(Rectangle2D r) {
         /* generic creation of PDF object */
-        super(number);
+        super();
 
         this.ulx = (float)r.getX();
         this.uly = (float)r.getY();
@@ -101,18 +100,16 @@ public class PDFLink extends PDFObject {
     }
 
     /**
-     * produce the PDF representation of the object
-     *
-     * @return the PDF
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
-        String p = this.number + " " + this.generation + " obj\n"
+    public String toPDFString() {
+        String s = getObjectID()
                    + "<< /Type /Annot\n" + "/Subtype /Link\n" + "/Rect [ "
                    + (ulx) + " " + (uly) + " "
                    + (brx) + " " + (bry) + " ]\n" + "/C [ "
                    + this.color + " ]\n" + "/Border [ 0 0 0 ]\n" + "/A "
                    + this.action.getAction() + "\n" + "/H /I\n>>\nendobj\n";
-        return p.getBytes();
+        return s;
     }
 
     /*

@@ -51,7 +51,7 @@
 package org.apache.fop.pdf;
 
 // Java
-import java.util.Vector;
+import java.util.List;
 
 /**
  * class representing an object which is a list of annotations.
@@ -64,23 +64,7 @@ public class PDFAnnotList extends PDFObject {
     /**
      * the /Annot objects
      */
-    protected Vector links = new Vector();
-
-    /**
-     * the number of /Annot objects
-     */
-    protected int count = 0;
-
-    /**
-     * create a /Annots object.
-     *
-     * @param number the object's number
-     */
-    public PDFAnnotList(int number) {
-
-        /* generic creation of object */
-        super(number);
-    }
+    private List links = new java.util.Vector();
 
     /**
      * add an /Annot object of /Subtype /Link.
@@ -88,8 +72,7 @@ public class PDFAnnotList extends PDFObject {
      * @param link the PDFLink to add.
      */
     public void addAnnot(PDFObject link) {
-        this.links.addElement(link);
-        this.count++;
+        this.links.add(link);
     }
 
     /**
@@ -98,23 +81,22 @@ public class PDFAnnotList extends PDFObject {
      * @return the number of links
      */
     public int getCount() {
-        return this.count;
+        return this.links.size();
     }
 
     /**
-     * represent the object in PDF
-     *
-     * @return the PDF string
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
-        StringBuffer p = new StringBuffer(this.number + " " + this.generation
-                                          + " obj\n[\n");
-        for (int i = 0; i < this.count; i++) {
-            p = p.append(((PDFObject)links.elementAt(i)).referencePDF()
-                         + "\n");
+    public String toPDFString() {
+        StringBuffer p = new StringBuffer(128);
+        p.append(getObjectID());
+        p.append("[\n");
+        for (int i = 0; i < getCount(); i++) {
+            p.append(((PDFObject)links.get(i)).referencePDF());
+            p.append("\n");
         }
-        p = p.append("]\nendobj\n");
-        return p.toString().getBytes();
+        p.append("]\nendobj\n");
+        return p.toString();
     }
 
     /*

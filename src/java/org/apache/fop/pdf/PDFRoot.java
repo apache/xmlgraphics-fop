@@ -94,11 +94,12 @@ public class PDFRoot extends PDFObject {
      * it is about to be written (immediately before the xref
      * table as part of the trsailer). (mark-fop@inomial.com)
      *
-     * @param number the object's number
+     * @param objnum the object's number
      * @param pages the PDFPages object
      */
-    public PDFRoot(int number, PDFPages pages) {
-        super(number);
+    public PDFRoot(int objnum, PDFPages pages) {
+        super();
+        setObjectNumber(objnum);
         setRootPages(pages);
     }
 
@@ -148,15 +149,14 @@ public class PDFRoot extends PDFObject {
     }
 
     /**
-     * represent the object as PDF.
-     *
-     * @return the PDF string
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
-        StringBuffer p = new StringBuffer(this.number + " " + this.generation
-                                          + " obj\n<< /Type /Catalog\n/Pages "
-                                          + this.rootPages.referencePDF()
-                                          + "\n");
+    public String toPDFString() {
+        StringBuffer p = new StringBuffer(128);
+        p.append(getObjectID());
+        p.append("<< /Type /Catalog\n/Pages "
+                + this.rootPages.referencePDF()
+                + "\n");
         if (outline != null) {
             p.append(" /Outlines " + outline.referencePDF() + "\n");
             p.append(" /PageMode /UseOutlines\n");
@@ -176,8 +176,8 @@ public class PDFRoot extends PDFObject {
                 break;
             }
         }
-        p.append(" >>\nendobj\n");
-        return p.toString().getBytes();
+        p.append(">>\nendobj\n");
+        return p.toString();
     }
 
 }

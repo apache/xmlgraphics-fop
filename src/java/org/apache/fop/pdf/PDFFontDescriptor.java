@@ -83,7 +83,6 @@ public class PDFFontDescriptor extends PDFObject {
     /**
      * Create the /FontDescriptor object
      *
-     * @param number the object's number
      * @param ascent the maximum height above the baseline
      * @param descent the maximum depth below the baseline
      * @param capHeight height of the capital letters
@@ -93,13 +92,13 @@ public class PDFFontDescriptor extends PDFObject {
      * @param italicAngle the angle of the vertical dominant strokes
      * @param stemV the width of the dominant vertical stems of glyphs
      */
-    public PDFFontDescriptor(int number, String basefont, int ascent,
+    public PDFFontDescriptor(String basefont, int ascent,
                              int descent, int capHeight, int flags,
                              PDFRectangle fontBBox, int italicAngle,
                              int stemV) {
 
         /* generic creation of PDF object */
-        super(number);
+        super();
 
         /* set fields using paramaters */
         this.basefont = basefont;
@@ -150,14 +149,13 @@ public class PDFFontDescriptor extends PDFObject {
     // public void setCharSet(){}//for subset fonts
 
     /**
-     * Produce the PDF representation for the object
-     *
-     * @return the PDF
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
-        StringBuffer p = new StringBuffer(this.number + " " + this.generation
-                                          + " obj\n<< /Type /FontDescriptor"
-                                          + "\n/FontName /" + this.basefont);
+    public String toPDFString() {
+        StringBuffer p = new StringBuffer(128);
+        p.append(getObjectID() 
+                + "<< /Type /FontDescriptor"
+                + "\n/FontName /" + this.basefont);
 
         p.append("\n/FontBBox ");
         p.append(fontBBox.toPDFString());
@@ -209,8 +207,8 @@ public class PDFFontDescriptor extends PDFObject {
         // charSet for subset fonts // not yet implemented
         // CID optional field
         fillInPDF(p);
-        p.append("\n >>\nendobj\n");
-        return p.toString().getBytes();
+        p.append(" >>\nendobj\n");
+        return p.toString();
     }
 
     /**

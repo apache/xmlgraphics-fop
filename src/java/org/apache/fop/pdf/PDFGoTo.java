@@ -68,12 +68,11 @@ public class PDFGoTo extends PDFAction {
     /**
      * create a /GoTo object.
      *
-     * @param number the object's number
      * @param pageReference the pageReference represented by this object
      */
-    public PDFGoTo(int number, String pageReference) {
+    public PDFGoTo(String pageReference) {
         /* generic creation of object */
-        super(number);
+        super();
 
         this.pageReference = pageReference;
     }
@@ -124,11 +123,9 @@ public class PDFGoTo extends PDFAction {
     }
 
     /**
-     * represent the object in PDF
-     *
-     * @return the PDF string
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
+    public String toPDFString() {
         String dest;
         if (destination == null) {
             dest = "/D [" + this.pageReference + " /XYZ " + xPosition
@@ -136,10 +133,9 @@ public class PDFGoTo extends PDFAction {
         } else {
             dest = "/D [" + this.pageReference + " " + destination + "]\n";
         }
-        String p = new String(this.number + " " + this.generation
-                              + " obj\n<<\n/S /GoTo\n" + dest
-                              + ">>\nendobj\n");
-        return p.getBytes();
+        return getObjectID() 
+                    + "<< /Type /Action\n/S /GoTo\n" + dest
+                    + ">>\nendobj\n";
     }
 
     /*
