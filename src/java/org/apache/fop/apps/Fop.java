@@ -50,7 +50,16 @@
  */ 
 package org.apache.fop.apps;
 
+// Java
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+
+// Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
+
+// FOP
+import org.apache.fop.render.awt.AWTRenderer;
+
 
 /**
  * The main application class for the FOP command line interface (CLI).
@@ -63,13 +72,37 @@ public class Fop {
      */
     public static void main(String[] args) {
         CommandLineOptions options = null;
-        CommandLineStarter starter = null;
+        InputHandler inputHandler = null;
+        BufferedOutputStream bos = null;
+        String version = Version.getVersion();
 
         try {
+            Driver driver = new Driver();
+            driver.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_INFO));
+            driver.getLogger().info(version);
             options = new CommandLineOptions(args);
-            starter = new CommandLineStarter(options);
-            starter.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_INFO));
-            starter.run();
+            inputHandler = options.getInputHandler();
+
+            try {
+                if (options.getOutputMode() == CommandLineOptions.AWT_OUTPUT) {
+                    driver.setRenderer(new AWTRenderer(inputHandler));
+                } else { 
+                    driver.setRenderer(options.getRenderer());
+    
+                    if (options.getOutputFile() != null) {
+                        bos = new BufferedOutputStream(new FileOutputStream(
+                            options.getOutputFile()));
+                        driver.setOutputStream(bos);
+                    }
+                }
+        
+                driver.getRenderer().setOptions(options.getRendererOptions());
+                driver.render(inputHandler);
+            } finally {
+                if (bos != null) {
+                    bos.close();
+                }
+            }
         } catch (FOPException e) {
             if (e.getMessage() == null) {
                 System.err.println("Exception occured with a null error message");
@@ -81,15 +114,14 @@ public class Fop {
             } else {
                 System.err.println("Turn on debugging for more information");
             }
-        } catch (java.io.FileNotFoundException e) {
+        } catch (java.io.IOException e) {
             System.err.println("" + e.getMessage());
             if (options != null && options.getLogger().isDebugEnabled()) {
                 e.printStackTrace();
             } else {
                 System.err.println("Turn on debugging for more information");
             }
-        }
+        } 
     }
-
 }
 
