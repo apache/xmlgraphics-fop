@@ -81,20 +81,13 @@ public class RegionBody extends Region {
      * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension)
      */
     public Rectangle getViewportRectangle (FODimension reldims) {
-        /*
-        * Use space-before and space-after which will use corresponding
-        * absolute margin properties if specified. For indents:
-        * try to get corresponding absolute margin property using the
-        * writing-mode on the page (not on the region-body!). If that's not
-        * set but indent is explicitly set, it will return that.
-        */
-        int start = commonMarginBlock.startIndent.getValue();
-        int end = commonMarginBlock.endIndent.getValue();
-        int before = commonMarginBlock.spaceBefore.getOptimum().getLength().getValue();
-        int after = commonMarginBlock.spaceAfter.getOptimum().getLength().getValue();
-        return new Rectangle(start, before,
-                    reldims.ipd - start - end,
-                    reldims.bpd - before - after);
+        int left = commonMarginBlock.marginLeft.getValue();
+        int right = commonMarginBlock.marginRight.getValue();
+        int top = commonMarginBlock.marginTop.getValue();
+        int bottom = commonMarginBlock.marginBottom.getValue();
+        return new Rectangle(left, top,
+                    reldims.ipd - left - right,
+                    reldims.bpd - top - bottom);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
@@ -79,6 +80,12 @@ public abstract class Region extends FObj {
                         + " is not permitted.", locator);
             }
         }
+        
+        if (getCommonBorderPaddingBackground().getBPPaddingAndBorder(false) != 0
+                || getCommonBorderPaddingBackground().getIPPaddingAndBorder(false) != 0) {
+            throw new PropertyException("Border and padding for a region "
+                    + "must be '0' (See 6.4.13 in XSL 1.0).");
+        }
     }
 
     /**
@@ -90,6 +97,10 @@ public abstract class Region extends FObj {
             invalidChildError(loc, nsURI, localName);
     }
 
+    /**
+     * @param pageRefRect reference dimension of the page area.
+     * @return the rectangle for the viewport area
+     */
     public abstract Rectangle getViewportRectangle(FODimension pageRefRect);
 
     /**
@@ -132,36 +143,33 @@ public abstract class Region extends FObj {
     }
 
     /**
-     * Return the Common Border, Padding, and Background Properties.
+     * @return the Background Properties (border and padding are not used here).
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground; 
     }
 
-    /**
-     * Return the "region-name" property.
-     */
+    /** @return the "region-name" property. */
     public String getRegionName() {
         return regionName;
     }
 
-    /**
-     * Return the "writing-mode" property.
-     */
+    /** @return the "writing-mode" property. */
     public int getWritingMode() {
         return writingMode;
     }
 
-    /**
-     * Return the "overflow" property.
-     */
+    /** @return the "overflow" property. */
     public int getOverflow() {
         return overflow;
     }
     
-    /**
-     * Return the "reference-orientation" property.
-     */
+    /** @return the display-align property. */
+    public int getDisplayAlign() {
+        return displayAlign;
+    }
+       
+    /** @return the "reference-orientation" property. */
     public int getReferenceOrientation() {
         return referenceOrientation.getValue();
     }
