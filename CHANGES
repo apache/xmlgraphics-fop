@@ -2,6 +2,10 @@
 Done since 0.20.4 release
 
 - New Avalon Framework JAR with Log4J support (Bug 11274) (Jeremias Maerki)
+- Added a RunLengthEncode filter for the PostScript renderer
+  Submitted by: Stephen Wolke <smwolke@geistig.com>
+- Added a property on the PostScript renderer for switching between PostScript
+  Level 2 and 3. Default is Level 3. (Jeremias Maerki)
 
 ==============================================================================
 Done since 0.20.3 release
