@@ -24,7 +24,7 @@ public class ROIntArray {
     /**
      * Initialise with single integer array.  N.B. the ROIntArray is a
      * reference to the initialising array.  Any subsequent changes to the
-     * contents of the iniitialising array will be reflected in the
+     * contents of the initialising array will be reflected in the
      * ROIntArray.
      * @param iarray an <tt>int[]</tt>
      */
