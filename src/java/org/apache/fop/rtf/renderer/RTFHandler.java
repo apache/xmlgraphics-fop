@@ -452,7 +452,7 @@ public class RTFHandler extends FOInputHandler {
            white. */
         if ((fopValue.getRed() == 0) && (fopValue.getGreen() == 0)
                 && (fopValue.getBlue() == 0) && (fopValue.getAlpha() == 0)) {
-            rtfColor = RtfColorTable.getInstance().getColorNumber("white");
+            rtfColor = RtfColorTable.getInstance().getColorNumber("white").intValue();
         } else {
             rtfColor = convertFOPColorToRTF(fopValue);
         }
@@ -472,7 +472,7 @@ public class RTFHandler extends FOInputHandler {
         int greenComponent = ColorType.convertChannelToInteger (fopColor.getGreen());
         int blueComponent = ColorType.convertChannelToInteger (fopColor.getBlue());
         return RtfColorTable.getInstance().getColorNumber(redComponent,
-                greenComponent, blueComponent);
+                greenComponent, blueComponent).intValue();
     }
 
 }
