@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedList;
 
+import org.xml.sax.SAXParseException;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.RetrieveMarker;
@@ -108,15 +110,20 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
             List list = new ArrayList();
             Marker marker = retrieveMarker(name, position, boundary);
             if (marker != null) {
+                try {
+                    marker.rebind(fobj.getPropertyList());
+                } catch (SAXParseException exc) {
+                    log.error("fo:retrieve-marker unable to rebind property values", exc);
+                }
                 marker.addLayoutManager(list);
                 if (list.size() > 0) {
                     replaceLM =  (LayoutManager)list.get(0);
                     replaceLM.setParent(this);
                     replaceLM.initialize();
                     log.debug("retrieved: " + replaceLM + ":" + list.size());
-                } else {
-                    log.debug("found no marker with name: " + name);
                 }
+            } else {
+                log.debug("found no marker with name: " + name);
             }
         }
     }

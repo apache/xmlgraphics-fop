@@ -106,7 +106,12 @@ public class FOTreeBuilder extends DefaultHandler {
         //This creates either an AreaTreeHandler and ultimately a Renderer, or
         //one of the RTF-, MIF- etc. Handlers.
         foEventHandler = RendererFactory.createFOEventHandler(foUserAgent, renderType, stream);
-        
+        foEventHandler.setPropertyListMaker(new PropertyListMaker() {
+            public PropertyList make(FObj fobj, PropertyList parentPropertyList) {
+                return new StaticPropertyList(fobj, parentPropertyList);
+            }
+        });
+
         // Add standard element mappings
         setupDefaultMappings();
 
