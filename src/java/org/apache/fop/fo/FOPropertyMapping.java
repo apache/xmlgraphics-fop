@@ -303,8 +303,7 @@ public class FOPropertyMapping implements Constants {
         genericBorderWidth.addKeyword("thin", "0.5pt");
         genericBorderWidth.addKeyword("medium", "1pt");
         genericBorderWidth.addKeyword("thick", "2pt");
-        // TODO: bckfnn reenable
-        genericBorderWidth.setDefault("0pt");
+        genericBorderWidth.setDefault("medium");
 
         // GenericBorderStyle
         genericBorderStyle = new EnumProperty.Maker(0);
