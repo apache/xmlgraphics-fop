@@ -101,7 +101,7 @@ public class FopPrintServlet extends HttpServlet {
             PrinterJob pj = PrinterJob.getPrinterJob();
             PrintRenderer renderer = new PrintRenderer(pj);
 
-            driver.setLogger (log);
+            driver.enableLogging(log);
             driver.setRenderer(renderer);
             driver.run();
 
@@ -123,9 +123,9 @@ public class FopPrintServlet extends HttpServlet {
 
             pj.setCopies(1);
 
-            driver.setLogger (log);
-            driver.setRenderer (renderer);
-            driver.render (input.getParser(), input.getInputSource());
+            driver.enableLogging(log);
+            driver.setRenderer(renderer);
+            driver.render(input.getParser(), input.getInputSource());
 
             reportOK (response);
         } catch (Exception ex) {
