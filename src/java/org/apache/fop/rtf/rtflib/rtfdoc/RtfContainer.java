@@ -97,9 +97,9 @@ public class RtfContainer extends RtfElement {
 
             // warn of this problem
             final RtfFile rf = getRtfFile();
-            if(rf.getLog() != null) {
-                rf.getLog().logWarning(msg);
-            }
+//            if(rf.getLog() != null) {
+//               rf.getLog().logWarning(msg);
+//            }
 
             // TODO this should be activated to help detect XSL-FO constructs
             // that we do not handle properly.

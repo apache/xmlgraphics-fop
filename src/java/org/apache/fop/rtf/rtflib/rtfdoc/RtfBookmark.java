@@ -119,7 +119,7 @@ public class RtfBookmark extends RtfElement
 	 */
 	public void writeRtfContent () throws IOException
 	{
-		this.getRtfFile ().getLog ().logInfo ("Write bookmark '" + bookmark + "'.");
+//		this.getRtfFile ().getLog ().logInfo ("Write bookmark '" + bookmark + "'.");
 		// No content to write
 	}
 

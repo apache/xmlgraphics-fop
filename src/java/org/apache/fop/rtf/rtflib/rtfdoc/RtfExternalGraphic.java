@@ -58,8 +58,8 @@ import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
 
 import org.apache.fop.rtf.rtflib.tools.ImageConstants;
 import org.apache.fop.rtf.rtflib.tools.ImageUtil;
-import org.apache.fop.rtf.rtflib.tools.jpeg.Encoder;
-import org.apache.fop.rtf.rtflib.tools.jpeg.JPEGException;
+//import org.apache.fop.rtf.rtflib.tools.jpeg.Encoder;
+//import org.apache.fop.rtf.rtflib.tools.jpeg.JPEGException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -238,7 +238,7 @@ public class RtfExternalGraphic extends RtfElement
             return;
         }
 
-		getRtfFile ().getLog ().logInfo ("Writing image '" + url + "'.");
+//		getRtfFile ().getLog ().logInfo ("Writing image '" + url + "'.");
 
 
 		byte[] data = null;
@@ -273,20 +273,20 @@ public class RtfExternalGraphic extends RtfElement
 
 			if (to == ImageConstants.I_JPG) {
 				ByteArrayOutputStream out = null;
-				try {
+//				try {
 					//convert to jpeg
-					out = new ByteArrayOutputStream();
-					Encoder jpgEncoder = new Encoder(graphicCompressionRate, out);
-					jpgEncoder.encodeJPEG(data);
-					data = out.toByteArray();
-					type = to;
-				}
-				catch (JPEGException e) {
-					e.setMessage("Image from tag <fo:external-graphic> could not be created (src = '" + url + "'");
-				}
-				finally {
+//					out = new ByteArrayOutputStream();
+//					Encoder jpgEncoder = new Encoder(graphicCompressionRate, out);
+//					jpgEncoder.encodeJPEG(data);
+//					data = out.toByteArray();
+//					type = to;
+//				}
+//				catch (JPEGException e) {
+//					e.setMessage("Image from tag <fo:external-graphic> could not be created (src = '" + url + "'");
+//				}
+//				finally {
 					out.close();
-				}
+//				}
 			}
 			else {
 				type = ImageConstants.I_NOT_SUPPORTED;

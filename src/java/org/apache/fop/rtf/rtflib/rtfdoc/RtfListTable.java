@@ -55,7 +55,7 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 import java.util.*;
 import java.io.Writer;
 import java.io.IOException;
-import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
+//import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
 
 /**RtfListTable: used to make the list table in the header section of the RtfFile.
  * This is the method that Word uses to make lists in RTF and the way most RTF readers,
@@ -63,7 +63,7 @@ import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
  * @author Christopher Scott, scottc@westinghouse.com
  */
 public class RtfListTable extends RtfContainer{
-    
+
     //number of list in document
     private Integer listNum;
     //id of list
@@ -86,12 +86,12 @@ public class RtfListTable extends RtfContainer{
     public static final String LIST_NAME = "listname ;";
     public static final String LIST_ID = "listid";
     public static final String LIST_FONT_TYPE ="f";
-    
+
     public static final String LIST_OVR_TABLE = "listoverridetable";
     public static final String LIST_OVR = "listoverride";
     public static final String LIST_OVR_COUNT = "listoverridecount";
     public static final String LIST_NUMBER = "ls";
-    
+
     public static final String [] LIST_TABLE_ATTR = {
         LIST_TABLE,				LIST,				LIST_TEMPLATE_ID,
         LIST_NUMBER_TYPE,		LIST_JUSTIFICATION,	LIST_FOLLOWING_CHAR,
@@ -100,7 +100,7 @@ public class RtfListTable extends RtfContainer{
         LIST_OVR_TABLE,			LIST_OVR,			LIST_OVR_COUNT,
         LIST_NUMBER,			LIST_LEVEL
     };
-    
+
     /**RtfListTable Constructor: sets the number of the list, and allocates
      * for the RtfAttributes */
     public RtfListTable(RtfContainer parent, Writer w, Integer num, RtfAttributes attrs)
@@ -115,15 +115,15 @@ public class RtfListTable extends RtfContainer{
         listTemplateId = new Integer(listIdGenerator.nextInt());
         m_attrib.set(LIST_NUMBER_TYPE,0);
     }
-    
+
     public void setParentList(RtfList parent) {
         parentList = parent;
     }
-    
+
     public Integer getListNumber() {
         return listNum;
     }
-    
+
     /** Set whether the list is a bulleted list not, and set attributes
      * accordingly */
     private void setListType() {
@@ -142,13 +142,13 @@ public class RtfListTable extends RtfContainer{
             m_attrib.set(LIST_FONT_TYPE,0);
         }
     }
-    
+
     public void writeRtfContent() throws IOException {
         setListType();
         writeGroupMark(true);
         writeStarControlWordNS(LIST_TABLE);
         writeGroupMark(true);
-        
+
         writeControlWordNS(LIST);
         writeOneAttributeNS(LIST_TEMPLATE_ID,listTemplateId.toString());
         writeOneAttributeNS(LIST,m_attrib.getValue(LIST));
@@ -184,12 +184,12 @@ public class RtfListTable extends RtfContainer{
         writeGroupMark(false);
         writeGroupMark(false);
     }
-    
+
     //since this has no text content we have to overwrite isEmpty to print
     //the table
     public boolean isEmpty() {
         return false;
     }
-    
-    
+
+
 }

@@ -54,7 +54,7 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.*;
 import java.util.*;
-import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
+//import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
 import org.xml.sax.Attributes;
 
 /**  Base class for all elements of an RTF file.
@@ -271,7 +271,7 @@ public abstract class RtfElement {
 
         // make the exception message stand out so that the problem is visible
         writeControlWord("fs48");
-        RtfStringConverter.getInstance().writeRtfString(m_writer,JForVersionInfo.getShortVersionInfo() + ": ");
+//        RtfStringConverter.getInstance().writeRtfString(m_writer,JForVersionInfo.getShortVersionInfo() + ": ");
         RtfStringConverter.getInstance().writeRtfString(m_writer,ie.getClass().getName());
 
         writeControlWord("fs20");
