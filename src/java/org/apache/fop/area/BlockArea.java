@@ -92,7 +92,8 @@ public class BlockArea extends Area {
 
     private boolean spaceContains(Rectangle2D rect) {
         return pageSpace.contains(
-                rect.getMinX(), rect.getMinY(), rect.getWidth(), rect.getHeight());
+                rect.getMinX(), rect.getMinY(),
+                rect.getWidth(), rect.getHeight());
     }
     private AreaRange adjustedRequest(AreaRange request) {
         // TODO Adjust the request for padding, borders and margins on this
