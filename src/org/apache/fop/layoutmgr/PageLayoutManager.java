@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -125,7 +125,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             if (!curLM.isFinished()) {
                 bp = curLM.getNextBreakPoss(childLC);
             }
-            if(bp != null) {
+            if (bp != null) {
                 return new BreakPoss(
                          new BlockBreakPosition(curLM, bp));
             }
@@ -140,7 +140,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
     public PageViewport resolveRefID(String ref) {
         List list = areaTree.getIDReferences(ref);
-        if(list != null && list.size() > 0) {
+        if (list != null && list.size() > 0) {
             return (PageViewport)list.get(0);
         }
         return null;
@@ -159,8 +159,9 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
     public void addUnresolvedArea(String id, Resolveable res) {
         // add unresolved to tree
-        // should really add to the page viewport so it can serialize
-        areaTree.addUnresolvedID(id, res);
+        // adds to the page viewport so it can serialize
+        curPage.addUnresolvedID(id, res);
+        areaTree.addUnresolvedID(id, curPage);
     }
 
     /**
@@ -430,21 +431,21 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     private boolean needNewPage(int breakValue) {
         return false;
-        // 	if (curPage.isEmpty()) {
-        // 	    if (breakValue == Constants.PAGE) {
-        // 		return false;
-        // 	    }
-        // 	    else if (curPage.getPageNumber()%2 != 0) {
-        // 		// Current page is odd
-        // 		return (breakValue == Constants.EVEN_PAGE);
-        // 	    }
-        // 	    else {
-        // 		return (breakValue == Constants.ODD_PAGE);
-        // 	    }
-        // 	}
-        // 	else {
-        // 	    return true;
-        // 	}
+        //if (curPage.isEmpty()) {
+        //if (breakValue == Constants.PAGE) {
+        //return false;
+        //}
+        //else if (curPage.getPageNumber()%2 != 0) {
+        //// Current page is odd
+        //return (breakValue == Constants.EVEN_PAGE);
+        //}
+        //else {
+        //return (breakValue == Constants.ODD_PAGE);
+        //}
+        //}
+        //else {
+        //    return true;
+        //}
     }
 
 
@@ -467,15 +468,15 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         // This determines the position of the new span area
         // Attention: space calculation between the span areas.
 
-        // 	MinOptMax newpos ;
-        // 	if (curSpan != null) {
-        // 	    newpos = curSpan.getPosition(BPD);
-        // 	    newpos.add(curSpan.getDimension(BPD));
-        // 	}
-        // 	else newpos = new MinOptMax();
+        //MinOptMax newpos ;
+        //if (curSpan != null) {
+        //newpos = curSpan.getPosition(BPD);
+        //newpos.add(curSpan.getDimension(BPD));
+        //}
+        //else newpos = new MinOptMax();
         curSpan = new Span(numCols);
         // get Width or Height as IPD for span
-        curSpan.setIPD( (int) curPage.getPage(). getRegion(
+        curSpan.setIPD((int) curPage.getPage().getRegion(
                           RegionReference.BODY).getViewArea().getWidth());
 
         //curSpan.setPosition(BPD, newpos);

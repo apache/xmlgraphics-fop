@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,11 +8,13 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.*;
-import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.layout.AccessibilityProps;
+import org.apache.fop.layout.AuralProps;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.layout.MarginInlineProps;
+import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.Resolveable;
@@ -23,11 +25,14 @@ import org.apache.fop.layoutmgr.LMiter;
 import org.apache.fop.layoutmgr.LayoutManager;
 
 // Java
-import java.util.Enumeration;
-import java.awt.Rectangle;
 import java.util.List;
-import java.util.ArrayList;
+import java.io.Serializable;
 
+/**
+ * The basic link.
+ * This sets the basic link trait on the inline parent areas
+ * that are created by the fo element.
+ */
 public class BasicLink extends Inline {
     String link = null;
     boolean external = false;
@@ -50,14 +55,14 @@ public class BasicLink extends Inline {
     }
 
     protected void setupLinkArea(LayoutManager parentLM, InlineParent area) {
-        if(link == null) {
+        if (link == null) {
             return;
         }
-        if(external) {
+        if (external) {
             area.addTrait(Trait.EXTERNAL_LINK, link);
         } else {
             PageViewport page = parentLM.resolveRefID(link);
-            if(page != null) {
+            if (page != null) {
                 area.addTrait(Trait.INTERNAL_LINK, page);
             } else {
                 LinkResolver res = new LinkResolver(link, area);
@@ -95,10 +100,10 @@ public class BasicLink extends Inline {
         setupID();
         // this.properties.get("indicate-destination");
         String internal = properties.get("internal-destination").getString();
-        if(ext.length() > 0) {
+        if (ext.length() > 0) {
             link = ext;
             external = true;
-        } else if(internal.length() > 0) {
+        } else if (internal.length() > 0) {
             link = internal;
         } else {
             getLogger().error("basic-link requires an internal or external destination");
@@ -115,10 +120,12 @@ public class BasicLink extends Inline {
 
     }
 
-    protected static class LinkResolver implements Resolveable {
+    /**
+     * Link resolving for resolving internal links.
+     */
+    protected static class LinkResolver implements Resolveable, Serializable {
         private boolean resolved = false;
         private String idRef;
-        // NOTE: there will be a problem with serialization
         private Area area;
 
         public LinkResolver(String id, Area a) {
@@ -135,16 +142,15 @@ public class BasicLink extends Inline {
         }
 
         /**
-         * Resolve by removing the id link and replacing with
-         * an internal link.
+         * Resolve by adding an internal link.
          */
         public void resolve(String id, List pages) {
-            if(idRef.equals(id) && pages != null) {
+            resolved = true;
+            if (idRef.equals(id) && pages != null) {
                 PageViewport page = (PageViewport)pages.get(0);
                 area.addTrait(Trait.INTERNAL_LINK, page);
             }
         }
-
     }
 
 }

@@ -47,7 +47,7 @@ public class AreaTree {
      * @param rend the renderer that will be used
      * @return RenderPagesModel the new area tree model
      */
-    public RenderPagesModel createRenderPagesModel(Renderer rend) {
+    public static RenderPagesModel createRenderPagesModel(Renderer rend) {
         return new RenderPagesModel(rend);
     }
 
@@ -354,8 +354,14 @@ public class AreaTree {
      * contents but the PageViewport is retained.
      */
     public static class RenderPagesModel extends StorePagesModel {
-        private Renderer renderer;
-        private ArrayList prepared = new ArrayList();
+        /**
+         * The renderer that will render the pages.
+         */
+        protected Renderer renderer;
+        /**
+         * Pages that have been prepared but not rendered yet.
+         */
+        protected ArrayList prepared = new ArrayList();
         private ArrayList pendingExt = new ArrayList();
         private ArrayList endDocExt = new ArrayList();
 
@@ -388,19 +394,63 @@ public class AreaTree {
          */
         public void addPage(PageViewport page) {
             super.addPage(page);
+
+            // check prepared pages
+            boolean cont = checkPreparedPages();
+
             // if page finished
-            try {
-                renderer.renderPage(page);
-            } catch (Exception e) {
-                // use error handler to handle this FOP or IO Exception
+            if (cont && page.isResolved()) {
+                try {
+                    renderer.renderPage(page);
+                } catch (Exception e) {
+                    // use error handler to handle this FOP or IO Exception
+                }
+                page.clear();
+            } else {
+                preparePage(page);
             }
-            page.clear();
 
             renderExtensions(pendingExt);
             pendingExt.clear();
+        }
 
-            // else prepare
-            //renderer.preparePage(page);
+        /**
+         * Check prepared pages
+         * @return true if the current page should be rendered
+         *         false if the renderer doesn't support out of order
+         *         rendering and there are pending pages
+         */
+        protected boolean checkPreparedPages() {
+            for (Iterator iter = prepared.iterator(); iter.hasNext();) {
+                PageViewport p = (PageViewport)iter.next();
+                if (p.isResolved()) {
+                    try {
+                        renderer.renderPage(p);
+                    } catch (Exception e) {
+                        // use error handler to handle this FOP or IO Exception
+                    }
+                    p.clear();
+                    iter.remove();
+                } else {
+                    // if keeping order then stop at first page not resolved
+                    if (!renderer.supportsOutOfOrder()) {
+                        break;
+                    }
+                }
+            }
+            return renderer.supportsOutOfOrder() || prepared.isEmpty();
+        }
+
+        /**
+         * Prepare a page.
+         * An unresolved page can be prepared if the renderer supports
+         * it and the page will be rendered later.
+         * @param page the page to prepare
+         */
+        protected void preparePage(PageViewport page) {
+            if (renderer.supportsOutOfOrder()) {
+                renderer.preparePage(page);
+            }
             prepared.add(page);
         }
 
@@ -438,6 +488,8 @@ public class AreaTree {
          * End the document. Render any end document extensions.
          */
         public void endDocument() {
+            // render any pages that had unresolved ids
+            checkPreparedPages();
             renderExtensions(endDocExt);
         }
     }

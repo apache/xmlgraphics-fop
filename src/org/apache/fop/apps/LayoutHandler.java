@@ -17,6 +17,7 @@ import org.xml.sax.SAXException;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.CachedRenderPagesModel;
 import org.apache.fop.area.Title;
 import org.apache.fop.area.TreeExt;
 import org.apache.fop.render.Renderer;
@@ -76,7 +77,7 @@ public class LayoutHandler extends StructureHandler {
      * The current AreaTree for the PageSequence being rendered.
      */
     private AreaTree areaTree;
-    private AreaTree.StorePagesModel atModel;
+    private AreaTree.AreaTreeModel atModel;
 
     /**
      * @param outputStream the stream that the result is rendered to
@@ -90,7 +91,8 @@ public class LayoutHandler extends StructureHandler {
         this.renderer = renderer;
 
         this.areaTree = new AreaTree();
-        this.atModel = AreaTree.createStorePagesModel();
+        this.atModel = AreaTree.createRenderPagesModel(renderer);
+        //this.atModel = new CachedRenderPagesModel(renderer);
         areaTree.setTreeModel(atModel);
     }
 
@@ -120,18 +122,11 @@ public class LayoutHandler extends StructureHandler {
     }
 
     public void endDocument() throws SAXException {
-        /*
-           Force the processing of any more queue elements,
-           even if they are not resolved.
-         */
         try {
-            processAreaTree();
+            //processAreaTree(atModel);
             areaTree.endDocument();
             renderer.stopRenderer();
-        } catch (FOPException e) {
-            throw new SAXException(e);
-        }
-        catch (IOException e) {
+        } catch (Exception e) {
             throw new SAXException(e);
         }
 
@@ -190,16 +185,16 @@ public class LayoutHandler extends StructureHandler {
     }
 
 
-    private void processAreaTree() throws FOPException {
+    private void processAreaTree(AreaTree.StorePagesModel model) throws FOPException {
         int count = 0;
-        int seqc = atModel.getPageSequenceCount();
+        int seqc = model.getPageSequenceCount();
         while (count < seqc) {
-            Title title = atModel.getTitle(count);
+            Title title = model.getTitle(count);
             renderer.startPageSequence(title);
-            int pagec = atModel.getPageCount(count);
+            int pagec = model.getPageCount(count);
             for (int c = 0; c < pagec; c++) {
                 try {
-                    renderer.renderPage(atModel.getPage(count, c));
+                    renderer.renderPage(model.getPage(count, c));
                 } catch (java.io.IOException ioex) {
                     throw new FOPException("I/O Error rendering page",
                                            ioex);
@@ -207,7 +202,7 @@ public class LayoutHandler extends StructureHandler {
             }
             count++;
         }
-        List list = atModel.getEndExtensions();
+        List list = model.getEndExtensions();
         for(count = 0; count < list.size(); count++) {
             TreeExt ext = (TreeExt)list.get(count);
             renderer.renderExtension(ext);
