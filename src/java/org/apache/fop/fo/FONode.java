@@ -36,7 +36,6 @@ import org.apache.fop.fo.extensions.svg.SVGElementMapping;
 
 /**
  * base class for nodes in the XML tree
- *
  */
 public abstract class FONode {
 
@@ -318,6 +317,18 @@ public abstract class FONode {
         throw new SAXParseException(errorText(locator) + getName() + 
             " is missing child elements. \nRequired Content Model: " 
             + contentModel, locator);
+    }
+
+    /**
+     * Helper function to return missing child element errors
+     * (e.g., fo:layout-master-set not having any page-master child element)
+     * @param contentModel The XSL Content Model for the fo: object.
+     * or a similar description indicating child elements needed.
+     */
+    protected void missingPropertyError(String propertyName)
+        throws SAXParseException {
+        throw new SAXParseException(errorText(locator) + getName() +
+            " is missing required \"" + propertyName + "\" property.", locator);
     }
 
     /**

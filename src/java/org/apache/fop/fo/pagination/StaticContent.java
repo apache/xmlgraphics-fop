@@ -27,8 +27,7 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.fo.FONode;
 
 /**
- * Class modelling the fo:static-content object. See Sec. 6.4.19 of the XSL-FO
- * Standard.
+ * Class modelling the fo:static-content object.
  */
 public class StaticContent extends Flow {
 

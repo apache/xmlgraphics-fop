@@ -27,8 +27,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
 /**
- * Class modelling the fo:list-item-label object. See Sec. 6.8.5 of the XSL-FO
- * Standard.
+ * Class modelling the fo:list-item-label object.
+ * @todo implement validateChildNode()
  */
 public class ListItemLabel extends FObj {
 

@@ -31,8 +31,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 /**
- * Class modelling the fo:block-container object. See Sec. 6.5.3 of the XSL-FO
- * Standard.
+ * Class modelling the fo:block-container object.
+ * @todo implement validateChildNode()
  */
 public class BlockContainer extends FObj {
 

@@ -30,8 +30,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
 /**
- * Class modelling the fo:table-column object. See Sec. 6.7.4 of the XSL-FO
- * Standard.
+ * Class modelling the fo:table-column object.
  */
 public class TableColumn extends FObj {
 

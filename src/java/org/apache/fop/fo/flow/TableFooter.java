@@ -22,8 +22,8 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.FONode;
 
 /**
- * Class modelling the fo:table-footer object. See Sec. 6.7.7 of the XSL-FO
- * Standard.
+ * Class modelling the fo:table-footer object.
+ * @todo implement validateChildNode()
  */
 public class TableFooter extends TableBody {
 

@@ -33,7 +33,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.FlowLayoutManager;
 
 /**
- * Class modelling the fo:flow object. See Sec. 6.4.18 in the XSL-FO Standard.
+ * Class modelling the fo:flow object.
  */
 public class Flow extends FObj {
 

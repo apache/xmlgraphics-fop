@@ -34,6 +34,7 @@ import org.apache.fop.layoutmgr.LeaderLayoutManager;
  * Class modelling fo:leader object.
  * The main property of fo:leader is leader-pattern.
  * The following patterns are treated: rule, space, dots and use-content.
+ * @todo implement validateChildNode()
  */
 public class Leader extends FObjMixed {
 

@@ -34,8 +34,7 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.PageNumberLayoutManager;
 
 /**
- * Class modelling the fo:page-number object. See Sec. 6.6.10 of the XSL-FO
- * Standard.
+ * Class modelling the fo:page-number object.
  */
 public class PageNumber extends FObj {
     /** FontState for this object */

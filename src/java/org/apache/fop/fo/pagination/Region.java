@@ -67,15 +67,6 @@ public abstract class Region extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * XSL Content Model: empty
-     */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
-            invalidChildError(loc, nsURI, localName);
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
@@ -109,6 +100,15 @@ public abstract class Region extends FObj {
         // this.propertyList.get("clip");
         // this.propertyList.get("display-align");
         this.overflow = this.propertyList.get(PR_OVERFLOW).getEnum();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: empty
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+            invalidChildError(loc, nsURI, localName);
     }
 
     public abstract Rectangle getViewportRectangle(FODimension pageRefRect);

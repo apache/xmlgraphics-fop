@@ -24,6 +24,7 @@ import org.apache.fop.fo.FObj;
 
 /**
  * Class modelling the fo:multi-toggle property.
+ * @todo implement validateChildNode()
  */
 public class MultiToggle extends FObj {
 

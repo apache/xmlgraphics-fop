@@ -24,6 +24,7 @@ import org.apache.fop.fo.FObj;
 
 /**
  * Class modelling the fo:multi-switch object.
+ * @todo implement validateChildNode()
  */
 public class MultiSwitch extends FObj {
 

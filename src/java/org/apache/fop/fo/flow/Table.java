@@ -43,7 +43,7 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**
- * Class modelling the fo:table object. See Sec. 6.7.3 of the XSL-FO Standard.
+ * Class modelling the fo:table object.
  */
 public class Table extends FObj {
     private static final int MINCOLWIDTH = 10000; // 10pt

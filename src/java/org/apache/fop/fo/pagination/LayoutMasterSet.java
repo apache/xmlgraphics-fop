@@ -30,7 +30,6 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.apps.FOPException;
 
 /**
  * The layout-master-set formatting object.
@@ -51,6 +50,24 @@ public class LayoutMasterSet extends FObj {
      */
     public LayoutMasterSet(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws SAXParseException {
+        super.addProperties(attlist);
+
+        if (parent.getName().equals("fo:root")) {
+            Root root = (Root)parent;
+            root.setLayoutMasterSet(this);
+        } else {
+            throw new SAXParseException("fo:layout-master-set must be child of fo:root, not "
+                                   + parent.getName(), locator);
+        }
+
+        this.simplePageMasters = new java.util.HashMap();
+        this.pageSequenceMasters = new java.util.HashMap();
     }
 
     /**
@@ -79,40 +96,32 @@ public class LayoutMasterSet extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-
-        if (parent.getName().equals("fo:root")) {
-            Root root = (Root)parent;
-            root.setLayoutMasterSet(this);
-        } else {
-            throw new SAXParseException("fo:layout-master-set must be child of fo:root, not "
-                                   + parent.getName(), locator);
-        }
-
-        this.simplePageMasters = new java.util.HashMap();
-        this.pageSequenceMasters = new java.util.HashMap();
-    }
-
-    /**
      * Add a simple page master.
      * The name is checked to throw an error if already added.
-     * @param simplePageMaster simple-page-master to add
-     * @throws FOPException if there's a problem with name uniqueness
+     * @param sPM simple-page-master to add
+     * @throws SAXParseException if there's a problem with name uniqueness
      */
-    protected void addSimplePageMaster(SimplePageMaster simplePageMaster)
-                throws FOPException {
-        // check against duplication of master-name
-        if (existsName(simplePageMaster.getMasterName())) {
-            throw new FOPException("'master-name' ("
-                                   + simplePageMaster.getMasterName()
-                                   + ") must be unique "
-                                   + "across page-masters and page-sequence-masters");
+    protected void addSimplePageMaster(SimplePageMaster sPM)
+                throws SAXParseException {
+
+        // check for duplication of master-name
+        String masterName = sPM.getPropString(PR_MASTER_NAME);
+        if (existsName(masterName)) {
+            throw new SAXParseException("'master-name' ("
+               + masterName
+               + ") must be unique "
+               + "across page-masters and page-sequence-masters", sPM.locator);
         }
-        this.simplePageMasters.put(simplePageMaster.getMasterName(),
-                                   simplePageMaster);
+        this.simplePageMasters.put(masterName, sPM);
+    }
+
+    private boolean existsName(String masterName) {
+        if (simplePageMasters.containsKey(masterName)
+                || pageSequenceMasters.containsKey(masterName)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -130,19 +139,20 @@ public class LayoutMasterSet extends FObj {
      * Add a page sequence master.
      * The name is checked to throw an error if already added.
      * @param masterName name for the master
-     * @param pageSequenceMaster PageSequenceMaster instance
-     * @throws FOPException if there's a problem with name uniqueness
+     * @param pSM PageSequenceMaster instance
+     * @throws SAXParseException if there's a problem with name uniqueness
      */
     protected void addPageSequenceMaster(String masterName,
-                                        PageSequenceMaster pageSequenceMaster)
-                throws FOPException {
+                                        PageSequenceMaster pSM)
+                throws SAXParseException {
         // check against duplication of master-name
         if (existsName(masterName)) {
-            throw new FOPException("'master-name' (" + masterName
-                                   + ") must be unique "
-                                   + "across page-masters and page-sequence-masters");
+            throw new SAXParseException("'master-name' ("
+               + masterName
+               + ") must be unique "
+               + "across page-masters and page-sequence-masters", pSM.locator);
         }
-        this.pageSequenceMasters.put(masterName, pageSequenceMaster);
+        this.pageSequenceMasters.put(masterName, pSM);
     }
 
     /**
@@ -154,15 +164,6 @@ public class LayoutMasterSet extends FObj {
      */
     public PageSequenceMaster getPageSequenceMaster(String masterName) {
         return (PageSequenceMaster)this.pageSequenceMasters.get(masterName);
-    }
-
-    private boolean existsName(String masterName) {
-        if (simplePageMasters.containsKey(masterName)
-                || pageSequenceMasters.containsKey(masterName)) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**
@@ -215,6 +216,9 @@ public class LayoutMasterSet extends FObj {
         return false;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:layout-master-set";
     }

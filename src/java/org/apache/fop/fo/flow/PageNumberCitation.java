@@ -34,8 +34,7 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.PageNumberCitationLayoutManager;
 
 /**
- * Class modelling the fo:page-number-citation object. See Sec. 6.6.11 of the
- * XSL-FO Standard.
+ * Class modelling the fo:page-number-citation object.
  * This inline fo is replaced with the text for a page number.
  * The page number used is the page that contains the start of the
  * block referenced with the ref-id attribute.

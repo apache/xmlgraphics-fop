@@ -36,8 +36,8 @@ import org.apache.fop.fo.properties.Property;
 
 
 /**
- * Class modelling the fo:table-row object. See Sec. 6.7.9 of the XSL-FO
- * Standard.
+ * Class modelling the fo:table-row object.
+ * @todo implement validateChildNode()
  */
 public class TableRow extends FObj {
 

@@ -22,8 +22,8 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.FONode;
 
 /**
- * Class modelling the fo:table-header object. See Sec. 6.7.6 of the XSL-FO
- * Standard.
+ * Class modelling the fo:table-header object.
+ * @todo implement validateChildNode()
  */
 public class TableHeader extends TableBody {
 

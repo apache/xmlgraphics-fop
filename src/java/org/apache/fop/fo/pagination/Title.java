@@ -39,7 +39,7 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonMarginInline;
 
 /**
- * Class modelling the fo:title object. See Sec. 6.4.20 in the XSL-FO Standard.
+ * Class modelling the fo:title object.
  */
 public class Title extends FObjMixed {
 
