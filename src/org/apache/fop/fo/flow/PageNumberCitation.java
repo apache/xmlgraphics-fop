@@ -186,12 +186,19 @@ public class PageNumberCitation extends FObj
         IDReferences idReferences= area.getIDReferences();       
 
         String pageNumber=idReferences.getPageNumber(refId);                
-        String output = (pageNumber!=null)?pageNumber:"?";
-
 
         int orig_start = this.marker;
 
-        this.marker = ((BlockArea) area).addText(fs, red, green, blue, wrapOption, null, whiteSpaceTreatment, output.toCharArray(), 0, output.length());
+        if(pageNumber!=null)  // if we already know the page number
+        {
+            String output=pageNumber;
+            this.marker = ((BlockArea) area).addText(fs, red, green, blue, wrapOption, null, whiteSpaceTreatment, output.toCharArray(), 0, output.length());
+        }
+        else  // add pageNumberCitation to area to be resolved during rendering
+        {        
+            this.marker = ((BlockArea) area).addPageNumberCitation(fs, red, green, blue, wrapOption, null, whiteSpaceTreatment, refId);        
+        }
+                
 
         if ( this.marker == -1 )
         {

@@ -115,6 +115,28 @@ public class BlockArea extends Area {
 	}
     }
 
+    public int addPageNumberCitation(FontState fontState, float red, float green,
+		       float blue, int wrapOption, LinkSet ls,
+		       int whiteSpaceTreatment, String refid) {
+
+        this.currentLineArea.changeFont(fontState);
+	this.currentLineArea.changeColor(red, green, blue);
+	this.currentLineArea.changeWrapOption(wrapOption);
+	this.currentLineArea.changeWhiteSpaceTreatment(whiteSpaceTreatment);
+
+        if (ls != null) {
+            this.currentLinkSet = ls;
+	    ls.setYOffset(currentHeight);
+	}
+
+	this.currentLineArea.addPageNumberCitation(refid,ls);            
+	this.hasLines = true;
+        
+        return -1;
+
+    }
+
+Imaginary Buffer Line
     public int addText(FontState fontState, float red, float green,
 		       float blue, int wrapOption, LinkSet ls,
 		       int whiteSpaceTreatment, char data[],
