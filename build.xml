@@ -177,6 +177,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="optimize" value="on"/>
     <property name="deprecation" value="off"/>
 
+    <property name="textfontencoding" value="WinAnsiEncoding"/>
+
     <property name="src.dir" value="./src"/>
     <property name="src.codegen" value="./src/codegen"/>
     <property name="docs.dir" value="./docs"/>
@@ -229,7 +231,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="propinc.xsl" value="${build.codegen}/propinc.xsl"/>
     <property name="genconst.xsl" value="${build.codegen}/genconst.xsl"/>
     <property name="src.charlist.xsl" value="${src.codegen}/code-point-mapping.xsl"/>
-    <property name="charlist.xml" value="${build.codegen}/charlist.xml"/>
+    <property name="encodings.xml" value="${build.codegen}/encodings.xml"/>
     <property name="charlist.xsl" value="${build.codegen}/code-point-mapping.xsl"/>  
     <property name="fontfile.xsl" value="${build.codegen}/font-file.xsl"/>  
     <property name="t1fontfile.xsl" value="${build.codegen}/t1font-file.xsl"/>
@@ -445,36 +447,90 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
         dependent="${propinc.xsl}"
         outfile="${build.src}/${replacestring}/fo/properties/extenums_${ignore_this}" smart="yes"/>
 
-    <xslt infile="${charlist.xml}" xsltfile="${charlist.xsl}" 
-        outfile="${build.src}/${replacestring}/render/pdf/CodePointMapping.java" smart="yes"/>
-    <xslt infile="${Courier.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/Courier.java" smart="yes"/>
-    <xslt infile="${Courier-Oblique.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/CourierOblique.java" smart="yes"/>
-    <xslt infile="${Courier-Bold.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/CourierBold.java" smart="yes"/>
-    <xslt infile="${Courier-BoldOblique.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/CourierBoldOblique.java" smart="yes"/>
-    <xslt infile="${Helvetica.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/Helvetica.java" smart="yes"/>
-    <xslt infile="${Helvetica-Oblique.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/HelveticaOblique.java" smart="yes"/>
-    <xslt infile="${Helvetica-Bold.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBold.java" smart="yes"/>
-    <xslt infile="${Helvetica-BoldOblique.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBoldOblique.java" smart="yes"/>
-    <xslt infile="${Times-Roman.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesRoman.java" smart="yes"/>
-    <xslt infile="${Times-Italic.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesItalic.java" smart="yes"/>
-    <xslt infile="${Times-Bold.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesBold.java" smart="yes"/>
-    <xslt infile="${Times-BoldItalic.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesBoldItalic.java" smart="yes"/>
-    <xslt infile="${ZapfDingbats.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/ZapfDingbats.java" smart="yes"/>
-    <xslt infile="${Symbol.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/Symbol.java" smart="yes"/>
+    <style
+       in="${encodings.xml}" style="${charlist.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf" 
+       out="${build.src}/${replacestring}/render/pdf/CodePointMapping.java"/>
+    <style
+       in="${Courier.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/Courier.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Courier-Oblique.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/CourierOblique.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Courier-Bold.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/CourierBold.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Courier-BoldOblique.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/CourierBoldOblique.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Helvetica.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/Helvetica.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Helvetica-Bold.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBold.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Helvetica-Oblique.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/HelveticaOblique.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Helvetica-BoldOblique.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBoldOblique.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Times-Roman.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/TimesRoman.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Times-Italic.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/TimesItalic.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Times-Bold.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/TimesBold.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Times-BoldItalic.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/TimesBoldItalic.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+       in="${Symbol.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/Symbol.java"/>
+    <style
+       in="${ZapfDingbats.xml}" style="${fontfile.xsl}"
+       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
+       out="${build.src}/${replacestring}/render/pdf/fonts/ZapfDingbats.java"/>
 
     <!-- custom fonts (Use t1fontfile.xsl instead of fontfile.xsl for Type 1 fonts!) step 2/2 -->
     <!-- use this as a template for type 1 fonts: 

@@ -11,6 +11,7 @@ import java.util.Hashtable;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.FontVariant;
+import org.apache.fop.render.pdf.CodePointMapping;
 
 public class FontState {
 
@@ -125,14 +126,12 @@ public class FontState {
         }
 
         // Use default CodePointMapping
-        if (c > 127) {
-            char d = org.apache.fop.render.pdf.CodePointMapping.map[c];
-            if (d != 0) {
-                c = d;
-            } else {
-                c = '#';
-            }
-        }
+	char d = CodePointMapping.getMapping("WinAnsiEncoding").mapChar(c);
+	if (d != 0) {
+	    c = d;
+	} else {
+	    c = '#';
+	}
 
         return c;
     }
