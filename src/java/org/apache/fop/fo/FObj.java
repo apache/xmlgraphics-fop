@@ -101,8 +101,7 @@ public class FObj extends FONode implements Constants {
      * Create a default property list for this element. 
      */
     protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws SAXParseException {
-        //return foEventHandler.getPropertyListMaker().make(this, parent);
-        return new StaticPropertyList(this, parent);
+        return foEventHandler.getPropertyListMaker().make(this, parent);
     }
 
     /**

@@ -82,6 +82,11 @@ public abstract class FOEventHandler {
      */
     private Set idReferences = new HashSet();
 
+    /*
+     * The property list maker.
+     */
+    protected PropertyListMaker propertyListMaker;
+
     /**
      * Main constructor
      * @param FOUserAgent the apps.FOUserAgent instance for this process
@@ -121,6 +126,20 @@ public abstract class FOEventHandler {
      */
     public FontInfo getFontInfo() {
         return this.fontInfo;
+    }
+
+    /**
+     * Return the propertyListMaker.
+    */
+    public PropertyListMaker getPropertyListMaker() {
+        return propertyListMaker;
+    }
+     
+    /**
+     * Set a new propertyListMaker.
+     */
+    public void setPropertyListMaker(PropertyListMaker propertyListMaker) {
+        this.propertyListMaker = propertyListMaker;
     }
 
     /**

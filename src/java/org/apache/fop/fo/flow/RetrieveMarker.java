@@ -28,7 +28,9 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.layoutmgr.RetrieveMarkerLayoutManager;
 
 
@@ -43,6 +45,8 @@ public class RetrieveMarker extends FObjMixed {
     private int retrievePosition;
     private int retrieveBoundary;
     // End of property values
+
+    private PropertyList propertyList;
 
     /**
      * Create a retrieve marker object.
@@ -69,6 +73,19 @@ public class RetrieveMarker extends FObjMixed {
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
             invalidChildError(loc, nsURI, localName);
+    }
+
+    protected PropertyList createPropertyList(PropertyList parent, 
+            FOEventHandler foEventHandler) throws SAXParseException {
+        // TODO: A special RetrieveMarkerPropertyList would be more memory
+        // efficient. Storing a StaticPropertyList like this will keep all
+        // the parent PropertyLists alive.
+        propertyList = new StaticPropertyList(this, parent);
+        return propertyList;
+    }
+
+    public PropertyList getPropertyList() {
+        return propertyList;
     }
 
     /**
