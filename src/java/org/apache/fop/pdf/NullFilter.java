@@ -50,10 +50,7 @@
  */ 
 package org.apache.fop.pdf;
 
-import org.apache.fop.util.StreamUtilities;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
@@ -74,14 +71,6 @@ public class NullFilter extends PDFFilter {
      */
     public String getDecodeParms() {
         return null;
-    }
-
-    /**
-     * @see org.apache.fop.pdf.PDFFilter#encode(InputStream, OutputStream, int)
-     */
-    public void encode(InputStream in, OutputStream out, int length) throws IOException {
-        StreamUtilities.streamCopy(in, out, length);
-        out.close();
     }
 
     /**

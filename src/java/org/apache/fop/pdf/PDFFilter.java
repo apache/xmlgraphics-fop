@@ -50,7 +50,6 @@
  */ 
 package org.apache.fop.pdf;
 
-import java.io.InputStream;
 import java.io.OutputStream; 
 import java.io.IOException;
 
@@ -125,16 +124,6 @@ public abstract class PDFFilter {
      * @return the decode params for the filter
      */
     public abstract String getDecodeParms();
-
-    /**
-     * encode the given data with the filter
-     *
-     * @param in the input data stream to encode
-     * @param out the output stream to write the result
-     * @param length the length of data to read from the input stream
-     * @throws IOException if there is an error reading or writing the data
-     */
-    public abstract void encode(InputStream in, OutputStream out, int length) throws IOException;
 
     /**
      * Applies a filter to an OutputStream.
