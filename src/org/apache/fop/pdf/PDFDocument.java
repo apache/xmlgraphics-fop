@@ -104,6 +104,12 @@ public class PDFDocument {
 
     /** the /Resources object */
     protected PDFResources resources;
+
+    /** the counter for Pattern name numbering (e.g. 'Pattern1')*/
+    protected int patternCount = 0;
+    
+    /** the counter for Shading name numbering */
+    protected int shadingCount = 0;
     
     /** the counter for XObject numbering */
     protected int xObjectCount = 0;
@@ -116,10 +122,10 @@ public class PDFDocument {
      */
     public PDFDocument() {
 
-	/* create the /Root, /Info and /Resources objects */
-	this.root = makeRoot();
-	this.info = makeInfo();
-	this.resources = makeResources();
+		/* create the /Root, /Info and /Resources objects */
+		this.root = makeRoot();
+		this.info = makeInfo();
+		this.resources = makeResources();
     }
     
     /**
@@ -181,6 +187,410 @@ public class PDFDocument {
 	this.objects.addElement(pdfResources);
 	return pdfResources;
     }
+	
+	/**
+	 * Make a Type 0 sampled function
+	 * 
+	 * @param theDomain Vector objects of Double objects.
+	 * This is the domain of the function.
+	 * See page 264 of the PDF 1.3 Spec.
+	 * @param theRange Vector objects of Double objects.
+	 * This is the Range of the function.
+	 * See page 264 of the PDF 1.3 Spec.
+	 * @param theSize A Vector object of Integer objects.
+	 * This is the number of samples in each input dimension.
+	 * I can't imagine there being more or less than two input dimensions,
+	 * so maybe this should be an array of length 2.
+	 * 
+	 * See page 265 of the PDF 1.3 Spec.
+	 * @param theBitsPerSample An int specifying the number of bits user to represent each sample value.
+	 * Limited to 1,2,4,8,12,16,24 or 32.
+	 * See page 265 of the 1.3 PDF Spec.
+	 * @param theOrder The order of interpolation between samples. Default is 1 (one). Limited
+	 * to 1 (one) or 3, which means linear or cubic-spline interpolation.
+	 * 
+	 * This attribute is optional.
+	 * 
+	 * See page 265 in the PDF 1.3 spec.
+	 * @param theEncode Vector objects of Double objects.
+	 * This is the linear mapping of input values intop the domain
+	 * of the function's sample table. Default is hard to represent in
+	 * ascii, but basically [0 (Size0 1) 0 (Size1 1)...].
+	 * This attribute is optional.
+	 * 
+	 * See page 265 in the PDF 1.3 spec.
+	 * @param theDecode Vector objects of Double objects.
+	 * This is a linear mapping of sample values into the range.
+	 * The default is just the range.
+	 * 
+	 * This attribute is optional.
+	 * Read about it on page 265 of the PDF 1.3 spec.
+	 * @param theFunctionDataStream The sample values that specify the function are provided in a stream.
+	 * 
+	 * This is optional, but is almost always used.
+	 * 
+	 * Page 265 of the PDF 1.3 spec has more.
+	 * @param theFilter This is a vector of String objects which are the various filters that
+	 * have are to be applied to the stream to make sense of it. Order matters,
+	 * so watch out.
+	 * 
+	 * This is not documented in the Function section of the PDF 1.3 spec,
+	 * it was deduced from samples that this is sometimes used, even if we may never
+	 * use it in FOP. It is added for completeness sake.
+	 * @param theNumber The object number of this PDF object.
+	 * @param theFunctionType This is the type of function (0,2,3, or 4).
+	 * It should be 0 as this is the constructor for sampled functions.
+	 */
+	public PDFFunction makeFunction(int theFunctionType,
+			Vector theDomain, Vector theRange,
+			Vector theSize,int theBitsPerSample,
+			int theOrder,Vector theEncode,Vector theDecode,
+			StringBuffer theFunctionDataStream, Vector theFilter)
+	{//Type 0 function
+		PDFFunction function = new PDFFunction(
+			++this.objectcount, theFunctionType,
+			theDomain, theRange,	theSize,
+			theBitsPerSample,	theOrder,
+			theEncode, theDecode,
+			theFunctionDataStream,  theFilter);
+
+		this.objects.addElement(function);
+		return(function);
+	}
+	
+	/**
+	 * make a type Exponential interpolation function
+	 * (for shading usually)
+	 * 
+	 * @param theDomain Vector objects of Double objects.
+	 * This is the domain of the function.
+	 * See page 264 of the PDF 1.3 Spec.
+	 * @param theRange Vector of Doubles that is the Range of the function.
+	 * See page 264 of the PDF 1.3 Spec.
+	 * @param theCZero This is a vector of Double objects which defines the function result
+	 * when x=0.
+	 * 
+	 * This attribute is optional.
+	 * It's described on page 268 of the PDF 1.3 spec.
+	 * @param theCOne This is a vector of Double objects which defines the function result
+	 * when x=1.
+	 * 
+	 * This attribute is optional.
+	 * It's described on page 268 of the PDF 1.3 spec.
+	 * @param theInterpolationExponentN This is the inerpolation exponent.
+	 * 
+	 * This attribute is required.
+	 * PDF Spec page 268
+	 * @param theFunctionType The type of the function, which should be 2.
+	 */
+	public PDFFunction makeFunction(int theFunctionType,
+		Vector theDomain, Vector theRange,
+		Vector theCZero, Vector theCOne,
+		double theInterpolationExponentN)
+	
+	{//type 2
+		PDFFunction function = new PDFFunction(
+		++this.objectcount,
+		theFunctionType,
+		theDomain, theRange,
+		theCZero, theCOne,
+		theInterpolationExponentN);
+		
+		this.objects.addElement(function);
+		return(function);
+	}
+
+	/**
+	 * Make a Type 3 Stitching function
+	 * 
+	 * @param theDomain Vector objects of Double objects.
+	 * This is the domain of the function.
+	 * See page 264 of the PDF 1.3 Spec.
+	 * @param theRange Vector objects of Double objects.
+	 * This is the Range of the function.
+	 * See page 264 of the PDF 1.3 Spec.
+	 * @param theFunctions A Vector of the PDFFunction objects that the stitching function stitches.
+	 * 
+	 * This attributed is required.
+	 * It is described on page 269 of the PDF spec.
+	 * @param theBounds This is a vector of Doubles representing the numbers that,
+	 * in conjunction with Domain define the intervals to which each function from
+	 * the 'functions' object applies. It must be in order of increasing magnitude,
+	 * and each must be within Domain.
+	 * 
+	 * It basically sets how much of the gradient each function handles.
+	 * 
+	 * This attributed is required.
+	 * It's described on page 269 of the PDF 1.3 spec.
+	 * @param theEncode Vector objects of Double objects.
+	 * This is the linear mapping of input values intop the domain
+	 * of the function's sample table. Default is hard to represent in
+	 * ascii, but basically [0 (Size0 1) 0 (Size1 1)...].
+	 * This attribute is required.
+	 * 
+	 * See page 270 in the PDF 1.3 spec.
+	 * @param theFunctionType This is the function type. It should be 3,
+	 * for a stitching function.
+	 */
+	public PDFFunction makeFunction(int theFunctionType,
+		Vector theDomain, Vector theRange,
+		Vector theFunctions, Vector theBounds,
+		Vector theEncode)
+	{//Type 3
+		
+		PDFFunction function = new PDFFunction(
+			++this.objectcount,
+			theFunctionType,
+			theDomain, theRange,
+			theFunctions, theBounds,
+			theEncode); 			
+		
+		this.objects.addElement(function);
+		return(function);	
+	}
+	
+	/**
+	 * make a postscript calculator function
+	 * 
+	 * @param theNumber
+	 * @param theFunctionType
+	 * @param theDomain
+	 * @param theRange
+	 * @param theFunctionDataStream
+	 */
+	public PDFFunction makeFunction(int theNumber, int theFunctionType,
+			Vector theDomain, Vector theRange,
+			StringBuffer theFunctionDataStream)
+	{ //Type 4
+		PDFFunction function = new PDFFunction(
+			++this.objectcount,
+			theFunctionType,
+			theDomain, theRange,
+			theFunctionDataStream);
+
+		this.objects.addElement(function);
+		return(function);	
+
+	}
+	
+	/**
+	 * make a function based shading object
+	 * 
+	 * @param theShadingType The type of shading object, which should be 1 for function
+	 * based shading.
+	 * @param theColorSpace The colorspace is 'DeviceRGB' or something similar.
+	 * @param theBackground An array of color components appropriate to the
+	 * colorspace key specifying a single color value.
+	 * This key is used by the f operator buy ignored by the sh operator.
+	 * @param theBBox Vector of double's representing a rectangle
+	 * in the coordinate space that is current at the
+	 * time of shading is imaged. Temporary clipping
+	 * boundary.
+	 * @param theAntiAlias Whether or not to anti-alias.
+	 * @param theDomain Optional vector of Doubles specifying the domain.
+	 * @param theMatrix Vector of Doubles specifying the matrix.
+	 * If it's a pattern, then the matrix maps it to pattern space.
+	 * If it's a shading, then it maps it to current user space.
+	 * It's optional, the default is the identity matrix
+	 * @param theFunction The PDF Function that maps an (x,y) location to a color
+	 */
+	public PDFShading makeShading(int theShadingType, StringBuffer theColorSpace,
+		Vector theBackground, Vector theBBox, boolean theAntiAlias,
+		Vector theDomain, Vector theMatrix, PDFFunction theFunction)
+	{	//make Shading of Type 1
+		String theShadingName = new String("Sh"+(++this.shadingCount));
+	
+		PDFShading shading = new PDFShading(++this.objectcount, theShadingName,
+			theShadingType, theColorSpace, theBackground, theBBox,
+			theAntiAlias, theDomain, theMatrix, theFunction);
+		this.objects.addElement(shading);
+		
+		//add this shading to resources
+		this.resources.addShading(shading);
+
+		return(shading);
+	}
+	
+   /**
+    * Make an axial or radial shading object.
+    * 
+		 * @param theShadingType 2 or 3 for axial or radial shading
+		 * @param theColorSpace "DeviceRGB" or similar.
+		 * @param theBackground theBackground An array of color components appropriate to the
+		 * colorspace key specifying a single color value.
+		 * This key is used by the f operator buy ignored by the sh operator.
+		 * @param theBBox Vector of double's representing a rectangle
+		 * in the coordinate space that is current at the
+		 * time of shading is imaged. Temporary clipping
+		 * boundary.
+		 * @param theAntiAlias Default is false
+		 * @param theCoords Vector of four (type 2) or 6 (type 3) Double
+		 * @param theDomain Vector of Doubles specifying the domain
+		 * @param theFunction the Stitching (PDFfunction type 3) function, even if it's stitching a single function
+		 * @param theExtend Vector of Booleans of whether to extend teh start and end colors past the start and end points
+		 * The default is [false, false]
+    */
+   public PDFShading makeShading(int theShadingType,
+   	StringBuffer theColorSpace, Vector theBackground,
+   	Vector theBBox, boolean theAntiAlias,
+		Vector theCoords, Vector theDomain,
+		PDFFunction theFunction, Vector theExtend)
+	{ //make Shading of Type 2 or 3
+		String theShadingName = new String("Sh"+(++this.shadingCount));
+		
+		PDFShading shading = new PDFShading(++this.objectcount, theShadingName,
+			theShadingType, theColorSpace,
+			theBackground, theBBox, theAntiAlias,
+			theCoords, theDomain,theFunction,theExtend);
+
+		this.resources.addShading(shading);
+		
+		this.objects.addElement(shading);
+		return(shading);
+	}
+	
+	/**
+	 * Make a free-form gouraud shaded triangle mesh, coons patch mesh, or tensor patch mesh 
+	 * shading object
+	 * 
+	 * @param theShadingType 4, 6, or 7 depending on whether it's
+	 * Free-form gouraud-shaded triangle meshes, coons patch meshes, 
+	 * or tensor product patch meshes, respectively.
+	 * @param theColorSpace "DeviceRGB" or similar.
+	 * @param theBackground theBackground An array of color components appropriate to the
+	 * colorspace key specifying a single color value.
+	 * This key is used by the f operator buy ignored by the sh operator.
+	 * @param theBBox Vector of double's representing a rectangle
+	 * in the coordinate space that is current at the
+	 * time of shading is imaged. Temporary clipping
+	 * boundary.
+	 * @param theAntiAlias Default is false
+	 * @param theBitsPerCoordinate 1,2,4,8,12,16,24 or 32.
+	 * @param theBitsPerComponent 1,2,4,8,12, and 16
+	 * @param theBitsPerFlag 2,4,8.
+	 * @param theDecode Vector of Doubles see PDF 1.3 spec pages 303 to 312.
+	 * @param theFunction the PDFFunction
+	 */
+	public PDFShading makeShading(int theShadingType, StringBuffer theColorSpace,
+		Vector theBackground, Vector theBBox, boolean theAntiAlias,
+		int theBitsPerCoordinate, int theBitsPerComponent,
+		int theBitsPerFlag, Vector theDecode, PDFFunction theFunction)
+	{ //make Shading of type 4,6 or 7
+		String theShadingName = new String("Sh"+(++this.shadingCount));
+		
+		PDFShading shading= new PDFShading(++this.objectcount, theShadingName,
+			theShadingType, theColorSpace,
+			theBackground, theBBox, theAntiAlias,
+			theBitsPerCoordinate,theBitsPerComponent,
+			theBitsPerFlag, theDecode, theFunction);
+
+		this.resources.addShading(shading);
+		
+		this.objects.addElement(shading);
+		return(shading);
+	}
+	
+	/**
+	 * make a Lattice-Form Gouraud mesh shading object
+	 * 
+	 * @param theShadingType 5 for lattice-Form Gouraud shaded-triangle mesh
+	 * without spaces. "Shading1" or "Sh1" are good examples.
+	 * @param theColorSpace "DeviceRGB" or similar.
+	 * @param theBackground theBackground An array of color components appropriate to the
+	 * colorspace key specifying a single color value.
+	 * This key is used by the f operator buy ignored by the sh operator.
+	 * @param theBBox Vector of double's representing a rectangle
+	 * in the coordinate space that is current at the
+	 * time of shading is imaged. Temporary clipping
+	 * boundary.
+	 * @param theAntiAlias Default is false
+	 * @param theBitsPerCoordinate 1,2,4,8,12,16, 24, or 32
+	 * @param theBitsPerComponent 1,2,4,8,12,24,32
+	 * @param theDecode Vector of Doubles. See page 305 in PDF 1.3 spec.
+	 * @param theVerticesPerRow number of vertices in each "row" of the lattice.
+	 * @param theFunction The PDFFunction that's mapped on to this shape
+	 */
+	public PDFShading makeShading(int theShadingType, StringBuffer theColorSpace,
+		Vector theBackground, Vector theBBox, boolean theAntiAlias,
+		int theBitsPerCoordinate, int theBitsPerComponent,
+		Vector theDecode, int theVerticesPerRow, PDFFunction theFunction)
+	{ //make shading of Type 5
+		String theShadingName = new String("Sh"+(++this.shadingCount));
+		
+		PDFShading shading= new PDFShading(++this.objectcount,
+			theShadingName, theShadingType, theColorSpace,
+			theBackground, theBBox, theAntiAlias,
+			theBitsPerCoordinate, theBitsPerComponent,
+			theDecode, theVerticesPerRow, theFunction);
+
+		this.resources.addShading(shading);
+		
+		this.objects.addElement(shading);
+		
+		return(shading);
+	}
+	
+	/**
+	 * Make a tiling pattern
+	 * 
+	 * @param thePatternType the type of pattern, which is 1 for tiling. 
+	 * @param theResources the resources associated with this pattern
+	 * @param thePaintType 1 or 2, colored or uncolored.
+	 * @param theTilingType 1, 2, or 3, constant spacing, no distortion, or faster tiling
+	 * @param theBBox Vector of Doubles: The pattern cell bounding box
+	 * @param theXStep horizontal spacing
+	 * @param theYStep vertical spacing
+	 * @param theMatrix Optional Vector of Doubles transformation matrix
+	 * @param theXUID Optional vector of Integers that uniquely identify the pattern
+	 * @param thePatternDataStream The stream of pattern data to be tiled.
+	 */
+	public PDFPattern makePattern(
+			int thePatternType, //1
+			PDFResources theResources, 
+			int thePaintType, int theTilingType,
+			Vector theBBox, double theXStep, double theYStep,
+			Vector theMatrix, Vector theXUID, StringBuffer thePatternDataStream)
+	{
+		String thePatternName = new String("Pa"+(++this.patternCount));
+		//int theNumber, String thePatternName,
+			//PDFResources theResources
+			PDFPattern pattern = new PDFPattern(++this.objectcount,
+			thePatternName,
+			theResources, 1,
+			thePaintType, theTilingType,
+			theBBox, theXStep, theYStep,
+			theMatrix, theXUID, thePatternDataStream);
+			
+			this.resources.addPattern(pattern);
+			this.objects.addElement(pattern);
+			
+			return(pattern);
+	}
+	
+	/**
+	 * Make a smooth shading pattern
+	 * 
+	 * @param thePatternType the type of the pattern, which is 2, smooth shading
+	 * @param theShading the PDF Shading object that comprises this pattern
+	 * @param theXUID optional:the extended unique Identifier if used.
+	 * @param theExtGState optional: the extended graphics state, if used.
+	 * @param theMatrix Optional:Vector of Doubles that specify the matrix.
+	 */
+	public PDFPattern makePattern(int thePatternType,
+		PDFShading theShading, Vector theXUID,
+		StringBuffer theExtGState,Vector theMatrix)
+	{
+		String thePatternName = new String("Pa"+(++this.patternCount));
+
+		PDFPattern pattern = new PDFPattern(++this.objectcount,
+		thePatternName, 2, theShading, theXUID,
+		theExtGState, theMatrix);
+		
+		this.resources.addPattern(pattern);
+		this.objects.addElement(pattern);
+		
+		return(pattern);
+	}
 
     /**
      * make a Type1 /Font object
@@ -221,14 +631,14 @@ public class PDFDocument {
      */
     public PDFPage makePage(PDFResources resources,
 			    PDFStream contents,
-                            int pagewidth,
+			    int pagewidth,
 			    int pageheight)  {
 
 	/* create a PDFPage with the next object number, the given
 	   resources, contents and dimensions */
 	PDFPage page = new PDFPage(++this.objectcount, resources,
 				   contents,
-                                   pagewidth, pageheight);
+				   pagewidth, pageheight);
 
 	/* add it to the list of objects */
 	this.objects.addElement(page);
@@ -263,7 +673,7 @@ public class PDFDocument {
 
 	return link;
     }
-    
+
     /**
      * make a stream object
      *
