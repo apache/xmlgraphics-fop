@@ -318,7 +318,27 @@ public class PDFRenderer extends PrintRenderer {
             renderOutline(outline.getSubData(i), pdfOutline);
         }
     }
-
+    
+    /** Saves the graphics state of the rendering engine. */
+    protected void saveGraphicsState() {
+        currentStream.add("q\n");
+    }
+    
+    /** Restores the last graphics state of the rendering engine. */
+    protected void restoreGraphicsState() {
+        currentStream.add("Q\n");
+    }
+    
+    /** Indicates the beginning of a text object. */
+    protected void beginTextObject() {
+        currentStream.add("BT\n");
+    }
+        
+    /** Indicates the end of a text object. */
+    protected void endTextObject() {
+        currentStream.add("ET\n");
+    }
+        
     /**
      * Start the next page sequence.
      * For the pdf renderer there is no concept of page sequences
@@ -415,16 +435,16 @@ public class PDFRenderer extends PrintRenderer {
         currentState.setTransform(
           new AffineTransform(CTMHelper.toPDFArray(ctm)));
 
-        currentStream.add("q\n");
+        saveGraphicsState();
         // multiply with current CTM
         currentStream.add(CTMHelper.toPDFString(ctm) + " cm\n");
         // Set clip?
-        currentStream.add("BT\n");
+        beginTextObject();
     }
 
     protected void endVParea() {
-        currentStream.add("ET\n");
-        currentStream.add("Q\n");
+        endTextObject();
+        restoreGraphicsState();
         currentState.pop();
     }
 
@@ -441,8 +461,10 @@ public class PDFRenderer extends PrintRenderer {
         Rectangle2D viewArea = region.getViewArea();
         float width = (float)(viewArea.getWidth() / 1000f);
         float height = (float)(viewArea.getHeight() / 1000f);
+        /*
         Trait.Background back;
         back = (Trait.Background)region.getTrait(Trait.BACKGROUND);
+        */
         drawBackAndBorders(region, startx, starty, width, height);
     }
 
@@ -481,8 +503,8 @@ public class PDFRenderer extends PrintRenderer {
         if(back != null) {
             started = true;
             closeText();
-            currentStream.add("ET\n");
-            //currentStream.add("q\n");
+            endTextObject();
+            //saveGraphicsState();
 
             if (back.color != null) {
                 updateColor(back.color, true, null);
@@ -516,8 +538,8 @@ public class PDFRenderer extends PrintRenderer {
             if(!started) {
                 started = true;
                 closeText();
-                currentStream.add("ET\n");
-                //currentStream.add("q\n");
+                endTextObject();
+                //saveGraphicsState();
             }
 
             float bwidth = bps.width / 1000f;
@@ -533,8 +555,8 @@ public class PDFRenderer extends PrintRenderer {
             if(!started) {
                 started = true;
                 closeText();
-                currentStream.add("ET\n");
-                //currentStream.add("q\n");
+                endTextObject();
+                //saveGraphicsState();
             }
 
             float bwidth = bps.width / 1000f;
@@ -551,8 +573,8 @@ public class PDFRenderer extends PrintRenderer {
             if(!started) {
                 started = true;
                 closeText();
-                currentStream.add("ET\n");
-                //currentStream.add("q\n");
+                endTextObject();
+                //saveGraphicsState();
             }
 
             float bwidth = bps.width / 1000f;
@@ -569,8 +591,8 @@ public class PDFRenderer extends PrintRenderer {
             if(!started) {
                 started = true;
                 closeText();
-                currentStream.add("ET\n");
-                //currentStream.add("q\n");
+                endTextObject();
+                //saveGraphicsState();
             }
 
             float bwidth = bps.width / 1000f;
@@ -579,8 +601,8 @@ public class PDFRenderer extends PrintRenderer {
             drawLine(sx - bwidth / 2, starty, sx - bwidth / 2, endy);
         }
         if(started) {
-            //currentStream.add("Q\n");
-            currentStream.add("BT\n");
+            //restoreGraphicsState();
+            beginTextObject();
             // font last set out of scope in text section
             currentFontName = "";
         }
@@ -616,10 +638,10 @@ public class PDFRenderer extends PrintRenderer {
             currentBPPosition = 0;
 
             closeText();
-            currentStream.add("ET\n");
+            endTextObject();
 
             if (bv.getClip()) {
-                currentStream.add("q\n");
+                saveGraphicsState();
                 float x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
                 float y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
                 float width = (float)bv.getWidth() / 1000f;
@@ -636,9 +658,9 @@ public class PDFRenderer extends PrintRenderer {
             endVParea();
 
             if (bv.getClip()) {
-                currentStream.add("Q\n");
+                restoreGraphicsState();
             }
-            currentStream.add("BT\n");
+            beginTextObject();
 
             // clip if necessary
 
@@ -651,10 +673,10 @@ public class PDFRenderer extends PrintRenderer {
                 currentBPPosition = 0;
 
                 closeText();
-                currentStream.add("ET\n");
+                endTextObject();
 
                 double[] vals = ctm.toArray();
-                boolean aclock = vals[2] == 1.0;
+                //boolean aclock = vals[2] == 1.0;
                 if (vals[2] == 1.0) {
                     ctm = ctm.translate(-saveBP - bv.getHeight(), -saveIP);
                 } else if (vals[0] == -1.0) {
@@ -668,9 +690,9 @@ public class PDFRenderer extends PrintRenderer {
             if (bv.getClip()) {
                 if (ctm == null) {
                     closeText();
-                    currentStream.add("ET\n");
+                    endTextObject();
                 }
-                currentStream.add("q\n");
+                saveGraphicsState();
                 float x = (float)bv.getXOffset() / 1000f;
                 float y = (float)bv.getYOffset() / 1000f;
                 float width = (float)bv.getWidth() / 1000f;
@@ -688,13 +710,13 @@ public class PDFRenderer extends PrintRenderer {
             }
 
             if (bv.getClip()) {
-                currentStream.add("Q\n");
+                restoreGraphicsState();
                 if (ctm == null) {
-                    currentStream.add("BT\n");
+                    beginTextObject();
                 }
             }
             if (ctm != null) {
-                currentStream.add("BT\n");
+                beginTextObject();
             }
 
             currentIPPosition = saveIP;
@@ -1063,11 +1085,13 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     protected void placeImage(int x, int y, int w, int h, int xobj) {
-        currentStream.add("q\n" + ((float) w) + " 0 0 "
+        saveGraphicsState();
+        currentStream.add(((float) w) + " 0 0 "
                           + ((float) -h) + " "
                           + (((float) currentBlockIPPosition) / 1000f + x) + " "
                           + (((float)(currentBPPosition + 1000 * h)) / 1000f
-                          + y) + " cm\n" + "/Im" + xobj + " Do\nQ\n");
+                          + y) + " cm\n" + "/Im" + xobj + " Do\n");
+        restoreGraphicsState();
 
     }
 
@@ -1119,19 +1143,19 @@ public class PDFRenderer extends PrintRenderer {
         float height = viewport.getHeight() / 1000f;
         drawBackAndBorders(viewport, x, y, width, height);
 
-        currentStream.add("ET\n");
+        endTextObject();
 
         if (viewport.getClip()) {
-            currentStream.add("q\n");
+            saveGraphicsState();;
 
             clip(x, y, width, height);
         }
         super.renderViewport(viewport);
 
         if (viewport.getClip()) {
-            currentStream.add("Q\n");
+            restoreGraphicsState();
         }
-        currentStream.add("BT\n");
+        beginTextObject();
     }
 
     /**
@@ -1141,8 +1165,8 @@ public class PDFRenderer extends PrintRenderer {
      */
     public void renderLeader(Leader area) {
         closeText();
-        currentStream.add("ET\n");
-        currentStream.add("q\n");
+        endTextObject();
+        saveGraphicsState();
         int style = area.getRuleStyle();
         boolean alt = false;
         switch(style) {
@@ -1204,9 +1228,9 @@ public class PDFRenderer extends PrintRenderer {
             }
 
         }
-
-        currentStream.add("Q\n");
-        currentStream.add("BT\n");
+        
+        restoreGraphicsState();
+        beginTextObject();
         super.renderLeader(area);
     }
 }
