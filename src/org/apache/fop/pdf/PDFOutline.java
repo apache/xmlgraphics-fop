@@ -147,28 +147,24 @@ public class PDFOutline extends PDFObject {
     }
 
     /**
-     * escape parens, and other special chars for PDF
+     * escape string (see 3.8.1 in PDF reference 2nd edition)
      */
     private String escapeString(String s) {
         StringBuffer result = new StringBuffer();
         if (s != null) {
             int l = s.length();
 
+            // byte order marker (0xfeff)
+            result.append("\\376\\377");
+            
             for (int i = 0; i < l; i++) {
                 char ch = s.charAt(i);
-                if (ch > 127) {
-                    result.append("\\");
-                    result.append(Integer.toOctalString((int)ch));
-                } else {
-                    switch (ch) {
-                    case '(':
-                    case ')':
-                    case '\\':
-                        result.append('\\');
-                        break;
-                    }
-                    result.append(ch);
-                }
+                int high = (ch & 0xff00) >>> 8;
+                int low = ch & 0xff;
+                result.append("\\");
+                result.append(Integer.toOctalString(high));
+                result.append("\\");
+                result.append(Integer.toOctalString(low));
             }
         }
 
