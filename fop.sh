@@ -2,8 +2,6 @@
 #
 # Shell script to run FOP, adapted from the Jakarta-Ant project.
 
-set -x
-
 if [ -f $HOME/.foprc ] ; then
   . $HOME/.foprc
 fi
