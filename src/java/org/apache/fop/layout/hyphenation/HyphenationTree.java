@@ -277,6 +277,29 @@ public class HyphenationTree extends TernaryTree
     }
 
     /**
+     * w = "****nnllllllnnn*****",
+     * where n is a non-letter, l is a letter,
+     * all n may be absent, the first n is at offset,
+     * the first l is at offset + iIgnoreAtBeginning;
+     * word = ".llllll.'\0'***",
+     * where all l in w are copied into word.
+     * In the first part of the routine len = w.length,
+     * in the second part of the routine len = word.length.
+     * Three indices are used:
+     * index(w), the index in w,
+     * index(word), the index in word,
+     * letterindex(word), the index in the letter part of word.
+     * The following relations exist:
+     * index(w) = offset + i - 1
+     * index(word) = i - iIgnoreAtBeginning
+     * letterindex(word) = index(word) - 1
+     * (see first loop).
+     * It follows that:
+     * index(w) - index(word) = offset - 1 + iIgnoreAtBeginning
+     * index(w) = letterindex(word) + offset + iIgnoreAtBeginning
+     */
+
+    /**
      * Hyphenate word and return an array of hyphenation points.
      * @param w char array that contains the word
      * @param offset Offset to first character in word
@@ -295,13 +318,33 @@ public class HyphenationTree extends TernaryTree
 
         // normalize word
         char[] c = new char[2];
+        int iIgnoreAtBeginning = 0;
+        int iLength = len;
+        boolean bEndOfLetters = false;
         for (i = 1; i <= len; i++) {
             c[0] = w[offset + i - 1];
             int nc = classmap.find(c, 0);
-            if (nc < 0) {    // found a non-letter character, abort
-                return null;
+            if (nc < 0) {    // found a non-letter character ...
+                if (i == (1 + iIgnoreAtBeginning)) {
+                    // ... before any letter character
+                    iIgnoreAtBeginning ++;
+                } else {
+                    // ... after a letter character
+                    bEndOfLetters = true;
+                }
+                iLength --;
+            } else {
+                if (!bEndOfLetters) {
+                    word[i - iIgnoreAtBeginning] = (char)nc;
+                } else {
+                    return null;
+                }
             }
-            word[i] = (char)nc;
+        }
+        len = iLength;
+        if (len < (remainCharCount + pushCharCount)) {
+            // word is too short to be hyphenated
+            return null;
         }
         int[] result = new int[len + 1];
         int k = 0;
@@ -314,10 +357,12 @@ public class HyphenationTree extends TernaryTree
             int j = 0;
             for (i = 0; i < hw.size(); i++) {
                 Object o = hw.get(i);
+                // j = index(sw) = letterindex(word)?
+                // result[k] = corresponding index(w)
                 if (o instanceof String) {
                     j += ((String)o).length();
                     if (j >= remainCharCount && j < (len - pushCharCount)) {
-                        result[k++] = j;
+                        result[k++] = j + iIgnoreAtBeginning;
                     }
                 }
             }
@@ -332,10 +377,13 @@ public class HyphenationTree extends TernaryTree
             }
 
             // hyphenation points are located where interletter value is odd
+            // i is letterindex(word),
+            // i + 1 is index(word),
+            // result[k] = corresponding index(w)
             for (i = 0; i < len; i++) {
                 if (((il[i + 1] & 1) == 1) && i >= remainCharCount
                         && i <= (len - pushCharCount)) {
-                    result[k++] = i;
+                    result[k++] = i + iIgnoreAtBeginning;
                 }
             }
         }
