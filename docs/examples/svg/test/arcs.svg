@@ -1,0 +1,18 @@
+<?xml version="1.0" standalone="yes"?>
+<svg:svg width="600" height="200" viewBox="0 0 600 200" xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
+<svg:title>Example arcs01 - arc commands in path data</svg:title>
+<svg:desc>Picture of a pie chart with two pie wedges and
+a picture of a line with arc blips</svg:desc>
+<svg:rect x="1" y="1" width="598" height="198"
+style="fill:none; stroke:blue; stroke-width:1"/>
+<svg:path d="M150,100 h-75 a75,75 0 1,0 75,-75 z"
+style="fill:red; stroke:blue; stroke-width:5"/>
+<svg:path d="M137,87 v-75 a75,75 0 0,0 -75,75 z"
+style="fill:yellow; stroke:blue; stroke-width:5"/>
+<svg:path d="M300,175 l 25,-12
+a12,12 -15 0,1 25,-12 l 25,-12
+a12,25 -15 0,1 25,-12 l 25,-12
+a12,37 -15 0,1 25,-12 l 25,-12
+a12,50 -15 0,1 25,-12 l 25,-12"
+style="fill:none; stroke:red; stroke-width:5" />
+</svg:svg>
