@@ -110,7 +110,7 @@ public class PageNumber extends FObj {
 						area.getIDReferences().initializeID(id, area);
 				}
 
-				String p = Integer.toString(area.getPage().getNumber());
+				String p = area.getPage().getFormattedNumber();
 				this.marker = FOText.addText((BlockArea) area, propMgr.getFontState(area.getFontInfo()), red, green, blue,
 											wrapOption, null, whiteSpaceCollapse, p.toCharArray(),
 											0, p.length(), ts, VerticalAlign.BASELINE);

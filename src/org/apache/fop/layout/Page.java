@@ -30,7 +30,8 @@ public class Page {
     private AreaTree areaTree;
 
     protected int pageNumber = 0;
-
+	protected String formattedPageNumber;
+	
     protected Vector linkSets = new Vector();
 
     private Vector idList = new Vector();
@@ -49,6 +50,14 @@ public class Page {
 
     public int getNumber() {
 	return this.pageNumber;
+    }
+
+	public void setFormattedNumber(String number) {
+	this.formattedPageNumber = number;
+	}
+	
+    public String getFormattedNumber() {
+	return this.formattedPageNumber;
     }
 
     void addAfter(AreaContainer area) {
