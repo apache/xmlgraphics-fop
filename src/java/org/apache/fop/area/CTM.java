@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,14 +42,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.area;
 
+import org.apache.fop.datatypes.FODimension;
+import org.apache.fop.fo.PropertyManager;
 import java.awt.geom.Rectangle2D;
 import java.awt.Rectangle;
 import java.io.Serializable;
@@ -62,7 +64,7 @@ import org.apache.fop.fo.properties.WritingMode;
  * system used to render pages.
  */
 public class CTM implements Serializable {
-    
+
     private double a, b, c, d, e, f;
 
     private static final CTM CTM_LRTB = new CTM(1, 0, 0, 1, 0, 0);
@@ -276,5 +278,71 @@ public class CTM implements Serializable {
     public double[] toArray() {
         return new double[]{a, b, c, d, e, f};
     }
-}
 
+    /**
+     * Construct a coordinate transformation matrix (CTM).
+     * @param absVPrect absolute viewpoint rectangle
+     * @param reldims relative dimensions
+     * @return CTM the coordinate transformation matrix (CTM)
+     */
+    public static CTM getCTMandRelDims(PropertyManager pm, Rectangle2D absVPrect,
+                                FODimension reldims) {
+        int width, height;
+        // We will use the absolute reference-orientation to set up the CTM.
+        // The value here is relative to its ancestor reference area.
+        int absRefOrient = pm.getAbsRefOrient(
+                pm.getProperties().get("reference-orientation").getNumber().intValue());
+        if (absRefOrient % 180 == 0) {
+            width = (int) absVPrect.getWidth();
+            height = (int) absVPrect.getHeight();
+        } else {
+            // invert width and height since top left are rotated by 90 (cl or ccl)
+            height = (int) absVPrect.getWidth();
+            width = (int) absVPrect.getHeight();
+        }
+        /* Set up the CTM for the content of this reference area.
+         * This will transform region content coordinates in
+         * writing-mode relative into absolute page-relative
+         * which will then be translated based on the position of
+         * the region viewport.
+         * (Note: scrolling between region vp and ref area when
+         * doing online content!)
+         */
+        CTM ctm = new CTM(absVPrect.getX(), absVPrect.getY());
+
+        // First transform for rotation
+        if (absRefOrient != 0) {
+            // Rotation implies translation to keep the drawing area in the
+            // first quadrant. Note: rotation is counter-clockwise
+            switch (absRefOrient) {
+                case 90:
+                    ctm = ctm.translate(0, width); // width = absVPrect.height
+                    break;
+                case 180:
+                    ctm = ctm.translate(width, height);
+                    break;
+                case 270:
+                    ctm = ctm.translate(height, 0); // height = absVPrect.width
+                    break;
+            }
+            ctm = ctm.rotate(absRefOrient);
+        }
+        int wm = pm.getProperties().get("writing-mode").getEnum();
+        /* Since we've already put adjusted width and height values for the
+         * top and left positions implied by the reference-orientation, we
+         * can set ipd and bpd appropriately based on the writing mode.
+         */
+
+        if (wm == WritingMode.LR_TB || wm == WritingMode.RL_TB) {
+            reldims.ipd = width;
+            reldims.bpd = height;
+        } else {
+            reldims.ipd = height;
+            reldims.bpd = width;
+        }
+        // Set a rectangle to be the writing-mode relative version???
+        // Now transform for writing mode
+        return ctm.multiply(CTM.getWMctm(wm, reldims.ipd, reldims.bpd));
+    }
+
+}
