@@ -17,6 +17,7 @@ SOURCES=Block.java \
 	ListItemBody.java \
 	ListItemLabel.java \
 	PageNumber.java \
+	SimpleLink.java \
 	StaticContent.java \
 	Table.java \
 	TableBody.java \

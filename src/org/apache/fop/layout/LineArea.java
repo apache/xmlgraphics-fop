@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,12 +48,14 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.layout;
 
 import org.apache.fop.render.Renderer;
 
 import java.util.Vector;
 import java.util.Enumeration;
+import java.awt.Rectangle;
 
 import org.apache.fop.fo.properties.WrapOption; // for enumerated
 // values 
@@ -143,7 +145,7 @@ public class LineArea extends Area {
 	renderer.renderLineArea(this);
     }
 
-    public int addText(char data[], int start, int end) {
+    public int addText(char data[], int start, int end, LinkSet ls) {
 	boolean overrun = false;
 
 	wordStart = start;
@@ -212,6 +214,16 @@ public class LineArea extends Area {
 		    Enumeration e = pendingAreas.elements();
 		    while (e.hasMoreElements()) {
 			InlineArea inlineArea = (InlineArea) e.nextElement();
+			if (ls != null) {
+			    Rectangle lr =
+				new Rectangle(startIndent +
+					      finalWidth,
+					      0,
+					      inlineArea.getContentWidth(),
+					      lineHeight);
+			    ls.addRect(lr);
+			}
+
 			addChild(inlineArea);
 		    }
 		    finalWidth += pendingWidth;
@@ -223,12 +235,22 @@ public class LineArea extends Area {
 		    // add the current word
 
 		    if (wordLength > 0) {
-			addChild(new InlineArea(currentFontState,
-						this.red, this.green,
-						this.blue, new
-						String(data, wordStart,
-						       wordLength),
-						wordWidth)); 
+			InlineArea ia = new InlineArea(currentFontState,
+						       this.red, this.green,
+						       this.blue, new
+						       String(data, wordStart,
+							      wordLength),
+						       wordWidth);
+			addChild(ia);
+			if (ls != null) {
+			    Rectangle lr =
+				new Rectangle(startIndent +
+					      finalWidth,
+					      0,
+					      ia.getContentWidth(),
+					      lineHeight);
+			    ls.addRect(lr);
+			}
 			finalWidth += wordWidth;
 
 			// reset word width
@@ -318,10 +340,19 @@ public class LineArea extends Area {
 	} // end of iteration over text
 
 	if (prev == TEXT) {
-	    pendingAreas.addElement(new InlineArea(currentFontState, this.red,
+	    InlineArea pia = new InlineArea(currentFontState, this.red,
 				    this.green, this.blue, new
 				    String(data, wordStart,
-					   wordLength), wordWidth)); 
+					   wordLength), wordWidth); 
+	    if (ls != null) {
+		Rectangle lr =
+		    new Rectangle(startIndent + finalWidth,
+				  spaceWidth,
+				  pia.getContentWidth(),
+				  lineHeight);
+		ls.addRect(lr);
+	    }
+	    pendingAreas.addElement(pia);
 	    pendingWidth += wordWidth;
 	    wordWidth = 0;
 	}

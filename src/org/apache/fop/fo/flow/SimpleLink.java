@@ -1,4 +1,4 @@
-/*-- $Id$ -- 
+/*-- $Id$ --
 
  ============================================================================
                    The Apache Software License, Version 1.1
@@ -49,114 +49,83 @@
  
  */
 
-package org.apache.fop.fo;
+/* this class contributed by Arved Sandstrom with minor modifications
+   by James Tauber */
+
+package org.apache.fop.fo.flow;
 
 // FOP
+import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.layout.Area;
-import org.apache.fop.layout.LinkSet;
+import org.apache.fop.fo.properties.*;
+import org.apache.fop.layout.*;
+import org.apache.fop.datatypes.ColorType;
 
 // Java
-import java.util.Vector;
+import java.util.Enumeration;
+import java.awt.Rectangle;
 
-/**
- * base class for nodes in the formatting object tree
- */
-abstract public class FONode {
+public class SimpleLink extends FObjMixed {
 
-    protected FObj parent;
-    protected Vector children = new Vector();
-
-    /** value of marker before layout begins */
-    public final static int START = -1000;
-
-    /** value of marker after break-after */
-    public final static int BREAK_AFTER = -1001;
-
-    /** 
-     * where the layout was up to.
-     *  for FObjs it is the child number
-     *  for FOText it is the character number
-     */
-    protected int marker = START;
-
-    protected boolean isInLabel = false;
-    protected boolean isInListBody = false;
-    protected boolean isInTableCell = false;
-
-    protected int bodyIndent;
-    protected int distanceBetweenStarts;
-    protected int labelSeparation;
-
-    protected int forcedStartOffset = 0;
-    protected int forcedWidth = 0;
-
-    protected LinkSet linkSet;
-
-    protected FONode(FObj parent) {
-	this.parent = parent;
-    }
-
-    public void setIsInLabel() {
-	this.isInLabel = true;
-    }
-
-    public void setIsInListBody() {
-	this.isInListBody = true;
-    }
-
-    public void setIsInTableCell() {
-	this.isInTableCell = true;
-    }
-
-    public void setDistanceBetweenStarts(int distance) {
-	this.distanceBetweenStarts = distance;
-    }
-
-    public void setLabelSeparation(int separation) {
-	this.labelSeparation = separation;
-    }
-
-    public void setBodyIndent(int indent) {
-	this.bodyIndent = indent;
-    }
-
-    public void forceStartOffset(int offset) {
-	this.forcedStartOffset = offset;
-    }
-
-    public void forceWidth(int width) {
-	this.forcedWidth = width;
-    }
-
-    public void resetMarker() {
-	this.marker = START;
-	int numChildren = this.children.size();
-	for (int i = 0; i < numChildren; i++) {
-	    ((FONode) children.elementAt(i)).resetMarker();
+    public static class Maker extends FObj.Maker {
+	public FObj make(FObj parent, PropertyList propertyList)
+	    throws FOPException { 
+	    return new SimpleLink(parent, propertyList);
 	}
     }
 
-    public void removeAreas() {
-	// still to do
+    public static FObj.Maker maker() {
+	return new SimpleLink.Maker();
+    }
+    
+    public SimpleLink(FObj parent, PropertyList propertyList)
+	throws FOPException {
+	super(parent, propertyList);
+	this.name = "fo:simple-link";
+		
+	if (parent.getName().equals("fo:flow")) {
+	    throw new FOPException("simple-link can't be directly"
+				   + " under flow"); 
+	}
     }
 
-    protected void addChild(FONode child) {
-	children.addElement(child);
-    }
+    public Status layout(Area area) throws FOPException {
+	
+	String externalDest =
+	    this.properties.get("external-destination").getString();
+	
+	if (this.marker == START) {
+	    this.marker = 0;
+	}
+	
+	// new LinkedArea to gather up inlines
+	LinkSet ls = new LinkSet(externalDest);
+		
+	Page p = area.getPage();
 
-    public FObj getParent() {
-	return this.parent;
-    }
+	// assumption - AS
+	// should be able to retrieve this from somewhere - JT
+	AreaContainer ac = p.getBody();
+		
+	int numChildren = this.children.size();
+	for (int i = this.marker; i < numChildren; i++) {
+	    FONode fo = (FONode) children.elementAt(i);
+	    fo.setLinkSet(ls);
+		    
+	    Status status;
+	    if ((status = fo.layout(area)).isIncomplete()) {
+		this.marker = i;
+		return status;
+	    }
+	}
+		
+	ls.applyAreaContainerOffsets(ac);
+		
+	// comment this out to see individual words linked
+	ls.mergeLinks();
+		
+	p.addLinkSet(ls);
 
-    public void setLinkSet(LinkSet linkSet) {
-	this.linkSet = linkSet;
+	return new Status(Status.OK);
     }
-
-    public LinkSet getLinkSet() {
-	return this.linkSet;
-    }
-
-    abstract public Status layout(Area area)
-	throws FOPException;
 }

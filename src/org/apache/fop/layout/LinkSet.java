@@ -79,7 +79,7 @@ public class LinkSet {
 	this.externalDestination = externalDest;
     }
     
-    public void addLinkedRect(Rectangle r) {
+    public void addRect(Rectangle r) {
 	r.y = yoffset;
 	rects.addElement(r);
     }

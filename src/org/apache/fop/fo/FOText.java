@@ -118,6 +118,7 @@ public class FOText extends FONode {
 	int orig_start = this.marker;
 	this.marker = ((BlockArea) area).addText(fs, red, green, blue,
 						 wrapOption,
+						 this.getLinkSet(),
 						 whiteSpaceTreatment,
 						 ca, this.marker, length);
 	if (this.marker == -1) {
