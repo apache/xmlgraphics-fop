@@ -284,7 +284,6 @@ public class TableCell extends FObj {
 		} else {
 					// hani Elabed 11/21/2000
 			 area.addChild(areaContainer);
-//         	area.setHeight(getHeight());
          	area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
 
 		    return new Status(Status.AREA_FULL_SOME);
@@ -296,8 +295,8 @@ public class TableCell extends FObj {
 
  	height = getHeight();
  	top = areaContainer.getCurrentYPosition();
- 	area.setHeight(getHeight());
  	// reset absoluteHeight to beginning of row
+ 	area.setHeight(getHeight());
  	area.setAbsoluteHeight(originalAbsoluteHeight);
 
 	return new Status(Status.OK);
@@ -308,7 +307,7 @@ public class TableCell extends FObj {
     }
     
     public void setRowHeight(int h) {
-	areaContainer.setMaxHeight(height);
+        areaContainer.setMaxHeight(h);
 	    switch(verticalAlign) {
 	        case VerticalAlign.MIDDLE:
 	            areaContainer.setHeight(height);
