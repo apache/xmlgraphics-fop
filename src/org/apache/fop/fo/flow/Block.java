@@ -101,6 +101,7 @@ public class Block extends FObjMixed {
 
     String id;
     int span;
+    boolean breakStatusBeforeChecked = false;
 
     // this may be helpful on other FOs too
     boolean anythingLaidOut = false;
@@ -119,6 +120,16 @@ public class Block extends FObjMixed {
     }
 
     public int layout(Area area) throws FOPException {
+        if (!breakStatusBeforeChecked) {
+            breakStatusBeforeChecked = true;
+            // no break if first in area tree, or leading in context
+            // area
+            int breakBeforeStatus = propMgr.checkBreakBefore(area);
+            if (breakBeforeStatus != Status.OK) {
+                return breakBeforeStatus;
+            }
+        }
+
         BlockArea blockArea;
 
         if (!anythingLaidOut) {
@@ -190,14 +201,6 @@ public class Block extends FObjMixed {
             }
 
             this.marker = 0;
-
-            // no break if first in area tree, or leading in context
-            // area
-            int breakBeforeStatus = propMgr.checkBreakBefore(area);
-            if (breakBeforeStatus != Status.OK) {
-                return breakBeforeStatus;
-            }
-
         }
 
         if ((spaceBefore != 0) && (this.marker == 0)) {
