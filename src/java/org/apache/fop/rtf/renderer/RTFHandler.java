@@ -689,6 +689,12 @@ public class RTFHandler extends FOInputHandler {
         rtfAttr.set(rtfValue);
     }
 
+    /**
+     * Reads background-color from bl and writes it to rtfAttr.
+     *
+     * @param bl the Block object the properties are read from
+     * @param rtfAttr the RtfAttributes object the attributes are written to
+     */
     private void attrBlockBackgroundColor(Block bl, RtfAttributes rtfAttr) {
         ColorType fopValue = bl.properties.get("background-color").getColorType();
         int rtfColor = 0;
@@ -696,12 +702,11 @@ public class RTFHandler extends FOInputHandler {
            actually a transparent black, which is generally not suitable as a
            default here. Changing FOP's default to "white" causes problems in
            PDF output, so we will look for the default here & change it to
-           white. */
+           "auto". */
         if ((fopValue.getRed() == 0) && (fopValue.getGreen() == 0)
                 && (fopValue.getBlue() == 0) && (fopValue.getAlpha() == 0)) {
-            rtfColor = RtfColorTable.getInstance().getColorNumber("white").intValue();
+            rtfColor = 0; //=auto
             currentRTFBackgroundColor = -1;
-            return;
         } else {
             rtfColor = convertFOPColorToRTF(fopValue);
         }
