@@ -8,6 +8,7 @@ package org.apache.fop.pdf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.*;
 
 public class ASCIIHexFilter extends PDFFilter {
     private static final String ASCIIHEX_EOD = ">";
@@ -21,19 +22,16 @@ public class ASCIIHexFilter extends PDFFilter {
         return null;
     }
 
-    public byte[] encode(byte[] data) {
-
-        StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < data.length; i++) {
-            int val = (int)(data[i] & 0xFF);
+    public void encode(InputStream in, OutputStream out, int length) throws IOException {
+        Writer writer = new OutputStreamWriter(out);
+        for (int i = 0; i < length; i++) {
+            int val = (int)(in.read() & 0xFF);
             if (val < 16)
-                buffer.append("0");
-            buffer.append(Integer.toHexString(val));
+                writer.write("0");
+            writer.write(Integer.toHexString(val));
         }
-        buffer.append(ASCIIHEX_EOD);
-
-        return buffer.toString().getBytes();
-
+        writer.write(ASCIIHEX_EOD);
+        writer.close();
     }
 
 }

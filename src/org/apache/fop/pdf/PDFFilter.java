@@ -11,6 +11,8 @@
 
 package org.apache.fop.pdf;
 
+import java.io.*;
+
 public abstract class PDFFilter {
     /*
      * These are no longer needed, but are here as a reminder about what
@@ -60,8 +62,6 @@ public abstract class PDFFilter {
     /**
      * encode the given data with the filter
      */
-    public abstract byte[] encode(byte[] data);
-
-
+    public abstract void encode(InputStream in, OutputStream out, int length) throws IOException;
 
 }

@@ -7,9 +7,11 @@
 
 package org.apache.fop.pdf;
 
+import org.apache.fop.util.StreamUtilities;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
+import java.io.*;
 
 /**
  * DCT Filter class. Right now it is just used as a dummy filter flag so
@@ -28,8 +30,10 @@ public class DCTFilter extends PDFFilter {
         return null;
     }
 
-    public byte[] encode(byte[] data) {
-        return data;
+    public void encode(InputStream in, OutputStream out, int length) throws IOException {
+        StreamUtilities.streamCopy(in, out, length);
+        out.close();
     }
+    
 }
 

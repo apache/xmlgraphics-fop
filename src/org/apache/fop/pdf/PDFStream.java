@@ -27,7 +27,7 @@ public class PDFStream extends PDFObject {
     /**
      * the stream of PDF commands
      */
-    protected ByteArrayOutputStream _data;
+    protected StreamCache _data;
 
     /**
      * the filters that should be applied
@@ -41,7 +41,11 @@ public class PDFStream extends PDFObject {
      */
     public PDFStream(int number) {
         super(number);
-        _data = new ByteArrayOutputStream();
+        try {
+            _data = StreamCache.createStreamCache();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
         _filters = new ArrayList();
     }
 
@@ -52,7 +56,7 @@ public class PDFStream extends PDFObject {
      */
     public void add(String s) {
         try {
-            _data.write(s.getBytes());
+            _data.getOutputStream().write(s.getBytes());
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -130,21 +134,21 @@ public class PDFStream extends PDFObject {
                     int g = (p >> 8) & 0xFF;
                     int b = (p) & 0xFF;
                     if (r < 16) {
-                        _data.write('0');
+                        _data.getOutputStream().write('0');
                     }
-                    _data.write(Integer.toHexString(r).getBytes());
+                    _data.getOutputStream().write(Integer.toHexString(r).getBytes());
                     if (g < 16) {
-                        _data.write('0');
+                        _data.getOutputStream().write('0');
                     }
-                    _data.write(Integer.toHexString(g).getBytes());
+                    _data.getOutputStream().write(Integer.toHexString(g).getBytes());
                     if (b < 16) {
-                        _data.write('0');
+                        _data.getOutputStream().write('0');
                     }
-                    _data.write(Integer.toHexString(b).getBytes());
-                    _data.write(' ');
+                    _data.getOutputStream().write(Integer.toHexString(b).getBytes());
+                    _data.getOutputStream().write(' ');
                 }
             }
-            _data.write(">\n".getBytes());
+            _data.getOutputStream().write(">\n".getBytes());
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -153,15 +157,22 @@ public class PDFStream extends PDFObject {
 
     public void setData(byte[] data) throws IOException {
         _data.reset();
-        _data.write(data);
+        _data.getOutputStream().write(data);
     }
 
+    /*
     public byte[] getData() {
         return _data.toByteArray();
     }
+    */
 
     public int getDataLength() {
-        return _data.size();
+        try {
+            return _data.getSize();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
 
@@ -188,14 +199,13 @@ public class PDFStream extends PDFObject {
         throw new RuntimeException();
     }
 
-
     // overload the base object method so we don't have to copy
     // byte arrays around so much
     protected int output(OutputStream stream) throws IOException {
         int length = 0;
         String filterEntry = applyFilters();
         byte[] p = (this.number + " " + this.generation + " obj\n<< /Length "
-                    + (_data.size() + 1) + " " + filterEntry
+                    + (_data.getSize() + 1) + " " + filterEntry
                     + " >>\n").getBytes();
 
         stream.write(p);
@@ -216,8 +226,9 @@ public class PDFStream extends PDFObject {
         byte[] p = "stream\n".getBytes();
         stream.write(p);
         length += p.length;
-        _data.writeTo(stream);
-        length += _data.size();
+        _data.outputStreamData(stream);
+        _data.close();
+        length += _data.getSize();
         p = "\nendstream\n".getBytes();
         stream.write(p);
         length += p.length;
@@ -243,9 +254,7 @@ public class PDFStream extends PDFObject {
                 PDFFilter filter = (PDFFilter)_filters.get(count);
                 // apply the filter encoding if neccessary
                 if (!filter.isApplied()) {
-                    byte[] tmp = filter.encode(_data.toByteArray());
-                    _data.reset();
-                    _data.write(tmp);
+                    _data.applyFilter(filter);
                     filter.setApplied(true);
                 }
                 // place the names in our local vector in reverse order

@@ -9,6 +9,7 @@ package org.apache.fop.pdf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.*;
 
 public class ASCII85Filter extends PDFFilter {
     private static final char ASCII85_ZERO = 'z';
@@ -30,9 +31,7 @@ public class ASCII85Filter extends PDFFilter {
         return null;
     }
 
-    public byte[] encode(byte[] data) {
-
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    public void encode(InputStream in, OutputStream out, int length) throws IOException {
 
         int i;
         int total = 0;
@@ -40,16 +39,16 @@ public class ASCII85Filter extends PDFFilter {
 
         // first encode the majority of the data
         // each 4 byte group becomes a 5 byte group
-        for (i = 0; i + 3 < data.length; i += 4) {
+        for (i = 0; i + 3 < length; i += 4) {
 
-            long val = ((data[i] << 24)
+            long val = ((in.read() << 24)
                         & 0xff000000L)          // note: must have the L at the
-            + ((data[i + 1] << 16) & 0xff0000L)    // end, otherwise you get into
-            + ((data[i + 2] << 8) & 0xff00L)    // weird signed value problems
-            + (data[i + 3] & 0xffL);            // cause we're using a full 32 bits
+            + ((in.read() << 16) & 0xff0000L)    // end, otherwise you get into
+            + ((in.read() << 8) & 0xff00L)    // weird signed value problems
+            + (in.read() & 0xffL);            // cause we're using a full 32 bits
             byte[] conv = convertWord(val);
 
-            buffer.write(conv, 0, conv.length);
+            out.write(conv, 0, conv.length);
 
         }
 
@@ -57,12 +56,12 @@ public class ASCII85Filter extends PDFFilter {
         // with n leftover bytes, we append 0 bytes to make a full group of 4
         // then convert like normal (except not applying the special zero rule)
         // and write out the first n+1 bytes from the result
-        if (i < data.length) {
-            int n = data.length - i;
+        if (i < length) {
+            int n = length - i;
             byte[] lastdata = new byte[4];
             for (int j = 0; j < 4; j++) {
                 if (j < n) {
-                    lastdata[j] = data[i++];
+                    lastdata[j] = (byte)in.read();
                 } else {
                     lastdata[j] = 0;
                 }
@@ -82,16 +81,13 @@ public class ASCII85Filter extends PDFFilter {
                 }
             }
             // assert n+1 <= 5
-            buffer.write(conv, 0, n + 1);
+            out.write(conv, 0, n + 1);
             // System.out.println("ASCII85 end of data was "+n+" bytes long");
 
         }
         // finally write the two character end of data marker
-        buffer.write(ASCII85_EOD.getBytes(), 0,
+        out.write(ASCII85_EOD.getBytes(), 0,
                      ASCII85_EOD.getBytes().length);
-
-
-        byte[] result = buffer.toByteArray();
 
 
         // assert that we have the correct outgoing length
@@ -103,8 +99,8 @@ public class ASCII85Filter extends PDFFilter {
          * System.out.println("        inlength = "+data.length+" inlength % 4 = "+(data.length % 4)+" outlength = "+(result.length-ASCII85_EOD.getBytes().length)+" outlength % 5 = "+((result.length-ASCII85_EOD.getBytes().length) % 5));
          * }
          */
-        return result;
 
+        out.close();
     }
 
     /**

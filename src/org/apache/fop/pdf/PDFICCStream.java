@@ -11,7 +11,6 @@ import org.apache.fop.datatypes.ColorSpace;
 public class PDFICCStream extends PDFStream {
     private int origLength;
     private int len1, len3;
-    private byte[] originalData = null;
     
     private ColorSpace cs;
     
@@ -43,7 +42,7 @@ public class PDFICCStream extends PDFStream {
         if (cs.getColorSpace() > 0)
             pb.append("/Alternate /").append(cs.getColorSpacePDFString()).append(" ");
         
-        pb.append("/Length ").append((_data.size() + 1)).append(" ").append(filterEntry);
+        pb.append("/Length ").append((_data.getSize() + 1)).append(" ").append(filterEntry);
         pb.append(" >>\n");
         byte[] p = pb.toString().getBytes();
         stream.write(p);
