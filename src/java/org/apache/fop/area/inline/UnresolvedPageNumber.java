@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class UnresolvedPageNumber extends TextArea implements Resolvable {
     private boolean resolved = false;
-    private String pageRefId;
+    private String pageIDRef;
 
     /**
      * Create a new unresolvable page number.
@@ -38,7 +38,7 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
      * @param id the id reference for resolving this
      */
     public UnresolvedPageNumber(String id) {
-        pageRefId = id;
+        pageIDRef = id;
         text = "?";
     }
 
@@ -48,20 +48,22 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
      * @return the id reference for this unresolved page number
      */
     public String[] getIDs() {
-        return new String[] {pageRefId};
+        return new String[] {pageIDRef};
     }
 
     /**
-     * Resolve this page number reference.
-     * This resolves the reference by getting the page number
+     * Resolve the page number idref
+     * This resolves the idref for this object by getting the page number
      * string from the first page in the list of pages that apply
-     * for the id reference. The word string is then set to the
-     * page number string.
+     * for this ID.  The page number text is then set to the String value
+     * of the page number.
      *
-     * @param id the id reference being resolved
-     * @param pages the list of pages for the id reference
+     * @param id the id associated with the pages parameter
+     * @param pages the list of PageViewports associated with this ID
+     * @todo determine why the ID passed in will (always?) equal the pageIDRef,
+     *      explain in comments above
      */
-    public void resolve(String id, List pages) {
+    public void resolveIDRef(String id, List pages) {
         resolved = true;
         if (pages != null) {
             PageViewport page = (PageViewport)pages.get(0);

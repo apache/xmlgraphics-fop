@@ -61,7 +61,7 @@ public class LinkResolver implements Resolvable, Serializable {
     /**
      * Resolve by adding an internal link.
      */
-    public void resolve(String id, List pages) {
+    public void resolveIDRef(String id, List pages) {
         resolved = true;
         if (idRef.equals(id) && pages != null) {
             PageViewport page = (PageViewport)pages.get(0);

@@ -45,11 +45,14 @@ public interface Resolvable {
     String[] getIDs();
 
     /**
-     * This resolves reference with a list of pages.
-     * The pages (PageViewport) contain the rectangle of the area.
-     * @param id the id to resolve
-     * @param pages the list of pages with the id area
-     *              may be null if not found
+     * This method provides the opportunity for a Resolvable object
+     * to resolve one of its unresolved idrefs with the actual set of
+     * PageViewports containing the target ID.
+     *
+     * @param id an ID possibly matching one of the Resolvable object's
+     *      unresolved idref's.
+     * @param pages the list of PageViewports with the given ID
+     *      may be null if ID is not tied to any
      */
-    void resolve(String id, List pages);
+    void resolveIDRef(String id, List pages);
 }

@@ -139,7 +139,7 @@ public class AreaTreeHandler extends FOEventHandler {
             if (todo != null) {
                 for (Iterator iter = todo.iterator(); iter.hasNext();) {
                     Resolvable res = (Resolvable) iter.next();
-                    res.resolve(id, pvList);
+                    res.resolveIDRef(id, pvList);
                 }
                 unresolvedIDRefs.remove(id);
             }
@@ -201,7 +201,7 @@ public class AreaTreeHandler extends FOEventHandler {
             for (Iterator resIter = list.iterator(); resIter.hasNext();) {
                 Resolvable res = (Resolvable)resIter.next();
                 if (!res.isResolved()) {
-                    res.resolve(id, null);
+                    res.resolveIDRef(id, null);
                 }
             }
         }
@@ -294,7 +294,7 @@ public class AreaTreeHandler extends FOEventHandler {
             String[] ids = res.getIDs();
             for (int count = 0; count < ids.length; count++) {
                 if (idLocations.containsKey(ids[count])) {
-                    res.resolve(ids[count], (List) idLocations.get(ids[count]));
+                    res.resolveIDRef(ids[count], (List) idLocations.get(ids[count]));
                 } else {
                     addUnresolvedIDRef(ids[count], res);
                 }
