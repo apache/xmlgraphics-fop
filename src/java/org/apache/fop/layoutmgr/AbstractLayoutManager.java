@@ -421,7 +421,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
             Object theobj = fobjIter.next();
             if (theobj instanceof FObj) {
                 FObj fobj = (FObj) theobj;
-                areaTreeHandler.addLayoutManager(fobj, newLMs);
+                fobj.addLayoutManager(newLMs);
             }
         }
         return newLMs;
