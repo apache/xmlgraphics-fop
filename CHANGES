@@ -1,5 +1,12 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fixed marker handling thouroughly. All retrieving boundaries and
+  retrieve-position first-starting-within-page and last-starting-within-page
+  should work now, as well as multiline/multiblock marker contents.
+  Retrieve-position first-including-carryover and last-ending-within-page
+  do not yet work. Also fixed marker handling in case layout was undone
+  due to keeps (#16999). (J.Pietschmann, based on material submitted
+  by Marc C. Allman)
 - Fixed some sources of "wrong operand type" error in Acrobat Reader. They
   were caused by rounding bugs, mostly experienced with SVG files coming from
   OpenOffice. (Jeremias Maerki)
@@ -18,7 +25,7 @@ Done since 0.20.4 release
 - Added Turkish messages for AWT Viewer
   Submitted by: Togan Muftuoglu <toganm@users.sourceforge.net>
 - Fixed leader expansion and leader alignment to reference area to some
-  extent(#7490 and #15936).
+  extent(#7490 and #15936). (J.Pietschmann)
 - Temporary fix for wrong mapping of the hyphen character in the PostScript
   renderer. Needs to be done in a clean way later.
   Submitted by: Arnd Beissner <arnd.beissner@cappelino.de>
