@@ -94,7 +94,7 @@ public class LayoutManagerLS extends LayoutStrategy {
             return;
         }
 
-        areaTree.addBookmarksToAreaTree(this.document);
+        areaTree.addBookmarksToAreaTree();
 
         // Initialize if already used?
         //    this.layoutMasterSet.resetPageMasters();

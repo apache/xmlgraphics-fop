@@ -83,12 +83,22 @@ public class AreaTree {
     // allows for different models to deal with adding/rendering
     // in different situations
     private AreaTreeModel model;
+    private AreaTreeControl atControl;
 
     // hashmap of arraylists containing pages with id area
     private Map idLocations = new HashMap();
     // list of id's yet to be resolved and arraylists of pages
     private Map resolve = new HashMap();
     private List treeExtensions = new ArrayList();
+
+    /**
+     * Constructor.
+     * @param atControl the AreaTreeControl object controlling this AreaTree
+     */
+    public AreaTree (AreaTreeControl atControl) {
+        this.atControl = atControl;
+    }
+
 
     /**
      * Create a new store pages model.
@@ -241,14 +251,14 @@ public class AreaTree {
     /**
      * Create the bookmark data in the area tree.
      */
-    public void addBookmarksToAreaTree(Document document) {
-        if (document.getBookmarks() == null) {
+    public void addBookmarksToAreaTree() {
+        if (atControl.getBookmarks() == null) {
             return;
         }
-        document.getDriver().getLogger().debug("adding bookmarks to area tree");
+        atControl.getLogger().debug("adding bookmarks to area tree");
         BookmarkData data = new BookmarkData();
-        for (int count = 0; count < document.getBookmarks().getOutlines().size(); count++) {
-            Outline out = (Outline)(document.getBookmarks().getOutlines()).get(count);
+        for (int count = 0; count < atControl.getBookmarks().getOutlines().size(); count++) {
+            Outline out = (Outline)(atControl.getBookmarks().getOutlines()).get(count);
             data.addSubData(createBookmarkData(out));
         }
         addTreeExtension(data);
