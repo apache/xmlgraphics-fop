@@ -117,6 +117,10 @@ public class PDFXObject extends PDFObject {
 		p = p + "/BitsPerComponent " + fopimage.getBitsPerPixel() + "\n";
 		ColorSpace cs = fopimage.getColorSpace();
 		p = p + "/ColorSpace /" + cs.getColorSpacePDFString() + "\n";
+		if (fopimage.isTransparent()) {
+			PDFColor transp = fopimage.getTransparentColor();
+			p = p + "/Mask [" + transp.red255() + " " + transp.red255() + " " + transp.green255() + " " + transp.green255() + " " + transp.blue255() + " " + transp.blue255() + "]\n";
+		}
 		p = p + imgStream.getPDFDictionary();
 		p = p + ">>\n";
 
