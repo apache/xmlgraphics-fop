@@ -40,7 +40,7 @@ public class CreateTestDocuments {
     /**
      * package name for the testdocs
      */
-    public static final String TESTDOCS_PACKAGE = "org.apache.fop.rtf.rtflib.testdocs";
+    public static final String TESTDOCS_PACKAGE = "org.apache.fop.render.rtf.rtflib.testdocs";
 
     /** List of all TestDocument subclasses from this package */
     private static final String [] CLASS_NAMES = {
@@ -70,7 +70,7 @@ public class CreateTestDocuments {
 
     /** instantiate one TestDocument and let it generate its document */
     void createOneTestDocument(String className, File outDir)
-    throws Exception {
+            throws Exception {
         className = TESTDOCS_PACKAGE + "." + className;
         TestDocument td = null;
         try {
@@ -80,7 +80,12 @@ public class CreateTestDocuments {
                     + " as a TestDocument object: " + e);
         }
         td.setOutputDir(outDir);
-        td.generateOutput();
+        try {
+            td.generateOutput();
+        } catch (Exception e) {
+            System.err.println("Error while generating test RTF document:");
+            e.printStackTrace();
+        }
     }
 
     /** execute this to create test documents from all classes listed in classNames array
@@ -95,7 +100,7 @@ public class CreateTestDocuments {
         }
 
 //        System.err.println("CreateTestDocuments - using " + JForVersionInfo.getLongVersionInfo());
-        System.err.println("Generates documents to test the jfor RTF library.");
+        System.err.println("Generates documents to test the RTF library.");
         final File outDir = new File(args[0]);
         new CreateTestDocuments(outDir);
         System.err.println("CreateTestDocuments - all done.");
