@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!-- $Id$ -->
-
 <!ELEMENT compliance (head, body)>
 <!ELEMENT head (title)>
 <!ELEMENT title (#PCDATA)>
@@ -9,7 +7,7 @@
 <!ELEMENT standard (explanatory?, level-1+)>
 <!ATTLIST standard
   name CDATA #REQUIRED
-  baseURL CDATA #REQUIRED
+  baseURL CDATA #IMPLIED
   compliance-level-1-desc CDATA #REQUIRED
   compliance-level-2-desc CDATA #REQUIRED
   compliance-level-3-desc CDATA #REQUIRED
@@ -17,19 +15,23 @@
 <!ELEMENT level-1 (explanatory?, level-2+)>
 <!ATTLIST level-1
   name CDATA #REQUIRED
+  extURL CDATA #IMPLIED
   compliance-item-desc CDATA #REQUIRED
 >
 <!ELEMENT explanatory (p*)>
 <!ELEMENT level-2 (level-3+)>
 <!ATTLIST level-2
   name CDATA #REQUIRED
+  extURL CDATA #IMPLIED
 >
 <!ELEMENT level-3 (comment*)>
 <!ATTLIST level-3
   name CDATA #REQUIRED
+  extURL CDATA #IMPLIED
   compliance-level (1 | 2 | 3) #REQUIRED
   comply (yes | no | na | partial) #REQUIRED
 >
 <!ELEMENT comment (#PCDATA)>
 <!ELEMENT p (#PCDATA)>
 
+<!-- Last Line of $RCSfile$ -->
