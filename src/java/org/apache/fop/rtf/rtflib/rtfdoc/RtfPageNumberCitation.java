@@ -79,7 +79,7 @@ public class RtfPageNumberCitation extends RtfContainer
      this.id = id;
   }
 
-  /** Create an RTF page number citation as a child of given 
+  /** Create an RTF page number citation as a child of given
    *    paragraph, copying its attributes */
   RtfPageNumberCitation (RtfParagraph parent, Writer w, String id)
     throws IOException
@@ -99,8 +99,8 @@ public class RtfPageNumberCitation extends RtfContainer
             // Build page reference field
             String pageRef = RTF_FIELD_PAGEREF_MODEL;
             final int insertionIndex = pageRef.indexOf("}");
-            pageRef = 
-                pageRef.substring(0,insertionIndex) + "\"" + id + "\"" + " " 
+            pageRef =
+                pageRef.substring(0,insertionIndex) + "\"" + id + "\"" + " "
                 + pageRef.substring(insertionIndex, pageRef.length())
             ;
             id = null;
@@ -109,7 +109,7 @@ public class RtfPageNumberCitation extends RtfContainer
             writeGroupMark(true);
             writeControlWord(RTF_FIELD);
             writeGroupMark(true);
-            writeAttributes(m_attrib,RtfText.ATTR_NAMES); // Added by Boris Poudérous
+            writeAttributes(m_attrib,RtfText.ATTR_NAMES); // Added by Boris PoudÃ©rous
             writeStarControlWord(pageRef);
             writeGroupMark(false);
             writeGroupMark(true);

@@ -112,7 +112,7 @@ implements
 	}
 
 	/** start a new table after closing current paragraph, list and table
-   * @param tc Table context used for number-columns-spanned attribute (added by Boris Poudérous on july 2002)
+   * @param tc Table context used for number-columns-spanned attribute (added by Boris PoudÃ©rous on july 2002)
    */
 	public RtfTable newTable(ITableColumnsInfo tc) throws IOException {
 		closeAll();
@@ -121,7 +121,7 @@ implements
 	}
 
 	/** start a new table after closing current paragraph, list and table
-   * @param tc Table context used for number-columns-spanned attribute (added by Boris Poudérous on july 2002)
+   * @param tc Table context used for number-columns-spanned attribute (added by Boris PoudÃ©rous on july 2002)
    */
 	public RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException
 	{
@@ -143,7 +143,7 @@ implements
 		m_before = new RtfBefore(this,m_writer,attrs);
 		return m_before;
 	}
-	
+
     /** IRtfAfterContainer */
 	public RtfAfter newAfter(RtfAttributes attrs) throws IOException {
 		closeAll();
