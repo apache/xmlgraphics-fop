@@ -51,11 +51,14 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.apps.FOPException;
+
+import org.apache.fop.area.CTM;
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Flow;
+import org.apache.fop.area.Page;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.BodyRegion;
@@ -64,20 +67,28 @@ import org.apache.fop.area.Span;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.Resolveable;
+
+import org.apache.fop.datatypes.FODimension;
+
 import org.apache.fop.fo.flow.Marker;
-import org.apache.fop.fo.properties.Constants;
+
 import org.apache.fop.fo.pagination.PageNumberGenerator;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.properties.RetrieveBoundary;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
+
+import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.Constants;
+
 import org.apache.fop.layout.PageMaster;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.fop.apps.*;
+import java.awt.Rectangle;
+import java.util.Iterator;
 
 /**
  * LayoutManager for a PageSequence and its flow.
@@ -715,7 +726,12 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                                  + "' does not map to the region-body in page-master '"
                                  + pageSequence.getCurrentSimplePageMaster().getMasterName() + "'");
         }
-        PageMaster pageMaster = pageSequence.getCurrentSimplePageMaster().getPageMaster();
+        SimplePageMaster currentSimplePageMaster = pageSequence.getCurrentSimplePageMaster();
+        PageMaster pageMaster = currentSimplePageMaster.getPageMaster();
+        if (pageMaster == null) {
+            createSimplePageMasterAreas(currentSimplePageMaster);
+        }
+        pageMaster = pageSequence.getCurrentSimplePageMaster().getPageMaster();
         PageViewport p = pageMaster.makePage();
         return p;
         // The page will have a viewport/reference area pair defined
@@ -728,6 +744,58 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
         // handle the 'force-page-count'
         //forcePage(areaTree, firstAvailPageNumber);
+    }
+
+    public void createSimplePageMasterAreas(SimplePageMaster node) {
+        int pageWidth =
+                node.properties.get("page-width").getLength().getValue();
+        int pageHeight =
+                node.properties.get("page-height").getLength().getValue();
+        // Get absolute margin properties (top, left, bottom, right)
+        CommonMarginBlock mProps = node.getPropertyManager().getMarginProps();
+
+      /* Create the page reference area rectangle (0,0 is at top left
+       * of the "page media" and y increases
+       * when moving towards the bottom of the page.
+       * The media rectangle itself is (0,0,pageWidth,pageHeight).
+       */
+       Rectangle pageRefRect =
+               new Rectangle(mProps.marginLeft, mProps.marginTop,
+                       pageWidth - mProps.marginLeft - mProps.marginRight,
+                       pageHeight - mProps.marginTop - mProps.marginBottom);
+
+       // ??? KL shouldn't this take the viewport too???
+       Page page = new Page();  // page reference area
+
+       // Set up the CTM on the page reference area based on writing-mode
+       // and reference-orientation
+       FODimension reldims = new FODimension(0, 0);
+       CTM pageCTM = CTM.getCTMandRelDims(node.getPropertyManager().getAbsRefOrient(),
+               node.getPropertyManager().getWritingMode(), pageRefRect, reldims);
+
+       // Create a RegionViewport/ reference area pair for each page region
+
+       boolean bHasBody = false;
+
+       for (Iterator regenum = node.getRegions().values().iterator();
+            regenum.hasNext();) {
+           Region r = (Region)regenum.next();
+           RegionViewport rvp = r.makeRegionViewport(reldims, pageCTM);
+           rvp.setRegion(r.makeRegionReferenceArea(rvp.getViewArea()));
+           page.setRegion(r.getRegionAreaClass(), rvp);
+           if (r.getRegionAreaClass() == RegionReference.BODY) {
+               bHasBody = true;
+           }
+       }
+
+       if (!bHasBody) {
+           node.getLogger().error("simple-page-master has no region-body");
+       }
+
+       node.setPageMaster(new PageMaster(new PageViewport(page,
+               new Rectangle(0, 0, pageWidth, pageHeight))));
+
+
     }
 
 }

@@ -51,7 +51,6 @@
 package org.apache.fop.fo.pagination;
 
 // Java
-import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -60,16 +59,12 @@ import java.util.Map;
 import org.xml.sax.Attributes;
 
 // FOP
-import org.apache.fop.area.CTM;
-import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Page;
-import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
-import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
 
@@ -119,67 +114,6 @@ public class SimplePageMaster extends FObj {
     }
 
     /**
-     * At the end of this element read all the information and create
-     * the page master.
-     */
-    protected void end() {
-        int pageWidth =
-                this.properties.get("page-width").getLength().getValue();
-        int pageHeight =
-                this.properties.get("page-height").getLength().getValue();
-        // this.properties.get("reference-orientation");
-        // this.properties.get("writing-mode");
-
-        // Get absolute margin properties (top, left, bottom, right)
-        CommonMarginBlock mProps = propMgr.getMarginProps();
-
-        /* Create the page reference area rectangle (0,0 is at top left
-        * of the "page media" and y increases
-        * when moving towards the bottom of the page.
-        * The media rectangle itself is (0,0,pageWidth,pageHeight).
-        */
-        Rectangle pageRefRect =
-                new Rectangle(mProps.marginLeft, mProps.marginTop,
-                        pageWidth - mProps.marginLeft - mProps.marginRight,
-                        pageHeight - mProps.marginTop - mProps.marginBottom);
-
-        // ??? KL shouldn't this take the viewport too???
-        Page page = new Page();  // page reference area
-
-        // Set up the CTM on the page reference area based on writing-mode
-        // and reference-orientation
-        FODimension reldims = new FODimension(0, 0);
-        CTM pageCTM = CTM.getCTMandRelDims(propMgr.getAbsRefOrient(),
-                propMgr.getWritingMode(), pageRefRect, reldims);
-
-        // Create a RegionViewport/ reference area pair for each page region
-
-        boolean bHasBody = false;
-
-        for (Iterator regenum = regions.values().iterator();
-             regenum.hasNext();) {
-            Region r = (Region)regenum.next();
-            RegionViewport rvp = r.makeRegionViewport(reldims, pageCTM);
-            rvp.setRegion(r.makeRegionReferenceArea(rvp.getViewArea()));
-            page.setRegion(r.getRegionAreaClass(), rvp);
-            if (r.getRegionAreaClass() == RegionReference.BODY) {
-                bHasBody = true;
-            }
-        }
-
-        if (!bHasBody) {
-            getLogger().error("simple-page-master has no region-body");
-        }
-
-        this.pageMaster = new PageMaster(new PageViewport(page,
-                new Rectangle(0, 0, pageWidth, pageHeight)));
-
-        //  regions = null; // PageSequence access SimplePageMaster....
-        children = null;
-        properties = null;
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#generatesReferenceAreas()
      */
     public boolean generatesReferenceAreas() {
@@ -192,6 +126,10 @@ public class SimplePageMaster extends FObj {
      */
     public PageMaster getPageMaster() {
         return this.pageMaster;
+    }
+
+    public void setPageMaster(PageMaster pageMaster) {
+        this.pageMaster = pageMaster;
     }
 
     /**
@@ -251,7 +189,7 @@ public class SimplePageMaster extends FObj {
      * Returns a Map of regions associated with this simple-page-master
      * @return the regions
      */
-    protected Map getRegions() {
+    public Map getRegions() {
         return regions;
     }
 
