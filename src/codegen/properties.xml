@@ -792,6 +792,12 @@
     <datatype>Length</datatype>
     <default>auto</default>
   </property>
+  <property>
+    <name>initial-page-number</name>
+    <class-name>InitialPageNumber</class-name>
+    <inherited>false</inherited>
+    <datatype>Integer</datatype>
+    <default>0</default>
+  </property>
 </property-list>
- 
 
