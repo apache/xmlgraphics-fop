@@ -459,6 +459,7 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
 <xsl:if test=".//corresponding">
     <xsl:if test=".//corresponding/@use-if-specified='true'">
     public boolean isCorrespondingForced(PropertyList propertyList) {
+      FObj parentFO = propertyList.getParentFObj();
       StringBuffer sbExpr=new StringBuffer();
       <xsl:for-each select=".//corresponding/propval">
       sbExpr.setLength(0);
@@ -550,6 +551,10 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
 
 <xsl:template match="propval/wmrel2abs">
    sbExpr.append(propertyList.wmRelToAbs(PropertyList.<xsl:value-of select="@dir"/>));
+</xsl:template>
+
+<xsl:template match="propval/parwmrel2abs">
+   sbExpr.append(parentFO.properties.wmRelToAbs(PropertyList.<xsl:value-of select="@dir"/>));
 </xsl:template>
 
 <xsl:template match="propval/wmabs2rel">
