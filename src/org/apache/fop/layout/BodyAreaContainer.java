@@ -374,4 +374,11 @@ public class BodyAreaContainer extends Area {
 	{
 		return isNewSpanArea;
 	}
+	
+	public AreaContainer getCurrentColumnArea()
+	{
+		Vector spanAreas = this.mainReferenceArea.getChildren();
+		SpanArea spanArea = (SpanArea)spanAreas.elementAt(spanAreas.size()-1);
+		return spanArea.getCurrentColumnArea();		
+	}
 }
