@@ -43,25 +43,25 @@
 <fo:block id="N2531">
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A GIF image in FOP</fo:block>
   <fo:block>
-    <fo:external-graphic src="file:../graphics/xml_feather.gif"/>
+    <fo:external-graphic src="file:../../graphics/xml_feather.gif"/>
   </fo:block>
 </fo:block>
 <fo:block id="N2535">
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A transparent GIF image in FOP</fo:block>
   <fo:block>
-    <fo:external-graphic src="file:../graphics/xml_feather_transparent.gif"/>
+    <fo:external-graphic src="file:../../graphics/xml_feather_transparent.gif"/>
   </fo:block>
 </fo:block>
 <fo:block id="N2545">
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A JPEG image in FOP</fo:block>
   <fo:block>
-    <fo:external-graphic src="file:../graphics/fop.jpg"/>
+    <fo:external-graphic src="file:../../graphics/fop.jpg"/>
   </fo:block>
 </fo:block>
 <fo:block id="N2550">
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A BMP image in FOP</fo:block>
   <fo:block>
-    <fo:external-graphic src="file:../graphics/linux.bmp"/>
+    <fo:external-graphic src="file:../../graphics/linux.bmp"/>
   </fo:block>
 </fo:block>
 <fo:block id="N2559">
