@@ -22,6 +22,8 @@ package org.apache.fop.area.inline;
 import org.apache.fop.area.AbstractReferenceArea;
 import org.apache.fop.area.ReferenceArea;
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * @author pbw
@@ -33,22 +35,14 @@ implements ReferenceArea {
 
     /**
      * @param parent
-     * @param index
      * @throws IndexOutOfBoundsException
      */
-    public InlineContainer(Node parent, int index, Object areaSync)
-        throws IndexOutOfBoundsException {
-        super(parent, index, areaSync);
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
-     * @param parent
-     * @throws IndexOutOfBoundsException
-     */
-    public InlineContainer(Node parent, Object areaSync)
-    throws IndexOutOfBoundsException {
-        super(parent, areaSync);
+    public InlineContainer(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object areaSync) {
+        super(pageSeq, generatedBy, parent, areaSync);
         // TODO Auto-generated constructor stub
     }
 
