@@ -453,11 +453,11 @@ public class Driver {
      * events but isn't a SAX Parser itself.
      */
     public ContentHandler getContentHandler() {
-        StreamRenderer streamRenderer = new StreamRenderer(_stream, _renderer);
-        streamRenderer.setLogger(getLogger());
+        StructureHandler handler = new LayoutHandler(_stream, _renderer, true);
+        handler.setLogger(getLogger());
         _treeBuilder.setLogger(getLogger());
         _treeBuilder.setUserAgent(getUserAgent());
-        _treeBuilder.setStreamRenderer(streamRenderer);
+        _treeBuilder.setStructHandler(handler);
 
         return _treeBuilder;
     }

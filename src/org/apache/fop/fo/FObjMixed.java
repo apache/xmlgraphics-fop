@@ -11,7 +11,7 @@ import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.StreamRenderer;
+import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.layoutmgr.InlineStackingBPLayoutManager;
 import org.apache.fop.layoutmgr.LMiter;
@@ -30,7 +30,8 @@ public class FObjMixed extends FObj {
         super(parent);
     }
 
-    public void setStreamRenderer(StreamRenderer st) {
+    public void setStructHandler(StructureHandler st) {
+        super.setStructHandler(st);
         fontInfo = st.getFontInfo();
     }
 

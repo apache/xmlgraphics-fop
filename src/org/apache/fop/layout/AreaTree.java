@@ -9,7 +9,6 @@ package org.apache.fop.layout;
 
 // FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.fo.flow.StaticContent;
 import org.apache.fop.svg.*;
 import org.apache.fop.render.Renderer;
@@ -49,10 +48,7 @@ public class AreaTree {
      */
     Vector rootExtensions = null;
 
-    private StreamRenderer streamRenderer;
-
-    public AreaTree(StreamRenderer streamRenderer) {
-        this.streamRenderer = streamRenderer;
+    public AreaTree() {
     }
 
     public void setFontInfo(FontInfo fontInfo) {

@@ -16,7 +16,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.util.CharUtilities;
-import org.apache.fop.apps.StreamRenderer;
 
 import org.xml.sax.Attributes;
 
