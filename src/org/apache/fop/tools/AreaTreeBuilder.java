@@ -7,7 +7,7 @@
 
 package org.apache.fop.tools;
 
-import org.apache.fop.apps.*;
+// FOP
 import org.apache.fop.area.*;
 import org.apache.fop.area.inline.*;
 import org.apache.fop.area.inline.Character;
@@ -21,21 +21,24 @@ import org.apache.fop.layout.FontMetric;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fo.properties.RuleStyle;
 
+// Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
+// Java
 import java.io.*;
 import java.util.*;
-
 import java.awt.geom.Rectangle2D;
 import java.util.StringTokenizer;
 
+// JAXP
 import javax.xml.parsers.DocumentBuilderFactory;
 
+// DOM
 import org.w3c.dom.*;
 
+// Batik
 import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.dom.util.DOMUtilities;
 
 /**
  * Area tree tester.
@@ -88,7 +91,7 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
         setupLogger(ua);
         rend.setUserAgent(ua);
 
-        AreaTree.StorePagesModel sm = AreaTree.createStorePagesModel();
+        StorePagesModel sm = AreaTree.createStorePagesModel();
         TreeLoader tl = new TreeLoader(fi);
         tl.setTreeModel(sm);
         try {
@@ -101,7 +104,7 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
         }
     }
 
-    protected void renderAreaTree(AreaTree.StorePagesModel sm,
+    protected void renderAreaTree(StorePagesModel sm,
                                   Renderer rend, String out) {
         try {
             OutputStream os =
@@ -153,7 +156,7 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
 // the xml format is the same as the xml renderer output
 class TreeLoader {
     AreaTree areaTree;
-    AreaTree.AreaTreeModel model;
+    AreaTreeModel model;
     FontInfo fontInfo;
     FontState currentFontState;
 
@@ -161,7 +164,7 @@ class TreeLoader {
         fontInfo = fi;
     }
 
-    public void setTreeModel(AreaTree.AreaTreeModel mo) {
+    public void setTreeModel(AreaTreeModel mo) {
         model = mo;
     }
 

@@ -27,7 +27,7 @@ import java.io.BufferedInputStream;
  * the page contents to a file and once the page is resolved
  * the contents a reloaded.
  */
-public class CachedRenderPagesModel extends AreaTree.RenderPagesModel {
+public class CachedRenderPagesModel extends RenderPagesModel {
     private Map pageMap = new HashMap();
 
     /**
