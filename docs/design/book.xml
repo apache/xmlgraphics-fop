@@ -10,6 +10,7 @@
   <page id="areatree"       label="Area Tree"    source="areas.xml" />
   <separator/>
   <page id="layout"    label="Layout" source="layout.xml" />
+  <page id="breakpos"  label="Break Possibility" source="breakpos.xml" />
   <page id="renderers"      label="Renderers"     source="renderers.xml" />
   <page id="useragent"      label="User Agent"     source="useragent.xml" />
   <page id="optimise"    label="Optimisations" source="optimise.xml" />
