@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@
 package org.apache.fop.fo;
 
 // Java
-import java.util.List;
 import java.util.ListIterator;
 
 import org.xml.sax.Attributes;
@@ -136,7 +135,7 @@ public abstract class FONode implements Cloneable {
     */
     public void processNode(String elementName, Locator locator, 
             Attributes attlist, PropertyList parent) throws FOPException {
-        System.out.println("name = " + elementName);
+        log.debug("name = " + elementName);
     }
 
     /**
@@ -165,12 +164,14 @@ public abstract class FONode implements Cloneable {
 
     /**
      * Adds characters (does nothing here)
-     * @param data text
-     * @param start start position
-     * @param length length of the text
-     * @param locator location in fo source file. 
+     * @param data array of characters containing text to be added
+     * @param start starting array element to add
+     * @param end ending array element to add
+     * @param pList currently applicable PropertyList 
+     * @param locator location in fo source file.
+     * @throws FOPException if there's a problem during processing
      */
-    protected void addCharacters(char data[], int start, int length,
+    protected void addCharacters(char[] data, int start, int end,
                                  PropertyList pList,
                                  Locator locator) throws FOPException {
         // ignore
