@@ -49,7 +49,9 @@
  * Software Foundation, please see <http://www.apache.org/>.
  *
  *!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- * Automatically generated from xml-lang.xml by xml-lang.xsl.  DO NOT EDIT!
+ *   Automatically generated from xml-lang.xml by
+ *    xml-lang.xsl $Revision$ $Name$.
+ *                  DO NOT EDIT!
  *!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  */ 
 
@@ -58,10 +60,10 @@ package org.apache.fop.datatypes;
 import java.util.HashMap;
 
 /**
- * A class for accessing and validating:<br>
- * ISO 3166 country codes.<br>
- * ISO 639-2T, 639-2B and 639-1 language codes.<br>
- * ISO 15924 script codes.<br>
+ * A class for accessing and validating:
+ * ISO 3166 country codes,
+ * ISO 639-2T, 639-2B and 639-1 language codes,
+ * and ISO 15924 script codes.
  * @see <a href=
   "http://www.iso.ch/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/index.html"
 >http://www.iso.ch/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/index.html</a>
