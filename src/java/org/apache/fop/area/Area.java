@@ -43,22 +43,11 @@ import org.apache.fop.fo.properties.WritingMode;
  */
 public class Area extends AreaNode implements Cloneable  {
 
-    /** Current inline progression dimension.  May be unknown. */
-    protected Float iPDim = null;
-    /** Maximum required inline progression dimension.  May be unknown. */
-    protected Float iPDimMax = null;
-    /** Mimimum required inline progression dimension.  May be unknown. */
-    protected Float iPDimMin = null;
-    /** Current block progression dimension.  May be unknown. */
-    protected Float bPDim = null;
-    /** Maximum required block progression dimension.  May be unknown. */
-    protected Float bPDimMax = null;
-    /** Mimimum required block progression dimension.  May be unknown. */
-    protected Float bPDimMin = null;
     /** The geometrical area.  The <code>width</code> of this
      * <code>Rectangle</code> is the <code>inline-progression-dimension</code>
      * of the area, and the <code>height</code> is the
-     * <code>bllock-progression-dimension</code>.  */
+     * <code>block-progression-dimension</code>.  */
+
     protected Rectangle2D area = null;
     /** True if the the <code>writing-mode</code> of the content area is
      * horizontal */
@@ -201,10 +190,10 @@ public class Area extends AreaNode implements Cloneable  {
      * N.B. The method is synchronized only on this object.
      * @param pts <code>block-progression-dimension</code> to set, in points
      */
-    public void setBPDimPts(double pts) {
+    public void setBPDimPts(float pts) {
         synchronized (this) {
             if (area == null) {
-                area = new Rectangle2D.Double();
+                area = new Rectangle2D.Float();
             }
             if (contentIsHorizontal) {
                 area.setRect(
@@ -213,56 +202,6 @@ public class Area extends AreaNode implements Cloneable  {
                 area.setRect(
                         area.getX(),area.getY(), pts, area.getHeight());
             }
-        }
-    }
-
-    /**
-     * Gets the <code>block-progression-dimension</code> maximum value,
-     * in points
-     * N.B. The method is synchronized only on this object.
-     * @return the <code>block-progression-dimension</code> maximum value
-     */
-    public Float getBPDimMax() {
-        synchronized (this) {
-            return bPDimMax;
-        }
-    }
-
-    /**
-     * Sets the <code>block-progression-dimension</code> maximum value,
-     * in points
-     * N.B. The method is synchronized only on this object.
-     * @param dimMax <code>block-progression-dimension</code> maximum value
-     * to set
-     */
-    public void setBPDimMax(float dimMax) {
-        synchronized (this) {
-            bPDimMax = new Float(dimMax);
-        }
-    }
-
-    /**
-     * Gets the <code>block-progression-dimension</code> minimum value,
-     * in points
-     * N.B. The method is synchronized only on this object.
-     * @return the <code>block-progression-dimension</code> minimum value
-     */
-    public Float getBPDimMin() {
-        synchronized (this) {
-            return bPDimMin;
-        }
-    }
-
-    /**
-     * Sets the <code>block-progression-dimension</code> minimum value,
-     * in points
-     * N.B. The method is synchronized only on this object.
-     * @param dimMin <code>block-progression-dimension</code> minimum value
-     * to set
-     */
-    public void setBPDimMin(float dimMin) {
-        synchronized (this) {
-            bPDimMin = new Float(dimMin);
         }
     }
 
@@ -291,7 +230,7 @@ public class Area extends AreaNode implements Cloneable  {
     public double getIPDimPts() {
         synchronized (this) {
             if (area == null) {
-                area = new Rectangle2D.Double();
+                area = new Rectangle2D.Float();
             }
             if (contentIsHorizontal){
                 return area.getWidth();
@@ -326,7 +265,7 @@ public class Area extends AreaNode implements Cloneable  {
     public void setIPDimPts(double pts) {
         synchronized (this) {
             if (area == null) {
-                area = new Rectangle2D.Double();
+                area = new Rectangle2D.Float();
             }
             if (contentIsHorizontal){
                 area.setRect(area.getX(), area.getY(), pts, area.getHeight());
@@ -336,54 +275,22 @@ public class Area extends AreaNode implements Cloneable  {
         }
     }
 
-    /**
-     * Gets the <code>inline-progression-dimension</code> maximum value,
-     * in points
-     * N.B. The method is synchronized only on this object.
-     * @return the <code>inline-progression-dimension</code> maximum value
+    /** An initially null range of minima and maxima for
+     * <code>inline-progression-dimension</code> and
+     * <code>block-progression-dimension</code>.
      */
-    public Float getIPDimMax() {
-        synchronized(this) {
-            return iPDimMax;
-        }
+    protected AreaRange pageSpaceRange = new AreaRange();
+    /**
+     * @return the pageSpaceRange
+     */
+    public AreaRange getPageSpaceRange() {
+        return pageSpaceRange;
     }
-
     /**
-     * Sets the <code>inline-progression-dimension</code> maximum value,
-     * in points
-     * N.B. The method is synchronized only on this object.
-     * @param dimMax <code>inline-progression-dimension</code> maximum value
-     * to set
+     * @param pageSpaceRange to set
      */
-    public void setIPDimMax(float dimMax) {
-        synchronized (this) {
-            iPDimMax = new Float(dimMax);
-        }
-    }
-
-    /**
-     * Gets the <code>inline-progression-dimension</code> mimimum value,
-     * in points
-     * N.B. The method is synchronized only on this object.
-     * @return the <code>inline-progression-dimension</code> minimum value
-     */
-    public Float getIPDimMin() {
-        synchronized (this) {
-            return iPDimMin;
-        }
-    }
-
-    /**
-     * Sets the <code>inline-progression-dimension</code> minimum value,
-     * in millipoints
-     * N.B. The method is synchronized only on this object.
-     * @param dimMin <code>inline-progression-dimension</code> minimum value
-     * to set
-     */
-    public void setIPDimMin(float dimMin) {
-        synchronized (this) {
-            iPDimMin = new Float(dimMin);
-        }
+    public void setPageSpaceRange(AreaRange pageSpaceRange) {
+        this.pageSpaceRange = pageSpaceRange;
     }
 
     /** Initial size of the <code>listeners</code> array */
