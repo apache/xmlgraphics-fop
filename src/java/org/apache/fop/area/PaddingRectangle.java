@@ -28,7 +28,14 @@ import java.awt.geom.Rectangle2D;
  */
 public class PaddingRectangle extends AreaFrame {
 
-	/**
+    public PaddingRectangle() {
+        contents = new ContentRectangle();
+        contentOffset = new Point2D.Double();
+        borders = new BorderRectangle();
+        borders.setContents(this);
+    }
+
+    /**
 	 * @param x
 	 * @param y
 	 * @param w
@@ -37,8 +44,10 @@ public class PaddingRectangle extends AreaFrame {
 	 * @param contentOffset
 	 */
 	public PaddingRectangle(double x, double y, double w, double h,
-			Rectangle2D contents, Point2D contentOffset) {
+			ContentRectangle contents, Point2D contentOffset) {
 		super(x, y, w, h, contents, contentOffset);
+        borders = new BorderRectangle();
+        borders.setContents(this);
 	}
 
 	/**
@@ -46,9 +55,16 @@ public class PaddingRectangle extends AreaFrame {
 	 * @param contents
 	 * @param contentOffset
 	 */
-	public PaddingRectangle(Rectangle2D rect, Rectangle2D contents,
+	public PaddingRectangle(Rectangle2D rect, ContentRectangle contents,
 			Point2D contentOffset) {
 		super(rect, contents, contentOffset);
+        borders = new BorderRectangle();
+        borders.setContents(this);
 	}
 
+    private BorderRectangle borders = null;
+
+    public BorderRectangle getBorders() {
+        return borders;
+    }
 }
