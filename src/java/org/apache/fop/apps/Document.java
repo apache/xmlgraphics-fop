@@ -344,6 +344,7 @@ public class Document implements FOTreeControl, FOTreeListener,
      */
     public void foPageSequenceComplete (FOTreeEvent event) throws FOPException {
         PageSequence pageSeq = event.getPageSequence();
+        areaTree.addBookmarksToAreaTree();
         layoutStrategy.format(pageSeq, areaTree);
     }
 

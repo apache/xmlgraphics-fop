@@ -94,8 +94,6 @@ public class LayoutManagerLS extends LayoutStrategy {
             return;
         }
 
-        areaTree.addBookmarksToAreaTree();
-
         // Initialize if already used?
         //    this.layoutMasterSet.resetPageMasters();
         if (pageSeq.getPageSequenceMaster() != null) {
