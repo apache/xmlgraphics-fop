@@ -18,7 +18,6 @@
 
 package org.apache.fop.datatypes;
 
-import org.apache.avalon.framework.Enum;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
@@ -63,14 +62,21 @@ public interface PercentBase {
     int getBaseLength() throws PropertyException;
     
     /** Enum class for dimension types. */
-    public class LayoutDimension extends Enum {
+    public class LayoutDimension {
+        
+        private String name;
         
         /**
          * Constructor to add a new named item.
          * @param name Name of the item.
          */
         protected LayoutDimension(String name) {
-            super(name);
+            this.name = name;
+        }
+        
+        /** @see java.lang.Object#toString() */
+        public String toString() {
+            return super.toString() + "[" + name + "]";
         }
     }
 }
