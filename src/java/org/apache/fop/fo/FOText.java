@@ -38,7 +38,7 @@ import org.apache.fop.layoutmgr.TextLayoutManager;
  * @author unascribed
  * @author <a href="mailto:mark-fop@inomial.com">Mark Lillywhite</a>
  */
-public class FOText extends FObj {
+public class FOText extends FONode {
 
     /**
      * the character array containing the text

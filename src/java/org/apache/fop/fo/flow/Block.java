@@ -29,9 +29,10 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.CharIterator;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.RecursiveCharIterator;
 import org.apache.fop.layoutmgr.BlockLayoutManager;
@@ -170,8 +171,8 @@ public class Block extends FObjMixed {
         // Handle whitespace based on values of properties
         // Handle a sequence of inline-producing child nodes in
         // one pass
-        if (child instanceof FObj && ("fo:text".equals(child.getName()) 
-            || PropertySets.generatesInlineAreas(child.getNameId()))) {
+        if (child instanceof FOText
+            || PropertySets.generatesInlineAreas(child.getNameId())) {
                 if (firstInlineChild == null) {
                     firstInlineChild = child;
                 }
