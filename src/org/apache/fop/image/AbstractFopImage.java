@@ -134,7 +134,8 @@ public abstract class AbstractFopImage implements FopImage {
     * @return a new FopImage object
     * @exception FopImageException an error occured during initialization
     */
-  public AbstractFopImage(URL href, ImageReader imgReader) {
+  public AbstractFopImage(URL href, ImageReader imgReader)
+	throws FopImageException {
     this.m_href = href;
     this.m_imageReader = imgReader;
     this.m_width = this.m_imageReader.getWidth();
