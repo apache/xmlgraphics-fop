@@ -83,6 +83,9 @@ public class FObjMixed extends FObj {
 
 	if (this.marker == START) {
 	    this.marker = 0;
+            // initialize id                       
+            String id = this.properties.get("id").getString();            
+            area.getIDReferences().initializeID(id,area);                                
 	}
 
 	int numChildren = this.children.size();
