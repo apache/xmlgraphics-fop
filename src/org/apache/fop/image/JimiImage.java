@@ -61,7 +61,7 @@ import org.apache.fop.pdf.PDFFilter;
 // Java
 import java.util.Hashtable;
 import java.net.URL;
-import java.io.*;
+import java.io.IOException;
 //import java.io.PrintWriter;
 import java.awt.image.*;
 import java.awt.*;
@@ -96,10 +96,10 @@ public class JimiImage implements FopImage {
 		int[] tmpMap = null;
 		try {
 			ImageProducer ip = Jimi.getImageProducer(this.m_href.openStream(), Jimi.SYNCHRONOUS | Jimi.IN_MEMORY);
-			FopImageConsumer consumer = new FopImageConsumer(this);
+			FopImageConsumer consumer = new FopImageConsumer();
 			ip.startProduction(consumer);
 
-			while (! consumer.isImageReady() ) {}
+			while (! consumer.isImageReady()) {}
 			this.m_height = consumer.getHeight();
 			this.m_width = consumer.getWidth();
 
@@ -232,25 +232,47 @@ public class JimiImage implements FopImage {
 	}
 
 	// CONSUMER CLASS
-	public static class FopImageConsumer implements ImageConsumer {
+	public class FopImageConsumer implements ImageConsumer {
 		int width = -1;
 		int height = -1;
-		JimiImage graphic;
 		Integer imageStatus = new Integer(-1);
 
-		public FopImageConsumer(JimiImage graphic) {
-			this.graphic = graphic;
+		public FopImageConsumer() {
 		}
 
 		public void imageComplete(int status) {
-			synchronized (this.imageStatus) {
-				this.imageStatus = new Integer(status);
+			synchronized(this.imageStatus) {
+				// Need to stop status if image done
+				if (this.imageStatus.intValue() != ImageConsumer.STATICIMAGEDONE)
+					this.imageStatus = new Integer(status);
 			}
+/*
+System.err.print("Status ");
+if (status == ImageConsumer.COMPLETESCANLINES) {
+	System.err.println("CompleteScanLines");
+} else if (status == ImageConsumer.IMAGEABORTED) {
+	System.err.println("ImageAborted");
+} else if (status == ImageConsumer.IMAGEERROR) {
+	System.err.println("ImageError");
+} else if (status == ImageConsumer.RANDOMPIXELORDER) {
+	System.err.println("RandomPixelOrder");
+} else if (status == ImageConsumer.SINGLEFRAME) {
+	System.err.println("SingleFrame");
+} else if (status == ImageConsumer.SINGLEFRAMEDONE) {
+	System.err.println("SingleFrameDone");
+} else if (status == ImageConsumer.SINGLEPASS) {
+	System.err.println("SinglePass");
+} else if (status == ImageConsumer.STATICIMAGEDONE) {
+	System.err.println("StaticImageDone");
+} else if (status == ImageConsumer.TOPDOWNLEFTRIGHT) {
+	System.err.println("TopDownLeftRight");
+}
+*/
 		}
 
-		public synchronized boolean isImageReady()
+		public boolean isImageReady()
 			throws Exception {
-			synchronized (this.imageStatus) {
+			synchronized(this.imageStatus) {
 				if ( this.imageStatus.intValue() != -1 ) {
 					String statusStr = null;
 					if ( this.imageStatus.intValue() == ImageConsumer.IMAGEABORTED ) {
@@ -261,7 +283,7 @@ public class JimiImage implements FopImage {
 					if ( statusStr != null ) {
 						throw new Exception("Error in image consumer (" + statusStr + ")");
 					}
-
+		
 					if ( this.imageStatus.intValue() == ImageConsumer.STATICIMAGEDONE ) {
 						return true;
 					}
