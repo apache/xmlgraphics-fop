@@ -8,6 +8,7 @@
 package org.apache.fop.area.inline;
 
 import org.apache.fop.area.Area;
+import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.Property;
 import org.apache.fop.render.Renderer;
 
@@ -43,6 +44,12 @@ public class InlineArea extends Area {
 
     public int getWidth() {
         return width;
+    }
+
+    public MinOptMax getAllocationIPD() {
+	// Should also account for any borders and padding in the
+	// inline progression dimension
+	return new MinOptMax(width);
     }
 
     public void setOffset(int v) {
