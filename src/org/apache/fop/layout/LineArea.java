@@ -270,7 +270,7 @@ public class LineArea extends Area {
 
 		char d =
 
-		    org.apache.xml.fop.render.pdf.CodePointMapping.map[c];
+		    org.apache.fop.render.pdf.CodePointMapping.map[c];
 
 		if (d != 0) {
 
