@@ -4,7 +4,7 @@
 
 <compliance>
   <head>
-    <title>FOP 0.20.4 Standards Compliance</title>
+    <title>FOP Standards Compliance</title>
     <subtitle>Progress Report on Standard Features Implemented</subtitle>
   </head>
   <body>
@@ -14,7 +14,9 @@
 Although FOP does not currently conform to any of these levels, it is nevertheless a useful work-in-progress for many applications.
 The information presented here demonstrates FOP's progress toward the goal of conformance, which progress consists of implementation of specific objects and properties in the standard.
 The information presented is useful not only to the developers as a sort of "to do" list, but also for setting proper expectations for users and potential users.</p>
-        <p>In the tables below, blue indicates support at the specified level of conformance, and red indicates a lack of support.</p>
+        <p>In the tables below, "yes" indicates conformance, "no" indicates a lack of conformance, "partial" indicates partial conformance, and "na" indicates that the item is "not applicable" to FOP.
+The color-coding indicates conformance at a specific conformance level, with blue indicating conformance, red indicating non-conformance, and gray indicating partial conformance.
+So, for example, a given item may be blue either because it is not required at the conformance level indicated, or because FOP supports this feature, or both.</p>
       </explanatory>
       <level-1 name="XSL-FO Object Support" citation="§6" extURL="slice6.html#fo-section" compliance-item-desc="Object Name" ref-name="object">
         <explanatory>
@@ -106,7 +108,7 @@ want it to.</comment>
       </level-1>
       <level-1 name="XSL-FO Property Support" citation="§7" extURL="slice7.html#pr-section" compliance-item-desc="Property Name" ref-name="property">
         <explanatory>
-          <p>The following is a summary of FOP's current support for the standard XSL-FO properties. Please note that a number of properties and categories of properties are not supported because they do not apply to documents in visual formats.</p>
+          <p>The following is a summary of FOP's current support for the standard XSL-FO properties.</p>
         </explanatory>
         <level-2 name="Common Accessibility Properties" citation="§7.4" extURL="slice7.html#common-accessibility-properties" ref-name="commonaccess">
           <level-3 name="source-document" citation="§7.4.1" extURL="slice7.html#source-document" compliance-level="1" comply="na"/>
