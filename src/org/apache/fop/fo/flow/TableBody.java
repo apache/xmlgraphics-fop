@@ -78,6 +78,7 @@ public class TableBody extends FObj {
     int spaceBefore;
     int spaceAfter;
     ColorType backgroundColor;
+    String id;            
 
     Vector columns;
 
@@ -115,7 +116,11 @@ public class TableBody extends FObj {
 		this.properties.get("space-after.optimum").getLength().mvalue(); 
 	    this.backgroundColor =
 		this.properties.get("background-color").getColorType();
+            this.id = 
+                this.properties.get("id").getString();            
 
+	    area.getIDReferences().createID(id);
+            
 	    if (area instanceof BlockArea) {
 		area.end();
 	    }
@@ -133,9 +138,8 @@ public class TableBody extends FObj {
 	}
 
         if ( marker==0 ) {
-            // initialize id                       
-            String id = this.properties.get("id").getString();            
-            area.getIDReferences().initializeID(id,area);                        
+            // configure id                                   
+            area.getIDReferences().configureID(id,area);                        
         }
 
 	this.areaContainer =

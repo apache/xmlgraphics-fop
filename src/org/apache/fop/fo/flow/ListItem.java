@@ -85,6 +85,7 @@ public class ListItem extends FObj {
     int endIndent;
     int spaceBefore;
     int spaceAfter;
+    String id;
 	
     public ListItem(FObj parent, PropertyList propertyList) {
 	super(parent, propertyList);
@@ -118,6 +119,10 @@ public class ListItem extends FObj {
 		this.properties.get("space-before.optimum").getLength().mvalue(); 
 	    this.spaceAfter =
 		this.properties.get("space-after.optimum").getLength().mvalue(); 
+            this.id = 
+                this.properties.get("id").getString();
+
+            area.getIDReferences().createID(id);                        
 	    
 	    this.marker = 0;
 	}
@@ -130,12 +135,6 @@ public class ListItem extends FObj {
 	if (spaceBefore != 0) {
 	    area.addDisplaySpace(spaceBefore);
 	}
-
-        if ( marker==0 ) {
-            // initialize id                       
-            String id = this.properties.get("id").getString();            
-            area.getIDReferences().initializeID(id,area);                        
-        }
 
 	startIndent += this.bodyIndent;
 
@@ -172,6 +171,9 @@ public class ListItem extends FObj {
 	// body failed completely or only got some text in
 
 	if (this.marker == 0) {
+            // configure id                                               
+            area.getIDReferences().configureID(id,area);
+
 	    status = label.layout(blockArea);
 	    if (status.isIncomplete()) {
 		return status;
