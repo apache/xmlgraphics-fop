@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: PDFRenderer.java,v 1.37 2004/04/02 09:16:49 jeremias Exp $ */
+/* $Id: PDFRenderer.java,v 1.38 2004/04/07 14:24:17 cbowditch Exp $ */
 
 package org.apache.fop.render.pdf;
 
