@@ -70,10 +70,10 @@
     <eval expected="48800" xpath="//flow/block[2]/@bpda"/>
     <eval expected="28800" xpath="//flow/block[2]/@bpd"/>
     <eval expected="10000 10000 10000 10000" xpath="//flow/block[2]/@bap"/>
-    <eval expected="(133,#000000,5000)" xpath="//flow/block[2]/@border-start"/>
-    <eval expected="(133,#000000,5000)" xpath="//flow/block[2]/@border-end"/>
-    <eval expected="(133,#000000,5000)" xpath="//flow/block[2]/@border-before"/>
-    <eval expected="(133,#000000,5000)" xpath="//flow/block[2]/@border-after"/>
+    <eval expected="(solid,#000000,5000)" xpath="//flow/block[2]/@border-start"/>
+    <eval expected="(solid,#000000,5000)" xpath="//flow/block[2]/@border-end"/>
+    <eval expected="(solid,#000000,5000)" xpath="//flow/block[2]/@border-before"/>
+    <eval expected="(solid,#000000,5000)" xpath="//flow/block[2]/@border-after"/>
     
     <!-- cell 1 -->
     <true xpath="//flow/block[2]/block[1]/@is-reference-area"/>
