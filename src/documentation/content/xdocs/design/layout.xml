@@ -301,15 +301,92 @@ The areas are then placed on a last page.</p>
       <title>Status</title>
       <section id="status-todo">
         <title>To Do</title>
+        <table>
+          <tr>
+            <th>Task</th>
+            <th>Priority</th>
+            <th>Notes</th>
+          </tr>
+          <tr>
+            <td>Justified Text</td>
+            <td>High</td>
+            <td/>
+          </tr>
+          <tr>
+            <td>Multi-column layout</td>
+            <td>High</td>
+            <td/>
+          </tr>
+          <tr>
+            <td>Re-parenting retrieved markers</td>
+            <td>High</td>
+            <td/>
+          </tr>
+          <tr>
+            <td>Absolutely positioned block containers</td>
+            <td>High</td>
+            <td/>
+          </tr>
+          <tr>
+            <td>Background Images</td>
+            <td>High</td>
+            <td/>
+          </tr>
+          <tr>
+            <td>Conditional space suppression</td>
+            <td>High</td>
+            <td/>
+          </tr>
+          <tr>
+            <td>Footnotes</td>
+            <td>Medium</td>
+            <td/>
+          </tr>
+          <tr>
+            <td>Relative positioned block containers</td>
+            <td>Medium</td>
+            <td/>
+          </tr>
+          <tr>
+            <td>Fine-tuning line breaking and hypenation</td>
+            <td>Medium</td>
+            <td/>
+          </tr>
+          <tr>
+            <td>Last page layout</td>
+            <td>Medium</td>
+            <td/>
+          </tr>
+          <tr>
+            <td>Aligned leaders, especially in justified text</td>
+            <td>Medium</td>
+            <td/>
+          </tr>
+          <tr>
+            <td>Floats of all kind</td>
+            <td>Low</td>
+            <td/>
+          </tr>
+          <tr>
+            <td>Border collapsing on tables</td>
+            <td>Low</td>
+            <td>RenderX hasnt implemented this (17/03/04)</td> 
+          </tr>
+          <tr>
+            <td>Fine-tuning all other borders</td>
+            <td>Low</td>
+            <td>Not sure what Joerg means by this, border collapse priorties? 
+Dashed and dotted borders have been implemented in PDF</td>
+          </tr>
+          <tr>
+            <td>BIDI support</td>
+            <td>Low</td>
+            <td/>
+          </tr>
+        </table>
       </section>
       <section id="status-wip">
         <title>Work in Progress</title>
-        <ul>
-          <li><strong>better layout design</strong> - that can handle keeps and spacing better</li>
-          <li><strong>better area tree handling</strong> - means it can run in less memory</li>
-          <li>new area tree model</li>
-          <li>changed area tree xml format to match the area tree hierarchy</li>
-        </ul>
       </section>
       <section id="status-complete">
         <title>Completed</title>
