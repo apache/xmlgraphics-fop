@@ -210,7 +210,9 @@ public class RtfColorTable {
         }
 
         header.writeGroupMark (true);
-        header.writeControlWord ("colortbl;");
+        //Don't use writeControlWord, because it appends a blank,
+        //which may confuse Wordpad.
+        header.write ("\\colortbl;");
 
         int len = colorTable.size ();
 
@@ -236,7 +238,7 @@ public class RtfColorTable {
      * @param i Identifier of color
      */
     private void addColor (Integer i) {
-        colorIndex.put (i, new Integer (colorTable.size () + 1));
+        colorIndex.put (i, new Integer (colorTable.size ()));
         colorTable.addElement (i);
     }
 
