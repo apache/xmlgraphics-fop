@@ -33,7 +33,6 @@ PARENT DIRECTORY!
       <menu-item label="Properties" href="properties.html"/>
       <menu-item label="Layout Managers" href="layout_managers.html"/>
       <menu-item label="Area Tree" href="area_tree.html"/>
-      <menu-item label="Renderers" href="renderers.html"/>
     </menu>
     <menu label="Extras">
       <menu-item label="Images" href="images.html"/>
