@@ -105,6 +105,13 @@ public class Fop {
                     bos.close();
                 }
             }
+
+            // System.exit(0) called to close AWT/SVG-created threads, if any.
+            // AWTRenderer closes with window shutdown, so exit() should not
+            // be called here
+            if (options.getOutputMode() != CommandLineOptions.AWT_OUTPUT) {
+                System.exit(0);
+            }
         } catch (FOPException e) {
             if (e.getMessage() == null) {
                 System.err.println("Exception occured with a null error message");
@@ -116,6 +123,7 @@ public class Fop {
             } else {
                 System.err.println("Turn on debugging for more information");
             }
+            System.exit(1);
         } catch (java.io.IOException e) {
             System.err.println("" + e.getMessage());
             if (options != null && options.getLogger().isDebugEnabled()) {
@@ -123,6 +131,7 @@ public class Fop {
             } else {
                 System.err.println("Turn on debugging for more information");
             }
+            System.exit(1);
         }
     }
 }
