@@ -20,6 +20,13 @@
  */
 package org.apache.fop.fo.properties;
 
+import java.util.Locale;
+
+import org.apache.fop.datatypes.CountryType;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.expr.PropertyException;
+
 
 public class Country extends Property  {
     public static final int dataTypes = COUNTRY_T | NONE | INHERIT;
@@ -34,7 +41,7 @@ public class Country extends Property  {
         return traitMapping;
     }
 
-    public static final int initialValueType = NONE_IT;
+    public static final int initialValueType = COUNTRY_IT;
 
     public int getInitialValueType() {
         return initialValueType;
@@ -46,5 +53,20 @@ public class Country extends Property  {
         return inherited;
     }
 
+    private CountryType initialValue;
+
+    public PropertyValue getInitialValue(int propindex)
+    throws PropertyException {
+        if (propindex != PropNames.COUNTRY) {
+            throw new PropertyException(
+                    "Called in Country with property other than 'country'");
+        }
+        return initialValue;
+    }
+
+    public Country() throws PropertyException {
+        initialValue = new CountryType(
+                PropNames.COUNTRY, Locale.getDefault().getCountry());
+    }
 }
 
