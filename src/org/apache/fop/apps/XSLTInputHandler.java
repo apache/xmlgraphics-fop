@@ -7,9 +7,6 @@
 
 package org.apache.fop.apps;
 
-import java.lang.reflect.*;
-
-
 // Imported SAX classes
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -18,108 +15,51 @@ import org.xml.sax.XMLReader;
 // Imported java.io classes
 import java.io.*;
 
-// FOP
-import org.apache.fop.tools.xslt.XSLTransform;
-
 /**
- * XSLTInputHandler basically takes an xmlfile and transforms it with an xsltfile
- * and the resulting xsl:fo document is input for Fop.
+ * XSLTInputHandler takes an XML input, transforms it with XSLT
+ * and provides the resulting xsl:fo document as input for the
+ * FOP driver.
  */
 public class XSLTInputHandler extends InputHandler {
+    private TraxInputHandler traxInputHandler;
 
-    File xmlfile, xsltfile;
-    boolean useOldTransform = false;
+    public XSLTInputHandler(File xmlfile, File xsltfile)
+      throws FOPException {
+        traxInputHandler = new TraxInputHandler(xmlfile, xsltfile);
+    }
 
-    public XSLTInputHandler(File xmlfile, File xsltfile) {
-        this.xmlfile = xmlfile;
-        this.xsltfile = xsltfile;
+    public XSLTInputHandler(String xmlURL, String xsltURL)
+      throws FOPException {
+        traxInputHandler = new TraxInputHandler(xmlURL, xsltURL);
+    }
+
+    public XSLTInputHandler(InputSource xmlSource, String xsltSource)
+      throws FOPException {
+        traxInputHandler = new TraxInputHandler(xmlSource, xsltSource);
     }
 
     /**
-     * overwrites the method of the super class to return the xmlfile
+     * Get the InputSource.
+     * @deprecated
      */
     public InputSource getInputSource() {
-        if (useOldTransform) {
-            try {
-                java.io.Writer writer;
-                java.io.Reader reader;
-                File tmpFile = null;
-
-                // create a Writer
-                // the following is an ugly hack to allow processing of larger files
-                // if xml file size is larger than 500 kb write the fo:file to disk
-                if ((xmlfile.length()) > 500000) {
-                    tmpFile = new File(xmlfile.getName() + ".fo.tmp");
-                    writer = new FileWriter(tmpFile);
-                } else {
-                    writer = new StringWriter();
-                }
-
-                XSLTransform.transform(xmlfile.getCanonicalPath(),
-                                       xsltfile.getCanonicalPath(), writer);
-
-                writer.flush();
-                writer.close();
-
-                if (tmpFile != null) {
-                    reader = new FileReader(tmpFile);
-                } else {
-                    // create a input source containing the xsl:fo file which can be fed to Fop
-                    reader = new StringReader(writer.toString());
-                }
-                return new InputSource(reader);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                return null;
-            }
-        } else {
-            return fileInputSource(xmlfile);
-        }
-
+        return traxInputHandler.getInputSource();
     }
 
     /**
-     * This looks to see if the Trax api is supported and uses that to
-     * get an XMLFilter. Otherwise, it falls back to using DOM documents
-     *
+     * Get the parser, actually an XML filter.
+     * @deprecated
      */
     public XMLReader getParser() throws FOPException {
-        XMLReader result = null;
-        try {
-            // try trax first
-            Class transformer =
-                Class.forName("javax.xml.transform.Transformer");
-            transformer =
-                Class.forName("org.apache.fop.apps.TraxInputHandler");
-            Class[] argTypes = {
-                File.class, File.class
-            };
-            Method getFilterMethod = transformer.getMethod("getXMLFilter",
-                    argTypes);
-            File[] args = {
-                xmlfile, xsltfile
-            };
-            Object obj = getFilterMethod.invoke(null, args);
-            if (obj instanceof XMLReader) {
-                result = (XMLReader)obj;
-            }
-        } catch (ClassNotFoundException ex) {
-            throw new FOPException(ex);
-        } catch (InvocationTargetException ex) {
-            throw new FOPException(ex);
-        } catch (IllegalAccessException ex) {
-            throw new FOPException(ex);
-        } catch (NoSuchMethodException ex) {
-            throw new FOPException(ex);
-        }
-        // otherwise, use DOM documents via our XSLTransform tool class old style
-        if (result == null) {
-            useOldTransform = true;
-            result = createParser();
-        }
-        return result;
-
+        return traxInputHandler.getParser();
     }
 
+    public void run(Driver driver) throws FOPException {
+        traxInputHandler.run(driver);
+    }
+
+    public void setParameter(String name, Object value) {
+        traxInputHandler.setParameter(name, value);
+    }
 }
 

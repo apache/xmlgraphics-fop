@@ -370,7 +370,8 @@ public class CommandLineOptions {
     /**
      *
      */
-    public InputHandler getInputHandler() {
+    public InputHandler getInputHandler()
+      throws FOPException {
         switch (inputmode) {
         case FO_INPUT:
             return new FOInputHandler(fofile);

@@ -31,6 +31,16 @@ public class Options {
         initOptions();
     }
 
+    public Options(InputStream userConfig) throws FOPException {
+        this();
+        this.loadUserconfiguration(userConfig);
+    }
+
+    public Options(InputSource userConfig) throws FOPException {
+        this();
+        this.loadUserconfiguration(userConfig);
+    }
+
     public Options(File userConfigFile) throws FOPException {
         this();
         this.loadUserconfiguration(userConfigFile);
@@ -147,24 +157,31 @@ public class Options {
     }
 
     public void loadUserconfiguration(File userConfigFile) {
-        // read user configuration file
         if (userConfigFile != null) {
-            MessageHandler.logln("reading user configuration file");
-            ConfigurationReader reader =
-                new ConfigurationReader(InputHandler.fileInputSource(userConfigFile));
+            loadUserconfiguration(InputHandler.fileInputSource(userConfigFile));
+        }
+    }
+
+    public void loadUserconfiguration(InputStream userConfig) {
+        loadUserconfiguration(new InputSource(userConfig));
+    }
+
+    public void loadUserconfiguration(InputSource userConfigSource) {
+        // read user configuration
+        ConfigurationReader reader =
+            new ConfigurationReader(userConfigSource);
+        if (errorDump) {
+            reader.setDumpError(true);
+        }
+        try {
+            reader.start();
+        } catch (org.apache.fop.apps.FOPException error) {
+            MessageHandler.errorln("Could not load user configuration "
+                                   + userConfigSource.getSystemId() + " - error: "
+                                   + error.getMessage());
+            MessageHandler.errorln("using default values");
             if (errorDump) {
-                reader.setDumpError(true);
-            }
-            try {
-                reader.start();
-            } catch (org.apache.fop.apps.FOPException error) {
-                MessageHandler.errorln("Could not load user configuration file "
-                                       + userConfigFile + " - error: "
-                                       + error.getMessage());
-                MessageHandler.errorln("using default values");
-                if (errorDump) {
-                    reader.dumpError(error);
-                }
+                reader.dumpError(error);
             }
         }
     }
