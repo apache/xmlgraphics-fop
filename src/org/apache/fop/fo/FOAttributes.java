@@ -78,8 +78,6 @@ public class FOAttributes {
     private static Integer[] integerArray
                                     = new Integer[] { Ints.consts.get(0) };
 
-    private FONode foNode;
-
     /**
      * Construct an <i>FOAttributes</i> object.
      * <p>The <tt>Attributes</tt> object on the event is scanned, and each
@@ -103,8 +101,6 @@ public class FOAttributes {
         // an "invented" FopageSequenceMaster.  The default initialisation
         // includes an empty foAttrMap HashMap.
         if (event == null) return;
-
-        this.foNode = foNode;
 
         // Create the foAttrMap.
         Attributes attributes = event.getAttributes();
