@@ -18,6 +18,8 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
@@ -73,6 +75,17 @@ public class Row extends BlockStackingLayoutManager {
         fobj = node;
     }
 
+    /**
+     * @return the table owning this row
+     */
+    public Table getTable() {
+        FONode node = fobj.getParent();
+        while (!(node instanceof Table)) {
+            node = node.getParent();
+        }
+        return (Table)node;
+    }
+    
     /**
      * Set the columns from the table.
      *
@@ -337,6 +350,12 @@ public class Row extends BlockStackingLayoutManager {
                     childLM.addAreas(breakPosIter, lc);
                 }
                 x += col.getWidth().getValue();
+                
+                //Handle border-separation
+                Table table = getTable();
+                if (table.getBorderCollapse() == EN_SEPARATE) {
+                    x += table.getBorderSeparation().getIPD().getLength().getValue();
+                }
             }
         }
 

@@ -53,8 +53,9 @@ public class Cell extends BlockStackingLayoutManager {
     private int xoffset;
     private int yoffset;
     private int cellIPD;
-    private int allocBPD;
+    private int rowHeight;
     private int usedBPD;
+    private int borderAndPaddingBPD;
 
     /**
      * Create a new Cell layout manager.
@@ -64,6 +65,12 @@ public class Cell extends BlockStackingLayoutManager {
         fobj = node;
     }
 
+    private int getIPIndents() {
+        int iIndents = 0;
+        iIndents += fobj.getCommonBorderPaddingBackground().getIPPaddingAndBorder(false);
+        return iIndents;
+    }
+    
     /**
      * Get the next break possibility for this cell.
      * A cell contains blocks so there are breaks around the blocks
@@ -75,12 +82,16 @@ public class Cell extends BlockStackingLayoutManager {
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         LayoutManager curLM; // currently active LM
 
+        borderAndPaddingBPD = fobj.getCommonBorderPaddingBackground()
+                .getBPPaddingAndBorder(false);
+        
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
         // stackSize.add(spaceBefore);
         BreakPoss lastPos = null;
 
         cellIPD = context.getRefIPD();
+        cellIPD -= getIPIndents();
 
         while ((curLM = getChildLM()) != null) {
             if (curLM.generatesInlineAreas()) {
@@ -139,6 +150,7 @@ public class Cell extends BlockStackingLayoutManager {
                 }
                 MinOptMaxUtil.restrict(stackSize, specifiedBPD);
             }
+            stackSize = MinOptMax.add(stackSize, new MinOptMax(borderAndPaddingBPD));
 
             BreakPoss breakPoss = new BreakPoss(
                                     new LeafPosition(this, childBreaks.size() - 1));
@@ -173,12 +185,13 @@ public class Cell extends BlockStackingLayoutManager {
     }
 
     /**
-     * Set the row height that contains this cell.
+     * Set the row height that contains this cell. This method is used during
+     * addAreas() stage.
      *
      * @param h the height of the row
      */
     public void setRowHeight(int h) {
-        allocBPD = h;
+        rowHeight = h;
     }
 
     /**
@@ -200,14 +213,14 @@ public class Cell extends BlockStackingLayoutManager {
         }
 
         //Handle display-align
-        if (usedBPD < allocBPD) {
+        if (usedBPD < rowHeight) {
             if (fobj.getDisplayAlign() == EN_CENTER) {
                 Block space = new Block();
-                space.setBPD((allocBPD - usedBPD) / 2);
+                space.setBPD((rowHeight - usedBPD) / 2);
                 curBlockArea.addBlock(space);
             } else if (fobj.getDisplayAlign() == EN_AFTER) {
                 Block space = new Block();
-                space.setBPD((allocBPD - usedBPD));
+                space.setBPD((rowHeight - usedBPD));
                 curBlockArea.addBlock(space);
             }
         }
@@ -230,7 +243,9 @@ public class Cell extends BlockStackingLayoutManager {
         TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
         TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
         
-        curBlockArea.setBPD(allocBPD);
+        int contentBPD = rowHeight;
+        contentBPD -= borderAndPaddingBPD;
+        curBlockArea.setBPD(contentBPD);
 
         flush();
 
@@ -257,7 +272,9 @@ public class Cell extends BlockStackingLayoutManager {
             curBlockArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             curBlockArea.setPositioning(Block.ABSOLUTE);
             // set position
-            curBlockArea.setXOffset(xoffset);
+            int x = xoffset; //mimic start-indent
+            x += fobj.getCommonBorderPaddingBackground().getBorderStartWidth(false);
+            curBlockArea.setXOffset(x);
             curBlockArea.setYOffset(yoffset);
             curBlockArea.setIPD(cellIPD);
             //curBlockArea.setHeight();
