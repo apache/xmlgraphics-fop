@@ -31,7 +31,7 @@
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
           <fo:block-container left="10pt" top="10pt" width="3in" absolute-position="absolute" background-color="orange">
-            <fo:block background-color="yellow">absolutely positioned width, no height</fo:block>
+            <fo:block background-color="yellow">absolutely positioned width, no height specified</fo:block>
           </fo:block-container>
         </fo:flow>
       </fo:page-sequence>
