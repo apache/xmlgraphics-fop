@@ -88,8 +88,10 @@ public class PDFPages extends PDFObject {
      * @param page the PDFPage to add.
      */
     public void addPage(PDFPage page) {
+   	this.count++;
 	this.kids.addElement(page);
 	page.setParent(this);
+        this.incrementCount();
     }
 
     /**
@@ -99,6 +101,14 @@ public class PDFPages extends PDFObject {
      */
     public int getCount() {
 	return this.count;
+    }
+
+    /**
+     * increment the count of /Page objects
+     */
+    public void incrementCount() {
+	this.count++;
+        // System.out.println("Incrementing count to " + this.getCount());
     }
 
     /**
