@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.properties.PropertyMaker;
 import org.xml.sax.Attributes;
@@ -76,11 +77,12 @@ public class FObj extends FONode implements Constants {
         }
         
         if (propertyListTable == null) {
-            propertyListTable = new PropertyMaker[Constants.PROPERTY_COUNT+1];
+            propertyListTable = new PropertyMaker[Constants.PROPERTY_COUNT + 1];
             PropertyMaker[] list = FOPropertyMapping.getGenericMappings();
             for (int i = 1; i < list.length; i++) {
-                if (list[i] != null)
-                    propertyListTable[i] = list[i]; 
+                if (list[i] != null) {
+                    propertyListTable[i] = list[i];
+                }
             }
         }
     }
@@ -111,7 +113,8 @@ public class FObj extends FONode implements Constants {
     /**
      * Create a default property list for this element. 
      */
-    protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws FOPException {
+    protected PropertyList createPropertyList(PropertyList parent, 
+                    FOEventHandler foEventHandler) throws FOPException {
         return foEventHandler.getPropertyListMaker().make(this, parent);
     }
 
@@ -186,8 +189,8 @@ public class FObj extends FONode implements Constants {
      * @param key the Layout dimension, from PercentBase.
      * @param dimension The layout length.
      */
-    public void setLayoutDimension(Integer key, int dimension) {
-        if (layoutDimension == null){
+    public void setLayoutDimension(PercentBase.LayoutDimension key, int dimension) {
+        if (layoutDimension == null) {
             layoutDimension = new HashMap();
         }
         layoutDimension.put(key, new Integer(dimension));
@@ -198,8 +201,8 @@ public class FObj extends FONode implements Constants {
      * @param key the Layout dimension, from PercentBase.
      * @param dimension The layout length.
      */
-    public void setLayoutDimension(Integer key, float dimension) {
-        if (layoutDimension == null){
+    public void setLayoutDimension(PercentBase.LayoutDimension key, float dimension) {
+        if (layoutDimension == null) {
             layoutDimension = new HashMap();
         }
         layoutDimension.put(key, new Float(dimension));
@@ -210,7 +213,7 @@ public class FObj extends FONode implements Constants {
      * @param key The layout dimension key.
      * @return the length.
      */
-    public Number getLayoutDimension(Integer key) {
+    public Number getLayoutDimension(PercentBase.LayoutDimension key) {
         if (layoutDimension != null) {
             Number result = (Number) layoutDimension.get(key);
             if (result != null) {

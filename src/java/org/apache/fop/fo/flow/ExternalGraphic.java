@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,13 @@
 
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.IntrinsicSizeAccess;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
@@ -39,14 +36,13 @@ import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
-import org.apache.fop.layoutmgr.ExternalGraphicLayoutManager;
 
 /**
  * External graphic formatting object.
  * This FO node handles the external graphic. It creates an image
  * inline area that can be added to the area tree.
  */
-public class ExternalGraphic extends FObj implements IntrinsicSizeAccess {
+public class ExternalGraphic extends FObj {
     
     // The value of properties relevant for fo:external-graphic.
     private CommonAccessibility commonAccessibility;
@@ -272,6 +268,19 @@ public class ExternalGraphic extends FObj implements IntrinsicSizeAccess {
         return FO_EXTERNAL_GRAPHIC;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getLayoutDimension(org.apache.fop.datatypes.PercentBase.DimensionType)
+     */
+    public Number getLayoutDimension(PercentBase.LayoutDimension key) {
+        if (key == PercentBase.IMAGE_INTRINSIC_WIDTH) {
+            return new Integer(getIntrinsicWidth());
+        } else if (key == PercentBase.IMAGE_INTRINSIC_HEIGHT) {
+            return new Integer(getIntrinsicHeight());
+        } else {
+            return super.getLayoutDimension(key);
+        }
+    }
+    
     /**
      * Preloads the image so the intrinsic size is available.
      */
