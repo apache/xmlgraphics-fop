@@ -32,7 +32,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
      * Reference to FO whose areas it's managing or to the traits
      * of the FO.
      */
-    protected LayoutProcessor curChildLM = null;
+    protected LayoutManager curChildLM = null;
     protected BlockParent parentArea = null;
 
     public BlockStackingLayoutManager() {

@@ -25,7 +25,7 @@ public abstract class PositionIterator implements Iterator {
     
     private Iterator parentIter;
     private Object nextObj;
-    private LayoutProcessor childLM;
+    private LayoutManager childLM;
     private boolean bHasNext;
 
     PositionIterator(Iterator pIter) {
@@ -34,7 +34,7 @@ public abstract class PositionIterator implements Iterator {
         //checkNext();
     }
 
-    public LayoutProcessor getNextChildLM() {
+    public LayoutManager getNextChildLM() {
         // Move to next "segment" of iterator, ie: new childLM
         if (childLM == null && nextObj != null) {
             childLM = getLM(nextObj);
@@ -43,7 +43,7 @@ public abstract class PositionIterator implements Iterator {
         return childLM;
     }
 
-    protected abstract LayoutProcessor getLM(Object nextObj);
+    protected abstract LayoutManager getLM(Object nextObj);
 
     protected abstract Position getPos(Object nextObj);
 
@@ -57,7 +57,7 @@ public abstract class PositionIterator implements Iterator {
     }
 
     protected boolean checkNext() {
-        LayoutProcessor lm = getLM(nextObj);
+        LayoutManager lm = getLM(nextObj);
         if (childLM == null) {
             childLM = lm;
         } else if (childLM != lm) {

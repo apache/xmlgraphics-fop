@@ -46,12 +46,12 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutProcessor#getNextBreakPoss(LayoutContext)
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextBreakPoss(LayoutContext)
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
         // currently active LM
-        LayoutProcessor curLM;
+        LayoutManager curLM;
 
         while ((curLM = getChildLM()) != null) {
             // Make break positions and return page break
@@ -78,11 +78,11 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutProcessor#addAreas(PositionIterator, LayoutContext)
+     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(PositionIterator, LayoutContext)
      */
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
 
-        LayoutProcessor childLM;
+        LayoutManager childLM;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
@@ -114,7 +114,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutProcessor#getParentArea(Area)
+     * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(Area)
      */
     public Area getParentArea(Area childArea) {
         return region;

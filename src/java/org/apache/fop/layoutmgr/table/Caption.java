@@ -19,7 +19,7 @@
 package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.LayoutProcessor;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -58,7 +58,7 @@ public class Caption extends BlockStackingLayoutManager {
      * @return the next break possibility
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
-        LayoutProcessor curLM; // currently active LM
+        LayoutManager curLM; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
@@ -89,7 +89,7 @@ public class Caption extends BlockStackingLayoutManager {
                     if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
-                            LayoutProcessor lm = lastPos.getLayoutManager();
+                            LayoutManager lm = lastPos.getLayoutManager();
                             lm.resetPosition(lastPos.getPosition());
                             if (lm != curLM) {
                                 curLM.resetPosition(null);
@@ -136,7 +136,7 @@ public class Caption extends BlockStackingLayoutManager {
         getParentArea(null);
         addID();
 
-        LayoutProcessor childLM;
+        LayoutManager childLM;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {

@@ -206,9 +206,9 @@ public class AddLMVisitor implements FOTreeVisitor {
             serveFObjMixed((FObjMixed)node);
             currentLMList = saveLMList;
             for (int count = childList.size() - 1; count >= 0; count--) {
-                LayoutProcessor lm = (LayoutProcessor) childList.get(count);
+                LayoutManager lm = (LayoutManager) childList.get(count);
                 if (lm.generatesInlineAreas()) {
-                    LayoutProcessor blm = new BidiLayoutManager((InlineStackingLayoutManager) lm);
+                    LayoutManager blm = new BidiLayoutManager((InlineStackingLayoutManager) lm);
                     blm.setFObj(node);
                     currentLMList.add(blm);
                 } else {
@@ -264,7 +264,7 @@ public class AddLMVisitor implements FOTreeVisitor {
         currentLMList.add(lm);
     }
 
-    protected void setupBasicLinkArea(BasicLink node, LayoutProcessor parentLM,
+    protected void setupBasicLinkArea(BasicLink node, LayoutManager parentLM,
                                       InlineParent area) {
          if (node.getLink() == null) {
              return;
@@ -754,7 +754,7 @@ public class AddLMVisitor implements FOTreeVisitor {
      // if id can be resolved then simply return a word, otherwise
      // return a resolveable area
      public InlineArea getPageNumberCitationInlineArea(PageNumberCitation node,
-             LayoutProcessor parentLM) {
+             LayoutManager parentLM) {
          if (node.getRefId().equals("")) {
              node.getLogger().error("page-number-citation must contain \"ref-id\"");
              return null;

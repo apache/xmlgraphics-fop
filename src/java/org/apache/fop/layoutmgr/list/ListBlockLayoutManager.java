@@ -20,7 +20,7 @@ package org.apache.fop.layoutmgr.list;
 
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.LayoutProcessor;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -52,7 +52,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
 
     private class SectionPosition extends LeafPosition {
         protected List list;
-        protected SectionPosition(LayoutProcessor lm, int pos, List l) {
+        protected SectionPosition(LayoutManager lm, int pos, List l) {
             super(lm, pos);
             list = l;
         }
@@ -83,14 +83,14 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         // currently active LM
-        LayoutProcessor curLM;
+        LayoutManager curLM;
 
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
         // stackSize.add(spaceBefore);
         BreakPoss lastPos = null;
 
-        while ((curLM = (LayoutProcessor)getChildLM()) != null) {
+        while ((curLM = (LayoutManager)getChildLM()) != null) {
             // Make break positions
             // Set up a LayoutContext
             int ipd = context.getRefIPD();
@@ -108,7 +108,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
                     if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
-                            LayoutProcessor lm = lastPos.getLayoutManager();
+                            LayoutManager lm = lastPos.getLayoutManager();
                             lm.resetPosition(lastPos.getPosition());
                             if (lm != curLM) {
                                 curLM.resetPosition(null);
@@ -160,7 +160,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
 
         int listHeight = 0;
 
-        LayoutProcessor childLM;
+        LayoutManager childLM;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
@@ -170,7 +170,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
               new BreakPossPosIter(bodyBreaks, iStartPos,
                                    lfp.getLeafPos() + 1);
             iStartPos = lfp.getLeafPos() + 1;
-            while ((childLM = (LayoutProcessor)breakPosIter.getNextChildLM()) != null) {
+            while ((childLM = (LayoutManager)breakPosIter.getNextChildLM()) != null) {
                 childLM.addAreas(breakPosIter, lc);
             }
         }

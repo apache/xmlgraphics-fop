@@ -50,12 +50,12 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutProcessor#getNextBreakPoss(LayoutContext)
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextBreakPoss(LayoutContext)
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
         // currently active LM
-        LayoutProcessor curLM;
+        LayoutManager curLM;
         MinOptMax stackSize = new MinOptMax();
 
         while ((curLM = getChildLM()) != null) {
@@ -108,11 +108,11 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutProcessor#addAreas(PositionIterator, LayoutContext)
+     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(PositionIterator, LayoutContext)
      */
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
 
-        LayoutProcessor childLM;
+        LayoutManager childLM;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
             LeafPosition lfp = (LeafPosition) parentIter.next();
@@ -141,7 +141,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutProcessor#getParentArea(Area)
+     * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(Area)
      */
     public Area getParentArea(Area childArea) {
         // Get an area from the Page
@@ -153,7 +153,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutProcessor#resetPosition(Position)
+     * @see org.apache.fop.layoutmgr.LayoutManager#resetPosition(Position)
      */
     public void resetPosition(Position resetPos) {
         if (resetPos == null) {

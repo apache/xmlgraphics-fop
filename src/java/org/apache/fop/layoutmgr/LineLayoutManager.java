@@ -60,7 +60,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         int lineHeight;
         int baseline;
 
-        LineBreakPosition(LayoutProcessor lm, int iBreakIndex,
+        LineBreakPosition(LayoutManager lm, int iBreakIndex,
                           double ipdA, double adjust, int ind, int lh, int bl) {
             super(lm, iBreakIndex);
             // iPos = iBreakIndex;
@@ -130,7 +130,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
 
-        LayoutProcessor curLM ; // currently active LM
+        LayoutManager curLM ; // currently active LM
         BreakPoss prev = null;
         BreakPoss bp = null; // proposed BreakPoss
 
@@ -353,7 +353,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             // See if could break before next area
             // TODO: do we need to set anything on the layout context?
             LayoutContext lc = new LayoutContext(0);
-            LayoutProcessor nextLM = getChildLM();
+            LayoutManager nextLM = getChildLM();
             return (nextLM == null || nextLM.canBreakBefore(lc));
         }
     }
@@ -658,7 +658,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
      * @param dSpaceAdjust the space adjustment
      */
     public void addAreas(PositionIterator parentIter, double dSpaceAdjust) {
-        LayoutProcessor childLM;
+        LayoutManager childLM;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
             LineBreakPosition lbp = (LineBreakPosition) parentIter.next();
