@@ -466,7 +466,7 @@ public abstract class AbstractRenderer
         int saveBP = currentBPPosition;
 
         // Calculate the position of the content rectangle.
-        if (parent != null) {
+        if (parent != null && !Boolean.TRUE.equals(parent.getTrait(Trait.IS_VIEWPORT_AREA))) {
             currentBPPosition += parent.getBorderAndPaddingWidthBefore();
             /* This is unnecessary now as we're going to use the *-indent traits
             currentIPPosition += parent.getBorderAndPaddingWidthStart();
