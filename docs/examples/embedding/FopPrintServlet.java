@@ -46,7 +46,7 @@ import org.apache.log.*;
  * - fop.jar
  * - batik.jar
  * - avalon-framework-4.0.jar
- * - logkit-1.0b4.jar
+ * - logkit-1.0.jar
  * - xalan-2.0.0.jar
  */
  
