@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+	<fo:layout-master-set>
+	    <fo:simple-page-master master-name="simplePM"
+	                  page-height="11in" 
+	                  page-width="8.5in"
+	                  margin-top="1cm" 
+	                  margin-bottom="1cm" 
+	                  margin-left="1in" 
+	                  margin-right="0.75in">
+	      <fo:region-before extent="2.5cm"/>
+	      <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
+	      <fo:region-after extent="2.5cm"/>
+	    </fo:simple-page-master>
+	</fo:layout-master-set>
+
+	<fo:page-sequence master-name="simplePM">
+	    <fo:flow flow-name="xsl-region-body">
+			<fo:block space-before.optimum="1cm" font-family="monospace" font-size="10pt" white-space-treatment="preserve" wrap-option="no-wrap">
+ F I N A L    C A L C U L A T I O N                      AUD $      AUD $
+   ----------------------------------
+   L A B O U R            TIME BASIS   10 WU = 1 HR
+     TOTAL                33 WU  X   20.00AUD $/WU        660.00
+   TOTAL LABOUR.................................................     660.00
+   P A I N T   W O R K
+     LABOUR COST                                          210.00
+     MATERIAL COST                                        163.20
+   TOTAL PAINT..................................................     373.20
+   P A R T S                                              425.00
+     SUNDRY PARTS     (  2.0%)                              8.50
+   TOTAL PARTS..................................................     433.50
+   R E P A I R  C O S T S.......................................   1 466.70
+   ----------------------
+C O M M E N T S :
+E-PART PRICES = MANUFACTURERS RRP.     	*-POSITION = USER SUPPLIED DATA
+E-PART NUMBER IS NOT ORDER NUMBER      	NN = NO MANUFACTURERS CODE EXISTS
+SKEZAX=WORKING UNITS AS PER AUDATEX       )=WU PARTIAL INCL IN OTHER POSITIONS
+C O N T R O L  -  I N F O R M A T I O N   NO         666          25.08.2000
+OWNER       MRS                         SARAH
+            SCHAER                      GUNDELDINGERSTRASSE 131
+            4053 BASEL
+REFER. NO.  999
+MAKE        AUDI                  S4                    QUATTRO
+REG. NO     BS 66961                                    SHEET NO    00 33 03
+FIRST REG.  08.2000               NAECH HU 08.2000
+INSP DATE   24.08.2000            ACC DATE 24.08.2000
+REPAIRER    ZICK ZACK                   061/ 361 76 06
+            MR. MEIER                   ZOLLSTRASSE 62
+            8000 ZUERICH
+REP TIME    .     DAYS
+CU-NO / CUSTOMER-CODE    : 004001             ZATEST01  CLASSDIRECT  REL 2.9
+QUOTE DATE               : 25.08.2000
+MO-CODE
+- MODEL-OPTIONS          : E3 F3 I4 I7 J6 K2 M8 P8 Q6 Q7 V3 V6 W4 Z8
+PARTS / PAINTING
+- REP-METHOD/CODE-NO     : N  0741 LO
+			</fo:block>
+			
+	    	<fo:block keep-with-next="true" font-family="Helvetica" font-size="10pt">
+	    		The following is the control page for the Repair Assessment. It includes the 
+	    		<fo:inline font-weight="bold">Owner</fo:inline><fo:inline>, Reference No, Make, Reg No, and Options.</fo:inline>
+	    	</fo:block>
+
+			<fo:block space-before.optimum="2cm" font-family="monospace" font-size="10pt" white-space-treatment="preserve" wrap-option="no-wrap">
+R E P A I R /-/ A S S E S S M E N T   NO         666              25.08.2000
+OWNER       MRS                         SARAH
+            SCHAER                      GUNDELDINGERSTRASSE 131
+            4053 BASEL
+REFER. NO.  999
+
+MAKE        AUDI                  S4                    QUATTRO
+REG. NO     BS 66961                                    SHEET NO    00 33 03
+FIRST REG.  08.2000               NAECH HU 08.2000
+INSP DATE   24.08.2000            ACC DATE 24.08.2000
+REPAIRER    ZICK ZACK                   061/ 361 76 06
+            MR. MEIER                   ZOLLSTRASSE 62
+            8000 ZUERICH
+REP TIME    .     DAYS
+
+OPTIONS     FROM VIN X_200001     LUGGAGE NET           ELECTRIC FRONT SEATS
+            AUTO HEADLAMP LEVEL   SPORT SEATS           TRIM-JACQUARD GRAPH
+            ALTERNATOR 120 AMP    4-SPEED AUTOMATIC     SPORTS SUSPENSION
+            ANTI-LOCK BRAKES      ELECT STABILITY PROG  SUNROOF (ACCESSORY)
+            2.7 LTR V6
+			</fo:block>
+		</fo:flow>
+	</fo:page-sequence>
+</fo:root>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+	<fo:layout-master-set>
+	    <fo:simple-page-master master-name="simplePM"
+	                  page-height="25cm" 
+	                  page-width="20cm"
+	                  margin-top="1cm" 
+	                  margin-bottom="1cm" 
+	                  margin-left="1.5cm" 
+	                  margin-right="1.5cm">
+	      <fo:region-before extent="2.5cm"/>
+	      <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
+	      <fo:region-after extent="2.5cm"/>
+	    </fo:simple-page-master>
+	</fo:layout-master-set>
+
+	<fo:page-sequence master-name="simplePM">
+	    <fo:flow flow-name="xsl-region-body">
+
+	      <fo:block font-size="18pt" 
+	            font-family="sans-serif" 
+	            line-height="24pt"
+	            space-after.optimum="15pt"
+	            background-color="blue"
+	            color="white"
+	            padding-top="6pt">
+	        Extensible Markup Language (XML) 1.0 with padding
+	      </fo:block>
+
+	      <fo:block font-size="18pt" 
+	            font-family="sans-serif" 
+	            line-height="24pt"
+	            space-after.optimum="15pt"
+	            background-color="blue"
+	            color="white">
+	        Extensible Markup Language (XML) 1.0 without padding
+	      </fo:block>
+	      
+	      <fo:block-container border-width="1pt" height="5cm" width="5cm" padding-top="1cm">
+	      	<fo:block>
+	      		This block-container has a top padding of 1 cm.
+	      	</fo:block>
+	      </fo:block-container>
+
+	      <fo:block-container border-width="1pt" height="5cm" width="5cm" padding-bottom="1cm">
+	      	<fo:block>
+	      		bottom padding of 1 cm.
+	      	</fo:block>
+	      </fo:block-container>
+
+	      <fo:block-container border-width="1pt" height="5cm" width="5cm" padding-left="1cm">
+	      	<fo:block>
+	      		left padding of 1 cm.
+	      	</fo:block>
+	      </fo:block-container>
+
+	      <fo:block-container border-width="1pt" height="5cm" width="5cm" padding-right="1cm">
+	      	<fo:block>
+	      		right padding of 1 cm.
+	      	</fo:block>
+	      </fo:block-container>
+	      
+	      <fo:block-container border-width="1pt" height="5cm" width="5cm" padding-before="1cm">
+	      	<fo:block>
+	      		This block-container has a before padding of 1 cm.
+	      	</fo:block>
+	      </fo:block-container>
+
+	      <fo:block-container border-width="1pt" height="5cm" width="5cm" padding-after="1cm">
+	      	<fo:block>
+	      		after padding of 1 cm.
+	      	</fo:block>
+	      </fo:block-container>
+
+	      <fo:block-container border-width="1pt" height="5cm" width="5cm" padding-start="1cm">
+	      	<fo:block>
+	      		start padding of 1 cm.
+	      	</fo:block>
+	      </fo:block-container>
+
+	      <fo:block-container border-width="1pt" height="5cm" width="5cm" padding-end="1cm">
+	      	<fo:block>
+	      		end padding of 1 cm.
+	      	</fo:block>
+	      </fo:block-container>
+		</fo:flow>
+	</fo:page-sequence>
+</fo:root>
