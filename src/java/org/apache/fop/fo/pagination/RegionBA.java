@@ -26,7 +26,7 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
 
 /**
@@ -88,8 +88,8 @@ public abstract class RegionBA extends RegionBASE {
         }
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveRegionBA(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveRegionBA(this);
     }
 
 }

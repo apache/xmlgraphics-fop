@@ -30,7 +30,7 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -157,8 +157,8 @@ public class RepeatablePageMasterAlternatives extends FObj
         this.numberConsumed = 0;
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveRepeatablePageMasterAlternatives(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveRepeatablePageMasterAlternatives(this);
     }
 
     public String getName() {

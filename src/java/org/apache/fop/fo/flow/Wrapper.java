@@ -21,7 +21,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * Implementation for fo:wrapper formatting object.
@@ -47,8 +47,8 @@ public class Wrapper extends FObjMixed {
         return true;
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveWrapper(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveWrapper(this);
     }
     
     public String getName() {

@@ -20,7 +20,7 @@ package org.apache.fop.fo.extensions;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * Base class for pdf bookmark extension objects.
@@ -36,8 +36,8 @@ public abstract class ExtensionObj extends FObj {
         super(parent);
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveExtensionObj(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveExtensionObj(this);
     }
 
 }

@@ -23,7 +23,7 @@ import java.awt.Rectangle;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * Abstract base class for fo:region-start and fo:region-end.
@@ -67,8 +67,8 @@ public abstract class RegionSE extends RegionBASE {
         }
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveRegionSE(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveRegionSE(this);
     }
 
 }

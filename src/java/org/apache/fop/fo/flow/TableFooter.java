@@ -20,7 +20,7 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * Class modelling the fo:table-footer object. See Sec. 6.7.7 of the XSL-FO
@@ -35,8 +35,8 @@ public class TableFooter extends TableBody {
         super(parent);
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveTableFooter(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveTableFooter(this);
     }
 
     public String getName() {

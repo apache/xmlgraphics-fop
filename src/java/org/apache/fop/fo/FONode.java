@@ -34,6 +34,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.svg.SVGElementMapping;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
 
 
@@ -206,13 +207,12 @@ public abstract class FONode {
     }
 
     /**
-     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * This is a hook for the AddLMVisitor class to be able to access
      * this object.
-     * @param fotv the FOTreeVisitor subclass that can access this object.
-     * @see org.apache.fop.fo.FOTreeVisitor
+     * @param aLMV the AddLMVisitor object that can access this object.
      */
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveFONode(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveFONode(this);
     }
 
     /**

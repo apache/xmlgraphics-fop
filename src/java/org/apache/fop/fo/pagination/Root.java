@@ -32,7 +32,7 @@ import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.FOInputHandler;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * The fo:root formatting object. Contains page masters, page-sequences.
@@ -226,10 +226,10 @@ public class Root extends FObj {
 
     /**
      * Hook for Visitor objects accessing the FO Tree.
-     * @param fotv the FOTreeVisitor object accessing this node of the FO Tree
+     * @param aLMV the AddLMVisitor object that can access this object.
      */
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveRoot(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveRoot(this);
     }
 
     public String getName() {

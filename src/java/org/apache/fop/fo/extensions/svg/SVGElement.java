@@ -20,7 +20,7 @@ package org.apache.fop.fo.extensions.svg;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.apps.FOPException;
 
 import org.apache.batik.dom.svg.SVGOMDocument;
@@ -280,8 +280,8 @@ public class SVGElement extends SVGObj {
         }
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveSVGElement(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveSVGElement(this);
     }
 
 }

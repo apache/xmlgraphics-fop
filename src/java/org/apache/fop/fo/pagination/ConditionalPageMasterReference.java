@@ -26,7 +26,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -174,8 +174,8 @@ public class ConditionalPageMasterReference extends FObj {
         }
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveConditionalPageMasterReference(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveConditionalPageMasterReference(this);
     }
 
     public String getName() {

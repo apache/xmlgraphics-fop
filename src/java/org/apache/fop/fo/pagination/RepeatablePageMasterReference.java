@@ -25,7 +25,7 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -105,8 +105,8 @@ public class RepeatablePageMasterReference extends PageMasterReference
         this.numberConsumed = 0;
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveRepeatablePageMasterReference(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveRepeatablePageMasterReference(this);
     }
 
     public String getName() {

@@ -20,7 +20,7 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.ToBeImplementedElement;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
@@ -75,8 +75,8 @@ public class TableCaption extends ToBeImplementedElement {
         return true;
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveTableCaption(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveTableCaption(this);
     }
 
     public String getName() {

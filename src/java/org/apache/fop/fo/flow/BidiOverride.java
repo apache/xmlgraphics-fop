@@ -21,7 +21,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 
@@ -70,13 +70,12 @@ public class BidiOverride extends FObjMixed {
     }
 
     /**
-     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * This is a hook for the AddLMVisitor class to be able to access
      * this object.
-     * @param fotv the FOTreeVisitor subclass that can access this object.
-     * @see org.apache.fop.fo.FOTreeVisitor
+     * @param aLMV the AddLMVisitor object that can access this object.
      */
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveBidiOverride(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveBidiOverride(this);
     }
 
     public String getName() {

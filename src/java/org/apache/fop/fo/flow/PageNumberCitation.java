@@ -25,7 +25,7 @@ import org.xml.sax.SAXParseException;
 
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
@@ -148,8 +148,8 @@ public class PageNumberCitation extends FObj {
         unresolved = isUnresolved;
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.servePageNumberCitation(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.servePageNumberCitation(this);
     }
 
     public Font getFontState() {
