@@ -13,6 +13,10 @@ rendering the document.
 The user agent must be available to the layout processor and
 the renderer. Users can supply their own user agent or use
 the default one for a particular renderer.
+  </para>
+  <para>
+The user agent needs to be made available to the property
+resolution layout process and the renderer.
 	</para>
 
   <para>
@@ -35,7 +39,7 @@ title, used to identify a set of pages (in a page sequence)
        </para></listitem>
        <listitem><para>
 the width (in inline-progression-dimension) of a character with
-trea-word-as-space true
+treat-word-as-space true
        </para></listitem>
        <listitem><para>
 maximum space used by conditional areas from region-reference-area

@@ -12,6 +12,7 @@
 	
 		<property name="lib.dir" value="${basedir}/lib"/>
 
+      <taskdef name="xslt" classname="org.apache.fop.tools.anttasks.Xslt"/>
       <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"/>
     </target>
   
@@ -42,11 +43,16 @@
   <target name="pdf" depends="prepare">
     <echo message="Building pdf documentation. Please wait ..."/>
     <delete file="fop.fo"/>
+    <xslt infile="fop.xml" xsltfile="docbook/fo/docbook.xsl"
+        dependent="fop.xml"
+        outfile="fop.fo" smart="yes"/>
+<!--
     <style basedir="./" 
            destdir="./" 
            style="docbook/fo/docbook.xsl" 
            extension=".fo" 
            includes="fop.xml"/>
+-->
     <fop fofile="fop.fo" pdffile="fop.pdf"/>
 <!--    <delete file="fop.fo"/>-->
   </target>
