@@ -146,15 +146,13 @@ public class CTM implements Serializable {
         switch (wm) {
             case WritingMode.LR_TB:
                 return new CTM(CTM_LRTB);
-            case WritingMode.RL_TB:
-                {
+            case WritingMode.RL_TB: {
                     wmctm = new CTM(CTM_RLTB);
                     wmctm.e = ipd;
                     return wmctm;
                 }
                 //return  CTM_RLTB.translate(ipd, 0);
-            case WritingMode.TB_RL: // CJK
-                {
+            case WritingMode.TB_RL: { // CJK
                     wmctm = new CTM(CTM_TBRL);
                     wmctm.e = bpd;
                     return wmctm;
