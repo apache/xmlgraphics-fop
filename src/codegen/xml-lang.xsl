@@ -86,13 +86,9 @@ import java.util.HashMap;
  * ISO 3166 country codes,
  * ISO 639-2T, 639-2B and 639-1 language codes,
  * and ISO 15924 script codes.
- * @see &lt;a href=
-  "http://www.iso.ch/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/index.html"
-&gt;http://www.iso.ch/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/index.html&lt;/a&gt;
- * @see &lt;a href="http://www.loc.gov/standards/iso639-2/"
-&gt;http://www.loc.gov/standards/iso639-2/&lt;/a&gt;
- * @see &lt;a href="http://www.evertype.com/standards/iso15924/document/index.html"
-&gt;http://www.evertype.com/standards/iso15924/document/index.html&lt;/a&gt;
+ * @see &lt;a href="http://www.iso.ch/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/index.html"&gt;iso3166&lt;/a&gt;
+ * @see &lt;a href="http://www.loc.gov/standards/iso639-2/"&gt;iso639-2&lt;/a&gt;
+ * @see &lt;a href="http://www.evertype.com/standards/iso15924/document/index.html"&gt;iso15924&lt;/a&gt;
  */
 public class CountryLanguageScript {
 
