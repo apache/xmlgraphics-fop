@@ -108,6 +108,7 @@ public class TestConverter extends AbstractLogEnabled {
         }
         TestConverter tc = new TestConverter();
 
+        String results = "results";
         String testFile = null;
         for (int count = 0; count < args.length; count++) {
             if (args[count].equals("-failOnly")) {
@@ -118,6 +119,8 @@ public class TestConverter extends AbstractLogEnabled {
                 tc.setDebug(true);
             } else if (args[count].equals("-b")) {
                 tc.setBaseDir(args[++count]);
+            } else if (args[count].equals("-results")) {
+                results = args[++count];
             } else {
                 testFile = args[count];
             }
@@ -126,7 +129,7 @@ public class TestConverter extends AbstractLogEnabled {
             System.out.println("test suite file name required");
         }
 
-        tc.runTests(testFile, "results", null);
+        tc.runTests(testFile, results, null);
     }
 
     /**
