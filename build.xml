@@ -631,9 +631,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Creates the distribution                                            -->
   <!-- =================================================================== -->
-  <target name="dist" depends="dist-src"/>
+  <target name="dist" depends="dist-src,dist-bin"/>
 
-  <target name="dist-bin" depends="package, javadocs">
+  <target name="dist-bin" depends="package">
     <echo message="Building the binary distribution files (zip,tar)"/>
     <mkdir dir="${dist.bin.result.dir}"/>
     <copy todir="${dist.bin.result.dir}">
@@ -642,6 +642,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </copy>
     <mkdir dir="${dist.bin.result.dir}/build"/>
     <copy todir="${dist.bin.result.dir}/build" file="build/fop.jar"/>
+    <chmod file="${dist.bin.result.dir}/fop.sh" perm="ugo+rx" />
       
     <zip zipfile="${Name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
     <tar tarfile="${Name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
@@ -663,6 +664,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <mkdir dir="${dist.src.result.dir}/build"/>
     <copy todir="${dist.src.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.src.result.dir}/build.sh" perm="ugo+rx" />
+    <chmod file="${dist.src.result.dir}/fop.sh" perm="ugo+rx" />
 
     <zip zipfile="${Name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
     <tar tarfile="${Name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
