@@ -34,7 +34,7 @@
     <source><![CDATA[
    Driver driver = new Driver(new InputSource (args[0]), 
                               new FileOutputStream(args[1]));
-   driver.setRenderer(RENDER_PDF);
+   driver.setRenderer(Driver.RENDER_PDF);
    driver.run();]]></source>
 
   <p>You also need to set up logging. Global logging for all FOP
