@@ -24,7 +24,7 @@ more information: http://xml.apache.org/fop
 Build targets
 =============
 
-The build system is not only responsible of compiling Fop into a jar file,
+The build system is not only responsible for compiling Fop into a jar file,
 but is also responsible for creating the HTML documentation, javadocs,
 distributions and web site. In fact, the file you have here is _exactly_ what
 is used by fop maintainers to take care of everything in the Fop
@@ -107,23 +107,20 @@ list of possible build targets.
   </path>
 
   <patternset id="exclude-jimi">
-    <exclude name="org/apache/fop/image/JimiImage.java"/>
+    <exclude name="org/apache/fop/image/JimiImage.java" unless="jimi.present"/>
   </patternset>
 
   <patternset id="exclude-jai">
-    <exclude name="org/apache/fop/image/JAIImage.java"/>
+    <exclude name="org/apache/fop/image/JAIImage.java" unless="jai.present"/>
   </patternset>
 
   <patternset id="exclude-jce-dependencies">
-    <exclude name="org/apache/fop/pdf/PDFEncryptionJCE.java"/>
+    <exclude name="org/apache/fop/pdf/PDFEncryptionJCE.java" unless="jce.present"/>
   </patternset>
 
   <patternset id="base-sources">
     <include name="**/*.java"/>
     <exclude name="**/*${ignore_this}"/>
-    <patternset refid="exclude-jimi"/>
-    <patternset refid="exclude-jai"/>
-    <patternset refid="exclude-jce-dependencies"/>
   </patternset>
 
   <!-- =================================================================== -->
@@ -231,9 +228,39 @@ list of possible build targets.
   </target>
 
   <target name="init-avail">
-    <available property="jimi.present" classname="com.sun.jimi.core.Jimi" classpathref="libs-build-classpath"/>
-    <available property="jai.present" classname="javax.media.jai.JAI" classpathref="libs-build-classpath"/>
-    <available property="jce.present" classname="javax.crypto.Cipher" classpathref="libs-build-classpath"/>
+    <available property="jimi.present" classname="com.sun.jimi.core.Jimi"
+        classpathref="libs-build-classpath"/>
+    <condition property="jimi.message" value="Jimi Support PRESENT">
+      <equals arg1="${jimi.present}" arg2="true"/>
+    </condition>
+    <condition property="jimi.message" value="Jimi Support NOT Present">
+      <not>
+        <equals arg1="${jimi.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${jimi.message}"/>
+    <available property="jai.present" classname="javax.media.jai.JAI"
+        classpathref="libs-build-classpath"/>
+    <condition property="jai.message" value="JAI Support PRESENT">
+      <equals arg1="${jai.present}" arg2="true"/>
+    </condition>
+    <condition property="jai.message" value="JAI Support NOT Present">
+      <not>
+        <equals arg1="${jai.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${jai.message}"/>
+    <available property="jce.present" classname="javax.crypto.Cipher"
+        classpathref="libs-build-classpath"/>
+    <condition property="jce.message" value="JCE Support PRESENT">
+      <equals arg1="${jce.present}" arg2="true"/>
+    </condition>
+    <condition property="jce.message" value="JCE Support NOT Present">
+      <not>
+        <equals arg1="${jce.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${jce.message}"/>
     <available property="jdk14.present" classname="java.lang.CharSequence"/>
   </target>
 
@@ -401,39 +428,15 @@ list of possible build targets.
     <javac destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
       <src path="${build.gensrc}"/>
       <src path="${src.java}"/>
+      <patternset refid="exclude-jce-dependencies"/>
+      <patternset refid="exclude-jai"/>
+      <patternset refid="exclude-jimi"/>
       <classpath refid="libs-build-classpath"/>
       <patternset refid="base-sources"/>
     </javac>
   </target>
 
-  <target name="compile-jimi" depends="compile-src" if="jimi.present">
-    <echo message="Jimi library is present. Fop installs jimi support."/>
-    <javac destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
-      <src path="${src.java}"/>
-      <classpath refid="libs-build-classpath"/>
-      <include name="**/${jimi}"/>
-    </javac>
-  </target>
-
-  <target name="compile-jai" depends="compile-src" if="jai.present">
-    <echo message="JAI library is present. Fop installs JAI support."/>
-    <javac destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
-      <src path="${src.java}"/>
-      <classpath refid="libs-build-classpath"/>
-      <include name="**/${jai}"/>
-    </javac>
-  </target>
-
-  <target name="compile-jce" depends="compile-src" if="jce.present">
-    <echo message="JCE is present. Fop installs JCE-dependent classes (for PDF encryption)."/>
-    <javac destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
-      <src path="${src.java}"/>
-      <classpath refid="libs-build-classpath"/>
-      <include name="**/pdf/PDFEncryptionJCE.java"/>
-    </javac>
-  </target>
-
-  <target name="compile" depends="compile-src,compile-jimi,compile-jai,compile-jce" description="Compiles the source code"/>
+  <target name="compile" depends="compile-src" description="Compiles the source code"/>
 
   <!-- =================================================================== -->
   <!-- compiles hyphenation patterns                                       -->
@@ -487,7 +490,7 @@ list of possible build targets.
       </lib>
     </war>
   </target>
-  
+
   <target name="pdf-transcoder" depends="compile" description="Generates the jar for the pdf transcoder for Batik">
     <echo message="Creating the jar file ${build.dir}/pdf-transcoder.jar"/>
 
