@@ -234,11 +234,14 @@ abstract public class FONode {
 
     public void addMarker(Marker marker) throws FOPException {
         String mcname = marker.getMarkerClassName();
-        if (!markers.containsKey(mcname) && children.isEmpty())
+        if (!markers.containsKey(mcname) && children.isEmpty()) {
             markers.put(mcname, marker);
-        else
+        } else {
+            log.error("fo:marker must be an initial child,"
+                                   + "and 'marker-class-name' must be unique for same parent");
             throw new FOPException("fo:marker must be an initial child,"
                                    + "and 'marker-class-name' must be unique for same parent");
+        }
     }
 
     public boolean hasMarkers() {
