@@ -55,8 +55,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.layoutmgr.list.Item;
-import org.apache.fop.apps.*;
 
 /**
  * Class modelling the fo:list-item-body object. See Sec. 6.8.4 of the XSL-FO
@@ -69,16 +67,6 @@ public class ListItemBody extends FObj {
      */
     public ListItemBody(FONode parent) {
         super(parent);
-    }
-
-    /**
-     * @return Item layout manager
-     */
-    public Item getItemLayoutManager() {
-        Item item = new Item();
-        item.setUserAgent(getUserAgent());
-        item.setFObj(this);
-        return item;
     }
 
     private void setup() {

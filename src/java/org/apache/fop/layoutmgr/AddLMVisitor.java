@@ -84,6 +84,7 @@ import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.fo.flow.ListBlock;
+import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.InlineContainer;
 import org.apache.fop.fo.flow.ListItem;
@@ -108,6 +109,7 @@ import org.apache.fop.layoutmgr.table.Cell;
 import org.apache.fop.layoutmgr.table.Body;
 import org.apache.fop.layoutmgr.table.Row;
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
+import org.apache.fop.layoutmgr.list.Item;
 import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 import org.apache.fop.util.CharUtilities;
@@ -637,11 +639,21 @@ public class AddLMVisitor extends FOTreeVisitor {
              blm.setUserAgent(node.getUserAgent());
              blm.setFObj(node);
              blm.setLabel(node.getLabel().getItemLayoutManager());
-             blm.setBody(node.getBody().getItemLayoutManager());
+             blm.setBody(getListItemBodyLayoutManager(node.getBody()));
              currentLMList.add(blm);
          } else {
              node.getLogger().error("list-item requires list-item-label and list-item-body");
          }
+     }
+
+     /**
+      * @return Item layout manager
+      */
+     public Item getListItemBodyLayoutManager(ListItemBody node) {
+         Item item = new Item();
+         item.setUserAgent(node.getUserAgent());
+         item.setFObj(node);
+         return item;
      }
 
      /**
