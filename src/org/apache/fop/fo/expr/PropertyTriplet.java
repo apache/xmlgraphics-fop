@@ -20,25 +20,49 @@ import org.apache.fop.fo.expr.PropertyException;
  * A <tt><i>PropertyTriplet</i></tt> is a set of possible values of an
  * instance of a property at a given point in the FO tree.  The three
  * possible values are specified, computed and actual.  All three values
- * are represented by a subclass of <tt>PropertyValue</tt>.  In addition
- * the object may contain a string with the specified expression.
+ * are represented by a subclass of <tt>PropertyValue</tt>.
  * <p>
  * Values may, and frequently will be, null, especially specified and actual.
  */
 
 public class PropertyTriplet {
 
+    /** The property with which this triplet is associated. */
     private int property;
+    /**
+     * The <i>specified</i> property value.  Note that this may be a
+     * reference to a value associated with another property, so its
+     * property index may be different from <i>property</i>.
+     * TODO - ensure that whenever a value is derived from another property,
+     * that the value is cloned and the property correctly set, rather than
+     * simply held here as a reference.  This will render the above note
+     * obsolete.  Same for <i>computed</i> and <i>actual</i>.
+     */
     private PropertyValue specified;
+    /**
+     * The <i>computed</i> property value.  Note that this may be a
+     * reference to a value associated with another property, so its
+     * property index may be different from <i>property</i>.
+     */
     private PropertyValue computed;
+    /**
+     * The <i>actual</i> property value.  Note that this may be a
+     * reference to a value associated with another property, so its
+     * property index may be different from <i>property</i>.
+     */
     private PropertyValue actual;
-    private String expression;
     private boolean wasSpecified;
 
+    /**
+     * The <tt>FONode</tt> that stacked this triplet.  This is required in
+     * event that later a triplet is overriden by a higher priority property
+     * within the same FO; e.g. when the expansion of a shorthand is
+     * overriden by a direct assignment.
+     */
     private FONode stackedBy = null;
 
     public PropertyTriplet() {
-        // PropertyValues and expression are null
+        // PropertyValues are null
     }
 
     /**
@@ -46,13 +70,11 @@ public class PropertyTriplet {
      * @param specified a <tt>PropertyValue</tt>.
      * @param computed a <tt>PropertyValue</tt>.
      * @param actual a <tt>PropertyValue</tt>.
-     * @param expression a <tt>String</tt>.
      * @exception PropertyException if <i>property</i> is not within the
      * range of valid property indices.
      */
     public PropertyTriplet(int property, PropertyValue specified,
-                           PropertyValue computed, PropertyValue actual,
-                           String expression)
+                           PropertyValue computed, PropertyValue actual)
         throws PropertyException
     {
         if (property < 0 || property > PropNames.LAST_PROPERTY_INDEX)
@@ -62,7 +84,6 @@ public class PropertyTriplet {
         this.specified = specified;
         this.computed = computed;
         this.actual = actual;
-        this.expression = expression;
     }
 
     /**
@@ -70,17 +91,15 @@ public class PropertyTriplet {
      * @param specified a <tt>PropertyValue</tt>.
      * @param computed a <tt>PropertyValue</tt>.
      * @param actual a <tt>PropertyValue</tt>.
-     * @param expression a <tt>String</tt>.
      * @exception PropertyException if <i>property</i> is not within the
      * range of valid property indices.
      */
     public PropertyTriplet(String propertyName, PropertyValue specified,
-                           PropertyValue computed, PropertyValue actual,
-                           String expression)
+                           PropertyValue computed, PropertyValue actual)
         throws PropertyException
     {
         this(PropertyConsts.getPropertyIndex(propertyName),
-             specified, computed, actual, expression);
+             specified, computed, actual);
     }
 
     /**
@@ -90,19 +109,7 @@ public class PropertyTriplet {
     public PropertyTriplet(int property, PropertyValue specified)
         throws PropertyException
     {
-        this(property, specified, null, null, null);
-    }
-
-    /**
-     * @param property an <tt>int</tt> property index.
-     * @param expression a <tt>String</tt>.
-     * @param specified a <tt>PropertyValue</tt>.
-     */
-    public PropertyTriplet(int property, PropertyValue specified,
-                           String expression)
-        throws PropertyException
-    {
-        this(property, specified, null, null, expression);
+        this(property, specified, null, null);
     }
 
     /**
@@ -114,90 +121,99 @@ public class PropertyTriplet {
         (int property, PropertyValue specified, PropertyValue computed)
         throws PropertyException
     {
-        this(property, specified, computed, null, null);
+        this(property, specified, computed, null);
     }
 
     /**
-     * @param property an <tt>int</tt> property index.
-     * @param specified a <tt>PropertyValue</tt>.
-     * @param computed a <tt>PropertyValue</tt>.
-     * @param expression a <tt>String</tt>.
-     */
-    public PropertyTriplet
-        (int property, PropertyValue specified, PropertyValue computed,
-         String expression)
-        throws PropertyException
-    {
-        this(property, specified, computed, null, expression);
-    }
-
-    /**
-     * N.B. This sets expression to null as a side-effect.
+     * Set the <i>specified</i> value.
      * @param value a <tt>PropertyValue</tt>.
      */
     public void setSpecified(PropertyValue value) {
         specified = value;
-        expression = null;
     }
 
     /**
+     * Set the <i>computed</i> value.
      * @param value a <tt>PropertyValue</tt>.
-     * @param expr a <tt>String</tt>, the specified expression.
      */
-    public void setSpecified(PropertyValue value, String expr) {
-        specified = value;
-        expression = expr;
-    }
-
     public void setComputed(PropertyValue value) {
         computed = value;
     }
 
+    /**
+     * Set the <i>actual</i> value.
+     * @param value a <tt>PropertyValue</tt>.
+     */
     public void setActual(PropertyValue value) {
         actual = value;
     }
 
-    public String getExpression() {
-        return expression;
-    }
-
+    /**
+     * Get the <i>specified</i> value.
+     * @return the <i>specified</i> <tt>PropertyValue</tt>.
+     */
     public PropertyValue getSpecified() {
         return specified;
     }
 
+    /**
+     * Get the <i>computed</i> value.
+     * @return the <i>computed</i> <tt>PropertyValue</tt>.
+     */
     public PropertyValue getComputed() {
         return computed;
     }
 
+    /**
+     * Get the <i>actual</i> value.
+     * @return the <i>actual</i> <tt>PropertyValue</tt>.
+     */
     public PropertyValue getActual() {
         return actual;
     }
 
-    public PropertyValue getComputedOrSpecified() {
-        return computed != null ? computed
-                : specified != null ? specified : null;
-    }
-
+    /**
+     * Get the property index associated with this triplet.
+     * @return the property index.
+     */
     public int getProperty() {
         return property;
     }
 
+    /**
+     * Get the property index associated with the specified value.
+     * @return the property index.
+     */
     public int getSpecifiedProperty() {
         return specified.getProperty();
     }
 
+    /**
+     * Get the property index associated with the computed value.
+     * @return the property index.
+     */
     public int getComputedProperty() {
         return computed.getProperty();
     }
 
+    /**
+     * Get the property index associated with the actual value.
+     * @return the property index.
+     */
     public int getActualProperty() {
         return actual.getProperty();
     }
 
+    /**
+     * Retrieve the <tt>FONode</tt> that stacked this <tt>PropertyTriplet</tt>.
+     */
     public FONode getStackedBy() {
         return stackedBy;
     }
 
+    /**
+     * Record the <tt>FONode</tt> that stacked this <tt>PropertyTriplet</tt>.
+     */
     public void setStackedBy(FONode stackedBy) {
         this.stackedBy = stackedBy;
     }
@@ -205,9 +221,6 @@ public class PropertyTriplet {
     public String toString() {
         String tmpstr = "Specified: ";
         if (specified != null) tmpstr += specified.toString();
-        else tmpstr += "null";
-        tmpstr += "\nExpression: ";
-        if (expression != null) tmpstr += expression;
         else tmpstr += "null";
         tmpstr += "\nComputed: ";
         if (computed != null) tmpstr += computed.toString();
