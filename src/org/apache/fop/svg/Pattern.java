@@ -56,6 +56,7 @@ import org.apache.fop.fo.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.properties.*;
 
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
@@ -107,12 +108,26 @@ public class Pattern extends SVGObj {
 	}
 
     public SVGElement createGraphic() {
-    	SVGPatternElement pattern = new SVGPatternElementImpl();
-//        pattern.setStyle(
-//          ((SVGStyle) this.properties.get("style")).getStyle());
-//        pattern.setTransform(
-//          ((SVGTransform) this.properties.get("transform")).
-//          getTransform());
+    	SVGPatternElementImpl pattern = new SVGPatternElementImpl();
+        String rf = this.properties.get("xlink:href").getString();
+        pattern.setHref(new SVGAnimatedStringImpl(rf));
+        SVGLength width =
+          ((SVGLengthProperty) this.properties.get("width")).
+          getSVGLength();
+        SVGLength height =
+          ((SVGLengthProperty) this.properties.get("height")).
+          getSVGLength();
+        SVGLength x =
+          ((SVGLengthProperty) this.properties.get("x")).
+          getSVGLength();
+        SVGLength y = ((SVGLengthProperty) this.properties.get("y")).
+                     getSVGLength();
+        pattern.setX(x == null ? null : new SVGAnimatedLengthImpl(x));
+        pattern.setY(y == null ? null : new SVGAnimatedLengthImpl(y));
+        pattern.setWidth(width == null ? null : new SVGAnimatedLengthImpl(width));
+        pattern.setHeight(height == null ? null : new SVGAnimatedLengthImpl(height));
+        pattern.setPatternTransform(((SVGTransform) this.properties.get("transform")).
+          getTransform());
         pattern.setId(this.properties.get("id").getString());
 		int numChildren = this.children.size();
 		for (int i = 0; i < numChildren; i++) {
@@ -126,6 +141,20 @@ public class Pattern extends SVGObj {
 				}
 			}
 		}
+        switch ((this.properties.get("gradientUnits")).getEnum()) {
+            case GradientUnits.USER_SPACE:
+                pattern.setPatternUnits( new SVGAnimatedEnumerationImpl(
+                                           SVGUnitTypes.SVG_UNIT_TYPE_USERSPACE));
+                break;
+            case GradientUnits.USER_SPACE_ON_USE:
+                pattern.setPatternUnits( new SVGAnimatedEnumerationImpl(
+                                           SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE));
+                break;
+            case GradientUnits.OBJECT_BOUNDING_BOX:
+                pattern.setPatternUnits( new SVGAnimatedEnumerationImpl(
+                                           SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX));
+                break;
+        }
 		return pattern;
     }
 }
