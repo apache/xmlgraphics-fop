@@ -16,6 +16,12 @@ If you are using a binary distribution, it is already compiled and there is no n
     <section>
       <title>Set Up Your Environment</title>
       <section>
+        <title>JDK</title>
+          <p>
+            Building FOP requires a minimum Java Development Kit (JDK) of 1.3.
+          </p>
+      </section>
+      <section>
         <title>CLASSPATH</title>
         <p>There is no generally no need to setup a classpath.
 All libraries needed to compile FOP are included in the source distribution and are referenced by the build script.
