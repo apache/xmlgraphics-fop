@@ -10,6 +10,7 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.PageViewport;
 
 /**
  * The interface for all LayoutManagers.
@@ -65,7 +66,7 @@ public interface LayoutManager {
 
     public String getCurrentPageNumber();
 
-    public String resolveRefID(String ref);
+    public PageViewport resolveRefID(String ref);
 
     public void addIDToPage(String id);
 

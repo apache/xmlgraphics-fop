@@ -55,25 +55,21 @@ public class Leader extends FObjMixed {
     public void addLayoutManager(List list) {
         LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this) {
                 public InlineArea get(LayoutContext context) {
-                    int refIPD = context.getRefIPD();
-                    return getInlineArea(refIPD);
+                    return getInlineArea();
+                }
+
+                protected MinOptMax getAllocationIPD(int refIPD) {
+                   return getAllocIPD(refIPD);
                 }
             };
         lm.setAlignment(properties.get("leader-alignment").getEnum());
         list.add(lm);
     }
 
-    protected InlineArea getInlineArea(int refIPD) {
+    protected InlineArea getInlineArea() {
         if(leaderArea == null) {
             createLeaderArea();
         }
-        MinOptMax alloc = getAllocationIPD(refIPD);
-        if(leaderArea instanceof Stretch) {
-            ((Stretch)leaderArea).setAllocationIPD(alloc);
-        } else if(leaderArea instanceof FilledArea) {
-            ((FilledArea)leaderArea).setAllocationIPD(alloc);
-        }
-        leaderArea.setWidth(alloc.opt);
         return leaderArea;
     }
 
@@ -88,9 +84,7 @@ public class Leader extends FObjMixed {
 
             leaderArea = leader;
         } else if (leaderPattern == LeaderPattern.SPACE) {
-            Space space = new Space();
-
-            leaderArea = space;
+            leaderArea = new Space();
         } else if(leaderPattern == LeaderPattern.DOTS) {
             Word w = new Word();
             char dot = '.'; // userAgent.getLeaderDotChar();
@@ -226,7 +220,7 @@ public class Leader extends FObjMixed {
 
     }
 
-    protected MinOptMax getAllocationIPD(int ipd) {
+    protected MinOptMax getAllocIPD(int ipd) {
         // length of the leader
         int opt = getLength("leader-length.optimum", ipd);
         int min = getLength("leader-length.minimum", ipd);

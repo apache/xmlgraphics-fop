@@ -16,6 +16,7 @@ import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.PageViewport;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -67,52 +68,54 @@ public class PageNumberCitation extends FObj {
                     }
 
                     public void addAreas(PositionIterator posIter,
-                                             LayoutContext context) {
+                                         LayoutContext context) {
                         super.addAreas(posIter, context);
-                        if(unresolved) {
-                        parentLM.addUnresolvedArea(refId, (Resolveable)inline);
+                        if (unresolved) {
+                            parentLM.addUnresolvedArea(refId,
+                                                       (Resolveable) inline);
                         }
                     }
                 }
                );
     }
 
-    // is id can be resolved then simply return a word, otherwise
+    // if id can be resolved then simply return a word, otherwise
     // return a resolveable area
     private InlineArea getInlineArea(LayoutManager parentLM) {
         if (refId.equals("")) {
             getLogger().error("page-number-citation must contain \"ref-id\"");
             return null;
         }
-        String str = parentLM.resolveRefID(refId);
-        if(str != null) {
-        // get page string from parent, build area
-        Word word = new Word();
-        inline = word;
-        int width = getStringWidth(str);
-        word.setWord(str);
-        inline.setIPD(width);
-        inline.setHeight(fontState.getAscender() -
-                         fontState.getDescender());
-        inline.setOffset(fontState.getAscender());
+        PageViewport page = parentLM.resolveRefID(refId);
+        if (page != null) {
+            String str = page.getPageNumber();
+            // get page string from parent, build area
+            Word word = new Word();
+            inline = word;
+            int width = getStringWidth(str);
+            word.setWord(str);
+            inline.setIPD(width);
+            inline.setHeight(fontState.getAscender() -
+                             fontState.getDescender());
+            inline.setOffset(fontState.getAscender());
 
-        inline.addTrait(Trait.FONT_NAME, fontState.getFontName());
-        inline.addTrait(Trait.FONT_SIZE,
-                        new Integer(fontState.getFontSize()));
+            inline.addTrait(Trait.FONT_NAME, fontState.getFontName());
+            inline.addTrait(Trait.FONT_SIZE,
+                            new Integer(fontState.getFontSize()));
+            unresolved = false;
         } else {
-        unresolved = true;
-        inline = new UnresolvedPageNumber(refId);
-        str = "MMM"; // reserve three spaces for page number
-        int width = getStringWidth(str);
-        inline.setIPD(width);
-        inline.setHeight(fontState.getAscender() -
-                         fontState.getDescender());
-        inline.setOffset(fontState.getAscender());
+            unresolved = true;
+            inline = new UnresolvedPageNumber(refId);
+            String str = "MMM"; // reserve three spaces for page number
+            int width = getStringWidth(str);
+            inline.setIPD(width);
+            inline.setHeight(fontState.getAscender() -
+                             fontState.getDescender());
+            inline.setOffset(fontState.getAscender());
 
-        inline.addTrait(Trait.FONT_NAME, fontState.getFontName());
-        inline.addTrait(Trait.FONT_SIZE,
-                        new Integer(fontState.getFontSize()));
-
+            inline.addTrait(Trait.FONT_NAME, fontState.getFontName());
+            inline.addTrait(Trait.FONT_SIZE,
+                            new Integer(fontState.getFontSize()));
         }
         return inline;
     }

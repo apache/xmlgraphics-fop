@@ -91,7 +91,7 @@ public class BookmarkData implements Resolveable, TreeExt {
         return (String[])idRefs.keySet().toArray(new String[] {});
     }
 
-    public void resolve(String id, ArrayList pages) {
+    public void resolve(String id, List pages) {
         if(!id.equals(idRef)) {
             BookmarkData bd = (BookmarkData)idRefs.get(id);
             idRefs.remove(id);

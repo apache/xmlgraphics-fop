@@ -11,6 +11,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.PropertyManager;
 
 import java.util.ListIterator;
@@ -260,7 +261,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
         return parentLM.getCurrentPageNumber();
     }
 
-    public String resolveRefID(String ref) {
+    public PageViewport resolveRefID(String ref) {
         return parentLM.resolveRefID(ref);
     }
 

@@ -20,22 +20,13 @@ import java.util.ArrayList;
  * this inline parent.
  */
 public class FilledArea extends InlineParent {
-    MinOptMax alloc;
-    int unitWidth;
+    private int unitWidth;
 
     public FilledArea() {
     }
 
     public void setUnitWidth(int w) {
         unitWidth = w;
-    }
-
-    public void setAllocationIPD(MinOptMax all) {
-        alloc = all;
-    }
-
-    public MinOptMax getAllocationIPD() {
-        return alloc;
     }
 
     public List getChildAreas() {

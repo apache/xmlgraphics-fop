@@ -11,6 +11,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.PageViewport;
 
 import java.util.ArrayList;
 
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 public class ContentLayoutManager implements LayoutManager {
     Area holder;
     int stackSize;
+    LayoutManager parentLM;
 
     public ContentLayoutManager(Area area) {
         holder = area;
@@ -76,6 +78,7 @@ public class ContentLayoutManager implements LayoutManager {
     }
 
     public void setParentLM(LayoutManager lm) {
+        parentLM = lm;
     }
 
     public boolean canBreakBefore(LayoutContext lc) {
@@ -107,17 +110,19 @@ public class ContentLayoutManager implements LayoutManager {
     }
 
     public String getCurrentPageNumber() {
-        return "";
+        return parentLM.getCurrentPageNumber();
     }
 
-    public String resolveRefID(String ref) {
-        return null;
+    public PageViewport resolveRefID(String ref) {
+        return parentLM.resolveRefID(ref);;
     }
 
     public void addIDToPage(String id) {
+        parentLM.addIDToPage(id);
     }
 
     public void addUnresolvedArea(String id, Resolveable res) {
+        parentLM.addUnresolvedArea(id, res);
     }
 }
 
