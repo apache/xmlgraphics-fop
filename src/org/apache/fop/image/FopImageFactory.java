@@ -52,6 +52,11 @@ public class FopImageFactory {
         href = href.trim();
         if(href.startsWith("url(") && (href.indexOf(")") != -1)) {
             href = href.substring(4, href.indexOf(")")).trim();
+            if(href.startsWith("'") && href.endsWith("'")) {
+                href = href.substring(1, href.length() - 1);
+            } else if(href.startsWith("\"") && href.endsWith("\"")) {
+                href = href.substring(1, href.length() - 1);
+            }
         }
         try {
             // try url as complete first, this can cause
