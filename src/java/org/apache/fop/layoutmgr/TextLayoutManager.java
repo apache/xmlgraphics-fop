@@ -466,23 +466,19 @@ public class TextLayoutManager extends AbstractLayoutManager {
             return;
         }
         // Calculate total adjustment
+        int iRealWidth = ai.ipdArea.opt;
         int iAdjust = 0;
+        double dIPDAdjust = context.getIPDAdjust();
         double dSpaceAdjust = context.getSpaceAdjust();
-        if (dSpaceAdjust > 0.0) {
-            // Stretch by factor
-            //     System.err.println("Potential stretch = " +
-            //        (ai.ipdArea.max - ai.ipdArea.opt));
-            iAdjust = (int)((double)(ai.ipdArea.max
-                                     - ai.ipdArea.opt) * dSpaceAdjust);
-        } else if (dSpaceAdjust < 0.0) {
-            // Shrink by factor
-            //     System.err.println("Potential shrink = " +
-            //        (ai.ipdArea.opt - ai.ipdArea.min));
-            iAdjust = (int)((double)(ai.ipdArea.opt
-                                     - ai.ipdArea.min) * dSpaceAdjust);
+        if (dIPDAdjust > 0.0) {
+            iRealWidth += (int)((double)(ai.ipdArea.max - ai.ipdArea.opt) * dIPDAdjust);
         }
-//        System.err.println("\nText adjustment factor = " + dSpaceAdjust +
-//          " total=" + iAdjust + "; breakIndex = " + ai.iBreakIndex);
+        else {
+            iRealWidth += (int)((double)(ai.ipdArea.opt - ai.ipdArea.min) * dIPDAdjust);
+        }
+        iAdjust = (int)((double)(iRealWidth * dSpaceAdjust));
+        //System.err.println(" ");
+        //System.err.println("TextLayoutManager> recreated difference to fill= " + iAdjust);
 
         // Make an area containing all characters between start and end.
         InlineArea word = null;
@@ -498,12 +494,13 @@ public class TextLayoutManager extends AbstractLayoutManager {
             word = new Space();
             word.setWidth(ai.ipdArea.opt + iAdjust);
         } else  {
-            TextArea t = createTextArea(str, ai.ipdArea.opt + iAdjust, 
+            TextArea t = createTextArea(str, iRealWidth + iAdjust, 
                 context.getBaseline());
             if (iWScount > 0) {
                 //getLogger().error("Adjustment per word-space= " +
                 //                   iAdjust / iWScount);
                 t.setTSadjust(iAdjust / iWScount);
+                //System.err.println("TextLayoutManager> word spaces= " + iWScount + " adjustment per word space= " + (iAdjust/iWScount));
             }
             word = t;
         }

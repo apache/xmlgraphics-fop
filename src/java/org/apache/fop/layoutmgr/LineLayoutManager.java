@@ -566,7 +566,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 realWidth = targetWith;
             } else {
                 ipdAdjust = -1;
-                realWidth = actual.max;
+                realWidth = actual.min;
             }
         } else {
             if (targetWith - actual.opt < actual.max - actual.opt) {
@@ -575,7 +575,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 realWidth = targetWith;
             } else {
                 ipdAdjust = 1;
-                realWidth = actual.min;
+                realWidth = actual.max;
             }
         }
 
@@ -586,7 +586,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         switch (textalign) {
             case TextAlign.JUSTIFY:
                 if (realWidth != 0) {
-                    dAdjust = (targetWith - realWidth) / realWidth;
+                    dAdjust = (double)(targetWith - realWidth) / realWidth;
                 }
             break;
             case TextAlign.START:
@@ -601,6 +601,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 indent = targetWith - realWidth;
             break;
         }
+        //System.err.println(" ");
+        //System.err.println("LineLayoutManager> difference to fill= " + (targetWith - realWidth));
+        //System.err.println("LineLayoutManager> ipdAdjust= " + ipdAdjust + " dAdjust= " + dAdjust);
 
         LineBreakPosition lbp;
         lbp = new LineBreakPosition(this,
