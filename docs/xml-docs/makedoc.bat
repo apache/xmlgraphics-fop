@@ -8,7 +8,6 @@ if "%JAVA_HOME%" == "" goto error
 set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;..\..\lib\ant.jar;..\..\lib\xml.jar;..\..\lib;..\..\build\fop.jar
 set ANT_HOME=.\lib
 
-echo Building Fop documentation (pdf) ...
 
 %JAVA_HOME%\bin\java.exe -Dant.home=%ANT_HOME% -classpath %LOCALCLASSPATH%;%CLASSPATH% org.apache.tools.ant.Main %1 %2 %3 %4 %5
 
