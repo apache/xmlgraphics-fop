@@ -28,6 +28,7 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.render.rtf.FOPRtfAttributes;
 
 /** Constants for RTF border attribute names, and a static method for converting
@@ -127,6 +128,18 @@ public class BorderAttributesConverter {
             attrs.set(BORDER_COLOR, propList.get(color).getColorType());
             attrs.set(convertAttributetoRtf(styleEnum));
             attrs.set(BORDER_WIDTH, propList.get(width).getLength());
+            attributes.set(controlWord, attrs);
+        }
+    }
+
+    public static void makeBorder(CommonBorderPaddingBackground border, int side,
+            RtfAttributes attributes, String controlWord) {
+        int styleEnum = border.getBorderStyle(side);
+        if (styleEnum != Constants.NONE) {
+            FOPRtfAttributes attrs = new FOPRtfAttributes();
+            attrs.set(BORDER_COLOR, border.getBorderColor(side));
+            attrs.set(convertAttributetoRtf(styleEnum));
+            attrs.set(BORDER_WIDTH, border.getBorderWidth(side, false));
             attributes.set(controlWord, attrs);
         }
     }

@@ -21,13 +21,13 @@ package org.apache.fop.render.rtf;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
-
-//FOP
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.pagination.Region;
-import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.expr.NumericOp;
+import org.apache.fop.fo.pagination.RegionBA;
+import org.apache.fop.fo.pagination.RegionBody;
+import org.apache.fop.fo.pagination.SimplePageMaster;
+import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPage;
 
@@ -46,17 +46,17 @@ class PageAttributesConverter {
         FOPRtfAttributes attrib = new FOPRtfAttributes();
         
         try {
-            Region before = pagemaster.getRegion(Constants.FO_REGION_BEFORE);
-            Region body   = pagemaster.getRegion(Constants.FO_REGION_BODY);
-            Region after  = pagemaster.getRegion(Constants.FO_REGION_AFTER);
+            RegionBA before = (RegionBA) pagemaster.getRegion(Constants.FO_REGION_BEFORE);
+            RegionBody body   = (RegionBody) pagemaster.getRegion(Constants.FO_REGION_BODY);
+            RegionBA after  = (RegionBA) pagemaster.getRegion(Constants.FO_REGION_AFTER);
             
-            attrib.set(RtfPage.PAGE_WIDTH, pagemaster.getProperty(Constants.PR_PAGE_WIDTH).getLength());
-            attrib.set(RtfPage.PAGE_HEIGHT, pagemaster.getProperty(Constants.PR_PAGE_HEIGHT).getLength());
+            attrib.set(RtfPage.PAGE_WIDTH, pagemaster.getPageWidth());
+            attrib.set(RtfPage.PAGE_HEIGHT, pagemaster.getPageHeight());
             
-            Length pageTop = pagemaster.getProperty(Constants.PR_MARGIN_TOP).getLength();
-            Length pageBottom = pagemaster.getProperty(Constants.PR_MARGIN_BOTTOM).getLength();
-            Length pageLeft = pagemaster.getProperty(Constants.PR_MARGIN_LEFT).getLength();
-            Length pageRight = pagemaster.getProperty(Constants.PR_MARGIN_RIGHT).getLength();
+            Length pageTop = pagemaster.getCommonMarginBlock().marginTop;
+            Length pageBottom = pagemaster.getCommonMarginBlock().marginBottom;
+            Length pageLeft = pagemaster.getCommonMarginBlock().marginLeft;
+            Length pageRight = pagemaster.getCommonMarginBlock().marginRight;
 
             Length bodyTop = pageTop;
             Length bodyBottom = pageBottom;
@@ -65,10 +65,11 @@ class PageAttributesConverter {
 
             if (body != null) {
                 // Should perhaps be replaced by full reference-area handling.
-                bodyTop = (Length) NumericOp.addition(pageTop, body.getProperty(Constants.PR_MARGIN_TOP).getLength());
-                bodyBottom = (Length) NumericOp.addition(pageBottom, body.getProperty(Constants.PR_MARGIN_BOTTOM).getLength());
-                bodyLeft = (Length) NumericOp.addition(pageLeft, body.getProperty(Constants.PR_MARGIN_LEFT).getLength());
-                bodyRight = (Length) NumericOp.addition(pageRight, body.getProperty(Constants.PR_MARGIN_RIGHT).getLength());
+                CommonMarginBlock bodyMargin = body.getCommonMarginBlock();
+                bodyTop = (Length) NumericOp.addition(pageTop, bodyMargin.marginTop);
+                bodyBottom = (Length) NumericOp.addition(pageBottom, bodyMargin.marginBottom);
+                bodyLeft = (Length) NumericOp.addition(pageLeft, bodyMargin.marginLeft);
+                bodyRight = (Length) NumericOp.addition(pageRight, bodyMargin.marginRight);
             }
             
             attrib.set(RtfPage.MARGIN_TOP, bodyTop);
@@ -79,14 +80,14 @@ class PageAttributesConverter {
             //region-before attributes
             Length beforeTop = pageTop;
             if (before != null) {
-                beforeTop = (Length) NumericOp.addition(pageTop, before.getProperty(Constants.PR_MARGIN_TOP).getLength());
+                beforeTop = (Length) NumericOp.addition(pageTop, before.getExtent());
             }
             attrib.set(RtfPage.HEADERY, beforeTop);
 
             //region-after attributes
             Length afterBottom = pageBottom;
             if (after != null) {
-                afterBottom = (Length) NumericOp.addition(pageBottom, after.getProperty(Constants.PR_MARGIN_BOTTOM).getLength());
+                afterBottom = (Length) NumericOp.addition(pageBottom, after.getExtent());
             }
             attrib.set(RtfPage.FOOTERY, beforeTop);
         } catch (Exception e) {
