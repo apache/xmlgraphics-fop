@@ -50,8 +50,8 @@ import java.util.ListIterator;
 
 public class Node implements Cloneable {
 
-    private Tree tree;
-    private Node parent;
+    protected Tree tree;
+    protected Node parent;
     private ArrayList children;     // ArrayList of Node
     /** Creation size of the <i>children</i> <tt>ArrayList</tt>. */
     private static final int FAMILYSIZE = 4;
@@ -144,8 +144,8 @@ public class Node implements Cloneable {
      * Appends a child <tt>Node</tt> to this node.  Synchronized on the
      * containing <tt>Tree</tt> object.
      *
-     * Calls the <tt>modified</tt> method of the containing Tree to
-     * maintain the value of <tt>modCount</tt>.
+     * Calls the <i>modified</i> method of the containing Tree to
+     * maintain the value of <i>modCount</i>.
      *
      * @param child  Node to be added.
      */
@@ -164,8 +164,8 @@ public class Node implements Cloneable {
      * position.
      * Synchronized on the containing <tt>Tree</tt> object.
      *
-     * Calls the <tt>modified</tt> method of the containing Tree to
-     * maintain the value of <tt>modCount</tt>.
+     * Calls the <i>modified</i> method of the containing Tree to
+     * maintain the value of <i>modCount</i>.
      *
      * @param index  int position of new child
      * @param child  Node to be added.
@@ -179,6 +179,51 @@ public class Node implements Cloneable {
             children.add(index, (Object) child);
             tree.modified();
         }
+    }
+
+    /**
+     * Insert a subtree at a specified index position in the child list.
+     * Takes advantage of the synchronization on the associated <tt>Tree</tt>
+     * object of the actual <i>addChild</i> call.
+     * <p>Calls the <i>modified</i> method of the tree to maintain the
+     * value of <i>modCount</i>.
+     */
+    public void addSubTree(int index, Node subtree)
+        throws IndexOutOfBoundsException
+    {
+        // The subtree must be traversed, and the tree references set
+        // to the Tree of this node.
+        subtree.setSubTreeTree(tree);
+        subtree.setParent(this);
+        addChild(index, subtree);
+    }
+
+    /**
+     * Add a subtree to the child list.
+     * Takes advantage of the synchronization on the associated <tt>Tree</tt>
+     * object of the actual <i>addChild</i> call.
+     * <p>Calls the <i>modified</i> method of the tree to maintain the
+     * value of <i>modCount</i>.
+     */
+    public void addSubTree(Node subtree)
+        throws IndexOutOfBoundsException
+    {
+        // The subtree must be traversed, and the tree references set
+        // to the Tree of this node.
+        subtree.setSubTreeTree(tree);
+        subtree.setParent(this);
+        addChild(subtree);
+    }
+
+    /**
+     * Set all of the <i>tree</i> references in a subtree to the given
+     * value.
+     * @param tree - the <tt.Tree</tt> reference to set.
+     */
+    public void setSubTreeTree(Tree tree) {
+        for (int i = 0; i < numChildren(); i++)
+            getChild(i).setSubTreeTree(tree);
+        this.tree = tree;
     }
 
     /**
@@ -341,65 +386,156 @@ public class Node implements Cloneable {
 
     /**
      * Deletes the entire subtree rooted on <tt>this</tt> from the 
-     * <tt>Tree</tt>.  The Tree is
-     * traversed in PostOrder, and each Node is removed in PostOrder.
+     * <tt>Tree</tt>.  The Tree is traversed in PostOrder, and each
+     * encountered <tt>Node</tt> has its <i>Tree</i> reference
+     * nullified. The <i>parent</i> field, and the parent's child reference
+     * to <tt>this</tt>, are nullified only at the top of the subtree.
+     * <p>As a result, any remaining reference to any element in the
+     * subtree will keep the whole subtree from being GCed.
      * @return int count of Nodes deleted.
      */
     public int deleteSubTree() {
         synchronized (tree) {
+            Tree ttree = tree;
             int count = delete(this);
-            tree.modified();
+            // At this point, the tree reference has been nullified.
+            // nullify the parent reference
+            if (ttree.getRoot() != this) {
+                // Not the root node - remove from parent
+                parent.removeChild(this);
+                unsetParent();
+            } else {
+                ttree.unsetRoot();
+            } // end of else
+            ttree.modified();
             return count;
         }
     }
 
     /**
+     * Deletes the entire subtree rooted on <tt>this</tt> from the 
+     * <tt>Tree</tt>.  The Tree is traversed in PostOrder, and each
+     * encountered <tt>Node</tt> has its <i>Tree</i> reference
+     * nullified. The <i>parent</i> field, and the parent's child reference
+     * to <tt>this</tt>, are nullified only at the top of the subtree.
+     * <p>As a result, any remaining reference to any element in the
+     * subtree will keep the whole subtree from being GCed.
+     * @return <i>this</i>, the <tt>Node</tt> at which the cut subtree is
+     * rooted.  All <i>tree</i> references in the subtree will be nullified.
+     */
+    public Node cutSubTree() {
+        synchronized (tree) {
+            Tree ttree = tree;
+            int count = delete(this);
+            // At this point, the tree reference has been nullified.
+            // nullify the parent reference
+            if (ttree.getRoot() != this) {
+                // Not the root node - remove from parent
+                parent.removeChild(this);
+                unsetParent();
+            } else {
+                ttree.unsetRoot();
+            } // end of else
+            ttree.modified();
+            return this;
+        }
+    }
+
+    /**
      * N.B. this private method must only be called from the deleteSubTree
-     * method, which is synchronized.  In itself, it is not synchronized.
+     * or cutSubTree methods, which are synchronized.  In itself, it is not
+     * synchronized.
+     * The <i>tree</i> reference in each node is nullified, but otherwise the
+     * internal relationships between the <tt>Node</tt>s are unchanged.
      * @param subtree Node at the root of the subtree to be deleted.
      * @return int count of Nodes deleted.
      */
     private int delete(Node subtree) {
         int count = 0;
+        int numkids = subtree.numChildren();
+        //System.out.println("# children "+subtree.numChildren());
 
-        while (subtree.numChildren() > 0) {
-            //System.out.println("# children "+subtree.numChildren());
-
-            count += delete((Node)subtree.children.get(0));
+        for (int i = 0; i < numkids; i++) {
+            //System.out.println("Delete child "+ i);
+            count += delete((Node)subtree.children.get(i));
         }
         // Delete this node
-        // nullify the parent reference
-        if (subtree.getTree().getRoot() != subtree) {
-            // Not the root node - remove from parent
-            subtree.getParent().removeChild(subtree);
-            subtree.unsetParent();
-        } else {
-            subtree.getTree().unsetRoot();
-        } // end of else
+        // nullify the tree reference
+        tree = null;
         return ++count;
     }
 
+    /**
+     * Get the <tt>Tree</tt> reference of this <tt>Node</tt>.
+     * @return the <tt>Tree</tt>.
+     */
     public Tree getTree() {
         return tree;
     }
 
+    /**
+     * Set the <i>tree</i> field of this node.
+     * @param tree - the <tt>Tree</tt> reference to set.
+     */
+    public void setTree(Tree tree) {
+        this.tree = tree;
+    }
+
+    /**
+     * Get the parent of this <tt>Node</tt>.
+     * @return the parent <tt>Node</tt>.
+     */
     public Node getParent() {
         return (Node) parent;
     }
 
+    /**
+     * Set the <i>parent</i> field of this node.
+     * @param parent - the <tt>Node</tt> reference to set.
+     */
+    public void setParent(Node parent) {
+        this.parent = parent;
+    }
+
+    /**
+     * Nullify the parent <tt>Node</tt> of this node.
+     */
     public void unsetParent() {
         parent = null;
     }
 
-    public Node getChild(int index) {
-        return (Node) children.get(index);
+    /**
+     * Nullify the <tt>Tree</tt> reference of this node.
+     */
+    public void unsetTree() {
+        tree = null;
     }
 
+    /**
+     * Get the n'th child of this node.
+     * @param n - the <tt>int</tt> index of the child to return.
+     * @return the <tt>Node</tt> reference to the n'th child.
+     */
+    public Node getChild(int n) {
+        if (children == null) return null;
+        return (Node) children.get(n);
+    }
+
+    /**
+     * Get an <tt>Iterator</tt> over the children of this node.
+     * @return the <tt>Iterator</tt>.
+     */
     public Iterator nodeChildren() {
+        if (children == null) return null;
         return children.iterator();
     }
 
+    /**
+     * Get the number of children of this node.
+     * @return the <tt>int</tt> number of children.
+     */
     public int numChildren() {
+        if (children == null) return 0;
         return children.size();
     }
 
@@ -467,7 +603,7 @@ public class Node implements Cloneable {
                 // there may be no children, or the last child may be
                 // exhausted, hence no possibility of an
                 // iterator on the children of any child.
-                if (nextChildIndex < children.size()) {
+                if (nextChildIndex < numChildren()) {
                     return nextChildIterator.hasNext(); 
                 }
                 else { // no kiddies
@@ -492,7 +628,7 @@ public class Node implements Cloneable {
                 }
                 if (selfNotReturned) {
                     selfNotReturned = false;
-                    if (nextChildIndex < children.size()) {
+                    if (nextChildIndex < numChildren()) {
                         // We have children - create an iterator
                         // for the first one
                         nextChildIterator =
@@ -508,6 +644,7 @@ public class Node implements Cloneable {
                 else { // self has been returned
                     // there must be a next available, or we would not have
                     // come this far
+                    /* ---------------------------------
                     if (! nextChildIterator.hasNext()) {
                         // last iterator was exhausted;
                         // if there was another child available, an
@@ -518,11 +655,12 @@ public class Node implements Cloneable {
                         throw new NoSuchElementException(
                                 "Cannot reach this");
                     }
+                    ----------------------------------- */
                     Object tempNode = nextChildIterator.next();
                     // Check for exhaustion of the child
                     if (! nextChildIterator.hasNext()) {
                         // child iterator empty - another child?
-                        if (++nextChildIndex < children.size()) {
+                        if (++nextChildIndex < numChildren()) {
                             nextChildIterator =
                                     ((Node)
                                      (children.get(nextChildIndex))).new
@@ -603,7 +741,7 @@ public class Node implements Cloneable {
                 }
 
                 // Check first for children, and set up an iterator if so
-                if (nextChildIndex < children.size()) {
+                if (nextChildIndex < numChildren()) {
                     if (nextChildIterator == null) {
                         nextChildIterator =
                                 ((Node)
@@ -634,14 +772,14 @@ public class Node implements Cloneable {
                     throw new NoSuchElementException();
                 }
                 // Are there any children?
-                if (nextChildIndex < children.size()) {
+                if (nextChildIndex < numChildren()) {
                     // There will be an active iterator.  Is it empty?
                     if (nextChildIterator.hasNext()) {
                         // children remain
                         Object tempNode = nextChildIterator.next();
                         // now check for exhaustion of the iterator
                         if (! nextChildIterator.hasNext()) {
-                            if (++nextChildIndex < children.size()) {
+                            if (++nextChildIndex < numChildren()) {
                                 nextChildIterator =
                                         ((Node)
                                         (children.get(nextChildIndex))).new
