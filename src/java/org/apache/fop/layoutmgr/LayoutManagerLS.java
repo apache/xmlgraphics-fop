@@ -18,7 +18,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.Title;
@@ -36,8 +35,8 @@ public class LayoutManagerLS extends LayoutStrategy {
      extending FOP **/
     private AddLMVisitor addLMVisitor = null;
 
-    public LayoutManagerLS(Document document) {
-        super(document);
+    public LayoutManagerLS() {
+        super();
     }
 
     /**
