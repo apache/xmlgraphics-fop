@@ -457,7 +457,7 @@ public abstract class AbstractRenderer
             renderBlocks(bv, children);
 
             currentIPPosition = saveIP;
-            currentBPPosition = saveBP + bv.getHeight();
+            currentBPPosition = saveBP + bv.getAllocBPD();
         }
     }
 
@@ -491,7 +491,7 @@ public abstract class AbstractRenderer
                 currentBlockIPPosition =
                         currentIPPosition + line.getStartIndent();
                 renderLineArea(line);
-                currentBPPosition += line.getHeight();
+                currentBPPosition += line.getAllocBPD();
             }
         }
     }
@@ -506,7 +506,7 @@ public abstract class AbstractRenderer
         if (children == null) {
             handleBlockTraits(block);
             // simply move position
-            currentBPPosition += block.getHeight();
+            currentBPPosition += block.getAllocBPD();
         } else if (block instanceof BlockViewport) {
             renderBlockViewport((BlockViewport) block, children);
         } else {
@@ -534,7 +534,7 @@ public abstract class AbstractRenderer
                 renderBlocks(block, children);
 
                 // stacked and relative blocks effect stacking
-                currentBPPosition = saveBP + block.getHeight();
+                currentBPPosition = saveBP + block.getAllocBPD();
             }
             currentIPPosition = saveIP;
         }
@@ -576,7 +576,7 @@ public abstract class AbstractRenderer
 
     /** @see org.apache.fop.render.Renderer */
     protected void renderCharacter(Character ch) {
-        currentBlockIPPosition += ch.getWidth();
+        currentBlockIPPosition += ch.getAllocIPD();
     }
 
     /** @see org.apache.fop.render.Renderer */
@@ -585,17 +585,17 @@ public abstract class AbstractRenderer
         // for the current block by the width or height of the space
         // it may also have styling (only on this object) that needs
         // handling
-        currentBlockIPPosition += space.getWidth();
+        currentBlockIPPosition += space.getAllocIPD();
     }
 
     /** @see org.apache.fop.render.Renderer */
     protected void renderLeader(Leader area) {
-        currentBlockIPPosition += area.getWidth();
+        currentBlockIPPosition += area.getAllocIPD();
     }
 
     /** @see org.apache.fop.render.Renderer */
     protected void renderText(TextArea text) {
-        currentBlockIPPosition += text.getWidth();
+        currentBlockIPPosition += text.getAllocIPD();
     }
 
     /** @see org.apache.fop.render.Renderer */
@@ -605,7 +605,7 @@ public abstract class AbstractRenderer
         while (iter.hasNext()) {
             renderInlineArea((InlineArea) iter.next()); 
         }
-        currentBlockIPPosition = saveIP + ip.getWidth();
+        currentBlockIPPosition = saveIP + ip.getAllocIPD();
     }
 
     /** @see org.apache.fop.render.Renderer */
@@ -621,7 +621,7 @@ public abstract class AbstractRenderer
         } else if (content instanceof ForeignObject) {
             renderForeignObject((ForeignObject) content, contpos);
         }
-        currentBlockIPPosition += viewport.getWidth();
+        currentBlockIPPosition += viewport.getAllocIPD();
         currentBPPosition = saveBP;
     }
 

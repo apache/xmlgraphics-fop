@@ -380,7 +380,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
                         currentBlockIPPosition / 1000,
                         (currentBPPosition + area.getOffset()
                             - area.getRuleThickness() / 2) / 1000,
-                        (currentBlockIPPosition + area.getWidth()) / 1000,
+                        (currentBlockIPPosition + area.getIPD()) / 1000,
                         (currentBPPosition + area.getOffset()
                             - area.getRuleThickness() / 2) / 1000);
         line.setAttributeNS(null, "style", style);
