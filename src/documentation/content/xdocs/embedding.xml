@@ -65,8 +65,33 @@ driver.run();]]></source>
 In the example above, args[0] contains the path to an XSL-FO file, while 
 args[1] contains a path for the target PDF file.
   </p>
-  <section id="basic-logging">
+ <section id="basic-logging">
     <title>Logging</title>
+    <p>
+      You also need to set up logging. Global logging for all FOP
+      processes is managed by MessageHandler. Per-instance logging
+      is handled by Driver. You want to set both using an implementation
+      of org.apache.avalon.framework.logger.Logger. See 
+      <jump href="#logging">below</jump> for more information.
+    </p>
+    <p>
+      Call <code>setLogger(Logger)</code> always immediately after 
+      instantiating the Driver object. See here:
+    </p>
+    <source><![CDATA[
+import org.apache.avalon.framework.logger.Logger; 
+import org.apache.avalon.framework.logger.ConsoleLogger; 
+
+/*..*/
+
+Driver driver = new Driver();
+Logger logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+MessageHandler.setScreenLogger(logger);
+driver.setLogger(logger);]]></source>
+  </section>
+  
+  <section id="basic-logging-new-version">
+    <title>Logging (Upcoming FOP 1.0 Version only)</title>
     <p>
       You also need to set up logging. Global logging for all FOP
       processes is managed by MessageHandler. Per-instance logging
@@ -160,7 +185,7 @@ transformer.transform(src, res);]]></source>
   <section id="logging">
     <title>Controlling logging</title>
     <p>
-      FOP uses the
+      Current FOP 0.20.x production uses the
       <fork href="http://avalon.apache.org/framework/api/org/apache/avalon/framework/logger/package-summary.html">Logger package</fork>
       from Apache Avalon Framework to do logging. See the 
       <fork href="http://avalon.apache.org/framework/">Apache Avalon Framework</fork>
