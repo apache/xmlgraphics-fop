@@ -320,16 +320,16 @@ public class PDFRenderer implements Renderer {
             // Y position is computed assuming positive Y axis, adjust for negative postscript one
             this.currentYPosition =
               area.getYPosition() - 2 * area.getPaddingTop() -
-              2 * area.borderWidthTop;
+              2 * area.getBorderTopWidth();
             this.currentAreaContainerXPosition = area.getXPosition();
         } else if (area.getPosition() == Position.RELATIVE) {
             this.currentYPosition -= area.getYPosition();
             this.currentAreaContainerXPosition += area.getXPosition();
         } else if (area.getPosition() == Position.STATIC) {
             this.currentYPosition -=
-              area.getPaddingTop() + area.borderWidthTop;
+              area.getPaddingTop() + area.getBorderTopWidth();
             this.currentAreaContainerXPosition +=
-              area.getPaddingLeft() + area.borderWidthLeft;
+              area.getPaddingLeft() + area.getBorderLeftWidth();
         }
 
         this.currentXPosition = this.currentAreaContainerXPosition;
@@ -422,23 +422,26 @@ public class PDFRenderer implements Renderer {
             this.addRect(rx, ry, w, -h, new PDFColor(bg), new PDFColor(bg));
         }
 
-        rx = rx - area.borderWidthLeft;
-        ry = ry + area.borderWidthTop;
-        w = w + area.borderWidthLeft + area.borderWidthRight;
-        h = h + area.borderWidthTop + area.borderWidthBottom;
+        rx = rx - area.getBorderLeftWidth();
+        ry = ry + area.getBorderTopWidth();
+        w = w + area.getBorderLeftWidth() + area.getBorderRightWidth();
+        h = h + area.getBorderTopWidth() + area.getBorderBottomWidth();
 
-        if (area.borderWidthTop != 0)
-            addLine(rx, ry, rx + w, ry, area.borderWidthTop,
-                    new PDFColor(area.borderColorTop));
-        if (area.borderWidthLeft != 0)
-            addLine(rx, ry, rx, ry - h, area.borderWidthLeft,
-                    new PDFColor(area.borderColorLeft));
-        if (area.borderWidthRight != 0)
-            addLine(rx + w, ry, rx + w, ry - h, area.borderWidthRight,
-                    new PDFColor(area.borderColorRight));
-        if (area.borderWidthBottom != 0)
-            addLine(rx, ry - h, rx + w, ry - h, area.borderWidthBottom,
-                    new PDFColor(area.borderColorBottom));
+	// Handle line style
+	// Offset for haft the line width!
+				BorderAndPadding bp = area.getBorderAndPadding();
+        if (area.getBorderTopWidth() != 0)
+            addLine(rx, ry, rx + w, ry, area.getBorderTopWidth(),
+                    new PDFColor(bp.getBorderColor(BorderAndPadding.TOP)));
+        if (area.getBorderLeftWidth() != 0)
+            addLine(rx, ry, rx, ry - h, area.getBorderLeftWidth(),
+                    new PDFColor(bp.getBorderColor(BorderAndPadding.LEFT)));
+        if (area.getBorderRightWidth() != 0)
+            addLine(rx + w, ry, rx + w, ry - h, area.getBorderRightWidth(),
+                    new PDFColor(bp.getBorderColor(BorderAndPadding.RIGHT)));
+        if (area.getBorderBottomWidth() != 0)
+            addLine(rx, ry - h, rx + w, ry - h, area.getBorderBottomWidth(),
+                    new PDFColor(bp.getBorderColor(BorderAndPadding.BOTTOM)));
 
     }
 
@@ -451,14 +454,14 @@ public class PDFRenderer implements Renderer {
     public void renderBlockArea(BlockArea area) {
       // KLease: Temporary test to fix block positioning
       // Offset ypos by padding and border widths
-      // this.currentYPosition -= (area.getPaddingTop() + area.borderWidthTop);
+        this.currentYPosition -= (area.getPaddingTop() + area.getBorderTopWidth());
         doFrame(area);
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
             Box b = (Box) e.nextElement();
             b.render(this);
         }
-	//  this.currentYPosition -= (area.getPaddingBottom() + area.borderWidthBottom);
+	this.currentYPosition -= (area.getPaddingBottom() + area.getBorderBottomWidth());
     }
 
     /**
