@@ -260,7 +260,7 @@ public class PropertyListBuilder {
     Hashtable table;
     table = (Hashtable)elementTable.get(elementName);
 	for (int i = 0; i < attributes.getLength(); i++) {
-	    String attributeName = attributes.getRawName(i);
+	    String attributeName = attributes.getQName(i);
 	    Property.Maker propertyMaker = null;
 	    if(sptable != null) {
 	    	propertyMaker = (Property.Maker)sptable.get(attributeName);

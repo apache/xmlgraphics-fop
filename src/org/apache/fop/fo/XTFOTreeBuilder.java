@@ -197,7 +197,7 @@ public class XTFOTreeBuilder extends HandlerBase {
 	level++;
 	int length = attlist.getLength();
 	for (int i = 0; i < length; i++) {
-	    String att = attlist.getRawName(i);
+	    String att = attlist.getQName(i);
 	    if (att.equals("xmlns")) {
 		namespaceStack.push( new NSMap("",
 					       attlist.getValue(i),
