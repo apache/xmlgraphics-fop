@@ -13,6 +13,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * LayoutManager for an fo:flow object.
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 public class StaticContentLayoutManager extends BlockStackingLayoutManager {
 
     private RegionReference region;
-    private ArrayList blockBreaks = new ArrayList();      
+    private List blockBreaks = new ArrayList();      
   
     public StaticContentLayoutManager(FObj fobj) {
         super(fobj);
@@ -88,9 +89,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      * area class. A Flow can fill at most one area container of any class
      * at any one time. The actual work is done by BlockStackingLM.
      */
-    public boolean addChild(Area childArea) {
+    public void addChild(Area childArea) {
         region.addBlock((Block)childArea);
-        return true;
     }
 
     public Area getParentArea(Area childArea) {

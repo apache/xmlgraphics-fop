@@ -41,7 +41,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     int lineHeight = 14000;
     int follow = 2000;
 
-    ArrayList childBreaks = new ArrayList();
+    protected List childBreaks = new ArrayList();
 
     /**
      * Iterator for Block layout.
@@ -63,11 +63,11 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                 LayoutManager lm = (LayoutManager) proxy.next();
                 if(lm.generatesInlineAreas()) {
                     LineLayoutManager lineLM = createLineManager(lm);
-                    m_listLMs.add(lineLM);
+                    listLMs.add(lineLM);
                 } else {
-                    m_listLMs.add(lm);
+                    listLMs.add(lm);
                 }
-                if (m_curPos < m_listLMs.size()) {
+                if (curPos < listLMs.size()) {
                     return true;
                 }
             }
@@ -77,7 +77,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         protected LineLayoutManager createLineManager(
           LayoutManager firstlm) {
             LayoutManager lm;
-            ArrayList inlines = new ArrayList();
+            List inlines = new ArrayList();
             inlines.add(firstlm);
             while (proxy.hasNext()) {
                 lm = (LayoutManager) proxy.next();
@@ -98,7 +98,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
     public BlockLayoutManager(FObj fobj) {
         super(fobj);
-        m_childLMiter = new BlockLMiter(m_childLMiter);
+        childLMiter = new BlockLMiter(childLMiter);
     }
 
     public void setBlockTextInfo(TextInfo ti) {
@@ -118,7 +118,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     }
     
     public BreakPoss getNextBreakPoss(LayoutContext context) {
-        LayoutManager curLM ; // currently active LM
+        LayoutManager curLM; // currently active LM
+
+        int ipd = context.getRefIPD();
 
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
@@ -129,7 +131,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         while ((curLM = getChildLM()) != null) {
             // Make break positions and return blocks!
             // Set up a LayoutContext
-            int ipd = context.getRefIPD();
             BreakPoss bp;
 
             LayoutContext childLC = new LayoutContext(0);
@@ -137,7 +138,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             // line LM actually generates a LineArea which is a block
             if (curLM.generatesInlineAreas()) {
                 // set stackLimit for lines
-                childLC.setStackLimit(new MinOptMax(ipd/* - m_iIndents - m_iTextIndent*/));
+                childLC.setStackLimit(new MinOptMax(ipd/* - iIndents - iTextIndent*/));
                 childLC.setRefIPD(ipd);
             } else {
                 childLC.setStackLimit(
@@ -145,7 +146,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                                      stackSize));
                 childLC.setRefIPD(ipd);
             }
-
+            boolean over = false;
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                     stackSize.add(bp.getStackingSize());
@@ -156,6 +157,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                         } else {
                             curLM.resetPosition(null);
                         }
+                        over = true;
                         break;
                     }
                     lastPos = bp;
@@ -163,23 +165,28 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
                     if (curLM.generatesInlineAreas()) {
                         // Reset stackLimit for non-first lines
-                        childLC.setStackLimit(new MinOptMax(ipd/* - m_iIndents*/));
+                        childLC.setStackLimit(new MinOptMax(ipd/* - iIndents*/));
                     } else {
-                        childLC.setStackLimit( MinOptMax.subtract(
+                        childLC.setStackLimit(MinOptMax.subtract(
                                                  context.getStackLimit(), stackSize));
                     }
                 }
             }
-            if(getChildLM() == null) {
-                stackSize.add(layoutProps.spaceAfter.space);
-            }
-            BreakPoss breakPoss = new BreakPoss(
+            if(getChildLM() == null || over) {
+                if(getChildLM() == null) {
+                    setFinished(true);
+                    stackSize.add(layoutProps.spaceAfter.space);
+                }
+                BreakPoss breakPoss = new BreakPoss(
                                     new LeafPosition(this, childBreaks.size() - 1));
-            breakPoss.setStackingSize(stackSize);
-            return breakPoss;
+                breakPoss.setStackingSize(stackSize);
+                return breakPoss;
+            }
         }
         setFinished(true);
-        return null;
+        BreakPoss breakPoss = new BreakPoss(new LeafPosition(this, -2));
+        breakPoss.setStackingSize(stackSize);
+        return breakPoss;
     }
 
     public void addAreas(PositionIterator parentIter,
@@ -197,6 +204,12 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
             LeafPosition lfp = (LeafPosition) parentIter.next();
+            if (lfp.getLeafPos() == -2) {
+                childBreaks.clear();
+                curBlockArea = null;
+                flush();
+                return;
+            }
             // Add the block areas to Area
             PositionIterator breakPosIter =
               new BreakPossPosIter(childBreaks, iStartPos,
@@ -246,24 +259,23 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         return curBlockArea;
     }
 
-    public boolean addChild(Area childArea) {
+    public void addChild(Area childArea) {
         if (curBlockArea != null) {
             if (childArea instanceof LineArea) {
                 curBlockArea.addLineArea((LineArea) childArea);
-
-                return false;
             } else {
                 curBlockArea.addBlock((Block) childArea);
-
-                return false;
             }
         }
-        return false;
     }
 
     public void resetPosition(Position resetPos) {
         if (resetPos == null) {
             reset(null);
+            childBreaks.clear();
+        } else {
+            //reset(resetPos);
+            LayoutManager lm = resetPos.getLM();
         }
     }
 }

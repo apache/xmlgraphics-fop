@@ -6,12 +6,14 @@
  */
 package org.apache.fop.layoutmgr;
 
-import java.util.List;
-
 import org.apache.fop.area.Area;
 import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
+
+import java.util.List;
+import java.util.ArrayList;
+
 
 /**
  * Content Layout Manager.
@@ -35,7 +37,7 @@ public class ContentLayoutManager implements LayoutManager {
 
     public void fillArea(LayoutManager curLM) {
 
-        List childBreaks = new java.util.ArrayList();
+        List childBreaks = new ArrayList();
         MinOptMax stack = new MinOptMax();
         int ipd = 1000000;
         BreakPoss bp;
@@ -116,9 +118,8 @@ public class ContentLayoutManager implements LayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public boolean addChild(Area childArea) {
+    public void addChild(Area childArea) {
         holder.addChild(childArea);
-        return true;
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */

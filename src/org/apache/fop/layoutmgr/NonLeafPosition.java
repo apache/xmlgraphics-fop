@@ -9,15 +9,15 @@ package org.apache.fop.layoutmgr;
 
 public class NonLeafPosition extends Position {
 
-    private Position m_subPos ;
+    private Position subPos;
 
-    public NonLeafPosition(LayoutManager lm, Position subPos) {
+    public NonLeafPosition(LayoutManager lm, Position sub) {
         super(lm);
-        m_subPos = subPos;
+        subPos = sub;
     }
 
     public Position getPosition() {
-        return m_subPos;
+        return subPos;
     }
 }
 

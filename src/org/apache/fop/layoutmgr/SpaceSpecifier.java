@@ -10,6 +10,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.area.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Accumulate a sequence of space-specifiers (XSL space type) on
@@ -19,21 +20,21 @@ import java.util.ArrayList;
 public class SpaceSpecifier implements Cloneable {
 
 
-    private boolean m_bStartsRefArea;
-    private boolean m_bHasForcing = false;
-    private ArrayList m_vecSpaceVals = new ArrayList();
+    private boolean bStartsRefArea;
+    private boolean bHasForcing = false;
+    private List vecSpaceVals = new ArrayList();
 
 
-    public SpaceSpecifier(boolean bStartsRefArea) {
-        m_bStartsRefArea = bStartsRefArea;
+    public SpaceSpecifier(boolean bStarts) {
+        bStartsRefArea = bStarts;
     }
 
     public Object clone() {
         try {
             SpaceSpecifier ss = (SpaceSpecifier) super.clone();
             // Clone the vector, but share the objects in it!
-            ss.m_vecSpaceVals = new ArrayList();
-            ss.m_vecSpaceVals.addAll(this.m_vecSpaceVals);
+            ss.vecSpaceVals = new ArrayList();
+            ss.vecSpaceVals.addAll(this.vecSpaceVals);
             return ss;
         } catch (CloneNotSupportedException cnse) {
             return null;
@@ -45,14 +46,14 @@ public class SpaceSpecifier implements Cloneable {
      * Clear all space specifiers
      */
     public void clear() {
-        m_bHasForcing = false;
-        m_vecSpaceVals.clear();
+        bHasForcing = false;
+        vecSpaceVals.clear();
     }
 
 
     /** Return true if any space-specifiers have been added. */
     public boolean hasSpaces() {
-        return (m_vecSpaceVals.size() > 0);
+        return (vecSpaceVals.size() > 0);
     }
 
     /**
@@ -62,20 +63,20 @@ public class SpaceSpecifier implements Cloneable {
      * add it to the sequence.
      */
     public void addSpace(SpaceVal moreSpace) {
-        if (!m_bStartsRefArea || !moreSpace.bConditional ||
-                !m_vecSpaceVals.isEmpty()) {
+        if (!bStartsRefArea || !moreSpace.bConditional ||
+                !vecSpaceVals.isEmpty()) {
             if (moreSpace.bForcing) {
-                if (m_bHasForcing == false) {
+                if (bHasForcing == false) {
                     // Remove all other values (must all be non-forcing)
-                    m_vecSpaceVals.clear();
-                    m_bHasForcing = true;
+                    vecSpaceVals.clear();
+                    bHasForcing = true;
                 }
-                m_vecSpaceVals.add(moreSpace);
-            } else if (m_bHasForcing == false) {
+                vecSpaceVals.add(moreSpace);
+            } else if (bHasForcing == false) {
                 // Don't bother adding all 0 space-specifier if not forcing
                 if (moreSpace.space.min != 0 || moreSpace.space.opt != 0 ||
                         moreSpace.space.max != 0) {
-                    m_vecSpaceVals.add(moreSpace);
+                    vecSpaceVals.add(moreSpace);
                 }
             }
         }
@@ -90,12 +91,12 @@ public class SpaceSpecifier implements Cloneable {
      * @return The resolved value as a min/opt/max triple.
      */
     public MinOptMax resolve(boolean bEndsReferenceArea) {
-        int lastIndex = m_vecSpaceVals.size();
+        int lastIndex = vecSpaceVals.size();
         if (bEndsReferenceArea) {
             // Start from the end and count conditional specifiers
             // Stop at first non-conditional
             for (; lastIndex > 0; --lastIndex) {
-                SpaceVal sval = (SpaceVal) m_vecSpaceVals.get(
+                SpaceVal sval = (SpaceVal) vecSpaceVals.get(
                                   lastIndex - 1);
                 if (!sval.bConditional) {
                     break;
@@ -105,8 +106,8 @@ public class SpaceSpecifier implements Cloneable {
         MinOptMax resSpace = new MinOptMax(0);
         int iMaxPrec = -1;
         for (int index = 0; index < lastIndex; index++) {
-            SpaceVal sval = (SpaceVal) m_vecSpaceVals.get(index);
-            if (m_bHasForcing) {
+            SpaceVal sval = (SpaceVal) vecSpaceVals.get(index);
+            if (bHasForcing) {
                 resSpace.add(sval.space);
             } else if (sval.iPrecedence > iMaxPrec) {
                 iMaxPrec = sval.iPrecedence;

@@ -85,7 +85,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         Item curLM; // currently active LM
 
         BreakPoss lastPos = null;
-        ArrayList breakList = new ArrayList();
+        List breakList = new ArrayList();
 
         int min = 0;
         int opt = 0;
@@ -100,7 +100,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
             } else {
                 break;
             }
-            ArrayList childBreaks = new ArrayList();
+            List childBreaks = new ArrayList();
             MinOptMax stackSize = new MinOptMax();
 
             // Set up a LayoutContext
@@ -248,12 +248,10 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
      * @param childArea the child area
      * @return unused
      */
-    public boolean addChild(Area childArea) {
+    public void addChild(Area childArea) {
         if (curBlockArea != null) {
             curBlockArea.addBlock((Block) childArea);
-            return false;
         }
-        return false;
     }
 
     /**

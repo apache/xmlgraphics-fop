@@ -511,8 +511,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         currentArea = area;
     }
 
-
-    public boolean addChild(Area childArea) {
+    public void addChild(Area childArea) {
         // Make sure childArea is inline area
         if (childArea instanceof InlineArea) {
             Area parent = getCurrentArea();
@@ -523,7 +522,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
             }
             parent.addChild(childArea);
         }
-        return false;
     }
 
     protected void setChildContext(LayoutContext lc) {

@@ -42,7 +42,7 @@ public class Body extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
 
-    private ArrayList childBreaks = new ArrayList();
+    private List childBreaks = new ArrayList();
 
     /**
      * Create a new body layout manager.
@@ -212,8 +212,8 @@ public class Body extends BlockStackingLayoutManager {
      * @param childArea the child area to add
      * @return unused
      */
-    public boolean addChild(Area childArea) {
-        return parentLM.addChild(childArea);
+    public void addChild(Area childArea) {
+        parentLM.addChild(childArea);
     }
 
     /**
