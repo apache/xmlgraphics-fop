@@ -79,7 +79,9 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             }
         }
 
+        blockBreaks.clear();
         flush();
+        region = null;
     }
 
 
