@@ -191,8 +191,6 @@ public class FONode extends Node{
         throws TreeException, FOPException, PropertyException
     {
         super(foTree, parent);
-        if (type == FObjectNames.BLOCK)
-            System.out.println("Constructing FONode for FoBlock");
         this.type = type;
         this.stateFlags = stateFlags;
         attrSet = stateFlags & ATTRIBUTESETS;
@@ -214,8 +212,6 @@ public class FONode extends Node{
         // Do not set up the remaining properties now.
         // These will be developed by inheritance or from the initial values
         // as the property values are referenced.
-        if (type == FObjectNames.BLOCK)
-            System.out.println("Finshed constructing FONode for FoBlock");
     }
 
     private void processAttributes() throws FOPException, PropertyException {
