@@ -24,8 +24,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-// SAX
-import org.xml.sax.InputSource;
+//JAXP
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.Result;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.sax.SAXResult;
 
 // FOP
 import org.apache.fop.apps.Driver;
@@ -45,28 +50,34 @@ public class ExampleFO2PDF {
      */
     public void convertFO2PDF(File fo, File pdf) throws IOException, FOPException {
         
-        // Construct driver
-        Driver driver = new Driver();
+        OutputStream out = null;
         
-        // Setup Renderer (output format)        
-        driver.setRenderer(Driver.RENDER_PDF);
-        
-        // Setup output
-        OutputStream out = new java.io.FileOutputStream(pdf);
-        out = new java.io.BufferedOutputStream(out);
         try {
+            // Construct driver and setup output format
+            Driver driver = new Driver();
+            driver.setRenderer(Driver.RENDER_PDF);
+    
+            // Setup output
+            out = new java.io.FileOutputStream(pdf);
+            out = new java.io.BufferedOutputStream(out);
             driver.setOutputStream(out);
 
-            //Setup input
-            InputStream in = new java.io.FileInputStream(fo);
-            try {
-                driver.setInputSource(new InputSource(in));
+            // Setup JAXP using identity transformer
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer(); // identity transformer
             
-                //Process FO
-                driver.run();
-            } finally {
-                in.close();
-            }
+            // Setup input for XSLT transformation
+            Source src = new StreamSource(fo);
+            
+            // Resulting SAX events (the generated FO) must be piped through to FOP
+            Result res = new SAXResult(driver.getContentHandler());
+            
+            // Start XSLT transformation and FOP processing
+            transformer.transform(src, res);
+
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+            System.exit(-1);
         } finally {
             out.close();
         }
