@@ -15,7 +15,7 @@
     </fo:simple-page-master>
   </fo:layout-master-set>
 
-  <fo:page-sequence master-name="first">
+  <fo:page-sequence master-reference="first">
     <fo:flow source-document="a" flow-name="xsl-region-body">
 
       <fo:block source-document="inherit" space-before.optimum="3pt" space-after.optimum="15pt">

@@ -10,7 +10,7 @@
 					<fo:region-after extent="1.5cm"/>
 				</fo:simple-page-master>
 			</fo:layout-master-set>
-			<fo:page-sequence master-name="one">
+			<fo:page-sequence master-reference="one">
 				<fo:flow font-size="10pt" line-height="10pt" flow-name="xsl-region-body">
 					<xsl:apply-templates select="data"/>
 				</fo:flow>
