@@ -65,7 +65,7 @@ public class InstreamForeignObject extends FObj {
      * @see org.apache.fop.fo.FONode#end
      */
     protected void endOfNode() throws SAXParseException {
-        if (childNodes == null) {
+        if (childNodes.size() != 1) {
             missingChildElementError("one (1) non-XSL namespace child");
         }
     }
