@@ -65,12 +65,6 @@ import org.apache.fop.fo.properties.DisplayAlign;
 import org.apache.fop.fo.properties.Overflow;
 import org.apache.fop.fo.properties.Scaling;
 import org.apache.fop.fo.properties.TextAlign;
-import org.apache.fop.layout.AccessibilityProps;
-import org.apache.fop.layout.AuralProps;
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.MarginInlineProps;
-import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 import org.w3c.dom.Document;
 
@@ -129,22 +123,6 @@ public class InstreamForeignObject extends FObj {
             return null;
         }
         XMLObj child = (XMLObj)fo;
-
-        // Common Accessibility Properties
-        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
-
-        // Common Aural Properties
-        AuralProps mAurProps = propMgr.getAuralProps();
-
-        // Common Border, Padding, and Background Properties
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
-
-        // Common Margin Properties-Inline
-        MarginInlineProps mProps = propMgr.getMarginInlineProps();
-
-        // Common Relative Position Properties
-        RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
 
         // viewport size is determined by block-progression-dimension
         // and inline-progression-dimension
