@@ -26,36 +26,23 @@
     </p>
     <p>FOP is proud to be part of <link href="http://xml.apache.org">Apache's XML project</link>.
     </p>
-    <p>Users can subscribe to fop-user@xml.apache.org by sending an email
-        to <link href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</link>
-        this is where user specific topics are discussed.
-     </p>
     </section>
 
   <section id="demo">
     <title>Demonstration</title>
         <figure width="480" height="260" src="images/layout.jpg" alt="Formatting Diagram" />
 <p>
-This image is a demonstration of a two page document. The xml data on the left
-is formatted into the two pages on the right. The document contains static areas that appear on every page and an external graphic (an svg document in this example).
-It also includes a footnote on the first page and a table that goes across both pages.
+This image is a demonstration of a real two page document. The xml data on the left
+is formatted into the two pages on the right. The document contains static areas that appear on every page, an external graphic, a footnote on the first page, and a table that goes across both pages.
 </p>
 <p>
-The advantage of XSL is the ability to take an XML document and to format
-the information into a page layout. The XML document can be generated
-in any way, the most common would be to use XSLT. FOP takes the XML
-and formats the data into pages. The pages are then rendered to the
-requested output.
-</p>
-<p>
-This is a real document. The image was created by rendering the document
-to the svg renderer then putting the rendered pages into an svg document
-along with the xml.
-</p>
+FOP uses the standard XSL-FO file format as input, lays the content out into pages, then renders it to the requested output.
+One great advantage to using XSL-FO as input is that XSL-FO is itself an XML file, which means that it can be conveniently created from a variety of sources.
+The most common method is to convert semantic XML to XSL-FO, using an XSLT transformation.</p>
   </section>
   <section id="objectives">
     <title>FOP Objectives</title>
-    <p>The goals of the Apache XML FOP Project are to deliver an XSL FO->PDF formatter that is compliant to at least the Basic
+    <p>The goals of the Apache XML FOP Project are to deliver an XSL-FO to PDF formatter that is compliant to at least the Basic
        conformance level described in the W3C Recommendation from 15 October 2001, and that complies with the 11 March 1999 Portable Document
        Format Specification (Version 1.3) from Adobe Systems.
     </p>
@@ -65,9 +52,7 @@ along with the xml.
        Project will attempt to use the latest version of evolving specifications.
     </p>
 
-   <p>To reach this aim currently the layout system is being redesigned to
-better handle the formatting of all different types of formatting objects.
-   </p>
+   <p>The FOP layout system is currently being rewritten to better support the XSL-FO standard.</p>
   </section>
   <note>
     The PDF files on this site are created using the latest development version of FOP.
