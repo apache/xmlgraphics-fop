@@ -1,5 +1,7 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fix for bug #20506 (grayscale images in PS renderer) (JM)
+  Submitted by: Zhong(George) Yi <yidaomao@yahoo.com>
 - Fix for bad font encodings in the PS renderer (Fonts get reencoded as
   WinAnsiEncoding, Symbol and ZapfDingbats show correctly now) (JM)
   Financed by: CTB/McGraw-Hill
