@@ -59,10 +59,13 @@ import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
+
+import org.w3c.dom.svg.*;
+
 /**
  *
  */
-public class Switch extends FObj {
+public class Switch extends FObj implements GraphicsCreator {
 
 	/**
 	 * inner class for making Line objects.
@@ -103,6 +106,65 @@ public class Switch extends FObj {
 		this.name = "svg:switch";
 	}
 
+	public GraphicImpl createGraphic()
+	{
+		/*
+		 * There are two options
+		 * 1) add all children and select the correct one when rendering
+		 * 2) select the correct one now and return it rather than a switch element
+		 * Since renderers may have different ideas, leave it up to the renderer
+		 * to select the correct one.
+		 */
+		String rf = this.properties.get("requiredFeatures").getString();
+		String re = this.properties.get("requiredExtensions").getString();
+		String sl = this.properties.get("systemLanguage").getString();
+		SVGList strlist;
+		GraphicElement graphic;
+		graphic = new SVGSwitchElementImpl();
+		if(!rf.equals("notpresent")) {
+    		strlist = new SVGStringList(rf);
+			graphic.setRequiredFeatures(strlist);
+    	}
+		if(!re.equals("notpresent")) {
+			strlist = new SVGStringList(re);
+			graphic.setRequiredExtensions(strlist);
+		}
+		if(!sl.equals("notpresent")) {
+			strlist = new SVGStringList(sl);
+			graphic.setSystemLanguage(strlist);
+		}
+
+		int numChildren = this.children.size();
+		for (int i = 0; i < numChildren; i++) {
+			FONode child = (FONode) children.elementAt(i);
+			if(child instanceof GraphicsCreator) {
+				GraphicImpl impl = ((GraphicsCreator)child).createGraphic();
+				if(impl instanceof SVGTests) {
+					SVGTests testable = (SVGTests)impl;
+					rf = child.getProperty("requiredFeatures").getString();
+					re = child.getProperty("requiredExtensions").getString();
+					sl = child.getProperty("systemLanguage").getString();
+					if(!rf.equals("notpresent")) {
+						strlist = new SVGStringList(rf);
+						testable.setRequiredFeatures(strlist);
+					}
+					if(!re.equals("notpresent")) {
+						strlist = new SVGStringList(re);
+						testable.setRequiredExtensions(strlist);
+					}
+					if(!sl.equals("notpresent")) {
+						strlist = new SVGStringList(sl);
+						testable.setSystemLanguage(strlist);
+					}
+					graphic.appendChild((GraphicElement)impl);
+				}
+			} else if(child instanceof Defs) {
+			}
+		}
+
+		return graphic;
+	}
+
 	/**
 	 * layout this formatting object.
 	 *
@@ -113,13 +175,10 @@ public class Switch extends FObj {
 	public Status layout(Area area) throws FOPException {
 
 		/* retrieve properties */
-		String sr = this.properties.get("system-required").getString();
-		String sl = this.properties.get("system-language").getString();
-		
 		/* if the area this is being put into is an SVGArea */
 		if (area instanceof SVGArea) {
 			/* add a line to the SVGArea */
-			((SVGArea) area).addGraphic(new SVGSwitchElementImpl(sr, sl));
+			((SVGArea) area).addGraphic(createGraphic());
 		} else {
 			/* otherwise generate a warning */
 			System.err.println("WARNING: svg:switch outside svg:svg");

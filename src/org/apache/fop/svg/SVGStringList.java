@@ -51,98 +51,31 @@
 
 package org.apache.fop.svg;
 
-// FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.layout.Area;
-import org.apache.fop.layout.FontState;
-import org.apache.fop.apps.FOPException;
-
 import org.apache.fop.dom.svg.*;
 
+import java.util.*;
+
 /**
- * class representing svg:a pseudo flow object.
  *
  */
-public class A extends FObj implements GraphicsCreator {
-
-	/**
-	 * inner class for making A objects.
-	 */
-	public static class Maker extends FObj.Maker {
-
-		/**
-		 * make a A object.
-		 *
-		 * @param parent the parent formatting object
-		 * @param propertyList the explicit properties of this object
-		 *
-		 * @return the A object
-		 */
-		public FObj make(FObj parent, PropertyList propertyList) throws FOPException
-		{
-			return new A(parent, propertyList);
-		}
-	}
-
-	/**
-	 * returns the maker for this object.
-	 *
-	 * @return the maker for A objects
-	 */
-	public static FObj.Maker maker() {
-		return new A.Maker();
-	}
-
-	/**
-	 * constructs a A object (called by Maker).
-	 *
-	 * @param parent the parent formatting object
-	 * @param propertyList the explicit properties of this object
-	 */
-	protected A(FObj parent, PropertyList propertyList) {
-		super(parent, propertyList);
-		this.name = "svg:a";
-	}
-
-	public GraphicImpl createGraphic()
+class SVGStringList extends SVGListImpl {
+	public SVGStringList(String str)
 	{
-		String rf = this.properties.get("xlink:href").getString();
-		SVGAElementImpl graphic;
-		graphic = new SVGAElementImpl();
-//		graphic.setTarget(new SVGAnimatedStringImpl(rf));
-
-		int numChildren = this.children.size();
-		for (int i = 0; i < numChildren; i++) {
-			FONode child = (FONode) children.elementAt(i);
-			if(child instanceof GraphicsCreator) {
-				GraphicImpl impl = ((GraphicsCreator)child).createGraphic();
-				graphic.appendChild((GraphicElement)impl);
-			} else if(child instanceof Defs) {
-			}
-		}
-
-		return graphic;
+		parseString(str);
 	}
 
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a line to the SVGArea */
-			((SVGArea) area).addGraphic(createGraphic());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:a outside svg:svg");
+	void parseString(String str)
+	{
+		StringTokenizer st = new StringTokenizer(str, ", \n\r\t:;");
+		while(st.hasMoreTokens()) {
+			String item = st.nextToken();
+			appendItem(item);
 		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
+
+	public Object createItem()
+	{
+		return new String();
+	}
+
 }
