@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!-- example for a simple fo file. At the beginning the page layout is set. 
   Below fo:root there is always 
@@ -23,8 +23,8 @@
                   page-width="21cm"
                   margin-top="1cm" 
                   margin-bottom="2cm" 
-                  margin-left="2.5cm" 
-                  margin-right="2.5cm">
+                  margin-left="7cm" 
+                  margin-right="3cm">
       <fo:region-body margin-top="3cm"/>
       <fo:region-before extent="3cm"/>
       <fo:region-after extent="1.5cm"/>
@@ -138,14 +138,14 @@
                 hyphenation-remain-character-count="2"                >
         1. Warum TEI?
         Die Verwendungszeit elektronischer Editionen wird von mehreren 
-        Faktoren verkürzt: der kurzen Lebensdauer der Programme, die zu 
-        ihrer Darstellung verwendet werden, der etwas längeren der 
+        Faktoren verkÃ¼rzt: der kurzen Lebensdauer der Programme, die zu 
+        ihrer Darstellung verwendet werden, der etwas lÃ¤ngeren der 
         Betriebssysteme, unter denen die Darstellungsprogramme laufen, 
-        der logischen Einrichtung des Datenträgers, auf dem sich die 
+        der logischen Einrichtung des DatentrÃ¤gers, auf dem sich die 
         Edition befindet, und dessen physischer Dauer. Um die besonders 
-        unangenehme Abhängigkeit elektronischer Texte von bestimmten 
+        unangenehme AbhÃ¤ngigkeit elektronischer Texte von bestimmten 
         Programmen und Betriebssystemen zu vermeiden, haben 
-        Wissenschaftler ein Textauszeichnungssystem für philologische 
+        Wissenschaftler ein Textauszeichnungssystem fÃ¼r philologische 
         Belange entwickelt, das nach dem Entwicklerteam "Text Encoding 
         Initiative" (TEI) genannt wird (1). 
       </fo:block>
@@ -155,15 +155,13 @@
                 line-height="15pt"
                 space-after.optimum="3pt"
                 language="de"
-                hyphenate="true"
-                hyphenation-push-character-count="2"
-                hyphenation-remain-character-count="2"                >
+                hyphenate="true">
         Das Auszeichnungssystem TEI ist eine Anwendung der Metasprache 
-        zur Beschreibung programmunabhängiger Auszeichnungssysteme SGML 
+        zur Beschreibung programmunabhÃ¤ngiger Auszeichnungssysteme SGML 
         (Standard Generalized Markup Language), so wie auch HTML, mit 
         dem die meisten Texte des Internets zur Zeit ausgezeichnet 
         sind, eine Anwendung von SGML ist. Daten, die entsprechend den 
-        TEI-Richtlinien ausgezeichnet worden sind, können also mit 
+        TEI-Richtlinien ausgezeichnet worden sind, kÃ¶nnen also mit 
         jedem Programm, das SGML-Daten verarbeiten kann, dargestellt, 
         umgewandelt oder durchsucht werden. (2)
       </fo:block>
@@ -172,18 +170,21 @@
       <fo:block font-size="12pt" 
                 font-family="sans-serif" 
                 line-height="15pt"
-                space-after.optimum="3pt">
-        Verwendet wurde für die Auszeichnung 'teilite', das eine 
+                space-after.optimum="3pt"
+                language="de"
+                hyphenate="true">
+                
+        Verwendet wurde fÃ¼r die Auszeichnung 'teilite', das eine 
         Teilmenge des gesamten Auszeichnungssystems TEI bietet, aber 
         auf einige der komplexeren Merkmale verzichtet und deshalb auch 
         eine einfache Konvertierung der Daten zu neueren Metasprachen 
-        für Auszeichnungssysteme wie XML, einer Teilmenge von SGML, 
-        ermöglicht.
-        SGML-Programme mit der Leistungsfähigkeit von Folio Views sind 
-        z.Zt. noch relativ teuer, daher wurde für die vorliegende 
-        Edition der Weg gewählt, den Text doppelt auf die CD zu legen: 
-        Einmal für die sofortige Nutzung mit einer komfortablen 
-        Oberfläche und einmal ohne Software in einem Format, das seine 
+        fÃ¼r Auszeichnungssysteme wie XML, einer Teilmenge von SGML, 
+        ermÃ¶glicht.
+        SGML-Programme mit der LeistungsfÃ¤higkeit von Folio Views sind 
+        z.Zt. noch relativ teuer, daher wurde fÃ¼r die vorliegende 
+        Edition der Weg gewÃ¤hlt, den Text doppelt auf die CD zu legen: 
+        Einmal fÃ¼r die sofortige Nutzung mit einer komfortablen 
+        OberflÃ¤che und einmal ohne Software in einem Format, das seine 
         langfristige Verwendbarkeit garantiert. 
         Das Nachstehende soll einige Hinweise zur Einrichtung der TEI-
         Dateien geben, um deren weitere Verwendung zu erleichtern. 
@@ -203,49 +204,49 @@
 
         <fo:block language="fi"
                   hyphenate="true">
-          <fo:block font-weight="bold">Internet - tuo kaiken pahan lähde?</fo:block>
-          <fo:block>Internet on saanut nauttia lähes täydellisestä sananvapaudesta koko
+          <fo:block font-weight="bold">Internet - tuo kaiken pahan lÃ¤hde?</fo:block>
+          <fo:block>Internet on saanut nauttia lÃ¤hes tÃ¤ydellisestÃ¤ sananvapaudesta koko
           olemassaolonsa ajan. Parin viimeiksi kuluneen vuoden aikana on kuitenkin
           julkisuudessa keskusteltu ahkerasti sen rajoittamisesta. Muutamat ilmaista
-          kotisivutilaa tarjoavat palvelut ovatkin jo kieltäneet esimerkiksi natsimia
-          kannattavien sivujen ylläpidon.</fo:block> <fo:block>Astetta pahempaan
+          kotisivutilaa tarjoavat palvelut ovatkin jo kieltÃ¤neet esimerkiksi natsimia
+          kannattavien sivujen yllÃ¤pidon.</fo:block> <fo:block>Astetta pahempaan
           suuntaan ollaan kuitenkin menossa. Nettihuutokaupoissa tarjotaan kaikkea
-          ihmiselimistä lähtien ja itsemurhiin etsitään avustajia itsemurhia suosivilta
-          nettisivustoilta. Etelä-Koreassa poliisi on pidättänyt 20-vuotiaan miehen,
-          jota epäillään ns. netti-itsemurhassa avustamisesta. Mies oli luvannut noin
+          ihmiselimistÃ¤ lÃ¤htien ja itsemurhiin etsitÃ¤Ã¤n avustajia itsemurhia suosivilta
+          nettisivustoilta. EtelÃ¤-Koreassa poliisi on pidÃ¤ttÃ¤nyt 20-vuotiaan miehen,
+          jota epÃ¤illÃ¤Ã¤n ns. netti-itsemurhassa avustamisesta. Mies oli luvannut noin
           4000 dollarin korvausta vastaan kuristaa 23-vuotiaan naisen kuoliaaksi. Nainen
-          tuli kuitenkin viime hetkellä toisiin ajatuksiin. Mies väittää kyseessä olleen
-          pelkän vitsin. Viime kuussa Etelä-Koreassa kaksi opiskelijaa myrkytti itsensä
-          netistä löytämiensä ohjeiden avulla.</fo:block> <fo:block>FBI puolestaan
-          tutkii tapausta, jossa äiti oli myynyt kaksostytöt adoptoitavaksi korkeinta
-          tarjousta vastaan nettihuutokaupalla. Tytöt myytiin ensin Kaliforniaan Allenin
-          pariskunnalle, josta äiti kuitenkin kävi ryöstämässä lapset, sillä
-          englantilainen Kilshawin pariskunta oli tarjonnut tytöistä tuplasumman.
-          Kilshawit kuljettivat lapset Englantiin ja nyt tyttöjen perässä ovat sekä
-          kahdet adoptiovanhemmat että iso liuta eri viranomaistahoja. Myös
-          Iso-Britannian pääministeri Tony Blair on pitänyt lehdistötilaisuuden
-          aiheeseen liittyen. Lue juttu.</fo:block> <fo:block>K2, 23:10. Lähde:
-          Newsbytes | 5 kommenttia</fo:block> <fo:block font-weight="bold">Mato ryömii
-          Linux-palvelimiin</fo:block> <fo:block>Internetissä leviää Ramen nimellä
-          tunnettu mato, joka ilmeisesti hyödyntää kahta tunnettua tietoturva-aukkoa Red
-          Hat Linuxin 6.2 ja 7.0 versioissa esiintyvissä wu-ftpd ja RPC.statd
-          -ohjelmissa. Jos mato pääsee sisään järjestelmään, se korvaa palvelimella
-          sijaitsevan HTML-pääsivun tekstillä, jossa kerrotaan hakkereiden pitävän
-          nuudeleista. Madon on todettu leviävän erittäin nopeasti, sillä jos kaistaa
-          riittää se pystyy skannaamaan jopa kaksi B-luokan verkkoa 15 minuutissa. Madon
+          tuli kuitenkin viime hetkellÃ¤ toisiin ajatuksiin. Mies vÃ¤ittÃ¤Ã¤ kyseessÃ¤ olleen
+          pelkÃ¤n vitsin. Viime kuussa EtelÃ¤-Koreassa kaksi opiskelijaa myrkytti itsensÃ¤
+          netistÃ¤ lÃ¶ytÃ¤miensÃ¤ ohjeiden avulla.</fo:block> <fo:block>FBI puolestaan
+          tutkii tapausta, jossa Ã¤iti oli myynyt kaksostytÃ¶t adoptoitavaksi korkeinta
+          tarjousta vastaan nettihuutokaupalla. TytÃ¶t myytiin ensin Kaliforniaan Allenin
+          pariskunnalle, josta Ã¤iti kuitenkin kÃ¤vi ryÃ¶stÃ¤mÃ¤ssÃ¤ lapset, sillÃ¤
+          englantilainen Kilshawin pariskunta oli tarjonnut tytÃ¶istÃ¤ tuplasumman.
+          Kilshawit kuljettivat lapset Englantiin ja nyt tyttÃ¶jen perÃ¤ssÃ¤ ovat sekÃ¤
+          kahdet adoptiovanhemmat ettÃ¤ iso liuta eri viranomaistahoja. MyÃ¶s
+          Iso-Britannian pÃ¤Ã¤ministeri Tony Blair on pitÃ¤nyt lehdistÃ¶tilaisuuden
+          aiheeseen liittyen. Lue juttu.</fo:block> <fo:block>K2, 23:10. LÃ¤hde:
+          Newsbytes | 5 kommenttia</fo:block> <fo:block font-weight="bold">Mato ryÃ¶mii
+          Linux-palvelimiin</fo:block> <fo:block>InternetissÃ¤ leviÃ¤Ã¤ Ramen nimellÃ¤
+          tunnettu mato, joka ilmeisesti hyÃ¶dyntÃ¤Ã¤ kahta tunnettua tietoturva-aukkoa Red
+          Hat Linuxin 6.2 ja 7.0 versioissa esiintyvissÃ¤ wu-ftpd ja RPC.statd
+          -ohjelmissa. Jos mato pÃ¤Ã¤see sisÃ¤Ã¤n jÃ¤rjestelmÃ¤Ã¤n, se korvaa palvelimella
+          sijaitsevan HTML-pÃ¤Ã¤sivun tekstillÃ¤, jossa kerrotaan hakkereiden pitÃ¤vÃ¤n
+          nuudeleista. Madon on todettu leviÃ¤vÃ¤n erittÃ¤in nopeasti, sillÃ¤ jos kaistaa
+          riittÃ¤Ã¤ se pystyy skannaamaan jopa kaksi B-luokan verkkoa 15 minuutissa. Madon
           ei ole todettu avaavan palvelimiin takaovia, joiden kautta madon kirjoittaja
-          pääsisi sisään järjestelmään. Lue juttu</fo:block> <fo:block>oma, 20:48.
-          Lähde: ZDNet | 6 kommenttia</fo:block> <fo:block font-weight="bold">Macromedia
-          ja Allaire yhdistyvät</fo:block> <fo:block>Macromedian ja Allairen
-          julkaisemissa lehdistötiedotteissa kerrotaan yhtiöiden
+          pÃ¤Ã¤sisi sisÃ¤Ã¤n jÃ¤rjestelmÃ¤Ã¤n. Lue juttu</fo:block> <fo:block>oma, 20:48.
+          LÃ¤hde: ZDNet | 6 kommenttia</fo:block> <fo:block font-weight="bold">Macromedia
+          ja Allaire yhdistyvÃ¤t</fo:block> <fo:block>Macromedian ja Allairen
+          julkaisemissa lehdistÃ¶tiedotteissa kerrotaan yhtiÃ¶iden
           yhdistymissuunnitelmista. Macromedialle yrityskauppa maksaa noin 2,2 miljardia
-          markkaa. Uuden yhdistyneen yrityksen nimenä säilyy Macromedia ja sen johdossa
+          markkaa. Uuden yhdistyneen yrityksen nimenÃ¤ sÃ¤ilyy Macromedia ja sen johdossa
           jatkaa Macromedian nykyinen toimitusjohtaja Rob Burgess. Yrityksen tuotteisiin
           lukeutuvat mm. Macromedia Dreamweaver, Macromedia Flash, Allaire ColdFusion ja
           Allaire JRun. Lue juttu.</fo:block> 
         </fo:block>
 
-      <!-- Italian example sent in by Stéphane Bline-->
+      <!-- Italian example sent in by StÃ©phane Bline-->
       <fo:block font-size="12pt" 
             font-family="sans-serif" 
             line-height="12pt"
@@ -261,7 +262,7 @@
         space-before.optimum="0.6em" space-before.minimum="0.4em"
         space-before.maximum="0.8em">Un'applicazione di servizio consiste nell'utilizzo
         di applicazioni nell'ambito aziendale, senza procedere ad installazioni locali.
-        L'applicazione ha la particolaritàdi essere ospitata "in-house" tramite
+        L'applicazione ha la particolaritÃ di essere ospitata "in-house" tramite
         Intranet o presso un fornitore esterno di applicazioni di servizi (ASP, acronimo
         di Application Service Provider) e di transitare grazie al protocollo di
         Internet. Intermediario eventuale tra l'editore di software e il cliente che
@@ -270,22 +271,61 @@
         space-before.optimum="0.6em" space-before.minimum="0.4em"
         space-before.maximum="0.8em">L'utilizzazione in linea rende automatica la
         manutenzione e l'aggiornamento delle applicazioni. A partire da una semplice
-        interfaccia Web installata su un thin client, l'utente può accedere via
+        interfaccia Web installata su un thin client, l'utente puÃ² accedere via
         Internet o Intranet all'insieme delle applicazioni attraverso il proprio account
         personale e dedicarsi all'utilizzazione approfondita delle applicazioni
         professionali.</fo:block> <fo:block font-weight="bold"
         space-after.optimum="6pt">Esempio 1.1. Esempio di applicazione di
         servizio</fo:block> <fo:block space-before.optimum="0.6em"
         space-before.minimum="0.4em" space-before.maximum="0.8em">Si prenda il caso di
-        una societàA che desidera ottimizzare la comunicazione interna e la
+        una societÃ A che desidera ottimizzare la comunicazione interna e la
         condivisione delle informazioni. Un fornitore di applicazioni di servizio
-        potràrispondere rapidamente a questa aspettativa. Inoltre, potràproporre
+        potrÃ rispondere rapidamente a questa aspettativa. Inoltre, potrÃ proporre
         servizi complementari che permettono di proteggere i dati di A. Dopo aver
-        studiato l'offerta, un responsabile della società firma con il fornitore B un
+        studiato l'offerta, un responsabile della societÃ  firma con il fornitore B un
         contratto d'abbonamento a un'applicazione di servizio perfettamente adattata. Le
-        società e B scambiano informazioni relative all'utilizzo online di questa
-        applicazione, come il costo del servizio, le modalitàdi pagamento e la gestione
+        societÃ  e B scambiano informazioni relative all'utilizzo online di questa
+        applicazione, come il costo del servizio, le modalitÃ di pagamento e la gestione
         degli account utente come i profili.</fo:block> </fo:block> 
+
+
+      <!-- this defines a title -->
+      <fo:block font-size="12pt" 
+            font-family="sans-serif" 
+            line-height="12pt"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        Danish
+      </fo:block>
+        <fo:block language="da"
+                  hyphenate="true">
+        BekendtgÃ¸relsen har som udkast vÃ¦ret
+        notificeret i overensstemmelse med Europa-parlamentets og RÃ¥dets direktiv
+        98/34/EF (Informationsproceduredirektivet), som senest Ã¦ndret ved direktiv
+        98/48/EF. BekendtgÃ¸relsen indeholder bestemmelser der gennemfÃ¸rer dele af
+        RÃ¥dets direktiv 89/677/EÃ˜F (EF-tidende L 398 s. 19).
+        </fo:block>
+
+        <fo:block language="da" 
+                  hyphenate="true">
+        BekendtgÃ¸relsens regler hindrer
+        ikke import, salg og anvendelse af produkter, der pÃ¥ tidspunktet for
+        bekendtgÃ¸relsens ikrafttrÃ¦den er reguleret i medfÃ¸r af anden lovgivning,
+        der implementerer EU-direktiver, samt anden lovgivning i Ã¸vrigt, herunder
+        bl.a. bekendtgÃ¸relse nr. 807 af 2. december 1986 om
+        begrÃ¦nsning af motorbenzins indhold af blyforbindelser og benzen.
+        </fo:block>
+        <fo:block language="da" 
+                  hyphenate="true">
+        Import og salg af produkter, der
+        indeholder kemiske forbindelser af bly, er forbudt fra 1. marts 2001.
+        Uanset forbudet i stk. 
+        1 er import og salg af produkter, der indeholder kemiske forbindelser af
+        bly, fortsat tilladt for de produktkategorier, som er nÃ¦vnt i bilag
+        1 til denne bekendtgÃ¸relse, indtil de i bilaget anfÃ¸rte
+        tidspunkter.
+        </fo:block>
 
     </fo:flow> <!-- closes the flow element-->
   </fo:page-sequence> <!-- closes the page-sequence -->
