@@ -28,10 +28,10 @@ import org.apache.fop.apps.FOPException;
 // Java
 import java.util.*;
 
-
 /**
- * This provides pagination of flows onto pages. Much of the logic for paginating
- * flows is contained in this class. The main entry point is the format method.
+ * This provides pagination of flows onto pages. Much of the
+ * logic for paginating flows is contained in this class.
+ * The main entry point is the format method.
  */
 public class PageSequence extends FObj {
     //

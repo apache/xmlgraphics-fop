@@ -566,6 +566,10 @@ class Service {
 
     public static synchronized Enumeration providers(Class cls) {
         ClassLoader cl = cls.getClassLoader();
+        // null if loaded by bootstrap class loader
+        if(cl == null) {
+            cl = ClassLoader.getSystemClassLoader();
+        }
         String serviceFile = "META-INF/services/" + cls.getName();
 
         // System.out.println("File: " + serviceFile);

@@ -7,11 +7,12 @@
 
 package org.apache.fop.area;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
 // may combine with before float into a conditional area
-public class Footnote {
+public class Footnote implements Serializable {
     Block separator = null;
 
     // footnote has an optional separator

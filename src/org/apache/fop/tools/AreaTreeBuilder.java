@@ -17,6 +17,7 @@ import org.apache.fop.render.pdf.*;
 import org.apache.fop.render.svg.*;
 import org.apache.fop.render.xml.*;
 import org.apache.fop.layout.FontInfo;
+import org.apache.fop.layout.FontState;
 import org.apache.fop.fo.FOUserAgent;
 
 import org.apache.log.*;
@@ -30,6 +31,8 @@ import java.util.*;
 import java.awt.geom.Rectangle2D;
 import java.util.StringTokenizer;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.w3c.dom.*;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
@@ -41,12 +44,14 @@ import org.apache.batik.dom.util.DOMUtilities;
  * for the purpose of testing the area tree and rendering.
  * This covers the set of possible properties that can be set
  * on the area tree for rendering.
+ * As this is not for general purpose there is no attempt to handle
+ * invalid area tree xml.
+ *
  * Tests: different renderers, saving and loading pages with serialization
  * out of order rendering
  */
 public class AreaTreeBuilder {
     private Logger log;
-    //String baseName = "temp";
 
     /**
      */
@@ -129,6 +134,7 @@ public class AreaTreeBuilder {
                 while (c < pagec) {
                     PageViewport page = sm.getPage(count, c);
                     c++;
+                    // save the page to a stream for testing
                     ObjectOutputStream tempstream = new ObjectOutputStream(
                                                       new BufferedOutputStream(
                                                         new FileOutputStream("temp.ser")));
@@ -142,6 +148,7 @@ public class AreaTreeBuilder {
                                                new FileInputStream("temp.ser")));
                     page.loadPage(in);
                     in.close();
+
                     rend.renderPage(page);
                 }
                 count++;
@@ -163,6 +170,7 @@ class TreeLoader {
     AreaTree areaTree;
     AreaTree.AreaTreeModel model;
     FontInfo fontInfo;
+    FontState currentFontState;
 
     TreeLoader(FontInfo fi) {
         fontInfo = fi;
@@ -175,8 +183,10 @@ class TreeLoader {
     public void buildAreaTree(InputStream is) {
         Document doc = null;
         try {
-            doc = javax.xml.parsers.DocumentBuilderFactory.newInstance().
-                  newDocumentBuilder().parse(is);
+            DocumentBuilderFactory fact =
+              DocumentBuilderFactory.newInstance();
+            fact.setNamespaceAware(true);
+            doc = fact.newDocumentBuilder().parse(is);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -475,6 +485,16 @@ class TreeLoader {
                 Character ch =
                   new Character(getString((Element) obj).charAt(0));
                 addProperties((Element) obj, ch);
+                try {
+                    currentFontState =
+                      new FontState(fontInfo, "sans-serif", "normal",
+                                    "normal", 12000, 0);
+                } catch (FOPException e) {
+
+                }
+
+                ch.setWidth(currentFontState.width(ch.getChar()));
+                ch.setOffset(currentFontState.getCapHeight());
                 list.add(ch);
             } else if (obj.getNodeName().equals("space")) {
                 Space space = new Space();
@@ -520,6 +540,11 @@ class TreeLoader {
             return null;
         }
         Viewport viewport = new Viewport(child);
+        String str = root.getAttribute("width");
+        if (str != null && !"".equals(str)) {
+            int width = Integer.parseInt(str);
+            viewport.setWidth(width);
+        }
         return viewport;
     }
 
@@ -544,15 +569,19 @@ class TreeLoader {
                 //System.out.println(obj.getNodeName());
                 Element rootEle = (Element) obj;
                 String space = rootEle.getAttribute("xmlns");
-                if (space.equals(svgNS)) {
+                if (svgNS.equals(space)) {
                     try {
-                        doc = javax.xml.parsers.DocumentBuilderFactory.newInstance().
-                              newDocumentBuilder().newDocument();
+                        DocumentBuilderFactory fact =
+                          DocumentBuilderFactory.newInstance();
+                        fact.setNamespaceAware(true);
+
+                        doc = fact. newDocumentBuilder().newDocument();
                         Node node = doc.importNode(obj, true);
                         doc.appendChild(node);
                         DOMImplementation impl =
                           SVGDOMImplementation.getDOMImplementation();
                         // due to namespace problem attributes are not cloned
+                        // serializing causes an npe
                         //doc = DOMUtilities.deepCloneDocument(doc, impl);
 
                         ForeignObject fo = new ForeignObject(doc, svgNS);
@@ -562,8 +591,10 @@ class TreeLoader {
                     }
                 } else {
                     try {
-                        doc = javax.xml.parsers.DocumentBuilderFactory.newInstance().
-                              newDocumentBuilder().newDocument();
+                        DocumentBuilderFactory fact =
+                          DocumentBuilderFactory.newInstance();
+                        fact.setNamespaceAware(true);
+                        doc = fact. newDocumentBuilder().newDocument();
                         Node node = doc.importNode(obj, true);
                         doc.appendChild(node);
                         ForeignObject fo = new ForeignObject(doc, space);
@@ -602,14 +633,28 @@ class TreeLoader {
         String rt = root.getAttribute("ruleThickness");
         int thick = Integer.parseInt(rt);
         leader.setRuleThickness(thick);
+        rt = root.getAttribute("width");
+        if (rt != null && !"".equals(rt)) {
+            thick = Integer.parseInt(rt);
+            leader.setWidth(thick);
+        }
+        leader.setOffset(currentFontState.getCapHeight());
         addProperties(root, leader);
         return leader;
     }
 
     Word getWord(Element root) {
-        String url = root.getAttribute("url");
+        String str = getString(root);
         Word word = new Word();
+        word.setWord(str);
         addProperties(root, word);
+        int width = 0;
+        for (int count = 0; count < str.length(); count++) {
+            width += currentFontState.width(str.charAt(count));
+        }
+        word.setWidth(width);
+        word.setOffset(currentFontState.getCapHeight());
+
         return word;
     }
 

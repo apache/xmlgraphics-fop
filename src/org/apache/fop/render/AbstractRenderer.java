@@ -13,12 +13,14 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.*;
 import org.apache.fop.area.Span;
 import org.apache.fop.area.inline.*;
+import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.fo.FOUserAgent;
 
 import org.apache.log.Logger;
 
 // Java
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -56,6 +58,29 @@ public abstract class AbstractRenderer implements Renderer {
         options = opt;
     }
 
+    /**
+     * Utility method to convert a page sequence title to a string.
+     * Some renderers may only be able to use a string title.
+     * A title is a sequence of inline areas that this method
+     * attempts to convert to an equivalent string.
+     */
+    public String convertTitleToString(Title title) {
+        String str = "";
+        List children = title.getInlineAreas();
+
+        for (int count = 0; count < children.size(); count++) {
+            InlineArea inline = (InlineArea) children.get(count);
+            if (inline instanceof Character) {
+                str += ((Character) inline).getChar();
+            } else if (inline instanceof Word) {
+                str += ((Word) inline).getWord();
+            } else {
+                str += " ";
+            }
+        }
+        return str.trim();
+    }
+
     public void startPageSequence(Title seqTitle) {
     }
 
@@ -87,6 +112,11 @@ public abstract class AbstractRenderer implements Renderer {
     // a position from where the region is placed
     protected void renderRegionViewport(RegionViewport port) {
         if (port != null) {
+            Rectangle2D view = port.getViewArea();
+            currentBPPosition = (int) view.getY();
+            currentIPPosition = (int) view.getX();
+            currentBlockIPPosition = currentIPPosition;
+
             Region region = port.getRegion();
             if (region.getRegionClass() == Region.BODY) {
                 renderBodyRegion((BodyRegion) region);
@@ -185,7 +215,9 @@ public abstract class AbstractRenderer implements Renderer {
                 // of the line, each inline object is offset from there
                 for (int count = 0; count < children.size(); count++) {
                     LineArea line = (LineArea) children.get(count);
+                    currentBlockIPPosition = currentIPPosition;
                     renderLineArea(line);
+                    currentBPPosition += line.getHeight();
                 }
 
             }
@@ -213,21 +245,30 @@ public abstract class AbstractRenderer implements Renderer {
         } else if (content instanceof ForeignObject) {
             renderForeignObject((ForeignObject) content);
         }
+        currentBlockIPPosition += viewport.getWidth();
     }
 
     public void renderImage(Image image) {
     }
 
     public void renderContainer(Container cont) {
+        int saveIP = currentIPPosition;
+        currentIPPosition = currentBlockIPPosition;
+        int saveBlockIP = currentBlockIPPosition;
+        int saveBP = currentBPPosition;
+
         List blocks = cont.getBlocks();
         renderBlocks(blocks);
+        currentIPPosition = saveIP;
+        currentBlockIPPosition = saveBlockIP;
+        currentBPPosition = saveBP;
     }
 
     public void renderForeignObject(ForeignObject fo) {
 
     }
 
-    public void renderCharacter(org.apache.fop.area.inline.Character ch) {
+    public void renderCharacter(Character ch) {
         currentBlockIPPosition += ch.getWidth();
     }
 

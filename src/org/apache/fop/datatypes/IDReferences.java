@@ -91,7 +91,6 @@ public class IDReferences {
      * Creates id entry that hasn't been validated
      *
      * @param id     The id to create
-     * @exception FOPException
      */
     public void createUnvalidatedID(String id) {
         if (id != null &&!id.equals("")) {
@@ -178,7 +177,6 @@ public class IDReferences {
      * Removes id from IDReferences
      *
      * @param id     The id to remove
-     * @exception FOPException
      */
     public void removeID(String id) {
         idReferences.remove(id);
