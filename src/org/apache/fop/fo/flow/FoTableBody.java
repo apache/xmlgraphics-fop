@@ -124,7 +124,7 @@ public class FoTableBody extends FONode {
                    != null) {
                 new FoMarker(getFOTree(), this, ev, stateFlags);
                 numMarkers++;
-                xmlevents.getEndElement(FObjectNames.MARKER);
+                xmlevents.getEndElement(ev);
             }
 
             // Look for one or more table-rows
@@ -134,7 +134,7 @@ public class FoTableBody extends FONode {
                    != null) {
                 new FoTableRow(getFOTree(), this, ev, stateFlags);
                 numRows++;
-                xmlevents.getEndElement(FObjectNames.TABLE_ROW);
+                xmlevents.getEndElement(ev);
             }
 
             if (numRows > 0) {
@@ -147,7 +147,7 @@ public class FoTableBody extends FONode {
                        != null) {
                     new FoTableCell(getFOTree(), this, ev, stateFlags);
                     numCells++;
-                    xmlevents.getEndElement(FObjectNames.TABLE_CELL);
+                    xmlevents.getEndElement(ev);
                 }
                 if (numCells == 0)
                     throw new FOPException
