@@ -33,7 +33,7 @@
       <!-- transformer-factory>org.apache.xalan.xsltc.trax.TransformerFactoryImpl</transformer-factory -->
     </map:transformer>
   </map:transformers>
-
+      
   <map:readers default="resource">
    <map:reader name="resource"       src="org.apache.cocoon.reading.ResourceReader"/>
   </map:readers>
@@ -48,6 +48,12 @@
      <encoding>ISO-8859-1</encoding>
    </map:serializer>
 
+   <map:serializer name="rss091"    mime-type="text/xml"         src="org.apache.cocoon.serialization.XMLSerializer">
+     <doctype-public>-//Netscape Communications//DTD RSS 0.91//EN</doctype-public>
+     <doctype-system>http://my.netscape.com/publish/formats/rss-0.91.dtd</doctype-system>
+     <encoding>ISO-8859-1</encoding>
+   </map:serializer>
+   
    <map:serializer name="fo2pdf"
                 src="org.apache.cocoon.serialization.FOPSerializer"
                 mime-type="application/pdf"/>
@@ -90,7 +96,19 @@
   <map:actions>
    <!-- <map:action logger="sitemap.action.request" name="request" src="org.apache.cocoon.acting.RequestParamAction"/> -->
     <map:action logger="sitemap.action.resource-exists" name="resource-exists" src="org.apache.cocoon.acting.ResourceExistsAction"/>
+    <map:action logger="sitemap.action.sourcetype" name="sourcetype" src="org.apache.forrest.components.sourcetype.SourceTypeAction">
+      <sourcetype name="document-v11">
+        <document-declaration public-id="-//APACHE//DTD Documentation V1.1//EN"/>
+      </sourcetype>
+      <sourcetype name="howto-v10">
+        <document-declaration public-id="-//APACHE//DTD How-to V1.0//EN"/>
+      </sourcetype>
+    </map:action>
   </map:actions>
+
+  <map:selectors>
+    <map:selector logger="sitemap.selector.parameter" name="parameter" src="org.apache.cocoon.selection.ParameterSelector"/>
+  </map:selectors>
 
   <!--
      The different pipeline implementations
@@ -103,7 +121,7 @@
      <map:pipeline name="profile-noncaching" src="org.apache.cocoon.components.profiler.ProfilingNonCachingProcessingPipeline"/>
      -->
   </map:pipelines>
-
+  
  </map:components>
 
 <!-- =========================== Views =================================== -->
@@ -121,11 +139,11 @@
 
  <map:resources>
   <map:resource name="skinit">
-   <map:transform src="skins/{defaults:skin}/xslt/html/{type}.xsl">
+   <map:transform src="skins/{forrest:skin}/xslt/html/{type}.xsl">
      <map:parameter name="isfaq" value="{isfaq}"/>
      <map:parameter name="nopdf" value="{nopdf}"/>
      <map:parameter name="path" value="{path}"/>
-     <!-- Can set an alternative project skinconfig here
+     <!-- Can set an alternative project skinconfig here 
      <map:parameter name="config-file" value="../../../../skinconf.xml"/>
      -->
    </map:transform>
@@ -141,7 +159,21 @@
   </map:resource>
 
   <map:resource name="skin-read">
-    <map:read src="skins/{defaults:skin}/{path}" mime-type="{mime-type}"/>
+    <map:read src="skins/{forrest:skin}/{path}" mime-type="{mime-type}"/>
+  </map:resource>
+
+  <!-- Checks the document type of the resource passed in the "src" parameter
+       and converts it to document if necessary -->
+  <map:resource name="transform-to-document">
+    <map:act type="sourcetype" src="{src}">
+      <map:select type="parameter">
+        <map:parameter name="parameter-selector-test" value="{sourcetype}"/>
+        <map:when test="howto-v10">
+          <map:transform src="library/xslt/howto2document.xsl" label="content"/>
+        </map:when>
+        <map:otherwise/>
+      </map:select>
+    </map:act>
   </map:resource>
 
  </map:resources>
@@ -149,28 +181,28 @@
 <!-- =========================== Pipelines ================================= -->
 
  <map:pipelines>
-
+  
   <!-- Pipeline that manages the internal URI space
        For the external URI space manager, see the next pipeline. -->
-  <map:pipeline internal-only="true">
+  <map:pipeline>
 
   <map:match pattern="**tab-**.xml">
     <map:generate src="content/xdocs/tabs.xml"/>
     <map:call resource="skinit">
      <map:parameter name="type" value="tab2menu"/>
-     <map:parameter name="path" value="{2}.html"/>
+     <map:parameter name="path" value="{2}"/>
     </map:call>
   </map:match>
 
   <map:match pattern="**book-**/*.xml">
     <map:call resource="book">
-     <map:parameter name="path" value="{2}/{3}"/>
+     <map:parameter name="path" value="{2}/{3}.xml"/>
     </map:call>
   </map:match>
 
   <map:match pattern="**book-**.xml">
     <map:call resource="book">
-      <map:parameter name="path" value="{2}"/>
+      <map:parameter name="path" value="{2}.xml"/>
     </map:call>
   </map:match>
 
@@ -188,7 +220,7 @@
      <map:transform src="library/xslt/changes2document.xsl" label="content"/>
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
-      <map:parameter name="path" value="/changes"/>
+      <map:parameter name="path" value="/changes.xml"/>
      </map:call>
    </map:match>
 
@@ -197,7 +229,7 @@
      <map:transform src="library/xslt/faq2document.xsl" label="content"/>
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
-      <map:parameter name="path" value="{1}/faq"/>
+      <map:parameter name="path" value="{1}/faq.xml"/>
       <map:parameter name="isfaq" value="true"/>
 
      </map:call>
@@ -208,7 +240,7 @@
      <map:transform src="library/xslt/faq2document.xsl" label="content"/>
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
-      <map:parameter name="path" value="faq"/>
+      <map:parameter name="path" value="faq.xml"/>
       <map:parameter name="isfaq" value="true"/>
 
      </map:call>
@@ -226,11 +258,6 @@
    </map:match>
 
 <!-- ======================== End FOP Additions ======================== -->
-
-   <!-- Redirect requests for community/ (eg in the trail) to the home page -->
-   <map:match pattern="community/index.html">
-     <map:redirect-to uri="../index.html"/>
-   </map:match>
 
    <!-- index pages for contribution categories -->
    <map:match pattern="body-community/*/index.xml">
@@ -259,7 +286,7 @@
      <map:transform src="library/xslt/{1}2document.xsl" label="content"/>
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
-      <map:parameter name="path" value="community/{1}/{2}/{3}"/>
+      <map:parameter name="path" value="community/{1}/{2}/{3}.xml"/>
      </map:call>
    </map:match>
 
@@ -275,15 +302,6 @@
    <map:serialize type="xml" />
  </map:match>
 
- <!-- Any other howto directories get transformed, without revisions -->
- <map:match pattern="body-**howto/*.xml">
-   <map:generate src="content/xdocs/{1}howto/{2}.xml"/>
-   <map:transform src="library/xslt/howto2document.xsl" label="content"/>
-   <map:call resource="skinit">
-     <map:parameter name="type" value="document2html"/>
-     <map:parameter name="path" value="{1}howto/{2}"/>
-   </map:call>
- </map:match>
 
 
    <!-- Generate the "doclist" - list of all documentation
@@ -307,7 +325,7 @@
      <map:transform src="library/xslt/doclist2document.xsl"/>
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
-      <map:parameter name="path" value="doclist"/>
+      <map:parameter name="path" value="doclist.xml"/>
       <map:parameter name="nopdf" value="true"/>
      </map:call>
    </map:match>
@@ -323,25 +341,31 @@
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
       <map:parameter name="isfaq" value="true"/>
-      <map:parameter name="path" value="{1}.dtdx.html"/>
+      <map:parameter name="path" value="{1}.dtdx.xml"/>
      </map:call>
    </map:match>
 
    <!-- Generates body HTML for files in subdirs -->
    <map:match pattern="body-**/*.xml">
     <map:generate src="content/xdocs/{1}/{2}.xml"/>
+    <map:call resource="transform-to-document">
+     <map:parameter name="src" value="content/xdocs/{1}/{2}.xml"/>
+    </map:call>
     <map:call resource="skinit">
      <map:parameter name="type" value="document2html"/>
-     <map:parameter name="path" value="{1}/{2}"/>
+     <map:parameter name="path" value="{1}/{2}.xml"/>
     </map:call>
-    </map:match>
+   </map:match>
 
    <!-- Generates body HTML for root-level files -->
    <map:match pattern="body-**.xml">
     <map:generate src="content/xdocs/{1}.xml"/>
+    <map:call resource="transform-to-document">
+     <map:parameter name="src" value="content/xdocs/{1}.xml"/>
+    </map:call>
     <map:call resource="skinit">
      <map:parameter name="type" value="document2html"/>
-     <map:parameter name="path" value="{1}"/>
+     <map:parameter name="path" value="{1}.xml"/>
     </map:call>
    </map:match>
 
@@ -381,20 +405,28 @@
 
 <!-- ======================= End FOP Additions ======================== -->
 
+   <!-- ======================    editor    ============================== -->
+   <map:match pattern="edit**">
+     <map:mount uri-prefix="edit" src="editor.xmap" check-reload="yes"/>
+   </map:match>
+   
+   <!-- ==================   External URI-space    ========================= -->   
+
+
    <map:match pattern="">
-    <map:redirect-to uri="/{context:context}/index.html"/>
+    <map:redirect-to uri="{request:contextPath}/index.html"/>
    </map:match>
 
    <map:match pattern="**">
-
+   
     <!-- if the file is present verbatim as content, give that to the user... -->
     <map:act type="resource-exists">
      <map:parameter name="url" value="content/{1}"/>
      <map:read src="content/{../1}"/>
     </map:act>
-
+   
    <!-- ... otherwise try to generate it using these rules.  -->
-
+  
   <map:match pattern="apachestats">
     <map:generate type="html"
                   src="http://www.apache.org/~rubys/stats/xml.apache.org/">
@@ -404,7 +436,7 @@
     <map:serialize type="xml"/>
   </map:match>
 
-
+     
    <map:match pattern="*.html">
     <map:aggregate element="site">
      <map:part src="cocoon:/book-{1}.xml"/>
@@ -413,7 +445,7 @@
     </map:aggregate>
     <map:call resource="skinit">
       <map:parameter name="type" value="site2xhtml"/>
-      <map:parameter name="path" value="{1}"/>
+      <map:parameter name="path" value="{0}"/>
     </map:call>
    </map:match>
 
@@ -425,7 +457,7 @@
     </map:aggregate>
      <map:call resource="skinit">
       <map:parameter name="type" value="site2xhtml"/>
-      <map:parameter name="path" value="{1}/{2}"/>
+      <map:parameter name="path" value="{0}"/>
      </map:call>
    </map:match>
 
@@ -435,7 +467,7 @@
      </map:generate>
      <map:transform src="library/xslt/dtdx2flat.xsl"/>
      <map:transform src="library/xslt/flat2document.xsl"/>
-     <map:transform src="skins/{defaults:skin}/xslt/fo/document2fo.xsl"/>
+     <map:transform src="skins/{forrest:skin}/xslt/fo/document2fo.xsl"/>
     <map:serialize type="fo2pdf"/>
    </map:match>
 
@@ -445,7 +477,7 @@
      </map:generate>
      <map:transform src="library/xslt/dtdx2flat.xsl"/>
      <map:transform src="library/xslt/flat2document.xsl"/>
-    <map:transform src="skins/{defaults:skin}/xslt/fo/document2fo.xsl"/>
+    <map:transform src="skins/{forrest:skin}/xslt/fo/document2fo.xsl"/>
     <map:serialize type="fo2pdf"/>
    </map:match>
 
@@ -456,6 +488,12 @@
     <map:serialize type="fo2pdf"/>
    </map:match>
 
+   <map:match pattern="changes.rss">
+     <map:generate type="file-nolabel" src="status.xml"/>
+     <map:transform src="library/xslt/changes2rss.xsl" label="content"/>
+     <map:serialize type="rss091"/>
+   </map:match>
+   
    <map:match pattern="todo.pdf">
     <map:generate type="file-nolabel" src="status.xml"/>
     <map:transform src="library/xslt/todo2document.xsl" label="content"/>
@@ -488,23 +526,19 @@
 
 <!-- ======================= End FOP Additions ======================== -->
 
-   <map:match pattern="community/howto/**.pdf">
-    <map:generate src="content/xdocs/community/howto/{1}.xml"/>
-    <map:transform src="library/xslt/howto2document.xsl" label="content"/>
-    <map:transform src="skins/{defaults:skin}/xslt/fo/document2fo.xsl"/>
-    <map:serialize type="fo2pdf"/>
-   </map:match>
-
    <map:match pattern="**.pdf">
     <map:generate src="content/xdocs/{1}.xml"/>
-    <map:transform src="skins/{defaults:skin}/xslt/fo/document2fo.xsl"/>
+    <map:call resource="transform-to-document">
+     <map:parameter name="src" value="content/xdocs/{1}.xml"/>
+    </map:call>
+    <map:transform src="skins/{forrest:skin}/xslt/fo/document2fo.xsl"/>
     <map:serialize type="fo2pdf"/>
    </map:match>
 
    <!-- ================  Directory redirects   =========================== -->
    <!-- Redirect any request for a directory to the directory's index.html file  -->
    <map:match pattern="**/">
-     <map:redirect-to uri="{context:context}/{1}/index.html"/>
+     <map:redirect-to uri="{request:contextPath}/{1}/index.html"/>
    </map:match>
 
    <!-- ================  Libre   =========================== -->
@@ -594,7 +628,7 @@
    </map:match>
 
    </map:match>
-
+   
   </map:pipeline>
  </map:pipelines>
 
