@@ -66,11 +66,7 @@ import org.apache.fop.area.StorePagesModel;
 import org.apache.fop.area.Title;
 import org.apache.fop.area.TreeExt;
 import org.apache.fop.fo.StructureHandler;
-import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.layout.FontInfo;
-import org.apache.fop.render.Renderer;
 import org.apache.fop.fo.flow.Block;
-import org.apache.fop.fo.flow.Flow;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
@@ -80,6 +76,10 @@ import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
+import org.apache.fop.fo.pagination.Flow;
+import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.render.Renderer;
 
 /**
  * Layout handler that receives the structure events.

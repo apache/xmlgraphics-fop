@@ -53,9 +53,6 @@ package org.apache.fop.fo.pagination;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.Title;
-import org.apache.fop.fo.flow.Flow;
-import org.apache.fop.fo.flow.StaticContent;
 import org.apache.fop.layout.PageMaster;
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.PageViewport;
