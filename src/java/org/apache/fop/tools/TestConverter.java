@@ -315,10 +315,8 @@ public class TestConverter {
                 driver.setRenderer(Driver.RENDER_XML);
             }
 
-            Map rendererOptions = new java.util.HashMap();
-            rendererOptions.put("fineDetail", new Boolean(false));
-            rendererOptions.put("consistentOutput", new Boolean(true));
-            driver.getRenderer().setOptions(rendererOptions);
+            userAgent.getRendererOptions().put("fineDetail", new Boolean(false));
+            userAgent.getRendererOptions().put("consistentOutput", new Boolean(true));
             driver.getRenderer().setProducer("Testsuite Converter");
 
             String outname = res;
