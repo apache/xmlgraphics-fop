@@ -36,14 +36,7 @@ import javax.xml.transform.stream.StreamSource;
 
 // XML
 import org.apache.commons.logging.impl.SimpleLog;
-import org.apache.commons.logging.Log;
 import org.apache.fop.apps.Fop;
-import org.xml.sax.InputSource;
-
-//Java
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
 
 
 /**

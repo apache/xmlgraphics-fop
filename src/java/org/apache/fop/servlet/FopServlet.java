@@ -35,7 +35,6 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.impl.SimpleLog;
-import org.apache.commons.logging.Log;
 
 //FOP
 import org.apache.fop.apps.Fop;
