@@ -141,12 +141,12 @@ public class Property {
          * of compound property types, such as "space".
          * Overridden by property maker subclasses which handle
          * compound properties.
-         * @param subprop The name of the component for which a Maker is to
-         * returned, for example "optimum", if the FO attribute is
+         * @param subprop The Constants ID of the component for which a Maker is to
+         * returned, for example CP_OPTIMUM, if the FO attribute is
          * space.optimum='10pt'.
          * @return the Maker object specified
          */
-        protected Maker getSubpropMaker(String subprop) {
+        protected Maker getSubpropMaker(int subpropId) {
             return null;
         }
 
@@ -188,11 +188,11 @@ public class Property {
             if (baseProp == null) {
                 baseProp = makeCompound(propertyList, fo);
             }
-            Maker spMaker = getSubpropMaker(partName);
+            int partId = FOPropertyMapping.getSubPropertyId(partName);
+            Maker spMaker = getSubpropMaker(partId);
             if (spMaker != null) {
                 Property p = spMaker.make(propertyList, value, fo);
                 if (p != null) {
-                    int partId = FOPropertyMapping.getSubPropertyId(partName);
                     return setSubprop(baseProp, partId, p);
                 }
             } else {

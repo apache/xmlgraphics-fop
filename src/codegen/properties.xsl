@@ -523,10 +523,12 @@ public class </xsl:text>
         super(propId);</xsl:text>
       <xsl:if test="compound">
         <xsl:text>
-        m_shorthandMaker= getSubpropMaker("</xsl:text>
-        <xsl:value-of select=
-            'compound/subproperty[@set-by-shorthand="true"]/name'/>
-        <xsl:text>");</xsl:text>
+        m_shorthandMaker= getSubpropMaker(Constants.CP_</xsl:text>
+        <xsl:call-template name="makeEnumConstant">
+          <xsl:with-param name="propstr" select=
+          		'compound/subproperty[@set-by-shorthand="true"]/name'/>
+        </xsl:call-template>
+        <xsl:text>);</xsl:text>
       </xsl:if>
       <xsl:text>
     }
@@ -544,7 +546,7 @@ public class </xsl:text>
         return true;
     }
 
-    protected Property.Maker getSubpropMaker(String subprop) {</xsl:text>
+    protected Property.Maker getSubpropMaker(int subpropId) {</xsl:text>
         <xsl:for-each select="compound/subproperty">
           <xsl:variable name="spname">
             <xsl:call-template name="makeClassName">
@@ -552,15 +554,17 @@ public class </xsl:text>
             </xsl:call-template>
           </xsl:variable>
           <xsl:text>
-        if (subprop.equals("</xsl:text>
-          <xsl:value-of select='name'/>
-          <xsl:text>"))
+        if (subpropId == Constants.CP_</xsl:text>
+          <xsl:call-template name="makeEnumConstant">
+            <xsl:with-param name="propstr" select="name"/>
+          </xsl:call-template>
+          <xsl:text>)
             return s_</xsl:text>
           <xsl:value-of select="$spname"/>
           <xsl:text>Maker;</xsl:text>
         </xsl:for-each>
         <xsl:text>
-        return super.getSubpropMaker(subprop);
+        return super.getSubpropMaker(subpropId);
     }
 
     protected Property setSubprop(Property baseProp, int subpropId,
@@ -624,9 +628,11 @@ public class </xsl:text>
        // set default for subprop </xsl:text>
         <xsl:value-of select="."/>
         <xsl:text>
-          subProp = getSubpropMaker("</xsl:text>
-        <xsl:value-of select='.'/>
-        <xsl:text>").make(pList, getDefaultFor</xsl:text>
+       subProp = getSubpropMaker(Constants.CP_</xsl:text>
+        <xsl:call-template name="makeEnumConstant">
+          <xsl:with-param name="propstr" select="."/>
+        </xsl:call-template>
+        <xsl:text>).make(pList, getDefaultFor</xsl:text>
         <xsl:value-of select='$spname'/>
         <xsl:text>(), fo);
        p.setComponent(Constants.CP_</xsl:text>
