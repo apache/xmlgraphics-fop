@@ -12,7 +12,6 @@ import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.layout.*;
-import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.render.pdf.Font;

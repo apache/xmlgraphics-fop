@@ -16,7 +16,6 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.pdf.PDFPathPaint;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.layout.*;
-import org.apache.fop.layout.inline.*;
 import org.apache.fop.image.*;
 
 import org.w3c.dom.svg.SVGSVGElement;

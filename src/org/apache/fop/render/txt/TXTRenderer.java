@@ -14,7 +14,6 @@ import org.apache.fop.render.pcl.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
-import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.pdf.PDFPathPaint;
 import org.apache.fop.pdf.PDFColor;

@@ -15,7 +15,6 @@ package org.apache.fop.render.awt;
  */
 
 import org.apache.fop.layout.*;
-import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.image.*;
 import org.apache.fop.svg.*;
