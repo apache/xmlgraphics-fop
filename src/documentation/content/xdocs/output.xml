@@ -41,7 +41,7 @@ FOP uses a value of 72dpi.
   <section id="general-direct-output">
     <title>Output to a Printer or Other Device</title>
         <p>
-The most obvious way to print your document is to use the FOP <link href="">print renderer</link>, which uses the Java API (AWT).
+The most obvious way to print your document is to use the FOP <link href="#print">print renderer</link>, which uses the Java API (AWT).
 However, you can also send output from the Postscript renderer directly to a Postscript device, or output from the PCL renderer directly to a PCL device.
     </p>
     <p>
