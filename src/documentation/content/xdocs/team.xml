@@ -12,8 +12,14 @@
     <section id="commit-active">
       <title>Active Committers</title>
       <ul>
+        <li><link href="mailto:bckfnn@worldonline.dk">Finn Bock</link> (FB)</li>
+        <li><link href="mailto:bowditch_chris@hotmail.com">Chris Bowditch</link> (CB)</li>
+        <li><link href="mailto:a_l.delmelle@pandora.be">Andreas Delmelle</link> (AD)</li>
         <li id="cg"><link href="mailto:chrisg@apache.org">Christian Geisert</link> (CG)</li>
-        <li id="kll"><link href="mailto:keiron@apache.org">Keiron Liddle</link> (KLL)</li>
+        <li><link href="mailto:pherweg@web.de">Peter Herweg</link> (PH) is helping to 
+            integrate the jfor project's RTF support into the upcoming FOP 1.0 version.
+            Born in 1978, he has been serving as an application developer for a small 
+            industrial company in Germany since 1999.</li>
         <li id="jm"><link href="mailto:jeremias@apache.org">Jeremias M&#x00E4;rki</link> (JM)
           is a software engineer from Lucerne, Switzerland. He is currently enjoying a longer period of
           "independence" and is having fun working on open source projects like Apache FOP. He's also
@@ -21,10 +27,6 @@
         </li>
         <li id="gm"><link href="mailto:gmazza@apache.org">Glen Mazza</link> (GM) is an information
             systems analyst with EDS in Arlington, Virginia, USA.</li>
-        <li id="wvm"><link href="mailto:vmote@apache.org">Victor Mote</link> (WVM) is the founder and
-            manager of <fork href="http://www.outfitr.com">Enterprise Outfitters</fork>, a business 
-            software company, and of <fork href="http://www.portagepub.com">Portage Publications</fork>, 
-            a republisher of old documents. Both are located in Colorado Springs, Colorado, USA.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
         <li id="ot"><link href="mailto:olegt@apache.org">Oleg Tkachenko</link> (OT)</li>
         <li id="pbw"><link href="mailto:pbwest@apache.org">Peter B. West</link> (PBW)</li>
@@ -38,13 +40,6 @@
             Newfoundland.  While developing a taste for good seafood, he still isn't ready
             for seal flipper (even if it's fresh).  He is currently assisting the FOP
             project on memory and performance issues.</li>
-        <li><link href="mailto:bckfnn@worldonline.dk">Finn Bock</link></li>
-        <li><link href="mailto:bowditch_chris@hotmail.com">Chris Bowditch</link></li>
-        <li><link href="mailto:a_l.delmelle@pandora.be">Andreas Delmelle</link></li>
-        <li><link href="mailto:pherweg@web.de">Peter Herweg</link> is helping to 
-            integrate the jfor project's RTF support into the upcoming FOP 1.0 version.
-            Born in 1978, he has been serving as an application developer for a small 
-            industrial company in Germany since 1999.</li>
         <li><link href="mailto:cleeds@medata.com">Clay Leeds</link>
           is a web/WAP/Palm developer from Laguna Beach, California, USA. A 
           recent XML/XSL-FO convert, he has been nit-picking FAQs &amp; assorted web 
@@ -72,16 +67,12 @@
         <li id="sg"><link href="mailto:stanislav@apache.org">Stanislav Gorkhover</link></li>
         <li id="fj"><link href="mailto:fotis@apache.org">Fotis Jannidis</link></li>
         <li id="kl"><link href="mailto:klease@apache.org">Karen Lease</link></li>
+        <li id="kll"><link href="mailto:keiron@apache.org">Keiron Liddle</link></li>
+        <li id="wvm"><link href="mailto:vmote@apache.org">Victor Mote</link></li>
         <li id="jn"><link href="mailto:jordan@apache.org">Jordan Naftolin</link></li>
         <li id="as"><link href="mailto:arved@apache.org">Arved Sandstrom</link></li>
         <li id="es"><link href="mailto:eschaeffer@apache.org">Eric Schaeffer</link></li>
         <li id="aw"><link href="mailto:artw@apache.org">Art Welch</link></li>
-      </ul>
-    </section>
-    <section id="contribute-former">
-      <title>Former Contributors</title>
-      <ul>
-        <li id="ml"><link href="mailto:mark-fop@inomial.com">Mark Lillywhite</link></li>
       </ul>
     </section>
     <section id="expertise">
@@ -90,12 +81,12 @@
         <tr>
           <th/>
           <th>CG </th>
-          <th>KLL</th>
-          <th>JM </th>
-          <th>GM </th>
-          <th>WVM</th>
-          <th>JP </th>
-          <th>OT </th>
+          <th>FB</th>
+          <th>JM</th>
+          <th>GM</th>
+          <th>PH</th>
+          <th>JP</th>
+          <th>OT</th>
           <th>PBW</th>
         </tr>
         <tr>
@@ -105,9 +96,9 @@
           <td>X</td>
           <td/>
           <td/>
-          <td/>
-          <td/>
           <td>X</td>
+          <td/>
+          <td/>
         </tr>
         <tr>
           <td>Release manager</td>
@@ -134,7 +125,7 @@
         <tr>
           <td>Layout</td>
           <td/>
-          <td>X</td>
+          <td></td>
           <td/>
           <td/>
           <td/>
@@ -156,7 +147,7 @@
         <tr>
           <td>SVG</td>
           <td/>
-          <td>X</td>
+          <td></td>
           <td>X</td>
           <td/>
           <td/>
@@ -167,7 +158,7 @@
         <tr>
           <td>Java2D (AWT)</td>
           <td/>
-          <td>X</td>
+          <td></td>
           <td>X</td>
           <td/>
           <td/>
@@ -178,7 +169,7 @@
         <tr>
           <td>PDF</td>
           <td/>
-          <td>X</td>
+          <td></td>
           <td>X</td>
           <td/>
           <td/>
@@ -214,7 +205,7 @@
           <td/>
           <td/>
           <td/>
-          <td/>
+          <td>X</td>
           <td/>
           <td/>
           <td/>
