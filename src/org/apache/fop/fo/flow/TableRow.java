@@ -398,7 +398,10 @@ public class TableRow extends FObj {
 				// added by Hani Elabed 11/27/2000
 				boolean someCellDidNotLayoutCompletely = false;
 
-				for (int i = this.marker; i < numChildren; i++) {
+				// If it takes multiple calls to completely layout the row, we need to process
+				// all of the children (cells) not just those from the marker so that the borders
+				// will be drawn properly.
+				for (int i = 0; i < numChildren; i++) {
 						TableCell cell = (TableCell) children.elementAt(i);
 
 						// added by Hani Elabed 11/22/2000
@@ -433,15 +436,14 @@ public class TableRow extends FObj {
 
 										// locate the first cell
 										// that need to be laid out further
-
-										for (int j = 0; j < numChildren; j++) {
-												CellState state = (CellState) cells.elementAt(j);
-
-												if (! state.isLayoutComplete()) {
-														this.marker = j;
-														break; // out of for loop
-												}
-										}
+										//for (int j = 0; j < numChildren; j++) {
+										//		CellState state = (CellState) cells.elementAt(j);
+										//
+										//		if (! state.isLayoutComplete()) {
+										//				this.marker = j;
+										//				break; // out of for loop
+										//		}
+										//}
 								} else {
 										// added on 11/28/2000, by Dresdner Bank, Germany
 										if (spacer != null) {
