@@ -94,6 +94,7 @@ public class FOUserAgent implements LogEnabled {
     private Map handlers = new java.util.HashMap();
     private String baseURL;
     private PDFEncryptionParams pdfEncryptionParams;
+    private float px2mm = 0.35277777777777777778f; //72dpi (=25.4/dpi)
 
     /**
      * Sets the logger.
@@ -168,7 +169,15 @@ public class FOUserAgent implements LogEnabled {
      * @return float conversion factor
      */
     public float getPixelUnitToMillimeter() {
-        return 0.35277777777777777778f;
+        return this.px2mm;
+    }
+
+    /**
+     * Sets the resolution in dpi.
+     * @param dpi resolution in dpi
+     */
+    public void setResolution(int dpi) {
+        this.px2mm = (float)(25.4 / dpi);
     }
 
     /**
