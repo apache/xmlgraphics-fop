@@ -1260,7 +1260,7 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("static");
         m.addShorthand(s_generics[PR_POSITION]);
-		addPropertyMaker("relative-position", m);
+        addPropertyMaker("relative-position", m);
     }
         
     private void createAreaAlignmentProperties() {
