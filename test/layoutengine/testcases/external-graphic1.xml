@@ -32,7 +32,7 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>plain external-graphic</fo:block>
           <fo:block>
-            <fo:external-graphic src="C:/Dev/FOP/main/xml-fop/test/resources/images/bgimg300dpi.jpg"/>EOG
+            <fo:external-graphic src="../../resources/images/bgimg300dpi.jpg"/>EOG
           </fo:block>
           <fo:block>EOF</fo:block>
         </fo:flow>

@@ -332,7 +332,6 @@ list of possible build targets.
     <echo message="Preparing the build directories"/>
     <mkdir dir="${build.src}"/>
     <mkdir dir="${build.gensrc}"/>
-    <mkdir dir="${build.gensrc}/${properties.dir}"/>
     <mkdir dir="${build.gensrc}/${fonts.dir}"/>
     <mkdir dir="${build.dest}/hyph"/>
   </target>
