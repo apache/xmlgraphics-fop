@@ -13,7 +13,7 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 LIBDIR=../../lib
-LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip:$LIBDIR/ant-1.4.1.jar:$LIBDIR/buildtools.jar:$LIBDIR/xerces-1.2.3.jar:$LIBDIR/xalan-2.0.0.jar
+LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip:$LIBDIR/ant-1.4.1.jar:$LIBDIR/buildtools.jar:$LIBDIR/xercesImpl-2.0.1.jar:$LIBDIR/xml-apis.jar:$LIBDIR/xalan-2.3.1.jar
 
 ANT_HOME=$LIBDIR
 
