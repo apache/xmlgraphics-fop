@@ -63,7 +63,7 @@ import org.apache.fop.layout.AreaTree;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.version.Version;
 import org.apache.fop.xml.FoXMLSerialHandler;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
  * Sets up and runs serialized component threads.
@@ -81,7 +81,7 @@ public class Driver {
     private InputSource source;
 
     private FoXMLSerialHandler xmlhandler;
-    private SyncedFoXmlEventsBuffer xmlevents;
+    private SyncedXmlEventsBuffer xmlevents;
     private FOTree foTree;
     private AreaTree areaTree = new AreaTree();
 
@@ -106,7 +106,7 @@ public class Driver {
      * Sets up the environment and start processing threads.
      * The primary elements of the environment include:<br>
      * the input source, the parser, the
-     * {@link org.apache.fop.xml.SyncedFoXmlEventsBuffer SyncedFoXmlEventsBuffer}
+     * {@link org.apache.fop.xml.SyncedXmlEventsBuffer SyncedXmlEventsBuffer}
      * (<code>xmlevents</code>), the
      * {@link org.apache.fop.xml.FoXMLSerialHandler FoXMLSerialHandler}
      * (<code>xmlhandler</code>) and the
@@ -138,7 +138,7 @@ public class Driver {
         // Setting of namespace-prefixes feature no longer required
         //setParserFeatures(parser);
 
-        xmlevents = new SyncedFoXmlEventsBuffer();
+        xmlevents = new SyncedXmlEventsBuffer();
         xmlhandler = new FoXMLSerialHandler(xmlevents, parser, source);
         foTree = new FOTree(xmlevents);
 
@@ -213,11 +213,6 @@ public class Driver {
                 e.printStackTrace();
                 if (((SAXException)e).getException() != null) {
                     ((SAXException)e).getException().printStackTrace();
-                }
-            } else if (e instanceof FOPException) {
-                e.printStackTrace();
-                if (((FOPException)e).getException() != null) {
-                    ((FOPException)e).getException().printStackTrace();
                 }
             } else {
                 e.printStackTrace();
