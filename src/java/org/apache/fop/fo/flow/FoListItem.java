@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -47,9 +45,8 @@
  * on  behalf of the Apache Software  Foundation and was  originally created by
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
- *  
- *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * 
+ * $Id$
  */
 
 package org.apache.fop.fo.flow;
@@ -72,6 +69,8 @@ import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
  * Implements the fo:list-item flow object.
+ *
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
  */
 public class FoListItem extends FONode {
 
@@ -129,9 +128,6 @@ public class FoListItem extends FONode {
         }
     }
 
-    /** The number of markers on this FO. */
-    private int numMarkers = 0;
-
     /**
      * Construct an fo:list-item node, and build the fo:list-item subtree.
      * <p>Content model for fo:list-item:
@@ -151,19 +147,9 @@ public class FoListItem extends FONode {
                           stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev;
         // Look for zero or more markers
-        String nowProcessing = "marker";
+        getMarkers();
         try {
-            while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
-                   != null) {
-                new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
-                numMarkers++;
-                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
-            }
-
             // Look for one list-item-label
-            nowProcessing = "list-item-label";
             if ((ev = xmlevents.expectStartElement
                     (FObjectNames.LIST_ITEM_LABEL, XmlEvent.DISCARD_W_SPACE))
                    == null)
@@ -175,7 +161,6 @@ public class FoListItem extends FONode {
             namespaces.surrenderEvent(ev);
 
             // Look for one list-item-body
-            nowProcessing = "list-item-body";
             if ((ev = xmlevents.expectStartElement
                     (FObjectNames.LIST_ITEM_BODY, XmlEvent.DISCARD_W_SPACE))
                    == null)
@@ -185,11 +170,6 @@ public class FoListItem extends FONode {
             ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
 
-            /*
-        } catch (NoSuchElementException e) {
-            throw new FOPException
-                ("Unexpected EOF while processing " + nowProcessing + ".");
-            */
         } catch(TreeException e) {
             throw new FOPException("TreeException: " + e.getMessage());
         } catch(PropertyException e) {
