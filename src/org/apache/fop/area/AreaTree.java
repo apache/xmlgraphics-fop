@@ -10,7 +10,9 @@ package org.apache.fop.area;
 import org.apache.fop.render.Renderer;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Area tree for formatting objects.
@@ -74,6 +76,7 @@ public class AreaTree {
                 Resolveable res = (Resolveable)todo.get(count);
                 res.resolve(id, list);
             }
+            resolve.remove(id);
         }
     }
 
@@ -106,10 +109,31 @@ public class AreaTree {
         }
     }
 
+    public void handleTreeExtension(TreeExt ext, int when) {
+        // queue tree extension according to the when
+        model.addExtension(ext, when);
+    }
+
+    public void endDocument() {
+        for(Iterator iter = resolve.keySet().iterator(); iter.hasNext(); ) {
+            String id = (String)iter.next();
+            ArrayList list = (ArrayList)resolve.get(id);
+            for(int count = 0; count < list.size(); count++) {
+                Resolveable res = (Resolveable)list.get(count);
+                if(!res.isResolved()) {
+                    res.resolve(id, null);
+                }
+            }
+        }
+        model.endDocument();
+    }
+
     // this is the model for the area tree object
     public static abstract class AreaTreeModel {
         public abstract void startPageSequence(Title title);
         public abstract void addPage(PageViewport page);
+        public abstract void addExtension(TreeExt ext, int when);
+        public abstract void endDocument();
     }
 
     // this class stores all the pages in the document
@@ -118,6 +142,7 @@ public class AreaTree {
         ArrayList pageSequence = null;
         ArrayList titles = new ArrayList();
         ArrayList currSequence;
+        ArrayList extensions = new ArrayList();
 
         public StorePagesModel() {}
 
@@ -151,6 +176,32 @@ public class AreaTree {
             ArrayList sequence = (ArrayList) pageSequence.get(seq);
             return (PageViewport) sequence.get(count);
         }
+
+        public void addExtension(TreeExt ext, int when) {
+            int seq, page;
+            switch(when) {
+                case TreeExt.IMMEDIATELY:
+                    seq = pageSequence == null ? 0 : pageSequence.size();
+                    page = currSequence == null ? 0 : currSequence.size();
+                break;
+                case TreeExt.AFTER_PAGE:
+                break;
+                case TreeExt.END_OF_DOC:
+                break;
+            }
+            extensions.add(ext);
+        }
+
+        public List getExtensions(int seq, int count) {
+            return null;
+        }
+
+        public List getEndExtensions() {
+            return extensions;
+        }
+
+        public void endDocument() {
+        }
     }
 
     // this uses the store pages model to store the pages
@@ -159,6 +210,8 @@ public class AreaTree {
     public static class RenderPagesModel extends StorePagesModel {
         Renderer renderer;
         ArrayList prepared = new ArrayList();
+        ArrayList pendingExt = new ArrayList();
+        ArrayList endDocExt = new ArrayList();
 
         public RenderPagesModel(Renderer rend) {
             renderer = rend;
@@ -178,9 +231,38 @@ public class AreaTree {
                 // use error handler to handle this FOP or IO Exception
             }
             page.clear();
+
+            renderExtensions(pendingExt);
+            pendingExt.clear();
+
             // else prepare
             //renderer.preparePage(page);
             prepared.add(page);
+        }
+
+        public void addExtension(TreeExt ext, int when) {
+            switch(when) {
+                case TreeExt.IMMEDIATELY:
+                    renderer.renderExtension(ext);
+                break;
+                case TreeExt.AFTER_PAGE:
+                    pendingExt.add(ext);
+                break;
+                case TreeExt.END_OF_DOC:
+                    endDocExt.add(ext);
+                break;
+            }
+        }        
+
+        private void renderExtensions(ArrayList list) {
+            for(int count = 0; count < list.size(); count++) {
+                TreeExt ext = (TreeExt)list.get(count);
+                renderer.renderExtension(ext);
+            }
+        }
+
+        public void endDocument() {
+            renderExtensions(endDocExt);
         }
     }
 

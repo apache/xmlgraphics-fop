@@ -10,6 +10,10 @@ package org.apache.fop.area;
 /**
  */
 public interface TreeExt {
+    public final static int IMMEDIATELY = 0;
+    public final static int AFTER_PAGE = 1;
+    public final static int END_OF_DOC = 2;
+
     public boolean isResolveable();
     public String getMimeType();
     public String getName();

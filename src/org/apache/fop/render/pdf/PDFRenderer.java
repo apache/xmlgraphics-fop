@@ -176,6 +176,38 @@ public class PDFRenderer extends PrintRenderer {
         return true;
     }
 
+    public void renderExtension(TreeExt ext) {
+        // render bookmark extension
+        if(ext instanceof BookmarkData) {
+            renderRootExtensions((BookmarkData)ext);
+        }
+    }
+
+    protected void renderRootExtensions(BookmarkData bookmarks) {
+        for (int i = 0; i < bookmarks.getCount(); i++) {
+            BookmarkData ext = bookmarks.getSubData(i);
+            renderOutline(ext, null);
+        }
+    }
+
+    private void renderOutline(BookmarkData outline, PDFOutline parentOutline) {
+        PDFOutline outlineRoot = pdfDoc.getOutlineRoot();
+        PDFOutline pdfOutline = null;
+        String intDest = (String)pageReferences.get(outline.getPage());
+        if (parentOutline == null) {
+            pdfOutline = pdfDoc.makeOutline(outlineRoot,
+                                    outline.getLabel(), intDest);
+        } else {
+            PDFOutline pdfParentOutline = parentOutline;
+            pdfOutline = pdfDoc.makeOutline(pdfParentOutline,
+                                    outline.getLabel(), intDest);
+        }
+
+        for (int i = 0; i < outline.getCount(); i++) {
+            renderOutline(outline.getSubData(i), pdfOutline);
+        }
+    }
+
     public void startPageSequence(Title seqTitle) {
         if(seqTitle != null) {
             String str = convertTitleToString(seqTitle);

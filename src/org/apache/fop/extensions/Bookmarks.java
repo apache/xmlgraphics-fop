@@ -44,6 +44,7 @@ public class Bookmarks extends ExtensionObj {
         if(structHandler instanceof LayoutHandler) {
             AreaTree at = ((LayoutHandler)structHandler).getAreaTree();
             at.addTreeExtension(data);
+            data.setAreaTree(at);
         }
     }
 }

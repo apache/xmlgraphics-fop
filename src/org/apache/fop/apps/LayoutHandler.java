@@ -1,8 +1,16 @@
+/*
+ * $Id$
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
+ */
+
 package org.apache.fop.apps;
 
 import java.io.OutputStream;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 
 import org.xml.sax.SAXException;
 
@@ -10,6 +18,7 @@ import org.apache.fop.layout.FontInfo;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.Title;
+import org.apache.fop.area.TreeExt;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.LayoutMasterSet;
@@ -116,8 +125,8 @@ public class LayoutHandler extends StructureHandler {
            even if they are not resolved.
          */
         try {
-            //processQueue(true);
             processAreaTree();
+            areaTree.endDocument();
             renderer.stopRenderer();
         } catch (FOPException e) {
             throw new SAXException(e);
@@ -198,7 +207,11 @@ public class LayoutHandler extends StructureHandler {
             }
             count++;
         }
-
+        List list = atModel.getEndExtensions();
+        for(count = 0; count < list.size(); count++) {
+            TreeExt ext = (TreeExt)list.get(count);
+            renderer.renderExtension(ext);
+        }
     }
 
     public FontInfo getFontInfo() {
