@@ -68,6 +68,11 @@
        <td>Output directory</td> 
        <td>Required if a fileset is used to specify the files to render; optional for fofile. (Can alternatively specify the full path in the fofile value.)</td> 
       </tr> 
+      <!--tr Commented out; implemented only in 1.0 currently>
+       <td>force</td> 
+       <td>If <code>true</code>, always generate target file, even if source file has not changed.</td> 
+       <td>No, default is <code>false</code></td> 
+      </tr--> 
       <!--tr  Commented out; attribute is currently unimplemented according to the code> 
        <td>basedir</td> 
        <td>Directory to work from</td> 
