@@ -6,6 +6,15 @@
     <title>FOP Development: Coding Conventions</title>
   </header>
   <body>
+    <p>Acknowledgement: Some content in this guide was adapted from other Apache projects such as Avalon, Cactus, Turbine and Velocity.</p>
+    <section id="cvs">
+      <title>CVS Repository</title>
+      <p>Conventions in this section apply to Repository content, regardless of type:</p>
+      <ul>
+        <li>Files checked in must conform to the code conventions for that type of file (java files must conform to java requirements, xml to xml requirements, etc.). If a submitted patch does not conform, it is the responsibility of the committer to bring it into conformance before checking it in. Developers submitting patches are encouraged to follow the code conventions to reduce the work load on the the committers.</li>
+        <li>To reduce the amount of spurious deltas, all text (non-binary) files checked into CVS must have Unix-style line endings (LF only). Many IDEs and editors (even on non-Unix platforms) have settings that can facilitate this convention.</li>
+      </ul>
+    </section>
     <section id="java">
       <title>Java</title>
       <section id="java-style">
@@ -54,6 +63,11 @@ In addition, the FOP developers have agreed to other conventions, which are summ
             <td>Standardization, general preference.</td>
             <td>checkstyle</td>
           </tr>
+          <tr>
+            <td>Write appropriate javadoc entries for all public and protected classes, methods, and variables.</td>
+            <td>Basic API documentation is needed.</td>
+            <td>checkstyle</td>
+          </tr>
         </table>
         <p>For developers that dislike these conventions, one workaround is to develop using their own style, then use a formatting tool like <link href="http://astyle.sourceforge.net/">astyle</link> (Artistic Style) before committing.</p>
       </section>
@@ -90,6 +104,46 @@ Printing error messages to System.err or System.out is useless in a server-side 
           <li>Try to avoid catching Throwable or Exception and catch specific exceptions instead.</li>
         </ul>
       </section>
+      <section id="java-resources">
+        <title>Resources</title>
+        <ul>
+          <li>[book on code style] Code Complete by Steve McConnell.</li>
+          <li>[code formatting software] <jump href="http://jrefactory.sourceforge.net">JRefactory</jump>.</li>
+        </ul>
+      </section>
+      <section id="java-links">
+        <title>Related Links</title>
+        <ul>
+          <li><jump href="http://xml.apache.org/source.html">Apache Source Repositories</jump></li>
+          <li><jump href="http://jakarta.apache.org/site/faqs.html#Coding%20Conventions%20and%20Standards">Jakarta Code Conventions and Standards</jump> (see Coding Conventions and Standards section)</li>
+          <li><jump href="http://jakarta.apache.org/avalon/code-standards.html">Avalon Project - Coding Standards</jump></li>
+        </ul>
+      </section>
+    </section>
+    <section id="xml">
+      <title>XML</title>
+      <table>
+        <tr>
+          <th>Convention</th>
+          <th>Rationale</th>
+          <th>Enforced By</th>
+        </tr>
+        <tr>
+          <td>XML files must always be well-formed. Validation is optional.</td>
+          <td>Document integrity</td>
+          <td>Not enforced</td>
+        </tr>
+        <tr>
+          <td>No tabs in content.</td>
+          <td>Users should not have to adjust tab settings in their editor to be able to read the content.</td>
+          <td>Not enforced</td>
+        </tr>
+        <tr>
+          <td>Indentation of 2 spaces per level</td>
+          <td>Maximize readability</td>
+          <td>Not enforced</td>
+        </tr>
+      </table>
     </section>
   </body>
 </document>
