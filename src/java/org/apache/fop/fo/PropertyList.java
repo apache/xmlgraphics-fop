@@ -57,6 +57,7 @@ import org.xml.sax.Attributes;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Property.Maker;
+import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.apache.fop.fo.properties.WritingMode;
 
@@ -207,7 +208,7 @@ public class PropertyList extends HashMap {
                 return null;
             }
         }
-        return (Property)super.get(propertyName);
+        return (Property) super.get(propertyName);
     }
 
     /**
@@ -483,6 +484,7 @@ public class PropertyList extends HashMap {
                                             String attributeName,
                                             String attributeValue) {
                                                 
+        Property.Maker propertyMaker = null;
         FObj parentFO = fobj.findNearestAncestorFObj();
         
         HashMap validProperties;
@@ -492,8 +494,12 @@ public class PropertyList extends HashMap {
         String basePropertyName = findBasePropertyName(attributeName);
         String subPropertyName = findSubPropertyName(attributeName);
 
-        Property.Maker propertyMaker = findMaker(validProperties, 
-            basePropertyName);
+        // convert the string (e.g., "font-size") to its const value (PR_FONT_SIZE).
+        int propertyId = FOPropertyMapping.getPropertyId(basePropertyName);
+        if (propertyId != -1) { // -1 w/namespaces (xmlns:fo, xmlns:svg, etc.)
+            propertyMaker = findMaker(validProperties, propertyId);
+        }
+
         if (propertyMaker == null) {
             handleInvalidProperty(attributeName);
             return;
@@ -532,10 +538,14 @@ public class PropertyList extends HashMap {
         }
         // If it is specified later in this list of Attributes, create it
         String basePropertyValue = attributes.getValue(basePropName);
+        
         if (basePropertyValue != null) {
-            baseProperty = propertyMaker.make(this, basePropertyValue,
+            int propertyId = FOPropertyMapping.getPropertyId(basePropertyValue);
+            if (propertyId != -1) {
+                baseProperty = propertyMaker.make(this, basePropertyValue,
                     parentFO);
-            return baseProperty;
+                return baseProperty;
+            }
         }
         // Otherwise it is a compound property ??
         // baseProperty = propertyMaker.makeCompound(propertyList, parentFO);
@@ -660,46 +670,6 @@ public class PropertyList extends HashMap {
     }
 
     /**
-     * @param space namespace of element
-     * @param elementName name of element
-     * @param propertyName name of property
-     * @return the Property.Maker for this property
-     */
-    protected Property.Maker findMaker(String space, String elementName,
-                                       String propertyName) {
-        return findMaker((HashMap) FObj.elementStringTable.get(elementName),
-                         propertyName);
-    }
-
-    /**
-     * Convenience function to return the Maker for a given property
-     * given the HashMap containing properties specific to this element.
-     * If table is non-null and
-     * @param elemTable Element-specific properties or null if none.
-     * @param propertyName Name of property.
-     * @return A Maker for this property.
-     */
-    private Property.Maker findMaker(HashMap elemTable,
-                                     String propertyName) {
-        Property.Maker propertyMaker = null;
-        if (elemTable != null) {
-            propertyMaker = (Property.Maker) elemTable.get(propertyName);
-        }
-        if (propertyMaker == null) {
-            int propId = FOPropertyMapping.getPropertyId(propertyName);
-            if (propId != -1) { // -1 w/namespaces (xmlns:fo, xmlns:svg, etc.)
-                propertyMaker = FObj.propertyListTable[propId];
-            }
-            // old string method (retained temporarily for troubleshooting)
-            // propertyMaker =   
-            //     (Property.Maker) FObj.propertyListStringTable.get(propertyName);
-            // System.out.println(propertyName + "= " + propId + " propMaker = "
-            //     + ((propertyMaker != null) ? (propertyMaker.toString()) : "(is null)"));
-        }
-        return propertyMaker;
-    }
-
-    /**
      *
      * @param propertyList collection of properties
      * @param space namespace of element
@@ -750,5 +720,50 @@ public class PropertyList extends HashMap {
         }
         return b;
     }    
+
+    /**
+     * @param space namespace of element
+     * @param elementName name of element
+     * @param propertyName name of property
+     * @return the Property.Maker for this property
+     */
+    protected Property.Maker findMaker(String space, String elementName,
+        String propertyName) {
+
+        // convert the string (e.g., "font-size") to its const value (PR_FONT_SIZE).
+        int propertyId = FOPropertyMapping.getPropertyId(propertyName);
+        if (propertyId != -1) { // -1 w/namespaces (xmlns:fo, xmlns:svg, etc.)
+            return findMaker((HashMap) FObj.elementStringTable.get(elementName),
+                             propertyId);
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Convenience function to return the Maker for a given property
+     * given the HashMap containing properties specific to this element.
+     * If table is non-null and
+     * @param elemTable Element-specific properties or null if none.
+     * @param propId int value of property (see property.Constants)
+     * @return A Maker for this property.
+     */
+    private Property.Maker findMaker(HashMap elemTable,
+                                     int propertyId) {
+        
+        if (propertyId < 1 || propertyId > Constants.PROPERTY_COUNT) {
+            return null;
+        }
+        
+        Property.Maker propertyMaker = null;
+        if (elemTable != null) {
+            String propertyName = FOPropertyMapping.getPropertyName(propertyId);
+            propertyMaker = (Property.Maker) elemTable.get(propertyName);
+        }
+        if (propertyMaker == null) {
+            propertyMaker = FObj.propertyListTable[propertyId];
+        }
+        return propertyMaker;
+    }
 }
 
