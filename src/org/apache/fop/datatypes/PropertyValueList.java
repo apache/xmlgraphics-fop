@@ -7,6 +7,7 @@ import java.util.Iterator;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 
@@ -36,6 +37,11 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
      * An integer property type.
      */
     public final int type;
+
+    /**
+     * The <tt>FONode</tt> that stacked this value.
+     */
+    private FONode stackedBy = null;
 
     /**
      * @param property <tt>int</tt> index of the property.
@@ -175,6 +181,21 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
      */
     public int getType() {
         return type;
+    }
+
+    /**
+     * Set the node that stacked this value.
+     * @param node - the <tt>FONode</tt> that stacked this value.
+     */
+    public void setStackedBy(FONode node) {
+        stackedBy = node;
+    }
+
+    /**
+     * Get the node that stacked this value.
+     */
+    public FONode getStackedBy() {
+        return stackedBy;
     }
 
     /**
