@@ -79,23 +79,16 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         
         int marginProp = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
         Numeric margin;
-//          Calculate the absolute margin.
+        // Calculate the absolute margin.
         if (propertyList.getExplicitOrShorthand(marginProp) == null) {
             Property indent = propertyList.getExplicit(baseMaker.propId);
             if (indent == null) {
                 //Neither start-indent nor margin is specified, use inherited
-                //margin = new FixedLength(0);
-                /*
-                Numeric v = new FixedLength(0);
-                v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
-                return (Property)v;
-                */
                 return null;
-            } else {
-                margin = propertyList.getExplicit(baseMaker.propId).getNumeric();
-                margin = NumericOp.subtraction(margin, 
-                        propertyList.getInherited(baseMaker.propId).getNumeric());
             }
+            margin = propertyList.getExplicit(baseMaker.propId).getNumeric();
+            margin = NumericOp.subtraction(margin, 
+                    propertyList.getInherited(baseMaker.propId).getNumeric());
             margin = NumericOp.subtraction(margin, padding);
             margin = NumericOp.subtraction(margin, border);
         } else {
@@ -105,9 +98,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         Numeric v = new FixedLength(0);
         if (!propertyList.getFObj().generatesReferenceAreas()) {
             // The inherited_value_of([start|end]-indent)
-            //if (!propertyList.getParentFObj().generatesReferenceAreas()) {
-                v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
-            //}
+            v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
         }
         // The corresponding absolute margin-[right|left}.
         v = NumericOp.addition(v, margin);
