@@ -146,8 +146,7 @@ public class FoCharacter extends FONode {
      * Construct an fo:character node.  This node has no children.
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
-     * this node
+     * @param event that triggered the creation of this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
      */

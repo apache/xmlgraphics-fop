@@ -67,8 +67,8 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
  * Implements the fo:multi-switch flow object.
@@ -126,7 +126,7 @@ public class FoMultiSwitch extends FONode {
      * <p>Content model for fo:multi-switch: (multi-case+)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
+     * @param event that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -137,15 +137,17 @@ public class FoMultiSwitch extends FONode {
     {
         super(foTree, FObjectNames.MULTI_SWITCH, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        FoXMLEvent ev;
+        XMLEvent ev;
         try {
             // Look for one or more multi-case
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.MULTI_CASE, XMLEvent.DISCARD_W_SPACE))
                    != null) {
-                new FoMultiCase(getFOTree(), this, ev, stateFlags);
+                new FoMultiCase(
+                        getFOTree(), this, (FoXMLEvent)ev, stateFlags);
                 numCases++;
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(
+                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
 

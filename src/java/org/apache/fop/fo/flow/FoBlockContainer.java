@@ -67,7 +67,8 @@ import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
@@ -143,7 +144,7 @@ public class FoBlockContainer extends FONode {
      * <p>Content model for fo:block-container: (%block;)+
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XMLEvent</tt> that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -158,7 +159,7 @@ public class FoBlockContainer extends FONode {
         // absolutely positioned areas.  They are not allowed as descendents
         // of fo:title, fo:float or fo:footnote.  They are not allowed to
         // have any fo:marker children.
-        FoXMLEvent ev = null;
+        XMLEvent ev = null;
         try {
             // Get at least one %block;
             if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
@@ -169,9 +170,10 @@ public class FoBlockContainer extends FONode {
                 throw new FOPException
                         ("%block; not found in fo:block-container");
             // Generate the flow object
-            FObjects.fobjects.makeFlowObject(foTree, this, ev, stateFlags);
+            FObjects.fobjects.makeFlowObject(
+                    foTree, this, (FoXMLEvent)ev, stateFlags);
             // Clear the blockage
-            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
             // Get the rest of the %block;s
             do {
@@ -181,9 +183,10 @@ public class FoBlockContainer extends FONode {
                     ev = xmlevents.expectOutOfLineBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makeFlowObject
-                                            (foTree, this, ev, stateFlags);
-                    ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                    FObjects.fobjects.makeFlowObject(
+                            foTree, this, (FoXMLEvent)ev, stateFlags);
+                    ev = xmlevents.getEndElement(
+                            SyncedXmlEventsBuffer.DISCARD_EV, ev);
                     namespaces.surrenderEvent(ev);
                 }
             } while (ev != null);

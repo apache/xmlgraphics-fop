@@ -67,8 +67,8 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
  * Implements the fo:footnote flow object.
@@ -131,7 +131,7 @@ public class FoFootnote extends FONode {
      * <p>Content model for fo:footnote: (inline,footnote-body)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XMLEvent</tt> that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -145,16 +145,18 @@ public class FoFootnote extends FONode {
         if ((stateFlags & FONode.MC_FOOTNOTE) != 0)
             throw new FOPException
                     ("fo:footnote not allowed as child of fo:footnote.");
-        FoXMLEvent ev;
+        XMLEvent ev;
         try {
             // Look for the inline
             if ((ev = xmlevents.expectStartElement
                     (FObjectNames.INLINE, XMLEvent.DISCARD_W_SPACE))
                    == null)
                 throw new FOPException("No inline in footnote.");
-            new FoInline
-                    (getFOTree(), this, ev, stateFlags | FONode.MC_FOOTNOTE);
-            ev =  xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+            new FoInline(
+                    getFOTree(), this, (FoXMLEvent)ev,
+                    stateFlags | FONode.MC_FOOTNOTE);
+            ev =  xmlevents.getEndElement(
+                    SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
 
             // Look for the footnote-body
@@ -162,9 +164,10 @@ public class FoFootnote extends FONode {
                     (FObjectNames.FOOTNOTE_BODY, XMLEvent.DISCARD_W_SPACE))
                    == null)
                 throw new FOPException("No footnote-body in footnote.");
-            new FoFootnoteBody
-                    (getFOTree(), this, ev, stateFlags | FONode.MC_FOOTNOTE);
-            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+            new FoFootnoteBody(
+                    getFOTree(), this, (FoXMLEvent)ev,
+                    stateFlags | FONode.MC_FOOTNOTE);
+            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
 
             /*

@@ -68,7 +68,8 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
@@ -125,7 +126,7 @@ public class FoMultiToggle extends FONode {
      * <p>Only permitted as descendent of a multi-case.
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
+     * @param event that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -136,7 +137,7 @@ public class FoMultiToggle extends FONode {
     {
         super(foTree, FObjectNames.MULTI_TOGGLE, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        FoXMLEvent ev = null;
+        XMLEvent ev = null;
         if ((stateFlags & FONode.MC_MULTI_CASE) != 0)
         do {
             try {
@@ -149,8 +150,9 @@ public class FoMultiToggle extends FONode {
                     //System.out.println("Generating flow object for " + ev);
                     FObjects.fobjects.makeFlowObject
                                 (foTree, this, ev, stateFlags);
-                    if (ev.getFoType() != FObjectNames.PCDATA) {
-                        ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                    if (ev.getType() != XMLEvent.CHARACTERS) {
+                        ev = xmlevents.getEndElement(
+                                SyncedXmlEventsBuffer.DISCARD_EV, ev);
                     }
                     namespaces.surrenderEvent(ev);
                 }
@@ -159,7 +161,8 @@ public class FoMultiToggle extends FONode {
                 MessageHandler.logln
                         ("Ignoring unexpected Start Element: "
                                                          + ev.getQName());
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(
+                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
         } while (ev != null);

@@ -67,8 +67,8 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
  * Implements the fo:multi-properties flow object.
@@ -125,7 +125,7 @@ public class FoMultiProperties extends FONode {
      * <p>Content model for fo:multi-properties: (multi-property-set+,wrapper)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
+     * @param event that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -136,16 +136,18 @@ public class FoMultiProperties extends FONode {
     {
         super(foTree, FObjectNames.MULTI_PROPERTIES, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        FoXMLEvent ev;
+        XMLEvent ev;
         try {
             // Look for one or more multi-property-set
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.MULTI_PROPERTY_SET,
                                                  XMLEvent.DISCARD_W_SPACE))
                    != null) {
-                new FoMultiPropertySet(getFOTree(), this, ev, stateFlags);
+                new FoMultiPropertySet(
+                        getFOTree(), this, (FoXMLEvent)ev, stateFlags);
                 numSets++;
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(
+                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
 
@@ -159,8 +161,8 @@ public class FoMultiProperties extends FONode {
                    == null)
                 throw new FOPException
                         ("No wrapper in multi-properties.");
-            new FoWrapper(getFOTree(), this, ev, stateFlags);
-            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+            new FoWrapper(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
 
             /*

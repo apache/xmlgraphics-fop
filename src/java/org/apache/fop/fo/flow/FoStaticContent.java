@@ -66,7 +66,8 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
@@ -114,7 +115,7 @@ public class FoStaticContent extends FONode {
      * <p>Content model for fo:static-content: (%block;)+
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XMLEvent</tt> that triggered the creation of
      * this node
      */
     public FoStaticContent(FOTree foTree, FONode parent, FoXMLEvent event)
@@ -122,7 +123,7 @@ public class FoStaticContent extends FONode {
     {
         super(foTree, FObjectNames.STATIC_CONTENT, parent, event,
               FONode.STATIC_SET, sparsePropsMap, sparseIndices);
-        FoXMLEvent ev;
+        XMLEvent ev;
         try {
             // Get at least one %block;
             if ((ev = xmlevents.expectBlock()) == null)
@@ -130,19 +131,19 @@ public class FoStaticContent extends FONode {
                         ("%block; not found in fo:static-content");
             // Generate the flow object
             //System.out.println("Generating first block for static-content.");
-            FObjects.fobjects.makeFlowObject
-                                    (foTree, this, ev, FONode.STATIC_SET);
+            FObjects.fobjects.makeFlowObject(
+                    foTree, this, (FoXMLEvent)ev, FONode.STATIC_SET);
             // Clear the blockage
-            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
             // Get the rest of the %block;s
             while ((ev = xmlevents.expectBlock()) != null) {
                 // Generate the flow object
                 //System.out.println
                     //("Generating subsequent block for static-content.");
-                FObjects.fobjects.makeFlowObject
-                                    (foTree, this, ev, FONode.STATIC_SET);
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                FObjects.fobjects.makeFlowObject(
+                        foTree, this, (FoXMLEvent)ev, FONode.STATIC_SET);
+                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
         } catch(UnexpectedStartElementException e) {
