@@ -14,6 +14,7 @@ import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.TextInfo; // should be somewhere else probably...
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.FontInfo;
+import org.apache.fop.layout.FontMetric;
 import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.MarginProps;
 import org.apache.fop.layout.MarginInlineProps;
@@ -68,7 +69,7 @@ public class PropertyManager {
     }
 
 
-    public FontState getFontState(FontInfo fontInfo) throws FOPException {
+    public FontState getFontState(FontInfo fontInfo) {
         if (fontState == null) {
 	    if (fontInfo == null) {
 		fontInfo = m_fontInfo;
@@ -78,14 +79,33 @@ public class PropertyManager {
 	    }
             String fontFamily = properties.get("font-family").getString();
             String fontStyle = properties.get("font-style").getString();
-            String fontWeight = properties.get("font-weight").getString();
+            String fw = properties.get("font-weight").getString();
+            int fontWeight = 400;
+            if(fw.equals("bolder")) {
+                // +100 from inherited
+            } else if(fw.equals("lighter")) {
+                // -100 from inherited
+            } else {
+                try {
+                    fontWeight = Integer.parseInt(fw);
+                } catch(NumberFormatException nfe) {
+                }
+            }
+            fontWeight = ((int)fontWeight / 100) * 100;
+            if(fontWeight < 100) {
+                fontWeight = 100;
+            } else if(fontWeight > 900) {
+                fontWeight = 900;
+            }
+
             // NOTE: this is incomplete. font-size may be specified with
             // various kinds of keywords too
             int fontSize = properties.get("font-size").getLength().mvalue();
             int fontVariant = properties.get("font-variant").getEnum();
-            // fontInfo is same for the whole FOP run but set in all FontState
-            fontState = new FontState(fontInfo, fontFamily, fontStyle,
-                                      fontWeight, fontSize, fontVariant);
+            String fname = fontInfo.fontLookup(fontFamily, fontStyle,
+                                               fontWeight);
+            FontMetric metrics = fontInfo.getMetricsFor(fname);
+            fontState = new FontState(fname, metrics, fontSize);
         }
         return fontState;
     }
@@ -299,13 +319,7 @@ public class PropertyManager {
     public TextInfo getTextLayoutProps(FontInfo fontInfo) {
 	if (textInfo == null) {
 	    textInfo = new TextInfo();
-	    try {
 		textInfo.fs = getFontState(fontInfo);
-	    } catch (FOPException fopex) {
-		/* log.error("Error setting FontState for characters: " +
-		   fopex.getMessage());*/
-		// Now what should we do ???
-	    }
 	    textInfo.color = properties.get("color").getColorType();
 
 	    textInfo.verticalAlign =

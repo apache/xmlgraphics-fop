@@ -18,6 +18,7 @@ import org.apache.fop.render.svg.*;
 import org.apache.fop.render.xml.*;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.FontMetric;
 import org.apache.fop.fo.FOUserAgent;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
@@ -462,13 +463,10 @@ class TreeLoader {
                 Character ch =
                   new Character(getString((Element) obj).charAt(0));
                 addTraits((Element) obj, ch);
-                try {
-                    currentFontState =
-                      new FontState(fontInfo, "sans-serif", "normal",
-                                    "normal", 12000, 0);
-                } catch (FOPException e) {
-                    e.printStackTrace();
-                }
+                String fname = fontInfo.fontLookup("sans-serif", "normal", FontInfo.NORMAL);
+                FontMetric metrics = fontInfo.getMetricsFor(fname);
+                currentFontState =
+                    new FontState(fname, metrics, 12000);
 
                 ch.setWidth(currentFontState.width(ch.getChar()));
                 ch.setOffset(currentFontState.getCapHeight());
@@ -490,16 +488,15 @@ class TreeLoader {
                     list.add(leader);
                 }
             } else if (obj.getNodeName().equals("word")) {
-                try {
-                    currentFontState =
-                      new FontState(fontInfo, "sans-serif", "normal",
-                                    "normal", 12000, 0);
-                } catch (FOPException e) {
-                    e.printStackTrace();
-                }
+                String fname = fontInfo.fontLookup("sans-serif", "normal", FontInfo.NORMAL);
+                FontMetric metrics = fontInfo.getMetricsFor(fname);
+                currentFontState =
+                    new FontState(fname, metrics, 12000);
                 Word word = getWord((Element) obj);
 
-		word.addTrait(Trait.FONT_STATE, currentFontState);
+                word.addTrait(Trait.FONT_NAME, fname);
+                word.addTrait(Trait.FONT_SIZE, new Integer(12000));
+
                 if (word != null) {
                     list.add(word);
                 }

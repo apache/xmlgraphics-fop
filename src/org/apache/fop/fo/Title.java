@@ -44,7 +44,7 @@ public class Title extends ToBeImplementedElement {
         BackgroundProps bProps = propMgr.getBackgroundProps();
 
         // Common Font Properties
-        //FontState fontState = propMgr.getFontState(structHandler.getFontInfo());
+        FontState fontState = propMgr.getFontState(structHandler.getFontInfo());
 
         // Common Margin Properties-Inline
         MarginInlineProps mProps = propMgr.getMarginInlineProps();

@@ -21,10 +21,8 @@ public class Trait implements Serializable {
     public static final Integer ID_LINK = new Integer(0);
     public static final Integer INTERNAL_LINK =  new Integer(1); //resolved
     public static final Integer EXTERNAL_LINK =  new Integer(2);
-    public static final Integer FONT_FAMILY =  new Integer(3);
+    public static final Integer FONT_NAME =  new Integer(3);
     public static final Integer FONT_SIZE =  new Integer(4);
-    public static final Integer FONT_WEIGHT =  new Integer(5);
-    public static final Integer FONT_STYLE =  new Integer(6);
     public static final Integer COLOR =  new Integer(7);
     public static final Integer ID_AREA =  new Integer(8);
     public static final Integer BACKGROUND =  new Integer(9);
@@ -41,8 +39,6 @@ public class Trait implements Serializable {
     public static final Integer PADDING_END =  new Integer(20);
     public static final Integer PADDING_BEFORE =  new Integer(21);
     public static final Integer PADDING_AFTER =  new Integer(22);
-
-    public static final Integer FONT_STATE =  new Integer(100);
 
     static HashMap s_hmTraitInfo;
 
@@ -64,14 +60,10 @@ public class Trait implements Serializable {
 			   new TraitInfo("internal-link", String.class));
 	s_hmTraitInfo.put(EXTERNAL_LINK,
 			   new TraitInfo("external-link", String.class));
-	s_hmTraitInfo.put(FONT_FAMILY,
+	s_hmTraitInfo.put(FONT_NAME,
 			   new TraitInfo("font-family", String.class));
 	s_hmTraitInfo.put(FONT_SIZE,
 			   new TraitInfo("font-size", Integer.class));
-	s_hmTraitInfo.put(FONT_WEIGHT,
-			   new TraitInfo("font-weight", Integer.class));
-	s_hmTraitInfo.put(FONT_STYLE,
-			   new TraitInfo("font-style", String.class));
 	s_hmTraitInfo.put(COLOR,
 			   new TraitInfo("color", String.class));
 	s_hmTraitInfo.put(ID_AREA,
@@ -104,9 +96,6 @@ public class Trait implements Serializable {
 			   new TraitInfo("padding-before", Integer.class));
 	s_hmTraitInfo.put(PADDING_AFTER,
 			   new TraitInfo("padding-after", Integer.class));
-
-	s_hmTraitInfo.put(FONT_STATE,
-			   new TraitInfo("font-state", FontState.class));
     }
 
     public static String getTraitName(Object traitCode) {

@@ -25,6 +25,8 @@ import org.apache.fop.area.*;
 import org.apache.fop.area.inline.*;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.layout.FontMetric;
 
 import org.w3c.dom.Document;
 
@@ -224,6 +226,7 @@ public class PDFRenderer extends PrintRenderer {
 	currentStream.add("1 0 0 -1 0 " +
 			  (int) Math.round(pageHeight / 1000) + " cm\n");
         //currentStream.add("BT\n");
+        currentFontName = "";
 
         Page p = page.getPage();
         renderPageAreas(p);
@@ -274,14 +277,11 @@ public class PDFRenderer extends PrintRenderer {
     public void renderWord(Word word) {
             StringBuffer pdf = new StringBuffer();
 
-            FontState fs = null;
-
-	    fs = (FontState)word.getTrait(Trait.FONT_STATE);
-            String name = fs.getFontName();
-            int size = fs.getFontSize();
+            String name = (String)word.getTrait(Trait.FONT_NAME);
+            int size = ((Integer)word.getTrait(Trait.FONT_SIZE)).intValue();
 
             // This assumes that *all* CIDFonts use a /ToUnicode mapping
-            Font f = (Font)fs.getFontInfo().getFonts().get(name);
+            Font f = (Font)fontInfo.getFonts().get(name);
             boolean useMultiByte = f.isMultiByte();
 
             // String startText = useMultiByte ? "<FEFF" : "(";
@@ -330,6 +330,8 @@ public class PDFRenderer extends PrintRenderer {
 
         String s = word.getWord();
 
+        FontMetric metrics = fontInfo.getMetricsFor(name);
+        FontState fs = new FontState(name, metrics, size);
         escapeText(s, fs, useMultiByte, pdf);
         pdf.append(endText);
 
@@ -566,15 +568,7 @@ public class PDFRenderer extends PrintRenderer {
         context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);
         context.setProperty(PDFXMLHandler.PDF_XPOS, new Integer(currentBlockIPPosition + (int)pos.getX()));
         context.setProperty(PDFXMLHandler.PDF_YPOS, new Integer(currentBPPosition + (int)pos.getY()));
-        FontState fs = null;
-            try {
-                fs = new FontState(fontInfo, "Helvetica", "",
-                                          "", 12 * 1000, 0);
-            } catch (org.apache.fop.apps.FOPException fope) {
-                fope.printStackTrace();
-            }
-
-        context.setProperty(PDFXMLHandler.PDF_FONT_STATE, fs);
+        context.setProperty(PDFXMLHandler.PDF_FONT_INFO, fontInfo);
         context.setProperty(PDFXMLHandler.PDF_FONT_NAME, currentFontName);
         context.setProperty(PDFXMLHandler.PDF_FONT_SIZE, new Integer(currentFontSize));
         context.setProperty(PDFXMLHandler.PDF_WIDTH, new Integer((int)pos.getWidth()));
