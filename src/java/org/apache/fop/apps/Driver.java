@@ -66,12 +66,14 @@ import org.apache.fop.render.rtf.RTFHandler;
  * enables runtime determination of ElementMapping(s).
  * <P>
  * Once the Driver is set up, the render method
- * is called. Depending on whether DOM or SAX is being used, the
- * invocation of the method is either render(Document) or
- * buildFOTree(Parser, InputSource) respectively.
+ * is called. The invocation of the method is 
+ * render(Parser, InputSource).
  * <P>
  * A third possibility may be used to build the FO Tree, namely
  * calling getContentHandler() and firing the SAX events yourself.
+ * This will work either for DOM Tree input or SAX.  See the embed
+ * examples on the FOP web page for more details or in the 
+ * examples\embedding directory of the main distribution for more details.
  * <P>
  * Once the FO Tree is built, the format() and render() methods may be
  * called in that order.
@@ -375,24 +377,9 @@ public class Driver implements Constants {
     }
 
     /**
-     * This method overloads the main render() method, adding the convenience
-     * of using a DOM Document as input.
-     * @see #render(XMLReader, InputSource)
-     * @param document the DOM document to read from
-     * @throws FOPException if anything goes wrong.
-     */
-    public synchronized void render(Document document)
-                throws FOPException {
-        DocumentInputSource source = new DocumentInputSource(document);
-        DocumentReader reader = new DocumentReader();
-        render(reader, source);
-    }
-
-    /**
      * Runs the formatting and renderering process using the previously set
      * parser, input source, renderer and output stream.
-     * If no parser was set, and the input source is not a dom document,
-     * get a default SAX parser.
+     * If no parser was set, get a default SAX parser.
      * @throws IOException in case of IO errors.
      * @throws FOPException if anything else goes wrong.
      */
@@ -410,15 +397,9 @@ public class Driver implements Constants {
         }
 
         if (reader == null) {
-            if (!(source instanceof DocumentInputSource)) {
-                reader = FOFileHandler.createParser();
-            }
+            reader = FOFileHandler.createParser();
         }
 
-        if (source instanceof DocumentInputSource) {
-            render(((DocumentInputSource)source).getDocument());
-        } else {
-            render(reader, source);
-        }
+        render(reader, source);
     }
 }
