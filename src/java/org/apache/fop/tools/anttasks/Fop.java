@@ -58,9 +58,6 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.util.GlobPatternMapper;
 
-// SAX
-import org.xml.sax.XMLReader;
-
 // Java
 import java.io.File;
 import java.io.IOException;
@@ -463,8 +460,6 @@ class FOPTaskStarter extends Starter {
     private void render(File foFile, File outFile,
                         int renderer) throws FOPException {
         InputHandler inputHandler = new FOInputHandler(foFile);
-        XMLReader parser = inputHandler.getParser();
-        setParserFeatures(parser);
 
         OutputStream out = null;
         try {
@@ -480,14 +475,13 @@ class FOPTaskStarter extends Starter {
         try {
             Driver driver = new Driver();
             setupLogger(driver);
-            driver.initialize();
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(this.baseURL);
             userAgent.enableLogging(getLogger());
             driver.setUserAgent(userAgent);
             driver.setRenderer(renderer);
             driver.setOutputStream(out);
-            driver.render(parser, inputHandler.getInputSource());
+            driver.render(inputHandler);
         } catch (Exception ex) {
             throw new BuildException(ex);
         } finally {

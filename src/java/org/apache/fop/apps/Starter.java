@@ -53,10 +53,6 @@ package org.apache.fop.apps;
 // Avalon
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
-// SAX
-import org.xml.sax.XMLReader;
-import org.xml.sax.SAXException;
-
 /**
  * Abstract super class.
  * Creates a SAX Parser (defaulting to Xerces).
@@ -86,22 +82,5 @@ public abstract class Starter extends AbstractLogEnabled {
      * @throws FOPException In case of a problem during the FOP run
      */
     public abstract void run() throws FOPException;
-
-    /**
-     * Sets the parser features on an XMLReader
-     * @param parser XMLReader to set features on
-     * @throws FOPException if the XMLReader doesn't support the feature that
-     * need to be set
-     */
-    public void setParserFeatures(XMLReader parser) throws FOPException {
-        try {
-            parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
-                              true);
-        } catch (SAXException e) {
-            throw new FOPException("Error: You need a parser which allows the"
-                   + " http://xml.org/sax/features/namespace-prefixes"
-                   + " feature to be set to true to support namespaces", e);
-        }
-    }
 
 }
