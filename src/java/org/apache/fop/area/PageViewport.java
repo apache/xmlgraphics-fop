@@ -131,7 +131,7 @@ public class PageViewport implements Resolvable, Cloneable {
      * @param id the id of the reference
      * @param res the resolver of the reference
      */
-    public void addUnresolvedID(String id, Resolvable res) {
+    public void addUnresolvedIDRef(String id, Resolvable res) {
         if (unresolved == null) {
             unresolved = new HashMap();
         }

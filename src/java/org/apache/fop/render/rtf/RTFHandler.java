@@ -24,8 +24,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
-import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOEventHandler;
@@ -95,7 +95,7 @@ public class RTFHandler extends FOEventHandler {
 
     private RtfFile rtfFile;
     private final OutputStream os;
-    private final Log log = new SimpleLog("FOP/RTF");
+    private static Log log = LogFactory.getLog(RTFHandler.class);
     private RtfSection sect;
     private RtfDocumentArea docArea;
     private int iNestCount;

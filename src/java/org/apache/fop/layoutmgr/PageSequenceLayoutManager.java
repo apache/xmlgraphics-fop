@@ -340,8 +340,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
     public void addUnresolvedArea(String id, Resolvable res) {
         // add unresolved to tree
         // adds to the page viewport so it can serialize
-        curPage.addUnresolvedID(id, res);
-        areaTreeHandler.addUnresolvedID(id, curPage);
+        curPage.addUnresolvedIDRef(id, res);
+        areaTreeHandler.addUnresolvedIDRef(id, curPage);
     }
 
     /**
