@@ -13,7 +13,7 @@
     <body>
   <section>
     <title>Status</title>
-<p>[last updated 20th November 2002]</p>
+<p>[last updated 31st July 2003]</p>
         <figure width="585" height="175" src="images/track.png" alt="Planning and branches of FOP development" />
 <p>
 This is the development status of FOP. A branch has been created for
@@ -39,76 +39,56 @@ developers to work on more functionality.
 The timing of these events depends on progress made so it is not possible
 to predict any dates.
 </p>
-<p><strong>Binaries</strong></p>
-    <table>
-      <tr><td>fop.jar</td><td>1,962 kb</td></tr>
-      <tr><td>hyphention (in fop.jar)</td><td>717 kb</td></tr>
-      <tr><td>batik.jar</td><td>2,164 kb</td></tr>
-      <tr><td>bsf.jar</td><td>106 kb</td></tr>
-      <tr><td>xalan.jar</td><td>883 kb</td></tr>
-      <tr><td>xerces.jar</td><td>1,809 kb</td></tr>
-    </table>
-
-<p><strong>Lines of code</strong> using "find . -iname "*.java" | xargs cat | wc -l"</p>
-    <table>
-      <tr><td>org.apache.fop.*</td><td>67479</td></tr>
-      <tr><td>org.apache.fop.fo.*</td><td>13186 (20%)</td></tr>
-      <tr><td>org.apache.fop.layoutmgr.*</td><td>7913 (12%)</td></tr>
-      <tr><td>org.apache.fop.area.*</td><td>3722 (5.5%)</td></tr>
-      <tr><td>org.apache.fop.render.*</td><td>8210 (12%)</td></tr>
-      <tr><td>org.apache.fop.pdf.*</td><td>9481 (14%)</td></tr>
-    </table>
-
-<p><strong>Files</strong> using "find . -iname "*.java" | wc -l"</p>
-    <table>
-      <tr><td>org.apache.fop.*</td><td>442</td></tr>
-      <tr><td>org.apache.fop.fo.*</td><td>125 (28%)</td></tr>
-      <tr><td>org.apache.fop.layoutmgr.*</td><td>35 (8%)</td></tr>
-      <tr><td>org.apache.fop.area.*</td><td>37 (8%)</td></tr>
-      <tr><td>org.apache.fop.render.*</td><td>39 (9%)</td></tr>
-    </table>
-
   </section>
-
   <section>
     <title>Maintenance Status</title>
-<p>
-Latest maintenance release will be FOP 0.20.5 on TBA.
-See <link href="relnotes.html">release notes</link> for more
-details. Releases will be made periodically to address minor bugs
-and compatibility.
-</p>
-
-<p><strong>Binaries</strong></p>
-    <table>
-      <tr><td>fop.jar</td><td>1,992 kb</td></tr>
-      <tr><td>hyphention (in fop.jar)</td><td>746 kb</td></tr>
-      <tr><td>batik.jar</td><td>2,119 kb</td></tr>
-      <tr><td>bsf.jar</td><td>106 kb</td></tr>
-      <tr><td>xalan.jar</td><td>1,007 kb</td></tr>
-      <tr><td>xercesImpl.jar</td><td>813 kb</td></tr>
-      <tr><td>xml-apis.jar</td><td>112 kb</td></tr>
-    </table>
-
-<p><strong>Lines of code</strong> using "find . -iname "*.java" | xargs cat | wc -l"</p>
-    <table>
-      <tr><td>org.apache.fop.*</td><td>69610</td></tr>
-      <tr><td>org.apache.fop.fo.*</td><td>14660 (21%)</td></tr>
-      <tr><td>org.apache.fop.layout.*</td><td>7154 (10%)</td></tr>
-      <tr><td>org.apache.fop.render.*</td><td>16260 (23%)</td></tr>
-      <tr><td>org.apache.fop.pdf.*</td><td>7938 (11%)</td></tr>
-    </table>
-
-<p><strong>Files</strong> using "find . -iname "*.java" | wc -l"</p>
-    <table>
-      <tr><td>org.apache.fop.*</td><td>394</td></tr>
-      <tr><td>org.apache.fop.fo.*</td><td>122 (31%)</td></tr>
-      <tr><td>org.apache.fop.layout.*</td><td>49 (12%)</td></tr>
-      <tr><td>org.apache.fop.render.*</td><td>48 (12%)</td></tr>
-      <tr><td>org.apache.fop.pdf.*</td><td>50 (13%)</td></tr>
-    </table>
-
+    <p>The latest maintenance release is FOP 0.20.5, released on July 18th, 2003.
+See <link href="relnotes.html">release notes</link> for more details.
+The developers do not currently intend to create more releases from the maintenance branch.</p>
   </section>
+    <section id="stats">
+      <title>Statistics</title>
+      <table>
+        <tr>
+          <th>&#x00A0;</th>
+          <th>Development (aka trunk, redesign)</th>
+          <th>0.20.5</th>
+        </tr>
+        <tr>
+          <th colspan="3">&#x00A0;</th>
+        </tr>
+        <tr>
+          <th colspan="3">Binaries</th>
+        </tr>
+        <tr><td>fop jar</td><td>1,962 kb</td><td>1,992 kb</td></tr>
+        <tr><td>hyphention (in fop.jar)</td><td>717 kb</td><td>746 kb</td></tr>
+        <tr><td>batik jar</td><td>2,164 kb</td><td>2,119 kb</td></tr>
+        <tr><td>bsf jar</td><td>106 kb</td><td>106 kb</td></tr>
+        <tr><td>xalan jar</td><td>883 kb</td><td>1,007 kb</td></tr>
+        <tr><td>xerces jar</td><td>1,809 kb</td><td>813 kb</td></tr>
+        <tr><td>xml-apis jar</td><td>&#x00A0;</td><td>112 kb</td></tr>
+        <tr>
+          <th colspan="3">Lines of Source Code, using "find . -iname "*.java" | xargs cat | wc -l"</th>
+        </tr>
+        <tr><td>org.apache.fop.*</td><td>67479</td><td>69610</td></tr>
+        <tr><td>org.apache.fop.fo.*</td><td>13186 (20%)</td><td>14660 (21%)</td></tr>
+        <tr><td>org.apache.fop.layout.*</td><td>&#x00A0;</td><td>7154 (10%)</td></tr>
+        <tr><td>org.apache.fop.layoutmgr.*</td><td>7913 (12%)</td></tr>
+        <tr><td>org.apache.fop.area.*</td><td>3722 (5.5%)</td></tr>
+        <tr><td>org.apache.fop.render.*</td><td>8210 (12%)</td><td>16260 (23%)</td></tr>
+        <tr><td>org.apache.fop.pdf.*</td><td>9481 (14%)</td><td>7938 (11%)</td></tr>
+        <tr>
+          <th colspan="3">Files, using "find . -iname "*.java" | wc -l"</th>
+        </tr>
+        <tr><td>org.apache.fop.*</td><td>442</td><td>394</td></tr>
+        <tr><td>org.apache.fop.fo.*</td><td>125 (28%)</td><td>122 (31%)</td></tr>
+        <tr><td>org.apache.fop.layout.*</td><td>&#x00A0;</td><td>49 (12%)</td></tr>
+        <tr><td>org.apache.fop.layoutmgr.*</td><td>35 (8%)</td></tr>
+        <tr><td>org.apache.fop.area.*</td><td>37 (8%)</td></tr>
+        <tr><td>org.apache.fop.render.*</td><td>39 (9%)</td><td>48 (12%)</td></tr>
+        <tr><td>org.apache.fop.pdf.*</td><td>&#x00A0;</td><td>50 (13%)</td></tr>
+      </table>
+    </section>
     </body>
 </document>
 
