@@ -132,7 +132,7 @@ public class FoBlock extends FOPageSeqNode {
      * attribute set information.
      */
     public FoBlock
-            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+            (FOTree foTree, FoPageSequence pageSequence, FOPageSeqNode parent,
                     FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
@@ -152,6 +152,10 @@ public class FoBlock extends FOPageSeqNode {
                     // Generate the flow object
                     FObjects.makePageSeqFOChild(
                             foTree, pageSequence, this, ev, stateFlags);
+                    // Area generation happening here
+                    // Note that while the child is being processed, callbacks
+                    // involving requests for and allocation of page space will
+                    // be occurring
                     if (ev.getType() != XmlEvent.CHARACTERS) {
                         ev = xmlevents.getEndElement(
                                 XmlEventReader.DISCARD_EV, ev);

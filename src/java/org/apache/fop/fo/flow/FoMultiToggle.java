@@ -100,7 +100,7 @@ public class FoMultiToggle extends FOPageSeqNode {
      * attribute set information.
      */
     public FoMultiToggle
-            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+            (FOTree foTree, FoPageSequence pageSequence, FOPageSeqNode parent,
                     FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {

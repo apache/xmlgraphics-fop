@@ -100,7 +100,8 @@ public class FoListItemLabel extends FOPageSeqNode {
      * attribute set information.
      */
     public FoListItemLabel
-            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FoPageSequence pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.LIST_ITEM_LABEL, pageSequence, parent, event,

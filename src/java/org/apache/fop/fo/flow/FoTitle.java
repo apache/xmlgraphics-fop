@@ -105,7 +105,7 @@ public class FoTitle extends FOPageSeqNode {
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      */
-    public FoTitle(FOTree foTree, FONode parent, FoXmlEvent event)
+    public FoTitle(FOTree foTree, FoPageSequence parent, FoXmlEvent event)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.TITLE, parent, event,

@@ -29,7 +29,6 @@ import java.util.BitSet;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
@@ -120,7 +119,7 @@ public class FoTableBody extends FOPageSeqNode {
      * attribute set information.
      */
     public FoTableBody
-            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+            (FOTree foTree, FoPageSequence pageSequence, FOPageSeqNode parent,
                     FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {

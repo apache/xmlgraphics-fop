@@ -120,7 +120,7 @@ public class FoInlineContainer extends FOPageSeqNode {
      * attribute set information.
      */
     public FoInlineContainer
-            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+            (FOTree foTree, FoPageSequence pageSequence, FOPageSeqNode parent,
                     FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {

@@ -99,7 +99,7 @@ public class FoStaticContent extends FOPageSeqNode {
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      */
-    public FoStaticContent(FOTree foTree, FONode parent, FoXmlEvent event)
+    public FoStaticContent(FOTree foTree, FoPageSequence parent, FoXmlEvent event)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.STATIC_CONTENT, parent, event,
