@@ -18,6 +18,7 @@
  */
 package org.apache.fop.fo;
 
+import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.datastructs.SyncedNode;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.EnumType;
+import org.apache.fop.datatypes.FontFamilySet;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
@@ -42,6 +44,8 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.fo.properties.CorrespondingProperty;
 import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fonts.FontException;
+import org.apache.fop.render.FontData;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.Namespaces;
 import org.apache.fop.xml.XmlEventReader;
@@ -111,11 +115,10 @@ public class FONode extends SyncedNode implements AreaListener {
         ROOT | DECLARATIONS | LAYOUT | SEQ_MASTER |
         PAGESEQ | FLOW | STATIC | TITLE | MC_MARKER;
 
-    /**
-     * The FO Tree
-     */
+    /** The FO Tree  */
     protected final FOTree foTree;
 
+    /** The FOP logger */
     protected final Logger log;
 
     /** The buffer from which parser events are drawn. */
@@ -124,6 +127,8 @@ public class FONode extends SyncedNode implements AreaListener {
     /** The namespaces object associated with <i>xmlevents</i>. */
     protected final Namespaces namespaces;
 
+    /** The font database from the renderer */
+    protected final FontData fontData;
     /** The FO type. */
     public final int type;
 
@@ -219,6 +224,7 @@ public class FONode extends SyncedNode implements AreaListener {
         this.sparsePropsMap = sparsePropsMap;
         this.sparseIndices = sparseIndices;
         this.numProps = sparseIndices.length;
+        fontData = foTree.getFontData();
         attrBitSet = FOPropertySets.getAttrROBitSet(stateFlags);
         xmlevents = foTree.xmlevents;
         namespaces = xmlevents.getNamespaces();
@@ -493,6 +499,14 @@ public class FONode extends SyncedNode implements AreaListener {
                     (PropertyConsts.pconsts.getInitialValue(sourceProperty));
     }
 
+    public PropertyValue getResolvedPropertyValue(int property)
+    throws PropertyException {
+        PropertyValue pv = getPropertyValue(property);
+        if (pv instanceof IndirectValue) {
+            throw new PropertyException("Not resolved");
+        }
+        return pv;
+    }
 
     /**
      * Get the adjusted <tt>PropertyValue</tt> for the given property index.
@@ -633,6 +647,66 @@ public class FONode extends SyncedNode implements AreaListener {
         }
     }
 
+    private FontFamilySet getFontSet() throws PropertyException {
+        PropertyValue fontSet = getPropertyValue(PropNames.FONT_FAMILY);
+        if (fontSet.getType() != PropertyValue.FONT_FAMILY) {
+            throw new PropertyException(
+                    "font-family value is not a FontFamilySet object.");
+        }
+        // TODO make the FO tree proeprty values immutable objects wherever
+        // possible
+        return (FontFamilySet)fontSet;
+    }
+
+    public Font getFont() throws PropertyException, FontException {
+        // Get the current font specifiers
+        int style = 0;
+        int weight = 0;
+        int variant = 0;
+        int stretch = 0;
+        int pvtype;
+        float size = 0;
+        Numeric fontSize = null;
+        PropertyValue pv = getPropertyValue(PropNames.FONT_STYLE);
+        if (pv.getType() != PropertyValue.ENUM) {
+            throw new PropertyException("font-style not resolved");
+        }
+        style = ((EnumType)pv).getEnumValue();
+        pv = getPropertyValue(PropNames.FONT_WEIGHT);
+        pvtype = pv.getType();
+        if (pvtype == PropertyValue.ENUM) {
+            weight = ((EnumType)pv).getEnumValue();
+        } else if (pvtype == PropertyValue.INTEGER) {
+            throw new PropertyException(
+                    "Integer values not supported for font-weight");
+        } else {
+            throw new PropertyException("font-weight not resolved");
+        }
+        pv = getPropertyValue(PropNames.FONT_VARIANT);
+        if (pv.getType() !=  PropertyValue.ENUM) {
+            throw new PropertyException("font-variant not resolved");
+        }
+        pv = getPropertyValue(PropNames.FONT_STRETCH);
+        if (pv.getType() !=  PropertyValue.ENUM) {
+            throw new PropertyException("font-stretch not resolved");
+        }
+        fontSize = currentFontSize();
+        if (fontSize.isLength()) size = (float)(fontSize.asDouble());
+        FontFamilySet fontSet = getFontSet();
+        FontFamilySet.Traverser fonts = fontSet.new Traverser();
+        while (fonts.hasNext()) {
+            try {
+                // TODO fix this or getFont to behave reasonably when a font
+                // cannot be matched
+                Font font = fontData.getFont(
+                        fonts.next(), style, variant, weight, stretch, size, 0);
+            } catch (FontException e) {
+                log.info(e.getMessage());
+            }
+        }
+        throw new FontException("No matching font found");
+    }
+    
     public Area getReferenceRectangle() throws FOPException {
         throw new FOPException("Called from FONode");
     }
