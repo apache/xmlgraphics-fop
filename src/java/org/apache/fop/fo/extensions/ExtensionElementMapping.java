@@ -29,12 +29,13 @@ import java.util.HashMap;
  * pdf bookmark extension.
  */
 public class ExtensionElementMapping extends ElementMapping {
+    public static String URI = "http://xml.apache.org/fop/extensions";
 
     /**
      * Constructor.
      */
     public ExtensionElementMapping() {
-        namespaceURI = "http://xml.apache.org/fop/extensions";
+        namespaceURI = URI;
     }
 
     /**

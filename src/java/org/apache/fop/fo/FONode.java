@@ -31,6 +31,8 @@ import org.apache.commons.logging.Log;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.extensions.svg.SVGElementMapping;
 
 /**
  * base class for nodes in the XML tree
@@ -198,13 +200,60 @@ public abstract class FONode {
     /**
      * Helper function to standardize the names of all namespace URI - local
      * name pairs in text messages.
+     * For readability, using fo:, fox:, svg:, for those namespaces even
+     * though that prefix may not have been chosen in the document.
      * @param namespaceURI URI of node found 
      *         (e.g., "http://www.w3.org/1999/XSL/Format")
      * @param localName local name of node, (e.g., "root" for "fo:root")
-     * @return a string combining the two values
+     * @return the prefix:localname, if fo/fox/svg, or a longer representation
+     * with the unabbreviated URI otherwise.
      */
     public static String getNodeString(String namespaceURI, String localName) {
-        return "(Namespace URI: \"" + namespaceURI + "\", Local Name: \"" + localName + "\")";
+        if (namespaceURI.equals(FOElementMapping.URI)) {
+            return "fo:" + localName;
+        } else if (namespaceURI.equals(ExtensionElementMapping.URI)) {
+            return "fox:" + localName;
+        } else if (namespaceURI.equals(SVGElementMapping.URI)) {
+            return "svg:" + localName;
+        } else
+            return "(Namespace URI: \"" + namespaceURI + "\", " +
+                "Local Name: \"" + localName + "\")";
     }
+
+    /**
+     * Helper function to standardize "too many" error exceptions
+     * (e.g., two fo:declarations within fo:root)
+     * @param offendingNode incoming node that would cause a duplication.
+     */
+    protected void tooManyNodesError(String offendingNode) {
+        throw new IllegalArgumentException(
+            "Error: for " + getName() + ", only one " 
+            + offendingNode + " may be declared.");
+    }
+
+    /**
+     * Helper function to standardize "out of order" exceptions
+     * (e.g., fo:layout-master-set appearing after fo:page-sequence)
+     * @param tooLateNode string name of node that should be earlier in document
+     * @param tooEarlyNode string name of node that should be later in document
+     */
+    protected void nodesOutOfOrderError(String tooLateNode, String tooEarlyNode) {
+        throw new IllegalArgumentException(
+            "Error: for " + getName() + ", " + tooLateNode 
+            + " must be declared before " + tooEarlyNode + ".");
+    }
+    
+    /**
+     * Helper function to return "invalid child" exceptions
+     * (e.g., fo:block appearing immediately under fo:root)
+     * @param nsURI namespace URI of incoming invalid node
+     * @param lName local name (i.e., no prefix) of incoming node 
+     */
+    protected void invalidChildError(String nsURI, String lName) {
+        throw new IllegalArgumentException(
+            "Error: " + getNodeString(nsURI, lName) + 
+            " is not valid child element of " + getName() + ".");
+    }
+    
 }
 

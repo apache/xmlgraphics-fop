@@ -30,10 +30,11 @@ import org.apache.fop.fo.FONode;
  * of the http://xml.apache.org/batik/ext namespace.
  */
 public class BatikExtensionElementMapping extends ElementMapping {
+    public static String URI = "http://xml.apache.org/batik/ext";
     private boolean batikAvail = true;
 
     public BatikExtensionElementMapping() {
-        namespaceURI = "http://xml.apache.org/batik/ext";
+        namespaceURI = URI;
     }
 
     protected void initialize() {

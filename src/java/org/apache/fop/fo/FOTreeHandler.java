@@ -205,7 +205,7 @@ public class FOTreeHandler extends FOInputHandler {
             }
         }
 
-        getAreaTree().addBookmarksToAreaTree();
+        getAreaTree().addBookmarksToAreaTree(pageSequence.getRoot().getBookmarks());
         formatPageSequence(pageSequence, getAreaTree());
     }
 

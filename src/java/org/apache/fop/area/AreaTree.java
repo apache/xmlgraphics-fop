@@ -21,6 +21,7 @@ package org.apache.fop.area;
 import org.apache.fop.apps.Document;
 import org.apache.fop.area.extensions.BookmarkData;
 import org.apache.fop.fo.extensions.Outline;
+import org.apache.fop.fo.extensions.Bookmarks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -219,14 +220,15 @@ public class AreaTree {
     /**
      * Create the bookmark data in the area tree.
      */
-    public void addBookmarksToAreaTree() {
-        if (document.getBookmarks() == null) {
+    public void addBookmarksToAreaTree(Bookmarks bookmarks) {
+        if (bookmarks == null) {
             return;
         }
+
         document.getDriver().getLogger().debug("adding bookmarks to area tree");
         BookmarkData data = new BookmarkData();
-        for (int count = 0; count < document.getBookmarks().getOutlines().size(); count++) {
-            Outline out = (Outline)(document.getBookmarks().getOutlines()).get(count);
+        for (int count = 0; count < bookmarks.getOutlines().size(); count++) {
+            Outline out = (Outline)(bookmarks.getOutlines()).get(count);
             data.addSubData(createBookmarkData(out));
         }
         addTreeExtension(data);
