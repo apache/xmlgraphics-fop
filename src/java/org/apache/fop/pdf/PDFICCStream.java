@@ -51,6 +51,8 @@
 package org.apache.fop.pdf;
 
 import java.awt.color.ICC_Profile;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Special PDFStream for ICC profiles (color profiles).
@@ -64,10 +66,10 @@ public class PDFICCStream extends PDFStream {
     private PDFColorSpace pdfColorSpace;
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#PDFObject(int)
+     * @see org.apache.fop.pdf.PDFObject#PDFObject()
      */
-    public PDFICCStream(int num) {
-        super(num);
+    public PDFICCStream() {
+        super();
         cp = null;
     }
 
@@ -87,29 +89,37 @@ public class PDFICCStream extends PDFStream {
      * @see org.apache.fop.pdf.PDFObject#output(OutputStream)
      */
     protected int output(java.io.OutputStream stream)
-        throws java.io.IOException {
-
-        setData(cp.getData());
-
-        int length = 0;
-        String filterEntry = applyFilters();
-        StringBuffer pb = new StringBuffer();
-        pb.append(this.number).append(" ").append(this.generation).append(" obj\n<< ");
-        pb.append("/N ").append(cp.getNumComponents()).append(" ");
-
-        if (pdfColorSpace != null) {
-            pb.append("/Alternate /").append(pdfColorSpace.getColorSpacePDFString()).append(" ");
-        }
-
-        pb.append("/Length ").append((data.getSize() + 1)).append(" ").append(filterEntry);
-        pb.append(" >>\n");
-        byte[] p = pb.toString().getBytes();
-        stream.write(p);
-        length += p.length;
-        length += outputStreamData(stream);
-        p = "endobj\n".getBytes();
-        stream.write(p);
-        length += p.length;
+                throws java.io.IOException {
+        int length = super.output(stream);
+        this.cp = null; //Free ICC stream when it's not used anymore
         return length;
     }
+    
+    /**
+     * @see org.apache.fop.pdf.PDFStream#outputRawStreamData(OutputStream)
+     */
+    protected void outputRawStreamData(OutputStream out) throws IOException {
+        cp.write(out);
+    }
+    
+    /**
+     * @see org.apache.fop.pdf.AbstractPDFStream#buildStreamDict(String)
+     */
+    protected String buildStreamDict(String lengthEntry) {
+        final String filterEntry = getFilterList().buildFilterDictEntries();
+        final StringBuffer sb = new StringBuffer(128);
+        sb.append(getObjectID());
+        sb.append("<< ");
+        sb.append("/N " + cp.getNumComponents());
+
+        if (pdfColorSpace != null) {
+            sb.append("\n/Alternate /" + pdfColorSpace.getColorSpacePDFString() + " ");
+        }
+
+        sb.append("\n/Length " + lengthEntry);
+        sb.append("\n" + filterEntry);
+        sb.append("\n>>\n");
+        return sb.toString();
+    }
+
 }
