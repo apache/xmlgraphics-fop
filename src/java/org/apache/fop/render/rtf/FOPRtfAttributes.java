@@ -29,13 +29,25 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
  * A RtfAttributes subclass that adds some helper set methods. 
  */
 public class FOPRtfAttributes extends RtfAttributes {
+
     /**
-     * Set an attribute that has a Length value
+     * Set an attribute that has a Length value (internal units in twips)
      * @param name name of attribute
      * @param value value of attribute
      * @return this (which now contains the new entry)
      */
-    public RtfAttributes set(String name, Length value) {
+    public RtfAttributes setTwips(String name, Length value) {
+        set(name, value.getValue() / (1000 / 20)); //Convert millipoints to twips
+        return this;
+    }
+
+    /**
+     * Set an attribute that has a Length value (internal units in half-points)
+     * @param name name of attribute
+     * @param value value of attribute
+     * @return this (which now contains the new entry)
+     */
+    public RtfAttributes setHalfPoints(String name, Length value) {
         set(name, value.getValue() / (1000 / 2)); //Convert millipoints to half-points
         return this;
     }

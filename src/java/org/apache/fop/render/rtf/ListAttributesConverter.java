@@ -44,8 +44,8 @@ public class ListAttributesConverter {
         
         FOPRtfAttributes attrib = new FOPRtfAttributes();
         
-        attrib.set(RtfListTable.LIST_INDENT, fobj.getCommonMarginBlock().startIndent);
-        attrib.set(RtfText.LEFT_INDENT_BODY, fobj.getCommonMarginBlock().endIndent);
+        attrib.setTwips(RtfListTable.LIST_INDENT, fobj.getCommonMarginBlock().startIndent);
+        attrib.setTwips(RtfText.LEFT_INDENT_BODY, fobj.getCommonMarginBlock().endIndent);
         
         /*
          * set list table defaults

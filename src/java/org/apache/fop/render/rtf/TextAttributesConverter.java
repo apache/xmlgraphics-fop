@@ -132,7 +132,7 @@ class TextAttributesConverter {
     private static void attrFont(CommonFont font, FOPRtfAttributes rtfAttr) {
         rtfAttr.set(RtfText.ATTR_FONT_FAMILY,
                 RtfFontManager.getInstance().getFontNumber(font.fontFamily));
-        rtfAttr.set(RtfText.ATTR_FONT_SIZE, font.fontSize);
+        rtfAttr.setHalfPoints(RtfText.ATTR_FONT_SIZE, font.fontSize);
 
         if (font.fontWeight.equals("bold") || font.fontWeight.equals("700")) {
             rtfAttr.set("b", 1);
@@ -174,12 +174,12 @@ class TextAttributesConverter {
     }
 
     private static void attrBlockMargin(CommonMarginBlock cmb, FOPRtfAttributes rtfAttr) {
-        rtfAttr.set(RtfText.SPACE_BEFORE, 
+        rtfAttr.setTwips(RtfText.SPACE_BEFORE, 
                 cmb.spaceBefore.getOptimum().getLength());
-        rtfAttr.set(RtfText.SPACE_AFTER, 
+        rtfAttr.setTwips(RtfText.SPACE_AFTER, 
                 cmb.spaceAfter.getOptimum().getLength());
-        rtfAttr.set(RtfText.LEFT_INDENT_BODY, cmb.marginLeft);
-        rtfAttr.set(RtfText.RIGHT_INDENT_BODY, cmb.marginRight);
+        rtfAttr.setTwips(RtfText.LEFT_INDENT_BODY, cmb.marginLeft);
+        rtfAttr.setTwips(RtfText.RIGHT_INDENT_BODY, cmb.marginRight);
     }
 
 

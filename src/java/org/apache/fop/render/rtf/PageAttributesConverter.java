@@ -50,8 +50,8 @@ class PageAttributesConverter {
             RegionBody body   = (RegionBody) pagemaster.getRegion(Constants.FO_REGION_BODY);
             RegionBA after  = (RegionBA) pagemaster.getRegion(Constants.FO_REGION_AFTER);
             
-            attrib.set(RtfPage.PAGE_WIDTH, pagemaster.getPageWidth());
-            attrib.set(RtfPage.PAGE_HEIGHT, pagemaster.getPageHeight());
+            attrib.setTwips(RtfPage.PAGE_WIDTH, pagemaster.getPageWidth());
+            attrib.setTwips(RtfPage.PAGE_HEIGHT, pagemaster.getPageHeight());
             
             Length pageTop = pagemaster.getCommonMarginBlock().marginTop;
             Length pageBottom = pagemaster.getCommonMarginBlock().marginBottom;
@@ -72,24 +72,24 @@ class PageAttributesConverter {
                 bodyRight = (Length) NumericOp.addition(pageRight, bodyMargin.marginRight);
             }
             
-            attrib.set(RtfPage.MARGIN_TOP, bodyTop);
-            attrib.set(RtfPage.MARGIN_BOTTOM, bodyBottom);
-            attrib.set(RtfPage.MARGIN_LEFT, bodyLeft);
-            attrib.set(RtfPage.MARGIN_RIGHT, bodyRight);
+            attrib.setTwips(RtfPage.MARGIN_TOP, bodyTop);
+            attrib.setTwips(RtfPage.MARGIN_BOTTOM, bodyBottom);
+            attrib.setTwips(RtfPage.MARGIN_LEFT, bodyLeft);
+            attrib.setTwips(RtfPage.MARGIN_RIGHT, bodyRight);
 
             //region-before attributes
             Length beforeTop = pageTop;
             if (before != null) {
                 beforeTop = (Length) NumericOp.addition(pageTop, before.getExtent());
             }
-            attrib.set(RtfPage.HEADERY, beforeTop);
+            attrib.setTwips(RtfPage.HEADERY, beforeTop);
 
             //region-after attributes
             Length afterBottom = pageBottom;
             if (after != null) {
                 afterBottom = (Length) NumericOp.addition(pageBottom, after.getExtent());
             }
-            attrib.set(RtfPage.FOOTERY, beforeTop);
+            attrib.setTwips(RtfPage.FOOTERY, beforeTop);
         } catch (Exception e) {
             log.error("Exception in convertPageAttributes: " 
                 + e.getMessage() + "- page attributes ignored");
