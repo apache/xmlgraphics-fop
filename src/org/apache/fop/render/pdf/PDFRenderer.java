@@ -296,10 +296,22 @@ public class PDFRenderer implements Renderer {
      * @param fg the green component of the fill
      * @param fb the blue component of the fill
      */
-    protected void addRect(float x, float y, float w, float h, DrawingInstruction di)
+    protected void addRect(float x, float y, float w, float h, float rx, float ry, DrawingInstruction di)
     {
-    	String str = "" + x + " " + y + " "
-				  + w + " " + h + " re\n";
+    	String str = "";
+    	if(rx == 0.0 && ry == 0.0) {
+        	str = "" + x + " " + y + " " + w + " " + h + " re\n";
+        } else {
+            str = "" + (x + rx) + " " + y + " m\n";
+            str += "" + (x + w - rx) + " " + y + " l\n";
+            str += "" + (x + w) + " " + y + " " + (x + w) + " " + y + " " + (x + w) + " " + (y + ry) + " c\n";
+            str += "" + (x + w) + " " + (y + h - ry) + " l\n";
+            str += "" + (x + w) + " " + (y + h) + " " + (x + w) + " " + (y + h) + " " + (x + w - rx) + " " + (y + h) + " c\n";
+            str += "" + (x + rx) + " " + (y + h) + " l\n";
+            str += "" + x + " " + (y + h) + " " + x + " " + (y + h) + " " + x + " " + (y + h - ry) + " c\n";
+            str += "" + x + " " + (y + ry) + " l\n";
+            str += "" + x + " " + y + " " + x + " " + y + " " + (x + rx) + " " + y + " c\n";
+        }
 		if(di == null) {
 			currentStream.add(str + "S\n");
 		} else {
@@ -1127,11 +1139,13 @@ public class PDFRenderer implements Renderer {
 
 		if (area instanceof SVGRectElement) {
 			SVGRectElement rg = (SVGRectElement)area;
-			float rx = rg.getX().getBaseVal().getValue();
-			float ry = rg.getY().getBaseVal().getValue();
+			float rectx = rg.getX().getBaseVal().getValue();
+			float recty = rg.getY().getBaseVal().getValue();
+			float rx = rg.getRx().getBaseVal().getValue();
+			float ry = rg.getRy().getBaseVal().getValue();
 			float rw = rg.getWidth().getBaseVal().getValue();
 			float rh = rg.getHeight().getBaseVal().getValue();
-			addRect(rx, ry, rw, rh, di);
+			addRect(rectx, recty, rw, rh, rx, ry, di);
 		} else if (area instanceof SVGLineElement) {
 			SVGLineElement lg = (SVGLineElement)area;
 			float x1 = lg.getX1().getBaseVal().getValue();
