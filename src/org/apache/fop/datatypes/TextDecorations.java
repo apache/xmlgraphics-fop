@@ -17,7 +17,11 @@ import org.apache.fop.datatypes.TextDecorator;
  * @version $Revision$ $Name$
  */
 /**
- * Class for 
+ * Class for the text decorations to be applied according to the
+ * <em>text-decoration</em> property.  This class maintains the current
+ * set of text decorations.  Modifications to the set are specified in a
+ * TextDecorator object, which contains the on and off masks to be applied
+ * to the "current" set of decorations.
  */
 
 public class TextDecorations
