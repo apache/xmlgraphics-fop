@@ -75,7 +75,7 @@ which will be used to configure the chosen Forrest skin.
   <!-- optional group logo
        default skin: renders it at the top-left corner -->
   <group-name>Apache XML</group-name>
-  <group-description>MyGroup Description</group-description>
+  <group-description>The Apache XML Project provides commercial-quality standards-based XML solutions that are developed in an open and cooperative fashion, provides feedback to standards bodies (such as IETF and W3C) from an implementation perspective, and is a focus for XML-related activities within Apache projects</group-description>
   <group-url>http://xml.apache.org/</group-url>
   <group-logo>images/group-logo.gif</group-logo>
   <!-- Alternative static image:
@@ -90,7 +90,7 @@ which will be used to configure the chosen Forrest skin.
   <favicon-url></favicon-url>
 
   <!-- The following used to construct a copyright statement -->
-  <year>1999-2003</year>
+  <year>1999-2005</year>
   <vendor>The Apache Software Foundation.</vendor>
   <!-- The optional copyright-link URL will be used as a link in the
     copyright statement
