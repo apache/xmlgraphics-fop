@@ -54,12 +54,14 @@ package org.apache.fop.render.rtf;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Iterator;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.EnumProperty;
 import org.apache.fop.fo.FOInputHandler;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.datatypes.FixedLength;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
@@ -71,6 +73,7 @@ import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableColumn;
@@ -82,6 +85,7 @@ import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.StringProperty;
@@ -129,6 +133,12 @@ public class RTFHandler extends FOInputHandler {
     private final Logger log = new ConsoleLogger();
     private RtfSection sect;
     private RtfDocumentArea docArea;
+    private int iNestCount;
+    private boolean bDefer;              //true, if each called handler shall be
+                                         //processed at later time.
+    private boolean bDeferredExecution;  //true, if currently called handler was not
+                                         //called while SAX parsing, but was called
+                                         //by invokeDeferredEvent.
     private boolean bPrevHeaderSpecified = false;//true, if there has been a
                                                  //header in any page-sequence
     private boolean bPrevFooterSpecified = false;//true, if there has been a
@@ -150,6 +160,9 @@ public class RTFHandler extends FOInputHandler {
     public RTFHandler(Document doc, OutputStream os) {
         super(doc);
         this.os = os;
+        bDefer = false;
+        bDeferredExecution = false;
+        iNestCount=0;
         FontSetup.setup(doc, null);
         log.warn(ALPHA_WARNING);
     }
@@ -185,6 +198,10 @@ public class RTFHandler extends FOInputHandler {
      */
     public void startPageSequence(PageSequence pageSeq)  {
         try {
+            if (bDefer) {
+                return;
+            }
+
             sect = docArea.newSection();
 
             //read page size and margins, if specified
@@ -218,6 +235,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endPageSequence(PageSequence)
      */
     public void endPageSequence(PageSequence pageSeq) throws FOPException {
+        if (bDefer) {
+            return;
+        }
+
         builderContext.popContainer();
     }
 
@@ -225,6 +246,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startFlow(Flow)
      */
     public void startFlow(Flow fl) {
+        if (bDefer) {
+            return;
+        }
+
         try {
             if (fl.getFlowName().equals("xsl-region-body")) {
                 // if there is no header in current page-sequence but there has been
@@ -300,6 +325,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endFlow(Flow)
      */
     public void endFlow(Flow fl) {
+        if (bDefer) {
+            return;
+        }
+
         try {
             if (fl.getFlowName().equals("xsl-region-body")) {
                 //just do nothing
@@ -318,6 +347,19 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startBlock(Block)
      */
     public void startBlock(Block bl) {
+        ++iNestCount;
+        
+        if (!bDeferredExecution) {
+            //If startBlock was called while SAX parsing, defer processing of this
+            //FO and all its elements until endBlock. This has to be done, because
+            //attributes (for example while-space-treatment, linefeed-treatment)
+            //are not available until endBlock.
+            bDefer = true;
+        }
+        if (bDefer) {
+            return;
+        }
+       
         try {
             RtfAttributes rtfAttr
                 = TextAttributesConverter.convertAttributes(bl.propertyList, null);
@@ -346,6 +388,27 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endBlock(Block)
      */
     public void endBlock(Block bl) {
+        --iNestCount;
+        
+        if (!bDeferredExecution && iNestCount==0) {
+            //If endBlock was called while SAX parsing, and the passed FO is Block
+            //nested within another Block, stop deferring.
+            //Now process all deferred FOs.
+            bDefer = false;
+            
+            bDeferredExecution=true;
+            recurseFObj(bl);
+            bDeferredExecution=false;
+            
+            //exit function, because the code has already beed executed while 
+            //deferred execution.   
+            return;
+        }
+        
+        if(bDefer) {
+            return;
+        }
+        
         try {
             IRtfTextrunContainer container 
                 = (IRtfTextrunContainer)builderContext.getContainer(
@@ -370,6 +433,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startTable(Table)
      */
     public void startTable(Table tbl) {
+        if (bDefer) {
+            return;
+        }
+
         // create an RtfTable in the current table container
         TableContext tableContext = new TableContext(builderContext);
 
@@ -393,6 +460,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endTable(Table)
      */
     public void endTable(Table tbl) {
+        if (bDefer) {
+            return;
+        }
+
         builderContext.popTableContext();
         builderContext.popContainer();
     }
@@ -403,6 +474,10 @@ public class RTFHandler extends FOInputHandler {
     */
 
     public void startColumn(TableColumn tc) {
+        if (bDefer) {
+            return;
+        }
+
         try {
             Integer iWidth = new Integer(tc.getColumnWidth() / 1000);
             builderContext.getTableContext().setNextColumnWidth(iWidth.toString() + "pt");
@@ -420,6 +495,9 @@ public class RTFHandler extends FOInputHandler {
      */
 
     public void endColumn(TableColumn tc) {
+        if (bDefer) {
+            return;
+        }
     }
 
     /**
@@ -451,6 +529,9 @@ public class RTFHandler extends FOInputHandler {
      * @param inl Inline that is starting.
      */
     public void startInline(Inline inl) {
+        if (bDefer) {
+            return;
+        }
 
         try {
             RtfAttributes rtfAttr
@@ -479,6 +560,10 @@ public class RTFHandler extends FOInputHandler {
      * @param inl Inline that is ending.
      */
     public void endInline(Inline inl) {
+        if (bDefer) {
+            return;
+        }
+
         try {
             IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
@@ -499,6 +584,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startBody(TableBody)
      */
     public void startBody(TableBody tb) {
+        if (bDefer) {
+            return;
+        }
+
         try {
             RtfAttributes atts = TableAttributesConverter.convertRowAttributes (tb.propertyList,
                    null);
@@ -515,6 +604,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endBody(TableBody)
      */
     public void endBody(TableBody tb) {
+        if (bDefer) {
+            return;
+        }
+
         try {
             RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class, true, this);
             tbl.setHeaderAttribs(null);
@@ -528,6 +621,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startRow(TableRow)
      */
     public void startRow(TableRow tr) {
+        if (bDefer) {
+            return;
+        }
+
         try {
             // create an RtfTableRow in the current RtfTable
             final RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class,
@@ -554,6 +651,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endRow(TableRow)
      */
     public void endRow(TableRow tr) {
+        if (bDefer) {
+            return;
+        }
+
         builderContext.popContainer();
         builderContext.getTableContext().decreaseRowSpannings();
     }
@@ -562,6 +663,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startCell(TableCell)
      */
     public void startCell(TableCell tc) {
+        if (bDefer) {
+            return;
+        }
+
         try {
             TableContext tctx = builderContext.getTableContext();
             final RtfTableRow row = (RtfTableRow)builderContext.getContainer(RtfTableRow.class,
@@ -608,6 +713,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endCell(TableCell)
      */
     public void endCell(TableCell tc) {
+        if (bDefer) {
+            return;
+        }
+
         builderContext.popContainer();
         builderContext.getTableContext().selectNextColumn();
     }
@@ -617,6 +726,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startList(ListBlock)
      */
     public void startList(ListBlock lb) {
+        if (bDefer) {
+            return;
+        }
+
         try  {
             // create an RtfList in the current list container
             final IRtfListContainer c
@@ -641,6 +754,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endList(ListBlock)
      */
     public void endList(ListBlock lb) {
+        if (bDefer) {
+            return;
+        }
+
         builderContext.popContainer();
     }
 
@@ -648,6 +765,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startListItem(ListItem)
      */
     public void startListItem(ListItem li) {
+        if (bDefer) {
+            return;
+        }
+
         // create an RtfListItem in the current RtfList
         try {
             final RtfList list = (RtfList)builderContext.getContainer(
@@ -669,6 +790,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endListItem(ListItem)
      */
     public void endListItem(ListItem li) {
+        if (bDefer) {
+            return;
+        }
+
         builderContext.popContainer();
     }
 
@@ -676,6 +801,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startListLabel()
      */
     public void startListLabel() {
+        if (bDefer) {
+            return;
+        }
+
         try {
             RtfListItem item
                 = (RtfListItem)builderContext.getContainer(RtfListItem.class, true, this);
@@ -695,6 +824,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endListLabel()
      */
     public void endListLabel() {
+        if (bDefer) {
+            return;
+        }
+
         builderContext.popContainer();
     }
 
@@ -739,6 +872,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startLink(BasicLink basicLink)
      */
     public void startLink(BasicLink basicLink) {
+        if (bDefer) {
+            return;
+        }
+
         try {
             IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
@@ -774,6 +911,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endLink()
      */
     public void endLink() {
+        if (bDefer) {
+            return;
+        }
+
         builderContext.popContainer();
     }
 
@@ -781,6 +922,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#image(ExternalGraphic)
      */
     public void image(ExternalGraphic eg) {
+        if (bDefer) {
+            return;
+        }
+
         try {
        
         
@@ -858,6 +1003,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startFootnote(Footnote)
      */
     public void startFootnote(Footnote footnote) {
+        if (bDefer) {
+            return;
+        }
+
         try {
             RtfAttributes rtfAttr
                 = TextAttributesConverter.convertAttributes(footnote.propertyList, null);
@@ -886,6 +1035,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endFootnote(Footnote)
      */
     public void endFootnote(Footnote footnote) {
+        if (bDefer) {
+            return;
+        }
+
         builderContext.popContainer();
     }
     
@@ -893,6 +1046,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startFootnoteBody(FootnoteBody)
      */
     public void startFootnoteBody(FootnoteBody body) {
+        if (bDefer) {
+            return;
+        }
+
         try {
             RtfFootnote rtfFootnote
                 = (RtfFootnote)builderContext.getContainer(
@@ -914,6 +1071,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endFootnoteBody(FootnoteBody)
      */
     public void endFootnoteBody(FootnoteBody body) {
+        if (bDefer) {
+            return;
+        }
+
         try {
             RtfFootnote rtfFootnote
                 = (RtfFootnote)builderContext.getContainer(
@@ -941,6 +1102,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#characters(char[], int, int)
      */
     public void characters(char[] data, int start, int length) {
+        if (bDefer) {
+            return;
+        }
+        
         try {
             IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
@@ -963,6 +1128,10 @@ public class RTFHandler extends FOInputHandler {
      * @param pagenum PageNumber that is starting.
      */
     public void startPageNumber(PageNumber pagenum) {
+        if (bDefer) {
+            return;
+        }
+
         try {
             RtfAttributes rtfAttr
                 = TextAttributesConverter.convertCharacterAttributes(
@@ -988,5 +1157,118 @@ public class RTFHandler extends FOInputHandler {
      * @param pagenum PageNumber that is ending.
      */
     public void endPageNumber(PageNumber pagenum) {
+        if (bDefer) {
+            return;
+        }
+    }
+    
+    /**
+     * Calls the appropriate event handler for the passed FObj. 
+     *
+     * @param fobj FO-object whose event is to be called
+     * @param bStart TRUE calls the start handler, FALSE the end handler 
+     */
+    private void invokeDeferredEvent(FObj fobj, boolean bStart) {
+        if (fobj instanceof Block) {
+            if (bStart) {
+                startBlock( (Block) fobj);
+            } else {
+                endBlock( (Block) fobj);
+            }
+        } else if (fobj instanceof Inline) {
+            if (bStart) {
+                startInline( (Inline) fobj);
+            } else {
+                endInline( (Inline) fobj);
+            }
+        } else if (fobj instanceof FOText) {
+            if (bStart) {
+                FOText text = (FOText) fobj;
+                characters(text.ca, 0, text.length);
+            }
+        } else if (fobj instanceof BasicLink) {
+            if (bStart) {
+                startLink( (BasicLink) fobj);
+            } else {
+                endLink();
+            }
+        } else if (fobj instanceof PageNumber) {
+            if (bStart) {
+                startPageNumber( (PageNumber) fobj);
+            } else {
+                endPageNumber( (PageNumber) fobj);
+            }
+        } else if (fobj instanceof Footnote) {
+            if (bStart) {
+                startFootnote( (Footnote) fobj);
+            } else {
+                endFootnote( (Footnote) fobj);
+            }
+        } else if (fobj instanceof FootnoteBody) {
+            if (bStart) {
+                startFootnoteBody( (FootnoteBody) fobj);
+            } else {
+                endFootnoteBody( (FootnoteBody) fobj);
+            }
+        } else if (fobj instanceof ListBlock) {
+            if (bStart) {
+                startList( (ListBlock) fobj);
+            } else {
+                endList( (ListBlock) fobj);
+            }
+        } else if (fobj instanceof ListItem) {
+            if (bStart) {
+                startListItem( (ListItem) fobj);
+            } else {
+                endListItem( (ListItem) fobj);
+            }
+        } else if (fobj instanceof ListItemLabel) {
+            if (bStart) {
+                startListLabel();
+            } else {
+                endListLabel();
+            }
+        } else if (fobj instanceof Table) {
+            if (bStart) {
+                startTable( (Table) fobj);
+            } else {
+                endTable( (Table) fobj);
+            }
+        } else if (fobj instanceof TableColumn) {
+            if (bStart) {
+                startColumn( (TableColumn) fobj);
+            } else {
+                endColumn( (TableColumn) fobj);
+            }
+        } else if (fobj instanceof TableRow) {
+            if (bStart) {
+                startRow( (TableRow) fobj);
+            } else {
+                endRow( (TableRow) fobj);
+            }
+        } else if (fobj instanceof TableCell) {
+            if (bStart) {
+                startCell( (TableCell) fobj);
+            } else {
+                endCell( (TableCell) fobj);
+            }
+        }
+    }
+    
+    /**
+     * Calls the event handlers for the passed FObj and all its elements. 
+     *
+     * @param fobj FO-object which shall be recursed
+     */
+    private void recurseFObj(FObj fobj) {
+        invokeDeferredEvent(fobj, true);
+        
+        if (fobj.children!=null) {
+            for(Iterator it=fobj.children.iterator();it.hasNext();) {
+                recurseFObj( (FObj) it.next() );
+            }
+        }
+        
+        invokeDeferredEvent(fobj, false);
     }
 }
