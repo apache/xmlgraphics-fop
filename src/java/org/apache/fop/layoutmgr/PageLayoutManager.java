@@ -844,7 +844,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             Rectangle2D absRegVPRect) {
         // Should set some column stuff here I think, or put it elsewhere
         BodyRegion body = new BodyRegion();
-        r.setRegionPosition(body, absRegVPRect);
+        setRegionPosition(r, body, absRegVPRect);
         int columnCount =
                 r.properties.get("column-count").getNumber().intValue();
         if ((columnCount > 1) && (r.overflow == Overflow.SCROLL)) {
@@ -872,8 +872,23 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     public RegionReference makeRegionReferenceArea(Region r,
             Rectangle2D absRegVPRect) {
         RegionReference rr = new RegionReference(r.getRegionAreaClass());
-        r.setRegionPosition(rr, absRegVPRect);
+        setRegionPosition(r, rr, absRegVPRect);
         return rr;
+    }
+
+    /**
+     * Set the region position inside the region viewport.
+     * This sets the trasnform that is used to place the contents of
+     * the region.
+     *
+     * @param r the region reference area
+     * @param absRegVPRect the rectangle to place the region contents
+     */
+    public void setRegionPosition(Region r, RegionReference rr,
+                                  Rectangle2D absRegVPRect) {
+        FODimension reldims = new FODimension(0, 0);
+        rr.setCTM(CTM.getCTMandRelDims(r.getPropertyManager().getAbsRefOrient(),
+                r.getPropertyManager().getWritingMode(), absRegVPRect, reldims));
     }
 
 }
