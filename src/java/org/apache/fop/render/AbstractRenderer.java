@@ -64,6 +64,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 // Avalon
 import org.apache.avalon.framework.configuration.Configurable;
@@ -86,8 +87,8 @@ public abstract class AbstractRenderer
     /**
      * logging instance
      */
-    protected Log logger = null;
-
+    protected static Log logger = LogFactory.getLog("Renderer");
+    
     /**
      * producer (usually "FOP")
      */
@@ -139,14 +140,6 @@ public abstract class AbstractRenderer
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
     public void configure(Configuration conf) throws ConfigurationException {
-    }
-
-    /**
-     * Sets the Commons-Logging instance for this class
-     * @param logger The Commons-Logging instance
-     */
-    public void setLogger(Log logger) {
-        this.logger = logger;
     }
 
     /**

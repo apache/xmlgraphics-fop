@@ -409,7 +409,6 @@ public class Driver {
                 throws IllegalArgumentException {
         try {
             renderer = (Renderer)Class.forName(rendererClassName).newInstance();
-            renderer.setLogger(getLogger());
             renderer.setProducer(Version.getVersion());
             renderer.setUserAgent(getUserAgent());
         } catch (ClassNotFoundException e) {

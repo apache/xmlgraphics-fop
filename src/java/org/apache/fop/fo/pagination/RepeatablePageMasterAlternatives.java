@@ -23,8 +23,10 @@ import java.util.ArrayList;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 // FOP
+import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
@@ -55,6 +57,26 @@ public class RepeatablePageMasterAlternatives extends FObj
      */
     public RepeatablePageMasterAlternatives(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+        XSL/FOP: (conditional-page-master-reference+)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+        if (!(nsURI == FOElementMapping.URI &&
+            localName.equals("conditional-page-master-reference"))) {
+                invalidChildError(loc, nsURI, localName);
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void end() {
+        if (children == null) {
+           missingChildElementError("(conditional-page-master-reference+)");
+        }
     }
 
     /**

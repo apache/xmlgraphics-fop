@@ -159,7 +159,6 @@ public class AreaTreeBuilder {
             rend = new SVGRenderer();
         }
 
-        rend.setLogger(logger);
         FontInfo fontInfo = new FontInfo();
         rend.setupFontInfo(fontInfo);
         FOUserAgent ua = new FOUserAgent();
