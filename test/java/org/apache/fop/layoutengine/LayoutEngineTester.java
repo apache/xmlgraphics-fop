@@ -20,6 +20,7 @@ package org.apache.fop.layoutengine;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -101,8 +102,10 @@ public class LayoutEngineTester {
      * @param testFile Test case to run
      * @throws TransformerException In case of an XSLT/JAXP problem
      * @throws FOPException In case of a FOP problem
+     * @throws MalformedURLException if the base URL cannot be set
      */
-    public void runTest(File testFile) throws TransformerException, FOPException {
+    public void runTest(File testFile) 
+            throws TransformerException, FOPException, MalformedURLException {
         //Setup Transformer to convert the testcase XML to XSL-FO
         Transformer transformer = getTestcase2FOStylesheet().newTransformer();
         Source src = new StreamSource(testFile);
@@ -114,6 +117,7 @@ public class LayoutEngineTester {
         
         //Setup FOP for area tree rendering
         FOUserAgent ua = new FOUserAgent();
+        ua.setBaseURL(testFile.getParentFile().toURL().toString());
         XMLRenderer atrenderer = new XMLRenderer();
         atrenderer.setUserAgent(ua);
         atrenderer.setTransformerHandler(athandler);
