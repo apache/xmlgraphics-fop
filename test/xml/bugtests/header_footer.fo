@@ -14,7 +14,7 @@
 	    </fo:simple-page-master>
 	</fo:layout-master-set>
 
-	<fo:page-sequence master-name="simplePM">
+	<fo:page-sequence master-reference="simplePM">
 	    <!-- header -->
 	    <fo:static-content flow-name="xsl-region-before">
 	      <fo:block-container width="5cm" height="3cm" position="absolute" background-color="#22CC55">

@@ -14,7 +14,7 @@
 	    </fo:simple-page-master>
 	</fo:layout-master-set>
 
-	<fo:page-sequence master-name="simplePM">
+	<fo:page-sequence master-reference="simplePM">
 	    <fo:flow flow-name="xsl-region-body">
 			<fo:block text-align="start" space-before.optimum="6pt" text-indent="1in"> 
 			  This text is formatted into a left-justified paragraph.

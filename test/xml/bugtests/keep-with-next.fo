@@ -14,7 +14,7 @@
 	    </fo:simple-page-master>
 	</fo:layout-master-set>
 
-	<fo:page-sequence master-name="simplePM">
+	<fo:page-sequence master-reference="simplePM">
 	    <fo:flow flow-name="xsl-region-body">
 			<fo:block space-before.optimum="1cm" font-family="monospace" font-size="10pt" white-space-treatment="preserve" wrap-option="no-wrap">
  F I N A L    C A L C U L A T I O N                      AUD $      AUD $
