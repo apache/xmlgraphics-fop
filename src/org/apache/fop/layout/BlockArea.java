@@ -230,8 +230,11 @@ public class BlockArea extends Area {
         this.currentLineArea.changeColor(red, green, blue);
 
         //check whether leader fits into the (rest of the) line
+        //using length.optimum to determine where to break the line as defined 
+        // in the xsl:fo spec: "User agents may choose to use the value of 'leader-length.optimum'
+        // to determine where to break the line" (7.20.4)
         //if leader is longer then create a new LineArea and put leader there
-        if (leaderLengthMinimum <= (this.getContentWidth() -
+        if (leaderLengthOptimum <= (this.getContentWidth() -
                                     this.currentLineArea.finalWidth -
                                     this.currentLineArea.pendingWidth)) {
             this.currentLineArea.addLeader(leaderPattern,
