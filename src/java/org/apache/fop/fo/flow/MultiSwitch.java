@@ -74,7 +74,7 @@ public class MultiSwitch extends ToBeImplementedElement {
         // Common Accessibility Properties
         CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
 
-        // this.properties.get("auto-restore");
+        // this.propertyList.get("auto-restore");
         setupID();
 
     }

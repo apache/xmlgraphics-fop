@@ -189,7 +189,7 @@ public class PageSequence extends FObj {
 
         // we are now on the first page of the page sequence
         thisIsFirstPage = true;
-        ipnValue = this.properties.get("initial-page-number").getString();
+        ipnValue = this.propertyList.get("initial-page-number").getString();
 
         if (ipnValue.equals("auto")) {
             pageNumberType = AUTO;
@@ -209,7 +209,7 @@ public class PageSequence extends FObj {
         }
 
 
-        String masterName = this.properties.get("master-reference").getString();
+        String masterName = this.propertyList.get("master-reference").getString();
         this.simplePageMaster =
                 this.layoutMasterSet.getSimplePageMaster(masterName);
         if (this.simplePageMaster == null) {
@@ -224,17 +224,17 @@ public class PageSequence extends FObj {
 
         // get the 'format' properties
         this.pageNumberGenerator =
-            new PageNumberGenerator(this.properties.get("format").getString(),
-                                    this.properties.get("grouping-separator").getCharacter(),
-                                    this.properties.get("grouping-size").getNumber().intValue(),
-                                    this.properties.get("letter-value").getEnum());
+            new PageNumberGenerator(this.propertyList.get("format").getString(),
+                                    this.propertyList.get("grouping-separator").getCharacter(),
+                                    this.propertyList.get("grouping-size").getNumber().intValue(),
+                                    this.propertyList.get("letter-value").getEnum());
         this.pageNumberGenerator.enableLogging(getLogger());
 
         this.forcePageCount =
-            this.properties.get("force-page-count").getEnum();
+            this.propertyList.get("force-page-count").getEnum();
 
-        // this.properties.get("country");
-        // this.properties.get("language");
+        // this.propertyList.get("country");
+        // this.propertyList.get("language");
         setupID();
 
         //call startStructuredPageSequence to ensure, that startPageSequence is called

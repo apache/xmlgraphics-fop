@@ -71,7 +71,7 @@ public class MultiPropertySet extends ToBeImplementedElement {
     private void setup() {
 
         setupID();
-        // this.properties.get("active-state");
+        // this.propertyList.get("active-state");
 
     }
 

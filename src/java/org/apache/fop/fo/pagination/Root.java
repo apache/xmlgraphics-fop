@@ -78,7 +78,7 @@ public class Root extends FObj {
      */
     public Root(FONode parent) {
         super(parent);
-        // this.properties.get("media-usage");
+        // this.propertyList.get("media-usage");
         pageSequences = new java.util.ArrayList();
         if (parent != null) {
             //throw new FOPException("root must be root element");

@@ -118,22 +118,22 @@ public class Inline extends FObjMixed {
         // Common Relative Position Properties
         CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
 
-        // this.properties.get("alignment-adjust");
-        // this.properties.get("alignment-baseline");
-        // this.properties.get("baseline-shift");
-        // this.properties.get("color");
-        // this.properties.get("dominant-baseline");
+        // this.propertyList.get("alignment-adjust");
+        // this.propertyList.get("alignment-baseline");
+        // this.propertyList.get("baseline-shift");
+        // this.propertyList.get("color");
+        // this.propertyList.get("dominant-baseline");
         setupID();
-        // this.properties.get("keep-together");
-        // this.properties.get("keep-with-next");
-        // this.properties.get("keep-with-previous");
-        // this.properties.get("line-height");
-        // this.properties.get("line-height-shift-adjustment");
-        // this.properties.get("text-devoration");
-        // this.properties.get("visibility");
-        // this.properties.get("z-index");
+        // this.propertyList.get("keep-together");
+        // this.propertyList.get("keep-with-next");
+        // this.propertyList.get("keep-with-previous");
+        // this.propertyList.get("line-height");
+        // this.propertyList.get("line-height-shift-adjustment");
+        // this.propertyList.get("text-devoration");
+        // this.propertyList.get("visibility");
+        // this.propertyList.get("z-index");
 
-        int textDecoration = this.properties.get("text-decoration").getEnum();
+        int textDecoration = this.propertyList.get("text-decoration").getEnum();
 
         if (textDecoration == TextDecoration.UNDERLINE) {
             this.underlined = true;

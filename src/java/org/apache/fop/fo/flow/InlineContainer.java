@@ -92,25 +92,25 @@ public class InlineContainer extends FObj {
         CommonRelativePosition mRelProps =
           propMgr.getRelativePositionProps();
 
-        // this.properties.get("alignment-adjust");
-        // this.properties.get("alignment-baseline");
-        // this.properties.get("baseline-shift");
-        // this.properties.get("block-progression-dimension");
-        // this.properties.get("clip");
-        // this.properties.get("display-align");
-        // this.properties.get("dominant-baseline");
-        // this.properties.get("height");
+        // this.propertyList.get("alignment-adjust");
+        // this.propertyList.get("alignment-baseline");
+        // this.propertyList.get("baseline-shift");
+        // this.propertyList.get("block-progression-dimension");
+        // this.propertyList.get("clip");
+        // this.propertyList.get("display-align");
+        // this.propertyList.get("dominant-baseline");
+        // this.propertyList.get("height");
         setupID();
-        // this.properties.get("inline-progression-dimension");
-        // this.properties.get("keep-together");
-        // this.properties.get("keep-with-next");
-        // this.properties.get("keep-with-previous");
-        // this.properties.get("line-height");
-        // this.properties.get("line-height-shift-adjustment");
-        // this.properties.get("overflow");
-        // this.properties.get("reference-orientation");
-        // this.properties.get("width");
-        // this.properties.get("writing-mode");
+        // this.propertyList.get("inline-progression-dimension");
+        // this.propertyList.get("keep-together");
+        // this.propertyList.get("keep-with-next");
+        // this.propertyList.get("keep-with-previous");
+        // this.propertyList.get("line-height");
+        // this.propertyList.get("line-height-shift-adjustment");
+        // this.propertyList.get("overflow");
+        // this.propertyList.get("reference-orientation");
+        // this.propertyList.get("width");
+        // this.propertyList.get("writing-mode");
     }
 
     /**

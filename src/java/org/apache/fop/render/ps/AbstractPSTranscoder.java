@@ -51,38 +51,21 @@
 package org.apache.fop.render.ps;
 
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-
 import java.awt.Color;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import java.io.IOException;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.BridgeException;
-import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.ViewBox;
-
-import org.apache.batik.dom.svg.SVGOMDocument;
-
-import org.apache.batik.gvt.GraphicsNode;
-
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.resources.Messages;
 
 import org.apache.batik.transcoder.image.ImageTranscoder;
 
 import org.apache.fop.svg.AbstractFOPTranscoder;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGSVGElement;
 
 /**
  * This class enables to transcode an input to a PostScript document.

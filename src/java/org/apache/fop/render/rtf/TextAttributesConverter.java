@@ -139,8 +139,8 @@ class TextAttributesConverter {
     }
 
 
-    private static void attrBlockFontFamily(PropertyList properties, RtfAttributes rtfAttr) {
-        String fopValue = properties.get("font-family").getString();
+    private static void attrBlockFontFamily(PropertyList propertyList, RtfAttributes rtfAttr) {
+        String fopValue = propertyList.get("font-family").getString();
 
         if (fopValue != null) {
             rtfAttr.set(RtfText.ATTR_FONT_FAMILY,
@@ -148,14 +148,14 @@ class TextAttributesConverter {
         }
     }
 
-    private static void attrBlockFontSize(PropertyList properties, RtfAttributes rtfAttr) {
-        int fopValue = properties.get("font-size").getLength().getValue() / 500;
+    private static void attrBlockFontSize(PropertyList propertyList, RtfAttributes rtfAttr) {
+        int fopValue = propertyList.get("font-size").getLength().getValue() / 500;
         rtfAttr.set("fs", fopValue);
     }
 
-    private static void attrBlockFontColor(PropertyList properties, RtfAttributes rtfAttr) {
+    private static void attrBlockFontColor(PropertyList propertyList, RtfAttributes rtfAttr) {
         // Cell background color
-        ColorTypeProperty colorTypeProp = (ColorTypeProperty)properties.get("color");
+        ColorTypeProperty colorTypeProp = (ColorTypeProperty)propertyList.get("color");
         if (colorTypeProp != null) {
             ColorType colorType = colorTypeProp.getColorType();
             if (colorType != null) {
@@ -175,8 +175,8 @@ class TextAttributesConverter {
 
 
 
-    private static void attrBlockFontWeight(PropertyList properties, RtfAttributes rtfAttr) {
-        String fopValue = properties.get("font-weight").getString();
+    private static void attrBlockFontWeight(PropertyList propertyList, RtfAttributes rtfAttr) {
+        String fopValue = propertyList.get("font-weight").getString();
         if (fopValue == "bold" || fopValue == "700") {
             rtfAttr.set("b", 1);
         } else {
@@ -184,8 +184,8 @@ class TextAttributesConverter {
         }
     }
 
-    private static void attrBlockFontItalic(PropertyList properties, RtfAttributes rtfAttr) {
-        String fopValue = properties.get("font-style").getString();
+    private static void attrBlockFontItalic(PropertyList propertyList, RtfAttributes rtfAttr) {
+        String fopValue = propertyList.get("font-style").getString();
         if (fopValue.equals("italic")) {
             rtfAttr.set(RtfText.ATTR_ITALIC, 1);
         } else {
@@ -193,8 +193,8 @@ class TextAttributesConverter {
         }
     }
 
-    private static void attrBlockFontUnderline(PropertyList properties, RtfAttributes rtfAttr) {
-        EnumProperty enumProp = (EnumProperty)properties.get("text-decoration");
+    private static void attrBlockFontUnderline(PropertyList propertyList, RtfAttributes rtfAttr) {
+        EnumProperty enumProp = (EnumProperty)propertyList.get("text-decoration");
         if (enumProp.getEnum() == Constants.UNDERLINE) {
             rtfAttr.set(RtfText.ATTR_UNDERLINE, 1);
         } else {
@@ -202,11 +202,11 @@ class TextAttributesConverter {
         }
     }
 
-    private static void attrBlockSpaceBeforeAfter(PropertyList properties, RtfAttributes rtfAttr) {
+    private static void attrBlockSpaceBeforeAfter(PropertyList propertyList, RtfAttributes rtfAttr) {
         SpaceProperty spaceProp = null;
 
         //space-before
-        spaceProp = (SpaceProperty)properties.get("space-before");
+        spaceProp = (SpaceProperty)propertyList.get("space-before");
         if (spaceProp != null) {
             Float f = new Float(
                 spaceProp.getLengthRange().getOptimum().getLength().getValue() / 1000f);
@@ -222,7 +222,7 @@ class TextAttributesConverter {
         }
 
         //space-after
-        spaceProp = (SpaceProperty)properties.get("space-after");
+        spaceProp = (SpaceProperty)propertyList.get("space-after");
         if (spaceProp != null) {
             Float f = new Float(
                 spaceProp.getLengthRange().getOptimum().getLength().getValue() / 1000f);
@@ -238,12 +238,12 @@ class TextAttributesConverter {
         }
     }
 
-    private static void attrBlockMargins(PropertyList properties, RtfAttributes rtfAttr) {
+    private static void attrBlockMargins(PropertyList propertyList, RtfAttributes rtfAttr) {
         try {
             LengthProperty lengthProp = null;
 
             // margin-left
-            lengthProp = (LengthProperty)properties.get("margin-left");
+            lengthProp = (LengthProperty)propertyList.get("margin-left");
             if (lengthProp != null) {
                 Float f = new Float(lengthProp.getLength().getValue() / 1000f);
                 String sValue = f.toString() + "pt";
@@ -256,7 +256,7 @@ class TextAttributesConverter {
             }
 
             // margin-right
-            lengthProp = (LengthProperty)properties.get("margin-right");
+            lengthProp = (LengthProperty)propertyList.get("margin-right");
             if (lengthProp != null) {
                 Float f = new Float(lengthProp.getLength().getValue() / 1000f);
                 String sValue = f.toString() + "pt";
@@ -274,8 +274,8 @@ class TextAttributesConverter {
 
 
 
-    private static void attrBlockTextAlign(PropertyList properties, RtfAttributes rtfAttr) {
-        int fopValue = properties.get("text-align").getEnum();
+    private static void attrBlockTextAlign(PropertyList propertyList, RtfAttributes rtfAttr) {
+        int fopValue = propertyList.get("text-align").getEnum();
         String rtfValue = null;
         switch (fopValue) {
             case Constants.CENTER:
@@ -301,8 +301,8 @@ class TextAttributesConverter {
      * @param bl the Block object the properties are read from
      * @param rtfAttr the RtfAttributes object the attributes are written to
      */
-    private static void attrBlockBackgroundColor(PropertyList properties, RtfAttributes rtfAttr) {
-        ColorType fopValue = properties.get("background-color").getColorType();
+    private static void attrBlockBackgroundColor(PropertyList propertyList, RtfAttributes rtfAttr) {
+        ColorType fopValue = propertyList.get("background-color").getColorType();
         int rtfColor = 0;
         /* FOP uses a default background color of "transparent", which is
            actually a transparent black, which is generally not suitable as a

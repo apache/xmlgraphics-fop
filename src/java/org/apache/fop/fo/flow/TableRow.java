@@ -105,7 +105,7 @@ public class TableRow extends FObj {
         // Common Accessibility Properties
         CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
 
-        // this.properties.get("block-progression-dimension");
+        // this.propertyList.get("block-progression-dimension");
 
         // Common Aural Properties
         CommonAural mAurProps = propMgr.getAuralProps();
@@ -119,30 +119,30 @@ public class TableRow extends FObj {
         // Common Relative Position Properties
         CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
 
-        // this.properties.get("break-before");
-        // this.properties.get("break-after");
+        // this.propertyList.get("break-before");
+        // this.propertyList.get("break-after");
         setupID();
-        // this.properties.get("height");
-        // this.properties.get("keep-together");
-        // this.properties.get("keep-with-next");
-        // this.properties.get("keep-with-previous");
+        // this.propertyList.get("height");
+        // this.propertyList.get("keep-together");
+        // this.propertyList.get("keep-with-next");
+        // this.propertyList.get("keep-with-previous");
 
 
-        this.breakAfter = this.properties.get("break-after").getEnum();
+        this.breakAfter = this.propertyList.get("break-after").getEnum();
         this.backgroundColor =
-            this.properties.get("background-color").getColorType();
+            this.propertyList.get("background-color").getColorType();
 
         this.keepTogether = getKeepValue("keep-together.within-column");
         this.keepWithNext = getKeepValue("keep-with-next.within-column");
         this.keepWithPrevious =
             getKeepValue("keep-with-previous.within-column");
 
-        this.minHeight = this.properties.get("height").getLength().getValue();
+        this.minHeight = this.propertyList.get("height").getLength().getValue();
         setup = true;
     }
 
     private KeepValue getKeepValue(String sPropName) {
-        Property p = this.properties.get(sPropName);
+        Property p = this.propertyList.get(sPropName);
         Number n = p.getNumber();
         if (n != null) {
             return new KeepValue(KeepValue.KEEP_WITH_VALUE, n.intValue());

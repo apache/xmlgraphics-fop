@@ -75,7 +75,7 @@ public class ListItemBody extends FObj {
             CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
 
             setupID();
-            // this.properties.get("keep-together");
+            // this.propertyList.get("keep-together");
 
         /*
          * For calculating the lineage - The fo:list-item-body formatting object

@@ -895,7 +895,7 @@ public class </xsl:text>
 
 <xsl:template match="propval/parwmrel2abs">
   <xsl:text>
-        sbExpr.append(parentFO.properties.wmRelToAbs(PropertyList.</xsl:text>
+        sbExpr.append(parentFO.propertyList.wmRelToAbs(PropertyList.</xsl:text>
   <xsl:value-of select="@dir"/>
   <xsl:text>));</xsl:text>
 </xsl:template>

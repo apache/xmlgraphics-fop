@@ -183,7 +183,7 @@ public class RTFHandler extends FOInputHandler {
 
             //read page size and margins, if specified
             Property prop;
-            if ((prop = pageSeq.properties.get("master-reference")) != null) {
+            if ((prop = pageSeq.propertyList.get("master-reference")) != null) {
                 String reference = prop.getString();
 
                 SimplePageMaster pagemaster 
@@ -193,7 +193,7 @@ public class RTFHandler extends FOInputHandler {
                 if (pagemaster != null) {
                     sect.getRtfAttributes().set(
                         PageAttributesConverter.convertPageAttributes(
-                            pagemaster.properties, null));
+                            pagemaster.propertyList, null));
                 }
             }
 
@@ -314,7 +314,7 @@ public class RTFHandler extends FOInputHandler {
     public void startBlock(Block bl) {
         try {
             RtfAttributes rtfAttr
-                = TextAttributesConverter.convertAttributes(bl.properties, null);
+                = TextAttributesConverter.convertAttributes(bl.propertyList, null);
                     
             IRtfTextrunContainer container 
                 = (IRtfTextrunContainer)builderContext.getContainer(
@@ -369,7 +369,7 @@ public class RTFHandler extends FOInputHandler {
 
         try {
             RtfAttributes atts 
-                = TableAttributesConverter.convertTableAttributes(tbl.properties);
+                = TableAttributesConverter.convertTableAttributes(tbl.propertyList);
             
             final IRtfTableContainer tc 
                 = (IRtfTableContainer)builderContext.getContainer(
@@ -448,7 +448,7 @@ public class RTFHandler extends FOInputHandler {
 
         try {
             RtfAttributes rtfAttr
-                = TextAttributesConverter.convertCharacterAttributes(inl.properties, null);
+                = TextAttributesConverter.convertCharacterAttributes(inl.propertyList, null);
                     
             IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
@@ -494,7 +494,7 @@ public class RTFHandler extends FOInputHandler {
      */
     public void startBody(TableBody tb) {
         try {
-            RtfAttributes atts = TableAttributesConverter.convertRowAttributes (tb.properties,
+            RtfAttributes atts = TableAttributesConverter.convertRowAttributes (tb.propertyList,
                    null);
 
             RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class, true, this);
@@ -527,7 +527,7 @@ public class RTFHandler extends FOInputHandler {
             final RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class,
                     true, null);
 
-            RtfAttributes atts = TableAttributesConverter.convertRowAttributes(tr.properties,
+            RtfAttributes atts = TableAttributesConverter.convertRowAttributes(tr.propertyList,
                     tbl.getHeaderAttribs());
                     
             if (tr.getParent() instanceof TableHeader) {
@@ -575,12 +575,12 @@ public class RTFHandler extends FOInputHandler {
             float width = tctx.getColumnWidth();
 
             // create an RtfTableCell in the current RtfTableRow
-            RtfAttributes atts = TableAttributesConverter.convertCellAttributes(tc.properties);
+            RtfAttributes atts = TableAttributesConverter.convertCellAttributes(tc.propertyList);
             RtfTableCell cell = row.newTableCell((int)width, atts);
 
             //process number-rows-spanned attribute
             Property p = null;
-            if ((p = tc.properties.get("number-rows-spanned")) != null) {
+            if ((p = tc.propertyList.get("number-rows-spanned")) != null) {
                 // Start vertical merge
                 cell.setVMerge(RtfTableCell.MERGE_START);
 
@@ -617,7 +617,7 @@ public class RTFHandler extends FOInputHandler {
                 = (IRtfListContainer)builderContext.getContainer(
                     IRtfListContainer.class, true, this);
             final RtfList newList = c.newList(
-                ListAttributesConverter.convertAttributes(lb.properties));
+                ListAttributesConverter.convertAttributes(lb.propertyList));
             builderContext.pushContainer(newList);
         } catch (IOException ioe) {
             log.error("startList: " + ioe.getMessage());
@@ -757,7 +757,7 @@ public class RTFHandler extends FOInputHandler {
             Property p = null; 
                
             //get source file
-            if ((p = eg.properties.get("src")) != null) {
+            if ((p = eg.propertyList.get("src")) != null) {
                 newGraphic.setURL (p.getString());
             } else {
                 log.error("The attribute 'src' of <fo:external-graphic> is required.");
@@ -765,7 +765,7 @@ public class RTFHandler extends FOInputHandler {
             }
             
             //get scaling
-            if ((p = eg.properties.get("scaling")) != null) {
+            if ((p = eg.propertyList.get("scaling")) != null) {
                 EnumProperty e = (EnumProperty)p;
                 if (p.getEnum() == Constants.UNIFORM) {
                     newGraphic.setScaling ("uniform");
@@ -773,7 +773,7 @@ public class RTFHandler extends FOInputHandler {
             }
             
             //get width
-            if ((p = eg.properties.get("width")) != null) {
+            if ((p = eg.propertyList.get("width")) != null) {
                 LengthProperty lengthProp = (LengthProperty)p;
                 if (lengthProp.getLength() instanceof FixedLength) {
                     Float f = new Float(lengthProp.getLength().getValue() / 1000f);
@@ -783,7 +783,7 @@ public class RTFHandler extends FOInputHandler {
             }
             
             //get height
-            if ((p = eg.properties.get("height")) != null) {
+            if ((p = eg.propertyList.get("height")) != null) {
                 LengthProperty lengthProp = (LengthProperty)p;
                 if (lengthProp.getLength() instanceof FixedLength) {
                     Float f = new Float(lengthProp.getLength().getValue() / 1000f);
@@ -859,7 +859,7 @@ public class RTFHandler extends FOInputHandler {
         try {
             RtfAttributes rtfAttr
                 = TextAttributesConverter.convertCharacterAttributes(
-                    pagenum.properties, null);
+                    pagenum.propertyList, null);
                     
             IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(

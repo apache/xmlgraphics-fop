@@ -89,7 +89,7 @@ public class Marker extends FObjMixed {
         super.handleAttrs(attlist);
 
         this.markerClassName =
-            this.properties.get("marker-class-name").getString();
+            this.propertyList.get("marker-class-name").getString();
     }
 
     /**

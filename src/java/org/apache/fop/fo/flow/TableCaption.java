@@ -91,12 +91,12 @@ public class TableCaption extends ToBeImplementedElement {
         // Common Relative Position Properties
         CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
 
-        // this.properties.get("block-progression-dimension");
-        // this.properties.get("height");
+        // this.propertyList.get("block-progression-dimension");
+        // this.propertyList.get("height");
         setupID();
-        // this.properties.get("inline-progression-dimension");
-        // this.properties.get("keep-togethe");
-        // this.properties.get("width");
+        // this.propertyList.get("inline-progression-dimension");
+        // this.propertyList.get("keep-togethe");
+        // this.propertyList.get("width");
 
     }
 

@@ -107,37 +107,37 @@ public class Leader extends FObjMixed {
         // Common Relative Position Properties
         CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
 
-        // this.properties.get("alignment-adjust");
-        // this.properties.get("alignment-baseline");
-        // this.properties.get("baseline-shift");
-        // this.properties.get("color");
-        // this.properties.get("dominant-baseline");
-        // this.properties.get("text-depth");
-        // this.properties.get("text-altitude");
+        // this.propertyList.get("alignment-adjust");
+        // this.propertyList.get("alignment-baseline");
+        // this.propertyList.get("baseline-shift");
+        // this.propertyList.get("color");
+        // this.propertyList.get("dominant-baseline");
+        // this.propertyList.get("text-depth");
+        // this.propertyList.get("text-altitude");
         setupID();
-        // this.properties.get("leader-alignment");
-        // this.properties.get("leader-length");
-        // this.properties.get("leader-pattern");
-        // this.properties.get("leader-pattern-width");
-        // this.properties.get("rule-style");
-        // this.properties.get("rule-thickness");
-        // this.properties.get("letter-spacing");
-        // this.properties.get("line-height");
-        // this.properties.get("line-height-shift-adjustment");
-        // this.properties.get("text-shadow");
-        // this.properties.get("visibility");
-        // this.properties.get("word-spacing");
-        // this.properties.get("z-index");
+        // this.propertyList.get("leader-alignment");
+        // this.propertyList.get("leader-length");
+        // this.propertyList.get("leader-pattern");
+        // this.propertyList.get("leader-pattern-width");
+        // this.propertyList.get("rule-style");
+        // this.propertyList.get("rule-thickness");
+        // this.propertyList.get("letter-spacing");
+        // this.propertyList.get("line-height");
+        // this.propertyList.get("line-height-shift-adjustment");
+        // this.propertyList.get("text-shadow");
+        // this.propertyList.get("visibility");
+        // this.propertyList.get("word-spacing");
+        // this.propertyList.get("z-index");
 
         // color properties
-        ColorType c = this.properties.get("color").getColorType();
+        ColorType c = this.propertyList.get("color").getColorType();
         float red = c.getRed();
         float green = c.getGreen();
         float blue = c.getBlue();
 
         // fo:leader specific properties
         // determines the pattern of leader; allowed values: space, rule,dots, use-content
-        leaderPattern = this.properties.get("leader-pattern").getEnum();
+        leaderPattern = this.propertyList.get("leader-pattern").getEnum();
         switch(leaderPattern) {
             case LeaderPattern.SPACE:
                 // use Space
@@ -146,8 +146,8 @@ public class Leader extends FObjMixed {
                 // the following properties only apply
                 // for leader-pattern = "rule"
                 ruleThickness =
-                         properties.get("rule-thickness").getLength().getValue();
-                ruleStyle = properties.get("rule-style").getEnum();
+                         propertyList.get("rule-thickness").getLength().getValue();
+                ruleStyle = propertyList.get("rule-style").getEnum();
             break;
             case LeaderPattern.DOTS:
             break;
@@ -159,13 +159,13 @@ public class Leader extends FObjMixed {
 
         // if leaderPatternWidth = 0 = default = use-font-metric
         patternWidth =
-            this.properties.get("leader-pattern-width").getLength().getValue();
+            this.propertyList.get("leader-pattern-width").getLength().getValue();
 
     }
 
     public int getLength(String prop, int dim) {
         int length;
-        Length maxlength = properties.get(prop).getLength();
+        Length maxlength = propertyList.get(prop).getLength();
         if (maxlength instanceof PercentLength) {
             length = (int)(((PercentLength)maxlength).value()
                                       * dim);

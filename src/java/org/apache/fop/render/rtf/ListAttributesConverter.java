@@ -74,7 +74,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 public class ListAttributesConverter {
     
     
-    static RtfAttributes convertAttributes(PropertyList properties)
+    static RtfAttributes convertAttributes(PropertyList propertyList)
     throws FOPException {
         
         RtfAttributes attrib = new RtfAttributes();
@@ -83,7 +83,7 @@ public class ListAttributesConverter {
         int iStartIndentInTwips = 0;
         
         //start-indent
-        if ((prop = properties.get("start-indent")) != null) {
+        if ((prop = propertyList.get("start-indent")) != null) {
             LengthProperty lengthprop = (LengthProperty)prop;
 
             Float f = new Float(lengthprop.getLength().getValue() / 1000f);
@@ -97,7 +97,7 @@ public class ListAttributesConverter {
         attrib.set(RtfListTable.LIST_INDENT, iStartIndentInTwips);
         
         //end-indent
-        if ((prop = properties.get("end-indent")) != null) {
+        if ((prop = propertyList.get("end-indent")) != null) {
             LengthProperty lengthprop = (LengthProperty)prop;
 
             Float f = new Float(lengthprop.getLength().getValue() / 1000f);

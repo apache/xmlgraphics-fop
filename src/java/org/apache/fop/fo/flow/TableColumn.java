@@ -133,22 +133,22 @@ public class TableColumn extends FObj {
         CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
         CommonBackground bProps = propMgr.getBackgroundProps();
 
-        // this.properties.get("column-width");
-        // this.properties.get("number-columns-repeated");
-        // this.properties.get("number-columns-spanned");
-        // this.properties.get("visibility");
+        // this.propertyList.get("column-width");
+        // this.propertyList.get("number-columns-repeated");
+        // this.propertyList.get("number-columns-spanned");
+        // this.propertyList.get("visibility");
 
-        iColumnNumber = properties.get("column-number").getNumber().intValue();
+        iColumnNumber = propertyList.get("column-number").getNumber().intValue();
 
         numColumnsRepeated =
-            properties.get("number-columns-repeated").getNumber().intValue();
+            propertyList.get("number-columns-repeated").getNumber().intValue();
 
         this.backgroundColor =
-            this.properties.get("background-color").getColorType();
+            this.propertyList.get("background-color").getColorType();
 
-        Property prop = this.properties.get("column-width");
+        Property prop = this.propertyList.get("column-width");
         if (prop != null) {
-            columnWidthPropVal = properties.get("column-width").getLength();
+            columnWidthPropVal = propertyList.get("column-width").getLength();
 
             // This won't include resolved table-units or % values yet.
             columnWidth = columnWidthPropVal.getValue();

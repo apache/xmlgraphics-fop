@@ -111,10 +111,10 @@ public class RegionBody extends Region {
     private int getRelMargin(int reldir, String sRelPropName) {
         FObj parent = (FObj) getParent();
         String sPropName = "margin-"
-                + parent.properties.wmRelToAbs(reldir);
-        Property prop = properties.getExplicitBaseProp(sPropName);
+                + parent.propertyList.wmRelToAbs(reldir);
+        Property prop = propertyList.getExplicitBaseProp(sPropName);
         if (prop == null) {
-            prop = properties.getExplicitBaseProp(sRelPropName);
+            prop = propertyList.getExplicitBaseProp(sRelPropName);
         }
         return ((prop != null) ? prop.getLength().getValue() : 0);
     }

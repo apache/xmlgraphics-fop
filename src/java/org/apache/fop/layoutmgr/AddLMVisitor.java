@@ -165,7 +165,6 @@ import org.apache.fop.layoutmgr.table.Column;
 import org.apache.fop.layoutmgr.table.Row;
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.traits.MinOptMax;
-import org.apache.fop.util.CharUtilities;
 
 /**
  * Concrete implementation of FOTreeVisitor for the purpose of adding
@@ -353,7 +352,7 @@ public class AddLMVisitor implements FOTreeVisitor {
          };
          lm.setUserAgent(node.getUserAgent());
          lm.setFObj(node);
-         lm.setAlignment(node.properties.get("leader-alignment").getEnum());
+         lm.setAlignment(node.propertyList.get("leader-alignment").getEnum());
          currentLMList.add(lm);
      }
 
@@ -461,7 +460,7 @@ public class AddLMVisitor implements FOTreeVisitor {
      }
 
      public InlineArea getCharacterInlineArea(Character node) {
-         String str = node.properties.get("character").getString();
+         String str = node.propertyList.get("character").getString();
          if (str.length() == 1) {
              org.apache.fop.area.inline.Character ch =
                new org.apache.fop.area.inline.Character(
@@ -483,7 +482,7 @@ public class AddLMVisitor implements FOTreeVisitor {
              lm.setUserAgent(node.getUserAgent());
              lm.setFObj(node);
              lm.setCurrentArea(area);
-             lm.setAlignment(node.properties.get("vertical-align").getEnum());
+             lm.setAlignment(node.propertyList.get("vertical-align").getEnum());
              lm.setLead(node.getViewHeight());
              currentLMList.add(lm);
          }
@@ -521,7 +520,7 @@ public class AddLMVisitor implements FOTreeVisitor {
          BlockContainerLayoutManager blm = new BlockContainerLayoutManager();
          blm.setUserAgent(node.getUserAgent());
          blm.setFObj(node);
-         blm.setOverflow(node.properties.get("overflow").getEnum());
+         blm.setOverflow(node.propertyList.get("overflow").getEnum());
          currentLMList.add(blm);
      }
 
@@ -539,7 +538,7 @@ public class AddLMVisitor implements FOTreeVisitor {
              lm.setUserAgent(node.getUserAgent());
              lm.setFObj(node);
              lm.setCurrentArea(areaCurrent);
-             lm.setAlignment(node.properties.get("vertical-align").getEnum());
+             lm.setAlignment(node.propertyList.get("vertical-align").getEnum());
              lm.setLead(areaCurrent.getHeight());
              currentLMList.add(lm);
          }
@@ -570,10 +569,10 @@ public class AddLMVisitor implements FOTreeVisitor {
          // and inline-progression-dimension
 
          // if replaced then use height then ignore block-progression-dimension
-         //int h = this.properties.get("height").getLength().mvalue();
+         //int h = this.propertyList.get("height").getLength().mvalue();
 
          // use specified line-height then ignore dimension in height direction
-         boolean hasLH = false;//properties.get("line-height").getSpecifiedValue() != null;
+         boolean hasLH = false;//propertyList.get("line-height").getSpecifiedValue() != null;
 
          Length len;
 
@@ -581,27 +580,27 @@ public class AddLMVisitor implements FOTreeVisitor {
          int ipd = -1;
          boolean bpdauto = false;
          if (hasLH) {
-             bpd = node.properties.get("line-height").getLength().getValue();
+             bpd = node.propertyList.get("line-height").getLength().getValue();
          } else {
              // this property does not apply when the line-height applies
              // isn't the block-progression-dimension always in the same
              // direction as the line height?
-             len = node.properties.get("block-progression-dimension.optimum").getLength();
+             len = node.propertyList.get("block-progression-dimension.optimum").getLength();
              if (!len.isAuto()) {
                  bpd = len.getValue();
              } else {
-                 len = node.properties.get("height").getLength();
+                 len = node.propertyList.get("height").getLength();
                  if (!len.isAuto()) {
                      bpd = len.getValue();
                  }
              }
          }
 
-         len = node.properties.get("inline-progression-dimension.optimum").getLength();
+         len = node.propertyList.get("inline-progression-dimension.optimum").getLength();
          if (!len.isAuto()) {
              ipd = len.getValue();
          } else {
-             len = node.properties.get("width").getLength();
+             len = node.propertyList.get("width").getLength();
              if (!len.isAuto()) {
                  ipd = len.getValue();
              }
@@ -611,7 +610,7 @@ public class AddLMVisitor implements FOTreeVisitor {
          // to the content-height and content-width
          int cwidth = -1;
          int cheight = -1;
-         len = node.properties.get("content-width").getLength();
+         len = node.propertyList.get("content-width").getLength();
          if (!len.isAuto()) {
              /*if(len.scaleToFit()) {
                  if(ipd != -1) {
@@ -620,7 +619,7 @@ public class AddLMVisitor implements FOTreeVisitor {
              } else {*/
              cwidth = len.getValue();
          }
-         len = node.properties.get("content-height").getLength();
+         len = node.propertyList.get("content-height").getLength();
          if (!len.isAuto()) {
              /*if(len.scaleToFit()) {
                  if(bpd != -1) {
@@ -643,7 +642,7 @@ public class AddLMVisitor implements FOTreeVisitor {
          if (cheight == -1) {
              cheight = (int)size.getY() * 1000;
          }
-         int scaling = node.properties.get("scaling").getEnum();
+         int scaling = node.propertyList.get("scaling").getEnum();
          if (scaling == Scaling.UNIFORM) {
              // adjust the larger
              double rat1 = cwidth / (size.getX() * 1000f);
@@ -665,7 +664,7 @@ public class AddLMVisitor implements FOTreeVisitor {
 
          boolean clip = false;
          if (cwidth > ipd || cheight > bpd) {
-             int overflow = node.properties.get("overflow").getEnum();
+             int overflow = node.propertyList.get("overflow").getEnum();
              if (overflow == Overflow.HIDDEN) {
                  clip = true;
              } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {

@@ -59,6 +59,7 @@ import java.util.Set;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.xml.sax.Attributes;
 
 /**
@@ -67,10 +68,13 @@ import org.xml.sax.Attributes;
 public class FObj extends FONode {
     private static final String FO_URI = "http://www.w3.org/1999/XSL/Format";
 
+    public static HashMap propertyListTable = null;
+    public static HashMap elementTable = null;
+
     /**
      * Formatting properties for this fo element.
      */
-    public PropertyList properties;
+    public PropertyList propertyList;
 
     /**
      * Property manager for handling some common properties.
@@ -100,6 +104,22 @@ public class FObj extends FONode {
      */
     public FObj(FONode parent) {
         super(parent);
+        
+        if (propertyListTable == null) {
+            propertyListTable = new HashMap();
+            propertyListTable.putAll(FOPropertyMapping.getGenericMappings());
+        }
+        
+        if (elementTable == null) {
+            elementTable = new HashMap();
+            for (Iterator iter =
+                FOPropertyMapping.getElementMappings().iterator();
+                    iter.hasNext();) {
+                String elem = (String) iter.next();
+                elementTable.put(elem, FOPropertyMapping.getElementMapping(elem));
+            }
+        }
+        
     }
 
     /** Marks input file containing this object **/
@@ -128,14 +148,15 @@ public class FObj extends FONode {
      */
     public void handleAttrs(Attributes attlist) throws FOPException {
         FObj parentFO = findNearestAncestorFObj();
-        PropertyList parentProperties = null;
+        PropertyList parentPropertyList = null;
         if (parentFO != null) {
-            parentProperties = parentFO.getPropertiesForNamespace(FO_URI);
+            parentPropertyList = parentFO.getPropertiesForNamespace(FO_URI);
         }
 
-        properties = new PropertyList(this, parentProperties, FO_URI, name);
-        properties.addAttributesToList(attlist);
-        this.propMgr = makePropertyManager(properties);
+        propertyList = new PropertyList(this, parentPropertyList, FO_URI,
+            name);
+        propertyList.addAttributesToList(attlist);
+        this.propMgr = makePropertyManager(propertyList);
         setWritingMode();
     }
 
@@ -194,16 +215,16 @@ public class FObj extends FONode {
      * For a given namespace, determine whether the properties of this object
      * match that namespace.
      * @param nameSpaceURI the namespace URI to be tested against
-     * @return this.properties, if the namespaces match; otherwise, null
+     * @return this.propertyList, if the namespaces match; otherwise, null
      */
     public PropertyList getPropertiesForNamespace(String nameSpaceURI) {
-        if (this.properties == null) {
+        if (this.propertyList == null) {
             return null;
         }
-        if (!nameSpaceURI.equals(this.properties.getNameSpace())) {
+        if (!nameSpaceURI.equals(this.propertyList.getNameSpace())) {
             return null;
         }
-        return this.properties;
+        return this.propertyList;
     }
 
     /**
@@ -238,7 +259,7 @@ public class FObj extends FONode {
      * @return the property
      */
     public Property getProperty(String name) {
-        return (properties.get(name));
+        return (propertyList.get(name));
     }
 
     /**
@@ -248,7 +269,7 @@ public class FObj extends FONode {
      * fo and sets the id attribute of this object.
      */
     public void setupID() {
-        Property prop = this.properties.get("id");
+        Property prop = this.propertyList.get("id");
         if (prop != null) {
             String str = prop.getString();
             if (str != null && !str.equals("")) {
@@ -307,7 +328,7 @@ public class FObj extends FONode {
      */
     protected void setWritingMode() {
         FObj p = findNearestAncestorGeneratingRAs(true, true);
-        this.properties.setWritingMode(
+        this.propertyList.setWritingMode(
           p.getProperty("writing-mode").getEnum());
     }
 

@@ -73,8 +73,6 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
 // Java
-import java.util.Map;
-import java.util.Iterator;
 import java.util.List;
 
 /**

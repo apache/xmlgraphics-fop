@@ -95,7 +95,7 @@ public class LabelEndFunction extends FunctionBase {
         if (item == null) {
             throw new PropertyException("label-end() called from outside an fo:list-item");
         }
-        Length startIndent = ((ListItem)item).properties.get("start-indent").getLength();
+        Length startIndent = ((ListItem)item).propertyList.get("start-indent").getLength();
 
         LinearCombinationLength labelEnd = new LinearCombinationLength();
 

@@ -98,9 +98,9 @@ public class ConditionalPageMasterReference extends FObj {
 
         validateParent(parent);
 
-        this.pagePosition = this.properties.get("page-position").getEnum();
-        this.oddOrEven = this.properties.get("odd-or-even").getEnum();
-        this.blankOrNotBlank = this.properties.get("blank-or-not-blank").getEnum();
+        this.pagePosition = this.propertyList.get("page-position").getEnum();
+        this.oddOrEven = this.propertyList.get("odd-or-even").getEnum();
+        this.blankOrNotBlank = this.propertyList.get("blank-or-not-blank").getEnum();
     }
 
     /**

@@ -148,45 +148,45 @@ public class Table extends FObj {
         CommonRelativePosition mRelProps =
                 propMgr.getRelativePositionProps();
 
-        // this.properties.get("block-progression-dimension");
-        // this.properties.get("border-after-precendence");
-        // this.properties.get("border-before-precedence");
-        // this.properties.get("border-collapse");
-        // this.properties.get("border-end-precendence");
-        // this.properties.get("border-separation");
-        // this.properties.get("border-start-precendence");
-        // this.properties.get("break-after");
-        // this.properties.get("break-before");
+        // this.propertyList.get("block-progression-dimension");
+        // this.propertyList.get("border-after-precendence");
+        // this.propertyList.get("border-before-precedence");
+        // this.propertyList.get("border-collapse");
+        // this.propertyList.get("border-end-precendence");
+        // this.propertyList.get("border-separation");
+        // this.propertyList.get("border-start-precendence");
+        // this.propertyList.get("break-after");
+        // this.propertyList.get("break-before");
         setupID();
-        // this.properties.get("inline-progression-dimension");
-        // this.properties.get("height");
-        // this.properties.get("keep-together");
-        // this.properties.get("keep-with-next");
-        // this.properties.get("keep-with-previous");
-        // this.properties.get("table-layout");
-        // this.properties.get("table-omit-footer-at-break");
-        // this.properties.get("table-omit-header-at-break");
-        // this.properties.get("width");
-        // this.properties.get("writing-mode");
+        // this.propertyList.get("inline-progression-dimension");
+        // this.propertyList.get("height");
+        // this.propertyList.get("keep-together");
+        // this.propertyList.get("keep-with-next");
+        // this.propertyList.get("keep-with-previous");
+        // this.propertyList.get("table-layout");
+        // this.propertyList.get("table-omit-footer-at-break");
+        // this.propertyList.get("table-omit-header-at-break");
+        // this.propertyList.get("width");
+        // this.propertyList.get("writing-mode");
 
-        this.breakBefore = this.properties.get("break-before").getEnum();
-        this.breakAfter = this.properties.get("break-after").getEnum();
-        this.spaceBefore = this.properties.get(
+        this.breakBefore = this.propertyList.get("break-before").getEnum();
+        this.breakAfter = this.propertyList.get("break-after").getEnum();
+        this.spaceBefore = this.propertyList.get(
                              "space-before.optimum").getLength().getValue();
-        this.spaceAfter = this.properties.get(
+        this.spaceAfter = this.propertyList.get(
                             "space-after.optimum").getLength().getValue();
         this.backgroundColor =
-          this.properties.get("background-color").getColorType();
-        this.ipd = this.properties.get(
+          this.propertyList.get("background-color").getColorType();
+        this.ipd = this.propertyList.get(
                      "inline-progression-dimension").getLengthRange();
-        this.height = this.properties.get("height").getLength().getValue();
-        this.bAutoLayout = (this.properties.get(
+        this.height = this.propertyList.get("height").getLength().getValue();
+        this.bAutoLayout = (this.propertyList.get(
                 "table-layout").getEnum() == TableLayout.AUTO);
 
-        this.omitHeaderAtBreak = this.properties.get(
+        this.omitHeaderAtBreak = this.propertyList.get(
                 "table-omit-header-at-break").getEnum()
                                             == TableOmitHeaderAtBreak.TRUE;
-        this.omitFooterAtBreak = this.properties.get(
+        this.omitFooterAtBreak = this.propertyList.get(
                 "table-omit-footer-at-break").getEnum()
                                             == TableOmitFooterAtBreak.TRUE;
 

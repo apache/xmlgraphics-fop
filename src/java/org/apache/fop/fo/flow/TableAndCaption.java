@@ -92,11 +92,11 @@ public class TableAndCaption extends ToBeImplementedElement {
         // Common Relative Position Properties
         CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
 
-        // this.properties.get("caption-side");
+        // this.propertyList.get("caption-side");
         setupID();
-        // this.properties.get("keep-together");
-        // this.properties.get("keep-with-next");
-        // this.properties.get("keep-with-previous");
+        // this.propertyList.get("keep-together");
+        // this.propertyList.get("keep-with-next");
+        // this.propertyList.get("keep-with-previous");
 
     }
 

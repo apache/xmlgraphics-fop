@@ -74,7 +74,7 @@ public abstract class RegionBASE extends Region {
     public void end() {
         // The problem with this is that it might not be known yet....
         // Supposing extent is calculated in terms of percentage
-        this.extent = this.properties.get("extent").getLength().getValue();
+        this.extent = this.propertyList.get("extent").getLength().getValue();
     }
 
     /**

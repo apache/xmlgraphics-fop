@@ -109,22 +109,22 @@ public class ListItem extends FObj {
         // Common Relative Position Properties
         CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
 
-        // this.properties.get("break-after");
-        // this.properties.get("break-before");
+        // this.propertyList.get("break-after");
+        // this.propertyList.get("break-before");
         setupID();
-        // this.properties.get("keep-together");
-        // this.properties.get("keep-with-next");
-        // this.properties.get("keep-with-previous");
-        // this.properties.get("relative-align");
+        // this.propertyList.get("keep-together");
+        // this.propertyList.get("keep-with-next");
+        // this.propertyList.get("keep-with-previous");
+        // this.propertyList.get("relative-align");
 
-        this.align = this.properties.get("text-align").getEnum();
-        this.alignLast = this.properties.get("text-align-last").getEnum();
+        this.align = this.propertyList.get("text-align").getEnum();
+        this.alignLast = this.propertyList.get("text-align-last").getEnum();
         this.lineHeight =
-            this.properties.get("line-height").getLength().getValue();
+            this.propertyList.get("line-height").getLength().getValue();
         this.spaceBefore =
-            this.properties.get("space-before.optimum").getLength().getValue();
+            this.propertyList.get("space-before.optimum").getLength().getValue();
         this.spaceAfter =
-            this.properties.get("space-after.optimum").getLength().getValue();
+            this.propertyList.get("space-after.optimum").getLength().getValue();
 
     }
 

@@ -67,7 +67,6 @@ import org.apache.fop.area.Span;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.Resolveable;
-import org.apache.fop.area.Trait;
 
 import org.apache.fop.datatypes.FODimension;
 
@@ -771,9 +770,9 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
     private PageViewport createPageAreas(SimplePageMaster spm) {
         int pageWidth =
-                spm.properties.get("page-width").getLength().getValue();
+                spm.propertyList.get("page-width").getLength().getValue();
         int pageHeight =
-                spm.properties.get("page-height").getLength().getValue();
+                spm.propertyList.get("page-height").getLength().getValue();
         // Get absolute margin properties (top, left, bottom, right)
         CommonMarginBlock mProps = spm.getPropertyManager().getMarginProps();
 
@@ -859,7 +858,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         BodyRegion body = new BodyRegion();
         setRegionPosition(r, body, absRegVPRect);
         int columnCount =
-                r.properties.get("column-count").getNumber().intValue();
+                r.propertyList.get("column-count").getNumber().intValue();
         if ((columnCount > 1) && (r.overflow == Overflow.SCROLL)) {
             // recover by setting 'column-count' to 1. This is allowed but
             // not required by the spec.
@@ -870,7 +869,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         body.setColumnCount(columnCount);
 
         int columnGap =
-                r.properties.get("column-gap").getLength().getValue();
+                r.propertyList.get("column-gap").getLength().getValue();
         body.setColumnGap(columnGap);
         return body;
     }
