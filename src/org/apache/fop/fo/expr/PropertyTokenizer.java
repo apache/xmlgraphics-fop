@@ -19,6 +19,9 @@ import org.apache.fop.datatypes.Time;
  */
 class PropertyTokenizer {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /*
      * Maintain the numbering of this list in (X)Emacs by issuing
      * a shell command on the region with replacement (M-1 M-|).  Use
