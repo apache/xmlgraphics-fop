@@ -20,7 +20,12 @@
         <tr>
           <td>BMP (Microsoft Windows Bitmap)</td>
           <td>bitmap</td>
-          <td><link href="#native">FOP native</link></td>
+          <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
+        </tr>
+        <tr>
+          <td>CUR</td>
+          <td>unknown</td>
+          <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
           <td><link href="#eps">EPS</link> (Encapsulated PostScript)</td>
@@ -33,9 +38,29 @@
           <td><link href="#native">FOP native</link></td>
         </tr>
         <tr>
+          <td>FPX</td>
+          <td>unknown</td>
+          <td><link href="#jai">JAI</link></td>
+        </tr>
+        <tr>
+          <td>ICO (Sun Icon)</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
           <td><link href="#jpeg">JPEG</link> (Joint Photographic Experts Group)</td>
           <td>bitmap</td>
           <td><link href="#native">FOP native</link></td>
+        </tr>
+        <tr>
+          <td>PCX (PC Paintbrush)</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
+          <td>PICT (Macintosh PICT)</td>
+          <td>metafile</td>
+          <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
           <td>PNG (Portable Network Graphic)</td>
@@ -43,14 +68,44 @@
           <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
         </tr>
         <tr>
+          <td>PNM (Portable aNyMap Utilities, part of the Portable Bitmap Utilies, aka pbmplus. PNM is a superset encompassing PBM or Portable Bitmap, PGM or Portable Grayscale, and PPM or Portable Pixmap.)</td>
+          <td>bitmap</td>
+          <td><link href="#jai">JAI</link></td>
+        </tr>
+        <tr>
+          <td>PSD (Adobe Photoshop)</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
+          <td>RAS (Sunraster)</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
           <td><link href="#svg">SVG</link> (Scalable Vector Graphics)</td>
           <td>vector (with embedded bitmaps)</td>
           <td><link href="#batik">Batik</link></td>
         </tr>
         <tr>
-          <td><link href="#tiff">TIFF</link> (Tag Image Format File)</td>
+          <td>TGA (Targa)</td>
           <td>bitmap</td>
-          <td><link href="#native">FOP native</link> or <link href="#jai">JAI</link>, depending on the subformat. See <link href="#tiff">TIFF</link> for more details.(JIMI also supports TIFF, but this has not been implemented within FOP).</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
+          <td>TIFF (Tag Image Format File)</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
+        </tr>
+        <tr>
+          <td>XBM (X BitMap)</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link></td>
+        </tr>
+        <tr>
+          <td>XPM (X PixMap)</td>
+          <td>bitmap</td>
+          <td><link href="#jimi">JIMI</link></td>
         </tr>
       </table>
     </section>
@@ -66,15 +121,14 @@
         <title>JIMI</title>
         <p>
           Because of licensing issues, the JIMI image library is not included in the FOP distribution. First, <fork href="http://java.sun.com/products/jimi">download</fork> and install it.
-Then, copy the file "JimiProClasses.zip" from the archive to {fop-install-dir}/lib/jimi-1.0.jar. Please note that FOP binary distributions are compiled with JIMI support, so there is no need for you to build FOP to add the support. If jimi-1.0.jar is installed in the right place, it will automatically be used by FOP, otherwise it will not.
+Then, copy the file "JimiProClasses.zip" from the archive to xml-fop/lib/jimi-1.0.jar. Please note that FOP binary distributions are compiled with JIMI support, so there is no need for you to build FOP to add the support. If jimi-1.0.jar is installed in the right place, it will automatically be used by FOP, otherwise it will not.
         </p>
       </section>
       <section id="jai">
         <title>JAI</title>
-        <warning>JAI support is available for Release 0.20.5 and later. The comments in this section do not apply to releases earlier than 0.20.5.</warning>
         <p>
           FOP has been compiled with JAI support, but JAI is not included in the FOP distribution.
-To use it, install <link href="http://java.sun.com/products/java-media/jai">JAI</link>, then copy the jai_core.jar and the jai_codec.jar files to {fop-install-dir}/lib.
+To use it, simply install <link href="http://java.sun.com/products/java-media/jai">JAI</link>.
 JAI is much faster than JIMI, but is not available for all platforms. See <link href="http://java.sun.com/products/java-media/jai/forDevelopers/jaifaq.html#platforms">What platforms are supported?</link> on the JAI FAQ page for more details.
         </p>
       </section>
@@ -222,10 +276,6 @@ into a raster graphic are not drawn properly in PDF. The image is opaque.
         </ul>
       </section>
     </section>
-    <section id="tiff">
-      <title>TIFF</title>
-      <p>TIFF images with JPEG or CCITT content are passed through by FOP natively. Other TIFF subformats are handled by JAI.</p>
-    </section>
     <section id="resolution">
       <title>Graphics Resolution</title>
       <p>Some bitmapped image file formats store a dots-per-inch (dpi) or other resolution value. Since PDF and most output formats do not have a concept of resolution, but only of absolute image units (i.e. pixels) FOP ignores the resolution values as well. Instead, FOP uses the dimensions of the image as specified in the fo:external-graphic element to render the image:</p>
@@ -236,21 +286,6 @@ into a raster graphic are not drawn properly in PDF. The image is opaque.
       </ul>
       <p>If you need a higher apparent output resolution for bitmapped images, first make sure that at least one dimension of the image is defined in your XSL-FO input. Apart from that, resolution problems are in the image file itself, and must be corrected there: use or create a higher-resolution image file.</p>
       <note>The explanation above describes only the basic default behavior. There are other attributes of the fo:external-graphic element that can affect the behavior described above.</note>
-    </section>
-    <section id="caching">
-      <title>Image caching</title>
-      <p>
-        FOP caches images between runs. The URL is used as a key to identify images which means that when
-        a particular URL appears again, the image is taken from the cache. If you have a servlet that
-        generates a different image each time it is called with the same URL you need to use a constantly 
-        changing dummy parameter on the URL to avoid caching.
-      </p>
-      <p>
-        Currently, the images are not automatically released when an OutOfMemoryError is imminent. The
-        image cache can grow to a considerable size over time when a lot of different URLs are in use.
-        Starting with version 0.20.5 you can call <code>org.apache.fop.image.FopImageFactory.resetCache()</code>
-        to manually empty the cache. Image caching will be improved as part of our redesign effort.
-      </p>
     </section>
   </body>
 </document>

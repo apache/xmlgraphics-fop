@@ -15,7 +15,7 @@
         <li><link href="http://nagoya.apache.org/gump/javadoc/xml-fop-maintenance/build/javadocs/index.html">Javadocs for Maintenance Branch</link></li>
         <li><link href="http://nagoya.apache.org/gump/javadoc/xml-fop/build/javadocs/index.html">Javadocs for Trunk (Redesign)</link></li>
       </ul>
-      <note>If the links return an "Object not found!" message or otherwise do not work properly, it is probably because of a build error. Please raise a question on the <link href="../maillist.html#fop-user">fop-user mailing list</link> so that any problems can be fixed before the next build.</note>
+      <note>If the links return an "Object not found!" message or otherwise do not work properly, it is probably because of a build error. Please raise a question on the <link href="../resources.html#mailing-lists-fop-user">fop-user mailing list</link> so that any problems can be fixed before the next build.</note>
     </section>
     <section id="self-built">
       <title>Building them Yourself</title>

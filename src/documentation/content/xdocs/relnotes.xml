@@ -14,11 +14,11 @@
   <p>Important changes since the last release (0.20.4):</p>
   <ul>
     <li>Some hyphenation patterns (cs, da, de, de_DR, el, en, en_US, fr, nl,
-        no, pt, ru, sk, tr) have been removed due to licensing reasons. 
-        We hope to resolve this issue until the final release.
+        no, pt, ru, sk, tr) have been removed due to licensing reasons.
+        We hope to resolve this issue before the final release.
         (English hyphenation is still available as en_GB)
     </li>
-    <li>Documentation is done with <link href="http://xml.apache.org/forrest/">
+    <li>Documentation is now built with <link href="http://xml.apache.org/forrest/">
         Forrest</link> (version 0.3). You need to install Forrest if you want build the docs
         yourself. (See
         <link href="http://xml.apache.org/forrest/your-project.html">Using Forrest</link>)
@@ -26,19 +26,21 @@
     <li>The following JARs have been updated:
         Xerces to version 2.2.1, Xalan to version 2.4.1 and Batik to version 1.5beta4.
     </li>
-    <li>Fop has been compiled with Jimi support this time but you still have to download
-        <link href="http://java.sun.com/products/jimi/">Jimi</link>, extract the archive,
+    <li>FOP has been compiled with Jimi support, but Jimi is not included in the
+        FOP distribution. To use it, first download
+        <link href="http://java.sun.com/products/jimi/">Jimi</link>, then extract
+        the archive, then
         copy JimiProClasses.zip to FOP's lib dir and rename it to jimi-1.0.jar.
     </li>
-    <li>Fop has been compiled with
-        <link href="http://java.sun.com/products/java-media/jai">JAI</link>
-        support. For using JAI you just need to install it.
+    <li>FOP has been compiled with JAI support, but JAI is not included in the
+        FOP distribution. To use it, simply install
+        <link href="http://java.sun.com/products/java-media/jai">JAI</link>.
     </li>
     <li>Links in PDF won't generate multiple link rectangles anymore. If this causes
         a problem you can set the system property "links.merge" to "no".
     </li>
   </ul>
-  
+
 </section>
 <section>
   <title>FOP 0.20.4</title>
@@ -51,7 +53,7 @@
        <li>The following JARs have been updated:
          Xerces to version 2.0.1, Xalan to version 2.3.1 and Batik to version 1.5beta2.
       </li>
-      <li>Fop has been compiled with Jimi support this time
+      <li>FOP has been compiled with Jimi support this time
         but you still have to download
         <link href="http://java.sun.com/products/jimi/">Jimi</link>
         and copy it to lib/ to get PNG support (no need to build FOP yourself though).

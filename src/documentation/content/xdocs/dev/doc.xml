@@ -19,22 +19,6 @@ The major exception to this rule is the design doc, which currently exclusively 
 Maintenance branch releases either copy the trunk content to the maintenance branch or use the trunk content directly for doc builds.</note>
       <p>Basic documents are stored in XML files, and use DTDs provided by Apache Forrest.</p>
     </section>
-    <section id="design">
-      <title>Design Principles</title>
-      <p>These principles are not written in stone, but reflect the current philosophy, and are documented here primarily to help achieve consistency. These principles should be changed if better or more practical ones are found, but they should probably be discussed and changed by common consent.</p>
-      <section id="where">
-        <title>Where</title>
-        <ul>
-          <li>To the extent possible, keep user content separate from developer content, primarily so the user doesn't have to filter out technical information.</li>
-          <li>To the extent possible, try to document a topic exactly once, in the place the user is most likely to look for it, then link to that from other locations as appropriate. This is somewhat contrary to the principle above, which should be applied as a higher priority.</li>
-        </ul>
-      </section>
-      <section id="design-when">
-        <title>When</title>
-        <p>The documentation and the product are in a constant state of change, and there is some difficulty in deciding what product state the website content should reflect. The current thinking is that the website should reflect the current state of the repository code branch from which releases are made. Features or other documentation that applies to unreleased code should be marked in such a way within the content that the user can determine whether and how it applies to the version they are using. For example, "Feature xyz is first available in Release n.nn.n".</p>
-        <p>Other approaches were considered, but all seemed to have significantly higher costs both to the users and the developers. From the user's standpoint, the choice is either that they potentially have to look multiple places to get the information they need (which was rejected), or they have to filter out an occasional feature that is in code available subsequent to their release (which was accepted).</p>
-      </section>
-    </section>
     <section id="web">
       <title>Website</title>
       <section id="web-background">
