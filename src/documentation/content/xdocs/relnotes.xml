@@ -10,7 +10,7 @@
     <body>
 <section>
   <title>FOP 0.20.5</title>
-  <p>This is the last planed release in the 0.20.x series (aka maintenance branch).</p>
+  <p>This is the last planned release in the 0.20.x series (aka maintenance branch).</p>
   <p>Important changes since the last release (0.20.4):</p>
   <ul>
     <li>Some hyphenation patterns (cs, da, de, de_DR, el, en, en_US, fr, nl,
@@ -31,7 +31,7 @@
         copy JimiProClasses.zip to FOP's lib dir and rename it to jimi-1.0.jar.
     </li>
     <li>Fop has been compiled with
-        <link href="http://java.sun.com/products/java-media/jai/JAI">JAI</link>
+        <link href="http://java.sun.com/products/java-media/jai">JAI</link>
         support. For using JAI you just need to install it.
     </li>
     <li>Links in PDF won't generate multiple link rectangles anymore. If this causes
