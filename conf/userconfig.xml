@@ -15,18 +15,13 @@
   </entry>
  
   <entry>
-    <key>foFileName</key>
-    <value>/home/pbw/public_html/xml/newtest3.fo</value>
-  </entry>
-
-  <entry>
     <key>inputMode</key>
     <value>fo</value>
   </entry>
 
   <entry>
     <key>foFileName</key>
-    <value>/home/pbw/public_html/xml/newtest3.fo</value>
+    <value>/usr/local/src/xml-fop_20_Alt/docs/examples/fo/test.fo</value>
   </entry>
 
   <entry>
@@ -36,7 +31,7 @@
 
   <entry>
     <key>outputFileName</key>
-    <value>/home/pbw/public_html/xml/newtest3.pdf</value>
+    <value>/usr/local/src/xml-fop_20_Alt/docs/examples/tests/test.pdf</value>
   </entry>
 
 <!--  NOT IMPLEMENTED
