@@ -237,8 +237,14 @@ public class Flow extends FObj {
 	return "fo:flow";
     }
     
-	public Status getStatus()
-	{
-		return _status;
-	}
+    public Status getStatus() 
+    {
+	return _status;
+    }
+    
+
+  public boolean generatesReferenceAreas() {
+	return true;
+  }
+
 }
