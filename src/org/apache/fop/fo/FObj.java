@@ -17,7 +17,6 @@ import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.AreaClass;
 import org.apache.fop.layout.LinkSet;
-import org.apache.fop.system.BufferManager;
 import org.apache.fop.fo.flow.Marker;
 
 // Java
