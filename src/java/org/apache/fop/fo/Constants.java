@@ -370,7 +370,8 @@ public interface Constants {
     int PR_WRITING_MODE = 245;
     int PR_XML_LANG = 246;
     int PR_Z_INDEX = 247;
-    int PROPERTY_COUNT = 247;
+    int PR_INTRUSION_DISPLACE = 248;
+    int PROPERTY_COUNT = 248;
 
     // compound property constants
 
@@ -500,7 +501,46 @@ public interface Constants {
     int NO_LIMIT = 110;
     int AUTO_ODD = 111;
     int AUTO_EVEN = 112;
-    int ENUM_COUNT = 112;
+    int BEFORE_EDGE = 113;
+    int TEXT_BEFORE_EDGE = 114;
+    int CENTRAL = 115;
+    int AFTER_EDGE = 116;
+    int TEXT_AFTER_EDGE = 117;
+    int IDEOGRAPHIC = 118;
+    int HANGING = 119;
+    int MATHEMATICAL = 120;
+    int SCALE_TO_FIT = 121;
+    int USE_FONT_METRICS = 122;
+    int INDEFINITE = 123;
+    int LARGER = 124;
+    int SMALLER = 125;
+    int INSIDE = 126;
+    int OUTSIDE = 127;
+    int CONSIDER_SHIFTS = 128;
+    int DISREGARD_SHIFTS = 129;
+    int INTEGER_PIXELS = 130;
+    int RESAMPLE_ANY_METHOD = 131;
+    int USE_SCRIPT = 132;
+    int NO_CHANGE = 133;
+    int RESET_SIZE = 134;    
+    int WIDER = 135;
+    int NARROWER = 136;
+    int ULTRA_CONDENSED = 137;
+    int EXTRA_CONDENSED = 138;
+    int CONDENSED = 139;
+    int SEMI_CONDENSED = 140;
+    int SEMI_EXPANDED = 141;
+    int EXPANDED = 142;
+    int EXTRA_EXPANDED = 143;
+    int ULTRA_EXPANDED = 144;        
+    int LINE = 145;
+    int INDENT = 146;
+    int BLOCK = 147;
+    int BOTH = 148;
+    int COLLAPSE_WITH_PRECEDENCE = 149;
+    int SHOW = 150;
+    int HIDE = 151;
+    int ENUM_COUNT = 151;
 
    // Enumeration Interfaces
    
