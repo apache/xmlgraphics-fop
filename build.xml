@@ -176,7 +176,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
-  <target name="init" depends="init-avail, init-filters-xalan1, init-filters-xalan2">
+  <target name="init" depends="init-avail, init-filters-xalan2">
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
@@ -268,7 +268,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="ZapfDingbats.xml" value="${build.codegen}/ZapfDingbats.xml"/>
     <property name="Symbol.xml" value="${build.codegen}/Symbol.xml"/>
 
-    <property name="xalan1" value="Xalan1Transform.java"/>
     <property name="trax" value="TraxTransform.java"/>
     <property name="xsltransform" value="XSLTransform.java"/>
 
@@ -297,14 +296,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <available property="jai.present" classname="javax.media.jai.JAI"/>
 
     <available property="trax.present" classname="javax.xml.transform.Transformer"/>
-    <available property="xalan1.present" classname="org.apache.xalan.xslt.XSLTProcessor"/>
-    <filter token="xalan1-replacestring" value="./build/src/org/apache/fop"/>
+
     <filter token="xalan2-replacestring" value="../org/apache/fop"/>
 
-  </target>
-
-  <target name="init-filters-xalan1" depends="init-avail" if="xalan1.present" unless="trax.present">
-    <copy file="src/codegen/xalan1.filter" toFile="./build/src/codegen/filter" filtering="on"/>
   </target>
 
   <target name="init-filters-xalan2" depends="init-avail" if="trax.present">
@@ -389,14 +383,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </copy>
   </target>
 
-
-  <target name="prepare-xalan1" if="xalan1.present">
-      <echo message="Xalan1 is present. Installing Xalan1 support"/>
-    <copy todir="${build.src}">
-      <fileset dir="${src.dir}" includes="**/${xsltransform},**/${xalan1}"/>
-    </copy>
-  </target>
- 
   <target name="prepare-trax" if="trax.present">
       <echo message="JAXP1.1 transforms is present. Installing TRaX support"/>
     <copy todir="${build.src}">
@@ -408,11 +394,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Prepares the source code                                            -->
   <!-- =================================================================== -->
-  <target name="prepare-src" depends="prepare, prepare-jimi, prepare-jai, prepare-xalan1, prepare-trax">
+  <target name="prepare-src" depends="prepare, prepare-jimi, prepare-jai, prepare-trax">
     <!-- copy src files -->
     <copy todir="${build.src}">
       <fileset dir="${src.dir}" 
-         excludes="**/package.html, **/${jimi},**/${jai},**/${xsltransform},**/${trax},**/${xalan1},**/apps/TraxInputHandler.java"/>
+         excludes="**/package.html, **/${jimi},**/${jai},**/${xsltransform},**/${trax},**/apps/TraxInputHandler.java"/>
     </copy>
   </target>
 
