@@ -54,7 +54,7 @@ chrisg@www.apache.org:/www/www.apache.org/dist/xml/fop/</code></li>
       </ul>
       <p>Following are links with information about mirroring:</p>
       <ul>
-        <li><jump href="http://apache.bilkent.edu.tr/dev/mirrors.html">Apache Mirroring</jump></li>
+        <li><jump href="http://www.apache.org/dev/mirrors.html">Apache Mirroring</jump></li>
         <li>Stefan Bodewig's <jump href="http://cvs.apache.org/~bodewig/mirror.html">Making your Downloads Mirrorable</jump></li>
       </ul>
     </section>

@@ -19,13 +19,9 @@ However, a source distribution will be preferable if you fall into one of the fo
   </section>
   <section id="binary">
     <title>Binary Download</title>
-    <p>Binary distributions include "-bin" in their names, and can be downloaded from the
-      <link href="http://www.apache.org/dyn/closer.cgi/xml/fop">FOP Distribution</link> directory.
+    <p>Binary distributions include "-bin" in their names, and can be downloaded from a
+      <link href="http://www.apache.org/dyn/closer.cgi/xml/fop">FOP Distribution mirror</link>.
     </p>
-    <note>We're in the process of moving the download location. If you're looking for old
-      distributions please check the
-      <link href="http://xml.apache.org/dist/fop/">old download location</link>.
-    </note>
   </section>
   <section id="source">
     <title>Source Download</title>
@@ -33,7 +29,7 @@ However, a source distribution will be preferable if you fall into one of the fo
 See <link href="dev/index.html">Development Introduction</link> for more details on the choices, and for the CVS tags to use when downloading the "maintenance" branch.</p>
     <p>There are three ways to obtain a source distribution. Please note that they are listed from least current to most current:</p>
     <ul>
-      <li>Download a released version from the <link href="http://www.apache.org/dyn/closer.cgi/xml/fop">FOP Distribution</link> directory. Source distributions include "-src" in their names. Please note that official releases currently are <em>only</em> made from the "maintenance" branch.</li>
+      <li>Download a released version from a <link href="http://www.apache.org/dyn/closer.cgi/xml/fop">FOP Distribution mirror</link>. Source distributions include "-src" in their names. Please note that official releases currently are <em>only</em> made from the "maintenance" branch.</li>
       <li>Download a CVS snapshot from the cvs files <link href="http://xml.apache.org/from-cvs/xml-fop/">here</link>. These snapshots are built approximately every six hours, and have the GMT of their creation time embedded in their names. Please note that CVS snapshots are made only for the "redesign" branch.</li>
       <li>Download directly from the CVS repository.
 Anyone can do this using the <link href="http://xml.apache.org/cvs.html#AnonCVS">Anonymous CVS Server</link>. By default, the CVS code is up-to-the-minute, the same code that the developers are modifying. See the <link href="dev/tools.html#cvs">CVS section of Developer Tools</link> for more information on using CVS.</li>
