@@ -18,74 +18,21 @@ import org.apache.fop.apps.FOPException;
 public abstract class PageMasterReference extends FObj
     implements SubSequenceSpecifier {
 
-    private String _masterName;
-    private PageSequenceMaster _pageSequenceMaster;
+    protected String masterName;
 
     public PageMasterReference(FObj parent, PropertyList propertyList)
             throws FOPException {
         super(parent, propertyList);
-        this.name = getElementName();
-        if (getProperty("master-reference") != null) {
-            setMasterName(getProperty("master-reference").getString());
-        }
-        validateParent(parent);
-
     }
 
-    protected void setMasterName(String masterName) {
-        _masterName = masterName;
-    }
-
-    /**
-     * Returns the "master-reference" attribute of this page master reference
-     */
     public String getMasterName() {
-        return _masterName;
+        return masterName;
     }
-
-    protected void setPageSequenceMaster(PageSequenceMaster pageSequenceMaster) {
-        _pageSequenceMaster = pageSequenceMaster;
-    }
-
-    protected PageSequenceMaster getPageSequenceMaster() {
-        return _pageSequenceMaster;
-    }
-
-    public abstract String getNextPageMaster(int currentPageNumber,
-                                             boolean thisIsFirstPage,
-                                             boolean isEmptyPage);
-
-    /**
-     * Gets the formating object name for this object. Subclasses must provide this.
-     *
-     * @return the element name of this reference. e.g. fo:repeatable-page-master-reference
-     */
-    protected abstract String getElementName();
-
-    /**
-     * Checks that the parent is the right element. The default implementation
-     * checks for fo:page-sequence-master
-     */
-    protected void validateParent(FObj parent) throws FOPException {
-        if (parent.getName().equals("fo:page-sequence-master")) {
-            _pageSequenceMaster = (PageSequenceMaster)parent;
-
-            if (getMasterName() == null) {
-                log.warn("" + getElementName()
-                                       + " does not have a master-reference and so is being ignored");
-            } else {
-                _pageSequenceMaster.addSubsequenceSpecifier(this);
-            }
-        } else {
-            throw new FOPException(getElementName() + " must be"
-                                   + "child of fo:page-sequence-master, not "
-                                   + parent.getName());
-        }
-    }
+  
+    public abstract String getNextPageMasterName(boolean isOddPage,
+                                                 boolean isFirstPage,
+                                                 boolean isEmptyPage)
+      throws FOPException;
 
     public abstract void reset();
-
-
-
-
 }

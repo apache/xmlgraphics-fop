@@ -37,118 +37,15 @@ public class ConditionalPageMasterReference extends FObj {
             throws FOPException {
         super(parent, propertyList);
 
-        this.name = getElementName();
+        this.name = "fo:conditional-page-master-reference";
         if (getProperty("master-reference") != null) {
-            setMasterName(getProperty("master-reference").getString());
+            this.masterName = getProperty("master-reference").getString();
         }
-
-        validateParent(parent);
-
-        setPagePosition(this.properties.get("page-position").getEnum());
-        setOddOrEven(this.properties.get("odd-or-even").getEnum());
-        setBlankOrNotBlank(this.properties.get("blank-or-not-blank").getEnum());
-
-
-    }
-
-    protected void setMasterName(String masterName) {
-        this.masterName = masterName;
-    }
-
-    /**
-     * Returns the "master-reference" attribute of this page master reference
-     */
-    public String getMasterName() {
-        return masterName;
-    }
-
-
-    protected boolean isValid(int currentPageNumber, boolean thisIsFirstPage,
-                              boolean isEmptyPage) {
-        // page-position
-        boolean okOnPagePosition = true;    // default is 'any'
-        switch (getPagePosition()) {
-        case PagePosition.FIRST:
-            if (!thisIsFirstPage)
-                okOnPagePosition = false;
-            break;
-        case PagePosition.LAST:
-            // how the hell do you know at this point?
-            log.debug("LAST PagePosition NYI");
-            okOnPagePosition = true;
-            break;
-        case PagePosition.REST:
-            if (thisIsFirstPage)
-                okOnPagePosition = false;
-            break;
-        case PagePosition.ANY:
-            okOnPagePosition = true;
-        }
-
-        // odd or even
-        boolean okOnOddOrEven = true;    // default is 'any'
-        int ooe = getOddOrEven();
-        boolean isOddPage = ((currentPageNumber % 2) == 1) ? true : false;
-        if ((OddOrEven.ODD == ooe) &&!isOddPage) {
-            okOnOddOrEven = false;
-        }
-        if ((OddOrEven.EVEN == ooe) && isOddPage) {
-            okOnOddOrEven = false;
-        }
-
-        // experimental check for blank-or-not-blank
-
-        boolean okOnBlankOrNotBlank = true;    // default is 'any'
-
-        int bnb = getBlankOrNotBlank();
-
-        if ((BlankOrNotBlank.BLANK == bnb) &&!isEmptyPage) {
-            okOnBlankOrNotBlank = false;
-        } else if ((BlankOrNotBlank.NOT_BLANK == bnb) && isEmptyPage) {
-            okOnBlankOrNotBlank = false;
-        }
-
-        return (okOnOddOrEven && okOnPagePosition && okOnBlankOrNotBlank);
-
-    }
-
-    protected void setPagePosition(int pagePosition) {
-        this.pagePosition = pagePosition;
-    }
-
-    protected int getPagePosition() {
-        return this.pagePosition;
-    }
-
-    protected void setOddOrEven(int oddOrEven) {
-        this.oddOrEven = oddOrEven;
-    }
-
-    protected int getOddOrEven() {
-        return this.oddOrEven;
-    }
-
-    protected void setBlankOrNotBlank(int blankOrNotBlank) {
-        this.blankOrNotBlank = blankOrNotBlank;
-    }
-
-    protected int getBlankOrNotBlank() {
-        return this.blankOrNotBlank;
-    }
-
-    protected String getElementName() {
-        return "fo:conditional-page-master-reference";
-    }
-
-
-    protected void validateParent(FObj parent) throws FOPException {
         if (parent.getName().equals("fo:repeatable-page-master-alternatives")) {
             this.repeatablePageMasterAlternatives =
                 (RepeatablePageMasterAlternatives)parent;
-
-            if (getMasterName() == null) {
-                log.warn("single-page-master-reference"
-                                       + "does not have a master-reference and so is being ignored");
+            if (masterName == null) {
+                log.warn("A fo:conditional-page-master-reference does not have a master-reference and so is being ignored");
             } else {
                 this.repeatablePageMasterAlternatives.addConditionalPageMasterReference(this);
             }
@@ -157,7 +54,71 @@ public class ConditionalPageMasterReference extends FObj {
                                    + "of fo:repeatable-page-master-alternatives, not "
                                    + parent.getName());
         }
+        this.pagePosition = this.properties.get("page-position").getEnum();
+        this.oddOrEven = this.properties.get("odd-or-even").getEnum();
+        this.blankOrNotBlank = this.properties.get("blank-or-not-blank").getEnum();
     }
 
+    protected boolean isValid(boolean isOddPage, boolean isFirstPage,
+                              boolean isEmptyPage) {
+        // page-position
+        if( isFirstPage ) {
+            if (pagePosition==PagePosition.REST) {
+                return false;
+            } else if (pagePosition==PagePosition.LAST) {
+                // how the hell do you know at this point?
+                log.debug("LAST PagePosition NYI");
+                return false;
+            }
+        } else {
+            if (pagePosition==PagePosition.FIRST) {
+                return false;
+            } else if (pagePosition==PagePosition.LAST) {
+                // how the hell do you know at this point?
+                log.debug("LAST PagePosition NYI");
+                // potentially valid, don't return
+            }
+        }
 
+        // odd-or-even
+        if (isOddPage) {
+            if (oddOrEven==OddOrEven.EVEN) {
+              return false;
+            }
+        } else {
+            if (oddOrEven==OddOrEven.ODD) {
+              return false;
+            }
+        }
+
+        // blank-or-not-blank
+        if (isEmptyPage) {
+            if (blankOrNotBlank==BlankOrNotBlank.NOT_BLANK) {
+                return false;
+            }
+        } else {
+            if (blankOrNotBlank==BlankOrNotBlank.BLANK) {
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
+    protected int getPagePosition() {
+        return this.pagePosition;
+    }
+
+    protected int getOddOrEven() {
+        return this.oddOrEven;
+    }
+
+    protected int getBlankOrNotBlank() {
+        return this.blankOrNotBlank;
+    }
+
+    public String getMasterName() {
+        return masterName;
+    }
 }
