@@ -22,9 +22,9 @@ public class FontInfo {
     public static final int NORMAL = 400;
     public static final int BOLD = 700;
 
-    HashMap usedFonts;
-    HashMap triplets;    // look up a font-triplet to find a font-name
-    HashMap fonts;    // look up a font-name to get a font (that implements FontMetric at least)
+    private HashMap usedFonts;
+    private HashMap triplets;    // look up a font-triplet to find a font-name
+    private HashMap fonts;    // look up a font-name to get a font (that implements FontMetric at least)
 
     public FontInfo() {
         this.triplets = new HashMap();

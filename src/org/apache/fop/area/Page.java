@@ -9,7 +9,6 @@ package org.apache.fop.area;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * The page.

@@ -8,8 +8,6 @@
 package org.apache.fop.layout;
 
 import java.util.HashMap;
-
-import org.apache.fop.fo.properties.FontVariant;
 import org.apache.fop.render.pdf.CodePointMapping;
 
 public class FontState {

@@ -7,8 +7,6 @@
 
 package org.apache.fop.layout;
 
-import org.apache.fop.datatypes.Length;
-
 /**
  * Store all hyphenation related properties on an FO.
  * Public "structure" allows direct member access.

@@ -7,8 +7,6 @@
 
 package org.apache.fop.layout;
 
-import org.apache.fop.apps.FOPException;
-
 /**
  * This class holds information about text-decoration
  *
