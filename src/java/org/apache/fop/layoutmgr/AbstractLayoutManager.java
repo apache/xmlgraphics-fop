@@ -275,43 +275,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      * interface which are declared abstract in AbstractLayoutManager.
      * ---------------------------------------------------------*/
 
-    public LinkedList getNextKnuthElements(LayoutContext context,
-                                           int alignment) {
-        log.debug("null implementation of getNextKnuthElements() called!");
-        setFinished(true);
-        return null;
-    }
-
-    public KnuthElement addALetterSpaceTo(KnuthElement element) {
-        log.debug("null implementation of addALetterSpaceTo() called!");
-        return element;
-    }
-
-    public void getWordChars(StringBuffer sbChars, Position pos) {
-        log.debug("null implementation of getWordChars() called!");
-    }
-
-    public void hyphenate(Position pos, HyphContext hc) {
-        log.debug("null implementation of hyphenate called!");
-    }
-
-    public boolean applyChanges(List oldList) {
-        log.debug("null implementation of applyChanges() called!");
-        return false;
-    }
-
-    public LinkedList getChangedKnuthElements(List oldList,
-                                              int flaggedPenalty,
-                                              int alignment) {
-        log.debug("null implementation of getChangeKnuthElement() called!");
-        return null;
-    }
-
-    public int getWordSpaceIPD() {
-        log.debug("null implementation of getWordSpaceIPD() called!");
-        return 0;
-    }
-
     public Area getParentArea(Area childArea) {
         return null;
     }

@@ -22,6 +22,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.PageViewport;
 
@@ -40,12 +41,12 @@ import org.apache.commons.logging.LogFactory;
  * For use with objects that contain inline areas such as
  * leader use-content and title.
  */
-public class ContentLayoutManager implements LayoutManager {
+public class ContentLayoutManager implements InlineLevelLayoutManager {
     private FOUserAgent userAgent;
     private Area holder;
     private int stackSize;
     private LayoutManager parentLM;
-    private List childLMs = new ArrayList(1);
+    private InlineLevelLayoutManager childLM = null;
 
     /**
      * logging instance
@@ -137,6 +138,19 @@ public class ContentLayoutManager implements LayoutManager {
         stackSize = stack.opt;
     }
 
+    public void addAreas(PositionIterator posIter, LayoutContext context) {
+        // add the content areas
+        // the area width has already been adjusted, and it must remain unchanged
+        // so save its value before calling addAreas, and set it again afterwards
+        int savedIPD = ((InlineArea)holder).getIPD();
+        // set to zero the ipd adjustment ratio, to avoid spaces in the pattern
+        // to be modified
+        LayoutContext childContext = new LayoutContext(context);
+        childContext.setIPDAdjust(0.0);
+        childLM.addAreas(posIter, childContext);
+        ((InlineArea)holder).setIPD(savedIPD);
+    }
+
     public int getStackingSize() {
         return stackSize;
     }
@@ -202,9 +216,6 @@ public class ContentLayoutManager implements LayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void addAreas(PositionIterator posIter, LayoutContext context) { }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void initialize() {
         //to be done
     }
@@ -259,6 +270,8 @@ public class ContentLayoutManager implements LayoutManager {
      * @see org.apache.fop.layoutmgr.LayoutManager#getChildLMs
      */
     public List getChildLMs() {
+        List childLMs = new ArrayList(1);
+        childLMs.add(childLM);
         return childLMs;
     }
 
@@ -271,7 +284,7 @@ public class ContentLayoutManager implements LayoutManager {
         }
         lm.setParent(this);
         lm.initialize();
-        childLMs.add(lm);
+        childLM = (InlineLevelLayoutManager)lm;
         log.trace(this.getClass().getName()
                   + ": Adding child LM " + lm.getClass().getName());
     }
@@ -292,8 +305,26 @@ public class ContentLayoutManager implements LayoutManager {
 
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
+        LinkedList contentList = new LinkedList();
+        LinkedList returnedList;
+
+        while (!childLM.isFinished()) {
+            // get KnuthElements from childLM
+            returnedList = childLM.getNextKnuthElements(context, alignment);
+
+            if (returnedList != null) {
+                // move elements to contentList, and accumulate their size
+               KnuthElement contentElement;
+               while (returnedList.size() > 0) {
+                    contentElement = (KnuthElement)returnedList.removeFirst();
+                    stackSize += contentElement.getW();
+                    contentList.add(contentElement);
+                }
+            }
+        }
+
         setFinished(true);
-        return null;
+        return contentList;
     }
 
     public KnuthElement addALetterSpaceTo(KnuthElement element) {
@@ -314,10 +345,6 @@ public class ContentLayoutManager implements LayoutManager {
                                               int flaggedPenalty,
                                               int alignment) {
         return null;
-    }
-
-    public int getWordSpaceIPD() {
-        return 0;
     }
 }
 

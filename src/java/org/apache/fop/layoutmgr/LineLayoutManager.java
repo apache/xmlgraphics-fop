@@ -58,7 +58,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
      * @param l the default lead, from top to baseline
      * @param f the default follow, from baseline to bottom
      */
-    public LineLayoutManager(Block node, int lh, int l, int f) {
+    public LineLayoutManager(Block node, int lh, int l, int f, int ms) {
         super(node);
         fobj = node;
         // the child FObj are owned by the parent BlockLM
@@ -67,6 +67,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         lineHeight = lh;
         lead = l;
         follow = f;
+        middleShift = ms;
         initialize(); // Normally done when started by parent!
     }
 
@@ -126,6 +127,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     private int lineHeight;
     private int lead;
     private int follow;
+    // offset of the middle baseline with respect to the main baseline
+    private int middleShift;
 
     // inline start pos when adding areas
     private int iStartPos = 0;
@@ -151,6 +154,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     // suggested modification to the "optimum" number of lines
     private int looseness = 0;
 
+    // this constant is used to create elements when text-align is center:
+    // every TextLM descendant of LineLM must use the same value, 
+    // otherwise the line breaking algorithm does not find the right
+    // break point
+    public static final int DEFAULT_SPACE_WIDTH = 3336;
     private static final int INFINITE_RATIO = 1000;
 
     // this class represent a feasible breaking point
@@ -272,10 +280,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     // which was the first element in the paragraph
     // returned by each LM
     private class Update {
-        private LayoutManager inlineLM;
+        private InlineLevelLayoutManager inlineLM;
         private int iFirstIndex;
 
-        public Update(LayoutManager lm, int index) {
+        public Update(InlineLevelLayoutManager lm, int index) {
             inlineLM = lm;
             iFirstIndex = index;
         }
@@ -288,28 +296,19 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         public int ignoreAtEnd = 0;
         // minimum space at the end of the last line (in millipoints)
         public int lineFillerWidth;
-        // word space dimension (in millipoints)
-        private int wordSpaceIPD;
 
         public void startParagraph(int lineWidth) {
-            // get the word space dimension, which needs to be known
-            // in order to center text
-            LayoutManager lm;
-            if ((lm = getChildLM()) != null) {
-                wordSpaceIPD = lm.getWordSpaceIPD();
-            }
-
             // set the minimum amount of empty space at the end of the
             // last line
             if (bTextAlignment == CENTER) {
                 lineFillerWidth = 0; 
             } else {
-                lineFillerWidth = (int)(lineWidth / 6); 
+                lineFillerWidth = (int)(lineWidth / 12); 
             }
 
             // add auxiliary elements at the beginning of the paragraph
             if (bTextAlignment == CENTER && bTextAlignmentLast != JUSTIFY) {
-                this.add(new KnuthGlue(0, 3 * wordSpaceIPD, 0,
+                this.add(new KnuthGlue(0, 3 * DEFAULT_SPACE_WIDTH, 0,
                                        null, false));
                 ignoreAtStart ++;
             }
@@ -333,7 +332,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             if (this.size() > ignoreAtStart) {
                 if (bTextAlignment == CENTER
                     && bTextAlignmentLast != JUSTIFY) {
-                    this.add(new KnuthGlue(0, 3 * wordSpaceIPD, 0,
+                    this.add(new KnuthGlue(0, 3 * DEFAULT_SPACE_WIDTH, 0,
                                            null, false));
                     this.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
                                               false, null, false));
@@ -371,7 +370,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
-        LayoutManager curLM ; // currently active LM
+        InlineLevelLayoutManager curLM ; // currently active LM
         BreakPoss prev = null;
         BreakPoss bp = null; // proposed BreakPoss
 
@@ -407,57 +406,66 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
             Paragraph knuthPar = new Paragraph();
             knuthPar.startParagraph(availIPD.opt);
-            while ((curLM = getChildLM()) != null) {
+            while ((curLM = (InlineLevelLayoutManager) getChildLM()) != null) {
                 if ((returnedList
                      = curLM.getNextKnuthElements(inlineLC,
                                                   effectiveAlignment))
                     != null) {
-                    // if there are two consecutive KnuthBox, the first one 
-                    // does not represent a whole word, so it must be given
-                    // one more letter space
+                    // look at the first element
                     thisElement = (KnuthElement) returnedList.getFirst();
-                    if (returnedList.size() > 1
-                        || !(thisElement.isPenalty()
-                             && ((KnuthPenalty) thisElement).getP()
-                             == -KnuthElement.INFINITE)) {
-                        if (thisElement.isBox() && !thisElement.isAuxiliary()
-                            && bPrevWasKnuthBox) {
-                            prevBox = (KnuthBox) knuthPar.removeLast();
-                            if (!prevBox.isAuxiliary()) {
-                                // if letter spacing is constant,
-                                // only prevBox needs to be replaced;
-                                knuthPar.addLast(prevBox.getLayoutManager()
-                                                 .addALetterSpaceTo(prevBox));
-                            } else {
-                                // prevBox is the last element
-                                // in the sub-sequence
-                                //   <box> <aux penalty> <aux glue> <aux box>
-                                // the letter space is added to <aux glue>,
-                                // while the other elements are not changed
-                                KnuthBox auxBox = prevBox;
-                                KnuthGlue auxGlue
-                                    = (KnuthGlue) knuthPar.removeLast();
-                                KnuthPenalty auxPenalty
-                                    = (KnuthPenalty) knuthPar.removeLast();
-                                prevBox = (KnuthBox) knuthPar.getLast();
-                                knuthPar.addLast(auxPenalty);
-                                knuthPar.addLast(prevBox.getLayoutManager()
-                                                 .addALetterSpaceTo(prevBox));
-                                knuthPar.addLast(auxBox);
-                }
-                        }
-                        if (((KnuthElement) returnedList.getLast()).isBox()) {
-                            bPrevWasKnuthBox = true;
+                    if (thisElement.isBox() && !thisElement.isAuxiliary()
+                        && bPrevWasKnuthBox) {
+                        prevBox = (KnuthBox) knuthPar.removeLast();
+                        // if there are two consecutive KnuthBoxes the
+                        // first one does not represent a whole word,
+                        // so it must be given one more letter space
+                        if (!prevBox.isAuxiliary()) {
+                            // if letter spacing is constant,
+                            // only prevBox needs to be replaced;
+                            knuthPar.addLast(((InlineLevelLayoutManager)
+                                              prevBox.getLayoutManager())
+                                             .addALetterSpaceTo(prevBox));
                         } else {
-                            bPrevWasKnuthBox = false;
+                            // prevBox is the last element
+                            // in the sub-sequence
+                            //   <box> <aux penalty> <aux glue> <aux box>
+                            // the letter space is added to <aux glue>,
+                            // while the other elements are not changed
+                            KnuthBox auxBox = prevBox;
+                            KnuthGlue auxGlue
+                                = (KnuthGlue) knuthPar.removeLast();
+                            KnuthPenalty auxPenalty
+                                = (KnuthPenalty) knuthPar.removeLast();
+                            prevBox = (KnuthBox) knuthPar.getLast();
+                            knuthPar.addLast(auxPenalty);
+                            knuthPar.addLast(((InlineLevelLayoutManager)
+                                              prevBox.getLayoutManager())
+                                             .addALetterSpaceTo(prevBox));
+                            knuthPar.addLast(auxBox);
                         }
-                        // add the new elements to the paragraph
-                        knuthPar.addAll(returnedList);
+                    }
+
+                    // look at the last element
+                    KnuthElement lastElement = (KnuthElement) returnedList.getLast();
+                    boolean bForceLinefeed = false;
+                    if (lastElement.isBox()) {
+                        bPrevWasKnuthBox = true;
                     } else {
-                        // a list with a single penalty item
-                        // whose value is -inf
-                        // represents a preserved linefeed,
-                        // wich forces a line break
+                        bPrevWasKnuthBox = false;
+                        if (lastElement.isPenalty()
+                            && ((KnuthPenalty) lastElement).getP()
+                                == -KnuthPenalty.INFINITE) {
+                            // a penalty item whose value is -inf
+                            // represents a preserved linefeed,
+                            // wich forces a line break
+                            bForceLinefeed = true;
+                            returnedList.removeLast();
+                        }
+                    }
+
+                    // add the new elements to the paragraph
+                    knuthPar.addAll(returnedList);
+                    if (bForceLinefeed) {
                         knuthPar.endParagraph();
                         knuthPar = new Paragraph();
                         knuthPar.startParagraph(availIPD.opt);
@@ -467,7 +475,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                     // curLM returned null; this can happen
                     // if it has nothing more to layout,
                     // so just iterate once more to see
-                    // if there are other chilren
+                    // if there are other children
                 }
             }
             knuthPar.endParagraph();
@@ -647,53 +655,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             double ratio = (textAlign == JUSTIFY)
                 ? bestActiveNode.adjustRatio : 0;
 
-            // lead to baseline is
-            // max of: baseline fixed alignment and middle/2
-            // after baseline is
-            // max: top height-lead, middle/2 and bottom height-lead
-            int halfLeading = (lineHeight - lead - follow) / 2;
-            // height before baseline
-            int lineLead = lead + halfLeading;
-            // maximum size of top and bottom alignment
-            int maxtb = follow + halfLeading;
-            // max size of middle alignment below baseline
-            int middlefollow = maxtb;
-
-            // index of the first KnuthElement in this line
-            int firstElementIndex = 0;
-            if (line > 1) {
-                firstElementIndex = bestActiveNode.previous.position + 1;
-            }
-            ListIterator inlineIterator = par.listIterator(firstElementIndex);
-            for (int j = 0;
-                 j < (bestActiveNode.position - firstElementIndex + 1);
-                 j++) {
-                KnuthElement element = (KnuthElement) inlineIterator.next();
-                if (element.isBox()) {
-                    if (((KnuthBox) element).getLead() > lineLead) {
-                        lineLead = ((KnuthBox) element).getLead();
-                    }
-                    if (((KnuthBox) element).getTotal() > maxtb) {
-                        maxtb = ((KnuthBox) element).getTotal();
-                    }
-                    if (((KnuthBox) element).getMiddle() > middlefollow) {
-                        middlefollow = ((KnuthBox) element).getMiddle();
-                    }
-                }
-            }
-
-            if (maxtb - lineLead > middlefollow) {
-                middlefollow = maxtb - lineLead;
-            }
-
-            // add nodes at the beginning of the list, as they are found
-            // backwards, from the last one to the first one
-            breakpoints.add(0,
-                            new LineBreakPosition(this,
+            makeLineBreakPosition(par,
+                                  (i > 1 ? bestActiveNode.previous.position + 1: 0),
                                                   bestActiveNode.position,
-                                                  ratio, 0, indent,
-                                                  lineLead + middlefollow,
-                                                  lineLead));
+                                  0, ratio, indent);
+
             bestActiveNode = bestActiveNode.previous;
         }
         if (bForced) {
@@ -705,22 +671,29 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     }
 
     private void fallback(Paragraph par, int line) {
-        // lead to baseline is
-        // max of: baseline fixed alignment and middle/2
-        // after baseline is
-        // max: top height-lead, middle/2 and bottom height-lead
+        makeLineBreakPosition(par,
+                              lastDeactivatedNode.position,
+                              par.size() - 1,
+                              line, 0, 0);
+    }
+
+    private void makeLineBreakPosition(Paragraph par,
+                                       int firstElementIndex, int lastElementIndex,
+                                       int insertIndex, double ratio, int indent) {
+        // line height calculation
+
         int halfLeading = (lineHeight - lead - follow) / 2;
-        // height before baseline
+        // height above the main baseline
         int lineLead = lead + halfLeading;
         // maximum size of top and bottom alignment
         int maxtb = follow + halfLeading;
-        // max size of middle alignment below baseline
+        // max size of middle alignment above and below the middle baseline
         int middlefollow = maxtb;
 
         ListIterator inlineIterator
-            = par.listIterator(lastDeactivatedNode.position);
-        for (int j = lastDeactivatedNode.position;
-             j < (par.size());
+            = par.listIterator(firstElementIndex);
+        for (int j = firstElementIndex;
+             j <= lastElementIndex;
              j++) {
             KnuthElement element = (KnuthElement) inlineIterator.next();
             if (element.isBox()) {
@@ -730,8 +703,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 if (((KnuthBox) element).getTotal() > maxtb) {
                     maxtb = ((KnuthBox) element).getTotal();
                 }
-                if (((KnuthBox) element).getMiddle() > middlefollow) {
-                    middlefollow = ((KnuthBox) element).getMiddle();
+                if (((KnuthBox) element).getMiddle() > lineLead + middleShift) {
+                    lineLead += ((KnuthBox) element).getMiddle()
+                                - lineLead - middleShift;
+                }
+                if (((KnuthBox) element).getMiddle() > middlefollow - middleShift) {
+                    middlefollow += ((KnuthBox) element).getMiddle()
+                                    - middlefollow + middleShift;
                 }
             }
         }
@@ -740,13 +718,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                     middlefollow = maxtb - lineLead;
         }
 
-        breakpoints.add(line,
-                        new LineBreakPosition(this, par.size() - 1,
-                                              0, 0, 0,
+        breakpoints.add(insertIndex,
+                        new LineBreakPosition(this,
+                                              lastElementIndex ,
+                                              ratio, 0, indent,
                                               lineLead + middlefollow,
                                               lineLead));
     }
-
 
     private void considerLegalBreak(LinkedList par, int lineWidth,
                                     KnuthElement element,
@@ -969,8 +947,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         LinkedList updateList = new LinkedList();
         KnuthElement firstElement = null;
         KnuthElement nextElement = null;
-        // current TextLayoutManager
-        LayoutManager currLM = null;
+        // current InlineLevelLayoutManager
+        InlineLevelLayoutManager currLM = null;
         // number of KnuthBox elements containing word fragments
         int boxCount;
         // number of auxiliary KnuthElements between KnuthBoxes
@@ -982,7 +960,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             firstElement = (KnuthElement) currParIterator.next();
             // 
             if (firstElement.getLayoutManager() != currLM) {
-                currLM = firstElement.getLayoutManager();
+                currLM = (InlineLevelLayoutManager) firstElement.getLayoutManager();
                 if (currLM != null) { 
                     updateList.add(new Update(currLM, currParIterator.previousIndex()));
                 } else {
@@ -1003,7 +981,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                     if (nextElement.isBox() && !nextElement.isAuxiliary()) {
                         // a non-auxiliary KnuthBox: append word chars
                         if (currLM != nextElement.getLayoutManager()) {
-                            currLM = nextElement.getLayoutManager();
+                            currLM = (InlineLevelLayoutManager) nextElement.getLayoutManager();
                             updateList.add(new Update(currLM, currParIterator.previousIndex()));
                         }
                         // append text to recreate the whole word
@@ -1031,7 +1009,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                     for (int i = 0; i < (boxCount + auxCount); i++) {
                         element = (KnuthElement) currParIterator.next();
                         if (element.isBox() && !element.isAuxiliary()) {
-                            element.getLayoutManager().hyphenate(element.getPosition(), hc);
+                            ((InlineLevelLayoutManager)
+                             element.getLayoutManager()).hyphenate(element.getPosition(), hc);
                         } else {
                             // nothing to do, element is an auxiliary KnuthElement
                         }
@@ -1065,7 +1044,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
             // applyChanges() returns true if the LM modifies its data,
             // so it must return new KnuthElements to replace the old ones
-            if (currUpdate.inlineLM
+            if (((InlineLevelLayoutManager) currUpdate.inlineLM)
                 .applyChanges(currPar.subList(fromIndex + iAddedElements,
                                               toIndex + iAddedElements))) {
                 // insert the new KnuthElements
@@ -1415,6 +1394,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             lineArea.setBPD(lbp.lineHeight);
             lc.setBaseline(lbp.baseline);
             lc.setLineHeight(lbp.lineHeight);
+            lc.setMiddleShift(middleShift);
             setCurrentArea(lineArea);
 
             Paragraph currPar = (Paragraph) knuthParagraphs.get(iCurrParIndex);

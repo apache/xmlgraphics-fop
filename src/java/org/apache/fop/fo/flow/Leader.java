@@ -54,6 +54,7 @@ public class Leader extends FObjMixed {
     private CommonRelativePosition commonRelativePosition;
     private Length alignmentAdjust;
     private int alignmentBaseline;
+    private int verticalAlign;
     private Length baselineShift;
     private ColorType color;
     private int dominantBaseline;
@@ -94,6 +95,7 @@ public class Leader extends FObjMixed {
         commonRelativePosition = pList.getRelativePositionProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
+        verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         color = pList.get(PR_COLOR).getColorType();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
@@ -136,7 +138,21 @@ public class Leader extends FObjMixed {
     protected void startOfNode() throws FOPException {
         checkId(id);
     }
- 
+
+    /**
+     * Return the Common Margin Properties-Inline.
+     */
+    public CommonMarginInline getCommonMarginInline() {
+        return commonMarginInline;
+    }
+
+    /**
+     * Return the Common Border, Padding, and Background Properties.
+     */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
+    } 
+
     /**
      * Return the Common Font Properties.
      */
@@ -191,6 +207,13 @@ public class Leader extends FObjMixed {
      */
     public Length getLeaderPatternWidth() {
         return leaderPatternWidth;
+    }
+
+    /**
+     * Return the "vertical-align" property.
+     */
+    public int getVerticalAlign() {
+        return verticalAlign; 
     }
 
     /**

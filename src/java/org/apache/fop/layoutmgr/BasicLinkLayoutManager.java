@@ -27,7 +27,7 @@ import org.apache.fop.area.PageViewport;
 /**
  * LayoutManager for the fo:basic-link formatting object
  */
-public class BasicLinkLayoutManager extends InlineStackingLayoutManager {
+public class BasicLinkLayoutManager extends InlineLayoutManager {
     private BasicLink fobj;
     
     /**

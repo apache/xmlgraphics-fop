@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import org.apache.fop.fo.FOText;
+import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.area.Trait;
@@ -36,7 +37,8 @@ import org.apache.fop.traits.MinOptMax;
  * LayoutManager for text (a sequence of characters) which generates one
  * or more inline areas.
  */
-public class TextLayoutManager extends AbstractLayoutManager {
+public class TextLayoutManager extends AbstractLayoutManager
+                               implements InlineLevelLayoutManager {
 
     /**
      * Store information about each potential text area.
@@ -117,6 +119,12 @@ public class TextLayoutManager extends AbstractLayoutManager {
     private short iTempStart = 0;
     private LinkedList changeList = null;
 
+    private int textHeight;
+    private int lead = 0;
+    private int total = 0;
+    private int middle = 0;
+    private int verticalAlignment = VerticalAlign.BASELINE;
+
     /**
      * Create a Text layout manager.
      *
@@ -155,6 +163,26 @@ public class TextLayoutManager extends AbstractLayoutManager {
         // in the SpaceVal.makeWordSpacing() method
         letterSpaceIPD = ls.getSpace();
         wordSpaceIPD = MinOptMax.add(new MinOptMax(spaceCharIPD), ws.getSpace());
+
+        // set text height
+        textHeight = fs.getAscender()
+                     - fs.getDescender();
+
+        // if the text node is son of an inline, set vertical align
+        if (foText.getParent() instanceof Inline) {
+            setAlignment(((Inline) foText.getParent()).getVerticalAlign());
+        }
+        switch (verticalAlignment) {
+            case VerticalAlign.MIDDLE  : middle = textHeight / 2 ;
+                                         break;
+            case VerticalAlign.TOP     : // fall through
+            case VerticalAlign.BOTTOM  : total = textHeight;
+                                         break;
+            case VerticalAlign.BASELINE: // fall through
+            default                    : lead = fs.getAscender();
+                                         total = textHeight;
+                                         break;
+        }
     }
 
     /**
@@ -458,8 +486,8 @@ public class TextLayoutManager extends AbstractLayoutManager {
          * used for calculating the bpd of the line area containing
          * this text.
          */
-        //bp.setDescender(foText.textInfo.fs.getDescender());
-        //bp.setAscender(foText.textInfo.fs.getAscender());
+        //bp.setDescender(fs.getDescender());
+        //bp.setAscender(fs.getAscender());
         if (iNextStart == textArray.length) {
             flags |= BreakPoss.ISLAST;
             setFinished(true);
@@ -574,7 +602,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
         iTotalAdjust += (iWordSpaceDim - wordSpaceIPD.opt) * iWScount;
 
         TextArea t = createTextArea(str, realWidth.opt + iTotalAdjust,
-                                    context.getBaseline());
+                                    context);
 
         // iWordSpaceDim is computed in relation to wordSpaceIPD.opt
         // but the renderer needs to know the adjustment in relation
@@ -606,12 +634,26 @@ public class TextLayoutManager extends AbstractLayoutManager {
      * @param base the baseline position
      * @return the new word area
      */
-    protected TextArea createTextArea(String str, int width, int base) {
+    protected TextArea createTextArea(String str, int width, LayoutContext context) {
         TextArea textArea = new TextArea();
         textArea.setIPD(width);
         textArea.setBPD(fs.getAscender() - fs.getDescender());
-        textArea.setOffset(fs.getAscender());
-        textArea.setOffset(base);
+        int bpd = textArea.getBPD();
+        switch (verticalAlignment) {
+            case VerticalAlign.MIDDLE:
+                textArea.setOffset(context.getMiddleBaseline() + fs.getXHeight() / 2);
+            break;
+            case VerticalAlign.TOP:
+                textArea.setOffset(fs.getAscender());
+            break;
+            case VerticalAlign.BOTTOM:
+                textArea.setOffset(context.getLineHeight() - bpd + fs.getAscender());
+            break;
+            case VerticalAlign.BASELINE:
+            default:
+                textArea.setOffset(context.getBaseline());
+            break;
+        }
 
         textArea.setTextArea(str);
         textArea.addTrait(Trait.FONT_NAME, fs.getFontName());
@@ -620,13 +662,29 @@ public class TextLayoutManager extends AbstractLayoutManager {
         return textArea;
     }
 
+    /**
+     * Set the alignment of the inline area.
+     * @param al the vertical alignment positioning
+     */
+    public void setAlignment(int al) {
+        verticalAlignment = al;
+    }
+
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         LinkedList returnList = new LinkedList();
 
         while (iNextStart < textArray.length) {
-            if (textArray[iNextStart] == SPACE) {
+            if (textArray[iNextStart] == SPACE
+                || textArray[iNextStart] == NBSPACE) {
                 // normal, breaking space
+                // or non-breaking space
+                if (textArray[iNextStart] == NBSPACE) {
+                    returnList.add
+                        (new KnuthPenalty(0, KnuthElement.INFINITE, false,
+                                          new LeafPosition(this, vecAreaInfo.size() - 1),
+                                          false));
+                }
                 switch (alignment) {
                 case CENTER :
                     vecAreaInfo.add
@@ -634,14 +692,14 @@ public class TextLayoutManager extends AbstractLayoutManager {
                                       (short) 1, (short) 0,
                                       wordSpaceIPD, false));
                     returnList.add
-                        (new KnuthGlue(0, 3 * wordSpaceIPD.opt, 0,
+                        (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, vecAreaInfo.size() - 1), false));
                     returnList.add
                         (new KnuthPenalty(0, 0, false,
                                           new LeafPosition(this, -1), true));
                     returnList.add
                         (new KnuthGlue(wordSpaceIPD.opt,
-                                       - 6 * wordSpaceIPD.opt, 0,
+                                       - 6 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, -1), true));
                     returnList.add
                         (new KnuthBox(0, 0, 0, 0,
@@ -650,7 +708,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                         (new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                           new LeafPosition(this, -1), true));
                     returnList.add
-                        (new KnuthGlue(0, 3 * wordSpaceIPD.opt, 0,
+                        (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, -1), true));
                     iNextStart ++;
                     break;
@@ -715,8 +773,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                 iNextStart ++;
             } else if (textArray[iNextStart] == NEWLINE) {
                 // linefeed; this can happen when linefeed-treatment="preserve"
-                // the linefeed character is the first one in textArray,
-                // so we can just return a list with a penalty item
+                // add a penalty item to the list and return
                 returnList.add
                     (new KnuthPenalty(0, -KnuthElement.INFINITE,
                                       false, null, false));
@@ -747,14 +804,15 @@ public class TextLayoutManager extends AbstractLayoutManager {
                     // constant letter space; simply return a box
                     // whose width includes letter spaces
                     returnList.add
-                        (new KnuthBox(wordIPD.opt, 0, 0, 0,
+                        (new KnuthBox(wordIPD.opt, lead, total, middle,
                                       new LeafPosition(this, vecAreaInfo.size() - 1), false));
                     iNextStart = iTempStart;
                 } else {
                     // adjustable letter space;
                     // some other KnuthElements are needed
                     returnList.add
-                        (new KnuthBox(wordIPD.opt - (iTempStart - iThisStart - 1) * letterSpaceIPD.opt, 0, 0, 0,
+                        (new KnuthBox(wordIPD.opt - (iTempStart - iThisStart - 1) * letterSpaceIPD.opt,
+                                      lead, total, middle,
                                       new LeafPosition(this, vecAreaInfo.size() - 1), false));
                     returnList.add
                         (new KnuthPenalty(0, KnuthElement.INFINITE, false,
@@ -765,7 +823,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                                        (iTempStart - iThisStart - 1) * (letterSpaceIPD.opt - letterSpaceIPD.min),
                                        new LeafPosition(this, -1), true));
                     returnList.add
-                        (new KnuthBox(0, 0, 0, 0,
+                        (new KnuthBox(0, lead, total, middle,
                                       new LeafPosition(this, -1), true));
                     iNextStart = iTempStart;
                 }
@@ -779,17 +837,13 @@ public class TextLayoutManager extends AbstractLayoutManager {
         }
     }
 
-    public int getWordSpaceIPD() {
-        return wordSpaceIPD.opt;
-    }
-
     public KnuthElement addALetterSpaceTo(KnuthElement element) {
         LeafPosition pos = (LeafPosition) element.getPosition();
         AreaInfo ai = (AreaInfo) vecAreaInfo.get(pos.getLeafPos());
         ai.iLScount ++;
         ai.ipdArea.add(letterSpaceIPD);
         if (letterSpaceIPD.min == letterSpaceIPD.max) {
-            return new KnuthBox(ai.ipdArea.opt, 0, 0, 0, pos, false);
+            return new KnuthBox(ai.ipdArea.opt, lead, total, middle, pos, false);
         } else {
             return new KnuthGlue(ai.iLScount * letterSpaceIPD.opt,
                                  ai.iLScount * (letterSpaceIPD.max - letterSpaceIPD.opt),
@@ -908,13 +962,13 @@ public class TextLayoutManager extends AbstractLayoutManager {
                 // ai refers either to a word or a word fragment
                 if (letterSpaceIPD.min == letterSpaceIPD.max) {
                     returnList.add
-                        (new KnuthBox(ai.ipdArea.opt, 0, 0, 0,
+                        (new KnuthBox(ai.ipdArea.opt, lead, total, middle,
                                       new LeafPosition(this, iReturnedIndex), false));
                 } else {
                     returnList.add
                         (new KnuthBox(ai.ipdArea.opt
                                       - ai.iLScount * letterSpaceIPD.opt,
-                                      0, 0, 0, 
+                                      lead, total, middle, 
                                       new LeafPosition(this, iReturnedIndex), false));
                     returnList.add
                         (new KnuthPenalty(0, KnuthElement.INFINITE, false,
@@ -939,14 +993,14 @@ public class TextLayoutManager extends AbstractLayoutManager {
                 switch (alignment) {
                 case CENTER :
                     returnList.add
-                        (new KnuthGlue(0, 3 * wordSpaceIPD.opt, 0,
+                        (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, iReturnedIndex), false));
                     returnList.add
                         (new KnuthPenalty(0, 0, false,
                                           new LeafPosition(this, -1), true));
                     returnList.add
                         (new KnuthGlue(wordSpaceIPD.opt,
-                                       - 6 * wordSpaceIPD.opt, 0,
+                                       - 6 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, -1), true));
                     returnList.add
                         (new KnuthBox(0, 0, 0, 0,
@@ -955,7 +1009,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                         (new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                           new LeafPosition(this, -1), true));
                     returnList.add
-                        (new KnuthGlue(0, 3 * wordSpaceIPD.opt, 0,
+                        (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, -1), true));
                     iReturnedIndex ++;
                     break;

@@ -23,7 +23,10 @@ import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.traits.MinOptMax;
@@ -38,6 +41,9 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     private Leader fobj;
     Font font = null;
     
+    private LinkedList contentList = null;
+    private ContentLayoutManager clm = null;
+
     /**
      * Constructor
      *
@@ -48,7 +54,10 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         super(node);
         fobj = node;
         font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo());
-        setAlignment(node.getLeaderAlignment());
+        // the property leader-alignment does not affect vertical positioning
+        // (see section 7.21.1 in the XSL Recommendation)
+        // setAlignment(node.getLeaderAlignment());
+        setAlignment(fobj.getVerticalAlign());
     }
 
     public InlineArea get(LayoutContext context) {
@@ -84,10 +93,9 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             char dot = '.'; // userAgent.getLeaderDotCharacter();
 
             t.setTextArea("" + dot);
+            t.setIPD(font.getCharWidth(dot));
             t.addTrait(Trait.FONT_NAME, font.getFontName());
             t.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
-            // set offset of dot within inline parent
-            t.setOffset(font.getAscender());
             int width = font.getCharWidth(dot);
             Space spacer = null;
             if (fobj.getLeaderPatternWidth().getValue() > width) {
@@ -116,15 +124,15 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             // get breaks then add areas to FilledArea
             FilledArea fa = new FilledArea();
 
-            ContentLayoutManager clm = new ContentLayoutManager(fa);
+            clm = new ContentLayoutManager(fa);
             clm.setUserAgent(fobj.getUserAgent());
             addChildLM(clm);
 
-            InlineStackingLayoutManager lm;
-            lm = new InlineStackingLayoutManager(fobj);
+            InlineLayoutManager lm;
+            lm = new InlineLayoutManager(fobj);
             clm.addChildLM(lm);
 
-            clm.fillArea(lm);
+            contentList = clm.getNextKnuthElements(new LayoutContext(0), 0);
             int width = clm.getStackingSize();
             Space spacer = null;
             if (fobj.getLeaderPatternWidth().getValue() > width) {
@@ -140,6 +148,90 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         }
         return leaderArea;
      }
+
+    protected void offsetArea(LayoutContext context) {
+        int pattern = fobj.getLeaderPattern();
+        int bpd = curArea.getBPD();
+
+        switch (pattern) {
+            case LeaderPattern.RULE: 
+                switch (verticalAlignment) {
+                    case VerticalAlign.TOP:
+                        curArea.setOffset(0);
+                    break;
+                    case VerticalAlign.MIDDLE:
+                        curArea.setOffset(context.getMiddleBaseline() - bpd / 2);
+                    break;
+                    case VerticalAlign.BOTTOM:
+                        curArea.setOffset(context.getLineHeight() - bpd);
+                    break;
+                    case VerticalAlign.BASELINE: // fall through
+                    default:
+                        curArea.setOffset(context.getBaseline() - bpd);
+                    break;
+                }
+            break;
+            case LeaderPattern.DOTS: 
+                switch (verticalAlignment) {
+                    case VerticalAlign.TOP:
+                        curArea.setOffset(0);
+                    break;
+                    case VerticalAlign.MIDDLE:
+                        curArea.setOffset(context.getMiddleBaseline());
+                    break;
+                    case VerticalAlign.BOTTOM:
+                        curArea.setOffset(context.getLineHeight() - bpd + font.getAscender());
+                    break;
+                    case VerticalAlign.BASELINE: // fall through
+                    default:
+                        curArea.setOffset(context.getBaseline());
+                    break;
+                }
+            break;
+            case LeaderPattern.SPACE: 
+                // nothing to do
+            break;
+            case LeaderPattern.USECONTENT: 
+                switch (verticalAlignment) {
+                    case VerticalAlign.TOP:
+                        curArea.setOffset(0);
+                    break;
+                    case VerticalAlign.MIDDLE:
+                        curArea.setOffset(context.getMiddleBaseline());
+                    break;
+                    case VerticalAlign.BOTTOM:
+                        curArea.setOffset(context.getLineHeight() - bpd);
+                    break;
+                    case VerticalAlign.BASELINE: // fall through
+                    default:
+                        curArea.setOffset(context.getBaseline());
+                    break;
+                }
+            break;
+        }
+    }
+
+    public void addAreas(PositionIterator posIter, LayoutContext context) {
+        if (fobj.getLeaderPattern() != LeaderPattern.USECONTENT) {
+            // use LeafNodeLayoutManager.addAreas()
+            super.addAreas(posIter, context);
+        } else {
+            addId();
+
+            widthAdjustArea(context);
+
+            // add content areas
+            KnuthPossPosIter contentIter = new KnuthPossPosIter(contentList, 0, contentList.size());
+            clm.addAreas(contentIter, context);
+            offsetArea(context);
+
+            parentLM.addChild(curArea);
+
+            while (posIter.hasNext()) {
+                posIter.next();
+            }
+        }
+    }
 
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
@@ -158,15 +250,13 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         int lead = 0;
         int total = 0;
         int middle = 0;
-        switch (alignment) {
+        switch (verticalAlignment) {
             case VerticalAlign.MIDDLE  : middle = bpd / 2 ;
-                                         lead = bpd / 2 ;
                                          break;
-            case VerticalAlign.TOP     : total = bpd;
-                                         break;
+            case VerticalAlign.TOP     : // fall through
             case VerticalAlign.BOTTOM  : total = bpd;
                                          break;
-            case VerticalAlign.BASELINE:
+            case VerticalAlign.BASELINE: // fall through
             default:                     lead = bpd;
                                          break;
         }
