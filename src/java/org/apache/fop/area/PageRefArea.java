@@ -21,7 +21,6 @@ import java.io.Serializable;
 //import java.util.Map;
 
 import org.apache.fop.datastructs.Node;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
@@ -44,12 +43,47 @@ implements ReferenceArea, Serializable {
 //    // temporary map of unresolved objects used when serializing the page
 //    private Map unresolved = null;
     
+    /**
+     * Create a <code>page-reference-area</code> with a null rectangular area
+     * and <code>region-reference-area</code>s. 
+     * @param pageSeq
+     * @param parent
+     * @param sync
+     */
     public PageRefArea(
             FoPageSequence pageSeq,
-            FONode generatedBy,
             Node parent,
             Object sync) {
-        super(pageSeq, generatedBy, parent, sync);
+        // the page-sequence is the generated-by node
+        super(pageSeq, pageSeq, parent, sync);
+    }
+
+    /**
+     * Creates and returns a <code>PageRefArea</code> with no rectangular
+     * area. The area created references null region viewports for
+     * <code>region-body, region-before, region-after, region-start</code> and
+     * <code>region-end</code>.
+     * <b>N.B.</b> this is a <code>static</code> method.
+     * @param pageSeq the <code>page-sequence</code> to which this area belongs
+     * @param parent the <code>page-viewport-area</code>
+     * @param sync
+     * @return the created reference area
+     */
+    public static PageRefArea nullPageRef(
+            FoPageSequence pageSeq, Node parent, Object sync) {
+        PageRefArea pageRef =
+            new PageRefArea(pageSeq, parent, sync);
+        pageRef.setRegionBody(RegionBodyVport.nullRegionBodyVport(
+                pageSeq, pageRef, sync));
+        pageRef.setRegionBefore(RegionBeforeVport.nullRegionBeforeVport(
+                pageSeq, pageRef, sync));
+        pageRef.setRegionAfter(RegionAfterVport.nullRegionAfterVport(
+                pageSeq, pageRef, sync));
+        pageRef.setRegionStart(RegionStartVport.nullRegionStartVport(
+                pageSeq, pageRef, sync));
+        pageRef.setRegionEnd(RegionEndVport.nullRegionEndVport(
+                pageSeq, pageRef, sync));
+        return pageRef;
     }
 
 //    /**

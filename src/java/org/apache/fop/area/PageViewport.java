@@ -20,7 +20,6 @@ package org.apache.fop.area;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.fop.datastructs.Node;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
@@ -37,56 +36,67 @@ extends AbstractViewport
 implements Viewport {
 
     /**
-     * Create a page viewport at the root of a tree, synchronized on itself,
-     * with a given page reference area and viewport dimensions
-     * @param pageId
-     * @param p the page reference area for the contents of this page
-     * @param bounds the dimensions of the viewport
+     * Creates a page viewport at the root of a tree, synchronized on itself,
+     * with a null page reference area and rectangular area
+     * @param pageSeq the page-sequence which generated this area
+     * the page-sequence
      */
     public PageViewport(
-            FoPageSequence pageSeq,
-            FONode generatedBy,
-            long pageId,
-            Rectangle2D bounds,
-            PageRefArea p) {
-        super(bounds, pageSeq, generatedBy);
-        refArea = p;
+            FoPageSequence pageSeq) {
+        // The pageSeq is also the generating node
+        super(pageSeq, pageSeq);
     }
 
     /**
-     * Create a page viewport.
-     * @param parent node of this viewport
-     * @param sync object on which the Area is synchronized
-     * @param pageId the unique identifier of this page
-     * @param p the page reference area for the contents of this page
-     * @param bounds the dimensions of the viewport
-     */
-    public PageViewport(
-            FoPageSequence pageSeq,
-            FONode generatedBy,
-            long pageId,
-            Rectangle2D bounds,
-            PageRefArea p,
-            Node parent,
-            Object sync) {
-        super(bounds, pageSeq, generatedBy, parent, sync);
-        refArea = p;
-    }
-
-    /**
-     * Create a page viewport with a given parent node, sync object and ID
+     * Creates a page viewport, with a null page reference area and the given
+     * rectangular area
+     * @param area the rectangular area
+     * @param pageSeq the page-sequence which generated this area
      * @param parent
      * @param sync
-     * @param pageId
+     */
+    public PageViewport(
+            Rectangle2D area,
+            FoPageSequence pageSeq,
+            Node parent,
+            Object sync) {
+        // The pageSeq is also the generating node
+        super(area, pageSeq, pageSeq, parent, sync);
+    }
+
+    /**
+     * Creates a page viewport with a null page ref area and rectangular area,
+     * and the given parent node and sync object
+     * @param pageSeq the page-sequence which generated this viewport. This is
+     * also the generated-by node
+     * @param parent
+     * @param sync
      */
     public PageViewport(
             FoPageSequence pageSeq,
-            FONode generatedBy,
-            long pageId,
             Node parent,
             Object sync) {
-        super(pageSeq, generatedBy, parent, sync);
+        // The pageSeq is also the generating node
+        super(pageSeq, pageSeq, parent, sync);
         refArea = null;
+    }
+
+    /**
+     * Creates and returns a <code>PageViewport</code> with no rectangular
+     * area. The area created references a null <code>PageRefArea</code>.
+     * <b>N.B.</b> this is a <code>static</code> method.
+     * @param pageSeq the <code>page-sequence</code> to which this area belongs
+     * @param parent the <code>Page</code> object
+     * @param sync
+     * @return the created viewport area
+     */
+    public static PageViewport nullPageVport(
+            FoPageSequence pageSeq, Node parent, Object sync) {
+        PageViewport vport =
+            new PageViewport(pageSeq, parent, sync);
+        vport.setReferenceArea(PageRefArea.nullPageRef(
+                pageSeq, vport, sync));
+        return vport;
     }
     
     /**
