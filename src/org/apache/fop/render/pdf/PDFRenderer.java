@@ -168,8 +168,8 @@ public class PDFRenderer implements Renderer {
 		this.renderPage((Page) e.nextElement());
 	}
     
-            if ( !idReferences.isEveryIdValid() ) {
-                throw new FOPException("The id \""+idReferences.getNextInvalidId()+"\" was referenced but does not exist\n");            
+            if ( !idReferences.isEveryIdValid() ) {                          
+                throw new FOPException("The following id's were referenced but not found: "+idReferences.getInvalidIds()+"\n");
             }
     
             MessageHandler.logln("writing out PDF");
@@ -1445,6 +1445,10 @@ public class PDFRenderer implements Renderer {
 	String s;
 	if ( area.getPageNumberID()!=null ) { // this text is a page number, so resolve it
             s = idReferences.getPageNumber(area.getPageNumberID());            
+            if(s==null)
+            {
+                s="";
+            }
         }
         else {
             s = area.getText();
