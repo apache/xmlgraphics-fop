@@ -41,7 +41,8 @@ import org.apache.fop.fo.properties.RetrievePosition;
 public class PageViewport
 extends Area
 implements Viewport, Resolveable, Cloneable {
-    
+
+    private long pageId = 0;
     private PageRefArea pageRefArea;
     private Rectangle2D viewArea;
     private boolean clip = false;
@@ -66,22 +67,45 @@ implements Viewport, Resolveable, Cloneable {
     private Map markerLastAny = null;
 
     /**
-     * Create a page viewport.
-     * @param p the page reference area that holds the contents
-     * @param bounds the bounds of this viewport
+     * Create a page viewport at the root of a tree, synchronized on itself,
+     * with a given page reference area and viewport dimensions
+     * @param pageId
+     * @param p the page reference area for the contents of this page
+     * @param bounds the dimensions of the viewport
      */
-    public PageViewport(
-            Node parent, Object areaSync, PageRefArea p, Rectangle2D bounds) {
-        super(parent, areaSync);
+    public PageViewport(long pageId, PageRefArea p, Rectangle2D bounds) {
+        super();
+        this.pageId = pageId;
         pageRefArea = p;
         viewArea = bounds;
     }
 
     /**
      * Create a page viewport.
+     * @param parent node of this viewport
+     * @param sync object on which teh Area is synchronized
+     * @param pageId the unique identifier of this page
+     * @param p the page reference area for the contents of this page
+     * @param bounds the dimensions of the viewport
      */
-    public PageViewport(Node parent, Object areaSync) {
-        super(parent, areaSync);
+    public PageViewport(
+            Node parent, Object sync, long pageId,
+            PageRefArea p, Rectangle2D bounds) {
+        super(parent, sync);
+        this.pageId = pageId;
+        pageRefArea = p;
+        viewArea = bounds;
+    }
+
+    /**
+     * Create a page viewport with a given parent node, sync object and ID
+     * @param parent
+     * @param sync
+     * @param pageId
+     */
+    public PageViewport(Node parent, Object sync, long pageId) {
+        super(parent, sync);
+        this.pageId = pageId;
         pageRefArea = null;
         viewArea = null;
     }
@@ -124,17 +148,6 @@ implements Viewport, Resolveable, Cloneable {
      */
     public String getPageNumber() {
         return pageNumber;
-    }
-
-    /**
-     * Get the key for this page viewport.
-     * This is used so that a serializable key can be used to
-     * lookup the page or some other reference.
-     *
-     * @return a unique page viewport key for this area tree
-     */
-    public String getKey() {
-        return toString();
     }
 
     /**
@@ -363,9 +376,15 @@ implements Viewport, Resolveable, Cloneable {
      * @return a copy of this page and associated viewports
      */
     public Object clone() {
-        PageRefArea p = (PageRefArea)pageRefArea.clone();
-        PageViewport ret = new PageViewport(parent, sync, p, (Rectangle2D)viewArea.clone());
-        return ret;
+        PageViewport pv;
+        try {
+            pv = (PageViewport)(super.clone());
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+        pageId = 0;  // N.B. This invalidates the page id
+        pv.pageRefArea = (PageRefArea)pageRefArea.clone();
+        return pv;
     }
 
     /**
