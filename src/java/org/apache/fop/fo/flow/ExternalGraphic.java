@@ -65,6 +65,7 @@ import org.apache.fop.fo.properties.Scaling;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.LengthRange;
 
 // Java
 import java.awt.geom.Rectangle2D;
@@ -108,8 +109,9 @@ public class ExternalGraphic extends FObj {
         }
         url = ImageFactory.getURL(url);
 
-        // assume lr-tb for now
-        Length ipd = propertyList.get(PR_INLINE_PROGRESSION_DIMENSION).getLength();
+        // assume lr-tb for now and just use the .optimum value of the range
+        Length ipd = propertyList.get(PR_INLINE_PROGRESSION_DIMENSION).
+                                    getLengthRange().getOptimum().getLength();
         if (!ipd.isAuto()) {
             viewWidth = ipd.getValue();
         } else {
