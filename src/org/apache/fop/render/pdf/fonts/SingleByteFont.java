@@ -1,4 +1,9 @@
-
+/* $Id$
+ *
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources."
+ */
 
 package org.apache.fop.render.pdf.fonts;
 
@@ -47,7 +52,12 @@ public class SingleByteFont extends Font implements FontDescriptor {
         return (useKerning & kerning.isEmpty());
     }
     
-    public final java.util.Hashtable getKerningInfo() {return kerning;}
+    public final java.util.Hashtable getKerningInfo() {
+       if (useKerning)
+          return kerning;
+       else
+          return new Hashtable();
+    }
 
     public byte getSubType() {
         return subType;

@@ -13,7 +13,7 @@
 	<xsl:element name="widths">
 		<xsl:for-each select="char">
 			<xsl:variable name="char-num" select="@ansichar"/>
-			<xsl:variable name="char-name" select="document('charlist.xml')/font-mappings/map[@win-ansi=$char-num]/@adobe-name"/>
+			<xsl:variable name="char-name" select="document('file:charlist.xml')/font-mappings/map[@win-ansi=$char-num]/@adobe-name"/>
 			<xsl:if test="$char-name!=''">
 				<xsl:element name="char">
 					<xsl:attribute name="name"><xsl:value-of select="$char-name"/></xsl:attribute>
