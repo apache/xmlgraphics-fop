@@ -138,13 +138,15 @@ public class PropertyListBuilder {
 	 */
 	String fontsizeval=attributes.getValue(FONTSIZEATTR);
 	if (fontsizeval != null) {
-	  // get a Property.Maker
 	  Property.Maker propertyMaker = findMaker(table, FONTSIZEATTR);
 	  if (propertyMaker != null) {
-	    p.put(FONTSIZEATTR, propertyMaker.make(p,fontsizeval,fo));
-	    propsDone.append(FONTSIZEATTR + ' ');
-	  }	
-	}
+	    try {
+	      p.put(FONTSIZEATTR, propertyMaker.make(p,fontsizeval,fo));
+	    } catch (FOPException e) { }
+	  }
+	  // Put in the "done" list even if error or no Maker.
+	  propsDone.append(FONTSIZEATTR + ' ');
+	}	
 
 	for (int i = 0; i < attributes.getLength(); i++) {
 	    String attributeName = attributes.getQName(i);
@@ -166,6 +168,7 @@ public class PropertyListBuilder {
 	    Property.Maker propertyMaker =findMaker(table, propName);
 
 	    if (propertyMaker != null) {
+	      try {
 		if (subpropName != null) {
 		    Property baseProp = p.getExplicit(propName);
 		    if (baseProp == null) {
@@ -183,13 +186,14 @@ public class PropertyListBuilder {
 		else {
 		    propVal = propertyMaker.make(p,attributes.getValue(i),fo);
 		}
-		
 		if (propVal != null) {
 		    p.put(propName,propVal);
 		}
-		
+	      } catch (FOPException e) { /* Do other props. */  }
 	    } else {
-		//MessageHandler.errorln("WARNING: property " + attributeName + " ignored");
+	      if (! attributeName.startsWith("xmlns"))
+		MessageHandler.errorln("WARNING: property '" +
+				       attributeName + "' ignored");
 	    }
 	}
 	
