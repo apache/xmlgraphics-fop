@@ -186,6 +186,9 @@ public class RTFHandler extends FOInputHandler {
             RtfAttributes rtfAttr = new RtfAttributes();
             attrBlockTextAlign(bl, rtfAttr);
             attrBlockBackgroundColor(bl, rtfAttr);
+            attrBlockFontSize(bl, rtfAttr);
+            attrBlockFontWeight(bl, rtfAttr);
+
             para = sect.newParagraph(rtfAttr);
         } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOInputHandler events?
@@ -397,6 +400,21 @@ public class RTFHandler extends FOInputHandler {
          } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOInputHandler events?
             throw new Error("IOException: " + ioe);
+        }
+    }
+
+    private void attrBlockFontSize(Block bl, RtfAttributes rtfAttr){
+        int fopValue = bl.properties.get("font-size").getLength().getValue()/500;
+        rtfAttr.set("fs",fopValue);
+    }
+
+    private void attrBlockFontWeight(Block bl, RtfAttributes rtfAttr){
+        String fopValue = bl.properties.get("font-weight").getString();
+        if(fopValue=="bold" || fopValue=="700"){
+            rtfAttr.set("b",1);
+        }
+        else{
+            rtfAttr.set("b",0);
         }
     }
 
