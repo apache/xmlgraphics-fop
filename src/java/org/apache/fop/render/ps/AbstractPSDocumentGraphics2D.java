@@ -61,7 +61,7 @@ import java.io.IOException;
 //FOP
 import org.apache.fop.apps.Document;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.render.pdf.FontSetup;
+import org.apache.fop.fonts.FontSetup;
 
 /**
  * This class is a wrapper for the <tt>PSGraphics2D</tt> that

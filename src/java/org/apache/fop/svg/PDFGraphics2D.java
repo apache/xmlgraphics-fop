@@ -66,7 +66,7 @@ import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.BitmapImage;
 import org.apache.fop.apps.Document;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.render.pdf.FontSetup;
+import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.image.JpegImage;
@@ -964,12 +964,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     private void createPattern(PatternPaint pp, boolean fill) {
         Rectangle2D rect = pp.getPatternRect();
 
-        Document fi = new Document(null);
-        FontSetup.setup(fi, null);
+        Document fontInfo = new Document(null);
+        FontSetup.setup(fontInfo, null);
 
         PDFResources res = pdfDoc.getFactory().makeResources();
         PDFResourceContext context = new PDFResourceContext(res);
-        PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fi,
+        PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fontInfo,
                                         pdfDoc, context, pageRef,
                                         "", 0);
         pattGraphic.gc = (GraphicContext)this.gc.clone();
@@ -1008,7 +1008,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         translate.add(new Double(flatmatrix[4]));
         translate.add(new Double(flatmatrix[5]));
 
-        FontSetup.addToResources(pdfDoc, res, fi);
+        /** @todo see if pdfDoc and res can be linked here,
+        (currently res <> PDFDocument's resources) so addFonts() 
+        can be moved to PDFDocument class */
+        res.addFonts(pdfDoc, fontInfo);
 
         PDFPattern myPat = pdfDoc.getFactory().makePattern(
                                 resourceContext, 1, res, 1, 1, bbox,

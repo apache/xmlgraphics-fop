@@ -74,6 +74,7 @@ import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.SimplePageMaster;
+import org.apache.fop.fonts.FontSetup;
 import org.xml.sax.SAXException;
 
 // TODO: do we really want every method throwing a SAXException
@@ -102,8 +103,7 @@ public class MIFHandler extends FOInputHandler {
     public MIFHandler(Document doc, OutputStream os) {
         super(doc);
         outStream = os;
-        // use pdf fonts for now, this is only for resolving names
-        org.apache.fop.render.pdf.FontSetup.setup(doc, null);
+        FontSetup.setup(doc, null);
     }
 
     /**

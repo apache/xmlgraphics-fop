@@ -1,5 +1,5 @@
 /*
- * $Id: FontSetup.java,v 1.22 2003/03/07 09:46:32 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,19 +48,11 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.render.pdf;
+package org.apache.fop.fonts;
 
 // FOP
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.Typeface;
-import org.apache.fop.fonts.FontDescriptor;
-import org.apache.fop.fonts.FontUtil;
-import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.apps.Document;
-import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.pdf.PDFResources;
+
 // FOP (base 14 fonts)
 import org.apache.fop.fonts.base14.Helvetica;
 import org.apache.fop.fonts.base14.HelveticaBold;
@@ -77,13 +69,17 @@ import org.apache.fop.fonts.base14.CourierBoldOblique;
 import org.apache.fop.fonts.base14.Symbol;
 import org.apache.fop.fonts.base14.ZapfDingbats;
 
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
+
 // Java
 import java.util.Map;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * sets up the PDF fonts.
+ * Default fonts for FOP application; currently this uses PDF's fonts
+ * by default.
  *
  * Assigns the font (with metrics) to internal names like "F1" and
  * assigns family-style-weight triplets to the fonts
@@ -241,30 +237,6 @@ public class FontSetup {
             }
         }
     }
-
-    /**
-     * Add the fonts in the font info to the PDF document
-     *
-     * @param doc PDF document to add fonts to
-     * @param resources PDFResources object to attach the font to
-     * @param fontInfo font info object to get font information from
-     */
-    public static void addToResources(PDFDocument doc, PDFResources resources,
-                                      Document fontInfo) {
-        Map fonts = fontInfo.getUsedFonts();
-        Iterator e = fonts.keySet().iterator();
-        while (e.hasNext()) {
-            String f = (String)e.next();
-            Typeface font = (Typeface)fonts.get(f);
-            FontDescriptor desc = null;
-            if (font instanceof FontDescriptor) {
-                desc = (FontDescriptor)font;
-            }
-            resources.addFont(doc.getFactory().makeFont(
-                f, font.getFontName(), font.getEncoding(), font, desc));
-        }
-    }
-
 
     /**
      * Builds a list of EmbedFontInfo objects for use with the setup() method.

@@ -72,6 +72,7 @@ import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.apps.Document;
 import org.apache.fop.render.AbstractRenderer;
@@ -262,9 +263,8 @@ public class PSRenderer extends AbstractRenderer {
      * @param foTreeControl the font info object to set up
      */
     public void setupFontInfo(FOTreeControl foTreeControl) {
-        /* use PDF's font setup to get PDF metrics */
-        org.apache.fop.render.pdf.FontSetup.setup((Document)foTreeControl, null);
-        this.fontInfo = (Document)foTreeControl;
+        FontSetup.setup((Document) foTreeControl, null);
+        this.fontInfo = (Document) foTreeControl;
     }
 
     /**

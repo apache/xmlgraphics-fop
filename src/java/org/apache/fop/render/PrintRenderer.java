@@ -51,9 +51,9 @@
 package org.apache.fop.render;
 
 // FOP
-import org.apache.fop.render.pdf.FontSetup;
 import org.apache.fop.apps.Document;
 import org.apache.fop.fo.FOTreeControl;
+import org.apache.fop.fonts.FontSetup;
 
 // Java
 import java.util.List;
