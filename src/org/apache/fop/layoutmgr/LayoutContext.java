@@ -17,8 +17,8 @@ public class LayoutContext {
      * Values for flags.
      */
     public static final int LINEBREAK_AT_LF_ONLY = 0x01;
-    public static final int START_BLOCK =          0x02;
-    public static final int START_AREA =          0x02; // inline too
+    /** Generated break possibility is first in a new area */
+    public static final int NEW_AREA =          0x02;
     public static final int IPD_UNKNOWN =          0x04;
     /** Signal to a Line LM that a higher level LM may provoke a change
      *  in the reference area, thus ref area IPD. The LineLM should return
@@ -33,6 +33,7 @@ public class LayoutContext {
      * except the first.
      */
     public static final int SUPPRESS_LEADING_SPACE =       0x10;
+    public static final int FIRST_AREA =                   0x20;
 
 
     public int flags;  // Contains some set of flags defined above
@@ -43,13 +44,8 @@ public class LayoutContext {
      * These LM <b>may</b> wish to pass this information down to lower
      * level LM to allow them to optimize returned break possibilities.
      */
-    MinOptMax stackLimit;
+    MinOptMax m_stackLimit;
 
-    /** Current stacking dimension, either IPD or BPD, depending on
-     * caller. This is generally the value returned by a previous call
-     * to getNextBreakPoss().
-     */
-    MinOptMax m_stackSize;
 
     /** True if current top-level reference area is spanning. */
     boolean bIsSpan;
@@ -63,27 +59,49 @@ public class LayoutContext {
     public LayoutContext(LayoutContext parentLC) {
         this.flags = parentLC.flags;
         this.refIPD = parentLC.refIPD;
-        this.stackLimit = null; // Don't reference parent MinOptMax!
+        this.m_stackLimit = null; // Don't reference parent MinOptMax!
 	this.m_pendingSpace = parentLC.m_pendingSpace; //???
         // Copy other fields as necessary. Use clone???
     }
 
-    public LayoutContext() {
-        this.flags = 0;
+    public LayoutContext(int flags) {
+        this.flags = flags;
         this.refIPD = 0;
-	stackLimit = new MinOptMax(0);
+	m_stackLimit = new MinOptMax(0);
+	m_pendingSpace = null;
     }
 
     public void setFlags(int flags) {
-	this.flags |= flags;
+	setFlags(flags, true);
+    }
+
+    public void setFlags(int flags, boolean bSet) {
+	if (bSet) {
+	    this.flags |= flags;
+	}
+	else {
+	    this.flags &= ~flags;
+	}
     }
 
     public void unsetFlags(int flags) {
-	this.flags &= ~flags;
+	setFlags(flags, false);
     }
 
     public boolean isStart() {
-	return ((this.flags & START_BLOCK) != 0);
+	return ((this.flags & NEW_AREA) != 0);
+    }
+
+    public boolean startsNewArea() {
+	return ((this.flags & NEW_AREA) != 0 && m_pendingSpace != null);
+    }
+
+    public boolean isFirstArea() {
+	return ((this.flags & FIRST_AREA) != 0);
+    }
+
+    public boolean suppressLeadingSpace() {
+	return ((this.flags & SUPPRESS_LEADING_SPACE) != 0);
     }
 
     public void setPendingSpace(SpaceSpecifier space) {
@@ -94,11 +112,11 @@ public class LayoutContext {
 	return m_pendingSpace;
     }
 
-    public void setStackSize(MinOptMax stackSize) {
-	m_stackSize = stackSize;
+    public void setStackLimit(MinOptMax stackLimit) {
+	m_stackLimit = stackLimit;
     }
 
-    public MinOptMax getStackSize() {
-	return m_stackSize ;
+    public MinOptMax getStackLimit() {
+	return m_stackLimit ;
     }
 }

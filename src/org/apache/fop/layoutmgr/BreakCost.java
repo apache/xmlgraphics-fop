@@ -15,6 +15,7 @@ import org.apache.fop.area.Area;
  */
 public class BreakCost {
     private Area breakArea;
+    private BreakPoss bp;
 
     private int cost; // Will be more complicated than this!
 
@@ -23,8 +24,21 @@ public class BreakCost {
         this.cost = cost;
     }
 
+    public BreakCost(BreakPoss bp, int cost) {
+        this.bp = bp;
+        this.cost = cost;
+    }
+
+    BreakPoss getBP() {
+        return this.bp;
+    }
+
     Area getArea() {
-        return breakArea;
+        return this.breakArea;
+    }
+
+    int getCost() {
+        return this.cost;
     }
 
     public BreakCost chooseLowest(BreakCost otherCost) {
