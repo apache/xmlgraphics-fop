@@ -54,6 +54,7 @@ implements Runnable {
     private Namespaces namespaces;
     private InputSource source;
     private Thread foThread;
+    private Thread renderThread;
     protected Logger log = Logger.getLogger(Fop.fopPackage);
     private boolean errorDump;
 
@@ -76,10 +77,23 @@ implements Runnable {
         }
     }
 
+    /**
+     * Allow the thread starter process to notify the serial handler of
+     * the FO Tree building thread.
+     * @param foThread
+     */
     public void setFoThread(Thread foThread) {
         this.foThread = foThread;
     }
 
+    /**
+     * Allow the thread starter process to notify the serial handler of
+     * the rendering thread.
+     * @param renderThread
+     */
+    public void setRenderThread(Thread renderThread) {
+        this.renderThread = renderThread;
+    }
     /**
      * This is the run method for the callback parser thread.
      */
