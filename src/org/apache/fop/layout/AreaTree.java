@@ -55,6 +55,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.StaticContent;
 import org.apache.fop.svg.*;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.datatypes.IDReferences;
 
 // Java
 import java.io.IOException;
@@ -72,6 +73,8 @@ public class AreaTree {
     /* list of all the pages */
     Vector pageList = new Vector();
 
+    IDReferences idReferences = new IDReferences();
+
     public void setFontInfo(FontInfo fontInfo) {
 	this.fontInfo = fontInfo;
     }
@@ -86,5 +89,10 @@ public class AreaTree {
 
     public Vector getPages() {
 	return this.pageList;
+    }
+
+    public IDReferences getIDReferences()
+    {
+        return idReferences;
     }
 }
