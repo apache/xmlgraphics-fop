@@ -120,13 +120,13 @@ public class Defs extends SVGObj {
 				SVGElement gi = ((GraphicsCreator)child).createGraphic();
 				if(gi instanceof SVGElement) {
 				    defs.appendChild((SVGElement)gi);
-					String id = ((SVGElement)gi).getId();
-					if(!id.equals("")) {
+//					String id = ((SVGElement)gi).getId();
+//					if(!id.equals("")) {
 //						defs.put(id, gi);
-					} else {
+//					} else {
 						// no id
-						System.err.println("WARNING No ID for defs element : " + gi);
-					}
+//						System.err.println("WARNING No ID for defs element : " + gi);
+//					}
 				}
 			}
 		}
