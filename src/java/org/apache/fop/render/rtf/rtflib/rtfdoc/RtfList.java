@@ -51,7 +51,7 @@ public class RtfList extends RtfContainer {
 
         //random number generator for ids
         Date runTime = new Date();
-        Random listIdGenerator = new Random(runTime.getTime());
+        Random listIdGenerator = new Random(0);
         listId = new Integer(listIdGenerator.nextInt());
         listTemplateId = new Integer(listIdGenerator.nextInt());
 
