@@ -5,7 +5,11 @@
   <separator/>
   <external href="../index.html"      label="NEW DESIGN" />
   <separator/>
-  <page id="index" label="alt.properties"  source="alt.properties.xml"/>
+  <page id="index" label="co-routines" source="coroutines.xml"/>
+  <page id="galleys" label="galleys" source="galleys.xml"/>
+  <page id="footnotes" label="footnotes" source="footnotes.xml"/>
+  <separator/>
+  <page id="alt.properties" label="alt.properties"  source="alt.properties.xml"/>
   <page id="classes-overview" label="Classes overview"  source="classes-overview.xml"/>
   <page id="properties-classes" label="Properties classes"  source="properties-classes.xml"/>
   <page id="Properties" label="Properties"  source="Properties.png.xml"/>
@@ -18,4 +22,7 @@
   <page id="xml-parsing" label="XML parsing"  source="xml-parsing.xml"/>
   <separator/>
   <page id="property-parsing" label="Property parsing"  source="propertyExpressions.xml"/>
+  <separator/>
+  <page id="compound-properties" label="Compound properties"  source="compound-properties.xml"/>
+  <page id="traits" label="Traits"  source="traits.xml"/>
 </book>
