@@ -86,7 +86,8 @@ public abstract class SVGObj extends FObj implements GraphicsCreator {
         for(int count = 0; count < props.length; count++) {
             if(this.properties.get(props[count]) != null) {
                 String rf = this.properties.get(props[count]).getString();
-                element.setAttribute(props[count], rf);
+                if(rf != null)
+                    element.setAttribute(props[count], rf);
             }
         }
         parent.appendChild(element);

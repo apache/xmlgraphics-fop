@@ -214,6 +214,7 @@
         <tagname>g</tagname>
         <attributes>
             <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="PresentationAttributes-All"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -453,7 +454,14 @@
         <tagname>text</tagname>
         <attributes>
             <includeAttributes ref="stdAttrs"/>
-            <attribute>id</attribute>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+            <includeAttributes ref="PresentationAttributes-TextContentElements"/>
+            <includeAttributes ref="PresentationAttributes-TextElements"/>
+            <attribute>class</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
             <attribute>x</attribute>
