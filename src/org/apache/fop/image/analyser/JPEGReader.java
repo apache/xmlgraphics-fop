@@ -7,7 +7,7 @@
 package org.apache.fop.image.analyser;
 
 // Java
-import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 
 // FOP
@@ -42,7 +42,7 @@ public class JPEGReader implements ImageReader {
     private static final int JPG_SIG_LENGTH = 2;
 
     /** @see org.apache.fop.image.analyser.ImageReader */
-    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream fis,
+    public FopImage.ImageInfo verifySignature(String uri, InputStream fis,
                                    FOUserAgent ua) throws IOException {
         byte[] header = getDefaultHeader(fis);
         boolean supported = ((header[0] == (byte) 0xff)
@@ -50,6 +50,7 @@ public class JPEGReader implements ImageReader {
         if (supported) {
             FopImage.ImageInfo info = getDimension(fis);
             info.mimeType = getMimeType();
+            info.inputStream = fis;
             return info;
         } else {
             return null;
@@ -65,7 +66,7 @@ public class JPEGReader implements ImageReader {
         return "image/jpeg";
     }
 
-    private byte[] getDefaultHeader(BufferedInputStream imageStream) throws IOException {
+    private byte[] getDefaultHeader(InputStream imageStream) throws IOException {
         byte[] header = new byte[JPG_SIG_LENGTH];
         try {
             imageStream.mark(JPG_SIG_LENGTH + 1);
@@ -82,12 +83,13 @@ public class JPEGReader implements ImageReader {
         return header;
     }
 
-    private FopImage.ImageInfo getDimension(BufferedInputStream imageStream) throws IOException {
+    private FopImage.ImageInfo getDimension(InputStream imageStream) throws IOException {
         FopImage.ImageInfo info = new FopImage.ImageInfo();
         try {
+            imageStream.mark(imageStream.available());
             int marker = NULL;
             long length, skipped;
-            outer:
+outer:
             while (imageStream.available() > 0) {
                 while ((marker = imageStream.read()) != MARK) {
                     //nop, simply skip
@@ -118,6 +120,7 @@ public class JPEGReader implements ImageReader {
                         }
                 }
             }
+            imageStream.reset();
         } catch (IOException ioe) {
             try {
                 imageStream.reset();
@@ -129,13 +132,13 @@ public class JPEGReader implements ImageReader {
         return info;
     }
 
-    private int read2bytes(BufferedInputStream imageStream) throws IOException {
+    private int read2bytes(InputStream imageStream) throws IOException {
         int byte1 = imageStream.read();
         int byte2 = imageStream.read();
         return (int) ((byte1 << 8) | byte2);
     }
 
-    private long skip(BufferedInputStream imageStream, long n) throws IOException {
+    private long skip(InputStream imageStream, long n) throws IOException {
         long discarded = 0;
         while (discarded != n) {
             imageStream.read();
@@ -145,3 +148,4 @@ public class JPEGReader implements ImageReader {
     }
 
 }
+

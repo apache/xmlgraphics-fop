@@ -8,7 +8,6 @@ package org.apache.fop.image.analyser;
 
 // Java
 import java.io.InputStream;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -60,11 +59,10 @@ public class ImageReaderFactory {
             FOUserAgent ua) {
 
         ImageReader reader;
-        BufferedInputStream bis = new BufferedInputStream(in);
         try {
             for (int count = 0; count < formats.size(); count++) {
                 reader = (ImageReader) formats.get(count);
-                FopImage.ImageInfo info = reader.verifySignature(uri, bis, ua);
+                FopImage.ImageInfo info = reader.verifySignature(uri, in, ua);
                 if (info != null) {
                     return info;
                 }

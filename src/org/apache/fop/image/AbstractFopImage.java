@@ -11,6 +11,7 @@ package org.apache.fop.image;
 import java.net.URL;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
+import java.io.InputStream;
 
 // FOP
 import org.apache.fop.pdf.PDFColor;
@@ -38,9 +39,9 @@ public abstract class AbstractFopImage implements FopImage {
     protected int m_height = 0;
 
     /**
-     * Image URL.
+     * Image input stream.
      */
-    protected URL m_href = null;
+    protected InputStream inputStream = null;
 
     /**
      * ImageReader object (to obtain image header informations).
@@ -85,12 +86,12 @@ public abstract class AbstractFopImage implements FopImage {
      * <LI>image height
      * </UL>
      * The image data isn't kept in memory.
-     * @param href image URL
+     * @param input input stream
      * imgReader ImageReader object
      * @return a new FopImage object
      */
-    public AbstractFopImage(URL href, FopImage.ImageInfo info) {
-        this.m_href = href;
+    public AbstractFopImage(FopImage.ImageInfo info) {
+        this.inputStream = info.inputStream;
         this.imageInfo = info;
         if(this.imageInfo.width != -1) {
             m_width = imageInfo.width;
@@ -147,14 +148,6 @@ public abstract class AbstractFopImage implements FopImage {
     }
 
     /**
-     * Return the image URL.
-     * @return the image URL (as String)
-     */
-    public String getURL() {
-        return this.m_href.toString();
-    }
-
-    /**
      * Return the image width.
      * @return the image width
      */
@@ -178,6 +171,9 @@ public abstract class AbstractFopImage implements FopImage {
         return this.m_colorSpace;
     }
 
+    /**
+     * Get ICC profile for this image.
+     */
     public ICC_Profile getICCProfile() {
         return null;
     }

@@ -35,14 +35,14 @@ public class EPSImage extends AbstractFopImage {
     /**
      * Initialize docName and bounding box
      */
-    private void init(URL href) {
+    private void init(String name) {
         bbox = new int[4];
         bbox[0] = 0;
         bbox[1] = 0;
         bbox[2] = 0;
         bbox[3] = 0;
 
-        docName = href.toString();
+        docName = name;
     }
 
     /**
@@ -59,9 +59,9 @@ public class EPSImage extends AbstractFopImage {
         return bbox;
     }
 
-    public EPSImage(URL href, FopImage.ImageInfo imgInfo) {
-        super(href, imgInfo);
-        init(href);
+    public EPSImage(FopImage.ImageInfo imgInfo) {
+        super(imgInfo);
+        init("");
         if (imgInfo.data instanceof EPSData) {
             epsData = (EPSData) imgInfo.data;
             bbox = new int[4];

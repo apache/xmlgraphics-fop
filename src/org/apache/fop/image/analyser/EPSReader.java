@@ -7,7 +7,7 @@
 package org.apache.fop.image.analyser;
 
 // Java
-import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -27,7 +27,7 @@ public class EPSReader implements ImageReader {
     private static final byte[] BOUNDINGBOX = "%%BoundingBox: ".getBytes();
 
     /** @see org.apache.fop.image.analyser.ImageReader */
-    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream bis,
+    public FopImage.ImageInfo verifySignature(String uri, InputStream bis,
                 FOUserAgent ua) throws IOException {
 
         boolean isEPS = false;
@@ -73,6 +73,11 @@ public class EPSReader implements ImageReader {
             if (data.bbox != null) {
                 info.width = (int) (data.bbox[2] - data.bbox[0]);
                 info.height = (int) (data.bbox[3] - data.bbox[1]);
+
+                // image data read
+                bis.close();
+                info.inputStream = null;
+
                 return info;
             } else {
                 // Ain't eps if no BoundingBox
@@ -108,7 +113,7 @@ public class EPSReader implements ImageReader {
      * @param data             EPSData object to write the results to
      * @exception IOException  If an I/O error occurs
      */
-    private void readEPSImage(BufferedInputStream bis, EPSImage.EPSData data)
+    private void readEPSImage(InputStream bis, EPSImage.EPSData data)
                 throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] file;

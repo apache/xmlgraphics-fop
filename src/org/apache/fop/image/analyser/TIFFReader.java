@@ -7,7 +7,7 @@
 package org.apache.fop.image.analyser;
 
 // Java
-import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 
 // FOP
@@ -25,7 +25,7 @@ public class TIFFReader implements ImageReader {
     private static final int TIFF_SIG_LENGTH = 8;
 
     /** @see org.apache.fop.image.analyser.ImageReader */
-    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream bis,
+    public FopImage.ImageInfo verifySignature(String uri, InputStream bis,
                 FOUserAgent ua) throws IOException {
         byte[] header = getDefaultHeader(bis);
         boolean supported = false;
@@ -51,6 +51,7 @@ public class TIFFReader implements ImageReader {
         if (supported) {
             FopImage.ImageInfo info = getDimension(header);
             info.mimeType = getMimeType();
+            info.inputStream = bis;
             return info;
         } else {
             return null;
@@ -95,7 +96,7 @@ public class TIFFReader implements ImageReader {
         return info;
     }
 
-    private byte[] getDefaultHeader(BufferedInputStream imageStream)
+    private byte[] getDefaultHeader(InputStream imageStream)
         throws IOException {
         byte[] header = new byte[TIFF_SIG_LENGTH];
         try {

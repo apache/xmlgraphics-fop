@@ -7,7 +7,7 @@
 package org.apache.fop.image.analyser;
 
 // Java
-import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 
 // FOP
@@ -35,7 +35,7 @@ public interface ImageReader {
      * @return                 <code>true</code> if image type is the handled one
      * @exception IOException  if an I/O error occurs
      */
-    FopImage.ImageInfo verifySignature(String uri, BufferedInputStream bis,
+    FopImage.ImageInfo verifySignature(String uri, InputStream bis,
             FOUserAgent ua)
         throws IOException;
 

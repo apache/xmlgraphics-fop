@@ -7,7 +7,7 @@
 package org.apache.fop.image.analyser;
 
 // Java
-import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 
 // FOP
@@ -25,7 +25,7 @@ public class PNGReader implements ImageReader {
     private static final int PNG_SIG_LENGTH = 24;
 
     /** @see org.apache.fop.image.analyser.ImageReader */
-    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream bis,
+    public FopImage.ImageInfo verifySignature(String uri, InputStream bis,
                 FOUserAgent ua) throws IOException {
         byte[] header = getDefaultHeader(bis);
         boolean supported = ((header[0] == (byte) 0x89)
@@ -40,6 +40,7 @@ public class PNGReader implements ImageReader {
         if (supported) {
             FopImage.ImageInfo info = getDimension(header);
             info.mimeType = getMimeType();
+            info.inputStream = bis;
             return info;
         } else {
             return null;
@@ -78,7 +79,7 @@ public class PNGReader implements ImageReader {
         return info;
     }
 
-    private byte[] getDefaultHeader(BufferedInputStream imageStream)
+    private byte[] getDefaultHeader(InputStream imageStream)
                 throws IOException {
         byte[] header = new byte[PNG_SIG_LENGTH];
         try {

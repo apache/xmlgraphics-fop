@@ -25,8 +25,8 @@ import org.apache.fop.image.analyser.ImageReader;
 import org.apache.fop.fo.FOUserAgent;
 
 public class BmpImage extends AbstractFopImage {
-    public BmpImage(URL href, FopImage.ImageInfo imgReader) {
-        super(href, imgReader);
+    public BmpImage(FopImage.ImageInfo imgReader) {
+        super(imgReader);
     }
 
     protected boolean loadBitmap(FOUserAgent ua) {
@@ -34,13 +34,11 @@ public class BmpImage extends AbstractFopImage {
         int hpos = 22; // offset positioning for w and height in  bmp files
         int[] headermap = new int[54];
         int filepos = 0;
-        InputStream file = null;
         byte palette[] = null;
         try {
-            file = this.m_href.openStream();
             boolean eof = false;
             while ((!eof) && (filepos < 54)) {
-                int input = file.read();
+                int input = inputStream.read();
                 if (input == -1)
                     eof = true;
                 else
@@ -54,7 +52,7 @@ public class BmpImage extends AbstractFopImage {
                 while (!eof && countr < palettesize) {
                     int count2 = 2;
                     while (!eof && count2 >= -1) {
-                        int input = file.read();
+                        int input = inputStream.read();
                         if (input == -1)
                             eof = true;
                         else if (count2 >= 0) {
@@ -69,7 +67,7 @@ public class BmpImage extends AbstractFopImage {
             }
         } catch (IOException e) {
             ua.getLogger().error("Error while loading image "
-                                         + this.m_href.toString() + " : "
+                                         + "" + " : "
                                          + e.getClass() + " - "
                                          + e.getMessage(), e);
             return false;
@@ -94,7 +92,7 @@ public class BmpImage extends AbstractFopImage {
         else if (this.m_bitsPerPixel == 4 || this.m_bitsPerPixel == 8)
             bytes = this.m_width / (8 / this.m_bitsPerPixel);
         else {
-            ua.getLogger().error("Image (" + this.m_href.toString()
+            ua.getLogger().error("Image (" + ""
                                          + ") has " + this.m_bitsPerPixel
                                          + " which is not a supported BMP format.");
             return false;
@@ -112,13 +110,14 @@ public class BmpImage extends AbstractFopImage {
         try {
             int input;
             int count = 0;
-            file.skip((long)(imagestart - filepos));
-            while ((input = file.read()) != -1)
+            inputStream.skip((long)(imagestart - filepos));
+            while ((input = inputStream.read()) != -1)
                 temp[count++] = input;
-            file.close();
+            inputStream.close();
+            inputStream = null;
         } catch (IOException e) {
             ua.getLogger().error("Error while loading image "
-                                         + this.m_href.toString() + " : "
+                                         + "" + " : "
                                          + e.getClass() + " - "
                                          + e.getMessage(), e);
             return false;

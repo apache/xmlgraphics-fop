@@ -134,3 +134,4 @@ public class FopImageConsumer implements ImageConsumer {
     }
 
 }
+
