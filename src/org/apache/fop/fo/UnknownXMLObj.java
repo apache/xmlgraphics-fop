@@ -7,7 +7,6 @@
 
 package org.apache.fop.fo;
 
-import org.apache.fop.fo.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.inline.*;
@@ -82,7 +81,7 @@ public class UnknownXMLObj extends XMLObj {
         super.addCharacters(data, start, length);
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         //if (!(area instanceof ForeignObjectArea)) {
             // this is an error
             //throw new FOPException("Foreign XML not in fo:instream-foreign-object");
@@ -90,7 +89,7 @@ public class UnknownXMLObj extends XMLObj {
         log.error("no handler defined for " + this.getName() + " foreign xml");
 
         /* return status */
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     public String getName() {

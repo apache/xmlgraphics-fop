@@ -201,10 +201,10 @@ public class TableCell extends FObj {
     }
 
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         int originalAbsoluteHeight = area.getAbsoluteHeight();
         if (this.marker == BREAK_AFTER) {
-            return new Status(Status.OK);
+            return Status.OK;
         }
 
         if (this.marker == START) {
@@ -270,16 +270,16 @@ public class TableCell extends FObj {
             // need to pass already processed content.
             this.marker = i;
 
-            Status status;
-            if ((status = fo.layout(cellArea)).isIncomplete()) {
+            int status;
+            if (Status.isIncomplete((status = fo.layout(cellArea)))) {
                 // this.marker = i;
-                if ((i == 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
-                    return new Status(Status.AREA_FULL_NONE);
+                if ((i == 0) && (status == Status.AREA_FULL_NONE)) {
+                    return Status.AREA_FULL_NONE;
                 } else {
                     // hani Elabed 11/21/2000
                     area.addChild(cellArea);
                     // area.setAbsoluteHeight(cellArea.getAbsoluteHeight());
-                    return new Status(Status.AREA_FULL_SOME);
+                    return Status.AREA_FULL_SOME;
                 }
             }
 
@@ -307,7 +307,7 @@ public class TableCell extends FObj {
         // area.setHeight(cellArea.getHeight());
         // area.setAbsoluteHeight(originalAbsoluteHeight);
 
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     /**

@@ -15,6 +15,7 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.messaging.*;
 
 // Java
+import java.util.Iterator;
 import java.util.ArrayList;
 
 public class Footnote extends FObj {
@@ -40,7 +41,7 @@ public class Footnote extends FObj {
         return "fo:footnote";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         FONode inline = null;
         FONode fbody = null;
         if (this.marker == START) {
@@ -51,8 +52,8 @@ public class Footnote extends FObj {
             FONode fo = (FONode)children.get(i);
             if (fo instanceof Inline) {
                 inline = fo;
-                Status status = fo.layout(area);
-                if (status.isIncomplete()) {
+                int status = fo.layout(area);
+                if (Status.isIncomplete(status)) {
                     return status;
                 }
             } else if (inline != null && fo instanceof FootnoteBody) {
@@ -70,7 +71,7 @@ public class Footnote extends FObj {
             log.error("no footnote-body in footnote");
         }
         if (area instanceof BlockArea) {}
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     public static boolean layoutFootnote(Page p, FootnoteBody fb, Area area) {
@@ -88,8 +89,8 @@ public class Footnote extends FObj {
                 footArea.setMaxHeight(bac.getMaxHeight()
                                       + footArea.getHeight());
             }
-            Status status = fb.layout(footArea);
-            if (status.isIncomplete()) {
+            int status = fb.layout(footArea);
+            if (Status.isIncomplete(status)) {
                 // add as a pending footnote
                 return false;
             } else {

@@ -144,7 +144,7 @@ public class PageSequence extends FObj {
         } else {
             pageNumberType = EXPLICIT;
             try {
-                int pageStart = new Integer(ipnValue).intValue();
+                int pageStart = Integer.parseInt(ipnValue);
                 this.firstPageNumber = (pageStart > 0) ? pageStart  : 1;
             } catch (NumberFormatException nfe) {
                 throw new FOPException("The value '" + ipnValue
@@ -271,25 +271,25 @@ public class PageSequence extends FObj {
         }
 
         // make pages and layout content
-        Status status = new Status(Status.OK);
+        int status = Status.OK;
         Page currentPage = null;
         do {
             boolean isBlankPage = false;
 
             // for this calculation we are already on the
             // blank page
-            if (status.getCode() == Status.FORCE_PAGE_BREAK_EVEN) {
+            if (status == Status.FORCE_PAGE_BREAK_EVEN) {
                 if ((currentPageNumber % 2) == 1) {
                    isBlankPage = true;
                 } 
-            } else if (status.getCode() == Status.FORCE_PAGE_BREAK_ODD) {
+            } else if (status == Status.FORCE_PAGE_BREAK_ODD) {
                 if ((currentPageNumber % 2) == 0) {
                    isBlankPage = true;
                 } 
             }
             currentPage = makePage(areaTree, isBlankPage, currentPage);
             status = flow.getStatus();
-        } while (status.isIncomplete());
+        } while (Status.isIncomplete(status));
 
         // handle cases of 'force-page-count' which do not depend
         // on the presence of a following page sequence

@@ -53,9 +53,9 @@ public abstract class AbstractTableBody extends FObj {
         return areaContainer.getHeight() + spaceBefore + spaceAfter;
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         if (this.marker == BREAK_AFTER) {
-            return new Status(Status.OK);
+            return Status.OK;
         }
 
         if (this.marker == START) {
@@ -157,10 +157,10 @@ public abstract class AbstractTableBody extends FObj {
                 }
             }
 
-            Status status;
-            if ((status = row.layout(areaContainer)).isIncomplete()) {
+            int status;
+            if (Status.isIncomplete((status = row.layout(areaContainer)))) {
                 // BUG!!! don't distinguish between break-before and after!
-                if (status.isPageBreak()) {
+                if (Status.isPageBreak(status)) {
                     this.marker = i;
                     area.addChild(areaContainer);
                     // areaContainer.end();
@@ -190,12 +190,12 @@ public abstract class AbstractTableBody extends FObj {
                         // Fix for infinite loop bug if keeps are too big for page
                         rowSpanMgr.setIgnoreKeeps(true);
 
-                        return new Status(Status.AREA_FULL_NONE);
+                        return Status.AREA_FULL_NONE;
                     }
                 }
                 this.marker = i;
-                if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
-                    status = new Status(Status.AREA_FULL_SOME);
+                if ((i != 0) && (status == Status.AREA_FULL_NONE)) {
+                    status = Status.AREA_FULL_SOME;
                 }
                 if (!((i == 0) && (areaContainer.getContentHeight() <= 0))) {
                     area.addChild(areaContainer);
@@ -208,7 +208,7 @@ public abstract class AbstractTableBody extends FObj {
                 rowSpanMgr.setIgnoreKeeps(true);
 
                 return status;
-            } else if (status.getCode() == Status.KEEP_WITH_NEXT
+            } else if (status == Status.KEEP_WITH_NEXT
                        || rowSpanMgr.hasUnfinishedSpans()) {
                 keepWith.add(row);
                 endKeepGroup = false;
@@ -234,7 +234,7 @@ public abstract class AbstractTableBody extends FObj {
             area.start();
         }
 
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     public void removeLayout(Area area) {

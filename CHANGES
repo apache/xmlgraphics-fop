@@ -1,6 +1,8 @@
 ==============================================================================
 Done since 0.20.4 release
 
+- Perfomance tuning (reduced object creation etc.) (see bug #14103)
+  Submitted by: Henrik Olsson <henrik.olsson@intentia.se> 
 - Update to Xerces 2.2.1 (Jeremias Maerki)
 - Fixed EOFException in TTFReader (Bug #14576)
   Submitted by: Bernard D'Have <bdhaveos@wanadoo.be>

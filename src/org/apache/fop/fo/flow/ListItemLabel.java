@@ -36,7 +36,7 @@ public class ListItemLabel extends FObj {
         return "fo:list-item-label";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         int numChildren = this.children.size();
 
         if (numChildren != 1) {
@@ -62,7 +62,7 @@ public class ListItemLabel extends FObj {
          * of areas returned by each of the children of the fo:list-item-label.
          */
 
-        Status status;
+        int status;
         status = block.layout(area);
         area.addDisplaySpace(-block.getAreaHeight());
         return status;

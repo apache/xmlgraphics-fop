@@ -53,7 +53,7 @@ public class ExternalGraphic extends FObj {
         return "fo:external-graphic";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
 
         if (this.marker == START) {
 
@@ -165,7 +165,7 @@ public class ExternalGraphic extends FObj {
             }
 
             if (area.spaceLeft() < (height + spaceBefore)) {
-                return new Status(Status.AREA_FULL_NONE);
+                return Status.AREA_FULL_NONE;
             }
 
             this.imageArea =
@@ -193,15 +193,15 @@ public class ExternalGraphic extends FObj {
             if (breakBefore == BreakBefore.PAGE
                     || ((spaceBefore + imageArea.getHeight())
                         > area.spaceLeft())) {
-                return new Status(Status.FORCE_PAGE_BREAK);
+                return Status.FORCE_PAGE_BREAK;
             }
 
             if (breakBefore == BreakBefore.ODD_PAGE) {
-                return new Status(Status.FORCE_PAGE_BREAK_ODD);
+                return Status.FORCE_PAGE_BREAK_ODD;
             }
 
             if (breakBefore == BreakBefore.EVEN_PAGE) {
-                return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+                return Status.FORCE_PAGE_BREAK_EVEN;
             }
 
 
@@ -209,13 +209,13 @@ public class ExternalGraphic extends FObj {
                 BlockArea ba = (BlockArea)area;
                 LineArea la = ba.getCurrentLineArea();
                 if (la == null) {
-                    return new Status(Status.AREA_FULL_NONE);
+                    return Status.AREA_FULL_NONE;
                 }
                 la.addPending();
                 if (imageArea.getContentWidth() > la.getRemainingWidth()) {
                     la = ba.createNextLineArea();
                     if (la == null) {
-                        return new Status(Status.AREA_FULL_NONE);
+                        return Status.AREA_FULL_NONE;
                     }
                 }
                 la.addInlineArea(imageArea, this.getLinkSet());
@@ -227,22 +227,18 @@ public class ExternalGraphic extends FObj {
 
             if (breakAfter == BreakAfter.PAGE) {
                 this.marker = BREAK_AFTER;
-                return new Status(Status.FORCE_PAGE_BREAK);
+                return Status.FORCE_PAGE_BREAK;
             }
 
             if (breakAfter == BreakAfter.ODD_PAGE) {
                 this.marker = BREAK_AFTER;
-                return new Status(Status.FORCE_PAGE_BREAK_ODD);
+                return Status.FORCE_PAGE_BREAK_ODD;
             }
 
             if (breakAfter == BreakAfter.EVEN_PAGE) {
                 this.marker = BREAK_AFTER;
-                return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+                return Status.FORCE_PAGE_BREAK_EVEN;
             }
-
-
-
-
 
         } catch (MalformedURLException urlex) {
             // bad URL
@@ -258,7 +254,7 @@ public class ExternalGraphic extends FObj {
         // area.start();
         // }
 
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
 }

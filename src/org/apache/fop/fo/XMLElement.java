@@ -74,7 +74,7 @@ public class XMLElement extends XMLObj {
      *
      * @return the status of the layout
      */
-    public Status layout(final Area area) throws FOPException {
+    public int layout(final Area area) throws FOPException {
 
         if (!(area instanceof ForeignObjectArea)) {
             // this is an error
@@ -82,7 +82,7 @@ public class XMLElement extends XMLObj {
         }
 
         /* return status */
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     private void init() {

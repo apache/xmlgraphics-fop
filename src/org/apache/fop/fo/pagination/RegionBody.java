@@ -87,7 +87,11 @@ public class RegionBody extends Region {
             this.properties.get("column-count").getString();
         int columnCount = 1;
         try {
-            columnCount = Integer.parseInt(columnCountAsString);
+            if( columnCountAsString.charAt(0) >= '0' && columnCountAsString.charAt(0)<= '9') {
+                columnCount = Integer.parseInt(columnCountAsString);
+            } else {
+                log.error("Bad value on region body 'column-count'");
+            }
         } catch (NumberFormatException nfe) {
             log.error("Bad value on region body 'column-count'");
             columnCount = 1;

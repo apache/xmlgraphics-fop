@@ -39,7 +39,7 @@ public class StaticContent extends AbstractFlow {
         return "fo:static-content";
     }
 
-    public Status layout(Area area, Region region) throws FOPException {
+    public int layout(Area area, Region region) throws FOPException {
 
         int numChildren = this.children.size();
         // Set area absolute height so that link rectangles will be drawn correctly in xsl-before and xsl-after
@@ -69,19 +69,19 @@ public class StaticContent extends AbstractFlow {
         for (int i = 0; i < numChildren; i++) {
             FObj fo = (FObj)children.get(i);
 
-            Status status;
-            if ((status = fo.layout(area)).isIncomplete()) {
+            int status;
+            if (Status.isIncomplete((status = fo.layout(area)))) {
                 // in fact all should be laid out and clip, error etc depending on 'overflow'
                 log.warn("Some static content could not fit in the area.");
                 this.marker = i;
-                if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
-                    status = new Status(Status.AREA_FULL_SOME);
+                if ((i != 0) && (status == Status.AREA_FULL_NONE)) {
+                    status = Status.AREA_FULL_SOME;
                 }
                 return (status);
             }
         }
         resetMarker();
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     // flowname checking is more stringient for static content currently

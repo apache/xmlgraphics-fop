@@ -74,11 +74,11 @@ public class FOText extends FONode {
         return false;
     }
   
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         if (!(area instanceof BlockArea)) {
             log.error("text outside block area"
                                    + new String(ca, 0, ca.length));
-            return new Status(Status.OK);
+            return Status.OK;
         }
         if (this.marker == START) {
             String fontFamily =
@@ -132,11 +132,11 @@ public class FOText extends FONode {
             // see LineArea.addText()
 
             // this.marker = 0;
-            return new Status(Status.OK);
+            return Status.OK;
         } else if (this.marker != orig_start) {
-            return new Status(Status.AREA_FULL_SOME);
+            return Status.AREA_FULL_SOME;
         } else {
-            return new Status(Status.AREA_FULL_NONE);
+            return Status.AREA_FULL_NONE;
         }
     }
 

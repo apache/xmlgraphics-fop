@@ -6,7 +6,7 @@
  */
 
 package org.apache.fop.fo;
-
+import java.lang.StringBuffer;
 import java.net.MalformedURLException;
 import java.text.FieldPosition;
 import java.text.MessageFormat;
@@ -47,15 +47,6 @@ public class PropertyManager {
     private String[] saRight;
     private String[] saTop;
     private String[] saBottom;
-
-    private static MessageFormat msgColorFmt =
-        new MessageFormat("border-{0}-color");
-    private static MessageFormat msgStyleFmt =
-        new MessageFormat("border-{0}-style");
-    private static MessageFormat msgWidthFmt =
-        new MessageFormat("border-{0}-width");
-    private static MessageFormat msgPaddingFmt =
-        new MessageFormat("padding-{0}");
 
     public PropertyManager(PropertyList pList) {
         this.properties = pList;
@@ -104,14 +95,40 @@ public class PropertyManager {
 
     private void initBorderInfo(int whichSide, String[] saSide) {
         borderAndPadding.setPadding(whichSide,
-                                    properties.get(msgPaddingFmt.format(saSide)).getCondLength());
+                                    properties.get(formatPadding(saSide)).getCondLength());
+
         // If style = none, force width to 0, don't get Color
-        int style = properties.get(msgStyleFmt.format(saSide)).getEnum();
+        int style = properties.get(formatStyle(saSide)).getEnum();
         if (style != Constants.NONE) {
             borderAndPadding.setBorder(whichSide, style,
-                                       properties.get(msgWidthFmt.format(saSide)).getCondLength(),
-                                       properties.get(msgColorFmt.format(saSide)).getColorType());
+                                       properties.get(formatWidth(saSide)).getCondLength(),
+                                       properties.get(formatColor(saSide)).getColorType());
         }
+    }
+
+    private static final String padding = new String("padding-");
+    private static final String border  = new String("border-");
+    private static final String width   = new String("-width");
+    private static final String color	 = new String("-color");
+    private static final String style	 = new String("-style");
+
+    private String formatPadding(String[] saSide) {
+        StringBuffer sb = new StringBuffer(14);
+        return sb.append(padding).append(saSide[0]).toString();
+    }
+
+    private String formatColor(String[] saSide) {
+        StringBuffer sb = new StringBuffer(19);
+        return sb.append(border).append(saSide[0]).append(color).toString();
+    }
+    private String formatWidth(String[] saSide) {
+        StringBuffer sb = new StringBuffer(19);
+        return sb.append(border).append(saSide[0]).append(width).toString();
+    }
+
+    private String formatStyle(String[] saSide) {
+        StringBuffer sb = new StringBuffer(19);
+        return sb.append(border).append(saSide[0]).append(style).toString();
     }
 
     public HyphenationProps getHyphenationProps() {

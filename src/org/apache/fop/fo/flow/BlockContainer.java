@@ -54,7 +54,7 @@ public class BlockContainer extends FObj {
         return "fo:block-container";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         if (this.marker == START) {
 
             // Common Accessibility Properties
@@ -125,8 +125,8 @@ public class BlockContainer extends FObj {
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
             FObj fo = (FObj)children.get(i);
-            Status status;
-            if ((status = fo.layout(areaContainer)).isIncomplete()) {
+            int status;
+            if (Status.isIncomplete((status = fo.layout(areaContainer)))) {
                 /*
                  * if ((prevChildMustKeepWithNext) && (status.laidOutNone())) {
                  * this.marker = i - 1;
@@ -142,7 +142,7 @@ public class BlockContainer extends FObj {
                  * }
                  */
             }
-            if (status.getCode() == Status.KEEP_WITH_NEXT) {
+            if (status == Status.KEEP_WITH_NEXT) {
                 prevChildMustKeepWithNext = true;
             }
         }
@@ -152,7 +152,7 @@ public class BlockContainer extends FObj {
             areaContainer.setHeight(height);
         area.addChild(areaContainer);
 
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     /**

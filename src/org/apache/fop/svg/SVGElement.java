@@ -92,7 +92,7 @@ public class SVGElement extends SVGObj {
      *
      * @return the status of the layout
      */
-    public Status layout(final Area area) throws FOPException {
+    public int layout(final Area area) throws FOPException {
 
         if (!(area instanceof ForeignObjectArea)) {
             // this is an error
@@ -172,16 +172,14 @@ public class SVGElement extends SVGObj {
         if (s.length() == 0) {
             s = SVGOMDocument.SVG_SVG_WIDTH_DEFAULT_VALUE;
         }
-        float width = UnitProcessor.svgHorizontalLengthToUserSpace
-                     (s, SVGOMDocument.SVG_WIDTH_ATTRIBUTE, uctx);
+        float width = UnitProcessor.svgHorizontalLengthToUserSpace(s, SVGOMDocument.SVG_WIDTH_ATTRIBUTE, uctx);
 
         // 'height' attribute - default is 100%
         s = e.getAttributeNS(null, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE);
         if (s.length() == 0) {
             s = SVGOMDocument.SVG_SVG_HEIGHT_DEFAULT_VALUE;
         }
-        float height = UnitProcessor.svgVerticalLengthToUserSpace
-                     (s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx);
+        float height = UnitProcessor.svgVerticalLengthToUserSpace(s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx);
 
         SVGArea svg = new SVGArea(fs, width, height);
         svg.setSVGDocument(doc);
@@ -198,7 +196,7 @@ public class SVGElement extends SVGObj {
        ((SVGOMElement)svgRoot).setSVGContext(null);
 
         /* return status */
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
     private void init() {

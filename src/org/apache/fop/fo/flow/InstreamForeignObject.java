@@ -86,10 +86,10 @@ public class InstreamForeignObject extends FObj {
      *
      * @return the status of the layout
      */
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
 
         if (this.marker == BREAK_AFTER) {
-            return new Status(Status.OK);
+            return Status.OK;
         }
 
         if (this.marker == START) {
@@ -192,10 +192,10 @@ public class InstreamForeignObject extends FObj {
                 /* layout foreign object */
                 if (this.children.size() > 0) {
                     FONode fo = (FONode)children.get(0);
-                    Status status;
+                    int status;
                     // currently FONode must be an SVG
-                    if ((status =
-                            fo.layout(this.areaCurrent)).isIncomplete()) {
+                    if (Status.isIncomplete((status =
+                                                 fo.layout(this.areaCurrent)))) {
                         return status;
                     }
 
@@ -209,33 +209,33 @@ public class InstreamForeignObject extends FObj {
             if (breakBefore == BreakBefore.PAGE
                     || ((spaceBefore + areaCurrent.getEffectiveHeight())
                         > area.spaceLeft())) {
-                return new Status(Status.FORCE_PAGE_BREAK);
+                return Status.FORCE_PAGE_BREAK;
             }
 
             if (breakBefore == BreakBefore.ODD_PAGE) {
-                return new Status(Status.FORCE_PAGE_BREAK_ODD);
+                return Status.FORCE_PAGE_BREAK_ODD;
             }
 
             if (breakBefore == BreakBefore.EVEN_PAGE) {
-                return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+                return Status.FORCE_PAGE_BREAK_EVEN;
             }
         }
 
         if (this.areaCurrent == null) {
-            return new Status(Status.OK);
+            return Status.OK;
         }
 
         if (area instanceof BlockArea) {
             BlockArea ba = (BlockArea)area;
             LineArea la = ba.getCurrentLineArea();
             if (la == null) {
-                return new Status(Status.AREA_FULL_NONE);
+                return Status.AREA_FULL_NONE;
             }
             la.addPending();
             if (areaCurrent.getEffectiveWidth() > la.getRemainingWidth()) {
                 la = ba.createNextLineArea();
                 if (la == null) {
-                    return new Status(Status.AREA_FULL_NONE);
+                    return Status.AREA_FULL_NONE;
                 }
             }
             la.addInlineArea(areaCurrent, this.getLinkSet());
@@ -278,22 +278,22 @@ public class InstreamForeignObject extends FObj {
 
         if (breakAfter == BreakAfter.PAGE) {
             this.marker = BREAK_AFTER;
-            return new Status(Status.FORCE_PAGE_BREAK);
+            return Status.FORCE_PAGE_BREAK;
         }
 
         if (breakAfter == BreakAfter.ODD_PAGE) {
             this.marker = BREAK_AFTER;
-            return new Status(Status.FORCE_PAGE_BREAK_ODD);
+            return Status.FORCE_PAGE_BREAK_ODD;
         }
 
         if (breakAfter == BreakAfter.EVEN_PAGE) {
             this.marker = BREAK_AFTER;
-            return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+            return Status.FORCE_PAGE_BREAK_EVEN;
         }
 
         areaCurrent = null;
         /* return status */
-        return new Status(Status.OK);
+        return Status.OK;
     }
 
 }

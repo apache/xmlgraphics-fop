@@ -12,6 +12,9 @@ import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.apps.FOPException;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Iterator;
+
 
 public class PropertyList extends HashMap {
 
@@ -39,20 +42,22 @@ public class PropertyList extends HashMap {
         "inline-progression-dimension"
     };
 
-    static private final HashMap wmtables = new HashMap(4);
-    {
-        wmtables.put(new Integer(WritingMode.LR_TB),    /* lr-tb */
-        new byte[] {
-            START, END, BEFORE, AFTER, BLOCKPROGDIM, INLINEPROGDIM
-        });
-        wmtables.put(new Integer(WritingMode.RL_TB),    /* rl-tb */
-        new byte[] {
-            END, START, BEFORE, AFTER, BLOCKPROGDIM, INLINEPROGDIM
-        });
-        wmtables.put(new Integer(WritingMode.TB_RL),    /* tb-rl */
-        new byte[] {
-            AFTER, BEFORE, START, END, INLINEPROGDIM, BLOCKPROGDIM
-        });
+    static private final byte[][] wmtables;
+    static{
+        int i = Math.max( Math.max( WritingMode.LR_TB, WritingMode.RL_TB), WritingMode.TB_RL)+1;
+        wmtables = new byte[i][];
+        wmtables[ WritingMode.LR_TB] =    /* lr-tb */
+            new byte[] {
+                START, END, BEFORE, AFTER, BLOCKPROGDIM, INLINEPROGDIM
+            };
+        wmtables[ WritingMode.RL_TB] =     /* rl-tb */
+            new byte[] {
+                END, START, BEFORE, AFTER, BLOCKPROGDIM, INLINEPROGDIM
+            };
+        wmtables[ WritingMode.TB_RL] =     /* tb-rl */
+            new byte[] {
+                AFTER, BEFORE, START, END, INLINEPROGDIM, BLOCKPROGDIM
+            };
     }
 
     private PropertyListBuilder builder;
@@ -363,7 +368,7 @@ public class PropertyList extends HashMap {
      * Set the writing mode traits for the FO with this property list.
      */
     public void setWritingMode(int writingMode) {
-        this.wmtable = (byte[])wmtables.get(new Integer(writingMode));
+        this.wmtable = wmtables[writingMode];
     }
 
 }

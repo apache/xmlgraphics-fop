@@ -8,7 +8,6 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.fo.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.fo.flow.*;
@@ -41,7 +40,7 @@ public class Title extends ToBeImplementedElement {
         return "fo:title";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();

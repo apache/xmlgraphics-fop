@@ -45,7 +45,7 @@ public abstract class AbstractFlow extends FObj {
      */
     private int contentWidth;
 
-    private Status _status = new Status(Status.AREA_FULL_NONE);
+    private int _status = Status.AREA_FULL_NONE;
 
 
     protected AbstractFlow(FObj parent,
@@ -64,12 +64,12 @@ public abstract class AbstractFlow extends FObj {
         return _flowName;
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         return layout(area, null);
 
     }
 
-    public Status layout(Area area, Region region) throws FOPException {
+    public int layout(Area area, Region region) throws FOPException {
         if (this.marker == START) {
             this.marker = 0;
         }
@@ -120,23 +120,22 @@ public abstract class AbstractFlow extends FObj {
              * continue;
              * }
              */
-            if (_status.isIncomplete()) {
-                if ((prevChildMustKeepWithNext) && (_status.laidOutNone())) {
+            if (Status.isIncomplete(_status)) {
+                if ((prevChildMustKeepWithNext) && (Status.laidOutNone(_status))) {
                     this.marker = i - 1;
                     FObj prevChild = (FObj)children.get(this.marker);
                     prevChild.removeAreas();
                     prevChild.resetMarker();
                     prevChild.removeID(area.getIDReferences());
-                    _status = new Status(Status.AREA_FULL_SOME);
+                    _status = Status.AREA_FULL_SOME;
                     return _status;
                     // should probably return AREA_FULL_NONE if first
                     // or perhaps an entirely new status code
                 }
                 if (bac.isLastColumn())
-                    if (_status.getCode() == Status.FORCE_COLUMN_BREAK) {
+                    if (_status == Status.FORCE_COLUMN_BREAK) {
                         this.marker = i;
-                        _status =
-                            new Status(Status.FORCE_PAGE_BREAK);    // same thing
+                        _status = Status.FORCE_PAGE_BREAK;    // same thing
                         return _status;
                     } else {
                         this.marker = i;
@@ -144,7 +143,7 @@ public abstract class AbstractFlow extends FObj {
                     }
                 else {
                     // not the last column, but could be page breaks
-                    if (_status.isPageBreak()) {
+                    if (Status.isPageBreak(_status)) {
                         this.marker = i;
                         return _status;
                     }
@@ -153,7 +152,7 @@ public abstract class AbstractFlow extends FObj {
                     i--;
                 }
             }
-            if (_status.getCode() == Status.KEEP_WITH_NEXT) {
+            if (_status == Status.KEEP_WITH_NEXT) {
                 prevChildMustKeepWithNext = true;
             } else {
                 prevChildMustKeepWithNext = false;
@@ -163,17 +162,17 @@ public abstract class AbstractFlow extends FObj {
     }
 
     protected void setContentWidth(int contentWidth) {
-	this.contentWidth = contentWidth;
+        this.contentWidth = contentWidth;
     }
     /**
      * Return the content width of this flow (really of the region
      * in which it is flowing).
      */
     public int getContentWidth() {
-	return this.contentWidth;
+        return this.contentWidth;
     }
 
-    public Status getStatus() {
+    public int getStatus() {
         return _status;
     }
 

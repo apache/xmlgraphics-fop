@@ -50,7 +50,7 @@ public class RetrieveMarker extends FObj {
         return "fo:retrieve-marker";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public int layout(Area area) throws FOPException {
         // locate qualifying areas by 'marker-class-name' and
         // 'retrieve-boundary'. Initially we will always check
         // the containing page
@@ -73,15 +73,15 @@ public class RetrieveMarker extends FObj {
                         bestMarker = searchPage(previousPage, false);
                         currentPage = previousPage;
                     } else {
-                        return new Status(Status.OK);
+                        return Status.OK;
                     }
                 }
             } else {
-                return new Status(Status.OK);
+                return Status.OK;
             }
         }
 
-        Status status = new Status(Status.OK);
+        int status = Status.OK;
         // System.out.println("Laying out marker '" + bestMarker + "' in area '" + area + "'");
         // the 'markers' referred to in this method are internal; they have
         // nothing to do with fo:marker

@@ -10,9 +10,7 @@ package org.apache.fop.fo;
 /**
  * classes representating the status of laying out a formatting object
  */
-public class Status {
-
-    protected int code;
+public abstract class Status {
 
     public final static int OK = 1;
     public final static int AREA_FULL_NONE = 2;
@@ -23,26 +21,21 @@ public class Status {
     public final static int FORCE_COLUMN_BREAK = 7;
     public final static int KEEP_WITH_NEXT = 8;
 
-    public Status(int code) {
-        this.code = code;
+    public static boolean isIncomplete(int code) {
+        return ((code != OK) && (code != KEEP_WITH_NEXT));
     }
 
-    public int getCode() {
-        return this.code;
+    public static boolean laidOutNone(int code) {
+        return (code == AREA_FULL_NONE);
     }
 
-    public boolean isIncomplete() {
-        return ((this.code != OK) && (this.code != KEEP_WITH_NEXT));
+    public static boolean isPageBreak(int code) {
+        switch( code) {
+        case FORCE_PAGE_BREAK:
+        case FORCE_PAGE_BREAK_EVEN:
+        case FORCE_PAGE_BREAK_ODD:
+            return true;
+        }
+        return false;
     }
-
-    public boolean laidOutNone() {
-        return (this.code == AREA_FULL_NONE);
-    }
-
-    public boolean isPageBreak() {
-        return ((this.code == FORCE_PAGE_BREAK)
-                || (this.code == FORCE_PAGE_BREAK_EVEN)
-                || (this.code == FORCE_PAGE_BREAK_ODD));
-    }
-
 }
