@@ -255,13 +255,12 @@ public class AreaTreeHandler extends FOEventHandler {
         }
 
         log.debug("adding bookmarks to area tree");
-        BookmarkData data = new BookmarkData();
+        BookmarkData data = new BookmarkData(model);
         for (int count = 0; count < bookmarks.getOutlines().size(); count++) {
             Outline out = (Outline)(bookmarks.getOutlines()).get(count);
             data.addSubData(createBookmarkData(out));
         }
         addOffDocumentItem(data);
-        data.setAreaTreeModel(model);
     }
 
     /**

@@ -302,7 +302,7 @@ public class PDFRenderer extends PrintRenderer {
     private void renderOutline(BookmarkData outline, PDFOutline parentOutline) {
         PDFOutline outlineRoot = pdfDoc.getOutlineRoot();
         PDFOutline pdfOutline = null;
-        PageViewport pv = outline.getPage();
+        PageViewport pv = outline.getPageViewport();
         if (pv != null) {
             Rectangle2D bounds = pv.getViewArea();
             double h = bounds.getHeight();

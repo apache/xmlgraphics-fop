@@ -38,11 +38,14 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
 
     /**
      * Create a new bookmark data object.
-     * This should only be call by the top level element as the
-     * id reference will be null.
+     * This should only be call by the top level element as its
+     * idref will be null.
+     *
+     * @param model the AreaTreeModel for this object
      */
-    public BookmarkData() {
+    public BookmarkData(AreaTreeModel model) {
         idRef = null;
+        areaTreeModel = model;
         whenToProcess = IMMEDIATELY;
     }
 
@@ -56,17 +59,6 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
     public BookmarkData(String id) {
         idRef = id;
         idRefs.put(idRef, this);
-    }
-
-    /**
-     * Set the area tree model
-     * This should only be called for the top level element.
-     * The area tree model is used once resolving is complete.
-     *
-     * @param atm the area tree model for the current document
-     */
-    public void setAreaTreeModel(AreaTreeModel atm) {
-        areaTreeModel = atm;
     }
 
     /**
@@ -127,15 +119,15 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
      * @return the child bookmark data
      */
     public BookmarkData getSubData(int count) {
-        return (BookmarkData)subData.get(count);
+        return (BookmarkData) subData.get(count);
     }
 
     /**
-     * Get the page that this resolves to.
+     * Get the PageViewport object that this bookmark refers to
      *
-     * @return the PageViewport that this extension resolves to
+     * @return the PageViewport that this bookmark points to
      */
-    public PageViewport getPage() {
+    public PageViewport getPageViewport() {
         return pageRef;
     }
 
@@ -165,12 +157,12 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
      * resolves id references of child elements that have the same
      * id reference.
      *
-     * @param id the id reference being resolved
-     * @param pages the list of pages the the id reference resolves to
+     * @param id the ID which has already been resolved to one or more
+     *      PageViewport objects
+     * @param pages the list of PageViewport objects the ID resolves to
      */
     public void resolve(String id, List pages) {
         // this method is buggy
-
         if (!id.equals(idRef)) {
             BookmarkData bd = (BookmarkData)idRefs.get(id);
             idRefs.remove(id);
