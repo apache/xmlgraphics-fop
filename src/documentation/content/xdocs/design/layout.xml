@@ -27,6 +27,7 @@ Note: it may be possible to start immediately after a block formatting object ha
 It is also possible to layout all pages in a page sequence after each page sequence has been added from the xml.</p>
     <p>The layout process is handled by a set of layout managers.
 The block level layout managers are used to create the block areas which are added to the region area of a page.</p>
+      <p>The traversal is done by the layout or structure process only in the flow elements.</p>
       <section id="issue-simple-layout">
         <title>Keep Layouts Simple</title>
         <p>Layout should handle floats, footnotes and keeps in a simple, straightforward way.</p>

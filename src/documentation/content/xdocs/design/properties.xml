@@ -10,6 +10,38 @@
     </authors>
   </header>
   <body>
+
+
+    <section id="properties">
+      <title>Properties</title>
+      <p>The XML attributes on each element are passed to the object. The objects
+that represent FO objects then convert the attributes into properties.</p>
+      <p>Since properties can be inherited the PropertyList class handles resolving
+properties for a particular element.
+All properties are specified in an XML file. Classes are created
+automatically during the build process.</p>
+      <p>In some cases the element may be moved to have a different parent, for
+example markers, or the inheritance could be different, for example
+initial property set.</p>
+      <p>Properties (recall that FO's have properties, areas have traits, and XML
+nodes have attributes) are also a concern of <em>FOTreeBuilder</em>. It
+accomplishes this by using a <em>PropertyListBuilder</em>. There is a
+separate <em>PropertyListBuilder</em> for each namespace encountered
+while building the FO tree. Each Builder object contains a hash of
+property names and <em>their</em> respective makers. It may also
+contain element-specific property maker hashes; these are based on the
+<em>local name</em> of the flow object, ie. <em>table-row</em>, not
+<em>fo:table-row</em>. If an element-specific property mapping exists,
+it is preferred to the generic mapping.</p>
+      <p>The base class for all
+properties is <em>Property</em>, and all the property makers extend
+<em>Property.Maker</em>. A more complete discussion of the property
+architecture may be found in <jump href="properties.html">Properties</jump>.</p>
+    </section>
+
+
+<p>The <strong>Refinement</strong> step is part of reading and using the properties which may happen immediately or during the layout process.</p>
+
     <p>During XML Parsing, the FO tree is constructed. For each FO object (some
 subclass of FObj), the tree builder then passes the list of all
 attributes specified on the FO element to the handleAttrs method. This
