@@ -128,7 +128,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     	makers.put(Wrapper.class, new WrapperLayoutManagerMaker());
     	makers.put(Title.class, new InlineLayoutManagerMaker());
     }
-    
+
     public void makeLayoutManagers(FONode node, List lms) {
     	Maker maker = (Maker) makers.get(node.getClass());
     	if (maker == null) {
@@ -162,7 +162,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 			return;
 		}
 	}
-	
+
 	public static class FOTextLayoutManagerMaker extends Maker {
 		public void make(FONode node, List lms) {
 			FOText foText = (FOText) node;
@@ -171,7 +171,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 		    }
 		}
 	}
-	
+
     /*
 	public static class FObjMixedLayoutManagerMaker extends Maker {
 	    public void make(FONode node, List lms) {
@@ -209,7 +209,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 	        }
 	    }
 	}
-	
+
 	public static class InlineLayoutManagerMaker extends Maker {
 	     public void make(FONode node, List lms) {
              if (node.getChildNodes() != null) {
@@ -217,36 +217,36 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
              }
 	     }
 	}
-	
+
 	public static class FootnodeLayoutManagerMaker extends Maker {
 	    public void make(FONode node, List lms) {
             Inline citation = ((Footnote) node).getInlineFO();
 	        if (citation != null) {
                 lms.add(new InlineLayoutManager(citation));
             }
-	    }		
+	    }
 	}
-	
+
 	public static class InlineContainerLayoutManagerMaker extends Maker {
 	    public void make(FONode node, List lms) {
 	        ArrayList childList = new ArrayList();
 	        super.make(node, childList);
 	        lms.add(new ICLayoutManager((InlineContainer) node, childList));
-	    }		
+	    }
 	}
-	
+
 	public static class BasicLinkLayoutManagerMaker extends Maker {
         public void make(FONode node, List lms) {
             lms.add(new BasicLinkLayoutManager((BasicLink) node));
         }
     }
-	
+
 	public static class BlockLayoutManagerMaker extends Maker {
 	     public void make(FONode node, List lms) {
 	         lms.add(new BlockLayoutManager((Block) node));
 	     }
 	}
-	
+
 	public static class LeaderLayoutManagerMaker extends Maker {
         public void make(FONode node, List lms) {
             lms.add(new LeaderLayoutManager((Leader) node));
@@ -295,7 +295,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 	public static class PageNumberLayoutManagerMaker extends Maker {
 	     public void make(FONode node, List lms) {
              lms.add(new PageNumberLayoutManager((PageNumber) node));
-	     }		
+	     }
 	}
 
 	public static class PageNumberCitationLayoutManagerMaker extends Maker {
@@ -319,7 +319,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 				ArrayList columnLMs = new ArrayList();
 				ListIterator iter = columns.listIterator();
 				while (iter.hasNext()) {
-                    columnLMs.add(new Column((TableColumn) node));
+                    columnLMs.add(new Column((TableColumn) iter.next()));
 				}
 				tlm.setColumns(columnLMs);
 			}

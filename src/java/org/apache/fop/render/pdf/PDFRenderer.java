@@ -281,44 +281,45 @@ public class PDFRenderer extends PrintRenderer {
     /**
      * @see org.apache.fop.render.Renderer#processOffDocumentItem(OffDocumentItem)
      */
-    public void processOffDocumentItem(OffDocumentItem ext) {
-        // render bookmark extension
-        if (ext instanceof BookmarkData) {
-            renderRootExtensions((BookmarkData)ext);
+    public void processOffDocumentItem(OffDocumentItem odi) {
+        // render Bookmark-Tree
+        if (odi instanceof BookmarkData) {
+            renderBookmarkTree((BookmarkData) odi);
         }
     }
 
     /**
-     * Renders the root extension elements
-     * @param bookmarks the bookmarks to render
+     * Renders a Bookmark-Tree object
+     * @param bookmarks the BookmarkData object containing all the Bookmark-Items
      */
-    protected void renderRootExtensions(BookmarkData bookmarks) {
+    protected void renderBookmarkTree(BookmarkData bookmarks) {
         for (int i = 0; i < bookmarks.getCount(); i++) {
             BookmarkData ext = bookmarks.getSubData(i);
-            renderOutline(ext, null);
+            renderBookmarkItem(ext, null);
         }
     }
 
-    private void renderOutline(BookmarkData outline, PDFOutline parentOutline) {
+    private void renderBookmarkItem(BookmarkData bookmarkItem, 
+            PDFOutline parentBookmarkItem) {
         PDFOutline pdfOutline = null;
-        PageViewport pv = outline.getPageViewport();
+        PageViewport pv = bookmarkItem.getPageViewport();
         if (pv != null) {
             Rectangle2D bounds = pv.getViewArea();
             double h = bounds.getHeight();
             float yoffset = (float)h / 1000f;
             String intDest = (String)pageReferences.get(pv.getKey());
-            if (parentOutline == null) {
+            if (parentBookmarkItem == null) {
                 PDFOutline outlineRoot = pdfDoc.getOutlineRoot();
                 pdfOutline = pdfDoc.getFactory().makeOutline(outlineRoot,
-                                        outline.getLabel(), intDest, yoffset);
+                                        bookmarkItem.getLabel(), intDest, yoffset);
             } else {
-                pdfOutline = pdfDoc.getFactory().makeOutline(parentOutline,
-                                        outline.getLabel(), intDest, yoffset);
+                pdfOutline = pdfDoc.getFactory().makeOutline(parentBookmarkItem,
+                                        bookmarkItem.getLabel(), intDest, yoffset);
             }
         }
 
-        for (int i = 0; i < outline.getCount(); i++) {
-            renderOutline(outline.getSubData(i), pdfOutline);
+        for (int i = 0; i < bookmarkItem.getCount(); i++) {
+            renderBookmarkItem(bookmarkItem.getSubData(i), pdfOutline);
         }
     }
 
