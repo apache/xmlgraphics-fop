@@ -81,7 +81,7 @@ public class Property {
         /**
          * @return the name of the property for this Maker
          */
-        protected int getPropName() {
+        protected int getPropId() {
             return propId;
         }
 
