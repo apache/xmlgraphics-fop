@@ -117,20 +117,38 @@ public class PropertyListBuilder {
         return b;
     }
 
+    /**
+     *
+     * @param nameSpaceURI URI for the namespace of the element to which
+     *     the attributes belong.
+     * @param elementName Local name for the element to which the attributes
+     *     belong.
+     * @param attributes Collection of attributes passed to us from the parser.
+     * @param fo The FObj to which the attributes need to be attached as
+     *     properties.
+     * @return PropertyList object containing collection of Properties objects
+     *     appropriate for the FObj
+     * @throws FOPException
+     */
     public PropertyList makeList(String nameSpaceURI, String elementName,
                                  Attributes attributes,
-                                 PropertyList parentPropertyList,
-                                 FObj parentFO) throws FOPException {
+                                 FObj fo) throws FOPException {
         String nameSpaceURIToUse = "http://www.w3.org/TR/1999/XSL/Format";
         if (nameSpaceURI != null) {
             nameSpaceURIToUse = nameSpaceURI;
         }
+        FObj parentFO = fo.findNearestAncestorFObj();
 
+        PropertyList parentPropertyList = null;
+        if (parentFO != null) {
+            parentPropertyList = parentFO.properties;
+        }
         PropertyList par = null;
         if (parentPropertyList != null
                 && nameSpaceURIToUse.equals(parentPropertyList.getNameSpace())) {
             par = parentPropertyList;
         }
+
         PropertyList p = new PropertyList(par, nameSpaceURIToUse,
                                           elementName);
         p.setBuilder(this);
