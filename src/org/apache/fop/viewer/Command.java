@@ -6,6 +6,7 @@ package org.apache.fop.viewer;
  */
 
 import java.awt.event.ActionEvent;
+import org.apache.fop.messaging.MessageHandler;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import java.net.*;
@@ -39,7 +40,7 @@ public class Command extends AbstractAction {
     String path = IMAGE_DIR + iconName + ".gif";
     URL url = getClass().getResource(path);
     if (url == null) {
-      System.err.println("Icon not found: " + path);
+      MessageHandler.errorln("Icon not found: " + path);
     }
     else
       putValue(SMALL_ICON, new ImageIcon(url));
@@ -51,10 +52,10 @@ public class Command extends AbstractAction {
   }
 
   public void doit() {
-    System.err.println("Not implemented.");
+    MessageHandler.errorln("Not implemented.");
   }
 
   public void undoit() {
-    System.err.println("Not implemented.");
+    MessageHandler.errorln("Not implemented.");
   }
 }

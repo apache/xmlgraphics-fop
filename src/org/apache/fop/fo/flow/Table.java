@@ -53,6 +53,7 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
@@ -201,7 +202,7 @@ public class Table extends FObj {
                 offset += c.getColumnWidth();
 	    } else if (fo instanceof TableBody) {
 		if (columns.size() == 0) {
-		    System.err.println("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
+		    MessageHandler.errorln("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
 		    return new Status(Status.OK);
 		}
 		

@@ -57,6 +57,7 @@ import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.messaging.MessageHandler;
 
 // DOM
 import org.w3c.dom.Document;
@@ -149,20 +150,20 @@ public class Driver {
      * instantiate the Renderer class
      */
     protected Renderer createRenderer(String rendererClassName) {
-	System.err.println("using renderer " + rendererClassName);
+    MessageHandler.logln("using renderer " + rendererClassName);
 
 	try {
 	    return (Renderer)
 		Class.forName(rendererClassName).newInstance();
 	} catch (ClassNotFoundException e) {
-	    System.err.println("Could not find " + rendererClassName);
+	    MessageHandler.errorln("Could not find " + rendererClassName);
 	} catch (InstantiationException e) {
-	    System.err.println("Could not instantiate "
+	    MessageHandler.errorln("Could not instantiate "
 			       + rendererClassName);
 	} catch (IllegalAccessException e) {
-	    System.err.println("Could not access " + rendererClassName);
+	    MessageHandler.errorln("Could not access " + rendererClassName);
 	} catch (ClassCastException e) {
-	    System.err.println(rendererClassName + " is not a renderer"); 
+	    MessageHandler.errorln(rendererClassName + " is not a renderer"); 
 	}
 	return null;
     }
@@ -188,20 +189,20 @@ public class Driver {
      * instantiate element mapping class
      */
     protected ElementMapping createElementMapping(String mappingClassName) {
-	System.err.println("using element mapping " + mappingClassName);
+    MessageHandler.logln("using element mapping " + mappingClassName);
 
 	try {
 	    return (ElementMapping)
 		Class.forName(mappingClassName).newInstance();
 	} catch (ClassNotFoundException e) {
-	    System.err.println("Could not find " + mappingClassName);
+	    MessageHandler.errorln("Could not find " + mappingClassName);
 	} catch (InstantiationException e) {
-	    System.err.println("Could not instantiate "
+	    MessageHandler.errorln("Could not instantiate "
 			       + mappingClassName);
 	} catch (IllegalAccessException e) {
-	    System.err.println("Could not access " + mappingClassName);
+	    MessageHandler.errorln("Could not access " + mappingClassName);
 	} catch (ClassCastException e) {
-	    System.err.println(mappingClassName + " is not an element mapping"); 
+	    MessageHandler.errorln(mappingClassName + " is not an element mapping"); 
 	}
 	return null;
     }

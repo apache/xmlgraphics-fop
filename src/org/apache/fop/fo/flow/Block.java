@@ -53,6 +53,7 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
@@ -104,7 +105,7 @@ public class Block extends FObjMixed {
     }
 
     public Status layout(Area area) throws FOPException {
-	// System.err.print(" b:LAY[" + marker + "] ");
+	// MessageHandler.error(" b:LAY[" + marker + "] ");
 
 	if (this.marker == BREAK_AFTER) {
 	    return new Status(Status.OK);
@@ -289,7 +290,7 @@ public class Block extends FObjMixed {
 	    return new Status(Status.KEEP_WITH_NEXT);
 	}
 
-	//System.err.print(" b:OK" + marker + " ");
+	//MessageHandler.error(" b:OK" + marker + " ");
 	return new Status(Status.OK);
     }
 

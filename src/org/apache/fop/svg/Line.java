@@ -53,6 +53,7 @@ package org.apache.fop.svg;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
@@ -123,7 +124,7 @@ public class Line extends FObj {
 	    ((SVGArea) area).addGraphic(new LineGraphic(x1, y1, x2, y2));
 	} else {
 	    /* otherwise generate a warning */
-	    System.err.println("WARNING: svg:line outside svg:svg");
+	    MessageHandler.errorln("WARNING: svg:line outside svg:svg");
 	}
 
 	/* return status */

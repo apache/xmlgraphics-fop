@@ -52,6 +52,7 @@ package org.apache.fop.render.pdf;
 
 // FOP
 import org.apache.fop.render.pdf.fonts.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFResources;
@@ -77,7 +78,7 @@ public class FontSetup {
      * @param fontInfo the font info object to set up
      */
     public static void setup(FontInfo fontInfo) {
-	System.err.println("setting up fonts");
+	MessageHandler.logln("setting up fonts");
 		
 	fontInfo.addMetrics("F1", new Helvetica());
 	fontInfo.addMetrics("F2", new HelveticaOblique());

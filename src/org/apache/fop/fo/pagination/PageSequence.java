@@ -53,6 +53,7 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.fo.flow.Flow;
 import org.apache.fop.fo.flow.StaticContent;
@@ -217,7 +218,7 @@ public class PageSequence extends FObj
             currentPage.setNumber(++this.currentPageNumber);
             this.runningPageNumberCounter=this.currentPageNumber;            
 
-            System.err.print(" [" + currentPageNumber);
+            MessageHandler.log(" [" + currentPageNumber);
             if ( (this.staticBefore != null) &&
             (currentPage.getBefore() != null) )
             {
@@ -246,10 +247,10 @@ public class PageSequence extends FObj
                 bodyArea.setIDReferences(areaTree.getIDReferences());
                 status = this.flow.layout(bodyArea);
             }
-            System.err.print("]");
+            MessageHandler.log("]");
             areaTree.addPage(currentPage);
         } while ( status.isIncomplete() );
-        System.err.println();
+        MessageHandler.errorln("");
     }
 
     public void setFlow(Flow flow) {
@@ -272,7 +273,7 @@ public class PageSequence extends FObj
         }
         else
         {
-            System.err.println("WARNING: this version of FOP only supports "
+            MessageHandler.errorln("WARNING: this version of FOP only supports "
             + "static-content in region-before and region-after"); 
         }
     }

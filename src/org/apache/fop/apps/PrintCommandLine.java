@@ -21,6 +21,7 @@ import java.util.Vector;
 import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.layout.Page;
+import org.apache.fop.messaging.MessageHandler;
 
 
 /**
@@ -40,10 +41,10 @@ public class PrintCommandLine extends CommandLine {
   public static void main(String[] args) {
 
     String version = Version.getVersion();
-    System.err.println(version);
+    MessageHandler.errorln(version);
 
     if (args.length != 1) {
-      System.err.println("usage: java [-Dstart=i] [-Dend=i]"
+      MessageHandler.errorln("usage: java [-Dstart=i] [-Dend=i]"
         + " [-Dcopies=i] [-Deven=true|false]"
         + " org.apache.fop.apps.PrintCommandLine formatting-object-file");
       System.exit(1);
@@ -52,7 +53,7 @@ public class PrintCommandLine extends CommandLine {
     Parser parser = createParser();
 
     if (parser == null) {
-      System.err.println("ERROR: Unable to create SAX parser");
+      MessageHandler.errorln("ERROR: Unable to create SAX parser");
       System.exit(1);
     }
 
@@ -67,7 +68,7 @@ public class PrintCommandLine extends CommandLine {
       driver.format();
       driver.render();
     } catch (Exception e) {
-      System.err.println("FATAL ERROR: " + e.getMessage());
+      MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
       System.exit(1);
     }
 

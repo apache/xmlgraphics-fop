@@ -52,6 +52,7 @@ package org.apache.fop.render.xml;
 
 // FOP
 import org.apache.fop.svg.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.layout.*;
@@ -93,7 +94,7 @@ public class XMLRenderer implements Renderer {
      */
     public void render(AreaTree areaTree, PrintWriter writer)
 	throws IOException {
-	System.err.println("rendering areas to XML");
+	MessageHandler.logln("rendering areas to XML");
 	this.writer = writer;
 	this.writer.write("<?xml version=\"1.0\"?>\n<!-- produced by "
 			  + this.producer + " -->\n");
@@ -104,7 +105,7 @@ public class XMLRenderer implements Renderer {
 	}
 	writeEndTag("</AreaTree>");
 	this.writer.flush();
-	System.err.println("written out XML");
+	MessageHandler.errorln("written out XML");
     }
 
     /**

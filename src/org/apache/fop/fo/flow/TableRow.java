@@ -53,6 +53,7 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.layout.*;
@@ -163,7 +164,7 @@ public class TableRow extends FObj {
 
 	int numChildren = this.children.size();
 	if (numChildren != columns.size()) {
-	    System.err.println("WARNING: Number of children under table-row not equal to number of table-columns");
+	    MessageHandler.errorln("WARNING: Number of children under table-row not equal to number of table-columns");
 	    return new Status(Status.OK);
 	}
 

@@ -51,6 +51,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.messaging.MessageHandler;
 
 /**
  * a length quantity in XSL
@@ -95,7 +96,7 @@ public class Length {
 	int l = len.length();
 	
 	if (l == 0) {
-	    System.err.println("WARNING: empty length");
+	    MessageHandler.errorln("WARNING: empty length");
 	    this.millipoints = 0;
         } else if (len.equals("auto")) {
           this.auto = true;
@@ -120,7 +121,7 @@ public class Length {
 		dvalue = dvalue * assumed_resolution;
 	    else {
 		dvalue = 0;
-		System.err.println("ERROR: unknown length units in "
+		MessageHandler.errorln("ERROR: unknown length units in "
 				   + len);
 	    }
 	    

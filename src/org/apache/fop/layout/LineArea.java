@@ -52,6 +52,7 @@
 package org.apache.fop.layout;
 
 import org.apache.fop.render.Renderer;
+import org.apache.fop.messaging.MessageHandler;
 
 import java.util.Vector;
 import java.util.Enumeration;
@@ -172,7 +173,7 @@ public class LineArea extends Area {
 		if (d != 0) {
 		    c = data[i] = d;
 		} else {
-		    System.err.print("ch"
+		    MessageHandler.error("ch"
 				       + (int)c + "?");
 		    c = data[i] = '#';
 		}
@@ -311,7 +312,7 @@ public class LineArea extends Area {
 		    if ((finalWidth + spaceWidth + wordWidth) >
 			this.getContentWidth()) { 
 			if (overrun)
-			    System.err.print(">");
+			    MessageHandler.error(">");
 			if (this.wrapOption == WrapOption.WRAP)
 			    return i;
 		    }
@@ -373,7 +374,7 @@ public class LineArea extends Area {
 	}
 
 	if (overrun)
-	    System.err.print(">");
+	    MessageHandler.error(">");
 	return -1;
     }
 

@@ -53,6 +53,7 @@ package org.apache.fop.fo;
 
 // FOP
 import org.apache.fop.layout.Area;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.datatypes.*;
@@ -86,7 +87,7 @@ public class FOText extends FONode {
 
     public Status layout(Area area) throws FOPException {
 	if (!(area instanceof BlockArea)) {
-	    System.err.println("WARNING: text outside block area" + new String(ca, start, length));
+	    MessageHandler.errorln("WARNING: text outside block area" + new String(ca, start, length));
 	    return new Status(Status.OK);
 	}
 	if (this.marker == START) {

@@ -53,6 +53,7 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.pagination.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
@@ -170,7 +171,7 @@ public class PageNumberCitation extends FObj
 	{
 		if(!(area instanceof BlockArea)) 
 		{
-		    System.err.println("WARNING: page-number-citation outside block area");
+		    MessageHandler.errorln("WARNING: page-number-citation outside block area");
 		    return new Status(Status.OK);
 		}
 		this.area = area;
@@ -202,7 +203,7 @@ public class PageNumberCitation extends FObj
 		{	
 			FObj root;
 			refId = this.properties.get("ref-id").getString();
-//System.out.println("PageNumberCitation.layout() ref-id: "+refId);	
+//MessageHandler.logln("PageNumberCitation.layout() ref-id: "+refId);	
 
 			// find the reference number citation here, what to do if not found?
 			// to do this, get the root document, and do a search for the id that matches ref-id
@@ -217,7 +218,7 @@ public class PageNumberCitation extends FObj
 				citation = searchForId(root);
 				if(citation != null)
 				{
-//System.out.println("PageNumberCitation.layout() found citation");	
+//MessageHandler.logln("PageNumberCitation.layout() found citation");	
 					Status s = resolvePageNumber();
 					if(s.isIncomplete())
 					{
@@ -228,7 +229,7 @@ public class PageNumberCitation extends FObj
 			}
 			else
 			{
-//System.out.println("PageNumberCitation.layout() found citation");	
+//MessageHandler.logln("PageNumberCitation.layout() found citation");	
 				Status s = resolvePageNumber();
 				if(s.isIncomplete())
 				{
@@ -248,7 +249,7 @@ public class PageNumberCitation extends FObj
 	public Status resolvePageNumber()
 	{
 			idPageNumber = citation.getPageNumber();
-//System.out.println("PageNumberCitation: citation page #: "+idPageNumber);
+//MessageHandler.logln("PageNumberCitation: citation page #: "+idPageNumber);
 			if(idPageNumber <0) return new Status(Status.AREA_FULL_NONE);
 		
 			return new Status(Status.OK);

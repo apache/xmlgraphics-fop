@@ -54,6 +54,7 @@ package org.apache.fop.apps;
 import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.fo.StandardElementMapping;
 import org.apache.fop.svg.SVGElementMapping;
+import org.apache.fop.messaging.MessageHandler;
 
 // James Clark
 import com.jclark.xsl.sax.XSLProcessor;
@@ -92,17 +93,17 @@ public class XTCommandLine extends CommandLine {
      */
     public static void main(String[] args) {
 	String version = Version.getVersion();
-	System.err.println(version);
+	MessageHandler.errorln(version);
 		
 	if (args.length != 3) {
-	    System.err.println("usage: java org.apache.fop.apps.XTCommandLine xml-file xsl-stylesheet pdf-file");
+	    MessageHandler.errorln("usage: java org.apache.fop.apps.XTCommandLine xml-file xsl-stylesheet pdf-file");
 	    System.exit(1);
 	}
 	
 	Parser parser = createParser();
 	
 	if (parser == null) {
-	    System.err.println("ERROR: Unable to create SAX parser");
+	    MessageHandler.errorln("ERROR: Unable to create SAX parser");
 	    System.exit(1);
 	}
 	
@@ -122,7 +123,7 @@ public class XTCommandLine extends CommandLine {
 	    driver.format();
 	    driver.render();
 	} catch (Exception e) {
-	    System.err.println("FATAL ERROR: " + e.getMessage());
+	    MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
 	    System.exit(1);
 	}
     }

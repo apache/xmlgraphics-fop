@@ -51,6 +51,7 @@
 package org.apache.fop.fo;
 
 import java.util.Hashtable;
+import org.apache.fop.messaging.MessageHandler;
 
 import org.apache.fop.apps.FOPException;
 
@@ -65,7 +66,7 @@ public class PropertyList extends Hashtable {
   public Property get(String propertyName) {
 
     if (builder == null)
-      System.err.println("OH OH, builder has not been set");
+      MessageHandler.errorln("OH OH, builder has not been set");
     Property p = (Property)super.get(propertyName);
 		
     if (p == null) { // if not explicit

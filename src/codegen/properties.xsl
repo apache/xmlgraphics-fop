@@ -13,6 +13,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.messaging.MessageHandler;
 
 public class <xsl:value-of select="class-name"/> extends Property {
 
@@ -80,6 +81,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.messaging.MessageHandler;
 
 public class <xsl:value-of select="class-name"/> extends Property {
 <xsl:for-each select="datatype/enumeration/value">
@@ -94,7 +96,7 @@ public class <xsl:value-of select="class-name"/> extends Property {
       if (value.equals("<xsl:value-of select="."/>")) { v = <xsl:value-of select="@const"/>; }
       else</xsl:for-each>
       {
-        System.err.println("WARNING: Unknown value for <xsl:value-of select="name"/>: " + value);
+        MessageHandler.errorln("WARNING: Unknown value for <xsl:value-of select="name"/>: " + value);
         return make(propertyList, "<xsl:value-of select="default"/>");
       }
       return new <xsl:value-of select="class-name"/>(propertyList, v);

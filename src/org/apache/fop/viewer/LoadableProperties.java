@@ -1,6 +1,7 @@
 package org.apache.fop.viewer;
 
 import java.io.*;
+import org.apache.fop.messaging.MessageHandler;
 import java.util.*;
 
 /**
@@ -60,7 +61,7 @@ public class LoadableProperties extends Hashtable {
       return true;
     }
     else {
-      System.out.println(getClass().getName() + ": load(): invalid line " +
+      MessageHandler.logln(getClass().getName() + ": load(): invalid line " +
                          str + "." + " Character '=' missed.");
       return false;
     }

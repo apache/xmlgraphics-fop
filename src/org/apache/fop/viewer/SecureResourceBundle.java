@@ -1,6 +1,7 @@
 package org.apache.fop.viewer;
 
 import java.util.*;
+import org.apache.fop.messaging.MessageHandler;
 import java.io.*;
 
 
@@ -35,7 +36,7 @@ public class SecureResourceBundle extends ResourceBundle implements Translator {
     try {
       lookup.load(in);
     } catch(Exception ex) {
-      System.out.println("Abgefangene Exception: " + ex.getMessage());
+      MessageHandler.logln("Abgefangene Exception: " + ex.getMessage());
       isSourceFound = false;
     }
   }
@@ -70,7 +71,7 @@ public class SecureResourceBundle extends ResourceBundle implements Translator {
       return obj;
     else {
       if (isMissingEmphasized) {
-        System.out.println(getClass().getName() + ": missing key: " + key);
+        MessageHandler.logln(getClass().getName() + ": missing key: " + key);
         return getMissedRepresentation(key.toString());
       }
       else

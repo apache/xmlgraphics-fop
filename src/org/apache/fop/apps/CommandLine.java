@@ -65,6 +65,10 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.net.URL;
 
+// FOP 
+import org.apache.fop.messaging.MessageHandler;
+
+
 /**
  * mainline class.
  *
@@ -86,20 +90,20 @@ public class CommandLine {
 	if (parserClassName == null) {
 	    parserClassName = "org.apache.xerces.parsers.SAXParser";
 	}
-	System.err.println("using SAX parser " + parserClassName);
+	org.apache.fop.messaging.MessageHandler.logln("using SAX parser " + parserClassName);
 
 	try {
 	    return (Parser)
 		Class.forName(parserClassName).newInstance();
 	} catch (ClassNotFoundException e) {
-	    System.err.println("Could not find " + parserClassName);
+	    org.apache.fop.messaging.MessageHandler.errorln("Could not find " + parserClassName);
 	} catch (InstantiationException e) {
-	    System.err.println("Could not instantiate "
+	    org.apache.fop.messaging.MessageHandler.errorln("Could not instantiate "
 			       + parserClassName);
 	} catch (IllegalAccessException e) {
-	    System.err.println("Could not access " + parserClassName);
+	    org.apache.fop.messaging.MessageHandler.errorln("Could not access " + parserClassName);
 	} catch (ClassCastException e) {
-	    System.err.println(parserClassName + " is not a SAX driver"); 
+	    org.apache.fop.messaging.MessageHandler.errorln(parserClassName + " is not a SAX driver"); 
 	}
 	return null;
     }
@@ -139,10 +143,12 @@ public class CommandLine {
      */
     public static void main(String[] args) {
 	String version = Version.getVersion();
-	System.err.println(version);
+   MessageHandler.errorln(version);
+
+
 		
 	if (args.length != 2) {
-	    System.err.println("usage: java "
+	    MessageHandler.errorln("usage: java "
 			       + "org.apache.fop.apps.CommandLine "
 			       + "formatting-object-file pdf-file");
 	    System.exit(1);
@@ -151,7 +157,7 @@ public class CommandLine {
 	Parser parser = createParser();
 		
 	if (parser == null) {
-	    System.err.println("ERROR: Unable to create SAX parser");
+	    MessageHandler.errorln("ERROR: Unable to create SAX parser");
 	    System.exit(1);
 	}
 	
@@ -165,7 +171,7 @@ public class CommandLine {
 	    driver.format();
 	    driver.render();
 	} catch (Exception e) {
-	    System.err.println("FATAL ERROR: " + e.getMessage());
+	    MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
 	    System.exit(1);
 	}
     }

@@ -52,6 +52,7 @@ package org.apache.fop.fo;
 
 // FOP
 import org.apache.fop.layout.AreaTree;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.pagination.Root;
 
@@ -178,7 +179,7 @@ public class FOTreeBuilder extends HandlerBase {
 
     /** SAX Handler for the start of the document */
     public void startDocument() {
-	System.err.println("building formatting object tree");
+	MessageHandler.logln("building formatting object tree");
     }
 
     /** SAX Handler for the start of an element */
@@ -212,7 +213,7 @@ public class FOTreeBuilder extends HandlerBase {
 	if (fobjMaker == null) {
 	    if (!this.unknownFOs.containsKey(fullName)) {
 		this.unknownFOs.put(fullName, "");
-		System.err.println("WARNING: Unknown formatting object "
+		MessageHandler.errorln("WARNING: Unknown formatting object "
 				   + fullName);  
 	    }
 	    fobjMaker = new FObjMixed.Maker(); // fall back
@@ -248,7 +249,7 @@ public class FOTreeBuilder extends HandlerBase {
      */
     public void format(AreaTree areaTree)
 	throws FOPException {
-	System.err.println("formatting FOs into areas");
+	MessageHandler.logln("formatting FOs into areas");
 	((Root) this.rootFObj).format(areaTree);
     }
 }
