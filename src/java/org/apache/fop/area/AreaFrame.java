@@ -36,7 +36,7 @@ import org.apache.fop.fo.properties.WritingMode;
 public class AreaFrame extends AreaGeometry {
 
     /** The framed rectangle */
-    protected Rectangle2D contents = null;
+    protected AreaGeometry contents = null;
     /** The offset from <code>this</code> origin to the origin of the framed
      * rectangle */
     protected Point2D contentOffset = null;
@@ -120,7 +120,7 @@ public class AreaFrame extends AreaGeometry {
      * the new framed contents.  The offset is not affected.
      * @param contents the new framed contents
      */
-    public void setContents(Rectangle2D contents) {
+    public void setContents(AreaGeometry contents) {
         setRect(getX(), getY(),
                 getWidth() + (contents.getWidth() - this.contents.getWidth()),
                 getHeight() + (contents.getWidth() - this.contents.getWidth()));
