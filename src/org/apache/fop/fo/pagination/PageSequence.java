@@ -281,7 +281,7 @@ public class PageSequence extends FObj
             areaTree.addPage(currentPage);
 	} while ( flowsAreIncomplete() );
 		
-        MessageHandler.errorln("");
+        MessageHandler.logln("");
     }
 
     /** 
