@@ -677,26 +677,29 @@ public class PropertySets {
     public static PropertyValueList expandAndCopySHand(PropertyValue value)
         throws PropertyException
     {
-        int property;
+        // The property associated with this PropertyValue
+        int property = value.getProperty();
         // Is the property of the argument a shorthand?
-        Integer sHIndex = (Integer)shorthandMap.get
-                (Ints.consts.get(value.getProperty()));
-        if (sHIndex == null)
+        Integer sHIndex =
+                (Integer)(shorthandMap.get(Ints.consts.get(property)));
+        if (sHIndex == null) {
+            String propname = PropNames.getPropertyName(property);
             throw new PropertyException
-                    ("" + value.getProperty() + " not a shorthand property");
-        property = sHIndex.intValue();
-        String sHPropertyName = PropNames.getPropertyName(property);
+                    (propname + " not a shorthand property");
+        }
+
+        // Get the array of indices of the properties in the
+        // expansion of this shorthand
         ROIntArray expansion = shorthandExpansions[property];
         PropertyValueList list = new PropertyValueList(property);
         for (int i = 0; i < expansion.length; i++) {
             int expandedProp = expansion.get(i);
             PropertyValue expandedPropValue;
-
+            //   The PropertyValue must be cloneable
             try {
                 expandedPropValue = (PropertyValue)(value.clone());
             } catch (CloneNotSupportedException e) {
-                throw new PropertyException
-                        (sHPropertyName + ": " + e.getMessage());
+                throw new PropertyException(e.getMessage());
             }
 
             expandedPropValue.setProperty(expandedProp);
