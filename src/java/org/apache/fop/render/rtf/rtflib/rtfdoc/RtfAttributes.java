@@ -145,6 +145,17 @@ implements java.lang.Cloneable {
     }
 
     /**
+     * Set an attribute that has nested attributes as value
+     * @param name name of attribute
+     * @param type value of the nested attributes
+     * @return this (which now contains the new entry)
+     */
+    public RtfAttributes set(String name, RtfAttributes value) {
+        values.put(name, value);
+        return this;
+    }
+
+    /**
      * @param name String containing attribute name
      * @return the value of an attribute, null if not found
      */

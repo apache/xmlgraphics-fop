@@ -211,7 +211,11 @@ public abstract class RtfElement {
             cw += value;
         } else if (value instanceof String) {
             cw += value;
-        }
+        } else if (value instanceof RtfAttributes) {
+            writeControlWord(cw);
+            writeAttributes((RtfAttributes) value, null);
+            return;
+        }        
         writeControlWord(cw);
     }
 
@@ -229,7 +233,11 @@ public abstract class RtfElement {
             cw += value;
         } else if (value instanceof String) {
             cw += value;
-        }
+        } else if (value instanceof RtfAttributes) {
+            writeControlWord(cw);
+            writeAttributes((RtfAttributes) value, null);
+            return;
+        }        
         writeControlWordNS(cw);
     }
 
