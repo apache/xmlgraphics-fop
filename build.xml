@@ -108,64 +108,65 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
 <project default="package" basedir=".">
 
-    <fileset dir="${basedir}" id="dist.bin">
-       <include name="conf/**"/>
-       <include name="docs/**"/>
-       <include name="hyph/**"/>
-       <include name="CHANGES"/>
-       <include name="LICENSE"/>
-       <include name="README"/>
-       <include name="STATUS"/>
-       <include name="fop.bat"/>
-       <include name="fop.sh"/>
-       <exclude name="src/**"/>
-       <exclude name="dist/**"/>
-       <exclude name="build/**"/>
-       <exclude name="lib/**"/>
-    </fileset>
+  <fileset dir="${basedir}" id="dist.bin">
+     <include name="conf/**"/>
+     <include name="docs/**"/>
+     <include name="hyph/**"/>
+     <include name="CHANGES"/>
+     <include name="LICENSE"/>
+     <include name="README"/>
+     <include name="STATUS"/>
+     <include name="fop.bat"/>
+     <include name="fop.sh"/>
+     <exclude name="src/**"/>
+     <exclude name="dist/**"/>
+     <exclude name="build/**"/>
+     <exclude name="lib/**"/>
+  </fileset>
 
-    <fileset dir="${basedir}" id="dist.bin.lib">
-       <include name="lib/xercesImpl-2.0.1.jar"/>
-       <include name="lib/xalan-2.2D11.jar"/>
-       <include name="lib/xml-apis.jar"/>
-       <include name="lib/batik.jar"/>
-       <include name="lib/avalon-framework-cvs-20020315.jar"/>
-       <include name="lib/jimi*"/>
-    </fileset>
+  <fileset dir="${basedir}" id="dist.bin.lib">
+     <include name="lib/xercesImpl-2.0.1.jar"/>
+     <include name="lib/xalan-2.3.1.jar"/>
+     <include name="lib/xml-apis.jar"/>
+     <include name="lib/batik.jar"/>
+     <include name="lib/avalon-framework*.jar"/>
+     <include name="lib/jimi*"/>
+  </fileset>
 
-    <fileset dir="${basedir}" id="dist.src">
-       <exclude name="lib/classes/**"/>
-       <exclude name="lib/org/**"/>
-       <exclude name="lib/src/**"/>
-       <exclude name="build/**"/>
-       <include name="src/**"/>
-       <include name="conf/**"/>
-       <include name="docs/**"/>
-       <include name="hyph/**"/>
-       <include name="lib/**"/>
-       <include name="CHANGES"/>
-       <include name="LICENSE"/>
-       <include name="README"/>
-       <include name="STATUS"/>
-       <include name="build*"/>
-       <include name="fop.bat"/>
-       <include name="fop.sh"/>
+  <fileset dir="${basedir}" id="dist.src">
+     <exclude name="lib/classes/**"/>
+     <exclude name="lib/org/**"/>
+     <exclude name="lib/src/**"/>
+     <exclude name="build/**"/>
+     <include name="src/**"/>
+     <include name="conf/**"/>
+     <include name="docs/**"/>
+     <include name="hyph/**"/>
+     <include name="lib/**"/>
+     <include name="CHANGES"/>
+     <include name="LICENSE"/>
+     <include name="README"/>
+     <include name="STATUS"/>
+     <include name="build*"/>
+     <include name="fop.bat"/>
+     <include name="fop.sh"/>
+  </fileset>
+
+  <path id="libs-build-classpath">
+    <fileset dir="lib">
+      <include name="*.jar"/>
     </fileset>
+  </path>
 
   <path id="libs-run-classpath">
     <fileset dir="lib">
       <include name="*.jar"/>
+      <exclude name="ant.jar"/>
+      <exclude name="buildtools.jar"/>
+      <exclude name="stylebook.jar"/>
     </fileset>
     <fileset dir="build">
       <include name="fop.jar"/>
-    </fileset>
-  </path>
-
-  <path id="libs-build-classpath">
-    <fileset dir="lib">
-      <include name="stylebook*.jar"/>
-      <include name="xalan*.jar"/>
-      <include name="xerces*.jar"/>
     </fileset>
   </path>
 
@@ -203,8 +204,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="doc.generator" value="org.apache.stylebook.StyleBook"/>
     <property name="doc.generator.package" value="${lib.dir}/stylebook-1.0-b2.jar"/>
 
-	<property name="viewer.resources.src.dir" value="./src/org/apache/fop/viewer/resources"/>
-	<property name="viewer.images.src.dir" value="./src/org/apache/fop/viewer/Images"/>
+    <property name="viewer.resources.src.dir" value="./src/org/apache/fop/viewer/resources"/>
+    <property name="viewer.images.src.dir" value="./src/org/apache/fop/viewer/Images"/>
 	
     <property name="build.dir" value="./build"/>
     <property name="build.src" value="./build/src"/>
@@ -213,8 +214,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="build.docs" value="./build/docs"/>
     <property name="build.javadocs" value="./build/javadocs"/>
 
-	<property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/viewer/resources"/>
-	<property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/viewer/Images"/>
+    <property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/viewer/resources"/>
+    <property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/viewer/Images"/>
 
     <property name="dist.bin.dir" value="./dist-bin"/>
     <property name="dist.src.dir" value="./dist-src"/>
@@ -265,7 +266,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest"/>
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
-    <property name="runtime.classpath" value="lib/xerces-1.4.3.jar lib/xalan-2.2D11.jar lib/batik.jar lib/jimi-1.0.jar lib/avalon-framework-cvs-20020315.jar"/>
    
   </target>
 
@@ -281,28 +281,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- Help on usage                                                       -->
   <!-- =================================================================== -->
   <target name="usage">
-    <echo message=""/>
-    <echo message=""/>
-    <echo message="${Name} Build file"/>
-    <echo message="-------------------------------------------------------------"/>
-    <echo message=""/>
-    <echo message=" available targets are:"/>
-    <echo message=""/>
-    <echo message="   package   --> generates the ${name}.jar file (default)"/>
-    <echo message="   codegen   --> generates the java files from the xml resources"/>
-    <echo message="   compile   --> compiles the source code"/>
-    <echo message="   htmldoc   --> generates the HTML documentation"/>
-    <echo message="   javadocs  --> generates the API documentation (java 1.2 only)"/>
-    <echo message="   pdfdoc    --> generates the PDF documentation"/>
-    <echo message="   dist      --> generates the ${Name} distribution as .tar.gz and .zip"/>
-    <echo message="   clean     --> cleans up the directory (except for the dist files)"/>
-    <echo message="   distclean --> cleans up the directory"/>
-    <echo message="   site      --> generates the ${Name} web site (not yet implemented)"/>
-    <echo message=""/>
-    <echo message=" See the comments inside the build.xml file for more details."/>
-    <echo message="-------------------------------------------------------------"/>
-    <echo message=""/>
-    <echo message=""/>
+  	<echo message="Use the -projecthelp option instead" />
   </target>
 
   <!-- =================================================================== -->
@@ -327,10 +306,10 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- compiles hyphenation patterns                                       -->
   <!-- =================================================================== -->
 
-  <target name="hyphenation" depends="prepare" >
+  <target name="hyphenation" depends="prepare">
     <serHyph includes="*.xml" 
              sourceDir="./hyph" 
-             targetDir="${build.dest}/hyph" /> 
+             targetDir="${build.dest}/hyph"/> 
   </target>
 
   <!-- =================================================================== -->
@@ -354,7 +333,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </target>
 
   <target name="prepare-trax" if="trax.present">
-      <echo message="JAXP1.1 transforms is present. Installing TRaX support"/>
+    <echo message="JAXP1.1 transforms is present. Installing TRaX support"/>
     <copy todir="${build.src}">
       <fileset dir="${src.dir}" includes="**/${xsltransform},**/${trax},**/apps/TraxInputHandler.java"/>
     </copy>
@@ -375,7 +354,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Generate the source code                                            -->
   <!-- =================================================================== -->
-  <target name="codegen" depends="prepare">
+  <target name="codegen" depends="prepare" description="Generates the java files from the xml resources">
     <!-- resetting codegen directory -->
     <echo message="Resetting codegen directory"/>
 
@@ -435,51 +414,55 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
-  <target name="compile" depends="codegen, prepare-src">
+  <target name="compile" depends="codegen, prepare-src" description="Compiles the source code">
     <echo message="Compiling the sources "/>
     <!-- create directories -->
     <mkdir dir="${build.dest}"/>
 
-	<mkdir dir="${viewer.resources.dest.dir}"/>
+    <mkdir dir="${viewer.resources.dest.dir}"/>
     <copy todir="${viewer.resources.dest.dir}">
       <fileset dir="${viewer.resources.src.dir}"/>
     </copy>
-	<mkdir dir="${viewer.images.dest.dir}"/>
+    <mkdir dir="${viewer.images.dest.dir}"/>
     <copy todir="${viewer.images.dest.dir}">
       <fileset dir="${viewer.images.src.dir}"/>
     </copy>
 
-    <javac srcdir="${build.src}"
-           destdir="${build.dest}"
-           debug="${debug}"
-           deprecation="${deprecation}"
-           optimize="${optimize}"
-           excludes="**/*${ignore_this},${jimi}"/>
+    <javac destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
+      <src path="${build.src}"/>
+      <classpath refid="libs-build-classpath"/>
+      <exclude name="**/${ignore_this}"/>
+      <exclude name="${jimi}"/>
+     </javac>
   </target>
 
   <!-- =================================================================== -->
   <!-- Creates the class package                                           -->
   <!-- =================================================================== -->
-  <target name="package" depends="compile,hyphenation">
+  <target name="package" depends="compile,hyphenation" description="Generates the jar files">
     <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
+    <pathconvert property="manifest-classpath" dirsep="/" pathsep=" " refid="libs-run-classpath">
+      <map from="${basedir}${file.separator}lib${file.separator}" to=""/>
+      <map from="${basedir}${file.separator}build${file.separator}fop.jar" to=""/>
+    </pathconvert>
     <jar jarfile="${build.dir}/${name}.jar"
          basedir="${build.dest}"
          includes="org/**,conf/**,hyph/**">
     <manifest>
         <attribute name="Main-Class" value="${main.class}"/>
-        <attribute name="Class-Path" value="${runtime.classpath}"/>
+        <attribute name="Class-Path" value="${manifest-classpath}"/>
         <attribute name="Implementation-Title" value="${Name}"/>
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="Apache Software Foundation (http://xml.apache.org/fop/)"/>
-        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}])"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
     </manifest>
     </jar>
   </target>
 
-  <target name="pdf-transcoder" depends="compile">
+  <target name="pdf-transcoder" depends="compile" description="Generates the jar for the pdf transcoder for Batik">
     <echo message="Creating the jar file ${build.dir}/pdf-transcoder.jar"/>
 
     <property name="pdf-transcoder.name" value="FOP PDF Transcoder"/>
@@ -498,12 +481,12 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
         <attribute name="Implementation-Title" value="${pdf-transcoder.name}"/>
         <attribute name="Implementation-Version" value="${pdf-transcoder.version}"/>
         <attribute name="Implementation-Vendor" value="Apache Software Foundation (http://xml.apache.org/fop/)"/>
-        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}])"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
     </manifest>
     </jar>
   </target>
 
-  <target name="test" depends="package">
+  <target name="test" depends="package" description="Runs the test suite">
     <echo message="Testing build in jar file ${build.dir}/${name}.jar against reference"/>
     <runTest testSuite="basictests.xml" basedir="test/" reference="test/reference/fop.jar"
          refVersion="FOP 1.0dev"/>
@@ -536,12 +519,13 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Creates the API documentation                                       -->
   <!-- =================================================================== -->
-  <target name="javadocs" depends="prepare-src">
+  <target name="javadocs" depends="prepare-src" description="Generates javadocs">
     <echo message="Producing the javadoc files "/>
     <mkdir dir="${build.javadocs}"/>
     <javadoc packagenames="${packages}"
              sourcepath="${build.src}"
              destdir="${build.javadocs}"
+             classpathref="libs-build-classpath"
              author="true"
              version="true"
              windowtitle="${Name} API"
@@ -552,9 +536,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     />
   </target>
 
-  <target name="html" depends="javadocs, htmldoc"/>
+  <target name="html" depends="javadocs, htmldoc" description="Generates javadocs and documentation in html format"/>
   
-  <target name="htmldoc" depends= "html-fop, html-design"/>
+  <target name="htmldoc" depends= "html-fop, html-design" description="Generates documentation in html format"/>
 
   <target name="html-fop" depends="prepare-src">
     <copy file="${xdocs}/fop.xml"
@@ -590,7 +574,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </java>
   </target>
 
-  <target name="pdfdoc" depends="package">
+  <target name="pdfdoc" depends="package" description="Generates the documentation in pdf format">
     <copy file="${xdocs}/fop.xml"
           tofile="${xdocs}/book.xml"
           filtering="on"/>
@@ -606,7 +590,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Creates the distribution                                            -->
   <!-- =================================================================== -->
-  <target name="dist" depends="dist-src,dist-bin"/>
+  <target name="dist" depends="dist-src,dist-bin" description="Generates the distribution package"/>
 
   <target name="dist-bin" depends="package">
     <echo message="Building the binary distribution files (zip,tar)"/>
@@ -650,11 +634,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Clean targets                                                       -->
   <!-- =================================================================== -->
-  <target name="clean" depends="init">
+  <target name="clean" depends="init" description="Cleans the build directory">
     <delete dir="${build.dir}"/>
   </target>
 
-  <target name="distclean" depends="clean">
+  <target name="distclean" depends="clean" description="Cleans the distribution target directories">
     <delete dir="${dist.src.dir}"/>
     <delete dir="${dist.bin.dir}"/>
     <delete>
