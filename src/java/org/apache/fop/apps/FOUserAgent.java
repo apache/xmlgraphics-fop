@@ -85,7 +85,9 @@ import org.apache.fop.pdf.PDFEncryptionParams;
 public class FOUserAgent implements LogEnabled {
 
     private Logger log;
+    /** Map containing various default values */
     public Map defaults = new java.util.HashMap();
+    /** Map containing XML handlers for various document types */
     public Map handlers = new java.util.HashMap();
     private String baseURL;
     private PDFEncryptionParams pdfEncryptionParams;

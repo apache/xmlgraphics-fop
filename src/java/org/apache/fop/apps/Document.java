@@ -95,10 +95,9 @@ public class Document implements FOTreeControl, FOTreeListener {
      */
     private LayoutStrategy layoutStrategy = null;
 
-    /**
-     * The current AreaTree for the PageSequence being rendered.
-     */
+    /** The current AreaTree for the PageSequence being rendered. */
     public AreaTree areaTree;
+    /** The AreaTreeModel for the PageSequence being rendered. */
     public AreaTreeModel atModel;
 
     private Bookmarks bookmarks = null;
@@ -350,10 +349,19 @@ public class Document implements FOTreeControl, FOTreeListener {
         return areaTree;
     }
 
+    /**
+     * Set the Bookmarks object for this Document
+     * @param bookmarks the Bookmarks object containing the bookmarks for this
+     * Document
+     */
     public void setBookmarks(Bookmarks bookmarks) {
         this.bookmarks = bookmarks;
     }
 
+    /**
+     * Public accessor for the Bookmarks for this Document
+     * @return the Bookmarks for this Document
+     */
     public Bookmarks getBookmarks() {
         return bookmarks;
     }
