@@ -28,6 +28,7 @@ import org.apache.fop.fo.TextInfo;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.traits.LayoutProps;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
@@ -67,6 +68,20 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     private int iStartPos = 0;
 
     protected List childBreaks = new java.util.ArrayList();
+
+    public BlockLayoutManager(org.apache.fop.fo.flow.Block inBlock) {
+        super.setFObj(inBlock);
+        childLMiter = new BlockLMiter(this, childLMiter);
+        userAgent = inBlock.getUserAgent();
+        setBlockTextInfo(inBlock.getPropertyManager().getTextLayoutProps(
+            inBlock.getFOTreeControl()));
+    }
+
+    private void setBlockTextInfo(TextInfo ti) {
+        lead = ti.fs.getAscender();
+        follow = -ti.fs.getDescender();
+        lineHeight = ti.lineHeight;
+    }
 
     /**
      * Iterator for Block layout.
@@ -124,25 +139,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             return child;
 
         }
-    }
-
-    public BlockLayoutManager() {
-    }
-
-    /**
-     * Set the FO object for this layout manager
-     *
-     * @param fo the fo for this layout manager
-     */
-    public void setFObj(FObj fo) {
-        super.setFObj(fo);
-        childLMiter = new BlockLMiter(this, childLMiter);
-    }
-
-    public void setBlockTextInfo(TextInfo ti) {
-        lead = ti.fs.getAscender();
-        follow = -ti.fs.getDescender();
-        lineHeight = ti.lineHeight;
     }
 
     /**
@@ -325,10 +321,17 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             // Set up dimensions
             // Must get dimensions from parent area
             Area parentArea = parentLM.getParentArea(curBlockArea);
+
+            // Get reference IPD from parentArea
             int referenceIPD = parentArea.getIPD();
             curBlockArea.setIPD(referenceIPD);
-            curBlockArea.setWidth(referenceIPD);
-            // Get reference IPD from parentArea
+            
+            // Set the width of the block based on the parent block
+            if (parentArea instanceof BlockParent) {
+                curBlockArea.setWidth(((BlockParent) parentArea).getWidth());
+            } else {
+                curBlockArea.setWidth(referenceIPD);
+            }
             setCurrentArea(curBlockArea); // ??? for generic operations
         }
         return curBlockArea;
