@@ -226,6 +226,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         pageCount--;
         log.debug("Ending layout");
         flush();
+        fobj.setCurrentPageNumber(getPageCount());
     }
 
     /**

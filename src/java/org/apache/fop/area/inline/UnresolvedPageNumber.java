@@ -47,7 +47,7 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
      *
      * @return the id reference for this unresolved page number
      */
-    public String[] getIDs() {
+    public String[] getIDRefs() {
         return new String[] {pageIDRef};
     }
 

@@ -51,7 +51,7 @@ import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
  * The area tree needs to be simple to render and follow the spec
  * closely.
  * This area tree has the concept of page sequences.
- * Where ever possible information is discarded or optimized to
+ * Wherever possible information is discarded or optimized to
  * keep memory use low. The data is also organized to make it
  * possible for renderers to minimize their output.
  * A page can be saved if not fully resolved and once rendered
@@ -82,11 +82,12 @@ public class AreaTreeHandler extends FOEventHandler {
     // The fo:root node of the document
     private Root rootFObj;
 
-    // HashMap of ID's whose area is located on one or more PageViewports
-    // Each ID has an arraylist of PageViewports sharing the area with this ID
+    // HashMap of ID's whose area is located on one or more consecutive 
+    // PageViewports.  Each ID has an arraylist of PageViewports that
+    // form the defined area of this ID
     private Map idLocations = new HashMap();
 
-    // idref's whose corresponding id's have yet to be found
+    // idref's whose target PageViewports have yet to be identified
     // Each idref has a HashSet of Resolvable objects containing that idref
     private Map unresolvedIDRefs = new HashMap();
 
@@ -136,8 +137,9 @@ public class AreaTreeHandler extends FOEventHandler {
             idLocations.put(id, pvList);
             pvList.add(pv);
 
-            /* See if this ID is in the unresolved idref list.  Note:
-             * unresolving occurs at first PV found for a given area. 
+            /* 
+             * See if this ID is in the unresolved idref list, if so
+             * resolve Resolvable objects tied to it.
              */
             Set todo = (Set) unresolvedIDRefs.get(id);
             if (todo != null) {
@@ -237,7 +239,6 @@ public class AreaTreeHandler extends FOEventHandler {
             PageSequenceLayoutManager pageSLM 
                 = new PageSequenceLayoutManager(this, pageSequence);
             pageSLM.activateLayout();
-            pageSequence.setCurrentPageNumber(pageSLM.getPageCount());
         }
     }
 
@@ -285,7 +286,7 @@ public class AreaTreeHandler extends FOEventHandler {
     private void addOffDocumentItem(OffDocumentItem odi) {
         if (odi instanceof Resolvable) {
             Resolvable res = (Resolvable) odi;
-            String[] ids = res.getIDs();
+            String[] ids = res.getIDRefs();
             for (int count = 0; count < ids.length; count++) {
                 if (idLocations.containsKey(ids[count])) {
                     res.resolveIDRef(ids[count], (List) idLocations.get(ids[count]));
