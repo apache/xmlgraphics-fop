@@ -55,6 +55,7 @@ import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
 // FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.Inline;
@@ -337,8 +338,9 @@ public abstract class FOInputHandler extends AbstractLogEnabled {
 
     /**
      * Process start of a Link.
+     * @param basicLink BasicLink that is ending
      */
-    public abstract void startLink();
+    public abstract void startLink(BasicLink basicLink);
 
     /**
      * Process end of a Link.
