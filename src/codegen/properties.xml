@@ -183,13 +183,6 @@
     <default>24pt</default>
   </property>
   <property>
-    <name>line-height</name>
-    <class-name>LineHeight</class-name>
-    <inherited>true</inherited>
-    <datatype>Length</datatype>
-    <default>12pt</default>
-  </property>
-  <property>
     <name>space-after.optimum</name>
     <class-name>SpaceAfterOptimum</class-name>
     <inherited>false</inherited>
