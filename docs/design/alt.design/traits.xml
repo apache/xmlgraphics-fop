@@ -29,7 +29,7 @@
           <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-common"
-		  >4.2.2 Common Traits</link><br/>
+      >4.2.2 Common Traits</link><br/>
             <link href=
             "http://www.w3.org/TR/xsl/slice7.html#writing-mode"
             >7.27.7 writing-mode</link>
@@ -108,7 +108,7 @@
             >5.6 Non-property Based Trait Generation</link>
           </td>
           <td>
-	    Set "true" on:<br/>
+      Set "true" on:<br/>
             simple-page-master<br/>
             title<br/>
             region-body<br/>
@@ -121,7 +121,7 @@
             table<br/>
             table-caption<br/>
             table-cell
-	  </td>
+    </td>
         </tr>
         <tr>
           <td>is-viewport-area</td>
@@ -232,7 +232,7 @@
         <tr>
           <td>overline-score-color</td>
           <td></td>
-          
+
           <td>
             <link href=
               "http://www.w3.org/TR/xsl/slice5.html#refine-text-decoration"
@@ -249,7 +249,7 @@
         <tr>
           <td>through-score</td>
           <td></td>
-          
+
           <td>
             <link href=
               "http://www.w3.org/TR/xsl/slice5.html#refine-text-decoration"
@@ -279,90 +279,90 @@
             </link>
           </td>
         </tr>
-	<tr>
-	  <th>Other Indirectly Derived Traits</th>
-	</tr>
-	<tr>
-	  <td>alignment-point</td>
-	  <td/>
-	  <td>
+  <tr>
+    <th>Other Indirectly Derived Traits</th>
+  </tr>
+  <tr>
+    <td>alignment-point</td>
+    <td/>
+    <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-intro"
             >4.1 Introduction</link>
-	  </td>
-	</tr>
-	<tr>
-	  <td>alignment-baseline</td>
-	  <td/>
-	  <td>
+    </td>
+  </tr>
+  <tr>
+    <td>alignment-baseline</td>
+    <td/>
+    <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-intro"
             >4.1 Introduction</link>
-	  </td>
-	</tr>
-	<tr>
-	  <td>baseline-shift</td>
-	  <td/>
-	  <td>
+    </td>
+  </tr>
+  <tr>
+    <td>baseline-shift</td>
+    <td/>
+    <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-intro"
             >4.1 Introduction</link>
-	  </td>
-	</tr>
-	<tr>
-	  <td>dominant-baseline-identifier</td>
-	  <td/>
-	  <td>
+    </td>
+  </tr>
+  <tr>
+    <td>dominant-baseline-identifier</td>
+    <td/>
+    <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-intro"
             >4.1 Introduction</link>
-	  </td>
-	</tr>
-	<tr>
-	  <td>actual-baseline-table</td>
-	  <td/>
-	  <td>
+    </td>
+  </tr>
+  <tr>
+    <td>actual-baseline-table</td>
+    <td/>
+    <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-intro"
             >4.1 Introduction</link>
-	  </td>
-	</tr>
-	<tr>
-	  <td>start-intrusion-adjustment</td>
-	  <td/>
-	  <td>
+    </td>
+  </tr>
+  <tr>
+    <td>start-intrusion-adjustment</td>
+    <td/>
+    <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-intro"
             >4.1 Introduction</link>
-	  </td>
-	</tr>
-	<tr>
-	  <td>end-intrusion-adjustment</td>
-	  <td/>
-	  <td>
+    </td>
+  </tr>
+  <tr>
+    <td>end-intrusion-adjustment</td>
+    <td/>
+    <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-intro"
             >4.1 Introduction</link>
-	  </td>
-	</tr>
-	<tr>
-	  <td>page-number</td>
-	  <td/>
-	  <td>
+    </td>
+  </tr>
+  <tr>
+    <td>page-number</td>
+    <td/>
+    <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-intro"
             >4.1 Introduction</link>
-	  </td>
-	</tr>
-	<tr>
-	  <td>script</td>
-	  <td/>
-	  <td>
+    </td>
+  </tr>
+  <tr>
+    <td>script</td>
+    <td/>
+    <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-intro"
             >4.1 Introduction</link>
-	  </td>
-	</tr>
+    </td>
+  </tr>
       </table>
     </s1>
   </body>
