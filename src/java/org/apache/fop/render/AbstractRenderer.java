@@ -276,16 +276,20 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
      * @param page  The page whos page areas are to be rendered
      */
     protected void renderPageAreas(Page page) {
+        /* Spec does not appear to specify whether fo:region-body should
+        appear above or below side regions in cases of overlap.  FOP
+        decision is to have fo:region-body on top, hence it is rendered
+        last here. */
         RegionViewport viewport;
         viewport = page.getRegion(Region.BEFORE_CODE);
         renderRegionViewport(viewport);
         viewport = page.getRegion(Region.START_CODE);
         renderRegionViewport(viewport);
-        viewport = page.getRegion(Region.BODY_CODE);
-        renderRegionViewport(viewport);
         viewport = page.getRegion(Region.END_CODE);
         renderRegionViewport(viewport);
         viewport = page.getRegion(Region.AFTER_CODE);
+        renderRegionViewport(viewport);
+        viewport = page.getRegion(Region.BODY_CODE);
         renderRegionViewport(viewport);
     }
 
