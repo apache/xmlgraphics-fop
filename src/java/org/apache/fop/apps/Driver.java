@@ -73,6 +73,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 
 // Java
 import java.io.BufferedReader;
@@ -648,8 +649,9 @@ public class Driver implements LogEnabled {
         if (reader == null) {
             if (!(source instanceof DocumentInputSource)) {
                 try {
-                    reader = javax.xml.parsers.SAXParserFactory.newInstance()
-                        .newSAXParser().getXMLReader();
+                    SAXParserFactory spf = javax.xml.parsers.SAXParserFactory.newInstance();
+                    spf.setNamespaceAware(true);
+                    reader = spf.newSAXParser().getXMLReader();
                 } catch (SAXException e) {
                     throw new FOPException(e);
                 } catch (ParserConfigurationException e) {
