@@ -21,18 +21,8 @@ package org.apache.fop.layoutmgr;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.fop.area.Trait;
-import org.apache.fop.area.inline.FilledArea;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.Space;
-import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.datatypes.Length;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.flow.Inline;
-import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.Wrapper;
-import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.fo.LMVisited;
 
 /**
@@ -100,104 +90,4 @@ public class AddLMVisitor {
             }
         }
     }
-
-     public void serveLeader(final Leader node) {
-         LeafNodeLayoutManager lm = new LeafNodeLayoutManager(node) {
-             public InlineArea get(LayoutContext context) {
-                 return getLeaderInlineArea(node, this);
-             }
-
-             protected MinOptMax getAllocationIPD(int refIPD) {
-                return getLeaderAllocIPD(node, refIPD);
-             }
-
-             /*protected void offsetArea(LayoutContext context) {
-                 if(leaderPattern == LeaderPattern.DOTS) {
-                     curArea.setOffset(context.getBaseline());
-                 }
-             }*/
-         };
-         lm.setAlignment(node.getProperty(Constants.PR_LEADER_ALIGNMENT).getEnum());
-         currentLMList.add(lm);
-     }
-
-     public MinOptMax getLeaderAllocIPD(Leader node, int ipd) {
-         // length of the leader
-         int opt = node.getLength(Constants.PR_LEADER_LENGTH | Constants.CP_OPTIMUM, ipd);
-         int min = node.getLength(Constants.PR_LEADER_LENGTH | Constants.CP_MINIMUM, ipd);
-         int max = node.getLength(Constants.PR_LEADER_LENGTH | Constants.CP_MAXIMUM, ipd);
-
-         return new MinOptMax(min, opt, max);
-     }
-
-     private InlineArea getLeaderInlineArea(Leader node, LayoutManager parentLM) {
-         InlineArea leaderArea = null;
-
-         if (node.getLeaderPattern() == Constants.LeaderPattern.RULE) {
-             org.apache.fop.area.inline.Leader leader = new org.apache.fop.area.inline.Leader();
-             leader.setRuleStyle(node.getRuleStyle());
-             leader.setRuleThickness(node.getRuleThickness());
-             leaderArea = leader;
-         } else if (node.getLeaderPattern() == Constants.LeaderPattern.SPACE) {
-             leaderArea = new Space();
-         } else if (node.getLeaderPattern() == Constants.LeaderPattern.DOTS) {
-             TextArea t = new TextArea();
-             char dot = '.'; // userAgent.getLeaderDotCharacter();
-
-             t.setTextArea("" + dot);
-             t.addTrait(Trait.FONT_NAME, node.getFontState().getFontName());
-             t.addTrait(Trait.FONT_SIZE,
-                              new Integer(node.getFontState().getFontSize()));
-             // set offset of dot within inline parent
-             t.setOffset(node.getFontState().getAscender());
-             int width = node.getFontState().getCharWidth(dot);
-             Space spacer = null;
-             if (node.getPatternWidth() > width) {
-                 spacer = new Space();
-                 spacer.setWidth(node.getPatternWidth() - width);
-                 width = node.getPatternWidth();
-             }
-             FilledArea fa = new FilledArea();
-             fa.setUnitWidth(width);
-             fa.addChild(t);
-             if (spacer != null) {
-                 fa.addChild(spacer);
-             }
-             fa.setHeight(node.getFontState().getAscender());
-
-             leaderArea = fa;
-         } else if (node.getLeaderPattern() == Constants.LeaderPattern.USECONTENT) {
-             if (node.getChildNodes() == null) {
-                 node.getLogger().error("Leader use-content with no content");
-                 return null;
-             }
-             InlineStackingLayoutManager lm;
-             lm = new InlineStackingLayoutManager(node);
-             lm.setLMiter(new LMiter(lm, node.getChildNodes()));
-             lm.initialize();
-
-             // get breaks then add areas to FilledArea
-             FilledArea fa = new FilledArea();
-
-             ContentLayoutManager clm = new ContentLayoutManager(fa);
-             clm.setParent(parentLM);
-             clm.setUserAgent(node.getUserAgent());
-             lm.setParent(clm);
-
-             clm.fillArea(lm);
-             int width = clm.getStackingSize();
-             Space spacer = null;
-             if (node.getPatternWidth() > width) {
-                 spacer = new Space();
-                 spacer.setWidth(node.getPatternWidth() - width);
-                 width = node.getPatternWidth();
-             }
-             fa.setUnitWidth(width);
-             if (spacer != null) {
-                 fa.addChild(spacer);
-             }
-             leaderArea = fa;
-         }
-         return leaderArea;
-     }
 }

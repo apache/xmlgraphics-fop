@@ -23,6 +23,7 @@ import java.util.List;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
@@ -30,12 +31,6 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 
 /**
  * Class modelling the fo:list-block object. See Sec. 6.8.2 of the XSL-FO
@@ -54,6 +49,9 @@ public class ListBlock extends FObj {
     private int spaceAfter;
     private int spaceBetweenListRows = 0;
     private ColorType backgroundColor;
+    
+    // used for child node validation
+    private boolean hasListItem = false;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -87,6 +85,35 @@ public class ListBlock extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* (list-item)+
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+            if (nsURI == FO_URI && localName.equals("marker")) {
+                if (hasListItem) {
+                    nodesOutOfOrderError(loc, "fo:marker", "fo:list-item");
+                }
+            } else if (nsURI == FO_URI && localName.equals("list-item")) {
+                hasListItem = true;
+            } else {
+                invalidChildError(loc, nsURI, localName);
+            }
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOInputHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (!hasListItem) {
+            missingChildElementError("marker* (list-item)+");
+        }
+        getFOInputHandler().endList(this);
+    }
+
+    /**
      * @return false (ListBlock does not generate inline areas)
      */
     public boolean generatesInlineAreas() {
@@ -99,11 +126,6 @@ public class ListBlock extends FObj {
     public void addLayoutManager(List list) { 	 
         ListBlockLayoutManager lm = new ListBlockLayoutManager(this);
         list.add(lm); 	 
-    }
-
-    protected void endOfNode() throws SAXParseException {
-        super.endOfNode();
-        getFOInputHandler().endList(this);
     }
 
     public String getName() {

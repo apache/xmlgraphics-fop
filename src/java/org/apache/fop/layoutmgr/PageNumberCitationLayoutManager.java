@@ -28,7 +28,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fonts.Font;
 
 /**
- * LayoutManager for the fo:basic-link formatting object
+ * LayoutManager for the fo:page-number-citation formatting object
  */
 public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
 
@@ -39,7 +39,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
      * Constructor
      *
      * @param node the formatting object that creates this area
-     * @todo better null checking font
+     * @todo better null checking of font object
      */
     public PageNumberCitationLayoutManager(PageNumberCitation node) {
         super(node);

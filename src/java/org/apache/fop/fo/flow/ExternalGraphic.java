@@ -72,7 +72,7 @@ public class ExternalGraphic extends FObj {
 
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
-    */
+     */
     public void addLayoutManager(List list) {
         if (getURL() != null) {
             ExternalGraphicLayoutManager lm = new ExternalGraphicLayoutManager(this);
