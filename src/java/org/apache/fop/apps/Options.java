@@ -458,8 +458,16 @@ public class Options {
                 readOk = false;
             }
             if (! readOk) {
-                // Try reading the file using loadConfig()
-                loadConfiguration(userConfigFileName);
+                try {
+                    // Try reading the file using loadConfig()
+                    loadConfiguration(userConfigFileName);
+                } catch (FOPException ex) {
+                    MessageHandler.logln("Can't find user configuration file "
+                    + userConfigFile + " in system locations");
+                    if (debug) {
+                        reader.dumpError(ex);
+                    }
+                }
             }
         }
     }
