@@ -102,7 +102,7 @@
     
     
     <!-- table start -->
-    <fo:table border-width="0.5mm" background-color="yellow">
+    <fo:table border-width="0.5mm" border-style="solid" background-color="yellow">
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
@@ -156,7 +156,7 @@
     
     
     <!-- table start -->
-    <fo:table border-width="3mm" background-color="yellow">
+    <fo:table border-width="3mm" border-style="solid" background-color="yellow">
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
@@ -216,24 +216,24 @@
       <fo:table-column column-width="50mm"/>
       <fo:table-body>
         <fo:table-row>
-          <fo:table-cell border-width="0.5mm" background-color="yellow"><fo:block>good</fo:block></fo:table-cell>
-          <fo:table-cell border-width="0.5mm" background-color="yellow"><fo:block>bad</fo:block></fo:table-cell>
-          <fo:table-cell border-width="0.5mm" background-color="yellow"><fo:block>ugly</fo:block></fo:table-cell>
+          <fo:table-cell border-width="0.5mm" border-style="solid" background-color="yellow"><fo:block>good</fo:block></fo:table-cell>
+          <fo:table-cell border-width="0.5mm" border-style="solid" background-color="yellow"><fo:block>bad</fo:block></fo:table-cell>
+          <fo:table-cell border-width="0.5mm" border-style="solid" background-color="yellow"><fo:block>ugly</fo:block></fo:table-cell>
         </fo:table-row>
         <fo:table-row>
-          <fo:table-cell border-width="0.5mm" background-color="yellow"><fo:block>nice</fo:block></fo:table-cell>
-          <fo:table-cell border-width="0.5mm" background-color="yellow"><fo:block>dice</fo:block></fo:table-cell>
-          <fo:table-cell border-width="0.5mm" background-color="yellow"><fo:block>vice</fo:block></fo:table-cell>
+          <fo:table-cell border-width="0.5mm" border-style="solid" background-color="yellow"><fo:block>nice</fo:block></fo:table-cell>
+          <fo:table-cell border-width="0.5mm" border-style="solid" background-color="yellow"><fo:block>dice</fo:block></fo:table-cell>
+          <fo:table-cell border-width="0.5mm" border-style="solid" background-color="yellow"><fo:block>vice</fo:block></fo:table-cell>
         </fo:table-row>
         <fo:table-row>
-          <fo:table-cell border-width="0.5mm" background-color="yellow"><fo:block>literature</fo:block></fo:table-cell>
-          <fo:table-cell border-width="0.5mm" background-color="yellow"><fo:block>music</fo:block></fo:table-cell>
-          <fo:table-cell border-width="0.5mm" background-color="yellow"><fo:block>art</fo:block></fo:table-cell>
+          <fo:table-cell border-width="0.5mm" border-style="solid" background-color="yellow"><fo:block>literature</fo:block></fo:table-cell>
+          <fo:table-cell border-width="0.5mm" border-style="solid" background-color="yellow"><fo:block>music</fo:block></fo:table-cell>
+          <fo:table-cell border-width="0.5mm" border-style="solid" background-color="yellow"><fo:block>art</fo:block></fo:table-cell>
         </fo:table-row>
         <fo:table-row>
-          <fo:table-cell border-width="0.5mm" background-color="yellow"><fo:block>java</fo:block></fo:table-cell>
-          <fo:table-cell border-width="0.5mm" background-color="yellow"><fo:block>perl</fo:block></fo:table-cell>
-          <fo:table-cell border-width="0.5mm" background-color="yellow"><fo:block>python</fo:block></fo:table-cell>
+          <fo:table-cell border-width="0.5mm" border-style="solid" background-color="yellow"><fo:block>java</fo:block></fo:table-cell>
+          <fo:table-cell border-width="0.5mm" border-style="solid" background-color="yellow"><fo:block>perl</fo:block></fo:table-cell>
+          <fo:table-cell border-width="0.5mm" border-style="solid" background-color="yellow"><fo:block>python</fo:block></fo:table-cell>
         </fo:table-row>
       </fo:table-body>
     </fo:table>
@@ -269,24 +269,24 @@
       <fo:table-column column-width="50mm"/>
       <fo:table-body>
         <fo:table-row>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>good</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>bad</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>ugly</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>good</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>bad</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>ugly</fo:block></fo:table-cell>
         </fo:table-row>
         <fo:table-row>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>nice</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>dice</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>vice</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>nice</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>dice</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>vice</fo:block></fo:table-cell>
         </fo:table-row>
         <fo:table-row>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>literature</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>music</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>art</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>literature</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>music</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>art</fo:block></fo:table-cell>
         </fo:table-row>
         <fo:table-row>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>java</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>perl</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>python</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>java</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>perl</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>python</fo:block></fo:table-cell>
         </fo:table-row>
       </fo:table-body>
     </fo:table>
@@ -304,24 +304,24 @@
       <fo:table-column column-width="50mm"/>
       <fo:table-body>
         <fo:table-row>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>good</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>bad</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>ugly</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>good</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>bad</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>ugly</fo:block></fo:table-cell>
         </fo:table-row>
         <fo:table-row>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>nice</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>dice</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>vice</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>nice</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>dice</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>vice</fo:block></fo:table-cell>
         </fo:table-row>
         <fo:table-row>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>literature</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>music</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>art</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>literature</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>music</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>art</fo:block></fo:table-cell>
         </fo:table-row>
         <fo:table-row>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>java</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>perl</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" background-color="yellow"><fo:block>python</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>java</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>perl</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>python</fo:block></fo:table-cell>
         </fo:table-row>
       </fo:table-body>
     </fo:table>
@@ -350,7 +350,7 @@
     </fo:block>
     
 
-      <fo:table border-width="1.5mm" background-color="rgb(100,210,250)">
+      <fo:table border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)">
         <fo:table-column column-width="150mm"/>
         <fo:table-body>
           <fo:table-row>
@@ -360,7 +360,7 @@
       </fo:table>
 
 
-      <fo:table border-width="1.5mm" background-color="rgb(100,210,250)" >
+      <fo:table border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)" >
         <fo:table-column column-width="150mm"/>
         <fo:table-body>
           <fo:table-row>
@@ -370,7 +370,7 @@
       </fo:table>
 
     
-      <fo:table border-width="1.5mm" background-color="rgb(100,210,250)" >
+      <fo:table border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)" >
         <fo:table-column column-width="150mm"/>
         <fo:table-body>
           <fo:table-row>
@@ -379,7 +379,7 @@
         </fo:table-body>
       </fo:table>
 
-      <fo:table border-width="1.5mm" background-color="rgb(100,210,250)">
+      <fo:table border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)">
         <fo:table-column column-width="150mm"/>
         <fo:table-body>
           <fo:table-row>
