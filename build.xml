@@ -64,6 +64,7 @@ list of possible build targets.
     <include name="lib/batik.jar"/>
     <include name="lib/avalon-framework*.jar"/>
     <include name="lib/jimi*"/>
+    <include name="lib/jfor*.jar"/>
   </fileset>
   
   <fileset dir="${basedir}" id="dist.src">
