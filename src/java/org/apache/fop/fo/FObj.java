@@ -54,9 +54,6 @@ public class FObj extends FONode implements Constants {
     */
     private boolean isOutOfLineFODescendant = false;
 
-    /** Id of this fo element or null if no id. */
-    protected String id = null;
-
     /** Markers added to this element. */
     protected Map markers = null;
 
@@ -135,19 +132,15 @@ public class FObj extends FONode implements Constants {
      * fo and sets the id attribute of this object.
      */
     private void setupID() throws SAXParseException {
-        Property prop = this.propertyList.get(PR_ID);
-        if (prop != null) {
-            String str = prop.getString();
-            if (str != null && !str.equals("")) {
-                Set idrefs = getFOEventHandler().getIDReferences();
-                if (!idrefs.contains(str)) {
-                    id = str;
-                    idrefs.add(id);
-                } else {
-                    throw new SAXParseException("Property id \"" + str + 
-                        "\" previously used; id values must be unique" +
-                        " in document.", locator);
-                }
+        String str = getPropString(PR_ID);
+        if (str != null && !str.equals("")) {
+            Set idrefs = getFOEventHandler().getIDReferences();
+            if (!idrefs.contains(str)) {
+                idrefs.add(str);
+            } else {
+                throw new SAXParseException("Property id \"" + str + 
+                    "\" previously used; id values must be unique" +
+                    " in document.", locator);
             }
         }
     }
@@ -347,16 +340,6 @@ public class FObj extends FONode implements Constants {
             return ((FObj) parent).getLayoutDimension(key);
         }
         return new Integer(0);
-    }
-
-    /**
-     * Get the id string for this formatting object.
-     * This will be unique for the fo document.
-     *
-     * @return the id string or null if not set
-     */
-    public String getID() {
-        return id;
     }
 
     /**

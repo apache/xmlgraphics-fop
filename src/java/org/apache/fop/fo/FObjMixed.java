@@ -25,8 +25,7 @@ import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 
 /**
  * Base class for representation of mixed content formatting objects
- * and their processing
- * @todo define what a "mixed content formatting object" is
+ * (i.e., those that can contain both child FO's and text nodes/PCDATA)
  */
 public class FObjMixed extends FObj {
     /** TextInfo for this object */

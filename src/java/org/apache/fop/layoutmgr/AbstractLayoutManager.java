@@ -86,7 +86,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      */
     public void setFObj(FObj fo) {
         this.fobj = fo;
-        foID = fobj.getID();
+        foID = fobj.getPropString(PR_ID);
         markers = fobj.getMarkers();
         fobjIter = fobj.getChildNodes();
         childLMiter = new LMiter(this);
