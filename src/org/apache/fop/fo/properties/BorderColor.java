@@ -6,15 +6,17 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.NCName;
+import org.apache.fop.datatypes.EnumType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.ShorthandPropSets;
 import org.apache.fop.fo.properties.Property;
+import org.apache.fop.messaging.MessageHandler;
 
 import java.util.Map;
 import java.util.Iterator;
 
-public class BorderColor extends Property {
+public class BorderColor extends ColorTransparent {
     public static final int dataTypes = SHORTHAND;
     public static final int traitMapping = SHORTHAND_MAP;
     public static final int initialValueType = NOTYPE_IT;
@@ -78,75 +80,68 @@ public class BorderColor extends Property {
                     return refineExpansionList(PropNames.BORDER_COLOR, foNode,
                             ShorthandPropSets.expandAndCopySHand(value));
             }
-            if (type == PropertyValue.COLOR_TYPE)
-                return refineExpansionList(PropNames.BORDER_COLOR, foNode,
-                                ShorthandPropSets.expandAndCopySHand(value));
-            if (type == PropertyValue.NCNAME) {
-                // Must be a standard color
-                ColorType color;
-                try {
-                    color = new ColorType(PropNames.BORDER_COLOR,
-                                        ((NCName)value).getNCName());
-                } catch (PropertyException e) {
-                    throw new PropertyException
-                        (((NCName)value).getNCName() +
-                            " not a standard color for border-color");
-                }
-                return refineExpansionList(PropNames.BORDER_COLOR, foNode,
-                                ShorthandPropSets.expandAndCopySHand(color));
-            }
-            else throw new PropertyException
-                ("Invalid " + value.getClass().getName() +
-                                            " value for border-color");
+            // Form a list and pass to processList
+	    PropertyValueList tmpList = new PropertyValueList(propindex);
+	    tmpList.add(value);
+	    return processList(tmpList);
         } else {
             if (nested) throw new PropertyException
                     ("PropertyValueList invalid for nested border-color "
                         + "refineParsing() method");
-            // List may contain only multiple color specifiers
-            // i.e. ColorTypes or NCNames specifying a standard color or
-            // 'transparent'.
-            PropertyValueList list =
-                            spaceSeparatedList((PropertyValueList)value);
-            ColorType top, left, bottom, right;
-            int count = list.size();
-            if (count < 2 || count > 4)
-                throw new PropertyException
-                    ("border-color list contains " + count + " items");
-
-            Iterator colors = list.iterator();
-
-            // There must be at least two
-            top = getColor((PropertyValue)(colors.next()));
-            right = getColor((PropertyValue)(colors.next()));
-            try {
-                bottom = (ColorType)(top.clone());
-                left = (ColorType)(right.clone());
-            } catch (CloneNotSupportedException cnse) {
-                throw new PropertyException
-                                ("clone() not supported on ColorType");
-            }
-
-            if (colors.hasNext()) bottom
-                            = getColor((PropertyValue)(colors.next()));
-            if (colors.hasNext()) left
-                            = getColor((PropertyValue)(colors.next()));
-
-            // Set the properties for each
-            top.setProperty(PropNames.BORDER_TOP_COLOR);
-            right.setProperty(PropNames.BORDER_RIGHT_COLOR);
-            bottom.setProperty(PropNames.BORDER_BOTTOM_COLOR);
-            left.setProperty(PropNames.BORDER_LEFT_COLOR);
-
-            list = new PropertyValueList(PropNames.BORDER_COLOR);
-            list.add(top);
-            list.add(right);
-            list.add(bottom);
-            list.add(left);
-            // Question: if less than four colors have been specified in
-            // the shorthand, what border-?-color properties, if any,
-            // have been specified?
-            return list;
+            return processList(spaceSeparatedList((PropertyValueList)value));
         }
+    }
+
+    private PropertyValueList processList(PropertyValueList list)
+        throws PropertyException
+    {
+        // List may contain only multiple color specifiers
+        // i.e. ColorTypes or NCNames specifying a standard color or
+        // 'transparent'.
+        ColorType top, left, bottom, right;
+        int count = list.size();
+        if (count < 1 || count > 4)
+            throw new PropertyException
+                ("border-color list contains " + count + " items");
+
+        Iterator colors = list.iterator();
+
+        // There must be at least one
+        top = getColor((PropertyValue)(colors.next()));
+
+        try {
+            if (colors.hasNext())
+                right = getColor((PropertyValue)(colors.next()));
+            else
+                right = (ColorType)(top.clone());
+
+            bottom = (ColorType)(top.clone());
+            left = (ColorType)(right.clone());
+        } catch (CloneNotSupportedException cnse) {
+            throw new PropertyException
+                            ("clone() not supported on ColorType");
+        }
+
+        if (colors.hasNext())
+                    bottom = getColor((PropertyValue)(colors.next()));
+        if (colors.hasNext())
+                    left = getColor((PropertyValue)(colors.next()));
+
+        // Set the properties for each
+        top.setProperty(PropNames.BORDER_TOP_COLOR);
+        right.setProperty(PropNames.BORDER_RIGHT_COLOR);
+        bottom.setProperty(PropNames.BORDER_BOTTOM_COLOR);
+        left.setProperty(PropNames.BORDER_LEFT_COLOR);
+
+        list = new PropertyValueList(PropNames.BORDER_COLOR);
+        list.add(top);
+        list.add(right);
+        list.add(bottom);
+        list.add(left);
+        // Question: if less than four colors have been specified in
+        // the shorthand, what border-?-color properties, if any,
+        // have been specified?
+        return list;
     }
 
     /**
@@ -171,13 +166,30 @@ public class BorderColor extends Property {
                                 + PropNames.getPropertyName(property));
         // We have an NCName - hope it''s a color
         NCName ncname = (NCName)value;
+        // Must be a standard color
+        EnumType enum = null;
+        ColorType color = null;
+        String name = ncname.getNCName();
         try {
-            return new ColorType(property, ncname.getNCName());
+            try {
+                enum = new EnumType(PropNames.BORDER_COLOR, name);
+            } catch (PropertyException e) {
+                System.out.println("PropertyException: " + e.getMessage());
+                MessageHandler.logln(name +
+                         " is not a standard color for border-color."
+                         + " Trying as a system-color.");
+            }
+            if (enum != null)
+                color = new ColorType(PropNames.BORDER_COLOR,
+                                                        enum.getEnumValue());
+            else
+                color = new ColorType(PropNames.BORDER_COLOR, name);
         } catch (PropertyException e) {
             throw new PropertyException
-                        (ncname.getNCName() + " instead of color for "
+                (name + " not a standard or system color for "
                                 + PropNames.getPropertyName(property));
         }
+        return color;
     }
 }
 
