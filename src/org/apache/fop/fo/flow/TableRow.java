@@ -80,6 +80,8 @@ public class TableRow extends FObj {
 		FontState fs;
 		int spaceBefore;
 		int spaceAfter;
+		int breakBefore;
+		int breakAfter;
 		ColorType backgroundColor;
 		String id;
 
@@ -273,6 +275,9 @@ public class TableRow extends FObj {
 														 "space-before.optimum").getLength().mvalue();
 				this.spaceAfter = this.properties.get(
 														"space-after.optimum").getLength().mvalue();
+						this.breakBefore =
+							this.properties.get("break-before").getEnum();
+						this.breakAfter = this.properties.get("break-after").getEnum();
 				this.backgroundColor =
 					this.properties.get("background-color").getColorType();
 				this.borderTopColor =
@@ -378,6 +383,21 @@ public class TableRow extends FObj {
 
 
 						this.marker = 0;
+						if (breakBefore == BreakBefore.PAGE) {
+								return new Status(Status.FORCE_PAGE_BREAK);
+						}
+
+						if (breakBefore == BreakBefore.ODD_PAGE) {
+								return new Status(Status.FORCE_PAGE_BREAK_ODD);
+						}
+
+						if (breakBefore == BreakBefore.EVEN_PAGE) {
+								return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+						}
+
+						if (breakBefore == BreakBefore.COLUMN) {
+								return new Status(Status.FORCE_COLUMN_BREAK);
+						}
 				}
 
 				if ((spaceBefore != 0) && (this.marker == 0)) {
@@ -431,6 +451,10 @@ public class TableRow extends FObj {
 								state.setColumn(colCount);
 								// add the state of a cell.
 								cells.insertElementAt(state, i);
+								if(colCount + numCols > columns.size()) {
+									MessageHandler.errorln("WARNING: Number of cell columns under table-row not equal to number of table-columns");
+									return new Status(Status.OK);
+								}
 								for (int count = 0;
 												count < numCols && count < columns.size();
 												count++) {
@@ -442,6 +466,10 @@ public class TableRow extends FObj {
 								cell.setWidth(width);
 								widthOfCellsSoFar += width;
 
+						}
+						if(colCount < columns.size()) {
+							MessageHandler.errorln("WARNING: Number of cell columns under table-row not equal to number of table-columns");
+							return new Status(Status.OK);
 						}
 				}
 
@@ -588,6 +616,25 @@ public class TableRow extends FObj {
 				if (someCellDidNotLayoutCompletely) {
 						return new Status(Status.AREA_FULL_SOME);
 				} else {
+				if (breakAfter == BreakAfter.PAGE) {
+						this.marker = BREAK_AFTER;
+						return new Status(Status.FORCE_PAGE_BREAK);
+				}
+
+				if (breakAfter == BreakAfter.ODD_PAGE) {
+						this.marker = BREAK_AFTER;
+						return new Status(Status.FORCE_PAGE_BREAK_ODD);
+				}
+
+				if (breakAfter == BreakAfter.EVEN_PAGE) {
+						this.marker = BREAK_AFTER;
+						return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+				}
+
+				if (breakAfter == BreakAfter.COLUMN) {
+						this.marker = BREAK_AFTER;
+						return new Status(Status.FORCE_COLUMN_BREAK);
+				}
 						if (keepWithNext.getType() != KeepValue.KEEP_WITH_AUTO) {
 								return new Status(Status.KEEP_WITH_NEXT);
 						}
