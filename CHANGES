@@ -1,5 +1,8 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fix embedding of Adobe Type 1 fonts. PFB file encoded in PC format were
+  not decoded prior to embedding. This may explain error messages with
+  certain RIP engines. (Jeremias Maerki)
 - Added infinite loop detection (just halts processing, see bug #8878)
   Submitted by: Rhett Aultman (raultman@fcci-group.com)
 - Added autoselecting  portrait/landscape on PCL Renderer (see bug #6638)
@@ -9,7 +12,7 @@ Done since 0.20.4 release
 - Updated examples/fo files to remove all errors and warnings during build
   Submitted by: Manuel Mall <mm@arcus.com.au> (see bug #13867)
 - Perfomance tuning (reduced object creation etc.) (see bug #14103)
-  Submitted by: Henrik Olsson <henrik.olsson@intentia.se> 
+  Submitted by: Henrik Olsson <henrik.olsson@intentia.se>
 - Update to Xerces 2.2.1 (Jeremias Maerki)
 - Fixed EOFException in TTFReader (Bug #14576)
   Submitted by: Bernard D'Have <bdhaveos@wanadoo.be>
