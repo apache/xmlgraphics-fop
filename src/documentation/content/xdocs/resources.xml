@@ -95,6 +95,7 @@
       <section id="documents-xslt">
         <title>XSLT</title>
         <ul>
+          <li>[online resource] <jump href="http://www.w3.org/Style/XSL/">Extensible Stylesheet Language Family (XSL)</jump>, W3C XSL Family page.</li>
           <li>[book] <jump href="http://wrox.com/books/1861005067.htm">XSLT Programmer's Reference</jump>, by Michael H. Kay, Wrox Press, ISBN 1-861-00506-7.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/xslt">XSLT</jump>, by Doug Tidwell, O'Reilly &amp; Associates, 2001, ISBN 0-596-00053-7.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/xsltckbk">XSLT Cookbook</jump>, by Sal Mangano, O'Reilly &amp; Associates, 2002, ISBN 0-596-00372-2.</li>
