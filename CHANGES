@@ -53,8 +53,13 @@ Done since 0.20.3 release
   (thanks to Arnd Beissner and Brian O'Kelley)
 - Added support for comma-separated values for the font-family property
   Submitted by: Oleg Tkachenko <olegt@multiconn.com>
+- Fixed support for fractional font sizes
+  Submitted by: Björn Lütkemeier
+- Added exit codes/file deletion in case of an error (Joerg Pietschmann)
 - Implemented margin shorthand
   Submitted by: Peter Kullmann <p.kullmann@arenae.ch>
+- Added reload functionality in AWT preview window
+  Submitted by: Oleg Tkachenko <olegt@multiconn.com>
 
 ==============================================================================
 Done since 0.20.2 release
