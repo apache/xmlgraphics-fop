@@ -451,9 +451,12 @@ public abstract class AbstractRenderer implements Renderer {
      * @param area area to render
      */
     public void renderLineArea(LineArea area) {
-        if (area.pendingWidth>0) {
+        if (area.pendingWidth > 0) {
+        	final String pageNumber = (area.getPage() != null 
+        			? area.getPage().getFormattedNumber()
+        			: "<unknown>");
             log.error("Areas pending, text probably lost. Check Page " +
-                      area.getPage().getFormattedNumber() +
+                      pageNumber +
                       " and following page.");
         }
         int rx = this.currentAreaContainerXPosition + area.getStartIndent();
