@@ -91,6 +91,10 @@ abstract public class Area extends Box {
     protected int paddingBottom;
     protected int paddingRight;
 
+    /* author : Seshadri G
+    ** the fo which created it */	
+    public org.apache.fop.fo.FObj foCreator;	
+        
     public int borderWidthTop;
     public int borderWidthLeft;
     public int borderWidthRight;
@@ -310,5 +314,10 @@ abstract public class Area extends Box {
     public IDReferences getIDReferences() {
         return idReferences;
     }
+
+	/* Author seshadri */    
+	public org.apache.fop.fo.FObj getfoCreator() {
+		return this.foCreator;
+	}	
 
 }

@@ -260,6 +260,7 @@ public class TableCell extends FObj {
 			new AreaContainer(fs, startOffset - area.borderWidthLeft,
 															- area.borderWidthTop + ((this.marker ==0) ? spaceBefore : 0),
 													width, area.spaceLeft(), Position.RELATIVE);
+	areaContainer.foCreator=this;	// G Seshadri
 	areaContainer.setPage(area.getPage());
 	areaContainer.setPadding(paddingTop, paddingLeft, paddingBottom,
 					 paddingRight);

@@ -184,6 +184,7 @@ public class Table extends FObj {
 				this.areaContainer =
 					new AreaContainer(fs, 0, 0, area.getAllocationWidth(),
 														area.spaceLeft(), Position.STATIC);
+				areaContainer.foCreator=this;	// G Seshadri
 				areaContainer.setPage(area.getPage());
 				areaContainer.setBackgroundColor(backgroundColor);
 				areaContainer.setBorderStyle(borderStyle, borderStyle,

@@ -393,6 +393,7 @@ public class TableRow extends FObj {
 				this.areaContainer = new AreaContainer(fs, -area.borderWidthLeft,
 																							 -area.borderWidthTop, area.getAllocationWidth(),
 																							 area.spaceLeft(), Position.RELATIVE);
+				areaContainer.foCreator=this;	// G Seshadri
 				areaContainer.setPage(area.getPage());
 				areaContainer.setPadding(paddingTop, paddingLeft,
 																 paddingBottom, paddingRight);

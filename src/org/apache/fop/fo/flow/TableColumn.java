@@ -203,6 +203,7 @@ public class TableColumn extends FObj {
 	this.areaContainer =
 			new AreaContainer(fs, columnOffset - area.borderWidthLeft, -area.borderWidthTop, columnWidth,
 				area.getHeight(), Position.RELATIVE);
+	areaContainer.foCreator=this;	// G Seshadri
 	areaContainer.setPage(area.getPage());
 	areaContainer.setPadding(paddingTop, paddingLeft, paddingBottom,
 				 paddingRight);
