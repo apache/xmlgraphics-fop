@@ -63,7 +63,7 @@ import org.w3c.dom.events.*;
  */
 public class SVGDocumentImpl extends ElementImpl implements SVGDocument {
 	String title;
-	public static final String namespaceURI = "http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd";
+	public static final String namespaceURI = "http://www.w3.org/2000/svg";
 
 	public SVGDocumentImpl()
 	{

@@ -57,6 +57,8 @@ import org.w3c.dom.svg.*;
  *
  */
 public class SVGSymbolElementImpl extends GraphicElement implements SVGSymbolElement {
+	SVGAnimatedRect viewBox;
+	SVGAnimatedPreserveAspectRatio preserveAspectRatio;
 
 	public SVGSymbolElementImpl()
 	{
@@ -64,19 +66,21 @@ public class SVGSymbolElementImpl extends GraphicElement implements SVGSymbolEle
 
 	public SVGAnimatedRect getViewBox()
 	{
-		return null;
+		return viewBox;
 	}
 
 	public void setViewBox(SVGAnimatedRect viewBox)
 	{
+		this.viewBox = viewBox;
 	}
 
 	public SVGAnimatedPreserveAspectRatio getPreserveAspectRatio( )
 	{
-		return null;
+		return preserveAspectRatio;
 	}
 
 	public void setPreserveAspectRatio(SVGAnimatedPreserveAspectRatio preserveAspectRatio)
 	{
+		this.preserveAspectRatio = preserveAspectRatio;
 	}
 }

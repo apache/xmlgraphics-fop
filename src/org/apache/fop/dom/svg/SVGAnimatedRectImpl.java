@@ -48,76 +48,31 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.dom.svg;
 
-import java.util.*;
-
 import org.w3c.dom.svg.*;
-import org.w3c.dom.*;
 
-/**
- *
- */
-public class SVGListImpl implements SVGList {
-	Vector list = new Vector();
+public class SVGAnimatedRectImpl implements SVGAnimatedRect {
+    SVGRect rect = null;
 
-	public int getNumberOfItems( )
-	{
-		return list.size();
-	}
+    public SVGAnimatedRectImpl(SVGRect r)
+    {
+        rect = r;
+    }
 
-	public void clear()
-	{
-		list.removeAllElements();
-	}
+  public SVGRect getBaseVal( )
+  {
+      return rect;
+  }
 
-	public Object initialize ( Object newItem )
-		throws SVGException
-	{
-		return null;
-	}
+  public void setBaseVal( SVGRect baseVal )
+  {
+      rect = baseVal;
+  }
 
-	public Object createItem()
-	{
-		return null;
-	}
-
-	public Object getItem(int index)
-		throws DOMException
-	{
-		Object obj = list.elementAt(index);
-		return obj;
-	}
-
-	public Object insertItemBefore(Object newItem, int index)
-		throws SVGException
-	{
-		return null;
-	}
-
-	public Object replaceItem(Object newItem, int index)
-		throws DOMException, SVGException
-	{
-		return null;
-	}
-
-	public Object removeItem(int index)
-		throws DOMException
-	{
-		Object obj = list.elementAt(index);
-		list.removeElementAt(index);
-		return obj;
-	}
-
-	public Object appendItem(Object newItem)
-		throws SVGException
-	{
-		list.addElement(newItem);
-		return null;
-	}
-
-	public String toString()
-	{
-		return list.toString();
-	}
+  public SVGRect getAnimVal( )
+  {
+      return rect;
+  }
 }
