@@ -72,6 +72,10 @@ public class PageNumber extends FObj {
 
                         return inline;
                     }
+
+                    protected void offsetArea(LayoutContext context) {
+                        curArea.setOffset(context.getBaseline());
+                    }
                 }
                );
     }
