@@ -20,7 +20,7 @@ package org.apache.fop.area.extensions;
 
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolvable;
-import org.apache.fop.area.TreeExt;
+import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.AreaTreeModel;
 
 import java.util.ArrayList;
@@ -29,10 +29,8 @@ import java.util.HashMap;
 
 /**
  * This class holds the PDF bookmark extension data.
- * This implements Resolvable and TreeExt so that it can be
- * added to the area tree as a resolvable tree extension.
  */
-public class BookmarkData implements Resolvable, TreeExt {
+public class BookmarkData implements Resolvable, OffDocumentItem {
     private ArrayList subData = new ArrayList();
     private HashMap idRefs = new HashMap();
 
@@ -203,7 +201,7 @@ public class BookmarkData implements Resolvable, TreeExt {
         if (idRefs.size() == 0) {
             idRefs = null;
             if (areaTreeModel != null) {
-                areaTreeModel.handleExtension(this, TreeExt.AFTER_PAGE);
+                areaTreeModel.handleOffDocumentItem(this, OffDocumentItem.AFTER_PAGE);
             }
         }
     }

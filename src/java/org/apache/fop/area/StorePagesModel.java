@@ -92,18 +92,18 @@ public class StorePagesModel extends AreaTreeModel {
     }
 
     /**
-     * @see org.apache.fop.area.AreaTreeModel#handleExtension(TreeExt, int)
+     * @see org.apache.fop.area.AreaTreeModel#handleOffDocumentItem(OffDocumentItem, int)
      */
-    public void handleExtension(TreeExt ext, int when) {
+    public void handleOffDocumentItem(OffDocumentItem ext, int when) {
         int seq, page;
         switch(when) {
-            case TreeExt.IMMEDIATELY:
+            case OffDocumentItem.IMMEDIATELY:
                 seq = pageSequence == null ? 0 : pageSequence.size();
                 page = currSequence == null ? 0 : currSequence.size();
                 break;
-            case TreeExt.AFTER_PAGE:
+            case OffDocumentItem.AFTER_PAGE:
                 break;
-            case TreeExt.END_OF_DOC:
+            case OffDocumentItem.END_OF_DOC:
                 break;
         }
         extensions.add(ext);

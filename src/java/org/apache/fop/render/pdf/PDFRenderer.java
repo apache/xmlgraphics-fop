@@ -46,7 +46,7 @@ import org.apache.fop.area.Page;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.TreeExt;
+import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.extensions.BookmarkData;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.TextArea;
@@ -279,9 +279,9 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderExtension(TreeExt)
+     * @see org.apache.fop.render.Renderer#processOffDocumentItem(OffDocumentItem)
      */
-    public void renderExtension(TreeExt ext) {
+    public void processOffDocumentItem(OffDocumentItem ext) {
         // render bookmark extension
         if (ext instanceof BookmarkData) {
             renderRootExtensions((BookmarkData)ext);

@@ -271,7 +271,7 @@ public class AreaTreeHandler extends FOEventHandler {
             Outline out = (Outline)(bookmarks.getOutlines()).get(count);
             data.addSubData(createBookmarkData(out));
         }
-        addTreeExtension(data);
+        addOffDocumentItem(data);
         data.setAreaTreeModel(model);
     }
 
@@ -295,12 +295,12 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /**
-     * Add a tree extension.
-     * This checks if the extension is resolvable and attempts
+     * Add a OffDocumentItem to the area tree model
+     * This checks if the OffDocumentItem is resolvable and attempts
      * to resolve or add the resolvable ids for later resolution.
-     * @param ext the tree extension to add.
+     * @param ext the OffDocumentItem to add.
      */
-    private void addTreeExtension(TreeExt ext) {
+    private void addOffDocumentItem(OffDocumentItem ext) {
         if (ext instanceof Resolvable) {
             Resolvable res = (Resolvable)ext;
             String[] ids = res.getIDs();
@@ -317,7 +317,7 @@ public class AreaTreeHandler extends FOEventHandler {
                 }
             }
         } else {
-            model.handleExtension(ext, TreeExt.IMMEDIATELY);
+            model.handleOffDocumentItem(ext, OffDocumentItem.IMMEDIATELY);
         }
     }
 }

@@ -19,14 +19,12 @@
 package org.apache.fop.area;
 
 /**
- * Area tree extension interface.
- * This interface is used by area tree extensions that are handled
- * by the renderer.
- * When this extension is handled by the area tree it is rendered
- * according to the three possibilities, IMMEDIATELY, AFTER_PAGE
- * or END_OF_DOC.
+ * Interface for objects that are processed by the renderer outside
+ * of the actual document.
+ * This object can be handled by the renderer according to three
+ * possibilities, IMMEDIATELY, AFTER_PAGE, or END_OF_DOC.
  */
-public interface TreeExt {
+public interface OffDocumentItem {
     /**
      * Render this extension immediately when
      * being handled by the area tree.
