@@ -1,6 +1,6 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ * Copyright 1999-2005 The Apache Software Foundation.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,19 +19,6 @@
 package org.apache.fop.render.awt.viewer;
 
 //Java
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -44,13 +31,26 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.awt.print.PrinterJob;
 import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 
-//FOP
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FOUserAgent;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.render.awt.AWTRenderer;
 
@@ -123,6 +123,18 @@ public class PreviewDialog extends JFrame {
                 reload();
             }
         };
+        Command debugAction = new Command("   Debug") {
+            //TODO use Translator
+            public void doit() {
+                debug();
+            }
+        };
+
+        //set the system look&feel
+        try {
+            UIManager.setLookAndFeel(
+                UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) { }
 
         setTitle("FOP: AWT-" + translator.getString("Title.Preview"));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -171,8 +183,9 @@ public class PreviewDialog extends JFrame {
         toolBar.add(lastPageAction);
         toolBar.addSeparator();
         toolBar.add(new JLabel(translator.getString("Menu.Zoom")));
-        toolBar.addSeparator();
         toolBar.add(scale);
+        toolBar.addSeparator();
+        toolBar.add(debugAction);
         getContentPane().add(toolBar, BorderLayout.NORTH);
         //Status bar
         JPanel statusBar = new JPanel();
@@ -376,6 +389,14 @@ public class PreviewDialog extends JFrame {
             reloader = new Reloader();
             reloader.start();
         }
+    }
+
+    /**
+     * Allows a (yet) simple visual debug of the document.
+     */
+    private void debug(){
+        renderer.debug = !renderer.debug;
+        showPage();
     }
 
     /**
