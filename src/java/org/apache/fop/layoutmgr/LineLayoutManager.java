@@ -480,6 +480,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             }
             knuthPar.endParagraph();
 
+            // emergency patch
+            if (knuthParagraphs.size() == 0) {
+                setFinished(true);
+                return null;
+            }
+
             // find the optimal line breaking points for each paragraph
             ListIterator paragraphsIterator
                 = knuthParagraphs.listIterator(knuthParagraphs.size());
