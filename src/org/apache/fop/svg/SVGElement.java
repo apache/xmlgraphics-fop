@@ -88,27 +88,7 @@ public class SVGElement extends Svg {
         }*/
 
         if (this.marker == START) {
-            /* retrieve properties */
-            String id = this.properties.get("id").getString();
-            String fontFamily =
-              this.properties.get("font-family").getString();
-            String fontStyle =
-              this.properties.get("font-style").getString();
-            String fontWeight =
-              this.properties.get("font-weight").getString();
-            String fontSz = this.properties.get("font-size").getString();
-            int fontSize = area.getFontState().getFontSize();
-            try {
-                fontSize = Integer.parseInt(fontSz);
-            } catch (Exception e) {
-            }
-
-            // FIX-ME: should get the font-variant property
-            this.fs = new FontState(area.getFontInfo(), fontFamily,
-                                    fontStyle, fontWeight, fontSize, FontVariant.NORMAL);
-
-            //						this.width = this.properties.get("width").getString();
-            //						this.height = this.properties.get("height").getString();
+            this.fs = area.getFontState();
 
             this.marker = 0;
         }
@@ -141,26 +121,6 @@ public class SVGElement extends Svg {
                                };
         ((SVGOMDocument)doc).setSVGContext(dc);
         buildTopLevel(doc, svgRoot);
-/*
-        for (int count = 0; count < props.length; count++) {
-            if (this.properties.get(props[count]) != null) {
-                String rf = this.properties.get(props[count]).getString();
-                if (rf != null)
-                    svgRoot.setAttributeNS(null, props[count], rf);
-            }
-        }
-        //doc.appendChild(topLevel);
-        int numChildren = this.children.size();
-        for (int i = 0; i < numChildren; i++) {
-            Object child = children.elementAt(i);
-            if (child instanceof SVGObj) {
-                ((SVGObj) child).addGraphic(doc, svgRoot);
-            } else if (child instanceof String) {
-                org.w3c.dom.Text text = doc.createTextNode((String) child);
-                svgRoot.appendChild(text);
-            }
-        }
-*/
         float width = ((SVGSVGElement) svgRoot).getWidth().getBaseVal().
                       getValue();
         float height = ((SVGSVGElement) svgRoot).getHeight().getBaseVal().
