@@ -9,6 +9,7 @@ James Tauber (started it all and wrote most of the code)
 
 Steven Coffman 
 Fotis Jannidis 
+Keiron Liddle
 Jordan Naftolin
 Eric Schaeffer 
 Jon Smirl 
@@ -111,6 +112,7 @@ write
 
 **** Bugs ****
 
+- SVG linearGradients don't appear the same as in other SVG Viewers
 - colour not continued onto subsequent pages if coloured block goes over page 
 - no SVG support in AWTCommandLine 
 - keep-next doesn't work and doubles the text lines which should be moved to the next page
@@ -133,13 +135,16 @@ with AWT Previewer:
 
 **** HISTORY **** 
 
-Done since 0.13 release 
+Done since 0.13 release
+- pagination updated to 03/27/2000 XSL WD [Arved Sandstrom]
 - added support for fo page-number-citation [Mike Crowe, Jordan Naftolin]
+- added support for 06/29/2000 SVG WD + W3C Java DOM bindings [Keiron Liddle]
 - added image support using Jimi [Eric Schaeffer]
 - added support for external and internal simple-links [Jordan Naftolin]
 - added support for the fonts Symbol and ZapfDingbats [Fotis Jannidis]
 - added a MessageHandler  [Fotis Jannidis]
-
+- fixed table overflow bug [Jordan Naftolin]
+- finally fixed postscript printing of generated PDF [Domagoj Cosic]
 
 Done since 0.12.1 release 
 - using Ant to build Fop instead of make [Giacomo Pati] 
