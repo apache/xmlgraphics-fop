@@ -62,8 +62,6 @@ public class FONode extends FOTree.Node{
     protected XMLNamespaces namespaces;
     /** The FO type. */
     public final int type;
-    /** The PropertyConsts singleton. */
-    public final PropertyConsts propertyConsts;
     /** The attributes defined on this node. */
     public FOAttributes foAttributes;
     /** The unmodifiable map of properties defined on this node. */
@@ -108,7 +106,6 @@ public class FONode extends FOTree.Node{
     {
         foTree.super(parent);
         this.foTree = foTree;
-        propertyConsts = PropertyConsts.getPropertyConsts();
         this.type = type;
         this.parent = parent;
         this.event = event;
@@ -180,9 +177,9 @@ public class FONode extends FOTree.Node{
     {
         // parse the expression
         exprParser.resetParser();
-        Property prop = propertyConsts.setupProperty(property);
-        return prop.refineParsing
-                        (this, exprParser.parse(this, property, attrValue));
+        Property prop = PropertyConsts.pconsts.setupProperty(property);
+        PropertyValue pv = exprParser.parse(this, property, attrValue);
+        return prop.refineParsing(pv.getProperty(), this, pv);
     }
 
     /**
@@ -236,7 +233,7 @@ public class FONode extends FOTree.Node{
                             (parent.getNearestSpecifiedValue(sourceProperty));
         else // root
             return IndirectValue.adjustedPropertyValue
-                                    (foTree.getInitialValue(sourceProperty));
+                    (PropertyConsts.pconsts.getInitialValue(sourceProperty));
     }
 
     /**
@@ -265,7 +262,7 @@ public class FONode extends FOTree.Node{
                                 (parent.getNearestSpecifiedValue(property));
         else // root
             return IndirectValue.adjustedPropertyValue
-                                        (foTree.getInitialValue(property));
+                        (PropertyConsts.pconsts.getInitialValue(property));
     }
 
     /**
@@ -307,7 +304,7 @@ public class FONode extends FOTree.Node{
                                     (parent.getPropertyValue(sourceProperty));
         else // root
             return IndirectValue.adjustedPropertyValue
-                                    (foTree.getInitialValue(sourceProperty));
+                    (PropertyConsts.pconsts.getInitialValue(sourceProperty));
     }
 
 
@@ -340,14 +337,14 @@ public class FONode extends FOTree.Node{
         PropertyValue pval;
         if ((pval = propertySet[property]) != null) 
             return IndirectValue.adjustedPropertyValue(pval);
-        if (parent != null && propertyConsts.isInherited(property))
+        if (parent != null && PropertyConsts.pconsts.isInherited(property))
             return (propertySet[property] =
                                IndirectValue.adjustedPropertyValue
                                         (parent.getPropertyValue(property)));
         else // root
             return (propertySet[property] =
                         IndirectValue.adjustedPropertyValue
-                                        (foTree.getInitialValue(property)));
+                        (PropertyConsts.pconsts.getInitialValue(property)));
     }
 
 
