@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /*
  * FOTree.java
@@ -50,6 +51,14 @@ public class FOTree extends Tree implements Runnable {
     private static final String revision = "$Revision$";
 
     /**
+     * A <tt>Numeric[]</tt> array of the values to which the
+     * <em>BorderCommonWidth</em> MappedNumeric enumeration tokens map.
+     * These values are used in common by the various border-?-width
+     * properties.
+     */
+    private Numeric[] borderCommonWidthMap = null;
+
+    /**
      * The buffer from which the <tt>XMLEvent</tt>s from the parser will
      * be read.  <tt>protected</tt> so that FONode can access it.
      */
@@ -72,7 +81,7 @@ public class FOTree extends Tree implements Runnable {
      * <p>
      *  LinkedList is part of the 1.2 Collections framework.
      */
-    protected final LinkedList[] propertyStacks;
+    protected LinkedList[] propertyStacks;
 
     /**
      * @param xmlevents the buffer from which <tt>XMLEvent</tt>s from the
@@ -94,8 +103,19 @@ public class FOTree extends Tree implements Runnable {
         try {
             try {
                 // Set the initial value
-                PropertyConsts.initialValueMethods.get
-                    (PropNames.FONT_SIZE).invoke(null, new Object[]{this});
+                propertyStacks[PropNames.FONT_SIZE].addLast
+                        (new PropertyTriplet
+                         (PropNames.FONT_SIZE,
+                          (PropertyValue)
+                          (((Method)
+                            (PropertyConsts
+                             .initialValueMethods.get(PropNames.FONT_SIZE)
+                             )
+                            )
+                           .invoke(null, new Object[]{this})
+                           )
+                          )
+                         );
             }
             catch (IllegalArgumentException e) {
                 throw new RuntimeException(
@@ -113,7 +133,8 @@ public class FOTree extends Tree implements Runnable {
                     "Invocation target exception on \""
                     + targetex.getMessage() + "\" in class FontSize");
             }
-            PropertyValue prop = Properties.FontSize.getInitialValue();
+            PropertyValue prop =
+                    getInitialSpecifiedValue(PropNames.FONT_SIZE);
             if ( ! (prop instanceof Numeric)
                  || ! ((Numeric)prop).isLength())
                 throw new RuntimeException(
@@ -130,7 +151,7 @@ public class FOTree extends Tree implements Runnable {
             String cname = "";
             if (i == PropNames.FONT_SIZE) continue;
             try {
-                Class vclass = PropertyConsts.propertyClasses.get(i);
+                Class vclass = (Class)(PropertyConsts.propertyClasses.get(i));
                 cname = vclass.getName();
                 // Set up the initial values for each property
                 // Note that initial (specified) values are stored as
@@ -154,34 +175,37 @@ public class FOTree extends Tree implements Runnable {
                 case Properties.COLOR_IT:
                 case Properties.TEXT_DECORATION_IT:
                     // Set the initial value
+                    // This returns an initial value for the propertyStacks
                     try {
-                        PropertyConsts.initialValueMethods.get
-                                (i).invoke(null, new Object[]{this});
+                        propertyStacks[i].addLast
+                                (new PropertyTriplet
+                                 (i,
+                                  (PropertyValue)
+                                  (((Method)
+                                    (PropertyConsts
+                                     .initialValueMethods.get(i))).invoke
+                                   (null, new Object[]{this})
+                                   )
+                                  )
+                                 );
                     }
                     catch (IllegalArgumentException e) {
-                        throw new RuntimeException(
+                        throw new PropertyException(
                             "Illegal argument on \"" + e.getMessage()
                             + "\" in class " + cname);
                     }
                     catch (IllegalAccessException e) {
-                        throw new RuntimeException(
+                        throw new PropertyException(
                             "Illegal access on \"" + e.getMessage()
                             + "\" in class " + cname);
                     }
                     catch (InvocationTargetException e) {
                         Throwable targetex = e.getTargetException();
-                        throw new RuntimeException(
+                        throw new PropertyException(
                             "Invocation target exception on \""
                             + targetex.getMessage() + "\" in class " + cname);
                     }
 
-                    propertyStacks[i].addLast(new PropertyTriplet(
-                        i,
-                        (PropertyValue)
-                        (PropertyConsts.
-                         propertyClasses.get(i).
-                         getDeclaredField("initialValue").get(null))
-                        ));
                     break;
                 case Properties.AUTO_IT:
                     propertyStacks[i].addLast
@@ -201,6 +225,7 @@ public class FOTree extends Tree implements Runnable {
                              + " for class " + cname);
                 }
             }
+            /*
             catch (NoSuchFieldException e) {
                 throw new RuntimeException(
                             "Missing field \"" + e.getMessage() + "\""
@@ -211,6 +236,7 @@ public class FOTree extends Tree implements Runnable {
                     "Illegal access on \"" + e.getMessage() + "\" in class " +
                     cname);
             }
+            */
             catch (PropertyException e) {
                 throw new RuntimeException
                     ("PropertyException: " + e.getMessage());
@@ -235,6 +261,20 @@ public class FOTree extends Tree implements Runnable {
         } catch (CloneNotSupportedException e) {
             throw new PropertyException("Clone not supported.");
         }
+    }
+
+    /**
+     * Set the initial value of a particular property
+     * @param property <tt>int</tt> index of the property
+     * @initialValue <tt>PropertyValue</tt>
+     * @exception <tt>PropertyException</tt>
+     */
+    public void setInitialValue(PropertyValue value)
+        throws PropertyException
+    {
+        int property = value.getProperty();
+        propertyStacks[property].addLast
+                (new PropertyTriplet(property, value));
     }
 
     /**
@@ -288,6 +328,18 @@ public class FOTree extends Tree implements Runnable {
             throws PropertyException
     {
         return (PropertyTriplet)(propertyStacks[index].getFirst());
+    }
+
+    /**
+     * @param index: <tt>int</tt> property index.
+     * @return a <tt>PropertyValue</tt> containing the <em>specified</em>
+     * property value at the bottom of the stack for the indexed property.
+     */
+    public PropertyValue getInitialSpecifiedValue(int index)
+            throws PropertyException
+    {
+        return ((PropertyTriplet)(propertyStacks[index].getFirst()))
+                .getSpecified();
     }
 
     /**
