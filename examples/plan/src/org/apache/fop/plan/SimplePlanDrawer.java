@@ -1,52 +1,109 @@
-/* $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+/*
+ * $Id$
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.plan;
 
-import org.apache.fop.svg.SVGUtilities;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 
-import java.util.*;
-import java.text.*;
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.awt.font.FontRenderContext;
-
-import org.w3c.dom.*;
-import org.w3c.dom.svg.*;
-import org.w3c.dom.css.*;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.fop.svg.SVGUtilities;
 
+/**
+ * Simple plan drawer implementation.
+ */
 public class SimplePlanDrawer implements PlanDrawer {
-    final static String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
-    float fontSize;
-    HashMap hints;
-    java.awt.Font font = null;
-    boolean bord = false;
-    float lSpace = 15;
-    float width;
-    float height;
-    float topEdge;
-    float rightEdge;
+    
+    private static final String SVG_NAMESPACE = SVGDOMImplementation.SVG_NAMESPACE_URI;
+    
+    private float fontSize;
+    private HashMap hints;
+    private java.awt.Font font = null;
+    private boolean bord = false;
+    private float lSpace = 15;
+    private float width;
+    private float height;
+    private float topEdge;
+    private float rightEdge;
 
-    String[] colours;
-    String[] darkcolours;
+    private String[] colours;
+    private String[] darkcolours;
 
-    Date startDate;
-    Date endDate;
+    private Date startDate;
+    private Date endDate;
 
+    /**
+     * Sets the start date.
+     * @param sd start date
+     */
     public void setStartDate(Date sd) {
         startDate = sd;
     }
 
+    /**
+     * Sets the end date.
+     * @param ed end date
+     */
     public void setEndDate(Date ed) {
         endDate = ed;
     }
 
+    /**
+     * @see org.apache.fop.plan.PlanDrawer#createDocument(EventList, float, float, HashMap)
+     */
     public Document createDocument(EventList data, float w, float h,
                                    HashMap hints) {
         this.width = w;
@@ -58,22 +115,23 @@ public class SimplePlanDrawer implements PlanDrawer {
         String title = "";
 
         DOMImplementation impl =
-          SVGDOMImplementation.getDOMImplementation();
-        Document doc = impl.createDocument(svgNS, "svg", null);
+            SVGDOMImplementation.getDOMImplementation();
+        Document doc = impl.createDocument(SVG_NAMESPACE, "svg", null);
 
         Element svgRoot = doc.getDocumentElement();
         svgRoot.setAttributeNS(null, "width", "" + width);
         svgRoot.setAttributeNS(null, "height", "" + height);
         svgRoot.setAttributeNS(null, "style",
-                               "font-size:" + 8 + ";font-family:" +
-                               hints.get(PlanHints.FONT_FAMILY));
+                               "font-size:" + 8 
+                                   + ";font-family:" 
+                                   + hints.get(PlanHints.FONT_FAMILY));
 
-        font = new java.awt.Font( (String) hints.get(PlanHints.FONT_FAMILY),
-                                  java.awt.Font.PLAIN, (int) fontSize);
+        font = new java.awt.Font((String)hints.get(PlanHints.FONT_FAMILY),
+                                  java.awt.Font.PLAIN, (int)fontSize);
 
         if (bord) {
             Element border =
-              SVGUtilities.createRect(doc, 0, 0, width, height);
+                SVGUtilities.createRect(doc, 0, 0, width, height);
             border.setAttributeNS(null, "style", "stroke:black;fill:none");
             svgRoot.appendChild(border);
         }
@@ -104,7 +162,7 @@ public class SimplePlanDrawer implements PlanDrawer {
         Date lastWeek = startDate;
         Date future = endDate;
         Calendar lw = Calendar.getInstance();
-        if(lastWeek == null || future == null) {
+        if (lastWeek == null || future == null) {
             int dow = lw.get(Calendar.DAY_OF_WEEK);
             lw.add(Calendar.DATE, -dow - 6);
             lastWeek = lw.getTime();
@@ -123,15 +181,15 @@ public class SimplePlanDrawer implements PlanDrawer {
         svgRoot.appendChild(line);
 
         Element clip1 = SVGUtilities.createClip(doc,
-                                                SVGUtilities.createPath(doc,
-                                                                        "m0 0l126 0l0 " + height + "l-126 0z"), "clip1");
+                SVGUtilities.createPath(doc,
+                    "m0 0l126 0l0 " + height + "l-126 0z"), "clip1");
         Element clip2 = SVGUtilities.createClip(doc,
-                                                SVGUtilities.createPath(doc,
-                                                                        "m130 0l66 0l0 " + height + "l-66 0z"), "clip2");
+                SVGUtilities.createPath(doc,
+                    "m130 0l66 0l0 " + height + "l-66 0z"), "clip2");
         Element clip3 = SVGUtilities.createClip(doc,
-                                                SVGUtilities.createPath(doc,
-                                                                        "m200 0l" + (width - 200) + " 0l0 " + height + "l-" +
-                                                                        (width - 200) + " 0z"), "clip3");
+                SVGUtilities.createPath(doc,
+                    "m200 0l" + (width - 200) + " 0l0 " + height + "l-"
+                        + (width - 200) + " 0z"), "clip3");
         svgRoot.appendChild(clip1);
         svgRoot.appendChild(clip2);
         svgRoot.appendChild(clip3);
@@ -155,9 +213,10 @@ public class SimplePlanDrawer implements PlanDrawer {
             offset++;
             if (count % 7 == 0 || count % 7 == 1) {
                 Element rect = SVGUtilities.createRect(doc,
-                                                       200 + (offset - 1) * (width - 200) / (totalDays - 2),
-                                                       (float)(topEdge + 0.5), (width - 200) / (totalDays - 3),
-                                                       height - 1 - topEdge);
+                    200 + (offset - 1) * (width - 200) / (totalDays - 2),
+                    (float)(topEdge + 0.5),
+                    (width - 200) / (totalDays - 3),
+                    height - 1 - topEdge);
                 rect.setAttributeNS(null, "style", "stroke:none;fill:rgb(230,230,230)");
                 svgRoot.appendChild(rect);
             }
@@ -208,44 +267,51 @@ public class SimplePlanDrawer implements PlanDrawer {
                     int left = 200;
                     int right = 500;
 
-                    int daysToStart = (int)((start.getTime() -
-                                             lastWeek.getTime() + 43200000) / 86400000);
-                    int days = (int)((end.getTime() - start.getTime() +
-                                      43200000) / 86400000);
+                    int daysToStart = (int)((start.getTime()
+                                - lastWeek.getTime() + 43200000) / 86400000);
+                    int days = (int)((end.getTime() - start.getTime()
+                                + 43200000) / 86400000);
                     int daysFromEnd =
-                      (int)((future.getTime() - end.getTime() +
-                             43200000) / 86400000);
+                        (int)((future.getTime() - end.getTime()
+                            + 43200000) / 86400000);
                     Element taskGraphic;
                     switch (type) {
                         case ActionInfo.TASK:
                             taskGraphic = SVGUtilities.createRect(doc,
-                                                                  left + daysToStart * 300 / (totalDays - 2),
-                                                                  topEdge + 2, days * 300 / (totalDays - 2), 10);
-                            taskGraphic.setAttributeNS(null, "style", "stroke:black;fill:blue;stroke-width:1;clip-path:url(#clip3)");
+                                left + daysToStart * 300 / (totalDays - 2),
+                                topEdge + 2, days * 300 / (totalDays - 2), 10);
+                            taskGraphic.setAttributeNS(null, 
+                                "style", 
+                                "stroke:black;fill:blue;stroke-width:1;clip-path:url(#clip3)");
                             g.appendChild(taskGraphic);
                             break;
                         case ActionInfo.MILESTONE:
                             taskGraphic = SVGUtilities.createPath(doc,
-                                                                  "m " + (left +
-                                                                          daysToStart * 300 / (totalDays - 2) - 6) +
-                                                                  " " + (topEdge + 6) + "l6 6l6-6l-6-6z");
-                            taskGraphic.setAttributeNS(null, "style", "stroke:black;fill:black;stroke-width:1;clip-path:url(#clip3)");
+                                "m " + (left
+                                    + daysToStart * 300 / (totalDays - 2) - 6)
+                                    + " " + (topEdge + 6) + "l6 6l6-6l-6-6z");
+                            taskGraphic.setAttributeNS(null, 
+                                "style", 
+                                "stroke:black;fill:black;stroke-width:1;clip-path:url(#clip3)");
                             g.appendChild(taskGraphic);
                             text = SVGUtilities.createText(doc,
-                                                           left + daysToStart * 300 / (totalDays - 2) + 8,
-                                                           topEdge + 9, df.format(start));
+                                left + daysToStart * 300 / (totalDays - 2) + 8,
+                                topEdge + 9, df.format(start));
                             g.appendChild(text);
 
                             break;
                         case ActionInfo.GROUPING:
                             taskGraphic = SVGUtilities.createPath(doc,
-                                                                  "m " + (left +
-                                                                          daysToStart * 300 / (totalDays - 2) - 6) +
-                                                                  " " + (topEdge + 6) + "l6 -6l" +
-                                                                  (days * 300 / (totalDays - 2)) +
-                                                                  " 0l6 6l-6 6l-4-4l" + -
-                                                                  (days * 300 / (totalDays - 2) - 8) + " 0l-4 4l-6-6z");
-                            taskGraphic.setAttributeNS(null, "style", "stroke:black;fill:black;stroke-width:1;clip-path:url(#clip3)");
+                                "m " + (left 
+                                    + daysToStart * 300 / (totalDays - 2) - 6)
+                                    + " " + (topEdge + 6) + "l6 -6l"
+                                    + (days * 300 / (totalDays - 2))
+                                    + " 0l6 6l-6 6l-4-4l"
+                                    + -(days * 300 / (totalDays - 2) - 8)
+                                    + " 0l-4 4l-6-6z");
+                            taskGraphic.setAttributeNS(null,
+                                "style", 
+                                "stroke:black;fill:black;stroke-width:1;clip-path:url(#clip3)");
                             g.appendChild(taskGraphic);
                             break;
                         default:
@@ -262,8 +328,8 @@ public class SimplePlanDrawer implements PlanDrawer {
             }
         }
         int currentDays =
-          (int)((currentDate.getTime() - lastWeek.getTime() +
-                 43200000) / 86400000);
+          (int)((currentDate.getTime() - lastWeek.getTime()
+                + 43200000) / 86400000);
 
         text = SVGUtilities.createText(doc,
                                        (float)(200 + (currentDays + 0.5) * 300 / 35),
