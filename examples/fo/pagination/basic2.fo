@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- This example shows the simplest use of an fo:page-sequence-master (PSM), 
+    having only a single fo:simple-page-master-reference.
+    
+    Note that because only a single fo:simple-page-master-reference is being
+    used, this PSM can actually be omitted.  Instead, the fo:page-sequence's 
+    master-reference can be set directly to the master-name attribute 
+    ("SPM_Name") of the fo:simple-page-master (SPM).
+    
+    Also note that using a single fo:single-page-master-reference (as opposed 
+    to a fo:repeatable-page-master-reference) within the PSM limits you 
+    to one (1) page for the referencing fo:page-sequence.  If the fo:page-sequence's
+    master-reference is set to the master-name of the SPM, however, the number
+    of pages that can be output using that SPM is unbounded.
+-->
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
   <!-- defines page layout -->
   <fo:layout-master-set>
 
     <!-- layout for the first page -->
-    <fo:simple-page-master master-name="only"
+    <fo:simple-page-master master-name="SPM_Name"
                   page-height="29.7cm"
                   page-width="21cm"
                   margin-top="1cm"
@@ -18,14 +32,15 @@
       <fo:region-after extent="1.5cm"/>
     </fo:simple-page-master>
 
-  <fo:page-sequence-master master-name="single">
-    <fo:single-page-master-reference master-reference="only"/>
+  <fo:page-sequence-master master-name="PSM_Name">
+    <fo:single-page-master-reference master-reference="SPM_Name"/>
   </fo:page-sequence-master>
   </fo:layout-master-set>
   <!-- end: defines page layout -->
 
-  <!-- actual layout -->
-  <fo:page-sequence master-reference="single" initial-page-number="1">
+  <!-- actual layout, note master-reference can alternatively be set to
+       SPM_Name as mentioned above -->
+  <fo:page-sequence master-reference="PSM_Name" initial-page-number="1">
 
     <!-- usage of page layout -->
     <!-- header -->
