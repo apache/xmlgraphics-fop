@@ -129,9 +129,9 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
 
     /**
      * @return next event from the SyncedCircularBuffer
-     * @exception FOPException.  The purpose of this method is to catch
-     * and transform any InterruptedException exceptions thrown by the
-     * <tt>SyncedCircularBuffer</tt>.
+     * @exception FOPException  exception into which
+     * any InterruptedException exceptions thrown by the
+     * <tt>SyncedCircularBuffer</tt> are transformed
      */
     public FoXMLEvent getEvent() throws FOPException {
         FoXMLEvent ev;
@@ -1037,7 +1037,6 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if ENDELEMENT is not the next
      * event detected.  The erroneous event is pushed back.
-     * @exception NoSuchElementException if end of buffer detected.
      */
     public FoXMLEvent expectEndElement(boolean discardWhiteSpace)
                 throws FOPException

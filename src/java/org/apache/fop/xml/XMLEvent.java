@@ -269,7 +269,7 @@ public class XMLEvent {
 
     /**
      * Set the <tt>AttributesImpl</tt> object associated with this event.
-     * @param the <tt>AttributesImpl</tt> object.
+     * @param attributes the attributes
      */
     public void setAttributes(AttributesImpl attributes) {
         this.attributes = attributes;
@@ -277,7 +277,7 @@ public class XMLEvent {
 
     /**
      * Set the <tt>XMLNamespaces</tt> object associated with this event.
-     * @param the <tt>XMLNamespaces</tt> object.
+     * @param namespaces  the XMLNamespaces
      */
     public void setNamespaces(XMLNamespaces namespaces) {
         this.namespaces = namespaces;
