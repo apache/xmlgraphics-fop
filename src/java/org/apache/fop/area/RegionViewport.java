@@ -31,11 +31,11 @@ public class RegionViewport
 extends AbstractViewport
 implements Viewport, Cloneable {
     /**
-     * Creates a new region viewport.
+     * Creates a new region viewport with the given rectangular area
      * @param area the rectangular area
      * @param pageSeq the generating <code>page-sequence</code>
-     * @param generatedBy the generating <code>FONode</code>
-     * @param parent
+     * @param generatedBy the generating node; in this case, the page sequence
+     * @param parent the <code>main-reference-area</code>
      * @param sync
      */
     public RegionViewport(
@@ -50,8 +50,8 @@ implements Viewport, Cloneable {
     /**
      * Creates a new region viewport with a null rectangular area
      * @param pageSeq the generating <code>page-sequence</code>
-     * @param generatedBy the generating <code>FONode</code>
-     * @param parent
+     * @param generatedBy the generating node; in this case, the page sequence
+     * @param parent the <code>main-reference-area</code>
      * @param sync
      */
     public RegionViewport(

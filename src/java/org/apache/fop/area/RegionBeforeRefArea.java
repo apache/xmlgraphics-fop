@@ -19,6 +19,8 @@
  */
 package org.apache.fop.area;
 
+import java.awt.geom.Rectangle2D;
+
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
@@ -32,7 +34,11 @@ public class RegionBeforeRefArea
     implements ReferenceArea {
 
     /**
-     * @param parent
+     * Creates a new region-before area with no defined rectangular area
+     * @param pageSeq the generating <code>page-sequence</code>
+     * @param generatedBy the node which generated this reference area; in this
+     * case, the <code>page-sequence</code>
+     * @param parent the page-reference-area
      * @param sync
      */
     public RegionBeforeRefArea(
@@ -42,5 +48,43 @@ public class RegionBeforeRefArea
             Object sync) {
         super(pageSeq, generatedBy, parent, sync);
     }
+
+    /**
+     * Creates a new region-before area with the given rectangular area
+     * @param area the rectangular area
+     * @param pageSeq the generating <code>page-sequence</code>
+     * @param generatedBy the node which generated this reference area; in this
+     * case, the <code>page-sequence</code>
+     * @param parent the page-reference-area
+     * @param sync
+     */
+    public RegionBeforeRefArea(
+            Rectangle2D area,
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(area, pageSeq, generatedBy, parent, sync);
+    }
+
+    /**
+     * Creates and returns a <code>RegionBeforeRefArea</code> with no
+     * rectangular area.
+     * <b>N.B.</b> this is a <code>static</code> method.
+     * @param pageSeq the <code>page-sequence</code> to which this area belongs
+     * @param generatedBy the node which generated this reference area; in this
+     * case, the <code>page-sequence</code>
+     * @param parent the <code>region-body-viewport-area</code>
+     * @param sync
+     * @return the created reference area
+     */
+    public static RegionBeforeRefArea nullRegionBeforeRef(
+            FoPageSequence pageSeq, FONode generatedBy,
+            Node parent, Object sync) {
+        RegionBeforeRefArea beforeRef =
+            new RegionBeforeRefArea(pageSeq, generatedBy, parent, sync);
+        return beforeRef;
+    }
+
 
 }

@@ -17,6 +17,8 @@
  */
 package org.apache.fop.area;
 
+import java.awt.geom.Rectangle2D;
+
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
@@ -36,11 +38,13 @@ implements ReferenceArea {
     private int columnCount = 1;
 
     /**
-     * Create a new body region area.
+     * Creates a new body region area with no defined rectangular area and the
+     * default column count and gap
      * This sets the region reference area class to BODY.
      * @param pageSeq the generating <code>page-sequence</code>
-     * @param generatedBy the generating <code>FONode</code>
-     * @param parent
+     * @param generatedBy the node which generated this reference area; in this
+     * case, the <code>page-sequence</code>
+     * @param parent the page-reference-area
      * @param sync
      */
     public RegionBodyRefArea(
@@ -52,21 +56,42 @@ implements ReferenceArea {
     }
 
     /**
-     * Create a new body region area.
+     * Creates a new body region area with the given rectangular area, column
+     * count and gap
      * This sets the region reference area class to BODY.
+     * @param columnCount
+     * @param columnGap
+     * @param area the rectangular area
+     * @param pageSeq the generating <code>page-sequence</code>
+     * @param generatedBy the node which generated this reference area; in this
+     * case, the <code>page-sequence</code>
+     * @param parent the page-reference-area
+     * @param sync
      */
     public RegionBodyRefArea(
             int columnCount,
             int columnGap,
+            Rectangle2D area,
             FoPageSequence pageSeq,
             FONode generatedBy,
             Node parent,
             Object sync) {
-        super(pageSeq, generatedBy, parent, sync);
+        super(area, pageSeq, generatedBy, parent, sync);
         this.columnCount = columnCount;
         this.columnGap = columnGap;
     }
 
+    /**
+     * Creates and returns a <code>RegionBodyRefArea</code> with no rectangular
+     * area. The area created references a null <code>MainReferenceArea</code>.
+     * <b>N.B.</b> this is a <code>static</code> method.
+     * @param pageSeq the <code>page-sequence</code> to which this area belongs
+     * @param generatedBy the node which generated this reference area; in this
+     * case, the <code>page-sequence</code>
+     * @param parent the <code>region-body-viewport-area</code>
+     * @param sync
+     * @return the created reference area
+     */
     public static RegionBodyRefArea nullRegionBodyRef(
             FoPageSequence pageSeq, FONode generatedBy,
             Node parent, Object sync) {
