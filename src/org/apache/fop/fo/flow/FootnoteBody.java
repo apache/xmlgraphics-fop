@@ -57,6 +57,7 @@ public class FootnoteBody extends FObj {
                           alignLast, lineHeight);
         blockArea.setGeneratedBy(this);
         blockArea.isFirst(true);
+        blockArea.setParent(area);
         blockArea.setPage(area.getPage());
         blockArea.start();
 

@@ -244,6 +244,7 @@ public class TableCell extends FObj {
 
         cellArea.foCreator = this;    // G Seshadri
         cellArea.setPage(area.getPage());
+	cellArea.setParent(area);
 	try {
 	    cellArea.setBorderAndPadding((BorderAndPadding)
 				      propMgr.getBorderAndPadding().clone());
@@ -256,8 +257,8 @@ public class TableCell extends FObj {
 
         cellArea.setAbsoluteHeight(area.getAbsoluteHeight());    // ???
         cellArea.setIDReferences(area.getIDReferences());
-        // ******** CHECK THIS: we've changed startOffset (KL)
-        cellArea.setTableCellXOffset(startOffset);
+	// Add adjust for padding and border to fix link alignment!
+        cellArea.setTableCellXOffset(startOffset + startAdjust);
 
         int numChildren = this.children.size();
         for (int i = this.marker; bDone==false && i < numChildren; i++) {

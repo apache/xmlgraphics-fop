@@ -104,6 +104,10 @@ public class ListItem extends FObj {
             new BlockArea(propMgr.getFontState(area.getFontInfo()),
                           area.getAllocationWidth(), area.spaceLeft(), 0, 0,
                           0, align, alignLast, lineHeight);
+
+	// Fix links in lists in tables problem
+	blockArea.setTableCellXOffset(area.getTableCellXOffset());
+
         this.blockArea.setGeneratedBy(this);
         this.areasGenerated++;
         if (this.areasGenerated == 1)
@@ -115,6 +119,7 @@ public class ListItem extends FObj {
         if (this.hasMarkers())
             this.blockArea.addMarkers(this.getMarkers());
 
+        blockArea.setParent(area);
         blockArea.setPage(area.getPage());
         blockArea.start();
 
@@ -148,7 +153,6 @@ public class ListItem extends FObj {
             blockArea.end();
             area.addChild(blockArea);
             area.increaseHeight(blockArea.getHeight());
-            area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
             this.marker = 1;
             return status;
         }
@@ -156,7 +160,6 @@ public class ListItem extends FObj {
         blockArea.end();
         area.addChild(blockArea);
         area.increaseHeight(blockArea.getHeight());
-        area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
 
         if (spaceAfter != 0) {
             area.addDisplaySpace(spaceAfter);

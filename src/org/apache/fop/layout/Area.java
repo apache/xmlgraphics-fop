@@ -38,8 +38,10 @@ abstract public class Area extends Box {
     // used to keep track of the current x position within a table.  Required for drawing rectangle links.
     protected int tableCellXOffset = 0;
 
-    // used to keep track of the absolute height on the page.  Required for drawing rectangle links.
-    private int absoluteHeight = 0;
+    /** Stores position of top of this area relative to page column Ypos.
+     *  Used to set the position of link hotspot rectangles.
+     */
+    private int absoluteYtop = 0;
 
     protected int contentRectangleWidth;
 
@@ -114,7 +116,6 @@ abstract public class Area extends Box {
 
     public void addDisplaySpace(int size) {
         this.addChild(new DisplaySpace(size));
-        this.absoluteHeight += size;
         this.currentHeight += size;
     }
 
@@ -253,33 +254,43 @@ abstract public class Area extends Box {
         tableCellXOffset = offset;
     }
 
+    /**
+     * Return absolute Y position of the current bottom of this area,
+     * not counting any bottom padding or border. This is used
+     * to set positions for link hotspots.
+     * In fact, the position is not really absolute, but is relative
+     * to the Ypos of the column-level AreaContainer, even when the
+     * area is in a page header or footer!
+     */
     public int getAbsoluteHeight() {
-        return absoluteHeight;
+        return absoluteYtop + getPaddingTop() + getBorderTopWidth() +
+	    currentHeight;
     }
 
+    /**
+     * Set "absolute" Y position of the top of this area. In fact, the
+     * position is not really absolute, but relative to the Ypos of
+     * the column-level AreaContainer, even when the area is in a
+     * page header or footer!
+     * It is set from the value of getAbsoluteHeight() on the parent
+     * area, just before adding this area.
+     */
     public void setAbsoluteHeight(int value) {
-        absoluteHeight = value;
-    }
-
-    public void increaseAbsoluteHeight(int value) {
-        absoluteHeight += value;
+        absoluteYtop = value;
     }
 
     public void increaseHeight(int amount) {
         this.currentHeight += amount;
-        this.absoluteHeight += amount;
     }
 
     // Remove allocation height of child
     public void removeChild(Area area) {
         this.currentHeight -= area.getHeight();
-        this.absoluteHeight -= area.getHeight();
         this.children.remove(area);
     }
 
     public void removeChild(DisplaySpace spacer) {
         this.currentHeight -= spacer.getSize();
-        this.absoluteHeight -= spacer.getSize();
         this.children.remove(spacer);
     }
 
@@ -329,7 +340,6 @@ abstract public class Area extends Box {
         if (currentHeight > getMaxHeight()) {
             currentHeight = getMaxHeight();
         }
-        absoluteHeight += (currentHeight - prevHeight);
     }
 
     public void setMaxHeight(int height) {
@@ -361,7 +371,7 @@ abstract public class Area extends Box {
 
     public AreaContainer getNearestAncestorAreaContainer() {
         Area area = this.getParent();
-        while (!(area instanceof AreaContainer)) {
+        while (area != null && !(area instanceof AreaContainer)) {
             area = area.getParent();
         }
         return (AreaContainer)area;

@@ -124,6 +124,7 @@ public abstract class AbstractTableBody extends FObj {
         area.spaceLeft(), Position.RELATIVE);
         areaContainer.foCreator = this;                  // G Seshadri
         areaContainer.setPage(area.getPage());
+	areaContainer.setParent(area);
         areaContainer.setBackground(propMgr.getBackgroundProps());
         areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
         areaContainer.start();
@@ -165,7 +166,6 @@ public abstract class AbstractTableBody extends FObj {
                     // areaContainer.end();
 
                     area.increaseHeight(areaContainer.getHeight());
-                    area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
                     if (i == numChildren - 1) {
                         this.marker = BREAK_AFTER;
                         if (spaceAfter != 0) {
@@ -202,7 +202,6 @@ public abstract class AbstractTableBody extends FObj {
                     // areaContainer.end();
 
                     area.increaseHeight(areaContainer.getHeight());
-                    area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
                 }
 
                 // Fix for infinite loop bug if spanned rows are too big for page
@@ -225,8 +224,6 @@ public abstract class AbstractTableBody extends FObj {
         areaContainer.end();
 
         area.increaseHeight(areaContainer.getHeight());
-
-        area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
 
         if (spaceAfter != 0) {
             area.increaseHeight(spaceAfter);
