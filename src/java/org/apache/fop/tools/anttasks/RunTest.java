@@ -61,6 +61,7 @@ import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -128,9 +129,8 @@ public class RunTest extends Task {
      */
     protected void testNewBuild() {
         try {
-            ClassLoader loader = new URLClassLoader(new URL[] {
-                new URL("file:build/fop.jar")
-            });
+            ClassLoader loader = new URLClassLoader(
+                                    createUrls("build/fop.jar"));
             Map diff = runConverter(loader, "areatree",
                                           "reference/output/");
             if (diff != null && !diff.isEmpty()) {
@@ -172,16 +172,11 @@ public class RunTest extends Task {
         // return;
         // } else {
         try {
-            ClassLoader loader = new URLClassLoader(new URL[] {
-                new URL("file:" + referenceJar)
-            });
+            ClassLoader loader = new URLClassLoader(createUrls(referenceJar));
             boolean failed = false;
 
             try {
-                Class cla = Class.forName("org.apache.fop.apps.Options",
-                                          true, loader);
-                /*Object opts =*/ cla.newInstance();
-                cla = Class.forName("org.apache.fop.apps.Version", true,
+                Class cla = Class.forName("org.apache.fop.apps.Version", true,
                                     loader);
                 Method get = cla.getMethod("getVersion", new Class[]{});
                 if (!get.invoke(null, new Object[]{}).equals(refVersion)) {
@@ -195,8 +190,6 @@ public class RunTest extends Task {
             } catch (InvocationTargetException are) {
                 failed = true;
             } catch (ClassNotFoundException are) {
-                failed = true;
-            } catch (InstantiationException are) {
                 failed = true;
             } catch (NoSuchMethodException are) {
                 failed = true;
@@ -253,4 +246,20 @@ public class RunTest extends Task {
         return diff;
     }
 
+    /**
+     * Return a list of URL's with the specified URL first and followed 
+     * by all the jar files from lib/.
+     * @return a list of urls to the runtime jar files.
+     */
+    private URL[] createUrls(String mainJar) throws MalformedURLException {
+        ArrayList urls = new ArrayList();
+        urls.add(new File(mainJar).toURL());
+        File[] libFiles = new File("lib").listFiles();
+        for (int i = 0; i < libFiles.length; i++) {
+            if (libFiles[i].getPath().endsWith(".jar")) {
+                urls.add(libFiles[i].toURL());
+            }
+        }
+        return (URL[]) urls.toArray(new URL[urls.size()]);
+    }
 }
