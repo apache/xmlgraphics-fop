@@ -23,8 +23,6 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 
 import org.apache.fop.fo.FONode;
-import org.apache.fop.apps.FOPException;
-
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,6 +30,7 @@ import org.w3c.dom.Node;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
@@ -60,7 +59,7 @@ public class MathMLElement extends MathMLObj {
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, 
-                            Attributes attlist) throws FOPException {
+                            Attributes attlist) throws SAXParseException {
         super.processNode(elementName, locator, attlist);
         createBasicDocument();
     }
