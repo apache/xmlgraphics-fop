@@ -23,7 +23,10 @@ We have included several useful links on our <link href="resources.html">Resourc
       <p>FOP is a work in progress, and does not yet fully comply with the W3C XSL-FO standard.
 The developers track which standard requirements have been implemented, and have documented these capabilities on the <link href="compliance.html">Compliance</link> page.
 If this document appears to be in error, continue down this checklist so that either the document or the software can be corrected.
-Otherwise, please do not submit mailing list questions or bug reports regarding features documented in the standard.</p>
+Otherwise, please do not submit mailing list questions or bug reports regarding features documented in the standard.
+Please especially do not submit questions asking when a particular feature will be implemented.
+There are too many unknowns to make even a reasonable estimate.
+The only sure way to get a feature implemented is to <link href="#how-to-help">pitch in and help</link>.</p>
     </section>
     <section id="doc">
       <title>Read the Documentation</title>
