@@ -24,7 +24,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.Resolvable;
@@ -47,7 +46,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ContentLayoutManager implements InlineLevelLayoutManager {
     private FOUserAgent userAgent;
-    private AreaTreeHandler areaTreeHandler;
     private Area holder;
     private int stackSize;
     private LayoutManager parentLM;
@@ -284,10 +282,10 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
 
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager
-     * @return the AreaTreeHandler object.
+     * @return the LayoutManagerMaker object.
      */
-    public AreaTreeHandler getAreaTreeHandler() {
-        return parentLM.getAreaTreeHandler();
+    public LayoutManagerMaker getLayoutManagerMaker() {
+        return parentLM.getLayoutManagerMaker();
     }
 
     /**
