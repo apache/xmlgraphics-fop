@@ -220,6 +220,8 @@ public class PageSequence extends FObj {
             super.addChildNode(child); // For getChildren
         } else if (childId == FO_STATIC_CONTENT) {
             addFlow((StaticContent) child);
+            String flowName = ((StaticContent) child).getPropString(PR_FLOW_NAME);
+            flowMap.put(flowName, child);
             startStructuredPageSequence();
         }
     }
