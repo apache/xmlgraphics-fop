@@ -246,7 +246,7 @@ public class TestConverter {
                 driver.setRenderer(Driver.RENDER_XML);
             }
 
-            Hashtable rendererOptions = new Hashtable();
+            HashMap rendererOptions = new HashMap();
             rendererOptions.put("fineDetail", new Boolean(false));
             rendererOptions.put("consistentOutput", new Boolean(true));
             driver.getRenderer().setOptions(rendererOptions);

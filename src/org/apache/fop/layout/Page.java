@@ -124,10 +124,6 @@ public class Page {
         area.setPage(this);
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderPage(this);
-    }
-
     public AreaContainer getAfter() {
         return this.after;
     }

@@ -64,10 +64,6 @@ public class ImageArea extends InlineArea {
         return this.image;
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderImageArea(this);
-    }
-
     public int getImageHeight() {
         return currentHeight;
     }

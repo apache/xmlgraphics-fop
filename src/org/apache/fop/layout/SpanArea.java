@@ -49,10 +49,6 @@ public class SpanArea extends AreaContainer {
         }
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderSpanArea(this);
-    }
-
     public void end() {}
 
     public void start() {}

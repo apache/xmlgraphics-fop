@@ -20,8 +20,4 @@ public class DisplaySpace extends Space {
         return size;
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderDisplaySpace(this);
-    }
-
 }

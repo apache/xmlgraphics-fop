@@ -49,13 +49,4 @@ public class SVGArea extends Area {
         return contentRectangleWidth;
     }
 
-    /**
-     * render the SVG.
-     *
-     * @param renderer the Renderer to use
-     */
-    public void render(Renderer renderer) {
-        renderer.renderSVGArea(this);
-    }
-
 }

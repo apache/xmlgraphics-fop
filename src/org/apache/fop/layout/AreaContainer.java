@@ -34,10 +34,6 @@ public class AreaContainer extends Area {
         // setIsReferenceArea(true); // Should always be true!
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderAreaContainer(this);
-    }
-
     public int getPosition() {
         return position;
     }

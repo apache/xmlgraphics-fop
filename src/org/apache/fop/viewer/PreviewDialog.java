@@ -532,7 +532,7 @@ public class PreviewDialog extends JFrame implements ProgressListener,
             BufferedImage pageImage = null;
             Graphics graphics = null;
 
-            renderer.render(currentPage);
+            //renderer.render(currentPage);
             pageImage = renderer.getLastRenderedPage();
             if (pageImage == null)
                 return;

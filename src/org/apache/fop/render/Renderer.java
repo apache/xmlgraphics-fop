@@ -7,30 +7,46 @@
 package org.apache.fop.render;
 
 // FOP
-import org.apache.fop.svg.SVGArea;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.layout.*;
-import org.apache.fop.layout.inline.*;
+import org.apache.fop.area.*;
+import org.apache.fop.area.inline.*;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.fo.FOUserAgent;
 
 import org.apache.log.Logger;
 
 // Java
 import java.io.OutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
- * interface implement by all renderers.
- * 
+ * Interface implemented by all renderers.
+ * This interface is used to control the rendering of pages
+ * and to let block and inline level areas call the appropriate
+ * method to render themselves
+ *
  * a Renderer implementation takes areas/spaces and produces output in
  * some format.
  */
 public interface Renderer {
 
+    public void startRenderer(OutputStream outputStream)
+    throws IOException;
+
+    public void stopRenderer()
+    throws IOException;
+
     /**
      * Set the logger
      */
     public void setLogger(Logger logger);
+
+    /**
+     * Set the User Agent
+     */
+    public void setUserAgent(FOUserAgent agent);
 
     /**
      * set up the given FontInfo
@@ -40,89 +56,34 @@ public interface Renderer {
     /**
      * set up renderer options
      */
-    public void setOptions(java.util.Hashtable options);
+    public void setOptions(HashMap options);
 
     /**
      * set the producer of the rendering
      */
     public void setProducer(String producer);
 
-    /**
-     * render the given area tree to the given stream
-     */
-    //public void render(AreaTree areaTree, OutputStream stream) throws IOException, FOPException;
-    public void render(Page page, OutputStream stream)
+    public void startPageSequence(Title seqTitle);
+
+    public void renderPage(PageViewport page)
     throws IOException, FOPException;
 
-    /**
-     * render the given area container
-     */
-    public void renderAreaContainer(AreaContainer area);
 
-    /**
-     * render the given area container
-     */
-    public void renderBodyAreaContainer(BodyAreaContainer area);
+    public void renderContainer(Container cont);
+/*
+    public void renderInlineViewport(org.apache.fop.area.inline.Viewport view);
 
-    /**
-     * render the given span area
-     */
-    public void renderSpanArea(SpanArea area);
+    public void renderWord(Word area);
+*/
+    public void renderCharacter(org.apache.fop.area.inline.Character ch);
 
-    /**
-     * render the given block area
-     */
-    public void renderBlockArea(BlockArea area);
+    public void renderInlineSpace(Space space);
+/*
+    public void renderForeignObject(ForeignObject area);
 
-    /**
-     * render the given display space
-     */
-    public void renderDisplaySpace(DisplaySpace space);
+    public void renderImage(Image area);
 
-    /**
-     * render the given SVG area
-     */
-    public void renderSVGArea(SVGArea area);
-
-    /**
-     * render a foreign object area
-     */
-    public void renderForeignObjectArea(ForeignObjectArea area);
-
-    /**
-     * render the given image area
-     */
-    public void renderImageArea(ImageArea area);
-
-    /**
-     * render the given inline area
-     */
-    public void renderWordArea(WordArea area);
-
-    /**
-     * render the given inline space
-     */
-    public void renderInlineSpace(InlineSpace space);
-
-    /**
-     * render the given line area
-     */
-    public void renderLineArea(LineArea area);
-
-    /**
-     * render the given page
-     */
-    public void renderPage(Page page);
-
-    /**
-     * render the given leader area
-     */
-    public void renderLeaderArea(LeaderArea area);
-
-    public void startRenderer(OutputStream outputStream)
-    throws IOException;
-
-    public void stopRenderer(OutputStream outputStream)
-    throws IOException;
-
+    public void renderLeader(Leader area);
+*/
 }
+

@@ -134,18 +134,17 @@ public class PrintStarter extends CommandLineStarter {
 
         }
 
-
-
         public void stopRenderer(OutputStream outputStream)
         throws IOException {
-            super.stopRenderer(outputStream);
+            super.stopRenderer();
 
             if(endNumber == -1)
                 endNumber = getPageCount();
 
             Vector numbers = getInvalidPageNumbers();
-            for (int i = numbers.size() - 1; i > -1; i--)
-                removePage(Integer.parseInt((String)numbers.elementAt(i)));
+            for (int i = numbers.size() - 1; i > -1; i--) {
+                //removePage(Integer.parseInt((String)numbers.elementAt(i)));
+            }
 
             try {
                 printerJob.print();
@@ -160,9 +159,7 @@ public class PrintStarter extends CommandLineStarter {
         public void renderPage(Page page) {
             pageWidth = (int)((float)page.getWidth() / 1000f);
             pageHeight = (int)((float)page.getHeight() / 1000f);
-            super.renderPage(page);
         }
-
 
         private Vector getInvalidPageNumbers() {
 
@@ -199,6 +196,4 @@ public class PrintStarter extends CommandLineStarter {
         */
     }    // class PrintRenderer
 }        // class PrintCommandLine
-
-
 

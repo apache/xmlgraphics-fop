@@ -158,10 +158,6 @@ public class LineArea extends Area {
         }
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderLineArea(this);
-    }
-
     public int addPageNumberCitation(String refid, LinkSet ls) {
 
         /*

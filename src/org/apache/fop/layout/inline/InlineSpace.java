@@ -87,8 +87,4 @@ public class InlineSpace extends Space {
         return eatable;
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderInlineSpace(this);
-    }
-
 }

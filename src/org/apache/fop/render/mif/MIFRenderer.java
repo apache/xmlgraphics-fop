@@ -41,11 +41,6 @@ import java.util.Hashtable;
 /**
  * Renderer that renders areas to MIF
  *
- * Modified by Mark Lillywhite mark-fop@inomial.com. Updated to
- * collect all the Pages and print them out at the end. This means
- * that the MIF renderer does not stream, but on the other hand
- * it should still work. I don't have an MIF view to test it with,
- * you see.
  */
 public class MIFRenderer extends AbstractRenderer {
 
@@ -80,23 +75,14 @@ public class MIFRenderer extends AbstractRenderer {
     private boolean inTable = false;
 
     /**
-     * options
-     */
-    protected Hashtable options;
-
-    /**
      * create the MIF renderer
      */
     public MIFRenderer() {
         this.mifDoc = new MIFDocument();
     }
 
-    /**
-     * set up renderer options
-     */
-    public void setOptions(Hashtable options) {
-        this.options = options;
-    }
+    public void startRenderer(OutputStream outputStream)
+    throws IOException {}
 
     /**
      * set up the given FontInfo
@@ -114,272 +100,12 @@ public class MIFRenderer extends AbstractRenderer {
     public void setProducer(String producer) {}
 
 
-    public void renderAreaContainer(AreaContainer area) {
-
-        if (area.foCreator != null
-                && area.foCreator.getName() == "fo:table") {
-
-            this.mifDoc.createTable();
-            this.inTable = true;
-        } else if (area.foCreator != null
-                   && area.foCreator.getName() == "fo:table-body") {
-
-            this.mifDoc.setCurrent("fo:table-body");
-        } else if (area.foCreator != null
-                   && area.foCreator.getName() == "fo:table-column") {
-
-            int colWidth =
-                ((org.apache.fop.fo.flow.TableColumn)area.foCreator).getColumnWidth();
-            this.mifDoc.setColumnProp(colWidth);
-        } else if (area.foCreator != null
-                   && area.foCreator.getName() == "fo:table-row") {
-
-            this.mifDoc.startRow();
-        } else if (area.foCreator != null
-                   && area.foCreator.getName() == "fo:table-cell") {
-
-            int rowSpan =
-                ((org.apache.fop.fo.flow.TableCell)area.foCreator).getNumRowsSpanned();
-            int colSpan =
-                ((org.apache.fop.fo.flow.TableCell)area.foCreator).getNumColumnsSpanned();
-            this.mifDoc.startCell(rowSpan, colSpan);
-        } else if (inTable) {
-
-            inTable = false;
-            this.mifDoc.endTable();
-
-        }
-        super.renderAreaContainer(area);
-    }
-
-    protected void addFilledRect(int x, int y, int w, int h,
-                                 ColorType col) {
-    }
-
-    protected void doFrame(Area area) {
-        int w, h;
-        int rx = this.currentAreaContainerXPosition;
-        w = area.getContentWidth();
-
-        if (area instanceof BlockArea)
-            rx += ((BlockArea)area).getStartIndent();
-
-        h = area.getContentHeight();
-        int ry = this.currentYPosition;
-        ColorType bg = area.getBackgroundColor();
-
-        rx = rx - area.getPaddingLeft();
-        ry = ry + area.getPaddingTop();
-        w = w + area.getPaddingLeft() + area.getPaddingRight();
-        h = h + area.getPaddingTop() + area.getPaddingBottom();
-
-        /*
-         * // I'm not sure I should have to check for bg being null
-         * // but I do
-         * if ((bg != null) && (bg.alpha() == 0)) {
-         * this.addRect(rx, ry, w, -h,
-         * new PDFColor(bg),
-         * new PDFColor(bg));
-         * }
-         */
-
-        rx = rx - area.getBorderLeftWidth();
-        ry = ry + area.getBorderTopWidth();
-        w = w + area.getBorderLeftWidth() + area.getBorderRightWidth();
-        h = h + area.getBorderTopWidth() + area.getBorderBottomWidth();
-
-        // Create a textrect with these dimensions.
-        // The y co-ordinate is measured +ve downwards so subtract page-height
-
-        this.mifDoc.setTextRectProp(rx, pageHeight - ry, w, h);
-
-        /*
-         * BorderAndPadding bp = area.getBorderAndPadding();
-         * if (area.getBorderTopWidth() != 0)
-         * addLine(rx, ry, rx + w, ry, area.getBorderTopWidth(),
-         * new PDFColor(bp.getBorderColor(BorderAndPadding.TOP)));
-         * if (area.getBorderLeftWidth() != 0)
-         * addLine(rx, ry, rx, ry - h, area.getBorderLeftWidth(),
-         * new PDFColor(bp.getBorderColor(BorderAndPadding.LEFT)));
-         * if (area.getBorderRightWidth() != 0)
-         * addLine(rx + w, ry, rx + w, ry - h, area.getBorderRightWidth(),
-         * new PDFColor(bp.getBorderColor(BorderAndPadding.RIGHT)));
-         * if (area.getBorderBottomWidth() != 0)
-         * addLine(rx, ry - h, rx + w, ry - h, area.getBorderBottomWidth(),
-         * new PDFColor(bp.getBorderColor(BorderAndPadding.BOTTOM)));
-         */
-    }
-
-    public void renderSpanArea(SpanArea area) {
-        // A span maps to a textframe
-        this.mifDoc.createTextRect(area.getColumnCount());
-        super.renderSpanArea(area);
-    }
-
     /**
-     * render the given block area
-     */
-    public void renderBlockArea(BlockArea area) {
-        this.mifDoc.setBlockProp(area.getStartIndent(), area.getEndIndent());
-        super.renderBlockArea(area);
-    }
-
-    /**
-     * render the given display space
-     */
-    public void renderDisplaySpace(DisplaySpace space) {
-        int d = space.getSize();
-        this.currentYPosition -= d;
-    }
-
-    /**
-     * render the given SVG area
-     */
-    public void renderSVGArea(SVGArea area) {}
-
-    /**
-     * render a foreign object area
-     */
-    public void renderForeignObjectArea(ForeignObjectArea area) {}
-
-    public void renderWordArea(WordArea area) {
-        String s;
-        s = area.getText();
-        this.mifDoc.addToStream(s);
-
-        this.currentXPosition += area.getContentWidth();
-    }
-
-    /**
-     * render the given image area
-     */
-    public void renderImageArea(ImageArea area) {
-
-        int x = this.currentAreaContainerXPosition + area.getXOffset();
-        int y = this.currentYPosition;
-        int w = area.getContentWidth();
-        int h = area.getHeight();
-
-        this.currentYPosition -= h;
-
-        FopImage img = area.getImage();
-        if (img instanceof SVGImage) {
-            /*
-             * try {
-             * SVGSVGElement svg =
-             * ((SVGImage) img).getSVGDocument().getRootElement();
-             * currentStream.add("ET\nq\n" + (((float) w) / 1000f) +
-             * " 0 0 " + (((float) h) / 1000f) + " " +
-             * (((float) x) / 1000f) + " " +
-             * (((float)(y - h)) / 1000f) + " cm\n");
-             * //        renderSVG(svg, (int) x, (int) y);
-             * currentStream.add("Q\nBT\n");
-             * } catch (FopImageException e) {
-             * }
-             */
-
-            log.warn("SVG images not supported in this version");
-        } else {
-            String url = img.getURL();
-            this.mifDoc.addImage(url, x, pageHeight - y, w, h);
-
-        }
-    }
-
-    /**
-     * render the given inline area
-     */
-    public void renderInlineArea(InlineArea area) {}
-
-    /**
-     * render the given inline space
-     */
-    public void renderInlineSpace(InlineSpace space) {
-
-        // I dont need the size of space! I just need to
-        // leave a blank space each time
-        String s = " ";
-        this.mifDoc.addToStream(s);    // cool!
-        this.currentXPosition += space.getSize();
-    }
-
-    /**
-     * render the given line area
-     */
-    public void renderLineArea(LineArea area) {
-        // The start of a new linearea corresponds to a new para in FM
-        this.mifDoc.startLine();
-        super.renderLineArea(area);
-    }
-
-    /**
-     * render the given page
-     */
-    public void renderPage(Page page) {
-
-        AreaContainer before, after;
-        BodyAreaContainer body;
-        body = page.getBody();
-        before = page.getBefore();
-        after = page.getAfter();
-
-        this.currentFontName = "";
-        this.currentFontSize = "0";
-
-        pageHeight = page.getHeight();
-        pageWidth = page.getWidth();
-        this.mifDoc.setDocumentHeightWidth(pageHeight, pageWidth);
-
-        this.mifDoc.createPage();
-
-        renderBodyAreaContainer(body);
-
-
-        // If the area is an instance of anything other than body, it goes into the
-        // corresponding master page.
-
-
-        if (before != null) {
-
-            this.mifDoc.createTextRect(1);    // Create a rect with one col
-            renderAreaContainer(before);
-        }
-
-        if (after != null) {
-
-            this.mifDoc.createTextRect(1);    // Create a rect with one col
-            renderAreaContainer(after);
-        }
-
-    }
-
-    /**
-     * render the given leader area
-     */
-    public void renderLeaderArea(LeaderArea area) {}
-
-    /**
-      Default start renderer method. This would
-      normally be overridden. (mark-fop@inomial.com).
     */
-    public void startRenderer(OutputStream outputStream)
-    throws IOException {
-        log.info("rendering areas to MIF");
-    }
-
-    /**
-      Default stop renderer method. This would
-      normally be overridden. (mark-fop@inomial.com)
-    */
-    public void stopRenderer(OutputStream outputStream)
+    public void stopRenderer()
     throws IOException {
         log.info("writing out MIF");
-        this.mifDoc.output(outputStream);
-        outputStream.flush();
     }
 
-    public void render(Page page, OutputStream outputStream) {
-        this.renderPage(page);
-    }
 }
 

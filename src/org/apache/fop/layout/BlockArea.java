@@ -78,10 +78,6 @@ public class BlockArea extends Area {
             this.halfLeading = (lineHeight - fontState.getFontSize()) / 2;
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderBlockArea(this);
-    }
-
     /**
      * Add a Line Area to this block area.
      * Used internally to add a completed line area to this block area
