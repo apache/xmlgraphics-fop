@@ -624,6 +624,23 @@ public class PSRenderer extends AbstractRenderer {
 
             write(x + " " + (y - h) + " translate");
             write(w + " " + h + " scale");
+
+            write("mark {{");
+            // Template: (RawData is used for the EOF signal only)
+            // write("/RawData currentfile <first filter> filter def");
+            // write("/Data RawData <second filter> <third filter> [...] def");
+            if (img instanceof JpegImage) {
+                write("/RawData currentfile /ASCII85Decode filter def");
+                write("/Data RawData << >> /DCTDecode filter def");
+            } else {
+                if (this.psLevel >= 3) {
+                    write("/RawData currentfile /ASCII85Decode filter def");
+                    write("/Data RawData /FlateDecode filter def");
+                } else {
+                    write("/RawData currentfile /ASCII85Decode filter def");
+                    write("/Data RawData /RunLengthDecode filter def");
+                }
+            }
             write("<<");
             write("  /ImageType 1");
             write("  /Width " + img.getWidth());
@@ -643,22 +660,17 @@ public class PSRenderer extends AbstractRenderer {
             write("  /ImageMatrix [" + img.getWidth() + " 0 0 -"
                   + img.getHeight() + " 0 " + img.getHeight() + "]");
 
-            if (img instanceof JpegImage) {
-                write("  /DataSource currentfile /ASCII85Decode filter /DCTDecode filter");
-            } else {
-                if (this.psLevel >= 3) {
-                    write("  /DataSource currentfile /ASCII85Decode filter /FlateDecode filter");
-                } else {
-                    write("  /DataSource currentfile /ASCII85Decode filter /RunLengthDecode filter");
-                }
-            }
-            // write("  /DataSource currentfile /ASCIIHexDecode filter /FlateDecode filter");
-            // write("  /DataSource currentfile /ASCIIHexDecode filter /RunLengthDecode filter");
-            // write("  /DataSource currentfile /ASCIIHexDecode filter");
-            // write("  /DataSource currentfile /ASCII85Decode filter");
-            // write("  /DataSource currentfile /RunLengthDecode filter");
+            write("  /DataSource Data");
             write(">>");
             write("image");
+            /* the following two lines could be enabled if something still goes wrong
+             * write("Data closefile");
+             * write("RawData flushfile");
+             */
+            write("} stopped {handleerror} if");
+            write("  cleartomark");
+            write("  RawData flushfile");
+            write("} exec");
 
             /*
              * for (int y=0; y<img.getHeight(); y++) {
@@ -679,7 +691,9 @@ public class PSRenderer extends AbstractRenderer {
                 // imgmap[0] = 1;
                 OutputStream out = this.out;
                 out = new ASCII85OutputStream(out);
-                if (!(img instanceof JpegImage)) {
+                if (img instanceof JpegImage) {
+                    //nop
+                } else {
                     if (this.psLevel >= 3) {
                         out = new FlateEncodeOutputStream(out);
                     } else {
