@@ -11,6 +11,9 @@ import java.util.Iterator;
 import java.util.HashMap;
 import java.util.ArrayList;
 
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
+
 /**
  * Reads a TrueType file or a TrueType Collection.
  * The TrueType spec can be found at the Microsoft
@@ -22,7 +25,9 @@ public class TTFFile {
     static final int MAX_CHAR_CODE = 255;
     static final int ENC_BUF_SIZE = 1024;
 
-    static String encoding = "WinAnsiEncoding";    // Deafult encoding
+    private Logger log;
+
+    static String encoding = "WinAnsiEncoding";    // Default encoding
     short firstChar = 0;
     boolean is_embeddable = true;
     boolean hasSerifs = true;
@@ -67,6 +72,10 @@ public class TTFFile {
     int ansiWidth[];
     HashMap ansiIndex;
 
+    public void setLogger(Logger l) {
+        log = l;
+    }
+
     /**
      * Position inputstream to position indicated
      * in the dirtab offset + offset
@@ -75,7 +84,7 @@ public class TTFFile {
                   long offset) throws IOException {
         TTFDirTabEntry dt = (TTFDirTabEntry)dirTabs.get(name);
         if (dt == null) {
-            System.out.println("Dirtab " + name + " not found.");
+            log.error("Dirtab " + name + " not found.");
             return;
         }
 
@@ -122,7 +131,7 @@ public class TTFFile {
         int num_cmap = in.readTTFUShort();    // Number of cmap subtables
         long cmap_unioffset = 0;
 
-        // System.out.println(num_cmap+" cmap tables");
+        log.info(num_cmap+" cmap tables");
 
         /*
          * Read offset for all tables
@@ -133,15 +142,16 @@ public class TTFFile {
             int cmap_eid = in.readTTFUShort();
             long cmap_offset = in.readTTFULong();
 
-            // System.out.println("Platform ID: "+cmap_pid+
-            // " Encoding: "+cmap_eid);
+            log.debug("Platform ID: "+cmap_pid+
+             " Encoding: "+cmap_eid);
 
             if (cmap_pid == 3 && cmap_eid == 1)
                 cmap_unioffset = cmap_offset;
         }
 
         if (cmap_unioffset <= 0) {
-            System.out.println("Unicode cmap table not present");
+            log.fatalError("Unicode cmap table not present");
+            log.fatalError("Unsupported format: Aborting");
             return false;
         }
 
@@ -150,7 +160,7 @@ public class TTFFile {
         int cmap_format = in.readTTFUShort();
         int cmap_length = in.readTTFUShort();
 
-        // System.out.println("CMAP format: "+cmap_format);
+        log.info("CMAP format: "+cmap_format);
         if (cmap_format == 4) {
             in.skip(2);    // Skip version number
             int cmap_segCountX2 = in.readTTFUShort();
@@ -158,12 +168,12 @@ public class TTFFile {
             int cmap_entrySelector = in.readTTFUShort();
             int cmap_rangeShift = in.readTTFUShort();
 
-            /*
-             * System.out.println("segCountX2   : "+cmap_segCountX2);
-             * System.out.println("searchRange  : "+cmap_searchRange);
-             * System.out.println("entrySelector: "+cmap_entrySelector);
-             * System.out.println("rangeShift   : "+cmap_rangeShift);
-             */
+
+            log.debug("segCountX2   : "+cmap_segCountX2);
+            log.debug("searchRange  : "+cmap_searchRange);
+            log.debug("entrySelector: "+cmap_entrySelector);
+            log.debug("rangeShift   : "+cmap_rangeShift);
+             
 
             int cmap_endCounts[] = new int[cmap_segCountX2 / 2];
             int cmap_startCounts[] = new int[cmap_segCountX2 / 2];
@@ -196,10 +206,10 @@ public class TTFFile {
             // and fill in the cmaps ArrayList
 
             for (int i = 0; i < cmap_startCounts.length; i++) {
-                /*
-                 * System.out.println(i+ ": "+cmap_startCounts[i]+
-                 * " - "+cmap_endCounts[i]);
-                 */
+                
+                  log.debug(i+ ": "+cmap_startCounts[i]+
+                  " - "+cmap_endCounts[i]);
+                 
                 for (int j = cmap_startCounts[i]; j <= cmap_endCounts[i];
                         j++) {
 
@@ -209,7 +219,9 @@ public class TTFFile {
 
                     if (mtxPtr < mtx_tab.length) {
                         int glyphIdx;
-                        if (cmap_rangeOffsets[i] != 0) {
+                        // the last character 65535 = .notdef
+                        // may have a range offset
+                        if (cmap_rangeOffsets[i] != 0 && j != 65535) {
                             int glyphOffset =
                                 glyphIdArrayOffset
                                 + ((cmap_rangeOffsets[i] / 2) + (j - cmap_startCounts[i]) + (i) - cmap_segCountX2 / 2)
@@ -233,22 +245,22 @@ public class TTFFile {
                                         (Integer)e.next();
                                     ansiWidth[aIdx.intValue()] =
                                         mtx_tab[glyphIdx].wx;
-                                    /*
-                                     * System.out.println("Added width "+
-                                     * mtx_tab[glyphIdx].wx +
-                                     * " uni: " + j +
-                                     * " ansi: " + aIdx.intValue());
-                                     */
+                                    
+                                      log.debug("Added width "+
+                                      mtx_tab[glyphIdx].wx +
+                                      " uni: " + j +
+                                      " ansi: " + aIdx.intValue());
+                                     
                                 }
                             }
-                            /*
-                             * System.out.println("Idx: "+
-                             * glyphIdx +
-                             * " Delta: " + cmap_deltas[i]+
-                             * " Unicode: " + j +
-                             * " name: " +
-                             * mtx_tab[glyphIdx].name);
-                             */
+                            
+                              log.debug("Idx: "+
+                              glyphIdx +
+                              " Delta: " + cmap_deltas[i]+
+                              " Unicode: " + j +
+                              " name: " +
+                              mtx_tab[glyphIdx].name);
+                             
 
                         } else {
 
@@ -257,7 +269,7 @@ public class TTFFile {
                             if (glyphIdx < mtx_tab.length)
                                 mtx_tab[glyphIdx].unicodeIndex.add(new Integer(j));
                             else
-                                System.out.println("Glyph " + glyphIdx
+                                log.debug("Glyph " + glyphIdx
                                                    + " out of range: "
                                                    + mtx_tab.length);
 
@@ -266,7 +278,7 @@ public class TTFFile {
                             if (glyphIdx < mtx_tab.length)
                                 mtx_tab[glyphIdx].unicodeIndex.add(new Integer(j));
                             else
-                                System.out.println("Glyph " + glyphIdx
+                                log.debug("Glyph " + glyphIdx
                                                    + " out of range: "
                                                    + mtx_tab.length);
 
@@ -285,14 +297,14 @@ public class TTFFile {
                                 }
                             }
 
-                            /*
-                             * System.out.println("IIdx: "+
-                             * mtxPtr +
-                             * " Delta: " + cmap_deltas[i]+
-                             * " Unicode: " + j +
-                             * " name: " +
-                             * mtx_tab[(j+cmap_deltas[i]) & 0xffff].name);
-                             */
+                            
+                              log.debug("IIdx: "+
+                              mtxPtr +
+                              " Delta: " + cmap_deltas[i]+
+                              " Unicode: " + j +
+                              " name: " +
+                              mtx_tab[(j+cmap_deltas[i]) & 0xffff].name);
+                            
                         }
                         if (glyphIdx < mtx_tab.length) {
                             if (mtx_tab[glyphIdx].unicodeIndex.size() < 2) {
@@ -320,8 +332,8 @@ public class TTFFile {
             if (mtx_tab[i].index > max)
                 max = mtx_tab[i].index;
         }
-        System.out.println("Min: " + min);
-        System.out.println("Max: " + max);
+        log.info("Min: " + min);
+        log.info("Max: " + max);
     }
 
     public void readFont(FontFileReader in) throws IOException {
@@ -361,19 +373,19 @@ public class TTFFile {
      * The name of the font to read data for must be supplied,
      * else the name is ignored
      */
-    public void readFont(FontFileReader in, String name) throws IOException {
+    public boolean readFont(FontFileReader in, String name) throws IOException {
 
         /*
          * Check if TrueType collection, and that the name
          * exists in the collection
          */
-        if (!checkTTC(in, name, true))
+        if (!checkTTC(in, name))
             throw new IOException("Failed to read font");
 
         readDirTabs(in);
         readFontHeader(in);
         getNumGlyphs(in);
-        System.out.println("Number of glyphs in font: " + nglyphs);
+        log.info("Number of glyphs in font: " + nglyphs);
         readHorizontalHeader(in);
         readHorizontalMetrics(in);
         initAnsiWidths();
@@ -383,11 +395,17 @@ public class TTFFile {
         readGlyf(in);
         readName(in);
         readPCLT(in);
-        readCMAP(in);     // Read cmap table and fill in ansiwidths
-        createCMaps();    // Create cmaps for bfentries
+        // Read cmap table and fill in ansiwidths
+        boolean valid = readCMAP(in);
+        if(!valid) {
+            return false;
+        }
+        // Create cmaps for bfentries
+        createCMaps();
         // print_max_min();
 
         readKerning(in);
+        return true;
     }
 
     private void createCMaps() {
@@ -445,8 +463,12 @@ public class TTFFile {
     }
 
     public static void main(String[] args) {
+        int level = ConsoleLogger.LEVEL_WARN;
+        Logger log = new ConsoleLogger(level);
         try {
             TTFFile ttfFile = new TTFFile();
+            ttfFile.setLogger(log);
+
             FontFileReader reader = new FontFileReader(args[0]);
 
             String name = null;
@@ -457,7 +479,7 @@ public class TTFFile {
             ttfFile.printStuff();
 
         } catch (IOException ioe) {
-            System.out.println(ioe.toString());
+            log.error("problem reading font: " + ioe.toString(), ioe);
         }
     }
 
@@ -582,7 +604,7 @@ public class TTFFile {
 
         dirTabs = new HashMap();
         TTFDirTabEntry[] pd = new TTFDirTabEntry[ntabs];
-        // System.out.println("Reading " + ntabs + " dir tables");
+        log.debug("Reading " + ntabs + " dir tables");
         for (int i = 0; i < ntabs; i++) {
             pd[i] = new TTFDirTabEntry();
             dirTabs.put(pd[i].read(in), pd[i]);
@@ -631,7 +653,7 @@ public class TTFFile {
 
         in.skip(2 + 2 + 3 * 2 + 8 * 2);
         nhmtx = in.readTTFUShort();
-        // System.out.println("Number of horizontal metrics: " + nhmtx);
+        log.debug("Number of horizontal metrics: " + nhmtx);
     }
 
     /**
@@ -647,16 +669,15 @@ public class TTFFile {
         int mtx_size = (nglyphs > nhmtx) ? nglyphs : nhmtx;
         mtx_tab = new TTFMtxEntry[mtx_size];
 
-        // System.out.println("*** Widths array: \n");
+        log.debug("*** Widths array: \n");
         for (int i = 0; i < mtx_size; i++)
             mtx_tab[i] = new TTFMtxEntry();
         for (int i = 0; i < nhmtx; i++) {
             mtx_tab[i].wx = in.readTTFUShort();
             mtx_tab[i].lsb = in.readTTFUShort();
-            /*
-             * System.out.println("   width["+i+"] = "+
-             * get_ttf_funit(mtx_tab[i].wx)+";");
-             */
+            
+            log.debug("   width["+i+"] = "+
+             get_ttf_funit(mtx_tab[i].wx)+";");
         }
 
         if (nhmtx < mtx_size) {
@@ -687,16 +708,16 @@ public class TTFFile {
 
         in.skip(4 * 4);
 
-        // System.out.println("Post format: "+post_format);
+        log.debug("Post format: "+post_format);
         switch (post_format) {
         case 0x00010000:
-            // System.out.println("Postscript format 1");
+            log.debug("Postscript format 1");
             for (i = 0; i < Glyphs.mac_glyph_names.length; i++) {
                 mtx_tab[i].name = Glyphs.mac_glyph_names[i];
             }
             break;
         case 0x00020000:
-            // System.out.println("Postscript format 2");
+            log.debug("Postscript format 2");
             int numGlyphStrings = 0;
             l = in.readTTFUShort();      // Num Glyphs
             // short minIndex=256;
@@ -708,13 +729,12 @@ public class TTFFile {
                 if (mtx_tab[i].index > 257)
                     numGlyphStrings++;
 
-                    // System.out.println("Post index: "+mtx_tab[i].index);
+                    log.debug("Post index: "+mtx_tab[i].index);
             }
             // firstChar=minIndex;
             ps_glyphs_buf = new String[numGlyphStrings];
-            // System.out.println("Reading " + numGlyphStrings +
-            // " glyphnames"+
-            // ", was n num glyphs="+l);
+            log.debug("Reading " + numGlyphStrings +
+                      " glyphnames" + ", was n num glyphs="+l);
             for (i = 0; i < ps_glyphs_buf.length; i++) {
                 ps_glyphs_buf[i] = in.readTTFString(in.readTTFUByte());
             }
@@ -725,10 +745,10 @@ public class TTFFile {
                         Glyphs.mac_glyph_names[mtx_tab[i].index];
                 } else {
                     k = mtx_tab[i].index - NMACGLYPHS;
-                    /*
-                     * System.out.println(k+" i="+i+" mtx="+mtx_tab.length+
-                     * " ps="+ps_glyphs_buf.length);
-                     */
+
+                     log.debug(k+" i="+i+" mtx="+mtx_tab.length+
+                      " ps="+ps_glyphs_buf.length);
+
                     mtx_tab[i].name = ps_glyphs_buf[k];
                 }
             }
@@ -736,10 +756,10 @@ public class TTFFile {
             break;
         case 0x00030000:
             // Postscript format 3 contains no glyph names
-            System.out.println("Postscript format 3");
+            log.debug("Postscript format 3");
             break;
         default:
-            System.out.println("Unknown Postscript format : " + post_format);
+            log.error("Unknown Postscript format : " + post_format);
         }
     }
 
@@ -812,7 +832,7 @@ public class TTFFile {
                 mtx_tab[i].bbox[2] = mtx_tab[0].bbox[0];
                 mtx_tab[i].bbox[3] = mtx_tab[0].bbox[0];
             }
-            // System.out.println(mtx_tab[i].toString(this));
+            log.debug(mtx_tab[i].toString(this));
         }
     }
 
@@ -829,7 +849,7 @@ public class TTFFile {
         i += 2 * 2;
 
         while (n-- > 0) {
-            // System.out.println("Iteration: "+n);
+            // log.debug("Iteration: "+n);
             in.seek_set(i);
             platform_id = in.readTTFUShort();
             encoding_id = in.readTTFUShort();
@@ -843,7 +863,7 @@ public class TTFFile {
                 // if (k==1 || k==2 || k==0 || k==4 || k==6) {
                 in.seek_set(j + in.readTTFUShort());
                 String txt = in.readTTFString(l);
-                // System.out.println(platform_id+" "+encoding_id+
+                // log.debug(platform_id+" "+encoding_id+
                 // " "+k+" "+txt);
                 switch (k) {
                 case 0:
@@ -942,7 +962,7 @@ public class TTFFile {
                     }
                 }
             }
-            // System.out.println(kerningTab.toString());
+            // log.debug(kerningTab.toString());
 
             // Create winAnsiEncoded kerning table
 
@@ -995,8 +1015,7 @@ public class TTFFile {
      * @ return true if not collection or font name present, false
      * otherwise
      */
-    protected final boolean checkTTC(FontFileReader in, String name,
-                                     boolean verbose) throws IOException {
+    protected final boolean checkTTC(FontFileReader in, String name) throws IOException {
         String tag = in.readTTFString(4);
 
         if ("ttcf".equals(tag)) {
@@ -1011,11 +1030,9 @@ public class TTFFile {
                 dirOffsets[i] = in.readTTFULong();
             }
 
-            if (verbose) {
-                System.out.println("This is a TrueType collection file with"
+            log.debug("This is a TrueType collection file with"
                                    + numDirectories + " fonts");
-                System.out.println("Containing the following fonts: ");
-            }
+            log.debug("Containing the following fonts: ");
             // Read all the directories and name tables to check
             // If the font exists - this is a bit ugly, but...
             boolean found = false;
@@ -1032,11 +1049,9 @@ public class TTFFile {
                 if (fullName.equals(name)) {
                     found = true;
                     dirTabOffset = dirOffsets[i];
-                    if (verbose)
-                        System.out.println("* " + fullName);
+                    log.debug("* " + fullName);
                 } else {
-                    if (verbose)
-                        System.out.println(fullName);
+                    log.debug(fullName);
                 }
 
                 // Reset names

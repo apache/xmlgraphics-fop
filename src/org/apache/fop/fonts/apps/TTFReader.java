@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
+
 /**
  * A tool which reads TTF files and generates
  * XML font metrics file for use in FOP.
@@ -24,9 +27,13 @@ import java.util.Iterator;
 public class TTFReader {
 
     private boolean invokedStandalone = false;
+    private Logger log;
 
     public TTFReader() {}
 
+    public void setLogger(Logger l) {
+        log = l;
+    }
 
     /**
      * Parse commandline arguments. put options in the HashMap and return
@@ -107,11 +114,22 @@ public class TTFReader {
         HashMap options = new HashMap();
         String[] arguments = parseArguments(options, args);
 
+        int level = ConsoleLogger.LEVEL_INFO;
+        if (options.get("-d") != null) {
+            String lev = (String)options.get("-d");
+            if(lev.equals("DEBUG")) {
+                level = ConsoleLogger.LEVEL_DEBUG;
+            } else if(lev.equals("INFO")) {
+                level = ConsoleLogger.LEVEL_INFO;
+            }
+        }
+        Logger log = new ConsoleLogger(level);
+
         TTFReader app = new TTFReader();
+        app.setLogger(log);
         app.invokedStandalone = true;
 
-        System.out.println("TTF Reader v1.1.1");
-        System.out.println();
+        log.info("TTF Reader v1.1.2");
 
         if (options.get("-enc") != null) {
             String enc = (String)options.get("-enc");
@@ -145,18 +163,18 @@ public class TTFReader {
                         ttcName);
 
                 if (isCid)
-                    System.out.println("Creating CID encoded metrics");
+                    log.info("Creating CID encoded metrics");
                 else
-                    System.out.println("Creating WinAnsi encoded metrics");
+                    log.info("Creating WinAnsi encoded metrics");
 
                 if (doc != null) {
                     app.writeFontXML(doc, arguments[1]);
                 }
 
                 if (ttf.isEmbeddable())
-                    System.out.println("This font contains no embedding license restrictions");
+                    log.info("This font contains no embedding license restrictions");
                 else
-                    System.out.println("** Note: This font contains license retrictions for\n"
+                    log.info("** Note: This font contains license retrictions for\n"
                                        + "         embedding. This font shouldn't be embedded.");
 
             }
@@ -171,12 +189,15 @@ public class TTFReader {
      */
     public TTFFile loadTTF(String fileName, String fontName) {
         TTFFile ttfFile = new TTFFile();
+        ttfFile.setLogger(log);
         try {
-            System.out.println("Reading " + fileName + "...");
-            System.out.println();
+            log.info("Reading " + fileName + "...");
 
             FontFileReader reader = new FontFileReader(fileName);
-            ttfFile.readFont(reader, fontName);
+            boolean supported = ttfFile.readFont(reader, fontName);
+            if(!supported) {
+                return null;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -192,8 +213,7 @@ public class TTFReader {
      * @param   target The target filename for the XML file.
      */
     public void writeFontXML(org.w3c.dom.Document doc, String target) {
-        System.out.println("Writing xml font file " + target + "...");
-        System.out.println();
+        log.info("Writing xml font file " + target + "...");
 
         try {
             OutputFormat format = new OutputFormat(doc);    // Serialize DOM
@@ -217,8 +237,7 @@ public class TTFReader {
     public org.w3c.dom.Document constructFontXML(TTFFile ttf,
             String fontName, String className, String resource, String file,
             boolean isCid, String ttcName) {
-        System.out.println("Creating xml font file...");
-        System.out.println();
+        log.info("Creating xml font file...");
 
         Document doc = new DocumentImpl();
         Element root = doc.createElement("font-metrics");
