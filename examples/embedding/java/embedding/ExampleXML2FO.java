@@ -32,9 +32,6 @@ import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-//Avalon
-import org.apache.avalon.framework.ExceptionUtil;
-
 /**
  * This class demonstrates the conversion of an XML file to an XSL-FO file
  * using JAXP (XSLT).
@@ -103,7 +100,7 @@ public class ExampleXML2FO {
             
             System.out.println("Success!");
         } catch (Exception e) {
-            System.err.println(ExceptionUtil.printStackTrace(e));
+            e.printStackTrace(System.err);
             System.exit(-1);
         }
     }

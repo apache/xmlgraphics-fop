@@ -33,9 +33,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
-//Avalon
-import org.apache.avalon.framework.ExceptionUtil;
-
 // Commons-Logging
 import org.apache.commons.logging.impl.SimpleLog;
 
@@ -141,8 +138,9 @@ public class ExampleDOM2PDF {
             app.convertDOM2PDF(foDoc, pdffile);
             
             System.out.println("Success!");
+            
         } catch (Exception e) {
-            System.err.println(ExceptionUtil.printStackTrace(e));
+            e.printStackTrace(System.err);
             System.exit(-1);
         }
     }

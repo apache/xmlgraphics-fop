@@ -32,9 +32,6 @@ import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
 
-//Avalon
-import org.apache.avalon.framework.ExceptionUtil;
-
 // Commons-Logging
 import org.apache.commons.logging.impl.SimpleLog;
 
@@ -127,7 +124,7 @@ public class ExampleObj2PDF {
             
             System.out.println("Success!");
         } catch (Exception e) {
-            System.err.println(ExceptionUtil.printStackTrace(e));
+            e.printStackTrace(System.err);
             System.exit(-1);
         }
     }
