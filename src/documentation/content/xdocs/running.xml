@@ -136,30 +136,21 @@ Forward references are references to some later part of a document.
 Examples include page number citations which refer to pages which follow the citation, tables of contents at the beginning of a document, and page numbering schemes that include the total number of pages in the document (<link href="faq.html#pagenum">"page N of TOTAL"</link>).
 Forward references cause all subsequent pages to be held in memory until the reference can be resolved, i.e. until the page with the referenced element is encountered.
 Forward references may be required by the task, but if you are getting a memory overflow, at least consider the possibility of eliminating them.
-A table of contents might be eliminated, relying on PDF bookmarks instead.
-Or it might be moved to the end of the document without dimishing its value very much.
-Or, in some circumstances, the paper could even be reshuffled after printing.
+A table of contents could be replaced by PDF bookmarks instead or moved to the end of the document (reshuffle the paper could after printing).
         </li>
         <li>
 Avoid large images, especially if they are scaled down.
 If they need to be scaled, scale them in another application upstream from FOP.
 For many image formats, memory consumption is driven mainly by the size of the image file itself, not its dimensions (width*height), so increasing the compression rate may help.
+If FOP is running embedded, clearing the image from time to time cache might prevent memory exhaustion, you can call
+<code>org.apache.fop.image.FopImageFactory.resetCache()</code> to empty the 
+<jump href="graphics.html#caching">image cache</jump>.
         </li>
         <li>
 Use multiple page sequences.
 FOP starts rendering after the end of a page sequence is encountered.
-While the actual rendering is done page-by-page, some additional memory allocated for other purposes could be freed after the page sequence has been rendered.
-        </li>
-        <li>
-Break down large tables.
-If you don't use table headers and footers, just start a new table every N rows.
-With headers and footers, consider integrating them as normal table rows, or, if they are used at page breaks, try to put the information into static content.
-You can then use markers to change them.
-        </li>
-        <li>
-Clear the image cache. At the moment, images in the cache are not released automatically when an OutOfMemoryError is imminent.
-Starting with version 0.20.5 however, you can call <code>org.apache.fop.image.FopImageFactory.resetCache()</code> to empty the 
-<jump href="graphics.html#caching">image cache</jump>.
+While the actual rendering is done page-by-page, some additional memory is freed after the page sequence has been rendered.
+This can be substantial if the page sequence contains lots of FO elements.
         </li>
       </ul>
       <p>
