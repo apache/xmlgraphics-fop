@@ -50,6 +50,8 @@
  */ 
 package org.apache.fop.apps;
 
+import org.apache.avalon.framework.logger.ConsoleLogger;
+
 /**
  * The main application class for the FOP command line interface (CLI).
  */
@@ -61,10 +63,16 @@ public class Fop {
      */
     public static void main(String[] args) {
         CommandLineOptions options = null;
+        Starter starter = null;
 
         try {
             options = new CommandLineOptions(args);
-            Starter starter = options.getStarter();
+            if (options.getOutputMode() == CommandLineOptions.AWT_OUTPUT) {
+                starter = new AWTStarter(options);
+            } else {
+                starter = new CommandLineStarter(options);
+            }
+            starter.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_INFO));
             starter.run();
         } catch (FOPException e) {
             if (e.getMessage() == null) {
