@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,21 +8,23 @@
 package org.apache.fop.tools.anttasks;
 
 // Ant
-import org.apache.tools.ant.*;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 
 // SAX
 import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 // Java
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
 
 // FOP
-import org.apache.fop.messaging.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.apps.Options;
 import org.apache.fop.apps.Starter;
 import org.apache.fop.apps.InputHandler;
@@ -34,6 +36,7 @@ import org.apache.fop.configuration.Configuration;
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
+import org.apache.tools.ant.util.GlobPatternMapper;
 
 /**
  * Wrapper for Fop which allows it to be accessed from within an Ant task.
@@ -44,18 +47,21 @@ import org.apache.avalon.framework.logger.Logger;
  * <li>outfile -> output filename</li>
  * <li>baseDir -> directory to work from</li>
  * <li>userconfig -> file with user configuration (same as the "-c" command line option)</li>
- * <li>messagelevel -> (info | verbose | debug) level to output non-error messages</li>
+ * <li>messagelevel -> (error | warn | info | verbose | debug) level to output non-error messages</li>
+ * <li>logFiles -> Controls whether the names of the files that are processed are logged or not</li>
  * </ul>
  */
 public class Fop extends Task {
+    
     File foFile;
-    ArrayList filesets = new ArrayList();
+    List filesets = new java.util.ArrayList();
     File outFile;
     File outDir;
     String format; //MIME type
     File baseDir;
     File userConfig;
     int messageType = Project.MSG_VERBOSE;
+    boolean logFiles = true;
 
     /**
      * Sets the input file
@@ -142,6 +148,10 @@ public class Fop extends Task {
             messageType = Project.MSG_VERBOSE;
         } else if (messageLevel.equalsIgnoreCase("debug")) {
             messageType = Project.MSG_DEBUG;
+        } else if (messageLevel.equalsIgnoreCase("err") || messageLevel.equalsIgnoreCase("error")) {
+            messageType = Project.MSG_ERR;
+        } else if (messageLevel.equalsIgnoreCase("warn")) {
+            messageType = Project.MSG_WARN;
         } else {
             log("messagelevel set to unknown value \"" + messageLevel +
                 "\"", Project.MSG_ERR);
@@ -173,11 +183,33 @@ public class Fop extends Task {
     }
 
     /**
+     * Controls whether the filenames of the files that are processed are logged
+     * or not.
+     */
+    public void setLogFiles(boolean aBoolean) {
+        logFiles = aBoolean;
+    }
+
+    public boolean getLogFiles() {
+        return logFiles;
+    }
+
+    /**
      * Starts execution of this task
      */
     public void execute() throws BuildException {
+        int logLevel = ConsoleLogger.LEVEL_INFO;
+        switch (getMessageType()) {
+            case Project.MSG_DEBUG  : logLevel = ConsoleLogger.LEVEL_DEBUG; break;
+            case Project.MSG_INFO   : logLevel = ConsoleLogger.LEVEL_INFO; break;
+            case Project.MSG_WARN   : logLevel = ConsoleLogger.LEVEL_WARN; break;
+            case Project.MSG_ERR    : logLevel = ConsoleLogger.LEVEL_ERROR; break;
+            case Project.MSG_VERBOSE: logLevel = ConsoleLogger.LEVEL_DEBUG; break;
+        }
+        Logger log = new ConsoleLogger(logLevel);
+        MessageHandler.setScreenLogger(log);
         try {
-            Starter starter = new FOPTaskStarter(this);
+            Starter starter = new FOPTaskStarter(this, log, logFiles);
             starter.run();
         } catch (FOPException ex) {
             throw new BuildException(ex);
@@ -190,12 +222,12 @@ public class Fop extends Task {
 class FOPTaskStarter extends Starter {
     Fop task;
     Logger log;
+    boolean logFiles;
 
-    FOPTaskStarter(Fop task) throws FOPException {
+    FOPTaskStarter(Fop task, Logger aLogger, boolean aLogFiles) throws FOPException {
         this.task = task;
-
-    log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-    MessageHandler.setScreenLogger(log);
+        log = aLogger;
+        logFiles = aLogFiles;
     }
 
     private int determineRenderer(String format) {
@@ -221,7 +253,6 @@ class FOPTaskStarter extends Starter {
             return Driver.RENDER_XML;
         } else {
             String err = "Couldn't determine renderer to use: "+format;
-            log.error(err);
             throw new BuildException(err);
         }
     }
@@ -242,7 +273,6 @@ class FOPTaskStarter extends Starter {
                 return ".xml";
             default:
                 String err = "Unknown renderer: "+renderer;
-                log.error(err);
                 throw new BuildException(err);
         }
     }
@@ -277,7 +307,8 @@ class FOPTaskStarter extends Starter {
             task.log("Using base directory: " +
                      Configuration.getValue("baseDir"), Project.MSG_DEBUG);
         } catch (Exception e) {
-            log.error("Error setting base directory",e);
+
+            task.log("Error setting base directory: " + e, Project.MSG_ERR);
         }
 
         int rint = determineRenderer(task.getFormat());
@@ -300,17 +331,28 @@ class FOPTaskStarter extends Starter {
             }
         }
 
+        GlobPatternMapper mapper = new GlobPatternMapper();
+        mapper.setFrom("*.fo");
+        mapper.setTo("*" + newExtension);
+
         // deal with the filesets
         for (int i = 0; i < task.filesets.size(); i++) {
             FileSet fs = (FileSet) task.filesets.get(i);
             DirectoryScanner ds = fs.getDirectoryScanner(task.getProject());
             String[] files = ds.getIncludedFiles();
 
+
             for (int j = 0; j < files.length; j++) {
                 File f = new File(fs.getDir(task.getProject()), files[j]);
-                File outf = replaceExtension(f, ".fo", newExtension);
-                if (task.getOutdir() != null) {
-                    outf = new File(task.getOutdir(), outf.getName());
+                File outf = null;
+                if (task.getOutdir() != null && files[j].endsWith(".fo")) {
+                  String[] sa = mapper.mapFileName(files[j]);
+                  outf = new File(task.getOutdir(), sa[0]);
+                } else {
+                  outf = replaceExtension(f, ".fo", newExtension);
+                  if (task.getOutdir() != null) {
+                      outf = new File(task.getOutdir(), outf.getName());
+                  }
                 }
                 try {
                     if (task.getBasedir() != null) {
@@ -325,7 +367,7 @@ class FOPTaskStarter extends Starter {
                     task.log("Using base directory: " +
                              Configuration.getValue("baseDir"), Project.MSG_DEBUG);
                 } catch (Exception e) {
-                    log.error("Error setting base directory", e);
+                    task.log("Error setting base directory: " + e, Project.MSG_ERR);
                 }
 
                 render(f, outf, rint);
@@ -345,22 +387,23 @@ class FOPTaskStarter extends Starter {
         InputHandler inputHandler = new FOInputHandler(foFile);
         XMLReader parser = inputHandler.getParser();
 
-        FileOutputStream out = null;
+        OutputStream out = null;
         try {
-            out = new FileOutputStream(outFile);
+            File dir = outFile.getParentFile();
+            dir.mkdirs();
+            out = new java.io.FileOutputStream(outFile);
         } catch (Exception ex) {
-            log.error("Failed to open " + outFile);
             throw new BuildException(ex);
         }
 
-        task.log(foFile + " -> " + outFile, Project.MSG_INFO);
+        if (logFiles) task.log(foFile + " -> " + outFile, Project.MSG_INFO);
 
         try {
             Driver driver = new Driver(inputHandler.getInputSource(), out);
             driver.setLogger(log);
             driver.setRenderer(renderer);
             if (renderer == Driver.RENDER_XML) {
-                HashMap rendererOptions = new HashMap();
+                Map rendererOptions = new java.util.HashMap();
                 rendererOptions.put("fineDetail", new Boolean(true));
                 driver.getRenderer().setOptions(rendererOptions);
             }
@@ -368,7 +411,6 @@ class FOPTaskStarter extends Starter {
             driver.run();
             out.close();
         } catch (Exception ex) {
-            log.error("Couldn't render file: " + ex.getMessage());
             throw new BuildException(ex);
         }
     }
