@@ -3183,6 +3183,9 @@ public abstract class Properties {
                     || value instanceof UriType
                     )
                     return PropertySets.expandAndCopySHand(value);
+                throw new PropertyException
+                    ("Invalid " + value.getClass().getName() +
+                        " object for cue");
             } else {
                 // List may contain only 2 uri specifiers
                 PropertyValueList list = (PropertyValueList)value;
