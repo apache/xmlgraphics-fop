@@ -10,7 +10,7 @@ public class SpaceAfterPrecedence extends PrecedenceCommon {
     public static final int dataTypes = INTEGER | ENUM;
     public static final int traitMapping = FORMATTING;
     public static final int initialValueType = INTEGER_IT;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new IntegerType(PropNames.SPACE_AFTER_PRECEDENCE, 0);

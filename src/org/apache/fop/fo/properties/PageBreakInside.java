@@ -33,7 +33,7 @@ public class PageBreakInside extends Property  {
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
     {
@@ -65,10 +65,10 @@ public class PageBreakInside extends Property  {
                 + value.getClass().getName());
     }
 
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

@@ -11,7 +11,7 @@ public class BorderLeftColor extends ColorTransparent {
     public static final int traitMapping = DISAPPEARS;
     public static final int initialValueType = COLOR_IT;
     public static final int inherited = NO;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new ColorType (PropNames.BACKGROUND_COLOR, BLACK);

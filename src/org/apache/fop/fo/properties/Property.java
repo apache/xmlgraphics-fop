@@ -252,7 +252,7 @@ public /*abstract*/ class Property {
      * and separated by a vertical bar.  Psuedo-datatypes are in upper case.
      * @exception PropertyException if no matches are found.
      */
-    public /**/static/**/ String listDataTypes(int datatypes)
+    public static String listDataTypes(int datatypes)
                     throws PropertyException
     {
         String typeNames = "";
@@ -335,7 +335,7 @@ public /*abstract*/ class Property {
      * @param foNode - the <tt>FONode</tt> being built
      * @param value - <tt>PropertyValue</tt> returned by the parser
      */
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
             throws PropertyException
     {
@@ -352,7 +352,7 @@ public /*abstract*/ class Property {
      * method.
      * @see #refineParsing(int,FOTree,PropertyValue)
      */
-    public /*static*/ PropertyValue refineParsing(int property,
+    public PropertyValue refineParsing(int property,
                         FONode foNode, PropertyValue value, boolean nested)
             throws PropertyException
     {
@@ -481,7 +481,7 @@ public /*abstract*/ class Property {
      * @return a <tt>PropertyValueList>/tt> containing the refined property
      * values.
      */
-    public /*static*/ PropertyValueList refineExpansionList
+    public PropertyValueList refineExpansionList
                         (int propindex, FONode foNode, PropertyValueList list)
             throws PropertyException
     {
@@ -518,7 +518,7 @@ public /*abstract*/ class Property {
      * @throws <tt>PropertyException</tt> if <i>list</i> contains more than
      * one element or if the contained element is not a list.
      */
-    protected /*static*/ PropertyValueList spaceSeparatedList
+    protected PropertyValueList spaceSeparatedList
                                                     (PropertyValueList list)
             throws PropertyException
     {
@@ -545,7 +545,7 @@ public /*abstract*/ class Property {
      * @return <tt>EnumValue</tt> equivalent of the argument
      * @exception <tt>PropertyException</tt>
      */
-    protected /*static*/ EnumType getEnum(PropertyValue value,
+    protected EnumType getEnum(PropertyValue value,
                                             int property, String type)
             throws PropertyException
     {
@@ -573,7 +573,7 @@ public /*abstract*/ class Property {
      * @return <tt>int</tt> constant representing the enumeration value.
      * @exception PropertyException
      */
-    public /*static*/ int getEnumIndex(String enum)
+    public int getEnumIndex(String enum)
             throws PropertyException
     {
         throw new PropertyException("ENUM not supported.");
@@ -584,7 +584,7 @@ public /*abstract*/ class Property {
      * @return <tt>String</tt> containing the enumeration text.
      * @exception PropertyException
      */
-    public /*static*/ String getEnumText(int enumIndex)
+    public String getEnumText(int enumIndex)
                     throws PropertyException
     {
         throw new PropertyException("ENUM not supported.");
@@ -598,7 +598,7 @@ public /*abstract*/ class Property {
      * @return the integer equivalent of the enum text
      * @exception PropertyException if the enum text is not valid.
      */
-    public /*static*/ int enumValueToIndex(String value, String[] values)
+    public int enumValueToIndex(String value, String[] values)
                 throws PropertyException
     {
         for (int i = 1; i < values.length; i++) {
@@ -618,7 +618,7 @@ public /*abstract*/ class Property {
      * @return a <tt>Numeric</tt>.  This implementation never returns.
      * @throws <tt>PropertyException</tt>.
      */
-    public /*static*/ Numeric getMappedLength(int enum)
+    public Numeric getMappedLength(int enum)
             throws PropertyException
     {
         throw new PropertyException
@@ -635,7 +635,7 @@ public /*abstract*/ class Property {
      * @exception <tt>PropertyException</tt>
      * @exception <tt>PropertyNotImplementedException</tt>
      */
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
             throws PropertyException
     {
         int initialValueType =
@@ -692,7 +692,7 @@ public /*abstract*/ class Property {
      *  N.B. this is the order of elements defined in
      *       ShorthandPropSets.borderRightExpansion
      */
-    protected /*static*/ PropertyValue borderEdge
+    protected PropertyValue borderEdge
                         (int propindex, FONode foNode, PropertyValue value,
                                 int styleProp, int colorProp, int widthProp)
                 throws PropertyException
@@ -701,7 +701,7 @@ public /*abstract*/ class Property {
                                             colorProp, widthProp, NOT_NESTED);
     }
 
-    protected /*static*/ PropertyValue borderEdge
+    protected PropertyValue borderEdge
             (int propindex, FONode foNode, PropertyValue value, int styleProp,
                                 int colorProp, int widthProp, boolean nested)
                 throws PropertyException
@@ -716,7 +716,7 @@ public /*abstract*/ class Property {
         }
     }
 
-    private /*static*/ PropertyValueList processEdgeValue
+    private PropertyValueList processEdgeValue
             (int propindex, FONode foNode, PropertyValue value, int styleProp,
                 int colorProp, int widthProp, boolean nested)
             throws PropertyException
@@ -739,7 +739,7 @@ public /*abstract*/ class Property {
                 (propindex, foNode, tmpList, styleProp, colorProp, widthProp);
     }
 
-    private /*static*/ PropertyValueList processEdgeList
+    private PropertyValueList processEdgeList
             (int property, FONode foNode, PropertyValueList value,
                                 int styleProp, int colorProp, int widthProp)
                     throws PropertyException

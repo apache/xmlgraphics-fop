@@ -22,7 +22,7 @@ public class Border extends Property  {
     public static final int initialValueType = NOTYPE_IT;
     public static final int inherited = NO;
 
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
         throws PropertyException
     {

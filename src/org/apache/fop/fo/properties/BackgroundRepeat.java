@@ -15,7 +15,7 @@ public class BackgroundRepeat extends Property  {
     public static final int REPEAT_X = 2;
     public static final int REPEAT_Y = 3;
     public static final int NO_REPEAT = 4;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.BACKGROUND_REPEAT, REPEAT);
@@ -30,10 +30,10 @@ public class BackgroundRepeat extends Property  {
         ,"repeat-y"
         ,"no-repeat"
     };
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

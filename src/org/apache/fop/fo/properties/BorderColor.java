@@ -47,7 +47,7 @@ public class BorderColor extends Property {
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
                 throws PropertyException
     {
@@ -65,7 +65,7 @@ public class BorderColor extends Property {
      * @return <tt>PropertyValue</tt> the verified value
      * @see #refineParsing(FONode,PropertyValue)
      */
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
         (int propindex, FONode foNode, PropertyValue value, boolean nested)
                 throws PropertyException
     {

@@ -11,14 +11,14 @@ public class WordSpacingOptimum extends WordSpacingCommon  {
     public static final int dataTypes = LENGTH;
     public static final int traitMapping = DISAPPEARS;
     public static final int initialValueType = LENGTH_IT;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return getMappedLength(WordSpacing.NORMAL);
     }
     public static final int inherited = COMPUTED;
 
-    public /*static*/ Numeric getMappedLength(int enum)
+    public Numeric getMappedLength(int enum)
         throws PropertyException
     {
         if (enum != NORMAL)

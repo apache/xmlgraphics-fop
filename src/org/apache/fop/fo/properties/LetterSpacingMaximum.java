@@ -11,7 +11,7 @@ public class LetterSpacingMaximum extends Property  {
     public static final int traitMapping = DISAPPEARS;
     public static final int initialValueType = LENGTH_IT;
     public static final int NORMAL = 1;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return Length.makeLength

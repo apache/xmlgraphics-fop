@@ -12,7 +12,7 @@ public class LeaderPatternWidth extends Property  {
     public static final int traitMapping = FORMATTING;
     public static final int initialValueType = ENUM_IT;
     public static final int USE_FONT_METRICS = 1;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType
@@ -24,10 +24,10 @@ public class LeaderPatternWidth extends Property  {
         null
         ,"use-font-metrics"
     };
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

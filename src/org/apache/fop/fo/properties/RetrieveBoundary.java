@@ -14,7 +14,7 @@ public class RetrieveBoundary extends Property  {
     public static final int PAGE = 1;
     public static final int PAGE_SEQUENCE = 2;
     public static final int DOCUMENT = 3;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.RETRIEVE_BOUNDARY, PAGE_SEQUENCE);
@@ -27,10 +27,10 @@ public class RetrieveBoundary extends Property  {
         ,"page-sequence"
         ,"document"
     };
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

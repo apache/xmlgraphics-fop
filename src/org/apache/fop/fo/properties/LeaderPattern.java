@@ -15,7 +15,7 @@ public class LeaderPattern extends Property  {
     public static final int RULE = 2;
     public static final int DOTS = 3;
     public static final int USE_CONTENT = 4;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.LEADER_PATTERN, SPACE);
@@ -29,10 +29,10 @@ public class LeaderPattern extends Property  {
         ,"dots"
         ,"use-content"
     };
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

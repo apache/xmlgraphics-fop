@@ -15,7 +15,7 @@ public class FontStyle extends Property  {
     public static final int ITALIC = 2;
     public static final int OBLIQUE = 3;
     public static final int BACKSLANT = 4;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.FONT_STYLE, NORMAL);
@@ -30,10 +30,10 @@ public class FontStyle extends Property  {
         ,"oblique"
         ,"backslant"
     };
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

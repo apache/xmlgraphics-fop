@@ -10,7 +10,7 @@ public class SpaceBefore extends Property  {
     public static final int dataTypes = COMPOUND | LENGTH | INHERIT;
     public static final int traitMapping = FORMATTING;
     public static final int initialValueType = LENGTH_IT;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return Length.makeLength(PropNames.SPACE_BEFORE, 0.0d, Length.PT);

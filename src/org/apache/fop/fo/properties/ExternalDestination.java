@@ -10,7 +10,7 @@ public class ExternalDestination extends Property  {
     public static final int dataTypes = URI_SPECIFICATION;
     public static final int traitMapping = ACTION;
     public static final int initialValueType = URI_SPECIFICATION_IT;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new UriType(PropNames.EXTERNAL_DESTINATION, "");

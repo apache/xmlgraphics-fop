@@ -18,13 +18,13 @@ public class BorderAfterWidth extends BorderCommonWidth {
     // automatically update the following initial Length PropertyValue
     // if the mapping changes.
 
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return getMappedLength(MEDIUM);
     }
 
-    public /*static*/ Numeric getMappedLength(int enum)
+    public Numeric getMappedLength(int enum)
         throws PropertyException
     {
         return getMappedLength (PropNames.BORDER_AFTER_WIDTH, enum);

@@ -20,7 +20,7 @@ public class LineHeight extends Property  {
         ,"normal"
     };
 
-    public /*static*/ Numeric getMappedLength(int enum)
+    public Numeric getMappedLength(int enum)
         throws PropertyException
     {
         if (enum != NORMAL)

@@ -13,14 +13,14 @@ public class WordSpacing extends WordSpacingCommon  {
                             COMPOUND | LENGTH | MAPPED_LENGTH | INHERIT;
     public static final int traitMapping = DISAPPEARS;
     public static final int initialValueType = LENGTH_IT;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return getMappedLength(NORMAL); //normal
     }
     public static final int inherited = NO;
 
-    public /*static*/ Numeric getMappedLength(int enum)
+    public Numeric getMappedLength(int enum)
         throws PropertyException
     {
         if (enum != NORMAL)

@@ -12,7 +12,7 @@ public class TargetProcessingContext extends Property  {
     public static final int traitMapping = ACTION;
     public static final int initialValueType = ENUM_IT;
     public static final int DOCUMENT_ROOT = 1;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType(PropNames.TARGET_PROCESSING_CONTEXT,
@@ -24,10 +24,10 @@ public class TargetProcessingContext extends Property  {
         null
         ,"document-root"
     };
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

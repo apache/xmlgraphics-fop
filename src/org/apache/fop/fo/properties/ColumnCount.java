@@ -10,7 +10,7 @@ public class ColumnCount extends Property  {
     public static final int dataTypes = NUMBER | INHERIT;
     public static final int traitMapping = SPECIFICATION;
     public static final int initialValueType = NUMBER_IT;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new Numeric(PropNames.COLUMN_COUNT, 1d);

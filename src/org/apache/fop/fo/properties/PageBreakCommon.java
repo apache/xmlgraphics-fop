@@ -42,10 +42,10 @@ public class PageBreakCommon extends Property  {
                                 (Object) Ints.consts.get(i));
         }
     }
-    public /*static*/ int getEnumIndex(String enum) {
+    public int getEnumIndex(String enum) {
         return ((Integer)(rwEnumHash.get(enum))).intValue();
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 
@@ -55,7 +55,7 @@ public class PageBreakCommon extends Property  {
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
     {

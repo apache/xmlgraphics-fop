@@ -23,7 +23,7 @@ public class Position extends Property  {
     public static final int RELATIVE = 2;
     public static final int ABSOLUTE = 3;
     public static final int FIXED = 4;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType(PropNames.POSITION, STATIC);
@@ -44,7 +44,7 @@ public class Position extends Property  {
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
     {
@@ -96,10 +96,10 @@ public class Position extends Property  {
             ("Invalid value for 'position': "
                 + value.getClass().getName());
     }
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

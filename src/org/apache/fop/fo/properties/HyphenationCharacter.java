@@ -10,7 +10,7 @@ public class HyphenationCharacter extends Property  {
     public static final int dataTypes = CHARACTER_T | INHERIT;
     public static final int traitMapping = FORMATTING;
     public static final int initialValueType = LITERAL_IT;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new Literal(PropNames.HYPHENATION_CHARACTER, "\u2010");

@@ -14,7 +14,7 @@ public class LineStackingStrategy extends Property  {
     public static final int LINE_HEIGHT = 1;
     public static final int FONT_HEIGHT = 2;
     public static final int MAX_HEIGHT = 3;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType
@@ -28,10 +28,10 @@ public class LineStackingStrategy extends Property  {
         ,"font-height"
         ,"max-height"
     };
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

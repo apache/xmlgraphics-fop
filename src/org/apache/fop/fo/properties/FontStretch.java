@@ -28,7 +28,7 @@ public class FontStretch extends Property  {
     public static final int EXTRA_EXPANDED = 10;
     public static final int ULTRA_EXPANDED = 11;
 
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.FONT_STRETCH, NORMAL);
@@ -58,10 +58,10 @@ public class FontStretch extends Property  {
                                 (Object) Ints.consts.get(i));
         }
     }
-    public /*static*/ int getEnumIndex(String enum) {
+    public int getEnumIndex(String enum) {
         return ((Integer)(rwEnumHash.get(enum))).intValue();
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

@@ -44,7 +44,7 @@ public class FontFamily extends Property  {
         }
     }
 
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
     {
@@ -64,7 +64,7 @@ public class FontFamily extends Property  {
         return refineParsing(propindex, foNode, value, NOT_NESTED);
     }
 
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
         (int property, FONode foNode, PropertyValue value, boolean nested)
                     throws PropertyException
     {

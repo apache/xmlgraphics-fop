@@ -10,7 +10,7 @@ public class LineHeightOptimum extends Property  {
     public static final int dataTypes = LENGTH | PERCENTAGE;
     public static final int traitMapping = FORMATTING;
     public static final int initialValueType = LENGTH_IT;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return Ems.makeEms(PropNames.LINE_HEIGHT_OPTIMUM, 1.2d);
