@@ -18,9 +18,10 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.pagination.FoLayoutMasterSet;
+import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.XMLNamespaces;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 
 import org.xml.sax.Attributes;
 
@@ -44,11 +45,11 @@ public class FoRoot extends FONode {
 
     /**
      * @param foTree the FO tree being built
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of this
+     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of this
      * node
      */
     public FoRoot
-        (FOTree foTree, XMLEvent event)
+        (FOTree foTree, FoXMLEvent event)
         throws Tree.TreeException, FOPException, PropertyException
     {
         // This is the root node of the tree; hence the null argument
@@ -80,7 +81,7 @@ public class FoRoot extends FONode {
      * in the page-sequence-sequence.
      */
     public void buildFoTree() throws FOPException{
-        XMLEvent ev;
+        FoXMLEvent ev;
         System.out.println("buildFoTree: " + event);
         // Look for layout-master-set
         try {
@@ -88,7 +89,7 @@ public class FoRoot extends FONode {
                     (XMLNamespaces.XSLNSpaceIndex, "layout-master-set",
                                                     XMLEvent.DISCARD_W_SPACE);
         } catch (NoSuchElementException e) {
-            throw new FOPException(e);
+            throw new FOPException("buildFoTree: Unexpected EOF in layout-master-set.");
         }
         // Process the layout-master-set
         try {
@@ -100,15 +101,18 @@ public class FoRoot extends FONode {
         }
         // Look for optional declarations
         try {
-            xmlevents.expectStartElement
+            ev = xmlevents.expectStartElement
                         (XMLNamespaces.XSLNSpaceIndex, "declarations",
                                                     XMLEvent.DISCARD_W_SPACE);
-            // process the declarations
-            xmlevents.getEndElement
-                    (XMLNamespaces.XSLNSpaceIndex, "declarations");
+            if (ev != null) {
+                // process the declarations
+                xmlevents.getEndElement
+                        (XMLNamespaces.XSLNSpaceIndex, "declarations");
+            }
         } catch (NoSuchElementException e) {
-            // Take no notice - declarations is optional
+            throw new FOPException
+                ("Unexpected EOF while processing declarations.");
         }
-        
+
     }
 }

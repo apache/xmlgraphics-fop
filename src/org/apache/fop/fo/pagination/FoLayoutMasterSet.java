@@ -12,10 +12,11 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.UriLocalName;
 import org.apache.fop.xml.XMLNamespaces;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.fo.pagination.FoPageSequenceMaster;
 import org.apache.fop.fo.pagination.PageSequenceMaster;
@@ -78,7 +79,7 @@ public class FoLayoutMasterSet extends FONode {
      * this node
      */
     public FoLayoutMasterSet
-        (FOTree foTree, FONode parent, XMLEvent event)
+        (FOTree foTree, FONode parent, FoXMLEvent event)
         throws Tree.TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.LAYOUT_MASTER_SET, parent, event,
@@ -93,7 +94,7 @@ public class FoLayoutMasterSet extends FONode {
      * @param event - the layout page-master-set STARTELEMENT event.
      * @throws <tt>FOPException</tt>.
      */
-    public void setupPageMasters(XMLEvent event)
+    public void setupPageMasters(FoXMLEvent event)
 	    throws FOPException, PropertyException
     {
 	FoSimplePageMaster simple;
@@ -102,9 +103,10 @@ public class FoLayoutMasterSet extends FONode {
 	FoPageSequenceMaster foPageSeq;
         try {
             do {
-                XMLEvent ev =
+                FoXMLEvent ev =
                     xmlevents.expectStartElement
                         (simpleOrSequenceMaster, XMLEvent.DISCARD_W_SPACE);
+                if (ev == null) break; // No instance of these elements found
                 localName = ev.getLocalName();
                 if (localName.equals("simple-page-master")) {
                     //System.out.println("Found simple-page-master");
@@ -145,7 +147,8 @@ public class FoLayoutMasterSet extends FONode {
                             ("Aargh! expectStartElement(events, list)");
             } while (true);
         } catch (NoSuchElementException e) {
-            // Masters exhausted
+            // Unexpected end of file
+            throw new FOPException("layout-master-set: unexpected EOF.");
         }
         catch (PropertyException e) {
             throw new FOPException(e);
@@ -153,6 +156,8 @@ public class FoLayoutMasterSet extends FONode {
         catch (Tree.TreeException e) {
             throw new FOPException(e);
         }
+        if (pageMasters.size() == 0)
+            throw new FOPException("No pageg masters defined in layout-master-set.");
 	// Create the master set structures.
 	// Scan the page-sequence-masters
 	// N.B. Processing of the page-sequence-masters must be deferred until

@@ -12,7 +12,7 @@ package org.apache.fop.fo.pagination;
 // FOP
 import org.apache.fop.fo.FOAttributes;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
@@ -37,13 +37,13 @@ public class FoSimplePageMaster extends FONode {
      * @param event the <tt>XMLEvent</tt> that triggered the creation of
      * this node
      */
-    public FoSimplePageMaster(FOTree foTree, FONode parent, XMLEvent event)
+    public FoSimplePageMaster(FOTree foTree, FONode parent, FoXMLEvent event)
         throws Tree.TreeException, FOPException
     {
         super(foTree, FObjectNames.SIMPLE_PAGE_MASTER, parent, event,
               FOPropertySets.LAYOUT_SET);
         // Process regions here
-        XMLEvent ev = xmlevents.getEndElement(event);
+        FoXMLEvent ev = xmlevents.getEndElement(event);
     }
 
     /**
