@@ -615,7 +615,7 @@ list of possible build targets.
   <!-- =================================================================== -->
   <target name="test" depends="package" description="Runs the test suite">
     <echo message="Testing build in jar file ${build.dir}/${name}.jar against reference"/>
-    <property name="ref-version" value="FOP 1.0dev"/>
+    <property name="ref-version" value="1.0dev"/>
     <path id="testtask-classpath">
       <path refid="libs-build-classpath"/>
       <pathelement location="${build.dir}/classes"/>
