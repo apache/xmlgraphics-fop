@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
 THIS IS NOT THE LATEST VERSION OF THE FOP DOCUMENTATION BUT ONLY AN EXAMPLE FILE 
 
@@ -22,21 +23,21 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
                   margin-bottom="2cm" 
                   margin-left="2.5cm" 
                   margin-right="2.5cm">
-      <fo:region-before extent="3cm"/>
       <fo:region-body margin-top="3cm"/>
+      <fo:region-before extent="3cm"/>
       <fo:region-after extent="1.5cm"/>
     </fo:simple-page-master>
 
     <!-- layout for the other pages -->
     <fo:simple-page-master master-name="rest"
-                  height="29.7cm" 
-                  width="21cm"
+                  page-height="29.7cm" 
+                  page-width="21cm"
                   margin-top="1cm" 
                   margin-bottom="2cm" 
                   margin-left="2.5cm" 
                   margin-right="2.5cm">
-      <fo:region-before extent="2.5cm"/>
       <fo:region-body margin-top="2.5cm"/>
+      <fo:region-before extent="2.5cm"/>
       <fo:region-after extent="1.5cm"/>
     </fo:simple-page-master>
 

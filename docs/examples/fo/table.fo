@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
 
@@ -11,8 +12,8 @@
                            margin-bottom="2cm" 
                            margin-left="2.5cm" 
                            margin-right="2.5cm">
-      <fo:region-before extent="3cm"/>
       <fo:region-body margin-top="3cm"/>
+      <fo:region-before extent="3cm"/>
       <fo:region-after extent="1.5cm"/>
     </fo:simple-page-master>
   </fo:layout-master-set>
