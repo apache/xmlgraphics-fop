@@ -12,6 +12,9 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.TextInfo;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layout.MarginProps;
+import org.apache.fop.layout.HyphenationProps;
+import org.apache.fop.layout.hyphenation.Hyphenation;
+import org.apache.fop.layout.hyphenation.Hyphenator;
 import org.apache.fop.traits.BlockProps;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
@@ -62,6 +65,7 @@ public class LineBPLayoutManager extends
     private boolean m_bJustify = false; // True if fo:block text-align=JUSTIFY
     private int m_iTextIndent = 0;
     private int m_iIndents = 0;
+    private HyphenationProps m_hyphProps;
 
     private int lineHeight;
     private int lead;
@@ -77,13 +81,12 @@ public class LineBPLayoutManager extends
     }
 
     protected void initProperties(PropertyManager propMgr) {
-	// super.initProperties(propMgr);
-	System.err.println("LineBPLayoutManager.initProperties called");
         MarginProps marginProps = propMgr.getMarginProps();
         m_iIndents = marginProps.startIndent + marginProps.endIndent;
 	BlockProps blockProps = propMgr.getBlockProps();
 	m_bJustify = (blockProps.textAlign == TextAlign.JUSTIFY);
 	m_iTextIndent = blockProps.firstIndent;
+	m_hyphProps = propMgr.getHyphenationProps();
     }
     
 
@@ -120,6 +123,7 @@ public class LineBPLayoutManager extends
 	LayoutContext inlineLC = new LayoutContext(context);
 
 	clearPrevIPD();
+	int iPrevLineEnd = m_vecInlineBreaks.size();
 
         while ((curLM = getChildLM()) != null) {
 	    // INITIALIZE LAYOUT CONTEXT FOR CALL TO CHILD LM
@@ -129,22 +133,12 @@ public class LineBPLayoutManager extends
 		 (((BreakPoss)m_vecInlineBreaks.lastElement()).
 		  getLayoutManager() != curLM));
 
-	    initChildLC(inlineLC, bp, (bp==null), bFirstBPforLM,
+	    // Need previous breakpoint! ATTENTION when backing up for hyphenation!
+	    prevBP =  (m_vecInlineBreaks.isEmpty())? null:
+		(BreakPoss)m_vecInlineBreaks.lastElement();	
+	    initChildLC(inlineLC, prevBP,
+			(m_vecInlineBreaks.size()==iPrevLineEnd), bFirstBPforLM,
 			new SpaceSpecifier(true));
-
-// 	    if (bp == null) {
-// 		// Start of a new line area
-// 		inlineLC.setFlags(LayoutContext.FIRST_AREA, bFirstBPforLM );
-// 		inlineLC.setPendingSpace(new SpaceSpecifier(true));
-// 	    }
-// 	    else if (bFirstBPforLM) {
-// 		// Space-after sequence from previous "area"
-// 		inlineLC.setFlags(LayoutContext.FIRST_AREA, true);
-// 		inlineLC.setPendingSpace(bp.getTrailingSpace());
-// 	    }
-// 	    else {
-// 		inlineLC.setPendingSpace(null);
-// 	    }
 
 
             /* If first BP in this line but line is not first in this
@@ -152,16 +146,18 @@ public class LineBPLayoutManager extends
              * then set the SUPPRESS_LEADING_SPACE flag.
              */
 	    inlineLC.setFlags(LayoutContext.SUPPRESS_LEADING_SPACE,
-			      (bp == null && !m_vecInlineBreaks.isEmpty() &&
+			      (prevBP == null && !m_vecInlineBreaks.isEmpty() &&
 			       ((BreakPoss)m_vecInlineBreaks.lastElement()).
 			       isForcedBreak()==false));
 
 	    // GET NEXT POSSIBLE BREAK FROM CHILD LM
-	    prevBP = bp;
+	    // prevBP = bp;
             if ((bp = curLM.getNextBreakPoss(inlineLC, null)) != null) {
 		// Add any space before and previous content dimension
-		MinOptMax prevIPD = updatePrevIPD(bp, prevBP, (prevBP==null),
-						  inlineLC.isFirstArea());
+		MinOptMax prevIPD =
+		    updatePrevIPD(bp, prevBP,
+				  (m_vecInlineBreaks.size()==iPrevLineEnd),
+				  inlineLC.isFirstArea());
 		MinOptMax bpDim = MinOptMax.add(bp.getStackingSize(), prevIPD);
 
 		// check if this bp fits in line
@@ -175,41 +171,40 @@ public class LineBPLayoutManager extends
 		// TODO: stop if linebreak is forced (NEWLINE)
 		// PROBLEM: interaction with wrap which can be set
 		// at lower levels!
-		System.err.println("BPdim=" + bpDim.opt);
+		// System.err.println("BPdim=" + bpDim.opt);
 
 		// Check if proposed area would fit in line
 		if (bpDim.min > availIPD.max) {
 		    // See if we have already found a potential break
-		    if (vecPossEnd.size() > 0) break;
+		    //if (vecPossEnd.size() > 0) break;
 
 		    // This break position doesn't fit
 		    // TODO: If we are in nowrap, we use it as is!
 		    if (m_bJustify || m_prevBP == null) {
-			// try to find a hyphenation point in the word
-			// which spans the queued breaks and the proposed bp
-			// Even if not justified, we must try to hyphenate if
-			// there is no breakpoint at all up to this point!
-			do {
-			    bp = findHyphenPoss(m_prevBP, bp);
-			} while (bp != null &&
-				 (bp.getStackingSize().min > availIPD.max));
-			if (bp == null) {
-			    // Couldn't find a hyphenation point. The line
-			    // will be "short".
+			// If we are already in a hyphenation loop, then stop.
+
+			if (inlineLC.tryHyphenate()) {
+			    break;
 			}
-			else {
-			    m_prevBP = bp;
+			// Otherwise, prepare to try hyphenation
+			if (!bBreakOK) {
+			    // Make sure we collect the entire word!
+			    m_vecInlineBreaks.add(bp);
+			    continue;
 			}
-			// Handle pendingIPD if any. The hyphenation point
-			// may be within the "pending" content or after it.
-                        /* Make sure child LM are updated concerning the actual
-                         * hyphenation BreakPoss for their next call!
-                         */
+			
+			inlineLC.setHyphContext(getHyphenContext(m_prevBP, bp));
+			if (inlineLC.getHyphContext()==null) break;
+			inlineLC.setFlags(LayoutContext.TRY_HYPHENATE, true);
+			// Reset to previous acceptable break
+			reset();
 		    }
 		    /* If we are not in justified text, we can end the line at
 		     * prevBP.
 		     */
-		    break;
+		    else {
+			break;
+		    }
 		}
 		else {
 		    // Add the BP to the list whether or not we can break
@@ -229,7 +224,6 @@ public class LineBPLayoutManager extends
 			     * (ie, bpDim.opt closes to availIPD.opt), keeps
 			     * and hyphenation.
 			     */
-			    System.err.println("Found potential linebreak");
 			    vecPossEnd.add(new BreakCost(bp,
 			     Math.abs(availIPD.opt - bpDim.opt )));
 			}
@@ -246,13 +240,17 @@ public class LineBPLayoutManager extends
 		 * up. Just try the next child LM.
 		 */
 	    }
+	    if (inlineLC.tryHyphenate() &&
+		!inlineLC.getHyphContext().hasMoreHyphPoints()) {
+		break;
+	    }
 	} // end of while on child LM
 	if ((curLM = getChildLM())== null) {
 	    // No more content to layout!
 	    setFinished(true);
 	}
 
-if(bp == null) return null;
+	if(bp == null) return null;
 
 	// Choose the best break
 	if (!bp.isForcedBreak() && vecPossEnd.size()>0) {
@@ -260,11 +258,7 @@ if(bp == null) return null;
 	}
 	// Backup child LM if necessary
 	if (bp != m_prevBP) {
-	    // Remove any pending breaks from the vector
-	    while (m_vecInlineBreaks.lastElement()!=m_prevBP) {
-		m_vecInlineBreaks.remove(m_vecInlineBreaks.size()-1);
-	    }
-	    reset(m_prevBP.getLayoutManager(), m_prevBP.getPosition());
+	    reset();
 	}
 	// Distribute space in the line
 	MinOptMax actual = MinOptMax.add(m_prevBP.getStackingSize(),
@@ -280,6 +274,14 @@ if(bp == null) return null;
 	boolean bJustify = (m_bJustify && !m_prevBP.isForcedBreak() &&
 			    !isFinished());
         return makeLineBreak(m_prevBP, availIPD, actual, bJustify);
+    }
+
+
+    private void reset() {
+	while (m_vecInlineBreaks.lastElement()!=m_prevBP) {
+	    m_vecInlineBreaks.remove(m_vecInlineBreaks.size()-1);
+	}
+	reset(m_prevBP.getLayoutManager(), m_prevBP.getPosition());
     }
 
     protected boolean couldEndLine(BreakPoss bp) {
@@ -301,6 +303,7 @@ if(bp == null) return null;
 		    nextLM.canBreakBefore(lc));
 	}
     }
+
 
 
     private BreakPoss getBestBP(Vector vecPossEnd) {
@@ -333,12 +336,61 @@ if(bp == null) return null;
     
 
 
-    private BreakPoss findHyphenPoss(BreakPoss prevBP, BreakPoss newBP) {
+    private HyphContext getHyphenContext(BreakPoss prevBP, BreakPoss newBP) {
 	// Get a "word" to hyphenate by getting characters from all
 	// pending break poss which are in m_vecInlineBreaks, starting
-	// with the position just AFTER prevBP.getPosition()
-	return null;
+	// with the position just AFTER prevBP.getPosition() 
+
+	m_vecInlineBreaks.add(newBP);
+	ListIterator bpIter = m_vecInlineBreaks.
+	    listIterator(m_vecInlineBreaks.size());
+	while (bpIter.hasPrevious() && bpIter.previous() != prevBP);
+	if (bpIter.next() != prevBP) {
+	    System.err.println("findHyphenPoss: problem!");
+	    return null;
+	}
+	StringBuffer sbChars = new StringBuffer(30);
+	while (bpIter.hasNext()) {
+	    BreakPoss bp = (BreakPoss)bpIter.next();
+	    if (bp.getLayoutManager() == prevBP.getLayoutManager()) {
+		bp.getLayoutManager().getWordChars(sbChars, prevBP.getPosition(),
+						   bp.getPosition());
+	    }
+	    else {
+		bp.getLayoutManager().getWordChars(sbChars, null, bp.getPosition());
+	    }
+	    prevBP = bp;
+	}
+	m_vecInlineBreaks.remove(m_vecInlineBreaks.size()-1); // remove last
+	System.err.println("Word to hyphenate: " + sbChars.toString());
+
+	// Now find all hyphenation points in this word (get in an array of offsets)
+	// hyphProps are from the block level?. Note that according to the spec,
+	// they also "apply to" fo:character. I don't know what that means, since
+	// if we change language in the middle of a "word", the effect would seem
+	// quite strange! Or perhaps in that case, we say that it's several words.
+	// We probably should bring the hyphenation props up from the actual
+	// TextLM which generate the hyphenation buffer, since these properties
+	// inherit and could be specified on an inline or wrapper below the block
+	// level.
+	Hyphenation hyph =
+            Hyphenator.hyphenate(m_hyphProps.language, m_hyphProps.country,
+                                 sbChars.toString(),
+                                 m_hyphProps.hyphenationRemainCharacterCount,
+                                 m_hyphProps.hyphenationPushCharacterCount);
+	// They hyph structure contains the information we need
+	// Now start from prevBP: reset to that position, ask that LM to get
+	// a Position for the first hyphenation offset. If the offset isn't in
+	// its characters, it returns null, but must tell how many chars it had.
+	// Keep looking at currentBP using next hyphenation point until the
+	// returned size is greater than the available size or no more hyphenation
+	// points remain. Choose the best break.
+	if (hyph != null) {
+	    return new HyphContext(hyph.getHyphenationPoints());
+	}
+	else return null;
     }
+
 
     private BreakPoss makeLineBreak(BreakPoss inlineBP, MinOptMax target,
 				    MinOptMax actual, boolean bJustify) {
@@ -377,26 +429,54 @@ if(bp == null) return null;
 
     // Generate and add areas to parent area
     // Set size etc
-    public void addAreas(PositionIterator parentIter) {
+    // dSpaceAdjust should reference extra space in the BPD
+    public void addAreas(PositionIterator parentIter, double dSpaceAdjust) {
 	BPLayoutManager childLM ;
 	int iStartPos = 0;
 	while  (parentIter.hasNext()) {
 	    LineBreakPosition lbp  = (LineBreakPosition)parentIter.next();
-	    System.err.println("lbp.endpos=" + lbp.m_iPos);
 	    m_lineArea = new LineArea();
 	    // Add the inline areas to lineArea
-	    PositionIterator inlinePosIter =
+	    BreakPossPosIter inlinePosIter =
 		new BreakPossPosIter(m_vecInlineBreaks,
 				     iStartPos, lbp.m_iPos+1);
 	    iStartPos = lbp.m_iPos+1;
 	    while  ((childLM = inlinePosIter.getNextChildLM())!= null) {
-		childLM.addAreas(inlinePosIter);
+		BreakPoss bp = inlinePosIter.getBP();
+		int iSpaceSize = getLeadingSpace(bp,  lbp.m_dAdjust);
+		if (iSpaceSize != 0) {
+		    System.err.println("Add leading space: " + iSpaceSize);
+		    Space ls = new Space();
+		    ls.setWidth(iSpaceSize);
+		    addChild(ls);
+		}
+		childLM.addAreas(inlinePosIter, lbp.m_dAdjust);
 	    }
 	    m_lineArea.verticalAlign(lineHeight, lead, follow);
 	    parentLM.addChild(m_lineArea);
 	}
 	m_lineArea = null;
     }
+
+    protected int getLeadingSpace(BreakPoss bp, double dSpaceAdjust) {
+	MinOptMax leadSpace = bp.resolveLeadingSpace();
+	if (leadSpace != null) {
+	    int iAdjust=0;
+	    if (dSpaceAdjust > 0.0) {
+		// Stretch by factor
+		iAdjust = (int)((double)(leadSpace.max - leadSpace.opt) *
+				dSpaceAdjust);
+	    }
+	    else if (dSpaceAdjust < 0.0)  {
+		// Shrink by factor
+		iAdjust = (int)((double)(leadSpace.opt - leadSpace.min) *
+				dSpaceAdjust);
+	    }
+	    return leadSpace.opt + iAdjust;
+	}
+	else return 0;
+   }
+
 
     public boolean addChild(Area childArea) {
 	// Make sure childArea is inline area
@@ -440,7 +520,7 @@ if(bp == null) return null;
 		}
 	    }
         }
-	addAreas(new BreakPossPosIter(vecBreakPoss, 0, vecBreakPoss.size()));
+	addAreas(new BreakPossPosIter(vecBreakPoss, 0, vecBreakPoss.size()), 0.0);
         return false;
     }
 

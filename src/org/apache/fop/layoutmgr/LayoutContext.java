@@ -34,6 +34,7 @@ public class LayoutContext {
      */
     public static final int SUPPRESS_LEADING_SPACE =       0x10;
     public static final int FIRST_AREA =                   0x20;
+    public static final int TRY_HYPHENATE =                0x40;
 
 
     public int flags;  // Contains some set of flags defined above
@@ -56,11 +57,15 @@ public class LayoutContext {
     /** Current pending space-after or space-end from preceding area */
     SpaceSpecifier m_pendingSpace;
 
+    /** Current hyphenation context. May be null. */
+    private HyphContext m_hyphContext=null;
+
     public LayoutContext(LayoutContext parentLC) {
         this.flags = parentLC.flags;
         this.refIPD = parentLC.refIPD;
         this.m_stackLimit = null; // Don't reference parent MinOptMax!
 	this.m_pendingSpace = parentLC.m_pendingSpace; //???
+	this.m_hyphContext = parentLC.m_hyphContext;
         // Copy other fields as necessary. Use clone???
     }
 
@@ -118,5 +123,17 @@ public class LayoutContext {
 
     public MinOptMax getStackLimit() {
 	return m_stackLimit ;
+    }
+
+    public void setHyphContext(HyphContext hyphContext) {
+	m_hyphContext = hyphContext;
+    }
+
+    public HyphContext getHyphContext() {
+	return m_hyphContext;
+    }
+
+    public boolean tryHyphenate() {
+	return ((this.flags & TRY_HYPHENATE) != 0);
     }
 }
