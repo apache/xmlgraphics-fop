@@ -51,6 +51,7 @@
     <fop fofile="${foDir}/images.fo"   pdffile="${testDir}/images.pdf"/> 
     <fop fofile="${foDir}/readme.fo"   pdffile="${testDir}/readme.pdf"/> 
     <fop fofile="${foDir}/fonts.fo"   pdffile="${testDir}/fonts.pdf"/> 
+    <fop fofile="${foDir}/leader.fo"   pdffile="${testDir}/leader.pdf"/> 
   </target>
 
 

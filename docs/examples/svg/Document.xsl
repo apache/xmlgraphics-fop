@@ -62,12 +62,12 @@
 						</fo:block>
 		            </fo:block-container>
 					<fo:block-container height="1cm" width="17cm" top="1.1cm" left="0cm" position="absolute">
-						<fo:display-rule space-before.optimum="0pt" space-after.optimum="0pt"/>
+						<fo:leader leader-pattern="rule" space-before.optimum="0pt" space-after.optimum="0pt"/>
 		            </fo:block-container>
 				</fo:static-content>
 				<fo:static-content flow-name="xsl-region-after">
 					<fo:block-container height="1cm" width="17cm" top="0cm" left="0cm" position="absolute">
-						<fo:display-rule space-before.optimum="0pt" space-after.optimum="0pt"/>
+						<fo:leader leader-pattern="rule" space-before.optimum="0pt" space-after.optimum="0pt"/>
 		            </fo:block-container>
 	    	        <fo:block-container height="2cm" width="6cm" top="0.1cm" left="0cm" position="absolute">
 						<fo:block font-size="10pt" font-family="serif" line-height="12pt">
@@ -154,7 +154,7 @@
 		<xsl:if test="not(position()=1)">
 			<fo:block break-before="page"/>
 		</xsl:if>
-		<fo:display-rule rule-thickness="1.5pt" space-before.optimum="5pt" space-after.optimum="4pt"/>
+		<fo:leader leader-pattern="rule" rule-thickness="1.5pt" space-before.optimum="5pt" space-after.optimum="4pt"/>
 		<fo:block font-weight="bold" font-size="18pt" line-height="18pt"><xsl:apply-templates select="Title"/></fo:block>
 		<xsl:apply-templates select="ExternalDiagram|ExternalSVG"/>
 		<xsl:apply-templates select="Body"/>
@@ -183,7 +183,7 @@
 	</xsl:template>
 
 	<xsl:template match="Section">
-		<fo:display-rule space-before.optimum="8pt"/>
+		<fo:leader leader-pattern="rule" space-before.optimum="8pt"/>
 		<fo:block font-weight="bold" font-size="14pt" line-height="14pt" space-before.optimum="2pt"><xsl:apply-templates select="Title"/></fo:block>
 
 		<xsl:apply-templates select="ExternalDiagram|ExternalSVG"/>
@@ -194,7 +194,7 @@
 	</xsl:template>
 
 	<xsl:template match="SubSection">
-		<fo:display-rule space-before.optimum="6pt"/>
+		<fo:leader leader-pattern="rule" space-before.optimum="6pt"/>
 		<fo:block font-weight="bold" font-size="12pt" line-height="12pt" space-before.optimum="2pt"><xsl:apply-templates select="Title"/></fo:block>
 
 		<xsl:apply-templates select="ExternalDiagram|ExternalSVG"/>

@@ -82,9 +82,9 @@
       </fo:list-block>
       <fo:block break-before="page" font-size="24pt" line-height="28pt" space-before.optimum="12pt" space-after.optimum="12pt">Next Stage</fo:block>
       <fo:block>Right, now we are ready to try some newly implemented things like rules. What follows is a display rule of default thickness 1pt and a space-before and space-after of 12pt.</fo:block>
-      <fo:display-rule space-before.optimum="12pt" space-after.optimum="12pt"/>
-      <fo:block>Now what follows is a display-rule of thickness 5pt with start-indent of 100pt (same space-before/after as before).</fo:block>
-      <fo:display-rule space-before.optimum="12pt" space-after.optimum="12pt" rule-thickness="5pt" start-indent="100pt"/>
+      <fo:block><fo:leader leader-pattern="rule" space-before.optimum="12pt" space-after.optimum="12pt"/></fo:block>
+      <fo:block>Now what follows is a leader of thickness 5pt with start-indent of 100pt (same space-before/after as before).</fo:block>
+      <fo:block><fo:leader leader-pattern="rule" space-before.optimum="12pt" space-after.optimum="12pt" rule-thickness="5pt" start-indent="100pt"/></fo:block>
       <fo:block font-size="24pt" line-height="28pt" space-before.optimum="12pt" space-after.optimum="12pt"
       ><fo:inline-sequence color="#500">C</fo:inline-sequence
       ><fo:inline-sequence color="#700">o</fo:inline-sequence
