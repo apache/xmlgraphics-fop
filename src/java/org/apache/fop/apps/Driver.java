@@ -58,7 +58,7 @@ import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fo.FOInputHandler;
-import org.apache.fop.layoutmgr.LayoutHandler;
+import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.mif.MIFHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.awt.AWTPrintRenderer;
@@ -559,7 +559,7 @@ public class Driver implements LogEnabled {
                 throw new IllegalStateException(
                         "Renderer not set when using standard foInputHandler");
             }
-            foInputHandler = new LayoutHandler(stream, renderer, true);
+            foInputHandler = new FOTreeHandler(stream, renderer, true);
         }
 
         foInputHandler.enableLogging(getLogger());
