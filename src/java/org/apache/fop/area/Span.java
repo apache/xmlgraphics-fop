@@ -38,11 +38,14 @@ public class Span extends Area {
      * Create a span area with the number of columns for this span area.
      *
      * @param cols the number of columns in the span
+     * @param ipd the ipd of the span 
      */
-    public Span(int cols) {
-        flowAreas = new java.util.ArrayList(cols);
-        columnCount = cols;
+    public Span(int cols, int ipd) {
         addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+        columnCount = cols;
+        this.ipd = ipd;
+        flowAreas = new java.util.ArrayList(cols);
+        addAdditionalNormalFlow(); // one normal flow is required
     }
 
     /**
@@ -50,7 +53,11 @@ public class Span extends Area {
      *
      * @return the newly made NormalFlow object
      */
-    public NormalFlow addNewNormalFlow() {
+    public NormalFlow addAdditionalNormalFlow() {
+        if (flowAreas.size() >= columnCount) { // internal error
+            throw new IllegalStateException("Maximum number of flow areas (" +
+                    columnCount + ") for this span reached.");
+        }
         NormalFlow newFlow = new NormalFlow();
         newFlow.setIPD(getIPD());
         flowAreas.add(newFlow);

@@ -366,64 +366,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             return;
         }
         if (childArea.getAreaClass() == Area.CLASS_NORMAL) {
-            placeNormalFlowRefArea(childArea);
+            getParentArea(childArea);
         } else {
              // todo: all the others!
         }
-    }
-
-    /**
-     * Place a normal-flow-reference-area into the current span. The FlowLM is
-     * responsible for making sure that it will actually fit in the
-     * current span area. In fact the area has already been added to the
-     * current span, so we are just checking to see if the span is "full",
-     * possibly moving to the next column or to the next page.
-     *
-     * @param area the area to place
-     */
-    protected void placeNormalFlowRefArea(Area area) {
-        // assert (curSpan != null);
-        // assert (area == curFlow);
-        // assert (curFlow == curSpan.getFlow(curSpan.getColumnCount()-1));
-        // assert (area.getBPD().min < curSpan.getHeight());
-        // Last column on this page is filled
-        // See if the flow is full. The Flow LM can add an area before
-        // it's full in the case of a break or a span.
-        // Also in the case of a float to be placed. In that case, there
-        // may be further material added later.
-        // The Flow LM sets the "finished" flag on the Flow Area if it has
-        // completely filled it. In this case, if on the last column
-        // end the page.
-        getParentArea(area);
-        // Alternatively the child LM indicates to parent that it's full?
-        //getLogger().debug("size: " + area.getAllocationBPD().max +
-        //                   ":" + curSpan.getMaxBPD().min);
-        /*if (area.getAllocationBPD().max >= curSpan.getMaxBPD().min) {
-            // Consider it filled
-            if (curSpan.getColumnCount() == curSpan.getNormalFlowCount()) {
-                finishPage();
-            } else
-                curFlow = null; // Create new flow on next getParentArea()
-        }*/
-    }
-
-    protected void placeAbsoluteArea(Area area) {
-    }
-
-
-    protected void placeBeforeFloat(Area area) {
-    }
-
-    protected void placeSideFloat(Area area) {
-    }
-
-    protected void placeFootnote(Area area) {
-        // After doing this, reduce available space on the curSpan.
-        // This has to be propagated to the curFlow (FlowLM) so that
-        // it can adjust its limit for composition (or it just asks
-        // curSpan for BPD before doing the break?)
-        // If multi-column, we may have to balance to find more space
-        // for a float. When?
     }
 
     private PageViewport makeNewPage(boolean bIsBlank, boolean bIsLast) {
@@ -451,33 +397,22 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
 
         flowBPD = (int) curPage.getBodyRegion().getBPD();
-        createSpan(1); // todo determine actual # of NormalFlows needed
+        createSpan(curPage.getBodyRegion().getColumnCount());
         return curPage;
     }
 
     private void createSpan(int numCols) {
-        // check number of columns (= all in Body or 1)
-        // If already have a span, get its size and position (as MinMaxOpt)
-        // This determines the position of the new span area
-        // Attention: space calculation between the span areas.
-
-        //MinOptMax newpos ;
-        //if (curSpan != null) {
-        //newpos = curSpan.getPosition(BPD);
-        //newpos.add(curSpan.getDimension(BPD));
-        //}
-        //else newpos = new MinOptMax();
-        curSpan = new Span(numCols);
         // get Width or Height as IPD for span
-
         RegionViewport rv = curPage.getPage().getRegionViewport(FO_REGION_BODY);
         int ipdWidth = (int) rv.getRegion().getIPD() -
             rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
 
-        curSpan.setIPD(ipdWidth);
+        // currently hardcoding to one column, replace with numCols when ready
+        curSpan = new Span(1 /* numCols */, ipdWidth);
+
         //curSpan.setPosition(BPD, newpos);
         curPage.getBodyRegion().getMainReference().addSpan(curSpan);
-        curFlow = curSpan.addNewNormalFlow();
+        curFlow = curSpan.getNormalFlow(0);
     }
 
     private void layoutStaticContent(int regionID) {
@@ -569,27 +504,37 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 makeNewPage(false, false);
             }
             // Now we should be on the right kind of page
-            boolean bNeedSpan = false;
+            boolean bNeedNewSpan = false;
+            /* Determine if a new span is needed.  From the XSL
+             * fo:region-body definition, if an fo:block has a span="ALL"
+             * (i.e., span all columns defined for the region-body), it
+             * must be placed in a span-reference-area whose 
+             * column-count = 1.  If its span-value is "NONE", 
+             * place in a normal Span whose column-count is what
+             * is defined for the region-body. 
+             */  // temporarily hardcoded to EN_NONE.
             int span = Constants.EN_NONE; // childArea.getSpan()
-            int numCols = 1;
+            int numColsNeeded;
             if (span == Constants.EN_ALL) {
-                // Assume the number of columns is stored on the curBody object.
-                //numCols = curPage.getBodyRegion().getProperty(NUMBER_OF_COLUMNS);
+                numColsNeeded = 1;
+            } else { // EN_NONE
+                numColsNeeded = curPage.getBodyRegion().getColumnCount();
             }
-            if (curSpan == null) {
-                bNeedSpan = true;
-            } else if (numCols != curSpan.getNormalFlowCount()) {
-                // todo: BALANCE EXISTING COLUMNS
-                if (curSpan.getNormalFlowCount() > 1) {
-                    // balanceColumns();
+            if (curSpan == null) {  // should never happen, remove?
+                bNeedNewSpan = true;
+            } else if (numColsNeeded != curSpan.getColumnCount()) {
+                // need a new Span, with numColsNeeded columns
+                if (curSpan.getColumnCount() > 1) {
+                    // finished with current span, so balance 
+                    // its columns to make them the same "height"
+                    // balanceColumns();  // TODO: implement
                 }
-                bNeedSpan = true;
+                bNeedNewSpan = true;
             }
-            if (bNeedSpan) {
-                // Make a new span and the first flow
-                createSpan(numCols);
-            } else if (curFlow == null) {
-                curFlow = curSpan.addNewNormalFlow();
+            if (bNeedNewSpan) {
+                createSpan(numColsNeeded);
+            } else if (curFlow == null) {  // should not happen
+                curFlow = curSpan.addAdditionalNormalFlow();
             }
             return curFlow;
         } else {
@@ -626,10 +571,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     private void handleBreak(int breakVal) {
         if (breakVal == Constants.EN_COLUMN) {
-            if (curSpan != null // TODO: change below to < or <=
-                    && curSpan.getNormalFlowCount() != curSpan.getColumnCount()) {
+            if (curSpan != null
+                    && curSpan.getNormalFlowCount() < curSpan.getColumnCount()) {
                 // Move to next column
-                curFlow = curSpan.addNewNormalFlow();
+                curFlow = curSpan.addAdditionalNormalFlow();
                 return;
             }
             // else need new page
@@ -760,7 +705,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
    
     /**
      * Set the region position inside the region viewport.
-     * This sets the trasnform that is used to place the contents of
+     * This sets the transform that is used to place the contents of
      * the region.
      *
      * @param r the region reference area
