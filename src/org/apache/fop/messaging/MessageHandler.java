@@ -148,6 +148,7 @@ public class MessageHandler {
         break;
       case NONE:
         //do nothing
+        break;
       default:
         System.out.print(message);
     }
@@ -193,6 +194,7 @@ public class MessageHandler {
         break;
       case NONE:
         //do nothing
+        break;
       default:
         System.err.print(errorMessage);
     }
