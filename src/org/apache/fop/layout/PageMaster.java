@@ -7,69 +7,77 @@
 
 package org.apache.fop.layout;
 
+import java.io.*;
+
+import org.apache.fop.area.PageViewport;
+
 public class PageMaster {
 
-    private int width;
-    private int height;
+    private PageViewport pageVP ;
 
-    private BodyRegionArea body;
-    private RegionArea before;
-    private RegionArea after;
-    private RegionArea start;
-    private RegionArea end;
-
-    public PageMaster(int pageWidth, int pageHeight) {
-        this.width = pageWidth;
-        this.height = pageHeight;
+    public PageMaster(PageViewport pageVP) {
+	this.pageVP = pageVP;
     }
 
-    public void addAfter(RegionArea region) {
-        this.after = region;
+
+    // Use serialization to make a clone of the master
+    public PageViewport makePage() {
+	try {
+	    System.err.println("PageMaster.makePage");
+	    PipedOutputStream outputStream = new PipedOutputStream();
+	    PipedInputStream inputStream = new PipedInputStream(outputStream);
+	    //System.err.println("PageMaster.makePage made piped streams");
+
+	    ObjectOutputStream objOut =
+		new ObjectOutputStream(new BufferedOutputStream(outputStream));
+	    /* ObjectInputStream objIn =
+	       new ObjectInputStream(new BufferedInputStream(inputStream));*/
+
+	    //System.err.println("PageMaster.makePage: streams made");
+	    PageViewport newPageVP = new PageViewport(pageVP.getPage(),
+						      pageVP.getViewArea());
+	    //System.err.println("PageMaster.makePage: newPageVP made");
+	    Thread reader = new Thread(new PageReader(inputStream, newPageVP));
+	    //System.err.println("Start serialize");
+	    reader.start();
+
+	    //System.err.println("Save page");
+	    pageVP.savePage(objOut);
+	    objOut.close();
+	    //System.err.println("Save page done");
+	    reader.join();
+	    //System.err.println("join done");
+
+	    // objIn.close();
+	    return newPageVP;
+	} catch (Exception e) {
+	    System.err.println("PageMaster.makePage(): " + e.getMessage());
+	    return null;
+	}
     }
 
-    public void addBefore(RegionArea region) {
-        this.before = region;
-    }
+    static private class PageReader implements Runnable {
+	private InputStream is;
+	private PageViewport pvp;
 
-    public void addBody(BodyRegionArea region) {
-        this.body = region;
-    }
+	PageReader(InputStream is, PageViewport pvp) {
+	    //System.err.println("PageReader object made");
+	    this.is = is;
+	    this.pvp = pvp;
+	}
 
-    public void addEnd(RegionArea region) {
-        this.end = region;
-    }
-
-    public void addStart(RegionArea region) {
-        this.start = region;
-    }
-
-    public int getHeight() {
-        return this.height;
-    }
-
-    public int getWidth() {
-        return this.width;
-    }
-
-    public Page makePage(AreaTree areaTree) {
-        Page p = new Page(areaTree, this.height, this.width);
-        if (this.body != null) {
-            p.addBody(body.makeBodyAreaContainer());
-        }
-        if (this.before != null) {
-            p.addBefore(before.makeAreaContainer());
-        }
-        if (this.after != null) {
-            p.addAfter(after.makeAreaContainer());
-        }
-        if (this.start != null) {
-            p.addStart(start.makeAreaContainer());
-        }
-        if (this.end != null) {
-            p.addEnd(end.makeAreaContainer());
-        }
-
-        return p;
+	public void run() {
+	    try {
+		//System.err.println("PageReader make ObjectInputStream");
+		ObjectInputStream ois = new ObjectInputStream(is);
+		//System.err.println("Load page");
+		pvp.loadPage(ois);
+		//System.err.println("Load page done");
+	    } catch (Exception e) {
+		System.err.println("Error copying PageViewport: " +
+				   e);
+	    }
+	}
     }
 
 }
