@@ -30,7 +30,7 @@ import java.util.Locale;
 public class Translator {
     
     private ResourceBundle bundle;
-    private static String bundleBaseName = "org/apache/fop/render/awt/viewer/resources/Viewer";
+    private static String bundleBaseName = "resources/awt_viewer/properties/Viewer";
 
     /**
      * Default constructor, default <code>Locale</code> is used.
