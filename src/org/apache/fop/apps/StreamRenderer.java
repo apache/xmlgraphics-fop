@@ -8,9 +8,10 @@ import java.util.Enumeration;
 import org.xml.sax.SAXException;
 
 import org.apache.fop.layout.FontInfo;
-import org.apache.fop.layout.Page;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.Title;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.layout.AreaTree;
 import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.extensions.ExtensionObj;
 import org.apache.fop.fo.pagination.PageSequence;
@@ -89,6 +90,12 @@ public class StreamRenderer {
 
     private Logger log;
 
+    /**
+     * The current AreaTree for the PageSequence being rendered.
+     */
+    private AreaTree areaTree;
+    private AreaTree.StorePagesModel atModel;
+
     public StreamRenderer(OutputStream outputStream, Renderer renderer) {
         this.outputStream = outputStream;
         this.renderer = renderer;
@@ -131,7 +138,8 @@ public class StreamRenderer {
           even if they are not resolved.
         */
         try {
-            processQueue(true);
+            //processQueue(true);
+	    processAreaTree();
             renderer.stopRenderer();
         } catch (FOPException e) {
             throw new SAXException(e);
@@ -174,167 +182,185 @@ public class StreamRenderer {
       the rendering until they are all valid.
     */
     public void render(PageSequence pageSequence)
-    throws SAXException {
-        AreaTree a = new AreaTree(this);
-        a.setFontInfo(fontInfo);
+    throws FOPException {
+	this.areaTree = new AreaTree();
+	this.atModel = AreaTree.createStorePagesModel();
+	areaTree.setTreeModel(atModel);
+        //areaTree.setFontInfo(fontInfo);
 
-        for(Enumeration e = extensions.elements(); e.hasMoreElements(); ) {
-            ExtensionObj ext = (ExtensionObj)e.nextElement();
-            try {
-                ext.format(a);
-            } catch (FOPException fope) {
-                throw new SAXException(fope);
-            }
-        }
-
-//         try {
-//             pageSequence.format(a);
-//         } catch (FOPException e) {
-//             throw new SAXException(e);
+//         for(Enumeration e = extensions.elements(); e.hasMoreElements(); ) {
+//             ExtensionObj ext = (ExtensionObj)e.nextElement();
+// 	    ext.format(areaTree);
 //         }
+	pageSequence.format(areaTree);
     }
 
-    public synchronized void queuePage(Page page)
-    throws FOPException, IOException {
-        /*
-          Try to optimise on the common case that there are
-          no pages pending and that all ID references are
-          valid on the current pages. This short-cuts the
-          pipeline and renders the area immediately.
-        */
-        if ((renderQueue.size() == 0) && idReferences.isEveryIdValid()) {
-            //renderer.render(page, outputStream);
-        } else {
-            addToRenderQueue(page);
-        }
-        pageCount++;
+
+    private void processAreaTree() throws FOPException {
+	int count = 0;
+	int seqc = atModel.getPageSequenceCount();
+	while (count < seqc) {
+	    Title title = atModel.getTitle(count);
+	    renderer.startPageSequence(title);
+	    int pagec = atModel.getPageCount(count);
+	    for (int c=0; c < pagec; c++) {
+		try {
+		    renderer.renderPage(atModel.getPage(count, c));
+		} catch (java.io.IOException ioex) {
+		    throw new FOPException("I/O Error rendering page", ioex);
+		}
+	    }
+	    count++;
+	}
+	
     }
 
-    private synchronized void addToRenderQueue(Page page)
-    throws FOPException, IOException {
-        RenderQueueEntry entry = new RenderQueueEntry(page);
-        renderQueue.addElement(entry);
-
-        /*
-          The just-added entry could (possibly) resolve the
-          waiting entries, so we try to process the queue
-          now to see.
-        */
-        processQueue(false);
+    public FontInfo getFontInfo() {
+	return this.fontInfo;
     }
 
-    /**
-      Try to process the queue from the first entry forward.
-      If an entry can't be processed, then the queue can't
-      move forward, so return.
-    */
-    private synchronized void processQueue(boolean force)
-    throws FOPException, IOException {
-        while (renderQueue.size() > 0) {
-            RenderQueueEntry entry = (RenderQueueEntry) renderQueue.elementAt(0);
-            if ((!force) && (!entry.isResolved()))
-                break;
+    // COMMENT OUT OLD PAGE MANAGEMENT CODE
+//     public synchronized void queuePage(Page page)
+//     throws FOPException, IOException {
+//         /*
+//           Try to optimise on the common case that there are
+//           no pages pending and that all ID references are
+//           valid on the current pages. This short-cuts the
+//           pipeline and renders the area immediately.
+//         */
+//         if ((renderQueue.size() == 0) && idReferences.isEveryIdValid()) {
+//             //renderer.render(page, outputStream);
+//         } else {
+//             addToRenderQueue(page);
+//         }
+//         pageCount++;
+//     }
 
-            //renderer.render(entry.getPage(), outputStream);
+//     private synchronized void addToRenderQueue(Page page)
+//     throws FOPException, IOException {
+//         RenderQueueEntry entry = new RenderQueueEntry(page);
+//         renderQueue.addElement(entry);
 
-            /* TODO
-            Enumeration rootEnumeration =
-            entry.getAreaTree().getExtensions().elements();
-            while (rootEnumeration.hasMoreElements())
-            renderTree.addExtension((ExtensionObj) rootEnumeration.nextElement());
-            */
+//         /*
+//           The just-added entry could (possibly) resolve the
+//           waiting entries, so we try to process the queue
+//           now to see.
+//         */
+//         processQueue(false);
+//     }
 
-            renderQueue.removeElementAt(0);
-        }
-    }
+//     /**
+//       Try to process the queue from the first entry forward.
+//       If an entry can't be processed, then the queue can't
+//       move forward, so return.
+//     */
+//     private synchronized void processQueue(boolean force)
+//     throws FOPException, IOException {
+//         while (renderQueue.size() > 0) {
+//             RenderQueueEntry entry = (RenderQueueEntry) renderQueue.elementAt(0);
+//             if ((!force) && (!entry.isResolved()))
+//                 break;
 
-    /**
-      A RenderQueueEntry consists of the Page to be queued,
-      plus a list of outstanding ID references that need to be
-      resolved before the Page can be renderered.<P>
-    */
-    class RenderQueueEntry extends Object {
-        /*
-          The Page that has outstanding ID references.
-        */
-        private Page page;
+//             //renderer.render(entry.getPage(), outputStream);
 
-        /*
-          A list of ID references (names).
-        */
-        private Vector unresolvedIdReferences = new Vector();
+//             /* TODO
+//             Enumeration rootEnumeration =
+//             entry.getAreaTree().getExtensions().elements();
+//             while (rootEnumeration.hasMoreElements())
+//             renderTree.addExtension((ExtensionObj) rootEnumeration.nextElement());
+//             */
 
-        public RenderQueueEntry(Page page) {
-            this.page = page;
+//             renderQueue.removeElementAt(0);
+//         }
+//     }
 
-            Enumeration e = idReferences.getInvalidElements();
-            while (e.hasMoreElements())
-                unresolvedIdReferences.addElement(e.nextElement());
-        }
+//     /**
+//       A RenderQueueEntry consists of the Page to be queued,
+//       plus a list of outstanding ID references that need to be
+//       resolved before the Page can be renderered.<P>
+//     */
+//     class RenderQueueEntry extends Object {
+//         /*
+//           The Page that has outstanding ID references.
+//         */
+//         private Page page;
 
-        public Page getPage() {
-            return page;
-        }
+//         /*
+//           A list of ID references (names).
+//         */
+//         private Vector unresolvedIdReferences = new Vector();
 
-        /**
-          See if the outstanding references are resolved
-          in the current copy of IDReferences.
-        */
-        public boolean isResolved() {
-            if ((unresolvedIdReferences.size() == 0) || idReferences.isEveryIdValid())
-                return true;
+//         public RenderQueueEntry(Page page) {
+//             this.page = page;
 
-            //
-            // See if any of the unresolved references are still unresolved.
-            //
-            Enumeration e = unresolvedIdReferences.elements();
-            while (e.hasMoreElements())
-                if (!idReferences.doesIDExist((String) e.nextElement()))
-                    return false;
+//             Enumeration e = idReferences.getInvalidElements();
+//             while (e.hasMoreElements())
+//                 unresolvedIdReferences.addElement(e.nextElement());
+//         }
 
-            unresolvedIdReferences.removeAllElements();
-            return true;
-        }
-    }
+//         public Page getPage() {
+//             return page;
+//         }
+
+//         /**
+//           See if the outstanding references are resolved
+//           in the current copy of IDReferences.
+//         */
+//         public boolean isResolved() {
+//             if ((unresolvedIdReferences.size() == 0) || idReferences.isEveryIdValid())
+//                 return true;
+
+//             //
+//             // See if any of the unresolved references are still unresolved.
+//             //
+//             Enumeration e = unresolvedIdReferences.elements();
+//             while (e.hasMoreElements())
+//                 if (!idReferences.doesIDExist((String) e.nextElement()))
+//                     return false;
+
+//             unresolvedIdReferences.removeAllElements();
+//             return true;
+//         }
+//     }
     
-       public Page getNextPage(Page current, boolean isWithinPageSequence,
-                            boolean isFirstCall) {
-        Page nextPage = null;
-        int pageIndex = 0;
-        if (isFirstCall)
-            pageIndex = renderQueue.size();
-        else
-            pageIndex = renderQueue.indexOf(current);
-        if ((pageIndex + 1) < renderQueue.size()) {
-            nextPage = (Page)renderQueue.elementAt(pageIndex + 1);
-            if (isWithinPageSequence
-                    &&!nextPage.getPageSequence().equals(current.getPageSequence())) {
-                nextPage = null;
-            }
-        }
-        return nextPage;
-    }
+//        public Page getNextPage(Page current, boolean isWithinPageSequence,
+//                             boolean isFirstCall) {
+//         Page nextPage = null;
+//         int pageIndex = 0;
+//         if (isFirstCall)
+//             pageIndex = renderQueue.size();
+//         else
+//             pageIndex = renderQueue.indexOf(current);
+//         if ((pageIndex + 1) < renderQueue.size()) {
+//             nextPage = (Page)renderQueue.elementAt(pageIndex + 1);
+//             if (isWithinPageSequence
+//                     &&!nextPage.getPageSequence().equals(current.getPageSequence())) {
+//                 nextPage = null;
+//             }
+//         }
+//         return nextPage;
+//     }
 
-    public Page getPreviousPage(Page current, boolean isWithinPageSequence,
-                                boolean isFirstCall) {
-        Page previousPage = null;
-        int pageIndex = 0;
-        if (isFirstCall)
-            pageIndex = renderQueue.size();
-        else
-            pageIndex = renderQueue.indexOf(current);
-        // System.out.println("Page index = " + pageIndex);
-        if ((pageIndex - 1) >= 0) {
-            previousPage = (Page)renderQueue.elementAt(pageIndex - 1);
-            PageSequence currentPS = current.getPageSequence();
-            // System.out.println("Current PS = '" + currentPS + "'");
-            PageSequence previousPS = previousPage.getPageSequence();
-            // System.out.println("Previous PS = '" + previousPS + "'");
-            if (isWithinPageSequence &&!previousPS.equals(currentPS)) {
-                // System.out.println("Outside page sequence");
-                previousPage = null;
-            }
-        }
-        return previousPage;
-    }
+//     public Page getPreviousPage(Page current, boolean isWithinPageSequence,
+//                                 boolean isFirstCall) {
+//         Page previousPage = null;
+//         int pageIndex = 0;
+//         if (isFirstCall)
+//             pageIndex = renderQueue.size();
+//         else
+//             pageIndex = renderQueue.indexOf(current);
+//         // System.out.println("Page index = " + pageIndex);
+//         if ((pageIndex - 1) >= 0) {
+//             previousPage = (Page)renderQueue.elementAt(pageIndex - 1);
+//             PageSequence currentPS = current.getPageSequence();
+//             // System.out.println("Current PS = '" + currentPS + "'");
+//             PageSequence previousPS = previousPage.getPageSequence();
+//             // System.out.println("Previous PS = '" + previousPS + "'");
+//             if (isWithinPageSequence &&!previousPS.equals(currentPS)) {
+//                 // System.out.println("Outside page sequence");
+//                 previousPage = null;
+//             }
+//         }
+//         return previousPage;
+//     }
 }
