@@ -104,16 +104,20 @@ inactive??
 
   <changes>
    <release version="2003" date="2003">
-   	<action context="code" dev="JM" type="add">
-   		PS renderer got a configurable setting to do auto-landscape rotation.
-   	</action>
-   	<action context="code" dev="JM" type="fix">
-   		Fixed TrueType embedding. Width array now reflects the subset again.
-   	</action>
-   	<action context="code" dev="JM" type="fix">
-   		Fixed font registration for PDF renderer. "normal" and "bold" get
-   		accepted as font-weight again. Fixed font-weight normalization.
-   	</action>
+    <action context="code" dev="JM" type="fix"
+          due-to="Matthias Germann" due-to-email="germannm@post.ch">
+      Fixed bug: PFBParser reports "Could not load the whole segment" (#19764).
+    </action>
+    <action context="code" dev="JM" type="add">
+      PS renderer got a configurable setting to do auto-landscape rotation.
+    </action>
+    <action context="code" dev="JM" type="fix">
+      Fixed TrueType embedding. Width array now reflects the subset again.
+    </action>
+    <action context="code" dev="JM" type="fix">
+      Fixed font registration for PDF renderer. "normal" and "bold" get
+      accepted as font-weight again. Fixed font-weight normalization.
+    </action>
     <action context="code" dev="KLL" type="update">
       Added markers to page when areas added.
       When an area is added that is created by an FO that contains markers
