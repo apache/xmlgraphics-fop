@@ -95,7 +95,6 @@ public class LayoutContext {
      */
     MinOptMax stackLimit;
 
-
     /** True if current top-level reference area is spanning. */
     boolean bIsSpan;
 
@@ -255,6 +254,24 @@ public class LayoutContext {
 
     public int getBaseline() {
         return iBaseline;
+    }
+    
+    public String toString() {
+        return "Layout Context:" +
+        "\nStack Limit: \t" + (getStackLimit() == null ? "null" : getStackLimit().toString()) +
+        "\nTrailing Space: \t" + (getTrailingSpace() == null ? "null" : getTrailingSpace().toString()) +
+        "\nLeading Space: \t" + (getLeadingSpace() == null ? "null" : getLeadingSpace().toString()) + 
+        "\nReference IPD: \t" + getRefIPD() +
+        "\nSpace Adjust: \t" + getSpaceAdjust() + 
+        "\nIPD Adjust: \t" + getIPDAdjust() +
+        "\nLine Height: \t" + getLineHeight() +
+        "\nBaseline: \t" + getBaseline() +
+        "\nResolve Leading Space: \t" + resolveLeadingSpace() +
+        "\nSuppress Leading Space: \t" + suppressLeadingSpace() +
+        "\nIs First Area: \t" + isFirstArea() + 
+        "\nStarts New Area: \t" + startsNewArea() + 
+        "\nIs Last Area: \t" + isLastArea() +
+        "\nTry Hyphenate: \t" + tryHyphenate();
     }
 }
 
