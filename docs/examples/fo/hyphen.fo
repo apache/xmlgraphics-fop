@@ -423,6 +423,46 @@ mildnet etter 1837 at det ble åpnet for en grundigere historisk analyse av Grun
 forhistorie og tilblivelse.
        </fo:block>
       </fo:block>
+      <!-- this defines a title -->
+      <fo:block font-size="12pt" 
+            font-family="sans-serif" 
+            line-height="12pt"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        Czech
+      </fo:block>
+
+      <!-- this defines normal text -->
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt"
+                space-after.optimum="3pt"
+                language="cs"
+                hyphenate="true">
+       
+       <fo:block font-weight="bold">Úryvek z knihy Alenka v říši divů</fo:block>
+       <fo:block>
+Alenka si ani trochu neublížila a v mžiku byla na nohou: pohlédla nad sebe a kolem sebe,
+nad ní bylo temno a před ní nová dlouhá chodba, v níž ještě zahlédla pospíchajícího Bílého Králíka.
+Nesměla ztratit ani vteřinu: jako vítr se pustila za ním a doběhla k němu dosti blízko, aby slyšela,
+jak si povídá, zahýbaje kolem rohu: "U mých uší a vousů, jak je pozdě!" Byla těsně za ním, když zahnula
+kolem rohu. Králík se jí však náhle ztratil z očí. Byla v dlouhé nízké síni, osvětlené řadou lamp,
+visících ze stropu. Po obou stranách síně byly řady dveří, všechny však byly zamčeny, a když je Alenka
+všechny po jedné i po druhé straně vyzkoušela, ubírala se smutně prostředkem síně přemýšlejíc, jak se kdy
+opět dostane domů.
+       </fo:block>
+       <fo:block>
+Pojednou jí stál v cestě malý třínohý stolek, celý z hladkého průhledného skla; na něm nebylo nic než malinký
+zlatý klíček, a Alenku hned napadlo, že by to mohl být klíček od některých těch dveří: ale běda! bud' byly zámky
+příliš velké, nebo klíč příliš malý, ať už tak nebo onak, nehodily se k sobě. Když však tak po druhé obcházela,
+uviděla před sebou nízkou záclonku, které dříve nezpozorovala, a za ní byly malé dveře, tak asi patnáct palců
+vysoké: zkusila zlatý klíček v jejich zámku a k veliké její radosti zapadl. Alenka otevřela dveře a shledala,
+že vedou do malé chodbičky, ne prostornější než myší díra. Poklekla a hleděla chodbičkou do nejrozkošnější zahrady,
+jakou si jen můžete představit. Ó, jak toužila dostat se z malé síně a procházeti se mezi záhony zářivých
+květin a chladnými vodotrysky! Ale dveřmi jí neprošla ani hlava.
+       </fo:block>
+       </fo:block>
     </fo:flow> <!-- closes the flow element-->
   </fo:page-sequence> <!-- closes the page-sequence -->
 </fo:root>
