@@ -108,9 +108,6 @@ public class FoLayoutMasterSet extends FONode {
         setupPageMasters(event);
         // No need to clean up the build tree, because the whole subtree
         // will be deleted.
-        // This is problematical: while Node is obliged to belong to a Tree,
-        // any remaining references to elements of the subtree will keep the
-        // whole subtree from being GCed.
         makeSparsePropsSet();
     }
 
@@ -176,6 +173,7 @@ public class FoLayoutMasterSet extends FONode {
                             ("Aargh! expectStartElement(events, list)");
                 // Flush the master event
                 xmlevents.getEndElement(ev);
+                pool.surrenderEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
             // Unexpected end of file
