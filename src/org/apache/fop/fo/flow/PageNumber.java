@@ -109,7 +109,12 @@ public class PageNumber extends FObj {
 	    this.whiteSpaceTreatment = this.properties.get("white-space-treatment").getEnum();
 	    
 	    this.marker = 0;
+
+            // initialize id                       
+            String id = this.properties.get("id").getString();            
+            area.getIDReferences().initializeID(id,area);                        
 	}
+        
 	String p = Integer.toString(area.getPage().getNumber());
 	this.marker = ((BlockArea) area).addText(fs, red, green, blue,
 						 wrapOption,

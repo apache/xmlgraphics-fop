@@ -121,6 +121,10 @@ public class TableColumn extends FObj {
 		this.properties.get("border-style").getEnum();
             this.columnWidth = 
                 this.properties.get("column-width").getLength().mvalue();
+            
+            // initialize id                       
+            String id = this.properties.get("id").getString();            
+            area.getIDReferences().initializeID(id,area);                                
         }
 
 	this.areaContainer =

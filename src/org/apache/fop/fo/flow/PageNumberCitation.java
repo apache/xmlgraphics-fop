@@ -192,7 +192,12 @@ public class PageNumberCitation extends FObj
 		    this.whiteSpaceTreatment = this.properties.get("white-space-treatment").getEnum();
 	    
 		    this.marker = 0;
+
+                    // initialize id                       
+                    String id = this.properties.get("id").getString();            
+                    area.getIDReferences().initializeID(id,area);                        
 		}
+
 		if(idPageNumber <0)
 		{	
 			FObj root;

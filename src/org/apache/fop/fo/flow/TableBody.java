@@ -132,6 +132,12 @@ public class TableBody extends FObj {
 	    area.addDisplaySpace(spaceBefore);
 	}
 
+        if ( marker==0 ) {
+            // initialize id                       
+            String id = this.properties.get("id").getString();            
+            area.getIDReferences().initializeID(id,area);                        
+        }
+
 	this.areaContainer =
 	    new AreaContainer(fs, -area.borderWidthLeft, -area.borderWidthTop, area.getAllocationWidth(), 
 			  area.spaceLeft(), Position.RELATIVE);
@@ -140,6 +146,7 @@ public class TableBody extends FObj {
 	areaContainer.start();
 
         areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
+        areaContainer.setIDReferences(area.getIDReferences());
 
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {

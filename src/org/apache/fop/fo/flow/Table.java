@@ -159,6 +159,12 @@ public class Table extends FObj {
 	    area.addDisplaySpace(spaceBefore);
 	}
 
+        if ( marker==0 ) {
+            // initialize id                       
+            String id = this.properties.get("id").getString();            
+            area.getIDReferences().initializeID(id,area);                        
+        }
+
 	this.areaContainer =
 	    new AreaContainer(fs, 0, 0, area.getAllocationWidth(), 
                           area.spaceLeft(), Position.STATIC);
@@ -170,6 +176,7 @@ public class Table extends FObj {
 	areaContainer.start();
 
         areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
+        areaContainer.setIDReferences(area.getIDReferences());
 
 	// added by Eric Schaeffer
 	currentColumnNumber = 0;

@@ -194,6 +194,12 @@ public class InlineGraphic extends FObj {
 		    area.addDisplaySpace(spaceBefore);
 		}
 
+                if (marker == 0) {
+                    // initialize id                       
+                    String id = this.properties.get("id").getString();            
+                    area.getIDReferences().initializeID(id,area);                                
+                }
+
 		imageArea.start();
 		imageArea.end();
 		area.addChild(imageArea);
