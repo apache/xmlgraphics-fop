@@ -50,11 +50,11 @@
  */ 
 package org.apache.fop.render.ps;
 
+import java.awt.geom.AffineTransform;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Stack;
 
@@ -71,13 +71,17 @@ public class PSGenerator {
      * Indicator for the PostScript interpreter that the value is provided 
      * later in the document (mostly in the %%Trailer section).
      */
-    public static final AtendIndicator ATEND = new AtendIndicator() {};
+    public static final AtendIndicator ATEND = new AtendIndicator() {
+    };
 
     private OutputStream out;
+    private boolean commentsEnabled = true;
     
     private Stack graphicsStateStack = new Stack();
     private PSState currentState;
-    private DecimalFormat df = new DecimalFormat("0.000");
+    private DecimalFormat df3 = new DecimalFormat("0.000");
+    private DecimalFormat df1 = new DecimalFormat("0.#");
+    private DecimalFormat df5 = new DecimalFormat("0.#####");
 
     private StringBuffer tempBuffer = new StringBuffer(256);
 
@@ -86,6 +90,14 @@ public class PSGenerator {
         this.out = out;
         this.currentState = new PSState();
         this.graphicsStateStack.push(this.currentState);
+    }
+    
+    /**
+     * Returns the OutputStream the PSGenerator writes to.
+     * @return the OutputStream
+     */
+    public OutputStream getOutputStream() {
+        return this.out;
     }
 
     /**
@@ -104,8 +116,17 @@ public class PSGenerator {
      * @return the formatted value
      */
     public String formatDouble(double value) {
-        NumberFormat nf = new java.text.DecimalFormat("0.#");
-        return nf.format(value);
+        return df1.format(value);
+    }
+
+    /**
+     * Formats a double value for PostScript output (higher resolution).
+     * 
+     * @param value value to format
+     * @return the formatted value
+     */
+    public String formatDouble5(double value) {
+        return df5.format(value);
     }
 
     /**
@@ -130,6 +151,12 @@ public class PSGenerator {
     public void writeln(String cmd) throws IOException {
         write(cmd);
         newLine();
+    }
+
+    public void commentln(String comment) throws IOException {
+        if (this.commentsEnabled) {
+            writeln(comment);
+        }
     }
 
     /**
@@ -290,12 +317,12 @@ public class PSGenerator {
                 } else if (params[i] instanceof AtendIndicator) {
                     tempBuffer.append("(atend)");
                 } else if (params[i] instanceof Double) {
-                    tempBuffer.append(df.format(params[i]));
+                    tempBuffer.append(df3.format(params[i]));
                 } else if (params[i] instanceof Number) {
                     tempBuffer.append(params[i].toString());
                 } else if (params[i] instanceof Date) {
-                    DateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                    tempBuffer.append(convertStringToDSC(df.format((Date)params[i])));
+                    DateFormat datef = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    tempBuffer.append(convertStringToDSC(datef.format((Date)params[i])));
                 } else {
                     throw new IllegalArgumentException("Unsupported parameter type: " 
                             + params[i].getClass().getName());
@@ -340,12 +367,12 @@ public class PSGenerator {
     public void concatMatrix(double a, double b,
                                 double c, double d, 
                                 double e, double f) throws IOException {
-        writeln("[" + formatDouble(a) + " "
-                    + formatDouble(b) + " "
-                    + formatDouble(c) + " "
-                    + formatDouble(d) + " "
-                    + formatDouble(e) + " "
-                    + formatDouble(f) + "] concat");
+        writeln("[" + formatDouble5(a) + " "
+                    + formatDouble5(b) + " "
+                    + formatDouble5(c) + " "
+                    + formatDouble5(d) + " "
+                    + formatDouble5(e) + " "
+                    + formatDouble5(f) + "] concat");
     }
     
     /**
@@ -357,6 +384,34 @@ public class PSGenerator {
         concatMatrix(matrix[0], matrix[1], 
                      matrix[2], matrix[3], 
                      matrix[4], matrix[5]);
+    }
+                                
+    /**
+     * Concats the transformations matric.
+     * @param at the AffineTransform whose matrix to use
+     * @exception IOException In case of an I/O problem
+     */
+    public void concatMatrix(AffineTransform at) throws IOException {
+        double[] matrix = new double[6];
+        at.getMatrix(matrix);
+        concatMatrix(matrix);                   
+    }
+               
+    /**
+     * Adds a rectangle to the current path.
+     * @param x upper left corner
+     * @param y upper left corner
+     * @param w width
+     * @param h height
+     * @exception IOException In case of an I/O problem
+     */
+    public void defineRect(double x, double y, double w, double h) 
+                throws IOException {
+        writeln(formatDouble(x) 
+            + " " + formatDouble(y) 
+            + " " + formatDouble(w) 
+            + " " + formatDouble(h) 
+            + " re");
     }
                                 
     /**

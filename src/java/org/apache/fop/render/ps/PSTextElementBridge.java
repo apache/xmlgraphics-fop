@@ -50,13 +50,10 @@
  */
 package org.apache.fop.render.ps;
 
-//import org.apache.batik.gvt.TextNode;
 import org.apache.batik.bridge.SVGTextElementBridge;
 import org.apache.batik.bridge.BridgeContext;
-//import org.apache.batik.bridge.TextUtilities;
 import org.apache.batik.gvt.GraphicsNode;
-
-import org.apache.fop.apps.Document;
+import org.apache.batik.gvt.TextNode;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -70,15 +67,15 @@ import org.w3c.dom.Node;
  * @version $Id: PSTextElementBridge.java,v 1.2 2003/03/07 09:46:30 jeremias Exp $
  */
 public class PSTextElementBridge extends SVGTextElementBridge {
-
-    //private PSTextPainter textPainter;
+    
+    private PSTextPainter textPainter;
 
     /**
      * Constructs a new bridge for the &lt;text> element.
-     * @param fi the font infomration
+     * @param textPainter the text painter to use
      */
-    public PSTextElementBridge(Document fi) {
-        //textPainter = new PSTextPainter(fi);
+    public PSTextElementBridge(PSTextPainter textPainter) {
+        this.textPainter = textPainter;
     }
 
     /**
@@ -90,18 +87,17 @@ public class PSTextElementBridge extends SVGTextElementBridge {
      */
     public GraphicsNode createGraphicsNode(BridgeContext ctx, Element e) {
         GraphicsNode node = super.createGraphicsNode(ctx, e);
-        /*
-        if (node != null && isSimple(ctx, e, node)) {
+        /* this code is worthless I think. PSTextPainter does a much better job
+         * at determining whether to stroke or not. */
+        if (true/*node != null && isSimple(ctx, e, node)*/) {
             ((TextNode)node).setTextPainter(getTextPainter());
-        }*/
+        }
         return node;
     }
 
-    /*
     private PSTextPainter getTextPainter() {
-        return textPainter;
+        return this.textPainter;
     }
-    */
 
     /**
      * Check if text element contains simple text.
@@ -118,16 +114,6 @@ public class PSTextElementBridge extends SVGTextElementBridge {
      *         easily rendered using normal drawString on the PDFGraphics2D
      */
     private boolean isSimple(BridgeContext ctx, Element element, GraphicsNode node) {
-        /*
-        // Font size, in user space units.
-        float fs = TextUtilities.convertFontSize(element).floatValue();
-        // PDF cannot display fonts over 36pt
-        if (fs > 36) {
-            return false;
-        }
-        */
-
-
         for (Node n = element.getFirstChild();
                 n != null;
                 n = n.getNextSibling()) {
@@ -136,7 +122,7 @@ public class PSTextElementBridge extends SVGTextElementBridge {
             case Node.ELEMENT_NODE:
 
                 if (n.getLocalName().equals(SVG_TSPAN_TAG)
-                    || n.getLocalName().equals(SVG_ALT_GLYPH_TAG)) {
+                        || n.getLocalName().equals(SVG_ALT_GLYPH_TAG)) {
                     return false;
                 } else if (n.getLocalName().equals(SVG_TEXT_PATH_TAG)) {
                     return false;
@@ -146,6 +132,7 @@ public class PSTextElementBridge extends SVGTextElementBridge {
                 break;
             case Node.TEXT_NODE:
             case Node.CDATA_SECTION_NODE:
+            default:
             }
         }
 

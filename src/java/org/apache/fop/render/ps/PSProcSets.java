@@ -85,6 +85,14 @@ public final class PSProcSets {
         gen.writeln("/M/moveto ld");
         gen.writeln("/RM/rmoveto ld");
         gen.writeln("/t/show ld");
+        gen.writeln("/A/ashow ld");
+        gen.writeln("/cp/closepath ld");
+
+        gen.writeln("/re {4 2 roll M"); //define rectangle
+        gen.writeln("1 index 0 rlineto");
+        gen.writeln("0 exch rlineto");
+        gen.writeln("neg 0 rlineto");
+        gen.writeln("cp } bd");
 
         gen.writeln("/_ctm matrix def"); //Holds the current matrix
         gen.writeln("/_tm matrix def");

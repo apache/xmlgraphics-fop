@@ -64,6 +64,9 @@ public class DSCConstants {
     /** Lead-in for a DSC-conformant PostScript file */
     public static final String PS_ADOBE_30       = "%!PS-Adobe-3.0";
     
+    /** Lead-in for an EPS file */
+    public static final String EPSF_30           = "EPSF-3.0";
+    
     /** Bounding box for the document */
     public static final String BBOX              = "BoundingBox";
     /** High-resolution bounding box for the document */

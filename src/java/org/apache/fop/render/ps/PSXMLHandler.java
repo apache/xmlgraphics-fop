@@ -137,6 +137,7 @@ public class PSXMLHandler implements XMLHandler {
             SVGHandler svghandler = new SVGHandler();
             svghandler.renderSVGDocument(context, doc, psi);
         } else {
+            //nop
         }
     }
 
@@ -295,7 +296,9 @@ public class PSXMLHandler implements XMLHandler {
 
             GVTBuilder builder = new GVTBuilder();
             BridgeContext ctx = new BridgeContext(ua);
-            PSTextElementBridge tBridge = new PSTextElementBridge(psInfo.getFontInfo());
+            PSTextPainter textPainter = new PSTextPainter(psInfo.getFontInfo());
+            ctx.setTextPainter(textPainter);            
+            PSTextElementBridge tBridge = new PSTextElementBridge(textPainter);
             ctx.putBridge(tBridge);
 
             //PSAElementBridge aBridge = new PSAElementBridge();
@@ -305,8 +308,6 @@ public class PSXMLHandler implements XMLHandler {
             //aBridge.setCurrentTransform(transform);
             //ctx.putBridge(aBridge);
 
-            TextPainter textPainter = new PSTextPainter(psInfo.getFontInfo());
-            ctx.setTextPainter(textPainter);
             GraphicsNode root;
             try {
                 root = builder.build(ctx, doc);
@@ -327,12 +328,16 @@ public class PSXMLHandler implements XMLHandler {
 
             try {
                 gen.writeln("%SVG graphic start ---");
+                gen.saveGraphicsState();
                 /*
                  * Clip to the svg area.
                  * Note: To have the svg overlay (under) a text area then use
                  * an fo:block-container
                  */
-                gen.saveGraphicsState();
+                gen.writeln("newpath");
+                gen.defineRect(xOffset, yOffset, w, h);
+                gen.writeln("clip");
+                
                 // transform so that the coordinates (0,0) is from the top left
                 // and positive is down and to the right. (0,0) is where the
                 // viewBox puts it.
@@ -351,7 +356,8 @@ public class PSXMLHandler implements XMLHandler {
                 if (psInfo.pdfContext == null) {
                     psInfo.pdfContext = psInfo.pdfPage;
                 }*/
-                PSGraphics2D graphics = new PSGraphics2D(true, gen);
+                final boolean textAsShapes = false;
+                PSGraphics2D graphics = new PSGraphics2D(textAsShapes, gen);
                 graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
                 //psInfo.pdfState.push();
                 transform = new AffineTransform();

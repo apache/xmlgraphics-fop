@@ -259,13 +259,12 @@ public class PSRenderer extends AbstractRenderer {
     /**
      * Set up the font info
      *
-     * @param fontInfo the font info object to set up
+     * @param foTreeControl the font info object to set up
      */
     public void setupFontInfo(FOTreeControl foTreeControl) {
         /* use PDF's font setup to get PDF metrics */
         org.apache.fop.render.pdf.FontSetup.setup((Document)foTreeControl, null);
-        // TODO: what's this?
-        this.fontInfo = fontInfo;
+        this.fontInfo = (Document)foTreeControl;
     }
 
     /**
@@ -276,10 +275,14 @@ public class PSRenderer extends AbstractRenderer {
      * @param h height
      * @param col color to fill with
      */
-    protected void fillRect(int x, int y, int w, int h,
+    protected void fillRect(float x, float y, float w, float h,
                                  ColorType col) {
         useColor(col);
-        writeln(x + " " + y + " " + w + " " + h + " rectfill");
+        writeln(gen.formatDouble(x) 
+            + " " + gen.formatDouble(y) 
+            + " " + gen.formatDouble(w) 
+            + " " + gen.formatDouble(h) 
+            + " rectfill");
     }
 
     /**
@@ -289,8 +292,12 @@ public class PSRenderer extends AbstractRenderer {
      * @param w width
      * @param h height
      */
-    protected void drawRect(int x, int y, int w, int h) {
-        writeln(x + " " + y + " " + w + " " + h + " rectstroke");
+    protected void drawRect(float x, float y, float w, float h) {
+        writeln(gen.formatDouble(x) 
+            + " " + gen.formatDouble(y) 
+            + " " + gen.formatDouble(w) 
+            + " " + gen.formatDouble(h) 
+            + " rectstroke");
     }
 
     /**
@@ -325,7 +332,10 @@ public class PSRenderer extends AbstractRenderer {
 
     private void useColor(float red, float green, float blue) {
         if ((red != currRed) || (green != currGreen) || (blue != currBlue)) {
-            writeln(red + " " + green + " " + blue + " setrgbcolor");
+            writeln(gen.formatDouble(red)
+                + " " + gen.formatDouble(green)
+                + " " + gen.formatDouble(blue)
+                + " setrgbcolor");
             currRed = red;
             currGreen = green;
             currBlue = blue;
@@ -480,7 +490,10 @@ public class PSRenderer extends AbstractRenderer {
         int bl = currentBPPosition + area.getOffset();
 
         useFont(fontname, fontsize);
-
+        ColorType ct = (ColorType)area.getTrait(Trait.COLOR);
+        if (ct != null) {
+            useColor(ct);
+        }
         paintText(rx, bl, area.getTextArea(), f);
 
 /*
@@ -713,9 +726,7 @@ public class PSRenderer extends AbstractRenderer {
             //saveGraphicsState();
 
             if (back.getColor() != null) {
-                updateColor(back.getColor(), true, null);
-                writeln(startx + " " + starty + " "
-                                  + width + " " + height + " rectfill");
+                fillRect(startx, starty, width, height, back.getColor());
             }
             if (back.getURL() != null) {
                 ImageFactory fact = ImageFactory.getInstance();
@@ -748,7 +759,7 @@ public class PSRenderer extends AbstractRenderer {
             }
 
             float bwidth = bps.width;
-            updateColor(bps.color, false, null);
+            useColor(bps.color);
             writeln(bwidth + " setlinewidth");
 
             drawLine(startx, starty + bwidth / 2, endx, starty + bwidth / 2);
@@ -765,7 +776,7 @@ public class PSRenderer extends AbstractRenderer {
             }
 
             float bwidth = bps.width;
-            updateColor(bps.color, false, null);
+            useColor(bps.color);
             writeln(bwidth + " setlinewidth");
 
             drawLine(startx + bwidth / 2, starty, startx + bwidth / 2, endy);
@@ -783,7 +794,7 @@ public class PSRenderer extends AbstractRenderer {
             }
 
             float bwidth = bps.width;
-            updateColor(bps.color, false, null);
+            useColor(bps.color);
             writeln(bwidth + " setlinewidth");
 
             drawLine(startx, sy - bwidth / 2, endx, sy - bwidth / 2);
@@ -801,7 +812,7 @@ public class PSRenderer extends AbstractRenderer {
             }
 
             float bwidth = bps.width;
-            updateColor(bps.color, false, null);
+            useColor(bps.color);
             writeln(bwidth + " setlinewidth");
             drawLine(sx - bwidth / 2, starty, sx - bwidth / 2, endy);
         }
@@ -825,13 +836,7 @@ public class PSRenderer extends AbstractRenderer {
         writeln(startx + " " + starty + " M ");
         writeln(endx + " " + endy + " lineto");
     }
-
-    private void updateColor(ColorType col, boolean fill, StringBuffer pdf) {
-        writeln(gen.formatDouble(col.getRed()) + " "
-                        + gen.formatDouble(col.getGreen()) + " "
-                        + gen.formatDouble(col.getBlue()) + " setrgbcolor");
-    }
-
+    
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
      */
@@ -863,34 +868,8 @@ public class PSRenderer extends AbstractRenderer {
         context.setProperty(PSXMLHandler.PS_YPOS,
                             new Integer(currentBPPosition + (int) pos.getY()));
         //context.setProperty("strokeSVGText", options.get("strokeSVGText"));
-
-        /*
-        context.setProperty(PDFXMLHandler.PDF_DOCUMENT, pdfDoc);
-        context.setProperty(PDFXMLHandler.OUTPUT_STREAM, ostream);
-        context.setProperty(PDFXMLHandler.PDF_STATE, currentState);
-        context.setProperty(PDFXMLHandler.PDF_PAGE, currentPage);
-        context.setProperty(PDFXMLHandler.PDF_CONTEXT,
-                    currentContext == null ? currentPage: currentContext);
-        context.setProperty(PDFXMLHandler.PDF_CONTEXT, currentContext);
-        context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);
-        context.setProperty(PDFXMLHandler.PDF_XPOS,
-                            new Integer(currentBlockIPPosition + (int) pos.getX()));
-        context.setProperty(PDFXMLHandler.PDF_YPOS,
-                            new Integer(currentBPPosition + (int) pos.getY()));
-        context.setProperty(PDFXMLHandler.PDF_FONT_INFO, fontInfo);
-        context.setProperty(PDFXMLHandler.PDF_FONT_NAME, currentFontName);
-        context.setProperty(PDFXMLHandler.PDF_FONT_SIZE,
-                            new Integer(currentFontSize));
-        context.setProperty(PDFXMLHandler.PDF_WIDTH,
-                            new Integer((int) pos.getWidth()));
-        context.setProperty(PDFXMLHandler.PDF_HEIGHT,
-                            new Integer((int) pos.getHeight()));
-        */
+        
         renderXML(userAgent, context, doc, ns);
-
     }
-
-
-
 
 }
