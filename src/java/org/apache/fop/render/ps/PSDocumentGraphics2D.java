@@ -72,7 +72,7 @@ import org.apache.fop.layout.FontInfo;
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id: PDFDocumentGraphics2D.java,v 1.27 2003/03/07 09:51:26 jeremias Exp $
- * @see org.apache.fop.svg.PSGraphics2D
+ * @see org.apache.fop.render.ps.PSGraphics2D
  */
 public class PSDocumentGraphics2D extends PSGraphics2D {
 
