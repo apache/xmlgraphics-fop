@@ -101,14 +101,6 @@ Software Foundation, please see <http://www.apache.org/>.
 
 package org.apache.fop.fo;
 
-import org.apache.fop.fo.properties.GenericBoolean;
-import org.apache.fop.fo.properties.GenericBorderStyle;
-import org.apache.fop.fo.properties.GenericBreak;
-import org.apache.fop.fo.properties.GenericCondBorderWidth;
-import org.apache.fop.fo.properties.GenericCondPadding;
-import org.apache.fop.fo.properties.GenericKeep;
-import org.apache.fop.fo.properties.GenericSpace;
-
 public interface Constants {</xsl:text>
 
     // element constants
@@ -141,7 +133,75 @@ public interface Constants {</xsl:text>
 </xsl:call-template>
 
    // Enumeration Interfaces
-<xsl:apply-templates select="document(propfile)//property[not(@type='generic')]"/>
+   
+    public interface GenericBooleanInterface {
+        int TRUE =  Constants.TRUE;
+        int FALSE =  Constants.FALSE;
+    }
+     
+    public interface GenericBorderStyleInterface {
+        int NONE =  Constants.NONE;
+        int HIDDEN =  Constants.HIDDEN;
+        int DOTTED =  Constants.DOTTED;
+        int DASHED =  Constants.DASHED;
+        int SOLID =  Constants.SOLID;
+        int DOUBLE =  Constants.DOUBLE;
+        int GROOVE =  Constants.GROOVE;
+        int RIDGE =  Constants.RIDGE;
+        int INSET =  Constants.INSET;
+        int OUTSET =  Constants.OUTSET;
+    }
+    
+    public interface GenericBreakInterface {
+        int AUTO =  Constants.AUTO;
+        int COLUMN =  Constants.COLUMN;
+        int PAGE =  Constants.PAGE;
+        int EVEN_PAGE =  Constants.EVEN_PAGE;
+        int ODD_PAGE =  Constants.ODD_PAGE;
+    }
+    
+    public interface GenericCondBorderWidthInterface {
+        public interface Conditionality {
+            int DISCARD = Constants.DISCARD;
+            int RETAIN = Constants.RETAIN;
+        }
+    }
+    
+    public interface GenericCondPaddingInterface {
+        public interface Conditionality {
+            int DISCARD = Constants.DISCARD;
+            int RETAIN = Constants.RETAIN;
+        }
+    }
+        
+    public interface GenericKeepInterface {
+        public interface WithinPage {
+            int AUTO = Constants.AUTO;
+            int ALWAYS = Constants.ALWAYS;
+        }
+        public interface WithinLine {
+            int AUTO = Constants.AUTO;
+            int ALWAYS = Constants.ALWAYS;
+        }
+        public interface WithinColumn {
+            int AUTO = Constants.AUTO;
+            int ALWAYS = Constants.ALWAYS;
+        }
+    }
+    
+    public interface GenericSpaceInterface {
+        public interface Precedence {
+            int FORCE = Constants.FORCE;
+        }
+        public interface Conditionality {
+            int DISCARD = Constants.DISCARD;
+            int RETAIN = Constants.RETAIN;
+        }
+    }
+   
+<xsl:apply-templates select = "document(propfile)//property[not(@type='generic')]">
+   <xsl:sort select="name"/>
+</xsl:apply-templates>
 
 <xsl:text>
 }
@@ -177,7 +237,7 @@ public interface Constants {</xsl:text>
       <xsl:if test="use-generic">
         <xsl:text> extends </xsl:text>
         <xsl:value-of select="use-generic"/>
-        <xsl:text>.Enums</xsl:text>
+        <xsl:text>Interface</xsl:text>
       </xsl:if>
       <xsl:text> {</xsl:text>
       <xsl:for-each select="enumeration/value">
