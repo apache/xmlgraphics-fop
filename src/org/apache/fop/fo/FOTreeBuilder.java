@@ -55,6 +55,8 @@ import org.apache.fop.layout.AreaTree;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.pagination.Root;
+import org.apache.fop.system.BufferManager;
+
 
 // SAX
 import org.xml.sax.helpers.DefaultHandler;
@@ -93,7 +95,9 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      */
     protected FObj rootFObj = null;
 
-    /**
+    public BufferManager bufferManager;
+	
+	/**
      * set of names of formatting objects encountered but unknown
      */
     protected Hashtable unknownFOs = new Hashtable();
@@ -277,6 +281,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
 
         if (rootFObj == null) {
             rootFObj = fobj;
+			rootFObj.setBufferManager(this.bufferManager);	
             if (!fobj.getName().equals("fo:root")) {
                 throw new SAXException(
                   new FOPException("Root element must" +
@@ -296,6 +301,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
       */
     public void format(AreaTree areaTree) throws FOPException {
         MessageHandler.logln("formatting FOs into areas");
+		this.bufferManager.readComplete();
         ((Root) this.rootFObj).format(areaTree);
     }
 
@@ -309,5 +315,8 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     {
 	return (rootFObj != null);
     }
-    
+
+    public void setBufferManager(BufferManager bufferManager) {
+     	this.bufferManager = bufferManager;
+    }	    
 }

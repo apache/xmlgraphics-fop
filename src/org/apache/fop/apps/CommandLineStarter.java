@@ -45,8 +45,10 @@ public class CommandLineStarter extends Starter {
 
         XMLReader parser = inputHandler.getParser();
         setParserFeatures(parser);
+		
+	    Driver driver = new Driver();
+		driver.setBufferFile(commandLineOptions.getBufferFile());
 
-	Driver driver = new Driver();
         if (errorDump) {
             driver.setErrorDump(true);
         }
