@@ -1,14 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
-      <document> 
-        <header> 
-          <title>FO Examples</title> 
-        </header> 
-        <body> 
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+<document> 
+  <header> 
+    <title>FO Examples</title> 
+  </header> 
+  <body> 
+    <section>
+      <title>Example Documents Using FOP</title>
+      <p>
+        These examples have been rendered using FOP.
+      </p>
+    </section>
           <section>
-            <title></title>
+            <title>Images Examples</title>
             <p>
+Embedding images in FO:
+  <table>
+    <caption>Images in FO</caption>
+    <tr>
+      <th>description</th>
+      <th>fo file</th>
+      <th>pdf result</th>
+    </tr>
+    <tr>
+      <td>align in larger viewport</td>
+      <td><link href="../fo/align.fo">align.fo</link></td>
+      <td><link href="../fo/align.fo.pdf">align.fo.pdf</link></td>
+    </tr>
+    <tr>
+      <td>align in smaller viewport</td>
+      <td><link href="../fo/align2.fo">align2.fo</link></td>
+      <td><link href="../fo/align2.fo.pdf">align2.fo.pdf</link></td>
+    </tr>
+    <tr>
+      <td>scaling image</td>
+      <td><link href="../fo/size.fo">size.fo</link></td>
+      <td><link href="../fo/size.fo.pdf">size.fo.pdf</link></td>
+    </tr>
+  </table>
             </p>
           </section>
-        </body>
-    </document>
+  </body>
+</document>

@@ -352,10 +352,17 @@
     <map:serialize type="svg2pdf"/>
    </map:match>
 
-   <map:match pattern="*/fo/*.fo">
+   <map:match pattern="fo/*.fo">
+    <map:read src="content/xdocs/fo/{1}.fo" mime-type="text/xml"/>
+   </map:match>
+   <map:match pattern="fo/*.fo.pdf">
+    <map:generate src="content/xdocs/fo/{1}.fo"/>
+    <map:serialize type="fo2pdf"/>
+   </map:match>
+   <map:match pattern="**/fo/*.fo">
     <map:read src="content/xdocs/{1}/fo/{2}.fo" mime-type="text/xml"/>
    </map:match>
-   <map:match pattern="*/fo/*.fo.pdf">
+   <map:match pattern="**/fo/*.fo.pdf">
     <map:generate src="content/xdocs/{1}/fo/{2}.fo"/>
     <map:serialize type="fo2pdf"/>
    </map:match>
