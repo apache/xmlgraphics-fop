@@ -14,12 +14,16 @@ public class PSStream extends FilterOutputStream {
     public PSStream(OutputStream out) {
         super(out);
     }
-
+    
     public void write(String cmd) throws IOException {
         if (cmd.length() > 255)
             throw new RuntimeException("PostScript command exceeded limit of 255 characters");
         write(cmd.getBytes("US-ASCII"));
         write('\n');
     }
-
+    
+    public void writeByteArr(byte[] cmd) throws IOException {
+        write(cmd);
+        write('\n');
+    }
 }

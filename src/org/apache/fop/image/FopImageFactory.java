@@ -132,6 +132,8 @@ public class FopImageFactory {
         } else if ("image/bmp".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.BmpImage";
             // imgClassName = "org.apache.fop.image.JAIImage";
+        } else if ("image/eps".equals(imgMimeType)) {
+            imgClassName = "org.apache.fop.image.EPSImage";
         } else if ("image/png".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.JimiImage";
             // imgClassName = "org.apache.fop.image.JAIImage";

@@ -311,6 +311,35 @@ public class PSRenderer extends AbstractRenderer {
         write("%%EndProlog");
         write("%%BeginSetup");
         writeFontDict(fontInfo);
+
+        /* Write proc for including EPS */
+        write("%%BeginResource: procset EPSprocs");
+        write("%%Title: EPS encapsulation procs");
+        
+        write("/BeginEPSF { %def");
+        write("/b4_Inc_state save def         % Save state for cleanup");
+        write("/dict_count countdictstack def % Count objects on dict stack");
+        write("/op_count count 1 sub def      % Count objects on operand stack");
+        write("userdict begin                 % Push userdict on dict stack");
+        write("/showpage { } def              % Redefine showpage, { } = null proc");
+        write("0 setgray 0 setlinecap         % Prepare graphics state");
+        write("1 setlinewidth 0 setlinejoin");
+        write("10 setmiterlimit [ ] 0 setdash newpath");
+        write("/languagelevel where           % If level not equal to 1 then");
+        write("{pop languagelevel             % set strokeadjust and");
+        write("1 ne                           % overprint to their defaults.");
+        write("{false setstrokeadjust false setoverprint");
+        write("} if");
+        write("} if");
+        write("} bind def");
+        
+        write("/EndEPSF { %def");
+        write("count op_count sub {pop} repeat            % Clean up stacks");
+        write("countdictstack dict_count sub {end} repeat");
+        write("b4_Inc_state restore");
+        write("} bind def");
+        write("%%EndResource");
+        
         write("%%EndSetup");
         write("FOPFonts begin");
     }
