@@ -69,7 +69,6 @@ import org.xml.sax.Attributes;
 public class FObj extends FONode {
     private static final String FO_URI = "http://www.w3.org/1999/XSL/Format";
 
-    public static HashMap propertyListStringTable = null;  // temporary
     public static HashMap elementStringTable = null;       // temporary
 
     public static Property.Maker[] propertyListTable = null;
@@ -107,12 +106,7 @@ public class FObj extends FONode {
      */
     public FObj(FONode parent) {
         super(parent);
-/*      temporary, during conversions to int constants only
-        if (propertyListStringTable == null) {
-            propertyListStringTable = new HashMap();
-            propertyListStringTable.putAll(FOPropertyMapping.getGenericStringMappings());
-        }
-*/        
+
         if (elementStringTable == null) {
             elementStringTable = new HashMap();
             for (Iterator iter =
