@@ -58,6 +58,7 @@ For more information see <link href="http://xml.apache.org/batik/">Batik</link>
 for how transcoders work.
             </p>
           </section>
+<!--
           <section>
             <title>Examples</title>
             <p>
@@ -101,9 +102,15 @@ to PDF:
       <td><link href="svg/transparency.png">transparency.png</link></td>
       <td><link href="svg/transparency.pdf">transparency.pdf</link></td>
     </tr>
-  </table> 
-As can be seen most of the specific issues are handled.
-
+  </table>
+    <p>
+ As can be seen most of the specific issues are handled.
+    </p>
+    <p>
+<note>
+You will need Acrobat 5.0 to see transparency.
+</note>
+    </p>
   <table>
     <caption>XSL:FO to PDF examples</caption>
     <tr>
@@ -119,6 +126,7 @@ As can be seen most of the specific issues are handled.
   </table> 
             </p>
           </section>
+-->
           <section>
             <title>Important Notes</title>
             <p>

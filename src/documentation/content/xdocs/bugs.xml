@@ -1,0 +1,26 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+
+<document>
+  <header>
+    <title>Bugs</title>
+  </header>
+  <body>
+    <section>
+      <title>How to report bugs</title>
+    <p>Please report bugs to <link href="http://nagoya.apache.org/bugzilla/">bugzilla</link>, the Apache bug
+       database. A copy of your bug report is sent automatically to the discussion list fop-dev@xml.apache.org. </p>
+    <p>Please make sure, before you report a bug, that it is not mentioned in the FAQ or
+       in the list of open bugs at bugzilla.</p>
+    <p>Please make your description as concise as possible and add an example fo 
+       file with your report, which just demonstrates the problem. Thanks for your help!</p>
+  </section>
+  <section>
+    <title>Known bugs</title>
+    <p>A list of known bugs can be found at
+       <link href="http://nagoya.apache.org/bugzilla/">bugzilla</link>.</p>
+  </section>
+</body>
+</document>
+
+

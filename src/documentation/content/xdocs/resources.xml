@@ -1,0 +1,96 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+  
+<!-- FOP Relevant Specifications and links -->
+<document> 
+    <header>
+        <title>Resources</title>
+        <subtitle>Resources useful for developing and using FOP</subtitle>
+    </header> 
+    
+    <body>
+
+<section>
+  <title>FOP Relevant Specifications and Links</title>
+  <section>
+    <title>Mailing Lists (and archives)</title>
+    <section>
+      <title>FOP User Mailing List</title>
+      <ul>
+        <li>Send a mail to <link href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</link>
+         to subscribe (use <link href="mailto:fop-user-digest-subscribe@xml.apache.org">
+                         fop-user-digest-subscribe@xml.apache.org</link> for digest).
+                         This is where user specific topics are discussed. For detailed instructions on the subscription, see
+         <link href="http://xml.apache.org/mail.html">Apache XML Mailing Lists</link>.</li>
+         <li>The Mailing list ARChives (MARC) at the AIMS group:
+              <link href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">fop-user</link>
+            (searchable)</li>
+            <li><link href="http://xml.apache.org/mail/fop-user/">Apache archive of fop-user@apache.org</link></li>
+      </ul>
+    </section>
+    <section>
+      <title>FOP Developer Mailing List</title>
+      <ul>
+        <li>Send a mail to <link href="mailto:fop-dev-subscribe@xml.apache.org">fop-dev-subscribe@xml.apache.org</link>
+         to subscribe. (use <link href="mailto:fop-dev-digest-subscribe@xml.apache.org">
+                         fop-dev-digest-subscribe@xml.apache.org</link> for digest).
+                          For detailed instructions on the subscription, see
+         <link href="http://xml.apache.org/mail.html">Apache XML Mailing Lists</link>.</li>
+         <li>The Mailing list ARChives (MARC) at the AIMS group:
+              <link href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">fop-dev</link> (searchable)
+            </li>
+            <li><link href="http://xml.apache.org/mail/fop-dev/">Apache archive of fop-dev@apache.org</link></li>
+      </ul>
+    </section>
+    <section>
+      <title>XSL:FO Mailing List (at W3C)</title>
+      <ul>
+          <li>There is an XSL:FO mailing list: www-xsl-fo@w3.org. Subscription info can be found here: <link href="http://www.w3.org/Mail/Request">
+              http://www.w3.org/Mail/Request</link>.</li>
+              <li>The archive can be found here:
+              <link href="http://lists.w3.org/Archives/Public/www-xsl-fo/">http://lists.w3.org/Archives/Public/www-xsl-fo/</link></li>
+      </ul>
+    </section>
+  </section>
+  <section>
+    <title>Specifications</title>
+  <ul>
+    <li><link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Recommendation (15 October 2001)</link></li>
+    <li><link href="http://www.renderx.com/Tests/validator/fo.dtd.html">A dtd for the XSL-FO Recommendation provided by N. Grigoriev from RenderX</link></li>
+    <li><link href="http://www.w3.org/TR/SVG/">Supported SVG Recommendation (04 September 2001)</link></li>
+    <li><link href="http://www.w3.org/TR/REC-xml">XML Recommendation</link></li>
+    <li><link href="http://www.w3.org/TR/xslt">XSLT Recommendation</link></li>
+    <li><link href="http://partners.adobe.com/asn/developer/acrosdk/docs/filefmtspecs/PDFReference.pdf">Portable Document Format (PDF) 1.4 Reference Manual </link></li>
+    <li><link href="http://sax.sourceforge.net/">Simple API for XML (SAX)</link></li>
+    <li><link href="http://www.w3.org/TR/REC-DOM-Level-1">Document Object Model (DOM)</link></li>
+    <li><link href="http://www.w3.org/TR/REC-xml-names/">Namespaces in XML Recommendation</link></li>
+    <li><link href="http://java.sun.com/j2se/1.3/docs/api/index.html">Java JDK 1.3 Documentation</link></li>
+  </ul>
+  </section>
+  <section>
+    <title>Tutorials/Articles</title>
+    <ul>
+      <li><link href="http://www.ibiblio.org/xml/books/bible2/chapters/ch18.html">Elliotte Rusty Harold: Chapter 18 on xsl:fo from his excellent book XML Bible, Second Edition</link></li>
+      <li><link href="http://www.sun.com/software/xml/developers/slides-dtd/">Paul Sandoz: Using formatting objects with the slides dtd</link></li>
+      <li><link href="http://www.xml.com/pub/a/2001/01/17/xsl-fo/index.html">J. David Eisenberg: Using XSL Formatting Objects</link></li>
+      <li><link href="http://zvon.org/xxl/xslfoReference/Output/index.html">Miloslav Nic: XSL FO reference</link></li>
+      <li><link href="http://www.dpawson.co.uk/xsl/sect3/bk/index.html">Dave Pawson: An introduction to XSL Formatting Objects</link></li>
+    </ul>
+  </section>
+  <section>
+    <title>Related/Useful Products</title>
+    <ul>
+      <li>
+PJ is an open source product that can be used to modify PDF documents:
+<link href="http://www.etymon.com/pj/index.html">http://www.etymon.com/pj/index.html</link>
+      </li>
+      <li>
+iText is a library that can edit PDF files, it is possible to do
+post processing of the generated PDF files: <link href="http://www.lowagie.com/iText/">http://www.lowagie.com/iText/</link>.
+      </li>
+    </ul>
+  </section>
+</section>
+    </body>
+</document>
+

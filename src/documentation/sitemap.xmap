@@ -122,8 +122,8 @@
   <map:resource name="skinit">
    <map:transform src="skins/{defaults:skin}/xslt/html/{type}.xsl">
      <map:parameter name="isfaq" value="{isfaq}"/>
-     <map:parameter name="dir" value="{dir}"/>
-     <map:parameter name="resource" value="{resource}"/>
+     <map:parameter name="nopdf" value="{nopdf}"/>
+     <map:parameter name="path" value="{path}"/>
      <!-- Can set an alternative project skinconfig here 
      <map:parameter name="config-file" value="../../../../skinconf.xml"/>
      -->
@@ -135,7 +135,7 @@
     <map:generate src="content/xdocs/{../1}book.xml"/>
     <map:call resource="skinit">
       <map:parameter name="type" value="book2menu"/>
-      <map:parameter name="resource" value="{resource}.html"/>
+      <map:parameter name="path" value="{path}"/>
     </map:call>
   </map:resource>
 
@@ -192,20 +192,19 @@
     <map:generate src="content/xdocs/tabs.xml"/>
     <map:call resource="skinit">
      <map:parameter name="type" value="tab2menu"/>
-     <map:parameter name="resource" value="{1}"/>
-     <map:parameter name="dir" value="{1}/"/>
+     <map:parameter name="path" value="{2}.html"/>
     </map:call>
   </map:match>
 
   <map:match pattern="**book-**/*.xml">
     <map:call resource="book">
-      <map:parameter name="resource" value="{3}"/>
+     <map:parameter name="path" value="{2}/{3}"/>
     </map:call>
   </map:match>
 
   <map:match pattern="**book-**.xml">
     <map:call resource="book">
-      <map:parameter name="resource" value="{2}"/>
+      <map:parameter name="path" value="{2}"/>
     </map:call>
   </map:match>
 
@@ -214,8 +213,7 @@
      <map:transform src="library/xslt/todo2document.xsl" label="content"/>
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
-      <map:parameter name="resource" value="todo"/>
-      <map:parameter name="dir" value=""/>
+      <map:parameter name="path" value="/todo.xml"/>
      </map:call>
    </map:match>
 
@@ -224,8 +222,7 @@
      <map:transform src="library/xslt/changes2document.xsl" label="content"/>
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
-      <map:parameter name="resource" value="changes"/>
-      <map:parameter name="dir" value=""/>
+      <map:parameter name="path" value="/changes"/>
      </map:call>
    </map:match>
 
@@ -234,8 +231,7 @@
      <map:transform src="library/xslt/faq2document.xsl" label="content"/>
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
-      <map:parameter name="resource" value="faq"/>
-      <map:parameter name="dir" value=""/>
+      <map:parameter name="path" value="{1}/faq"/>
       <map:parameter name="isfaq" value="true"/>
 
      </map:call>
@@ -246,8 +242,7 @@
      <map:transform src="library/xslt/faq2document.xsl" label="content"/>
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
-      <map:parameter name="resource" value="faq"/>
-      <map:parameter name="dir" value=""/>
+      <map:parameter name="path" value="faq"/>
       <map:parameter name="isfaq" value="true"/>
 
      </map:call>
@@ -264,8 +259,7 @@
      <map:generate src="content/xdocs/community/{1}/index.xml"/>
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
-      <map:parameter name="resource" value="{1}"/>
-      <map:parameter name="dir" value="community/{1}/"/>
+      <map:parameter name="path" value="community/{1}/index"/>
      </map:call>
    </map:match>
 
@@ -274,8 +268,7 @@
      <map:generate src="content/xdocs/community{1}revision-{2}.xml"/>
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
-      <map:parameter name="resource" value="{1}"/>
-      <map:parameter name="dir" value="community/{1}/"/>
+      <map:parameter name="path" value="community/{1}/revision-{2}"/>
      </map:call>
    </map:match>
 
@@ -288,8 +281,7 @@
      <map:transform src="library/xslt/{1}2document.xsl" label="content"/>
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
-      <map:parameter name="resource" value="{3}"/>
-      <map:parameter name="dir" value="community/{1}/{2}/"/>
+      <map:parameter name="path" value="community/{1}/{2}/{3}"/>
      </map:call>
    </map:match>
 
@@ -311,8 +303,7 @@
    <map:transform src="library/xslt/howto2document.xsl" label="content"/>
    <map:call resource="skinit">
      <map:parameter name="type" value="document2html"/>
-     <map:parameter name="resource" value="{3}"/>
-     <map:parameter name="dir" value="{1}howto/"/>
+     <map:parameter name="path" value="{1}howto/{2}"/>
    </map:call>
  </map:match>
 
@@ -328,7 +319,8 @@
        <map:parameter name="uri" value="{1}"/>
      </map:transform>
      <map:serialize type="xml"/>
-   </map:match>
+    </map:match>
+
    <map:match pattern="body-doclist.xml">
      <map:aggregate element="doclist">
        <map:part src="cocoon:/doclist/content/xdocs/book.xml"/>
@@ -337,7 +329,8 @@
      <map:transform src="library/xslt/doclist2document.xsl"/>
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
-      <map:parameter name="dir" value="community/{1}/{2}/"/>
+      <map:parameter name="path" value="doclist"/>
+      <map:parameter name="nopdf" value="true"/>
      </map:call>
    </map:match>
 
@@ -352,8 +345,7 @@
      <map:call resource="skinit">
       <map:parameter name="type" value="document2html"/>
       <map:parameter name="isfaq" value="true"/>
-      <map:parameter name="resource" value="{1}.dtdx"/>
-      <map:parameter name="dir" value="{1}"/>
+      <map:parameter name="path" value="{1}.dtdx.html"/>
      </map:call>
    </map:match>
 
@@ -362,8 +354,7 @@
     <map:generate src="content/xdocs/{1}/{2}.xml"/>
     <map:call resource="skinit">
      <map:parameter name="type" value="document2html"/>
-     <map:parameter name="dir" value="{1}/"/>
-     <map:parameter name="resource" value="{2}"/>
+     <map:parameter name="path" value="{1}/{2}"/>
     </map:call>
     </map:match>
 
@@ -372,8 +363,7 @@
     <map:generate src="content/xdocs/{1}.xml"/>
     <map:call resource="skinit">
      <map:parameter name="type" value="document2html"/>
-     <map:parameter name="dir" value="/"/>
-     <map:parameter name="resource" value="{1}"/>
+     <map:parameter name="path" value="{1}"/>
     </map:call>
    </map:match>
 
@@ -385,8 +375,7 @@
     </map:aggregate>
     <map:call resource="skinit">
       <map:parameter name="type" value="site2xhtml"/>
-      <map:parameter name="dir" value=""/>
-      <map:parameter name="resource" value="{0}"/>
+      <map:parameter name="path" value="{1}"/>
     </map:call>
    </map:match>
 
@@ -398,8 +387,7 @@
     </map:aggregate>
      <map:call resource="skinit">
       <map:parameter name="type" value="site2xhtml"/>
-      <map:parameter name="dir" value="{1}/"/>
-      <map:parameter name="resource" value="{0}"/>
+      <map:parameter name="path" value="{1}/{2}"/>
      </map:call>
    </map:match>
 

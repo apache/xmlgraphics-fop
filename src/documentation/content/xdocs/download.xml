@@ -1,0 +1,32 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+
+<document>
+    <header>
+        <title>Download</title>
+    </header>
+
+    <body>
+<section>
+  <title>Downloading FOP</title>
+    <p>You can download the latest release version from the <link
+       href="http://xml.apache.org/dist/fop/">distribution directory</link>. </p>
+    <p>The file contains also the documentation (including some example fo files) and the source.  </p>
+    <p>If you want to work with the latest and nicest code, you can use the cvs version. See the section
+       on AnonCVS in the <link href="http://xml.apache.org/cvs.html">xml.apache.org documentation</link> for details.
+       Sometimes people have difficulties to access the cvs server; in this case you can download
+       a snapshot from the cvs files <link href="http://xml.apache.org/from-cvs/xml-fop/">here</link>.
+       In both cases you have to build Fop yourself - see <link href="compiling.html">Compiling Fop</link> for details.
+    </p>
+    <note>
+      Important: Currently, releases of FOP are coming out of the "fop-0_20_2-maintain" branch. The "MAIN" branch is
+      used for the redesign. See <link href="design/index.html">NEW DESIGN</link> for more information.
+    </note>
+    <p>To run FOP from the command line, see <link href="running.html">Running FOP</link>.</p>
+    <p>If you are interested in embedding FOP in a Java application of your own, see
+       <link href="embedding.html">Embedding FOP</link>.
+    </p>
+</section>
+    </body>
+</document>
+
