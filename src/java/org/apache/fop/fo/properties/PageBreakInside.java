@@ -83,7 +83,7 @@ public class PageBreakInside extends Property  {
                                 ShorthandPropSets.expandAndCopySHand(value));
         }
         if (value instanceof NCName) {
-            EnumType enum = null;
+            EnumType enumval = null;
             String ncname = ((NCName)value).getNCName();
             //PropertyValueList list =
                     //new PropertyValueList(PropNames.PAGE_BREAK_INSIDE);
@@ -102,8 +102,8 @@ public class PageBreakInside extends Property  {
                 + value.getClass().getName());
     }
 
-    public int getEnumIndex(String enum) throws PropertyException {
-        return enumValueToIndex(enum, rwEnums);
+    public int getEnumIndex(String enumval) throws PropertyException {
+        return enumValueToIndex(enumval, rwEnums);
     }
     public String getEnumText(int index) {
         return rwEnums[index];

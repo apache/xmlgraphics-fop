@@ -76,7 +76,7 @@ public class BorderWidth extends BorderCommonWidth {
      *
      * <p>If 'value' is a PropertyValueList, it contains a
      * PropertyValueList which in turn contains a list of
-     * 2 to 4 NCName enum tokens or Length values representing border-widths.
+     * 2 to 4 NCName enumval tokens or Length values representing border-widths.
      *
      * <p>The value(s) provided, if valid, are converted into a list
      * containing the expansion of the shorthand.
@@ -215,12 +215,12 @@ public class BorderWidth extends BorderCommonWidth {
      * <i>refineExpansionList()</i>.
      * @param node the node for which the mapped length is being
      * derived.
-     * @param enum the enum value which is being mapped to a length.
+     * @param enumval the enumval value which is being mapped to a length.
      */
-    public Numeric getMappedLength(FONode node, int enum)
+    public Numeric getMappedLength(FONode node, int enumval)
         throws PropertyException
     {
-        return getMappedLength(node, PropNames.BORDER_WIDTH, enum);
+        return getMappedLength(node, PropNames.BORDER_WIDTH, enumval);
     }
 
 }

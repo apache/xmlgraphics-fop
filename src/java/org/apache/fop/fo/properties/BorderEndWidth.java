@@ -52,10 +52,10 @@ public class BorderEndWidth extends BorderCommonWidth {
         return getMappedLength(null, MEDIUM);
     }
 
-    public Numeric getMappedLength(FONode node, int enum)
+    public Numeric getMappedLength(FONode node, int enumval)
         throws PropertyException
     {
-        return getMappedLength(node, PropNames.BORDER_END_WIDTH, enum);
+        return getMappedLength(node, PropNames.BORDER_END_WIDTH, enumval);
     }
 
     public static final int inherited = NO;

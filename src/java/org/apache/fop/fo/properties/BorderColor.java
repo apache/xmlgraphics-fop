@@ -69,7 +69,7 @@ public class BorderColor extends ColorTransparent {
      *   or an Inherit value.
      *
      * <p>If 'value' is a PropertyValueList, it contains a list of
-     * 2 to 4 ColorType values or NCName enum tokens representing colors.
+     * 2 to 4 ColorType values or NCName enumval tokens representing colors.
      *
      * <p>The value(s) provided, if valid, are converted into a list
      * containing the expansion of the shorthand.

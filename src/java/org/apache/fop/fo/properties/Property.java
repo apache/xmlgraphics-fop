@@ -553,7 +553,7 @@ public class Property {
      * valid Enum for the property associated with the NCName.
      * @param value <tt>PropertyValue</tt>
      * @param property <tt>int</tt> the target property index
-     * @param type <tt>String</tt> type of expected enum - for
+     * @param type <tt>String</tt> type of expected enumval - for
      * exception messages only
      * @return <tt>EnumValue</tt> equivalent of the argument
      * @exception PropertyException
@@ -582,11 +582,11 @@ public class Property {
     /**
      * Get the <tt>int</tt> index corresponding to an enumeration keyword
      * for this property.
-     * @param enum - a <tt>String</tt> containing the enumeration text.
+     * @param enumval - a <tt>String</tt> containing the enumeration text.
      * @return <tt>int</tt> constant representing the enumeration value.
      * @exception PropertyException
      */
-    public int getEnumIndex(String enum)
+    public int getEnumIndex(String enumval)
             throws PropertyException
     {
         throw new PropertyException("ENUM not supported.");
@@ -604,12 +604,12 @@ public class Property {
     }
 
     /**
-     * Map the String value of an enum to its integer equivalent.
-     * @param value the enum text
-     * @param values an <tt>ROStringArray</tt> of all of the enum text values.
+     * Map the String value of an enumval to its integer equivalent.
+     * @param value the enumval text
+     * @param values an <tt>ROStringArray</tt> of all of the enumval text values.
      * This array is effectively 1-based.
-     * @return the integer equivalent of the enum text
-     * @exception PropertyException if the enum text is not valid.
+     * @return the integer equivalent of the enumval text
+     * @exception PropertyException if the enumval text is not valid.
      */
     public int enumValueToIndex(String value, String[] values)
                 throws PropertyException
@@ -627,11 +627,11 @@ public class Property {
      * fallback implementation of this function for properties which do not
      * support a MAPPED_LENGTH type.  Those which do must override this
      * method.
-     * @param enum - the enumeration index.
+     * @param enumval - the enumeration index.
      * @return a <tt>Numeric</tt>.  This implementation never returns.
      * @throws PropertyException
      */
-    public Numeric getMappedLength(FONode node, int enum)
+    public Numeric getMappedLength(FONode node, int enumval)
             throws PropertyException
     {
         throw new PropertyException

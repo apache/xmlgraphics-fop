@@ -81,12 +81,12 @@ public class PageBreakCommon extends Property  {
                                 Ints.consts.get(i));
         }
     }
-    public int getEnumIndex(String enum)
+    public int getEnumIndex(String enumval)
         throws PropertyException
     {
-        Integer ii = (Integer)(rwEnumHash.get(enum));
+        Integer ii = (Integer)(rwEnumHash.get(enumval));
         if (ii == null)
-            throw new PropertyException("Unknown enum value: " + enum);
+            throw new PropertyException("Unknown ENUM value: " + enumval);
         return ii.intValue();
     }
     public String getEnumText(int index)
@@ -133,15 +133,15 @@ public class PageBreakCommon extends Property  {
                                 ShorthandPropSets.expandAndCopySHand(value));
         }
         if (value instanceof NCName) {
-            EnumType enum = null;
+            EnumType enumval = null;
             String ncname = ((NCName)value).getNCName();
             try {
-                enum = new EnumType(value.getProperty(), ncname);
+                enumval = new EnumType(value.getProperty(), ncname);
             } catch (PropertyException e) {
                 throw new PropertyException                ("Unrecognized NCName in page-break-after: " + ncname);
             }
             PropertyValueList list = new PropertyValueList(property);
-            switch (enum.getEnumValue()) {
+            switch (enumval.getEnumValue()) {
             case ALWAYS:
                 list.add(new EnumType(beforeAfter, "page"));
                 list.add(new Auto(previousNext));

@@ -68,7 +68,7 @@ public class BorderStyle extends BorderCommonStyle  {
      *   or an Inherit value.
      *
      * <p>If 'value' is a PropertyValueList, it contains a list of
-     * 2 to 4 NCName enum tokens representing border-styles.
+     * 2 to 4 NCName enumval tokens representing border-styles.
      *
      * <p>The value(s) provided, if valid, are converted into a list
      * containing the expansion of the shorthand.
@@ -114,9 +114,9 @@ public class BorderStyle extends BorderCommonStyle  {
             }
             if (type == PropertyValue.NCNAME) {
                 // Must be a border-style
-                EnumType enum;
+                EnumType enumval;
                 try {
-                    enum = new EnumType(PropNames.BORDER_STYLE,
+                    enumval = new EnumType(PropNames.BORDER_STYLE,
                                         ((NCName)value).getNCName());
                 } catch (PropertyException e) {
                     throw new PropertyException
@@ -124,7 +124,7 @@ public class BorderStyle extends BorderCommonStyle  {
                                                 " not a border-style");
                 }
                 return refineExpansionList(PropNames.BORDER_STYLE, foNode,
-                                ShorthandPropSets.expandAndCopySHand(enum));
+                                ShorthandPropSets.expandAndCopySHand(enumval));
             }
             else throw new PropertyException
                 ("Invalid " + value.getClass().getName() +

@@ -102,15 +102,15 @@ public class FontSize extends Property  {
         ,0.83d      // smaller
     };
 
-    public Numeric getMappedLength(FONode node, int enum)
+    public Numeric getMappedLength(FONode node, int enumval)
         throws PropertyException
     {
-        if (enum == LARGER || enum == SMALLER)
+        if (enumval == LARGER || enumval == SMALLER)
             return Ems.makeEms
-                            (node, PropNames.FONT_SIZE, mappedLengths[enum]);
+                            (node, PropNames.FONT_SIZE, mappedLengths[enumval]);
         return
             Length.makeLength
-                    (PropNames.FONT_SIZE, mappedLengths[enum], Length.PT);
+                    (PropNames.FONT_SIZE, mappedLengths[enumval], Length.PT);
     }
 
     private static final HashMap rwEnumHash;
