@@ -136,6 +136,11 @@ public class Length {
 	return millipoints;
     }
 
+    public boolean isAuto()
+    {
+	return auto;
+    }
+
     public String toString() {
 	String s = millipoints + "mpt";
 	return s;
