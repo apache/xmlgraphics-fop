@@ -87,11 +87,19 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
      * Create an inline stacking layout manager.
      * This is used for fo's that create areas that
      * contain inline areas.
-     *
-     * @param fobj the formatting object that creates the area
-     * @param childLMiter the iterator for child areas
      */
     public InlineStackingLayoutManager() {
+    }
+
+    /**
+     * Create an inline stacking layout manager.
+     * This is used for fo's that create areas that
+     * contain inline areas.
+     *
+     * @param node the formatting object that creates the area
+     */
+    public InlineStackingLayoutManager(FObj node) {
+        super(node);
     }
 
     /**

@@ -18,6 +18,7 @@
  
 package org.apache.fop.layoutmgr.list;
 
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -62,7 +63,8 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
      * Create a new table layout manager.
      *
      */
-    public ListBlockLayoutManager() {
+    public ListBlockLayoutManager(FObj node) {
+        super(node);
     }
 
     /**

@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.Block;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -36,6 +37,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
     protected BlockParent parentArea = null;
 
     public BlockStackingLayoutManager() {
+    }
+
+    public BlockStackingLayoutManager(FObj node) {
+        super(node);
     }
 
     private BreakCost evaluateBreakCost(Area parent, Area child) {

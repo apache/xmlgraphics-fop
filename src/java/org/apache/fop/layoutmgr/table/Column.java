@@ -45,14 +45,8 @@ public class Column extends AbstractLayoutManager {
     /**
      * Create a new column layout manager.
      */
-    public Column() {
-    }
-
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#setFObj(FObj)
-     */
-    public void setFObj(FObj fobj) {
-        super.setFObj(fobj);
+    public Column(FObj node) {
+         super(node);
     }
 
     /**

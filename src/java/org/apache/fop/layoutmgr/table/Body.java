@@ -18,6 +18,7 @@
  
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
@@ -59,7 +60,8 @@ public class Body extends BlockStackingLayoutManager {
     /**
      * Create a new body layout manager.
      */
-    public Body() {
+    public Body(FObj node) {
+        super(node);
     }
 
     /**

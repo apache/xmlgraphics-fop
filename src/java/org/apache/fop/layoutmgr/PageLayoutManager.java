@@ -132,6 +132,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     public PageLayoutManager(AreaTree areaTree, PageSequence pageseq,
                              LayoutManagerLS lmls) {
+        super(pageseq);
         this.areaTree = areaTree;
         pageSequence = pageseq;
         this.lmls = lmls;

@@ -43,8 +43,7 @@ public interface LayoutManager {
     void setFObj(FObj obj);
 
     /**
-     * Set the user agent. For resolving user agent values
-     * and getting logger.
+     * Set the user agent. For resolving user agent values.
      *
      * @param ua the user agent
      */

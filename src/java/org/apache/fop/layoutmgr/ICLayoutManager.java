@@ -23,6 +23,7 @@ import java.util.List;
 
 // FOP
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.fo.FObj;
 
 /**
  * This creates a single inline container area after
@@ -33,7 +34,8 @@ public class ICLayoutManager extends LeafNodeLayoutManager {
 
     private List childrenLM;
 
-    ICLayoutManager(List childLM) {
+    ICLayoutManager(FObj node, List childLM) {
+        super(node);
         childrenLM = childLM;
     }
 

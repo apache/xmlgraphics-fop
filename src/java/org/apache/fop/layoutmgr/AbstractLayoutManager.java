@@ -67,6 +67,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      */
     public AbstractLayoutManager(FObj fo) {
         setFObj(fo);
+        setUserAgent(fo.getUserAgent());
     }
 
     /**

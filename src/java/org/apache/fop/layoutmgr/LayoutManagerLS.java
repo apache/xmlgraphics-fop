@@ -71,8 +71,6 @@ public class LayoutManagerLS extends LayoutStrategy {
 
         // This will layout pages and add them to the area tree
         PageLayoutManager pageLM = new PageLayoutManager(areaTree, pageSeq, this);
-        pageLM.setUserAgent(pageSeq.getUserAgent());
-        pageLM.setFObj(pageSeq);
         pageLM.setPageCounting(pageSeq.getCurrentPageNumber(),
                                pageSeq.getPageNumberGenerator());
 
@@ -102,9 +100,7 @@ public class LayoutManagerLS extends LayoutStrategy {
         // use special layout manager to add the inline areas
         // to the Title.
         InlineStackingLayoutManager lm;
-        lm = new InlineStackingLayoutManager();
-        lm.setUserAgent(foTitle.getUserAgent());
-        lm.setFObj(foTitle);
+        lm = new InlineStackingLayoutManager(foTitle);
         lm.setLMiter(new LMiter(lm, foTitle.children.listIterator()));
         lm.initialize();
 

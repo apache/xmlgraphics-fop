@@ -19,6 +19,7 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonHyphenation;
@@ -98,7 +99,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
      * @param l the default lead, from top to baseline
      * @param f the default follow, from baseline to bottom
      */
-    public LineLayoutManager(int lh, int l, int f) {
+    public LineLayoutManager(FObj node, int lh, int l, int f) {
+        super(node);
         lineHeight = lh;
         lead = l;
         follow = f;
