@@ -704,12 +704,20 @@ public class FOPropertyMapping implements Constants {
         m  = new LengthProperty.Maker(PR_BACKGROUND_POSITION_HORIZONTAL);
         m.setInherited(false);
         m.setDefault("0%");
+        m.addKeyword("left", "0%");
+        m.addKeyword("center", "50%");
+        m.addKeyword("right", "100%");
+        m.setPercentBase(LengthBase.CONTAINING_BOX);
         addPropertyMaker("background-position-horizontal", m);
 
         // background-position-vertical
         m  = new LengthProperty.Maker(PR_BACKGROUND_POSITION_VERTICAL);
         m.setInherited(false);
         m.setDefault("0%");
+        m.addKeyword("top", "0%");
+        m.addKeyword("center", "50%");
+        m.addKeyword("bottom", "100%");
+        m.setPercentBase(LengthBase.CONTAINING_BOX);
         addPropertyMaker("background-position-vertical", m);
 
         // border-before-color
@@ -1434,6 +1442,7 @@ public class FOPropertyMapping implements Constants {
         l  = new LengthProperty.Maker(PR_HEIGHT);
         l.setInherited(false);
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
+        l.setPercentBase(LengthBase.BLOCK_HEIGHT);
         l.setDefault("auto");
         addPropertyMaker("height", l);
 
