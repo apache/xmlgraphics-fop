@@ -20,8 +20,12 @@
  */
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.expr.PropertyException;
 
-public class BorderLeftStyle extends BorderCommonStyle {
+
+public class BorderLeftStyle
+extends BorderCommonStyleAbsolute {
     public static final int dataTypes = ENUM | NONE | INHERIT;
 
     public int getDataTypes() {
@@ -47,7 +51,15 @@ public class BorderLeftStyle extends BorderCommonStyle {
         return inherited;
     }
 
+    public int getCorrespondingRelativeProperty(FONode foNode)
+    throws PropertyException {
+        return WritingMode.getCorrespondingRelativeEdge(
+                getWritingMode(foNode), WritingMode.LEFT);
+    }
 
+    public boolean correspondingOverrides(FONode foNode) {
+        return false;
+    }
 
 }
 
