@@ -114,6 +114,10 @@ public class FOAttributes {
         for (int i = 0; i < attributes.getLength(); i++) {
             String attrUri = attributes.getURI(i);
             String attrLocalname = attributes.getLocalName(i);
+            String attrQName = attributes.getQName(i);
+            int sep = attrQName.indexOf(':');
+            String prefix = attrQName.substring(0, (sep == -1 ? 0 : sep));
+            if (prefix.equals("xmlns")) break;
             String attrValue = attributes.getValue(i);
             int attrUriIndex = foNode.namespaces.getURIIndex(attrUri);
 
@@ -132,7 +136,7 @@ public class FOAttributes {
                 } catch (PropertyException e) {
                     // Not known - ignore
                     MessageHandler.errorln(event.getQName() + " "
-                                           + attributes.getQName(i)
+                                           + attrQName
                                            + " not recognized.  Ignoring.");
                 }
             } else { // Not the XSL FO namespace
@@ -169,6 +173,8 @@ public class FOAttributes {
             foAttrKeys = (Integer[])(foAttrMap.keySet().toArray(integerArray));
             Arrays.sort(foAttrKeys);
         }
+        // Finished with the Attributes object
+        event.setAttributes(null);
     }
 
     /**
