@@ -19,7 +19,9 @@
 package org.apache.fop.fo.flow;
 
 // FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
+
 
 /**
  * Class modelling the fo:table-header object.
@@ -32,6 +34,24 @@ public class TableHeader extends TableBody {
      */
     public TableHeader(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws FOPException {
+//      getFOEventHandler().startHeader(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws FOPException {
+//      getFOEventHandler().endHeader(this);
+        if (!(tableRowsFound || tableCellsFound)) {
+            missingChildElementError("marker* (table-row+|table-cell+)");
+        }
+//      convertCellsToRows();
     }
 
     /**

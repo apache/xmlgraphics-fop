@@ -704,9 +704,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     private void createBodyMainReferenceArea() {
-        MainReference mainRef = new MainReference();
-        mainRef.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
-        curBody.setMainReference(mainRef);
+        curBody.setMainReference(new MainReference());
     }
 
     private Flow createFlow() {

@@ -102,7 +102,10 @@ public class TableBody extends FObj {
                 getParent().removeChild(this);
             }
         }
-        convertCellsToRows();
+        if (tableCellsFound) {
+            convertCellsToRows();
+        }
+        savedPropertyList = null; //Release reference
     }
 
     /**
@@ -140,44 +143,35 @@ public class TableBody extends FObj {
 
     /**
      * If table-cells are used as direct children of a table-body|header|footer
-     * they are replace in this method by proper table-rows.
+     * they are replaced in this method by proper table-rows.
      * @throws FOPException if there's a problem binding the TableRows properties.
      */
     private void convertCellsToRows() throws FOPException {
-        try {
-            if (childNodes == null 
-                    || childNodes.size() == 0 
-                    || childNodes.get(0) instanceof TableRow) {
-                return;
-            }
-            //getLogger().debug("Converting cells to rows...");
-            List cells = (List)childNodes.clone();
-            childNodes.clear();
-            Iterator i = cells.iterator();
-            TableRow row = null;
-            while (i.hasNext()) {
-                TableCell cell = (TableCell)i.next();
-                if (cell.startsRow() && (row != null)) {
-                    childNodes.add(row);
-                    row = null;
-                }
-                if (row == null) {
-                    row = new TableRow(this);
-                    PropertyList pList = new StaticPropertyList(row, savedPropertyList);
-                    pList.setWritingMode();
-                    row.bind(pList);
-                }
-                row.addReplacedCell(cell);
-                if (cell.endsRow()) {
-                    childNodes.add(row);
-                    row = null;
-                }
-            }
-            if (row != null) {
+        //getLogger().debug("Converting cells to rows...");
+        List cells = (List)childNodes.clone();
+        childNodes.clear();
+        Iterator i = cells.iterator();
+        TableRow row = null;
+        while (i.hasNext()) {
+            TableCell cell = (TableCell)i.next();
+            if (cell.startsRow() && (row != null)) {
                 childNodes.add(row);
+                row = null;
             }
-        } finally {
-            savedPropertyList = null; //Release reference
+            if (row == null) {
+                row = new TableRow(this);
+                PropertyList pList = new StaticPropertyList(row, savedPropertyList);
+                pList.setWritingMode();
+                row.bind(pList);
+            }
+            row.addReplacedCell(cell);
+            if (cell.endsRow()) {
+                childNodes.add(row);
+                row = null;
+            }
+        }
+        if (row != null) {
+            childNodes.add(row);
         }
     }
     

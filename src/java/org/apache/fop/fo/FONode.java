@@ -292,8 +292,9 @@ public abstract class FONode implements Cloneable {
      */
     protected void tooManyNodesError(Locator loc, String nsURI, String lName) 
         throws ValidationException {
-        throw new ValidationException(errorText(loc) + getName() + ", only one " 
-            + getNodeString(nsURI, lName) + " may be declared.", loc);
+        throw new ValidationException(errorText(loc) + "For " + getName() + 
+            ", only one " + getNodeString(nsURI, lName) + " may be declared.", 
+            loc);
     }
 
     /**
@@ -305,8 +306,8 @@ public abstract class FONode implements Cloneable {
      */
     protected void tooManyNodesError(Locator loc, String offendingNode) 
         throws ValidationException {
-        throw new ValidationException(errorText(loc) + getName() + ", only one " 
-            + offendingNode + " may be declared.", loc);
+        throw new ValidationException(errorText(loc) + "For " + getName() + 
+            ", only one " + offendingNode + " may be declared.", loc);
     }
 
     /**
