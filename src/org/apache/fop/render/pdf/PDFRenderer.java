@@ -9,7 +9,10 @@ package org.apache.fop.render.pdf;
 
 // FOP
 import org.apache.fop.render.PrintRenderer;
-import org.apache.fop.image.FopImage;
+import org.apache.fop.render.XMLHandler;
+import org.apache.fop.render.RendererContext;
+import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.image.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.*;
@@ -54,6 +57,7 @@ text decoration
  *
  */
 public class PDFRenderer extends PrintRenderer {
+    public static final String mimeType = "application/pdf";
 
     /**
      * the PDF Document being created
@@ -142,6 +146,14 @@ public class PDFRenderer extends PrintRenderer {
         producer = prod;
     }
 
+    public void setUserAgent(FOUserAgent agent) {
+        super.setUserAgent(agent);
+        PDFXMLHandler xmlHandler = new PDFXMLHandler();
+        //userAgent.setDefaultXMLHandler(mimeType, xmlHandler);
+        String svg = "http://www.w3.org/2000/svg";
+        userAgent.addXMLHandler(mimeType, svg, xmlHandler);
+    }
+
     public void startRenderer(OutputStream stream) throws IOException {
         ostream = stream;
         this.pdfDoc = new PDFDocument();
@@ -225,20 +237,19 @@ public class PDFRenderer extends PrintRenderer {
 	// multiply with current CTM
 	currentStream.add(ctm.toPDFctm() + " cm\n");
 	// Set clip?
+  currentStream.add("BT\n");
     }
 
     protected void endVParea() {
+  currentStream.add("ET\n");
 	currentStream.add("Q\n");
     }
 
     protected void renderRegion(RegionReference region) {
 	// Draw a rectangle so we can see it!
 	// x=0,y=0,w=ipd,h=bpd
-	currentStream.add("BT\n");
 	super.renderRegion(region);
-	currentStream.add("ET\n");
     }
-
 
     protected void renderLineArea(LineArea line) {
 	super.renderLineArea(line);
@@ -447,6 +458,116 @@ public class PDFRenderer extends PrintRenderer {
             this.currentFontSize = size;
             pdf = pdf.append("/" + name + " " + (size / 1000) + " Tf\n");
         }
+    }
+
+    public void renderImage(Image image) {
+        String url = image.getURL();
+        ImageFactory fact = ImageFactory.getInstance();
+        FopImage fopimage = fact.getImage(url, userAgent);
+        if(fopimage == null) {
+            return;
+        }
+        if(!fopimage.load(FopImage.DIMENSIONS, userAgent)) {
+            return;
+        }
+        String mime = fopimage.getMimeType();
+        if("text/xml".equals(mime)) {
+            if(!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
+                return;
+            }
+            Document doc = ((XMLImage)fopimage).getDocument();
+            String ns = ((XMLImage)fopimage).getNameSpace();
+
+            renderDocument(doc, ns);
+
+        } else if("image/svg+xml".equals(mime)) {
+            if(!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
+                return;
+            }
+            Document doc = ((XMLImage)fopimage).getDocument();
+            String ns = ((XMLImage)fopimage).getNameSpace();
+
+            renderDocument(doc, ns);
+
+        } else if("image/eps".equals(mime)) {
+            if(!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
+                return;
+            }
+            int xobj = pdfDoc.addImage(fopimage);
+            fact.releaseImage(url, userAgent);
+        } else if("image/jpg".equals(mime)) {
+            if(!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
+                return;
+            }
+            int xobj = pdfDoc.addImage(fopimage);
+            fact.releaseImage(url, userAgent);
+        } else {
+            if(!fopimage.load(FopImage.BITMAP, userAgent)) {
+                return;
+            }
+            int xobj = pdfDoc.addImage(fopimage);
+            fact.releaseImage(url, userAgent);
+
+            closeText();
+            int w = fopimage.getWidth();
+            int h = fopimage.getHeight();
+
+            currentStream.add("ET\nq\n" + ((float)w) + " 0 0 "
+                              + ((float)-h) + " "
+                              + (((float)currentBlockIPPosition) / 1000f) + " "
+                              + (((float)(currentBPPosition - 1000 * h)) / 1000f) + " cm\n" + "/Im"
+                              + xobj + " Do\nQ\nBT\n");
+        }
+
+    }
+
+    public void renderForeignObject(ForeignObject fo) {
+        Document doc = fo.getDocument();
+        String ns = fo.getNameSpace();
+        renderDocument(doc, ns);
+    }
+
+    public void renderDocument(Document doc, String ns) {
+        RendererContext context;
+        context = new RendererContext(mimeType);
+        context.setLogger(log);
+
+        context.setProperty(PDFXMLHandler.PDF_DOCUMENT, pdfDoc);
+        context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);
+        context.setProperty(PDFXMLHandler.PDF_X, new Integer(currentBlockIPPosition));
+        context.setProperty(PDFXMLHandler.PDF_Y, new Integer(currentBPPosition));
+        FontState fs = null;
+            try {
+                fs = new FontState(fontInfo, "Helvetica", "",
+                                          "", 12 * 1000, 0);
+            } catch (org.apache.fop.apps.FOPException fope) {
+                fope.printStackTrace();
+            }
+
+        context.setProperty(PDFXMLHandler.PDF_FONT_STATE, fs);
+        context.setProperty(PDFXMLHandler.PDF_FONT_NAME, currentFontName);
+        context.setProperty(PDFXMLHandler.PDF_FONT_SIZE, new Integer(currentFontSize));
+        context.setProperty(PDFXMLHandler.PDF_XPOS, new Integer(currentBlockIPPosition));
+        context.setProperty(PDFXMLHandler.PDF_YPOS, new Integer(currentBPPosition));
+        closeText();
+        currentStream.add("ET\n");
+        userAgent.renderXML(context, doc, ns);
+        currentStream.add("BT\n");
+
+    }
+
+    public void renderViewport(Viewport viewport) {
+        /*if (clip && w != 0 && h != 0) {
+            currentStream.add(x / 1000f + " " + y / 1000f + " m\n");
+            currentStream.add((x + w) / 1000f + " " + y / 1000f + " l\n");
+            currentStream.add((x + w) / 1000f + " " + (y - h) / 1000f
+                              + " l\n");
+            currentStream.add(x / 1000f + " " + (y - h) / 1000f + " l\n");
+            currentStream.add("h\n");
+            currentStream.add("W\n");
+            currentStream.add("n\n");
+        }*/
+        super.renderViewport(viewport);
     }
 }
 

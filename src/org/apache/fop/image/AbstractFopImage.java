@@ -100,7 +100,7 @@ public abstract class AbstractFopImage implements FopImage {
         this.imageInfo = info;
         this.m_width = this.imageInfo.width;
         this.m_height = this.imageInfo.height;
-        loaded = loaded & DIMENSIONS;
+        loaded = loaded | DIMENSIONS;
     }
 
     public String getMimeType() {
@@ -121,12 +121,12 @@ public abstract class AbstractFopImage implements FopImage {
             if(!success) {
                 return false;
             }
-            loaded = loaded & DIMENSIONS;
+            loaded = loaded | DIMENSIONS;
         }
         if(((type & BITMAP) != 0) && ((loaded & BITMAP) == 0)) {
             success = success && loadBitmap(ua);
             if(success) {
-                loaded = loaded & BITMAP;
+                loaded = loaded | BITMAP;
             }
         }
         return success;

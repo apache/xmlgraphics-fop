@@ -48,12 +48,14 @@ public class ExternalGraphic extends FObj {
     }
 
     protected InlineArea getInlineArea() {
+        setup();
         if(url == null) {
             return null;
         }
         url = ImageFactory.getURL(url);
         // if we need to load this image to get its size
-        // FopImage fopimage = ImageFactory.getImage(url, userAgent);
+        ImageFactory fact = ImageFactory.getInstance();
+        FopImage fopimage = fact.getImage(url, userAgent);
         // if(fopimage == null) {
         // error
         // }
@@ -65,7 +67,7 @@ public class ExternalGraphic extends FObj {
         return vp;
     }
 
-    public void setup() throws FOPException {
+    public void setup() {
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
@@ -102,7 +104,7 @@ public class ExternalGraphic extends FObj {
         // this.properties.get("overflow");
         // this.properties.get("scaling");
         // this.properties.get("scaling-method");
-        // this.properties.get("src");
+        url = this.properties.get("src").getString();
         // this.properties.get("text-align");
         // this.properties.get("width");
     }

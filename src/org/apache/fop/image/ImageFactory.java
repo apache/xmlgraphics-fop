@@ -186,7 +186,9 @@ public class ImageFactory {
             imgClassName = "org.apache.fop.image.JimiImage";
             // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/svg+xml".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.SVGImage";
+            imgClassName = "org.apache.fop.image.XMLImage";
+        } else if ("text/xml".equals(imgMimeType)) {
+            imgClassName = "org.apache.fop.image.XMLImage";
         }
         if (imgClassName == null) {
             log.error("Unsupported image type (" +

@@ -70,6 +70,7 @@ public interface FopImage {
         public int height;
         public Object data;
         public String mimeType;
+        public String str;
     }
 
 }

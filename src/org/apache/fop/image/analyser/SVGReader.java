@@ -15,7 +15,7 @@ import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
 
 // FOP
-import org.apache.fop.image.SVGImage;
+import org.apache.fop.image.XMLImage;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -38,6 +38,7 @@ import org.w3c.dom.DOMImplementation;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
@@ -94,18 +95,69 @@ public class SVGReader implements ImageReader {
      * the SVGReader class.
      */
     class Loader {
-        private FopImage.ImageInfo getImage(String uri, BufferedInputStream fis,
+        private FopImage.ImageInfo getImage(String uri, InputStream fis,
                                    FOUserAgent ua) {
             // parse document and get the size attributes of the svg element
 
             try {
-                FopImage.ImageInfo info = new FopImage.ImageInfo();
-                info.mimeType = getMimeType();
-
-                int length = fis.available();
+                int length = 5;
                 fis.mark(length);
+                byte[] b = new byte[length];
+                fis.read(b);
+                String start = new String(b);
+                fis.reset();
+
+                if(start.equals("<?xml")) {
+                    // we have xml, might be another doc
+                    // so stop batik from closing the stream
+                    final InputStream input = fis;
+                    fis = new InputStream() {
+                        public int read() throws IOException {
+                            return input.read();
+                        }
+
+                        public int read(byte[] b) throws IOException {
+                            return input.read(b);
+                        }
+
+                        public int read(byte[] b, int off, int len) throws IOException {
+                            return input.read(b, off, len);
+                        }
+
+                        public long skip(long n) throws IOException {
+                            return input.skip(n);
+                        }
+
+                        public int available() throws IOException {
+                            return input.available();
+                        }
+
+                        public void mark(int rl) {
+                            input.mark(rl);
+                        }
+
+                        public boolean markSupported() {
+                            return input.markSupported();
+                        }
+
+                        public void reset() throws IOException {
+                            input.reset();
+                        }
+
+                        public void close() throws IOException {
+                        }
+                    };
+                }
+
+                FopImage.ImageInfo info = new FopImage.ImageInfo();
+
+                info.mimeType = getMimeType();
+                info.str = SVGDOMImplementation.SVG_NAMESPACE_URI;
+
+                length = fis.available();
+                fis.mark(length + 1);
                 SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(
-                                                  SVGImage.getParserName());
+                                                  XMLImage.getParserName());
                 SVGDocument doc = factory.createDocument(uri, fis);
                 info.data = doc;
 
@@ -138,6 +190,9 @@ public class SVGReader implements ImageReader {
 
                 return info;
             } catch (NoClassDefFoundError ncdfe) {
+                try {
+                    fis.reset();
+                } catch (IOException ioe) { }
                 batik = false;
                 //ua.getLogger().error("Batik not in class path", ncdfe);
                 return null;
