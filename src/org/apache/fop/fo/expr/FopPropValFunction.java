@@ -67,7 +67,7 @@ public class FopPropValFunction extends FunctionBase {
     if (propName == null) {
       throw new PropertyException("Incorrect parameter to _int-property-value function");
     }
-    System.err.println("Get property-value for " + propName);
+    // System.err.println("Get property-value for " + propName);
     return pInfo.getPropertyList().get( propName);
   }
 

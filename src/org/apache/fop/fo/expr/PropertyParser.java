@@ -51,6 +51,7 @@
 package org.apache.fop.fo.expr;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.ListProperty;
 import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.NumberProperty;
 import org.apache.fop.fo.StringProperty;
@@ -139,10 +140,27 @@ public class PropertyParser extends PropertyTokenizer {
       // if prop value is empty string, force to StringProperty
       return new StringProperty("");
     }
-    Property prop = parseAdditiveExpr();
-    if (currentToken != TOK_EOF)
-      throw new PropertyException("unexpected token");
-    return prop;
+    ListProperty propList = null;
+    while (true) {
+      Property prop = parseAdditiveExpr();
+      if (currentToken == TOK_EOF) {
+	if (propList != null) {
+          propList.addProperty(prop);
+	  return propList;
+	}
+        else return prop;
+      }
+      else {
+        if (propList == null) {
+          propList = new ListProperty(prop);
+        }
+        else {
+          propList.addProperty(prop);
+        }
+      }
+      //throw new PropertyException("unexpected token");
+    }
+    //return prop;
   }
 
   /**
