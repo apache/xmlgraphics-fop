@@ -18,25 +18,24 @@ import java.util.ArrayList;
 /**
  * The base class for all BPLayoutManagers.
  */
-public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
-    implements BPLayoutManager {
+public abstract class AbstractBPLayoutManager extends AbstractLayoutManager implements BPLayoutManager {
 
 
     /** True if this LayoutManager has handled all of its content. */
     private boolean m_bFinished = false;
-    private BPLayoutManager m_curChildLM=null;
-    private ListIterator m_childLMiter;
-    private boolean m_bInited=false;
+    protected BPLayoutManager m_curChildLM = null;
+    protected ListIterator m_childLMiter;
+    protected boolean m_bInited = false;
 
 
     public AbstractBPLayoutManager(FObj fobj) {
-	this(fobj, new LMiter(fobj.getChildren()));
+        this(fobj, new LMiter(fobj.getChildren()));
     }
 
 
     public AbstractBPLayoutManager(FObj fobj, ListIterator lmIter) {
-	super(fobj);
-	m_childLMiter = lmIter;
+        super(fobj);
+        m_childLMiter = lmIter;
     }
 
 
@@ -47,34 +46,34 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
      * and print a warning.
      */
     protected BPLayoutManager getChildLM() {
-	if (m_curChildLM != null && !m_curChildLM.isFinished()) {
-	    return m_curChildLM;
-	}
-	while (m_childLMiter.hasNext()) {
-	    Object obj = m_childLMiter.next();
-	    if (obj instanceof BPLayoutManager) {
-		m_curChildLM = (BPLayoutManager)obj;
-		m_curChildLM.setParentLM(this);
-		m_curChildLM.init();
-		return m_curChildLM;
-	    }
-	    else {
-		m_childLMiter.remove();
-		System.err.println("WARNING: child LM not a BPLayoutManager: "
-				   + obj.getClass().getName());
-	    }
-	}
-	return null;
+        if (m_curChildLM != null && !m_curChildLM.isFinished()) {
+            return m_curChildLM;
+        }
+        while (m_childLMiter.hasNext()) {
+            Object obj = m_childLMiter.next();
+            if (obj instanceof BPLayoutManager) {
+                m_curChildLM = (BPLayoutManager) obj;
+                m_curChildLM.setParentLM(this);
+                m_curChildLM.init();
+                return m_curChildLM;
+            } else {
+                m_childLMiter.remove();
+                System.err.println(
+                  "WARNING: child LM not a BPLayoutManager: " +
+                  obj.getClass().getName());
+            }
+        }
+        return null;
     }
 
     protected boolean hasMoreLM(BPLayoutManager prevLM) {
-	// prevLM should = m_curChildLM
-	if (prevLM != m_curChildLM) {
-	    System.err.println("AbstractBPLayoutManager.peekNextLM: " +
-			       "passed LM is not current child LM!");
-	    return false;
-	}
-	return !m_childLMiter.hasNext();
+        // prevLM should = m_curChildLM
+        if (prevLM != m_curChildLM) {
+            System.err.println("AbstractBPLayoutManager.peekNextLM: " +
+                               "passed LM is not current child LM!");
+            return false;
+        }
+        return !m_childLMiter.hasNext();
     }
 
 
@@ -87,29 +86,30 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
      * If pos is null, then back up to the first child LM.
      */
     protected void reset(Position pos) {
- 	//if (lm == null) return;
-	BPLayoutManager lm = (pos != null)? pos.getLM(): null;
-	if (m_curChildLM != lm) {
-	    // ASSERT m_curChildLM == (BPLayoutManager)m_childLMiter.previous()
-	    if (m_curChildLM != (BPLayoutManager)m_childLMiter.previous()) {
-		System.err.println("LMiter problem!");
-	    }
-	    while (m_curChildLM != lm && m_childLMiter.hasPrevious()) {
-		m_curChildLM.resetPosition(null);
-		m_curChildLM = (BPLayoutManager)m_childLMiter.previous();
-	    }
-	    m_childLMiter.next(); // Otherwise next returns same object
-	}
- 	m_curChildLM.resetPosition(pos);
- 	if (isFinished()) {
- 	    setFinished(false);
- 	}
+        //if (lm == null) return;
+        BPLayoutManager lm = (pos != null) ? pos.getLM() : null;
+        if (m_curChildLM != lm) {
+            // ASSERT m_curChildLM == (BPLayoutManager)m_childLMiter.previous()
+            if (m_curChildLM !=
+                    (BPLayoutManager) m_childLMiter.previous()) {
+                System.err.println("LMiter problem!");
+            }
+            while (m_curChildLM != lm && m_childLMiter.hasPrevious()) {
+                m_curChildLM.resetPosition(null);
+                m_curChildLM = (BPLayoutManager) m_childLMiter.previous();
+            }
+            m_childLMiter.next(); // Otherwise next returns same object
+        }
+        m_curChildLM.resetPosition(pos);
+        if (isFinished()) {
+            setFinished(false);
+        }
     }
 
     public void resetPosition(Position resetPos) {
-// 	if (resetPos == null) {
-// 	    reset(null);
-// 	}
+        // 	if (resetPos == null) {
+        // 	    reset(null);
+        // 	}
     }
 
 
@@ -118,10 +118,10 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
      * for the areas it will create, based on Properties set on its FO.
      */
     public void init() {
- 	if (fobj != null && m_bInited == false) {
-	    initProperties(fobj.getPropertyManager());
-	    m_bInited=true;
- 	}
+        if (fobj != null && m_bInited == false) {
+            initProperties(fobj.getPropertyManager());
+            m_bInited = true;
+        }
     }
 
 
@@ -130,7 +130,7 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
      * for the areas it will create, based on Properties set on its FO.
      */
     protected void initProperties(PropertyManager pm) {
-	System.err.println("AbstractBPLayoutManager.initProperties");
+        System.err.println("AbstractBPLayoutManager.initProperties");
     }
 
 
@@ -140,11 +140,11 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
      * ie. the last one returned represents the end of the content.
      */
     public boolean isFinished() {
-	return m_bFinished;
+        return m_bFinished;
     }
 
     public void setFinished(boolean bFinished) {
-	m_bFinished = bFinished;
+        m_bFinished = bFinished;
     }
 
 
@@ -155,13 +155,13 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
      * default implementation?
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
-	return getNextBreakPoss(context, null);
+        return getNextBreakPoss(context, null);
     }
 
 
     public BreakPoss getNextBreakPoss(LayoutContext context,
-				      Position prevBreakPoss) {
-	return null;
+                                      Position prevBreakPoss) {
+        return null;
     }
 
     /**
@@ -177,16 +177,16 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
      * Default implementation always returns true.
      */
     public boolean canBreakBefore(LayoutContext context) {
-	return true;
+        return true;
     }
 
 
     public void addAreas(PositionIterator posIter, LayoutContext context) {
     }
 
-    
-    public void getWordChars(StringBuffer sbChars,
-			     Position bp1, Position bp2) {
+
+    public void getWordChars(StringBuffer sbChars, Position bp1,
+                             Position bp2) {
     }
 
     /* ---------------------------------------------------------
@@ -194,11 +194,11 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
      * interface which are declared abstract in AbstractLayoutManager.
      * ---------------------------------------------------------*/
     public Area getParentArea(Area childArea) {
-	return null;
+        return null;
     }
 
     protected boolean flush() {
-	return false;
+        return false;
     }
 
 

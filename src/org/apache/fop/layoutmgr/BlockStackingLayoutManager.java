@@ -19,7 +19,7 @@ import java.util.Iterator;
  * Base LayoutManager class for all areas which stack their child
  * areas in the block-progression direction, such as Flow, Block, ListBlock.
  */
-public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
+public abstract class BlockStackingLayoutManager extends AbstractBPLayoutManager {
     /** Reference to FO whose areas it's managing or to the traits
      * of the FO.
      */
@@ -39,7 +39,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
         // Logically a BlockStacking LM only handles Block-type areas
         if (!(area instanceof BlockParent)) {
             return false;
-        }
+    }
         Iterator areaIter = ((BlockParent) area).getChildAreas().iterator();
 
 
@@ -62,15 +62,15 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
                     // If already saw several a potential break, use it
                     if (minBreakCost != null) {
                         /* Split 'area', placing all children after
-                         * minBreakCost.getArea() into a new area,
-                         * which we store in the splitContext.
-                         *
+         * minBreakCost.getArea() into a new area,
+         * which we store in the splitContext.
+         *
                         // splitContext.nextArea = area.splitAfter(minBreakCost.getArea());
                     } else {
                         /* This area will be shorter than the desired minimum.
-                         * Split before the current childArea (which will be
-                         * the first area in the newly created Area.
-                         *
+         * Split before the current childArea (which will be
+         * the first area in the newly created Area.
+         *
                         //splitContext.nextArea = area.splitBefore(childArea);
                     }
                 } else
@@ -89,10 +89,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
             }
             //Note: size of area when split can depend on conditional
             // space, border and padding of the split area!!!
-        }
+    }
         // True if some part of area can be placed, false if none is placed
         return (splitContext.nextArea != area);
-        */
+         */
         return false;
     }
 
@@ -135,7 +135,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
      * @param childArea the area to add: will be some block-stacked Area.
      * @param parentArea the area in which to add the childArea
      */
-    protected boolean addChildToArea(Area childArea, BlockParent parentArea) {
+    protected boolean addChildToArea(Area childArea,
+                                     BlockParent parentArea) {
         // This should be a block-level Area (Block in the generic sense)
         if (!(childArea instanceof Block)) {
             System.err.println("Child not a Block in BlockStackingLM!");
@@ -163,7 +164,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
             if (childLM.splitArea(childArea, splitContext)) {
                 //parentArea.addBlock(new InterBlockSpace(spaceBefore));
                 parentArea.addBlock((Block) childArea);
-            }*/
+        }*/
             //flush(); // hand off current area to parent
             //getParentArea(splitContext.nextArea);
             //getParentArea(childArea);

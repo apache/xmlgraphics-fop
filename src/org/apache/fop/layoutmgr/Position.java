@@ -11,11 +11,11 @@ public class Position {
     private BPLayoutManager m_lm;
 
     public Position(BPLayoutManager lm) {
-	m_lm = lm;
+        m_lm = lm;
     }
 
     public BPLayoutManager getLM() {
-	return m_lm;
+        return m_lm;
     }
 
     /**
@@ -23,7 +23,7 @@ public class Position {
      * child LM.
      */
     public Position getPosition() {
-	return null;
+        return null;
     }
 }
 
