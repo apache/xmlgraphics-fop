@@ -385,6 +385,11 @@ public class TableCell extends FObj {
              */
             int iSep =
                 properties.get("border-separation.inline-progression-direction").getLength().mvalue();
+             //border-spacing is a shorthand of border-separation
+            int iSpacing =
+                properties.get("border-spacing.inline-progression-direction").getLength().mvalue();
+            if (iSpacing > iSep)
+                iSep = iSpacing;
             this.startAdjust = iSep / 2 + bp.getBorderLeftWidth(false)
                                + bp.getPaddingLeft(false);
             /*
@@ -398,6 +403,10 @@ public class TableCell extends FObj {
             // Offset of content rectangle in the block-progression direction
             m_borderSeparation =
                 properties.get("border-separation.block-progression-direction").getLength().mvalue();
+            int m_borderSpacing =
+                properties.get("border-spacing.block-progression-direction").getLength().mvalue();
+            if (m_borderSpacing > m_borderSeparation)
+                m_borderSeparation = m_borderSpacing;
             this.beforeOffset = m_borderSeparation / 2
                                 + bp.getBorderTopWidth(false)
                                 + bp.getPaddingTop(false);
