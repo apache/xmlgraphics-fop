@@ -8,6 +8,9 @@
 
 <xsl:output method="text" />
 
+<!-- zap text content -->
+<xsl:template match="text()"/>
+
 <xsl:template match="property[not(@type='generic')]">
  <xsl:variable name="classname">
   <xsl:choose>
