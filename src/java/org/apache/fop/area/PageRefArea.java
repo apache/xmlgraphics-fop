@@ -31,7 +31,7 @@ import org.apache.fop.fo.flow.FoPageSequence;
  * @version $Revision$ $Name$
  */
 public class PageRefArea
-extends AbstractReferenceArea
+extends BlockReferenceArea
 implements ReferenceArea, Serializable {
     // contains before, start, body, end and after regions
     private RegionBodyVport regionBodyVport = null;
@@ -154,33 +154,6 @@ implements ReferenceArea, Serializable {
      */
     public void setRegionStartVport(RegionStartVport regionStart) {
         regionStartVport = regionStart;
-    }
-
-    /**
-     * Clone this page.
-     * This returns a new page with a clone of all the regions.
-     *
-     * @return a new clone of this page
-     */
-    public Object clone() {
-        PageRefArea p = (PageRefArea)(this.clone());
-        if (regionBodyVport != null) {
-            p.regionBodyVport = (RegionBodyVport)regionBodyVport.clone();
-        }
-        if (regionBeforeVport != null) {
-            p.regionBeforeVport = (RegionBeforeVport)regionBeforeVport.clone();
-        }
-        if (regionAfterVport != null) {
-            p.regionAfterVport = (RegionAfterVport)regionAfterVport.clone();
-        }
-        if (regionStartVport != null) {
-            p.regionStartVport = (RegionStartVport)regionStartVport.clone();
-        }
-        if (regionEndVport != null) {
-            p.regionEndVport = (RegionEndVport)regionEndVport.clone();
-        }
-
-        return p;
     }
     
 }
