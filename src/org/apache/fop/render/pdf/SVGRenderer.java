@@ -2208,66 +2208,101 @@ public class SVGRenderer {
         			} 
 
 				for (int i = 0; i < str.length(); i++) {
-						char ch = str.charAt(i);
-						if ( useMultiByte ) {
-	               						pdf = pdf.append(Integer.toHexString((int) ch));
-                						currentX += fs.width(ch) / 1000f;
-                						inbetween = true;
-                						addedspace = false;
-						} else if (ch > 127) {
-								pdf = pdf.append("\\");
-								pdf = pdf.append(Integer.toOctalString((int) ch));
-								currentX += fs.width(ch) / 1000f;
-								inbetween = true;
-								addedspace = false;
-						} else {
-								switch (ch) {
-										case '(' :
-												pdf = pdf.append("\\(");
-												currentX += fs.width(ch) / 1000f;
-												inbetween = true;
-												addedspace = false;
-												break;
-										case ')' :
-												pdf = pdf.append("\\)");
-												currentX += fs.width(ch) / 1000f;
-												inbetween = true;
-												addedspace = false;
-												break;
-										case '\\' :
-												pdf = pdf.append("\\\\");
-												currentX += fs.width(ch) / 1000f;
-												inbetween = true;
-												addedspace = false;
-												break;
-										case '\t':
-										case ' ':
-												if (spacing) {
-														pdf = pdf.append(' ');
-														currentX += fs.width(' ') / 1000f;
-												} else {
-														if (inbetween && !addedspace) {
-																addedspace = true;
-																pdf = pdf.append(' ');
-																currentX += fs.width(' ') / 1000f;
-														}
-												}
-												break;
-										case '\n':
-										case '\r':
-												if (spacing) {
-														pdf = pdf.append(' ');
-														currentX += fs.width(' ') / 1000f;
-												}
-												break;
-										default:
-												addedspace = false;
-												pdf = pdf.append(ch);
-												currentX += fs.width(ch) / 1000f;
-												inbetween = true;
-												break;
+                                    char ch = fs.mapChar(str.charAt(i));
+                                    if ( useMultiByte ) {
+                                        switch ( str.charAt( i ))
+                                        {
+                                            case '\t':
+                                            case ' ':
+                                                if (spacing) {
+                                                    pdf = pdf.append( endText );
+                                                    
+                                                    pdf = pdf.append( startText );
+                                                    currentX += fs.width(fs.mapChar(' ')) / 1000f;
+                                                } else {
+                                                    if (inbetween && !addedspace) {
+                                                        addedspace = true;
+                                                        pdf = pdf.append( endText );
+                                                        pdf = pdf.append(" ");
+                                                        pdf = pdf.append(Float.toString(-fs.width(fs.mapChar(' '))));
+                                                        pdf = pdf.append(" ");
+                                                        pdf = pdf.append( startText );
+                                                        currentX += fs.width(fs.mapChar(' ')) / 1000f;
+                                                    }
+                                                }
+                                                break;
+                                            case '\n':
+                                            case '\r':
+                                                if (spacing) {
+                                                    pdf = pdf.append( endText );
+                                                    pdf = pdf.append(" ");
+                                                    pdf = pdf.append(Float.toString(-fs.width(fs.mapChar(' '))));
+                                                    pdf = pdf.append(" ");
+                                                    pdf = pdf.append( startText );
+                                                    currentX += fs.width(fs.mapChar(' ')) / 1000f;
+                                                }
+                                                break;
+                                            default:
+                                                pdf = pdf.append(getUnicodeString( ch));
+                                                currentX += fs.width(ch) / 1000f;
+                                                inbetween = true;
+                                                addedspace = false;
+                                                break;
 								}
-						}
+                                    } else if (ch > 127) {
+                                        pdf = pdf.append("\\");
+                                        pdf = pdf.append(Integer.toOctalString((int) ch));
+                                        currentX += fs.width(ch) / 1000f;
+                                        inbetween = true;
+                                        addedspace = false;
+                                    } else {
+                                        switch (ch) {
+                                            case '(' :
+                                                pdf = pdf.append("\\(");
+                                                currentX += fs.width(ch) / 1000f;
+                                                inbetween = true;
+                                                addedspace = false;
+                                                break;
+                                            case ')' :
+                                                pdf = pdf.append("\\)");
+                                                currentX += fs.width(ch) / 1000f;
+                                                inbetween = true;
+                                                addedspace = false;
+                                                break;
+                                            case '\\' :
+                                                pdf = pdf.append("\\\\");
+                                                currentX += fs.width(ch) / 1000f;
+                                                inbetween = true;
+                                                addedspace = false;
+                                                break;
+                                            case '\t':
+                                            case ' ':
+                                                if (spacing) {
+                                                    pdf = pdf.append(' ');
+                                                    currentX += fs.width(' ') / 1000f;
+                                                } else {
+                                                    if (inbetween && !addedspace) {
+                                                        addedspace = true;
+                                                        pdf = pdf.append(' ');
+                                                        currentX += fs.width(' ') / 1000f;
+                                                    }
+                                                }
+                                                break;
+                                            case '\n':
+                                            case '\r':
+                                                if (spacing) {
+                                                    pdf = pdf.append(' ');
+                                                    currentX += fs.width(' ') / 1000f;
+                                                }
+                                                break;
+                                            default:
+                                                addedspace = false;
+                                                pdf = pdf.append(ch);
+                                                currentX += fs.width(ch) / 1000f;
+                                                inbetween = true;
+                                                break;
+                                        }
+                                    }
 				}
                			pdf.append(endText);
 				currentStream.write(pdf.toString());
@@ -2400,10 +2435,10 @@ public class SVGRenderer {
 										String str = ((CharacterData) o).getData();
 										currentStream.write(transstr +
 																				(currentX + matrix.getE()) + " " +
-																				(baseY + matrix.getF()) + " Tm " );
+																				(baseY + matrix.getF()) + " Tm [" );
 										boolean spacing = "preserve".equals(te.getXMLspace());
 										currentX = addSVGStr(fs, currentX, str, spacing);
-										currentStream.write(" Tj\n");
+										currentStream.write(" ] TJ\n");
 								} else if (o instanceof SVGTextPathElementImpl) {
 										SVGTextPathElementImpl tpg = (SVGTextPathElementImpl) o;
 										String ref = tpg.str;
@@ -2688,4 +2723,36 @@ public class SVGRenderer {
 						return changed;
 				}
 		}
+
+    /**
+      * Convert a char to a multibyte hex representation
+      */
+    private String getUnicodeString(char c) {
+
+		StringBuffer buf = new StringBuffer(4);
+		
+		byte[] uniBytes = null;
+		try {
+			char[] a = {c};
+			uniBytes = new String(a).getBytes("UnicodeBigUnmarked");
+		} catch (Exception e) {
+			// This should never fail
+		}
+		
+		for (int i = 0; i < uniBytes.length; i++) {
+			int b = (uniBytes[i] < 0) ? (int)(256 + uniBytes[i]) :
+			(int) uniBytes[i];
+			
+			String hexString = Integer.toHexString(b);
+			if (hexString.length() == 1)
+			buf = buf.append("0"+hexString);
+			else
+			buf = buf.append(hexString);
+		}
+		
+		return buf.toString();
+			
+    }
+
+
 }
