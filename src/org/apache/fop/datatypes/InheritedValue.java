@@ -4,6 +4,8 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.PropertyTriplet;
 import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.datatypes.IndirectValue;
 
 /*
@@ -88,30 +90,22 @@ public class InheritedValue extends IndirectValue {
 
     /**
      * validate the <i>InheritedValue</i> against the associated property.
+     * TODO: validate is a total mess.  It will all require a rethink
+     * when the expression parsing is being finalised.
+     * @param type - an <tt>int</tt> bitmap of datatypes.  Irrelevant here.
      */
-    public void validate(int property) throws PropertyException {
+    public void validate(int type) throws PropertyException {
         String propStr = "Unknown";
         String spropStr = "Unknown";
-        int sprop = getSourceProperty();
-        if (property != sprop) {
-            try {
-                propStr = PropNames.getPropertyName(this.property);
-                spropStr = PropNames.getPropertyName(sprop);
-            } catch (PropertyException e) {}
-            throw new PropertyException
-                    ("InheritedValue for property " + this.property
-                     + " (" + propStr + ") can only be validated against its "
-                     + "source property " + sprop + " (" + spropStr + ").");
-        }
         // Property must be inheritable
-        if (PropertyConsts.inheritance(sprop) == Properties.NO) {
+        if (PropertyConsts.inheritance(sourceProperty) == Properties.NO) {
             try {
-                propStr = PropNames.getPropertyName(this.property);
-                spropStr = PropNames.getPropertyName(sprop);
+                propStr = PropNames.getPropertyName(property);
+                spropStr = PropNames.getPropertyName(sourceProperty);
             } catch (PropertyException e) {}
             throw new PropertyException
-                    ("Source property " + sprop + " (" + spropStr + ") for "
-                     + this.property + " (" + propStr
+                    ("Source property " + sourceProperty + " (" + spropStr
+                     + ") for " + this.property + " (" + propStr
                      + ") is not inheritable.");
         }
     }
@@ -120,7 +114,7 @@ public class InheritedValue extends IndirectValue {
      * validate the <i>InheritedValue</i> against the <i>source</i> property.
      */
     public void validate() throws PropertyException {
-        validate(getSourceProperty());
+        validate(Properties.ANY_TYPE);
     }
 
 }
