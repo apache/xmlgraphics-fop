@@ -948,6 +948,18 @@
     <datatype>Number</datatype>
     <default>1</default>
   </property>
+  <property>
+    <name>table-omit-header-at-break</name>
+    <inherited>false</inherited>
+    <use-generic>GenericBoolean</use-generic>
+    <default>false</default>
+  </property>
+  <property>
+    <name>table-omit-footer-at-break</name>
+    <inherited>false</inherited>
+    <use-generic>GenericBoolean</use-generic>
+    <default>false</default>
+  </property>
 
   <property>
     <name>region-name</name>
