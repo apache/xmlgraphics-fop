@@ -48,10 +48,11 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-package org.apache.fop.layout;
+package org.apache.fop.layout.inline;
 
 // FOP
 import org.apache.fop.render.Renderer;
+import org.apache.fop.layout.*;
 
 // Java
 import java.util.Vector;

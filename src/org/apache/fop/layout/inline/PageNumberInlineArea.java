@@ -48,12 +48,13 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-package org.apache.fop.layout;
+package org.apache.fop.layout.inline;
 
 import org.apache.fop.render.Renderer;
 import org.apache.fop.datatypes.IDNode;
+import org.apache.fop.layout.*;
 
-public class PageNumberInlineArea extends InlineArea {
+public class PageNumberInlineArea extends WordArea {
   
     
     public PageNumberInlineArea(FontState fontState, float red, float green, float blue, String refid, int width) {
