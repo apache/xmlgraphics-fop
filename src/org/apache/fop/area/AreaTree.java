@@ -12,6 +12,7 @@ import org.apache.fop.render.Renderer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 /**
@@ -99,10 +100,10 @@ public class AreaTree {
         }
         list.add(pv);
 
-        List todo = (List)resolve.get(id);
+        HashSet todo = (HashSet)resolve.get(id);
         if (todo != null) {
-            for (int count = 0; count < todo.size(); count++) {
-                Resolveable res = (Resolveable)todo.get(count);
+            for (Iterator iter = todo.iterator(); iter.hasNext();) {
+                Resolveable res = (Resolveable)iter.next();
                 res.resolve(id, list);
             }
             resolve.remove(id);
@@ -124,9 +125,9 @@ public class AreaTree {
      * @param res the Resolveable object to resolve
      */
     public void addUnresolvedID(String id, Resolveable res) {
-        ArrayList todo = (ArrayList)resolve.get(id);
+        HashSet todo = (HashSet)resolve.get(id);
         if (todo == null) {
-            todo = new ArrayList();
+            todo = new HashSet();
             resolve.put(id, todo);
         }
         todo.add(res);
@@ -147,9 +148,9 @@ public class AreaTree {
                 if (idLocations.containsKey(ids[count])) {
                     res.resolve(ids[count], (ArrayList)idLocations.get(ids[count]));
                 } else {
-                    ArrayList todo = (ArrayList)resolve.get(ids[count]);
+                    HashSet todo = (HashSet)resolve.get(ids[count]);
                     if (todo == null) {
-                        todo = new ArrayList();
+                        todo = new HashSet();
                         resolve.put(ids[count], todo);
                     }
                     todo.add(ext);
@@ -179,9 +180,9 @@ public class AreaTree {
     public void endDocument() {
         for (Iterator iter = resolve.keySet().iterator(); iter.hasNext();) {
             String id = (String)iter.next();
-            ArrayList list = (ArrayList)resolve.get(id);
-            for (int count = 0; count < list.size(); count++) {
-                Resolveable res = (Resolveable)list.get(count);
+            HashSet list = (HashSet)resolve.get(id);
+            for (Iterator resIter = list.iterator(); resIter.hasNext();) {
+                Resolveable res = (Resolveable)resIter.next();
                 if (!res.isResolved()) {
                     res.resolve(id, null);
                 }
