@@ -59,6 +59,7 @@ import org.w3c.dom.svg.*;
  */
 public class SVGUseElementImpl extends GraphicElement implements SVGUseElement {
 	public String link;
+	String xlinkArcRole;
 
 	public SVGUseElementImpl(String s)
 	{
@@ -90,6 +91,16 @@ public class SVGUseElementImpl extends GraphicElement implements SVGUseElement {
 
 	public void setXlinkTitle( String xlinkTitle )
 	{
+	}
+
+	public String getXlinkArcRole()
+	{
+		return xlinkArcRole;
+	}
+
+	public void setXlinkArcRole(String xlinkArcRole)
+	{
+		this.xlinkArcRole = xlinkArcRole;
 	}
 
 	public String getXlinkShow( )
