@@ -108,11 +108,11 @@ public class FoInstreamForeignObject extends FONode {
      * attribute set information.
      */
     public FoInstreamForeignObject
-                (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
+            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.INSTREAM_FOREIGN_OBJECT, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices);
+                          stateFlags, sparsePropsMap, sparseIndices);
         // TODO
         makeSparsePropsSet();
     }
