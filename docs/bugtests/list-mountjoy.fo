@@ -3,7 +3,7 @@
 
   <!-- defines the layout master -->
   <fo:layout-master-set>
-    <fo:simple-page-master page-master-name="first" 
+    <fo:simple-page-master master-name="first" 
                            page-height="29.7cm" page-width="21cm" 
                            margin-top="1cm" 
                            margin-bottom="2cm" 
