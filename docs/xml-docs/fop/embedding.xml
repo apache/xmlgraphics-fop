@@ -32,6 +32,8 @@
   <p><code>driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);</code></p>
   <p><code>driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");</code></p>
   <p><code>driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");</code></p>
+  <p><code>driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");</code></p>
+  <p><code>driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");</code></p>
   <p><code>driver.setWriter(new PrintWriter(new FileWriter(args[1])));</code></p>
   <p><code>driver.buildFOTree(parser, fileInputSource(args[0]));</code></p>
   <p><code>driver.format();</code></p>

@@ -13,7 +13,11 @@
     </p>
     <p>c) Fop supports SVG (see <jump href="implemented.html">Features</jump> for further information) and
           needs the w3c.jar library. This library comes with Fop (xml-fop/lib) and must
-          be included in your classpath
+          be included in your classpath. The jar file w3c.jar is the compiled classes for the
+          java svg bindings with some other DOM classes that are used by the SVG DOM bindings.
+          The source for the svg java binding classes can be found at - <jump href="http://www.w3.org/TR/2000/CR-SVG-20000802/java.html">
+          SVG Java bindings</jump>, currently they correspond to the CR-SVG-20000802 specification document.
+          The other required files can be found at <jump href="http://www.w3.org/TR/2000/CR-DOM-Level-2-20000510/java-binding.html">W3C DOM Java binding</jump>.
     </p>
     <p>d) Optional: Fop supports the jimi library for image processing, if it is in your classpath
           when you build Fop. 
