@@ -1144,7 +1144,13 @@
   <property>
     <name>linefeed-treatment</name>
     <inherited>true</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>Enum</datatype>
+      <enumeration>
+        <value const="IGNORE">ignore</value>
+        <value const="PRESERVE">preserve</value>
+        <value const="TREAT_AS_SPACE">treat-as-space</value>
+        <value const="TREAT_AS_ZERO_WIDTH_SPACE">treat-as-zero-width-space</value>
+      </enumeration>
     <default>treat-as-space</default>
   </property>
   <property>
@@ -2151,10 +2157,17 @@
     <default>baseline</default>
   </property>
   <property>
-    <name>white-space</name>
+    <name>white-space-treatment</name>
     <inherited>true</inherited>
-    <datatype>ToBeImplemented</datatype>
-    <default>normal</default>
+    <datatype>Enum</datatype>
+      <enumeration>
+        <value const="IGNORE">ignore</value>
+        <value const="PRESERVE">preserve</value>
+        <value const="IGNORE_IF_BEFORE_LINEFEED">ignore-if-before-linefeed</value>
+        <value const="IGNORE_IF_AFTER_LINEFEED">ignore-if-after-linefeed</value>
+        <value const="IGNORE_IF_SURROUNDING_LINEFEED">ignore-if-surrounding-linefeed</value>
+      </enumeration>
+    <default>ignore-if-surrounding-linefeed</default>
   </property>
   <property>
     <name>xml:lang</name>
