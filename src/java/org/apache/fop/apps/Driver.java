@@ -594,6 +594,19 @@ public class Driver implements LogEnabled, FOTreeListener {
                 //this.atModel = new CachedRenderPagesModel(renderer);
                 areaTree.setTreeModel(atModel);
             }
+            /**
+             The following statement triggers virtually all of the processing
+             for this document. The SAX parser fires events that are handled by
+             the appropriate InputHandler object, which means that you will need
+             to look in those objects to see where FOP picks up control of
+             processing again. For Structure Renderers (e.g. MIF & RTF), the SAX
+             events are handled directly. For Layout Renderers (e.g. PDF &
+             PostScript), an FO Tree is built by the FOTreeHandler, which in
+             turn fires events when a PageSequence object is complete. This
+             allows higher-level control objects (such as this class) to work
+             directly with PageSequence objects. See foPageSequenceComplete()
+             where this level of control is implemented.
+             */
             parser.parse(source);
             if (foInputHandler instanceof FOTreeHandler) {
                 FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
@@ -659,7 +672,13 @@ public class Driver implements LogEnabled, FOTreeListener {
         }
     }
 
-    public void foPageSequenceComplete (FOTreeEvent event) throws FOPException{
+    /**
+     * Required by the FOTreeListener interface. It handles an
+     * FOTreeEvent that is fired when a PageSequence object has been completed.
+     * @param event the FOTreeEvent that was fired
+     * @throws FOPException for errors in building the PageSequence
+     */
+    public void foPageSequenceComplete (FOTreeEvent event) throws FOPException {
         PageSequence pageSeq = event.getPageSequence();
         Title title = null;
         if (pageSeq.getTitleFO() != null) {
@@ -669,13 +688,19 @@ public class Driver implements LogEnabled, FOTreeListener {
         pageSeq.format(areaTree);
     }
 
-    public void foDocumentComplete (FOTreeEvent event) throws SAXException{
+    /**
+     * Required by the FOTreeListener interface. It handles an FOTreeEvent that
+     * is fired when the Document has been completely parsed.
+     * @param event the FOTreeEvent that was fired
+     * @throws SAXException for parsing errors
+     */
+    public void foDocumentComplete (FOTreeEvent event) throws SAXException {
         //processAreaTree(atModel);
         try {
             areaTree.endDocument();
             renderer.stopRenderer();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
+            throw new SAXException(ex);
         }
     }
 
