@@ -5,9 +5,13 @@ include $(BASEDIR)/Makefile.rules
 
 SUBDIRS=
 
-SOURCES=PDFDocument.java \
+SOURCES=PDFAction.java \
+	PDFAnnotList.java \
+	PDFDocument.java \
+	PDFFileSpec.java \
 	PDFFont.java \
 	PDFInfo.java \
+	PDFLink.java \
 	PDFObject.java \
 	PDFPage.java \
 	PDFPages.java \
