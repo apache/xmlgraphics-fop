@@ -52,7 +52,7 @@
 // Ant
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
-import org.apache.fop.apps.*;
+
 
 // SAX
 import org.xml.sax.XMLReader;
@@ -69,6 +69,9 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.net.URL;
 
+// FOP
+import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.apps.*;
 
 /**
  * extension to Ant which allows usage of Fop in the 
@@ -110,20 +113,20 @@ public class Fop {
     if (parserClassName == null) {
         parserClassName = "org.apache.xerces.parsers.SAXParser";
     }
-    System.out.println("using SAX parser " + parserClassName);
+    MessageHandler.logln("using SAX parser " + parserClassName);
 
     try {
         return (XMLReader)
           Class.forName(parserClassName).newInstance();
     } catch (ClassNotFoundException e) {
-        System.err.println("Could not find " + parserClassName);
+        MessageHandler.errorln("Could not find " + parserClassName);
     } catch (InstantiationException e) {
-        System.err.println("Could not instantiate "
+        MessageHandler.errorln("Could not instantiate "
                        + parserClassName);
     } catch (IllegalAccessException e) {
-        System.err.println("Could not access " + parserClassName);
+        MessageHandler.errorln("Could not access " + parserClassName);
     } catch (ClassCastException e) {
-        System.err.println(parserClassName + " is not a SAX driver"); 
+        MessageHandler.errorln(parserClassName + " is not a SAX driver"); 
     }
     return null;
   }  // end: createParser
@@ -160,18 +163,18 @@ public class Fop {
   public void execute () throws BuildException {
     boolean errors = false;
     String version = Version.getVersion();
-    System.out.println("=======================\nTask " + version + 
+    MessageHandler.logln("=======================\nTask " + version + 
                        "\nconverting file " + fofile + " to " + pdffile);
   
     if (!(new File(fofile).exists())) {
       errors = true;
-      System.err.println("Task Fop - ERROR: Formatting objects file " + fofile + " missing.");
+      MessageHandler.errorln("Task Fop - ERROR: Formatting objects file " + fofile + " missing.");
     }
   
     XMLReader parser = createParser();
   
     if (parser == null) {
-        System.err.println("Task Fop - ERROR: Unable to create SAX parser");
+        MessageHandler.errorln("Task Fop - ERROR: Unable to create SAX parser");
         errors = true;
     }
 
@@ -179,8 +182,8 @@ public class Fop {
     try {
       parser.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
     } catch (SAXException e) {
-      System.err.println("Error in setting up parser feature namespace-prefixes");
-      System.err.println("You need a parser which supports SAX version 2");  
+      MessageHandler.errorln("Error in setting up parser feature namespace-prefixes");
+      MessageHandler.errorln("You need a parser which supports SAX version 2");  
       System.exit(1);  
     }
 
@@ -195,11 +198,11 @@ public class Fop {
         driver.format();
         driver.render();
       } catch (Exception e) {
-        System.err.println("Task Fop - FATAL ERROR: " + e.getMessage());
+        MessageHandler.errorln("Task Fop - FATAL ERROR: " + e.getMessage());
         System.exit(1);
       }
     }
-    System.out.println("=======================\n");  
+    MessageHandler.logln("=======================\n");  
   } // end: execute
 }
 
