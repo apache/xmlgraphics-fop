@@ -274,6 +274,15 @@ public abstract class Properties {
                 ,VALUE_SPECIFIC = 5
                               ;
 
+    /**
+     * Constant for nested <tt>verifyParsing</tt> methods
+     */
+    public static boolean IS_NESTED = true;
+
+    /**
+     * Constant for non-nested <tt>verifyParsing</tt> methods
+     */
+    public static boolean NOT_NESTED = false;
 
     /**
      * The final stage of parsing:<br>
@@ -293,83 +302,99 @@ public abstract class Properties {
                                         (FOTree foTree, PropertyValue value)
             throws PropertyException
     {
+        return verifyParsing(foTree, value, NOT_NESTED);
+    }
+
+    /**
+     * Do the work for the two argument verifyParsing method.
+     * @param foTree the <tt>FOTree</tt> being built
+     * @param value <tt>PropertyValue</tt> returned by the parser
+     * @param nested <tt>boolean</tt> indicating whether this method is
+     * called normally (false), or as part of another <i>verifyParsing</i>
+     * method.
+     * @see #verifyParsing(FOTree,PropertyValue)
+     */
+    protected static PropertyValue verifyParsing
+                        (FOTree foTree, PropertyValue value, boolean nested)
+            throws PropertyException
+    {
         int property = value.getProperty();
         String propName = PropNames.getPropertyName(property);
         int datatype = PropertyConsts.dataTypes.get(property);
-        testing_valuetypes: do {
-            if (value instanceof Numeric) {
-                // Can be any of
-                // INTEGER, FLOAT, LENGTH, PERCENTAGE, ANGLE, FREQUENCY or TIME
-                if ((datatype & (INTEGER | FLOAT | LENGTH | PERCENTAGE
-                                    | ANGLE | FREQUENCY | TIME)) != 0)
-                    return value;
-            }
-            if (value instanceof NCName) {
-                String ncname = ((NCName)value).getNCName();
-                // Can by any of
-                // NAME, COUNTRY_T, LANGUAGE_T, SCRIPT_T, ID_T, IDREF, ENUM
-                // MAPPED_NUMERIC or CHARACTER_T
-                if ((datatype & (NAME | ID_T | IDREF | CHARACTER_T)) != 0)
-                    return value;
-                if ((datatype & COUNTRY_T) != 0)
-                    return new CountryType(property, ncname);
-                if ((datatype & LANGUAGE_T) != 0)
-                    return new LanguageType(property, ncname);
-                if ((datatype & SCRIPT_T) != 0)
-                    return new ScriptType(property, ncname);
-                if ((datatype & ENUM) != 0)
-                    return new EnumType(property, ncname);
-                if ((datatype & MAPPED_NUMERIC) != 0)
-                    return (new MappedNumeric(property, ncname, foTree))
-                                    .getMappedNumValue();
-            }
-            if (value instanceof Literal) {
-                // Can be LITERAL or CHARACTER_T
-                if ((datatype & (LITERAL | CHARACTER_T)) != 0) return value;
-                throw new PropertyException
-                                ("Literal value invalid  for " + propName);
-            }
-            if (value instanceof Auto) {
-                if ((datatype & AUTO) != 0) return value;
-                throw new PropertyException("'auto' invalid  for " + propName);
-            }
-            if (value instanceof Bool) {
-                if ((datatype & BOOL) != 0) return value;
-                throw new PropertyException
-                                    ("Boolean value invalid for " + propName);
-            }
-            if (value instanceof ColorType) {
-                // Can be COLOR_T or COLOR_TRANS
-                if ((datatype & (COLOR_T | COLOR_TRANS)) != 0) return value;
-                throw new PropertyException("'none' invalid  for " + propName);
-            }
-            if (value instanceof None) {
-                // Some instances of 'none' are part of an enumeration, but
-                // the parser will find and return 'none' as a None
-                // PropertyValue.
-                // In these cases, the individual property's verifyParsing
-                // method must shadow this method.
-                if ((datatype & NONE) != 0) return value;
-                throw new PropertyException("'none' invalid  for " + propName);
-            }
+        if (value instanceof Numeric) {
+            // Can be any of
+            // INTEGER, FLOAT, LENGTH, PERCENTAGE, ANGLE, FREQUENCY or TIME
+            if ((datatype & (INTEGER | FLOAT | LENGTH | PERCENTAGE
+                                | ANGLE | FREQUENCY | TIME)) != 0)
+                return value;
+        }
+        if (value instanceof NCName) {
+            String ncname = ((NCName)value).getNCName();
+            // Can by any of
+            // NAME, COUNTRY_T, LANGUAGE_T, SCRIPT_T, ID_T, IDREF, ENUM
+            // MAPPED_NUMERIC or CHARACTER_T
+            if ((datatype & (NAME | ID_T | IDREF | CHARACTER_T)) != 0)
+                return value;
+            if ((datatype & COUNTRY_T) != 0)
+                return new CountryType(property, ncname);
+            if ((datatype & LANGUAGE_T) != 0)
+                return new LanguageType(property, ncname);
+            if ((datatype & SCRIPT_T) != 0)
+                return new ScriptType(property, ncname);
+            if ((datatype & ENUM) != 0)
+                return new EnumType(property, ncname);
+            if ((datatype & MAPPED_NUMERIC) != 0)
+                return (new MappedNumeric(property, ncname, foTree))
+                                .getMappedNumValue();
+        }
+        if (value instanceof Literal) {
+            // Can be LITERAL or CHARACTER_T
+            if ((datatype & (LITERAL | CHARACTER_T)) != 0) return value;
+            throw new PropertyException
+                            ("Literal value invalid  for " + propName);
+        }
+        if (value instanceof Auto) {
+            if ((datatype & AUTO) != 0) return value;
+            throw new PropertyException("'auto' invalid  for " + propName);
+        }
+        if (value instanceof Bool) {
+            if ((datatype & BOOL) != 0) return value;
+            throw new PropertyException
+                                ("Boolean value invalid for " + propName);
+        }
+        if (value instanceof ColorType) {
+            // Can be COLOR_T or COLOR_TRANS
+            if ((datatype & (COLOR_T | COLOR_TRANS)) != 0) return value;
+            throw new PropertyException("'none' invalid  for " + propName);
+        }
+        if (value instanceof None) {
+            // Some instances of 'none' are part of an enumeration, but
+            // the parser will find and return 'none' as a None
+            // PropertyValue.
+            // In these cases, the individual property's verifyParsing
+            // method must shadow this method.
+            if ((datatype & NONE) != 0) return value;
+            throw new PropertyException("'none' invalid  for " + propName);
+        }
+        if (value instanceof UriType) {
+            if ((datatype & URI_SPECIFICATION) != 0) return value;
+            throw new PropertyException("uri invalid for " + propName);
+        }
+        if (value instanceof MimeType) {
+            if ((datatype & MIMETYPE) != 0) return value;
+            throw new PropertyException
+                        ("mimetype invalid for " + propName);
+        }
+        if ( ! nested) {
             if (value instanceof Inherit) {
                 if ((datatype & INHERIT) != 0) return value;
                 throw new PropertyException
-                                        ("'inherit' invalid for " + propName);
+                                    ("'inherit' invalid for " + propName);
             }
-            if (value instanceof UriType) {
-                if ((datatype & URI_SPECIFICATION) != 0) return value;
-                throw new PropertyException("uri invalid for " + propName);
-            }
-            if (value instanceof MimeType) {
-                if ((datatype & MIMETYPE) != 0) return value;
-                throw new PropertyException
-                            ("mimetype invalid for " + propName);
-            }
-            throw new PropertyException
-                ("Inappropriate datatype passed to Properties.verifyParsing: "
-                    + value.getClass().getName());
-        } while (false);
+        }
+        throw new PropertyException
+            ("Inappropriate datatype passed to Properties.verifyParsing: "
+                + value.getClass().getName());
     }
 
     /**
@@ -498,9 +523,18 @@ public abstract class Properties {
             PropertyValue value, int styleProp, int colorProp, int widthProp)
                 throws PropertyException
     {
+        return borderEdge
+                (foTree, value, styleProp, colorProp, widthProp, NOT_NESTED);
+    }
+
+    protected static PropertyValue borderEdge
+            (FOTree foTree, PropertyValue value, int styleProp,
+                int colorProp, int widthProp, boolean nested)
+                throws PropertyException
+    {
         if ( ! (value instanceof PropertyValueList)) {
             return processEdgeValue
-                            (foTree, value, styleProp, colorProp, widthProp);
+                    (foTree, value, styleProp, colorProp, widthProp, nested);
         } else {
             return processEdgeList
                 (foTree, spaceSeparatedList((PropertyValueList)value),
@@ -508,24 +542,24 @@ public abstract class Properties {
         }
     }
 
-    private static PropertyValueList processEdgeValue(FOTree foTree,
-            PropertyValue value, int styleProp, int colorProp, int widthProp)
+    private static PropertyValueList processEdgeValue
+            (FOTree foTree, PropertyValue value, int styleProp,
+                int colorProp, int widthProp, boolean nested)
             throws PropertyException
     {
-        if (value instanceof Inherit |
-                value instanceof FromParent |
-                    value instanceof FromNearestSpecified)
-        {
-            // Construct a list of Inherit values
-            return PropertySets.expandAndCopySHand(value);
-        } else  {
-            // Make a list and pass to processList
-            PropertyValueList tmpList
-                    = new PropertyValueList(value.getProperty());
-            tmpList.add(value);
-            return processEdgeList
-                        (foTree, tmpList, styleProp, colorProp, widthProp);
+        if ( ! nested) {
+            if (value instanceof Inherit |
+                    value instanceof FromParent |
+                        value instanceof FromNearestSpecified)
+                // Construct a list of Inherit values
+                return PropertySets.expandAndCopySHand(value);
         }
+        // Make a list and pass to processList
+        PropertyValueList tmpList
+                = new PropertyValueList(value.getProperty());
+        tmpList.add(value);
+        return processEdgeList
+                    (foTree, tmpList, styleProp, colorProp, widthProp);
     }
 
     private static PropertyValueList processEdgeList(FOTree foTree,
@@ -1092,14 +1126,14 @@ public abstract class Properties {
                             "position overrides previous position");
                     if (tmpval == null)
                         position = BackgroundPosition.verifyParsing
-                                                        (foTree, pval);
+                                                (foTree, pval, IS_NESTED);
                     else { // 2 elements
                         // make a space-separated list
                         PropertyValueList ssList = new PropertyValueList
                                             (PropNames.BACKGROUND_POSITION);
                         ssList.add(posnList);
                         position = BackgroundPosition.verifyParsing
-                                                        (foTree, ssList);
+                                                (foTree, ssList, IS_NESTED);
                     }
                     continue scanning_elements;
                 }
@@ -1182,11 +1216,11 @@ public abstract class Properties {
                                             (PropNames.BACKGROUND_POSITION);
                             ssList.add(posnList);
                             position = BackgroundPosition.verifyParsing
-                                                            (foTree, ssList);
+                                                (foTree, ssList, IS_NESTED);
                         } else { // one only
                         // Now send one NCName to BackgroundPosition
                             position = BackgroundPosition.verifyParsing
-                                                            (foTree, pval);
+                                                (foTree, pval, IS_NESTED);
                         }
                         continue scanning_elements;
                     }
@@ -1330,32 +1364,58 @@ public abstract class Properties {
          * containing the expansion of the shorthand.  I.e. the first
          * element is a value for BackgroundPositionHorizontal, and the
          * second is for BackgroundPositionVertical.
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
          */
         public static PropertyValue verifyParsing
-                (FOTree foTree, PropertyValue value)
+                                        (FOTree foTree, PropertyValue value)
+                        throws PropertyException
+        {
+            return verifyParsing(foTree, value, NOT_NESTED);
+        }
+
+        /**
+         * Do the work for the two argument verifyParsing method.
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @param nested <tt>boolean</tt> indicating whether this method is
+         * called normally (false), or as part of another <i>verifyParsing</i>
+         * method.
+         * @return <tt>PropertyValue</tt> the verified value
+         * @see #verifyParsing(FOTree,PropertyValue)
+         */
+        public static PropertyValue verifyParsing
+                        (FOTree foTree, PropertyValue value, boolean nested)
                         throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
-                return processValue(value);
+                return processValue(value, nested);
             } else {
                 return processList
                             (spaceSeparatedList((PropertyValueList)value));
             }
         }
 
-        private static PropertyValueList processValue(PropertyValue value)
+        private static PropertyValueList processValue
+                                        (PropertyValue value, boolean nested)
                         throws PropertyException
         {
             PropertyValueList newlist
                             = new PropertyValueList(value.getProperty());
             // Can only be Inherit, NCName (i.e. enum token)
             // or Numeric (i.e. Length or Percentage)
-            if (value instanceof Inherit |
-                    value instanceof FromParent |
-                        value instanceof FromNearestSpecified) {
-                // Construct a list of Inherit values
-                newlist = PropertySets.expandAndCopySHand(value);
-            } else if (value instanceof Numeric) {
+            if ( ! nested) {
+                if (value instanceof Inherit |
+                        value instanceof FromParent |
+                            value instanceof FromNearestSpecified) {
+                    // Construct a list of Inherit values
+                    newlist = PropertySets.expandAndCopySHand(value);
+                    return newlist;
+                }
+            }
+
+            if (value instanceof Numeric) {
                 // Single horizontal value given
                 Numeric newNum;
                 try {
@@ -1785,6 +1845,85 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
+
+        public static PropertyValue verifyParsing
+                                        (FOTree foTree, PropertyValue value)
+            throws PropertyException
+        {
+            if (value instanceof Inherit |
+                            value instanceof FromParent |
+                                        value instanceof FromNearestSpecified)
+                // Construct a list of Inherit values
+                return PropertySets.expandAndCopySHand(value);
+
+            PropertyValueList ssList = null;
+            // Must be a space-separated list or a single value from the
+            // set of choices
+            if (! (value instanceof PropertyValueList)) {
+                // If it's a single value, form a list from that value
+                ssList = new PropertyValueList(PropNames.BORDER);
+                ssList.add(value);
+            } else {
+                // Must be a space-separated list
+                try {
+                    ssList = spaceSeparatedList((PropertyValueList)value);
+                } catch (PropertyException e) {
+                    throw new PropertyException
+                        ("Space-separated list required for 'border'");
+                }
+            }
+            // Look for appropriate values in ssList
+            PropertyValue width = null;
+            PropertyValue style = null;
+            PropertyValue color = null;
+            Iterator values = ssList.iterator();
+            while (values.hasNext()) {
+                PropertyValue val = (PropertyValue)(values.next());
+                PropertyValue pv = null;
+                try {
+                    pv = BorderWidth.verifyParsing(foTree, val, IS_NESTED);
+                    if (width != null)
+                        MessageHandler.log("border: duplicate" +
+                        "width overrides previous width");
+                    width = pv;
+                    continue;
+                } catch (PropertyException e) {}
+                try {
+                    pv = BorderStyle.verifyParsing(foTree, val, IS_NESTED);
+                    if (style != null)
+                        MessageHandler.log("border: duplicate" +
+                        "style overrides previous style");
+                    style = pv;
+                    continue;
+                } catch (PropertyException e) {}
+                try {
+                    pv = BorderColor.verifyParsing(foTree, val, IS_NESTED);
+                    if (color != null)
+                        MessageHandler.log("border: duplicate" +
+                        "color overrides previous color");
+                    color = pv;
+                    continue;
+                } catch (PropertyException e) {}
+
+                throw new PropertyException
+                    ("Unrecognized value; looking for style, "
+                    + "width or color in border: "
+                    + val.getClass().getName());
+            }
+            // Construct the shorthand expansion list
+            PropertyValueList borderexp =
+                PropertySets.initialValueExpansion(foTree, PropNames.BORDER);
+            if (style != null)
+                borderexp = PropertySets.overrideSHandElements(borderexp,
+                                                    (PropertyValueList)style);
+            if (color != null)
+                borderexp = PropertySets.overrideSHandElements(borderexp,
+                                                    (PropertyValueList)color);
+            if (width != null)
+                borderexp = PropertySets.overrideSHandElements(borderexp,
+                                                    (PropertyValueList)width);
+            return borderexp;
+        }
     }
 
     public static class Conditionality extends Properties {
@@ -1994,9 +2133,13 @@ public abstract class Properties {
          *
          *  N.B. this is the order of elements defined in
          *       PropertySets.borderRightExpansion
+         *
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
          */
         public static PropertyValue verifyParsing
-                (FOTree foTree, PropertyValue value)
+                                        (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             return Properties.borderEdge(foTree, value,
@@ -2110,17 +2253,41 @@ public abstract class Properties {
          * the second element is a value for border-right-color,
          * the third element is a value for border-bottom-color,
          * the fourth element is a value for border-left-color.
+         *
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
          */
         public static PropertyValue verifyParsing
-                (FOTree foTree, PropertyValue value)
+                                        (FOTree foTree, PropertyValue value)
+                    throws PropertyException
+        {
+            return verifyParsing(foTree, value, NOT_NESTED);
+        }
+
+        /**
+         * Do the work for the two argument verifyParsing method.
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @param nested <tt>boolean</tt> indicating whether this method is
+         * called normally (false), or as part of another <i>verifyParsing</i>
+         * method.
+         * @return <tt>PropertyValue</tt> the verified value
+         * @see #verifyParsing(FOTree,PropertyValue)
+         */
+        public static PropertyValue verifyParsing
+                        (FOTree foTree, PropertyValue value, boolean nested)
                     throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
-                if (value instanceof Inherit
-                    || value instanceof ColorType
-                    || value instanceof FromParent
-                    || value instanceof FromNearestSpecified
-                    )
+                if ( ! nested) {
+                    if (value instanceof Inherit
+                        || value instanceof FromParent
+                        || value instanceof FromNearestSpecified
+                        )
+                        return PropertySets.expandAndCopySHand(value);
+                }
+                if (value instanceof ColorType)
                     return PropertySets.expandAndCopySHand(value);
                 if (value instanceof NCName) {
                     // Must be a standard color
@@ -2139,6 +2306,9 @@ public abstract class Properties {
                     ("Invalid " + value.getClass().getName() +
                                                 " value for border-color");
             } else {
+                if (nested) throw new PropertyException
+                        ("PropertyValueList invalid for nested border-color "
+                            + "verifyParsing() method");
                 // List may contain only multiple color specifiers
                 // i.e. ColorTypes or NCNames specifying a standard color or
                 // 'transparent'.
@@ -2321,6 +2491,10 @@ public abstract class Properties {
          *
          *  N.B. this is the order of elements defined in
          *       PropertySets.borderRightExpansion
+         *
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
          */
         public static PropertyValue verifyParsing
                 (FOTree foTree, PropertyValue value)
@@ -2404,6 +2578,10 @@ public abstract class Properties {
          *
          *  N.B. this is the order of elements defined in
          *       PropertySets.borderRightExpansion
+         *
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
          */
         public static PropertyValue verifyParsing
                 (FOTree foTree, PropertyValue value)
@@ -2519,6 +2697,10 @@ public abstract class Properties {
          *   a list containing 2 Length PropertyValues
          *   Note: the Lengths cannot be percentages (what about relative
          *         lengths?)
+         *
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
          */
         public static PropertyValue verifyParsing
                 (FOTree foTree, PropertyValue value)
@@ -2677,17 +2859,40 @@ public abstract class Properties {
          * the second element is a value for border-right-style,
          * the third element is a value for border-bottom-style,
          * the fourth element is a value for border-left-style.
+         *
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
          */
         public static PropertyValue verifyParsing
-                (FOTree foTree, PropertyValue value)
+                                        (FOTree foTree, PropertyValue value)
+                    throws PropertyException
+        {
+            return verifyParsing(foTree, value, NOT_NESTED);
+        }
+
+        /**
+         * Do the work for the two argument verifyParsing method.
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @param nested <tt>boolean</tt> indicating whether this method is
+         * called normally (false), or as part of another <i>verifyParsing</i>
+         * method.
+         * @return <tt>PropertyValue</tt> the verified value
+         * @see #verifyParsing(FOTree,PropertyValue)
+         */
+        public static PropertyValue verifyParsing
+                        (FOTree foTree, PropertyValue value, boolean nested)
                     throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
-                if (value instanceof Inherit
-                    || value instanceof FromParent
-                    || value instanceof FromNearestSpecified
-                    )
-                    return PropertySets.expandAndCopySHand(value);
+                if ( ! nested) {
+                    if (value instanceof Inherit
+                        || value instanceof FromParent
+                        || value instanceof FromNearestSpecified
+                        )
+                        return PropertySets.expandAndCopySHand(value);
+                }
                 if (value instanceof NCName) {
                     // Must be a border-style
                     EnumType enum;
@@ -2705,6 +2910,9 @@ public abstract class Properties {
                     ("Invalid " + value.getClass().getName() +
                                                 " value for border-style");
             } else {
+                if (nested) throw new PropertyException
+                        ("PropertyValueList invalid for nested border-style "
+                            + "verifyParsing() method");
                 // List may contain only multiple style specifiers
                 // i.e. NCNames specifying a standard style
                 PropertyValueList list =
@@ -2771,6 +2979,10 @@ public abstract class Properties {
          *
          *  N.B. this is the order of elements defined in
          *       PropertySets.borderRightExpansion
+         *
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
          */
         public static PropertyValue verifyParsing
                 (FOTree foTree, PropertyValue value)
@@ -2865,17 +3077,40 @@ public abstract class Properties {
          * the second element is a value for border-right-width,
          * the third element is a value for border-bottom-width,
          * the fourth element is a value for border-left-width.
+         *
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
          */
         public static PropertyValue verifyParsing
-                (FOTree foTree, PropertyValue value)
+                                        (FOTree foTree, PropertyValue value)
+                    throws PropertyException
+        {
+            return verifyParsing(foTree, value, NOT_NESTED);
+        }
+
+        /**
+         * Do the work for the two argument verifyParsing method.
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @param nested <tt>boolean</tt> indicating whether this method is
+         * called normally (false), or as part of another <i>verifyParsing</i>
+         * method.
+         * @return <tt>PropertyValue</tt> the verified value
+         * @see #verifyParsing(FOTree,PropertyValue)
+         */
+        public static PropertyValue verifyParsing
+                        (FOTree foTree, PropertyValue value, boolean nested)
                     throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
-                if (value instanceof Inherit
-                    || value instanceof FromParent
-                    || value instanceof FromNearestSpecified
-                    )
-                    return PropertySets.expandAndCopySHand(value);
+                if ( ! nested) {
+                    if (value instanceof Inherit
+                        || value instanceof FromParent
+                        || value instanceof FromNearestSpecified
+                        )
+                        return PropertySets.expandAndCopySHand(value);
+                }
                 if (value instanceof NCName) {
                     // Must be a border-width
                     Numeric mapped;
@@ -2895,6 +3130,9 @@ public abstract class Properties {
                     ("Invalid " + value.getClass().getName() +
                                                 " value for border-width");
             } else {
+                if (nested) throw new PropertyException
+                        ("PropertyValueList invalid for nested border-width "
+                            + "verifyParsing() method");
                 // List may contain only multiple width specifiers
                 // i.e. NCNames specifying a standard width
                 PropertyValueList list =
@@ -3117,11 +3355,17 @@ public abstract class Properties {
         public static final int initialValueType = AUTO_IT;
         public static final int inherited = NO;
 
+        /*
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
+         */
         public static PropertyValue verifyParsing
-                (FOTree foTree, PropertyValue value)
+                                        (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
-            // AUTO and INHERIT will have been normally processed
+            if (value instanceof Inherit || value instanceof Auto)
+                return value;
             if (! (value instanceof PropertyValueList))
                 throw new PropertyException
                     ("clip: <shape> requires 4 <length> or <auto> args");
@@ -3273,6 +3517,10 @@ public abstract class Properties {
          * containing the expansion of the shorthand.
          * The first element is a value for cue-before,
          * the second element is a value for cue-after.
+         *
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
          */
         public static PropertyValue verifyParsing
                 (FOTree foTree, PropertyValue value)
@@ -3691,6 +3939,10 @@ public abstract class Properties {
          *
          * <p>The setup of the shorthand expansion list is determined by the
          * above considerations.
+         *
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
          */
         public static PropertyValue verifyParsing
                 (FOTree foTree, PropertyValue value)
@@ -3841,15 +4093,12 @@ public abstract class Properties {
                 // font-family begins at slash + 2
                 familyStart = slash + 2;
                 fontsize = slash - 1;
-                size = FontSize.verifyParsing(foTree, propvals[fontsize]);
+                size = FontSize.verifyParsing
+                                    (foTree, propvals[fontsize], IS_NESTED);
                 // derive the line-height
                 // line-height is at slash + 1
                 height = LineHeight.verifyParsing
-                                            (foTree, propvals[slash + 1]);
-                if (size instanceof Inherit || height instanceof Inherit)
-                    throw new PropertyException
-                        ("'inherit' found in font-size/line-height part "
-                        + "of 'font' shorthand expression");
+                                    (foTree, propvals[slash + 1], IS_NESTED);
             } else {
                 // Don''t know where slash is.  If anything precedes the
                 // font-family, it must be a font-size.  Look for that.
@@ -3903,12 +4152,8 @@ public abstract class Properties {
             // and that list is prepended to fontList.
             if (fontList.size() == 0
                                 && familyStart == (propvals.length - 1)) {
-                if (propvals[familyStart] instanceof Inherit)
-                    throw new PropertyException
-                        ("'inherit' found in font-family part "
-                        + "of 'font' shorthand expression");
-                fontset =
-                    FontFamily.verifyParsing(foTree, propvals[familyStart]);
+                fontset = FontFamily.verifyParsing
+                                (foTree, propvals[familyStart], IS_NESTED);
             } else {
                 // Must develop a list to prepend to fontList
                 PropertyValueList tmpList =
@@ -3917,39 +4162,46 @@ public abstract class Properties {
                     tmpList.add(propvals[i]);
                 fontList.addFirst(tmpList);
                 // Get a FontFamilySet
-                fontset = FontFamily.verifyParsing(foTree, fontList);
+                fontset = FontFamily.verifyParsing
+                                            (foTree, fontList, IS_NESTED);
             }
             // Only font-style font-variant and font-weight, in any order
             // remain as possibilities at the front of the expression
             for (int i = 0; i < fontsize; i++) {
                 PropertyValue pv = null;
-                if (propvals[i] instanceof Inherit)
-                    throw new PropertyException
-                        ("'inherit' found in 'font' expression");
                 try {
-                    pv = FontStyle.verifyParsing(foTree, propvals[i]);
+                    pv = FontStyle.verifyParsing
+                                            (foTree, propvals[i], IS_NESTED);
                     if (style != null)
                         MessageHandler.log("font: duplicate" +
                         "style overrides previous style");
                     style = pv;
+                    continue;
                 } catch(PropertyException e) {}
 
                 try {
-                    pv = FontVariant.verifyParsing(foTree, propvals[i]);
+                    pv = FontVariant.verifyParsing
+                                            (foTree, propvals[i], IS_NESTED);
                     if (variant != null)
                         MessageHandler.log("font: duplicate" +
                         "variant overrides previous variant");
                     variant = pv;
+                    continue;
                 } catch(PropertyException e) {}
 
                 try {
-                    pv = FontWeight.verifyParsing(foTree, propvals[i]);
+                    pv = FontWeight.verifyParsing
+                                            (foTree, propvals[i], IS_NESTED);
                     if (weight != null)
                         MessageHandler.log("font: duplicate" +
                         "weight overrides previous weight");
                     weight = pv;
+                    continue;
                 } catch(PropertyException e) {}
-
+                throw new PropertyException
+                    ("Unrecognized value; looking for style, "
+                    + "variant or color in font: "
+                    + propvals[i].getClass().getName());
             }
             // Construct the shorthand expansion list from the discovered
             // values of individual components
@@ -4020,7 +4272,7 @@ public abstract class Properties {
         }
 
         public static PropertyValue verifyParsing
-                (FOTree foTree, PropertyValue value)
+                                        (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
             // There is no point in attempting to validate the enumeration
@@ -4036,6 +4288,13 @@ public abstract class Properties {
             // be at the top level, and any font family names
             // that contained spaces will be in PropertyValueLists.
 
+            return verifyParsing(foTree, value, NOT_NESTED);
+        }
+
+        public static PropertyValue verifyParsing
+                        (FOTree foTree, PropertyValue value, boolean nested)
+                        throws PropertyException
+        {
             int property = value.getProperty();
             // First, check that we have a list
             if ( ! (value instanceof PropertyValueList)) {
@@ -4301,13 +4560,35 @@ public abstract class Properties {
         public static final ROStringArray enums = new ROStringArray(rwEnums);
         public static final ROStringArray enumValues = enums;
 
+        /*
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
+         */
         public static PropertyValue verifyParsing
-                (FOTree foTree, PropertyValue value)
+                                        (FOTree foTree, PropertyValue value)
+                        throws PropertyException
+        {
+            return verifyParsing(foTree, value, NOT_NESTED);
+        }
+
+        /**
+         * Do the work for the two argument verifyParsing method.
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @param nested <tt>boolean</tt> indicating whether this method is
+         * called normally (false), or as part of another <i>verifyParsing</i>
+         * method.
+         * @return <tt>PropertyValue</tt> the verified value
+         * @see #verifyParsing(FOTree,PropertyValue)
+         */
+        public static PropertyValue verifyParsing
+                        (FOTree foTree, PropertyValue value, boolean nested)
                         throws PropertyException
         {
             // Override the shadowed method to ensure that Integer values
             // are limited to the valid numbers
-            PropertyValue fw = Properties.verifyParsing(foTree, value);
+            PropertyValue fw = Properties.verifyParsing(foTree, value, nested);
             // If the result is an IntegerType, restrict the values
             if (fw instanceof IntegerType) {
                 int weight = ((IntegerType)fw).getInt();
@@ -6091,19 +6372,26 @@ public abstract class Properties {
         public static final int initialValueType = NONE_IT;
         public static final int inherited = NO;
 
+        /*
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
+         */
         public static PropertyValue verifyParsing
-                (FOTree foTree, PropertyValue list)
+                                        (FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
+            PropertyValue value =
+                        Properties.verifyParsing(foTree, list, IS_NESTED);
             // Confirm that the list contains only UriType elements
-            Iterator iter = ((PropertyValueList)list).iterator();
+            Iterator iter = ((PropertyValueList)value).iterator();
             while (iter.hasNext()) {
-                Object value = iter.next();
-                if ( ! (value instanceof UriType))
+                Object obj = iter.next();
+                if ( ! (obj instanceof UriType))
                     throw new PropertyException
                         ("source-document requires a list of uris");
             }
-            return list;
+            return value;
         }
     }
 
@@ -6565,11 +6853,15 @@ public abstract class Properties {
                 (FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
-            // Assume that the enumeration has been checked for.  Look for
-            // a list of NCNames.
+            // Check for the enumeration.  Look for a list of NCNames.
             // N.B. it may be a possible to perform further checks on the
             // validity of the NCNames - do they match multi-case case names.
-            Iterator iter = ((PropertyValueList)list).iterator();
+            if ( ! (list instanceof PropertyValueList))
+                return Properties.verifyParsing(foTree, list);
+
+            PropertyValueList ssList =
+                                spaceSeparatedList((PropertyValueList)list);
+            Iterator iter = ssList.iterator();
             while (iter.hasNext()) {
                 Object value = iter.next();
                 if ( ! (value instanceof NCName))
@@ -6840,6 +7132,7 @@ public abstract class Properties {
             byte onMask = NO_DECORATION;
             byte offMask = NO_DECORATION;
             Iterator iter;
+            PropertyValueList ssList = null;
             LinkedList strings = new LinkedList();
             if ( ! (list instanceof PropertyValueList)) {
                 if ( ! (list instanceof NCName))
@@ -6847,7 +7140,8 @@ public abstract class Properties {
                         ("text-decoration require list of NCNames");
                 strings.add(((NCName)list).getNCName());
             } else { // list is a PropertyValueList
-                iter = ((PropertyValueList)list).iterator();
+                ssList = spaceSeparatedList((PropertyValueList)list);
+                iter = ((PropertyValueList)ssList).iterator();
                 while (iter.hasNext()) {
                     Object value = iter.next();
                     if ( ! (value instanceof NCName))
@@ -6940,12 +7234,13 @@ public abstract class Properties {
                         throws PropertyException
         {
             int property = list.getProperty();
-            if ( ! (list instanceof PropertyValueList) ||
-                    ((PropertyValueList)list).size() == 0)
+            if ( ! (list instanceof PropertyValueList)) {
+                return Properties.verifyParsing(foTree, list);
+            }
+            if (((PropertyValueList)list).size() == 0)
                 throw new PropertyException
                     ("text-shadow requires PropertyValueList of effects");
-            PropertyValueList newlist =
-                    new PropertyValueList(property);
+            PropertyValueList newlist = new PropertyValueList(property);
             Iterator effects = ((PropertyValueList)list).iterator();
             while (effects.hasNext()) {
                 newlist.add(new ShadowEffect(property,
