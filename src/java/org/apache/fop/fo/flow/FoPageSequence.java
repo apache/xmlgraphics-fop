@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,8 +46,7 @@
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
  *  
- *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * $Id$
  */
 
 package org.apache.fop.fo.flow;
@@ -66,12 +63,15 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.pagination.FoLayoutMasterSet;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.XmlEventReader;
 
 /**
  * Implements the fo:simple-page-master flow object
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * @version $Revision$ $Name$
  */
 public class FoPageSequence extends FONode {
 
@@ -128,16 +128,18 @@ public class FoPageSequence extends FONode {
     private int title = -1;
     /** Child index of first fo:static-content child. */
     private int firstStaticContent = -1;
-    /** Child index of first fo:flow child. */
-    private int firstFlow = -1;
+    /** Child index of fo:flow child. */
+    private int flowChild = -1;
 
     /**
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
+     * @param layoutMasters the layout master set
      */
-    public FoPageSequence(FOTree foTree, FONode parent, FoXmlEvent event)
+    public FoPageSequence(FOTree foTree, FONode parent, FoXmlEvent event,
+            FoLayoutMasterSet layoutMasters)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.PAGE_SEQUENCE, parent, event,
@@ -175,7 +177,7 @@ public class FoPageSequence extends FONode {
                         (FObjectNames.FLOW, XmlEvent.DISCARD_W_SPACE);
             if (ev == null)
                 throw new FOPException("No flow found.");
-            firstFlow = numChildren();
+            flowChild = numChildren();
             new FoFlow(getFOTree(), this, (FoXmlEvent)ev);
             ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
             namespaces.relinquishEvent(ev);
