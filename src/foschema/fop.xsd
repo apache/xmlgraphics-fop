@@ -1,6 +1,6 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -777,7 +777,7 @@
       </documentation>
     </annotation>
     <restriction base = "NMTOKEN">
-      <pattern value = "[-+]?\d+"/>
+      <pattern value = "[\+\-]?\d+"/>
     </restriction>
   </simpleType>
   <simpleType name = "number_Type">
@@ -790,7 +790,7 @@
       </documentation>
     </annotation>
     <restriction base = "string">
-      <pattern value = "[-+]?\d+\.\d*"/>
+      <pattern value = "[\+\-]?\d+\.\d*"/>
     </restriction>
   </simpleType>
   <simpleType name = "length_Type">
@@ -806,7 +806,7 @@
       </documentation>
     </annotation>
     <restriction base = "string">
-      <pattern value = "[+-]?\d+\.?\d*(px|pt|mm|cm|in|em|%)"/>
+      <pattern value = "[\+\-]?\d+\.?\d*(px|pt|mm|cm|in|em|%)"/>
     </restriction>
   </simpleType>
   <simpleType name = "length_range_Type">
@@ -898,7 +898,7 @@
       </documentation>
     </annotation>
     <restriction base = "string">
-      <pattern value = "[-+]?[1-3]?\d?\d?\.?\d*(deg|grad|rad)"/>
+      <pattern value = "[\+\-]?[1-3]?\d?\d?\.?\d*(deg|grad|rad)"/>
     </restriction>
   </simpleType>
   <simpleType name = "percentage_Type">
@@ -911,7 +911,7 @@
       </documentation>
     </annotation>
     <restriction base = "string">
-      <pattern value = "[-+]?\d+\.?\d*%"/>
+      <pattern value = "[\+\-]?\d+\.?\d*%"/>
     </restriction>
   </simpleType>
   <simpleType name = "character_Type">
