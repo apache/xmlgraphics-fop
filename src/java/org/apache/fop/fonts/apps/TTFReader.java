@@ -31,15 +31,14 @@ import javax.xml.transform.TransformerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 //FOP
+import org.apache.fop.apps.Version;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFCmapEntry;
 import org.apache.fop.fonts.truetype.TTFFile;
-import org.apache.commons.logging.Log;
-
 
 /**
  * A tool which reads TTF files and generates
@@ -50,23 +49,7 @@ public class TTFReader {
     /**
      * logging instance
      */
-    protected Log logger = null;
-
-    /**
-     * Sets the Commons-Logging instance for this class
-     * @param logger The Commons-Logging instance
-     */
-    public void setLogger(Log logger) {
-        this.logger = logger;
-    }
-
-    /**
-     * Returns the Commons-Logging instance for this class
-     * @return  The Commons-Logging instance
-     */
-    protected Log getLogger(Log logger) {
-        return logger;
-    }
+    protected Log log = LogFactory.getLog(TTFReader.class);
 
     /**
      * Parse commandline arguments. put options in the HashMap and return
@@ -94,32 +77,31 @@ public class TTFReader {
     }
 
 
-    private void displayUsage() {
-        if (logger != null & logger.isInfoEnabled()) {
-            logger.info(
-                    " java org.apache.fop.fonts.apps.TTFReader [options] fontfile.ttf xmlfile.xml");
-            logger.info(" where options can be:");
-            logger.info("-d <DEBUG|INFO>");
-            logger.info("     Set debug level (default: INFO).");
-            logger.info("-enc ansi");
-            logger.info("     With this option you create a WinAnsi encoded font.");
-            logger.info("     The default is to create a CID keyed font.");
-            logger.info("     If you're not going to use characters outside the");
-            logger.info("     pdfencoding range (almost the same as iso-8889-1)");
-            logger.info("     you can add this option.");
-            logger.info("-ttcname <fontname>");
-            logger.info("     If you're reading data from a TrueType Collection");
-            logger.info("     (.ttc file) you must specify which font from the");
-            logger.info("     collection you will read metrics from. If you read");
-            logger.info("     from a .ttc file without this option, the fontnames");
-            logger.info("      will be listed for you.");
-            logger.info(" -fn <fontname>");
-            logger.info("     default is to use the fontname in the .ttf file, but");
-            logger.info("     you can override that name to make sure that the");
-            logger.info("     embedded font is used (if you're embedding fonts)");
-            logger.info("     instead of installed fonts when viewing documents ");
-            logger.info("     with Acrobat Reader.");
-        }
+    private static void displayUsage() {
+        System.out.println(
+                "java " + TTFReader.class.getName() + " [options] fontfile.ttf xmlfile.xml");
+        System.out.println();
+        System.out.println("where options can be:");
+        System.out.println("-d <WARN|INFO|DEBUG>");
+        System.out.println("    Set debug level (default: WARN).");
+        System.out.println("-enc ansi");
+        System.out.println("    With this option you create a WinAnsi encoded font.");
+        System.out.println("    The default is to create a CID keyed font.");
+        System.out.println("    If you're not going to use characters outside the");
+        System.out.println("    pdfencoding range (almost the same as iso-8889-1)");
+        System.out.println("    you can add this option.");
+        System.out.println("-ttcname <fontname>");
+        System.out.println("    If you're reading data from a TrueType Collection");
+        System.out.println("    (.ttc file) you must specify which font from the");
+        System.out.println("    collection you will read metrics from. If you read");
+        System.out.println("    from a .ttc file without this option, the fontnames");
+        System.out.println("    will be listed for you.");
+        System.out.println(" -fn <fontname>");
+        System.out.println("    default is to use the fontname in the .ttf file, but");
+        System.out.println("    you can override that name to make sure that the");
+        System.out.println("    embedded font is used (if you're embedding fonts)");
+        System.out.println("    instead of installed fonts when viewing documents ");
+        System.out.println("    with Acrobat Reader.");
     }
 
 
@@ -153,22 +135,32 @@ public class TTFReader {
         Map options = new java.util.HashMap();
         String[] arguments = parseArguments(options, args);
 
-        int level = SimpleLog.LOG_LEVEL_INFO;
+        //Setup simple logger for this command-line application
+        System.setProperty("org.apache.commons.logging.Log", 
+            "org.apache.commons.logging.impl.SimpleLog");
+        System.setProperty("org.apache.commons.logging.simplelog.showShortLogname", 
+            "false");
+            
+        //Determine log level
+        String level;
         if (options.get("-d") != null) {
             String lev = (String)options.get("-d");
-            if (lev.equals("DEBUG")) {
-                level = SimpleLog.LOG_LEVEL_DEBUG;
-            } else if (lev.equals("INFO")) {
-                level = SimpleLog.LOG_LEVEL_INFO;
+            if ("DEBUG".equalsIgnoreCase(lev)) {
+                level = "debug"; 
+            } else if ("INFO".equalsIgnoreCase(lev)) {
+                level = "info";
+            } else {
+                level = "warn";
             }
+        } else {
+            level = "warn";
         }
-
-        SimpleLog log = new SimpleLog("FOP/Fonts");
+        System.setProperty("org.apache.commons.logging.simplelog.defaultlog",
+            level); 
 
         TTFReader app = new TTFReader();
-        app.setLogger(log);
 
-        log.info("TTF Reader v1.1.4");
+        System.out.println("TTF Reader for Apache FOP " + Version.getVersion() + "\n");
 
         if (options.get("-enc") != null) {
             String enc = (String)options.get("-enc");
@@ -199,9 +191,10 @@ public class TTFReader {
 
         if (arguments.length != 2 || options.get("-h") != null
             || options.get("-help") != null || options.get("--help") != null) {
-            app.displayUsage();
+            displayUsage();
         } else {
             try {
+                System.out.println("Parsing font...");
                 TTFFile ttf = app.loadTTF(arguments[0], ttcName);
                 if (ttf != null) {
                     org.w3c.dom.Document doc = app.constructFontXML(ttf,
@@ -209,9 +202,9 @@ public class TTFReader {
                             ttcName);
     
                     if (isCid) {
-                        log.info("Creating CID encoded metrics");
+                        System.out.println("Creating CID encoded metrics...");
                     } else {
-                        log.info("Creating WinAnsi encoded metrics");
+                        System.out.println("Creating WinAnsi encoded metrics...");
                     }
     
                     if (doc != null) {
@@ -219,14 +212,16 @@ public class TTFReader {
                     }
     
                     if (ttf.isEmbeddable()) {
-                        log.info("This font contains no embedding license restrictions");
+                        System.out.println("This font contains no embedding license restrictions.");
                     } else {
-                        log.info("** Note: This font contains license retrictions for\n"
+                        System.out.println("** Note: This font contains license retrictions for\n"
                                + "         embedding. This font shouldn't be embedded.");
                     }
                 }
+                System.out.println("\nXML font metrics file successfullly created.");
             } catch (Exception e) {
-                log.error("Error while building XML font metrics file", e);
+                System.err.println("Error while building XML font metrics file.");
+                e.printStackTrace(System.err);
                 System.exit(-1);
             }
         }
@@ -242,7 +237,7 @@ public class TTFReader {
      */
     public TTFFile loadTTF(String fileName, String fontName) throws IOException {
         TTFFile ttfFile = new TTFFile();
-        logger.info("Reading " + fileName + "...");
+        log.info("Reading " + fileName + "...");
 
         FontFileReader reader = new FontFileReader(fileName);
         boolean supported = ttfFile.readFont(reader, fontName);
@@ -262,7 +257,7 @@ public class TTFReader {
      */
     public void writeFontXML(org.w3c.dom.Document doc, String target) 
                 throws TransformerException {
-        logger.info("Writing xml font file " + target + "...");
+        log.info("Writing xml font file " + target + "...");
 
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer();
@@ -286,14 +281,14 @@ public class TTFReader {
     public org.w3c.dom.Document constructFontXML(TTFFile ttf,
             String fontName, String className, String resource, String file,
             boolean isCid, String ttcName) {
-        logger.info("Creating xml font file...");
+        log.info("Creating xml font file...");
 
         Document doc;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             doc = factory.newDocumentBuilder().newDocument();
         } catch (javax.xml.parsers.ParserConfigurationException e) {
-            logger.error("Can't create DOM implementation", e);
+            log.error("Can't create DOM implementation", e);
             return null;
         }
         Element root = doc.createElement("font-metrics");
