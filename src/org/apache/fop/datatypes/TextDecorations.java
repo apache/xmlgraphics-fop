@@ -32,10 +32,11 @@ public class TextDecorations
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
-    /**
-     * The decorations specified by this object
-     */
+    /** The decorations specified by this object. */
     private byte decorations;
+
+    /** The color of these text decorations. */
+    private ColorType color;
 
     /**
      * @param property the <tt>int</tt> index of the property on which
@@ -62,12 +63,34 @@ public class TextDecorations
     }
 
     /**
+     * Get the set of decorations.
      * @return <tt>byte</tt> decorations value
      */
     public byte getDecorations() {
         return decorations;
     }
 
+    /**
+     * Get the color associated with this set of decorations.
+     * @return the color.
+     */
+    public ColorType getColor() {
+        return color;
+    }
+
+    /**
+     * Set the color associated with this set of decorations.
+     * @param the color.
+     */
+    public void setColor(ColorType color) {
+        this.color = color;
+    }
+
+    /**
+     * Apply the decoration masks of a <tt>TextDecorator</tt> object to
+     * these decorations.
+     * @param the <tt>TextDecorator</tt>.
+     */
     public byte maskDecorations(TextDecorator decorator) {
         decorations |= decorator.onMask;
         decorations &= ( ~ decorator.offMask );
