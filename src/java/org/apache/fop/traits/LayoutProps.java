@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  
 package org.apache.fop.traits;
 
+import org.apache.fop.datatypes.KeepValue;
 import org.apache.fop.fo.Constants;
 
 /**
@@ -29,6 +30,13 @@ public class LayoutProps {
 
     public int breakBefore; // enum constant BreakBefore.xxx
     public int breakAfter; // enum constant BreakAfter.xxx
+    public KeepValue keepWithPrevious;  /*LF*/
+    public KeepValue keepWithNext;      /*LF*/
+    public KeepValue keepTogether;      /*LF*/
+    public int orphans;                 /*LF*/
+    public int widows;                  /*LF*/
+    public int blockProgressionUnit;    /*LF*/
+    public int lineStackingStrategy;    /*LF*/
     public boolean bIsSpan;
     public SpaceVal spaceBefore;
     public SpaceVal spaceAfter;

@@ -45,8 +45,10 @@ package org.apache.fop.layoutmgr;
  * to get these values.
  */
 public class KnuthGlue extends KnuthElement {
+    
     private int stretchability;
     private int shrinkability;
+    private int adjustmentClass = -1;
 
     /**
      * Create a new KnuthGlue.
@@ -61,6 +63,14 @@ public class KnuthGlue extends KnuthElement {
         super(w, pos, bAux);
         stretchability = y;
         shrinkability = z;
+    }
+
+    public KnuthGlue(int w, int y, int z,
+            int iAdjClass, Position pos, boolean bAux) {
+        super(w, pos, bAux);
+        stretchability = y;
+        shrinkability = z;
+        adjustmentClass = iAdjClass;
     }
 
     public boolean isGlue() {
@@ -80,4 +90,9 @@ public class KnuthGlue extends KnuthElement {
     public int getZ() {
         return shrinkability;
     }
+    
+    public int getAdjustmentClass() {
+        return adjustmentClass;
+    }
+    
 }
