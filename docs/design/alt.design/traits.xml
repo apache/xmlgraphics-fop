@@ -29,20 +29,15 @@
           <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-common"
-            >4.2.2 Common Traits</link>
+		  >4.2.2 Common Traits</link><br/>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#writing-mode"
+            >7.27.7 writing-mode</link>
           </td>
           <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice7.html#reference-orientation"
             >7.27.7 reference-orientation</link>
-          </td>
-        </tr>
-        <tr>
-          <th colspan="2"/>
-          <td>
-            <link href=
-            "http://www.w3.org/TR/xsl/slice7.html#writing-mode"
-            >7.27.7 writing-mode</link>
           </td>
         </tr>
         <tr>
@@ -51,20 +46,15 @@
           <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-common"
-            >4.2.2 Common Traits</link>
+            >4.2.2 Common Traits</link><br/>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#writing-mode"
+            >7.27.7 writing-mode</link>
           </td>
           <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice7.html#reference-orientation"
             >7.27.7 reference-orientation</link>
-          </td>
-        </tr>
-        <tr>
-          <th colspan="2"/>
-          <td>
-            <link href=
-            "http://www.w3.org/TR/xsl/slice7.html#writing-mode"
-            >7.27.7 writing-mode</link>
           </td>
         </tr>
         <tr>
@@ -77,69 +67,38 @@
           <td>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-common"
-            >4.2.2 Common Traits</link>
-          </td>
-          <td>
-            <link href=
-            "http://www.w3.org/TR/xsl/slice7.html#glyph-orientation-horizontal"
-            >7.27.2 glyph-orientation-horizontal</link>
-          </td>
-        </tr>
-	<tr>
-          <th colspan="2"/>
-          <td>
+            >4.2.2 Common Traits</link><br/>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-glyph"
-            >4.6.2 Glyph-areas</link>
-          </td>
-          <td>
-            <link href=
-            "http://www.w3.org/TR/xsl/slice7.html#glyph-orientation-vertical"
-            >7.27.3 glyph-orientation-vertical</link>
-          </td>
-	</tr>
-	<tr>
-          <th colspan="2"/>
-          <td>
+            >4.6.2 Glyph-areas</link><br/>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#area-linebuild"
-            >4.7.2 Line-building</link>
-          </td>
-          <td>
-            <link href=
-            "http://www.w3.org/TR/xsl/slice7.html#direction"
-            >7.27.1 direction</link>
-          </td>
-	</tr>
-	<tr>
-          <th colspan="2"/>
-          <td>
+            >4.7.2 Line-building</link><br/>
             <link href=
             "http://www.w3.org/TR/xsl/slice4.html#rend-intrinsic"
-            >4.9.5 Intrinsic Marks</link>
-          </td>
-          <td>
-            <link href=
-            "http://www.w3.org/TR/xsl/slice7.html#writing-mode"
-            >7.27.7 writing-mode</link>
-          </td>
-	</tr>
-	<tr>
-          <th colspan="2"/>
-          <td>
+            >4.9.5 Intrinsic Marks</link><br/>
             <link href=
             "http://www.w3.org/TR/xsl/slice7.html#font-model"
-            >7.8.1 Fonts and Font Data</link>
-          </td>
-	</tr>
-	<tr>
-          <th colspan="2"/>
-          <td>
+            >7.8.1 Fonts and Font Data</link><br/>
             <link href=
             "http://www.w3.org/TR/xsl/slice7.html#writing-mode-related"
             >7.27 Writing-mode-related Properties</link>
           </td>
-	</tr>
+          <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#glyph-orientation-horizontal"
+            >7.27.2 glyph-orientation-horizontal</link><br/>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#glyph-orientation-vertical"
+            >7.27.3 glyph-orientation-vertical</link><br/>
+             <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#direction"
+            >7.27.1 direction</link><br/>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#writing-mode"
+            >7.27.7 writing-mode</link>
+          </td>
+        </tr>
         <tr>
           <td>is-reference-area</td>
           <td>All areas</td>
@@ -148,55 +107,21 @@
             "http://www.w3.org/TR/xsl/slice5.html#section-N6691-Non-property-Based-Trait-Generation"
             >5.6 Non-property Based Trait Generation</link>
           </td>
-          <td>Set "true" on:</td>
-        </tr>
-        <tr>
-          <th colspan="3"/>
-          <td>simple-page-master</td>
-        </tr>
-        <tr>
-          <th colspan="3"/>
-          <td>title</td>
-        </tr>
-        <tr>
-          <th colspan="3"/>
-          <td>region-body</td>
-        </tr>
-        <tr>
-          <th colspan="3"/>
-          <td>region-before</td>
-        </tr>
-        <tr>
-          <th colspan="3"/>
-          <td>region-after</td>
-        </tr>
-        <tr>
-          <th colspan="3"/>
-          <td>region-start</td>
-        </tr>
-        <tr>
-          <th colspan="3"/>
-          <td>region-end</td>
-        </tr>
-        <tr>
-          <th colspan="3"/>
-          <td>block-container</td>
-        </tr>
-        <tr>
-          <th colspan="3"/>
-          <td>inline-container</td>
-        </tr>
-        <tr>
-          <th colspan="3"/>
-          <td>table</td>
-        </tr>
-        <tr>
-          <th colspan="3"/>
-          <td>table-caption</td>
-        </tr>
-        <tr>
-          <th colspan="3"/>
-          <td>table-cell</td>
+          <td>
+	    Set "true" on:<br/>
+            simple-page-master<br/>
+            title<br/>
+            region-body<br/>
+            region-before<br/>
+            region-after<br/>
+            region-start<br/>
+            region-end<br/>
+            block-container<br/>
+            inline-container<br/>
+            table<br/>
+            table-caption<br/>
+            table-cell
+	  </td>
         </tr>
         <tr>
           <td>is-viewport-area</td>
