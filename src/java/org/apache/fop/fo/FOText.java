@@ -44,14 +44,14 @@ public class FOText extends FObj {
     public char[] ca;
 
     /**
-     * The actual length of the text to be rendered within ca,
-     * starting from position 0 of the array.  
+     * The starting valid index of the ca array 
+     * to be processed.
      *
-     * This value is originally equal to ca.length, but becomes decremented
-     * during whitespace removal by the flow.Block class, via the 
-     * TextCharIterator.remove() method below.
+     * This value is originally equal to ca.length, but becomes 
+     * incremented during whitespace removal by the flow.Block class,  
+     * via the TextCharIterator.remove() method below.
      */
-    public int length;
+    public int start = 0;
 
     /**
      * The TextInfo object attached to the text
@@ -100,7 +100,7 @@ public class FOText extends FObj {
      */
     public FOText(char[] chars, int start, int end, TextInfo ti, FONode parent) {
         super(parent);
-        length = end - start;
+        int length = end - start;
         this.ca = new char[length];
         System.arraycopy(chars, start, ca, 0, length);
         textInfo = ti;
@@ -119,11 +119,11 @@ public class FOText extends FObj {
      */
     public boolean willCreateArea() {
         if (textInfo.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE
-                && length > 0) {
+                && ca.length - start > 0) {
             return true;
         }
 
-        for (int i = 0; i < length; i++) {
+        for (int i = start; i < ca.length; i++) {
             char ch = ca[i];
             if (!((ch == ' ')
                     || (ch == '\n')
@@ -146,11 +146,11 @@ public class FOText extends FObj {
         private int curIndex = 0;
 
         public boolean hasNext() {
-            return (curIndex < length);
+            return (curIndex < ca.length);
         }
 
         public char nextChar() {
-            if (curIndex < length) {
+            if (curIndex < ca.length) {
                 // Just a char class? Don't actually care about the value!
                 return ca[curIndex++];
             } else {
@@ -159,24 +159,16 @@ public class FOText extends FObj {
         }
 
         public void remove() {
-            if (curIndex > 0 && curIndex < length) {
-                // copy from curIndex to end to curIndex-1
-                System.arraycopy(ca, curIndex, ca, curIndex - 1,
-                                 length - curIndex);
-                length--;
-                curIndex--;
-            } else if (curIndex == length) {
-                curIndex = --length;
+            if (start < ca.length) {
+                start++;
             }
         }
 
-
         public void replaceChar(char c) {
-            if (curIndex > 0 && curIndex <= length) {
+            if (curIndex > 0 && curIndex <= ca.length) {
                 ca[curIndex - 1] = c;
             }
         }
-
 
     }
 
@@ -239,7 +231,7 @@ public class FOText extends FObj {
      * @return True if the character at this location is the start of a new
      * word.
      */
-    public boolean isStartOfWord (int i) {
+    private boolean isStartOfWord(int i) {
         char prevChar = getRelativeCharInBlock(i, -1);
         /* All we are really concerned about here is of what type prevChar
            is. If inputChar is not part of a word, then the Java
@@ -285,9 +277,9 @@ public class FOText extends FObj {
      * @return the character in the offset position within the block; \u0000 if
      * the offset points to an area outside of the block.
      */
-    public char getRelativeCharInBlock(int i, int offset) {
+    private char getRelativeCharInBlock(int i, int offset) {
         // The easy case is where the desired character is in the same FOText
-        if (((i + offset) >= 0) && ((i + offset) <= this.length)) {
+        if (((i + offset) >= 0) && ((i + offset) <= this.ca.length)) {
             return ca[i + offset];
         }
         // For now, we can't look at following FOText nodes
@@ -345,7 +337,7 @@ public class FOText extends FObj {
      * @param i the index into ca[]
      * @return char with transformed value
      */
-    public char charTransform(int i) {
+    private char charTransform(int i) {
         switch (textInfo.textTransform) {
         /* put NONE first, as this is probably the common case */
         case TextTransform.NONE:

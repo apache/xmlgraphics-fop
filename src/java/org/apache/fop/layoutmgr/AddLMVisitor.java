@@ -179,11 +179,9 @@ public class AddLMVisitor implements FOTreeVisitor {
         return saveLMList;
     }
 
-    public void serveFOText(FOText node) {
-        if (node.length > 0) {
-            LayoutManager lm = new TextLayoutManager(node.ca, node.length, node.textInfo);
-            lm.setFObj(node);
-            currentLMList.add(lm);
+    public void serveFOText(FOText foText) {
+        if (foText.ca.length - foText.start > 0) {
+            currentLMList.add(new TextLayoutManager(foText));
         }
     }
 
