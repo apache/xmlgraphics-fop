@@ -37,6 +37,7 @@ public class TableBody extends FObj {
     String id;
 
     Vector columns;
+    RowSpanMgr rowSpanMgr; // manage information about spanning rows
 
     AreaContainer areaContainer;
 
@@ -81,6 +82,10 @@ public class TableBody extends FObj {
             if (area instanceof BlockArea) {
                 area.end();
             }
+
+	    if (rowSpanMgr == null) {
+		rowSpanMgr = new RowSpanMgr(columns.size());
+	    }
 
             //if (this.isInListBody) {
             //startIndent += bodyIndent + distanceBetweenStarts;
@@ -131,6 +136,7 @@ public class TableBody extends FObj {
             }
             TableRow row = (TableRow) child;
 
+            row.setRowSpanMgr(rowSpanMgr);
             row.setColumns(columns);
             row.doSetup(areaContainer);
             if (row.getKeepWithPrevious().getType() !=
@@ -145,6 +151,7 @@ public class TableBody extends FObj {
 
             Status status;
             if ((status = row.layout(areaContainer)).isIncomplete()) {
+								// BUG!!! don't distinguish between break-before and after!
                 if (status.isPageBreak()) {
                     this.marker = i;
                     area.addChild(areaContainer);
@@ -162,6 +169,7 @@ public class TableBody extends FObj {
                     return status;
                 }
                 if (keepWith.size() > 0) { // && status.getCode() == Status.AREA_FULL_NONE
+										// FIXME!!! Handle rows spans!!!
                     row.removeLayout(areaContainer);
                     for (Enumeration e = keepWith.elements();
                             e.hasMoreElements();) {
@@ -179,34 +187,6 @@ public class TableBody extends FObj {
                         (status.getCode() == Status.AREA_FULL_NONE)) {
                     status = new Status(Status.AREA_FULL_SOME);
                 }
-                // 								if (i < widows && numChildren >= widows) {
-                // 										resetMarker();
-                // 										return new Status(Status.AREA_FULL_NONE);
-                // 								}
-                // 								if (numChildren <= orphans) {
-                // 										resetMarker();
-                // 										return new Status(Status.AREA_FULL_NONE);
-                // 								}
-                // 								if (numChildren - i < orphans && numChildren >= orphans) {
-                // 										for (int count = i;
-                // 														count > numChildren - orphans - 1; count--) {
-                // 												row = (TableRow) children.elementAt(count);
-                // 												row.removeLayout(areaContainer);
-                // 												i--;
-                // 										}
-                // 										if (i < widows && numChildren >= widows) {
-                // 												resetMarker();
-                // 												return new Status(Status.AREA_FULL_NONE);
-                // 										}
-                // 										this.marker = i;
-                // 										area.addChild(areaContainer);
-                // 										//areaContainer.end();
-
-                // 										area.increaseHeight(areaContainer.getHeight());
-                // 										area.setAbsoluteHeight(
-                // 											areaContainer.getAbsoluteHeight());
-                // 										return new Status(Status.AREA_FULL_SOME);
-                // 								}
                 if (!((i == 0) &&
                         (areaContainer.getContentHeight() <= 0))) {
                     area.addChild(areaContainer);
@@ -217,7 +197,8 @@ public class TableBody extends FObj {
                       areaContainer.getAbsoluteHeight());
                 }
                 return status;
-            } else if (status.getCode() == Status.KEEP_WITH_NEXT) {
+            } else if (status.getCode() == Status.KEEP_WITH_NEXT ||
+											 rowSpanMgr.hasUnfinishedSpans()) {
                 keepWith.addElement(row);
                 endKeepGroup = false;
             } else {
