@@ -433,12 +433,12 @@ public class LineArea extends Area {
 	    padding = this.getContentWidth() - finalWidth;
 	    startIndent += padding;
 	    break;
-	case TextAlign.CENTERED: // center
+	case TextAlign.CENTER: // center
 	    padding = (this.getContentWidth() - finalWidth)/2;
 	    startIndent += padding;
 	    endIndent += padding;
 	    break;
-	case TextAlign.JUSTIFIED: // justify
+	case TextAlign.JUSTIFY: // justify
 	    Vector spaceList = new Vector();
 
 	    int spaceCount = 0;
