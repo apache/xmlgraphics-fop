@@ -8,10 +8,8 @@ by the ant construction of the build sources, any that are required,
 like setting version information, are done manually in the files under
 the build directory.
 
-The environment for the build can be set up by copying the xml-fop
-tree from the web page, and adding the support jars to the xml-fop/lib
-directory.  I am currently building with the set of jars that were
-current at fop 0.20.0.
+Checkout the FOP_0-20-0_Alt-Design tag from CVS, which now includes
+xalan and xerces.
 
 To build, set the environment variables FOPDEV and JAVA_HOME.
 JAVA_HOME should be the directory under which the jre directory
@@ -33,10 +31,12 @@ Make sure fopcomp is accessible via your PATH.  Then, e.g.,
 cd src/org/apache/fop/apps
 fopcomp Fop.java
 
-N.B. fopcomp shebangs /bin/ksh.  As an alternative, try the
-fopcomp-bash script, which is identical except for #!/bin/bash.  It
-will work with any modern (ksh-style) sh which supports the `typeset'
-method of specifying local shell variables.
+Because the properties classes, and many of the FO classes, are never
+named in the source, files in these directories must be specifically
+compiled.  The Dummy class in org/apache/fop/fo/properties and
+org/apache/fop/fo/flow exists to facilitate this.  They may be
+compiled directly, or invoked indirectly by compiling with fopcompall
+instead of fopcomp.
 
 Note that, for now, the files from the conf directory are also
 installed in the build/classes conf directory.  This messiness
@@ -50,8 +50,9 @@ command-line override values specific to my environment.  Sorry
 about that.
 
 N.B. As at the time of integrating this experimental code into the
-CVS tree, running will throw an exception.  Properties handling is
-in a state of flux.
+CVS tree, running may well throw an exception.  The code has not yet
+been comprehensively tested.  If you do see an exception, please send
+the fo file to me.
 
 The code doesn't do much as yet, but to see what it does get up to, I
 use the extensions I have made to the config functionality.
