@@ -469,7 +469,23 @@ public class Trait implements Serializable {
             this.vertical = vertical;
         }
 
-    }
+       /**
+         * Return the string for debugging.
+         * @see java.lang.Object#toString()
+         */
+        public String toString() {
+            StringBuffer sb = new StringBuffer();
+            sb.append("color=" + color);
+            if (url != null) {
+                sb.append(",url=");
+                sb.append(url);
+            }
+            sb.append(",repeat=" + repeat);
+            sb.append(",horiz=" + horiz);
+            sb.append(",vertical=" + vertical);
+            return sb.toString();
+        }
 
+    }
 }
 
