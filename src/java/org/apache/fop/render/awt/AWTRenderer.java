@@ -42,6 +42,7 @@ import java.util.Map;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.render.AbstractRenderer;
+import org.apache.fop.render.FontData;
 import org.apache.fop.render.awt.viewer.PreviewDialog;
 import org.apache.fop.render.awt.viewer.Translator;
 
@@ -68,6 +69,10 @@ implements Runnable, Printable, Pageable {
     private Map fontStyles = new java.util.Hashtable();
     private Color saveColor = null;
 
+    protected Fonts fontData = null;
+    public FontData getFontData() {
+        return fontData;
+    }
     /**
      * The preview dialog frame used for display of the documents.
      * Also used as the AWT Component for FontSetup in generating
@@ -76,18 +81,9 @@ implements Runnable, Printable, Pageable {
     protected PreviewDialog frame;
 
     public AWTRenderer() {
+        fontData = new Fonts();
         translator = new Translator();
         //createPreviewDialog();
-    }
-
-    /**
-     * Returns the graphics environment (including available font information)
-     * for this renderer.
-     * 
-     * @return the graphics environment for this renderer
-     */
-    public GraphicsEnvironment getGraphicsEnvironment() {
-        return gEnv;
     }
 
     /**
