@@ -18,6 +18,8 @@
 
 package org.apache.fop.fo.flow;
 
+import org.xml.sax.Locator;
+
 import java.util.List;
 
 import org.apache.fop.apps.FOPException;
@@ -25,6 +27,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -73,7 +76,13 @@ public class Table extends FObj {
     protected List columns = null;
     private TableBody tableHeader = null;
     private TableBody tableFooter = null;
-
+  
+    /** used for validation */
+    private boolean tableColumnFound = false;
+    private boolean tableHeaderFound = false;   
+    private boolean tableFooterFound = false;   
+    private boolean tableBodyFound = false; 
+   
     /** 
      * Default table-column used when no columns are specified. It is used
      * to handle inheritance (especially visibility) and defaults properly. */
@@ -135,6 +144,55 @@ public class Table extends FObj {
     protected void startOfNode() throws FOPException {
         checkId(id);
         getFOEventHandler().startTable(this);
+    }
+   
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: (marker*,table-column*,table-header?,table-footer?,table-body+)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws ValidationException {
+        if (nsURI == FO_URI) {
+            if (localName.equals("marker")) {
+                if (tableColumnFound || tableHeaderFound || tableFooterFound 
+                        || tableBodyFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", 
+                       "(table-column*,table-header?,table-footer?,table-body+)");
+                }
+            } else if (localName.equals("table-column")) {
+                tableColumnFound = true;
+                if (tableHeaderFound || tableFooterFound || tableBodyFound) {
+                    nodesOutOfOrderError(loc, "fo:table-column", 
+                        "(table-header?,table-footer?,table-body+)");
+                }
+            } else if (localName.equals("table-header")) {
+                if (tableHeaderFound) {
+                    tooManyNodesError(loc, "table-header");
+                } else {
+                    tableHeaderFound = true;
+                    if (tableFooterFound || tableBodyFound) {
+                        nodesOutOfOrderError(loc, "fo:table-header", 
+                            "(table-footer?,table-body+)"); 
+                    }
+                }
+            } else if (localName.equals("table-footer")) {
+                if (tableFooterFound) {
+                    tooManyNodesError(loc, "table-footer");
+                } else {
+                    tableFooterFound = true;
+                    if (tableBodyFound) {
+                        nodesOutOfOrderError(loc, "fo:table-footer", 
+                            "(table-body+)");
+                    }
+                }
+            } else if (localName.equals("table-body")) {
+                tableBodyFound = true;
+            } else {
+                invalidChildError(loc, nsURI, localName);
+            }
+        } else {
+            invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**

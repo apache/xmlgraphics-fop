@@ -19,11 +19,9 @@
 package org.apache.fop.fo.flow;
 
 // FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 
-import org.xml.sax.Locator;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.ValidationException;
 
 /**
  * Class modelling the fo:table-footer object.

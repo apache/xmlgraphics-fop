@@ -32,6 +32,13 @@ public class MainReference extends Area {
     private boolean isEmpty = true;
 
     /**
+     * Constructor
+     */
+    public MainReference() {
+        addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+    }
+      
+    /**
      * Add a span area to this area.
      *
      * @param span the span area to add
