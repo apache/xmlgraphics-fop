@@ -72,7 +72,7 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.control.Document;
+import org.apache.fop.fo.FOTreeControl;
 
 import org.xml.sax.SAXException;
 
@@ -96,13 +96,13 @@ public abstract class FOInputHandler extends AbstractLogEnabled {
 
 //    public Driver driver = null;
 
-    public Document doc = null;
+    public FOTreeControl foTreeControl = null;
 
     /**
      * Main constructor
      */
-    public FOInputHandler(Document document) {
-        this.doc = document;
+    public FOInputHandler(FOTreeControl foTreeControl) {
+        this.foTreeControl = foTreeControl;
     }
 
     /**
@@ -117,7 +117,7 @@ public abstract class FOInputHandler extends AbstractLogEnabled {
      * Returns the FontInfo object associated with this FOInputHandler.
      * @return the FontInof object
      */
-    public Document getFontInfo() {
+    public FOTreeControl getFontInfo() {
         return null;
     }
 

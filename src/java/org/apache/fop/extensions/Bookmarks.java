@@ -54,6 +54,7 @@ import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.area.AreaTree;
+import org.apache.fop.control.Document;
 
 import java.util.ArrayList;
 
@@ -110,7 +111,9 @@ public class Bookmarks extends ExtensionObj {
         }
         // add data to area tree for resolving and handling
         if (foInputHandler instanceof FOTreeHandler) {
-            AreaTree at = ((FOTreeHandler)foInputHandler).doc.getDriver().getAreaTree();
+            FOTreeHandler foth = (FOTreeHandler)foInputHandler;
+            Document doc = (Document)foth.foTreeControl;
+            AreaTree at = doc.getDriver().getAreaTree();
             at.addTreeExtension(data);
             data.setAreaTree(at);
         }
