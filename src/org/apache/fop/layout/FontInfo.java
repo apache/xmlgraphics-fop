@@ -73,6 +73,10 @@ public class FontInfo {
         return this.triplets.get(key) != null;
     }
 
+    public boolean hasFont(String key) {
+        return this.triplets.get(key) != null;
+    }
+
     /**
      * Creates a key from the given strings
      */

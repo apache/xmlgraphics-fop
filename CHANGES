@@ -51,6 +51,9 @@ Done since 0.20.3 release
 - Fixed letter-spacing (Jeremias Maerki)
 - BaseDir property is now used for loading custom fonts (Bug #7608)
   (thanks to Arnd Beissner and Brian O'Kelley)
+- Added support for comma-separated values for the font-family property
+  Submitted by: Oleg Tkachenko <olegt@multiconn.com>
+
 
 ==============================================================================
 Done since 0.20.2 release
