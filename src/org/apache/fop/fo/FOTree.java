@@ -64,6 +64,11 @@ public class FOTree extends Tree implements Runnable {
     protected PropertyParser exprParser;
 
     /**
+     * Args array for refineParsingMethods[].invoke() calls
+     */
+    Object[] args = new Object[2];
+
+    /**
      * An Array of LinkedList[].  Each LinkedList is a stack containing the
      * most recently specified value of a particular property.  The first
      * element of each stack will contain the initial value.
@@ -291,6 +296,18 @@ public class FOTree extends Tree implements Runnable {
             throws PropertyException
     {
         return getCurrentPropertyTriplet(index).getComputed();
+    }
+
+    /**
+     * @param index: <tt>int</tt> property index.
+     * @return a <tt>PropertyValue</tt> containing the inherited
+     * property value for the indexed property; i.e. computed if available,
+     * else specified.
+     */
+    public PropertyValue getCurrentInherited(int index)
+            throws PropertyException
+    {
+        return getCurrentPropertyTriplet(index).getComputedOrSpecified();
     }
 
     public void setParserThread(Thread parserThread) {
