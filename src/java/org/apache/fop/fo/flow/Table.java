@@ -115,7 +115,7 @@ public class Table extends FObj {
             if (columns == null) {
                 columns = new ArrayList();
             }
-            columns.add(((TableColumn)child).getLayoutManager());
+            columns.add(((TableColumn)child));
         } else if (child.getName().equals("fo:table-footer")) {
             tableFooter = (TableBody)child;
         } else if (child.getName().equals("fo:table-header")) {
