@@ -358,10 +358,26 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
 	// empty for now
-  	public void renderBodyAreaContainer(BodyAreaContainer area) {}
+  	public void renderBodyAreaContainer(BodyAreaContainer area) {
+  		renderAreaContainer(area.getBeforeFloatReferenceArea());
+  		renderAreaContainer(area.getFootnoteReferenceArea());
+		
+		// main reference area
+		Enumeration e = area.getMainReferenceArea().getChildren().elements();
+		while (e.hasMoreElements()) {
+			org.apache.fop.layout.Box b = (org.apache.fop.layout.Box) e.nextElement();
+			b.render(this);	// span areas
+		}		
+	}
 
 	// empty for now
-	public void renderSpanArea(SpanArea area) {}
+	public void renderSpanArea(SpanArea area) {
+		Enumeration e = area.getChildren().elements();
+		while (e.hasMoreElements()) {
+			org.apache.fop.layout.Box b = (org.apache.fop.layout.Box) e.nextElement();
+			b.render(this);	// column areas
+		}				
+	}
 
     private void doFrame(org.apache.fop.layout.Area area) {
         int w, h;
