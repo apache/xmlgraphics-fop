@@ -149,8 +149,12 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
                writeControlWord("pard");
            }
 
-        // do not write text attributes here, they are handled
-        // by RtfText
+        /*
+         * Original comment said "do not write text attributes here, they are
+         * handled by RtfText." However, the text attributes appear to be
+         * relevant to paragraphs as well.
+         */
+        writeAttributes(attrib, RtfText.ATTR_NAMES);
         writeAttributes(attrib, PARA_ATTRIBUTES);
         // Added by Normand Masse
         // Write alignment attributes after \intbl for cells

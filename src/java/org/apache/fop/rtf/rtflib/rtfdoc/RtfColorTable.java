@@ -168,9 +168,9 @@ public class RtfColorTable {
          * @param name a named color
          * @return the RTF number of a named color, or null if name not found
          */
-    public Integer getColorNumber (String name) {
-            return (Integer)namedColors.get(name.toLowerCase());
-        }
+    public int getColorNumber (String name) {
+        return ((Integer)namedColors.get(name.toLowerCase())).intValue();
+    }
 
     /**
      * Gets the number of color in the color table
