@@ -1,5 +1,5 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
-<section id="optimise">
+<section id="optimisations">
  <title>Process Optimisations</title>
 	<para>
 FOP should be able to handle very large documents. A document can be
@@ -30,7 +30,7 @@ as minimal as possible.
   <para>
 Line areas can be optimised once the layout for the line has
 been finalised. Consecutive characters with the same properties
-can be combined into a "word" to hold the infomration with
+can be combined into a "word" to hold the information with
 limited overhead.
   </para>
 
