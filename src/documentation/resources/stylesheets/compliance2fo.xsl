@@ -8,7 +8,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
-<xsl:import href="document2fo.xsl"/>
+<xsl:import href="../../skins/common/xslt/fo/document2fo.xsl"/>
 
 <xsl:output method="xml"/>
 
