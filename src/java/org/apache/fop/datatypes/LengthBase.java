@@ -19,6 +19,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -127,11 +128,16 @@ public class LengthBase implements PercentBase {
         case BLOCK_HEIGHT:
             return parentFO.getLayoutDimension(PercentBase.BLOCK_BPD).intValue();
         case CONTAINING_REFAREA:    // example: start-indent, end-indent
-            //FONode fo;
-            //for (fo = parentFO; fo != null && !fo.generatesReferenceAreas();
-            //        fo = fo.getParent());
-            //return (((fo != null) && (fo instanceof FObj)) ? ((FObj)fo).getContentWidth() : 0);
-            return 0;
+            FObj fo;
+            fo = parentFO;
+            while (fo != null && !fo.generatesReferenceAreas()) {
+                fo = fo.findNearestAncestorFObj();
+            }
+            if (fo != null && fo instanceof FObj) {
+                return fo.getLayoutDimension(PercentBase.BLOCK_IPD).intValue();
+            } else {
+                return 0;
+            }
         case IMAGE_INTRINSIC_WIDTH:
             return propertyList.getFObj()
                 .getLayoutDimension(PercentBase.IMAGE_INTRINSIC_WIDTH).intValue();
@@ -142,7 +148,7 @@ public class LengthBase implements PercentBase {
             //log.debug("!!! LengthBase.getBaseLength() called on CUSTOM_BASE type !!!");
             return 0;
         default:
-            //log.error("Unknown base type for LengthBase.");
+            parentFO.getLogger().error("Unknown base type for LengthBase.");
             return 0;
         }
     }
