@@ -84,6 +84,7 @@ public class NCName extends StringType {
     }
 
     /**
+     * Get the NCName string value.
      * @return the String.
      */
     public String getNCName() {
