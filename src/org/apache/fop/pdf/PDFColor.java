@@ -175,8 +175,8 @@ public class PDFColor extends PDFPathPaint {
                 } else {
                     p.append(PDFNumber.doubleOut(this.red) + " "
                              + PDFNumber.doubleOut(this.green) + " "
-                             + PDFNumber.doubleOut(this.blue) + " "
-                             + " rg \n");
+                             + PDFNumber.doubleOut(this.blue)
+                             + " rg\n");
                 }
             } else {                              // stroke/border
                 if (same) {
@@ -184,8 +184,8 @@ public class PDFColor extends PDFPathPaint {
                 } else {
                     p.append(PDFNumber.doubleOut(this.red) + " "
                              + PDFNumber.doubleOut(this.green) + " "
-                             + PDFNumber.doubleOut(this.blue) + " "
-                             + " RG \n");
+                             + PDFNumber.doubleOut(this.blue)
+                             + " RG\n");
                 }
             }
         }                                         // end of output RGB
@@ -196,12 +196,12 @@ public class PDFColor extends PDFPathPaint {
                 p.append(PDFNumber.doubleOut(this.cyan) + " "
                          + PDFNumber.doubleOut(this.magenta) + " "
                          + PDFNumber.doubleOut(this.yellow) + " "
-                         + PDFNumber.doubleOut(this.black) + " k \n");
+                         + PDFNumber.doubleOut(this.black) + " k\n");
             } else {                              // fill
                 p.append(PDFNumber.doubleOut(this.cyan) + " "
                          + PDFNumber.doubleOut(this.magenta) + " "
                          + PDFNumber.doubleOut(this.yellow) + " "
-                         + PDFNumber.doubleOut(this.black) + " K \n");
+                         + PDFNumber.doubleOut(this.black) + " K\n");
             }
 
         }                                         // end of if CMYK
@@ -209,9 +209,9 @@ public class PDFColor extends PDFPathPaint {
             // assume we're in DeviceGray, because otherwise we're screwed.
 
             if (fillNotStroke) {
-                p.append(PDFNumber.doubleOut(this.black) + " g \n");
+                p.append(PDFNumber.doubleOut(this.black) + " g\n");
             } else {
-                p.append(PDFNumber.doubleOut(this.black) + " G \n");
+                p.append(PDFNumber.doubleOut(this.black) + " G\n");
             }
 
         }
