@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,6 +111,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             lineHeight = lh;
             baseline = bl;
         }
+        
     }
 
 
@@ -469,6 +470,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                     // add the new elements to the paragraph
                     knuthPar.addAll(returnedList);
                     if (bForceLinefeed) {
+                        if (knuthPar.size() == 0) {
+                            //only a forced linefeed on this line 
+                            //-> compensate with a zero width box
+                            knuthPar.add(new KnuthBox(0, 0, 0, 0,
+                                    null, false));
+                        }
                         knuthPar.endParagraph();
                         knuthPar = new Paragraph();
                         knuthPar.startParagraph(availIPD.opt);
