@@ -22,8 +22,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.apache.fop.traits.BorderProps;
-
 /**
  * Region Viewport reference area.
  * This area is the viewport for a region and contains a region area.
@@ -77,87 +75,6 @@ public class RegionViewport extends Area implements Cloneable {
      */
     public Rectangle2D getViewArea() {
         return viewArea;
-    }
-
-    /**
-     * Return the sum of region border- and padding-before
-     *
-     * @return width in millipoints
-     */
-    public int getBorderAndPaddingWidthBefore() {
-        int margin = 0;
-        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_BEFORE);
-        if (bps != null) {
-            margin = bps.width;
-        }
-        
-        Integer padWidth = (Integer) getTrait(Trait.PADDING_BEFORE);
-        if (padWidth != null) {
-            margin += padWidth.intValue();
-        }
-
-        return margin;
-    }
-    
-    /**
-     * Return the sum of region border- and padding-after
-     *
-     * @return width in millipoints
-     */
-    public int getBorderAndPaddingWidthAfter() {
-        int margin = 0;
-        
-        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_AFTER);
-        if (bps != null) {
-            margin = bps.width;
-        }
-        
-        Integer padWidth = (Integer) getTrait(Trait.PADDING_AFTER);
-        if (padWidth != null) {
-            margin += padWidth.intValue();
-        }
-
-        return margin;
-    }
-
-    /**
-     * Return the sum of region border- and padding-start
-     *
-     * @return width in millipoints
-     */
-    public int getBorderAndPaddingWidthStart() {
-        int margin = 0;
-        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_START);
-        if (bps != null) {
-            margin = bps.width;
-        }
-        
-        Integer padWidth = (Integer) getTrait(Trait.PADDING_START);
-        if (padWidth != null) {
-            margin += padWidth.intValue();
-        }
-
-        return margin;
-    }
-
-    /**
-     * Return the sum of region border- and padding-end
-     *
-     * @return width in millipoints
-     */
-    public int getBorderAndPaddingWidthEnd() {
-        int margin = 0;
-        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_END);
-        if (bps != null) {
-            margin = bps.width;
-        }
-        
-        Integer padWidth = (Integer) getTrait(Trait.PADDING_END);
-        if (padWidth != null) {
-            margin += padWidth.intValue();
-        }
-
-        return margin;
     }
 
     private void writeObject(java.io.ObjectOutputStream out)
