@@ -67,11 +67,11 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 
-/**  Models the top-level structure of an RTF file.
- *  @see RtfFileExample
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
- *  @author Andreas Putz a.putz@skynamics.com
- *  @author Christopher Scott scottc@westinghouse.com
+/**
+ * Models the top-level structure of an RTF file.
+ * @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+ * @author Andreas Putz a.putz@skynamics.com
+ * @author Christopher Scott scottc@westinghouse.com
  */
 
 public class RtfFile

@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.util;
 
 import java.io.OutputStream;
@@ -109,7 +109,7 @@ public class ASCII85OutputStream extends FilterOutputStream
     private void checkedWrite(byte[] buf) throws IOException {
         checkedWrite(buf, buf.length, false);
     }
-        
+
     private void checkedWrite(byte[] buf, boolean nosplit) throws IOException {
         checkedWrite(buf, buf.length, nosplit);
     }
@@ -117,7 +117,7 @@ public class ASCII85OutputStream extends FilterOutputStream
     private void checkedWrite(byte[] buf , int len) throws IOException {
         checkedWrite(buf, len, false);
     }
-        
+
     private void checkedWrite(byte[] buf , int len, boolean nosplit) throws IOException {
         if (posinline + len > 80) {
             int firstpart = (nosplit ? 0 : len - (posinline + len - 80));
@@ -155,24 +155,24 @@ public class ASCII85OutputStream extends FilterOutputStream
             if (word < 0) {
                 word = -word;
             }
-            byte c1 = 
-                (byte)((word 
+            byte c1 =
+                (byte)((word
                         / POW85[0]) & 0xFF);
-            byte c2 = 
-                (byte)(((word - (c1 * POW85[0])) 
+            byte c2 =
+                (byte)(((word - (c1 * POW85[0]))
                         / POW85[1]) & 0xFF);
             byte c3 =
-                (byte)(((word - (c1 * POW85[0]) 
+                (byte)(((word - (c1 * POW85[0])
                               - (c2 * POW85[1]))
                         / POW85[2]) & 0xFF);
             byte c4 =
-                (byte)(((word - (c1 * POW85[0]) 
-                              - (c2 * POW85[1]) 
+                (byte)(((word - (c1 * POW85[0])
+                              - (c2 * POW85[1])
                               - (c3 * POW85[2]))
                         / POW85[3]) & 0xFF);
             byte c5 =
-                (byte)(((word - (c1 * POW85[0]) 
-                              - (c2 * POW85[1]) 
+                (byte)(((word - (c1 * POW85[0])
+                              - (c2 * POW85[1])
                               - (c3 * POW85[2])
                               - (c4 * POW85[3])))
                         & 0xFF);
@@ -195,7 +195,7 @@ public class ASCII85OutputStream extends FilterOutputStream
         }
     }
 
-    /** @see org.apache.fop.render.ps.Finalizable **/
+    /** @see Finalizable **/
     public void finalizeStream() throws IOException {
         // now take care of the trailing few bytes.
         // with n leftover bytes, we append 0 bytes to make a full group of 4
