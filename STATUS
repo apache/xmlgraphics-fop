@@ -2,6 +2,17 @@ $Id$
 
 STATUS 
 
+
+**** CONTENT **** 
+
+- committers
+- things worked on
+- things to do 
+- bugs 
+- history
+
+
+
 **** COMMITTERS **** 
 
 Arved Sandstrom (release coordinator) 
@@ -10,6 +21,7 @@ James Tauber (started it all and wrote most of the code)
 Steven Coffman 
 Stanislav Gorkhover
 Fotis Jannidis 
+Karen Lease
 Keiron Liddle
 Jordan Naftolin
 Eric Schaeffer 
