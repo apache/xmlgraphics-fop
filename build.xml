@@ -85,8 +85,8 @@ list of possible build targets.
 
   <!-- used to set values for testing etc. -->
   <!-- build-local.properties is not stored in CVS
-                                  and overrides values from build.properties -->
-      <property file="build-local.properties"/>
+                  and overrides values from build.properties -->
+  <property file="build-local.properties"/>
   <property file="build.properties"/>
 
 <!--
