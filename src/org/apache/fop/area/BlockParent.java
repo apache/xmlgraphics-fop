@@ -7,14 +7,13 @@
 
 package org.apache.fop.area;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A BlockParent holds block-level areas.
  */
-public class BlockParent extends Area implements Serializable {
+public class BlockParent extends Area {
 
     // this position is used for absolute position
     // or as an indent
