@@ -411,7 +411,7 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      * rounded value is equal to the value.
      */
     public boolean isInteger() {
-        return (isNumber() && (double)(Math.round(value)) == value);
+        return (isNumber() && (Math.round(value)) == value);
     }
 
     /**
@@ -494,7 +494,7 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      * @param fontSize a <tt>Numeric</tt> containing the reference
      * <i>font-size</i> length
      * @return <i>this</i>, with values changed to reflect the conversion
-     * @exception <tt>PropertyException</tt>
+     * @exception PropertyException
      */
     public Numeric expandEms(Numeric fontSize) throws PropertyException {
         if (baseunit == EMS) {
@@ -513,7 +513,7 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     /**
      * @param ref a <tt>Numeric</tt> containing the reference length
      * @return <i>this</i>, with values changed to reflect the conversion
-     * @exception <tt>PropertyException</tt>
+     * @exception PropertyException
      */
     public Numeric expandPercent(Numeric ref) throws PropertyException {
         if (baseunit == PERCENTAGE) {
