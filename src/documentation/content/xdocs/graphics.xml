@@ -25,7 +25,7 @@
         <tr>
           <td><link href="#eps">EPS</link> (Encapsulated PostScript)</td>
           <td>metafile (both bitmap and vector), probably most frequently used for vector drawings</td>
-          <td><link href="#native">FOP native</link> (limited support)</td>
+          <td><link href="#native">FOP native</link> (limited support, see restrictions below)</td>
         </tr>
         <tr>
           <td>GIF (Graphics Interchange Format)</td>
@@ -70,7 +70,7 @@ Then, copy the file "JimiProClasses.zip" from the archive to {fop-install-dir}/l
         </p>
       </section>
       <section id="jai">
-        <title>JAI</title>
+        <title>JAI (Java Advanced Imaging API)</title>
         <warning>JAI support is available for Release 0.20.5 and later. The comments in this section do not apply to releases earlier than 0.20.5.</warning>
         <p>
           FOP has been compiled with JAI support, but JAI is not included in the FOP distribution.
@@ -100,12 +100,30 @@ If you run a server without X, or if you can't connect to the X server due to se
       <p>FOP provides support for two output targets:</p>
       <ul>
         <li>PostScript (full support).</li>
-        <li>PDF (partial support). FOP embeds the EPS file into the PDF, but currently does not do so completely correctly. PostScript devices (including ghostscript) will render the EPS correctly, but Acrobat Reader will not currently display it.</li>
+        <li>
+          PDF (partial support). Due to the lack of a built-in PostScript interpreter, FOP 
+          can only embed the EPS file into the PDF. Acrobat Reader will not currently display 
+          the EPS (it doesn't have a PostScript interpreter, either) but it will be shown 
+          correctly when you print the PDF on a PostScript-capable printer. PostScript devices 
+          (including GhostScript) will render the EPS correctly.
+        </li>
       </ul>
+      <p>
+        Other output targets can't be supported at the moment because
+        FOP lacks a PostScript interpreter.
+      </p>
     </section>
     <section id="jpeg">
       <title>JPEG</title>
-      <p>Not all variants of JPEG are supported, especially those containing unusual color lookup tables and color profiles. If you have trouble with a JPEG image in FOP, try opening it with an image processing program (such as Photoshop or Gimp) and then saving it. Specifying 24-bit color output may also help.
+      <p>
+        Not all variants of JPEG are supported, especially those containing unusual color 
+        lookup tables and color profiles. If you have trouble with a JPEG image in FOP, try 
+        opening it with an image processing program (such as Photoshop or Gimp) and then saving 
+        it. Specifying 24-bit color output may also help.
+      </p>
+      <p>
+        For the PDF and PostScript renderers most JPEG images can be passed through without 
+        decompression.
       </p>
     </section>
     <section id="svg">
@@ -224,7 +242,7 @@ into a raster graphic are not drawn properly in PDF. The image is opaque.
     </section>
     <section id="tiff">
       <title>TIFF</title>
-      <p>TIFF images with JPEG or CCITT content are passed through by FOP natively. Other TIFF subformats are handled by JAI.</p>
+      <p>TIFF images with JPEG or CCITT content are passed through by FOP natively (PDF and PostScript only). Other TIFF subformats are handled by JAI.</p>
     </section>
     <section id="resolution">
       <title>Graphics Resolution</title>
