@@ -123,11 +123,17 @@ After reviewing the instructions there, send your subscribe or unsubscribe reque
           <li><jump href="http://java.sun.com/j2se/1.3/docs/api/index.html">Java JDK 1.3 Documentation</jump></li>
         </ul>
       </section>
+      <section id="specs-pdf">
+        <title>PDF</title>
+        <ul>
+          <li><jump href="http://partners.adobe.com/asn/developer/acrosdk/docs/filefmtspecs/PDFReference.pdf">Portable Document Format (PDF) 1.4 Reference Manual</jump>
+         </li>
+        </ul>
+      </section>
       <section id="specs-other">
         <title>Other</title>
         <ul>
           <li><jump href="http://www.w3.org/TR/SVG/">Supported SVG Recommendation (04 September 2001)</jump></li>
-          <li><jump href="http://partners.adobe.com/asn/developer/acrosdk/docs/filefmtspecs/PDFReference.pdf">Portable Document Format (PDF) 1.4 Reference Manual</jump></li>
         </ul>
       </section>
     </section>
@@ -171,6 +177,14 @@ After reviewing the instructions there, send your subscribe or unsubscribe reque
         <title>Java</title>
         <ul>
           <li>[online resource] A great number of Java-related books and articles can be found at the <jump href="http://java.oreilly.com">O'Reilly Java Site</jump>.</li>
+        </ul>
+      </section>
+      <section id="documents-pdf">
+        <title>PDF</title>
+        <ul>
+          <li>[online resource] Links to the various PDF file format specifications and numerous other documents can be found at Adobe Solutions Network, Acrobat Resources, <jump href="http://partners.adobe.com/asn/acrobat/docs.jsp#filefmtspecs">Acrobat 5.0 SDK Documentation</jump>.</li>
+          <li>[online resource] A list of PDF technical resources can be found at Adobe Solutions Network, Acrobat Resources, <jump href="http://partners.adobe.com/asn/acrobat/technotes.jsp">Acrobat/PDF Technical Notes</jump></li>
+          <li>[online resource] A list of Acrobat and PDF developer resources can be found at Adobe Solutions Network, Acrobat Resources, <jump href="http://partners.adobe.com/asn/acrobat">Resources for Developers</jump>.</li>
         </ul>
       </section>
     </section>
