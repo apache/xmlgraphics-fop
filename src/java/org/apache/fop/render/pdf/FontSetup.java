@@ -55,6 +55,7 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontDescriptor;
+import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.pdf.PDFDocument;
@@ -229,27 +230,7 @@ public class FontSetup {
                 for (int c = 0; c < triplets.size(); c++) {
                     FontTriplet triplet = (FontTriplet)triplets.get(c);
 
-                    int weight = 400;
-                    try {
-                        weight = Integer.parseInt(triplet.getWeight());
-                        weight = ((int)weight / 100) * 100;
-                        weight = Math.max(weight, 100);
-                        weight = Math.min(weight, 900);
-                    } catch (NumberFormatException nfe) {
-                        //weight is no number, so convert smybolic name to number
-                        if (triplet.getWeight().equals("normal")) {
-                            weight = 400;
-                        } else if (triplet.getWeight().equals("bold")) {
-                            weight = 700;
-                        } else {
-                            throw new IllegalArgumentException(
-                                "Illegal value for font weight: '" 
-                                + triplet.getWeight()
-                                + "'. Use one of: 100, 200, 300, "
-                                + "400, 500, 600, 700, 800, 900, "
-                                + "normal (=400), bold (=700)");
-                        }
-                    }
+                    int weight = FontUtil.parseCSS2FontWeight(triplet.getWeight());
                     //System.out.println("Registering: "+triplet+" weight="+weight);
                     fontInfo.addFontProperties(internalName,
                                                triplet.getName(),
