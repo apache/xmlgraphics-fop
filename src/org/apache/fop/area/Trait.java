@@ -266,7 +266,7 @@ public class Trait implements Serializable {
     /**
      * Make a trait value.
      *
-     * @param oCode 
+     * @param oCode
      */
     public static Object makeTraitValue(Object oCode, String sTraitValue) {
         // Get the code from the name

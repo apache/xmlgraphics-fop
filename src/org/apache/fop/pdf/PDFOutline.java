@@ -156,7 +156,7 @@ public class PDFOutline extends PDFObject {
 
             // byte order marker (0xfeff)
             result.append("\\376\\377");
-            
+
             for (int i = 0; i < l; i++) {
                 char ch = s.charAt(i);
                 int high = (ch & 0xff00) >>> 8;

@@ -24,7 +24,7 @@ public class FontFileReader {
 
     /**
      * Initializes class and reads stream. Init does not close stream.
-     * 
+     *
      * @param in InputStream to read from new array with size + inc
      * @throws IOException In case of an I/O problem
      */
@@ -52,7 +52,7 @@ public class FontFileReader {
 
     /**
      * Constructor
-     * 
+     *
      * @param fileName filename to read
      * @throws IOException In case of an I/O problem
      */
@@ -69,7 +69,7 @@ public class FontFileReader {
 
     /**
      * Constructor
-     * 
+     *
      * @param in InputStream to read from
      * @throws IOException In case of an I/O problem
      */
@@ -80,7 +80,7 @@ public class FontFileReader {
 
     /**
      * Set current file position to offset
-     * 
+     *
      * @param offset The new offset to set
      * @throws IOException In case of an I/O problem
      */
@@ -94,7 +94,7 @@ public class FontFileReader {
 
     /**
      * Set current file position to offset
-     * 
+     *
      * @param add The number of bytes to advance
      * @throws IOException In case of an I/O problem
      */
@@ -104,7 +104,7 @@ public class FontFileReader {
 
     /**
      * Skip a given number of bytes.
-     * 
+     *
      * @param add The number of bytes to advance
      * @throws IOException In case of an I/O problem
      */
@@ -114,7 +114,7 @@ public class FontFileReader {
 
     /**
      * Returns current file position.
-     * 
+     *
      * @return int The current position.
      */
     public int getCurrentPos() {
@@ -123,7 +123,7 @@ public class FontFileReader {
 
     /**
      * Returns the size of the file.
-     * 
+     *
      * @return int The filesize
      */
     public int getFileSize() {
@@ -132,7 +132,7 @@ public class FontFileReader {
 
     /**
      * Read 1 byte.
-     * 
+     *
      * @return One byte
      * @throws IOException If EOF is reached
      */
@@ -147,7 +147,7 @@ public class FontFileReader {
 
     /**
      * Read 1 signed byte.
-     * 
+     *
      * @return One byte
      * @throws IOException If EOF is reached
      */
@@ -157,7 +157,7 @@ public class FontFileReader {
 
     /**
      * Read 1 unsigned byte.
-     * 
+     *
      * @return One unsigned byte
      * @throws IOException If EOF is reached
      */
@@ -173,7 +173,7 @@ public class FontFileReader {
 
     /**
      * Read 2 bytes signed.
-     * 
+     *
      * @return One signed short
      * @throws IOException If EOF is reached
      */
@@ -185,7 +185,7 @@ public class FontFileReader {
 
     /**
      * Read 2 bytes unsigned.
-     * 
+     *
      * @return One unsigned short
      * @throws IOException If EOF is reached
      */
@@ -196,7 +196,7 @@ public class FontFileReader {
 
     /**
      * Write a USHort at a given position.
-     * 
+     *
      * @param pos The absolute position to write to
      * @param val The value to write
      * @throws IOException If EOF is reached
@@ -213,7 +213,7 @@ public class FontFileReader {
 
     /**
      * Read 2 bytes signed at position pos without changing current position.
-     * 
+     *
      * @param pos The absolute position to read from
      * @return One signed short
      * @throws IOException If EOF is reached
@@ -228,7 +228,7 @@ public class FontFileReader {
 
     /**
      * Read 2 bytes unsigned at position pos without changing current position.
-     * 
+     *
      * @param pos The absolute position to read from
      * @return One unsigned short
      * @throws IOException If EOF is reached
@@ -243,7 +243,7 @@ public class FontFileReader {
 
     /**
      * Read 4 bytes.
-     * 
+     *
      * @return One signed integer
      * @throws IOException If EOF is reached
      */
@@ -258,7 +258,7 @@ public class FontFileReader {
 
     /**
      * Read 4 bytes.
-     * 
+     *
      * @return One unsigned integer
      * @throws IOException If EOF is reached
      */
@@ -273,7 +273,7 @@ public class FontFileReader {
 
     /**
      * Read a NUL terminated ISO-8859-1 string.
-     * 
+     *
      * @return A String
      * @throws IOException If EOF is reached
      */
@@ -294,7 +294,7 @@ public class FontFileReader {
 
     /**
      * Read an ISO-8859-1 string of len bytes.
-     * 
+     *
      * @param len The length of the string to read
      * @return A String
      * @throws IOException If EOF is reached
@@ -312,7 +312,7 @@ public class FontFileReader {
 
     /**
      * Return a copy of the internal array
-     * 
+     *
      * @param offset The absolute offset to start reading from
      * @param length The number of bytes to read
      * @return An array of bytes

@@ -3,15 +3,15 @@
 DTD for foproperties.xml and svgproperties.xml
 -->
 
-<!DOCTYPE property-list [   
+<!DOCTYPE property-list [
 <!ELEMENT property-list (generic-property-list?,  element-property-list*) >
-     
+
 <!-- This defines properties which are generic: meaning they are valid for
      any formatting object in the namespace associated with this properties
      file.
 -->
 <!ELEMENT generic-property-list (property+) >
-   
+
 <!-- This defines properties which are specific to a particular element.
      The elements are specified in one or more localname elements. This
      will generate code which can be used to set up element-specific
@@ -19,12 +19,12 @@ DTD for foproperties.xml and svgproperties.xml
 -->
 <!ELEMENT element-property-list (localname+, property+) >
 <!ELEMENT localname (#PCDATA) >
-     
+
 <!-- Define a single property in the current namespace -->
 <!ELEMENT property (name, (use-generic | datatype), class-name?, inherited?,
-	 default?, enumeration?, datatype-conversion*, compound?,
-	 keyword-equiv*, percent-ok?, auto-ok?, derive?, corresponding? ) >
-     
+   default?, enumeration?, datatype-conversion*, compound?,
+   keyword-equiv*, percent-ok?, auto-ok?, derive?, corresponding? ) >
+
 <!-- If type is set to "ref", then this is not a new property definition,
      but rather a reference to a property allready defined (should be in
      another namespace). The "family" attribute then indicates in which
@@ -43,18 +43,18 @@ DTD for foproperties.xml and svgproperties.xml
 <!-- Sub-elements of property. -->
 <!-- This gives the name of the attribute used to specify values for this
      property in input FO or SVG files. It MUST be specified.
--->     
+-->
 <!ELEMENT name (#PCDATA) >
-     
+
 <!-- This gives the class name of the Java class which will be created to
      represent values for this property. It doesn't need to be specified if
      it can be deduced from the "name". The rule is that the first letter
      of the property name and any name following a "-" are capitalized and
      the "-" characters are removed. If you want to force a name, use the
      class-name sub-element.
--->     
+-->
 <!ELEMENT class-name (#PCDATA) >
-     
+
 <!-- This indicates that this property is based on a generic property
      datatype. This may be one hand-coded, such as SVGLengthProperty, or it
      may be one which is created by a generic property definition in the
@@ -69,10 +69,10 @@ DTD for foproperties.xml and svgproperties.xml
      only used for the SVG properties, because they don't have a
      rule-based relationship between the actual Property class name
      and the name of the datatype stored by objects of that class.
--->     
+-->
 <!ELEMENT use-generic (#PCDATA) >
 <!ATTLIST use-generic
-	ispropclass (true | false ) "false"
+  ispropclass (true | false ) "false"
 >
 
 <!-- This indicates whether the property is inherited or not. Use the value
@@ -81,12 +81,12 @@ DTD for foproperties.xml and svgproperties.xml
      value of the property is inherited. An example is line-height, which
      if specified using relative units or a percent, is recalculated
      relative to the FONTSIZE of the current FO.
--->     
+-->
 <!ELEMENT inherited (#PCDATA) >
 <!ATTLIST inherited
-	type	(specified | computed) "computed"
+  type  (specified | computed) "computed"
 >
-     
+
 <!-- This gives the datatype of the stored property values. It shouldn't be
      specified if the property has a use-generic element. The value of this
      element should be the name of either a basic Java class (String,
@@ -94,7 +94,7 @@ DTD for foproperties.xml and svgproperties.xml
      NOTE: the value "Enum" is special and indicates an enumerated
      datatype, stored as a Java "int". There is an EnumProperty class, but
      no corresponding Enum class.
--->     
+-->
 <!ELEMENT datatype (#PCDATA) >
 
 <!-- This element is used to specify the allowable values for enumerated
@@ -103,13 +103,13 @@ DTD for foproperties.xml and svgproperties.xml
      each value is used to generate a public static constant value in the
      class which can be referenced in code to test the property value. It
      must be a legal Java identifier. By convention, use all caps.
--->     
+-->
 <!ELEMENT enumeration (value+) >
 <!ELEMENT value (#PCDATA) >
-<!ATTLIST value 
-	const	CDATA	#REQUIRED
+<!ATTLIST value
+  const  CDATA  #REQUIRED
 >
-          
+
 <!-- This gives the default value for a property if it is not specified on
      a given FO. (The spec calls this the "initial" value.)
 
@@ -133,13 +133,13 @@ DTD for foproperties.xml and svgproperties.xml
      for a particular component. For example, the border-end-width property
      is based on GenericCondBorderWidth and specifies a specific default
      for the "conditionality" component.
--->     
+-->
 <!ELEMENT default (#PCDATA) >
 <!ATTLIST default
-	contextdep	(true | false) "false"
-	subproperty	CDATA #IMPLIED
+  contextdep  (true | false) "false"
+  subproperty  CDATA #IMPLIED
 >
-	
+
 
 <!-- The datatype-conversion element(s) specify how to handle property
      values which can be specified in several ways. For example, the
@@ -184,7 +184,7 @@ DTD for foproperties.xml and svgproperties.xml
      An example is space-before.
 -->
 <!ELEMENT compound (subproperty+) >
-     
+
 <!-- Describe one component of a compound property. Only the name and the
      datatype should be specified. For example, in the space-before
      property, the optimum component has the name optimum and the datatype
@@ -210,8 +210,8 @@ DTD for foproperties.xml and svgproperties.xml
 -->
 <!ELEMENT keyword-equiv (#PCDATA) >
 <!ATTLIST keyword-equiv
-	match	CDATA   #REQUIRED
-	eval	(true|false) "true"
+  match  CDATA   #REQUIRED
+  eval  (true|false) "true"
 >
 
 <!-- This element if present indicates that percent specifications are
@@ -231,7 +231,7 @@ DTD for foproperties.xml and svgproperties.xml
 -->
 <!ELEMENT   percent-ok (#PCDATA) >
 <!ATTLIST   percent-ok
-	 base	(FONTSIZE | INH-FONTSIZE | CONTAINING-BOX) #IMPLIED
+   base  (FONTSIZE | INH-FONTSIZE | CONTAINING-BOX) #IMPLIED
 >
 
 <!-- This element if present indicates that a value of "auto" for a Length
@@ -239,7 +239,7 @@ DTD for foproperties.xml and svgproperties.xml
      is created which holds a Length object of type "AUTO".
 -->
 <!ELEMENT   auto-ok EMPTY >
-     
+
 <!-- This element if present indicates that the value of the property may
      be computed (derived) from other properties if it isn't specified. It
      assumes that the property is an Enum datatype. (Currently only used
@@ -253,11 +253,11 @@ DTD for foproperties.xml and svgproperties.xml
 -->
 <!ELEMENT   derive (if+) >
 <!ATTLIST   derive
-	from	CDATA	#REQUIRED
+  from  CDATA  #REQUIRED
 >
 <!ELEMENT   if (#PCDATA) >
 <!ATTLIST   if
-	match	CDATA	#REQUIRED
+  match  CDATA  #REQUIRED
 >
 
 <!-- This element indicates that the value of the property is the same as
@@ -300,7 +300,7 @@ DTD for foproperties.xml and svgproperties.xml
 <!ELEMENT   propval (wmrel2abs | wmabs2rel | #PCDATA)+ >
 
 <!ELEMENT   wmrel2abs EMPTY>
-<!ATTLIST   wmrel2abs 
+<!ATTLIST   wmrel2abs
   dir (BEFORE | AFTER | START | END | BLOCKPROGDIM | INLINEPROGDIM)
   #REQUIRED
 >

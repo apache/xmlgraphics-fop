@@ -127,9 +127,9 @@ public class FopPDFImage implements PDFImage {
 
     protected PDFStream getPSDataStream() throws IOException {
         int length = 0;
-        int i = 0; 
+        int i = 0;
         EPSImage epsImage = (EPSImage) fopImage;
-        int[] bbox = epsImage.getBBox(); 
+        int[] bbox = epsImage.getBBox();
         int bboxw = bbox[2] - bbox[0];
         int bboxh = bbox[3] - bbox[1];
 

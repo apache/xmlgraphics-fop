@@ -56,7 +56,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      */
     PDFDocumentGraphics2D(boolean textAsShapes) {
         super(textAsShapes);
-    
+
         if (!textAsShapes) {
             fontInfo = new FontInfo();
             FontSetup.setup(fontInfo, null);
@@ -109,7 +109,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @param stream the stream that the final document should be written to.
      * @param width the width of the document
      * @param height the height of the document
-     * @throws IOException an io exception if there is a problem 
+     * @throws IOException an io exception if there is a problem
      *         writing to the output stream
      */
     public PDFDocumentGraphics2D(boolean textAsShapes, OutputStream stream,

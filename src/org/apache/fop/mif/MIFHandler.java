@@ -119,7 +119,7 @@ public class MIFHandler extends StructureHandler {
     }
 
     public void endPageSequence(PageSequence pageSeq) throws FOPException {
-        
+
     }
 
     public void startFlow(Flow fl) {

@@ -98,7 +98,7 @@ public class <xsl:value-of select="@family"/>PropertyMapping {
     </xsl:when>
     <xsl:when test="not(@type)">
       <xsl:call-template name="genmaker">
-	  <xsl:with-param name="htname" select="$htname"/>
+    <xsl:with-param name="htname" select="$htname"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:otherwise/>

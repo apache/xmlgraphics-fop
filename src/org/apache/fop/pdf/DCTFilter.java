@@ -34,6 +34,6 @@ public class DCTFilter extends PDFFilter {
         StreamUtilities.streamCopy(in, out, length);
         out.close();
     }
-    
+
 }
 

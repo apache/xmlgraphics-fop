@@ -70,7 +70,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private Flow curFlow;
 
     private int flowBPD = 0;
-    private int flowIPD = 0; 
+    private int flowIPD = 0;
 
     /** Manager which handles a queue of all pages which are completely
      * laid out and ready for rendering, except for resolution of ID
@@ -412,7 +412,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             }
         }
     }
-  
+
     private void finishPage() {
         if (curPage != null) {
             // Layout static content into the regions

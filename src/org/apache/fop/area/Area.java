@@ -55,19 +55,19 @@ public class Area implements Serializable {
      * Rotated 90 degrees clockwise
      */
     public static final int ORIENT_90 = 1;
-    
+
     /**
      * Rotate 180 degrees
      */
     public static final int ORIENT_180 = 2;
-    
+
     /**
      * Rotated 270 degrees clockwise
      */
     public static final int ORIENT_270 = 3;
 
     // area class values
-    
+
     /**
      * Normal class
      */

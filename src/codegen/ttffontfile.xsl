@@ -1,4 +1,4 @@
-<!-- 
+<!--
 This files writes the class files for the Adobe Type 1 fonts.
 It uses the information in the font description files (Courier.xml, Helvetica.xml) to this
 In these font description files each character is referenced by its adobe name:
@@ -45,7 +45,7 @@ public class <xsl:value-of select="class-name"/> extends Font implements FontDes
 
     private final static String embedFileName = <xsl:value-of select="embedFile"/>;
     private final static String embedResourceName = <xsl:value-of select="embedResource"/>;
-    private static PDFTTFStream embeddedFont=null; 
+    private static PDFTTFStream embeddedFont=null;
     private final static int flags = <xsl:value-of select="flags"/>;
     private final static int stemV = <xsl:value-of select="stemv"/>;
     private final static int italicAngle = <xsl:value-of select="italicangle"/>;
@@ -77,7 +77,7 @@ public class <xsl:value-of select="class-name"/> extends Font implements FontDes
     }
     public PDFStream getFontFile(int i) {
         InputStream instream=null;
-        
+
         // Get file first
         if (embedFileName!=null)
         try {
@@ -85,7 +85,7 @@ public class <xsl:value-of select="class-name"/> extends Font implements FontDes
         } catch (Exception e) {
            System.out.println("Failed to embed fontfile: "+embedFileName);
         }
-   
+
         // Get resource
         if (instream==null &amp;&amp; embedResourceName!=null)
         try {
@@ -93,10 +93,10 @@ public class <xsl:value-of select="class-name"/> extends Font implements FontDes
         } catch (Exception e) {
            System.out.println("Failed to embed fontresource: "+embedResourceName);
         }
-        
+
         if (instream==null)
             return (PDFStream)null;
-        
+
         // Read fontdata
         byte[] file = new byte[128000];
         int fsize = 0;
@@ -104,36 +104,36 @@ public class <xsl:value-of select="class-name"/> extends Font implements FontDes
         try {
           int l = instream.read(file, 0, 128000);
           fsize += l;
-      
+
           if (l==128000) {
                  // More to read - needs to extend
              byte[] tmpbuf;
-         
+
              while (l &gt; 0) {
                  tmpbuf = new byte[file.length + 64000];
                  System.arraycopy(file, 0, tmpbuf, 0, file.length);
                  l=instream.read(tmpbuf, file.length, 64000);
                  fsize += l;
                  file = tmpbuf;
-            
+
                  if (l &lt; 64000) // whole file read. No need to loop again
                     l=0;
              }
           }
-	  
+
           embeddedFont=new PDFTTFStream(i, fsize);
           embeddedFont.addFilter("flate");
           embeddedFont.addFilter("ascii-85");
           embeddedFont.setData(file, fsize);
           instream.close();
-        } catch (Exception e) {}  
+        } catch (Exception e) {}
 
         return (PDFStream) embeddedFont;
     }
     public String encoding() {
         return encoding;
     }
-    
+
     public String fontName() {
         return fontName;
     }

@@ -168,7 +168,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
         while ((curLM = getChildLM()) != null) {
             // Make break positions and return blocks!
-            // Set up a LayoutContext 
+            // Set up a LayoutContext
             BreakPoss bp;
 
             LayoutContext childLC = new LayoutContext(0);

@@ -439,7 +439,7 @@
    <map adobe-name="a189" win-ansi="0x00FC" unicode="0x27BC" unicodeName="WEDGE-TAILED RIGHTWARDS ARROW"/>
    <map adobe-name="a190" win-ansi="0x00FD" unicode="0x27BD" unicodeName="HEAVY WEDGE-TAILED RIGHTWARDS ARROW"/>
    <map adobe-name="a191" win-ansi="0x00FE" unicode="0x27BE" unicodeName="OPEN-OUTLINED RIGHTWARDS ARROW"/>
-   <!-- the following mappings are used for the Symbol font 
+   <!-- the following mappings are used for the Symbol font
     TBD: remove doublettes  -->
    <map adobe-name="universal" win-ansi="0x22" unicode="0x2200"/>
    <map adobe-name="existential" win-ansi="0x24" unicode="0x2203"/>
@@ -592,21 +592,21 @@
 </font-mappings>
 <!--  I couldn't find the following characters in the unicode tables -->
 <!--
-   <map adobe-name="center" win-ansi="-1" unicode=""/> 
-   <map adobe-name="dectab" win-ansi="-1" unicode=""/> 
-   <map adobe-name="down" win-ansi="-1" unicode=""/> 
-   <map adobe-name="format" win-ansi="-1" unicode=""/> 
-   <map adobe-name="graybox" win-ansi="-1" unicode=""/> 
-   <map adobe-name="indent" win-ansi="-1" unicode=""/> 
-   <map adobe-name="largebullet" win-ansi="-1" unicode=""/> 
-   <map adobe-name="left" win-ansi="-1" unicode=""/>   
-   <map adobe-name="ll" win-ansi="-1" unicode=""/>  
-   <map adobe-name="LL" win-ansi="-1" unicode=""/> 
-   <map adobe-name="merge" win-ansi="-1" unicode=""/> 
-   <map adobe-name="notegraphic" win-ansi="-1" unicode=""/> 
-   <map adobe-name="overscore" win-ansi="-1" unicode=""/> 
-   <map adobe-name="prescription" win-ansi="-1" unicode=""/> 
-   <map adobe-name="return" win-ansi="-1" unicode=""/> 
+   <map adobe-name="center" win-ansi="-1" unicode=""/>
+   <map adobe-name="dectab" win-ansi="-1" unicode=""/>
+   <map adobe-name="down" win-ansi="-1" unicode=""/>
+   <map adobe-name="format" win-ansi="-1" unicode=""/>
+   <map adobe-name="graybox" win-ansi="-1" unicode=""/>
+   <map adobe-name="indent" win-ansi="-1" unicode=""/>
+   <map adobe-name="largebullet" win-ansi="-1" unicode=""/>
+   <map adobe-name="left" win-ansi="-1" unicode=""/>
+   <map adobe-name="ll" win-ansi="-1" unicode=""/>
+   <map adobe-name="LL" win-ansi="-1" unicode=""/>
+   <map adobe-name="merge" win-ansi="-1" unicode=""/>
+   <map adobe-name="notegraphic" win-ansi="-1" unicode=""/>
+   <map adobe-name="overscore" win-ansi="-1" unicode=""/>
+   <map adobe-name="prescription" win-ansi="-1" unicode=""/>
+   <map adobe-name="return" win-ansi="-1" unicode=""/>
    <map adobe-name="square" win-ansi="-1" unicode=""/>
    <map adobe-name="stop" win-ansi="-1" unicode=""/>
    <map adobe-name="tab" win-ansi="-1" unicode=""/>

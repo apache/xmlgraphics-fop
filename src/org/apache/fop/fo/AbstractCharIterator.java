@@ -10,7 +10,7 @@ package org.apache.fop.fo;
 // FOP
 import org.apache.fop.apps.FOPException;
 import java.util.NoSuchElementException;
-    
+
 public abstract class AbstractCharIterator implements CharIterator, Cloneable {
 
     public abstract boolean hasNext();

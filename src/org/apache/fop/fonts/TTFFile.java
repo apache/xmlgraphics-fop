@@ -22,25 +22,25 @@ import org.apache.avalon.framework.logger.Logger;
  * Typography site: http://www.microsoft.com/truetype/
  */
 public class TTFFile extends AbstractLogEnabled {
-    
+
     static final byte NTABS = 24;
     static final int NMACGLYPHS = 258;
     static final int MAX_CHAR_CODE = 255;
     static final int ENC_BUF_SIZE = 1024;
 
     private String encoding = "WinAnsiEncoding";    // Default encoding
-    
+
     private short firstChar = 0;
     private boolean isEmbeddable = true;
     private boolean hasSerifs = true;
     /**
      * Table directory
      */
-    protected Map dirTabs;                          
+    protected Map dirTabs;
     private Map kerningTab;                          // for CIDs
     private Map ansiKerningTab;                      // For winAnsiEncoding
     private List cmaps;
-    private List unicodeMapping;                     
+    private List unicodeMapping;
 
     private int upem;                                // unitsPerEm from "head" table
     private int nhmtx;                               // Number of horizontal metrics
@@ -55,7 +55,7 @@ public class TTFFile extends AbstractLogEnabled {
 
     /**
      * Contains glyph data
-     */    
+     */
     protected TTFMtxEntry mtxTab[];                  // Contains glyph data
     private int[] mtxEncoded = null;
 
@@ -144,7 +144,7 @@ public class TTFFile extends AbstractLogEnabled {
             int cmapEID = in.readTTFUShort();
             long cmapOffset = in.readTTFULong();
 
-            getLogger().debug("Platform ID: " + cmapPID 
+            getLogger().debug("Platform ID: " + cmapPID
                 + " Encoding: " + cmapEID);
 
             if (cmapPID == 3 && cmapEID == 1) {
@@ -175,7 +175,7 @@ public class TTFFile extends AbstractLogEnabled {
             getLogger().debug("searchRange  : " + cmapSearchRange);
             getLogger().debug("entrySelector: " + cmapEntrySelector);
             getLogger().debug("rangeShift   : " + cmapRangeShift);
-            
+
 
             int cmapEndCounts[] = new int[cmapSegCountX2 / 2];
             int cmapStartCounts[] = new int[cmapSegCountX2 / 2];
@@ -208,10 +208,10 @@ public class TTFFile extends AbstractLogEnabled {
             // and fill in the cmaps ArrayList
 
             for (int i = 0; i < cmapStartCounts.length; i++) {
-                
-                getLogger().debug(i + ": " + cmapStartCounts[i] 
+
+                getLogger().debug(i + ": " + cmapStartCounts[i]
                     + " - " + cmapEndCounts[i]);
-                 
+
                 for (int j = cmapStartCounts[i]; j <= cmapEndCounts[i]; j++) {
 
                     // Update lastChar
@@ -224,9 +224,9 @@ public class TTFFile extends AbstractLogEnabled {
                         // the last character 65535 = .notdef
                         // may have a range offset
                         if (cmapRangeOffsets[i] != 0 && j != 65535) {
-                            int glyphOffset = glyphIdArrayOffset 
-                                + ((cmapRangeOffsets[i] / 2) 
-                                    + (j - cmapStartCounts[i]) 
+                            int glyphOffset = glyphIdArrayOffset
+                                + ((cmapRangeOffsets[i] / 2)
+                                    + (j - cmapStartCounts[i])
                                     + (i)
                                     - cmapSegCountX2 / 2) * 2;
                             in.seekSet(glyphOffset);
@@ -245,18 +245,18 @@ public class TTFFile extends AbstractLogEnabled {
                                     Integer aIdx = (Integer)e.next();
                                     ansiWidth[aIdx.intValue()] =
                                         mtxTab[glyphIdx].getWx();
-                                    
+
                                     getLogger().debug("Added width "
-                                        + mtxTab[glyphIdx].getWx() 
-                                        + " uni: " + j 
+                                        + mtxTab[glyphIdx].getWx()
+                                        + " uni: " + j
                                         + " ansi: " + aIdx.intValue());
                                 }
                             }
-                            
-                            getLogger().debug("Idx: " 
-                                + glyphIdx 
-                                + " Delta: " + cmapDeltas[i] 
-                                + " Unicode: " + j 
+
+                            getLogger().debug("Idx: "
+                                + glyphIdx
+                                + " Delta: " + cmapDeltas[i]
+                                + " Unicode: " + j
                                 + " name: " + mtxTab[glyphIdx].getName());
                         } else {
                             glyphIdx = (j + cmapDeltas[i]) & 0xffff;
@@ -287,14 +287,14 @@ public class TTFFile extends AbstractLogEnabled {
                                     ansiWidth[aIdx.intValue()] = mtxTab[glyphIdx].getWx();
                                 }
                             }
-                            
+
                             //getLogger().debug("IIdx: " +
                             //    mtxPtr +
                             //    " Delta: " + cmap_deltas[i] +
                             //    " Unicode: " + j +
                             //    " name: " +
                             //    mtxTab[(j+cmap_deltas[i]) & 0xffff].name);
-                            
+
                         }
                         if (glyphIdx < mtxTab.length) {
                             if (mtxTab[glyphIdx].getUnicodeIndex().size() < 2) {
@@ -326,10 +326,10 @@ public class TTFFile extends AbstractLogEnabled {
         getLogger().info("Max: " + max);
     }
 
-    
+
     /**
      * Reads the font using a FontFileReader.
-     * 
+     *
      * @param in The FontFileReader to use
      * @throws IOException In case of an I/O problem
      */
@@ -566,7 +566,7 @@ public class TTFFile extends AbstractLogEnabled {
     }
 
     /**
-     * Returns the index of the last character, but this is for WinAnsiEncoding 
+     * Returns the index of the last character, but this is for WinAnsiEncoding
      * only, so the last char is < 256.
      * @return short Index of the last character (<256)
      */
@@ -724,8 +724,8 @@ public class TTFFile extends AbstractLogEnabled {
         for (int i = 0; i < nhmtx; i++) {
             mtxTab[i].setWx(in.readTTFUShort());
             mtxTab[i].setLsb(in.readTTFUShort());
-            
-            getLogger().debug("   width[" + i + "] = " 
+
+            getLogger().debug("   width[" + i + "] = "
                 + convertTTFUnit2PDFUnit(mtxTab[i].getWx()) + ";");
         }
 
@@ -783,7 +783,7 @@ public class TTFFile extends AbstractLogEnabled {
             }
             // firstChar=minIndex;
             psGlyphsBuffer = new String[numGlyphStrings];
-            getLogger().debug("Reading " + numGlyphStrings 
+            getLogger().debug("Reading " + numGlyphStrings
                 + " glyphnames" + ", was n num glyphs=" + l);
             for (i = 0; i < psGlyphsBuffer.length; i++) {
                 psGlyphsBuffer[i] = in.readTTFString(in.readTTFUByte());
@@ -795,7 +795,7 @@ public class TTFFile extends AbstractLogEnabled {
                 } else {
                     k = mtxTab[i].getIndex() - NMACGLYPHS;
 
-                    getLogger().debug(k + " i=" + i + " mtx=" + mtxTab.length 
+                    getLogger().debug(k + " i=" + i + " mtx=" + mtxTab.length
                         + " ps=" + psGlyphsBuffer.length);
 
                     mtxTab[i].setName(psGlyphsBuffer[k]);
@@ -877,9 +877,9 @@ public class TTFFile extends AbstractLogEnabled {
                 in.seekSet(n + mtxTab[i].getOffset());
                 in.skip(2);
                 final int[] bbox = {
-                    in.readTTFShort(), 
-                    in.readTTFShort(), 
-                    in.readTTFShort(), 
+                    in.readTTFShort(),
+                    in.readTTFShort(),
+                    in.readTTFShort(),
                     in.readTTFShort()};
                 mtxTab[i].setBoundingBox(bbox);
             } else {
@@ -924,7 +924,7 @@ public class TTFFile extends AbstractLogEnabled {
                 // if (k==1 || k==2 || k==0 || k==4 || k==6) {
                 in.seekSet(j + in.readTTFUShort());
                 String txt = in.readTTFString(l);
-                // getLogger().debug(platform_id + " " + encoding_id 
+                // getLogger().debug(platform_id + " " + encoding_id
                 //     + " " + k + " " + txt);
                 switch (k) {
                 case 0:
@@ -943,9 +943,9 @@ public class TTFFile extends AbstractLogEnabled {
                     fontName = txt;
                     break;
                 }
-                if (!notice.equals("") 
+                if (!notice.equals("")
                         && !fullName.equals("")
-                        && !fontName.equals("") 
+                        && !fontName.equals("")
                         && !familyName.equals("")
                         && !subFamilyName.equals("")) {
                     break;
@@ -1220,10 +1220,10 @@ public class TTFFile extends AbstractLogEnabled {
  * Key-value helper class
  */
 class UnicodeMapping {
-    
+
     private int uIdx;
     private int gIdx;
-    
+
     UnicodeMapping(int gIdx, int uIdx) {
         this.uIdx = uIdx;
         this.gIdx = gIdx;

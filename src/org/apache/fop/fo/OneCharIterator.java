@@ -10,7 +10,7 @@ package org.apache.fop.fo;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-    
+
 public class OneCharIterator extends AbstractCharIterator {
 
     private boolean bFirst=true;

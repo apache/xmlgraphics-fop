@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class FlowLayoutManager extends BlockStackingLayoutManager {
 
-    protected List blockBreaks = new ArrayList();      
+    protected List blockBreaks = new ArrayList();
 
     /** Array of areas currently being filled stored by area class */
     private BlockParent[] currentAreas = new BlockParent[Area.CLASS_MAX];
@@ -103,7 +103,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
             PositionIterator breakPosIter =
               new BreakPossPosIter(blockBreaks, iStartPos,
                                    lfp.getLeafPos() + 1);
-            iStartPos = lfp.getLeafPos() + 1; 
+            iStartPos = lfp.getLeafPos() + 1;
             while ((childLM = breakPosIter.getNextChildLM()) != null) {
                 childLM.addAreas(breakPosIter, lc);
             }

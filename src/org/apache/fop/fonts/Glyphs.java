@@ -154,28 +154,28 @@ public class Glyphs {
         '\u2014',                                       // emdash
         '~', '\u2022',                                  // bullet
         '\u0161', '\u203a', '\u0153', '\u2022', '\u017e', '\u0178', // 0xA0
-             ' ', '\u00a1', '\u00a2', '\u00a3', '\u00a4', '\u00a5', 
-             '\u00a6', '\u00a7', '\u00a8', '\u00a9', '\u00aa', '\u00ab', 
+             ' ', '\u00a1', '\u00a2', '\u00a3', '\u00a4', '\u00a5',
+             '\u00a6', '\u00a7', '\u00a8', '\u00a9', '\u00aa', '\u00ab',
              '\u00ac', '\u00ad',  '\u00ae', '\u00af', // 0xb0
         '\u00b0', '\u00b1', '\u00b2', '\u00b3', '\u00b4',
              '\u00b5',                                  // This is hand-coded, the rest is assumption
         '\u00b6',                                       // and *might* not be correct...
-        '\u00b7', '\u00b8', '\u00b9', '\u00ba', '\u00bb', '\u00bc', '\u00bd', 
+        '\u00b7', '\u00b8', '\u00b9', '\u00ba', '\u00bb', '\u00bc', '\u00bd',
              '\u00be', '\u00bf', // 0xc0
         '\u00c0', '\u00c1', '\u00c2', '\u00c3', '\u00c4', '\u00c5', // Aring
         '\u00c6',                                            // AE
-        '\u00c7', '\u00c8', '\u00c9', '\u00ca', '\u00cb', '\u00cc', 
+        '\u00c7', '\u00c8', '\u00c9', '\u00ca', '\u00cb', '\u00cc',
              '\u00cd', '\u00ce', '\u00cf', // 0xd0
-        '\u00d0', '\u00d1', '\u00d2', '\u00d3', '\u00d4', '\u00d5', 
+        '\u00d0', '\u00d1', '\u00d2', '\u00d3', '\u00d4', '\u00d5',
              '\u00d6', '\u00d7', '\u00d8',    // Oslash
-        '\u00d9', '\u00da', '\u00db', '\u00dc', '\u00dd', '\u00de', 
+        '\u00d9', '\u00da', '\u00db', '\u00dc', '\u00dd', '\u00de',
              '\u00df', // 0xe0
         '\u00e0', '\u00e1', '\u00e2', '\u00e3', '\u00e4', '\u00e5', // aring
         '\u00e6',                                            // ae
-        '\u00e7', '\u00e8', '\u00e9', '\u00ea', '\u00eb', '\u00ec', 
+        '\u00e7', '\u00e8', '\u00e9', '\u00ea', '\u00eb', '\u00ec',
              '\u00ed', '\u00ee', '\u00ef', // 0xf0
-        '\u00f0', '\u00f1', '\u00f2', '\u00f3', '\u00f4', '\u00f5', 
-             '\u00f6', '\u00f7', '\u00f8', '\u00f9', '\u00fa', '\u00fb', 
+        '\u00f0', '\u00f1', '\u00f2', '\u00f3', '\u00f4', '\u00f5',
+             '\u00f6', '\u00f7', '\u00f8', '\u00f9', '\u00fa', '\u00fb',
              '\u00fc', '\u00fd', '\u00fe', '\u00ff'
     };
 
@@ -1233,7 +1233,7 @@ public class Glyphs {
         "\uF730", "zerooldstyle",
         "\u2070", "zerosuperior",
         "\u03B6", "zeta"
-   
+
     };
 
     /**

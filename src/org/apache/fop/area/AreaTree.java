@@ -488,7 +488,7 @@ public class AreaTree {
                     endDocExt.add(ext);
                 break;
             }
-        }        
+        }
 
         private void renderExtensions(List list) {
             for (int count = 0; count < list.size(); count++) {

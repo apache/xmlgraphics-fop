@@ -467,10 +467,10 @@ public class Driver implements LogEnabled {
         } else if(_rendererType == RENDER_RTF) {
             structHandler = new org.apache.fop.rtf.renderer.RTFHandler(_stream);
         } else {
-            if (_renderer == null) throw new Error("_renderer not set when using standard structHandler");  
+            if (_renderer == null) throw new Error("_renderer not set when using standard structHandler");
             structHandler = new LayoutHandler(_stream, _renderer, true);
         }
-        
+
         structHandler.enableLogging(getLogger());
 
         _treeBuilder.setUserAgent(getUserAgent());

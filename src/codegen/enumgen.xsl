@@ -25,10 +25,10 @@
   </xsl:choose>
   </xsl:variable>
    <xsl:variable name="bEnum">
-	<xsl:call-template name="hasEnum"/>
+  <xsl:call-template name="hasEnum"/>
    </xsl:variable>
    <xsl:variable name="bSubpropEnum">
-	<xsl:call-template name="hasSubpropEnum"/>
+  <xsl:call-template name="hasSubpropEnum"/>
    </xsl:variable>
 
    <xsl:if test="$bEnum='true' or contains($bSubpropEnum, 'true')">
@@ -38,7 +38,7 @@ package org.apache.fop.fo.properties;
 <!-- Handle enumeration values -->
     public interface <xsl:value-of select="$classname"/>
     <xsl:if test="use-generic and $bEnum='true'">
-	extends  <xsl:value-of select="use-generic"/>.Enums
+  extends  <xsl:value-of select="use-generic"/>.Enums
     </xsl:if>{
    <xsl:for-each select="enumeration/value">
      public final static int <xsl:value-of select="@const"/> = Constants.<xsl:value-of select="@const"/>;
@@ -69,18 +69,18 @@ package org.apache.fop.fo.properties;
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="$prop/compound/subproperty/use-generic">
-	<!-- generate "interface <subprop> extends <gensubprop>.Enums" -->
-	<xsl:for-each select="$prop/compound/subproperty[use-generic]">
-	  <xsl:variable name="bSpEnum">
-	    <xsl:call-template name="hasEnum">
-	      <xsl:with-param name="prop"
-	   	select="key('genericref', use-generic)"/>
+  <!-- generate "interface <subprop> extends <gensubprop>.Enums" -->
+  <xsl:for-each select="$prop/compound/subproperty[use-generic]">
+    <xsl:variable name="bSpEnum">
+      <xsl:call-template name="hasEnum">
+        <xsl:with-param name="prop"
+       select="key('genericref', use-generic)"/>
             </xsl:call-template>
-	  </xsl:variable>
-	  <xsl:if test="$bSpEnum='true'">
-	  public interface  <xsl:value-of select="name"/> extends  <xsl:value-of select="use-generic"/>.Enums { }
-	  </xsl:if>
-	</xsl:for-each>
+    </xsl:variable>
+    <xsl:if test="$bSpEnum='true'">
+    public interface  <xsl:value-of select="name"/> extends  <xsl:value-of select="use-generic"/>.Enums { }
+    </xsl:if>
+  </xsl:for-each>
     </xsl:when>
     <xsl:otherwise>false</xsl:otherwise>
   </xsl:choose>
@@ -100,7 +100,7 @@ package org.apache.fop.fo.properties;
     </xsl:otherwise>
   </xsl:choose>
       </xsl:variable>
-	<!-- generate "interface <subprop> extends <genprop>.<subprop>" -->
+  <!-- generate "interface <subprop> extends <genprop>.<subprop>" -->
       <xsl:for-each select="$prop/compound/subproperty[enumeration]">
       <xsl:variable name="spname">
         <xsl:call-template name="makeClassName">
@@ -110,7 +110,7 @@ package org.apache.fop.fo.properties;
       public interface <xsl:value-of select="$spname"/> extends <xsl:value-of select="$generic_name"/>.Enums.<xsl:value-of select="$spname"/> {
       }
       </xsl:for-each>
-      
+
     <xsl:if test="$prop/use-generic">
       <xsl:call-template name="inhspenums">
          <xsl:with-param name="prop" select="key('genericref', $prop/use-generic)"/>

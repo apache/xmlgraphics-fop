@@ -161,28 +161,28 @@ public class PDFDocument {
 
     /**
      * List of Links.
-     */ 
+     */
     protected List links = new ArrayList();
 
     /**
      * List of FileSpecs.
-     */ 
+     */
     protected List filespecs = new ArrayList();
 
     /**
      * List of GoToRemotes.
-     */ 
+     */
     protected List gotoremotes = new ArrayList();
 
     /**
      * List of GoTos.
-     */ 
+     */
     protected List gotos = new ArrayList();
 
 
     /**
      * creates an empty PDF document <p>
-     * 
+     *
      * The constructor creates a /Root and /Pages object to
      * track the document but does not write these objects until
      * the trailer is written. Note that the object ID of the
@@ -1464,8 +1464,8 @@ public class PDFDocument {
     /**
      * Add an annotation list object to the pdf document
      *
-     * @param obj the annotation list to add 
-     */ 
+     * @param obj the annotation list to add
+     */
     public void addAnnotList(PDFAnnotList obj) {
         this.objects.add(obj);
     }
@@ -1536,7 +1536,7 @@ public class PDFDocument {
              * add the position of this object to the list of object
              * locations
              */
-            location.set(object.getNumber() - 1, 
+            location.set(object.getNumber() - 1,
                          new Integer(this.position));
 
             /*
@@ -1586,7 +1586,7 @@ public class PDFDocument {
         output(stream);
         for (int count = 0; count < trailerObjects.size(); count++) {
             PDFObject o = (PDFObject) trailerObjects.get(count);
-            this.location.set(o.getNumber() - 1, 
+            this.location.set(o.getNumber() - 1,
                               new Integer(this.position));
             this.position += o.output(stream);
         }

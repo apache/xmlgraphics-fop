@@ -188,7 +188,7 @@ public class Row extends BlockStackingLayoutManager {
             // the optimum is the maximum of all optimums
             if (stackSize.opt > opt) {
                 opt = stackSize.opt;
-            }   
+            }
             // the maximum is the largest maximum
             if (stackSize.max > max) {
                 max = stackSize.max;
@@ -203,7 +203,7 @@ public class Row extends BlockStackingLayoutManager {
         setFinished(true);
         RowPosition rp = new RowPosition(this, breakList.size() - 1, breakList);
         BreakPoss breakPoss = new BreakPoss(rp);
-        if (over) { 
+        if (over) {
             breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
         }
         breakPoss.setStackingSize(rowSize);
@@ -217,7 +217,7 @@ public class Row extends BlockStackingLayoutManager {
      * @param pos a Position returned by a child layout manager
      * representing a potential break decision.
      * If pos is null, then back up to the first child LM.
-     */    
+     */
     protected void reset(Position pos) {
         LayoutManager curLM; // currently active LM
         int cellcount = 0;
@@ -249,7 +249,7 @@ public class Row extends BlockStackingLayoutManager {
      */
     public void setYOffset(int off) {
         yoffset = off;
-    } 
+    }
 
     /**
      * Add the areas for the break points.

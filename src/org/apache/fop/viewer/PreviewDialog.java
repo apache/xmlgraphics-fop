@@ -4,9 +4,9 @@
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
- 
+
 package org.apache.fop.viewer;
- 
+
 //Java
 import java.awt.*;
 import javax.swing.*;
@@ -499,11 +499,11 @@ public class PreviewDialog extends JFrame {
         String msg = translator.getString("Exception.Occured");
         setStatus(msg);
         JOptionPane.showMessageDialog(
- 		    getContentPane(),
+            getContentPane(),
             "<html><b>" + msg + ":</b><br>"
- 		     + e.getClass().getName() + "<br>" + e.getMessage() + "</html>", translator.getString("Exception.Error"),
+          + e.getClass().getName() + "<br>" + e.getMessage() + "</html>", translator.getString("Exception.Error"),
              JOptionPane.ERROR_MESSAGE
- 		);
+        );
     }
 }
 

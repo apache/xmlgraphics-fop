@@ -92,7 +92,7 @@ public class LayoutMasterSet extends FObj {
 
     /**
      * Get a page sequence master by name.
-     * This is used by the page sequence to get a page master for 
+     * This is used by the page sequence to get a page master for
      * creating pages.
      */
     public PageSequenceMaster getPageSequenceMaster(String masterName) {

@@ -95,7 +95,7 @@ public class ListItem extends FObj {
         } else {
             // error
         }
-    } 
+    }
 
     public boolean generatesInlineAreas() {
         return false;

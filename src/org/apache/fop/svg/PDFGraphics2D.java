@@ -361,7 +361,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             return false;
         }
 
-        // first we look to see if we've already added this image to 
+        // first we look to see if we've already added this image to
         // the pdf document. If so, we just reuse the reference;
         // otherwise we have to build a FopImage and add it to the pdf
         // document
@@ -610,7 +610,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         boolean newTransform = graphicsState.checkTransform(trans)
                                && !trans.isIdentity();
 
-        if (newClip || newTransform) { 
+        if (newClip || newTransform) {
             currentStream.write("q\n");
             graphicsState.push();
             if (newClip) {
@@ -993,7 +993,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         if (outputStream != null) {
             try {
-                this.pdfDoc.output(outputStream); 
+                this.pdfDoc.output(outputStream);
             } catch (IOException ioe) {
                 // ignore exception, will be thrown again later
             }
@@ -1172,10 +1172,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         float size;
         name = fontState.getFontName();
         size = (float)fontState.getFontSize() / 1000f;
-    
+
         if ((!name.equals(this.currentFontName))
                 || (size != this.currentFontSize)) {
-            this.currentFontName = name; 
+            this.currentFontName = name;
             this.currentFontSize = size;
             currentStream.write("/" + name + " " + size + " Tf\n");
 
@@ -1193,7 +1193,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             HashMap vals = new HashMap();
             vals.put(PDFGState.ca, new Float(salpha / 255f));
             PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
-            resourceContext.addGState(gstate); 
+            resourceContext.addGState(gstate);
             currentStream.write("/" + gstate.getName() + " gs\n");
         }
 
