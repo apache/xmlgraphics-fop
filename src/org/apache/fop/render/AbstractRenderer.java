@@ -216,12 +216,16 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
             // The CTM will transform coordinates relative to
             // this region-reference area into page coords, so
             // set origin for the region to 0,0.
-            currentBPPosition = 0;// (int) (view.getY() / 1000);
-            currentIPPosition = 0;// (int) (view.getX() / 1000);
+            currentBPPosition = 0;
+            currentIPPosition = 0;
             currentBlockIPPosition = currentIPPosition;
 
             RegionReference region = port.getRegion();
+            //  shouldn't the viewport have the CTM
             startVParea(region.getCTM());
+
+            // do after starting viewport area
+            handleViewportTraits(port);
             if (region.getRegionClass() == RegionReference.BODY) {
                 renderBodyRegion((BodyRegion) region);
             } else {
@@ -237,6 +241,17 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
      * @param ctm  The coordinate transformation matrix to use
      */
     protected void startVParea(CTM ctm) { }
+
+    /**
+     * Handle viewport traits.
+     * This should be overridden to draw border and background
+     * traits for the viewport area.
+     *
+     * @param vp the region viewport area
+     */
+    protected void handleViewportTraits(RegionViewport rv) {
+        // draw border and background
+    }
 
     /**
      * @todo Description of the Method

@@ -320,7 +320,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * Layout managers that create areas with borders can use this to
      * add the borders to the area.
      */
-    public void addBorders(Area curBlock, BorderAndPadding bordProps) {
+    public static void addBorders(Area curBlock, BorderAndPadding bordProps) {
         BorderProps bps = getBorderProps(bordProps, BorderAndPadding.TOP);
         if(bps.width != 0) {
             curBlock.addTrait(Trait.BORDER_BEFORE, bps);
@@ -339,7 +339,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
         }
     }
 
-    private BorderProps getBorderProps(BorderAndPadding bordProps, int side) {
+    private static BorderProps getBorderProps(BorderAndPadding bordProps, int side) {
         BorderProps bps;
         bps = new BorderProps(bordProps.getBorderStyle(side),
                               bordProps.getBorderWidth(side, false),
@@ -352,7 +352,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * Layout managers that create areas with a background can use this to 
      * add the background to the area.
      */
-    public void addBackground(Area curBlock, BackgroundProps backProps) {
+    public static void addBackground(Area curBlock, BackgroundProps backProps) {
         Trait.Background back = new Trait.Background();
         back.color = backProps.backColor;
 

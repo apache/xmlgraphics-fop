@@ -37,7 +37,7 @@ import org.apache.fop.area.CTM;
 import org.apache.fop.area.Title;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Page;
-import org.apache.fop.area.RegionReference;
+import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
@@ -295,6 +295,14 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
+    /**
+     * Start the next page sequence.
+     * For the pdf renderer there is no concept of page sequences
+     * but it uses the first available page sequence title to set
+     * as the title of the pdf document.
+     *
+     * @param seqTitle the title of the page sequence
+     */
     public void startPageSequence(Title seqTitle) {
         if (seqTitle != null) {
             String str = convertTitleToString(seqTitle);
@@ -309,6 +317,8 @@ public class PDFRenderer extends PrintRenderer {
      * and then stored to add the contents later.
      * The page objects is stored using the area tree PageViewport
      * as a key.
+     *
+     * @param page the page to prepare
      */
     public void preparePage(PageViewport page) {
         this.pdfResources = this.pdfDoc.getResources();
@@ -393,11 +403,22 @@ public class PDFRenderer extends PrintRenderer {
         currentState.pop();
     }
 
-    protected void renderRegion(RegionReference region) {
-        // Draw a rectangle so we can see it!
-        // x=0,y=0,w=ipd,h=bpd
+    /**
+     * Handle the viewport traits.
+     * This is used to draw the traits for a viewport.
+     *
+     * @param region the viewport region to handle
+     */
+    protected void handleViewportTraits(RegionViewport region) {
         currentFontName = "";
-        super.renderRegion(region);
+        float startx = 0;
+        float starty = 0;
+        Rectangle2D viewArea = region.getViewArea();
+        float width = (float)(viewArea.getWidth() / 1000f);
+        float height = (float)(viewArea.getHeight() / 1000f);
+        Trait.Background back;
+        back = (Trait.Background)region.getTrait(Trait.BACKGROUND);
+        drawBackAndBorders(region, startx, starty, width, height);
     }
 
     /**
@@ -1052,14 +1073,18 @@ public class PDFRenderer extends PrintRenderer {
      */
     public void renderViewport(Viewport viewport) {
         closeText();
+
+        float x = currentBlockIPPosition / 1000f;
+        float y = (currentBPPosition + viewport.getOffset()) / 1000f;
+        float width = viewport.getWidth() / 1000f;
+        float height = viewport.getHeight() / 1000f;
+        drawBackAndBorders(viewport, x, y, width, height);
+
         currentStream.add("ET\n");
+
         if (viewport.getClip()) {
             currentStream.add("q\n");
 
-            float x = currentBlockIPPosition / 1000f;
-            float y = (currentBPPosition + viewport.getOffset()) / 1000f;
-            float width = viewport.getWidth() / 1000f;
-            float height = viewport.getHeight() / 1000f;
             clip(x, y, width, height);
         }
         super.renderViewport(viewport);
