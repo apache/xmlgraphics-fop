@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.properties.BorderSpacingShorthandParser;
 import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
 import org.apache.fop.fo.properties.BoxPropShorthandParser;
 import org.apache.fop.fo.properties.CharacterProperty;
@@ -2296,7 +2297,8 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(true);
         m.setDefault("collapse");
         m.addEnum("separate", getEnumProperty(EN_SEPARATE, "SEPARATE"));
-        m.addEnum("collapse-with-precedence", getEnumProperty(EN_COLLAPSE_WITH_PRECEDENCE, "COLLAPSE_WITH_PRECEDENCE"));
+        m.addEnum("collapse-with-precedence", getEnumProperty(
+                EN_COLLAPSE_WITH_PRECEDENCE, "COLLAPSE_WITH_PRECEDENCE"));
         m.addEnum("collapse", getEnumProperty(EN_COLLAPSE, "COLLAPSE"));
         addPropertyMaker("border-collapse", m);
 
@@ -2309,6 +2311,7 @@ public class FOPropertyMapping implements Constants {
         // border-separation
         m  = new LengthPairProperty.Maker(PR_BORDER_SEPARATION);
         m.setInherited(true);
+        m.addShorthand(s_generics[PR_BORDER_SPACING]);
 
         sub = new LengthProperty.Maker(CP_BLOCK_PROGRESSION_DIRECTION);
         sub.setDefault("0pt");
@@ -2589,9 +2592,10 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("border-style", m);
 
         // border-spacing
-        m  = new ToBeImplementedProperty.Maker(PR_BORDER_SPACING);
+        m  = new ListProperty.Maker(PR_BORDER_SPACING);
         m.setInherited(true);
         m.setDefault("0pt");
+        m.setDatatypeParser(new BorderSpacingShorthandParser());
         addPropertyMaker("border-spacing", m);
 
         // border-top

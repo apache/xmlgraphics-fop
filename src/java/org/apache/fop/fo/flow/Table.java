@@ -199,6 +199,11 @@ public class Table extends FObj {
     public int getBreakBefore() {
         return breakBefore;
     }
+    
+    /** @return the "border-separation" property. */
+    public LengthPairProperty getBorderSeparation() {
+        return borderSeparation;
+    }
 
     /**
      * @return the "id" property.

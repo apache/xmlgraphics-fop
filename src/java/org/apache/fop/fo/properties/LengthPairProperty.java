@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
     public static class Maker extends CompoundPropertyMaker {
 
         /**
-         * @param name name of property for which this Maker should be created
+         * @param propId name of property for which this Maker should be created
          */
         public Maker(int propId) {
             super(propId);
@@ -54,8 +54,7 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
          * @see CompoundPropertyMaker#convertProperty
          */        
         public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
-            throws PropertyException
-        {
+            throws PropertyException {
             if (p instanceof LengthPairProperty) {
                 return p;
             }
@@ -63,6 +62,33 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
         }
     }
 
+    /**
+     * Creates a new LengthPairProperty with empty values.
+     */
+    public LengthPairProperty() {
+        super();
+    }
+    
+    /**
+     * Creates a new LengthPairProperty.
+     * @param ipd inline-progression-dimension
+     * @param bpd block-progression-dimension
+     */
+    public LengthPairProperty(Property ipd, Property bpd) {
+        this();
+        this.ipd = ipd;
+        this.bpd = bpd;
+    }
+    
+    /**
+     * Creates a new LengthPairProperty which sets both bpd and ipd to the
+     * same value.
+     * @param len length for both dimensions
+     */
+    public LengthPairProperty(Property len) {
+        this(len, len);
+    }
+    
     /**
      * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
      */
@@ -102,10 +128,11 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
         return this.bpd;
     }
 
+    /** @see java.lang.Object#toString() */
     public String toString() {
-        return "LengthPair[" + 
-        "ipd:" + getIPD().getObject() + 
-        ", bpd:" + getBPD().getObject() + "]";
+        return "LengthPair[" 
+            + "ipd:" + getIPD().getObject() 
+            + ", bpd:" + getBPD().getObject() + "]";
     }
 
     /**
