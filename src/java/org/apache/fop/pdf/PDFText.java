@@ -51,7 +51,6 @@
 package org.apache.fop.pdf;
 
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 
 import org.apache.avalon.framework.CascadingRuntimeException;
 

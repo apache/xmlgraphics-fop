@@ -94,7 +94,8 @@ public class FixedLength extends Length {
         } else if (unit.equals("mm")) {
             dvalue = dvalue * 2.83464567;
         } else if (unit.equals("pt")) {
-            dvalue = dvalue;
+            // Do nothing.
+            // dvalue = dvalue;
         } else if (unit.equals("pc")) {
             dvalue = dvalue * 12;
             /*
