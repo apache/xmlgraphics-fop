@@ -13,6 +13,7 @@ SOURCES=Block.java \
 	Flow.java \
 	InlineSequence.java \
 	ListBlock.java \
+	ListItem.java \
 	ListItemBody.java \
 	ListItemLabel.java \
 	PageNumber.java \
