@@ -49,6 +49,7 @@
  
  */
 package org.apache.fop.layout;
+import org.apache.fop.fo.properties.*;
 
 public class Region {
 
@@ -65,6 +66,6 @@ public class Region {
     }
 
     public AreaContainer makeAreaContainer() {
-	return new AreaContainer(xPosition, yPosition, width, height);
+	return new AreaContainer(null, xPosition, yPosition, width, height, Position.ABSOLUTE);
     }
 }

@@ -81,6 +81,7 @@ public class StandardElementMapping implements ElementMapping {
 	builder.addMapping(uri, "static-content",
 			   StaticContent.maker());
 	builder.addMapping(uri, "block", Block.maker()); 
+	builder.addMapping(uri, "block-container", BlockContainer.maker()); 
 	builder.addMapping(uri, "list-block", ListBlock.maker());
 	builder.addMapping(uri, "list-item", ListItem.maker());
 	builder.addMapping(uri, "list-item-label",

@@ -56,9 +56,20 @@ import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.*;
 
 public class TableColumn extends FObj {
 	
+    FontState fs;
+    ColorType backgroundColor;
+    ColorType borderColor;
+    int borderWidth;
+    int borderStyle;
+    int columnWidth;
+    int columnOffset;
+    
+    AreaContainer areaContainer;
+    
     public static class Maker extends FObj.Maker {
 	public FObj make(FObj parent, PropertyList propertyList)
 	    throws FOPException {
@@ -76,10 +87,63 @@ public class TableColumn extends FObj {
     }
 
     public int getColumnWidth() {
-	return this.properties.get("column-width").getLength().mvalue();
+        return columnWidth;
     }
 
     public int getColumnNumber() {
 	return 0; // not implemented yet
     }
+    
+    public Status layout(Area area) throws FOPException {
+	if (this.marker == BREAK_AFTER) {
+	    return new Status(Status.OK);
+	}
+
+	if (this.marker == START) {
+	    String fontFamily =
+		this.properties.get("font-family").getString(); 
+	    String fontStyle =
+		this.properties.get("font-style").getString(); 
+	    String fontWeight =
+		this.properties.get("font-weight").getString(); 
+	    int fontSize =
+		this.properties.get("font-size").getLength().mvalue(); 
+	    
+	    this.fs = new FontState(area.getFontInfo(), fontFamily, 
+				    fontStyle, fontWeight, fontSize);  
+	    this.backgroundColor =
+		this.properties.get("background-color").getColorType();
+	    this.borderColor =
+		this.properties.get("border-color").getColorType();
+	    this.borderWidth =
+		this.properties.get("border-width").getLength().mvalue();
+	    this.borderStyle =
+		this.properties.get("border-style").getEnum();
+            this.columnWidth = 
+                this.properties.get("column-width").getLength().mvalue();
+        }
+
+	this.areaContainer =
+	    new AreaContainer(fs, columnOffset - area.borderWidthLeft, -area.borderWidthTop, columnWidth, 
+			  area.getHeight(), Position.RELATIVE);
+	areaContainer.setPage(area.getPage());
+	areaContainer.setBackgroundColor(backgroundColor);
+        areaContainer.setBorderStyle(borderStyle, borderStyle, borderStyle, borderStyle); 
+        areaContainer.setBorderWidth(borderWidth, borderWidth, borderWidth, borderWidth); 
+        areaContainer.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
+        areaContainer.setHeight(area.getHeight());
+	area.addChild(areaContainer);
+        
+	return new Status(Status.OK);
+    }
+    
+    public void setColumnOffset(int columnOffset) {
+      this.columnOffset = columnOffset; 
+    }
+    
+    public void setHeight(int height) {
+	areaContainer.setMaxHeight(height);
+	areaContainer.setHeight(height);
+    }
+    
 }

@@ -88,7 +88,11 @@ public class Block extends FObjMixed {
     int paddingBottom;
     int paddingLeft;
     int paddingRight;
-
+    
+    ColorType borderColor;
+    int borderWidth;
+    int borderStyle;
+    
     BlockArea blockArea;
 
     // this may be helpful on other FOs too
@@ -142,14 +146,27 @@ public class Block extends FObjMixed {
 	    this.backgroundColor =
 		this.properties.get("background-color").getColorType();
 	    this.paddingTop =
-		this.properties.get("padding-top").getLength().mvalue();
-	    this.paddingLeft =
-		this.properties.get("padding-left").getLength().mvalue();
-	    this.paddingBottom =
-		this.properties.get("padding-bottom").getLength().mvalue();
-	    this.paddingRight =
-		this.properties.get("padding-right").getLength().mvalue();
-
+		this.properties.get("padding").getLength().mvalue();
+            this.paddingLeft = this.paddingTop;
+            this.paddingRight = this.paddingTop;
+            this.paddingBottom = this.paddingTop;
+            if (this.paddingTop == 0) {
+	      this.paddingTop =
+		  this.properties.get("padding-top").getLength().mvalue();
+	      this.paddingLeft =
+		  this.properties.get("padding-left").getLength().mvalue();
+	      this.paddingBottom =
+		  this.properties.get("padding-bottom").getLength().mvalue();
+	      this.paddingRight =
+		  this.properties.get("padding-right").getLength().mvalue();
+            }
+	    this.borderColor =
+		this.properties.get("border-color").getColorType();
+	    this.borderWidth =
+		this.properties.get("border-width").getLength().mvalue();
+	    this.borderStyle =
+		this.properties.get("border-style").getEnum();
+            
 	    if (area instanceof BlockArea) {
 		area.end();
 	    }
@@ -162,12 +179,6 @@ public class Block extends FObjMixed {
 
 	    if (this.isInListBody) {
 		startIndent += bodyIndent + distanceBetweenStarts;
-	    }
-
-	    if (this.isInTableCell) {
-		startIndent += forcedStartOffset;
-		endIndent = area.getAllocationWidth() - forcedWidth -
-		    forcedStartOffset;
 	    }
 
 	    this.marker = 0;
@@ -195,12 +206,17 @@ public class Block extends FObjMixed {
 
 	this.blockArea =
 	    new BlockArea(fs, area.getAllocationWidth(), 
-			  area.spaceLeft(), startIndent, endIndent,
+			  area.spaceLeft(), 
+                          startIndent, 
+                          endIndent,
 			  textIndent, align, alignLast, lineHeight);
 	blockArea.setPage(area.getPage());
 	blockArea.setBackgroundColor(backgroundColor);
 	blockArea.setPadding(paddingTop, paddingLeft, paddingBottom,
 			     paddingRight);
+        blockArea.setBorderStyle(borderStyle, borderStyle, borderStyle, borderStyle); 
+        blockArea.setBorderWidth(borderWidth, borderWidth, borderWidth, borderWidth); 
+        blockArea.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
 	blockArea.start();
 
 	int numChildren = this.children.size();

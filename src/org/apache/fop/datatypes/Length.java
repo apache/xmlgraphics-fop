@@ -60,6 +60,8 @@ public class Length {
     protected int millipoints = 0;
 
     protected double fontsize = 12;
+    
+    boolean auto = false;
 
     /**
      * set the length given a particular String specifying length and units
@@ -95,6 +97,8 @@ public class Length {
 	if (l == 0) {
 	    System.err.println("WARNING: empty length");
 	    this.millipoints = 0;
+        } else if (len.equals("auto")) {
+          this.auto = true;
 	} else {
 	    String unit = len.substring(l-2);
 	    double dvalue =

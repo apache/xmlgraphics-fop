@@ -118,6 +118,50 @@ public class PropertyListBuilder {
 	propertyTable.put("x2",SVGLength.maker());
 	propertyTable.put("y1",SVGLength.maker());
 	propertyTable.put("y2",SVGLength.maker());
+        
+	propertyTable.put("border-after-color",BorderAfterColor.maker());
+	propertyTable.put("border-after-style",BorderAfterStyle.maker());
+	propertyTable.put("border-after-width",BorderAfterWidth.maker());
+	propertyTable.put("border-before-color",BorderBeforeColor.maker());
+	propertyTable.put("border-before-style",BorderBeforeStyle.maker());
+	propertyTable.put("border-before-width",BorderBeforeWidth.maker());
+	propertyTable.put("border-bottom",BorderBottom.maker());
+	propertyTable.put("border-bottom-color",BorderBottomColor.maker());
+	propertyTable.put("border-bottom-style",BorderBottomStyle.maker());
+	propertyTable.put("border-bottom-width",BorderBottomWidth.maker());
+	propertyTable.put("border-color",BorderColor.maker());
+	propertyTable.put("border-end-color",BorderEndColor.maker());
+	propertyTable.put("border-end-style",BorderEndStyle.maker());
+	propertyTable.put("border-end-width",BorderEndWidth.maker());
+	propertyTable.put("border-left",BorderLeft.maker());
+	propertyTable.put("border-left-color",BorderLeftColor.maker());
+	propertyTable.put("border-left-style",BorderLeftStyle.maker());
+	propertyTable.put("border-left-width",BorderLeftWidth.maker());
+	propertyTable.put("border-right",BorderRight.maker());
+	propertyTable.put("border-right-color",BorderRightColor.maker());
+	propertyTable.put("border-right-style",BorderRightStyle.maker());
+	propertyTable.put("border-right-width",BorderRightWidth.maker());
+	propertyTable.put("border-start-color",BorderStartColor.maker());
+	propertyTable.put("border-start-color",BorderStartColor.maker());
+	propertyTable.put("border-start-width",BorderStartWidth.maker());
+	propertyTable.put("border-style",BorderStyle.maker());
+	propertyTable.put("border-top",BorderTop.maker());
+	propertyTable.put("border-top-color",BorderTopColor.maker());
+	propertyTable.put("border-top-style",BorderTopStyle.maker());
+	propertyTable.put("border-top-style",BorderTopStyle.maker());
+	propertyTable.put("border-width",BorderWidth.maker());
+	propertyTable.put("bottom",Bottom.maker());
+	propertyTable.put("height",Height.maker());
+	propertyTable.put("left",Left.maker());
+	propertyTable.put("padding",Padding.maker());
+	propertyTable.put("padding-after",PaddingAfter.maker());
+	propertyTable.put("padding-before",PaddingBefore.maker());
+	propertyTable.put("padding-end",PaddingEnd.maker());
+	propertyTable.put("padding-start",PaddingStart.maker());
+	propertyTable.put("position",Position.maker());
+	propertyTable.put("right",Right.maker());
+	propertyTable.put("top",Top.maker());
+	propertyTable.put("width",Width.maker());
     }
 
     public Property computeProperty(PropertyList propertyList, String propertyName) {
@@ -128,7 +172,7 @@ public class PropertyListBuilder {
 	if (propertyMaker != null) {
 	    p = propertyMaker.compute(propertyList);
 	} else {
-	    //System.err.println("WARNING: property " + propertyName + " ignored");
+	    System.err.println("WARNING: property " + propertyName + " ignored");
 	}
 	return p;
     }
@@ -172,7 +216,7 @@ public class PropertyListBuilder {
 	if (propertyMaker != null) {
 	    p = propertyMaker.make(propertyList);
 	} else {
-	    //System.err.println("WARNING: property " + propertyName + " ignored");
+	    System.err.println("WARNING: property " + propertyName + " ignored");
 	}
 	return p;
     }

@@ -74,9 +74,6 @@ abstract public class Area extends Box {
 
     protected int allocationWidth;
 
-    /* the inner-most area container the area is in */
-    protected AreaContainer areaContainer;
-
     /* the page this area is on */
     protected Page page;
 
@@ -86,6 +83,19 @@ abstract public class Area extends Box {
     protected int paddingLeft;
     protected int paddingBottom;
     protected int paddingRight;
+    
+    public int borderWidthTop;
+    public int borderWidthLeft;
+    public int borderWidthRight;
+    public int borderWidthBottom;
+    public int borderStyleTop;
+    public int borderStyleLeft;
+    public int borderStyleRight;
+    public int borderStyleBottom;
+    public ColorType borderColorTop;
+    public ColorType borderColorLeft;
+    public ColorType borderColorRight;
+    public ColorType borderColorBottom;
 
     public Area (FontState fontState) {
 	this.fontState = fontState;
@@ -94,6 +104,7 @@ abstract public class Area extends Box {
     public Area (FontState fontState, int allocationWidth, int maxHeight) {
 	this.fontState = fontState;
 	this.allocationWidth = allocationWidth;
+        this.contentRectangleWidth = allocationWidth;
 	this.maxHeight = maxHeight;
     }
 
@@ -120,7 +131,7 @@ abstract public class Area extends Box {
     }
     
     public int getAllocationWidth() {
-	return this.allocationWidth;
+	return this.allocationWidth - paddingLeft - paddingRight - borderWidthLeft - borderWidthRight;
     }
     
     public Vector getChildren() {
@@ -128,19 +139,23 @@ abstract public class Area extends Box {
     }
 	
     public int getContentWidth() {
-	return this.contentRectangleWidth;
+	return contentRectangleWidth - paddingLeft - paddingRight - borderWidthLeft - borderWidthRight;
     }
 
     public FontState getFontState() {
 	return this.fontState;
     }
 
-    public int getHeight() {
+    public int getContentHeight() {
 	return this.currentHeight;
     }
 
+    public int getHeight() {
+	return this.currentHeight + paddingTop + paddingBottom + borderWidthTop + borderWidthBottom;
+    }
+
     public int getMaxHeight() {
-	return this.maxHeight;
+	return this.maxHeight - paddingTop - paddingBottom - borderWidthTop - borderWidthBottom;
     }
 
     public Page getPage() {
@@ -195,10 +210,46 @@ abstract public class Area extends Box {
 	this.paddingRight = right;
     }
 
+    public void setBorderWidth(int top, int left, int bottom, int right) {
+	this.borderWidthTop = top;
+	this.borderWidthLeft = left;
+	this.borderWidthBottom = bottom;
+	this.borderWidthRight = right;
+    }
+
+    public void setBorderStyle(int top, int left, int bottom, int right) {
+	this.borderStyleTop = top;
+	this.borderStyleLeft = left;
+	this.borderStyleBottom = bottom;
+	this.borderStyleRight = right;
+    }
+
+    public void setBorderColor(ColorType top, ColorType left, ColorType bottom, ColorType right) {
+	this.borderColorTop = top;
+	this.borderColorLeft = left;
+	this.borderColorBottom = bottom;
+	this.borderColorRight = right;
+    }
+
     public int spaceLeft() {
 	return maxHeight - currentHeight;
     }
 
     public void start() {
+    }
+    
+    public void setHeight(int height) {
+      if (height > currentHeight)
+        currentHeight = height;
+      if (currentHeight > getMaxHeight())
+        currentHeight = getMaxHeight();
+    }
+    
+    public void setMaxHeight(int height) {
+      this.maxHeight = height;
+    }
+    
+    public Area getParent() {
+      return this.parent;
     }
 }

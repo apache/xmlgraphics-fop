@@ -95,7 +95,8 @@ public class BlockArea extends Area {
 	this.alignLastLine = alignLastLine;
 	this.lineHeight = lineHeight;
 
-	this.halfLeading = (lineHeight - fontState.getFontSize())/2;
+        if (fontState != null)
+	  this.halfLeading = (lineHeight - fontState.getFontSize())/2;
     }
 
     public void render(Renderer renderer) {
@@ -182,9 +183,15 @@ public class BlockArea extends Area {
     }
 
     public int getStartIndent() {
-	return startIndent;
+	return startIndent + paddingLeft + borderWidthLeft;
     }
 
+    public void setIndents(int startIndent, int endIndent) {
+	this.startIndent = startIndent;
+	this.endIndent = endIndent;
+	this.contentRectangleWidth = allocationWidth - startIndent - endIndent;
+    }
+    
     public int spaceLeft() {
 	return maxHeight - currentHeight;
     }

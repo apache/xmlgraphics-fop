@@ -75,15 +75,13 @@ public class TableBody extends FObj {
     }
 
     FontState fs;
-    int startIndent;
-    int endIndent;
     int spaceBefore;
     int spaceAfter;
     ColorType backgroundColor;
 
     Vector columns;
 
-    BlockArea blockArea;
+    AreaContainer areaContainer;
 
     public TableBody(FObj parent, PropertyList propertyList) {
 	super(parent, propertyList);
@@ -111,10 +109,6 @@ public class TableBody extends FObj {
 	    
 	    this.fs = new FontState(area.getFontInfo(), fontFamily, 
 				    fontStyle, fontWeight, fontSize);  
-	    this.startIndent =
-		this.properties.get("start-indent").getLength().mvalue(); 
-	    this.endIndent =
-		this.properties.get("end-indent").getLength().mvalue(); 
 	    this.spaceBefore =
 		this.properties.get("space-before.optimum").getLength().mvalue();  
 	    this.spaceAfter =
@@ -138,44 +132,36 @@ public class TableBody extends FObj {
 	    area.addDisplaySpace(spaceBefore);
 	}
 
-	this.blockArea =
-	    new BlockArea(fs, area.getAllocationWidth(), 
-			  area.spaceLeft(), startIndent, endIndent, 0,
-			  0, 0, 0);
-	blockArea.setPage(area.getPage());
-	blockArea.setBackgroundColor(backgroundColor);
-	blockArea.start();
+	this.areaContainer =
+	    new AreaContainer(fs, -area.borderWidthLeft, -area.borderWidthTop, area.getAllocationWidth(), 
+			  area.spaceLeft(), Position.RELATIVE);
+	areaContainer.setPage(area.getPage());
+	areaContainer.setBackgroundColor(backgroundColor);
+	areaContainer.start();
 
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
 	    TableRow row = (TableRow) children.elementAt(i);
 
-	    //if (this.isInListBody) {
-	    //fo.setIsInListBody();
-	    //fo.setDistanceBetweenStarts(this.distanceBetweenStarts);
-	    //fo.setBodyIndent(this.bodyIndent);
-	    //}
-
 	    row.setColumns(columns);
 
 	    Status status;
-	    if ((status = row.layout(blockArea)).isIncomplete()) {
+	    if ((status = row.layout(areaContainer)).isIncomplete()) {
 		this.marker = i;
 		if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
 		    status = new Status(Status.AREA_FULL_SOME);
 		}
-		//blockArea.end();
-		area.addChild(blockArea);
-		area.increaseHeight(blockArea.getHeight());
+    	        area.addChild(areaContainer);
+		//areaContainer.end();
+		area.increaseHeight(areaContainer.getHeight());
 		return status;
 	    }
 	}
-
-	blockArea.end();
-	area.addChild(blockArea);
+	area.addChild(areaContainer);
+	areaContainer.end();
 
 	/* should this be combined into above? */
-	area.increaseHeight(blockArea.getHeight());
+	area.increaseHeight(areaContainer.getHeight());
 
 	if (spaceAfter != 0) {
 	    area.addDisplaySpace(spaceAfter);
@@ -189,6 +175,6 @@ public class TableBody extends FObj {
     }
 
     public int getAreaHeight() {
-	return blockArea.getHeight();
+	return areaContainer.getHeight();
     }
 }

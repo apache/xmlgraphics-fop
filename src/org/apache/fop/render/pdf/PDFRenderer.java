@@ -55,6 +55,7 @@ package org.apache.fop.render.pdf;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
+import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.svg.*;
@@ -80,9 +81,6 @@ public class PDFRenderer implements Renderer {
 
     /** the current stream to add PDF commands to */
     PDFStream currentStream;
-
-    /** the current annotation list to add annotations to */
-    PDFAnnotList currentAnnotList;
 
     /** the current (internal) font name */
     protected String currentFontName;
@@ -214,21 +212,83 @@ public class PDFRenderer implements Renderer {
      * @param area the area container to render
      */
     public void renderAreaContainer(AreaContainer area) {
+        
+        int saveY = this.currentYPosition;
+        int saveX = this.currentAreaContainerXPosition;
+        
+        if (area.getPosition() == Position.ABSOLUTE) {
+            // Y position is computed assuming positive Y axis, adjust for negative postscript one
+ 	  this.currentYPosition = area.getYPosition() - 2 * area.getPaddingTop() - 2 * area.borderWidthTop;
+	  this.currentAreaContainerXPosition = area.getXPosition();
+        } else if (area.getPosition() == Position.RELATIVE) {
+	  this.currentYPosition -= area.getYPosition();
+    	  this.currentAreaContainerXPosition += area.getXPosition();
+        } else if (area.getPosition() == Position.STATIC) {
+	  this.currentYPosition -= area.getPaddingTop() + area.borderWidthTop;
+    	  this.currentAreaContainerXPosition += area.getPaddingLeft() + area.borderWidthLeft;
+        }
 
-	/* move into position */
-	currentStream.add("1 0 0 1 "
-			  + (area.getXPosition()/1000f) + " "
-			  + (area.getYPosition()/1000f) + " Tm\n");
-
-	this.currentYPosition = area.getYPosition();
-	this.currentAreaContainerXPosition = area.getXPosition();
-
+        doFrame(area);
+        
 	Enumeration e = area.getChildren().elements();
 	while (e.hasMoreElements()) {
 	    Box b = (Box) e.nextElement();
 	    b.render(this);
 	}
+        if (area.getPosition() != Position.STATIC) {
+          this.currentYPosition = saveY;
+          this.currentAreaContainerXPosition = saveX;
+        } else 
+          this.currentYPosition -= area.getHeight();
     }
+    
+    private void doFrame(Area area) {
+        int w, h;
+	int rx = this.currentAreaContainerXPosition;
+	w = area.getContentWidth();
+        if (area instanceof BlockArea)
+	  rx += ((BlockArea)area).getStartIndent();
+    	h = area.getContentHeight();
+	int ry = this.currentYPosition;
+	ColorType bg = area.getBackgroundColor();
+        
+        rx = rx - area.getPaddingLeft();
+        ry = ry + area.getPaddingTop();
+        w = w + area.getPaddingLeft() + area.getPaddingRight();
+        h = h + area.getPaddingTop() + area.getPaddingBottom();
+        
+	// I'm not sure I should have to check for bg being null
+	// but I do
+	if ((bg != null) && (bg.alpha() == 0)) {
+	    this.addRect(rx, ry, w, -h,
+			 bg.red(), bg.green(), bg.blue(),
+			 bg.red(), bg.green(), bg.blue());
+	}
+    
+        rx = rx - area.borderWidthLeft;
+        ry = ry + area.borderWidthTop;
+        w = w + area.borderWidthLeft + area.borderWidthRight;
+        h = h + area.borderWidthTop + area.borderWidthBottom;
+        
+        if (area.borderWidthTop != 0)
+          addLine(rx, ry, rx + w, ry, 
+                area.borderWidthTop,  
+                area.borderColorTop.red(), area.borderColorTop.green(), area.borderColorTop.blue());
+        if (area.borderWidthLeft != 0)
+          addLine(rx, ry, rx, ry - h, 
+                area.borderWidthLeft,  
+                area.borderColorLeft.red(), area.borderColorLeft.green(), area.borderColorLeft.blue());
+        if (area.borderWidthRight != 0)
+          addLine(rx + w, ry, rx + w, ry - h, 
+                area.borderWidthRight,  
+                area.borderColorRight.red(), area.borderColorRight.green(), area.borderColorRight.blue());
+        if (area.borderWidthBottom != 0)
+          addLine(rx, ry - h, rx + w, ry - h, 
+                area.borderWidthBottom,  
+                area.borderColorBottom.red(), area.borderColorBottom.green(), area.borderColorBottom.blue());
+
+    } 
+   
 
     /**
      * render block area to PDF
@@ -236,23 +296,7 @@ public class PDFRenderer implements Renderer {
      * @param area the block area to render
      */
     public void renderBlockArea(BlockArea area) {
-	int rx = this.currentAreaContainerXPosition
-	    + area.getStartIndent();
-	int ry = this.currentYPosition;
-	int w = area.getContentWidth();
-	int h = area.getHeight();
-	ColorType bg = area.getBackgroundColor();
-	int pt = area.getPaddingTop();
-	int pl = area.getPaddingLeft();
-	int pb = area.getPaddingBottom();
-	int pr = area.getPaddingRight();
-	// I'm not sure I should have to check for bg being null
-	// but I do
-	if ((bg != null) && (bg.alpha() == 0)) {
-	    this.addRect(rx - pl, ry + pt, w + pl + pr , - (h + pt + pb),
-			 bg.red(), bg.green(), bg.blue(),
-			 bg.red(), bg.green(), bg.blue());
-	}
+        doFrame(area);
 	Enumeration e = area.getChildren().elements();
 	while (e.hasMoreElements()) {
 	    Box b = (Box) e.nextElement();
@@ -461,9 +505,11 @@ public class PDFRenderer implements Renderer {
 	
 	currentStream.add("ET\n");
 
-	if (page.hasLinks()) {
-            currentAnnotList = this.pdfDoc.makeAnnotList();
+	this.pdfDoc.makePage(this.pdfResources, currentStream,
+			     page.getWidth()/1000,
+			     page.getHeight()/1000);
 
+	/*if (page.hasLinks()) {
 	    Enumeration e = page.getLinkSets().elements();
 	    while (e.hasMoreElements()) {
 		LinkSet linkSet = (LinkSet) e.nextElement();
@@ -471,20 +517,10 @@ public class PDFRenderer implements Renderer {
 		Enumeration f = linkSet.getRects().elements();
 		while (f.hasMoreElements()) {
 		    Rectangle rect = (Rectangle) f.nextElement();
-		    currentAnnotList.addLink(
-                        this.pdfDoc.makeLink(rect, dest)
-                    );
+		    this.pdfDoc.makeLink(rect, dest);
 		}
 	    }
-	} else {
-            currentAnnotList = null;
-        }
-
-	this.pdfDoc.makePage(this.pdfResources, currentStream,
-                             currentAnnotList,
-			     page.getWidth()/1000,
-			     page.getHeight()/1000);
-
+	} */
     }
 
     /**
@@ -516,3 +552,4 @@ public class PDFRenderer implements Renderer {
 	FontSetup.addToResources(this.pdfDoc, fontInfo);
     }
 }
+

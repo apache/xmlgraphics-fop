@@ -300,7 +300,7 @@ public class LineArea extends Area {
 
 		    wordWidth = charWidth;
 		    if ((finalWidth + spaceWidth + wordWidth) >
-			this.contentRectangleWidth) { 
+			this.getContentWidth()) { 
 			if (overrun)
 			    System.err.print(">");
 			if (this.wrapOption == WrapOption.WRAP)
@@ -320,7 +320,7 @@ public class LineArea extends Area {
 		}
 
 		if ((finalWidth + spaceWidth + pendingWidth + wordWidth) >
-		    this.contentRectangleWidth) { 
+		    this.getContentWidth()) { 
 		    
 		    // BREAK MID WORD
 		    if (wordStart == start) { // if couldn't even fit
@@ -386,15 +386,15 @@ public class LineArea extends Area {
 	
 	switch (type) {
 	case TextAlign.START: // left
-	    padding = this.contentRectangleWidth - finalWidth;
+	    padding = this.getContentWidth() - finalWidth;
 	    endIndent += padding;
 	    break;
 	case TextAlign.END: // right
-	    padding = this.contentRectangleWidth - finalWidth;
+	    padding = this.getContentWidth() - finalWidth;
 	    startIndent += padding;
 	    break;
 	case TextAlign.CENTERED: // center
-	    padding = (this.contentRectangleWidth - finalWidth)/2;
+	    padding = (this.getContentWidth() - finalWidth)/2;
 	    startIndent += padding;
 	    endIndent += padding;
 	    break;
@@ -412,7 +412,7 @@ public class LineArea extends Area {
 		}
 	    }
 	    if (spaceCount > 0) {
-		padding = (this.contentRectangleWidth - finalWidth) /
+		padding = (this.getContentWidth() - finalWidth) /
 		    spaceCount; 
 	    } else { // no spaces
 		padding = 0;

@@ -70,18 +70,25 @@ public class TableCell extends FObj {
 	return new TableCell.Maker();
     }
 
-    FontState fs;
-    int startIndent;
-    int endIndent;
     int spaceBefore;
     int spaceAfter;
     ColorType backgroundColor;
 
+    FontState fs;
+    ColorType borderColor;
+    int borderWidth;
+    int borderStyle;
+    int paddingTop;
+    int paddingBottom;
+    int paddingLeft;
+    int paddingRight;
+    int position;
+    
     protected int startOffset;
     protected int width;
     protected int height = 0;
 
-    BlockArea blockArea;
+    AreaContainer areaContainer;
 
     public TableCell(FObj parent, PropertyList propertyList) {
 	super(parent, propertyList);
@@ -113,10 +120,28 @@ public class TableCell extends FObj {
 	    
 	    this.fs = new FontState(area.getFontInfo(), fontFamily, 
 				    fontStyle, fontWeight, fontSize);  
-	    this.startIndent =
-		this.properties.get("start-indent").getLength().mvalue(); 
-	    this.endIndent =
-		this.properties.get("end-indent").getLength().mvalue(); 
+	    this.borderColor =
+		this.properties.get("border-color").getColorType();
+	    this.borderWidth =
+		this.properties.get("border-width").getLength().mvalue();
+	    this.borderStyle =
+		this.properties.get("border-style").getEnum();
+	    this.paddingTop =
+		this.properties.get("padding").getLength().mvalue();
+            this.paddingLeft = this.paddingTop;
+            this.paddingRight = this.paddingTop;
+            this.paddingBottom = this.paddingTop;
+            if (this.paddingTop == 0) {
+	      this.paddingTop =
+		  this.properties.get("padding-top").getLength().mvalue();
+	      this.paddingLeft =
+		  this.properties.get("padding-left").getLength().mvalue();
+	      this.paddingBottom =
+		  this.properties.get("padding-bottom").getLength().mvalue();
+	      this.paddingRight =
+		  this.properties.get("padding-right").getLength().mvalue();
+            }
+	    
 	    this.spaceBefore =
 		this.properties.get("space-before.optimum").getLength().mvalue();  
 	    this.spaceAfter =
@@ -140,25 +165,26 @@ public class TableCell extends FObj {
 	    area.addDisplaySpace(spaceBefore);
 	}
 
-	this.blockArea =
-	    new BlockArea(fs, area.getAllocationWidth(), 
-			  area.spaceLeft(), startIndent, endIndent, 0,
-			  0, 0, 0);
-	blockArea.setPage(area.getPage());
-	blockArea.setBackgroundColor(backgroundColor);
-	blockArea.start();
-
-	// added by Eric Schaeffer
-	height = 0;
+	this.areaContainer =
+	    new AreaContainer(fs, startOffset - area.borderWidthLeft,
+                              - area.borderWidthTop,
+                          width, area.spaceLeft(), Position.RELATIVE);
+	areaContainer.setPage(area.getPage());
+	areaContainer.setPadding(paddingTop, paddingLeft, paddingBottom,
+			     paddingRight);
+	areaContainer.setBackgroundColor(backgroundColor);
+        areaContainer.setBorderStyle(borderStyle, borderStyle, borderStyle, borderStyle); 
+        areaContainer.setBorderWidth(borderWidth, borderWidth, borderWidth, borderWidth); 
+        areaContainer.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
+	areaContainer.start();
 
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
 	    FObj fo = (FObj) children.elementAt(i);
 	    fo.setIsInTableCell();
-	    fo.forceStartOffset(startOffset);
 	    fo.forceWidth(width);
 	    Status status;
-	    if ((status = fo.layout(blockArea)).isIncomplete()) {
+	    if ((status = fo.layout(areaContainer)).isIncomplete()) {
 		this.marker = i;
 		if ((i == 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
 		    return new Status(Status.AREA_FULL_NONE);
@@ -166,18 +192,19 @@ public class TableCell extends FObj {
 		    return new Status(Status.AREA_FULL_SOME);
 		}
 	    }
-	    // bug fix from Eric Schaeffer
-	    // height += blockArea.getHeight();
-	    height = blockArea.getHeight();
-
 	}
-	blockArea.end();
-	area.addChild(blockArea);
+	areaContainer.end();
+	area.addChild(areaContainer);
 
 	return new Status(Status.OK);
     }
 
     public int getHeight() {
-	return height;
+	return areaContainer.getHeight();;
+    }
+    
+    public void setHeight(int height) {
+	areaContainer.setMaxHeight(height);
+	areaContainer.setHeight(height);
     }
 }
