@@ -130,7 +130,7 @@ public class FObj extends FONode {
             FONode child= (FONode)children.elementAt(i);
             if ((child instanceof FObj))   
             {
-                child.removeID(idReferences);            
+                ((FObj)child).removeID(idReferences);            
             }	
 	}
     }
