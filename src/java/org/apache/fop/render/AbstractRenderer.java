@@ -676,5 +676,31 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
         }
     }
 
+    /**
+     * Set the default xml handler for the given mime type.
+     * @param mime MIME type
+     * @param handler XMLHandler to use
+     */
+    public void setDefaultXMLHandler(FOUserAgent foua, String mime,
+                                     XMLHandler handler) {
+        foua.defaults.put(mime, handler);
+    }
+
+    /**
+     * Add an xml handler for the given mime type and xml namespace.
+     * @param mime MIME type
+     * @param ns Namespace URI
+     * @param handler XMLHandler to use
+     */
+    public void addXMLHandler(FOUserAgent foua, String mime, String ns,
+                              XMLHandler handler) {
+        Map mh = (Map) foua.handlers.get(mime);
+        if (mh == null) {
+            mh = new java.util.HashMap();
+            foua.handlers.put(mime, mh);
+        }
+        mh.put(ns, handler);
+    }
+
 }
 

@@ -147,9 +147,9 @@ public class XMLRenderer extends AbstractRenderer {
         //
         //userAgent.addExtensionHandler();
         XMLHandler handler = new XMLXMLHandler();
-        userAgent.setDefaultXMLHandler(XML_MIME_TYPE, handler);
+        setDefaultXMLHandler(userAgent, XML_MIME_TYPE, handler);
         String svg = "http://www.w3.org/2000/svg";
-        userAgent.addXMLHandler(XML_MIME_TYPE, svg, handler);
+        addXMLHandler(userAgent, XML_MIME_TYPE, svg, handler);
     }
 
     /**

@@ -161,8 +161,8 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
      */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
-        userAgent.setDefaultXMLHandler(SVG_MIME_TYPE, this);
-        userAgent.addXMLHandler(SVG_MIME_TYPE, SVG_NAMESPACE, this);
+        setDefaultXMLHandler(userAgent, SVG_MIME_TYPE, this);
+        addXMLHandler(userAgent, SVG_MIME_TYPE, SVG_NAMESPACE, this);
     }
 
     /**
