@@ -22,7 +22,7 @@
     </menu>
     <menu label="Output">
       <menu-item label="PDF" href="pdf.html"/>
-      <menu-item label="Postscript" href="pdf.html"/>
+      <menu-item label="Postscript" href="ps.html"/>
     </menu>
     <menu label="General">
       <external label="FOP Wiki" href="http://nagoya.apache.org/wiki/apachewiki.cgi?FOPProjectPages"/>
