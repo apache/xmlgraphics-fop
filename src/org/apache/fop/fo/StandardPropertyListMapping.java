@@ -57,7 +57,7 @@ import java.util.Hashtable;
 
 public class StandardPropertyListMapping implements PropertyListMapping {
 
-    public void addToBuilder(FOTreeBuilder builder) {
+    public void addToBuilder(TreeBuilder builder) {
 
 	String uri = "http://www.w3.org/1999/XSL/Format";
 	Hashtable propertyTable = new Hashtable();
