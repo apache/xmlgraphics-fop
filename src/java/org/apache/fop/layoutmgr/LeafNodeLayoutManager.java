@@ -77,12 +77,6 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
     }
 
     /**
-     * Create a Leaf node layout mananger.
-     */
-    public LeafNodeLayoutManager() {
-    }
-
-    /**
      * get the inline area.
      * @param context the context used to create the area
      * @return the current inline area for this layout manager

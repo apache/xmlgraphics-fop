@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.fo.pagination.Flow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,10 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
 
     private RegionReference region;
     private List blockBreaks = new ArrayList();
+
+    public StaticContentLayoutManager(Flow node) {
+        super(node);
+    }
 
     /**
      * Sets the region reference
