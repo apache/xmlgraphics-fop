@@ -31,7 +31,10 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="simple">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block line-height="10pt" space-before.optimum="5cm" 
+          <fo:block-container height="5cm">
+            <fo:block/>
+          </fo:block-container>
+          <fo:block line-height="10pt" background-color="orange"
             white-space-collapse="false" white-space-treatment="preserve" linefeed-treatment="preserve" wrap-option="no-wrap">
 line1
 line2
@@ -43,10 +46,11 @@ line3
   </fo>
   <checks>
     <!-- contents must be broken to the next page to show the bug. -->
-    <true xpath="boolean(//pageViewport[2])"/>
-    <eval expected="0" xpath="count(//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea)"/>
-    <eval expected="line1" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea[1]/text"/>
-    <eval expected="line2" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea[2]/text"/>
-    <eval expected="line3" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea[1]/text"/>
+    <eval expected="2" xpath="count(//pageViewport)"/>
+    
+    <eval expected="" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea[1]/text"/>
+    <eval expected="line1" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea[2]/text"/>
+    <eval expected="line2" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea[1]/text"/>
+    <eval expected="line3" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea[2]/text"/>
   </checks>
 </testcase>
