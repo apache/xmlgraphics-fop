@@ -70,6 +70,14 @@ public class FontMetricsMapper implements org.apache.fop.layout.FontMetric {
     }
 
     /**
+     * Create Original Font.
+     * @param fontPath path to truetype font
+     */
+    public void setEmbedFont(String fontPath) {
+        metric.setEmbedFont(family,style,fontPath);
+    }
+
+    /**
      * Determines the font ascent of the Font described by this
      * FontMetrics object
      * @return ascent in milliponts

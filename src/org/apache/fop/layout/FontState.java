@@ -123,6 +123,8 @@ public class FontState {
 
         if (_metric instanceof org.apache.fop.render.pdf.Font) {
             return ((org.apache.fop.render.pdf.Font)_metric).mapChar(c);
+        } else if (_metric instanceof org.apache.fop.render.awt.FontMetricsMapper) {
+            return c;
         }
 
         // Use default CodePointMapping

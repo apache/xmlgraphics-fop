@@ -2,7 +2,7 @@
 #
 #  In dieser Datei werden im Abschnitt "Messages" Meldungen auf deutsch 
 #  definiert. 
-#  Zu beachten: Beim Definieren einer neuen neuen Meldung, diese soweit möglich 
+#  Zu beachten: Beim Definieren einer neuen neuen Meldung, diese soweit mÃ¶glich 
 #  in allen Sprachen anlegen. 
 #
 #
@@ -14,9 +14,9 @@
 #  Zu jeder Meldung wird angegeben:
 #    - iconType (Typen siehe unten)
 #    - buttonType  (Typen siehe unten)
-#    - Meldungstext mit evtl. Platzhaltern für Parameter.
+#    - Meldungstext mit evtl. Platzhaltern fÃ¼r Parameter.
 #
-#  Ein Parameterplatzhalter ist ein dreifaches kaumänisches "und". Siehe Beispielmeldung 
+#  Ein Parameterplatzhalter ist ein dreifaches kaumÃ¤nisches "und". Siehe Beispielmeldung 
 #  "No_Records_found". 
 #  
 #  Die Angaben erfolgen in einer Zeile, jeweils durch einen Doppelpunkt getrennt.
@@ -24,7 +24,7 @@
 #  Format:
 #  <MESSAGE_ID>=<iconType>:<buttonType>:<Meldungstext>
 #
-#  Zulässige Werte für:
+#  ZulÃ¤ssige Werte fÃ¼r:
 #    iconType:
 #        INFO
 #        WARNING
@@ -40,7 +40,7 @@
 #  Beispiel mit einem String-Array:
 #  ================================
 #    Messagedefinition:
-#      No_Records_found=WARNING:STYLE_Y:Die Tabelle &&& enthält keinen Eintrag. Erwartet mind. &&&. Weitermachen?
+#      No_Records_found=WARNING:STYLE_Y:Die Tabelle &&& enthÃ¤lt keinen Eintrag. Erwartet mind. &&&. Weitermachen?
 #    Aufruf: 
 #      answer = UserMessage.show("No_Records_found", new String[] {"Mitarbeiter", "" + minNumber}, aShowFrame);
 #      if (answer == UserMessage.NO)
@@ -72,7 +72,7 @@ Question=Frage
 Error=Fehler
 
 # Messages
-TRANSLATION_SOURCE_NOT_FOUND=WARNING:STYLE_Y:Die Übersetzungsdatei &&& ist nicht gefunden.
+TRANSLATION_SOURCE_NOT_FOUND=WARNING:STYLE_Y:Die Ãœbersetzungsdatei &&& ist nicht gefunden.
 UNKNOWN_EXCEPTION=ERROR:STYLE_Y:Unbekannter Fehler
 UNHANDLED_EXCEPTION=ERROR:STYLE_Y:Interner Fehler
 

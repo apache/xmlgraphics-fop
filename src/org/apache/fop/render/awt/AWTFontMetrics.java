@@ -16,6 +16,7 @@ import org.apache.fop.layout.FontState;
 // Java
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.io.FileInputStream;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -92,6 +93,16 @@ public class AWTFontMetrics {
      * Temp graphics object needed to get the font metrics
      */
     Graphics2D graphics;
+
+    /**
+     * Embed Font List.
+     */
+    private Hashtable embedFontList = null;
+
+    /**
+     * Physical Font Cash.
+     */
+    private Hashtable fontCash = null;
 
     /**
      * Constructs a new Font-metrics.
@@ -210,7 +221,7 @@ public class AWTFontMetrics {
         int s = (int)(size / 1000f);
 
         if (f1 == null) {
-            f1 = new Font(family, style, s);
+            f1 = createFont(family, style, s);
             fmt = graphics.getFontMetrics(f1);
             changed = true;
         } else {
@@ -219,7 +230,7 @@ public class AWTFontMetrics {
                 if (family.equals(this.family)) {
                     f1 = f1.deriveFont(style, (float)s);
                 } else
-                    f1 = new Font(family, style, s);
+                    f1 = createFont(family, style, s);
                 fmt = graphics.getFontMetrics(f1);
                 changed = true;
             }
@@ -237,6 +248,58 @@ public class AWTFontMetrics {
         return changed;
     }
 
+    /**
+     * set embed font.
+     * @param family font-family name
+     * @param style font style
+     * @param fontPath path to phsical font
+     */
+    public void setEmbedFont(String family,int style,String fontPath) {
+        if (embedFontList == null)
+            embedFontList = new Hashtable();
+        embedFontList.put(family+style,fontPath);
+    }
+
+    /**
+     * create Font to draw.
+     * @param family font-family name
+     * @param style font style
+     * @param size font size
+     */
+    public java.awt.Font createFont(String family, int style, int size) {
+        String fontPath = null;
+        if (embedFontList != null)
+            fontPath = (String)embedFontList.get(family+style);
+        if (fontPath == null)
+            return new Font(family, style, size);
+        // lazy instanciation for fontCash.
+        if (fontCash == null)
+            fontCash = new Hashtable();
+        Font cashedFont = (Font)fontCash.get(fontPath);
+        if (cashedFont == null) {
+            // Create specified TrueType Font.
+            FileInputStream fontStream = null;
+            try {
+                MessageHandler.logln("create embedFont "+fontPath);
+                fontStream = new FileInputStream(fontPath);
+                // createFont methods supports higer than JDK1.3
+                // Currently supports only TrueType font.
+                cashedFont = Font.createFont(Font.TRUETYPE_FONT,fontStream);
+            } catch(Throwable th) {
+                MessageHandler.error("Failed to create embedFont "+
+                                     fontPath + " : " + th.toString());
+                // if failed create font, use system "Dialog" logical font
+                // name for each Locale.
+                cashedFont = new Font("Dialog", style, size);
+            } finally {
+                if (fontStream != null)
+                    try { fontStream.close(); } catch(Exception ex) {}
+            }
+            fontCash.put(fontPath,cashedFont);
+        }
+        Font font = cashedFont.deriveFont(style, (float)size);
+        return font;
+    }
 
     /**
      * Returns a java.awt.Font instance for the desired
