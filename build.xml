@@ -175,6 +175,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="Times-Italic.xml" value="${build.codegen}/Times-Italic.xml"/>  
     <property name="Times-Bold.xml" value="${build.codegen}/Times-Bold.xml"/>  
     <property name="Times-BoldItalic.xml" value="${build.codegen}/Times-BoldItalic.xml"/>
+    <property name="ZapfDingbats.xml" value="${build.codegen}/ZapfDingbats.xml"/>
+    <property name="Symbol.xml" value="${build.codegen}/Symbol.xml"/>
 
     <taskdef name="xslt" classname="Xslt"/>
     <available property="xt.present" classname="com.jclark.xsl.sax.XSLProcessor"/>
@@ -291,6 +293,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
         outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesBold.java" smart="yes"/>
     <xslt infile="${Times-BoldItalic.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesBoldItalic.java" smart="yes"/>
+    <xslt infile="${ZapfDingbats.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/ZapfDingbats.java" smart="yes"/>
+    <xslt infile="${Symbol.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/Symbol.java" smart="yes"/>
+
 
   </target>
 
