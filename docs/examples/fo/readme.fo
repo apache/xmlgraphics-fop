@@ -67,7 +67,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
 <fo:flow flow-name="xsl-body">
 <fo:block font-size="18pt" font-family="sans-serif" line-height="24pt" space-after.optimum="15pt" background-color="blue" color="white" text-align="centered" padding-top="3pt">FOP: An Open-Source XSL Formatter and Renderer</fo:block>
-<fo:block id="sec1" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" keep-with-next="true">A) 
+<fo:block id="sec1" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >A) 
       What is FOP?</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">FOP is the world's first print formatter driven by XSL formatting
      objects. It is a Java 1.1 application that reads a formatting object
@@ -86,7 +86,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
 
 
-  <fo:block  id="sec2" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" keep-with-next="true">B) 
+  <fo:block  id="sec2" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >B) 
       Downloading FOP</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">The latest release version is <fo:inline-sequence font-style="italic" font-family="serif">FOP 12.0</fo:inline-sequence>
 <fo:inline-sequence font-family="serif">
@@ -113,10 +113,10 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
 
 
-  <fo:block  id="sec3" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" keep-with-next="true">C) 
+  <fo:block  id="sec3" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >C) 
       Running FOP</fo:block>
   
-    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" keep-with-next="true">1) Prerequisites</fo:block>
+    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" >1) Prerequisites</fo:block>
     <fo:block space-after.optimum="3pt" font-family="serif">Following software must be installed:</fo:block>
     <fo:block space-after.optimum="3pt" font-family="serif">a) Java 1.1.x or later</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">For the fo-file viewer mode of FOP (see below) you must have the swing classes installed. 
@@ -147,7 +147,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     </fo:block>
   
   
-    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" keep-with-next="true">2) Starting FOP as an standalone application</fo:block>
+    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" >2) Starting FOP as an standalone application</fo:block>
     <fo:block space-after.optimum="3pt" font-family="serif">There are three ways to run FOP from the command line.</fo:block>
     <fo:block space-after.optimum="3pt" font-family="serif">a) Batch processing formatting objects (fo) files: </fo:block>
     <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">java org.apache.fop.apps.CommandLine fo-file pdf-file</fo:block>
@@ -158,7 +158,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     <fo:block space-after.optimum="3pt" font-family="serif">Each method uses next to the fop classes other packages. The following describes 
        each method in detail.</fo:block>
     
-      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" keep-with-next="true">a) Method One</fo:block>
+      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" >a) Method One</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">One is to first use an XSLT engine to produce the formatting object tree as an 
          XML document and then running the class org.apache.fop.apps.CommandLine with the
          formatting object file name and PDF filename as arguments. You will need to include 
@@ -176,7 +176,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
       <fo:block space-after.optimum="3pt" font-family="serif">(You have to include xerces.jar or another xml parser which supports DOM in your classpath.) </fo:block>
     
     
-      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" keep-with-next="true">b) Method Two</fo:block>
+      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" >b) Method Two</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">Rather than performing transformation with an XSLT before invoking FOP, it is 
          possible, if you use XT as your XSLT engine, to just call FOP and have it call 
          XT for you. To do this, run the class org.apache.fop.apps.CommandLine with the 
@@ -192,7 +192,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
       </fo:block>
     
     
-      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" keep-with-next="true">c) Method Three</fo:block>
+      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" >c) Method Three</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">If you already produced the FO file, you can preview the results of your 
          transformation without using any pdf viewer by invoking FOP with the viewer 
          application. You will need to include FOP and your XML Parser in your classpath 
@@ -208,7 +208,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     
   
   
-    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" keep-with-next="true">3) Running FOP on MacOS</fo:block>  
+    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" >3) Running FOP on MacOS</fo:block>  
     
     <fo:block space-after.optimum="3pt" font-family="serif">Ensure that you have a recent MRJ, and that you have downloaded and
        unpacked the XP and SAX distributions. The xp.jar and sax.jar files work
@@ -228,7 +228,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     </fo:block>  
   
   
-    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" keep-with-next="true">4) Problems</fo:block>
+    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" >4) Problems</fo:block>
     <fo:block space-after.optimum="3pt" font-family="serif">If you have problems running FOP, please have a look at the 
        <fo:inline-sequence font-style="italic" font-family="serif">FOP FAQ</fo:inline-sequence>
 <fo:inline-sequence font-family="serif">
@@ -246,7 +246,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
 
 
-  <fo:block  id="sec4" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" keep-with-next="true">D) 
+  <fo:block  id="sec4" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >D) 
       Embedding FOP </fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">Instantiate org.apache.fop.apps.Driver. Once this class is 
      instantiated, methods are called to set the
@@ -284,11 +284,11 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
 
 
-  <fo:block  id="sec5" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" keep-with-next="true">E) 
+  <fo:block  id="sec5" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >E) 
       What's Implemented?</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">Also see STATUS for what is being worked on.</fo:block>
   
-    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" keep-with-next="true">1) Formatting Objects</fo:block>
+    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" >1) Formatting Objects</fo:block>
     <fo:list-block start-indent="1cm" provisional-distance-between-starts="12pt" font-family="serif">
       <fo:list-item>
 <fo:list-item-label>
@@ -518,7 +518,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
   
 
   
-    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" keep-with-next="true">2) Properties</fo:block>
+    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" >2) Properties</fo:block>
     <fo:list-block start-indent="1cm" provisional-distance-between-starts="12pt" font-family="serif">
       <fo:list-item>
 <fo:list-item-label>
@@ -855,13 +855,13 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
  
 
 
-  <fo:block  id="sec6" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" keep-with-next="true">F) 
+  <fo:block  id="sec6" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >F) 
       Limitations</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">Although FOP implements the above listed fo objects and properties, sometimes it does so 
      only in a limited way. 
   </fo:block>
   
-    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" keep-with-next="true">list-block</fo:block>
+    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" >list-block</fo:block>
     <fo:block space-after.optimum="3pt" font-family="serif">The fo working draft allows describes two ways to markup lists.The list-block must have as 
        children either: 1) pairs of fo:list-item-label and fo:list-item-body formatting objects, or
        2) fo:list-item formatting objects.</fo:block>
@@ -874,7 +874,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">&lt;/fo:list-block&gt;</fo:block>
   
   
-    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" keep-with-next="true">Padding</fo:block>
+    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" >Padding</fo:block>
     <fo:block space-after.optimum="3pt" font-family="serif">Padding works in conjunction with indents and spaces. It is only implemented 
        for blocks. At the moment padding can't be used to make extra space (indents+spaces
        must be used), but only to control how much the background-color extends beyond
@@ -882,7 +882,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     </fo:block>  
   
   
-    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" keep-with-next="true">Tables</fo:block>
+    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" >Tables</fo:block>
     <fo:block space-after.optimum="3pt" font-family="serif">There two limitations for tables: 1) FOP needs you to explicitly specify column widths 
        2) Cells have to contain block-level FOs. They can't contain straight character data.
     </fo:block>
@@ -928,7 +928,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
 
 
-  <fo:block  id="sec7" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" keep-with-next="true">G) 
+  <fo:block  id="sec7" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >G) 
       Bugs</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">see STATUS file</fo:block>
 
@@ -937,12 +937,12 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
 
 
-  <fo:block  id="sec8" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" keep-with-next="true">H) 
+  <fo:block  id="sec8" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >H) 
       Compiling FOP</fo:block>
   
-    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" keep-with-next="true">1. Prerequisites</fo:block>
+    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" >1. Prerequisites</fo:block>
     
-      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" keep-with-next="true">a) Java 1.1.x or later</fo:block>
+      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" >a) Java 1.1.x or later</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">If you use Java 1.1.x you must also seperately include the swing classes, which can
          be found at the <fo:inline-sequence font-style="italic" font-family="serif">
          Sun website</fo:inline-sequence>
@@ -953,7 +953,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
       </fo:block>
     
     
-      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" keep-with-next="true">b) An XML parser</fo:block>
+      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" >b) An XML parser</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">An XML parser which supports DOM like 
          <fo:inline-sequence font-style="italic" font-family="serif">Xerces-J</fo:inline-sequence>
 <fo:inline-sequence font-family="serif">
@@ -961,7 +961,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
    </fo:inline-sequence>.</fo:block>
     
     
-      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" keep-with-next="true">c) XT from James Clark</fo:block>
+      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" >c) XT from James Clark</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">Some of the Java source code in FOP is generated from XML using
          XSLT. XT must be used to generate this code.</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">XT is an XSL stylesheet processor written in java. At the moment you
@@ -984,7 +984,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
       </fo:block>
     
     
-      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" keep-with-next="true">d) make</fo:block>
+      <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" >d) make</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">Under windows it has been reported that the use of the cygnus solutions port 
          of the GNU utilities works. You can find it at 
          <fo:inline-sequence font-style="italic" font-family="serif">Cygnus Solutions</fo:inline-sequence>
@@ -995,7 +995,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     
   
   
-    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" keep-with-next="true">Compiling FOP on MacOS</fo:block>
+    <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" >Compiling FOP on MacOS</fo:block>
     
     <fo:block space-after.optimum="3pt" font-family="serif">We strongly recommend the use of Codewarrior Java. This Readme will
        contain a link to more information in the near future.
@@ -1007,7 +1007,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
 
 
-  <fo:block  id="sec9" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" keep-with-next="true">I) 
+  <fo:block  id="sec9" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >I) 
       Getting involved</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">1. Subscribe to fop-dev@xml.apache.org by sending an email 
         to fop-dev-subscribe@xml.apache.org</fo:block>
@@ -1028,7 +1028,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
 
 
-  <fo:block  id="sec10" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" keep-with-next="true">J) 
+  <fo:block  id="sec10" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >J) 
       FOP Relevant Specifications</fo:block>
   <fo:list-block start-indent="1cm" provisional-distance-between-starts="12pt" font-family="serif">
     <fo:list-item>
@@ -1142,7 +1142,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
 
 
-  <fo:block  id="sec11" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" keep-with-next="true">K) 
+  <fo:block  id="sec11" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >K) 
       Licence</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif"> ============================================================================</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">                   The Apache Software License, Version 1.1</fo:block>
