@@ -150,6 +150,10 @@ public class SVGMatrixImpl implements SVGMatrix {
 	{
 		SVGMatrix mat = new SVGMatrixImpl();
 		double det = Math.abs(a * d - b * c);
+		if(det == 0) {
+			// throw exception
+			throw new SVGExceptionImpl(SVGException.SVG_MATRIX_NOT_INVERTABLE, "Matrix: " + toString() + " could not be inverted");
+		}
 		mat.setA((float)(d / det));
 		mat.setB((float)(b / det));
 		mat.setC((float)(-c / det));
