@@ -829,7 +829,7 @@ public /*abstract*/ class Property {
 
                 try {
                     colorFound = new ColorType(colorProp, ncname);
-                } catch (PropertyException e) {};
+                } catch (PropertyException e) {}
                 if (colorFound != null) {
                     if (color != null) MessageHandler.logln(propName +
                             ": duplicate color overrides previous color");
