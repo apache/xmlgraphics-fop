@@ -1,34 +1,57 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.pdf;
 
-import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.InputStream;
 import java.io.IOException;
-import java.io.*;
 
+/**
+ * PDF Filter for ASCII85.
+ * This applies a filter to a pdf stream that converts
+ * the data to ASCII.
+ */
 public class ASCII85Filter extends PDFFilter {
     private static final char ASCII85_ZERO = 'z';
     private static final char ASCII85_START = '!';
     private static final String ASCII85_EOD = "~>";
 
-    private static final long base85_4 = 85;
+    private static final long BASE85_4 = 85;
     //private static final long base85_3 = base85_4 * base85_4;
     //private static final long base85_2 = base85_3 * base85_4;
     //private static final long base85_1 = base85_2 * base85_4;
 
+    /**
+     * Get the PDF name of this filter.
+     *
+     * @return the name of the filter to be inserted into the PDF
+     */
     public String getName() {
         return "/ASCII85Decode";
     }
 
+    /**
+     * Get the decode parameters.
+     *
+     * @return always null
+     */
     public String getDecodeParms() {
         return null;
     }
 
+    /**
+     * Encode a pdf stream using this filter.
+     *
+     * @param in the input stream to read the data from
+     * @param out the output stream to write the data
+     * @param length the length of the data to filter
+     * @throws IOException if there is an error reading or writing to the streams
+     */
     public void encode(InputStream in, OutputStream out, int length) throws IOException {
 
         int i;
@@ -94,7 +117,11 @@ public class ASCII85Filter extends PDFFilter {
          * int out = (result.length-ASCII85_EOD.getBytes().length) % 5;
          * if ((in+1 != out) && !(in == 0 && out == 0)) {
          * System.out.println("ASCII85 assertion failed:");
-         * System.out.println("        inlength = "+data.length+" inlength % 4 = "+(data.length % 4)+" outlength = "+(result.length-ASCII85_EOD.getBytes().length)+" outlength % 5 = "+((result.length-ASCII85_EOD.getBytes().length) % 5));
+         * System.out.println("inlength = "+data.length+" inlength % 4 = "
+         *         + (data.length % 4)+" outlength = "
+         *         + (result.length-ASCII85_EOD.getBytes().length)
+         *         + " outlength % 5 = "
+         *         + ((result.length-ASCII85_EOD.getBytes().length) % 5));
          * }
          */
 
@@ -128,11 +155,11 @@ public class ASCII85Filter extends PDFFilter {
             byte c3 =
                 (byte)(((word - (c1 * base85_1) - (c2 * base85_2)) / base85_3)
                        & 0xFF);
-            byte c4 =
-                (byte)(((word - (c1 * base85_1) - (c2 * base85_2) - (c3 * base85_3)) / base85_4)
+            byte c4 = (byte)(((word - (c1 * base85_1)
+                      - (c2 * base85_2) - (c3 * base85_3)) / base85_4)
                        & 0xFF);
-            byte c5 =
-                (byte)(((word - (c1 * base85_1) - (c2 * base85_2) - (c3 * base85_3) - (c4 * base85_4)))
+            byte c5 = (byte)(((word - (c1 * base85_1)
+                       - (c2 * base85_2) - (c3 * base85_3) - (c4 * base85_4)))
                        & 0xFF);
 
             byte[] ret = {
@@ -142,15 +169,15 @@ public class ASCII85Filter extends PDFFilter {
             };
             */
 
-            byte c5 = (byte)((word % base85_4) + ASCII85_START);
-            word = word / base85_4;
-            byte c4 = (byte)((word % base85_4) + ASCII85_START);
-            word = word / base85_4;
-            byte c3 = (byte)((word % base85_4) + ASCII85_START);
-            word = word / base85_4;
-            byte c2 = (byte)((word % base85_4) + ASCII85_START);
-            word = word / base85_4;
-            byte c1 = (byte)((word % base85_4) + ASCII85_START);
+            byte c5 = (byte)((word % BASE85_4) + ASCII85_START);
+            word = word / BASE85_4;
+            byte c4 = (byte)((word % BASE85_4) + ASCII85_START);
+            word = word / BASE85_4;
+            byte c3 = (byte)((word % BASE85_4) + ASCII85_START);
+            word = word / BASE85_4;
+            byte c2 = (byte)((word % BASE85_4) + ASCII85_START);
+            word = word / BASE85_4;
+            byte c1 = (byte)((word % BASE85_4) + ASCII85_START);
 
             byte[] ret = {
               c1 , c2, c3, c4, c5
