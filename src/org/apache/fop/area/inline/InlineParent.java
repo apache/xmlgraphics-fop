@@ -17,7 +17,6 @@ import java.util.ArrayList;
 // this is an inline area that can have other inlines as children
 public class InlineParent extends InlineArea {
     ArrayList inlines = new ArrayList();
-    int width;
 
     public InlineParent() {
     }
@@ -26,16 +25,19 @@ public class InlineParent extends InlineArea {
         renderer.renderInlineParent(this);
     }
 
-    public void addChild(InlineArea child) {
-        inlines.add(child);
+
+    /**
+     * Override generic Area method.
+     */
+    public void addChild(Area childArea) {
+	if (childArea instanceof InlineArea) {
+	    inlines.add(childArea);
+	    increaseIPD( ((InlineArea)childArea).getAllocIPD());
+	}
     }
 
     public List getChildAreas() {
         return inlines;
-    }
-
-    public int getWidth() {
-        return width;
     }
 
 }

@@ -10,6 +10,8 @@ package org.apache.fop.area;
 import java.io.Serializable;
 import org.apache.fop.fo.FObj;
 
+import java.util.HashMap;
+
 // If the area appears more than once in the output
 // or if the area has external data it is cached
 // to keep track of it and to minimize rendered output
@@ -125,5 +127,34 @@ public class Area implements Serializable {
 
     public FObj getGeneratingFObj() {
 	return this.genFObj;
+    }
+
+    // Do nothing! Let subclasses do something if they can have child areas.
+    public void addChild(Area child) {
+    }
+
+
+    HashMap props = null;
+
+    public void addTrait(Trait prop) {
+        if (props == null) {
+            props = new HashMap(20);
+        }
+        props.put(prop.propType, prop.data);
+    }
+
+    public void addTrait(Object traitCode, Object prop) {
+        if (props == null) {
+            props = new HashMap(20);
+        }
+        props.put(traitCode, prop);
+    }
+
+    public HashMap getTraits() {
+	return this.props;
+    }
+
+    public Object getTrait(Object oTraitCode) {
+	return (props != null? props.get(oTraitCode) : null);
     }
 }

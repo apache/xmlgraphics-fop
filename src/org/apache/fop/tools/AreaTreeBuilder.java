@@ -408,10 +408,7 @@ class TreeLoader {
             Node obj = childs.item(i);
             if (obj.getNodeName().equals("block")) {
                 Block block = new Block();
-                List props = getProperties((Element) obj);
-                for (int count = 0; count < props.size(); count++) {
-                    block.addTrait((Trait) props.get(count));
-                }
+		addTraits((Element)obj, block);
                 addBlockChildren(block, (Element) obj);
                 list.add(block);
             }
@@ -437,10 +434,7 @@ class TreeLoader {
                     // error
                 }
                 LineArea line = new LineArea();
-                List props = getProperties((Element) obj);
-                for (int count = 0; count < props.size(); count++) {
-                    line.addTrait((Trait) props.get(count));
-                }
+		addTraits((Element) obj, line);
                 String height = ((Element) obj).getAttribute("height");
                 int h = Integer.parseInt(height);
                 line.setHeight(h);
@@ -466,7 +460,7 @@ class TreeLoader {
             if (obj.getNodeName().equals("char")) {
                 Character ch =
                   new Character(getString((Element) obj).charAt(0));
-                addProperties((Element) obj, ch);
+                addTraits((Element) obj, ch);
                 try {
                     currentFontState =
                       new FontState(fontInfo, "sans-serif", "normal",
@@ -503,10 +497,8 @@ class TreeLoader {
                     e.printStackTrace();
                 }
                 Word word = getWord((Element) obj);
-                Trait prop = new Trait();
-                prop.propType = Trait.FONT_STATE;
-                prop.data = currentFontState;
-                word.addTrait(prop);
+
+		word.addTrait(Trait.FONT_STATE, currentFontState);
                 if (word != null) {
                     list.add(word);
                 }
@@ -632,7 +624,7 @@ class TreeLoader {
             leader.setWidth(thick);
         }
         leader.setOffset(currentFontState.getCapHeight());
-        addProperties(root, leader);
+        addTraits(root, leader);
         return leader;
     }
 
@@ -640,7 +632,7 @@ class TreeLoader {
         String str = getString(root);
         Word word = new Word();
         word.setWord(str);
-        addProperties(root, word);
+        addTraits(root, word);
         int width = 0;
         for (int count = 0; count < str.length(); count++) {
             width += currentFontState.width(str.charAt(count));
@@ -651,80 +643,24 @@ class TreeLoader {
         return word;
     }
 
-    public void addProperties(Element ele, InlineArea inline) {
-        List props = getProperties(ele);
-        for (int count = 0; count < props.size(); count++) {
-            inline.addTrait((Trait) props.get(count));
-        }
-        String str = ele.getAttribute("width");
 
-    }
-
-    public List getProperties(Element ele) {
-        ArrayList list = new ArrayList();
+    public void addTraits(Element ele, Area area) {
         String str = ele.getAttribute("props");
         StringTokenizer st = new StringTokenizer(str, ";");
         while (st.hasMoreTokens()) {
             String tok = st.nextToken();
             int index = tok.indexOf(":");
             String id = tok.substring(0, index);
-            String val = tok.substring(index + 1);
-            Trait prop = new Trait();
-            if ("internal-link".equals(id)) {
-                prop.propType = Trait.INTERNAL_LINK;
-                prop.data = val;
-                list.add(prop);
-            } else if ("external-link".equals(id)) {
-                prop.propType = Trait.EXTERNAL_LINK;
-                prop.data = val;
-                list.add(prop);
-            } else if ("font-family".equals(id)) {
-                prop.propType = Trait.FONT_FAMILY;
-                prop.data = val;
-                list.add(prop);
-            } else if ("font-size".equals(id)) {
-                prop.propType = Trait.FONT_SIZE;
-                prop.data = Integer.valueOf(val);
-                list.add(prop);
-            } else if ("font-weight".equals(id)) {
-                prop.propType = Trait.FONT_WEIGHT;
-                prop.data = val;
-                list.add(prop);
-            } else if ("font-style".equals(id)) {
-                prop.propType = Trait.FONT_STYLE;
-                prop.data = val;
-                list.add(prop);
-            } else if ("color".equals(id)) {
-                prop.propType = Trait.COLOR;
-                prop.data = val;
-                list.add(prop);
-            } else if ("background".equals(id)) {
-                prop.propType = Trait.BACKGROUND;
-                prop.data = val;
-                list.add(prop);
-            } else if ("underline".equals(id)) {
-                prop.propType = Trait.UNDERLINE;
-                prop.data = new Boolean(val);
-                list.add(prop);
-            } else if ("overline".equals(id)) {
-                prop.propType = Trait.OVERLINE;
-                prop.data = new Boolean(val);
-                list.add(prop);
-            } else if ("linethrough".equals(id)) {
-                prop.propType = Trait.LINETHROUGH;
-                prop.data = new Boolean(val);
-                list.add(prop);
-            } else if ("offset".equals(id)) {
-                prop.propType = Trait.OFFSET;
-                prop.data = Integer.valueOf(val);
-                list.add(prop);
-            } else if ("shadow".equals(id)) {
-                prop.propType = Trait.SHADOW;
-                prop.data = val;
-                list.add(prop);
-            }
+	    Object traitCode = Trait.getTraitCode(id);
+	    if (traitCode != null) {
+		area.addTrait(traitCode,
+			      Trait.makeTraitValue(traitCode,
+						   tok.substring(index + 1)));
+	    }
+	    else {
+		System.err.println("Unknown trait: " + id );
+	    }
         }
-        return list;
     }
 
     public List getRanges(Element ele) {

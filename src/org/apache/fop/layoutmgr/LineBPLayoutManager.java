@@ -45,18 +45,18 @@ public class LineBPLayoutManager extends
      * Each value holds the start and end indexes into a List of
      * inline break positions.
      */
-    private static class LineBreakPosition implements BreakPoss.Position {
-        int m_iPos;
+    // private static class LineBreakPosition implements Position {
+    private static class LineBreakPosition extends LeafPosition {
+        // int m_iPos;
 	double m_dAdjust; // Percentage to adjust (stretch or shrink)
 
-        LineBreakPosition(int iBreakIndex, double dAdjust) {
-            m_iPos = iBreakIndex;
+        LineBreakPosition(BPLayoutManager lm, int iBreakIndex, double dAdjust) {
+	    super(lm, iBreakIndex);
+            // m_iPos = iBreakIndex;
 	    m_dAdjust = dAdjust;
         }
     }
 
-
-    private LineArea m_lineArea; // LineArea currently being filled
 
     /** Break positions returned by inline content. */
     private Vector m_vecInlineBreaks = new Vector(100);
@@ -96,7 +96,7 @@ public class LineBPLayoutManager extends
      * finish any line being filled and return to the parent LM.
      */
     public BreakPoss getNextBreakPoss(LayoutContext context,
-				      BreakPoss.Position prevLineBP) {
+				      Position prevLineBP) {
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
 
@@ -105,7 +105,8 @@ public class LineBPLayoutManager extends
 	     * (page) should check reference area and possibly
 	     * create a new one.
 	     */
-	    return new BreakPoss(this, null, BreakPoss.NEED_IPD);
+	    return new BreakPoss(new LineBreakPosition(this, -1, 0.0),
+				 BreakPoss.NEED_IPD);
         }
 
 	BPLayoutManager curLM ;        // currently active LM
@@ -137,7 +138,8 @@ public class LineBPLayoutManager extends
 	    prevBP =  (m_vecInlineBreaks.isEmpty())? null:
 		(BreakPoss)m_vecInlineBreaks.lastElement();	
 	    initChildLC(inlineLC, prevBP,
-			(m_vecInlineBreaks.size()==iPrevLineEnd), bFirstBPforLM,
+			(m_vecInlineBreaks.size()==iPrevLineEnd),
+			bFirstBPforLM,
 			new SpaceSpecifier(true));
 
 
@@ -146,7 +148,8 @@ public class LineBPLayoutManager extends
              * then set the SUPPRESS_LEADING_SPACE flag.
              */
 	    inlineLC.setFlags(LayoutContext.SUPPRESS_LEADING_SPACE,
-			      (prevBP == null && !m_vecInlineBreaks.isEmpty() &&
+			      (m_vecInlineBreaks.size()==iPrevLineEnd &&
+			       !m_vecInlineBreaks.isEmpty() &&
 			       ((BreakPoss)m_vecInlineBreaks.lastElement()).
 			       isForcedBreak()==false));
 
@@ -281,7 +284,7 @@ public class LineBPLayoutManager extends
 	while (m_vecInlineBreaks.lastElement()!=m_prevBP) {
 	    m_vecInlineBreaks.remove(m_vecInlineBreaks.size()-1);
 	}
-	reset(m_prevBP.getLayoutManager(), m_prevBP.getPosition());
+	reset(m_prevBP.getPosition());
     }
 
     protected boolean couldEndLine(BreakPoss bp) {
@@ -413,9 +416,8 @@ public class LineBPLayoutManager extends
 	}
 	System.err.println("Adjustment factor=" + dAdjust);
         BreakPoss curLineBP =
-            new BreakPoss(this,
-			  new LineBreakPosition(m_vecInlineBreaks.size()-1,
-			  dAdjust));
+            new BreakPoss(new LineBreakPosition(this, m_vecInlineBreaks.size()-1,
+						 dAdjust));
 
 	/* FIX ME!! 
 	 * Need to calculate line height based on all inline BP info
@@ -433,58 +435,33 @@ public class LineBPLayoutManager extends
     public void addAreas(PositionIterator parentIter, double dSpaceAdjust) {
 	BPLayoutManager childLM ;
 	int iStartPos = 0;
+	LayoutContext lc = new LayoutContext(0);
 	while  (parentIter.hasNext()) {
 	    LineBreakPosition lbp  = (LineBreakPosition)parentIter.next();
-	    m_lineArea = new LineArea();
+	    LineArea lineArea = new LineArea();
+	    setCurrentArea(lineArea);
 	    // Add the inline areas to lineArea
-	    BreakPossPosIter inlinePosIter =
+	    PositionIterator inlinePosIter =
 		new BreakPossPosIter(m_vecInlineBreaks,
-				     iStartPos, lbp.m_iPos+1);
-	    iStartPos = lbp.m_iPos+1;
+				     iStartPos, lbp.getLeafPos()+1);
+	    iStartPos = lbp.getLeafPos()+1;
+	    lc.setSpaceAdjust(lbp.m_dAdjust);
+	    lc.setLeadingSpace(new SpaceSpecifier(true));
+	    lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
+	    setChildContext(lc);
 	    while  ((childLM = inlinePosIter.getNextChildLM())!= null) {
-		BreakPoss bp = inlinePosIter.getBP();
-		int iSpaceSize = getLeadingSpace(bp,  lbp.m_dAdjust);
-		if (iSpaceSize != 0) {
-		    System.err.println("Add leading space: " + iSpaceSize);
-		    Space ls = new Space();
-		    ls.setWidth(iSpaceSize);
-		    addChild(ls);
-		}
-		childLM.addAreas(inlinePosIter, lbp.m_dAdjust);
+		childLM.addAreas(inlinePosIter, lc);
+		lc.setLeadingSpace(lc.getTrailingSpace());
+		lc.setTrailingSpace(new SpaceSpecifier(false));
 	    }
-	    m_lineArea.verticalAlign(lineHeight, lead, follow);
-	    parentLM.addChild(m_lineArea);
+	    addSpace(lineArea, lc.getTrailingSpace().resolve(true),
+	       lc.getSpaceAdjust());
+	    lineArea.verticalAlign(lineHeight, lead, follow);
+	    parentLM.addChild(lineArea);
 	}
-	m_lineArea = null;
+	setCurrentArea(null); // ?? necessary
     }
 
-    protected int getLeadingSpace(BreakPoss bp, double dSpaceAdjust) {
-	MinOptMax leadSpace = bp.resolveLeadingSpace();
-	if (leadSpace != null) {
-	    int iAdjust=0;
-	    if (dSpaceAdjust > 0.0) {
-		// Stretch by factor
-		iAdjust = (int)((double)(leadSpace.max - leadSpace.opt) *
-				dSpaceAdjust);
-	    }
-	    else if (dSpaceAdjust < 0.0)  {
-		// Shrink by factor
-		iAdjust = (int)((double)(leadSpace.opt - leadSpace.min) *
-				dSpaceAdjust);
-	    }
-	    return leadSpace.opt + iAdjust;
-	}
-	else return 0;
-   }
-
-
-    public boolean addChild(Area childArea) {
-	// Make sure childArea is inline area
-	if (childArea instanceof InlineArea) {
-	    m_lineArea.addInlineArea((InlineArea)childArea);
-	}
-	return false;
-    }
 
     // NOTE: PATCHED FOR NOW TO ADD BreakPoss stuff to Kerion's changes
     public boolean generateAreas() {

@@ -29,19 +29,6 @@ import java.util.Vector; // or use ArrayList ???
  * or more inline areas.
  */
 public class TextBPLayoutManager extends AbstractBPLayoutManager {
-    /**
-     * Private class to store information about the break index.
-     * the field stores the index in the vector of AreaInfo which
-     * corresponds to this break position.
-     * Note: fields are directly readable in this class
-     */
-    private static class TextBreakPosition implements BreakPoss.Position {
-        short m_iAreaIndex;
-
-        TextBreakPosition(int iAreaIndex) {
-            m_iAreaIndex = (short)iAreaIndex;
-        }
-    }
 
     /**
      * Store information about each potential word area.
@@ -147,10 +134,10 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 
 
     public void getWordChars(StringBuffer sbChars,
-			     BreakPoss.Position bp1, BreakPoss.Position bp2) {
-	TextBreakPosition endPos = (TextBreakPosition)bp2;
+			     Position bp1, Position bp2) {
+	LeafPosition endPos = (LeafPosition)bp2;
 	AreaInfo ai =
-	    (AreaInfo) m_vecAreaInfo.elementAt(endPos.m_iAreaIndex);
+	    (AreaInfo) m_vecAreaInfo.elementAt(endPos.getLeafPos());
 	// Skip all leading spaces for hyphenation
 	int i;
         for (i=ai.m_iStartIndex;i < ai.m_iBreakIndex && 
@@ -172,14 +159,19 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 
     /** Reset position for returning next BreakPossibility. */
 
-    public void resetPosition(BreakPoss.Position prevPos) {
+    public void resetPosition(Position prevPos) {
 	if (prevPos != null) {
-	    TextBreakPosition tbp = (TextBreakPosition)prevPos;
+	    // ASSERT (prevPos.getLM() == this)
+	    if (prevPos.getLM() != this) {
+		System.err.println("TextBPLayoutManager.resetPosition: " +
+				   "LM mismatch!!!");
+	    }
+	    LeafPosition tbp = (LeafPosition)prevPos;
 	    AreaInfo ai =
-		 (AreaInfo) m_vecAreaInfo.elementAt(tbp.m_iAreaIndex);
+		 (AreaInfo) m_vecAreaInfo.elementAt(tbp.getLeafPos());
 	    if (ai.m_iBreakIndex != m_iNextStart) {
 		m_iNextStart = ai.m_iBreakIndex;
-		m_vecAreaInfo.setSize(tbp.m_iAreaIndex+1);
+		m_vecAreaInfo.setSize(tbp.getLeafPos()+1);
 		// TODO: reset or recalculate total IPD = sum of all word IPD
 		// up to the break position
 		m_ipdTotal = ai.m_ipdArea;
@@ -238,7 +230,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
      * into spaces. A LINEFEED always forces a break.
      */
     public BreakPoss getNextBreakPoss(LayoutContext context,
-				      BreakPoss.Position prevPos) {
+				      Position prevPos) {
 	/* On first call in a new Line, the START_AREA
 	 * flag in LC is set.
 	 */
@@ -284,6 +276,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 	// Sum of glyph IPD of all characters in a word, inc. leading space
         int wordIPD = 0;
 	short iWScount=0; // Count of word spaces
+	boolean bSawNonSuppressible = false;
 
         for (; m_iNextStart < chars.length; m_iNextStart++) {
             char c = chars[m_iNextStart];
@@ -293,7 +286,15 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 		// Counted as word-space
 		if (m_iNextStart == iThisStart &&
 		    (iFlags & BreakPoss.ISFIRST) !=0 ) {
-		    context.getPendingSpace().addSpace(m_halfWS);
+		    // If possible, treat as normal inter-word space
+		    if (context.getLeadingSpace().hasSpaces()) {
+			context.getLeadingSpace().addSpace(m_halfWS);
+		    }
+		    else {
+			// Doesn't combine with any other leading spaces
+			// from ancestors
+			spaceIPD.add(m_halfWS.space);
+		    }
 		}
 		else {
 		    pendingSpace.addSpace(m_halfWS);
@@ -302,10 +303,14 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 		wordIPD += m_spaceIPD; // Space glyph IPD
 		pendingSpace.clear();
 		pendingSpace.addSpace(m_halfWS);
+		if (c == NBSPACE) {
+		    bSawNonSuppressible = true; 
+		}
 	    }
 	    else {
 		// If we have letter-space, so we apply this to fixed-
 		// width spaces (which are not word-space) also?
+		bSawNonSuppressible = true; 
 		spaceIPD.add(pendingSpace.resolve(false));
 		pendingSpace.clear();
 		wordIPD += CharUtilities.getCharWidth(c, textInfo.fs);
@@ -317,9 +322,11 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 	}
 	else {
 	    // This FO ended with spaces. Return the BP
-	    iFlags |= BreakPoss.ALL_ARE_SUPPRESS_AT_LB;
+	    if (!bSawNonSuppressible) {
+		iFlags |= BreakPoss.ALL_ARE_SUPPRESS_AT_LB;
+	    }
 	    return makeBreakPoss(iThisStart, spaceIPD, wordIPD, 
-				 context.getPendingSpace(), pendingSpace,
+				 context.getLeadingSpace(), pendingSpace,
 				 iFlags, iWScount);
 	}
 
@@ -353,8 +360,17 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 			    iFlags |= BreakPoss.FORCE;
 			}
 		    }
+		    // If all remaining characters would be suppressed at
+		    // line-end, set a flag for parent LM.
+		    int iLastChar;
+		    for (iLastChar = m_iNextStart;
+			 iLastChar < chars.length && chars[iLastChar]==SPACE;
+			 iLastChar++);
+		    if (iLastChar == chars.length) {
+			iFlags |= BreakPoss.REST_ARE_SUPPRESS_AT_LB;
+		    }
 		    return makeBreakPoss(iThisStart, spaceIPD, wordIPD,
-					 context.getPendingSpace(), null,
+					 context.getLeadingSpace(), null,
 					 iFlags, iWScount);
 		}
 		wordIPD += CharUtilities.getCharWidth(c, textInfo.fs);
@@ -363,7 +379,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 	    }
 	}
 	return makeBreakPoss(iThisStart, spaceIPD, wordIPD, 
-			     context.getPendingSpace(), null, iFlags, iWScount);
+			     context.getLeadingSpace(), null, iFlags, iWScount);
     }
 
 
@@ -380,8 +396,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 	// Position is the index of the info for this word in the vector
 	m_vecAreaInfo.add(new AreaInfo(iWordStart, m_iNextStart, iWScount, ipd));
         BreakPoss bp =
-	    new BreakPoss(this,
-			  new TextBreakPosition(m_vecAreaInfo.size()-1));
+	    new BreakPoss(new LeafPosition(this, m_vecAreaInfo.size()-1));
 	m_ipdTotal = ipd;
 	if ((flags & BreakPoss.HYPHENATED)!=0) {
 	    // Add the hyphen size, but don't change total IPD!
@@ -426,12 +441,12 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
      * an area containing all text with a parameter controlling the size of
      * the word space. The latter is most efficient for PDF generation.
      * Set size of each area.
-     * @param parentIter Iterator over BreakPoss.Position information returned
+     * @param parentIter Iterator over Position information returned
      * by this LayoutManager.
      * @param dSpaceAdjust Factor controlling how much extra space to add
      * in order to justify the line.
      */
-    public void addAreas(PositionIterator posIter, double dSpaceAdjust) {
+    public void addAreas(PositionIterator posIter, LayoutContext context) {
 	// Add word areas
 	AreaInfo ai=null ;
 	int iStart = -1;
@@ -441,8 +456,8 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 	 * Calculate word-space stretch value.
 	 */
 	while (posIter.hasNext()) {
-	    TextBreakPosition tbpNext =	(TextBreakPosition)posIter.next();
-	    ai = (AreaInfo)m_vecAreaInfo.elementAt(tbpNext.m_iAreaIndex);
+	    LeafPosition tbpNext = (LeafPosition)posIter.next();
+	    ai = (AreaInfo)m_vecAreaInfo.elementAt(tbpNext.getLeafPos());
 	    if (iStart == -1) {
 		iStart = ai.m_iStartIndex;
 	    }
@@ -450,30 +465,49 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 	}
 	// Calculate total adjustment
 	int iAdjust = 0;
+	double dSpaceAdjust = context.getSpaceAdjust();
 	if (dSpaceAdjust > 0.0) {
 	    // Stretch by factor
-	    System.err.println("Potential stretch = " +
-			       (ai.m_ipdArea.max - ai.m_ipdArea.opt));
+// 	    System.err.println("Potential stretch = " +
+// 			       (ai.m_ipdArea.max - ai.m_ipdArea.opt));
 	    iAdjust = (int)((double)(ai.m_ipdArea.max - ai.m_ipdArea.opt) *
 		dSpaceAdjust);
 	}
 	else if (dSpaceAdjust < 0.0)  {
 	    // Shrink by factor
-	    System.err.println("Potential shrink = " +
-			       (ai.m_ipdArea.opt - ai.m_ipdArea.min));
+// 	    System.err.println("Potential shrink = " +
+// 			       (ai.m_ipdArea.opt - ai.m_ipdArea.min));
 	    iAdjust = (int)((double)(ai.m_ipdArea.opt - ai.m_ipdArea.min) *
 		dSpaceAdjust);
 	}
-	System.err.println("Text adjustment factor = " + dSpaceAdjust +
-			   " total=" + iAdjust);
-	if (iWScount > 0) {
-	    System.err.println("Adjustment per word-space= " + iAdjust/iWScount);
-	}
+// 	System.err.println("Text adjustment factor = " + dSpaceAdjust +
+// 			   " total=" + iAdjust);
+
 	// Make an area containing all characters between start and end.
-	Word word = createWord(new String(chars, iStart, ai.m_iBreakIndex - iStart),
+	Word word = createWord(new String(chars, iStart,
+					  ai.m_iBreakIndex - iStart),
 			       ai.m_ipdArea.opt + iAdjust);
-	if (chars[iStart] == SPACE || chars[iStart] == NBSPACE ) {
-	    // word.setLeadingSpace(m_halfWS);
+	if (iWScount > 0) {
+	    System.err.println("Adjustment per word-space= " +
+			       iAdjust/iWScount);
+	    word.setWSadjust(iAdjust/iWScount);
+	}
+	if ((chars[iStart] == SPACE || chars[iStart] == NBSPACE) &&
+	    context.getLeadingSpace().hasSpaces()) {
+	    context.getLeadingSpace().addSpace(m_halfWS);
+	}
+	// Set LAST flag if done making characters
+	int iLastChar;
+	for (iLastChar = ai.m_iBreakIndex;
+	     iLastChar < chars.length && chars[iLastChar]==SPACE;
+	     iLastChar++);
+	context.setFlags(LayoutContext.LAST_AREA, iLastChar==chars.length );
+
+	// Can we have any trailing space? Yes, if last char was a space!
+	context.setTrailingSpace(new SpaceSpecifier(false));
+	if (chars[ai.m_iBreakIndex-1] == SPACE ||
+	    chars[ai.m_iBreakIndex-1] == NBSPACE ) {
+	    context.getTrailingSpace().addSpace(m_halfWS);
 	}
 	parentLM.addChild(word);
     }
@@ -491,10 +525,8 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
         curWordArea.info.blOffset = true;
 
         curWordArea.setWord(str);
-        Trait prop = new Trait();
-        prop.propType = Trait.FONT_STATE;
-        prop.data = textInfo.fs;
-        curWordArea.addTrait(prop);
+        //curWordArea.addTrait(new Trait(Trait.FONT_STATE, textInfo.fs));
+        curWordArea.addTrait(Trait.FONT_STATE, textInfo.fs);
         return curWordArea;
     }
 

@@ -35,7 +35,7 @@ abstract class PositionIterator implements Iterator
 
     abstract protected BPLayoutManager getLM(Object nextObj);
 
-    abstract protected BreakPoss.Position getPos(Object nextObj);
+    abstract protected Position getPos(Object nextObj);
 
     private void lookAhead() {
 	if (m_parentIter.hasNext()) {

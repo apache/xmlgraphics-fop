@@ -14,19 +14,12 @@ import org.apache.fop.traits.LayoutProps;
  * Used to pass information between different levels of layout manager concerning
  * the break positions. In an inline context, before and after are interpreted as
  * start and end.
- * The m_position field is opaque but should represent meaningful information to
- * the layout manager stored in m_lm.
+ * The m_position field is opaque represents where the break occurs. It is a
+ * nested structure with one level for each layout manager involved in generating
+ * the BreakPoss..
  * @author Karen Lease
  */
 public class BreakPoss {
-
-    /**
-     * Marker interface. Generally a LayoutManager class will include
-     * a class implementing this interface which it uses to store its
-     * own Break Position information.
-     */
-    public interface Position {
-    }
 
 
     /** Values for m_flags returned from lower level LM. */
@@ -42,10 +35,10 @@ public class BreakPoss {
     public static final int ALL_ARE_SUPPRESS_AT_LB =    0x80;
     /** This break possibility is a hyphenation */
     public static final int HYPHENATED =    0x100;
-
-
-    /** The top-level layout manager which generated this BreakPoss. */
-    private BPLayoutManager m_lm;
+    /** If this break possibility ends the line, all remaining characters
+     * in the lowest level text LM will be suppressed.
+     */
+    public static final int REST_ARE_SUPPRESS_AT_LB = 0x200;
 
     /** The opaque position object used by m_lm to record its
      *  break position.
@@ -69,12 +62,6 @@ public class BreakPoss {
 
     private long m_flags = 0;
     private LayoutProps m_layoutProps = new LayoutProps();
-    /**
-    private boolean m_bIsFirst=false;
-    private boolean m_bIsLast=false;
-    private boolean m_bCanBreakAfter;
-    private boolean m_bCanBreakBefore;
-    **/
 
     /** Store space-after (or end) and space-before (or start) to be
      * added if this break position is used.
@@ -82,12 +69,11 @@ public class BreakPoss {
     private SpaceSpecifier m_spaceSpecTrailing;
     private SpaceSpecifier m_spaceSpecLeading;
 
-    public BreakPoss(BPLayoutManager lm, Position position) {
-	this(lm,position,0);
+    public BreakPoss(Position position) {
+	this(position,0);
     }
 
-    public BreakPoss(BPLayoutManager lm, Position position, long flags) {
-        m_lm = lm;
+    public BreakPoss(Position position, long flags) {
         m_position = position;
 	m_flags = flags;
     }
@@ -96,12 +82,12 @@ public class BreakPoss {
      * The top-level layout manager responsible for this break
      */
     public BPLayoutManager getLayoutManager() {
-        return m_lm;
+        return m_position.getLM();
     }
 
-    public void setLayoutManager(BPLayoutManager lm) {
-        m_lm = lm;
-    }
+//     public void setLayoutManager(BPLayoutManager lm) {
+//         m_lm = lm;
+//     }
 
     /**
      * An object representing the break position in this layout manager.
@@ -161,6 +147,10 @@ public class BreakPoss {
 
     public boolean canBreakBefore() {
         return ((m_flags & CAN_BREAK_BEFORE) != 0);
+    }
+
+    public boolean couldEndLine() {
+        return ((m_flags & REST_ARE_SUPPRESS_AT_LB) != 0);
     }
 
     public boolean isForcedBreak() {

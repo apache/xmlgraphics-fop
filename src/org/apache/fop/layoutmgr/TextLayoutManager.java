@@ -246,10 +246,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         curWordArea.info.blOffset = true;
 
         curWordArea.setWord(str);
-        Trait prop = new Trait();
-        prop.propType = Trait.FONT_STATE;
-        prop.data = textInfo.fs;
-        curWordArea.addTrait(prop);
+        // curWordArea.addTrait(new Trait(Trait.FONT_STATE, textInfo.fs));
+        curWordArea.addTrait(Trait.FONT_STATE, textInfo.fs);
         return curWordArea;
     }
 
