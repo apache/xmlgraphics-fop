@@ -104,8 +104,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
      * generate inline areas. If a block-level generating LM is found,
      * finish any line being filled and return to the parent LM.
      */
-    public BreakPoss getNextBreakPoss(LayoutContext context,
-                                      Position prevLineBP) {
+    public BreakPoss getNextBreakPoss(LayoutContext context) {
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
 
@@ -153,7 +152,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
 
             // GET NEXT POSSIBLE BREAK FROM CHILD LM
             // prevBP = bp;
-            if ((bp = curLM.getNextBreakPoss(inlineLC, null)) != null) {
+            if ((bp = curLM.getNextBreakPoss(inlineLC)) != null) {
                 // Add any space before and previous content dimension
                 MinOptMax prevIPD = updatePrevIPD(bp, prevBP,
                                                   (m_vecInlineBreaks.size() == iPrevLineEnd),

@@ -41,7 +41,7 @@ public class ContentLayoutManager implements LayoutManager {
         childLC.setRefIPD(ipd);
 
         while (!curLM.isFinished()) {
-            if ((bp = curLM.getNextBreakPoss(childLC, null)) != null) {
+            if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                 stack.add(bp.getStackingSize());
                 childBreaks.add(bp);
             }

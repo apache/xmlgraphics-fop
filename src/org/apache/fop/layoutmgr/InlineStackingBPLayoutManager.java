@@ -184,7 +184,7 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
     }
 
 
-    public BreakPoss getNextBreakPoss(LayoutContext lc, Position pbp) {
+    public BreakPoss getNextBreakPoss(LayoutContext lc) {
         // Get a break from currently active child LM
         BreakPoss bp = null;
         BPLayoutManager curLM ;

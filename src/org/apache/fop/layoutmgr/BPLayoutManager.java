@@ -27,16 +27,7 @@ public interface BPLayoutManager extends LayoutManager {
      * space specifiers from ancestor areas or previous areas, reference
      * area inline-progression-dimension and various other layout-related
      * information.
-     * @param prevBreakPosition If not null, gives a Position returned by
-     * this layout manager on a previous call to getNextBreakPoss. It may not
-     * be the previous one returned. The Layout Manager should return the next
-     * potential Break Possibility after prevBreakPosition.
-     * If prevBreakPosition is null, it should return the first possible
-     * BreakPoss.
      */
-    public BreakPoss getNextBreakPoss(LayoutContext context,
-                                      Position prevBreakPosition);
-
     public BreakPoss getNextBreakPoss(LayoutContext context);
 
 

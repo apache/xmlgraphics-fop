@@ -34,8 +34,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         this.region = region;
     }
    
-    public BreakPoss getNextBreakPoss(LayoutContext context,
-                                      Position prevLineBP) {
+    public BreakPoss getNextBreakPoss(LayoutContext context) {
 
         BPLayoutManager curLM ; // currently active LM
 
@@ -45,7 +44,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             BreakPoss bp;
             LayoutContext childLC = context;
             if (!curLM.isFinished()) {
-                if ((bp = curLM.getNextBreakPoss(childLC, null)) != null) {
+                if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                     blockBreaks.add(bp);
                     if(bp.isForcedBreak()) {
                         System.out.println("Forced breaks are not allowed in static content");

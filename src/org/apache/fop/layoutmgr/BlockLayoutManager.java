@@ -108,9 +108,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         return curBlockArea.getIPD();
     }
 
-    public BreakPoss getNextBreakPoss(LayoutContext context,
-                                      Position prevLineBP) {
-
+    public BreakPoss getNextBreakPoss(LayoutContext context) {
         BPLayoutManager curLM ; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
@@ -139,7 +137,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             }
 
             while (!curLM.isFinished()) {
-                if ((bp = curLM.getNextBreakPoss(childLC, null)) != null) {
+                if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                     stackSize.add(bp.getStackingSize());
                     if (stackSize.min > context.getStackLimit().max) {
                         // reset to last break

@@ -36,8 +36,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         super(fobj);
     }
 
-    public BreakPoss getNextBreakPoss(LayoutContext context,
-                                      Position prevLineBP) {
+    public BreakPoss getNextBreakPoss(LayoutContext context) {
 
         BPLayoutManager curLM ; // currently active LM
         MinOptMax stackSize = new MinOptMax();
@@ -54,7 +53,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
             childLC.setRefIPD(context.getRefIPD());
 
             if (!curLM.isFinished()) {
-                if ((bp = curLM.getNextBreakPoss(childLC, null)) != null) {
+                if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                     stackSize.add(bp.getStackingSize());
                     blockBreaks.add(bp);
                     // set stackLimit for remaining space

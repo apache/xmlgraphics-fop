@@ -201,9 +201,6 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
      * Return the next break possibility that fits the constraints.
      * @param context An object specifying the flags and input information
      * concerning the context of the BreakPoss.
-     * @para prevPos An object specifying the previous Position returned
-     * by a BreakPoss from this LM. It may be earlier than the current
-     * pointer when doing hyphenation or starting a new line.
      * @return BreakPoss An object containing information about the next
      * legal break position or the end of the text run if no break
      * was found.
@@ -215,8 +212,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
      * There may be LINEFEED characters if they weren't converted
      * into spaces. A LINEFEED always forces a break.
      */
-    public BreakPoss getNextBreakPoss(LayoutContext context,
-                                      Position prevPos) {
+    public BreakPoss getNextBreakPoss(LayoutContext context) {
         /* On first call in a new Line, the START_AREA
          * flag in LC is set.
          */

@@ -66,8 +66,7 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
         return null;
     }
 
-    public BreakPoss getNextBreakPoss(LayoutContext context,
-                                      Position prevBreakPoss) {
+    public BreakPoss getNextBreakPoss(LayoutContext context) {
         curArea = get(context);
         if (curArea == null) {
             setFinished(true);
