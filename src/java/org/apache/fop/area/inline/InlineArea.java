@@ -21,6 +21,8 @@ package org.apache.fop.area.inline;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * @author pbw
@@ -33,9 +35,14 @@ public class InlineArea extends Area {
      * @param index
      * @throws IndexOutOfBoundsException
      */
-    public InlineArea(Node parent, int index, Object areaSync)
+    public InlineArea(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            int index,
+            Object sync)
         throws IndexOutOfBoundsException {
-        super(parent, index, areaSync);
+        super(pageSeq, generatedBy, parent, index, sync);
         // TODO Auto-generated constructor stub
     }
 
@@ -43,8 +50,12 @@ public class InlineArea extends Area {
      * @param parent
      * @throws IndexOutOfBoundsException
      */
-    public InlineArea(Node parent, Object areaSync) throws IndexOutOfBoundsException {
-        super(parent, areaSync);
+    public InlineArea(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
         // TODO Auto-generated constructor stub
     }
 
