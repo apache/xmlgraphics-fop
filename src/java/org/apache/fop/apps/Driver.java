@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.apps;
 
 // FOP
@@ -79,10 +79,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 // Java
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
 
 /**
  * Primary class that drives overall FOP process.
@@ -292,8 +290,8 @@ public class Driver implements LogEnabled {
     }
 
     /**
-     * Provide the Driver instance with a logger. More information on Avalon 
-     * logging can be found at the 
+     * Provide the Driver instance with a logger. More information on Avalon
+     * logging can be found at the
      * <a href="http://avalon.apache.org">Avalon site</a>.
      *
      * @param log the logger. Must not be <code>null</code>.
@@ -308,7 +306,7 @@ public class Driver implements LogEnabled {
     }
 
     /**
-     * Provide the Driver instance with a logger. 
+     * Provide the Driver instance with a logger.
      * @param log the logger. Must not be <code>null</code>.
      * @deprecated Use #enableLogging(Logger) instead.
      */
@@ -458,7 +456,7 @@ public class Driver implements LogEnabled {
      * @param rendererClassName the fully qualified classname of the renderer
      * class to use.
      * @param version version number
-     * @deprecated use renderer.setProducer(version) + setRenderer(renderer) or 
+     * @deprecated use renderer.setProducer(version) + setRenderer(renderer) or
      * just setRenderer(rendererType) which will use the default producer string.
      * @see #setRenderer(int)
      * @see #setRenderer(Renderer)
@@ -513,7 +511,6 @@ public class Driver implements LogEnabled {
     /**
      * Add the element mapping with the given class name.
      * @param mappingClassName the class name representing the element mapping.
-     * @throws IllegalArgumentException if there was not such element mapping.
      */
     public void addElementMapping(String mappingClassName) {
         treeBuilder.addElementMapping(mappingClassName);
@@ -532,7 +529,7 @@ public class Driver implements LogEnabled {
             initialize();
         }
         validateOutputStream();
-        
+
         // TODO: - do this stuff in a better way
         // PIJ: I guess the structure handler should be created by the renderer.
         if (rendererType == RENDER_MIF) {
