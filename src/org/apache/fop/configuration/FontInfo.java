@@ -8,7 +8,7 @@
 
 package org.apache.fop.configuration;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * FontInfo contains meta information on fonts (where is the metrics file etc.)
@@ -17,10 +17,10 @@ import java.util.Vector;
 public class FontInfo {
     private String metricsFile, embedFile, name;
     private boolean kerning;
-    private Vector fontTriplets;
+    private ArrayList fontTriplets;
 
     public FontInfo(String name, String metricsFile, boolean kerning,
-                    Vector fontTriplets, String embedFile) {
+                    ArrayList fontTriplets, String embedFile) {
         this.name = name;
         this.metricsFile = metricsFile;
         this.embedFile = embedFile;
@@ -40,7 +40,7 @@ public class FontInfo {
         return kerning;
     }
 
-    public Vector getFontTriplets() {
+    public ArrayList getFontTriplets() {
         return fontTriplets;
     }
 
