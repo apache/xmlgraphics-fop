@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<fo:root font-family="Times Roman" font-size="12pt" text-align="center" xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<fo:root font-family="Times Roman" font-size="12pt" xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
 <fo:layout-master-set>
     <fo:simple-page-master
@@ -11,8 +11,8 @@
   page-width="21cm"
   page-height="29.7cm"
   master-name="left">
-      <fo:region-before extent="1cm"/>
-      <fo:region-body margin-top="1cm"/>
+      <fo:region-before extent="0.5cm"/>
+      <fo:region-body margin-top="0.5cm" margin-bottom="1.7cm"/>
       <fo:region-after extent="1.5cm"/>
     </fo:simple-page-master>
 
@@ -27,7 +27,7 @@
 </fo:static-content>
 
 <fo:flow flow-name="xsl-region-body">
-<fo:block font-size="18pt" font-weight="bold">1. FOP test for images</fo:block>
+<fo:block font-size="18pt" font-weight="bold" text-align="center">1. FOP test for images</fo:block>
 <fo:block>
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">Normal</fo:block>
   <fo:block>
@@ -77,6 +77,33 @@ is clipped with the content size double the viewport size.
 The image
 (<fo:external-graphic width="50pt" height="50pt" overflow="error-if-overflow" src="file:logo.jpg"/>)
 is clipped with the content size double the viewport size.
+This has <fo:inline font-style="italic">error-if-overflow</fo:inline>
+set so there should be an error reported, it can recover from the
+error by clipping to the viewport.
+  </fo:block>
+</fo:block>
+
+<fo:block>
+  <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">Scaling</fo:block>
+  <fo:block>
+The image
+(<fo:external-graphic content-width="100pt" content-height="50pt" scaling="non-uniform" src="file:logo.jpg"/>)
+has non-uniform scaling.
+  </fo:block>
+  <fo:block>
+The image
+(<fo:external-graphic content-width="50pt" content-height="100pt" scaling="non-uniform" src="file:logo.jpg"/>)
+has non-uniform scaling.
+  </fo:block>
+  <fo:block>
+The image
+(<fo:external-graphic content-width="100pt" content-height="75pt" scaling="uniform" src="file:logo.jpg"/>)
+has uniform scaling.
+  </fo:block>
+  <fo:block>
+The image
+(<fo:external-graphic content-width="75pt" content-height="100pt" scaling="uniform" src="file:logo.jpg"/>)
+has uniform scaling.
   </fo:block>
 </fo:block>
 
