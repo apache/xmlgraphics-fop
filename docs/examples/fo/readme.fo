@@ -2,7 +2,7 @@
 <!--
 THIS IS NOT THE LATEST VERSION OF THE FOP DOCUMENTATION BUT ONLY AN EXAMPLE FILE 
 
-This files shows next to the trivial usage of fo:block and fo:inline-sequence examples of
+This files shows next to the trivial usage of fo:block and fo:inline examples of
 - fo:simple-link external-destination
 - fo:simple-link internal-destination
 - fo:table
@@ -78,7 +78,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
   </fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">FOP is part of Apache's XML project. The homepage of FOP is 
-     <fo:inline-sequence font-style="italic" font-family="serif"><fo:simple-link color="blue" external-destination="http://xml.apache.org/fop">http://xml.apache.org/fop</fo:simple-link></fo:inline-sequence>
+     <fo:inline font-style="italic" font-family="serif"><fo:simple-link color="blue" external-destination="http://xml.apache.org/fop">http://xml.apache.org/fop</fo:simple-link></fo:inline>
   </fo:block>
 
 
@@ -88,26 +88,26 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
   <fo:block  id="sec2" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >B) 
       Downloading FOP</fo:block>
-  <fo:block space-after.optimum="3pt" font-family="serif">The latest release version is <fo:inline-sequence font-style="italic" font-family="serif">FOP 12.0</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+  <fo:block space-after.optimum="3pt" font-family="serif">The latest release version is <fo:inline font-style="italic" font-family="serif">FOP 12.0</fo:inline>
+<fo:inline font-family="serif">
       ()
-   </fo:inline-sequence>. </fo:block>
+   </fo:inline>. </fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">NOTE: you do not have to unjar or unzip this jar file.</fo:block>
-  <fo:block space-after.optimum="3pt" font-family="serif">Documentation can be downloaded here as <fo:inline-sequence font-style="italic" font-family="serif">HMTL file</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+  <fo:block space-after.optimum="3pt" font-family="serif">Documentation can be downloaded here as <fo:inline font-style="italic" font-family="serif">HMTL file</fo:inline>
+<fo:inline font-family="serif">
       ()
-   </fo:inline-sequence> or 
-     as <fo:inline-sequence font-style="italic" font-family="serif">PDF file</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+   </fo:inline> or 
+     as <fo:inline font-style="italic" font-family="serif">PDF file</fo:inline>
+<fo:inline font-family="serif">
       ()
-   </fo:inline-sequence>.</fo:block>
+   </fo:inline>.</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">To run FOP from the command line, see Running FOP. If you are interested in 
      embedding FOP in a Java application of your own, see Embedding FOP.
   </fo:block>
-  <fo:block space-after.optimum="3pt" font-family="serif">You can also download the <fo:inline-sequence font-style="italic" font-family="serif">source code v. 12.0</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+  <fo:block space-after.optimum="3pt" font-family="serif">You can also download the <fo:inline font-style="italic" font-family="serif">source code v. 12.0</fo:inline>
+<fo:inline font-family="serif">
       ()
-   </fo:inline-sequence> as jar file</fo:block>
+   </fo:inline> as jar file</fo:block>
 
 
 
@@ -122,28 +122,28 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
       <fo:block space-after.optimum="3pt" font-family="serif">For the fo-file viewer mode of FOP (see below) you must have the swing classes installed. 
          From Java 1.2 on (aka Java 2) they are part of the standard java distribution. 
          If you use Java 1.1.x you must seperately include the swing classes, which can
-         be found at the <fo:inline-sequence font-style="italic" font-family="serif">
-         Sun website</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+         be found at the <fo:inline font-style="italic" font-family="serif">
+         Sun website</fo:inline>
+<fo:inline font-family="serif">
       (http://java.sun.com/products/jfc/#download-swing)
-   </fo:inline-sequence>. 
+   </fo:inline>. 
       </fo:block>
     <fo:block space-after.optimum="3pt" font-family="serif">b) An XML parser which supports SAX and DOM like 
-          <fo:inline-sequence font-style="italic" font-family="serif">Xerces-J</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+          <fo:inline font-style="italic" font-family="serif">Xerces-J</fo:inline>
+<fo:inline font-family="serif">
       (http://xml.apache.org/xerces-j/index.html)
-   </fo:inline-sequence>.</fo:block>
+   </fo:inline>.</fo:block>
     <fo:block space-after.optimum="3pt" font-family="serif">c) If you have to produce the flow objects files, which are the input for FOP, 
        you need a transformation utility to create this files from your xml files. 
        Normally this is an XSLT stylesheet processor like 
-       <fo:inline-sequence font-style="italic" font-family="serif">XT</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+       <fo:inline font-style="italic" font-family="serif">XT</fo:inline>
+<fo:inline font-family="serif">
       (http://www.jclark.com/xml/xt.html)
-   </fo:inline-sequence> 
-       or <fo:inline-sequence font-style="italic" font-family="serif">XALAN</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+   </fo:inline> 
+       or <fo:inline font-style="italic" font-family="serif">XALAN</fo:inline>
+<fo:inline font-family="serif">
       (http://xml.apache.org/xalan/index.html)
-   </fo:inline-sequence>. 
+   </fo:inline>. 
     </fo:block>
   
   
@@ -230,10 +230,10 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
   
     <fo:block font-size="16pt" font-family="serif" line-height="18pt" space-before.optimum="8pt" space-after.optimum="8pt" >4) Problems</fo:block>
     <fo:block space-after.optimum="3pt" font-family="serif">If you have problems running FOP, please have a look at the 
-       <fo:inline-sequence font-style="italic" font-family="serif">FOP FAQ</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+       <fo:inline font-style="italic" font-family="serif">FOP FAQ</fo:inline>
+<fo:inline font-family="serif">
       (faq.html)
-   </fo:inline-sequence>. If you don't find a solution there,
+   </fo:inline>. If you don't find a solution there,
        you can ask for help on the list fop-dev@xml.apache.org. Maybe it's bug and 
        maybe somebody is already working on it. 
     </fo:block>
@@ -292,7 +292,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     <fo:list-block start-indent="1cm" provisional-distance-between-starts="12pt" font-family="serif">
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>root </fo:block>
@@ -300,7 +300,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>layout-master-set </fo:block>
@@ -308,7 +308,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>simple-page-master </fo:block>
@@ -316,7 +316,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>region-body </fo:block>
@@ -324,7 +324,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>region-before </fo:block>
@@ -332,7 +332,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>region-after </fo:block>
@@ -340,7 +340,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>page-sequence </fo:block>
@@ -348,7 +348,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>sequence-specification </fo:block>
@@ -356,7 +356,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>sequence-specifier-single </fo:block>
@@ -364,7 +364,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>sequence-specifier-repeating </fo:block>
@@ -372,7 +372,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>sequence-specifier-alternating </fo:block>
@@ -380,7 +380,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>flow </fo:block>
@@ -388,7 +388,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>static-content </fo:block>
@@ -396,7 +396,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>block </fo:block>
@@ -404,7 +404,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>list-block </fo:block>
@@ -412,7 +412,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>list-item </fo:block>
@@ -420,7 +420,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>list-item-label </fo:block>
@@ -428,7 +428,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>list-item-body </fo:block>
@@ -436,7 +436,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>page-number </fo:block>
@@ -444,7 +444,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>display-sequence </fo:block>
@@ -452,15 +452,15 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
-<fo:block>inline-sequence </fo:block>
+<fo:block>inline </fo:block>
 </fo:list-item-body>
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>display-rule </fo:block>
@@ -468,7 +468,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>display-graphic </fo:block>
@@ -476,7 +476,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>table (minimal support)</fo:block>
@@ -484,7 +484,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>table-column (minimal support)</fo:block>
@@ -492,7 +492,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>table-body (minimal support)</fo:block>
@@ -500,7 +500,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>table-row (minimal support)</fo:block>
@@ -508,7 +508,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>table-cell (minimal support)</fo:block>
@@ -522,7 +522,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     <fo:list-block start-indent="1cm" provisional-distance-between-starts="12pt" font-family="serif">
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>end-indent </fo:block>
@@ -530,7 +530,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>page-master-name </fo:block>
@@ -538,7 +538,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>page-master-first </fo:block>
@@ -546,7 +546,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>page-master-repeating </fo:block>
@@ -554,7 +554,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>page-master-odd </fo:block>
@@ -562,7 +562,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>page-master-even </fo:block>
@@ -570,7 +570,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>margin-top (only on pages and regions)</fo:block>
@@ -578,7 +578,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>margin-bottom (only on pages and regions)</fo:block>
@@ -586,7 +586,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>margin-left (only on pages and regions)</fo:block>
@@ -594,7 +594,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>margin-right (only on pages and regions)</fo:block>
@@ -602,7 +602,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>extent </fo:block>
@@ -610,7 +610,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>page-width </fo:block>
@@ -618,7 +618,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>page-height </fo:block>
@@ -626,7 +626,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>flow-name </fo:block>
@@ -634,7 +634,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>font-family </fo:block>
@@ -642,7 +642,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>font-style </fo:block>
@@ -650,7 +650,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>font-weight </fo:block>
@@ -658,7 +658,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>font-size </fo:block>
@@ -666,7 +666,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>line-height </fo:block>
@@ -674,7 +674,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>text-align </fo:block>
@@ -682,7 +682,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>text-align-last </fo:block>
@@ -690,7 +690,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>space-before.optimum </fo:block>
@@ -698,7 +698,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>space-after.optimum </fo:block>
@@ -706,7 +706,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>start-indent </fo:block>
@@ -714,7 +714,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>end-indent </fo:block>
@@ -722,7 +722,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>provisional-distance-between-starts </fo:block>
@@ -730,7 +730,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>provisional-label-separation </fo:block>
@@ -738,7 +738,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>rule-thickness </fo:block>
@@ -746,7 +746,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>color </fo:block>
@@ -754,7 +754,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>wrap-option </fo:block>
@@ -762,7 +762,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>white-space-treatment </fo:block>
@@ -770,7 +770,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>break-before </fo:block>
@@ -778,7 +778,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>break-after </fo:block>
@@ -786,7 +786,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>text-indent </fo:block>
@@ -794,7 +794,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>href</fo:block>
@@ -802,7 +802,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>column-width</fo:block>
@@ -810,7 +810,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>background-color</fo:block>
@@ -818,7 +818,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>padding-top (only in conjunction with background color)</fo:block>
@@ -826,7 +826,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>padding-left (only in conjunction with background color)</fo:block>
@@ -834,7 +834,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>padding-bottom (only in conjunction with background color)</fo:block>
@@ -842,7 +842,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>padding-right (only in conjunction with background color)</fo:block>
@@ -944,21 +944,21 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     
       <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" >a) Java 1.1.x or later</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">If you use Java 1.1.x you must also seperately include the swing classes, which can
-         be found at the <fo:inline-sequence font-style="italic" font-family="serif">
-         Sun website</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+         be found at the <fo:inline font-style="italic" font-family="serif">
+         Sun website</fo:inline>
+<fo:inline font-family="serif">
       (http://java.sun.com/products/jfc/#download-swing)
-   </fo:inline-sequence>. From Java 1.2 on (aka Java 2) they are part of the standard 
+   </fo:inline>. From Java 1.2 on (aka Java 2) they are part of the standard 
          distribution. 
       </fo:block>
     
     
       <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" >b) An XML parser</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">An XML parser which supports DOM like 
-         <fo:inline-sequence font-style="italic" font-family="serif">Xerces-J</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+         <fo:inline font-style="italic" font-family="serif">Xerces-J</fo:inline>
+<fo:inline font-family="serif">
       (http://xml.apache.org/xerces-j/index.html)
-   </fo:inline-sequence>.</fo:block>
+   </fo:inline>.</fo:block>
     
     
       <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" >c) XT from James Clark</fo:block>
@@ -967,30 +967,30 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
       <fo:block space-after.optimum="3pt" font-family="serif">XT is an XSL stylesheet processor written in java. At the moment you
          can't use any other processor, because the make file makes use of some
          proprietary features of Clark's xt which allow to write output in more
-         then one document. You can find XT at <fo:inline-sequence font-style="italic" font-family="serif">
-        James Clark's website</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+         then one document. You can find XT at <fo:inline font-style="italic" font-family="serif">
+        James Clark's website</fo:inline>
+<fo:inline font-family="serif">
       (http://www.jclark.com/xml/xt.html)
-   </fo:inline-sequence>. You have to use XT version 19991105 or later.</fo:block>
+   </fo:inline>. You have to use XT version 19991105 or later.</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">(Under windows you shouldn't use the prepackaged xt.exe but also the
          generic jar file, otherwise make won't work)
       </fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">XT relies on an sax parser like XP (also J. Clark), which can be
-         downloaded at <fo:inline-sequence font-style="italic" font-family="serif">James 
-         Clark's Website</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+         downloaded at <fo:inline font-style="italic" font-family="serif">James 
+         Clark's Website</fo:inline>
+<fo:inline font-family="serif">
       (http://www.jclark.com/xml/xp/index.html)
-   </fo:inline-sequence>
+   </fo:inline>
       </fo:block>
     
     
       <fo:block font-size="14pt" font-family="serif" line-height="16pt" space-before.optimum="8pt" space-after.optimum="4pt" >d) make</fo:block>
       <fo:block space-after.optimum="3pt" font-family="serif">Under windows it has been reported that the use of the cygnus solutions port 
          of the GNU utilities works. You can find it at 
-         <fo:inline-sequence font-style="italic" font-family="serif">Cygnus Solutions</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+         <fo:inline font-style="italic" font-family="serif">Cygnus Solutions</fo:inline>
+<fo:inline font-family="serif">
       (http://sourceware.cygnus.com/cygwin/)
-   </fo:inline-sequence>
+   </fo:inline>
       </fo:block>
     
   
@@ -1033,105 +1033,105 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
   <fo:list-block start-indent="1cm" provisional-distance-between-starts="12pt" font-family="serif">
     <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>
-<fo:inline-sequence font-style="italic" font-family="serif">XML Recommendation</fo:inline-sequence>
-<fo:inline-sequence font-family="serif" >
+<fo:inline font-style="italic" font-family="serif">XML Recommendation</fo:inline>
+<fo:inline font-family="serif" >
       (<fo:simple-link color="blue" external-destination="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</fo:simple-link>)
-   </fo:inline-sequence>    
+   </fo:inline>    
 </fo:block>
 </fo:list-item-body>
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>
-<fo:inline-sequence font-style="italic" font-family="serif">XSL-FO Working Draft</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+<fo:inline font-style="italic" font-family="serif">XSL-FO Working Draft</fo:inline>
+<fo:inline font-family="serif">
       (<fo:simple-link color="blue" external-destination="http://www.w3.org/TR/WD-xsl/">http://www.w3.org/TR/WD-xsl/</fo:simple-link>)
-   </fo:inline-sequence>
+   </fo:inline>
 </fo:block>
 </fo:list-item-body>
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>
-<fo:inline-sequence font-style="italic" font-family="serif">XSLT Recommendation</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+<fo:inline font-style="italic" font-family="serif">XSLT Recommendation</fo:inline>
+<fo:inline font-family="serif">
       (<fo:simple-link color="blue" external-destination="http://www.w3.org/TR/xslt">http://www.w3.org/TR/xslt</fo:simple-link>)
-   </fo:inline-sequence>
+   </fo:inline>
 </fo:block>
 </fo:list-item-body>
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>
-<fo:inline-sequence font-style="italic" font-family="serif">PDF Documentation</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+<fo:inline font-style="italic" font-family="serif">PDF Documentation</fo:inline>
+<fo:inline font-family="serif">
       (<fo:simple-link color="blue" external-destination="http://partners.adobe.com/asn/developer/acrosdk/DOCS/pdfspec.pdf">http://partners.adobe.com/asn/developer/acrosdk/DOCS/pdfspec.pdf</fo:simple-link>)
-   </fo:inline-sequence>
+   </fo:inline>
 </fo:block>
 </fo:list-item-body>
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>
-<fo:inline-sequence font-style="italic" font-family="serif">Simple API for XML (SAX)</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+<fo:inline font-style="italic" font-family="serif">Simple API for XML (SAX)</fo:inline>
+<fo:inline font-family="serif">
       (<fo:simple-link color="blue" external-destination="http://www.megginson.com/SAX/">http://www.megginson.com/SAX/</fo:simple-link>)
-   </fo:inline-sequence>
+   </fo:inline>
 </fo:block>
 </fo:list-item-body>
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>
-<fo:inline-sequence font-style="italic" font-family="serif">Document Object Model (DOM)</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+<fo:inline font-style="italic" font-family="serif">Document Object Model (DOM)</fo:inline>
+<fo:inline font-family="serif">
       (<fo:simple-link color="blue" external-destination="http://www.w3.org/TR/REC-DOM-Level-1">http://www.w3.org/TR/REC-DOM-Level-1</fo:simple-link>)
-   </fo:inline-sequence>
+   </fo:inline>
 </fo:block>
 </fo:list-item-body>
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>
-<fo:inline-sequence font-style="italic" font-family="serif">Namespaces in XML Recommendation</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+<fo:inline font-style="italic" font-family="serif">Namespaces in XML Recommendation</fo:inline>
+<fo:inline font-family="serif">
       (<fo:simple-link color="blue" external-destination="http://www.w3.org/TR/REC-xml-names/">http://www.w3.org/TR/REC-xml-names/</fo:simple-link>)
-   </fo:inline-sequence>
+   </fo:inline>
 </fo:block>
 </fo:list-item-body>
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label>
-<fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body>
 <fo:block>
-<fo:inline-sequence font-style="italic" font-family="serif">Java JDK 1.1 Documentation</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+<fo:inline font-style="italic" font-family="serif">Java JDK 1.1 Documentation</fo:inline>
+<fo:inline font-family="serif">
       (<fo:simple-link color="blue" external-destination="http://java.sun.com/products/jdk/1.1/docs/index.html">http://java.sun.com/products/jdk/1.1/docs/index.html</fo:simple-link>)
-   </fo:inline-sequence>
+   </fo:inline>
 </fo:block>
 </fo:list-item-body>
 </fo:list-item>
@@ -1192,10 +1192,10 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
      This software  consists of voluntary contributions made  by many individuals
      on  behalf of the Apache Software  Foundation and was  originally created by
      James Tauber &lt;jtauber@jtauber.com&gt;. For more  information on the Apache 
-     Software Foundation, please see <fo:inline-sequence font-style="italic" font-family="serif">http://www.apache.org/</fo:inline-sequence>
-<fo:inline-sequence font-family="serif">
+     Software Foundation, please see <fo:inline font-style="italic" font-family="serif">http://www.apache.org/</fo:inline>
+<fo:inline font-family="serif">
       (http://www.apache.org/)
-   </fo:inline-sequence>.
+   </fo:inline>.
   </fo:block>
 
 <fo:block font-size="14pt" font-family="sans-serif" line-height="10pt" space-after.optimum="15pt" font-weight="bold" start-indent="15pt" break-before="page">

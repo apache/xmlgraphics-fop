@@ -86,12 +86,12 @@
       <fo:block>Now what follows is a leader of thickness 5pt with start-indent of 100pt (same space-before/after as before).</fo:block>
       <fo:block><fo:leader leader-pattern="rule" space-before.optimum="12pt" space-after.optimum="12pt" rule-thickness="5pt" start-indent="100pt"/></fo:block>
       <fo:block font-size="24pt" line-height="28pt" space-before.optimum="12pt" space-after.optimum="12pt"
-      ><fo:inline-sequence color="#500">C</fo:inline-sequence
-      ><fo:inline-sequence color="#700">o</fo:inline-sequence
-      ><fo:inline-sequence color="#900">l</fo:inline-sequence
-      ><fo:inline-sequence color="#B00">o</fo:inline-sequence
-      ><fo:inline-sequence color="#D00">u</fo:inline-sequence
-      ><fo:inline-sequence color="#F00">r</fo:inline-sequence
+      ><fo:inline color="#500">C</fo:inline
+      ><fo:inline color="#700">o</fo:inline
+      ><fo:inline color="#900">l</fo:inline
+      ><fo:inline color="#B00">o</fo:inline
+      ><fo:inline color="#D00">u</fo:inline
+      ><fo:inline color="#F00">r</fo:inline
       ></fo:block>
       <fo:block color="black">black</fo:block>
       <fo:block color="green">green</fo:block>
