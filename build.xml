@@ -139,6 +139,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <include name="lib/xercesImpl-2.0.1.jar"/>
        <include name="lib/xerces.LICENSE.txt"/>
        <include name="lib/xml-apis.jar"/>
+       <include name="lib/xml-apis.README.txt"/>
        <include name="lib/xalan-2.3.1.jar"/>
        <include name="lib/xalan.LICENSE.txt"/>
        <include name="lib/batik.jar"/>
