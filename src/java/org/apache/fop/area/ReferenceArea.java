@@ -59,7 +59,10 @@ public interface ReferenceArea extends Cloneable {
      * @return the current transform of this reference area.
      */
     public AffineTransform getCoordTransformer();
-    
+
+    public int getContentOrientation();
+    public int getFrameOrientation();
+
     public Object clone();
     // TODO - methods to apply transformation to content-rectangle of the
     // reference area wrt the allocation-rectangle
