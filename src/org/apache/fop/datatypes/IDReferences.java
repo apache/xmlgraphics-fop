@@ -64,8 +64,9 @@ import org.apache.fop.apps.FOPException;
 
 
 public class IDReferences {
-    private Hashtable idReferences;
-    private Vector idValidation;
+    private Hashtable 
+    idReferences,
+    idValidation;    
 
     final static int ID_PADDING = 5000; // space to add before id y position
 
@@ -75,18 +76,32 @@ public class IDReferences {
     public IDReferences()
     {
         idReferences = new Hashtable();
-        idValidation = new Vector();
+        idValidation = new Hashtable();
     }
 
 
     /**
-     * Initializes the specified id.  This should be called everytime an id is encountered
+     * Creates and configures the specified id.  
      * 
      * @param id     The id to initialize
      * @param area   The area where this id was encountered
      * @exception FOPException
      */
     public void initializeID(String id, Area area) throws FOPException
+    {
+        createID(id,area);
+        configureID(id,area);        
+    }
+
+
+    /**
+     * Creates id entry
+     * 
+     * @param id     The id to create
+     * @param area   The area where this id was encountered
+     * @exception FOPException
+     */
+    public void createID(String id, Area area) throws FOPException
     {
         if ( id!=null && !id.equals("") ) {
             if ( doesIDExist(id) ) {
@@ -95,11 +110,26 @@ public class IDReferences {
             else {
                 createNewId(id);
                 removeFromIdValidationList(id);                 
-                setYPosition(id,area.getPage().getBody().getYPosition() - area.getAbsoluteHeight()+ID_PADDING);                    
+            }
+            
+        }
+    }
+
+
+    /**
+     * Configures this id
+     * 
+     * @param id     The id to configure
+     * @param area   The area where the id was encountered
+     */
+    public void configureID(String id, Area area)
+    {
+        if ( id!=null && !id.equals("") ) {
+            setPosition(id,area.getPage().getBody().getXPosition()-ID_PADDING,area.getPage().getBody().getYPosition() - area.getAbsoluteHeight()+ID_PADDING);                                                
+            setPageNumber(id,area.getPage().getNumber());
                 area.getPage().addToIDList(id);                                    
             }
         }
-    }
 
     /**
      * Adds id to validation list to be validated .  This should be used if it is unsure whether the id is valid
@@ -108,10 +138,10 @@ public class IDReferences {
      */
     public void addToIdValidationList(String id)
     {     
-        idValidation.addElement(id);
+        idValidation.put(id,"");
     }
 
-    
+
 
     /**
      * Removes id from validation list. This should be used if the id has been determined to be valid
@@ -120,7 +150,7 @@ public class IDReferences {
      */
     public void removeFromIdValidationList(String id)
     {        
-        idValidation.removeElement(id);
+        idValidation.remove(id);     
     }
 
     /**
@@ -130,7 +160,7 @@ public class IDReferences {
      */
     public boolean isEveryIdValid()
     {
-        return (idValidation.size()==0);
+        return(idValidation.size()==0);
     }
 
 
@@ -142,16 +172,8 @@ public class IDReferences {
      */
     public String getNextInvalidId()
     {
-        String id;
-        try
-        {            
-            id = idValidation.firstElement().toString();
-        }
-        catch(NoSuchElementException nsee)
-        {            
-            id=null;    // should probably report error
-        }
-        return id;
+        Enumeration enum=idValidation.keys();
+        return enum.nextElement().toString();                
     }
 
 
@@ -254,15 +276,48 @@ public class IDReferences {
 
 
     /**
-     * Sets the x position of specified id
+     * Sets the page number for the specified id
      * 
-     * @param id     the id whose x position is to be set
+     * @param id     The id whose page number is being set
+     * @param pageNumber The page number of the specified id
+     */
+    public void setPageNumber(String id, int pageNumber)
+    {        
+        IDNode node=(IDNode)idReferences.get(id);                
+        node.setPageNumber(pageNumber);        
+    }
+
+
+    /**
+     * Returns the page number where the specified id is found
+     * 
+     * @param id     The id whose page number to return
+     * @return the page number of the id, or null if the id does not exist
+     */
+    public String getPageNumber(String id)
+    {        
+        if ( doesIDExist(id) ) {
+            IDNode node=(IDNode)idReferences.get(id);            
+            return node.getPageNumber();          
+        }
+        else {
+            addToIdValidationList(id);
+            return null;
+        }
+    }
+
+
+    /**
+     * Sets the x and y position of specified id
+     * 
+     * @param id     the id whose position is to be set
+     * @param x      x position of id
      * @param y      y position of id
      */
-    public void setYPosition(String id, int y)
+    public void setPosition(String id, int x, int y)
     {
         IDNode node=(IDNode)idReferences.get(id);
-        node.setYPosition(y);
-     }
-       
+        node.setPosition(x,y);        
+    }
+
 }

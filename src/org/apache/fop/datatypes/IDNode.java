@@ -64,9 +64,11 @@ public class IDNode
         internalLinkGoTo;
 
     private int 
-        yPosition=0;  // position on page
+    pageNumber = -1,
+    xPosition = 0,  // x position on page
+    yPosition = 0;  // y position on page
 
-    
+
     /**
      * Constructor for IDNode
      * 
@@ -79,6 +81,28 @@ public class IDNode
 
 
     /**
+     * Sets the page number for this node
+     * 
+     * @param number page number of node
+     */
+    protected void setPageNumber(int number)
+    {        
+        pageNumber=number;     
+    }
+
+
+    /**
+     * Returns the page number of this node
+     * 
+     * @return page number of this node
+     */
+    protected String getPageNumber()
+    {             
+        return(pageNumber != -1)?new Integer(pageNumber).toString():null;
+    }
+
+
+    /**
      * creates a new GoTo object for an internal link
      * 
      * @param objectNumber
@@ -86,7 +110,7 @@ public class IDNode
      */
     protected void createInternalLinkGoTo(int objectNumber)
     {
-        if(internalLinkGoToPageReference==null)
+        if ( internalLinkGoToPageReference==null )
         {
             internalLinkGoTo = new PDFGoTo(objectNumber,null);
         }
@@ -95,8 +119,9 @@ public class IDNode
             internalLinkGoTo = new PDFGoTo(objectNumber,internalLinkGoToPageReference);
         }
 
-        if(yPosition!=0)
+        if ( xPosition!=0 ) // if the position is known (if x is known, then y is known)
         {
+            internalLinkGoTo.setXPosition(xPosition);
             internalLinkGoTo.setYPosition(yPosition);
         }
         
@@ -113,7 +138,7 @@ public class IDNode
      */
     protected void setInternalLinkGoToPageReference(String pageReference)
     {        
-        if(internalLinkGoTo !=null)
+        if ( internalLinkGoTo !=null )
         {
             internalLinkGoTo.setPageReference(pageReference);                 
         }
@@ -173,18 +198,21 @@ public class IDNode
 
 
      /**
-      * Sets the x position of this node
+     * Sets the position of this node
       * 
       * @param x      the x position
+     * @param y      the y position
       */
-     protected void setYPosition(int y)
-     {
-         if(internalLinkGoTo !=null)
-        {            
+    protected void setPosition(int x, int y)
+    {
+        if ( internalLinkGoTo !=null )
+        {
+            internalLinkGoTo.setXPosition(x);
             internalLinkGoTo.setYPosition(y);
         }
         else
         {
+            xPosition=x;
             yPosition=y;
         }         
      }
