@@ -7,13 +7,13 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.UriLocalName;
 import org.apache.fop.xml.XMLNamespaces;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.datastructs.Tree;
@@ -41,14 +41,14 @@ public class FoLayoutMasterSet extends FONode {
     private static final String revision = "$Revision$";
 
     /**
-     * An array with <tt>XMLEvent.UriLocalName</tt> objects identifying
+     * An array with <tt>UriLocalName</tt> objects identifying
      * <tt>simple-page-master</tt> and <tt>page-sequence-master</tt>
      * XML events.
      */
-    private static final XMLEvent.UriLocalName[] simpleOrSequenceMaster = {
-        new XMLEvent.UriLocalName
+    private static final UriLocalName[] simpleOrSequenceMaster = {
+        new UriLocalName
                       (XMLNamespaces.XSLNSpaceIndex, "simple-page-master"),
-        new XMLEvent.UriLocalName
+        new UriLocalName
                      (XMLNamespaces.XSLNSpaceIndex, "page-sequence-master")
     };
 
@@ -107,7 +107,7 @@ public class FoLayoutMasterSet extends FONode {
                         (simpleOrSequenceMaster, XMLEvent.DISCARD_W_SPACE);
                 localName = ev.getLocalName();
                 if (localName.equals("simple-page-master")) {
-                    System.out.println("Found simple-page-master");
+                    //System.out.println("Found simple-page-master");
                     simple = new FoSimplePageMaster(foTree, this, ev);
                     masterName = simple.getMasterName();
                     if (pageMasters.get(masterName) != null)
@@ -122,7 +122,7 @@ public class FoLayoutMasterSet extends FONode {
                                  + "simplePageMasters: " + masterName);
                     simplePageMasters.put(masterName, simple);
                 } else if (localName.equals("page-sequence-master")) {
-                    System.out.println("Found page-sequence-master");
+                    //System.out.println("Found page-sequence-master");
                     try {
                         foPageSeq =
 				new FoPageSequenceMaster(foTree, this, ev);
