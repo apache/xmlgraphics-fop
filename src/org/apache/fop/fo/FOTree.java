@@ -84,6 +84,9 @@ public class FOTree extends Tree implements Runnable {
      */
     protected ArrayList[] propertyStacks;
 
+    protected PropertyValue[] initialValues
+                    = new PropertyValue[PropNames.LAST_PROPERTY_INDEX + 1];
+
     /**
      * @param xmlevents the buffer from which <tt>XMLEvent</tt>s from the
      * parser are read.
@@ -109,6 +112,7 @@ public class FOTree extends Tree implements Runnable {
         if ( ! (prop instanceof Numeric) || ! ((Numeric)prop).isLength())
             throw new PropertyException("Initial font-size is not a Length");
         propertyStacks[PropNames.FONT_SIZE].add(prop);
+        initialValues[PropNames.FONT_SIZE] = prop;
 
 
         for (int i = 1; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
@@ -116,6 +120,9 @@ public class FOTree extends Tree implements Runnable {
             // Set up the initial values for each property
             prop = PropertyConsts.getInitialValue(i);
             propertyStacks[i].add(prop);
+            System.out.println("....Setting initial value: "
+                               + i + ((prop == null) ? " NULL" : " notNULL"));
+            initialValues[i] = prop;
         }
 
     }
@@ -126,6 +133,7 @@ public class FOTree extends Tree implements Runnable {
      * @exception PropertyException if current font size is not defined,
      * or is not expressed as a <tt>Numeric</tt>, or if cloning is not
      * supported.
+     * [REMOVE]
      */
     public Numeric cloneCurrentFontSize() throws PropertyException {
         Numeric tmpval =
@@ -144,6 +152,7 @@ public class FOTree extends Tree implements Runnable {
      * @return a <tt>Numeric</tt> containing the current font size
      * @exception PropertyException if current font size is not defined,
      * or is not expressed as a <tt>Numeric</tt>.
+     * [REMOVE]
      */
     public Numeric currentFontSize() throws PropertyException {
         return (Numeric)(propertyStacks[PropNames.FONT_SIZE]
@@ -184,7 +193,8 @@ public class FOTree extends Tree implements Runnable {
 
     /**
      * Get the <tt>PropertyValue</tt> at the top of the stack for a
-     * given property.
+     * given property. Note that this is a <b>raw</b> value; if it is
+     * an unresolved percentage that value will be returned.
      * @param index - the property index.
      * @return a <tt>PropertyValue</tt> containing the latest property
      * value for the indexed property.
@@ -198,7 +208,8 @@ public class FOTree extends Tree implements Runnable {
 
     /**
      * Clone the <tt>PropertyValue</tt> at the top of the stack for a
-     * given property.
+     * given property. Note that this is a <b>raw</b> value; if it is
+     * an unresolved percentage that value will be cloned.
      * @param index - the property index.
      * @return a <tt>PropertyValue</tt> containing the latest property
      * value for the indexed property.
@@ -230,8 +241,9 @@ public class FOTree extends Tree implements Runnable {
     }
 
     /**
-     * Get the initial value <tt>PropertyValue</tt> from the bottom of the
-     * stack for a given property.
+     * Get the initial value <tt>PropertyValue</tt> for a given property.
+     * Note that this is a <b>raw</b> value; if it is
+     * an unresolved percentage that value will be returned.
      * @param index - the property index.
      * @return a <tt>PropertyValue</tt> containing the property
      * value element at the bottom of the stack for the indexed property.
@@ -239,7 +251,7 @@ public class FOTree extends Tree implements Runnable {
     public PropertyValue getInitialValue(int index)
             throws PropertyException
     {
-        return (PropertyValue)(propertyStacks[index].get(0));
+        return initialValues[index];
     }
 
     /**
