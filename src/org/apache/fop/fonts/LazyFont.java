@@ -80,7 +80,7 @@ public class LazyFont extends Font implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fonts.pdf.Font#mapChar(char)
+     * @see org.apache.fop.fonts.Font#mapChar(char)
      */
     public char mapChar(char c) {
         load();
