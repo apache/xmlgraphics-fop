@@ -92,7 +92,7 @@ public class PathData {
 				float[][] vals = getPoints(2, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_MOVETO_ABS, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_MOVETO_ABS, vals[count]));
 					}
 				}
 			} else if(str.equals("m")) {
@@ -101,123 +101,123 @@ public class PathData {
 				float[][] vals = getPoints(2, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_MOVETO_REL, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_MOVETO_REL, vals[count]));
 					}
 				}
 			} else if(str.equals("L")) {
 				float[][] vals = getPoints(2, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_LINETO_ABS, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_LINETO_ABS, vals[count]));
 					}
 				}
 			} else if(str.equals("l")) {
 				float[][] vals = getPoints(2, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_LINETO_REL, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_LINETO_REL, vals[count]));
 					}
 				}
 			} else if(str.equals("H")) {
 				float[][] vals = getPoints(1, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_LINETO_HORIZONTAL_ABS, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS, vals[count]));
 					}
 				}
 			} else if(str.equals("h")) {
 				float[][] vals = getPoints(1, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_LINETO_HORIZONTAL_REL, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL, vals[count]));
 					}
 				}
 			} else if(str.equals("V")) {
 				float[][] vals = getPoints(1, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_LINETO_VERTICAL_ABS, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS, vals[count]));
 					}
 				}
 			} else if(str.equals("v")) {
 				float[][] vals = getPoints(1, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_LINETO_VERTICAL_REL, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL, vals[count]));
 					}
 				}
 			} else if(str.equals("C")) {
 				float[][] vals = getPoints(6, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_CURVETO_CUBIC_ABS, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS, vals[count]));
 					}
 				}
 			} else if(str.equals("c")) {
 				float[][] vals = getPoints(6, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_CURVETO_CUBIC_REL, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL, vals[count]));
 					}
 				}
 			} else if(str.equals("S")) {
 				float[][] vals = getPoints(4, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_CURVETO_CUBIC_SMOOTH_ABS, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS, vals[count]));
 					}
 				}
 			} else if(str.equals("s")) {
 				float[][] vals = getPoints(4, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_CURVETO_CUBIC_SMOOTH_REL, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL, vals[count]));
 					}
 				}
 			} else if(str.equals("Q")) {
 				float[][] vals = getPoints(4, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_CURVETO_QUADRATIC_ABS, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_ABS, vals[count]));
 					}
 				}
 			} else if(str.equals("q")) {
 				float[][] vals = getPoints(4, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_CURVETO_QUADRATIC_REL, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL, vals[count]));
 					}
 				}
 			} else if(str.equals("T")) {
 				float[][] vals = getPoints(2, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS, vals[count]));
 					}
 				}
 			} else if(str.equals("t")) {
 				float[][] vals = getPoints(2, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL, vals[count]));
 					}
 				}
 			} else if(str.equals("A")) {
 				float[][] vals = getPoints(7, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_ARC_ABS, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_ARC_ABS, vals[count]));
 					}
 				}
 			} else if(str.equals("a")) {
 				float[][] vals = getPoints(7, st);
 				if(vals != null) {
 					for(int count = 0; count < vals.length; count++) {
-						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_ARC_REL, vals[count]));
+						addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_ARC_REL, vals[count]));
 					}
 				}
 			} else if(str.equals("Z") || str.equals("z")) {
-				addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.SVG_PATHSEG_CLOSEPATH, null));
+				addSVGPathSeg(new SVGPathSegImpl(SVGPathSeg.PATHSEG_CLOSEPATH, null));
 			}
 		}
 	}
