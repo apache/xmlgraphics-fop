@@ -282,7 +282,8 @@ public class FopImageFactory {
                 Class.forName("org.apache.fop.image.JAIImage");
                 m_genericImageClassName = "org.apache.fop.image.JAIImage";
             } catch (Throwable t) {
-                MessageHandler.logln("Failed to load JAI, using Jimi instead");
+                MessageHandler.logln("JAI support was not installed (read: not "
+                    + "present at build time). Trying to use Jimi instead");
                 /* on any exception assume Jai is not present and use Jimi instead */
                 m_genericImageClassName = "org.apache.fop.image.JimiImage";
             }
