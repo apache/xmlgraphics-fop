@@ -163,12 +163,12 @@ public class FObjects {
     }
 
     public Object makeFlowObject(FOTree foTree,
-                                 FONode parent, FoXMLEvent event, int attrSet)
+                             FONode parent, FoXMLEvent event, int stateFlags)
         throws FOPException
     {
         Class foclass;
         Object[] args = new Object[] {
-            foTree, parent, event, Ints.consts.get(attrSet)
+            foTree, parent, event, new Integer(stateFlags)
         };
         int foType = event.getFoType();
 
