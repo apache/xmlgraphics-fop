@@ -52,6 +52,7 @@ package org.apache.fop.apps;
 
 // FOP
 import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.RenderPagesModel;
 
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
@@ -588,7 +589,7 @@ public class Driver implements LogEnabled {
                 FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
                 foTreeHandler.addFOTreeListener(currentDocument);
                 currentDocument.areaTree = new AreaTree();
-                currentDocument.atModel = AreaTree.createRenderPagesModel(renderer);
+                currentDocument.atModel = new RenderPagesModel(renderer);
                 //this.atModel = new CachedRenderPagesModel(renderer);
                 currentDocument.areaTree.setTreeModel(currentDocument.atModel);
                 try {
