@@ -5,6 +5,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjectSets;
 
+import org.apache.fop.xml.FoXMLEventPool;
+
 import java.util.NoSuchElementException;
 import java.util.LinkedList;
 import java.util.Iterator;
@@ -33,6 +35,11 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
     private XMLNamespaces namespaces;
 
     /**
+     * The FoXMLEventPool for this buffer.
+     */
+    private FoXMLEventPool pool;
+
+    /**
      * No-argument constructor sets up a buffer with the default number of
      * elements.
      * The producer and consumer <tt>Thread</tt>s default to the current
@@ -43,6 +50,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
     {
         super();
         namespaces = new XMLNamespaces();
+        pool = new FoXMLEventPool(namespaces);
     }
 
     /**
@@ -54,6 +62,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
     {
         super(size);
         namespaces = new XMLNamespaces();
+        pool = new FoXMLEventPool(namespaces);
     }
 
     /**
@@ -61,6 +70,12 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
      * @return - the namespaces object.
      */
     public XMLNamespaces getNamespaces() { return namespaces; }
+
+    /**
+     * Get the <tt>FoXMLEventPool</tt> from this buffer.
+     * @return - the pool object.
+     */
+    public FoXMLEventPool getPool() { return pool; }
 
     /**
      * @return next event from the SyncedCircularBuffer
