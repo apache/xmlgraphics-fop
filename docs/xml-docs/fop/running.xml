@@ -20,7 +20,7 @@
           The other required files can be found at <jump href="http://www.w3.org/TR/2000/CR-DOM-Level-2-20000510/java-binding.html">W3C DOM Java binding</jump>.
     </p>
     <p>d) Optional: Fop supports the jimi library for image processing, if it is in your classpath
-          when you build Fop. 
+          when you build Fop. You can find it at <jump href="http://java.sun.com/products/jimi/">java.sun.com</jump>
     </p>
   </s2>
   <s2 title="Starting FOP as an standalone application">

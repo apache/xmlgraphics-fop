@@ -21,9 +21,15 @@
        like XT or Xalan) or can be passed in memory as a DOM Document or (in
        the case of XT) SAX events.
     </p>
+    <p>The latest version of Fop is 0.14 and it supports partially the xsl:fo working draft 
+       from March 2000. You can <jump href="download.html">download</jump> 
+       Fop including a precompiled version the source code and many example files to 
+       get you started. Pointers to introductions into xsl:fo can be found in the
+       section <jump href="specs.html">specifications</jump>. 
+    </p>
     <p>FOP is part of Apache's XML project. The homepage of FOP is 
        <jump href="http://xml.apache.org/fop">http://xml.apache.org/fop</jump>. A list
-       of the committers to this project and the tasks they are working on can be found 
+       of known bugs, the committers to this project and the tasks they are working on can be found 
        in the file <jump href="http://xml.apache.org/websrc/cvsweb.cgi/xml-fop/">Status</jump>
     </p>
   </s2>
