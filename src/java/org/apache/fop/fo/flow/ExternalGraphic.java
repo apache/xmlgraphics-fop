@@ -60,12 +60,10 @@ import org.apache.fop.fo.properties.DisplayAlign;
 import org.apache.fop.fo.properties.Scaling;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.FopImage;
-import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.datatypes.Length;
 
 // Java
 import java.awt.geom.Rectangle2D;
-import org.apache.fop.apps.*;
 
 /**
  * External graphic formatting object.

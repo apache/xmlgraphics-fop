@@ -51,7 +51,6 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentLength;
@@ -85,7 +84,6 @@ public class Leader extends FObjMixed {
     protected FOTreeControl fontInfo = null;
     /** FontState for this object */
     protected Font fontState;
-    public InlineArea leaderArea = null;
 
     /**
      * @param parent FONode that is the parent of this object
