@@ -16,7 +16,7 @@
         <li id="kl"><link href="mailto:klease@apache.org">Karen Lease</link> (KL)</li>
         <li id="kll"><link href="mailto:keiron@apache.org">Keiron Liddle</link> (KLL)</li>
         <li id="jm"><link href="mailto:jeremias@apache.org">Jeremias M&#x00E4;rki</link> (JM)</li>
-        <li id="wvm"><link href="mailto:vmote@apache.org">Victor Mote</link> (WVM) is the founder and manager of <link href="http://www.outfitr.com">Enterprise Outfitters</link>, a business software company, and of <link href="http://www.portagepub.com">Portage Publications</link>, a republisher of old documents. Both are located in Colorado Springs, Colorado, USA.</li>
+        <li id="wvm"><link href="mailto:vmote@apache.org">Victor Mote</link> (WVM) is the founder and manager of <jump href="http://www.outfitr.com">Enterprise Outfitters</jump>, a business software company, and of <jump href="http://www.portagepub.com">Portage Publications</jump>, a republisher of old documents. Both are located in Colorado Springs, Colorado, USA.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
         <li id="as"><link href="mailto:arved@apache.org">Arved Sandstrom</link> (AS)</li>
         <li id="ot"><link href="mailto:olegt@apache.org">Oleg Tkachenko</link> (OT)</li>
@@ -36,7 +36,7 @@
     </section>
     <section id="founder">
       <title>Founder</title>
-      <p>FOP was originally created and donated to the Apache Software Foundation by <link href="jtauber@jtauber.com">James Tauber</link>. Information about him can be found at <link href="http://www.jtauber.com">his website</link>.</p>
+      <p>FOP was originally created and donated to the Apache Software Foundation by <link href="jtauber@jtauber.com">James Tauber</link>. Information about him can be found at <jump href="http://www.jtauber.com">his website</jump>.</p>
     </section>
     <section id="commit-former">
       <title>Former Committers</title>
