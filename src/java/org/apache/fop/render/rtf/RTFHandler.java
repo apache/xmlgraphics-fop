@@ -32,6 +32,7 @@ import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
+import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.Footnote;
@@ -374,6 +375,65 @@ public class RTFHandler extends FOEventHandler {
             return;
         }
         
+        if(bDefer) {
+            return;
+        }
+        
+        try {
+            IRtfTextrunContainer container 
+                = (IRtfTextrunContainer)builderContext.getContainer(
+                    IRtfTextrunContainer.class,
+                    true, this);
+                    
+            RtfTextrun textrun = container.getTextrun();
+            
+            textrun.addParagraphBreak();
+            textrun.popAttributes();
+            
+        } catch (IOException ioe) {
+            log.error("startBlock:" + ioe.getMessage());
+            throw new RuntimeException(ioe.getMessage());
+        } catch (Exception e) {
+            log.error("startBlock:" + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FOEventHandler#startBlockContainer(BlockContainer)
+     */
+    public void startBlockContainer(BlockContainer blc) {
+        if (bDefer) {
+            return;
+        }
+       
+        try {
+            RtfAttributes rtfAttr
+                = TextAttributesConverter.convertBlockContainerAttributes(blc);
+                    
+            IRtfTextrunContainer container 
+                = (IRtfTextrunContainer)builderContext.getContainer(
+                    IRtfTextrunContainer.class,
+                    true, this);
+
+            RtfTextrun textrun = container.getTextrun();
+            
+            textrun.addParagraphBreak();
+            textrun.pushAttributes(rtfAttr);
+        } catch (IOException ioe) {
+            // TODO could we throw Exception in all FOEventHandler events?
+            log.error("startBlock: " + ioe.getMessage());
+            throw new RuntimeException("IOException: " + ioe);
+        } catch (Exception e) {
+            log.error("startBlock: " + e.getMessage());
+            throw new RuntimeException("Exception: " + e);
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FOEventHandler#endBlockContainer(BlockContainer)
+     */
+    public void endBlockContainer(BlockContainer bl) {
         if(bDefer) {
             return;
         }

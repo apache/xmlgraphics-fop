@@ -75,6 +75,28 @@ class TextAttributesConverter {
     }
 
     /**
+     * Converts all known text FO properties to RtfAttributes
+     * @param props list of FO properites, which are to be converted
+     */
+    public static RtfAttributes convertBlockContainerAttributes(FObj fobj)
+    throws FOPException {
+        RtfAttributes attrib = new RtfAttributes();
+        attrBlockFontFamily(fobj, attrib);
+        attrBlockFontWeight(fobj, attrib);
+        attrBlockFontSize(fobj, attrib);
+        attrBlockFontColor(fobj, attrib);
+        attrBlockFontItalic(fobj, attrib);
+        attrBlockFontUnderline(fobj, attrib);
+        attrBlockBackgroundColor(fobj, attrib);
+        attrBlockSpaceBeforeAfter(fobj, attrib);
+        attrBlockMargins(fobj, attrib);
+        attrBlockTextAlign(fobj, attrib);
+        //attrBlockDimension(fobj, attrib);
+
+        return attrib;
+    }
+
+    /**
      * Converts all character related FO properties to RtfAttributes.
      * @param fobj FObj whose properties are to be converted
      */
