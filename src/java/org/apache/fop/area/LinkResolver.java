@@ -24,14 +24,14 @@ import java.io.Serializable;
 
 // FOP
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Area;
 
 /**
  * Link resolving for resolving internal links.
  */
-public class LinkResolver implements Resolveable, Serializable {
+public class LinkResolver implements Resolvable, Serializable {
     private boolean resolved = false;
     private String idRef;
     private Area area;

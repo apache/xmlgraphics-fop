@@ -111,7 +111,7 @@ public class FObj extends FONode implements Constants {
      * @throws SAXParseException
      */
     public void bind(PropertyList pList) throws SAXParseException {
-        throw new SAXParseException("Unconverted element " + this, locator);
+//        throw new SAXParseException("Unconverted element " + this, locator);
     }
 
     /**

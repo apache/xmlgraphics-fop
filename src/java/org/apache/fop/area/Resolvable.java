@@ -21,11 +21,11 @@ package org.apache.fop.area;
 import java.util.List;
 
 /**
- * Resolveable Interface.
+ * Resolvable Interface.
  * Classes that implement this can be resolved when
  * an id is added to the area tree.
  */
-public interface Resolveable {
+public interface Resolvable {
 
     /**
      * Check if this area has been resolved.
@@ -35,8 +35,8 @@ public interface Resolveable {
     boolean isResolved();
 
     /**
-     * Get the array of id references of this resolveable object.
-     * If this object contains child resolveables that are
+     * Get the array of id references of this resolvable object.
+     * If this object contains child resolvables that are
      * resolved through this then it should return the id's of
      * the child also.
      *

@@ -20,7 +20,7 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
@@ -58,7 +58,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         super.addAreas(posIter, context);
         if (!resolved) {
-            parentLM.addUnresolvedArea(fobj.getRefId(), (Resolveable) curArea);
+            parentLM.addUnresolvedArea(fobj.getRefId(), (Resolvable) curArea);
         }
     }
     
@@ -68,7 +68,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
 
     /**
      * if id can be resolved then simply return a word, otherwise
-     * return a resolveable area
+     * return a resolvable area
      */
     private InlineArea getPageNumberCitationInlineArea(LayoutManager parentLM) {
         PageViewport page = parentLM.resolveRefID(fobj.getRefId());

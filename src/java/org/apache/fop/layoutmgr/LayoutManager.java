@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.fop.fo.flow.Marker;
 
 import org.apache.fop.area.Area;
-import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.FObj;
 
@@ -166,7 +166,7 @@ public interface LayoutManager {
     /**
      * Resolve the id reference.
      * This is called by an area looking for an id reference.
-     * If the id reference is not found then it should add a resolveable object.
+     * If the id reference is not found then it should add a resolvable object.
      *
      * @param ref the id reference
      * @return the page containing the id reference or null if not found
@@ -183,12 +183,12 @@ public interface LayoutManager {
 
     /**
      * Add an unresolved area.
-     * The is used to add a resolveable object to the page for a given id.
+     * The is used to add a resolvable object to the page for a given id.
      *
      * @param id the id reference this object needs for resolving
-     * @param res the resolveable object
+     * @param res the resolvable object
      */
-    void addUnresolvedArea(String id, Resolveable res);
+    void addUnresolvedArea(String id, Resolvable res);
 
     /**
      * Add the marker.

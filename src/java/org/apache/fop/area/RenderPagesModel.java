@@ -175,15 +175,9 @@ public class RenderPagesModel extends StorePagesModel {
     }
 
     /**
-     * Add an extension to this model.
-     * If handle immediately then send directly to the renderer.
-     * The after page ones are handled after the next page is added.
-     * End of document extensions are added to a list to be
-     * handled at the end.
-     * @param ext the extension
-     * @param when when to render the extension
+     * @see org.apache.fop.area.AreaTreeModel#handleExtension(TreeExt, int)
      */
-    public void addExtension(TreeExt ext, int when) {
+    public void handleExtension(TreeExt ext, int when) {
         switch(when) {
             case TreeExt.IMMEDIATELY:
                 renderer.renderExtension(ext);

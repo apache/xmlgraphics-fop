@@ -37,6 +37,7 @@ public class BasicLinkLayoutManager extends InlineStackingLayoutManager {
      */
     public BasicLinkLayoutManager(BasicLink node) {
         super(node);
+        fobj = node;
     }
 
     protected InlineParent createArea() {

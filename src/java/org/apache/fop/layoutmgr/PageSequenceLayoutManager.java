@@ -35,7 +35,7 @@ import org.apache.fop.area.MainReference;
 import org.apache.fop.area.Span;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Footnote;
-import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.Trait;
 
 import org.apache.fop.datatypes.PercentBase;
@@ -330,14 +330,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      * Add an unresolved area to the layout manager.
      * The Page layout manager handles the unresolved ID
      * reference by adding to the current page and then adding
-     * the page as a resolveable to the area tree.
+     * the page as a resolvable to the area tree.
      * This is so that the area tree can resolve the reference
      * and the page can serialize the resolvers if required.
      *
      * @param id the ID reference to add
-     * @param res the resolveable object that needs resolving
+     * @param res the resolvable object that needs resolving
      */
-    public void addUnresolvedArea(String id, Resolveable res) {
+    public void addUnresolvedArea(String id, Resolvable res) {
         // add unresolved to tree
         // adds to the page viewport so it can serialize
         curPage.addUnresolvedID(id, res);
@@ -671,7 +671,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      * See if need to generate a new page for a forced break condition.
      */
     private boolean needNewPage(int breakValue) {
-        if (curPage.getPage().isEmpty()) {
+        if (curPage != null && curPage.getPage().isEmpty()) {
             if (breakValue == Constants.PAGE) {
                 return false;
             }

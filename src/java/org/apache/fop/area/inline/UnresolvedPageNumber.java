@@ -19,21 +19,21 @@
 package org.apache.fop.area.inline;
 
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.Resolvable;
 
 import java.util.List;
 
 /**
- * Unresolveable page number area.
+ * Unresolvable page number area.
  * This is a word area that resolves itself to a page number
  * from an id reference.
  */
-public class UnresolvedPageNumber extends TextArea implements Resolveable {
+public class UnresolvedPageNumber extends TextArea implements Resolvable {
     private boolean resolved = false;
     private String pageRefId;
 
     /**
-     * Create a new unresolveable page number.
+     * Create a new unresolvable page number.
      *
      * @param id the id reference for resolving this
      */

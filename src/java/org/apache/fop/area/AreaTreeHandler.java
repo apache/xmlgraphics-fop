@@ -86,8 +86,6 @@ public class AreaTreeHandler extends FOEventHandler {
     // list of id's yet to be resolved and arraylists of pages
     private Map resolve = new HashMap();
 
-    private List treeExtensions = new ArrayList();
-
     private static Log log = LogFactory.getLog(AreaTreeHandler.class);
 
     /**
@@ -136,7 +134,7 @@ public class AreaTreeHandler extends FOEventHandler {
         Set todo = (Set)resolve.get(id);
         if (todo != null) {
             for (Iterator iter = todo.iterator(); iter.hasNext();) {
-                Resolveable res = (Resolveable)iter.next();
+                Resolvable res = (Resolvable)iter.next();
                 res.resolve(id, list);
             }
             resolve.remove(id);
@@ -155,43 +153,15 @@ public class AreaTreeHandler extends FOEventHandler {
     /**
      * Add an unresolved object with a given id.
      * @param id the id reference that needs resolving
-     * @param res the Resolveable object to resolve
+     * @param res the Resolvable object to resolve
      */
-    public void addUnresolvedID(String id, Resolveable res) {
+    public void addUnresolvedID(String id, Resolvable res) {
         Set todo = (Set)resolve.get(id);
         if (todo == null) {
             todo = new HashSet();
             resolve.put(id, todo);
         }
         todo.add(res);
-    }
-
-    /**
-     * Add a tree extension.
-     * This checks if the extension is resolveable and attempts
-     * to resolve or add the resolveable ids for later resolution.
-     * @param ext the tree extension to add.
-     */
-    private void addTreeExtension(TreeExt ext) {
-        treeExtensions.add(ext);
-        if (ext.isResolveable()) {
-            Resolveable res = (Resolveable)ext;
-            String[] ids = res.getIDs();
-            for (int count = 0; count < ids.length; count++) {
-                if (idLocations.containsKey(ids[count])) {
-                    res.resolve(ids[count], (List)idLocations.get(ids[count]));
-                } else {
-                    Set todo = (Set)resolve.get(ids[count]);
-                    if (todo == null) {
-                        todo = new HashSet();
-                        resolve.put(ids[count], todo);
-                    }
-                    todo.add(ext);
-                }
-            }
-        } else {
-            model.addExtension(ext, TreeExt.IMMEDIATELY);
-        }
     }
 
     /**
@@ -224,7 +194,7 @@ public class AreaTreeHandler extends FOEventHandler {
             String id = (String)iter.next();
             Set list = (Set)resolve.get(id);
             for (Iterator resIter = list.iterator(); resIter.hasNext();) {
-                Resolveable res = (Resolveable)resIter.next();
+                Resolvable res = (Resolvable)resIter.next();
                 if (!res.isResolved()) {
                     res.resolve(id, null);
                 }
@@ -254,6 +224,36 @@ public class AreaTreeHandler extends FOEventHandler {
                     logger.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
                 }
             }
+        }
+    }
+
+    /**
+     * End the PageSequence.
+     * The PageSequence formats Pages and adds them to the AreaTree.
+     * The area tree then handles what happens with the pages.
+     *
+     * @param pageSequence the page sequence ending
+     */
+    public void endPageSequence(PageSequence pageSequence) {
+
+        if (collectStatistics) {
+            if (MEM_PROFILE_WITH_GC) {
+                // This takes time but gives better results
+                System.gc();
+            }
+            long memoryNow = runtime.totalMemory() - runtime.freeMemory();
+            if (logger != null) {
+                logger.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
+            }
+        }
+
+        // If no main flow, nothing to layout!
+        if (pageSequence.getMainFlow() != null) {
+            addBookmarks(pageSequence.getRoot().getBookmarks());
+            PageSequenceLayoutManager pageSLM 
+                = new PageSequenceLayoutManager(this, pageSequence);
+            pageSLM.run();
+            pageSequence.setCurrentPageNumber(pageSLM.getPageCount());
         }
     }
 
@@ -295,32 +295,29 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /**
-     * End the PageSequence.
-     * The PageSequence formats Pages and adds them to the AreaTree.
-     * The area tree then handles what happens with the pages.
-     *
-     * @param pageSequence the page sequence ending
+     * Add a tree extension.
+     * This checks if the extension is resolvable and attempts
+     * to resolve or add the resolvable ids for later resolution.
+     * @param ext the tree extension to add.
      */
-    public void endPageSequence(PageSequence pageSequence) {
-
-        if (collectStatistics) {
-            if (MEM_PROFILE_WITH_GC) {
-                // This takes time but gives better results
-                System.gc();
+    private void addTreeExtension(TreeExt ext) {
+        if (ext instanceof Resolvable) {
+            Resolvable res = (Resolvable)ext;
+            String[] ids = res.getIDs();
+            for (int count = 0; count < ids.length; count++) {
+                if (idLocations.containsKey(ids[count])) {
+                    res.resolve(ids[count], (List)idLocations.get(ids[count]));
+                } else {
+                    Set todo = (Set)resolve.get(ids[count]);
+                    if (todo == null) {
+                        todo = new HashSet();
+                        resolve.put(ids[count], todo);
+                    }
+                    todo.add(ext);
+                }
             }
-            long memoryNow = runtime.totalMemory() - runtime.freeMemory();
-            if (logger != null) {
-                logger.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
-            }
-        }
-
-        // If no main flow, nothing to layout!
-        if (pageSequence.getMainFlow() != null) {
-            addBookmarks(pageSequence.getRoot().getBookmarks());
-            PageSequenceLayoutManager pageSLM 
-                = new PageSequenceLayoutManager(this, pageSequence);
-            pageSLM.run();
-            pageSequence.setCurrentPageNumber(pageSLM.getPageCount());
+        } else {
+            model.handleExtension(ext, TreeExt.IMMEDIATELY);
         }
     }
 }
