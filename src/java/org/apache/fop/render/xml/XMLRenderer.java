@@ -456,15 +456,19 @@ public class XMLRenderer extends AbstractRenderer {
         addTraitAttributes(block);
         if (block instanceof BlockViewport) {
             BlockViewport bvp = (BlockViewport)block;
+            boolean abspos = false;
             if (bvp.getPositioning() == Block.ABSOLUTE) {
                 addAttribute("positioning", "absolute");
-                addAttribute("left-position", bvp.getXOffset());
-                addAttribute("top-position", bvp.getYOffset());
+                abspos = true;
             } else if (bvp.getPositioning() == Block.FIXED) {
                 addAttribute("positioning", "fixed");
+                abspos = true;
+            }
+            if (abspos) {
                 addAttribute("left-position", bvp.getXOffset());
                 addAttribute("top-position", bvp.getYOffset());
             }
+            addAttribute("ctm", bvp.getCTM().toString());
         } else {
             if (block.getPositioning() == Block.RELATIVE) {
                 addAttribute("positioning", "relative");
