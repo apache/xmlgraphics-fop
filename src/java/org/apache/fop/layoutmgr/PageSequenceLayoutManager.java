@@ -494,9 +494,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         }
         
         RegionViewport reg = curPage.getPage().getRegionViewport(region.getNameId());
-        if (reg == null) {
-            log.error("no region viewport: shouldn't happen");
-        }
         StaticContentLayoutManager lm = getStaticContentLayoutManager(flow);
         lm.initialize();
         lm.setRegionReference(reg.getRegion());
