@@ -62,6 +62,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.InstreamForeignObject;
+import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
@@ -237,6 +238,20 @@ public class FOTreeHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endBlock(Block)
      */
     public void endBlock(Block bl) {
+    }
+    
+    /**
+     *
+     * @param inl Inline that is starting.
+     */
+    public void startInline(Inline inl){
+    }
+
+    /**
+     *
+     * @param inl Inline that is ending.
+     */
+    public void endInline(Inline inl){
     }
 
     /**

@@ -70,7 +70,8 @@ import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 abstract class RtfAfterBeforeBase
 extends RtfContainer
-implements IRtfParagraphContainer, IRtfExternalGraphicContainer, IRtfTableContainer {
+implements IRtfParagraphContainer, IRtfExternalGraphicContainer, IRtfTableContainer,
+        IRtfTextrunContainer {
     protected RtfAttributes attrib;
     private RtfParagraph para;
     private RtfExternalGraphic externalGraphic;
@@ -154,5 +155,10 @@ implements IRtfParagraphContainer, IRtfExternalGraphicContainer, IRtfTableContai
         closeAll();
         table = new RtfTable(this, writer, tc);
         return table;
+    }
+    
+    public RtfTextrun getTextrun()
+    throws IOException {
+        return RtfTextrun.getTextrun(this, writer, null);
     }
 }

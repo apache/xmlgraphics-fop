@@ -62,6 +62,7 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
+import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
@@ -425,6 +426,18 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
+     * @see org.apache.fop.fo.FOInputHandler#startInline(Inline)
+     */
+    public void startInline(Inline inl){
+    }
+
+    /**
+     * @see org.apache.fop.fo.FOInputHandler#endInline(Inline)
+     */
+    public void endInline(Inline inl){
+    }
+
+     /**
      * @see org.apache.fop.fo.FOInputHandler#startBody(TableBody)
      */
     public void startBody(TableBody tb) {

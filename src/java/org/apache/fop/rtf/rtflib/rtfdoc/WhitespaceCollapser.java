@@ -73,11 +73,13 @@ class WhitespaceCollapser {
     WhitespaceCollapser(RtfContainer c) {
         // process all texts
         for (Iterator it = c.getChildren().iterator(); it.hasNext();) {
-            RtfText current = null;
             final Object kid = it.next();
             if (kid instanceof RtfText) {
-                current = (RtfText)kid;
+                RtfText current = (RtfText)kid;
                 processText(current);
+            } else if (kid instanceof RtfString) {
+                RtfString current = (RtfString)kid;
+                processString(current);
             } else {
                 // if there is something between two texts, it counts for a space
                 lastEndSpace = true;
@@ -87,11 +89,29 @@ class WhitespaceCollapser {
 
     /** process one RtfText from our container */
     private void processText(RtfText txt) {
-        final String orig = txt.getText();
+        final String newString=processString(txt.getText());
+        if(newString!=null) {
+            txt.setText(newString);
+        }
+    }
+    
+    /** process one RtfString from our container */
+    private void processString(RtfString txt) {
+        final String newString=processString(txt.getText());
+        if(newString!=null) {
+            txt.setText(newString);
+        }
+    }
+    
+    /** process one String */
+    private String processString(String txt) {
+        final String orig = txt;
 
         // tokenize the text based on whitespace and regenerate it so as
         // to collapse multiple spaces into one
-        if (orig != null && orig.length() > 0) {
+        if(orig==null) {
+            return null;
+        } else if (orig.length() > 0) { 
             final boolean allSpaces = orig.trim().length() == 0;
             final boolean endSpace = allSpaces
                                      || Character.isWhitespace(orig.charAt(orig.length() - 1));
@@ -107,7 +127,7 @@ class WhitespaceCollapser {
                 // TODO to be compatible with different Locales, should use Character.isWhitespace
                 // instead of this limited list
                 boolean first = true;
-                final StringTokenizer stk = new StringTokenizer(txt.getText(), " \t\n\r");
+                final StringTokenizer stk = new StringTokenizer(txt, " \t\n\r");
                 while (stk.hasMoreTokens()) {
                     if (first && beginSpace && !lastEndSpace) {
                         sb.append(SPACE);
@@ -121,8 +141,10 @@ class WhitespaceCollapser {
                 }
             }
 
-            txt.setText(sb.toString());
             lastEndSpace = endSpace;
+            return sb.toString();
+        } else {
+            return "";
         }
     }
 }

@@ -143,6 +143,8 @@ public class RtfText extends RtfElement {
     public static final String LEFT_INDENT_BODY = "li";
     /** constant for left indent first */
     public static final String LEFT_INDENT_FIRST = "fi-";
+    /** constant for right indent body */
+    public static final String RIGHT_INDENT_BODY = "ri";
 
     /** constant for center tab */
     public static final String TAB_CENTER = "tqc\\tx";
@@ -285,7 +287,7 @@ public class RtfText extends RtfElement {
 
     /**
      *  True if text contains a single non-breaking space (#160).
-     *  TODO make this more general and/or merge with isEmpty? <-- what happen
+     *  TODO make this more general and/or merge with isEmpty? -- what happen
      *       with empty paragraphs, if they will be removed, than NO, else ok
      *
      * @return true    If m_text is character 160\n

@@ -70,7 +70,7 @@ import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 public class RtfTableCell
 extends RtfContainer
 implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
-       IRtfExternalGraphicContainer {
+       IRtfExternalGraphicContainer, IRtfTextrunContainer {
     private RtfParagraph paragraph;
     private RtfList list;
     private RtfTable table;
@@ -474,5 +474,13 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
             }
         }
         return result;
+    }
+    
+    public RtfTextrun getTextrun()
+    throws IOException {
+        RtfAttributes attrs = new RtfAttributes();
+        attrs.set("intbl");
+        
+        return RtfTextrun.getTextrun(this, writer, attrs);
     }
 }
