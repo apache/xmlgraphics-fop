@@ -8,6 +8,12 @@
   <body>
     <section>
       <title>XML Input</title>
+      <p>The xml document is always handled internally as SAX. The SAX events
+       are used to read the elements, attributes and text data of the FO document.
+       After the manipulation of the data the renderer writes out the pages in the
+       appropriate format. It may write as it goes, a page at a time or the whole
+       document at once. Once finished the document should contain all the data in the
+       chosen format ready for whatever use.</p>
       <p>FOP can take the input XML in a number of ways:</p>
       <ul>
         <li><strong>SAX Events through SAX Handler</strong>: <code>FOTreeBuilder</code> is the SAX Handler which is obtained through <code>getContentHandler</code> on <code>Driver</code>.</li>
