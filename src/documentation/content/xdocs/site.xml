@@ -61,8 +61,8 @@
     <news label="News" href="news.html"/>
     <team label="Who We Are" href="team.html"/>
     <status label="Status" href="status.html"/>
-    <changes label="Changes" href="changes.html"/>
-    <todo label="Todo" href="todo.html"/>
+    <!--changes label="Changes" href="changes.html"/-->
+    <!--todo label="Todo" href="todo.html"/-->
   </project>
 
   <development label="Development" href="dev/" tab="development">
