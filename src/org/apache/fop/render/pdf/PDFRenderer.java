@@ -275,17 +275,19 @@ public class PDFRenderer extends PrintRenderer {
         PDFOutline outlineRoot = pdfDoc.getOutlineRoot();
         PDFOutline pdfOutline = null;
         PageViewport pv = outline.getPage();
-        Rectangle2D bounds = pv.getViewArea();
-        double h = bounds.getHeight();
-        float yoffset = (float)h / 1000f;
-        String intDest = (String)pageReferences.get(pv.getKey());
-        if (parentOutline == null) {
-            pdfOutline = pdfDoc.makeOutline(outlineRoot,
-                                    outline.getLabel(), intDest, yoffset);
-        } else {
-            PDFOutline pdfParentOutline = parentOutline;
-            pdfOutline = pdfDoc.makeOutline(pdfParentOutline,
-                                    outline.getLabel(), intDest, yoffset);
+        if(pv != null) {
+            Rectangle2D bounds = pv.getViewArea();
+            double h = bounds.getHeight();
+            float yoffset = (float)h / 1000f;
+            String intDest = (String)pageReferences.get(pv.getKey());
+            if (parentOutline == null) {
+                pdfOutline = pdfDoc.makeOutline(outlineRoot,
+                                        outline.getLabel(), intDest, yoffset);
+            } else {
+                PDFOutline pdfParentOutline = parentOutline;
+                pdfOutline = pdfDoc.makeOutline(pdfParentOutline,
+                                        outline.getLabel(), intDest, yoffset);
+            }
         }
 
         for (int i = 0; i < outline.getCount(); i++) {
@@ -418,7 +420,7 @@ public class PDFRenderer extends PrintRenderer {
      * This draws the background and border traits for an area given
      * the position.
      *
-     * @param block the area to get teh traits from
+     * @param block the area to get the traits from
      * @param startx the start x position
      * @param starty the start y position
      * @param width the width of the area
@@ -526,6 +528,8 @@ public class PDFRenderer extends PrintRenderer {
         if(started) {
             currentStream.add("Q\n");
             currentStream.add("BT\n");
+            // font last set out of scope in text section
+            currentFontName = "";
         }
     }
 
