@@ -158,7 +158,7 @@ public class CommandLineOptions {
      * if processing should stop
      * @exception FOPException if there was an error in the format of the options
      */
-    private boolean parseOptions(String args[]) throws FOPException {
+    private boolean parseOptions(String[] args) throws FOPException {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
                 log = new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG);
