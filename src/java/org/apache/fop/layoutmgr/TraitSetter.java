@@ -165,6 +165,9 @@ public class TraitSetter {
      * @param backProps the background properties
      */
     public static void addBackground(Area area, CommonBorderPaddingBackground backProps) {
+        if (!backProps.hasBackground()) {
+            return;
+        }
         Trait.Background back = new Trait.Background();
         back.setColor(backProps.backgroundColor);
 
@@ -213,9 +216,7 @@ public class TraitSetter {
             }
         }
 
-        if (back.getColor() != null || back.getFopImage() != null) {
-            area.addTrait(Trait.BACKGROUND, back);
-        }
+        area.addTrait(Trait.BACKGROUND, back);
     }
 
     /**
