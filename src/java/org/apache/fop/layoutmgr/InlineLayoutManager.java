@@ -52,7 +52,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
     protected void initProperties() {
-        super.initProperties();
         inlineProps = fobj.getCommonMarginInline();
         borderProps = fobj.getCommonBorderPaddingBackground();
         int iPad = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false);
