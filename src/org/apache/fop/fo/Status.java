@@ -64,7 +64,8 @@ public class Status {
     public final static int FORCE_PAGE_BREAK      = 4;
     public final static int FORCE_PAGE_BREAK_EVEN = 5;
     public final static int FORCE_PAGE_BREAK_ODD  = 6;
-    public final static int KEEP_WITH_NEXT        = 7;
+    public final static int FORCE_COLUMN_BREAK	= 7;
+    public final static int KEEP_WITH_NEXT        = 8;
 
     public Status(int code) {
 	this.code = code;
@@ -81,4 +82,10 @@ public class Status {
     public boolean laidOutNone() {
 	return (this.code == AREA_FULL_NONE);
     }
+	
+	public boolean isPageBreak() {
+		return ((this.code == FORCE_PAGE_BREAK)
+		|| (this.code == FORCE_PAGE_BREAK_EVEN)
+		|| (this.code == FORCE_PAGE_BREAK_ODD));
+	}
 }
