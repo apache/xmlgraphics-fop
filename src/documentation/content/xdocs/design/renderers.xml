@@ -3,20 +3,12 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 <document>
   <header>
-    <title>Renderers</title>
-    <subtitle>Design of Renderers</subtitle>
+    <title>FO Design: Renderers</title>
     <authors>
       <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
     </authors>
   </header>
   <body>
-      <section id="issue-renderers-responsible">
-        <title>Renderers are Responsible</title>
-        <p>Each renderer is totally responsible for its output format.</p>
-      </section>
-      <section id="issue-output-stream">
-        <title>Send Output to a Stream</title>
-      </section>
     <section id="intro">
       <title>Introduction</title>
       <p>A renderer is primarily designed to convert a given area tree into the output
@@ -36,6 +28,16 @@ possble to render the pages out of order. Any page that is not ready to
 be rendered is setup by the renderer first so that it can reserve a space
 or reference for when the page is ready to be rendered.The renderer is responsible for managing the
 output format and associated data and flow.</p>
+    </section>
+    <section id="issues">
+      <title>Design Issues</title>
+      <section id="issue-renderers-responsible">
+        <title>Renderers are Responsible</title>
+        <p>Each renderer is totally responsible for its output format.</p>
+      </section>
+      <section id="issue-output-stream">
+        <title>Send Output to a Stream</title>
+      </section>
     </section>
     <section id="fonts">
       <title>Fonts</title>

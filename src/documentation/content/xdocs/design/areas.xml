@@ -3,13 +3,14 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 <document>
   <header>
-    <title>Area Tree</title>
-    <subtitle>Area Tree Design for FOP</subtitle>
+    <title>FO Design: Area Tree</title>
     <authors>
       <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
     </authors>
   </header>
   <body>
+    <section id="intro">
+    <title>Introduction</title>
     <p>The Area Tree is an internal representation of the result document, representing pages and their contents.
 To make the concepts clearer and easier to understand, the code to implement the area tree matches the areas defined in the XSL-FO specification.</p>
     <p>The area tree is created by the layout managers once the layout is decided for a page.
@@ -18,6 +19,7 @@ From that point forward, the area tree model can then handle the new page.
 The data in the area tree must be minimal and independant.
 This means that the data uses less memory and can be serialized to an output stream if needed.</p>
     <p>The Area Tree consists of a set of pages, which the actual implemenation places in a set of page sequences.</p>
+    </section>
     <section id="structure">
       <title>Structure</title>
       <p>The area tree is a root element that has a list of page-viewport-areas.

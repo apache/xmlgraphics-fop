@@ -4,15 +4,14 @@
 
 <document>
     <header>
-        <title>Embedding Design</title>
-        <subtitle>Design Approach to FOP</subtitle>
+        <title>FOP Design: Embedding FOP in Other Applications</title>
         <authors>
             <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
         </authors>
     </header>
 
     <body>
-<section>
+<section id="intro">
   <title>Introduction</title>
 <p>
 This is the design for the external interface when FOP is to be embedded
