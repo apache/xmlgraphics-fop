@@ -10,7 +10,7 @@
   </p>
 
   <s2 title="leader">
-    <p>fo:leader is only supported in a very limited way: you can use it to draw simple rule . 
+    <p>fo:leader is only supported in a very limited way: you can use it to draw simple rules. 
        Only the property value leader-pattern="rule" is supported. leader-length can be set, 
        but the value is not used. You should wrap leader into a block element.
     </p>
