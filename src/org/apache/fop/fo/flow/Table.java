@@ -115,11 +115,11 @@ public class Table extends FObj {
             this.spaceAfter =
                 this.properties.get("space-after.optimum").getLength().mvalue();
             this.ipd =
-		this.properties.get("inline-progression-dimension").
-		getLengthRange();
+                this.properties.get("inline-progression-dimension").
+                getLengthRange();
             this.height = this.properties.get("height").getLength().mvalue();
             this.bAutoLayout = (this.properties.get("table-layout").getEnum() == 
-		TableLayout.AUTO);
+                TableLayout.AUTO);
 
             this.id = this.properties.get("id").getString();
 
@@ -184,20 +184,20 @@ public class Table extends FObj {
         boolean addedFooter = false;
         int numChildren = this.children.size();
 
-	// Set up the column ArrayList;
-	// calculate width of all columns and get total width
-	if (columns.size()==0) {
-	    findColumns(areaContainer);
-	    if (this.bAutoLayout) {
-		log.warn("table-layout=auto is not supported, using fixed!");
-	    }
-	    // Pretend it's fixed...
-	    this.contentWidth = 
-		calcFixedColumnWidths(areaContainer.getAllocationWidth());
-	}
+        // Set up the column ArrayList;
+        // calculate width of all columns and get total width
+        if (columns.size()==0) {
+            findColumns(areaContainer);
+            if (this.bAutoLayout) {
+                log.warn("table-layout=auto is not supported, using fixed!");
+            }
+            // Pretend it's fixed...
+            this.contentWidth = 
+                calcFixedColumnWidths(areaContainer.getAllocationWidth());
+        }
         areaContainer.setAllocationWidth(this.contentWidth);
         layoutColumns(areaContainer);
-	
+        
         for (int i = this.marker; i < numChildren; i++) {
             FONode fo = (FONode)children.get(i);
             if (fo instanceof TableHeader) {
@@ -269,6 +269,7 @@ public class Table extends FObj {
                         }
                         setupColumnHeights();
                         status = Status.AREA_FULL_SOME;
+                        this.areasGenerated++;
                     }
                     return status;
                 } else {
@@ -285,6 +286,7 @@ public class Table extends FObj {
                 }
             }
         }
+        this.areasGenerated++;
 
         if (tableFooter != null && this.omitFooterAtBreak) {
             if (Status.isIncomplete(tableFooter.layout(areaContainer))) {
@@ -342,9 +344,14 @@ public class Table extends FObj {
         return Status.OK;
     }
 
+    public void resetMarker() {
+        this.areasGenerated=0;
+        super.resetMarker();
+    }
+
     protected void setupColumnHeights() {
-	for (int i = 0; i < columns.size(); i++) {
-	    TableColumn c = (TableColumn)columns.get(i);
+        for (int i = 0; i < columns.size(); i++) {
+            TableColumn c = (TableColumn)columns.get(i);
             if ( c != null) {
                 c.setHeight(areaContainer.getContentHeight());
             }
@@ -352,17 +359,17 @@ public class Table extends FObj {
     }
 
     private void findColumns(Area areaContainer) throws FOPException {
-	int nextColumnNumber = 1;
-	for (int i = 0; i < children.size(); i++) {
+        int nextColumnNumber = 1;
+        for (int i = 0; i < children.size(); i++) {
             FONode fo = (FONode)children.get(i);
             if (fo instanceof TableColumn) {
                 TableColumn c = (TableColumn)fo;
                 c.doSetup(areaContainer);
                 int numColumnsRepeated = c.getNumColumnsRepeated();
                 int currentColumnNumber = c.getColumnNumber();
-		if (currentColumnNumber == 0) {
-		    currentColumnNumber = nextColumnNumber;
-		}
+                if (currentColumnNumber == 0) {
+                    currentColumnNumber = nextColumnNumber;
+                }
                 if (currentColumnNumber + numColumnsRepeated > columns.size()) {
                     columns.ensureCapacity(currentColumnNumber + numColumnsRepeated);
                 }
@@ -379,7 +386,7 @@ public class Table extends FObj {
                     }
                     currentColumnNumber++;
                 }
-		nextColumnNumber = currentColumnNumber;
+                nextColumnNumber = currentColumnNumber;
             }
         }
     }
@@ -387,117 +394,117 @@ public class Table extends FObj {
 
 
     private int calcFixedColumnWidths(int maxAllocationWidth) {
-	int nextColumnNumber=1;
-	int iEmptyCols=0;
-	double dTblUnits=0.0;
-	int iFixedWidth=0;
-	double dWidthFactor = 0.0;
-	double dUnitLength = 0.0;
-	double tuMin = 100000.0 ; // Minimum number of proportional units
-	for (int i = 0; i < columns.size(); i++) {
-	    TableColumn c = (TableColumn)columns.get(i);
-	    if (c == null) {
-		log.warn("No table-column specification for column " +
-			 nextColumnNumber);
-		// What about sizing issues?
-		iEmptyCols++;
-	    }
-	    else {
-                Length colLength = c.getColumnWidthAsLength();
-		double tu = colLength.getTableUnits();
-		if (tu > 0 && tu < tuMin && colLength.mvalue()==0) {
-		    /* Keep track of minimum number of proportional units
-		     * in any column which has only proportional units.
-		     */
-		    tuMin = tu;
-		}
-		dTblUnits += tu;
-		iFixedWidth +=  colLength.mvalue();
-	    }
-	    nextColumnNumber++;
-	}
-
-	setIPD((dTblUnits > 0.0), maxAllocationWidth);
-	if (dTblUnits > 0.0) {
-	    int iProportionalWidth = 0;
-	    if (this.optIPD > iFixedWidth) {
-		iProportionalWidth = this.optIPD - iFixedWidth;
-	    }
-	    else if (this.maxIPD > iFixedWidth) {
-		iProportionalWidth = this.maxIPD - iFixedWidth;
-	    }
-	    else {
-		iProportionalWidth = maxAllocationWidth - iFixedWidth;
-	    }
-	    if (iProportionalWidth > 0) {
-		dUnitLength = ((double)iProportionalWidth)/dTblUnits;
-	    }
-	    else {
-		log.error("Sum of fixed column widths " + iFixedWidth +
-			  " greater than maximum available IPD " +
-			  maxAllocationWidth + "; no space for " +
-			  dTblUnits + " proportional units.");
-		/* Set remaining proportional units to a number which
-		 * will assure the minimum column size for tuMin.
-		 */
-		dUnitLength = MINCOLWIDTH/tuMin;
-		// Reduce fixed column widths by this much???
-	    }
-	    //log.debug("1 table-unit = " + dUnitLength + " mpt");
-	}
-	else {
-	    /* No proportional units. If minimum IPD is specified, check
-	     * that sum of column widths > minIPD.
-	     */
-	    int iTableWidth = iFixedWidth;
-	    if (this.minIPD > iFixedWidth) {
-		iTableWidth = this.minIPD;
-		// Add extra space to each column
-		dWidthFactor = (double)this.minIPD/(double)iFixedWidth;
-	    }
-	    else if (this.maxIPD < iFixedWidth) {
-		// Note: if maxIPD=auto, use maxAllocWidth
-		log.warn("Sum of fixed column widths " + iFixedWidth +
-			 " greater than maximum specified IPD " + this.maxIPD);
-	    }
-	    else if (this.optIPD != -1 && iFixedWidth != this.optIPD) {
-		log.warn("Sum of fixed column widths " + iFixedWidth +
-			 " differs from specified optimum IPD " + this.optIPD);
-	    }
-	}
-	// Now distribute the extra units onto each column and set offsets
-	int offset = 0;
+        int nextColumnNumber=1;
+        int iEmptyCols=0;
+        double dTblUnits=0.0;
+        int iFixedWidth=0;
+        double dWidthFactor = 0.0;
+        double dUnitLength = 0.0;
+        double tuMin = 100000.0 ; // Minimum number of proportional units
         for (int i = 0; i < columns.size(); i++) {
-	    TableColumn c = (TableColumn)columns.get(i);
-	    if (c != null) {
-		c.setColumnOffset(offset);
-		Length l = c.getColumnWidthAsLength();
-		if (dUnitLength > 0) {
-		    l.resolveTableUnit(dUnitLength);
-		}
-		// Check minimum values and adjust if necessary
-		int colWidth = l.mvalue();
-		if (colWidth <= 0) {
-		    log.warn("Zero-width table column!");
-		}
-		if (dWidthFactor > 0.0) {
-		    // Increase column sizes to use up extra space
-		    colWidth *= dWidthFactor;
-		}
-		c.setColumnWidth(colWidth);
-		offset += colWidth;
-	    }
-	}
-	return offset;
+            TableColumn c = (TableColumn)columns.get(i);
+            if (c == null) {
+                log.warn("No table-column specification for column " +
+                         nextColumnNumber);
+                // What about sizing issues?
+                iEmptyCols++;
+            }
+            else {
+                Length colLength = c.getColumnWidthAsLength();
+                double tu = colLength.getTableUnits();
+                if (tu > 0 && tu < tuMin && colLength.mvalue()==0) {
+                    /* Keep track of minimum number of proportional units
+                     * in any column which has only proportional units.
+                     */
+                    tuMin = tu;
+                }
+                dTblUnits += tu;
+                iFixedWidth +=  colLength.mvalue();
+            }
+            nextColumnNumber++;
+        }
+
+        setIPD((dTblUnits > 0.0), maxAllocationWidth);
+        if (dTblUnits > 0.0) {
+            int iProportionalWidth = 0;
+            if (this.optIPD > iFixedWidth) {
+                iProportionalWidth = this.optIPD - iFixedWidth;
+            }
+            else if (this.maxIPD > iFixedWidth) {
+                iProportionalWidth = this.maxIPD - iFixedWidth;
+            }
+            else {
+                iProportionalWidth = maxAllocationWidth - iFixedWidth;
+            }
+            if (iProportionalWidth > 0) {
+                dUnitLength = ((double)iProportionalWidth)/dTblUnits;
+            }
+            else {
+                log.error("Sum of fixed column widths " + iFixedWidth +
+                          " greater than maximum available IPD " +
+                          maxAllocationWidth + "; no space for " +
+                          dTblUnits + " proportional units.");
+                /* Set remaining proportional units to a number which
+                 * will assure the minimum column size for tuMin.
+                 */
+                dUnitLength = MINCOLWIDTH/tuMin;
+                // Reduce fixed column widths by this much???
+            }
+            //log.debug("1 table-unit = " + dUnitLength + " mpt");
+        }
+        else {
+            /* No proportional units. If minimum IPD is specified, check
+             * that sum of column widths > minIPD.
+             */
+            int iTableWidth = iFixedWidth;
+            if (this.minIPD > iFixedWidth) {
+                iTableWidth = this.minIPD;
+                // Add extra space to each column
+                dWidthFactor = (double)this.minIPD/(double)iFixedWidth;
+            }
+            else if (this.maxIPD < iFixedWidth) {
+                // Note: if maxIPD=auto, use maxAllocWidth
+                log.warn("Sum of fixed column widths " + iFixedWidth +
+                         " greater than maximum specified IPD " + this.maxIPD);
+            }
+            else if (this.optIPD != -1 && iFixedWidth != this.optIPD) {
+                log.warn("Sum of fixed column widths " + iFixedWidth +
+                         " differs from specified optimum IPD " + this.optIPD);
+            }
+        }
+        // Now distribute the extra units onto each column and set offsets
+        int offset = 0;
+        for (int i = 0; i < columns.size(); i++) {
+            TableColumn c = (TableColumn)columns.get(i);
+            if (c != null) {
+                c.setColumnOffset(offset);
+                Length l = c.getColumnWidthAsLength();
+                if (dUnitLength > 0) {
+                    l.resolveTableUnit(dUnitLength);
+                }
+                // Check minimum values and adjust if necessary
+                int colWidth = l.mvalue();
+                if (colWidth <= 0) {
+                    log.warn("Zero-width table column!");
+                }
+                if (dWidthFactor > 0.0) {
+                    // Increase column sizes to use up extra space
+                    colWidth *= dWidthFactor;
+                }
+                c.setColumnWidth(colWidth);
+                offset += colWidth;
+            }
+        }
+        return offset;
     }
 
     private void layoutColumns(Area tableArea) throws FOPException  {
-	for (int i = 0; i < columns.size(); i++) {
-	    TableColumn c = (TableColumn)columns.get(i);
-	    if (c != null) {
-		c.layout(tableArea);
-	    }
-	}
+        for (int i = 0; i < columns.size(); i++) {
+            TableColumn c = (TableColumn)columns.get(i);
+            if (c != null) {
+                c.layout(tableArea);
+            }
+        }
     }
 
 
@@ -519,44 +526,44 @@ public class Table extends FObj {
      * Initialize table inline-progression-properties values
      */
     private void setIPD(boolean bHasProportionalUnits, int maxAllocIPD) {
-	boolean bMaxIsSpecified = !this.ipd.getMaximum().getLength().isAuto();
-	if (bMaxIsSpecified) {
-	    this.maxIPD = ipd.getMaximum().getLength().mvalue();
-	}
-	else {
-	    this.maxIPD = maxAllocIPD;
-	}
+        boolean bMaxIsSpecified = !this.ipd.getMaximum().getLength().isAuto();
+        if (bMaxIsSpecified) {
+            this.maxIPD = ipd.getMaximum().getLength().mvalue();
+        }
+        else {
+            this.maxIPD = maxAllocIPD;
+        }
 
-	if (ipd.getOptimum().getLength().isAuto()) {
-	    this.optIPD = -1;
-	}
-	else {
-	    this.optIPD = ipd.getMaximum().getLength().mvalue();
-	}
-	if (ipd.getMinimum().getLength().isAuto()) {
-	    this.minIPD = -1;
-	}
-	else {
-	    this.minIPD = ipd.getMinimum().getLength().mvalue();
-	}
-	if (bHasProportionalUnits && this.optIPD < 0) {
-	    if (this.minIPD > 0) {
-		if (bMaxIsSpecified) {
-		    this.optIPD = (minIPD + maxIPD)/2;
-		}
-		else {
-		    this.optIPD = this.minIPD;
-		}
-	    }
-	    else if (bMaxIsSpecified) {
-		this.optIPD = this.maxIPD;
-	    }
-	    else {
-		log.error("At least one of minimum, optimum, or maximum " +
-			  "IPD must be specified on table.");
-		this.optIPD = this.maxIPD;
-	    }
-	}
+        if (ipd.getOptimum().getLength().isAuto()) {
+            this.optIPD = -1;
+        }
+        else {
+            this.optIPD = ipd.getMaximum().getLength().mvalue();
+        }
+        if (ipd.getMinimum().getLength().isAuto()) {
+            this.minIPD = -1;
+        }
+        else {
+            this.minIPD = ipd.getMinimum().getLength().mvalue();
+        }
+        if (bHasProportionalUnits && this.optIPD < 0) {
+            if (this.minIPD > 0) {
+                if (bMaxIsSpecified) {
+                    this.optIPD = (minIPD + maxIPD)/2;
+                }
+                else {
+                    this.optIPD = this.minIPD;
+                }
+            }
+            else if (bMaxIsSpecified) {
+                this.optIPD = this.maxIPD;
+            }
+            else {
+                log.error("At least one of minimum, optimum, or maximum " +
+                          "IPD must be specified on table.");
+                this.optIPD = this.maxIPD;
+            }
+        }
     }
 
 
