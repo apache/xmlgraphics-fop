@@ -71,13 +71,14 @@ import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableCell;
  */
 
 class MergedTableCells extends TestDocument {
+    static final int MM_TO_TWIPS = (int)(1440f / 25.4f);
+
     /** generate the body of the test document */
     protected void generateDocument(RtfDocumentArea rda, RtfSection sect)
     throws IOException {
         sect.newParagraph().newText("This document contains a table with some merged cells.");
 
         final RtfTable tbl = sect.newTable(new DummyTableColumnsInfo());
-        final int MM_TO_TWIPS = (int)(1440f / 25.4f);
 
         // first row, test horizontal merging
         {

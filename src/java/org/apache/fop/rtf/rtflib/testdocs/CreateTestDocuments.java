@@ -68,10 +68,14 @@ import java.io.IOException;
  */
 
 public class CreateTestDocuments {
+
+    /**
+     * package name for the testdocs
+     */
     public static final String TESTDOCS_PACKAGE = "org.apache.fop.rtf.rtflib.testdocs";
 
     /** List of all TestDocument subclasses from this package */
-    private static final String [] classNames = {
+    private static final String [] CLASS_NAMES = {
         "SimpleDocument",
         "TextAttributes",
         "SimpleTable",
@@ -91,8 +95,8 @@ public class CreateTestDocuments {
             throw new IOException("output directory (" + outDir + ") must exist and be writable");
         }
 
-        for (int i = 0; i < classNames.length; i++) {
-            createOneTestDocument(classNames[i], outDir);
+        for (int i = 0; i < CLASS_NAMES.length; i++) {
+            createOneTestDocument(CLASS_NAMES[i], outDir);
         }
     }
 
@@ -111,7 +115,10 @@ public class CreateTestDocuments {
         td.generateOutput();
     }
 
-    /** execute this to create test documents from all classes listed in classNames array */
+    /** execute this to create test documents from all classes listed in classNames array
+     * @param args String array of arguments
+     * @throws Exception for errors
+     */
     public static void main(String args[])
     throws Exception {
         if (args.length < 1) {

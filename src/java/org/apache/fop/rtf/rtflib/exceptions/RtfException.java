@@ -61,8 +61,10 @@ package org.apache.fop.rtf.rtflib.exceptions;
 /**  Base class for rtflib exceptions.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
-
 public class RtfException extends java.io.IOException {
+    /**
+     * @param reason Description of reason for Exception.
+     */
     public RtfException(String reason) {
         super(reason);
     }
