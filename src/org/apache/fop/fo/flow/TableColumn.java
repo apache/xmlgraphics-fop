@@ -116,6 +116,7 @@ public class TableColumn extends FObj {
 	areaContainer.foCreator=this;	// G Seshadri
 	areaContainer.setPage(area.getPage());
 	areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
+	areaContainer.setBackgroundColor(this.backgroundColor);
 	areaContainer.setHeight(area.getHeight());
 	area.addChild(areaContainer);
 
