@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.Date;
+import java.util.Stack;
 
 /**
  * This class is used to output PostScript code to an OutputStream.
@@ -28,12 +29,17 @@ public class PSGenerator {
     public static final AtendIndicator ATEND = new AtendIndicator() {};
 
     private OutputStream out;
+    
+    private Stack graphicsStateStack = new Stack();
+    private PSState currentState;
 
     private StringBuffer tempBuffer = new StringBuffer(256);
 
     /** @see java.io.FilterOutputStream **/
     public PSGenerator(OutputStream out) {
         this.out = out;
+        this.currentState = new PSState();
+        this.graphicsStateStack.push(this.currentState);
     }
 
     /**
@@ -251,6 +257,68 @@ public class PSGenerator {
         writeln(tempBuffer.toString());
     }
     
+    
+    /**
+     * Saves the graphics state of the rendering engine.
+     * @exception IOException In case of an I/O problem
+     */
+    public void saveGraphicsState() throws IOException {
+        writeln("gsave");
+        
+        PSState state = (PSState)this.currentState.clone();
+        this.graphicsStateStack.push(this.currentState);
+        this.currentState = state;
+    }
+    
+    /** 
+     * Restores the last graphics state of the rendering engine.
+     * @exception IOException In case of an I/O problem
+     */
+    public void restoreGraphicsState() throws IOException {
+        writeln("grestore");
+        this.currentState = (PSState)this.graphicsStateStack.pop();
+    }
+    
+    /**
+     * Concats the transformation matrix.
+     * @param a A part
+     * @param b B part
+     * @param c C part
+     * @param d D part
+     * @param e E part
+     * @param f F part
+     * @exception IOException In case of an I/O problem
+     */
+    public void concatMatrix(double a, double b,
+                                double c, double d, 
+                                double e, double f) throws IOException {
+        writeln("[" + formatDouble(a) + " "
+                    + formatDouble(b) + " "
+                    + formatDouble(c) + " "
+                    + formatDouble(d) + " "
+                    + formatDouble(e) + " "
+                    + formatDouble(f) + "] concat");
+    }
+    
+    /**
+     * Concats the transformations matrix.
+     * @param matrix Matrix to use
+     * @exception IOException In case of an I/O problem
+     */
+    public void concatMatrix(double[] matrix) throws IOException {
+        concatMatrix(matrix[0], matrix[1], 
+                     matrix[2], matrix[3], 
+                     matrix[4], matrix[5]);
+    }
+                                
+    /**
+     * Returns the current graphics state.
+     * @return the current graphics state
+     */
+    public PSState getCurrentState() {
+        return this.currentState;
+    }
+
     
     /** Used for the ATEND constant. See there. */
     private static interface AtendIndicator {
