@@ -262,7 +262,7 @@ public class ColorType extends AbstractPropertyValue {
 
     /**
      * Retrieve the components of a standard XSL/HTML color from the
-     * <i>systemColors</i> and <i>normalizedSystemColors</i>
+     * <i>systemColors</i> and <i>systemColors</i>
      * <tt>HashMap</tt>s.
      * @param name a <tt>String</tt>; the name of the standard color.
      * @return a <tt>float[4]</tt> containing the RGB information for
@@ -272,19 +272,8 @@ public class ColorType extends AbstractPropertyValue {
         throws PropertyException
     {
         float syscolor[];
-        int rgbcolor[];
-        if ((syscolor = (float[])normalizedSystemColors.get(name)) != null)
+        if ((syscolor = (float[])systemColors.get(name)) != null)
             return syscolor;
-        if ((rgbcolor = (int[])systemColors.get(name)) != null) {
-            syscolor = new float[] {
-                rgbcolor[RED]/255f,
-                rgbcolor[GREEN]/255f,
-                rgbcolor[BLUE]/255f,
-                0f
-            };
-            normalizedSystemColors.put(name, syscolor);
-            return syscolor;
-        }
         else throw new PropertyException("Unknown system color: " + name);
     }
 
@@ -336,672 +325,1325 @@ public class ColorType extends AbstractPropertyValue {
      * with the normalized RGB values of system colours, indexed by the
      * system name of the color.  This array is referred to when system color
      * references are encountered.  If the color is in the HashMap,
-     * a reference to the array is returned.  If not, the <i>systemColors</i>
-     * HashMap is checked.  If the color exists there, it is normailized,
-     * added to this HashMap, and a reference to the new array is returned.
+     * a reference to the array is returned.
      * @return a <tt>float[4]</tt> array representing the normalized color.
      */
-    private static HashMap normalizedSystemColors = new HashMap();
-
     public static final HashMap systemColors;
     static {
         systemColors = new HashMap();
-        systemColors.put("aliceblue", new int[] {240, 248, 255});
-        systemColors.put("antiquewhite1", new int[] {255, 239, 219});
-        systemColors.put("antiquewhite2", new int[] {238, 223, 204});
-        systemColors.put("antiquewhite3", new int[] {205, 192, 176});
-        systemColors.put("antiquewhite4", new int[] {139, 131, 120});
-        systemColors.put("antiquewhite", new int[] {250, 235, 215});
-        systemColors.put("aquamarine1", new int[] {127, 255, 212});
-        systemColors.put("aquamarine2", new int[] {118, 238, 198});
-        systemColors.put("aquamarine3", new int[] {102, 205, 170});
-        systemColors.put("aquamarine4", new int[] {69, 139, 116});
-        systemColors.put("aquamarine", new int[] {127, 255, 212});
-        systemColors.put("azure1", new int[] {240, 255, 255});
-        systemColors.put("azure2", new int[] {224, 238, 238});
-        systemColors.put("azure3", new int[] {193, 205, 205});
-        systemColors.put("azure4", new int[] {131, 139, 139});
-        systemColors.put("azure", new int[] {240, 255, 255});
-        systemColors.put("beige", new int[] {245, 245, 220});
-        systemColors.put("bisque1", new int[] {255, 228, 196});
-        systemColors.put("bisque2", new int[] {238, 213, 183});
-        systemColors.put("bisque3", new int[] {205, 183, 158});
-        systemColors.put("bisque4", new int[] {139, 125, 107});
-        systemColors.put("bisque", new int[] {255, 228, 196});
-        systemColors.put("black", new int[] {0, 0, 0});
-        systemColors.put("blanchedalmond", new int[] {255, 235, 205});
-        systemColors.put("blue1", new int[] {0, 0, 255});
-        systemColors.put("blue2", new int[] {0, 0, 238});
-        systemColors.put("blue3", new int[] {0, 0, 205});
-        systemColors.put("blue4", new int[] {0, 0, 139});
-        systemColors.put("blue", new int[] {0, 0, 255});
-        systemColors.put("blueviolet", new int[] {138, 43, 226});
-        systemColors.put("brown1", new int[] {255, 64, 64});
-        systemColors.put("brown2", new int[] {238, 59, 59});
-        systemColors.put("brown3", new int[] {205, 51, 51});
-        systemColors.put("brown4", new int[] {139, 35, 35});
-        systemColors.put("brown", new int[] {165, 42, 42});
-        systemColors.put("burlywood1", new int[] {255, 211, 155});
-        systemColors.put("burlywood2", new int[] {238, 197, 145});
-        systemColors.put("burlywood3", new int[] {205, 170, 125});
-        systemColors.put("burlywood4", new int[] {139, 115, 85});
-        systemColors.put("burlywood", new int[] {222, 184, 135});
-        systemColors.put("cadetblue1", new int[] {152, 245, 255});
-        systemColors.put("cadetblue2", new int[] {142, 229, 238});
-        systemColors.put("cadetblue3", new int[] {122, 197, 205});
-        systemColors.put("cadetblue4", new int[] {83, 134, 139});
-        systemColors.put("cadetblue", new int[] {95, 158, 160});
-        systemColors.put("chartreuse1", new int[] {127, 255, 0});
-        systemColors.put("chartreuse2", new int[] {118, 238, 0});
-        systemColors.put("chartreuse3", new int[] {102, 205, 0});
-        systemColors.put("chartreuse4", new int[] {69, 139, 0});
-        systemColors.put("chartreuse", new int[] {127, 255, 0});
-        systemColors.put("chocolate1", new int[] {255, 127, 36});
-        systemColors.put("chocolate2", new int[] {238, 118, 33});
-        systemColors.put("chocolate3", new int[] {205, 102, 29});
-        systemColors.put("chocolate4", new int[] {139, 69, 19});
-        systemColors.put("chocolate", new int[] {210, 105, 30});
-        systemColors.put("coral1", new int[] {255, 114, 86});
-        systemColors.put("coral2", new int[] {238, 106, 80});
-        systemColors.put("coral3", new int[] {205, 91, 69});
-        systemColors.put("coral4", new int[] {139, 62, 47});
-        systemColors.put("coral", new int[] {255, 127, 80});
-        systemColors.put("cornflowerblue", new int[] {100, 149, 237});
-        systemColors.put("cornsilk1", new int[] {255, 248, 220});
-        systemColors.put("cornsilk2", new int[] {238, 232, 205});
-        systemColors.put("cornsilk3", new int[] {205, 200, 177});
-        systemColors.put("cornsilk4", new int[] {139, 136, 120});
-        systemColors.put("cornsilk", new int[] {255, 248, 220});
-        systemColors.put("cyan1", new int[] {0, 255, 255});
-        systemColors.put("cyan2", new int[] {0, 238, 238});
-        systemColors.put("cyan3", new int[] {0, 205, 205});
-        systemColors.put("cyan4", new int[] {0, 139, 139});
-        systemColors.put("cyan", new int[] {0, 255, 255});
-        systemColors.put("darkblue", new int[] {0, 0, 139});
-        systemColors.put("darkcyan", new int[] {0, 139, 139});
-        systemColors.put("darkgoldenrod1", new int[] {255, 185, 15});
-        systemColors.put("darkgoldenrod2", new int[] {238, 173, 14});
-        systemColors.put("darkgoldenrod3", new int[] {205, 149, 12});
-        systemColors.put("darkgoldenrod4", new int[] {139, 101, 8});
-        systemColors.put("darkgoldenrod", new int[] {184, 134, 11});
-        systemColors.put("darkgray", new int[] {169, 169, 169});
-        systemColors.put("darkgreen", new int[] {0, 100, 0});
-        systemColors.put("darkgrey", new int[] {169, 169, 169});
-        systemColors.put("darkkhaki", new int[] {189, 183, 107});
-        systemColors.put("darkmagenta", new int[] {139, 0, 139});
-        systemColors.put("darkolivegreen1", new int[] {202, 255, 112});
-        systemColors.put("darkolivegreen2", new int[] {188, 238, 104});
-        systemColors.put("darkolivegreen3", new int[] {162, 205, 90});
-        systemColors.put("darkolivegreen4", new int[] {110, 139, 61});
-        systemColors.put("darkolivegreen", new int[] {85, 107, 47});
-        systemColors.put("darkorange1", new int[] {255, 127, 0});
-        systemColors.put("darkorange2", new int[] {238, 118, 0});
-        systemColors.put("darkorange3", new int[] {205, 102, 0});
-        systemColors.put("darkorange4", new int[] {139, 69, 0});
-        systemColors.put("darkorange", new int[] {255, 140, 0});
-        systemColors.put("darkorchid1", new int[] {191, 62, 255});
-        systemColors.put("darkorchid2", new int[] {178, 58, 238});
-        systemColors.put("darkorchid3", new int[] {154, 50, 205});
-        systemColors.put("darkorchid4", new int[] {104, 34, 139});
-        systemColors.put("darkorchid", new int[] {153, 50, 204});
-        systemColors.put("darkred", new int[] {139, 0, 0});
-        systemColors.put("darksalmon", new int[] {233, 150, 122});
-        systemColors.put("darkseagreen1", new int[] {193, 255, 193});
-        systemColors.put("darkseagreen2", new int[] {180, 238, 180});
-        systemColors.put("darkseagreen3", new int[] {155, 205, 155});
-        systemColors.put("darkseagreen4", new int[] {105, 139, 105});
-        systemColors.put("darkseagreen", new int[] {143, 188, 143});
-        systemColors.put("darkslateblue", new int[] {72, 61, 139});
-        systemColors.put("darkslategray1", new int[] {151, 255, 255});
-        systemColors.put("darkslategray2", new int[] {141, 238, 238});
-        systemColors.put("darkslategray3", new int[] {121, 205, 205});
-        systemColors.put("darkslategray4", new int[] {82, 139, 139});
-        systemColors.put("darkslategray", new int[] {47, 79, 79});
-        systemColors.put("darkslategrey", new int[] {47, 79, 79});
-        systemColors.put("darkturquoise", new int[] {0, 206, 209});
-        systemColors.put("darkviolet", new int[] {148, 0, 211});
-        systemColors.put("deeppink1", new int[] {255, 20, 147});
-        systemColors.put("deeppink2", new int[] {238, 18, 137});
-        systemColors.put("deeppink3", new int[] {205, 16, 118});
-        systemColors.put("deeppink4", new int[] {139, 10, 80});
-        systemColors.put("deeppink", new int[] {255, 20, 147});
-        systemColors.put("deepskyblue1", new int[] {0, 191, 255});
-        systemColors.put("deepskyblue2", new int[] {0, 178, 238});
-        systemColors.put("deepskyblue3", new int[] {0, 154, 205});
-        systemColors.put("deepskyblue4", new int[] {0, 104, 139});
-        systemColors.put("deepskyblue", new int[] {0, 191, 255});
-        systemColors.put("dimgray", new int[] {105, 105, 105});
-        systemColors.put("dimgrey", new int[] {105, 105, 105});
-        systemColors.put("dodgerblue1", new int[] {30, 144, 255});
-        systemColors.put("dodgerblue2", new int[] {28, 134, 238});
-        systemColors.put("dodgerblue3", new int[] {24, 116, 205});
-        systemColors.put("dodgerblue4", new int[] {16, 78, 139});
-        systemColors.put("dodgerblue", new int[] {30, 144, 255});
-        systemColors.put("firebrick1", new int[] {255, 48, 48});
-        systemColors.put("firebrick2", new int[] {238, 44, 44});
-        systemColors.put("firebrick3", new int[] {205, 38, 38});
-        systemColors.put("firebrick4", new int[] {139, 26, 26});
-        systemColors.put("firebrick", new int[] {178, 34, 34});
-        systemColors.put("floralwhite", new int[] {255, 250, 240});
-        systemColors.put("forestgreen", new int[] {34, 139, 34});
-        systemColors.put("gainsboro", new int[] {220, 220, 220});
-        systemColors.put("ghostwhite", new int[] {248, 248, 255});
-        systemColors.put("gold1", new int[] {255, 215, 0});
-        systemColors.put("gold2", new int[] {238, 201, 0});
-        systemColors.put("gold3", new int[] {205, 173, 0});
-        systemColors.put("gold4", new int[] {139, 117, 0});
-        systemColors.put("goldenrod1", new int[] {255, 193, 37});
-        systemColors.put("goldenrod2", new int[] {238, 180, 34});
-        systemColors.put("goldenrod3", new int[] {205, 155, 29});
-        systemColors.put("goldenrod4", new int[] {139, 105, 20});
-        systemColors.put("goldenrod", new int[] {218, 165, 32});
-        systemColors.put("gold", new int[] {255, 215, 0});
-        systemColors.put("gray0", new int[] {0, 0, 0});
-        systemColors.put("gray100", new int[] {255, 255, 255});
-        systemColors.put("gray10", new int[] {26, 26, 26});
-        systemColors.put("gray11", new int[] {28, 28, 28});
-        systemColors.put("gray12", new int[] {31, 31, 31});
-        systemColors.put("gray13", new int[] {33, 33, 33});
-        systemColors.put("gray14", new int[] {36, 36, 36});
-        systemColors.put("gray15", new int[] {38, 38, 38});
-        systemColors.put("gray16", new int[] {41, 41, 41});
-        systemColors.put("gray17", new int[] {43, 43, 43});
-        systemColors.put("gray18", new int[] {46, 46, 46});
-        systemColors.put("gray19", new int[] {48, 48, 48});
-        systemColors.put("gray1", new int[] {3, 3, 3});
-        systemColors.put("gray20", new int[] {51, 51, 51});
-        systemColors.put("gray21", new int[] {54, 54, 54});
-        systemColors.put("gray22", new int[] {56, 56, 56});
-        systemColors.put("gray23", new int[] {59, 59, 59});
-        systemColors.put("gray24", new int[] {61, 61, 61});
-        systemColors.put("gray25", new int[] {64, 64, 64});
-        systemColors.put("gray26", new int[] {66, 66, 66});
-        systemColors.put("gray27", new int[] {69, 69, 69});
-        systemColors.put("gray28", new int[] {71, 71, 71});
-        systemColors.put("gray29", new int[] {74, 74, 74});
-        systemColors.put("gray2", new int[] {5, 5, 5});
-        systemColors.put("gray30", new int[] {77, 77, 77});
-        systemColors.put("gray31", new int[] {79, 79, 79});
-        systemColors.put("gray32", new int[] {82, 82, 82});
-        systemColors.put("gray33", new int[] {84, 84, 84});
-        systemColors.put("gray34", new int[] {87, 87, 87});
-        systemColors.put("gray35", new int[] {89, 89, 89});
-        systemColors.put("gray36", new int[] {92, 92, 92});
-        systemColors.put("gray37", new int[] {94, 94, 94});
-        systemColors.put("gray38", new int[] {97, 97, 97});
-        systemColors.put("gray39", new int[] {99, 99, 99});
-        systemColors.put("gray3", new int[] {8, 8, 8});
-        systemColors.put("gray40", new int[] {102, 102, 102});
-        systemColors.put("gray41", new int[] {105, 105, 105});
-        systemColors.put("gray42", new int[] {107, 107, 107});
-        systemColors.put("gray43", new int[] {110, 110, 110});
-        systemColors.put("gray44", new int[] {112, 112, 112});
-        systemColors.put("gray45", new int[] {115, 115, 115});
-        systemColors.put("gray46", new int[] {117, 117, 117});
-        systemColors.put("gray47", new int[] {120, 120, 120});
-        systemColors.put("gray48", new int[] {122, 122, 122});
-        systemColors.put("gray49", new int[] {125, 125, 125});
-        systemColors.put("gray4", new int[] {10, 10, 10});
-        systemColors.put("gray50", new int[] {127, 127, 127});
-        systemColors.put("gray51", new int[] {130, 130, 130});
-        systemColors.put("gray52", new int[] {133, 133, 133});
-        systemColors.put("gray53", new int[] {135, 135, 135});
-        systemColors.put("gray54", new int[] {138, 138, 138});
-        systemColors.put("gray55", new int[] {140, 140, 140});
-        systemColors.put("gray56", new int[] {143, 143, 143});
-        systemColors.put("gray57", new int[] {145, 145, 145});
-        systemColors.put("gray58", new int[] {148, 148, 148});
-        systemColors.put("gray59", new int[] {150, 150, 150});
-        systemColors.put("gray5", new int[] {13, 13, 13});
-        systemColors.put("gray60", new int[] {153, 153, 153});
-        systemColors.put("gray61", new int[] {156, 156, 156});
-        systemColors.put("gray62", new int[] {158, 158, 158});
-        systemColors.put("gray63", new int[] {161, 161, 161});
-        systemColors.put("gray64", new int[] {163, 163, 163});
-        systemColors.put("gray65", new int[] {166, 166, 166});
-        systemColors.put("gray66", new int[] {168, 168, 168});
-        systemColors.put("gray67", new int[] {171, 171, 171});
-        systemColors.put("gray68", new int[] {173, 173, 173});
-        systemColors.put("gray69", new int[] {176, 176, 176});
-        systemColors.put("gray6", new int[] {15, 15, 15});
-        systemColors.put("gray70", new int[] {179, 179, 179});
-        systemColors.put("gray71", new int[] {181, 181, 181});
-        systemColors.put("gray72", new int[] {184, 184, 184});
-        systemColors.put("gray73", new int[] {186, 186, 186});
-        systemColors.put("gray74", new int[] {189, 189, 189});
-        systemColors.put("gray75", new int[] {191, 191, 191});
-        systemColors.put("gray76", new int[] {194, 194, 194});
-        systemColors.put("gray77", new int[] {196, 196, 196});
-        systemColors.put("gray78", new int[] {199, 199, 199});
-        systemColors.put("gray79", new int[] {201, 201, 201});
-        systemColors.put("gray7", new int[] {18, 18, 18});
-        systemColors.put("gray80", new int[] {204, 204, 204});
-        systemColors.put("gray81", new int[] {207, 207, 207});
-        systemColors.put("gray82", new int[] {209, 209, 209});
-        systemColors.put("gray83", new int[] {212, 212, 212});
-        systemColors.put("gray84", new int[] {214, 214, 214});
-        systemColors.put("gray85", new int[] {217, 217, 217});
-        systemColors.put("gray86", new int[] {219, 219, 219});
-        systemColors.put("gray87", new int[] {222, 222, 222});
-        systemColors.put("gray88", new int[] {224, 224, 224});
-        systemColors.put("gray89", new int[] {227, 227, 227});
-        systemColors.put("gray8", new int[] {20, 20, 20});
-        systemColors.put("gray90", new int[] {229, 229, 229});
-        systemColors.put("gray91", new int[] {232, 232, 232});
-        systemColors.put("gray92", new int[] {235, 235, 235});
-        systemColors.put("gray93", new int[] {237, 237, 237});
-        systemColors.put("gray94", new int[] {240, 240, 240});
-        systemColors.put("gray95", new int[] {242, 242, 242});
-        systemColors.put("gray96", new int[] {245, 245, 245});
-        systemColors.put("gray97", new int[] {247, 247, 247});
-        systemColors.put("gray98", new int[] {250, 250, 250});
-        systemColors.put("gray99", new int[] {252, 252, 252});
-        systemColors.put("gray9", new int[] {23, 23, 23});
-        systemColors.put("gray", new int[] {190, 190, 190});
-        systemColors.put("green1", new int[] {0, 255, 0});
-        systemColors.put("green2", new int[] {0, 238, 0});
-        systemColors.put("green3", new int[] {0, 205, 0});
-        systemColors.put("green4", new int[] {0, 139, 0});
-        systemColors.put("green", new int[] {0, 255, 0});
-        systemColors.put("greenyellow", new int[] {173, 255, 47});
-        systemColors.put("grey0", new int[] {0, 0, 0});
-        systemColors.put("grey100", new int[] {255, 255, 255});
-        systemColors.put("grey10", new int[] {26, 26, 26});
-        systemColors.put("grey11", new int[] {28, 28, 28});
-        systemColors.put("grey12", new int[] {31, 31, 31});
-        systemColors.put("grey13", new int[] {33, 33, 33});
-        systemColors.put("grey14", new int[] {36, 36, 36});
-        systemColors.put("grey15", new int[] {38, 38, 38});
-        systemColors.put("grey16", new int[] {41, 41, 41});
-        systemColors.put("grey17", new int[] {43, 43, 43});
-        systemColors.put("grey18", new int[] {46, 46, 46});
-        systemColors.put("grey19", new int[] {48, 48, 48});
-        systemColors.put("grey1", new int[] {3, 3, 3});
-        systemColors.put("grey20", new int[] {51, 51, 51});
-        systemColors.put("grey21", new int[] {54, 54, 54});
-        systemColors.put("grey22", new int[] {56, 56, 56});
-        systemColors.put("grey23", new int[] {59, 59, 59});
-        systemColors.put("grey24", new int[] {61, 61, 61});
-        systemColors.put("grey25", new int[] {64, 64, 64});
-        systemColors.put("grey26", new int[] {66, 66, 66});
-        systemColors.put("grey27", new int[] {69, 69, 69});
-        systemColors.put("grey28", new int[] {71, 71, 71});
-        systemColors.put("grey29", new int[] {74, 74, 74});
-        systemColors.put("grey2", new int[] {5, 5, 5});
-        systemColors.put("grey30", new int[] {77, 77, 77});
-        systemColors.put("grey31", new int[] {79, 79, 79});
-        systemColors.put("grey32", new int[] {82, 82, 82});
-        systemColors.put("grey33", new int[] {84, 84, 84});
-        systemColors.put("grey34", new int[] {87, 87, 87});
-        systemColors.put("grey35", new int[] {89, 89, 89});
-        systemColors.put("grey36", new int[] {92, 92, 92});
-        systemColors.put("grey37", new int[] {94, 94, 94});
-        systemColors.put("grey38", new int[] {97, 97, 97});
-        systemColors.put("grey39", new int[] {99, 99, 99});
-        systemColors.put("grey3", new int[] {8, 8, 8});
-        systemColors.put("grey40", new int[] {102, 102, 102});
-        systemColors.put("grey41", new int[] {105, 105, 105});
-        systemColors.put("grey42", new int[] {107, 107, 107});
-        systemColors.put("grey43", new int[] {110, 110, 110});
-        systemColors.put("grey44", new int[] {112, 112, 112});
-        systemColors.put("grey45", new int[] {115, 115, 115});
-        systemColors.put("grey46", new int[] {117, 117, 117});
-        systemColors.put("grey47", new int[] {120, 120, 120});
-        systemColors.put("grey48", new int[] {122, 122, 122});
-        systemColors.put("grey49", new int[] {125, 125, 125});
-        systemColors.put("grey4", new int[] {10, 10, 10});
-        systemColors.put("grey50", new int[] {127, 127, 127});
-        systemColors.put("grey51", new int[] {130, 130, 130});
-        systemColors.put("grey52", new int[] {133, 133, 133});
-        systemColors.put("grey53", new int[] {135, 135, 135});
-        systemColors.put("grey54", new int[] {138, 138, 138});
-        systemColors.put("grey55", new int[] {140, 140, 140});
-        systemColors.put("grey56", new int[] {143, 143, 143});
-        systemColors.put("grey57", new int[] {145, 145, 145});
-        systemColors.put("grey58", new int[] {148, 148, 148});
-        systemColors.put("grey59", new int[] {150, 150, 150});
-        systemColors.put("grey5", new int[] {13, 13, 13});
-        systemColors.put("grey60", new int[] {153, 153, 153});
-        systemColors.put("grey61", new int[] {156, 156, 156});
-        systemColors.put("grey62", new int[] {158, 158, 158});
-        systemColors.put("grey63", new int[] {161, 161, 161});
-        systemColors.put("grey64", new int[] {163, 163, 163});
-        systemColors.put("grey65", new int[] {166, 166, 166});
-        systemColors.put("grey66", new int[] {168, 168, 168});
-        systemColors.put("grey67", new int[] {171, 171, 171});
-        systemColors.put("grey68", new int[] {173, 173, 173});
-        systemColors.put("grey69", new int[] {176, 176, 176});
-        systemColors.put("grey6", new int[] {15, 15, 15});
-        systemColors.put("grey70", new int[] {179, 179, 179});
-        systemColors.put("grey71", new int[] {181, 181, 181});
-        systemColors.put("grey72", new int[] {184, 184, 184});
-        systemColors.put("grey73", new int[] {186, 186, 186});
-        systemColors.put("grey74", new int[] {189, 189, 189});
-        systemColors.put("grey75", new int[] {191, 191, 191});
-        systemColors.put("grey76", new int[] {194, 194, 194});
-        systemColors.put("grey77", new int[] {196, 196, 196});
-        systemColors.put("grey78", new int[] {199, 199, 199});
-        systemColors.put("grey79", new int[] {201, 201, 201});
-        systemColors.put("grey7", new int[] {18, 18, 18});
-        systemColors.put("grey80", new int[] {204, 204, 204});
-        systemColors.put("grey81", new int[] {207, 207, 207});
-        systemColors.put("grey82", new int[] {209, 209, 209});
-        systemColors.put("grey83", new int[] {212, 212, 212});
-        systemColors.put("grey84", new int[] {214, 214, 214});
-        systemColors.put("grey85", new int[] {217, 217, 217});
-        systemColors.put("grey86", new int[] {219, 219, 219});
-        systemColors.put("grey87", new int[] {222, 222, 222});
-        systemColors.put("grey88", new int[] {224, 224, 224});
-        systemColors.put("grey89", new int[] {227, 227, 227});
-        systemColors.put("grey8", new int[] {20, 20, 20});
-        systemColors.put("grey90", new int[] {229, 229, 229});
-        systemColors.put("grey91", new int[] {232, 232, 232});
-        systemColors.put("grey92", new int[] {235, 235, 235});
-        systemColors.put("grey93", new int[] {237, 237, 237});
-        systemColors.put("grey94", new int[] {240, 240, 240});
-        systemColors.put("grey95", new int[] {242, 242, 242});
-        systemColors.put("grey96", new int[] {245, 245, 245});
-        systemColors.put("grey97", new int[] {247, 247, 247});
-        systemColors.put("grey98", new int[] {250, 250, 250});
-        systemColors.put("grey99", new int[] {252, 252, 252});
-        systemColors.put("grey9", new int[] {23, 23, 23});
-        systemColors.put("grey", new int[] {190, 190, 190});
-        systemColors.put("honeydew1", new int[] {240, 255, 240});
-        systemColors.put("honeydew2", new int[] {224, 238, 224});
-        systemColors.put("honeydew3", new int[] {193, 205, 193});
-        systemColors.put("honeydew4", new int[] {131, 139, 131});
-        systemColors.put("honeydew", new int[] {240, 255, 240});
-        systemColors.put("hotpink1", new int[] {255, 110, 180});
-        systemColors.put("hotpink2", new int[] {238, 106, 167});
-        systemColors.put("hotpink3", new int[] {205, 96, 144});
-        systemColors.put("hotpink4", new int[] {139, 58, 98});
-        systemColors.put("hotpink", new int[] {255, 105, 180});
-        systemColors.put("indianred1", new int[] {255, 106, 106});
-        systemColors.put("indianred2", new int[] {238, 99, 99});
-        systemColors.put("indianred3", new int[] {205, 85, 85});
-        systemColors.put("indianred4", new int[] {139, 58, 58});
-        systemColors.put("indianred", new int[] {205, 92, 92});
-        systemColors.put("ivory1", new int[] {255, 255, 240});
-        systemColors.put("ivory2", new int[] {238, 238, 224});
-        systemColors.put("ivory3", new int[] {205, 205, 193});
-        systemColors.put("ivory4", new int[] {139, 139, 131});
-        systemColors.put("ivory", new int[] {255, 255, 240});
-        systemColors.put("khaki1", new int[] {255, 246, 143});
-        systemColors.put("khaki2", new int[] {238, 230, 133});
-        systemColors.put("khaki3", new int[] {205, 198, 115});
-        systemColors.put("khaki4", new int[] {139, 134, 78});
-        systemColors.put("khaki", new int[] {240, 230, 140});
-        systemColors.put("lavenderblush1", new int[] {255, 240, 245});
-        systemColors.put("lavenderblush2", new int[] {238, 224, 229});
-        systemColors.put("lavenderblush3", new int[] {205, 193, 197});
-        systemColors.put("lavenderblush4", new int[] {139, 131, 134});
-        systemColors.put("lavenderblush", new int[] {255, 240, 245});
-        systemColors.put("lavender", new int[] {230, 230, 250});
-        systemColors.put("lawngreen", new int[] {124, 252, 0});
-        systemColors.put("lemonchiffon1", new int[] {255, 250, 205});
-        systemColors.put("lemonchiffon2", new int[] {238, 233, 191});
-        systemColors.put("lemonchiffon3", new int[] {205, 201, 165});
-        systemColors.put("lemonchiffon4", new int[] {139, 137, 112});
-        systemColors.put("lemonchiffon", new int[] {255, 250, 205});
-        systemColors.put("lightblue1", new int[] {191, 239, 255});
-        systemColors.put("lightblue2", new int[] {178, 223, 238});
-        systemColors.put("lightblue3", new int[] {154, 192, 205});
-        systemColors.put("lightblue4", new int[] {104, 131, 139});
-        systemColors.put("lightblue", new int[] {173, 216, 230});
-        systemColors.put("lightcoral", new int[] {240, 128, 128});
-        systemColors.put("lightcyan1", new int[] {224, 255, 255});
-        systemColors.put("lightcyan2", new int[] {209, 238, 238});
-        systemColors.put("lightcyan3", new int[] {180, 205, 205});
-        systemColors.put("lightcyan4", new int[] {122, 139, 139});
-        systemColors.put("lightcyan", new int[] {224, 255, 255});
-        systemColors.put("lightgoldenrod1", new int[] {255, 236, 139});
-        systemColors.put("lightgoldenrod2", new int[] {238, 220, 130});
-        systemColors.put("lightgoldenrod3", new int[] {205, 190, 112});
-        systemColors.put("lightgoldenrod4", new int[] {139, 129, 76});
-        systemColors.put("lightgoldenrod", new int[] {238, 221, 130});
-        systemColors.put("lightgoldenrodyellow", new int[] {250, 250, 210});
-        systemColors.put("lightgray", new int[] {211, 211, 211});
-        systemColors.put("lightgreen", new int[] {144, 238, 144});
-        systemColors.put("lightgrey", new int[] {211, 211, 211});
-        systemColors.put("lightpink1", new int[] {255, 174, 185});
-        systemColors.put("lightpink2", new int[] {238, 162, 173});
-        systemColors.put("lightpink3", new int[] {205, 140, 149});
-        systemColors.put("lightpink4", new int[] {139, 95, 101});
-        systemColors.put("lightpink", new int[] {255, 182, 193});
-        systemColors.put("lightsalmon1", new int[] {255, 160, 122});
-        systemColors.put("lightsalmon2", new int[] {238, 149, 114});
-        systemColors.put("lightsalmon3", new int[] {205, 129, 98});
-        systemColors.put("lightsalmon4", new int[] {139, 87, 66});
-        systemColors.put("lightsalmon", new int[] {255, 160, 122});
-        systemColors.put("lightseagreen", new int[] {32, 178, 170});
-        systemColors.put("lightskyblue1", new int[] {176, 226, 255});
-        systemColors.put("lightskyblue2", new int[] {164, 211, 238});
-        systemColors.put("lightskyblue3", new int[] {141, 182, 205});
-        systemColors.put("lightskyblue4", new int[] {96, 123, 139});
-        systemColors.put("lightskyblue", new int[] {135, 206, 250});
-        systemColors.put("lightslateblue", new int[] {132, 112, 255});
-        systemColors.put("lightslategray", new int[] {119, 136, 153});
-        systemColors.put("lightslategrey", new int[] {119, 136, 153});
-        systemColors.put("lightsteelblue1", new int[] {202, 225, 255});
-        systemColors.put("lightsteelblue2", new int[] {188, 210, 238});
-        systemColors.put("lightsteelblue3", new int[] {162, 181, 205});
-        systemColors.put("lightsteelblue4", new int[] {110, 123, 139});
-        systemColors.put("lightsteelblue", new int[] {176, 196, 222});
-        systemColors.put("lightyellow1", new int[] {255, 255, 224});
-        systemColors.put("lightyellow2", new int[] {238, 238, 209});
-        systemColors.put("lightyellow3", new int[] {205, 205, 180});
-        systemColors.put("lightyellow4", new int[] {139, 139, 122});
-        systemColors.put("lightyellow", new int[] {255, 255, 224});
-        systemColors.put("limegreen", new int[] {50, 205, 50});
-        systemColors.put("linen", new int[] {250, 240, 230});
-        systemColors.put("magenta1", new int[] {255, 0, 255});
-        systemColors.put("magenta2", new int[] {238, 0, 238});
-        systemColors.put("magenta3", new int[] {205, 0, 205});
-        systemColors.put("magenta4", new int[] {139, 0, 139});
-        systemColors.put("magenta", new int[] {255, 0, 255});
-        systemColors.put("maroon1", new int[] {255, 52, 179});
-        systemColors.put("maroon2", new int[] {238, 48, 167});
-        systemColors.put("maroon3", new int[] {205, 41, 144});
-        systemColors.put("maroon4", new int[] {139, 28, 98});
-        systemColors.put("maroon", new int[] {176, 48, 96});
-        systemColors.put("mediumaquamarine", new int[] {102, 205, 170});
-        systemColors.put("mediumblue", new int[] {0, 0, 205});
-        systemColors.put("mediumorchid1", new int[] {224, 102, 255});
-        systemColors.put("mediumorchid2", new int[] {209, 95, 238});
-        systemColors.put("mediumorchid3", new int[] {180, 82, 205});
-        systemColors.put("mediumorchid4", new int[] {122, 55, 139});
-        systemColors.put("mediumorchid", new int[] {186, 85, 211});
-        systemColors.put("mediumpurple1", new int[] {171, 130, 255});
-        systemColors.put("mediumpurple2", new int[] {159, 121, 238});
-        systemColors.put("mediumpurple3", new int[] {137, 104, 205});
-        systemColors.put("mediumpurple4", new int[] {93, 71, 139});
-        systemColors.put("mediumpurple", new int[] {147, 112, 219});
-        systemColors.put("mediumseagreen", new int[] {60, 179, 113});
-        systemColors.put("mediumslateblue", new int[] {123, 104, 238});
-        systemColors.put("mediumspringgreen", new int[] {0, 250, 154});
-        systemColors.put("mediumturquoise", new int[] {72, 209, 204});
-        systemColors.put("mediumvioletred", new int[] {199, 21, 133});
-        systemColors.put("midnightblue", new int[] {25, 25, 112});
-        systemColors.put("mintcream", new int[] {245, 255, 250});
-        systemColors.put("mistyrose1", new int[] {255, 228, 225});
-        systemColors.put("mistyrose2", new int[] {238, 213, 210});
-        systemColors.put("mistyrose3", new int[] {205, 183, 181});
-        systemColors.put("mistyrose4", new int[] {139, 125, 123});
-        systemColors.put("mistyrose", new int[] {255, 228, 225});
-        systemColors.put("moccasin", new int[] {255, 228, 181});
-        systemColors.put("navajowhite1", new int[] {255, 222, 173});
-        systemColors.put("navajowhite2", new int[] {238, 207, 161});
-        systemColors.put("navajowhite3", new int[] {205, 179, 139});
-        systemColors.put("navajowhite4", new int[] {139, 121, 94});
-        systemColors.put("navajowhite", new int[] {255, 222, 173});
-        systemColors.put("navyblue", new int[] {0, 0, 128});
-        systemColors.put("navy", new int[] {0, 0, 128});
-        systemColors.put("oldlace", new int[] {253, 245, 230});
-        systemColors.put("olivedrab1", new int[] {192, 255, 62});
-        systemColors.put("olivedrab2", new int[] {179, 238, 58});
-        systemColors.put("olivedrab3", new int[] {154, 205, 50});
-        systemColors.put("olivedrab4", new int[] {105, 139, 34});
-        systemColors.put("olivedrab", new int[] {107, 142, 35});
-        systemColors.put("orange1", new int[] {255, 165, 0});
-        systemColors.put("orange2", new int[] {238, 154, 0});
-        systemColors.put("orange3", new int[] {205, 133, 0});
-        systemColors.put("orange4", new int[] {139, 90, 0});
-        systemColors.put("orange", new int[] {255, 165, 0});
-        systemColors.put("orangered1", new int[] {255, 69, 0});
-        systemColors.put("orangered2", new int[] {238, 64, 0});
-        systemColors.put("orangered3", new int[] {205, 55, 0});
-        systemColors.put("orangered4", new int[] {139, 37, 0});
-        systemColors.put("orangered", new int[] {255, 69, 0});
-        systemColors.put("orchid1", new int[] {255, 131, 250});
-        systemColors.put("orchid2", new int[] {238, 122, 233});
-        systemColors.put("orchid3", new int[] {205, 105, 201});
-        systemColors.put("orchid4", new int[] {139, 71, 137});
-        systemColors.put("orchid", new int[] {218, 112, 214});
-        systemColors.put("palegoldenrod", new int[] {238, 232, 170});
-        systemColors.put("palegreen1", new int[] {154, 255, 154});
-        systemColors.put("palegreen2", new int[] {144, 238, 144});
-        systemColors.put("palegreen3", new int[] {124, 205, 124});
-        systemColors.put("palegreen4", new int[] {84, 139, 84});
-        systemColors.put("palegreen", new int[] {152, 251, 152});
-        systemColors.put("paleturquoise1", new int[] {187, 255, 255});
-        systemColors.put("paleturquoise2", new int[] {174, 238, 238});
-        systemColors.put("paleturquoise3", new int[] {150, 205, 205});
-        systemColors.put("paleturquoise4", new int[] {102, 139, 139});
-        systemColors.put("paleturquoise", new int[] {175, 238, 238});
-        systemColors.put("palevioletred1", new int[] {255, 130, 171});
-        systemColors.put("palevioletred2", new int[] {238, 121, 159});
-        systemColors.put("palevioletred3", new int[] {205, 104, 137});
-        systemColors.put("palevioletred4", new int[] {139, 71, 93});
-        systemColors.put("palevioletred", new int[] {219, 112, 147});
-        systemColors.put("papayawhip", new int[] {255, 239, 213});
-        systemColors.put("peachpuff1", new int[] {255, 218, 185});
-        systemColors.put("peachpuff2", new int[] {238, 203, 173});
-        systemColors.put("peachpuff3", new int[] {205, 175, 149});
-        systemColors.put("peachpuff4", new int[] {139, 119, 101});
-        systemColors.put("peachpuff", new int[] {255, 218, 185});
-        systemColors.put("peru", new int[] {205, 133, 63});
-        systemColors.put("pink1", new int[] {255, 181, 197});
-        systemColors.put("pink2", new int[] {238, 169, 184});
-        systemColors.put("pink3", new int[] {205, 145, 158});
-        systemColors.put("pink4", new int[] {139, 99, 108});
-        systemColors.put("pink", new int[] {255, 192, 203});
-        systemColors.put("plum1", new int[] {255, 187, 255});
-        systemColors.put("plum2", new int[] {238, 174, 238});
-        systemColors.put("plum3", new int[] {205, 150, 205});
-        systemColors.put("plum4", new int[] {139, 102, 139});
-        systemColors.put("plum", new int[] {221, 160, 221});
-        systemColors.put("powderblue", new int[] {176, 224, 230});
-        systemColors.put("purple1", new int[] {155, 48, 255});
-        systemColors.put("purple2", new int[] {145, 44, 238});
-        systemColors.put("purple3", new int[] {125, 38, 205});
-        systemColors.put("purple4", new int[] {85, 26, 139});
-        systemColors.put("purple", new int[] {160, 32, 240});
-        systemColors.put("red1", new int[] {255, 0, 0});
-        systemColors.put("red2", new int[] {238, 0, 0});
-        systemColors.put("red3", new int[] {205, 0, 0});
-        systemColors.put("red4", new int[] {139, 0, 0});
-        systemColors.put("red", new int[] {255, 0, 0});
-        systemColors.put("rosybrown1", new int[] {255, 193, 193});
-        systemColors.put("rosybrown2", new int[] {238, 180, 180});
-        systemColors.put("rosybrown3", new int[] {205, 155, 155});
-        systemColors.put("rosybrown4", new int[] {139, 105, 105});
-        systemColors.put("rosybrown", new int[] {188, 143, 143});
-        systemColors.put("royalblue1", new int[] {72, 118, 255});
-        systemColors.put("royalblue2", new int[] {67, 110, 238});
-        systemColors.put("royalblue3", new int[] {58, 95, 205});
-        systemColors.put("royalblue4", new int[] {39, 64, 139});
-        systemColors.put("royalblue", new int[] {65, 105, 225});
-        systemColors.put("saddlebrown", new int[] {139, 69, 19});
-        systemColors.put("salmon1", new int[] {255, 140, 105});
-        systemColors.put("salmon2", new int[] {238, 130, 98});
-        systemColors.put("salmon3", new int[] {205, 112, 84});
-        systemColors.put("salmon4", new int[] {139, 76, 57});
-        systemColors.put("salmon", new int[] {250, 128, 114});
-        systemColors.put("sandybrown", new int[] {244, 164, 96});
-        systemColors.put("seagreen1", new int[] {84, 255, 159});
-        systemColors.put("seagreen2", new int[] {78, 238, 148});
-        systemColors.put("seagreen3", new int[] {67, 205, 128});
-        systemColors.put("seagreen4", new int[] {46, 139, 87});
-        systemColors.put("seagreen", new int[] {46, 139, 87});
-        systemColors.put("seashell1", new int[] {255, 245, 238});
-        systemColors.put("seashell2", new int[] {238, 229, 222});
-        systemColors.put("seashell3", new int[] {205, 197, 191});
-        systemColors.put("seashell4", new int[] {139, 134, 130});
-        systemColors.put("seashell", new int[] {255, 245, 238});
-        systemColors.put("sienna1", new int[] {255, 130, 71});
-        systemColors.put("sienna2", new int[] {238, 121, 66});
-        systemColors.put("sienna3", new int[] {205, 104, 57});
-        systemColors.put("sienna4", new int[] {139, 71, 38});
-        systemColors.put("sienna", new int[] {160, 82, 45});
-        systemColors.put("skyblue1", new int[] {135, 206, 255});
-        systemColors.put("skyblue2", new int[] {126, 192, 238});
-        systemColors.put("skyblue3", new int[] {108, 166, 205});
-        systemColors.put("skyblue4", new int[] {74, 112, 139});
-        systemColors.put("skyblue", new int[] {135, 206, 235});
-        systemColors.put("slateblue1", new int[] {131, 111, 255});
-        systemColors.put("slateblue2", new int[] {122, 103, 238});
-        systemColors.put("slateblue3", new int[] {105, 89, 205});
-        systemColors.put("slateblue4", new int[] {71, 60, 139});
-        systemColors.put("slateblue", new int[] {106, 90, 205});
-        systemColors.put("slategray1", new int[] {198, 226, 255});
-        systemColors.put("slategray2", new int[] {185, 211, 238});
-        systemColors.put("slategray3", new int[] {159, 182, 205});
-        systemColors.put("slategray4", new int[] {108, 123, 139});
-        systemColors.put("slategray", new int[] {112, 128, 144});
-        systemColors.put("slategrey", new int[] {112, 128, 144});
-        systemColors.put("snow1", new int[] {255, 250, 250});
-        systemColors.put("snow2", new int[] {238, 233, 233});
-        systemColors.put("snow3", new int[] {205, 201, 201});
-        systemColors.put("snow4", new int[] {139, 137, 137});
-        systemColors.put("snow", new int[] {255, 250, 250});
-        systemColors.put("springgreen1", new int[] {0, 255, 127});
-        systemColors.put("springgreen2", new int[] {0, 238, 118});
-        systemColors.put("springgreen3", new int[] {0, 205, 102});
-        systemColors.put("springgreen4", new int[] {0, 139, 69});
-        systemColors.put("springgreen", new int[] {0, 255, 127});
-        systemColors.put("steelblue1", new int[] {99, 184, 255});
-        systemColors.put("steelblue2", new int[] {92, 172, 238});
-        systemColors.put("steelblue3", new int[] {79, 148, 205});
-        systemColors.put("steelblue4", new int[] {54, 100, 139});
-        systemColors.put("steelblue", new int[] {70, 130, 180});
-        systemColors.put("tan1", new int[] {255, 165, 79});
-        systemColors.put("tan2", new int[] {238, 154, 73});
-        systemColors.put("tan3", new int[] {205, 133, 63});
-        systemColors.put("tan4", new int[] {139, 90, 43});
-        systemColors.put("tan", new int[] {210, 180, 140});
-        systemColors.put("thistle1", new int[] {255, 225, 255});
-        systemColors.put("thistle2", new int[] {238, 210, 238});
-        systemColors.put("thistle3", new int[] {205, 181, 205});
-        systemColors.put("thistle4", new int[] {139, 123, 139});
-        systemColors.put("thistle", new int[] {216, 191, 216});
-        systemColors.put("tomato1", new int[] {255, 99, 71});
-        systemColors.put("tomato2", new int[] {238, 92, 66});
-        systemColors.put("tomato3", new int[] {205, 79, 57});
-        systemColors.put("tomato4", new int[] {139, 54, 38});
-        systemColors.put("tomato", new int[] {255, 99, 71});
-        systemColors.put("turquoise1", new int[] {0, 245, 255});
-        systemColors.put("turquoise2", new int[] {0, 229, 238});
-        systemColors.put("turquoise3", new int[] {0, 197, 205});
-        systemColors.put("turquoise4", new int[] {0, 134, 139});
-        systemColors.put("turquoise", new int[] {64, 224, 208});
-        systemColors.put("violet", new int[] {238, 130, 238});
-        systemColors.put("violetred1", new int[] {255, 62, 150});
-        systemColors.put("violetred2", new int[] {238, 58, 140});
-        systemColors.put("violetred3", new int[] {205, 50, 120});
-        systemColors.put("violetred4", new int[] {139, 34, 82});
-        systemColors.put("violetred", new int[] {208, 32, 144});
-        systemColors.put("wheat1", new int[] {255, 231, 186});
-        systemColors.put("wheat2", new int[] {238, 216, 174});
-        systemColors.put("wheat3", new int[] {205, 186, 150});
-        systemColors.put("wheat4", new int[] {139, 126, 102});
-        systemColors.put("wheat", new int[] {245, 222, 179});
-        systemColors.put("white", new int[] {255, 255, 255});
-        systemColors.put("whitesmoke", new int[] {245, 245, 245});
-        systemColors.put("yellow1", new int[] {255, 255, 0});
-        systemColors.put("yellow2", new int[] {238, 238, 0});
-        systemColors.put("yellow3", new int[] {205, 205, 0});
-        systemColors.put("yellow4", new int[] {139, 139, 0});
-        systemColors.put("yellowgreen", new int[] {154, 205, 50});
-        systemColors.put("yellow", new int[] {255, 255, 0});
+        systemColors.put("aliceblue",
+                            new float[] {240/255f, 248/255f, 255/255f, 0f});
+        systemColors.put("antiquewhite1",
+                            new float[] {255/255f, 239/255f, 219/255f, 0f});
+        systemColors.put("antiquewhite2",
+                            new float[] {238/255f, 223/255f, 204/255f, 0f});
+        systemColors.put("antiquewhite3",
+                            new float[] {205/255f, 192/255f, 176/255f, 0f});
+        systemColors.put("antiquewhite4",
+                            new float[] {139/255f, 131/255f, 120/255f, 0f});
+        systemColors.put("antiquewhite",
+                            new float[] {250/255f, 235/255f, 215/255f, 0f});
+        systemColors.put("aquamarine1",
+                            new float[] {127/255f, 255/255f, 212/255f, 0f});
+        systemColors.put("aquamarine2",
+                            new float[] {118/255f, 238/255f, 198/255f, 0f});
+        systemColors.put("aquamarine3",
+                            new float[] {102/255f, 205/255f, 170/255f, 0f});
+        systemColors.put("aquamarine4",
+                            new float[] {69/255f, 139/255f, 116/255f, 0f});
+        systemColors.put("aquamarine",
+                            new float[] {127/255f, 255/255f, 212/255f, 0f});
+        systemColors.put("azure1",
+                            new float[] {240/255f, 255/255f, 255/255f, 0f});
+        systemColors.put("azure2",
+                            new float[] {224/255f, 238/255f, 238/255f, 0f});
+        systemColors.put("azure3",
+                            new float[] {193/255f, 205/255f, 205/255f, 0f});
+        systemColors.put("azure4",
+                            new float[] {131/255f, 139/255f, 139/255f, 0f});
+        systemColors.put("azure",
+                            new float[] {240/255f, 255/255f, 255/255f, 0f});
+        systemColors.put("beige",
+                            new float[] {245/255f, 245/255f, 220/255f, 0f});
+        systemColors.put("bisque1",
+                            new float[] {255/255f, 228/255f, 196/255f, 0f});
+        systemColors.put("bisque2",
+                            new float[] {238/255f, 213/255f, 183/255f, 0f});
+        systemColors.put("bisque3",
+                            new float[] {205/255f, 183/255f, 158/255f, 0f});
+        systemColors.put("bisque4",
+                            new float[] {139/255f, 125/255f, 107/255f, 0f});
+        systemColors.put("bisque",
+                            new float[] {255/255f, 228/255f, 196/255f, 0f});
+        systemColors.put("black",
+                            new float[] {0/255f, 0/255f, 0/255f, 0f});
+        systemColors.put("blanchedalmond",
+                            new float[] {255/255f, 235/255f, 205/255f, 0f});
+        systemColors.put("blue1",
+                            new float[] {0/255f, 0/255f, 255/255f, 0f});
+        systemColors.put("blue2",
+                            new float[] {0/255f, 0/255f, 238/255f, 0f});
+        systemColors.put("blue3",
+                            new float[] {0/255f, 0/255f, 205/255f, 0f});
+        systemColors.put("blue4",
+                            new float[] {0/255f, 0/255f, 139/255f, 0f});
+        systemColors.put("blue",
+                            new float[] {0/255f, 0/255f, 255/255f, 0f});
+        systemColors.put("blueviolet",
+                            new float[] {138/255f, 43/255f, 226/255f, 0f});
+        systemColors.put("brown1",
+                            new float[] {255/255f, 64/255f, 64/255f, 0f});
+        systemColors.put("brown2",
+                            new float[] {238/255f, 59/255f, 59/255f, 0f});
+        systemColors.put("brown3",
+                            new float[] {205/255f, 51/255f, 51/255f, 0f});
+        systemColors.put("brown4",
+                            new float[] {139/255f, 35/255f, 35/255f, 0f});
+        systemColors.put("brown",
+                            new float[] {165/255f, 42/255f, 42/255f, 0f});
+        systemColors.put("burlywood1",
+                            new float[] {255/255f, 211/255f, 155/255f, 0f});
+        systemColors.put("burlywood2",
+                            new float[] {238/255f, 197/255f, 145/255f, 0f});
+        systemColors.put("burlywood3",
+                            new float[] {205/255f, 170/255f, 125/255f, 0f});
+        systemColors.put("burlywood4",
+                            new float[] {139/255f, 115/255f, 85/255f, 0f});
+        systemColors.put("burlywood",
+                            new float[] {222/255f, 184/255f, 135/255f, 0f});
+        systemColors.put("cadetblue1",
+                            new float[] {152/255f, 245/255f, 255/255f, 0f});
+        systemColors.put("cadetblue2",
+                            new float[] {142/255f, 229/255f, 238/255f, 0f});
+        systemColors.put("cadetblue3",
+                            new float[] {122/255f, 197/255f, 205/255f, 0f});
+        systemColors.put("cadetblue4",
+                            new float[] {83/255f, 134/255f, 139/255f, 0f});
+        systemColors.put("cadetblue",
+                            new float[] {95/255f, 158/255f, 160/255f, 0f});
+        systemColors.put("chartreuse1",
+                            new float[] {127/255f, 255/255f, 0/255f, 0f});
+        systemColors.put("chartreuse2",
+                            new float[] {118/255f, 238/255f, 0/255f, 0f});
+        systemColors.put("chartreuse3",
+                            new float[] {102/255f, 205/255f, 0/255f, 0f});
+        systemColors.put("chartreuse4",
+                            new float[] {69/255f, 139/255f, 0/255f, 0f});
+        systemColors.put("chartreuse",
+                            new float[] {127/255f, 255/255f, 0/255f, 0f});
+        systemColors.put("chocolate1",
+                            new float[] {255/255f, 127/255f, 36/255f, 0f});
+        systemColors.put("chocolate2",
+                            new float[] {238/255f, 118/255f, 33/255f, 0f});
+        systemColors.put("chocolate3",
+                            new float[] {205/255f, 102/255f, 29/255f, 0f});
+        systemColors.put("chocolate4",
+                            new float[] {139/255f, 69/255f, 19/255f, 0f});
+        systemColors.put("chocolate",
+                            new float[] {210/255f, 105/255f, 30/255f, 0f});
+        systemColors.put("coral1",
+                            new float[] {255/255f, 114/255f, 86/255f, 0f});
+        systemColors.put("coral2",
+                            new float[] {238/255f, 106/255f, 80/255f, 0f});
+        systemColors.put("coral3",
+                            new float[] {205/255f, 91/255f, 69/255f, 0f});
+        systemColors.put("coral4",
+                            new float[] {139/255f, 62/255f, 47/255f, 0f});
+        systemColors.put("coral",
+                            new float[] {255/255f, 127/255f, 80/255f, 0f});
+        systemColors.put("cornflowerblue",
+                            new float[] {100/255f, 149/255f, 237/255f, 0f});
+        systemColors.put("cornsilk1",
+                            new float[] {255/255f, 248/255f, 220/255f, 0f});
+        systemColors.put("cornsilk2",
+                            new float[] {238/255f, 232/255f, 205/255f, 0f});
+        systemColors.put("cornsilk3",
+                            new float[] {205/255f, 200/255f, 177/255f, 0f});
+        systemColors.put("cornsilk4",
+                            new float[] {139/255f, 136/255f, 120/255f, 0f});
+        systemColors.put("cornsilk",
+                            new float[] {255/255f, 248/255f, 220/255f, 0f});
+        systemColors.put("cyan1",
+                            new float[] {0/255f, 255/255f, 255/255f, 0f});
+        systemColors.put("cyan2",
+                            new float[] {0/255f, 238/255f, 238/255f, 0f});
+        systemColors.put("cyan3",
+                            new float[] {0/255f, 205/255f, 205/255f, 0f});
+        systemColors.put("cyan4",
+                            new float[] {0/255f, 139/255f, 139/255f, 0f});
+        systemColors.put("cyan",
+                            new float[] {0/255f, 255/255f, 255/255f, 0f});
+        systemColors.put("darkblue",
+                            new float[] {0/255f, 0/255f, 139/255f, 0f});
+        systemColors.put("darkcyan",
+                            new float[] {0/255f, 139/255f, 139/255f, 0f});
+        systemColors.put("darkgoldenrod1",
+                            new float[] {255/255f, 185/255f, 15/255f, 0f});
+        systemColors.put("darkgoldenrod2",
+                            new float[] {238/255f, 173/255f, 14/255f, 0f});
+        systemColors.put("darkgoldenrod3",
+                            new float[] {205/255f, 149/255f, 12/255f, 0f});
+        systemColors.put("darkgoldenrod4",
+                            new float[] {139/255f, 101/255f, 8/255f, 0f});
+        systemColors.put("darkgoldenrod",
+                            new float[] {184/255f, 134/255f, 11/255f, 0f});
+        systemColors.put("darkgray",
+                            new float[] {169/255f, 169/255f, 169/255f, 0f});
+        systemColors.put("darkgreen",
+                            new float[] {0/255f, 100/255f, 0/255f, 0f});
+        systemColors.put("darkgrey",
+                            new float[] {169/255f, 169/255f, 169/255f, 0f});
+        systemColors.put("darkkhaki",
+                            new float[] {189/255f, 183/255f, 107/255f, 0f});
+        systemColors.put("darkmagenta",
+                            new float[] {139/255f, 0/255f, 139/255f, 0f});
+        systemColors.put("darkolivegreen1",
+                            new float[] {202/255f, 255/255f, 112/255f, 0f});
+        systemColors.put("darkolivegreen2",
+                            new float[] {188/255f, 238/255f, 104/255f, 0f});
+        systemColors.put("darkolivegreen3",
+                            new float[] {162/255f, 205/255f, 90/255f, 0f});
+        systemColors.put("darkolivegreen4",
+                            new float[] {110/255f, 139/255f, 61/255f, 0f});
+        systemColors.put("darkolivegreen",
+                            new float[] {85/255f, 107/255f, 47/255f, 0f});
+        systemColors.put("darkorange1",
+                            new float[] {255/255f, 127/255f, 0/255f, 0f});
+        systemColors.put("darkorange2",
+                            new float[] {238/255f, 118/255f, 0/255f, 0f});
+        systemColors.put("darkorange3",
+                            new float[] {205/255f, 102/255f, 0/255f, 0f});
+        systemColors.put("darkorange4",
+                            new float[] {139/255f, 69/255f, 0/255f, 0f});
+        systemColors.put("darkorange",
+                            new float[] {255/255f, 140/255f, 0/255f, 0f});
+        systemColors.put("darkorchid1",
+                            new float[] {191/255f, 62/255f, 255/255f, 0f});
+        systemColors.put("darkorchid2",
+                            new float[] {178/255f, 58/255f, 238/255f, 0f});
+        systemColors.put("darkorchid3",
+                            new float[] {154/255f, 50/255f, 205/255f, 0f});
+        systemColors.put("darkorchid4",
+                            new float[] {104/255f, 34/255f, 139/255f, 0f});
+        systemColors.put("darkorchid",
+                            new float[] {153/255f, 50/255f, 204/255f, 0f});
+        systemColors.put("darkred",
+                            new float[] {139/255f, 0/255f, 0/255f, 0f});
+        systemColors.put("darksalmon",
+                            new float[] {233/255f, 150/255f, 122/255f, 0f});
+        systemColors.put("darkseagreen1",
+                            new float[] {193/255f, 255/255f, 193/255f, 0f});
+        systemColors.put("darkseagreen2",
+                            new float[] {180/255f, 238/255f, 180/255f, 0f});
+        systemColors.put("darkseagreen3",
+                            new float[] {155/255f, 205/255f, 155/255f, 0f});
+        systemColors.put("darkseagreen4",
+                            new float[] {105/255f, 139/255f, 105/255f, 0f});
+        systemColors.put("darkseagreen",
+                            new float[] {143/255f, 188/255f, 143/255f, 0f});
+        systemColors.put("darkslateblue",
+                            new float[] {72/255f, 61/255f, 139/255f, 0f});
+        systemColors.put("darkslategray1",
+                            new float[] {151/255f, 255/255f, 255/255f, 0f});
+        systemColors.put("darkslategray2",
+                            new float[] {141/255f, 238/255f, 238/255f, 0f});
+        systemColors.put("darkslategray3",
+                            new float[] {121/255f, 205/255f, 205/255f, 0f});
+        systemColors.put("darkslategray4",
+                            new float[] {82/255f, 139/255f, 139/255f, 0f});
+        systemColors.put("darkslategray",
+                            new float[] {47/255f, 79/255f, 79/255f, 0f});
+        systemColors.put("darkslategrey",
+                            new float[] {47/255f, 79/255f, 79/255f, 0f});
+        systemColors.put("darkturquoise",
+                            new float[] {0/255f, 206/255f, 209/255f, 0f});
+        systemColors.put("darkviolet",
+                            new float[] {148/255f, 0/255f, 211/255f, 0f});
+        systemColors.put("deeppink1",
+                            new float[] {255/255f, 20/255f, 147/255f, 0f});
+        systemColors.put("deeppink2",
+                            new float[] {238/255f, 18/255f, 137/255f, 0f});
+        systemColors.put("deeppink3",
+                            new float[] {205/255f, 16/255f, 118/255f, 0f});
+        systemColors.put("deeppink4",
+                            new float[] {139/255f, 10/255f, 80/255f, 0f});
+        systemColors.put("deeppink",
+                            new float[] {255/255f, 20/255f, 147/255f, 0f});
+        systemColors.put("deepskyblue1",
+                            new float[] {0/255f, 191/255f, 255/255f, 0f});
+        systemColors.put("deepskyblue2",
+                            new float[] {0/255f, 178/255f, 238/255f, 0f});
+        systemColors.put("deepskyblue3",
+                            new float[] {0/255f, 154/255f, 205/255f, 0f});
+        systemColors.put("deepskyblue4",
+                            new float[] {0/255f, 104/255f, 139/255f, 0f});
+        systemColors.put("deepskyblue",
+                            new float[] {0/255f, 191/255f, 255/255f, 0f});
+        systemColors.put("dimgray",
+                            new float[] {105/255f, 105/255f, 105/255f, 0f});
+        systemColors.put("dimgrey",
+                            new float[] {105/255f, 105/255f, 105/255f, 0f});
+        systemColors.put("dodgerblue1",
+                            new float[] {30/255f, 144/255f, 255/255f, 0f});
+        systemColors.put("dodgerblue2",
+                            new float[] {28/255f, 134/255f, 238/255f, 0f});
+        systemColors.put("dodgerblue3",
+                            new float[] {24/255f, 116/255f, 205/255f, 0f});
+        systemColors.put("dodgerblue4",
+                            new float[] {16/255f, 78/255f, 139/255f, 0f});
+        systemColors.put("dodgerblue",
+                            new float[] {30/255f, 144/255f, 255/255f, 0f});
+        systemColors.put("firebrick1",
+                            new float[] {255/255f, 48/255f, 48/255f, 0f});
+        systemColors.put("firebrick2",
+                            new float[] {238/255f, 44/255f, 44/255f, 0f});
+        systemColors.put("firebrick3",
+                            new float[] {205/255f, 38/255f, 38/255f, 0f});
+        systemColors.put("firebrick4",
+                            new float[] {139/255f, 26/255f, 26/255f, 0f});
+        systemColors.put("firebrick",
+                            new float[] {178/255f, 34/255f, 34/255f, 0f});
+        systemColors.put("floralwhite",
+                            new float[] {255/255f, 250/255f, 240/255f, 0f});
+        systemColors.put("forestgreen",
+                            new float[] {34/255f, 139/255f, 34/255f, 0f});
+        systemColors.put("gainsboro",
+                            new float[] {220/255f, 220/255f, 220/255f, 0f});
+        systemColors.put("ghostwhite",
+                            new float[] {248/255f, 248/255f, 255/255f, 0f});
+        systemColors.put("gold1",
+                            new float[] {255/255f, 215/255f, 0/255f, 0f});
+        systemColors.put("gold2",
+                            new float[] {238/255f, 201/255f, 0/255f, 0f});
+        systemColors.put("gold3",
+                            new float[] {205/255f, 173/255f, 0/255f, 0f});
+        systemColors.put("gold4",
+                            new float[] {139/255f, 117/255f, 0/255f, 0f});
+        systemColors.put("goldenrod1",
+                            new float[] {255/255f, 193/255f, 37/255f, 0f});
+        systemColors.put("goldenrod2",
+                            new float[] {238/255f, 180/255f, 34/255f, 0f});
+        systemColors.put("goldenrod3",
+                            new float[] {205/255f, 155/255f, 29/255f, 0f});
+        systemColors.put("goldenrod4",
+                            new float[] {139/255f, 105/255f, 20/255f, 0f});
+        systemColors.put("goldenrod",
+                            new float[] {218/255f, 165/255f, 32/255f, 0f});
+        systemColors.put("gold",
+                            new float[] {255/255f, 215/255f, 0/255f, 0f});
+        systemColors.put("gray0",
+                            new float[] {0/255f, 0/255f, 0/255f, 0f});
+        systemColors.put("gray100",
+                            new float[] {255/255f, 255/255f, 255/255f, 0f});
+        systemColors.put("gray10",
+                            new float[] {26/255f, 26/255f, 26/255f, 0f});
+        systemColors.put("gray11",
+                            new float[] {28/255f, 28/255f, 28/255f, 0f});
+        systemColors.put("gray12",
+                            new float[] {31/255f, 31/255f, 31/255f, 0f});
+        systemColors.put("gray13",
+                            new float[] {33/255f, 33/255f, 33/255f, 0f});
+        systemColors.put("gray14",
+                            new float[] {36/255f, 36/255f, 36/255f, 0f});
+        systemColors.put("gray15",
+                            new float[] {38/255f, 38/255f, 38/255f, 0f});
+        systemColors.put("gray16",
+                            new float[] {41/255f, 41/255f, 41/255f, 0f});
+        systemColors.put("gray17",
+                            new float[] {43/255f, 43/255f, 43/255f, 0f});
+        systemColors.put("gray18",
+                            new float[] {46/255f, 46/255f, 46/255f, 0f});
+        systemColors.put("gray19",
+                            new float[] {48/255f, 48/255f, 48/255f, 0f});
+        systemColors.put("gray1",
+                            new float[] {3/255f, 3/255f, 3/255f, 0f});
+        systemColors.put("gray20",
+                            new float[] {51/255f, 51/255f, 51/255f, 0f});
+        systemColors.put("gray21",
+                            new float[] {54/255f, 54/255f, 54/255f, 0f});
+        systemColors.put("gray22",
+                            new float[] {56/255f, 56/255f, 56/255f, 0f});
+        systemColors.put("gray23",
+                            new float[] {59/255f, 59/255f, 59/255f, 0f});
+        systemColors.put("gray24",
+                            new float[] {61/255f, 61/255f, 61/255f, 0f});
+        systemColors.put("gray25",
+                            new float[] {64/255f, 64/255f, 64/255f, 0f});
+        systemColors.put("gray26",
+                            new float[] {66/255f, 66/255f, 66/255f, 0f});
+        systemColors.put("gray27",
+                            new float[] {69/255f, 69/255f, 69/255f, 0f});
+        systemColors.put("gray28",
+                            new float[] {71/255f, 71/255f, 71/255f, 0f});
+        systemColors.put("gray29",
+                            new float[] {74/255f, 74/255f, 74/255f, 0f});
+        systemColors.put("gray2",
+                            new float[] {5/255f, 5/255f, 5/255f, 0f});
+        systemColors.put("gray30",
+                            new float[] {77/255f, 77/255f, 77/255f, 0f});
+        systemColors.put("gray31",
+                            new float[] {79/255f, 79/255f, 79/255f, 0f});
+        systemColors.put("gray32",
+                            new float[] {82/255f, 82/255f, 82/255f, 0f});
+        systemColors.put("gray33",
+                            new float[] {84/255f, 84/255f, 84/255f, 0f});
+        systemColors.put("gray34",
+                            new float[] {87/255f, 87/255f, 87/255f, 0f});
+        systemColors.put("gray35",
+                            new float[] {89/255f, 89/255f, 89/255f, 0f});
+        systemColors.put("gray36",
+                            new float[] {92/255f, 92/255f, 92/255f, 0f});
+        systemColors.put("gray37",
+                            new float[] {94/255f, 94/255f, 94/255f, 0f});
+        systemColors.put("gray38",
+                            new float[] {97/255f, 97/255f, 97/255f, 0f});
+        systemColors.put("gray39",
+                            new float[] {99/255f, 99/255f, 99/255f, 0f});
+        systemColors.put("gray3",
+                            new float[] {8/255f, 8/255f, 8/255f, 0f});
+        systemColors.put("gray40",
+                            new float[] {102/255f, 102/255f, 102/255f, 0f});
+        systemColors.put("gray41",
+                            new float[] {105/255f, 105/255f, 105/255f, 0f});
+        systemColors.put("gray42",
+                            new float[] {107/255f, 107/255f, 107/255f, 0f});
+        systemColors.put("gray43",
+                            new float[] {110/255f, 110/255f, 110/255f, 0f});
+        systemColors.put("gray44",
+                            new float[] {112/255f, 112/255f, 112/255f, 0f});
+        systemColors.put("gray45",
+                            new float[] {115/255f, 115/255f, 115/255f, 0f});
+        systemColors.put("gray46",
+                            new float[] {117/255f, 117/255f, 117/255f, 0f});
+        systemColors.put("gray47",
+                            new float[] {120/255f, 120/255f, 120/255f, 0f});
+        systemColors.put("gray48",
+                            new float[] {122/255f, 122/255f, 122/255f, 0f});
+        systemColors.put("gray49",
+                            new float[] {125/255f, 125/255f, 125/255f, 0f});
+        systemColors.put("gray4",
+                            new float[] {10/255f, 10/255f, 10/255f, 0f});
+        systemColors.put("gray50",
+                            new float[] {127/255f, 127/255f, 127/255f, 0f});
+        systemColors.put("gray51",
+                            new float[] {130/255f, 130/255f, 130/255f, 0f});
+        systemColors.put("gray52",
+                            new float[] {133/255f, 133/255f, 133/255f, 0f});
+        systemColors.put("gray53",
+                            new float[] {135/255f, 135/255f, 135/255f, 0f});
+        systemColors.put("gray54",
+                            new float[] {138/255f, 138/255f, 138/255f, 0f});
+        systemColors.put("gray55",
+                            new float[] {140/255f, 140/255f, 140/255f, 0f});
+        systemColors.put("gray56",
+                            new float[] {143/255f, 143/255f, 143/255f, 0f});
+        systemColors.put("gray57",
+                            new float[] {145/255f, 145/255f, 145/255f, 0f});
+        systemColors.put("gray58",
+                            new float[] {148/255f, 148/255f, 148/255f, 0f});
+        systemColors.put("gray59",
+                            new float[] {150/255f, 150/255f, 150/255f, 0f});
+        systemColors.put("gray5",
+                            new float[] {13/255f, 13/255f, 13/255f, 0f});
+        systemColors.put("gray60",
+                            new float[] {153/255f, 153/255f, 153/255f, 0f});
+        systemColors.put("gray61",
+                            new float[] {156/255f, 156/255f, 156/255f, 0f});
+        systemColors.put("gray62",
+                            new float[] {158/255f, 158/255f, 158/255f, 0f});
+        systemColors.put("gray63",
+                            new float[] {161/255f, 161/255f, 161/255f, 0f});
+        systemColors.put("gray64",
+                            new float[] {163/255f, 163/255f, 163/255f, 0f});
+        systemColors.put("gray65",
+                            new float[] {166/255f, 166/255f, 166/255f, 0f});
+        systemColors.put("gray66",
+                            new float[] {168/255f, 168/255f, 168/255f, 0f});
+        systemColors.put("gray67",
+                            new float[] {171/255f, 171/255f, 171/255f, 0f});
+        systemColors.put("gray68",
+                            new float[] {173/255f, 173/255f, 173/255f, 0f});
+        systemColors.put("gray69",
+                            new float[] {176/255f, 176/255f, 176/255f, 0f});
+        systemColors.put("gray6",
+                            new float[] {15/255f, 15/255f, 15/255f, 0f});
+        systemColors.put("gray70",
+                            new float[] {179/255f, 179/255f, 179/255f, 0f});
+        systemColors.put("gray71",
+                            new float[] {181/255f, 181/255f, 181/255f, 0f});
+        systemColors.put("gray72",
+                            new float[] {184/255f, 184/255f, 184/255f, 0f});
+        systemColors.put("gray73",
+                            new float[] {186/255f, 186/255f, 186/255f, 0f});
+        systemColors.put("gray74",
+                            new float[] {189/255f, 189/255f, 189/255f, 0f});
+        systemColors.put("gray75",
+                            new float[] {191/255f, 191/255f, 191/255f, 0f});
+        systemColors.put("gray76",
+                            new float[] {194/255f, 194/255f, 194/255f, 0f});
+        systemColors.put("gray77",
+                            new float[] {196/255f, 196/255f, 196/255f, 0f});
+        systemColors.put("gray78",
+                            new float[] {199/255f, 199/255f, 199/255f, 0f});
+        systemColors.put("gray79",
+                            new float[] {201/255f, 201/255f, 201/255f, 0f});
+        systemColors.put("gray7",
+                            new float[] {18/255f, 18/255f, 18/255f, 0f});
+        systemColors.put("gray80",
+                            new float[] {204/255f, 204/255f, 204/255f, 0f});
+        systemColors.put("gray81",
+                            new float[] {207/255f, 207/255f, 207/255f, 0f});
+        systemColors.put("gray82",
+                            new float[] {209/255f, 209/255f, 209/255f, 0f});
+        systemColors.put("gray83",
+                            new float[] {212/255f, 212/255f, 212/255f, 0f});
+        systemColors.put("gray84",
+                            new float[] {214/255f, 214/255f, 214/255f, 0f});
+        systemColors.put("gray85",
+                            new float[] {217/255f, 217/255f, 217/255f, 0f});
+        systemColors.put("gray86",
+                            new float[] {219/255f, 219/255f, 219/255f, 0f});
+        systemColors.put("gray87",
+                            new float[] {222/255f, 222/255f, 222/255f, 0f});
+        systemColors.put("gray88",
+                            new float[] {224/255f, 224/255f, 224/255f, 0f});
+        systemColors.put("gray89",
+                            new float[] {227/255f, 227/255f, 227/255f, 0f});
+        systemColors.put("gray8",
+                            new float[] {20/255f, 20/255f, 20/255f, 0f});
+        systemColors.put("gray90",
+                            new float[] {229/255f, 229/255f, 229/255f, 0f});
+        systemColors.put("gray91",
+                            new float[] {232/255f, 232/255f, 232/255f, 0f});
+        systemColors.put("gray92",
+                            new float[] {235/255f, 235/255f, 235/255f, 0f});
+        systemColors.put("gray93",
+                            new float[] {237/255f, 237/255f, 237/255f, 0f});
+        systemColors.put("gray94",
+                            new float[] {240/255f, 240/255f, 240/255f, 0f});
+        systemColors.put("gray95",
+                            new float[] {242/255f, 242/255f, 242/255f, 0f});
+        systemColors.put("gray96",
+                            new float[] {245/255f, 245/255f, 245/255f, 0f});
+        systemColors.put("gray97",
+                            new float[] {247/255f, 247/255f, 247/255f, 0f});
+        systemColors.put("gray98",
+                            new float[] {250/255f, 250/255f, 250/255f, 0f});
+        systemColors.put("gray99",
+                            new float[] {252/255f, 252/255f, 252/255f, 0f});
+        systemColors.put("gray9",
+                            new float[] {23/255f, 23/255f, 23/255f, 0f});
+        systemColors.put("gray",
+                            new float[] {190/255f, 190/255f, 190/255f, 0f});
+        systemColors.put("green1",
+                            new float[] {0/255f, 255/255f, 0/255f, 0f});
+        systemColors.put("green2",
+                            new float[] {0/255f, 238/255f, 0/255f, 0f});
+        systemColors.put("green3",
+                            new float[] {0/255f, 205/255f, 0/255f, 0f});
+        systemColors.put("green4",
+                            new float[] {0/255f, 139/255f, 0/255f, 0f});
+        systemColors.put("green",
+                            new float[] {0/255f, 255/255f, 0/255f, 0f});
+        systemColors.put("greenyellow",
+                            new float[] {173/255f, 255/255f, 47/255f, 0f});
+        systemColors.put("grey0",
+                            new float[] {0/255f, 0/255f, 0/255f, 0f});
+        systemColors.put("grey100",
+                            new float[] {255/255f, 255/255f, 255/255f, 0f});
+        systemColors.put("grey10",
+                            new float[] {26/255f, 26/255f, 26/255f, 0f});
+        systemColors.put("grey11",
+                            new float[] {28/255f, 28/255f, 28/255f, 0f});
+        systemColors.put("grey12",
+                            new float[] {31/255f, 31/255f, 31/255f, 0f});
+        systemColors.put("grey13",
+                            new float[] {33/255f, 33/255f, 33/255f, 0f});
+        systemColors.put("grey14",
+                            new float[] {36/255f, 36/255f, 36/255f, 0f});
+        systemColors.put("grey15",
+                            new float[] {38/255f, 38/255f, 38/255f, 0f});
+        systemColors.put("grey16",
+                            new float[] {41/255f, 41/255f, 41/255f, 0f});
+        systemColors.put("grey17",
+                            new float[] {43/255f, 43/255f, 43/255f, 0f});
+        systemColors.put("grey18",
+                            new float[] {46/255f, 46/255f, 46/255f, 0f});
+        systemColors.put("grey19",
+                            new float[] {48/255f, 48/255f, 48/255f, 0f});
+        systemColors.put("grey1",
+                            new float[] {3/255f, 3/255f, 3/255f, 0f});
+        systemColors.put("grey20",
+                            new float[] {51/255f, 51/255f, 51/255f, 0f});
+        systemColors.put("grey21",
+                            new float[] {54/255f, 54/255f, 54/255f, 0f});
+        systemColors.put("grey22",
+                            new float[] {56/255f, 56/255f, 56/255f, 0f});
+        systemColors.put("grey23",
+                            new float[] {59/255f, 59/255f, 59/255f, 0f});
+        systemColors.put("grey24",
+                            new float[] {61/255f, 61/255f, 61/255f, 0f});
+        systemColors.put("grey25",
+                            new float[] {64/255f, 64/255f, 64/255f, 0f});
+        systemColors.put("grey26",
+                            new float[] {66/255f, 66/255f, 66/255f, 0f});
+        systemColors.put("grey27",
+                            new float[] {69/255f, 69/255f, 69/255f, 0f});
+        systemColors.put("grey28",
+                            new float[] {71/255f, 71/255f, 71/255f, 0f});
+        systemColors.put("grey29",
+                            new float[] {74/255f, 74/255f, 74/255f, 0f});
+        systemColors.put("grey2",
+                            new float[] {5/255f, 5/255f, 5/255f, 0f});
+        systemColors.put("grey30",
+                            new float[] {77/255f, 77/255f, 77/255f, 0f});
+        systemColors.put("grey31",
+                            new float[] {79/255f, 79/255f, 79/255f, 0f});
+        systemColors.put("grey32",
+                            new float[] {82/255f, 82/255f, 82/255f, 0f});
+        systemColors.put("grey33",
+                            new float[] {84/255f, 84/255f, 84/255f, 0f});
+        systemColors.put("grey34",
+                            new float[] {87/255f, 87/255f, 87/255f, 0f});
+        systemColors.put("grey35",
+                            new float[] {89/255f, 89/255f, 89/255f, 0f});
+        systemColors.put("grey36",
+                            new float[] {92/255f, 92/255f, 92/255f, 0f});
+        systemColors.put("grey37",
+                            new float[] {94/255f, 94/255f, 94/255f, 0f});
+        systemColors.put("grey38",
+                            new float[] {97/255f, 97/255f, 97/255f, 0f});
+        systemColors.put("grey39",
+                            new float[] {99/255f, 99/255f, 99/255f, 0f});
+        systemColors.put("grey3",
+                            new float[] {8/255f, 8/255f, 8/255f, 0f});
+        systemColors.put("grey40",
+                            new float[] {102/255f, 102/255f, 102/255f, 0f});
+        systemColors.put("grey41",
+                            new float[] {105/255f, 105/255f, 105/255f, 0f});
+        systemColors.put("grey42",
+                            new float[] {107/255f, 107/255f, 107/255f, 0f});
+        systemColors.put("grey43",
+                            new float[] {110/255f, 110/255f, 110/255f, 0f});
+        systemColors.put("grey44",
+                            new float[] {112/255f, 112/255f, 112/255f, 0f});
+        systemColors.put("grey45",
+                            new float[] {115/255f, 115/255f, 115/255f, 0f});
+        systemColors.put("grey46",
+                            new float[] {117/255f, 117/255f, 117/255f, 0f});
+        systemColors.put("grey47",
+                            new float[] {120/255f, 120/255f, 120/255f, 0f});
+        systemColors.put("grey48",
+                            new float[] {122/255f, 122/255f, 122/255f, 0f});
+        systemColors.put("grey49",
+                            new float[] {125/255f, 125/255f, 125/255f, 0f});
+        systemColors.put("grey4",
+                            new float[] {10/255f, 10/255f, 10/255f, 0f});
+        systemColors.put("grey50",
+                            new float[] {127/255f, 127/255f, 127/255f, 0f});
+        systemColors.put("grey51",
+                            new float[] {130/255f, 130/255f, 130/255f, 0f});
+        systemColors.put("grey52",
+                            new float[] {133/255f, 133/255f, 133/255f, 0f});
+        systemColors.put("grey53",
+                            new float[] {135/255f, 135/255f, 135/255f, 0f});
+        systemColors.put("grey54",
+                            new float[] {138/255f, 138/255f, 138/255f, 0f});
+        systemColors.put("grey55",
+                            new float[] {140/255f, 140/255f, 140/255f, 0f});
+        systemColors.put("grey56",
+                            new float[] {143/255f, 143/255f, 143/255f, 0f});
+        systemColors.put("grey57",
+                            new float[] {145/255f, 145/255f, 145/255f, 0f});
+        systemColors.put("grey58",
+                            new float[] {148/255f, 148/255f, 148/255f, 0f});
+        systemColors.put("grey59",
+                            new float[] {150/255f, 150/255f, 150/255f, 0f});
+        systemColors.put("grey5",
+                            new float[] {13/255f, 13/255f, 13/255f, 0f});
+        systemColors.put("grey60",
+                            new float[] {153/255f, 153/255f, 153/255f, 0f});
+        systemColors.put("grey61",
+                            new float[] {156/255f, 156/255f, 156/255f, 0f});
+        systemColors.put("grey62",
+                            new float[] {158/255f, 158/255f, 158/255f, 0f});
+        systemColors.put("grey63",
+                            new float[] {161/255f, 161/255f, 161/255f, 0f});
+        systemColors.put("grey64",
+                            new float[] {163/255f, 163/255f, 163/255f, 0f});
+        systemColors.put("grey65",
+                            new float[] {166/255f, 166/255f, 166/255f, 0f});
+        systemColors.put("grey66",
+                            new float[] {168/255f, 168/255f, 168/255f, 0f});
+        systemColors.put("grey67",
+                            new float[] {171/255f, 171/255f, 171/255f, 0f});
+        systemColors.put("grey68",
+                            new float[] {173/255f, 173/255f, 173/255f, 0f});
+        systemColors.put("grey69",
+                            new float[] {176/255f, 176/255f, 176/255f, 0f});
+        systemColors.put("grey6",
+                            new float[] {15/255f, 15/255f, 15/255f, 0f});
+        systemColors.put("grey70",
+                            new float[] {179/255f, 179/255f, 179/255f, 0f});
+        systemColors.put("grey71",
+                            new float[] {181/255f, 181/255f, 181/255f, 0f});
+        systemColors.put("grey72",
+                            new float[] {184/255f, 184/255f, 184/255f, 0f});
+        systemColors.put("grey73",
+                            new float[] {186/255f, 186/255f, 186/255f, 0f});
+        systemColors.put("grey74",
+                            new float[] {189/255f, 189/255f, 189/255f, 0f});
+        systemColors.put("grey75",
+                            new float[] {191/255f, 191/255f, 191/255f, 0f});
+        systemColors.put("grey76",
+                            new float[] {194/255f, 194/255f, 194/255f, 0f});
+        systemColors.put("grey77",
+                            new float[] {196/255f, 196/255f, 196/255f, 0f});
+        systemColors.put("grey78",
+                            new float[] {199/255f, 199/255f, 199/255f, 0f});
+        systemColors.put("grey79",
+                            new float[] {201/255f, 201/255f, 201/255f, 0f});
+        systemColors.put("grey7",
+                            new float[] {18/255f, 18/255f, 18/255f, 0f});
+        systemColors.put("grey80",
+                            new float[] {204/255f, 204/255f, 204/255f, 0f});
+        systemColors.put("grey81",
+                            new float[] {207/255f, 207/255f, 207/255f, 0f});
+        systemColors.put("grey82",
+                            new float[] {209/255f, 209/255f, 209/255f, 0f});
+        systemColors.put("grey83",
+                            new float[] {212/255f, 212/255f, 212/255f, 0f});
+        systemColors.put("grey84",
+                            new float[] {214/255f, 214/255f, 214/255f, 0f});
+        systemColors.put("grey85",
+                            new float[] {217/255f, 217/255f, 217/255f, 0f});
+        systemColors.put("grey86",
+                            new float[] {219/255f, 219/255f, 219/255f, 0f});
+        systemColors.put("grey87",
+                            new float[] {222/255f, 222/255f, 222/255f, 0f});
+        systemColors.put("grey88",
+                            new float[] {224/255f, 224/255f, 224/255f, 0f});
+        systemColors.put("grey89",
+                            new float[] {227/255f, 227/255f, 227/255f, 0f});
+        systemColors.put("grey8",
+                            new float[] {20/255f, 20/255f, 20/255f, 0f});
+        systemColors.put("grey90",
+                            new float[] {229/255f, 229/255f, 229/255f, 0f});
+        systemColors.put("grey91",
+                            new float[] {232/255f, 232/255f, 232/255f, 0f});
+        systemColors.put("grey92",
+                            new float[] {235/255f, 235/255f, 235/255f, 0f});
+        systemColors.put("grey93",
+                            new float[] {237/255f, 237/255f, 237/255f, 0f});
+        systemColors.put("grey94",
+                            new float[] {240/255f, 240/255f, 240/255f, 0f});
+        systemColors.put("grey95",
+                            new float[] {242/255f, 242/255f, 242/255f, 0f});
+        systemColors.put("grey96",
+                            new float[] {245/255f, 245/255f, 245/255f, 0f});
+        systemColors.put("grey97",
+                            new float[] {247/255f, 247/255f, 247/255f, 0f});
+        systemColors.put("grey98",
+                            new float[] {250/255f, 250/255f, 250/255f, 0f});
+        systemColors.put("grey99",
+                            new float[] {252/255f, 252/255f, 252/255f, 0f});
+        systemColors.put("grey9",
+                            new float[] {23/255f, 23/255f, 23/255f, 0f});
+        systemColors.put("grey",
+                            new float[] {190/255f, 190/255f, 190/255f, 0f});
+        systemColors.put("honeydew1",
+                            new float[] {240/255f, 255/255f, 240/255f, 0f});
+        systemColors.put("honeydew2",
+                            new float[] {224/255f, 238/255f, 224/255f, 0f});
+        systemColors.put("honeydew3",
+                            new float[] {193/255f, 205/255f, 193/255f, 0f});
+        systemColors.put("honeydew4",
+                            new float[] {131/255f, 139/255f, 131/255f, 0f});
+        systemColors.put("honeydew",
+                            new float[] {240/255f, 255/255f, 240/255f, 0f});
+        systemColors.put("hotpink1",
+                            new float[] {255/255f, 110/255f, 180/255f, 0f});
+        systemColors.put("hotpink2",
+                            new float[] {238/255f, 106/255f, 167/255f, 0f});
+        systemColors.put("hotpink3",
+                            new float[] {205/255f, 96/255f, 144/255f, 0f});
+        systemColors.put("hotpink4",
+                            new float[] {139/255f, 58/255f, 98/255f, 0f});
+        systemColors.put("hotpink",
+                            new float[] {255/255f, 105/255f, 180/255f, 0f});
+        systemColors.put("indianred1",
+                            new float[] {255/255f, 106/255f, 106/255f, 0f});
+        systemColors.put("indianred2",
+                            new float[] {238/255f, 99/255f, 99/255f, 0f});
+        systemColors.put("indianred3",
+                            new float[] {205/255f, 85/255f, 85/255f, 0f});
+        systemColors.put("indianred4",
+                            new float[] {139/255f, 58/255f, 58/255f, 0f});
+        systemColors.put("indianred",
+                            new float[] {205/255f, 92/255f, 92/255f, 0f});
+        systemColors.put("ivory1",
+                            new float[] {255/255f, 255/255f, 240/255f, 0f});
+        systemColors.put("ivory2",
+                            new float[] {238/255f, 238/255f, 224/255f, 0f});
+        systemColors.put("ivory3",
+                            new float[] {205/255f, 205/255f, 193/255f, 0f});
+        systemColors.put("ivory4",
+                            new float[] {139/255f, 139/255f, 131/255f, 0f});
+        systemColors.put("ivory",
+                            new float[] {255/255f, 255/255f, 240/255f, 0f});
+        systemColors.put("khaki1",
+                            new float[] {255/255f, 246/255f, 143/255f, 0f});
+        systemColors.put("khaki2",
+                            new float[] {238/255f, 230/255f, 133/255f, 0f});
+        systemColors.put("khaki3",
+                            new float[] {205/255f, 198/255f, 115/255f, 0f});
+        systemColors.put("khaki4",
+                            new float[] {139/255f, 134/255f, 78/255f, 0f});
+        systemColors.put("khaki",
+                            new float[] {240/255f, 230/255f, 140/255f, 0f});
+        systemColors.put("lavenderblush1",
+                            new float[] {255/255f, 240/255f, 245/255f, 0f});
+        systemColors.put("lavenderblush2",
+                            new float[] {238/255f, 224/255f, 229/255f, 0f});
+        systemColors.put("lavenderblush3",
+                            new float[] {205/255f, 193/255f, 197/255f, 0f});
+        systemColors.put("lavenderblush4",
+                            new float[] {139/255f, 131/255f, 134/255f, 0f});
+        systemColors.put("lavenderblush",
+                            new float[] {255/255f, 240/255f, 245/255f, 0f});
+        systemColors.put("lavender",
+                            new float[] {230/255f, 230/255f, 250/255f, 0f});
+        systemColors.put("lawngreen",
+                            new float[] {124/255f, 252/255f, 0/255f, 0f});
+        systemColors.put("lemonchiffon1",
+                            new float[] {255/255f, 250/255f, 205/255f, 0f});
+        systemColors.put("lemonchiffon2",
+                            new float[] {238/255f, 233/255f, 191/255f, 0f});
+        systemColors.put("lemonchiffon3",
+                            new float[] {205/255f, 201/255f, 165/255f, 0f});
+        systemColors.put("lemonchiffon4",
+                            new float[] {139/255f, 137/255f, 112/255f, 0f});
+        systemColors.put("lemonchiffon",
+                            new float[] {255/255f, 250/255f, 205/255f, 0f});
+        systemColors.put("lightblue1",
+                            new float[] {191/255f, 239/255f, 255/255f, 0f});
+        systemColors.put("lightblue2",
+                            new float[] {178/255f, 223/255f, 238/255f, 0f});
+        systemColors.put("lightblue3",
+                            new float[] {154/255f, 192/255f, 205/255f, 0f});
+        systemColors.put("lightblue4",
+                            new float[] {104/255f, 131/255f, 139/255f, 0f});
+        systemColors.put("lightblue",
+                            new float[] {173/255f, 216/255f, 230/255f, 0f});
+        systemColors.put("lightcoral",
+                            new float[] {240/255f, 128/255f, 128/255f, 0f});
+        systemColors.put("lightcyan1",
+                            new float[] {224/255f, 255/255f, 255/255f, 0f});
+        systemColors.put("lightcyan2",
+                            new float[] {209/255f, 238/255f, 238/255f, 0f});
+        systemColors.put("lightcyan3",
+                            new float[] {180/255f, 205/255f, 205/255f, 0f});
+        systemColors.put("lightcyan4",
+                            new float[] {122/255f, 139/255f, 139/255f, 0f});
+        systemColors.put("lightcyan",
+                            new float[] {224/255f, 255/255f, 255/255f, 0f});
+        systemColors.put("lightgoldenrod1",
+                            new float[] {255/255f, 236/255f, 139/255f, 0f});
+        systemColors.put("lightgoldenrod2",
+                            new float[] {238/255f, 220/255f, 130/255f, 0f});
+        systemColors.put("lightgoldenrod3",
+                            new float[] {205/255f, 190/255f, 112/255f, 0f});
+        systemColors.put("lightgoldenrod4",
+                            new float[] {139/255f, 129/255f, 76/255f, 0f});
+        systemColors.put("lightgoldenrod",
+                            new float[] {238/255f, 221/255f, 130/255f, 0f});
+        systemColors.put("lightgoldenrodyellow",
+                            new float[] {250/255f, 250/255f, 210/255f, 0f});
+        systemColors.put("lightgray",
+                            new float[] {211/255f, 211/255f, 211/255f, 0f});
+        systemColors.put("lightgreen",
+                            new float[] {144/255f, 238/255f, 144/255f, 0f});
+        systemColors.put("lightgrey",
+                            new float[] {211/255f, 211/255f, 211/255f, 0f});
+        systemColors.put("lightpink1",
+                            new float[] {255/255f, 174/255f, 185/255f, 0f});
+        systemColors.put("lightpink2",
+                            new float[] {238/255f, 162/255f, 173/255f, 0f});
+        systemColors.put("lightpink3",
+                            new float[] {205/255f, 140/255f, 149/255f, 0f});
+        systemColors.put("lightpink4",
+                            new float[] {139/255f, 95/255f, 101/255f, 0f});
+        systemColors.put("lightpink",
+                            new float[] {255/255f, 182/255f, 193/255f, 0f});
+        systemColors.put("lightsalmon1",
+                            new float[] {255/255f, 160/255f, 122/255f, 0f});
+        systemColors.put("lightsalmon2",
+                            new float[] {238/255f, 149/255f, 114/255f, 0f});
+        systemColors.put("lightsalmon3",
+                            new float[] {205/255f, 129/255f, 98/255f, 0f});
+        systemColors.put("lightsalmon4",
+                            new float[] {139/255f, 87/255f, 66/255f, 0f});
+        systemColors.put("lightsalmon",
+                            new float[] {255/255f, 160/255f, 122/255f, 0f});
+        systemColors.put("lightseagreen",
+                            new float[] {32/255f, 178/255f, 170/255f, 0f});
+        systemColors.put("lightskyblue1",
+                            new float[] {176/255f, 226/255f, 255/255f, 0f});
+        systemColors.put("lightskyblue2",
+                            new float[] {164/255f, 211/255f, 238/255f, 0f});
+        systemColors.put("lightskyblue3",
+                            new float[] {141/255f, 182/255f, 205/255f, 0f});
+        systemColors.put("lightskyblue4",
+                            new float[] {96/255f, 123/255f, 139/255f, 0f});
+        systemColors.put("lightskyblue",
+                            new float[] {135/255f, 206/255f, 250/255f, 0f});
+        systemColors.put("lightslateblue",
+                            new float[] {132/255f, 112/255f, 255/255f, 0f});
+        systemColors.put("lightslategray",
+                            new float[] {119/255f, 136/255f, 153/255f, 0f});
+        systemColors.put("lightslategrey",
+                            new float[] {119/255f, 136/255f, 153/255f, 0f});
+        systemColors.put("lightsteelblue1",
+                            new float[] {202/255f, 225/255f, 255/255f, 0f});
+        systemColors.put("lightsteelblue2",
+                            new float[] {188/255f, 210/255f, 238/255f, 0f});
+        systemColors.put("lightsteelblue3",
+                            new float[] {162/255f, 181/255f, 205/255f, 0f});
+        systemColors.put("lightsteelblue4",
+                            new float[] {110/255f, 123/255f, 139/255f, 0f});
+        systemColors.put("lightsteelblue",
+                            new float[] {176/255f, 196/255f, 222/255f, 0f});
+        systemColors.put("lightyellow1",
+                            new float[] {255/255f, 255/255f, 224/255f, 0f});
+        systemColors.put("lightyellow2",
+                            new float[] {238/255f, 238/255f, 209/255f, 0f});
+        systemColors.put("lightyellow3",
+                            new float[] {205/255f, 205/255f, 180/255f, 0f});
+        systemColors.put("lightyellow4",
+                            new float[] {139/255f, 139/255f, 122/255f, 0f});
+        systemColors.put("lightyellow",
+                            new float[] {255/255f, 255/255f, 224/255f, 0f});
+        systemColors.put("limegreen",
+                            new float[] {50/255f, 205/255f, 50/255f, 0f});
+        systemColors.put("linen",
+                            new float[] {250/255f, 240/255f, 230/255f, 0f});
+        systemColors.put("magenta1",
+                            new float[] {255/255f, 0/255f, 255/255f, 0f});
+        systemColors.put("magenta2",
+                            new float[] {238/255f, 0/255f, 238/255f, 0f});
+        systemColors.put("magenta3",
+                            new float[] {205/255f, 0/255f, 205/255f, 0f});
+        systemColors.put("magenta4",
+                            new float[] {139/255f, 0/255f, 139/255f, 0f});
+        systemColors.put("magenta",
+                            new float[] {255/255f, 0/255f, 255/255f, 0f});
+        systemColors.put("maroon1",
+                            new float[] {255/255f, 52/255f, 179/255f, 0f});
+        systemColors.put("maroon2",
+                            new float[] {238/255f, 48/255f, 167/255f, 0f});
+        systemColors.put("maroon3",
+                            new float[] {205/255f, 41/255f, 144/255f, 0f});
+        systemColors.put("maroon4",
+                            new float[] {139/255f, 28/255f, 98/255f, 0f});
+        systemColors.put("maroon",
+                            new float[] {176/255f, 48/255f, 96/255f, 0f});
+        systemColors.put("mediumaquamarine",
+                            new float[] {102/255f, 205/255f, 170/255f, 0f});
+        systemColors.put("mediumblue",
+                            new float[] {0/255f, 0/255f, 205/255f, 0f});
+        systemColors.put("mediumorchid1",
+                            new float[] {224/255f, 102/255f, 255/255f, 0f});
+        systemColors.put("mediumorchid2",
+                            new float[] {209/255f, 95/255f, 238/255f, 0f});
+        systemColors.put("mediumorchid3",
+                            new float[] {180/255f, 82/255f, 205/255f, 0f});
+        systemColors.put("mediumorchid4",
+                            new float[] {122/255f, 55/255f, 139/255f, 0f});
+        systemColors.put("mediumorchid",
+                            new float[] {186/255f, 85/255f, 211/255f, 0f});
+        systemColors.put("mediumpurple1",
+                            new float[] {171/255f, 130/255f, 255/255f, 0f});
+        systemColors.put("mediumpurple2",
+                            new float[] {159/255f, 121/255f, 238/255f, 0f});
+        systemColors.put("mediumpurple3",
+                            new float[] {137/255f, 104/255f, 205/255f, 0f});
+        systemColors.put("mediumpurple4",
+                            new float[] {93/255f, 71/255f, 139/255f, 0f});
+        systemColors.put("mediumpurple",
+                            new float[] {147/255f, 112/255f, 219/255f, 0f});
+        systemColors.put("mediumseagreen",
+                            new float[] {60/255f, 179/255f, 113/255f, 0f});
+        systemColors.put("mediumslateblue",
+                            new float[] {123/255f, 104/255f, 238/255f, 0f});
+        systemColors.put("mediumspringgreen",
+                            new float[] {0/255f, 250/255f, 154/255f, 0f});
+        systemColors.put("mediumturquoise",
+                            new float[] {72/255f, 209/255f, 204/255f, 0f});
+        systemColors.put("mediumvioletred",
+                            new float[] {199/255f, 21/255f, 133/255f, 0f});
+        systemColors.put("midnightblue",
+                            new float[] {25/255f, 25/255f, 112/255f, 0f});
+        systemColors.put("mintcream",
+                            new float[] {245/255f, 255/255f, 250/255f, 0f});
+        systemColors.put("mistyrose1",
+                            new float[] {255/255f, 228/255f, 225/255f, 0f});
+        systemColors.put("mistyrose2",
+                            new float[] {238/255f, 213/255f, 210/255f, 0f});
+        systemColors.put("mistyrose3",
+                            new float[] {205/255f, 183/255f, 181/255f, 0f});
+        systemColors.put("mistyrose4",
+                            new float[] {139/255f, 125/255f, 123/255f, 0f});
+        systemColors.put("mistyrose",
+                            new float[] {255/255f, 228/255f, 225/255f, 0f});
+        systemColors.put("moccasin",
+                            new float[] {255/255f, 228/255f, 181/255f, 0f});
+        systemColors.put("navajowhite1",
+                            new float[] {255/255f, 222/255f, 173/255f, 0f});
+        systemColors.put("navajowhite2",
+                            new float[] {238/255f, 207/255f, 161/255f, 0f});
+        systemColors.put("navajowhite3",
+                            new float[] {205/255f, 179/255f, 139/255f, 0f});
+        systemColors.put("navajowhite4",
+                            new float[] {139/255f, 121/255f, 94/255f, 0f});
+        systemColors.put("navajowhite",
+                            new float[] {255/255f, 222/255f, 173/255f, 0f});
+        systemColors.put("navyblue",
+                            new float[] {0/255f, 0/255f, 128/255f, 0f});
+        systemColors.put("navy",
+                            new float[] {0/255f, 0/255f, 128/255f, 0f});
+        systemColors.put("oldlace",
+                            new float[] {253/255f, 245/255f, 230/255f, 0f});
+        systemColors.put("olivedrab1",
+                            new float[] {192/255f, 255/255f, 62/255f, 0f});
+        systemColors.put("olivedrab2",
+                            new float[] {179/255f, 238/255f, 58/255f, 0f});
+        systemColors.put("olivedrab3",
+                            new float[] {154/255f, 205/255f, 50/255f, 0f});
+        systemColors.put("olivedrab4",
+                            new float[] {105/255f, 139/255f, 34/255f, 0f});
+        systemColors.put("olivedrab",
+                            new float[] {107/255f, 142/255f, 35/255f, 0f});
+        systemColors.put("orange1",
+                            new float[] {255/255f, 165/255f, 0/255f, 0f});
+        systemColors.put("orange2",
+                            new float[] {238/255f, 154/255f, 0/255f, 0f});
+        systemColors.put("orange3",
+                            new float[] {205/255f, 133/255f, 0/255f, 0f});
+        systemColors.put("orange4",
+                            new float[] {139/255f, 90/255f, 0/255f, 0f});
+        systemColors.put("orange",
+                            new float[] {255/255f, 165/255f, 0/255f, 0f});
+        systemColors.put("orangered1",
+                            new float[] {255/255f, 69/255f, 0/255f, 0f});
+        systemColors.put("orangered2",
+                            new float[] {238/255f, 64/255f, 0/255f, 0f});
+        systemColors.put("orangered3",
+                            new float[] {205/255f, 55/255f, 0/255f, 0f});
+        systemColors.put("orangered4",
+                            new float[] {139/255f, 37/255f, 0/255f, 0f});
+        systemColors.put("orangered",
+                            new float[] {255/255f, 69/255f, 0/255f, 0f});
+        systemColors.put("orchid1",
+                            new float[] {255/255f, 131/255f, 250/255f, 0f});
+        systemColors.put("orchid2",
+                            new float[] {238/255f, 122/255f, 233/255f, 0f});
+        systemColors.put("orchid3",
+                            new float[] {205/255f, 105/255f, 201/255f, 0f});
+        systemColors.put("orchid4",
+                            new float[] {139/255f, 71/255f, 137/255f, 0f});
+        systemColors.put("orchid",
+                            new float[] {218/255f, 112/255f, 214/255f, 0f});
+        systemColors.put("palegoldenrod",
+                            new float[] {238/255f, 232/255f, 170/255f, 0f});
+        systemColors.put("palegreen1",
+                            new float[] {154/255f, 255/255f, 154/255f, 0f});
+        systemColors.put("palegreen2",
+                            new float[] {144/255f, 238/255f, 144/255f, 0f});
+        systemColors.put("palegreen3",
+                            new float[] {124/255f, 205/255f, 124/255f, 0f});
+        systemColors.put("palegreen4",
+                            new float[] {84/255f, 139/255f, 84/255f, 0f});
+        systemColors.put("palegreen",
+                            new float[] {152/255f, 251/255f, 152/255f, 0f});
+        systemColors.put("paleturquoise1",
+                            new float[] {187/255f, 255/255f, 255/255f, 0f});
+        systemColors.put("paleturquoise2",
+                            new float[] {174/255f, 238/255f, 238/255f, 0f});
+        systemColors.put("paleturquoise3",
+                            new float[] {150/255f, 205/255f, 205/255f, 0f});
+        systemColors.put("paleturquoise4",
+                            new float[] {102/255f, 139/255f, 139/255f, 0f});
+        systemColors.put("paleturquoise",
+                            new float[] {175/255f, 238/255f, 238/255f, 0f});
+        systemColors.put("palevioletred1",
+                            new float[] {255/255f, 130/255f, 171/255f, 0f});
+        systemColors.put("palevioletred2",
+                            new float[] {238/255f, 121/255f, 159/255f, 0f});
+        systemColors.put("palevioletred3",
+                            new float[] {205/255f, 104/255f, 137/255f, 0f});
+        systemColors.put("palevioletred4",
+                            new float[] {139/255f, 71/255f, 93/255f, 0f});
+        systemColors.put("palevioletred",
+                            new float[] {219/255f, 112/255f, 147/255f, 0f});
+        systemColors.put("papayawhip",
+                            new float[] {255/255f, 239/255f, 213/255f, 0f});
+        systemColors.put("peachpuff1",
+                            new float[] {255/255f, 218/255f, 185/255f, 0f});
+        systemColors.put("peachpuff2",
+                            new float[] {238/255f, 203/255f, 173/255f, 0f});
+        systemColors.put("peachpuff3",
+                            new float[] {205/255f, 175/255f, 149/255f, 0f});
+        systemColors.put("peachpuff4",
+                            new float[] {139/255f, 119/255f, 101/255f, 0f});
+        systemColors.put("peachpuff",
+                            new float[] {255/255f, 218/255f, 185/255f, 0f});
+        systemColors.put("peru",
+                            new float[] {205/255f, 133/255f, 63/255f, 0f});
+        systemColors.put("pink1",
+                            new float[] {255/255f, 181/255f, 197/255f, 0f});
+        systemColors.put("pink2",
+                            new float[] {238/255f, 169/255f, 184/255f, 0f});
+        systemColors.put("pink3",
+                            new float[] {205/255f, 145/255f, 158/255f, 0f});
+        systemColors.put("pink4",
+                            new float[] {139/255f, 99/255f, 108/255f, 0f});
+        systemColors.put("pink",
+                            new float[] {255/255f, 192/255f, 203/255f, 0f});
+        systemColors.put("plum1",
+                            new float[] {255/255f, 187/255f, 255/255f, 0f});
+        systemColors.put("plum2",
+                            new float[] {238/255f, 174/255f, 238/255f, 0f});
+        systemColors.put("plum3",
+                            new float[] {205/255f, 150/255f, 205/255f, 0f});
+        systemColors.put("plum4",
+                            new float[] {139/255f, 102/255f, 139/255f, 0f});
+        systemColors.put("plum",
+                            new float[] {221/255f, 160/255f, 221/255f, 0f});
+        systemColors.put("powderblue",
+                            new float[] {176/255f, 224/255f, 230/255f, 0f});
+        systemColors.put("purple1",
+                            new float[] {155/255f, 48/255f, 255/255f, 0f});
+        systemColors.put("purple2",
+                            new float[] {145/255f, 44/255f, 238/255f, 0f});
+        systemColors.put("purple3",
+                            new float[] {125/255f, 38/255f, 205/255f, 0f});
+        systemColors.put("purple4",
+                            new float[] {85/255f, 26/255f, 139/255f, 0f});
+        systemColors.put("purple",
+                            new float[] {160/255f, 32/255f, 240/255f, 0f});
+        systemColors.put("red1",
+                            new float[] {255/255f, 0/255f, 0/255f, 0f});
+        systemColors.put("red2",
+                            new float[] {238/255f, 0/255f, 0/255f, 0f});
+        systemColors.put("red3",
+                            new float[] {205/255f, 0/255f, 0/255f, 0f});
+        systemColors.put("red4",
+                            new float[] {139/255f, 0/255f, 0/255f, 0f});
+        systemColors.put("red",
+                            new float[] {255/255f, 0/255f, 0/255f, 0f});
+        systemColors.put("rosybrown1",
+                            new float[] {255/255f, 193/255f, 193/255f, 0f});
+        systemColors.put("rosybrown2",
+                            new float[] {238/255f, 180/255f, 180/255f, 0f});
+        systemColors.put("rosybrown3",
+                            new float[] {205/255f, 155/255f, 155/255f, 0f});
+        systemColors.put("rosybrown4",
+                            new float[] {139/255f, 105/255f, 105/255f, 0f});
+        systemColors.put("rosybrown",
+                            new float[] {188/255f, 143/255f, 143/255f, 0f});
+        systemColors.put("royalblue1",
+                            new float[] {72/255f, 118/255f, 255/255f, 0f});
+        systemColors.put("royalblue2",
+                            new float[] {67/255f, 110/255f, 238/255f, 0f});
+        systemColors.put("royalblue3",
+                            new float[] {58/255f, 95/255f, 205/255f, 0f});
+        systemColors.put("royalblue4",
+                            new float[] {39/255f, 64/255f, 139/255f, 0f});
+        systemColors.put("royalblue",
+                            new float[] {65/255f, 105/255f, 225/255f, 0f});
+        systemColors.put("saddlebrown",
+                            new float[] {139/255f, 69/255f, 19/255f, 0f});
+        systemColors.put("salmon1",
+                            new float[] {255/255f, 140/255f, 105/255f, 0f});
+        systemColors.put("salmon2",
+                            new float[] {238/255f, 130/255f, 98/255f, 0f});
+        systemColors.put("salmon3",
+                            new float[] {205/255f, 112/255f, 84/255f, 0f});
+        systemColors.put("salmon4",
+                            new float[] {139/255f, 76/255f, 57/255f, 0f});
+        systemColors.put("salmon",
+                            new float[] {250/255f, 128/255f, 114/255f, 0f});
+        systemColors.put("sandybrown",
+                            new float[] {244/255f, 164/255f, 96/255f, 0f});
+        systemColors.put("seagreen1",
+                            new float[] {84/255f, 255/255f, 159/255f, 0f});
+        systemColors.put("seagreen2",
+                            new float[] {78/255f, 238/255f, 148/255f, 0f});
+        systemColors.put("seagreen3",
+                            new float[] {67/255f, 205/255f, 128/255f, 0f});
+        systemColors.put("seagreen4",
+                            new float[] {46/255f, 139/255f, 87/255f, 0f});
+        systemColors.put("seagreen",
+                            new float[] {46/255f, 139/255f, 87/255f, 0f});
+        systemColors.put("seashell1",
+                            new float[] {255/255f, 245/255f, 238/255f, 0f});
+        systemColors.put("seashell2",
+                            new float[] {238/255f, 229/255f, 222/255f, 0f});
+        systemColors.put("seashell3",
+                            new float[] {205/255f, 197/255f, 191/255f, 0f});
+        systemColors.put("seashell4",
+                            new float[] {139/255f, 134/255f, 130/255f, 0f});
+        systemColors.put("seashell",
+                            new float[] {255/255f, 245/255f, 238/255f, 0f});
+        systemColors.put("sienna1",
+                            new float[] {255/255f, 130/255f, 71/255f, 0f});
+        systemColors.put("sienna2",
+                            new float[] {238/255f, 121/255f, 66/255f, 0f});
+        systemColors.put("sienna3",
+                            new float[] {205/255f, 104/255f, 57/255f, 0f});
+        systemColors.put("sienna4",
+                            new float[] {139/255f, 71/255f, 38/255f, 0f});
+        systemColors.put("sienna",
+                            new float[] {160/255f, 82/255f, 45/255f, 0f});
+        systemColors.put("skyblue1",
+                            new float[] {135/255f, 206/255f, 255/255f, 0f});
+        systemColors.put("skyblue2",
+                            new float[] {126/255f, 192/255f, 238/255f, 0f});
+        systemColors.put("skyblue3",
+                            new float[] {108/255f, 166/255f, 205/255f, 0f});
+        systemColors.put("skyblue4",
+                            new float[] {74/255f, 112/255f, 139/255f, 0f});
+        systemColors.put("skyblue",
+                            new float[] {135/255f, 206/255f, 235/255f, 0f});
+        systemColors.put("slateblue1",
+                            new float[] {131/255f, 111/255f, 255/255f, 0f});
+        systemColors.put("slateblue2",
+                            new float[] {122/255f, 103/255f, 238/255f, 0f});
+        systemColors.put("slateblue3",
+                            new float[] {105/255f, 89/255f, 205/255f, 0f});
+        systemColors.put("slateblue4",
+                            new float[] {71/255f, 60/255f, 139/255f, 0f});
+        systemColors.put("slateblue",
+                            new float[] {106/255f, 90/255f, 205/255f, 0f});
+        systemColors.put("slategray1",
+                            new float[] {198/255f, 226/255f, 255/255f, 0f});
+        systemColors.put("slategray2",
+                            new float[] {185/255f, 211/255f, 238/255f, 0f});
+        systemColors.put("slategray3",
+                            new float[] {159/255f, 182/255f, 205/255f, 0f});
+        systemColors.put("slategray4",
+                            new float[] {108/255f, 123/255f, 139/255f, 0f});
+        systemColors.put("slategray",
+                            new float[] {112/255f, 128/255f, 144/255f, 0f});
+        systemColors.put("slategrey",
+                            new float[] {112/255f, 128/255f, 144/255f, 0f});
+        systemColors.put("snow1",
+                            new float[] {255/255f, 250/255f, 250/255f, 0f});
+        systemColors.put("snow2",
+                            new float[] {238/255f, 233/255f, 233/255f, 0f});
+        systemColors.put("snow3",
+                            new float[] {205/255f, 201/255f, 201/255f, 0f});
+        systemColors.put("snow4",
+                            new float[] {139/255f, 137/255f, 137/255f, 0f});
+        systemColors.put("snow",
+                            new float[] {255/255f, 250/255f, 250/255f, 0f});
+        systemColors.put("springgreen1",
+                            new float[] {0/255f, 255/255f, 127/255f, 0f});
+        systemColors.put("springgreen2",
+                            new float[] {0/255f, 238/255f, 118/255f, 0f});
+        systemColors.put("springgreen3",
+                            new float[] {0/255f, 205/255f, 102/255f, 0f});
+        systemColors.put("springgreen4",
+                            new float[] {0/255f, 139/255f, 69/255f, 0f});
+        systemColors.put("springgreen",
+                            new float[] {0/255f, 255/255f, 127/255f, 0f});
+        systemColors.put("steelblue1",
+                            new float[] {99/255f, 184/255f, 255/255f, 0f});
+        systemColors.put("steelblue2",
+                            new float[] {92/255f, 172/255f, 238/255f, 0f});
+        systemColors.put("steelblue3",
+                            new float[] {79/255f, 148/255f, 205/255f, 0f});
+        systemColors.put("steelblue4",
+                            new float[] {54/255f, 100/255f, 139/255f, 0f});
+        systemColors.put("steelblue",
+                            new float[] {70/255f, 130/255f, 180/255f, 0f});
+        systemColors.put("tan1",
+                            new float[] {255/255f, 165/255f, 79/255f, 0f});
+        systemColors.put("tan2",
+                            new float[] {238/255f, 154/255f, 73/255f, 0f});
+        systemColors.put("tan3",
+                            new float[] {205/255f, 133/255f, 63/255f, 0f});
+        systemColors.put("tan4",
+                            new float[] {139/255f, 90/255f, 43/255f, 0f});
+        systemColors.put("tan",
+                            new float[] {210/255f, 180/255f, 140/255f, 0f});
+        systemColors.put("thistle1",
+                            new float[] {255/255f, 225/255f, 255/255f, 0f});
+        systemColors.put("thistle2",
+                            new float[] {238/255f, 210/255f, 238/255f, 0f});
+        systemColors.put("thistle3",
+                            new float[] {205/255f, 181/255f, 205/255f, 0f});
+        systemColors.put("thistle4",
+                            new float[] {139/255f, 123/255f, 139/255f, 0f});
+        systemColors.put("thistle",
+                            new float[] {216/255f, 191/255f, 216/255f, 0f});
+        systemColors.put("tomato1",
+                            new float[] {255/255f, 99/255f, 71/255f, 0f});
+        systemColors.put("tomato2",
+                            new float[] {238/255f, 92/255f, 66/255f, 0f});
+        systemColors.put("tomato3",
+                            new float[] {205/255f, 79/255f, 57/255f, 0f});
+        systemColors.put("tomato4",
+                            new float[] {139/255f, 54/255f, 38/255f, 0f});
+        systemColors.put("tomato",
+                            new float[] {255/255f, 99/255f, 71/255f, 0f});
+        systemColors.put("turquoise1",
+                            new float[] {0/255f, 245/255f, 255/255f, 0f});
+        systemColors.put("turquoise2",
+                            new float[] {0/255f, 229/255f, 238/255f, 0f});
+        systemColors.put("turquoise3",
+                            new float[] {0/255f, 197/255f, 205/255f, 0f});
+        systemColors.put("turquoise4",
+                            new float[] {0/255f, 134/255f, 139/255f, 0f});
+        systemColors.put("turquoise",
+                            new float[] {64/255f, 224/255f, 208/255f, 0f});
+        systemColors.put("violet",
+                            new float[] {238/255f, 130/255f, 238/255f, 0f});
+        systemColors.put("violetred1",
+                            new float[] {255/255f, 62/255f, 150/255f, 0f});
+        systemColors.put("violetred2",
+                            new float[] {238/255f, 58/255f, 140/255f, 0f});
+        systemColors.put("violetred3",
+                            new float[] {205/255f, 50/255f, 120/255f, 0f});
+        systemColors.put("violetred4",
+                            new float[] {139/255f, 34/255f, 82/255f, 0f});
+        systemColors.put("violetred",
+                            new float[] {208/255f, 32/255f, 144/255f, 0f});
+        systemColors.put("wheat1",
+                            new float[] {255/255f, 231/255f, 186/255f, 0f});
+        systemColors.put("wheat2",
+                            new float[] {238/255f, 216/255f, 174/255f, 0f});
+        systemColors.put("wheat3",
+                            new float[] {205/255f, 186/255f, 150/255f, 0f});
+        systemColors.put("wheat4",
+                            new float[] {139/255f, 126/255f, 102/255f, 0f});
+        systemColors.put("wheat",
+                            new float[] {245/255f, 222/255f, 179/255f, 0f});
+        systemColors.put("white",
+                            new float[] {255/255f, 255/255f, 255/255f, 0f});
+        systemColors.put("whitesmoke",
+                            new float[] {245/255f, 245/255f, 245/255f, 0f});
+        systemColors.put("yellow1",
+                            new float[] {255/255f, 255/255f, 0/255f, 0f});
+        systemColors.put("yellow2",
+                            new float[] {238/255f, 238/255f, 0/255f, 0f});
+        systemColors.put("yellow3",
+                            new float[] {205/255f, 205/255f, 0/255f, 0f});
+        systemColors.put("yellow4",
+                            new float[] {139/255f, 139/255f, 0/255f, 0f});
+        systemColors.put("yellowgreen",
+                            new float[] {154/255f, 205/255f, 50/255f, 0f});
+        systemColors.put("yellow",
+                            new float[] {255/255f, 255/255f, 0/255f, 0f});
     }
 }
