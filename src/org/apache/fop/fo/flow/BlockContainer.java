@@ -159,7 +159,11 @@ public class BlockContainer extends FObj {
 		this.properties.get("border-width").getLength().mvalue();
 	    this.borderStyle =
 		this.properties.get("border-style").getEnum();
-	}
+
+            // initialize id                       
+            String id = this.properties.get("id").getString();            
+            area.getIDReferences().initializeID(id,area);  
+	}        
 
 	boolean prevChildMustKeepWithNext = false;
         
@@ -180,6 +184,9 @@ public class BlockContainer extends FObj {
         areaContainer.setBorderWidth(borderWidth, borderWidth, borderWidth, borderWidth); 
         areaContainer.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
 	areaContainer.start();
+        
+        areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
+        areaContainer.setIDReferences(area.getIDReferences());
         
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
@@ -205,6 +212,8 @@ public class BlockContainer extends FObj {
 		prevChildMustKeepWithNext = true;
 	    }
 	}
+        area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
+
 	areaContainer.end();
         if (position == Position.ABSOLUTE)
           areaContainer.setHeight(height);
