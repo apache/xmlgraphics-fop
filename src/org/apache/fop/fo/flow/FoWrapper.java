@@ -25,6 +25,7 @@ import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.messaging.MessageHandler;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.BitSet;
 
@@ -41,7 +42,7 @@ public class FoWrapper extends FONode {
         position in the <i>sparsePropsSet</i> array. See
         {@link org.apache.fop.fo.FONode#sparsePropsSet FONode.sparsePropsSet}.
      */
-    private static final HashMap sparsePropsMap;
+    private static final int[] sparsePropsMap;
 
     /** An <tt>int</tt> array of of the applicable property indices, in
         property index order. */
@@ -59,11 +60,11 @@ public class FoWrapper extends FONode {
         // sparsePropsSet is a HashMap containing the indicies of the
         // sparsePropsSet array, indexed by the FO index of the FO slot
         // in sparsePropsSet.
-        sparsePropsMap = new HashMap(1);
+        sparsePropsMap = new int[PropNames.LAST_PROPERTY_INDEX + 1];
+        Arrays.fill(sparsePropsMap, -1);
         numProps = 1;
         sparseIndices = new int[] { PropNames.ID };
-        sparsePropsMap.put
-            (Ints.consts.get(PropNames.ID), Ints.consts.get(0));
+        sparsePropsMap[PropNames.MARKER_CLASS_NAME] = 0;
     }
 
     /**
