@@ -74,7 +74,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
     }*/
 
-
     private int startPageNum = 0;
     private int currentPageNum = 0;
     private String pageNumberString;
@@ -101,14 +100,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * AreaTreeModel that this PSLM sends pages to.
      */
     private AreaTreeModel areaTreeModel;
-
-    /**
-     * This is the SimplePageMaster that should be used to create the page. It
-     * will be equal to the PageSequence's simplePageMaster, if it exists, or
-     * to the correct member of the PageSequence's pageSequenceMaster, if that
-     * is in effect instead.
-     */
-    private SimplePageMaster currentSimplePageMaster;
 
     /**
      * The collection of StaticContentLayoutManager objects that are associated
@@ -204,7 +195,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         protected int getCurrentDisplayAlign() {
-            return currentSimplePageMaster.getRegion(Constants.FO_REGION_BODY).getDisplayAlign();
+            return curPage.getSPM().getRegion(Constants.FO_REGION_BODY).getDisplayAlign();
         }
         
         protected boolean hasMoreContent() {
@@ -443,18 +434,18 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
         try {
             // create a new page
-            currentSimplePageMaster = pageSeq.getSimplePageMasterToUse(
+            SimplePageMaster spm = pageSeq.getSimplePageMasterToUse(
                 currentPageNum, isFirstPage, bIsBlank);
-            Region body = currentSimplePageMaster.getRegion(FO_REGION_BODY);
+            Region body = spm.getRegion(FO_REGION_BODY);
             if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
               // this is fine by the XSL Rec (fo:flow's flow-name can be mapped to
               // any region), but we don't support it yet.
               throw new FOPException("Flow '" + pageSeq.getMainFlow().getFlowName()
                  + "' does not map to the region-body in page-master '"
-                 + currentSimplePageMaster.getMasterName() + "'.  FOP presently "
+                 + spm.getMasterName() + "'.  FOP presently "
                  + "does not support this.");
             }
-            curPage = createPageAreas(currentSimplePageMaster);
+            curPage = createPageAreas(spm);
             isFirstPage = false;
         } catch (FOPException fopex) {
             throw new IllegalArgumentException("Cannot create page: " + fopex.getMessage());
@@ -472,7 +463,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     private void layoutSideRegion(int regionID) {
-        SideRegion reg = (SideRegion)currentSimplePageMaster.getRegion(regionID);
+        SideRegion reg = (SideRegion)curPage.getSPM().getRegion(regionID);
         if (reg == null) {
             return;
         }
@@ -746,7 +737,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
            page.setRegionViewport(r.getNameId(), rvp);
        }
 
-       return new PageViewport(page, new Rectangle(0, 0, pageWidth, pageHeight));
+       return new PageViewport(spm, page, new Rectangle(0, 0, pageWidth, pageHeight));
     }  
     
     /**
