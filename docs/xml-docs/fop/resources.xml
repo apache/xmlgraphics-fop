@@ -17,18 +17,22 @@
   	<s3 title="FOP User Mailing List">
   		<ul>
   			<li>Send a mail to <jump href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</jump>
-  			 to subscribe. This is where user specific topics are discussed. For detailed instructions on the subscription, see 
+  			 to subscribe (use <jump href="mailto:fop-user-digest-subscribe@xml.apache.org">
+                         fop-user-digest-subscribe@xml.apache.org</jump> for digest).
+                         This is where user specific topics are discussed. For detailed instructions on the subscription, see 
   			 <jump href="http://xml.apache.org/mail.html">Apache XML Mailing Lists</jump>.</li>
   			 <li>The Mailing list ARChives (MARC) at the AIMS group: 
 		      		<jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">fop-user</jump>
-		      	</li>(searchable)
+		      	(searchable)</li>
 		      	<li><jump href="http://xml.apache.org/mail/fop-user/">Apache archive of fop-user@apache.org</jump></li>
   		</ul>
   	</s3>
   	<s3 title="FOP Developer Mailing List">
   		<ul>
   			<li>Send a mail to <jump href="mailto:fop-dev-subscribe@xml.apache.org">fop-dev-subscribe@xml.apache.org</jump>
-  			 to subscribe. For detailed instructions on the subscription, see 
+  			 to subscribe. (use <jump href="mailto:fop-dev-digest-subscribe@xml.apache.org">
+                         fop-dev-digest-subscribe@xml.apache.org</jump> for digest).
+                          For detailed instructions on the subscription, see 
   			 <jump href="http://xml.apache.org/mail.html">Apache XML Mailing Lists</jump>.</li>
   			 <li>The Mailing list ARChives (MARC) at the AIMS group: 
 		      		<jump href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">fop-dev</jump>
