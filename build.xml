@@ -462,27 +462,15 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- compiles hyphenation patterns                                       -->
   <!-- =================================================================== -->
-  <target name="hyphenation" depends="fop-hyphenation,user-hyphenation"/>
-
-  <target name="prepare-hyphenation" depends="prepare">
+  <target name="hyphenation" depends="prepare">
     <path id="hyph-classpath">
       <path refid="libs-build-classpath"/>
       <pathelement location="${build.dir}/classes"/>
     </path>
     <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern" classpathref="hyph-classpath"/>
-  </target>
-
-  <target name="fop-hyphenation" depends="prepare-hyphenation">
     <serHyph includes="*.xml"
              sourceDir="${hyph.dir}"
              targetDir="${build.dest}/hyph"/>
-  </target>
-
-  <target name="user-hyphenation" depends="prepare-hyphenation" if="user.hyph.dir">
-    <property name="user.hyphdest.dir" value="${build.dest}/hyph"/>
-    <serHyph includes="*.xml"
-             sourceDir="${user.hyph.dir}"
-             targetDir="${user.hyphdest.dir}"/>
   </target>
 
   <target name="hyphenation-jar" depends="hyphenation">
