@@ -45,7 +45,8 @@ public class FOAttributes {
      * <tt>HashMap</tt>s which contain the attribute lists for each
      * namespace which may be active for a particular FO element.  The
      * <tt>ArrayList</tt> is indexed by the URIIndex for this namespace
-     * which is statically maintained by <tt>XMLEvent</tt>.  The
+     * which is maintained in an <tt>XMLNamespaces</tt> object by the
+     * <tt>FOTree</tt> object which is processing the FO input.  The
      * values in the <tt>HashMap</tt>s are indexed by the local name of the
      * attribute.
      * The <tt>ArrayList</tt> will not be created for a particular instance
@@ -119,8 +120,7 @@ public class FOAttributes {
             //System.out.println("FONode:" + event);
             if (attrUriIndex == XMLNamespaces.DefAttrNSIndex) {
                 // Standard FO namespace
-                // Catch default namespace declaration here.  This seems to
-                // be a kludge.  Should 'xmlns' come through here?
+                // Catch default namespace declaration here.
                 if (attrLocalname.equals("xmlns")) break;
                 // Is this a known (valid) property?
                 try {
