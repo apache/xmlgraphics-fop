@@ -29,6 +29,7 @@ Jon Smirl
 **** HISTORY **** 
 Done since 0.16 release
 
+- added: vertical-align to text [Keiron Liddle]
 - added: support for PDF outlines (aka bookmarks). See the example in
          docs/examples/fo/pdfoutline.fo [Kelly Campbell]
 - added: some text rendering optimizations for PDF [Kelly Campbell]
@@ -58,6 +59,7 @@ Done since 0.16 release
          page-sequence to meet section 6.4.5 of the spec [Kelly Campbell]
 - fixed: leader didn't fill rest of line in table of contents [Fotis Jannidis]
 - fixed: throws a more useful error if non-row inside table body [Keiron Liddle]
+- fixed: duplicate ID bug for tables that flow over a page [Keiron Liddle]
 
 
 Done since 0.15 release
