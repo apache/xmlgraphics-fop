@@ -28,7 +28,7 @@ import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.layoutmgr.TextLayoutManager;
 
 /**
- * A text node in the formatting object tree.
+ * A text node (PCDATA) in the formatting object tree.
  *
  * Unfortunately the BufferManager implementatation holds
  * onto references to the character data in this object
@@ -486,14 +486,6 @@ public class FOText extends FONode {
             }
         }
 
-    }
-
-    /**
-     * @todo rename somehow, there isn't an fo:text.
-     * @todo see if should still be a subclass of FObj
-     */
-    public String getName() {
-        return "fo:text";
     }
 
     /**
