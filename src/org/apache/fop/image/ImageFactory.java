@@ -31,11 +31,6 @@ import org.apache.fop.fo.FOUserAgent;
 // Avalon
 import org.apache.avalon.framework.logger.Logger;
 
-/*
-handle context: base dir, logger, caching
-
- */
-
 /**
  * create FopImage objects (with a configuration file - not yet implemented).
  * @author Eric SCHAEFFER
@@ -46,10 +41,21 @@ public class ImageFactory {
 
     private ImageFactory() {}
 
+    /**
+     * Get static image factory instance.
+     *
+     * @return the image factory instance
+     */
     public static ImageFactory getInstance() {
         return factory;
     }
 
+    /**
+     * Get the url string from a wrapped url.
+     *
+     * @href the input wrapped url
+     * @return the raw url
+     */
     public static String getURL(String href) {
         /*
          * According to section 5.11 a <uri-specification> is:
@@ -79,6 +85,10 @@ public class ImageFactory {
      * If this returns null then the image could not be loaded
      * due to an error. Messages should be logged.
      * Before calling this the getURL(url) must be used.
+     *
+     * @param url the url for the image
+     * @param context the user agent context
+     * @return the fop image instance
      */
     public FopImage getImage(String url, FOUserAgent context) {
         return cache.getImage(url, context);
@@ -89,6 +99,9 @@ public class ImageFactory {
      * This can be used if the renderer has its own cache of
      * the image.
      * The image should then be put into the weak cache.
+     *
+     * @param url the url for the image 
+     * @param context the user agent context
      */
     public void releaseImage(String url, FOUserAgent context) {
         cache.releaseImage(url, context);
@@ -98,12 +111,21 @@ public class ImageFactory {
      * create an FopImage objects.
      * @param href image URL as a String
      * @return a new FopImage object
+     *
+     * @param href the url for the image 
+     * @param baseURL the base url
+     * @param ua the user agent context
+     * @return the fop image instance
      */
     protected static FopImage loadImage(String href, String baseURL,
                                         FOUserAgent ua) {
         Logger log = ua.getLogger();
 
         InputStream imgIS = openStream(href, baseURL, ua);
+
+        if (imgIS == null) {
+            return null;
+        }
 
         // If not, check image type
         FopImage.ImageInfo imgInfo = null;
@@ -268,6 +290,10 @@ public class ImageFactory {
     }
 }
 
+/**
+ * Basic image cache.
+ * This keeps track of invalid images.
+ */
 class BasicImageCache implements ImageCache {
     Set invalid = Collections.synchronizedSet(new HashSet());
     Map contextStore = Collections.synchronizedMap(new HashMap());

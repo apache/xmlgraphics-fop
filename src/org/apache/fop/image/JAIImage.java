@@ -7,11 +7,6 @@
 
 package org.apache.fop.image;
 
-// Java
-import java.net.URL;
-import java.io.InputStream;
-import java.io.InputStream;
-
 // AWT
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
@@ -48,26 +43,26 @@ public class JAIImage extends AbstractFopImage {
             inputStream.close();
             inputStream = null;
 
-            this.m_height = imageOp.getHeight();
-            this.m_width = imageOp.getWidth();
+            this.height = imageOp.getHeight();
+            this.width = imageOp.getWidth();
 
             ColorModel cm = imageOp.getColorModel();
-            this.m_bitsPerPixel = 8;
-            // this.m_bitsPerPixel = cm.getPixelSize();
-            this.m_colorSpace = ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB);
+            this.bitsPerPixel = 8;
+            // this.bitsPerPixel = cm.getPixelSize();
+            this.colorSpace = ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB);
 
             BufferedImage imageData = imageOp.getAsBufferedImage();
-            int[] tmpMap = imageData.getRGB(0, 0, this.m_width,
-                                            this.m_height, null, 0, this.m_width);
+            int[] tmpMap = imageData.getRGB(0, 0, this.width,
+                                            this.height, null, 0, this.width);
 
             if (cm.hasAlpha()) {
                 int transparencyType = cm.getTransparency(); // java.awt.Transparency. BITMASK or OPAQUE or TRANSLUCENT
                 if (transparencyType == java.awt.Transparency.OPAQUE) {
-                    this.m_isTransparent = false;
+                    this.isTransparent = false;
                 } else if (transparencyType ==
                     java.awt.Transparency.BITMASK) {
                     if (cm instanceof IndexColorModel) {
-                        this.m_isTransparent = false;
+                        this.isTransparent = false;
                         byte[] alphas = new byte[
                                           ((IndexColorModel) cm).getMapSize()];
                         byte[] reds = new byte[
@@ -84,8 +79,8 @@ public class JAIImage extends AbstractFopImage {
                                 i < ((IndexColorModel) cm).getMapSize();
                                 i++) {
                             if ((alphas[i] & 0xFF) == 0) {
-                                this.m_isTransparent = true;
-                                this.m_transparentColor = new PDFColor(
+                                this.isTransparent = true;
+                                this.transparentColor = new PDFColor(
                                                             (int)(reds[i] & 0xFF),
                                                             (int)(greens[i] & 0xFF),
                                                             (int)(blues[i] & 0xFF));
@@ -95,39 +90,39 @@ public class JAIImage extends AbstractFopImage {
                     } else {
                         // TRANSLUCENT
                         /*
-                         * this.m_isTransparent = false;
-                         * for (int i = 0; i < this.m_width * this.m_height; i++) {
+                         * this.isTransparent = false;
+                         * for (int i = 0; i < this.width * this.height; i++) {
                          * if (cm.getAlpha(tmpMap[i]) == 0) {
-                         * this.m_isTransparent = true;
-                         * this.m_transparentColor = new PDFColor(cm.getRed(tmpMap[i]), cm.getGreen(tmpMap[i]), cm.getBlue(tmpMap[i]));
+                         * this.isTransparent = true;
+                         * this.transparentColor = new PDFColor(cm.getRed(tmpMap[i]), cm.getGreen(tmpMap[i]), cm.getBlue(tmpMap[i]));
                          * break;
                          * }
                          * }
                          * // or use special API...
                          */
-                        this.m_isTransparent = false;
+                        this.isTransparent = false;
                     }
                 } else {
-                    this.m_isTransparent = false;
+                    this.isTransparent = false;
                 }
             } else {
-                this.m_isTransparent = false;
+                this.isTransparent = false;
             }
 
             // Should take care of the ColorSpace and bitsPerPixel
-            this.m_bitmapsSize = this.m_width * this.m_height * 3;
-            this.m_bitmaps = new byte[this.m_bitmapsSize];
-            for (int i = 0; i < this.m_height; i++) {
-                for (int j = 0; j < this.m_width; j++) {
-                    int p = tmpMap[i * this.m_width + j];
+            this.bitmapsSize = this.width * this.height * 3;
+            this.bitmaps = new byte[this.bitmapsSize];
+            for (int i = 0; i < this.height; i++) {
+                for (int j = 0; j < this.width; j++) {
+                    int p = tmpMap[i * this.width + j];
                     int r = (p >> 16) & 0xFF;
                     int g = (p >> 8) & 0xFF;
                     int b = (p) & 0xFF;
-                    this.m_bitmaps[3 * (i * this.m_width + j)] =
+                    this.bitmaps[3 * (i * this.width + j)] =
                       (byte)(r & 0xFF);
-                    this.m_bitmaps[3 * (i * this.m_width + j) + 1] =
+                    this.bitmaps[3 * (i * this.width + j) + 1] =
                       (byte)(g & 0xFF);
-                    this.m_bitmaps[3 * (i * this.m_width + j) + 2] =
+                    this.bitmaps[3 * (i * this.width + j) + 2] =
                       (byte)(b & 0xFF);
                 }
             }
