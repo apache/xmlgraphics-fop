@@ -12,28 +12,17 @@
   </header>
 
   <body>
-<p>
-The code to implement the area tree matches the areas
-defined in the specification. This makes it easier to understand and
-correspond with the specification.
+<p>The Area Tree is an internal representation of the result document, representing pages and their contents.
+To make the concepts clearer and easier to understand, the code to implement the area tree matches the areas defined in the XSL-FO specification.
   </p>
   <p>
 The area tree is created by the layout managers once the layout is decided
 for a page. Once a completed page is finished it can then be added to the
-area tree. The area tree model can then handle the new page. The data in
+area tree. From that point forward, the area tree model can then handle the new page. The data in
 the area tree must be minimal and independant. This means that the data
 uses less memory and can be serialized to an output stream if needed.
   </p>
-<p>The Area Tree is an internal representation of the result document. This
-is a set of java classes that can put together a set of objects that
-represent the pages and their contents.</p>
-<p>This information is created by the layout managers and is rendered to the
-output using a renderer.</p>
-<p>The Area Tree follows the description of the area tree in the XSL:FO
-specification.</p>
-<p>The Area Tree consists of a set of pages, the actual implemenation places
-these in
-a set of page sequences.</p>
+<p>The Area Tree consists of a set of pages, which the actual implemenation places in a set of page sequences.</p>
 <section>
   <title>Structure</title>
 <p>
