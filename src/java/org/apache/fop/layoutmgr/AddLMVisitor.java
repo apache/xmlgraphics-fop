@@ -472,7 +472,7 @@ public class AddLMVisitor extends FOTreeVisitor {
      }
 
      public void serveVisitor(InstreamForeignObject node) {
-         Viewport areaCurrent = getIFOInlineArea(node);
+         Viewport areaCurrent = getInstreamForeignObjectInlineArea(node);
          if (areaCurrent != null) {
              LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
              lm.setUserAgent(node.getUserAgent());
@@ -489,7 +489,7 @@ public class AddLMVisitor extends FOTreeVisitor {
       *
       * @return the viewport inline area
       */
-     public Viewport getIFOInlineArea(InstreamForeignObject node) {
+     public Viewport getInstreamForeignObjectInlineArea(InstreamForeignObject node) {
          if (node.getChildren() == null) {
              return null;
          }
