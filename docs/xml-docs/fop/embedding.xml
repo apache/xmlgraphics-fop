@@ -28,6 +28,12 @@
    driver.run();
 ]]></source>
 
+  <p>To setup the user config file you can do the following
+  </p>
+    <source><![CDATA[
+   userConfigFile = new File(userConfig);
+   options = new Options(userConfigFile);
+]]></source>
 
   <p>Once the Driver is set up, the render method
      is called. Depending on whether DOM or SAX is being used, the
