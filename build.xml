@@ -718,10 +718,7 @@ Get it from http://checkstyle.sourceforge.net</fail>
     -->
     <delete dir="${build.javadocs}"/>
     <delete>
-      <fileset dir="${build.dir}" defaultexcludes="no">
-        <exclude name="**/CVS"/>
-        <exclude name="**CVS/*"/>
-        <exclude name="**/.cvsignore"/>
+      <fileset dir="${build.dir}">
       </fileset>
     </delete>
   </target>
