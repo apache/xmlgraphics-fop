@@ -2,6 +2,14 @@ $Id$
 
 STATUS
 
+Things worked on:
+
+rewrite of the org.apache.fop.layout (implements xsl 2000) [James Tauber]
+image support [Eric Schaeffer, Pankaj Narula]
+simple-links [Arved Sandstrom]
+SVG support [Keiron Liddle][Torsten Friebe]
+borders and absolute positioning [Jon Smirl]
+
 Things to do:
 
 Get images working
@@ -16,7 +24,12 @@ Other Bugs to fix:
 colour not continued onto subsequent pages if coloured block goes over page
 simple-link doesn't seem to work (I think I, JKT, broke it)
 
-Todo's and problems with AWT Previewer:
+Todo's 
+
+- Support XSL Working Draft 12 January 2000
+- Makefile: Avoid recompilation of all files, fix some smaller problems
+
+with AWT Previewer:
 
 - currently the layout process uses PDF fonts. This gives sometimes
   trouble with java.awt.Font 
@@ -24,12 +37,11 @@ Todo's and problems with AWT Previewer:
 - GIF format is supported by the viewer, but disabled in FOP. BMP is
   not done, because there are no standard libraries.
 - more comments/english comments
-- print output using AWT
-- i18n for the user interface (yes, now we need this stuff)
-- toolbar images directory is not configurable
 - first preview is painted twice (flashing screen)
 - should "preview" be an option when calling FOP instead of having
   it's own main method?
+
+History
 
 0.12.1 release
 to make the bug fix on XTCommandLine available to non developers
