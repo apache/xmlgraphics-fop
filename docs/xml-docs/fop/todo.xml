@@ -1,6 +1,15 @@
 <?xml version="1.0" standalone="no"?>
 
-<!-- SVG in FOP -->
+<!-- TODO -->
+<document>
+    <header>
+        <title>TODO</title>
+        <subtitle>TODO list for FOP</subtitle>
+        <authors>
+        </authors>
+    </header>
+
+    <body>
 
 <s1 title="TODO List for FOP">
   <s2 title="FOP TODO">
@@ -138,4 +147,6 @@ Currently patterns and gradients are not generated properly
 
 
 </s1>
+    </body>
+</document>
 
