@@ -27,6 +27,8 @@ import java.util.Map;
  * @author Eric SCHAEFFER
  */
 public class FopImageFactory {
+    // prevent instantiation
+    protected FopImageFactory() {}
 
     private static Map m_urlMap = new java.util.HashMap();
 
