@@ -3,6 +3,7 @@ package org.apache.fop.fo;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.indirect.Inherit;
 import org.apache.fop.datatypes.Auto;
 import org.apache.fop.datatypes.None;
@@ -16,8 +17,6 @@ import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.datatypes.PropertyTriplet;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
 
