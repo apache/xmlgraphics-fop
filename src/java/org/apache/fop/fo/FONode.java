@@ -242,6 +242,11 @@ public class FONode extends SyncedNode implements AreaListener {
         areaContext = area;
     }
 
+    protected Area getChildrensLayoutContext()
+            throws FOPException {
+        throw new FOPException("Called from FONode");
+    }
+
     private void processAttributes() throws FOPException, PropertyException {
         // Process the FOAttributes - parse and stack the values
         // Build a HashMap of the properties defined on this node
