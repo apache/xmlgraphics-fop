@@ -113,6 +113,18 @@
   <text x="15" y="310" font-family="FOPFont" font-size="12">FOP in FOPfont</text>
 </g>
 
+  <text x="130" y="80" writing-mode="tb" font-size="12">vertical</text>
+  <text x="140" y="80" writing-mode="tb" glyph-orientation-vertical="0deg" font-size="12">vertical</text>
+  <text x="150" y="80" glyph-orientation-horizontal="90deg" font-size="12">orientated text</text>
+
+  <text x="150" y="95" font-stretch="narrower" font-size="12">stretched font</text>
+
+  <text x="150" y="110" letter-spacing="5" font-size="12">spaced letters</text>
+
+  <text x="150" y="125" word-spacing="3pt" font-size="12">spaced words</text>
+
+
+
   <!-- empty element -->
   <text/>
 </g>
