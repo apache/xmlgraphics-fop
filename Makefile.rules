@@ -9,6 +9,7 @@ JAVAC = javac
 
 # following class path is for CygWin bash
 JAVAC_ARGS = -g:none -classpath "$(BASEDIR)/src;$(BASEDIR)/generated;$(CLASSPATH)"
+GEN_JAVAC_ARGS = -g:none -classpath "../src;$(CLASSPATH)"
 
 FIND=find
 TAR=tar
