@@ -3,7 +3,7 @@ package org.apache.fop.datatypes.indirect;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.AbstractPropertyValue;
 import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.datatypes.PropertyTriplet;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.FONode;
@@ -24,11 +24,11 @@ import org.apache.fop.fo.FONode;
  * These include <tt>Inherit</tt>, <tt>FromParent</tt> and
  * <tt>FromNearestSpecified</tt> objects.  If an <tt>InheritedValue</tt>
  * object is defined, it will also extend this class.
- * <p>The required value is usually the computed field of the
- * <tt>PropertyTriplet</tt> for the source property on the source node.  This
+ * <p>The required value is usually the computed value of the
+ * <tt>PropertyValue</tt> of the source property on the source node.  This
  * property may be different from the property of this object.  This class
- * provides accessors for the referenced <tt>PropertyTriplet</tt> and the
- * computed value of that triplet.  In some cases, the specified value is 
+ * provides accessors for the referenced <tt>PropertyValue</tt>.
+ * In some cases, the specified value is 
  * required.  It is the responsibility of the subclass to determine and
  * act upon these cases.  At the time of writing, the only such exception is
  * when a <i>line-height</i> is defined as a &lt;number&gt;.
@@ -46,11 +46,11 @@ public class IndirectValue extends AbstractPropertyValue {
     protected int sourceProperty;
 
     /**
-     * The <tt>PropertyTriplet</tt> from which this object is being
+     * The <tt>PropertyValue</tt> from which this object is being
      * inherited.  Set when the inheritance cannot be immediately resolved,
      * e.g. when the specified value is a percentage.
      */
-    protected PropertyTriplet inheritedValue = null;
+    protected PropertyValue inheritedValue = null;
 
     /**
      * @param property - the <tt>int</tt> index of the property on which
@@ -115,64 +115,51 @@ public class IndirectValue extends AbstractPropertyValue {
     }
 
     /**
-     * @return <tt>PropertyTriplet</tt> which contains or will contain the
+     * @return <tt>PropertyValue</tt> which contains or will contain the
      * the computed value being inherited.  This field will be null except
      * when an unresolved computed value is being inherited.  If so,
-     * a null value will be returned.  N.B. This triplet will have a
-     * property value different from this <i>IndirectValue</i> object.
-     */
-    public PropertyTriplet getInheritedTriplet() {
-        return inheritedValue;
-    }
-
-    /**
-     * @return computed <tt>PropertyValue</tt> field from the
-     * <tt>PropertyTriplet</tt> from which this object is inherting.
-     * If the <i>inheritedValue</i> field is null, no resolution of the
-     * inheritance has yet been attempted, and a null value is returned.
-     * If the <i>inheritedValue</i> field is not null, return the
-     * <i>computed</i> field, which may be null.  N.B. This
+     * a null value will be returned.  N.B. This
      * <tt>PropertyValue</tt> may have a property field different from 
      * this <i>IndirectValue</i> object.  The source property field is held in
      * the <i>sourceProperty</i> field.
      */
     public PropertyValue getInheritedValue() {
-        if (inheritedValue != null) return inheritedValue.getComputed();
-        return null;
+        return inheritedValue;
     }
 
     /**
-     * Set the reference to the <tt>PropertyTriplet</tt> from which the
+     * Set the reference to the <tt>PropertyValue</tt> from which the
      * value is being inherited.
-     * @param bequeathed - the <tt>PropertyTriplet</tt> which contains
+     * @param bequeathed - the <tt>PropertyValue</tt> which contains
      * or will contain the the computed value of the percentage being
      * inherited.
      */
-    public void setInheritedTriplet(PropertyTriplet bequeathed) {
+    public void setInheritedValue(PropertyValue bequeathed) {
         inheritedValue = bequeathed;
     }
 
     /**
      * Attempt to resolve the <tt>IndirectValue</tt> object.
-     * If no bequeathing <tt>PropertyTriplet</tt>, assume that the
+     * If no bequeathing <tt>PropertyValue</tt>, assume that the
      * bequeathing node is the parent node.  This is true for the
      * <tt>Inherit</tt>, <tt>InheritedValue</tt> and <tt>FromParent</tt>
      * objects.  <tt>FromNearestSpecified</tt> objects must override this
      * method to ensure that resolution is carried out against the correct
-     * triplet.
-     * <p>If the computed value of that triplet is
+     * property value.
+     * <p>If the computed value is
      * null, return this object.  If not, return the computed value.
      * @param node - the <tt>FONode</tt> with which this object is associated.
      * @return - a <tt>PropertyValue</tt> as described above.  A return of
      * the same <tt>IndirectValue</tt> object implies that the inherited
      * computed value has not yet been resolved in the ancestor.
      */
-    protected PropertyValue resolve(FONode node) throws PropertyException {
+    public PropertyValue resolve(FONode node) throws PropertyException {
         PropertyValue pv;
         if (inheritedValue == null)
-            inheritedValue = node.getParentTriplet(sourceProperty);
-        if ((pv = inheritedValue.getComputed()) == null)
+            inheritedValue = node.getParentPropertyValue(sourceProperty);
+        if (isUnresolved(inheritedValue))
             return this;
+        pv = inheritedValue;
         // Check that the property is the same
         if (property != pv.getProperty()) {
             try {
@@ -182,6 +169,13 @@ public class IndirectValue extends AbstractPropertyValue {
             }
         }
         return pv;
+    }
+
+    public static boolean isUnresolved(PropertyValue value)
+                    throws PropertyException
+    {
+        return (value.getType() == PropertyValue.NUMERIC
+                                    && ((Numeric)(value)).isPercentage());
     }
 
     // N.B. no validation on this class - subclasses will validate
