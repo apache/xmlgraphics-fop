@@ -21,7 +21,7 @@ package org.apache.fop.area.extensions;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.TreeExt;
-import org.apache.fop.area.AreaTreeHandler;
+import org.apache.fop.area.AreaTreeModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +36,8 @@ public class BookmarkData implements Resolveable, TreeExt {
     private ArrayList subData = new ArrayList();
     private HashMap idRefs = new HashMap();
 
-    // area tree handler for the top level object to notify when resolved
-    private AreaTreeHandler areaTreeHandler = null;
+    // area tree model for the top level object to activate when resolved
+    private AreaTreeModel areaTreeModel = null;
 
     private String idRef;
     private PageViewport pageRef = null;
@@ -65,14 +65,14 @@ public class BookmarkData implements Resolveable, TreeExt {
     }
 
     /**
-     * Set the area tree.
+     * Set the area tree model
      * This should only be called for the top level element.
-     * The area tree is used once resolving is complete.
+     * The area tree model is used once resolving is complete.
      *
-     * @param at the area tree handler for the current document
+     * @param atm the area tree model for the current document
      */
-    public void setAreaTreeHandler(AreaTreeHandler ath) {
-        areaTreeHandler = ath;
+    public void setAreaTreeModel(AreaTreeModel atm) {
+        areaTreeModel = atm;
     }
 
     /**
@@ -229,8 +229,8 @@ public class BookmarkData implements Resolveable, TreeExt {
     private void checkFinish() {
         if (idRefs.size() == 0) {
             idRefs = null;
-            if (areaTreeHandler != null) {
-                areaTreeHandler.handleTreeExtension(this, TreeExt.AFTER_PAGE);
+            if (areaTreeModel != null) {
+                areaTreeModel.addExtension(this, TreeExt.AFTER_PAGE);
             }
         }
     }

@@ -172,7 +172,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * to resolve or add the resolveable ids for later resolution.
      * @param ext the tree extension to add.
      */
-    public void addTreeExtension(TreeExt ext) {
+    private void addTreeExtension(TreeExt ext) {
         treeExtensions.add(ext);
         if (ext.isResolveable()) {
             Resolveable res = (Resolveable)ext;
@@ -190,19 +190,8 @@ public class AreaTreeHandler extends FOEventHandler {
                 }
             }
         } else {
-            handleTreeExtension(ext, TreeExt.IMMEDIATELY);
+            model.addExtension(ext, TreeExt.IMMEDIATELY);
         }
-    }
-
-    /**
-     * Handle a tree extension.
-     * This sends the extension to the model for handling.
-     * @param ext the tree extension to handle
-     * @param when when the extension should be handled by the model
-     */
-    public void handleTreeExtension(TreeExt ext, int when) {
-        // queue tree extension according to the when
-        model.addExtension(ext, when);
     }
 
     /**
@@ -271,7 +260,7 @@ public class AreaTreeHandler extends FOEventHandler {
     /**
      * Create the bookmark data in the area tree.
      */
-    public void addBookmarks(Bookmarks bookmarks) {
+    private void addBookmarks(Bookmarks bookmarks) {
         if (bookmarks == null) {
             return;
         }
@@ -283,7 +272,7 @@ public class AreaTreeHandler extends FOEventHandler {
             data.addSubData(createBookmarkData(out));
         }
         addTreeExtension(data);
-        data.setAreaTreeHandler(this);
+        data.setAreaTreeModel(model);
     }
 
     /**
@@ -295,7 +284,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * created
      * @return the new bookmark data
      */
-    public BookmarkData createBookmarkData(Outline outline) {
+    private BookmarkData createBookmarkData(Outline outline) {
         BookmarkData data = new BookmarkData(outline.getInternalDestination());
         data.setLabel(outline.getLabel());
         for (int count = 0; count < outline.getOutlines().size(); count++) {
