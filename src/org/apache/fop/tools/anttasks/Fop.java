@@ -28,6 +28,7 @@ import java.util.*;
 
 // FOP
 import org.apache.fop.messaging.*;
+import org.apache.fop.apps.Options;
 import org.apache.fop.apps.Starter;
 import org.apache.fop.apps.InputHandler;
 import org.apache.fop.apps.FOInputHandler;
@@ -43,6 +44,7 @@ import org.apache.fop.configuration.Configuration;
  * <li>format -> MIME type of the format to generate ex. "application/pdf"</li>
  * <li>outfile -> output filename</li>
  * <li>baseDir -> directory to work from</li>
+ * <li>userconfig -> file with user configuration (same as the "-c" command line option)</li>
  * <li>messagelevel -> (info | verbose | debug) level to output non-error messages</li>
  * </ul>
  */
@@ -53,7 +55,16 @@ public class Fop extends Task {
     File outDir;
     String format; //MIME type
     File baseDir;
+    File userConfig;
     int messageType = Project.MSG_VERBOSE;
+
+    /**
+     * Sets the input file
+     * @param File to input from
+     */
+    public void setUserconfig (File userConfig) {
+        this.userConfig = userConfig;
+    }
 
     /**
      * Sets the input file
@@ -133,8 +144,8 @@ public class Fop extends Task {
         } else if (messageLevel.equalsIgnoreCase("debug")) {
             messageType = Project.MSG_DEBUG;
         } else {
-            log("messagelevel set to unknown value \"" + messageLevel + "\"",
-                Project.MSG_ERR);
+            log("messagelevel set to unknown value \"" + messageLevel +
+                "\"", Project.MSG_ERR);
             throw new BuildException("unknown messagelevel");
         }
     }
@@ -211,20 +222,20 @@ class FOPTaskStarter extends Starter {
                 format.equalsIgnoreCase("pdf")) {
             return Driver.RENDER_PDF;
         } else if (format.equalsIgnoreCase("application/postscript") ||
-                format.equalsIgnoreCase("ps")) {
+            format.equalsIgnoreCase("ps")) {
             return Driver.RENDER_PS;
         } else if (format.equalsIgnoreCase("application/vnd.mif") ||
-                format.equalsIgnoreCase("mif")) {
+            format.equalsIgnoreCase("mif")) {
             return Driver.RENDER_MIF;
         } else if (format.equalsIgnoreCase("application/vnd.gp-PCL") ||
-                format.equalsIgnoreCase("pcl")) {
+            format.equalsIgnoreCase("pcl")) {
             return Driver.RENDER_PCL;
         } else if (format.equalsIgnoreCase("text/plain") ||
-                format.equalsIgnoreCase("txt")) {
+            format.equalsIgnoreCase("txt")) {
             return Driver.RENDER_TXT;
         } else if (format.equalsIgnoreCase("text/xml") ||
-                format.equalsIgnoreCase("at") ||
-                format.equalsIgnoreCase("xml")) {
+            format.equalsIgnoreCase("at") ||
+            format.equalsIgnoreCase("xml")) {
             return Driver.RENDER_XML;
         } else {
             String err = "Couldn't determine renderer to use: "+format;
@@ -235,39 +246,52 @@ class FOPTaskStarter extends Starter {
 
     private String determineExtension(int renderer) {
         switch (renderer) {
-            case Driver.RENDER_PDF: return ".pdf";
-            case Driver.RENDER_PS:  return ".ps";
-            case Driver.RENDER_MIF: return ".mif";
-            case Driver.RENDER_PCL: return ".pcl";
-            case Driver.RENDER_TXT: return ".txt";
-            case Driver.RENDER_XML: return ".xml";
+            case Driver.RENDER_PDF:
+                return ".pdf";
+            case Driver.RENDER_PS:
+                return ".ps";
+            case Driver.RENDER_MIF:
+                return ".mif";
+            case Driver.RENDER_PCL:
+                return ".pcl";
+            case Driver.RENDER_TXT:
+                return ".txt";
+            case Driver.RENDER_XML:
+                return ".xml";
             default:
-               String err = "Unknown renderer: "+renderer;
-               log.error(err);
-               throw new BuildException(err);
+                String err = "Unknown renderer: "+renderer;
+                log.error(err);
+                throw new BuildException(err);
         }
     }
 
-    private File replaceExtension(File file, String expectedExt, String newExt) {
+    private File replaceExtension(File file, String expectedExt,
+                                  String newExt) {
         String name = file.getName();
         if (name.toLowerCase().endsWith(expectedExt)) {
-            name = name.substring(0, name.length()-expectedExt.length());
+            name = name.substring(0, name.length() - expectedExt.length());
         }
         name = name.concat(newExt);
         return new File(file.getParentFile(), name);
     }
 
     public void run() throws FOPException {
+        if (task.userConfig != null) {
+            new Options (task.userConfig);
+        }
+
         try {
-            // Configuration.put("baseDir", task.getBasedir().toURL().toExternalForm());
-            Configuration.put("baseDir",
-                              task.getFofile().getParentFile().toURL().toExternalForm());
+            if (task.getFofile() != null) {
+                Configuration.put("baseDir",
+                                  task.getFofile().getParentFile().toURL().
+                                  toExternalForm());
+            }
         } catch (Exception e) {
             task.log("Error setting base directory", Project.MSG_DEBUG);
         }
 
-        task.log("Using base directory: "
-                 + Configuration.getValue("baseDir"), Project.MSG_DEBUG);
+        task.log("Using base directory: " +
+                 Configuration.getValue("baseDir"), Project.MSG_DEBUG);
 
         int rint = determineRenderer(task.getFormat());
         String newExtension = determineExtension(rint);
@@ -290,29 +314,41 @@ class FOPTaskStarter extends Starter {
         }
 
         // deal with the filesets
-        for (int i=0; i<task.filesets.size(); i++) {
-            FileSet fs = (FileSet)task.filesets.elementAt(i);
+        for (int i = 0; i < task.filesets.size(); i++) {
+            FileSet fs = (FileSet) task.filesets.elementAt(i);
             DirectoryScanner ds = fs.getDirectoryScanner(task.getProject());
             String[] files = ds.getIncludedFiles();
 
-            for (int j=0; j<files.length; j++) {
+            for (int j = 0; j < files.length; j++) {
                 File f = new File(fs.getDir(task.getProject()), files[j]);
                 File outf = replaceExtension(f, ".fo", newExtension);
                 if (task.getOutdir() != null) {
                     outf = new File(task.getOutdir(), outf.getName());
                 }
+                try {
+                    Configuration.put("baseDir",
+                                      fs.getDir(task.getProject()).toURL().
+                                      toExternalForm());
+
+                } catch (Exception e) {
+                    task.log("Error setting base directory",
+                             Project.MSG_DEBUG);
+                }
+
                 render(f, outf, rint);
                 actioncount++;
             }
         }
 
         if (actioncount == 0) {
-            task.log("No files processed. No files were selected by the filesets and no fofile was set."
-                     , Project.MSG_WARN);
+            task.log(
+              "No files processed. No files were selected by the filesets and no fofile was set." ,
+              Project.MSG_WARN);
         }
     }
 
-    private void render(File foFile, File outFile, int renderer) throws FOPException {
+    private void render(File foFile, File outFile,
+                        int renderer) throws FOPException {
         InputHandler inputHandler = new FOInputHandler(foFile);
         XMLReader parser = inputHandler.getParser();
         setParserFeatures(parser);
@@ -341,86 +377,4 @@ class FOPTaskStarter extends Starter {
     }
 
 }
-/*
-class MessageLogger implements MessageListener {
-    MessageHandler handler;
-    Task task;
-    int messageLevel = Project.MSG_VERBOSE;
-    int lastMessageLevel = Integer.MIN_VALUE;
-    StringBuffer cache = new StringBuffer();
-    String breakChars = "\n";
-    boolean performCaching = true;
 
-    MessageLogger(MessageHandler handler, Task task) {
-        this(handler, task, Project.MSG_VERBOSE);
-    }
-
-    MessageLogger(MessageHandler handler, Task task, int messageLevel) {
-        this.handler = handler;
-        this.task = task;
-        setMessageLevel(messageLevel);
-        handler.addListener(this);
-    }
-
-    public void setMessageLevel(int messageLevel) {
-        this.messageLevel = messageLevel;
-    }
-
-    public int getMessageLevel() {
-        return messageLevel;
-    }
-
-    public void processMessage(MessageEvent event) {
-        task.log("Logger got message: \"" + event.getMessage() + "\"",
-                 Project.MSG_DEBUG);
-
-        boolean flushed = false;
-
-        if (!flushed) {
-            int messageLevel;
-            if (event.getMessageType() == MessageEvent.ERROR) {
-                messageLevel = Project.MSG_ERR;
-            } else {
-                messageLevel = this.messageLevel;
-            }
-            if (messageLevel != lastMessageLevel) {
-                flush();
-                flushed = true;
-            }
-            lastMessageLevel = messageLevel;
-        }
-
-        cache.append(event.getMessage());
-
-        if (!performCaching) {
-            flush();
-            flushed = true;
-        }
-
-        for (int i = 0; !flushed && i < breakChars.length(); i++) {
-            if (event.getMessage().lastIndexOf(breakChars.charAt(i)) != -1) {
-                flush();
-                flushed = true;
-            }
-        }
-    }
-
-    public void flush() {
-        StringTokenizer output = new StringTokenizer(cache.toString(), "\n",
-                false);
-        while (output.hasMoreElements()) {
-            task.log(output.nextElement().toString(), lastMessageLevel);
-        }
-        cache.setLength(0);
-    }
-
-    public void die() {
-        flush();
-        // because MessageHandler is static this has to be done
-        // or you can get duplicate messages if there are
-        // multiple <fop> tags in a buildfile
-        handler.removeListener(this);
-    }
-
-}
-*/
