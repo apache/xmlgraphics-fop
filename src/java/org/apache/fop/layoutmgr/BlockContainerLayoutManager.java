@@ -36,7 +36,7 @@ import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.traits.MinOptMax;
 
 /**
- * LayoutManager for a block FO.
+ * LayoutManager for a block-container FO.
  */
 public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     private BlockContainer fobj;
@@ -142,6 +142,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             return getAbsoluteBreakPoss(context);
         }
 
+        autoHeight = false;
         boolean rotated = (fobj.getReferenceOrientation() % 180 != 0); //vals[0] == 0.0;
         referenceIPD = context.getRefIPD();
         int maxbpd = context.getStackLimit().opt;
@@ -151,6 +152,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             allocBPD += getBPIndents();
         } else {
             allocBPD = maxbpd;
+            autoHeight = true;
         }
         if (width.getEnum() != EN_AUTO) {
             allocIPD = width.getValue(); //this is the content-width
@@ -298,6 +300,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         LayoutManager curLM ; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
+        autoHeight = false;
 
         Point offset = getAbsOffset();
         int allocBPD, allocIPD;
@@ -316,6 +319,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 if (abProps.bottom.getEnum() != EN_AUTO) {
                     allocBPD -= abProps.bottom.getValue();
                 }
+            } else {
+                autoHeight = true;
             }
         }
         if (width.getEnum() != EN_AUTO) {
@@ -353,8 +358,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 fobj.getReferenceOrientation(),
                 fobj.getWritingMode(), 
                 rect, relDims);
-        //referenceIPD = relDims.ipd + getIPIndents();
-
         
         while ((curLM = getChildLM()) != null) {
             // Make break positions and return blocks!
@@ -379,7 +382,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         // to the normal stacking
         breakPoss.setStackingSize(new MinOptMax(0));
 
-        if (stackSize.opt > relDims.bpd) {
+        //TODO Maybe check for page overflow when autoHeight=true
+        if (!autoHeight & (stackSize.opt > relDims.bpd)) {
             log.warn("Contents overflow block-container viewport: clipping");
             if (fobj.getOverflow() == EN_HIDDEN) {
                 clip = true;
@@ -441,7 +445,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             
             viewportBlockArea.setCTM(absoluteCTM);
             viewportBlockArea.setIPD(vpContentIPD);
-            viewportBlockArea.setBPD(vpContentBPD);
+            if (autoHeight) {
+                viewportBlockArea.setBPD(0);
+            } else {
+                viewportBlockArea.setBPD(vpContentBPD);
+            }
             viewportBlockArea.setClip(clip);
             viewportBlockArea.addTrait(Trait.SPACE_BEFORE, new Integer(getSpaceBefore()));
 
@@ -450,41 +458,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 Point offset = getAbsOffset();
                 viewportBlockArea.setXOffset(offset.x);
                 viewportBlockArea.setYOffset(offset.y);
-                autoHeight = false;
             } else {
-                //double[] vals = absoluteCTM.toArray();
-                boolean rotated = (fobj.getReferenceOrientation() % 180 != 0); //vals[0] == 0.0;
-                if (rotated) {
-                    autoHeight = false;
-                } else {
-                    autoHeight = (height.getEnum() == EN_AUTO);
-                    if (autoHeight) {
-                        viewportBlockArea.setBPD(0);
-                    }
-                }
-                /*
-                boolean rotated = vals[0] == 0.0;
-                if (rotated) {
-                    viewportBlockArea.setIPD(vpContentIPD);
-                    viewportBlockArea.setBPD(vpContentBPD);
-                    viewportBlockArea.setClip(clip);
-                    autoHeight = false;
-                } else if (vals[0] == -1.0) {
-                    // need to set bpd to actual size for rotation
-                    // and stacking
-                    viewportBlockArea.setIPD(relDims.ipd);
-                    if (height.getEnum() != EN_AUTO) {
-                        viewportBlockArea.setBPD(relDims.bpd);
-                        autoHeight = false;
-                    }
-                    viewportBlockArea.setClip(clip);
-                } else {
-                    viewportBlockArea.setIPD(relDims.ipd);
-                    if (height.getEnum() != EN_AUTO) {
-                        viewportBlockArea.setBPD(relDims.bpd);
-                        autoHeight = false;
-                    }
-                }*/
+                //nop
             }
 
             curBlockArea = new Block();
