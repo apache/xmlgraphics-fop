@@ -1,4 +1,11 @@
 ==============================================================================
+Done since 0.20 release
+
+*** General
+- immediate fix to PDFRenderer and LazyFont, leading up to 0.20.1
+- build.xml improvements (Weiqi Gao)
+
+==============================================================================
 Done since 0.19 release
 
 *** General
