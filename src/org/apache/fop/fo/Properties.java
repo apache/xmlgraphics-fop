@@ -36,6 +36,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Percentage;
 import org.apache.fop.datatypes.Angle;
 import org.apache.fop.datatypes.EnumType;
+import org.apache.fop.datatypes.MappedEnumType;
 import org.apache.fop.datatypes.IntegerType;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.Bool;
@@ -265,7 +266,6 @@ public abstract class Properties {
             ,"outset"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -295,7 +295,6 @@ public abstract class Properties {
             ,"thick"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
 
         // N.B. If these values change, all initial values expressed in these
@@ -355,7 +354,6 @@ public abstract class Properties {
             ,"transparent"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwColorEnums;
         static {
             rwColorEnums = new HashMap(rwEnums.length);
@@ -404,7 +402,6 @@ public abstract class Properties {
             ,"-----NoEnum-----"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -424,7 +421,6 @@ public abstract class Properties {
             ,"fixed"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -450,7 +446,6 @@ public abstract class Properties {
             ,"focus"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -499,7 +494,6 @@ public abstract class Properties {
             ,"mathematical"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -547,7 +541,6 @@ public abstract class Properties {
             ,"mathematical"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -618,24 +611,18 @@ public abstract class Properties {
          *   a BackgroundPositionHorizontal Numeric or Inherit value
          *   a BackgroundPositionVertical Numeric or Inherit value
          */
-        public static PropertyValue complex
-            (int property, PropertyValue value) throws PropertyException
+        public static PropertyValue complex(PropertyValue value)
+                        throws PropertyException
         {
-            // TODO the property argument looks redundant.
-            // Check whether it is possible for a PropertyValue to be
-            // generated with a different property value.
-            //  If so, remove direct use of the property index from the
-            //    value
-            //  If not, removed the property argument from complex
             if ( ! (value instanceof PropertyValueList)) {
-                return processValue(property, value);
+                return processValue(value);
             } else {
-                return processList(property, (PropertyValueList)value);
+                return processList((PropertyValueList)value);
             }
         }
 
         private static PropertyValueList processValue
-            (int property, PropertyValue value) throws PropertyException
+            (PropertyValue value) throws PropertyException
         {
             // Can be Inherit, ColorType, UriType, None, Numeric, or an
             // NCName (i.e. enum token)
@@ -646,15 +633,17 @@ public abstract class Properties {
                 return PropertySets.expandAndCopySHand(value);
             } else  {
                 // Make a list an pass to processList
-                PropertyValueList tmpList = new PropertyValueList(property);
+                PropertyValueList tmpList
+                        = new PropertyValueList(value.getProperty());
                 tmpList.add(value);
-                return processList(property, tmpList);
+                return processList(tmpList);
             }
         }
 
-        private static PropertyValueList processList
-            (int property, PropertyValueList value) throws PropertyException
+        private static PropertyValueList processList(PropertyValueList value)
+                        throws PropertyException
         {
+            int property = value.getProperty();
             PropertyValue color= null,
                             image = null,
                             repeat = null,
@@ -696,8 +685,8 @@ public abstract class Properties {
                     // send it to BackgroundPosition.complex for processing
                     // If it is followed by another Numeric, form a list from
                     // the pair, else form a list from this element only
-                    PropertyValueList posnList
-                                        = new PropertyValueList(property);
+                    PropertyValueList posnList = new PropertyValueList
+                                            (PropNames.BACKGROUND_POSITION);
                     posnList.add(pval);
                     // Is it followed by another Numeric?
                     if (elements.hasNext()) {
@@ -715,8 +704,7 @@ public abstract class Properties {
                     if (position != null)
                             MessageHandler.log("Background: duplicate" +
                             "position overrides previous position");
-                    position = BackgroundPosition.complex
-                                    (PropNames.BACKGROUND_POSITION, posnList);
+                    position = BackgroundPosition.complex(posnList);
                     continue scanning_elements;
                 }
 
@@ -761,8 +749,8 @@ public abstract class Properties {
                     // shorthand.  A following NCName need not be a second
                     // position indicator.  So we have to test this element
                     // and the following element individually.
-                    PropertyValueList posnList
-                                        = new PropertyValueList(property);
+                    PropertyValueList posnList = new PropertyValueList
+                                            (PropNames.BACKGROUND_POSITION);
                     PropertyValue tmpval = null;
                     // Is the current NCName a position token?
                     boolean pos1ok = false, pos2ok = false;
@@ -792,8 +780,7 @@ public abstract class Properties {
                         if (position != null)
                                 MessageHandler.log("Background: duplicate" +
                                 "position overrides previous position");
-                        position = BackgroundPosition.complex
-                                    (PropNames.BACKGROUND_POSITION, posnList);
+                        position = BackgroundPosition.complex(posnList);
                         continue scanning_elements;
                     }
                     throw new PropertyException
@@ -801,8 +788,8 @@ public abstract class Properties {
                 }
 
                 throw new PropertyException
-                    ("Unknown property value for Background: "
-                                                        + pval.toString());
+                    ("Invalid " + pval.getClass().getName() +
+                        " property value for Background");
             }
 
             // Now construct the list of PropertyValues with their
@@ -863,7 +850,6 @@ public abstract class Properties {
             ,"fixed"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -924,13 +910,18 @@ public abstract class Properties {
         // Background will need access to this array
         protected static final ROStringArray enums
                                                 = new ROStringArray(rwEnums);
+        protected static final ROStringArray enumValues = enums;
 
         /**
          * 'value' is a PropertyValueList or an individual PropertyValue.
          *
          * <p>If 'value' is an individual PropertyValue, it must contain
-         * either a single distance measurement, a single NCName enumeration
-         * token, or an Inherit value.
+         * either
+         *   a distance measurement,
+         *   a NCName enumeration token,
+         *   a FromParent value,
+         *   a FromNearestSpecified value,
+         *   or an Inherit value.
          * The distance measurement can be either a Length or a Percentage.
          *
          * <p>If 'value' is a PropertyValueList, it contains either a pair of
@@ -943,28 +934,28 @@ public abstract class Properties {
          * element is a value for BackgroundPositionHorizontal, and the
          * second is for BackgroundPositionVertical.
          */
-        public static PropertyValue complex
-            (int property, PropertyValue value) throws PropertyException
+        public static PropertyValue complex(PropertyValue value)
+                        throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
-                return processValue(property, value);
+                return processValue(value);
             } else {
-                return processList(property, (PropertyValueList)value);
+                return processList((PropertyValueList)value);
             }
         }
 
-        private static PropertyValueList processValue
-            (int property, PropertyValue value) throws PropertyException
+        private static PropertyValueList processValue(PropertyValue value)
+                        throws PropertyException
         {
-            PropertyValueList newlist = new PropertyValueList(property);
+            PropertyValueList newlist
+                            = new PropertyValueList(value.getProperty());
             // Can only be Inherit, NCName (i.e. enum token)
             // or Numeric (i.e. Length or Percentage)
-            if (value instanceof Inherit) {
-                // Construct a list of two Inherit values
-                newlist.add(new Inherit(
-                            PropNames.BACKGROUND_POSITION_HORIZONTAL));
-                newlist.add(new Inherit(
-                            PropNames.BACKGROUND_POSITION_VERTICAL));
+            if (value instanceof Inherit |
+                    value instanceof FromParent |
+                        value instanceof FromNearestSpecified) {
+                // Construct a list of Inherit values
+                newlist = PropertySets.expandAndCopySHand(value);
             } else if (value instanceof Numeric) {
                 // Single horizontal value given
                 Numeric newNum;
@@ -1014,16 +1005,17 @@ public abstract class Properties {
                             vert));
             } else {
                 throw new PropertyException
-                ("Invalid single property value for BackgroundPosition: "
-                + value.toString());
+                ("Invalid " + value.getClass().getName() +
+                    " property value for BackgroundPosition");
             }
             return newlist;
         }
 
-        private static PropertyValueList processList
-            (int property, PropertyValueList value) throws PropertyException
+        private static PropertyValueList processList(PropertyValueList value)
+                            throws PropertyException
         {
-            PropertyValueList newlist = new PropertyValueList(property);
+            PropertyValueList newlist
+                            = new PropertyValueList(value.getProperty());
             // This is a list
             if (value.size() == 0)
                 throw new PropertyException
@@ -1053,8 +1045,8 @@ public abstract class Properties {
                 // Now check the type of the second element
                 if ( ! (posn2 instanceof Numeric))
                     throw new PropertyException
-                        ("Numeric not followed by Numeric in "
-                        + "BackgroundPosition list: " + posn2.toString());
+                        ("Numeric followed by " + posn2.getClass().getName()
+                        + " in BackgroundPosition list");
                 Numeric num2;
                 try {
                     num2 = (Numeric)(posn2.clone());
@@ -1074,8 +1066,8 @@ public abstract class Properties {
                 // Now check the type of the second element
                 if ( ! (posn2 instanceof NCName))
                     throw new PropertyException
-                        ("NCName not followed by NCName in BackgroundPosition"
-                        + " list: " + posn2.toString());
+                        ("NCName followed by " + posn2.getClass().getName()
+                        + " in BackgroundPosition list");
                 int enum1, enum2;
                 String enumval1 = ((NCName)posn ).getNCName();
                 String enumval2 = ((NCName)posn2).getNCName();
@@ -1221,8 +1213,8 @@ public abstract class Properties {
                             percent2));
 
             } else throw new PropertyException
-                        ("Invalid element in BackgroundPosition list: "
-                        + posn.toString());
+                        ("Invalid " + posn.getClass().getName() +
+                            " in BackgroundPosition list");
 
             return newlist;
         }
@@ -1256,7 +1248,6 @@ public abstract class Properties {
             ,"right"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -1288,7 +1279,6 @@ public abstract class Properties {
             ,"bottom"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -1321,7 +1311,6 @@ public abstract class Properties {
             ,"no-repeat"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -1354,7 +1343,6 @@ public abstract class Properties {
             ,"super"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -1385,7 +1373,6 @@ public abstract class Properties {
             ,"any"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -1435,7 +1422,6 @@ public abstract class Properties {
             ,"retain"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -1456,7 +1442,7 @@ public abstract class Properties {
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
-        private static final HashMap rwEnumValues = ColorCommon.rwColorEnums;
+        public static final Map enumValues = ColorCommon.colorTransEnums;
     }
 
     public static class BorderAfterPrecedence extends Properties {
@@ -1479,8 +1465,7 @@ public abstract class Properties {
         public static final int inherited = NO;
 
         public static final ROStringArray enums = BorderCommonStyle.enums;
-        private static final HashMap rwEnumValues
-                                            = BorderCommonStyle.rwEnumValues;
+        public static final Map enumValues = BorderCommonStyle.enumValues;
     }
 
     // Initial value for BorderAfterWidth is tne mapped enumerated value
@@ -1557,7 +1542,7 @@ public abstract class Properties {
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
-        private static final HashMap rwEnumValues = ColorCommon.rwColorEnums;
+        public static final Map enumValues = ColorCommon.colorTransEnums;
     }
 
     public static class BorderBeforePrecedence extends Properties {
@@ -1579,8 +1564,7 @@ public abstract class Properties {
         public static final int inherited = NO;
 
         public static final ROStringArray enums = BorderCommonStyle.enums;
-        private static final HashMap rwEnumValues
-                                            = BorderCommonStyle.rwEnumValues;
+        public static final Map enumValues = BorderCommonStyle.enumValues;
     }
 
     public static class BorderBeforeWidth extends Properties {
@@ -1660,7 +1644,7 @@ public abstract class Properties {
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
-        private static final HashMap rwEnumValues = ColorCommon.rwColorEnums;
+        public static final Map enumValues = ColorCommon.colorTransEnums;
     }
 
     public static class BorderBottomStyle extends Properties {
@@ -1671,8 +1655,7 @@ public abstract class Properties {
         public static final int inherited = NO;
 
         public static final ROStringArray enums = BorderCommonStyle.enums;
-        private static final HashMap rwEnumValues
-                                            = BorderCommonStyle.rwEnumValues;
+        public static final Map enumValues = BorderCommonStyle.enumValues;
     }
 
     public static class BorderBottomWidth extends Properties {
@@ -1725,7 +1708,6 @@ public abstract class Properties {
             ,"separate"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -1734,6 +1716,133 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
+
+        public static final ROStringArray enums = ColorCommon.enums;
+        public static final Map enumValues = ColorCommon.colorTransEnums;
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * <p>If 'value' is an individual PropertyValue, it must contain
+         * either
+         *   a ColorType value
+         *   a NCName containing a standard color name or 'transparent'
+         *   a FromParent value,
+         *   a FromNearestSpecified value,
+         *   or an Inherit value.
+         *
+         * <p>If 'value' is a PropertyValueList, it contains a list of
+         * 2 to 4 ColorType values or NCName enum tokens representing colors.
+         *
+         * <p>The value(s) provided, if valid, are converted into a list
+         * containing the expansion of the shorthand.
+         * The first element is a value for border-top-color,
+         * the second element is a value for border-right-color,
+         * the third element is a value for border-bottom-color,
+         * the fourth element is a value for border-left-color.
+         */
+        public static PropertyValue complex(PropertyValue value)
+                    throws PropertyException
+        {
+            if ( ! (value instanceof PropertyValueList)) {
+                if (value instanceof Inherit
+                    || value instanceof ColorType
+                    || value instanceof FromParent
+                    || value instanceof FromNearestSpecified
+                    )
+                    return PropertySets.expandAndCopySHand(value);
+                if (value instanceof NCName) {
+                    // Must be a standard color
+                    ColorType color;
+                    try {
+                        color = new ColorType(PropNames.BORDER_COLOR,
+                                            ((NCName)value).getNCName());
+                    } catch (PropertyException e) {
+                        throw new PropertyException
+                            (((NCName)value).getNCName() +
+                                " not a standard color for border-color");
+                    }
+                    return PropertySets.expandAndCopySHand(color);
+                }
+                else throw new PropertyException
+                    ("Invalid " + value.getClass().getName() +
+                                                " value for border-color");
+            } else {
+                // List may contain only multiple color specifiers
+                // i.e. ColorTypes or NCNames specifying a standard color or
+                // 'transparent'.
+                PropertyValueList list = (PropertyValueList)value;
+                ColorType top, left, bottom, right;
+                int count = list.size();
+                if (count < 2 || count > 4)
+                    throw new PropertyException
+                        ("border-color list contains " + count + " items");
+
+                Iterator colors = list.iterator();
+
+                // There must be at least two
+                top = getColor((PropertyValue)(colors.next()));
+                left = getColor((PropertyValue)(colors.next()));
+                try {
+                    bottom = (ColorType)(top.clone());
+                    right = (ColorType)(left.clone());
+                } catch (CloneNotSupportedException cnse) {
+                    throw new PropertyException
+                                    ("clone() not supported on ColorType");
+                }
+
+                if (colors.hasNext()) bottom
+                                = getColor((PropertyValue)(colors.next()));
+                if (colors.hasNext()) right
+                                = getColor((PropertyValue)(colors.next()));
+
+                // Set the properties for each
+                top.setProperty(PropNames.BORDER_TOP_COLOR);
+                left.setProperty(PropNames.BORDER_LEFT_COLOR);
+                bottom.setProperty(PropNames.BORDER_BOTTOM_COLOR);
+                right.setProperty(PropNames.BORDER_RIGHT_COLOR);
+
+                list = new PropertyValueList(PropNames.BORDER_COLOR);
+                list.add(top);
+                list.add(left);
+                list.add(bottom);
+                list.add(right);
+                // Question: if less than four colors have been specified in
+                // the shorthand, what border-?-color properties, if any,
+                // have been specified?
+                return list;
+            }
+        }
+
+        /**
+         * Return the ColorType derived from the argument.
+         * The argument must be either a ColorType already, in which case
+         * it is returned unchanged, or an NCName whose string value is a
+         * standard color or 'transparent'.
+         * @param value <tt>PropertyValue</tt>
+         * @return <tt>ColorValue</tt> equivalent of the argument
+         * @exception <tt>PropertyException</tt>
+         */
+        private static ColorType getColor(PropertyValue value)
+                throws PropertyException
+        {
+            int property = value.getProperty();
+            if (value instanceof ColorType) return (ColorType)value;
+            // Must be a color enum
+            if ( ! (value instanceof NCName))
+                throw new PropertyException
+                    (value.getClass().getName() + " instead of color for "
+                                    + PropNames.getPropertyName(property));
+            // We have an NCName - hope it''s a color
+            NCName ncname = (NCName)value;
+            try {
+                return new ColorType(property, ncname.getNCName());
+            } catch (PropertyException e) {
+                throw new PropertyException
+                            (ncname.getNCName() + " instead of color for "
+                                    + PropNames.getPropertyName(property));
+            }
+        }
     }
 
     public static class BorderEndColor extends Properties {
@@ -1753,7 +1862,7 @@ public abstract class Properties {
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
-        private static final HashMap rwEnumValues = ColorCommon.rwColorEnums;
+        public static final Map enumValues = ColorCommon.colorTransEnums;
     }
 
     public static class BorderEndPrecedence extends Properties {
@@ -1775,8 +1884,7 @@ public abstract class Properties {
         public static final int inherited = NO;
 
         public static final ROStringArray enums = BorderCommonStyle.enums;
-        private static final HashMap rwEnumValues
-                                            = BorderCommonStyle.rwEnumValues;
+        public static final Map enumValues = BorderCommonStyle.enumValues;
     }
 
     public static class BorderEndWidth extends Properties {
@@ -1856,7 +1964,7 @@ public abstract class Properties {
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
-        private static final HashMap rwEnumValues = ColorCommon.rwColorEnums;
+        public static final Map enumValues = ColorCommon.colorTransEnums;
     }
 
     public static class BorderLeftStyle extends Properties {
@@ -1867,8 +1975,7 @@ public abstract class Properties {
         public static final int inherited = NO;
 
         public static final ROStringArray enums = BorderCommonStyle.enums;
-        private static final HashMap rwEnumValues
-                                            = BorderCommonStyle.rwEnumValues;
+        public static final Map enumValues = BorderCommonStyle.enumValues;
     }
 
     public static class BorderLeftWidth extends Properties {
@@ -1919,7 +2026,7 @@ public abstract class Properties {
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
-        private static final HashMap rwEnumValues = ColorCommon.rwColorEnums;
+        public static final Map enumValues = ColorCommon.colorTransEnums;
     }
 
     public static class BorderRightStyle extends Properties {
@@ -1930,8 +2037,7 @@ public abstract class Properties {
         public static final int inherited = NO;
 
         public static final ROStringArray enums = BorderCommonStyle.enums;
-        private static final HashMap rwEnumValues
-                                            = BorderCommonStyle.rwEnumValues;
+        public static final Map enumValues = BorderCommonStyle.enumValues;
     }
 
     public static class BorderRightWidth extends Properties {
@@ -2008,6 +2114,61 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = SHORTHAND_INH;
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * Legal values are:
+         *   an Inherit PropertyValue
+         *   a FromParent PropertyValue
+         *   a FromNearestSpecified PropertyValue
+         *   a Length PropertyValue
+         *   a list containing 2 Length PropertyValues
+         *   Note: the Lengths cannot be percentages (what about relative
+         *         lengths?)
+         */
+        public static PropertyValue complex(PropertyValue value)
+                    throws PropertyException
+        {
+            if ( ! (value instanceof PropertyValueList)) {
+                if (value instanceof Inherit
+                    || value instanceof FromParent
+                    || value instanceof FromNearestSpecified
+                    )
+                    return PropertySets.expandAndCopySHand(value);
+                if (value instanceof Numeric && ((Numeric)value).isLength())
+                    return PropertySets.expandAndCopySHand(value);
+                throw new PropertyException
+                    ("Invalid " + value.getClass().getName() +
+                        " object for border-spacing");
+            } else {
+                // Must be a pair of Lengths
+                if (((PropertyValueList)value).size() != 2)
+                    throw new PropertyException
+                        ("List of " + ((PropertyValueList)value).size() +
+                            " for BorderSpacing");
+                PropertyValue len1
+                    = (PropertyValue)(((PropertyValueList)value).getFirst());
+                PropertyValue len2
+                    = (PropertyValue)(((PropertyValueList)value).getLast());
+                // Note that this test excludes (deliberately) ems relative
+                // lengths.  I don't know whether this exclusion is valid.
+                if ( ! (len1 instanceof Numeric && len2 instanceof Numeric
+                    && ((Numeric)len1).isLength()
+                    && ((Numeric)len2).isLength()))
+                    throw new PropertyException
+                        ("2 values to BorderSpacing are not Lengths");
+                // Set the individual expanded properties of the
+                // border-separation compound property
+                // Should I clone these values?
+                len1.setProperty
+                    (PropNames.BORDER_SEPARATION_BLOCK_PROGRESSION_DIRECTION);
+                len2.setProperty
+                    (PropNames.BORDER_SEPARATION_INLINE_PROGRESSION_DIRECTION);
+                return value;
+            }
+        }
+
     }
 
     public static class BorderStartColor extends Properties {
@@ -2027,7 +2188,7 @@ public abstract class Properties {
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
-        private static final HashMap rwEnumValues = ColorCommon.rwColorEnums;
+        public static final Map enumValues = ColorCommon.colorTransEnums;
     }
 
     public static class BorderStartPrecedence extends Properties {
@@ -2049,8 +2210,7 @@ public abstract class Properties {
         public static final int inherited = NO;
 
         public static final ROStringArray enums = BorderCommonStyle.enums;
-        private static final HashMap rwEnumValues
-                                            = BorderCommonStyle.rwEnumValues;
+        public static final Map enumValues = BorderCommonStyle.enumValues;
     }
 
     public static class BorderStartWidth extends Properties {
@@ -2111,6 +2271,128 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
+
+        public static final ROStringArray enums = BorderCommonStyle.enums;
+        public static final Map enumValues = BorderCommonStyle.enumValues;
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * <p>If 'value' is an individual PropertyValue, it must contain
+         * either
+         *   a NCName containing a border-style name
+         *   a FromParent value,
+         *   a FromNearestSpecified value,
+         *   or an Inherit value.
+         *
+         * <p>If 'value' is a PropertyValueList, it contains a list of
+         * 2 to 4 NCName enum tokens representing border-styles.
+         *
+         * <p>The value(s) provided, if valid, are converted into a list
+         * containing the expansion of the shorthand.
+         * The first element is a value for border-top-style,
+         * the second element is a value for border-right-style,
+         * the third element is a value for border-bottom-style,
+         * the fourth element is a value for border-left-style.
+         */
+        public static PropertyValue complex(PropertyValue value)
+                    throws PropertyException
+        {
+            if ( ! (value instanceof PropertyValueList)) {
+                if (value instanceof Inherit
+                    || value instanceof FromParent
+                    || value instanceof FromNearestSpecified
+                    )
+                    return PropertySets.expandAndCopySHand(value);
+                if (value instanceof NCName) {
+                    // Must be a border-style
+                    EnumType enum;
+                    try {
+                        enum = new EnumType(PropNames.BORDER_STYLE,
+                                            ((NCName)value).getNCName());
+                    } catch (PropertyException e) {
+                        throw new PropertyException
+                            (((NCName)value).getNCName() +
+                                                    " not a border-style");
+                    }
+                    return PropertySets.expandAndCopySHand(enum);
+                }
+                else throw new PropertyException
+                    ("Invalid " + value.getClass().getName() +
+                                                " value for border-style");
+            } else {
+                // List may contain only multiple style specifiers
+                // i.e. NCNames specifying a standard style
+                PropertyValueList list = (PropertyValueList)value;
+                EnumType top, left, bottom, right;
+                int count = list.size();
+                if (count < 2 || count > 4)
+                    throw new PropertyException
+                        ("border-style list contains " + count + " items");
+
+                Iterator styles = list.iterator();
+
+                // There must be at least two
+                top = getEnum((PropertyValue)(styles.next()));
+                left = getEnum((PropertyValue)(styles.next()));
+                try {
+                    bottom = (EnumType)(top.clone());
+                    right = (EnumType)(left.clone());
+                } catch (CloneNotSupportedException cnse) {
+                    throw new PropertyException
+                                ("clone() not supported on EnumType");
+                }
+
+                if (styles.hasNext()) bottom
+                            = getEnum((PropertyValue)(styles.next()));
+                if (styles.hasNext()) right
+                            = getEnum((PropertyValue)(styles.next()));
+
+                // Set the properties for each
+                top.setProperty(PropNames.BORDER_TOP_STYLE);
+                left.setProperty(PropNames.BORDER_LEFT_STYLE);
+                bottom.setProperty(PropNames.BORDER_BOTTOM_STYLE);
+                right.setProperty(PropNames.BORDER_RIGHT_STYLE);
+
+                list = new PropertyValueList(PropNames.BORDER_STYLE);
+                list.add(top);
+                list.add(left);
+                list.add(bottom);
+                list.add(right);
+                // Question: if less than four styles have been specified in
+                // the shorthand, what border-?-style properties, if any,
+                // have been specified?
+                return list;
+            }
+        }
+
+        /**
+         * Return the EnumType derived from the argument.
+         * The argument must be an NCName whose string value is a
+         * standard style.
+         * @param value <tt>PropertyValue</tt>
+         * @return <tt>EnumValue</tt> equivalent of the argument
+         * @exception <tt>PropertyException</tt>
+         */
+        private static EnumType getEnum(PropertyValue value)
+                throws PropertyException
+        {
+            int property = value.getProperty();
+            // Must be a style enum
+            if ( ! (value instanceof NCName))
+                throw new PropertyException
+                    (value.getClass().getName() + " instead of style for "
+                                    + PropNames.getPropertyName(property));
+            // We have an NCName - hope it''s a style
+            NCName ncname = (NCName)value;
+            try {
+                return new EnumType(property, ncname.getNCName());
+            } catch (PropertyException e) {
+                throw new PropertyException
+                            (ncname.getNCName() + " instead of style for "
+                                    + PropNames.getPropertyName(property));
+            }
+        }
     }
 
     public static class BorderTop extends Properties {
@@ -2181,6 +2463,131 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
+
+        public static final ROStringArray enums = BorderCommonWidth.enums;
+        public static final ROStringArray enumValues
+                                            = BorderCommonWidth.enumValues;
+        public static final ROStringArray enumMappings
+                                            = BorderCommonWidth.enumMappings;
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * <p>If 'value' is an individual PropertyValue, it must contain
+         * either
+         *   a NCName containing a border-width name
+         *   a FromParent value,
+         *   a FromNearestSpecified value,
+         *   or an Inherit value.
+         *
+         * <p>If 'value' is a PropertyValueList, it contains a list of
+         * 2 to 4 NCName enum tokens representing border-widths.
+         *
+         * <p>The value(s) provided, if valid, are converted into a list
+         * containing the expansion of the shorthand.
+         * The first element is a value for border-top-width,
+         * the second element is a value for border-right-width,
+         * the third element is a value for border-bottom-width,
+         * the fourth element is a value for border-left-width.
+         */
+        public static PropertyValue complex(PropertyValue value)
+                    throws PropertyException
+        {
+            if ( ! (value instanceof PropertyValueList)) {
+                if (value instanceof Inherit
+                    || value instanceof FromParent
+                    || value instanceof FromNearestSpecified
+                    )
+                    return PropertySets.expandAndCopySHand(value);
+                if (value instanceof NCName) {
+                    // Must be a border-width
+                    MappedEnumType mapped;
+                    try {
+                        mapped = new MappedEnumType(PropNames.BORDER_WIDTH,
+                                            ((NCName)value).getNCName());
+                    } catch (PropertyException e) {
+                        throw new PropertyException
+                            (((NCName)value).getNCName() +
+                                                    " not a border-width");
+                    }
+                    return PropertySets.expandAndCopySHand(mapped);
+                }
+                else throw new PropertyException
+                    ("Invalid " + value.getClass().getName() +
+                                                " value for border-width");
+            } else {
+                // List may contain only multiple width specifiers
+                // i.e. NCNames specifying a standard width
+                PropertyValueList list = (PropertyValueList)value;
+                MappedEnumType top, left, bottom, right;
+                int count = list.size();
+                if (count < 2 || count > 4)
+                    throw new PropertyException
+                        ("border-width list contains " + count + " items");
+
+                Iterator widths = list.iterator();
+
+                // There must be at least two
+                top = getMappedEnum((PropertyValue)(widths.next()));
+                left = getMappedEnum((PropertyValue)(widths.next()));
+                try {
+                    bottom = (MappedEnumType)(top.clone());
+                    right = (MappedEnumType)(left.clone());
+                } catch (CloneNotSupportedException cnse) {
+                    throw new PropertyException
+                                ("clone() not supported on MappedEnumType");
+                }
+
+                if (widths.hasNext()) bottom
+                            = getMappedEnum((PropertyValue)(widths.next()));
+                if (widths.hasNext()) right
+                            = getMappedEnum((PropertyValue)(widths.next()));
+
+                // Set the properties for each
+                top.setProperty(PropNames.BORDER_TOP_WIDTH);
+                left.setProperty(PropNames.BORDER_LEFT_WIDTH);
+                bottom.setProperty(PropNames.BORDER_BOTTOM_WIDTH);
+                right.setProperty(PropNames.BORDER_RIGHT_WIDTH);
+
+                list = new PropertyValueList(PropNames.BORDER_WIDTH);
+                list.add(top);
+                list.add(left);
+                list.add(bottom);
+                list.add(right);
+                // Question: if less than four widths have been specified in
+                // the shorthand, what border-?-width properties, if any,
+                // have been specified?
+                return list;
+            }
+        }
+
+        /**
+         * Return the MappedEnumType derived from the argument.
+         * The argument must be an NCName whose string value is a
+         * standard width.
+         * @param value <tt>PropertyValue</tt>
+         * @return <tt>MappedEnumValue</tt> equivalent of the argument
+         * @exception <tt>PropertyException</tt>
+         */
+        private static MappedEnumType getMappedEnum(PropertyValue value)
+                throws PropertyException
+        {
+            int property = value.getProperty();
+            // Must be a width enum
+            if ( ! (value instanceof NCName))
+                throw new PropertyException
+                    (value.getClass().getName() + " instead of width for "
+                                    + PropNames.getPropertyName(property));
+            // We have an NCName - hope it''s a width
+            NCName ncname = (NCName)value;
+            try {
+                return new MappedEnumType(property, ncname.getNCName());
+            } catch (PropertyException e) {
+                throw new PropertyException
+                            (ncname.getNCName() + " instead of width for "
+                                    + PropNames.getPropertyName(property));
+            }
+        }
     }
 
     public static class Bottom extends Properties {
@@ -2355,8 +2762,8 @@ public abstract class Properties {
         public static final int initialValueType = AUTO_IT;
         public static final int inherited = NO;
 
-        public static PropertyValue complex
-            (int property, PropertyValue value) throws PropertyException
+        public static PropertyValue complex(PropertyValue value)
+                        throws PropertyException
         {
             // AUTO and INHERIT will have been normally processed
             if (! (value instanceof PropertyValueList))
@@ -2562,7 +2969,6 @@ public abstract class Properties {
             ,"rtl"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -2582,7 +2988,6 @@ public abstract class Properties {
             ,"after"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -2618,7 +3023,6 @@ public abstract class Properties {
             ,"text-before-edge"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -2663,7 +3067,6 @@ public abstract class Properties {
             ,"hide"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -2754,7 +3157,6 @@ public abstract class Properties {
             ,"right"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -2811,7 +3213,6 @@ public abstract class Properties {
             ,"monospace"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -2824,8 +3225,8 @@ public abstract class Properties {
                 Collections.unmodifiableMap((Map)rwEnumValues);
         }
 
-        public static PropertyValue complex
-            (int property, PropertyValue propvalue) throws PropertyException
+        public static PropertyValue complex(PropertyValue propvalue)
+                        throws PropertyException
         {
             // There is no point in attempting to validate the enumeration
             // tokens, because all NCNames and all Literals are valid.
@@ -2840,11 +3241,13 @@ public abstract class Properties {
             // be at the top level, and any font family names
             // that contained spaces will be in PropertyValueLists.
 
+            int property = propvalue.getProperty();
             // First, check that we have a list
             if ( ! (propvalue instanceof PropertyValueList)) {
                 if ( ! (propvalue instanceof StringType))
                     throw new PropertyException
-                        ("Unexpected PropertyValue for font-family");
+                        ("Invalid " + propvalue.getClass().getName() +
+                            " PropertyValue for font-family");
                 return new FontFamilySet(property,
                         new String[] {((StringType)propvalue).getString() });
             }
@@ -2866,7 +3269,8 @@ public abstract class Properties {
                 else if (value instanceof StringType)
                             name = ((StringType)value).getString();
                 else throw new PropertyException
-                                ("Unexpected PropertyValue for font-family");
+                        ("Invalid " + propvalue.getClass().getName() +
+                            " PropertyValue for font-family");
                 strings[i++] = name;
             }
             // Construct the FontFamilySet property value
@@ -2887,7 +3291,6 @@ public abstract class Properties {
             ,"character-by-character"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -2936,7 +3339,6 @@ public abstract class Properties {
             ,"smaller"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -3018,7 +3420,6 @@ public abstract class Properties {
             ,"ultra-expanded"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -3061,7 +3462,6 @@ public abstract class Properties {
             ,"backslant"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -3089,7 +3489,6 @@ public abstract class Properties {
             ,"small-caps"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -3123,7 +3522,6 @@ public abstract class Properties {
             ,"lighter"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -3148,7 +3546,6 @@ public abstract class Properties {
             ,"no-force"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -3271,7 +3668,6 @@ public abstract class Properties {
             ,"page"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -3297,7 +3693,6 @@ public abstract class Properties {
             ,"no-limit"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -3374,7 +3769,6 @@ public abstract class Properties {
             ,"auto-even"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -3440,7 +3834,6 @@ public abstract class Properties {
             ,"block"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -3566,7 +3959,6 @@ public abstract class Properties {
             ,"page"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
 
     }
@@ -3657,7 +4049,6 @@ public abstract class Properties {
             ,"use-content"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
 
     }
@@ -3684,7 +4075,6 @@ public abstract class Properties {
             ,"use-font-metrics"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -3718,7 +4108,6 @@ public abstract class Properties {
             ,"normal"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -3736,7 +4125,6 @@ public abstract class Properties {
             ,"traditional"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -3768,7 +4156,6 @@ public abstract class Properties {
             ,"treat-as-zero-width-space"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -3786,7 +4173,6 @@ public abstract class Properties {
             ,"normal"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
 
         // If this value changes, change the corresponding initialValue.
@@ -3919,7 +4305,6 @@ public abstract class Properties {
             ,"disregard-shifts"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -3949,7 +4334,6 @@ public abstract class Properties {
             ,"max-height"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -4120,7 +4504,6 @@ public abstract class Properties {
             ,"no-limit"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
 
     }
@@ -4149,7 +4532,6 @@ public abstract class Properties {
             ,"unbounded"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -4255,7 +4637,6 @@ public abstract class Properties {
             ,"any"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
 
     }
@@ -4295,7 +4676,6 @@ public abstract class Properties {
             ,"error-if-overflow"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
 
     }
@@ -4617,7 +4997,6 @@ public abstract class Properties {
             ,"right"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -4652,7 +5031,6 @@ public abstract class Properties {
             ,"avoid"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -4668,7 +5046,6 @@ public abstract class Properties {
             ,"indefinite"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -4700,7 +5077,6 @@ public abstract class Properties {
             ,"any"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -4782,7 +5158,6 @@ public abstract class Properties {
             ,"fixed"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -4810,7 +5185,6 @@ public abstract class Properties {
             ,"force"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -4898,7 +5272,6 @@ public abstract class Properties {
             ,"xsl-footnote-separator"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -4936,7 +5309,6 @@ public abstract class Properties {
             ,"baseline"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -4964,7 +5336,6 @@ public abstract class Properties {
             ,"relative"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -4986,7 +5357,6 @@ public abstract class Properties {
             ,"absolute-colorimetric"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -5026,7 +5396,6 @@ public abstract class Properties {
             ,"document"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -5067,7 +5436,6 @@ public abstract class Properties {
             ,"last-ending-within-page"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -5125,7 +5493,6 @@ public abstract class Properties {
             ,"ridge"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -5179,7 +5546,6 @@ public abstract class Properties {
             ,"non-uniform"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -5197,7 +5563,6 @@ public abstract class Properties {
             ,"resample-any-method"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -5248,7 +5613,6 @@ public abstract class Properties {
             ,"new"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -5266,7 +5630,6 @@ public abstract class Properties {
             ,"portrait"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -5276,8 +5639,8 @@ public abstract class Properties {
         public static final int initialValueType = NONE_IT;
         public static final int inherited = NO;
 
-        public static PropertyValue complex
-            (int property, PropertyValue list) throws PropertyException
+        public static PropertyValue complex(PropertyValue list)
+                        throws PropertyException
         {
             // Confirm that the list contains only UriType elements
             Iterator iter = ((PropertyValueList)list).iterator();
@@ -5711,7 +6074,6 @@ public abstract class Properties {
             ,"all"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -5798,7 +6160,6 @@ public abstract class Properties {
             ,"hide"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -5839,7 +6200,6 @@ public abstract class Properties {
             ,"retain"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -5869,11 +6229,10 @@ public abstract class Properties {
             ,"xsl-any"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
 
-        public static PropertyValue complex
-            (int property, PropertyValue list) throws PropertyException
+        public static PropertyValue complex(PropertyValue list)
+                        throws PropertyException
         {
             // Assume that the enumeration has been checked for.  Look for
             // a list of NCNames.
@@ -5902,7 +6261,6 @@ public abstract class Properties {
             ,"fixed"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -5963,7 +6321,6 @@ public abstract class Properties {
             ,"use-target-processing-context"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -5990,7 +6347,6 @@ public abstract class Properties {
             ,"document-root"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -6017,7 +6373,6 @@ public abstract class Properties {
             ,"use-normal-stylesheet"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -6058,7 +6413,6 @@ public abstract class Properties {
             ,"right"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -6112,7 +6466,6 @@ public abstract class Properties {
             ,"right"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -6148,7 +6501,6 @@ public abstract class Properties {
             ,"use-font-metrics"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -6197,8 +6549,8 @@ public abstract class Properties {
                                     ,BLINK
                             });
 
-        public static PropertyValue complex
-            (int property, PropertyValue list) throws PropertyException
+        public static PropertyValue complex(PropertyValue list)
+                        throws PropertyException
         {
             byte onMask = NO_DECORATION;
             byte offMask = NO_DECORATION;
@@ -6244,7 +6596,7 @@ public abstract class Properties {
                 throw new PropertyException
                     ("Contradictory instructions for text-decoration " +
                         list.toString());
-            return new TextDecorator(property, onMask, offMask);
+            return new TextDecorator(list.getProperty(), onMask, offMask);
         }
     }
 
@@ -6270,7 +6622,6 @@ public abstract class Properties {
             ,"use-font-metrics"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -6309,9 +6660,10 @@ public abstract class Properties {
          * <tt>Length</tt>s may be preceded or followed by a color
          * specifier.
          */
-        public static PropertyValue complex
-            (int property, PropertyValue list) throws PropertyException
+        public static PropertyValue complex(PropertyValue list)
+                        throws PropertyException
         {
+            int property = list.getProperty();
             if ( ! (list instanceof PropertyValueList) ||
                     ((PropertyValueList)list).size() == 0)
                 throw new PropertyException
@@ -6343,7 +6695,6 @@ public abstract class Properties {
             ,"lowercase"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -6388,7 +6739,6 @@ public abstract class Properties {
             ,"bidi-override"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -6429,7 +6779,6 @@ public abstract class Properties {
             ,"bottom"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -6469,7 +6818,6 @@ public abstract class Properties {
             ,"collapse"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -6513,7 +6861,6 @@ public abstract class Properties {
             ,"nowrap"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -6563,7 +6910,6 @@ public abstract class Properties {
             ,"ignore-if-surrounding-linefeed"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
@@ -6624,7 +6970,6 @@ public abstract class Properties {
             ,"normal"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -6651,7 +6996,6 @@ public abstract class Properties {
             ,"no-wrap"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         public static final ROStringArray enumValues = enums;
     }
 
@@ -6687,7 +7031,6 @@ public abstract class Properties {
             ,"tb"
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
-
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
         static {
