@@ -34,7 +34,6 @@ import org.apache.fop.render.rtf.RTFHandler;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
 import org.apache.fop.tools.ProxyContentHandler;
-import org.apache.fop.layoutmgr.LayoutManagerLS;
 
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
@@ -509,13 +508,6 @@ public class Driver {
             }
         }
         currentDocument.foInputHandler = foInputHandler;
-        /** LayoutStrategy is hard-wired for now, but needs to be made
-        accessible through the API and/or configuration */
-        if (foInputHandler instanceof FOTreeHandler) {
-            if (currentDocument.getLayoutStrategy() == null) {
-                currentDocument.setLayoutStrategy(new LayoutManagerLS());
-            }
-        }
 
         foInputHandler.setLogger(getLogger());
 
@@ -561,6 +553,8 @@ public class Driver {
      * This is the main render() method. The other render() methods are for
      * convenience, and normalize to this form, then run this.
      * Renders the FO document read by a SAX Parser from an InputSource.
+     * For versions not needing an FO Tree (e.g., Alt-Design), override this.
+     *
      * @param parser the SAX parser.
      * @param source the input source the parser reads from.
      * @throws FOPException if anything goes wrong.
@@ -569,22 +563,6 @@ public class Driver {
                 throws FOPException {
         parser.setContentHandler(getContentHandler());
 
-        /**
-         * The following statement handles the case of a LayoutStrategy that
-         * does not wish to build an FO Tree, but wishes to parse the incoming
-         * document some other way. This applies primarily to the alt-design
-         * system.
-         */
-        if (currentDocument.getLayoutStrategy() != null) {
-            if (!currentDocument.getLayoutStrategy().foTreeNeeded()) {
-                currentDocument.getLayoutStrategy().format(null, null);
-                return;
-            }
-        }
-
-        /**
-         * For all other cases, we wish to parse normally.
-         */
         try {
             /**
              The following statement triggers virtually all of the processing

@@ -18,6 +18,7 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.area.CTM;
@@ -106,6 +107,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     private AreaTree areaTree;
     private PageSequence pageSequence;
+    private Document doc;
 
     /**
      * This is the SimplePageMaster that should be used to create the page. It
@@ -121,8 +123,6 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     private HashMap staticContentLMs = new HashMap(4);
 
-    private LayoutManagerLS lmls;
-
     /**
      * This is the top level layout manager.
      * It is created by the PageSequence FO.
@@ -131,11 +131,11 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param pageseq the page sequence fo
      */
     public PageLayoutManager(AreaTree areaTree, PageSequence pageseq,
-                             LayoutManagerLS lmls) {
+        Document doc) {
         super(pageseq);
         this.areaTree = areaTree;
         pageSequence = pageseq;
-        this.lmls = lmls;
+        this.doc = doc;
     }
 
     /**
@@ -895,9 +895,11 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         staticContentLMs.put(sc.getFlowName(), lm);
         return lm;
     }
-
-    public LayoutManagerLS getLayoutManagerLS() {
-        return lmls;
+    
+    /**
+     * @return the apps.Document object controlling this generation
+     */
+    public Document getDocument() {
+        return doc;
     }
-
 }

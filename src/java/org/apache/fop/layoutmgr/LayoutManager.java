@@ -71,10 +71,10 @@ public interface LayoutManager {
     LayoutManager getParent();
 
     /**
-     * Get the LayoutManagerLS object that is at the top of the LM Tree
-     * @return the LayoutManagerLS object that is at the top of the LM Tree
+     * Get the Document object that is at the top of the LM Tree
+     * @return the Document object that is at the top of the LM Tree
      */
-    LayoutManagerLS getLayoutManagerLS();
+    org.apache.fop.apps.Document getDocument();
 
     /**
      * Initialize this layout manager.
