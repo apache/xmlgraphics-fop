@@ -1,5 +1,5 @@
 /* $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -42,7 +42,7 @@ public class PlanElement extends PlanObj {
             doc = svgDoc;
         }
         } catch(Throwable t) {
-            log.error("Could not convert Plan to SVG", t);
+            getLogger().error("Could not convert Plan to SVG", t);
             width = 0;
             height = 0;
         }
