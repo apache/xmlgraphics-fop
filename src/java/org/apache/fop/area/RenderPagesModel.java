@@ -35,14 +35,14 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
 
 /**
- * This uses the store pages model to store the pages
- * each page is either rendered if ready or prepared
+ * This uses the AreaTreeModel to store the pages
+ * Each page is either rendered if ready or prepared
  * for later rendering.
  * Once a page is rendered it is cleared to release the
  * contents but the PageViewport is retained. So even
  * though the pages are stored the contents are discarded.
  */
-public class RenderPagesModel extends StorePagesModel {
+public class RenderPagesModel extends AreaTreeModel {
     /**
      * The renderer that will render the pages.
      */

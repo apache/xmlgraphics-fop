@@ -222,7 +222,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         pageCount--;
         log.debug("Ending layout");
-        flush();
+        finishPage();
         pageSeq.setCurrentPageNumber(getPageCount());
     }
 
@@ -745,11 +745,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         //curSpan.setPosition(BPD, newpos);
         curBody.getMainReference().addSpan(curSpan);
         createFlow();
-    }
-
-    // See finishPage...
-    protected void flush() {
-        finishPage();
     }
 
     /**
