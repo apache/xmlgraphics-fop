@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: TableLayoutManager.java,v 1.8 2004/03/21 12:03:08 gmazza Exp $ */
 
 package org.apache.fop.layoutmgr.table;
 
@@ -135,10 +135,12 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         fobj.setLayoutDimension(PercentBase.BLOCK_BPD, context.getStackLimit().opt);
         fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, context.getRefIPD());
         fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, context.getStackLimit().opt);
-        
+
+        // either works out table of column widths or if proportional-column-width function
+        // is used works out total factor, so that value of single unit can be computed.
         int sumCols = 0;
         float factors = 0;
-        if (columns != null) { 
+        if (columns != null) {
             for (Iterator i = columns.iterator(); i.hasNext(); ) {
                 Column column = (Column) i.next();
                 Length width = column.getWidth();
@@ -148,8 +150,12 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
                 }
             }
         }
+        // sets TABLE_UNITS in case where one or more columns is defined using proportional-column-width
         if (sumCols < context.getRefIPD()) {
-            fobj.setLayoutDimension(PercentBase.TABLE_UNITS, (context.getRefIPD() - sumCols) / factors);
+            if (fobj.getLayoutDimension(PercentBase.TABLE_UNITS).floatValue() == 0.0) {
+                fobj.setLayoutDimension(PercentBase.TABLE_UNITS,
+                                      (context.getRefIPD() - sumCols) / factors);
+            }
         }
         MinOptMax headerSize = null;
         if (tableHeader != null) {
