@@ -30,7 +30,7 @@ You will only need to adjust the classpath if you build FOP in some other way. S
       </section>
       <section id="env-java-home">
         <title>JAVA_HOME</title>
-        <p>The build script uses <link href="http://jakarta.apache.org/ant/">Ant</link>, a popular java-based build tool, which requires that the environment variable JAVA_HOME point to your local JDK root directory. This is true even if you use JDK 1.2 or above, which normally don't need this setting.</p>
+        <p>The build script uses <link href="http://jakarta.apache.org/ant/">Ant</link>, a popular java-based build tool, which requires that the environment variable JAVA_HOME point to your local JDK root directory. This is true even if you use JDK 1.2 or above, which normally does not need this setting.</p>
       </section>
   </section>
   <section id="build-script">
