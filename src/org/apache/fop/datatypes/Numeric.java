@@ -271,10 +271,27 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     }
 
     /**
+     * Set the value.  This used on <tt>Numeric</tt> clones in the <i>abs>/i>
+     * <i>min</i> and <i>max</i> operations.
+     * @param value - the <tt>double</tt> value.
+     */
+    protected void setValue(double value) {
+        this.value = value;
+    }
+
+    /**
      * @return <tt>int</tt> unit power of this <i>Numeric</i>.
      */
     public int getPower() {
         return power;
+    }
+
+    /**
+     * Set the power.  A complement to the <i>setValue</i> method.
+     * @param power - the <tt>int</tt> power.
+     */
+    protected void setPower(int power) {
+        this.power = power;
     }
 
     /**
@@ -673,57 +690,77 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     }
 
     /**
-     * Return the absolute value of this <tt>Numeric</tt>.  This is an
+     * Return a new <tt>Numeric</tt> with the absolute value of this.
+     * This is an
      * implementation of the core function library <tt>abs</tt> function.
-     * It is only valid on an absolute numeric of unit power zero.
      * @return A <tt>double</tt> containing the absolute value.
-     * @exception PropertyException if <i>value</i> is not unit power zero.
+     * @exception PropertyException if cloning fails.
      */
-    public double abs() throws PropertyException {
-        if (power != 0)
-            throw new PropertyException
-                    ("abs requires absolute numeric of unit power zero");
-        return Math.abs(value);
+    public Numeric abs() throws PropertyException {
+        Numeric n;
+        try {
+            n = (Numeric)(this.clone());
+        } catch (CloneNotSupportedException e) {
+            throw new PropertyException(e);
+        }
+        n.setValue(Math.abs(value));
+        return n;
     }
 
     /**
-     * Return a <tt>double</tt> which is the maximum of the current value and
+     * Return a <tt>Numeric</tt> which is the maximum of the current value and
      * the operand.  This is an implementation of the core function library
      * <tt>max</tt> function.  It is only valid for comparison of two
-     * absolute <tt>Numeric</tt> values.
+     * values of the same unit power and same type, i.e. both absolute or
+     * both percentages.
      * @param op a <tt>Numeric</tt> representing the comparison value.
      * @return a <tt>double</tt> representing the <i>max</i> of
      * <i>this.value</i> and the <i>value</i> of <i>op</i>.
-     * @throws PropertyException If the power of this
-     * object and the operand are different or not 0.
+     * @throws PropertyException If the baseunit or power of this
+     * object and the operand are different, or if cloning fails.
      */
-    public double max(Numeric op) throws PropertyException {
-        // Only compare if both have unit power 0
-        if (power == op.power && power == 0) {
-            return Math.max(value, op.value); 
+    public Numeric max(Numeric op) throws PropertyException {
+        Numeric n;
+        // Only compare if both have same unit power and same baseunit
+        if (power == op.power && baseunit == op.baseunit) {
+            try {
+                n = (Numeric)(this.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new PropertyException(e);
+            }
+            n.setValue(Math.max(value, op.value));
+            return n;
         }
         throw new PropertyException
-                ("max() must compare numerics of unit power 0.");
+                ("max() must compare numerics of same baseunit & unit power.");
     }
 
     /**
-     * Return a <tt>double</tt> which is the minimum of the current value and
+     * Return a <tt>Numeric</tt> which is the minimum of the current value and
      * the operand.  This is an implementation of the core function library
      * <tt>min</tt> function.  It is only valid for comparison of two
-     * absolute <tt>Numeric</tt> values.
+     * values of the same unit power and same type, i.e. both absolute or
+     * both percentages.
      * @param op a <tt>Numeric</tt> representing the comparison value.
      * @return a <tt>double</tt> representing the <i>min</i> of
      * <i>this.value</i> and the <i>value</i> of <i>op</i>.
-     * @throws PropertyException If the power of this
-     * object and the operand are different or not 0.
+     * @throws PropertyException If the baseunit or power of this
+     * object and the operand are different, or if cloning fails.
      */
-    public double min(Numeric op) throws PropertyException {
-        // Only compare if both have unit power 0
-        if (power == op.power && power == 0) {
-            return Math.min(value, op.value); 
+    public Numeric min(Numeric op) throws PropertyException {
+        Numeric n;
+        // Only compare if both have same unit power and same baseunit
+        if (power == op.power && baseunit == op.baseunit) {
+            try {
+                n = (Numeric)(this.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new PropertyException(e);
+            }
+            n.setValue(Math.min(value, op.value));
+            return n;
         }
         throw new PropertyException
-                ("min() must compare numerics of unit power 0.");
+                ("min() must compare numerics of same baseunit & unit power.");
     }
 
     /**
