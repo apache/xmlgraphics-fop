@@ -32,12 +32,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.table.Row;
 import org.apache.fop.fo.Constants;
-
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.Property;
 
 
@@ -70,7 +64,6 @@ public class TableRow extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        setupID();
         getFOInputHandler().startRow(this);
     }
 
@@ -82,33 +75,6 @@ public class TableRow extends FObj {
     }
 
     private void doSetup() {
-
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        // this.propertyList.get("block-progression-dimension");
-
-        // Common Aural Properties
-        CommonAural mAurProps = propMgr.getAuralProps();
-
-        // Common Border, Padding, and Background Properties
-        // only background apply, border apply if border-collapse
-        // is collapse.
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
-        // Common Relative Position Properties
-        CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
-
-        // this.propertyList.get("break-before");
-        // this.propertyList.get("break-after");
-        setupID();
-        // this.propertyList.get("height");
-        // this.propertyList.get("keep-together");
-        // this.propertyList.get("keep-with-next");
-        // this.propertyList.get("keep-with-previous");
-
-
         this.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
         this.backgroundColor =
             this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();

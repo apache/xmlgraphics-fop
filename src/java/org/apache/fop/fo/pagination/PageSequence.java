@@ -287,7 +287,6 @@ public class PageSequence extends FObj {
 
         // this.propertyList.get("country");
         // this.propertyList.get("language");
-        setupID();
 
         //call startStructuredPageSequence to ensure, that startPageSequence is called
         //before startFlow.

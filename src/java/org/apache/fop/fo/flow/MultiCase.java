@@ -21,7 +21,6 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ToBeImplementedElement;
-import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:multi-case object. See Sec. 6.9.4 of the XSL-FO
@@ -34,18 +33,6 @@ public class MultiCase extends ToBeImplementedElement {
      */
     public MultiCase(FONode parent) {
         super(parent);
-    }
-
-    private void setup() {
-
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        setupID();
-        // this.propertyList.get("starting-state");
-        // this.propertyList.get("case-name");
-        // this.propertyList.get("case-title");
-
     }
 
     public String getName() {

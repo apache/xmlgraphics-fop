@@ -31,12 +31,7 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.table.Cell;
-
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 
 /**
  * Class modelling the fo:table-cell object. See Sec. 6.7.10 of the XSL-FO
@@ -168,36 +163,10 @@ public class TableCell extends FObj {
         return numRowsSpanned;
     }
 
+    /**
+     * @todo convert to addProperties()
+     */
     private void doSetup() {
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        // Common Aural Properties
-        CommonAural mAurProps = propMgr.getAuralProps();
-
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
-        // Common Relative Position Properties
-        CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
-
-        // this.propertyList.get("border-after-precedence");
-        // this.propertyList.get("border-before-precendence");
-        // this.propertyList.get("border-end-precendence");
-        // this.propertyList.get("border-start-precendence");
-        // this.propertyList.get("block-progression-dimension");
-        // this.propertyList.get("column-number");
-        // this.propertyList.get("display-align");
-        // this.propertyList.get("relative-align");
-        // this.propertyList.get("empty-cells");
-        // this.propertyList.get("ends-row");
-        // this.propertyList.get("height");
-        setupID();
-        // this.propertyList.get("number-columns-spanned");
-        // this.propertyList.get("number-rows-spanned");
-        // this.propertyList.get("starts-row");
-        // this.propertyList.get("width");
 
         this.iColNumber =
             propertyList.get(PR_COLUMN_NUMBER).getNumber().intValue();

@@ -21,7 +21,6 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ToBeImplementedElement;
-import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:multi-toggle property. See Sec. 6.9.5 of the XSL-FO
@@ -36,16 +35,9 @@ public class MultiToggle extends ToBeImplementedElement {
         super(parent);
     }
 
-    private void setup() {
-
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        setupID();
-        // this.propertyList.get("switch-to");
-
-    }
-
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:multi-toggle";
     }

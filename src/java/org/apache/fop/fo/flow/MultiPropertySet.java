@@ -49,11 +49,9 @@ public class MultiPropertySet extends ToBeImplementedElement {
             invalidChildError(loc, nsURI, localName);
     }
 
-    private void setup() {
-        setupID();
-        // this.propertyList.get("active-state");
-    }
-
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:multi-property-set";
     }

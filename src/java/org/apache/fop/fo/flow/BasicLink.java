@@ -60,7 +60,6 @@ public class BasicLink extends Inline {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        setupID();
         
         // This logic is for determining the link represented by this FO.
         String ext =  propertyList.get(PR_EXTERNAL_DESTINATION).getString();

@@ -23,12 +23,6 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonMarginInline;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.PercentLength;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.LMVisited;
@@ -54,48 +48,12 @@ public class Leader extends FObjMixed implements LMVisited {
         super(parent);
     }
 
+    /**
+     * @todo convert to addProperties()
+     */
     private void setup() {
-
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        // Common Aural Properties
-        CommonAural mAurProps = propMgr.getAuralProps();
-
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
         // Common Font Properties
         this.fontState = propMgr.getFontState(getFOInputHandler().getFontInfo());
-
-        // Common Margin Properties-Inline
-        CommonMarginInline mProps = propMgr.getMarginInlineProps();
-
-        // Common Relative Position Properties
-        CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
-
-        // this.propertyList.get("alignment-adjust");
-        // this.propertyList.get("alignment-baseline");
-        // this.propertyList.get("baseline-shift");
-        // this.propertyList.get("color");
-        // this.propertyList.get("dominant-baseline");
-        // this.propertyList.get("text-depth");
-        // this.propertyList.get("text-altitude");
-        setupID();
-        // this.propertyList.get("leader-alignment");
-        // this.propertyList.get("leader-length");
-        // this.propertyList.get("leader-pattern");
-        // this.propertyList.get("leader-pattern-width");
-        // this.propertyList.get("rule-style");
-        // this.propertyList.get("rule-thickness");
-        // this.propertyList.get("letter-spacing");
-        // this.propertyList.get("line-height");
-        // this.propertyList.get("line-height-shift-adjustment");
-        // this.propertyList.get("text-shadow");
-        // this.propertyList.get("visibility");
-        // this.propertyList.get("word-spacing");
-        // this.propertyList.get("z-index");
 
         // color properties
         ColorType c = this.propertyList.get(PR_COLOR).getColorType();

@@ -21,7 +21,6 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:list-item-body object. See Sec. 6.8.4 of the XSL-FO
@@ -36,21 +35,16 @@ public class ListItemBody extends FObj {
         super(parent);
     }
 
+    /**
+     * @todo convert to addProperties()
+     */
     private void setup() {
-
-            // Common Accessibility Properties
-            CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-            setupID();
-            // this.propertyList.get("keep-together");
-
         /*
          * For calculating the lineage - The fo:list-item-body formatting object
          * does not generate any areas. The fo:list-item-body formatting object
          * returns the sequence of areas created by concatenating the sequences
          * of areas returned by each of the child nodes of the fo:list-item-body.
          */
-
     }
 
     public String getName() {

@@ -62,10 +62,6 @@ public class ListItem extends FObj {
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         getFOInputHandler().startListItem(this);
-    }
-
-    private void setup() {
-        setupID();
         this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
         this.alignLast = this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
         this.lineHeight =

@@ -75,8 +75,6 @@ public class PageNumberCitation extends FObj {
         // Common Font Properties
         this.fontState = propMgr.getFontState(getFOInputHandler().getFontInfo());
 
-        setupID();
-
         ColorType c = this.propertyList.get(PR_COLOR).getColorType();
         this.red = c.getRed();
         this.green = c.getGreen();

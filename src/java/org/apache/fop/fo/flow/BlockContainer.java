@@ -25,10 +25,6 @@ import java.util.List;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.properties.CommonAbsolutePosition;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.layoutmgr.BlockContainerLayoutManager;
 
 import org.xml.sax.Attributes;
@@ -65,44 +61,11 @@ public class BlockContainer extends FObj {
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         this.span = this.propertyList.get(PR_SPAN).getEnum();
-        setupID();
-    }
+        this.backgroundColor =
+            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
-    private void setup() {
-
-            // Common Accessibility Properties
-            CommonAbsolutePosition mAbsProps = propMgr.getAbsolutePositionProps();
-
-            // Common Border, Padding, and Background Properties
-            CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-            CommonBackground bProps = propMgr.getBackgroundProps();
-
-            // Common Margin-Block Properties
-            CommonMarginBlock mProps = propMgr.getMarginProps();
-
-            // this.propertyList.get("block-progression-dimension");
-            // this.propertyList.get("break-after");
-            // this.propertyList.get("break-before");
-            // this.propertyList.get("clip");
-            // this.propertyList.get("display-align");
-            // this.propertyList.get("height");
-            setupID();
-            // this.propertyList.get("keep-together");
-            // this.propertyList.get("keep-with-next");
-            // this.propertyList.get("keep-with-previous");
-            // this.propertyList.get("overflow");
-            // this.propertyList.get("reference-orientation");
-            // this.propertyList.get("span");
-            // this.propertyList.get("width");
-            // this.propertyList.get("writing-mode");
-
-            this.backgroundColor =
-                this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
-
-            this.width = this.propertyList.get(PR_WIDTH).getLength().getValue();
-            this.height = this.propertyList.get(PR_HEIGHT).getLength().getValue();
-            span = this.propertyList.get(PR_SPAN).getEnum();
-
+        this.width = this.propertyList.get(PR_WIDTH).getLength().getValue();
+        this.height = this.propertyList.get(PR_HEIGHT).getLength().getValue();
     }
 
     /**

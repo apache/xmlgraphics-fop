@@ -67,8 +67,6 @@ public class Inline extends FObjMixed {
                                    + " be directly under flow", locator);
         }
 
-        setupID();
-
         int textDecoration = this.propertyList.get(PR_TEXT_DECORATION).getEnum();
 
         if (textDecoration == TextDecoration.UNDERLINE) {

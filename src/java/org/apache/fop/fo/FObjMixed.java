@@ -62,12 +62,6 @@ public class FObjMixed extends FObj {
         addChildNode(ft);
     }
 
-    private void setup() {
-        if (this.propertyList != null) {
-            setupID();
-        }
-    }
-
     /**
      * @return iterator for this object
      */

@@ -26,11 +26,6 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ToBeImplementedElement;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 
 /**
  * Class modelling the fo:initial-property-set object. See Sec. 6.6.4 of the
@@ -52,37 +47,6 @@ public class InitialPropertySet extends ToBeImplementedElement {
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
             invalidChildError(loc, nsURI, localName);
-    }
-
-    private void setup() {
-
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        // Common Aural Properties
-        CommonAural mAurProps = propMgr.getAuralProps();
-
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
-        // Common Font Properties
-        //this.fontState = propMgr.getFontState(area.getFontInfo());
-
-        // Common Relative Position Properties
-        CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
-
-        // this.propertyList.get("color");
-        setupID();
-        // this.propertyList.get("letter-spacing");
-        // this.propertyList.get("line-height");
-        // this.propertyList.get("line-height-shift-adjustment");
-        // this.propertyList.get("score-spaces");
-        // this.propertyList.get("text-decoration");
-        // this.propertyList.get("text-shadow");
-        // this.propertyList.get("text-transform");
-        // this.propertyList.get("word-spacing");
-
     }
 
     public String getName() {

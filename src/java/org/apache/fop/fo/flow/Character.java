@@ -29,13 +29,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.OneCharIterator;
 import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonHyphenation;
-import org.apache.fop.fo.properties.CommonMarginInline;
-import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.LMVisited;
 
 /**
@@ -74,53 +67,6 @@ public class Character extends FObj implements LMVisited {
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
             invalidChildError(loc, nsURI, localName);
-    }
-
-    private void setup() throws FOPException {
-
-        // Common Aural Properties
-        CommonAural mAurProps = propMgr.getAuralProps();
-
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
-        // Common Font Properties
-        //this.fontState = propMgr.getFontState(area.getFontInfo());
-
-        // Common Hyphenation Properties
-        CommonHyphenation mHyphProps = propMgr.getHyphenationProps();
-
-        // Common Margin Properties-Inline
-        CommonMarginInline mProps = propMgr.getMarginInlineProps();
-
-        // Common Relative Position Properties
-        CommonRelativePosition mRelProps =
-          propMgr.getRelativePositionProps();
-
-        // this.propertyList.get("alignment-adjust");
-        // this.propertyList.get("treat-as-word-space");
-        // this.propertyList.get("alignment-baseline");
-        // this.propertyList.get("baseline-shift");
-        // this.propertyList.get("character");
-        // this.propertyList.get("color");
-        // this.propertyList.get("dominant-baseline");
-        // this.propertyList.get("text-depth");
-        // this.propertyList.get("text-altitude");
-        // this.propertyList.get("glyph-orientation-horizontal");
-        // this.propertyList.get("glyph-orientation-vertical");
-        setupID();
-        // this.propertyList.get("keep-with-next");
-        // this.propertyList.get("keep-with-previous");
-        // this.propertyList.get("letter-spacing");
-        // this.propertyList.get("line-height");
-        // this.propertyList.get("line-height-shift-adjustment");
-        // this.propertyList.get("score-spaces");
-        // this.propertyList.get("suppress-at-line-break");
-        // this.propertyList.get("text-decoration");
-        // this.propertyList.get("text-shadow");
-        // this.propertyList.get("text-transform");
-        // this.propertyList.get("word-spacing");
     }
 
     /**

@@ -21,7 +21,6 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ToBeImplementedElement;
-import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:multi-properties object. See Sec. 6.9.6 of the XSL-FO
@@ -34,15 +33,6 @@ public class MultiProperties extends ToBeImplementedElement {
      */
     public MultiProperties(FONode parent) {
         super(parent);
-    }
-
-    private void setup() {
-
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        setupID();
-
     }
 
     public String getName() {

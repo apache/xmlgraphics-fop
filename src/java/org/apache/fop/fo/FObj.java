@@ -121,6 +121,33 @@ public class FObj extends FONode implements Constants {
         propertyList.addAttributesToList(attlist);
         propMgr = new PropertyManager(propertyList);
         setWritingMode();
+        
+        // if this FO can have a PR_ID, make sure it is unique
+        if (PropertySets.canHaveId(getNameId())) {
+            setupID();
+        }
+    }
+
+    /**
+     * Setup the id for this formatting object.
+     * Most formatting objects can have an id that can be referenced.
+     * This methods checks that the id isn't already used by another
+     * fo and sets the id attribute of this object.
+     */
+    private void setupID() {
+        Property prop = this.propertyList.get(PR_ID);
+        if (prop != null) {
+            String str = prop.getString();
+            if (str != null && !str.equals("")) {
+                Set idrefs = getFOInputHandler().getIDReferences();
+                if (!idrefs.contains(str)) {
+                    id = str;
+                    idrefs.add(id);
+                } else {
+                    getLogger().warn("duplicate id:" + str + " ignored");
+                }
+            }
+        }
     }
 
     /**
@@ -283,28 +310,6 @@ public class FObj extends FONode implements Constants {
             return ((FObj) parent).getLayoutDimension(key);
         }
         return new Integer(0);
-    }
-
-    /**
-     * Setup the id for this formatting object.
-     * Most formatting objects can have an id that can be referenced.
-     * This methods checks that the id isn't already used by another
-     * fo and sets the id attribute of this object.
-     */
-    public void setupID() {
-        Property prop = this.propertyList.get(PR_ID);
-        if (prop != null) {
-            String str = prop.getString();
-            if (str != null && !str.equals("")) {
-                Set idrefs = getFOInputHandler().getIDReferences();
-                if (!idrefs.contains(str)) {
-                    id = str;
-                    idrefs.add(id);
-                } else {
-                    getLogger().warn("duplicate id:" + str + " ignored");
-                }
-            }
-        }
     }
 
     /**

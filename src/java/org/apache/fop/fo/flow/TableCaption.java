@@ -21,11 +21,6 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ToBeImplementedElement;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 
 /**
  * Class modelling the fo:table-caption object. See Sec. 6.7.5 of the XSL-FO
@@ -38,33 +33,6 @@ public class TableCaption extends ToBeImplementedElement {
      */
     public TableCaption(FONode parent) {
         super(parent);
-    }
-
-    /**
-     * Initialize property values.
-     */
-    private void setup() {
-
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        // Common Aural Properties
-        CommonAural mAurProps = propMgr.getAuralProps();
-
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
-        // Common Relative Position Properties
-        CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
-
-        // this.propertyList.get("block-progression-dimension");
-        // this.propertyList.get("height");
-        setupID();
-        // this.propertyList.get("inline-progression-dimension");
-        // this.propertyList.get("keep-togethe");
-        // this.propertyList.get("width");
-
     }
 
     public String getName() {

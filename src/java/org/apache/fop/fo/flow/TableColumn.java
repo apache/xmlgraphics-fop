@@ -29,9 +29,6 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-
 /**
  * Class modelling the fo:table-column object. See Sec. 6.7.4 of the XSL-FO
  * Standard.
@@ -93,19 +90,10 @@ public class TableColumn extends FObj {
         return numColumnsRepeated;
     }
 
+    /**
+     * @todo convert to addProperties()
+     */
     public void initialize() {
-
-        // Common Border, Padding, and Background Properties
-        // only background apply, border apply if border-collapse
-        // is collapse.
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
-        // this.propertyList.get("column-width");
-        // this.propertyList.get("number-columns-repeated");
-        // this.propertyList.get("number-columns-spanned");
-        // this.propertyList.get("visibility");
-
         iColumnNumber = propertyList.get(PR_COLUMN_NUMBER).getNumber().intValue();
 
         numColumnsRepeated =
@@ -115,9 +103,6 @@ public class TableColumn extends FObj {
             this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
         columnWidth = this.propertyList.get(PR_COLUMN_WIDTH).getLength();
-
-        // initialize id
-        setupID();
 
         initialized = true;
     }
