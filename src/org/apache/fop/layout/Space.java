@@ -48,7 +48,11 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-package org.apache.xml.fop.layout;
+package org.apache.fop.layout;
+
+
 
 abstract public class Space extends Box {
+
 }
+

@@ -48,26 +48,49 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-package org.apache.xml.fop.layout;
+package org.apache.fop.layout;
 
-import org.apache.xml.fop.render.Renderer;
+
+
+import org.apache.fop.render.Renderer;
+
+
 
 public class InlineSpace extends Space {
+
     private int size; // in millipoints
+
     
+
     public InlineSpace(int amount) {
+
 	this.size = amount;
+
     }
+
+
 
     public int getSize() {
+
 	return size;
+
     }
+
+
 
     public void setSize(int amount) {
+
 	this.size = amount;
+
     }
 
+
+
     public void render(Renderer renderer) {
+
 	renderer.renderInlineSpace(this);
+
     }
+
 }
+

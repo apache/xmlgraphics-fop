@@ -48,9 +48,15 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-package org.apache.xml.fop.fo;
+package org.apache.fop.fo;
+
+
 
 public interface ElementMapping {
 
+
+
     public void addToBuilder(FOTreeBuilder builder);
+
 }
+

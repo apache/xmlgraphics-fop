@@ -48,19 +48,35 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-package org.apache.xml.fop.apps;
+package org.apache.fop.apps;
+
+
 
 /**
+
  * Exception thrown when FOP has a problem
+
  */
+
 public class FOPException extends Exception {
 
+
+
     /**
+
      * create a new FOP Exception
+
      *
+
      * @param message descriptive message
+
      */
+
     public FOPException(String message) {
+
 	super(message);
+
     }
+
 }
+
