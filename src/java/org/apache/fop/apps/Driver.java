@@ -581,7 +581,9 @@ public class Driver implements LogEnabled {
         /** LayoutStrategy is hard-wired for now, but needs to be made
         accessible through the API and/or configuration */
         if (foInputHandler instanceof FOTreeHandler) {
-            currentDocument.setLayoutStrategy(new LayoutManagerLS(currentDocument));
+            if (currentDocument.getLayoutStrategy() == null) {
+                currentDocument.setLayoutStrategy(new LayoutManagerLS(currentDocument));
+            }
         }
         treeBuilder.foTreeControl = currentDocument;
         try {
