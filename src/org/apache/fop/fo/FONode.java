@@ -10,11 +10,14 @@ package org.apache.fop.fo;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.Area;
+import org.apache.fop.layout.AreaClass;
 import org.apache.fop.layout.LinkSet;
 import org.apache.fop.system.BufferManager;
+import org.apache.fop.fo.flow.Marker;
 
 // Java
 import java.util.Vector;
+import java.util.Hashtable;
 
 /**
  * base class for nodes in the formatting object tree
@@ -23,6 +26,8 @@ abstract public class FONode {
 
     protected FObj parent;
 
+    protected String areaClass = AreaClass.UNASSIGNED;
+  
 	public BufferManager bufferManager;
 	
     public Vector children = new Vector();		// made public for searching for id's
@@ -50,11 +55,22 @@ abstract public class FONode {
 
     protected LinkSet linkSet;
 
+    // count of areas generated-by/returned-by
+    public int areasGenerated = 0;
+  
+    // markers
+    protected Hashtable markers;
+
     protected FONode(FObj parent) {
-	this.parent = parent;
+		this.parent = parent;
 		if (parent != null) {
 			this.bufferManager = parent.bufferManager;
 		}
+	
+		markers = new Hashtable();
+	
+		if (null != parent)
+			this.areaClass = parent.areaClass;
     }
 
     public void setIsInTableCell() {
@@ -202,4 +218,22 @@ abstract public class FONode {
 		}
 		((FONode) children.elementAt(this.marker)).rollback(snapshot);
 	}
+
+
+  public void addMarker(Marker marker) throws FOPException {
+	  String mcname = marker.getMarkerClassName();
+	  if (!markers.containsKey(mcname) && children.isEmpty())
+		  markers.put(mcname, marker);
+	  else
+		  throw new FOPException("fo:marker must be an initial child," +
+		  "and 'marker-class-name' must be unique for same parent");
+  }
+  
+  public boolean hasMarkers() {
+	  return !markers.isEmpty();
+  }
+  
+  public Vector getMarkers() {
+	  return new Vector(markers.values());
+  }
 }
