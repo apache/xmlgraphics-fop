@@ -43,7 +43,7 @@
 				</fo:flow>
 			</fo:page-sequence>
 			<fo:page-sequence master-name="one">
-				<fo:static-content flow-name="xsl-before">
+				<fo:static-content flow-name="xsl-region-before">
 					<fo:block-container height="1cm" width="6cm" top="0.2cm" left="0cm" position="absolute">
 						<fo:block text-align="start" font-size="10pt" font-family="serif" line-height="12pt">
 						</fo:block>
@@ -63,7 +63,7 @@
 						<fo:display-rule space-before.optimum="0pt" space-after.optimum="0pt"/>
 		            </fo:block-container>
 				</fo:static-content>
-				<fo:static-content flow-name="xsl-after">
+				<fo:static-content flow-name="xsl-region-after">
 					<fo:block-container height="1cm" width="17cm" top="0cm" left="0cm" position="absolute">
 						<fo:display-rule space-before.optimum="0pt" space-after.optimum="0pt"/>
 		            </fo:block-container>

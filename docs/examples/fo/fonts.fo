@@ -24,7 +24,7 @@
 		</fo:page-sequence-master>
 </fo:layout-master-set>
 <fo:page-sequence master-name="firstAndRest">
-<fo:flow flow-name="xsl-body">
+<fo:flow flow-name="xsl-region-body">
 
   <fo:block font-family="Helvetica" font-size="14pt">
 Helvetica

@@ -58,14 +58,14 @@ This files shows next to the trivial usage of fo:block and fo:inline-sequence ex
   <fo:page-sequence master-name="basicPSM">
 
 
-<fo:static-content flow-name="xsl-before">
+<fo:static-content flow-name="xsl-region-before">
 <fo:block text-align="end" font-size="10pt" font-family="serif" line-height="14pt" color="red" >
 This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:page-number/>
 </fo:block>
 </fo:static-content>
 
 
-<fo:flow flow-name="xsl-body">
+<fo:flow flow-name="xsl-region-body">
 <fo:block font-size="18pt" font-family="sans-serif" line-height="24pt" space-after.optimum="15pt" background-color="blue" color="white" text-align="center" padding-top="3pt">FOP: An Open-Source XSL Formatter and Renderer</fo:block>
 <fo:block id="sec1" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >A) 
       What is FOP?</fo:block>

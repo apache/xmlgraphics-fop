@@ -5,7 +5,7 @@
   </fo:simple-page-master>
 </fo:layout-master-set>
 <fo:page-sequence master-name="one">
-<fo:flow>
+<fo:flow flow-name="xsl-region-body">
 <svg:svg width="500" height="400">
   <svg:defs>
     <svg:linearGradient id="myGradient" x1="0" y1="200" x2="500" y2="350">

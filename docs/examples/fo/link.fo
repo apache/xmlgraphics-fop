@@ -21,7 +21,7 @@
   <fo:page-sequence master-name="first">
 
     <!-- text body -->
-    <fo:flow flow-name="xsl-body">
+    <fo:flow flow-name="xsl-region-body">
 
       <!-- Normal text -->
       <fo:block text-align="center">0. Normal text without link
