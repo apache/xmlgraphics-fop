@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>fop-alt.design</name>
+	<name>FOP_Alt-Design</name>
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</name>
+			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
 			<arguments>
+				<dictionary>
+					<key>LaunchConfigHandle</key>
+					<value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;launchConfiguration local=&quot;false&quot; path=&quot;/FOP_Alt-Design/.externalToolBuilders/com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder.launch&quot;/&gt;
+</value>
+				</dictionary>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
