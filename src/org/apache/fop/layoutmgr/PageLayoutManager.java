@@ -13,6 +13,7 @@ import org.apache.fop.fo.flow.StaticContent;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
+import org.apache.fop.fo.pagination.PageNumberGenerator;
 import org.apache.fop.fo.properties.Constants;
 
 import java.util.ArrayList;
@@ -32,6 +33,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             breakps = bp;
         }
     }
+
+    private PageNumberGenerator pageNumberGenerator;
+    private int pageCount = 1;
+    private String pageNumberString;
 
     /** True if haven't yet laid out any pages.*/
     private boolean bFirstPage;
@@ -60,8 +65,6 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private AreaTree areaTree;
     private PageSequence pageSequence;
 
-    private int pageCount = 1;
-
     /**
      * This is the top level layout manager.
      * It is created by the PageSequence FO.
@@ -72,6 +75,15 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         pageSequence = pageseq;
     }
 
+    public void setPageCounting(int pc, PageNumberGenerator generator) {
+        pageCount = pc;
+        pageNumberGenerator = generator;
+        pageNumberString = pageNumberGenerator.makeFormattedPageNumber(pageCount);
+    }
+
+    public int getPageCount() {
+        return pageCount;
+    }
 
     /**
      * The layout process is designed to be able to be run in a thread.
@@ -104,10 +116,11 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
                 // finish page and add to area tree
                 finishPage();
+                pageCount++;
+                pageNumberString = pageNumberGenerator.makeFormattedPageNumber(pageCount);
             }
-            pageCount++;
         }
-
+        pageCount--;
     }
 
 
@@ -135,7 +148,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     }
 
     public String getCurrentPageNumber() {
-        return "" + pageCount;
+        return pageNumberString;
     }
 
     public PageViewport resolveRefID(String ref) {
@@ -251,7 +264,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private PageViewport makeNewPage(boolean bIsBlank, boolean bIsLast) {
         finishPage();
         try {
-            curPage = pageSequence.createPage(bIsBlank, bIsLast);
+            curPage = pageSequence.createPage(pageCount, bIsBlank, bIsLast);
         } catch (FOPException fopex) { /* ???? */
             fopex.printStackTrace();
         }
