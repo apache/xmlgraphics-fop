@@ -7,22 +7,20 @@
 
 package org.apache.fop.layout;
 
-import org.apache.fop.datatypes.Length;
-
-import java.awt.Color;
-
 /**
  * Store all hyphenation related properties on an FO.
  * Public "structure" allows direct member access.
  */
-public class BackgroundProps {
-    public int backAttachment;
-    public Color backColor;
-    public String backImage;
-    public int backRepeat;
-    public Length backPosHorizontal;
-    public Length backPosVertical;
+public class RelativePositionProps {
+    public int marginTop;
+    public int marginBottom;
+    public int marginLeft;
+    public int marginRight;
+    public int spaceBefore;
+    public int spaceAfter;
+    public int startIndent;
+    public int endIndent;
 
-    public BackgroundProps() {}
+    public RelativePositionProps() {}
 
 }
