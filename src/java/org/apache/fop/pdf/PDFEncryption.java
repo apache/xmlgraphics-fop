@@ -71,7 +71,16 @@ public interface PDFEncryption {
      * Adds a PDFFilter to the PDFStream object
      * @param stream the stream to add an encryption filter to
      */    
-    void applyFilter(PDFStream stream);
+    void applyFilter(AbstractPDFStream stream);
+ 
+    /**
+     * Encrypt an array of bytes using a reference PDFObject for calculating
+     * the encryption key.
+     * @param data data to encrypt
+     * @param refObj reference PDFObject
+     * @return byte[] the encrypted data
+     */
+    byte[] encrypt(byte[] data, PDFObject refObj);
  
     /**
      * Returns the trailer entry for encryption.
