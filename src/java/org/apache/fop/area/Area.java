@@ -21,7 +21,6 @@ package org.apache.fop.area;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.util.ArrayList;
 
 import org.apache.fop.datastructs.Node;
@@ -138,10 +137,6 @@ public class Area extends AreaNode implements Cloneable  {
 
 
     private void setup() {
-        content = new ContentRectangle();
-        padding = content.getPadding();
-        borders = padding.getBorders();
-        spaces = borders.getSpaces();
         try {
             contentWritingMode = generatedBy.getWritingMode();
             contentIsHorizontal = WritingMode.isHorizontal(contentWritingMode);
@@ -153,6 +148,10 @@ public class Area extends AreaNode implements Cloneable  {
         } catch (PropertyException e) {
             throw new RuntimeException(e.getMessage());
         }
+        content = new ContentRectangle(this, contentWritingMode);
+        //padding = new PaddingRectangle(frameWritingMode, content, 0.0, 0.0);
+        borders = padding.getBorders();
+        spaces = borders.getSpaces();
     }
 
     /**
@@ -184,147 +183,6 @@ public class Area extends AreaNode implements Cloneable  {
             FONode generatedBy) {
         super(pageSeq, generatedBy);
         setup();
-    }
-
-    /**
-     * Gets the <code>block-progression-dimension</code> of the contents of
-     * this area in millipoints.  This value is taken from the appropriate
-     * dimension of the <code>Rectangle2D</code> representing this area.  If no
-     * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
-     * created, then the zero value is returned.
-     * @return the <code>block-progression-dimension</code> in millipoints
-     */
-    public int getBPDim() {
-        return (int)(getBPDimPts()*1000);
-    }
-
-    /**
-     * Gets the <code>block-progression-dimension</code> of the contents of
-     * this area in points.  This value is taken from the appropriate dimension
-     * of the <code>Rectangle2D</code> representing this area.  If no
-     * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
-     * created, then the zero value is returned.
-     * N.B. The method is synchronized only on this object.
-     * @return the <code>block-progression-dimension</code> in points
-     */
-    public double getBPDimPts() {
-        synchronized (this) {
-            // TODO - check this.  Should the rectangle just be rotated as
-            // required?  This is incompatible with transform in space
-            // requests at block reference-areas.  OK if the transform is
-            // only for area rotations.  This depnds on how Java handles the
-            // layout of text in horizontal locales.
-            if (contentIsHorizontal) {
-                return content.getHeight();
-            } else {
-                return content.getWidth();
-            }
-        }
-    }
-
-    /**
-     * Sets the <code>block-progression-dimension</code> of the contents of
-     * this area to the specified value in millipoints.
-     * This value is applied to the appropriate dimension of the
-     * <code>Rectangle2D</code> representing this area.  If no
-     * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
-     * created, then the value is applied.
-     * @param millipts <code>block-progression-dimension</code> to set, in
-     * millipoints
-     */
-    public void setBPDim(int millipts) {
-        setBPDimPts(millipts/1000.0f);
-    }
-
-    /**
-     * Sets the <code>block-progression-dimension</code> of the contents of
-     * this area to the specified value in points.
-     * This value is applied to the appropriate dimension of the
-     * <code>Rectangle2D</code> representing this area.  If no
-     * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
-     * created, then the value is applied.
-     * N.B. The method is synchronized only on this object.
-     * @param pts <code>block-progression-dimension</code> to set, in points
-     */
-    public void setBPDimPts(double pts) {
-        synchronized (this) {
-            // TODO - check this
-            if (contentIsHorizontal) {
-                content.setRect(
-                        content.getX(),content.getY(), content.getWidth(), pts);
-            } else {
-                content.setRect(
-                        content.getX(),content.getY(), pts, content.getHeight());
-            }
-        }
-    }
-
-    /**
-     * Gets the <code>inline-progression-dimension</code> of the contents of
-     * this area in millipoints.  This value is taken from the appropriate
-     * dimension of the <code>Rectangle2D</code> representing this area.  If no
-     * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
-     * created, then the zero value is returned.
-     * N.B. The method is synchronized only on this object.
-     * @return the <code>inline-progression-dimension</code> in millipoints
-     */
-    public int getIPDim() {
-        return (int)(getIPDimPts()*1000);
-    }
-
-    /**
-     * Gets the <code>inline-progression-dimension</code> of the contents of
-     * this area in points.  This value is taken from the appropriate dimension
-     * of the <code>Rectangle2D</code> representing this area.  If no
-     * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
-     * created, then the zero value is returned.
-     * N.B. The method is synchronized only on this object.
-     * @return the <code>inline-progression-dimension</code> in points
-     */
-    public double getIPDimPts() {
-        synchronized (this) {
-            // TODO - check this
-            if (contentIsHorizontal){
-                return content.getWidth();
-            } else {
-                return content.getHeight();
-            }
-        }
-    }
-
-    /**
-     * Sets the <code>inline-progression-dimension</code> of the contents of
-     * this area, in points.  This value is applied to the appropriate
-     * dimension of the <code>Rectangle2D</code> representing this area.  If no
-     * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
-     * created, then the value is applied.
-     * @param millipts <code>inline-progression-dimension</code> to set, in
-     * millipoints
-     */
-    public void setIPDim(int millipts) {
-        setIPDimPts(millipts/1000.0f);
-    }
-
-    /**
-     * Sets the <code>inline-progression-dimension</code> of the contents of
-     * this area, in points.  This value is applied to the appropriate
-     * dimension of the <code>Rectangle2D</code> representing this area.  If no
-     * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
-     * created, then the value is applied.
-     * N.B. The method is synchronized only on this object.
-     * @param pts <code>inline-progression-dimension</code> to set, in points
-     */
-    public void setIPDimPts(double pts) {
-        synchronized (this) {
-            // Check this
-            if (contentIsHorizontal){
-                content.setRect(
-                        content.getX(), content.getY(), pts, content.getHeight());
-            } else {
-                content.setRect(
-                        content.getX(), content.getY(), content.getWidth(), pts);
-            }
-        }
     }
 
     /** An initially null range of minima and maxima for
@@ -375,13 +233,184 @@ public class Area extends AreaNode implements Cloneable  {
         }
     }
 
+    public class AreaGeometry extends Rectangle2D.Double {
+        protected int writingMode;
+        protected boolean isLeftToRight;
+        protected boolean isHorizontal;
+
+        public AreaGeometry(int writingMode) {
+            super();
+            this.writingMode = writingMode;
+            try {
+                isHorizontal = WritingMode.isHorizontal(writingMode);
+                isLeftToRight = WritingMode.isLeftToRight(writingMode);
+            } catch (PropertyException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+
+        public AreaGeometry(int writingMode,
+                double ipOrigin, double bpOrigin, double ipDim, double bpDim) {
+            this(writingMode);
+            setRect(ipOrigin, bpOrigin, ipDim, bpDim);
+        }
+        
+        public void setRect(
+                double ipOrigin, double bpOrigin, double ipDim, double bpDim) {
+            // Now work out what belongs where
+            Point2D origin = null;
+            Point2D wideHigh = null;
+            try {
+                origin = WritingMode.dimsRelToAbs(
+                        ipOrigin, bpOrigin, writingMode);
+                wideHigh = WritingMode.dimsRelToAbs(
+                        ipDim, bpDim, writingMode);
+            } catch (PropertyException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+            setRect(origin.getX(), origin.getY(),
+                    wideHigh.getX(), wideHigh.getY());
+        }
+
+        public int getWritingMode() {
+            return writingMode;
+        }
+
+        /**
+         * Gets the <code>block-progression-dimension</code> of the area
+         * geometry in millipoints.  This value is taken from the appropriate
+         * dimension of the <code>Rectangle2D</code> representing this area.
+         * @return the <code>block-progression-dimension</code> in millipoints
+         */
+        public int getBPDim() {
+            return (int)(getBPDimPts()*1000);
+        }
+
+        /**
+         * Gets the <code>block-progression-dimension</code> of the area
+         * geometry in points.  This value is taken from the appropriate dimension
+         * of the <code>Rectangle2D</code> representing this area.
+         * N.B. The method is synchronized only on this object.
+         * @return the <code>block-progression-dimension</code> in points
+         */
+        public double getBPDimPts() {
+            synchronized (this) {
+                // TODO - check this.  Should the rectangle just be rotated as
+                // required?  This is incompatible with transform in space
+                // requests at block reference-areas.  OK if the transform is
+                // only for area rotations.  This depnds on how Java handles the
+                // layout of text in horizontal locales.
+                if (isHorizontal) {
+                    return getHeight();
+                } else {
+                    return getWidth();
+                }
+            }
+        }
+
+        /**
+         * Sets the <code>block-progression-dimension</code> of the contents of
+         * this area to the specified value in millipoints.
+         * This value is applied to the appropriate dimension of the
+         * <code>Rectangle2D</code> representing this area.  If no
+         * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
+         * created, then the value is applied.
+         * @param millipts <code>block-progression-dimension</code> to set, in
+         * millipoints
+         */
+        public void setBPDim(int millipts) {
+            setBPDimPts(millipts/1000.0f);
+        }
+
+        /**
+         * Sets the <code>block-progression-dimension</code> of the contents of
+         * this area to the specified value in points.
+         * This value is applied to the appropriate dimension of the
+         * <code>Rectangle2D</code> representing this area.  If no
+         * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
+         * created, then the value is applied.
+         * N.B. The method is synchronized only on this object.
+         * @param pts <code>block-progression-dimension</code> to set, in points
+         */
+        public void setBPDimPts(double pts) {
+            synchronized (this) {
+                // TODO - check this
+                if (isHorizontal) {
+                    setRect(getX(), getY(), getWidth(), pts);
+                } else {
+                    setRect(getX(), getY(), pts, getHeight());
+                }
+            }
+        }
+
+        /**
+         * Gets the <code>inline-progression-dimension</code> of the contents of
+         * this area in millipoints.  This value is taken from the appropriate
+         * dimension of the <code>Rectangle2D</code> representing this area.
+         * N.B. The method is synchronized only on this object.
+         * @return the <code>inline-progression-dimension</code> in millipoints
+         */
+        public int getIPDim() {
+            return (int)(getIPDimPts()*1000);
+        }
+
+        /**
+         * Gets the <code>inline-progression-dimension</code> of the area
+         * geometry in points.  This value is taken from the appropriate dimension
+         * of the <code>Rectangle2D</code> representing this area.
+         * N.B. The method is synchronized only on this object.
+         * @return the <code>inline-progression-dimension</code> in points
+         */
+        public double getIPDimPts() {
+            synchronized (this) {
+                // TODO - check this
+                if (isHorizontal){
+                    return getWidth();
+                } else {
+                    return getHeight();
+                }
+            }
+        }
+
+        /**
+         * Sets the <code>inline-progression-dimension</code> of the contents of
+         * this area, in points.  This value is applied to the appropriate
+         * dimension of the <code>Rectangle2D</code> representing this area.  If no
+         * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
+         * created, then the value is applied.
+         * @param millipts <code>inline-progression-dimension</code> to set, in
+         * millipoints
+         */
+        public void setIPDim(int millipts) {
+            setIPDimPts(millipts/1000.0f);
+        }
+
+        /**
+         * Sets the <code>inline-progression-dimension</code> of the area
+         * geometry, in points.  This value is applied to the appropriate
+         * dimension of the <code>Rectangle2D</code> representing this area.
+         * N.B. The method is synchronized only on this object.
+         * @param pts <code>inline-progression-dimension</code> to set, in points
+         */
+        public void setIPDimPts(double pts) {
+            synchronized (this) {
+                // Check this
+                if (isHorizontal){
+                    setRect(getX(), getY(), pts, getHeight());
+                } else {
+                    setRect(getX(), getY(), getWidth(), pts);
+                }
+            }
+        }
+    }
+
     /**
      * <code>AreaFrame</code> is the basic type for the geometry of a rectangle
      * enclosing another rectangle, e.g., a padding rectangle. 
      * @author pbw
      * @version $Revision: 1.1.2.2 $ $Name:  $
      */
-    public class AreaFrame extends Rectangle2D.Double {
+    public class AreaFrame extends AreaGeometry {
 
         /** The framed rectangle */
         protected Rectangle2D contents = null;
@@ -392,8 +421,8 @@ public class Area extends AreaNode implements Cloneable  {
         /**
          * 
          */
-        public AreaFrame() {
-            super();
+        public AreaFrame(int writingMode) {
+            super(writingMode);
             contents = new Rectangle2D.Double();
             contentOffset = new Point2D.Double();
         }
@@ -402,8 +431,8 @@ public class Area extends AreaNode implements Cloneable  {
          * Instantiates a frame with 0-width edges.
          * @param contents the contained rectangle
          */
-        public AreaFrame(Rectangle2D contents) {
-            super();
+        public AreaFrame(int writingMode, AreaGeometry contents) {
+            super(writingMode);
             setRect(contents);
             this.contents = contents;
             this.contentOffset = new Point2D.Double();
@@ -424,9 +453,10 @@ public class Area extends AreaNode implements Cloneable  {
          * @param contentOffset the offset to the origin point of the framed
          * rectangle from the origin point of <code>this</code> framing rectangle.
          */
-        public AreaFrame(double x, double y, double w, double h,
-                Rectangle2D contents, Point2D contentOffset) {
-            super(x, y, w, h);
+        public AreaFrame(int writingMode,
+                double ipOrigin, double bpOrigin, double ipDim, double bpDim,
+                AreaGeometry contents, Point2D contentOffset) {
+            super(writingMode, ipOrigin, bpOrigin, ipDim,  bpDim);
             this.contents = contents;
             this.contentOffset = contentOffset;
         }
@@ -442,9 +472,10 @@ public class Area extends AreaNode implements Cloneable  {
          * @param contentOffset offset from origin of the framing rectangle to the
          * origin of the framed rectangle
          */
-        public AreaFrame(Rectangle2D rect, Rectangle2D contents,
+        public AreaFrame(int writingMode,
+                Rectangle2D rect, AreaGeometry contents,
                 Point2D contentOffset) {
-            this(rect.getX(), rect.getY(),
+            this(writingMode, rect.getX(), rect.getY(),
                     rect.getWidth(), rect.getHeight(),
                     contents, contentOffset);
         }
@@ -540,50 +571,6 @@ public class Area extends AreaNode implements Cloneable  {
         public void setEnd(double end) {
             double diff = end - (getX() - contentOffset.getX() - contents.getX());
             setRect(getX(), getY(), getWidth() + diff, getHeight());
-        }
-    }
-
-    /**
-     * Defines the <i>content rectangle</i> of an area.  It is the central class
-     * in the management of the layout geometry of areas.  The other generated
-     * rectangular areas are accessed through and defined in terms of this area. 
-     * @author pbw
-     * @version $Revision: 1.1.2.2 $ $Name:  $
-     */
-    public class ContentRectangle extends Double {
-
-        /**
-         * Creates an empty contents object.
-         */
-        public ContentRectangle() {
-            super();
-            padding = new PaddingRectangle(Area.this);
-            padding.setContents(this);
-        }
-
-        /**
-         * Creates a contents object from the given origin (<code>x, y</code>)
-         * width (<code>w</code>) and height (<code>h</code>).
-         * @param x x-origin
-         * @param y y-origin
-         * @param w width
-         * @param h height
-         */
-        public ContentRectangle(double x, double y, double w, double h) {
-            super(x, y, w, h);
-            padding = new PaddingRectangle(Area.this);
-            padding.setContents(this);
-        }
-
-        private PaddingRectangle padding = null;
-
-        public PaddingRectangle getPadding() {
-            return padding;
-        }
-
-        public void setRect(double x, double y, double w, double h) {
-            super.setRect(x, y, w, h);
-            padding.setContents(this);
         }
     }
 
