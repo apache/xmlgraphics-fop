@@ -69,7 +69,7 @@ public class AutoLength extends LengthProperty {
     //    }
 
     /**
-     * @see org.apache.fop.fo.Property#getString()
+     * @see org.apache.fop.fo.properties.Property#getString()
      */
     public String getString() {
         return "auto";
