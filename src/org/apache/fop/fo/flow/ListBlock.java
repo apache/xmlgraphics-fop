@@ -182,6 +182,9 @@ public class ListBlock extends FObj {
             listItem.setBodyIndent(this.bodyIndent);
             Status status;
             if ((status = listItem.layout(blockArea)).isIncomplete()) {
+                if(status.getCode() == Status.AREA_FULL_NONE && i > 0) {
+                    status = new Status(Status.AREA_FULL_SOME);
+                }
                 this.marker = i;
                 blockArea.end();
                 area.addChild(blockArea);
