@@ -120,7 +120,7 @@ n(orphans) + n(widows) in total. This will only be relevant for areas at
 the start or end of a particular reference area.
    </p>
   <p>
-   <img src="page.svg" alt="Diagram of Page Layout"/>
+   <!--img src="page.svg" alt="Diagram of Page Layout"/-->
   </p>
   <p>
 The spacing between the areas (including spacing in block areas inside
@@ -268,7 +268,7 @@ also effected as there must be enough space on the page to fit the
 side float.
   </p>
   <p>
-<img src="float.svg" alt="Diagram of Float"/>
+<!--img src="float.svg" alt="Diagram of Float"/-->
   </p>
   </section>
 <section>
