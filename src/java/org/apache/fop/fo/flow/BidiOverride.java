@@ -52,10 +52,10 @@ public class BidiOverride extends FObjMixed {
        /* Check to see if this node can have block-level children.
         * See validateChildNode() below.
         */
-       int lvlLeader = findAncestor("fo:leader");
-       int lvlInCntr = findAncestor("fo:inline-container");
-       int lvlInline = findAncestor("fo:inline");
-       int lvlFootnote = findAncestor("fo:footnote");
+       int lvlLeader = findAncestor(FO_LEADER);
+       int lvlInCntr = findAncestor(FO_INLINE_CONTAINER);
+       int lvlInline = findAncestor(FO_INLINE);
+       int lvlFootnote = findAncestor(FO_FOOTNOTE);
 
        if (lvlLeader > 0) {
            if (lvlInCntr < 0 ||

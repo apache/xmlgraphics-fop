@@ -514,8 +514,9 @@ public class FObj extends FONode implements Constants {
             || lName.equals("page-number") 
             || lName.equals("page-number-citation")
             || lName.equals("basic-link")
-            || lName.equals("multi-toggle")
-            || (!isOutOfLineFODescendant && lName.equals("footnote"))
+            || (lName.equals("multi-toggle")
+                && (getNameId() == FO_MULTI_CASE || findAncestor(FO_MULTI_CASE) > 0))
+            || (lName.equals("footnote") && !isOutOfLineFODescendant)
             || isNeutralItem(nsURI, lName)));
     }
 
@@ -551,15 +552,15 @@ public class FObj extends FONode implements Constants {
     /**
      * Convenience method for validity checking.  Checks if the
      * current node has an ancestor of a given name.
-     * @param ancestorName -- node name to check for (e.g., "fo:root")
+     * @param ancestorID -- Constants ID of node name to check for (e.g., FO_ROOT)
      * @return number of levels above FO where ancestor exists, 
      *    -1 if not found
      */
-    protected int findAncestor(String ancestorName) {
+    protected int findAncestor(int ancestorID) {
         int found = 1;
         FONode temp = getParent();
         while (temp != null) {
-            if (temp.getName().equals(ancestorName)) {
+            if (temp.getNameId() == ancestorID) {
                 return found;
             }
             found += 1;

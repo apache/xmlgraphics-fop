@@ -111,23 +111,6 @@ public abstract class FONode {
     }
 
     /**
-     * Returns the name of the node
-     * @return the name of this node
-     */
-    public String getName() {
-        return null;
-    }
-
-    /**
-     * Returns the Constants class integer value of this node
-     * @return the integer enumeration of this FO (e.g., FO_ROOT)
-     *      if a formatting object, FO_UNKNOWN_NODE otherwise
-     */
-    public int getNameId() {
-        return Constants.FO_UNKNOWN_NODE;
-    }
-
-    /**
      * Checks to make sure, during SAX processing of input document, that the
      * incoming node is valid for the this (parent) node (e.g., checking to
      * see that fo:table is not an immediate child of fo:root)
@@ -343,6 +326,23 @@ public abstract class FONode {
         } else {
             return "Error(" + loc.getLineNumber() + "/" + loc.getColumnNumber() + "): ";
         }
+    }
+
+    /**
+     * Returns the name of the node
+     * @return the name of this node
+     */
+    public String getName() {
+        return null;
+    }
+
+    /**
+     * Returns the Constants class integer value of this node
+     * @return the integer enumeration of this FO (e.g., FO_ROOT)
+     *      if a formatting object, FO_UNKNOWN_NODE otherwise
+     */
+    public int getNameId() {
+        return Constants.FO_UNKNOWN_NODE;
     }
 }
 
