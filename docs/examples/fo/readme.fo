@@ -43,12 +43,12 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
 
 <fo:page-sequence-master master-name="basicPSM" >
 	<fo:repeatable-page-master-alternatives>
-		<fo:conditional-page-master-reference master-name="first"
+		<fo:conditional-page-master-reference master-reference="first"
 			page-position="first" />
-		<fo:conditional-page-master-reference master-name="rest"
+		<fo:conditional-page-master-reference master-reference="rest"
 			page-position="rest" />
 		<!-- recommended fallback procedure -->
-		<fo:conditional-page-master-reference master-name="rest" />
+		<fo:conditional-page-master-reference master-reference="rest" />
 	</fo:repeatable-page-master-alternatives>
 </fo:page-sequence-master>
 
@@ -56,7 +56,7 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
   <!-- end: defines page layout -->
 
   <!-- actual layout -->
-  <fo:page-sequence master-name="basicPSM">
+  <fo:page-sequence master-reference="basicPSM">
 
 
 <fo:static-content flow-name="xsl-region-before">

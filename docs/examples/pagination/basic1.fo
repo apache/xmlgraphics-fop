@@ -22,7 +22,7 @@
   <!-- end: defines page layout -->
 
   <!-- actual layout -->
-  <fo:page-sequence master-name="only" initial-page-number="1">
+  <fo:page-sequence master-reference="only" initial-page-number="1">
 
     <!-- usage of page layout -->
     <!-- header -->

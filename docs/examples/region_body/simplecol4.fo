@@ -23,7 +23,7 @@
   </fo:layout-master-set>
 
   <!-- actual layout -->
-  <fo:page-sequence master-name="only">
+  <fo:page-sequence master-reference="only">
     <fo:static-content flow-name="xsl-region-before">
       <fo:block font-size="16pt" 
                 font-family="sans-serif" 

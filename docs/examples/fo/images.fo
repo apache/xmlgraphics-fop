@@ -17,20 +17,20 @@
 
 <fo:page-sequence-master master-name="psmOddEven" >
 	<fo:repeatable-page-master-alternatives>
-		<fo:conditional-page-master-reference master-name="right"
+		<fo:conditional-page-master-reference master-reference="right"
 			page-position="first" />
-		<fo:conditional-page-master-reference master-name="left"
+		<fo:conditional-page-master-reference master-reference="left"
 			odd-or-even="even" />
-		<fo:conditional-page-master-reference master-name="right"
+		<fo:conditional-page-master-reference master-reference="right"
 			odd-or-even="odd" />
 		<!-- recommended fallback procedure -->
-		<fo:conditional-page-master-reference master-name="rest" />
+		<fo:conditional-page-master-reference master-reference="rest" />
 	</fo:repeatable-page-master-alternatives>
 </fo:page-sequence-master>
 
 </fo:layout-master-set>
 
-<fo:page-sequence id="N2528" master-name="psmOddEven">
+<fo:page-sequence id="N2528" master-reference="psmOddEven">
 
 <fo:static-content flow-name="xsl-region-after">
 	<fo:block text-align-last="center" font-size="10pt">
@@ -71,7 +71,7 @@
 </fo:flow>
 </fo:page-sequence>
 
-<fo:page-sequence id="N2561" master-name="psmOddEven">
+<fo:page-sequence id="N2561" master-reference="psmOddEven">
 <fo:static-content flow-name="xsl-region-after">
 <fo:block text-align-last="center" font-size="10pt">
 <fo:page-number/></fo:block>

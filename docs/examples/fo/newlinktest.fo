@@ -15,7 +15,7 @@
   <!-- end: defines page layout -->
 
   <!-- actual layout -->
-  <fo:page-sequence master-name="first">
+  <fo:page-sequence master-reference="first">
 
 
 
