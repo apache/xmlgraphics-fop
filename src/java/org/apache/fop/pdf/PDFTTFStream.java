@@ -61,11 +61,10 @@ public class PDFTTFStream extends PDFStream {
 
     /**
      * Main constructor
-     * @param num PDF object number
      * @param len original length
      */
-    public PDFTTFStream(int num, int len) {
-        super(num);
+    public PDFTTFStream(int len) {
+        super();
         origLength = len;
     }
 
@@ -76,23 +75,24 @@ public class PDFTTFStream extends PDFStream {
      */
     protected int output(java.io.OutputStream stream)
             throws java.io.IOException {
-        int length = 0;
-        String filterEntry = applyFilters();
-        String preData = new String(this.number + " " + this.generation
-                                    + " obj\n<< /Length "
-                                    + (data.getSize() + 1) + " " + filterEntry
-                                    + " " + "/Length1 " + origLength
-                                    + " >>\n");
+        getDocumentSafely().getLogger().debug("Writing " 
+                + origLength + " bytes of TTF font data");
 
-        byte[] p = preData.getBytes();
-        stream.write(p);
-        length += p.length;
-
-        length += outputStreamData(stream);
-        p = "endobj\n".getBytes();
-        stream.write(p);
-        length += p.length;
+        int length = super.output(stream);
+        getDocumentSafely().getLogger().debug("Embedded TrueType/OpenType font");
         return length;
+    }
+
+    /**
+     * @see org.apache.fop.pdf.AbstractPDFStream#buildStreamDict(String)
+     */
+    protected String buildStreamDict(String lengthEntry) {
+        final String filterEntry = getFilterList().buildFilterDictEntries();
+        return (getObjectID()
+                + "<< /Length " + lengthEntry
+                + " /Length1 " + origLength
+                + "\n" + filterEntry
+                + "\n>>\n");
     }
 
     /**
@@ -102,9 +102,7 @@ public class PDFTTFStream extends PDFStream {
      * @throws IOException in case of an I/O problem
      */
     public void setData(byte[] data, int size) throws IOException {
-        this.data.reset();
-        /**@todo Log using Logger */
-        System.out.println("Writing " + size + " bytes of font data");
+        this.data.clear();
         this.data.getOutputStream().write(data, 0, size);
     }
 
