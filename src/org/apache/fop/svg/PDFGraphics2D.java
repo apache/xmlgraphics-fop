@@ -639,10 +639,16 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         if (paint instanceof LinearGradientPaint) {
             LinearGradientPaint gp = (LinearGradientPaint)paint;
             Color[] cols = gp.getColors();
+            float[] fractions = gp.getFractions();
             Point2D p1 = gp.getStartPoint();
             Point2D p2 = gp.getEndPoint();
             MultipleGradientPaint.CycleMethodEnum cycenum = gp.getCycleMethod();
             boolean cyclic = cycenum == MultipleGradientPaint.REPEAT;
+            AffineTransform transform = graphicsState.getTransform();
+            transform.concatenate(gp.getTransform());
+
+            p1 = transform.transform(p1, null);
+            p2 = transform.transform(p2, null);
 
             ArrayList theCoords = new ArrayList();
             theCoords.add(new Double(p1.getX()));
@@ -665,44 +671,51 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             theEncode.add(new Double(1));
 
             ArrayList theBounds = new ArrayList();
-            theBounds.add(new Double(0));
-            theBounds.add(new Double(1));
-
-            ArrayList theFunctions = new ArrayList();
 
             ArrayList someColors = new ArrayList();
 
-            Color c1 = cols[0];
-            Color c2 = cols[1];
-
-            PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
-                                           c1.getBlue());
-            someColors.add(color1);
-            PDFColor color2 = new PDFColor(c2.getRed(), c2.getGreen(),
-                                           c2.getBlue());
-            someColors.add(color2);
-
-            PDFFunction myfunc = this.pdfDoc.makeFunction(2, theDomain, null,
-                    color1.getVector(), color2.getVector(), 1.0);
+            for(int count = 0; count < cols.length; count++) {
+                Color c1 = cols[count];
+                PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
+                                               c1.getBlue());
+                someColors.add(color1);
+                if(count > 0 && count < cols.length - 1) {
+                    theBounds.add(new Double(fractions[count]));
+                }
+            }
 
             PDFColorSpace aColorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
-            PDFPattern myPat = this.pdfDoc.createGradient(resourceContext, false, aColorSpace,
-                    someColors, null, theCoords);
+            PDFPattern myPat = pdfDoc.createGradient(resourceContext, false, aColorSpace,
+                    someColors, theBounds, theCoords);
             currentStream.write(myPat.getColorSpaceOut(fill));
 
         } else if (paint instanceof RadialGradientPaint) {
             RadialGradientPaint rgp = (RadialGradientPaint)paint;
 
-            float ar = rgp.getRadius();
+            double ar = rgp.getRadius();
             Point2D ac = rgp.getCenterPoint();
             Point2D af = rgp.getFocusPoint();
+            AffineTransform transform = graphicsState.getTransform();
+            AffineTransform gradt = rgp.getTransform();
+            transform.concatenate(gradt);
+
+            // find largest scaling for the radius
+            double scale = gradt.getScaleX();
+            if(gradt.getScaleY() > scale) {
+                scale = gradt.getScaleY();
+            }
+            ar = ar * scale;
+            ac = transform.transform(ac, null);
+            af = transform.transform(af, null);
 
             ArrayList theCoords = new ArrayList();
-            theCoords.add( new Double(currentXPosition + ac.getX()));
-            theCoords.add( new Double(currentYPosition - ac.getY()));
+            // the center point af must be within the circle with
+            // radius ar centered at ac
+            theCoords.add(new Double(af.getX()));
+            theCoords.add(new Double(af.getY()));
             theCoords.add(new Double(0));
-            theCoords.add( new Double(currentXPosition + af.getX())); // Fx
-            theCoords.add(new Double(currentYPosition - af.getY())); // Fy
+            theCoords.add(new Double(ac.getX())); // Fx
+            theCoords.add(new Double(ac.getY())); // Fy
             theCoords.add(new Double(ar));
 
             Color[] cols = rgp.getColors();
@@ -713,11 +726,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
             float[] fractions = rgp.getFractions();
             ArrayList theBounds = new ArrayList();
-            float lastoffset = 0;
             for(int count = 1; count < fractions.length - 1; count++) {
                 float offset = fractions[count];
-                // create bounds from last to offset
-                lastoffset = offset;
                 theBounds.add(new Double(offset));
             }
             PDFColorSpace colSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);

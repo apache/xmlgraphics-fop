@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
 import java.io.OutputStream;
 import java.io.IOException;
 
@@ -92,7 +93,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         resourceContext = currentPage;
         pageRef = currentPage.referencePDF();
         currentStream.write("1 0 0 -1 0 " + height + " cm\n");
-
+        graphicsState.setTransform(new AffineTransform(1.0, 0.0, 0.0, -1.0, 0.0, (double)height));
         pdfDoc.outputHeader(stream);
 
         setOutputStream(stream);
