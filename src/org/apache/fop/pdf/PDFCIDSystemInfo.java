@@ -15,7 +15,6 @@ package org.apache.fop.pdf;
  * this small object is used in the CID fonts and in the CMaps.
  */
 public class PDFCIDSystemInfo extends PDFObject {
-    private static final StringBuffer p = new StringBuffer();
     protected String registry;
     protected String ordering;
     protected int supplement;
@@ -40,6 +39,7 @@ public class PDFCIDSystemInfo extends PDFObject {
     }
 
     public String toPDFString() {
+        StringBuffer p = new StringBuffer();
         p.setLength(0);
         p.append("/CIDSystemInfo << /Registry (");
         p.append(registry);
