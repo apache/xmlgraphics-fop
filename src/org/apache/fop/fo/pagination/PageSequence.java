@@ -157,9 +157,14 @@ public class PageSequence extends FObj {
 			this.properties.get("grouping-separator").getCharacter(),
 			this.properties.get("grouping-size").getNumber().intValue(),
 			this.properties.get("letter-value").getEnum()
+
 		);
 		
 		this.forcePageCount = this.properties.get("force-page-count").getEnum();
+
+      //this.properties.get("country");
+      //this.properties.get("language");
+      //this.properties.get("id");
     }
 
     public void addFlow(Flow flow) throws FOPException {
