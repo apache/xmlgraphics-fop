@@ -116,14 +116,16 @@ public class XMLEvent {
     /**
      * Clear the fields of this event.  Provided for pool operations.
      * The <i>namespaces</i> field is not cleared.
+     * @return the cleared event.
      */
-    public void clear() {
+    public XMLEvent clear() {
         type = NOEVENT;
         chars = null;
         uriIndex = 0;
         localName = null;
         qName = null;
         attributes = null;
+        return this;
     }
 
     public int getType() { return type; }
