@@ -59,9 +59,11 @@ import org.apache.fop.apps.FOPException;
 public class StaticContent extends AbstractFlow {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new StaticContent(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new StaticContent(parent, propertyList,
+                                     systemId, line, column);
         }
     }
 
@@ -69,12 +71,12 @@ public class StaticContent extends AbstractFlow {
         return new StaticContent.Maker();
     }
 
-    protected StaticContent(FObj parent,
-                            PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected StaticContent(FObj parent, PropertyList propertyList,
+                            String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
         setFlowName(getProperty("flow-name").getString());
         pageSequence.addStaticContent(this);
-//        ((PageSequence)parent).setIsFlowSet(false);    // hacquery of sorts
     }
 
     public String getName() {
@@ -130,7 +132,7 @@ public class StaticContent extends AbstractFlow {
     protected void setFlowName(String name) throws FOPException {
         if (name == null || name.equals("")) {
             throw new FOPException("A 'flow-name' is required for "
-                                   + getName() + ".");
+                                   + getName() + ".", systemId, line, column);
         } else {
             _flowName = name;
         }

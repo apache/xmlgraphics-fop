@@ -68,9 +68,11 @@ import java.util.Iterator;
 public class LayoutMasterSet extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new LayoutMasterSet(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new LayoutMasterSet(parent, propertyList,
+                                       systemId, line, column);
         }
     }
 
@@ -84,9 +86,10 @@ public class LayoutMasterSet extends FObj {
 
     private Root root;
 
-    protected LayoutMasterSet(FObj parent,
-                              PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected LayoutMasterSet(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
 
         this.simplePageMasters = new HashMap();
         this.pageSequenceMasters = new HashMap();
@@ -96,7 +99,7 @@ public class LayoutMasterSet extends FObj {
             root.setLayoutMasterSet(this);
         } else {
             throw new FOPException("fo:layout-master-set must be child of fo:root, not "
-                                   + parent.getName());
+                                   + parent.getName(), systemId, line, column);
         }
         allRegions = new HashMap();
 
@@ -113,7 +116,7 @@ public class LayoutMasterSet extends FObj {
             throw new FOPException("'master-name' ("
                                    + simplePageMaster.getMasterName()
                                    + ") must be unique "
-                                   + "across page-masters and page-sequence-masters");
+                                   + "across page-masters and page-sequence-masters", systemId, line, column);
         this.simplePageMasters.put(simplePageMaster.getMasterName(),
                                    simplePageMaster);
     }
@@ -128,7 +131,7 @@ public class LayoutMasterSet extends FObj {
         if (existsName(masterName))
             throw new FOPException("'master-name' (" + masterName
                                    + ") must be unique "
-                                   + "across page-masters and page-sequence-masters");
+                                   + "across page-masters and page-sequence-masters", systemId, line, column);
         this.pageSequenceMasters.put(masterName, pageSequenceMaster);
     }
 
@@ -165,7 +168,7 @@ public class LayoutMasterSet extends FObj {
                                                + "to the same region-class ("
                                                + localClass + "!="
                                                + region.getRegionClass()
-                                               + ")");
+                                               + ")", systemId, line, column);
                     }
                 }
                 allRegions.put(region.getRegionName(),

@@ -89,9 +89,11 @@ public class SVGElement extends SVGObj {
          *
          * @return the SVG object
          */
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new SVGElement(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new SVGElement(parent, propertyList,
+                                  systemId, line, column);
         }
     }
 
@@ -112,8 +114,9 @@ public class SVGElement extends SVGObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public SVGElement(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList, "svg");
+    public SVGElement(FObj parent, PropertyList propertyList,
+                      String systemId, int line, int column) {
+        super(parent, propertyList, "svg", systemId, line, column);
         init();
     }
 

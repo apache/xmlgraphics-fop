@@ -115,9 +115,11 @@ import org.apache.fop.apps.FOPException;
 public class PageNumberCitation extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new PageNumberCitation(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new PageNumberCitation(parent, propertyList,
+                                          systemId, line, column);
         }
 
     }
@@ -138,8 +140,9 @@ public class PageNumberCitation extends FObj {
     TextState ts;
 
 
-    public PageNumberCitation(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public PageNumberCitation(FObj parent, PropertyList propertyList,
+                              String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {
@@ -204,12 +207,20 @@ public class PageNumberCitation extends FObj {
             this.refId = this.properties.get("ref-id").getString();
 
             if (this.refId.equals("")) {
-                throw new FOPException("page-number-citation must contain \"ref-id\"");
+                throw new FOPException("page-number-citation must contain \"ref-id\"", systemId, line, column);
             }
 
             // create id
             this.id = this.properties.get("id").getString();
-            idReferences.createID(id);
+            try {
+                idReferences.createID(id);
+            }
+            catch(FOPException e) {
+                if (!e.isLocationSet()) {
+                    e.setLocation(systemId, line, column);
+                }
+                throw e;
+            }
             ts = new TextState();
 
             this.marker = 0;

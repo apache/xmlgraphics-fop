@@ -56,9 +56,11 @@ import org.apache.fop.apps.FOPException;
 public class ColorProfile extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ColorProfile(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new ColorProfile(parent, propertyList,
+                                    systemId, line, column);
         }
     }
 
@@ -66,9 +68,10 @@ public class ColorProfile extends FObj {
         return new ColorProfile.Maker();
     }
 
-    protected ColorProfile(FObj parent,
-                           PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected ColorProfile(FObj parent, PropertyList propertyList,
+                   String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
         log.warn("color profile not implemented");
         // this.properties.get("src");
         // this.properties.get("color-profile-name");

@@ -58,9 +58,11 @@ import org.apache.fop.apps.FOPException;
 public class ListItemBody extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ListItemBody(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new ListItemBody(parent, propertyList,
+                                    systemId, line, column);
         }
 
     }
@@ -69,8 +71,9 @@ public class ListItemBody extends FObj {
         return new ListItemBody.Maker();
     }
 
-    public ListItemBody(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public ListItemBody(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {
@@ -89,7 +92,15 @@ public class ListItemBody extends FObj {
             this.marker = 0;
             // initialize id
             String id = this.properties.get("id").getString();
-            area.getIDReferences().initializeID(id, area);
+            try {
+                area.getIDReferences().initializeID(id, area);
+            }
+            catch(FOPException e) {
+                if (!e.isLocationSet()) {
+                    e.setLocation(systemId, line, column);
+                }
+                throw e;
+            }
         }
 
         /*

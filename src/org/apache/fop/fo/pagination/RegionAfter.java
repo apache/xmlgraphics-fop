@@ -68,9 +68,11 @@ import org.apache.fop.layout.BackgroundProps;
 public class RegionAfter extends Region {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new RegionAfter(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new RegionAfter(parent, propertyList,
+                                   systemId, line, column);
         }
 
     }
@@ -83,9 +85,10 @@ public class RegionAfter extends Region {
 
     private int precedence;
 
-    protected RegionAfter(FObj parent,
-                          PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected RegionAfter(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
         precedence = this.properties.get("precedence").getEnum();
     }
 

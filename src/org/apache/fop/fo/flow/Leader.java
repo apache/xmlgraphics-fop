@@ -68,9 +68,10 @@ import org.apache.fop.apps.FOPException;
 public class Leader extends FObjMixed {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Leader(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new Leader(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -79,9 +80,10 @@ public class Leader extends FObjMixed {
         return new Leader.Maker();
     }
 
-    public Leader(FObj parent, PropertyList propertyList)
-      throws FOPException {
-        super(parent, propertyList);
+    public Leader(FObj parent, PropertyList propertyList,
+                  String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {
@@ -185,8 +187,16 @@ public class Leader extends FObjMixed {
 
         // initialize id
         String id = this.properties.get("id").getString();
-        blockArea.getIDReferences().initializeID(id, blockArea);
-
+        try {
+            blockArea.getIDReferences().initializeID(id, blockArea);
+        }
+        catch(FOPException e) {
+            if (!e.isLocationSet()) {
+                e.setLocation(systemId, line, column);
+            }
+            throw e;
+        }
+        
         // adds leader to blockarea, there the leaderArea is generated
         int succeeded = addLeader(blockArea,
                                   propMgr.getFontState(area.getFontInfo()),

@@ -65,9 +65,10 @@ public abstract class FObjMixed extends FObj {
 
     private StringBuffer textBuffer;
 
-    protected FObjMixed(FObj parent, PropertyList propertyList)
+    protected FObjMixed(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
       throws FOPException {
-        super(parent, propertyList);
+        super(parent, propertyList, systemId, line, column);
         textState = propMgr.getTextDecoration(parent);
 
     }
@@ -110,8 +111,17 @@ public abstract class FObjMixed extends FObj {
                 String id = prop.getString();
 
                 if (this.marker == START) {
-                    if (area.getIDReferences() != null)
-                        area.getIDReferences().createID(id);
+                    if (area.getIDReferences() != null) {
+                        try {
+                            area.getIDReferences().createID(id);
+                        }
+                        catch(FOPException e) {
+                            if (!e.isLocationSet()) {
+                                e.setLocation(systemId, line, column);
+                            }
+                            throw e;
+                        }
+                    }
                     this.marker = 0;
                 }
 

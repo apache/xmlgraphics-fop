@@ -79,9 +79,11 @@ public class XMLElement extends XMLObj {
          *
          * @return the XML object
          */
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new XMLElement(parent, propertyList, tag);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new XMLElement(parent, propertyList, tag,
+                                  systemId, line, column);
         }
     }
 
@@ -100,8 +102,9 @@ public class XMLElement extends XMLObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public XMLElement(FObj parent, PropertyList propertyList, String tag) {
-        super(parent, propertyList, tag);
+    public XMLElement(FObj parent, PropertyList propertyList, String tag,
+                      String systemId, int line, int column) {
+        super(parent, propertyList, tag, systemId, line, column);
         init();
     }
 
@@ -120,7 +123,8 @@ public class XMLElement extends XMLObj {
 
         if (!(area instanceof ForeignObjectArea)) {
             // this is an error
-            throw new FOPException("XML not in fo:instream-foreign-object");
+            throw new FOPException("XML not in fo:instream-foreign-object",
+                                   systemId, line, column);
         }
 
         /* return status */

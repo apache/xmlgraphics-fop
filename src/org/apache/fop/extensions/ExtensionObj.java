@@ -64,8 +64,9 @@ public abstract class ExtensionObj extends FObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public ExtensionObj(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public ExtensionObj(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
     }
 
     /**

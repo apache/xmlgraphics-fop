@@ -71,12 +71,14 @@ public abstract class AbstractTableBody extends FObj {
 
     AreaContainer areaContainer;
 
-    public AbstractTableBody(FObj parent, PropertyList propertyList)
+    public AbstractTableBody(FObj parent, PropertyList propertyList,
+                             String systemId, int line, int column)
         throws FOPException {
-        super(parent, propertyList);
+        super(parent, propertyList, systemId, line, column);
         if (!(parent instanceof Table)) {
           throw new FOPException("A table body must be child of fo:table,"
-                                   + " not " + parent.getName());
+                                   + " not " + parent.getName(),
+                                 systemId, line, column);
         }
     }
 
@@ -124,7 +126,15 @@ public abstract class AbstractTableBody extends FObj {
                 this.properties.get("space-after.optimum").getLength().mvalue();
             this.id = this.properties.get("id").getString();
 
-            area.getIDReferences().createID(id);
+            try {
+                area.getIDReferences().createID(id);
+            }
+            catch(FOPException e) {
+                if (!e.isLocationSet()) {
+                    e.setLocation(systemId, line, column);
+                }
+                throw e;
+            }
 
             if (area instanceof BlockArea) {
                 area.end();
@@ -186,7 +196,7 @@ public abstract class AbstractTableBody extends FObj {
                 continue;
             }
             if (!(child instanceof TableRow)) {
-                throw new FOPException("Currently only Table Rows are supported in table body, header and footer");
+                throw new FOPException("Currently only Table Rows are supported in table body, header and footer", systemId, line, column);
             }
             TableRow row = (TableRow)child;
 

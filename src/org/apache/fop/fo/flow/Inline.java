@@ -58,9 +58,10 @@ import org.apache.fop.apps.FOPException;
 public class Inline extends FObjMixed {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Inline(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new Inline(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -69,12 +70,13 @@ public class Inline extends FObjMixed {
         return new Inline.Maker();
     }
 
-    public Inline(FObj parent,
-                  PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public Inline(FObj parent, PropertyList propertyList,
+                  String systemId, int line, int column) throws FOPException {
+        super(parent, propertyList, systemId, line, column);
         if (parent.getName().equals("fo:flow")) {
             throw new FOPException("inline formatting objects cannot"
-                                   + " be directly under flow");
+                                   + " be directly under flow",
+                                   systemId, line, column);
         }
 
         // Common Accessibility Properties

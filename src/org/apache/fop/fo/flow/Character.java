@@ -78,9 +78,10 @@ public class Character extends FObj {
     public static final int DOESNOT_FIT = 1;
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Character(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new Character(parent, propertyList, systemId, line, column);
         }
     }
 
@@ -88,8 +89,9 @@ public class Character extends FObj {
         return new Character.Maker();
     }
 
-    public Character(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public Character(FObj parent, PropertyList propertyList,
+                     String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {
@@ -171,7 +173,15 @@ public class Character extends FObj {
 
         // initialize id
         String id = this.properties.get("id").getString();
-        blockArea.getIDReferences().initializeID(id, blockArea);
+        try {
+            blockArea.getIDReferences().initializeID(id, blockArea);
+        }
+        catch(FOPException e) {
+            if (!e.isLocationSet()) {
+                e.setLocation(systemId, line, column);
+            }
+            throw e;
+        }
 
         LineArea la = blockArea.getCurrentLineArea();
         if (la == null) {

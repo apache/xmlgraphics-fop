@@ -59,9 +59,10 @@ import org.apache.fop.apps.FOPException;
 public class ListItem extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ListItem(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new ListItem(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -82,8 +83,9 @@ public class ListItem extends FObj {
     String id;
     BlockArea blockArea;
 
-    public ListItem(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public ListItem(FObj parent, PropertyList propertyList,
+                    String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {
@@ -127,7 +129,15 @@ public class ListItem extends FObj {
                 this.properties.get("space-after.optimum").getLength().mvalue();
             this.id = this.properties.get("id").getString();
 
-            area.getIDReferences().createID(id);
+            try {
+                area.getIDReferences().createID(id);
+            }
+            catch(FOPException e) {
+                if (!e.isLocationSet()) {
+                    e.setLocation(systemId, line, column);
+                }
+                throw e;
+            }
 
             this.marker = 0;
         }
@@ -169,7 +179,8 @@ public class ListItem extends FObj {
 
         int numChildren = this.children.size();
         if (numChildren != 2) {
-            throw new FOPException("list-item must have exactly two children");
+            throw new FOPException("list-item must have exactly two children",
+                                   systemId, line, column);
         }
         ListItemLabel label = (ListItemLabel)children.get(0);
         ListItemBody body = (ListItemBody)children.get(1);

@@ -64,9 +64,11 @@ import org.apache.fop.apps.FOPException;
 public class ConditionalPageMasterReference extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ConditionalPageMasterReference(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new ConditionalPageMasterReference(parent, propertyList,
+                                                      systemId, line, column);
         }
 
     }
@@ -83,9 +85,10 @@ public class ConditionalPageMasterReference extends FObj {
     private int oddOrEven;
     private int blankOrNotBlank;
 
-    public ConditionalPageMasterReference(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    public ConditionalPageMasterReference(FObj parent, PropertyList propertyList,
+                                          String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
 
         if (getProperty("master-reference") != null) {
             this.masterName = getProperty("master-reference").getString();
@@ -101,7 +104,7 @@ public class ConditionalPageMasterReference extends FObj {
         } else {
             throw new FOPException("fo:conditional-page-master-reference must be child "
                                    + "of fo:repeatable-page-master-alternatives, not "
-                                   + parent.getName());
+                                   + parent.getName(), systemId, line, column);
         }
         this.pagePosition = this.properties.get("page-position").getEnum();
         this.oddOrEven = this.properties.get("odd-or-even").getEnum();

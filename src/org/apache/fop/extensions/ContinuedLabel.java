@@ -50,6 +50,7 @@
  */ 
 package org.apache.fop.extensions;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
@@ -57,7 +58,6 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.Status;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.AreaTree;
-import org.apache.fop.apps.FOPException;
 
 /**
  * Implement continued labels for table header/footer.
@@ -68,8 +68,11 @@ public class ContinuedLabel extends ExtensionObj {
     private FObj containingTable=null;
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent, PropertyList propertyList) {
-            return new ContinuedLabel(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new ContinuedLabel(parent, propertyList,
+                                      systemId, line, column);
         }
 
     }
@@ -78,8 +81,9 @@ public class ContinuedLabel extends ExtensionObj {
         return new ContinuedLabel.Maker();
     }
 
-    public ContinuedLabel(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public ContinuedLabel(FObj parent, PropertyList propertyList,
+                          String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
 
         // Find ancestor table
         for (; parent!=null ; parent = parent.getParent()) {

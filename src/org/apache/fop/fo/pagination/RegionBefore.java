@@ -68,9 +68,11 @@ import org.apache.fop.apps.FOPException;
 public class RegionBefore extends Region {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new RegionBefore(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new RegionBefore(parent, propertyList,
+                                    systemId, line, column);
         }
 
     }
@@ -83,9 +85,10 @@ public class RegionBefore extends Region {
 
     private int precedence;
 
-    protected RegionBefore(FObj parent,
-                           PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected RegionBefore(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
         precedence = this.properties.get("precedence").getEnum();
     }
 

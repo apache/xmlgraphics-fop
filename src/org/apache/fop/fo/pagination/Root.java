@@ -64,9 +64,10 @@ import org.apache.fop.apps.FOPException;
 public class Root extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Root(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new Root(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -82,13 +83,14 @@ public class Root extends FObj {
      */
     PageSequence pageSequence;
 
-    protected Root(FObj parent,
-                   PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected Root(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
         // this.properties.get("media-usage");
 
         if (parent != null) {
-            throw new FOPException("root must be root element");
+            throw new FOPException("root must be root element", systemId, line, column);
         }
     }
 

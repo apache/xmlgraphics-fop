@@ -59,9 +59,10 @@ import org.apache.fop.apps.FOPException;
 public class TableCell extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new TableCell(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new TableCell(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -137,12 +138,13 @@ public class TableCell extends FObj {
 
     AreaContainer cellArea;
 
-    public TableCell(FObj parent, PropertyList propertyList)
+    public TableCell(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
         throws FOPException {
-        super(parent, propertyList);
+        super(parent, propertyList, systemId, line, column);
         if (!(parent instanceof TableRow)) {
             throw new FOPException("A table cell must be child of fo:table-row,"
-                                   + " not " + parent.getName());
+                                   + " not " + parent.getName(), systemId, line, column);
         }
         doSetup();    // init some basic property values
     }
@@ -257,7 +259,15 @@ public class TableCell extends FObj {
             // Calculate cell borders
             // calcBorders(propMgr.getBorderAndPadding());
 
-            area.getIDReferences().createID(id);
+            try {
+                area.getIDReferences().createID(id);
+            }
+            catch(FOPException e) {
+                if (!e.isLocationSet()) {
+                    e.setLocation(systemId, line, column);
+                }
+                throw e;
+            }
 
             this.marker = 0;
             this.bDone=false;

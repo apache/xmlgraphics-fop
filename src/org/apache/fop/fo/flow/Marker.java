@@ -63,9 +63,10 @@ public class Marker extends FObjMixed {
     private boolean isLast;
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Marker(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new Marker(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -74,9 +75,10 @@ public class Marker extends FObjMixed {
         return new Marker.Maker();
     }
 
-    public Marker(FObj parent, PropertyList propertyList)
-      throws FOPException {
-        super(parent, propertyList);
+    public Marker(FObj parent, PropertyList propertyList,
+                  String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
 
         // do check to see that 'this' is under fo:flow
 

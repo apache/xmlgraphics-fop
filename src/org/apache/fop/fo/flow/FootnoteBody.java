@@ -67,9 +67,11 @@ public class FootnoteBody extends FObj {
     int textIndent;
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new FootnoteBody(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new FootnoteBody(parent, propertyList,
+                                    systemId, line, column);
         }
 
     }
@@ -78,9 +80,10 @@ public class FootnoteBody extends FObj {
         return new FootnoteBody.Maker();
     }
 
-    public FootnoteBody(FObj parent,
-                        PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public FootnoteBody(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
         this.areaClass = AreaClass.setAreaClass(AreaClass.XSL_FOOTNOTE);
     }
 

@@ -50,6 +50,7 @@
  */ 
 package org.apache.fop.extensions;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.*;
 
 
@@ -62,8 +63,10 @@ public class Label extends ExtensionObj {
     private StringBuffer textBuffer;
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent, PropertyList propertyList) {
-            return new Label(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new Label(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -72,8 +75,9 @@ public class Label extends ExtensionObj {
         return new Label.Maker();
     }
 
-    public Label(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public Label(FObj parent, PropertyList propertyList,
+                 String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
     }
 
     protected void addCharacters(char data[], int start, int length) {

@@ -74,9 +74,11 @@ public class SimplePageMaster extends FObj {
     private static final int FALLBACK_PAGE_WIDTH = 576000;
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new SimplePageMaster(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new SimplePageMaster(parent, propertyList,
+                                        systemId, line, column);
         }
 
     }
@@ -100,9 +102,10 @@ public class SimplePageMaster extends FObj {
     int beforeExtent, afterExtent, startExtent, endExtent;
     boolean afterPrecedence = false;
 
-    protected SimplePageMaster(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    protected SimplePageMaster(FObj parent, PropertyList propertyList,
+                               String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
 
         if (parent.getName().equals("fo:layout-master-set")) {
             this.layoutMasterSet = (LayoutMasterSet)parent;
@@ -116,7 +119,7 @@ public class SimplePageMaster extends FObj {
         } else {
             throw new FOPException("fo:simple-page-master must be child "
                                    + "of fo:layout-master-set, not "
-                                   + parent.getName());
+                                   + parent.getName(), systemId, line, column);
         }
         _regions = new HashMap();
 
@@ -212,7 +215,8 @@ public class SimplePageMaster extends FObj {
         if (_regions.containsKey(region.getRegionClass())) {
             throw new FOPException("Only one region of class "
                                    + region.getRegionClass()
-                                   + " allowed within a simple-page-master.");
+                                   + " allowed within a simple-page-master.",
+                                   systemId, line, column);
         } else {
             _regions.put(region.getRegionClass(), region);
         }

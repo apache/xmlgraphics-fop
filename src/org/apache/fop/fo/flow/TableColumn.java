@@ -70,9 +70,11 @@ public class TableColumn extends FObj {
     AreaContainer areaContainer;
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new TableColumn(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new TableColumn(parent, propertyList,
+                                   systemId, line, column);
         }
     }
 
@@ -80,12 +82,13 @@ public class TableColumn extends FObj {
         return new TableColumn.Maker();
     }
 
-    public TableColumn(FObj parent, PropertyList propertyList)
+    public TableColumn(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
         throws FOPException {
-        super(parent, propertyList);
+        super(parent, propertyList, systemId, line, column);
         if (!(parent instanceof Table)) {
             throw new FOPException("A table column must be child of fo:table, not "
-                                   + parent.getName());
+                                   + parent.getName(), systemId, line, column);
         }
     }
 
@@ -143,7 +146,15 @@ public class TableColumn extends FObj {
 
         // initialize id
         String id = this.properties.get("id").getString();
-        area.getIDReferences().initializeID(id, area);
+        try {
+            area.getIDReferences().initializeID(id, area);
+        }
+        catch(FOPException e) {
+            if (!e.isLocationSet()) {
+                e.setLocation(systemId, line, column);
+            }
+            throw e;
+        }
 
         setup = true;
     }

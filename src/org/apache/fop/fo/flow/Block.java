@@ -73,9 +73,10 @@ import org.apache.fop.apps.FOPException;
 public class Block extends FObjMixed {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Block(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new Block(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -108,10 +109,10 @@ public class Block extends FObjMixed {
     //Added to see how long it's been since nothing was laid out.
     int noLayoutCount = 0;
 
-    public Block(FObj parent, PropertyList propertyList)
+    public Block(FObj parent, PropertyList propertyList,
+                 String systemId, int line, int column)
         throws FOPException {
-
-        super(parent, propertyList);
+        super(parent, propertyList, systemId, line, column);
         this.span = this.properties.get("span").getEnum();
     }
 
@@ -138,7 +139,8 @@ public class Block extends FObjMixed {
         if (noLayoutCount > infLoopThreshhold) {
             throw new FOPException(
                 "No meaningful layout in block after many attempts.  "+
-                "Infinite loop is assumed.  Processing halted.");
+                "Infinite loop is assumed.  Processing halted.",
+                systemId, line, column);
         }
 
         // log.error(" b:LAY[" + marker + "] ");
@@ -197,7 +199,15 @@ public class Block extends FObjMixed {
             }
 
             if (area.getIDReferences() != null) {
-                area.getIDReferences().createID(id);
+                try {
+                    area.getIDReferences().createID(id);
+                }
+                catch(FOPException e) {
+                    if (!e.isLocationSet()) {
+                        e.setLocation(systemId, line, column);
+                    }
+                    throw e;
+                }
             }
 
             this.marker = 0;

@@ -76,9 +76,11 @@ public class UnknownXMLObj extends XMLObj {
          *
          * @return the unknown xml object
          */
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new UnknownXMLObj(parent, propertyList, space, tag);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new UnknownXMLObj(parent, propertyList, space, tag,
+                                     systemId, line, column);
         }
     }
 
@@ -97,8 +99,10 @@ public class UnknownXMLObj extends XMLObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    protected UnknownXMLObj(FObj parent, PropertyList propertyList, String namespace, String name) {
-        super(parent, propertyList, name);
+    protected UnknownXMLObj(FObj parent, PropertyList propertyList,
+                            String namespace, String name,
+                            String systemId, int line, int column) {
+        super(parent, propertyList, name, systemId, line, column);
         this.namespace = namespace;
     }
 

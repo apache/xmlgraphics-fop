@@ -79,8 +79,9 @@ public abstract class XMLObj extends FObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public XMLObj(FObj parent, PropertyList propertyList, String tag) {
-        super(parent, propertyList);
+    public XMLObj(FObj parent, PropertyList propertyList, String tag,
+                  String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
         tagName = tag;
     }
 

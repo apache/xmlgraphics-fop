@@ -1,5 +1,8 @@
 ==============================================================================
 Done since 0.20.4 release
+- Use Locator to make system id, line and column number available to
+  FOs. Use it when throwing FOPExceptions. TBD: Use it in mesages, also
+  catch RuntimeExceptions and wrap them.
 - Added PDF encryption. Available options: no printing, no copy, no
   edit, no annotations.
   Submitted by Patrick C. Lankswert <PLankswert@InsightBB.COM>

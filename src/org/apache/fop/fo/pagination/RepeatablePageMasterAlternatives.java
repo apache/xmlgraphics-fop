@@ -70,9 +70,11 @@ public class RepeatablePageMasterAlternatives extends FObj
 
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new RepeatablePageMasterAlternatives(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new RepeatablePageMasterAlternatives(parent, propertyList,
+                                                        systemId, line, column);
         }
 
     }
@@ -92,9 +94,10 @@ public class RepeatablePageMasterAlternatives extends FObj
 
     private ArrayList conditionalPageMasterRefs;
 
-    public RepeatablePageMasterAlternatives(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    public RepeatablePageMasterAlternatives(FObj parent, PropertyList propertyList,
+                                            String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
 
         if (parent.getName().equals("fo:page-sequence-master")) {
             this.pageSequenceMaster = (PageSequenceMaster)parent;
@@ -102,7 +105,7 @@ public class RepeatablePageMasterAlternatives extends FObj
         } else {
             throw new FOPException("A fo:repeatable-page-master-alternatives"
                                    + "must be child of fo:page-sequence-master, not "
-                                   + parent.getName());
+                                   + parent.getName(), systemId, line, column);
         }
 
         String mr = getProperty("maximum-repeats").getString();
@@ -117,7 +120,7 @@ public class RepeatablePageMasterAlternatives extends FObj
                 }
             } catch (NumberFormatException nfe) {
                 throw new FOPException("Invalid number for "
-                                       + "'maximum-repeats' property");
+                                       + "'maximum-repeats' property", systemId, line, column);
             }
         }
         conditionalPageMasterRefs = new ArrayList();

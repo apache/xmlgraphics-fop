@@ -60,9 +60,10 @@ import org.apache.fop.apps.FOPException;
 public class Float extends ToBeImplementedElement {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Float(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new Float(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -71,9 +72,10 @@ public class Float extends ToBeImplementedElement {
         return new Float.Maker();
     }
 
-    protected Float(FObj parent,
-                    PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected Float(FObj parent, PropertyList propertyList,
+                    String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {

@@ -60,9 +60,11 @@ import org.apache.fop.apps.FOPException;
 public class InlineContainer extends ToBeImplementedElement {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new InlineContainer(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new InlineContainer(parent, propertyList,
+                                       systemId, line, column);
         }
     }
 
@@ -70,9 +72,10 @@ public class InlineContainer extends ToBeImplementedElement {
         return new InlineContainer.Maker();
     }
 
-    protected InlineContainer(FObj parent,
-                              PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected InlineContainer(FObj parent, PropertyList propertyList,
+                              String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
 
         // Common Border, Padding, and Background Properties
         BorderAndPadding bap = propMgr.getBorderAndPadding();

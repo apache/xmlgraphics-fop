@@ -63,9 +63,10 @@ import java.util.ArrayList;
 public class TableRow extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new TableRow(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new TableRow(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -175,13 +176,14 @@ public class TableRow extends FObj {
     }
 
 
-    public TableRow(FObj parent, PropertyList propertyList)
+    public TableRow(FObj parent, PropertyList propertyList,
+                    String systemId, int line, int column)
         throws FOPException {
-        super(parent, propertyList);
+        super(parent, propertyList, systemId, line, column);
         if (!(parent instanceof AbstractTableBody)) {
             throw new FOPException("A table row must be child of fo:table-body,"
                                    + " fo:table-header or fo:table-footer, not "
-                                   + parent.getName());
+                                   + parent.getName(), systemId, line, column);
         }
     }
 
@@ -271,7 +273,15 @@ public class TableRow extends FObj {
                 // laid out yet (with an id created already)
             }
             // create ID also in case the row has been reset
-            area.getIDReferences().createID(id);
+            try {
+                area.getIDReferences().createID(id);
+            }
+            catch(FOPException e) {
+                if (!e.isLocationSet()) {
+                    e.setLocation(systemId, line, column);
+                }
+                throw e;
+            }
 
             this.marker = 0;
             int breakStatus = propMgr.checkBreakBefore(area);

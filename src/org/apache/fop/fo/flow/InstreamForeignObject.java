@@ -73,9 +73,11 @@ public class InstreamForeignObject extends FObj {
          *
          * @return the SVG object
          */
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new InstreamForeignObject(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new InstreamForeignObject(parent, propertyList,
+                                             systemId, line, column);
         }
 
     }
@@ -113,8 +115,9 @@ public class InstreamForeignObject extends FObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public InstreamForeignObject(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public InstreamForeignObject(FObj parent, PropertyList propertyList,
+                                 String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {
@@ -206,7 +209,15 @@ public class InstreamForeignObject extends FObj {
 
             this.scaling = this.properties.get("scaling").getEnum();
 
-            area.getIDReferences().createID(id);
+            try {
+                area.getIDReferences().createID(id);
+            }
+            catch(FOPException e) {
+                if (!e.isLocationSet()) {
+                    e.setLocation(systemId, line, column);
+                }
+                throw e;
+            }
             if (this.areaCurrent == null) {
                 this.areaCurrent =
                     new ForeignObjectArea(propMgr.getFontState(area.getFontInfo()),
@@ -229,7 +240,7 @@ public class InstreamForeignObject extends FObj {
 
                 int numChildren = this.children.size();
                 if (numChildren > 1) {
-                    throw new FOPException("Only one child element is allowed in an instream-foreign-object");
+                    throw new FOPException("Only one child element is allowed in an instream-foreign-object", systemId, line, column);
                 }
                 /* layout foreign object */
                 if (this.children.size() > 0) {

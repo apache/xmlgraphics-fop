@@ -78,9 +78,11 @@ public class PageSequence extends FObj {
     // Factory methods
     //
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new PageSequence(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new PageSequence(parent, propertyList,
+                                    systemId, line, column);
         }
 
     }
@@ -152,16 +154,17 @@ public class PageSequence extends FObj {
     private SimplePageMaster currentSimplePageMaster;
     private PageSequenceMaster pageSequenceMaster;
 
-    protected PageSequence(FObj parent,
-                           PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected PageSequence(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
 
         if (parent.getName().equals("fo:root")) {
             this.root = (Root)parent;
         }
         else {
             throw new FOPException("page-sequence must be child of root, not "
-                                   + parent.getName());
+                                   + parent.getName(), systemId, line, column);
         }
 
         layoutMasterSet = root.getLayoutMasterSet();
@@ -189,7 +192,7 @@ public class PageSequence extends FObj {
                 this.firstPageNumber = (pageStart > 0) ? pageStart  : 1;
             } catch (NumberFormatException nfe) {
                 throw new FOPException("The value '" + ipnValue
-                                       + "' is not valid for initial-page-number");
+                                       + "' is not valid for initial-page-number", systemId, line, column);
             }
         }
 
@@ -216,10 +219,10 @@ public class PageSequence extends FObj {
 
     public void addFlow(Flow flow) throws FOPException {
         if (this.flow!=null) {
-            throw new FOPException("Only a single fo:flow permitted per fo:page-sequence");
+            throw new FOPException("Only a single fo:flow permitted per fo:page-sequence", systemId, line, column);
         }
         if (flowMap.containsKey(flow.getFlowName())) {
-            throw new FOPException("flow-names must be unique within an fo:page-sequence");
+            throw new FOPException("flow-names must be unique within an fo:page-sequence", systemId, line, column);
         }
         this.flow = flow;
     }
@@ -229,10 +232,11 @@ public class PageSequence extends FObj {
         if (this.flow!=null) {
             throw new FOPException("Static content ('"
                                    + staticContent.getFlowName()
-                                   + "') is not allowed after fo:flow");
+                                   + "') is not allowed after fo:flow",
+                                   systemId, line, column);
         }
         if (flowMap.containsKey(staticContent.getFlowName())) {
-            throw new FOPException("flow-names must be unique within an fo:page-sequence");
+            throw new FOPException("flow-names must be unique within an fo:page-sequence", systemId, line, column);
         }
         String flowName = staticContent.getFlowName();
         if (!this.layoutMasterSet.regionNameExists(flowName)
@@ -251,7 +255,7 @@ public class PageSequence extends FObj {
      */
     public void format(AreaTree areaTree) throws FOPException {
         if (flow == null) {
-            throw new FOPException("No flow in page-sequence");
+            throw new FOPException("No flow in page-sequence", systemId, line, column);
         }
         PageSequence previousPageSequence=this.root.getPageSequence();
         if( previousPageSequence!=null ) {
@@ -301,7 +305,7 @@ public class PageSequence extends FObj {
               this.layoutMasterSet.getPageSequenceMaster(masterName);
             if (this.pageSequenceMaster==null) {
                 throw new FOPException("master-reference '" + masterName
-                                       + "' for fo:page-sequence matches no simple-page-master or page-sequence-master");
+                                       + "' for fo:page-sequence matches no simple-page-master or page-sequence-master", systemId, line, column);
             }
             pageSequenceMaster.reset();
         } else {
@@ -310,7 +314,7 @@ public class PageSequence extends FObj {
             if (!flow.getFlowName().equals(region.getRegionName())) {
                 throw new FOPException("Flow '" + flow.getFlowName()
                                        + "' does not map to the region-body in page-master '"
-                                       + currentSimplePageMaster.getMasterName() + "'");
+                                       + currentSimplePageMaster.getMasterName() + "'", systemId, line, column);
             }
         }
 
@@ -375,7 +379,7 @@ public class PageSequence extends FObj {
             if (!flow.getFlowName().equals(region.getRegionName())) {
                 throw new FOPException("Flow '" + flow.getFlowName()
                                        + "' does not map to the region-body in page-master '"
-                                       + currentSimplePageMaster.getMasterName() + "'");
+                                       + currentSimplePageMaster.getMasterName() + "'", systemId, line, column);
             }
         }
         Page newPage = this.currentSimplePageMaster.getPageMaster()

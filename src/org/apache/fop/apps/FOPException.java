@@ -61,6 +61,9 @@ public class FOPException extends Exception {
     private static final String EXCEPTION_SEPARATOR = "\n---------\n";
 
     private Throwable _exception;
+    private String systemId;
+    private int line;
+    private int column;
 
     /**
      * create a new FOP Exception
@@ -69,16 +72,48 @@ public class FOPException extends Exception {
      */
     public FOPException(String message) {
         super(message);
+        systemId = null;
+        line = -1;
+        column = -1;
+    }
+
+    public FOPException(String message, String systemId, int line, int column) {
+        super(message);
+        this.systemId = systemId;
+        this.line = line;
+        this.column = column;
     }
 
     public FOPException(Throwable e) {
         super(e.getMessage());
         setException(e);
+        systemId = null;
+        line = -1;
+        column = -1;
+    }
+
+    public FOPException(Throwable e, String systemId, int line, int column) {
+        super(e.getMessage());
+        setException(e);
+        this.systemId = systemId;
+        this.line = line;
+        this.column = column;
     }
 
     public FOPException(String message, Throwable e) {
         super(message);
         setException(e);
+        systemId = null;
+        line = -1;
+        column = -1;
+    }
+
+    public FOPException(String message, Throwable e, String systemId, int line, int column) {
+        super(message);
+        setException(e);
+        this.systemId = systemId;
+        this.line = line;
+        this.column = column;
     }
 
     protected void setException(Throwable t) {
@@ -87,6 +122,16 @@ public class FOPException extends Exception {
 
     public Throwable getException() {
         return _exception;
+    }
+
+    public void setLocation(String systemId, int line, int column) {
+        this.systemId = systemId;
+        this.line = line;
+        this.column = column;
+    }
+
+    public boolean isLocationSet() {
+        return line>=0;
     }
 
     protected Throwable getRootException() {
@@ -105,7 +150,14 @@ public class FOPException extends Exception {
         return null;
     }
 
-
+    public String getMessage() {
+        if (line>=0) {
+            return systemId+':'+line+':'+column+' '+super.getMessage();
+        } else {
+            return super.getMessage();
+        }
+    }
+    
     public void printStackTrace() {
         synchronized (System.err) {
             super.printStackTrace();
@@ -128,7 +180,7 @@ public class FOPException extends Exception {
                 _exception.printStackTrace(stream);
             }
             if (getRootException() != null) {
-                System.err.println(EXCEPTION_SEPARATOR);
+                stream.println(EXCEPTION_SEPARATOR);
                 getRootException().printStackTrace(stream);
             }
         }
@@ -142,7 +194,7 @@ public class FOPException extends Exception {
                 _exception.printStackTrace(writer);
             }
             if (getRootException() != null) {
-                System.err.println(EXCEPTION_SEPARATOR);
+                writer.println(EXCEPTION_SEPARATOR);
                 getRootException().printStackTrace(writer);
             }
         }

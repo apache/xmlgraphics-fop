@@ -64,22 +64,30 @@ import java.util.HashSet;
 public abstract class FObj extends FONode {
 
     public abstract static class Maker {
-        public abstract FObj make(FObj parent,
-                                  PropertyList propertyList) throws FOPException;
+        public abstract FObj make(FObj parent, PropertyList propertyList,
+                                  String systemId, int line, int column)
+            throws FOPException;
     }
 
     // protected PropertyList properties;
     public PropertyList properties;
     protected PropertyManager propMgr;
+    protected String systemId;
+    protected int line;
+    protected int column;
 
     // markers
     private HashSet markerClassNames;
 
-    protected FObj(FObj parent, PropertyList propertyList) {
+    protected FObj(FObj parent, PropertyList propertyList,
+                   String systemId, int line, int column) {
         super(parent);
         this.properties = propertyList;    // TO BE REMOVED!!!
         propertyList.setFObj(this);
         this.propMgr = makePropertyManager(propertyList);
+        this.systemId = systemId;
+        this.line = line;
+        this.column = column;
         setWritingMode();
     }
 
@@ -199,7 +207,7 @@ public abstract class FObj extends FONode {
                  FONode child = (FONode)children.get(i);
                  if (!child.mayPrecedeMarker()) {
                    throw new FOPException("A fo:marker must be an initial child of '"
-                                          + getName()+"'");
+                                          + getName()+"'", systemId, line, column);
                  }
              }
          }
@@ -211,7 +219,8 @@ public abstract class FObj extends FONode {
          } else {
              throw new FOPException("marker-class-name '"
                                     + markerClassName
-                                    + "' already exists for this parent");
+                                    + "' already exists for this parent",
+                                    systemId, line, column);
          }
      }
 
