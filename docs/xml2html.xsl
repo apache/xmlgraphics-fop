@@ -46,7 +46,7 @@
 <!-- generates table of contents with links to the different levels-->
 <p>
 <xsl:for-each select="section[@class='level1']/title">
-<xsl:number value="position()"/>) 
+<xsl:number value="position()" format="A"/>) 
 <a href="">
 <xsl:attribute name="href"> 
 #<xsl:number count="section[@class='level1']"/>
@@ -79,10 +79,10 @@ mailto:<xsl:value-of select="//head/maintain/email"/>
 <h1>
 <a>
 <xsl:attribute name="name"> 
-<xsl:number count="section[@class='level1']"/>
+<xsl:number count="section[@class='level1']" format="A"/>
 </xsl:attribute>
 </a>
-<xsl:number count="section[@class='level1']"/>) 
+<xsl:number count="section[@class='level1']"  format="A"/>) 
       <xsl:apply-templates/> 
 </h1>
 </xsl:template>
