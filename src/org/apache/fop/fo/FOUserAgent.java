@@ -7,13 +7,18 @@
 
 package org.apache.fop.fo;
 
+import org.apache.fop.render.XMLHandler;
+import org.apache.fop.render.RendererContext;
+
 import org.w3c.dom.*;
+
+import java.util.HashMap;
 
 /**
  * The User Agent for fo.
  * This user agent is used by the processing to obtain user configurable
  * options.
- * 
+ *
  * Renderer specific extensions (that do not produce normal areas on
  * the output) will be done like so:
  * The extension will create an area, custom if necessary
@@ -24,14 +29,55 @@ import org.w3c.dom.*;
  * These areas may contain resolveable areas that will be processed
  * with other resolveable areas
  */
-public interface FOUserAgent {
-public void renderXML(RendererContext ctx, Document doc, String namespace);
+public class FOUserAgent {
+    HashMap defaults = new HashMap();
+    HashMap handlers = new HashMap();
 
-}
+    /**
+     * Set the default xml handler for the given mime type.
+     */
+    public void setDefaultXMLHandler(String mime, XMLHandler handler) {
+        defaults.put(mime, handler);
+    }
 
-class RendererContext {
-String getMimeType() {
-return null;
-}
+    /**
+     * Add an xml handler for the given mime type and xml namespace.
+     */
+    public void addXMLHandler(String mime, String ns, XMLHandler handler) {
+        HashMap mh = (HashMap) handlers.get(mime);
+        if (mh == null) {
+            mh = new HashMap();
+            handlers.put(mime, mh);
+        }
+        mh.put(ns, handler);
+    }
+
+    /** 
+     * Render the xml document with the given xml namespace.
+     * The Render Context is by the handle to render into the current
+     * rendering target.
+     */
+    public void renderXML(RendererContext ctx, Document doc,
+                          String namespace) {
+        String mime = ctx.getMimeType();
+        HashMap mh = (HashMap) handlers.get(mime);
+        XMLHandler handler = null;
+        if (mh != null) {
+            handler = (XMLHandler) mh.get(namespace);
+        }
+        if (handler == null) {
+            handler = (XMLHandler) defaults.get(mime);
+        }
+        if (handler != null) {
+            try {
+                handler.handleXML(ctx, doc, namespace);
+            } catch (Throwable t) {
+                // could not handle document
+                //t.printStackTrace();
+            }
+        } else {
+            // no handler found for document
+        }
+    }
 }
 

@@ -21,6 +21,17 @@ public class BeforeFloat extends Area {
 
     ArrayList blocks = null;
 
+    public void addBlock(Block block) {
+        if (blocks == null) {
+            blocks = new ArrayList();
+        }
+        blocks.add(block);
+    }
+
+    public void setSeparator(Block sep) {
+        separator = sep;
+    }
+
     public List getBlocks() {
         return blocks;
     }

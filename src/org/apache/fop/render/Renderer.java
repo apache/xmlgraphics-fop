@@ -32,11 +32,9 @@ import java.util.HashMap;
  */
 public interface Renderer {
 
-    public void startRenderer(OutputStream outputStream)
-    throws IOException;
+    public void startRenderer(OutputStream outputStream) throws IOException;
 
-    public void stopRenderer()
-    throws IOException;
+    public void stopRenderer() throws IOException;
 
     /**
      * Set the logger
@@ -65,25 +63,19 @@ public interface Renderer {
 
     public void startPageSequence(Title seqTitle);
 
-    public void renderPage(PageViewport page)
-    throws IOException, FOPException;
+    public void renderPage(PageViewport page) throws IOException, FOPException;
 
+    public void renderViewport(Viewport viewport);
 
     public void renderContainer(Container cont);
-/*
-    public void renderInlineViewport(org.apache.fop.area.inline.Viewport view);
 
     public void renderWord(Word area);
-*/
-    public void renderCharacter(org.apache.fop.area.inline.Character ch);
+
+    public void renderCharacter(
+              org.apache.fop.area.inline.Character ch);
 
     public void renderInlineSpace(Space space);
-/*
-    public void renderForeignObject(ForeignObject area);
-
-    public void renderImage(Image area);
 
     public void renderLeader(Leader area);
-*/
 }
 

@@ -9,6 +9,24 @@ package org.apache.fop.area;
 
 import java.util.ArrayList;
 
+
+/**
+ * Area tree for formatting objects.
+ *
+ * Concepts:
+ * The area tree is to be as small as possible. With minimal classes
+ * and data to fully represent an area tree for formatting objects.
+ * The area tree needs to be simple to render and follow the spec
+ * closely.
+ * This area tree has the concept of page sequences.
+ * Where ever possible information is discarded or optimised to
+ * keep memory use low. The data is also organised to make it
+ * possible for renderers to minimise their output.
+ * A page can be saved if not fully resolved and once rendered
+ * a page contains only size and id reference information.
+ * The area tree pages are organised in a model that depends on the
+ * type of renderer.
+ */
 public class AreaTree {
     // allows for different models to deal with adding/rendering
     // in different situations
@@ -38,15 +56,6 @@ public class AreaTree {
     public static abstract class AreaTreeModel {
         public abstract void startPageSequence(Area title);
         public abstract void addPage(PageViewport page);
-    }
-
-    // this queues pages and will call the render listener
-    // when the page is ready to be rendered
-    // if the render supports out of order rendering
-    // then a ready page is rendered immediately
-    public static class RenderPagesModel extends AreaTreeModel {
-        public void startPageSequence(Area title) {}
-        public void addPage(PageViewport page) {}
     }
 
     // this class stores all the pages in the document
@@ -89,10 +98,20 @@ public class AreaTree {
             return (PageViewport) sequence.get(count);
         }
     }
+
+    // this queues pages and will call the render listener
+    // when the page is ready to be rendered
+    // if the render supports out of order rendering
+    // then a ready page is rendered immediately
+    public static class RenderPagesModel extends StorePagesModel {
+        public void startPageSequence(Area title) {}
+        public void addPage(PageViewport page) {}
+    }
+
+    public static abstract class PageRenderListener {
+        public abstract void renderPage(RenderPagesModel model,
+                                        int pageseq, int count);
+    }
+
 }
 
-abstract class PageRenderListener {
-    public abstract void startPageSequence(Area title);
-    public abstract void preparePage(PageViewport page);
-    public abstract void renderPage(PageViewport page);
-}

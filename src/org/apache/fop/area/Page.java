@@ -7,7 +7,9 @@
 
 package org.apache.fop.area;
 
-public class Page {
+import java.io.Serializable;
+
+public class Page implements Serializable {
     // contains before, start, body, end and after regions
     RegionViewport regionBefore = null;
     RegionViewport regionStart = null;

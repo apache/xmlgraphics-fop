@@ -7,9 +7,14 @@
 
 package org.apache.fop.area.inline;
 
+import org.apache.fop.render.Renderer;
+
 public class Word extends InlineArea {
 
     // character info: font, char spacing, colour, baseline
     String word;
 
+    public void render(Renderer renderer) {
+        renderer.renderWord(this);
+    }
 }

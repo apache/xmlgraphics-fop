@@ -16,6 +16,8 @@ import org.apache.fop.render.*;
 import org.apache.fop.render.pdf.*;
 import org.apache.fop.render.svg.*;
 import org.apache.fop.render.xml.*;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.fo.FOUserAgent;
 
 import org.apache.log.*;
 import org.apache.log.format.*;
@@ -25,7 +27,13 @@ import org.apache.log.output.*;
 import java.io.*;
 import java.util.*;
 
+import java.awt.geom.Rectangle2D;
+import java.util.StringTokenizer;
+
 import org.w3c.dom.*;
+
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.dom.util.DOMUtilities;
 
 /**
  * Area tree tester.
@@ -38,14 +46,15 @@ import org.w3c.dom.*;
  */
 public class AreaTreeBuilder {
     private Logger log;
-    String baseName = "temp";
+    //String baseName = "temp";
 
     /**
      */
     public static void main(String[] args) {
         AreaTreeBuilder atb = new AreaTreeBuilder();
 
-        atb.runTests();
+        atb.runTests(args[0], args[1], args[2]);
+        System.exit(0);
     }
 
     public AreaTreeBuilder() {
@@ -67,35 +76,46 @@ public class AreaTreeBuilder {
     /**
      *
      */
-    protected void runTests() {
+    protected void runTests(String in, String type, String out) {
         log.debug("Starting tests");
-        runTest();
+        runTest(in, type, out);
         log.debug("Finished");
     }
 
     /**
      */
-    protected void runTest() {
+    protected void runTest(String in, String type, String out) {
+        Renderer rend = null;
+        if ("xml".equals(type)) {
+            rend = new XMLRenderer();
+        } else if ("pdf".equals(type)) {
+            rend = new PDFRenderer();
+        } else if ("svg".equals(type)) {
+            rend = new SVGRenderer();
+        }
+        FontInfo fi = new FontInfo();
+        rend.setupFontInfo(fi);
+        rend.setUserAgent(new FOUserAgent());
+
         AreaTree.StorePagesModel sm = AreaTree.createStorePagesModel();
-        TreeLoader tl = new TreeLoader();
+        TreeLoader tl = new TreeLoader(fi);
         tl.setTreeModel(sm);
         try {
             InputStream is =
-              new BufferedInputStream(new FileInputStream("doc.xml"));
+              new BufferedInputStream(new FileInputStream(in));
             tl.buildAreaTree(is);
-            renderAreaTree(sm);
+            renderAreaTree(sm, rend, out);
         } catch (IOException e) {
             log.error("error reading file" + e.getMessage(), e);
         }
     }
 
-    protected void renderAreaTree(AreaTree.StorePagesModel sm) {
+    protected void renderAreaTree(AreaTree.StorePagesModel sm,
+                                  Renderer rend, String out) {
         try {
-            OutputStream os = new BufferedOutputStream(
-                                new FileOutputStream(baseName + ".xml"));
+            OutputStream os =
+              new BufferedOutputStream(new FileOutputStream(out));
 
-            Renderer rend = new XMLRenderer();
-            //Renderer rend = new PDFRenderer();
             rend.setLogger(log);
             rend.startRenderer(os);
 
@@ -109,6 +129,19 @@ public class AreaTreeBuilder {
                 while (c < pagec) {
                     PageViewport page = sm.getPage(count, c);
                     c++;
+                    ObjectOutputStream tempstream = new ObjectOutputStream(
+                                                      new BufferedOutputStream(
+                                                        new FileOutputStream("temp.ser")));
+                    page.savePage(tempstream);
+                    tempstream.close();
+                    File temp = new File("temp.ser");
+                    log.debug("page serialized to: " + temp.length());
+                    temp = null;
+                    ObjectInputStream in = new ObjectInputStream(
+                                             new BufferedInputStream(
+                                               new FileInputStream("temp.ser")));
+                    page.loadPage(in);
+                    in.close();
                     rend.renderPage(page);
                 }
                 count++;
@@ -129,8 +162,10 @@ public class AreaTreeBuilder {
 class TreeLoader {
     AreaTree areaTree;
     AreaTree.AreaTreeModel model;
-    TreeLoader() {
+    FontInfo fontInfo;
 
+    TreeLoader(FontInfo fi) {
+        fontInfo = fi;
     }
 
     public void setTreeModel(AreaTree.AreaTreeModel mo) {
@@ -163,7 +198,6 @@ class TreeLoader {
                 readPageSequence((Element) obj);
             }
         }
-
     }
 
     public void readPageSequence(Element root) {
@@ -202,14 +236,14 @@ class TreeLoader {
     }
 
     public PageViewport readPageViewport(Element root) {
-        String bounds = root.getAttribute("bounds");
+        Rectangle2D bounds = getRectangle(root, "bounds");
         PageViewport viewport = null;
         NodeList childs = root.getChildNodes();
         for (int i = 0; i < childs.getLength(); i++) {
             Node obj = childs.item(i);
             if (obj.getNodeName().equals("page")) {
                 Page page = readPage((Element) obj);
-                viewport = new PageViewport(page);
+                viewport = new PageViewport(page, bounds);
             }
         }
         return viewport;
@@ -228,8 +262,32 @@ class TreeLoader {
         return page;
     }
 
+    Rectangle2D getRectangle(Element root, String attr) {
+        String rect = root.getAttribute(attr);
+        StringTokenizer st = new StringTokenizer(rect, " ");
+        int x = 0, y = 0, w = 0, h = 0;
+        if (st.hasMoreTokens()) {
+            String tok = st.nextToken();
+            x = Integer.parseInt(tok);
+        }
+        if (st.hasMoreTokens()) {
+            String tok = st.nextToken();
+            y = Integer.parseInt(tok);
+        }
+        if (st.hasMoreTokens()) {
+            String tok = st.nextToken();
+            w = Integer.parseInt(tok);
+        }
+        if (st.hasMoreTokens()) {
+            String tok = st.nextToken();
+            h = Integer.parseInt(tok);
+        }
+        Rectangle2D r2d = new Rectangle2D.Float(x, y, w, h);
+        return r2d;
+    }
+
     public RegionViewport readRegionViewport(Page page, Element root) {
-        RegionViewport reg = new RegionViewport();
+        RegionViewport reg = new RegionViewport(getRectangle(root, "rect"));
         NodeList childs = root.getChildNodes();
         for (int i = 0; i < childs.getLength(); i++) {
             Node obj = childs.item(i);
@@ -257,17 +315,99 @@ class TreeLoader {
     public Region readRegion(Element root, int type) {
         Region reg;
         if (type == Region.BODY) {
-            reg = new BodyRegion();
+            BodyRegion br = new BodyRegion();
+            NodeList childs = root.getChildNodes();
+            for (int i = 0; i < childs.getLength(); i++) {
+                Node obj = childs.item(i);
+                if (obj.getNodeName().equals("beforeFloat")) {
+                    BeforeFloat bf = readBeforeFloat((Element) obj);
+                    br.setBeforeFloat(bf);
+                } else if (obj.getNodeName().equals("mainReference")) {
+                    MainReference mr = readMainReference((Element) obj);
+                    br.setMainReference(mr);
+                } else if (obj.getNodeName().equals("footnote")) {
+                    Footnote foot = readFootnote((Element) obj);
+                    br.setFootnote(foot);
+                }
+            }
+            reg = br;
         } else {
             reg = new Region(type);
-        }
-        List blocks = getBlocks(root);
-        for (int i = 0; i < blocks.size(); i++) {
-            Block obj = (Block) blocks.get(i);
-            reg.addBlock(obj);
+            List blocks = getBlocks(root);
+            for (int i = 0; i < blocks.size(); i++) {
+                Block obj = (Block) blocks.get(i);
+                reg.addBlock(obj);
+            }
         }
         return reg;
     }
+
+    public BeforeFloat readBeforeFloat(Element root) {
+        BeforeFloat bf = new BeforeFloat();
+        List blocks = getBlocks(root);
+        for (int i = 0; i < blocks.size(); i++) {
+            Block obj = (Block) blocks.get(i);
+            bf.addBlock(obj);
+        }
+        return bf;
+    }
+
+    public MainReference readMainReference(Element root) {
+        MainReference mr = new MainReference();
+        List spans = getSpans(root);
+        for (int i = 0; i < spans.size(); i++) {
+            Span obj = (Span) spans.get(i);
+            mr.addSpan(obj);
+        }
+        return mr;
+    }
+
+    List getSpans(Element root) {
+        ArrayList list = new ArrayList();
+        NodeList childs = root.getChildNodes();
+        for (int i = 0; i < childs.getLength(); i++) {
+            Node obj = childs.item(i);
+            if (obj.getNodeName().equals("span")) {
+                List flows = getFlows((Element) obj);
+                Span span = new Span(flows.size());
+                for (int j = 0; j < flows.size(); j++) {
+                    Flow flow = (Flow) flows.get(j);
+                    span.addFlow(flow);
+                }
+                list.add(span);
+            }
+        }
+        return list;
+    }
+
+    List getFlows(Element root) {
+        ArrayList list = new ArrayList();
+        NodeList childs = root.getChildNodes();
+        for (int i = 0; i < childs.getLength(); i++) {
+            Node obj = childs.item(i);
+            if (obj.getNodeName().equals("flow")) {
+                Flow flow = new Flow();
+                List blocks = getBlocks((Element) obj);
+                for (int j = 0; j < blocks.size(); j++) {
+                    Block block = (Block) blocks.get(j);
+                    flow.addBlock(block);
+                }
+                list.add(flow);
+            }
+        }
+        return list;
+    }
+
+    public Footnote readFootnote(Element root) {
+        Footnote foot = new Footnote();
+        List blocks = getBlocks(root);
+        for (int i = 0; i < blocks.size(); i++) {
+            Block obj = (Block) blocks.get(i);
+            foot.addBlock(obj);
+        }
+        return foot;
+    }
+
 
     List getBlocks(Element root) {
         ArrayList list = new ArrayList();
@@ -276,6 +416,10 @@ class TreeLoader {
             Node obj = childs.item(i);
             if (obj.getNodeName().equals("block")) {
                 Block block = new Block();
+                List props = getProperties((Element) obj);
+                for (int count = 0; count < props.size(); count++) {
+                    block.addProperty((Property) props.get(count));
+                }
                 addBlockChildren(block, (Element) obj);
                 list.add(block);
             }
@@ -301,11 +445,19 @@ class TreeLoader {
                     // error
                 }
                 LineArea line = new LineArea();
-                List inlines = getInlineAreas((Element)obj);
-        for (int j = 0; j < inlines.size(); j++) {
-            InlineArea inline = (InlineArea) inlines.get(j);
-            line.addInlineArea(inline);
-        }
+                List props = getProperties((Element) obj);
+                for (int count = 0; count < props.size(); count++) {
+                    line.addProperty((Property) props.get(count));
+                }
+                String height = ((Element) obj).getAttribute("height");
+                int h = Integer.parseInt(height);
+                line.setHeight(h);
+
+                List inlines = getInlineAreas((Element) obj);
+                for (int j = 0; j < inlines.size(); j++) {
+                    InlineArea inline = (InlineArea) inlines.get(j);
+                    line.addInlineArea(inline);
+                }
 
                 block.addLineArea(line);
                 type = 2;
@@ -322,6 +474,7 @@ class TreeLoader {
             if (obj.getNodeName().equals("char")) {
                 Character ch =
                   new Character(getString((Element) obj).charAt(0));
+                addProperties((Element) obj, ch);
                 list.add(ch);
             } else if (obj.getNodeName().equals("space")) {
                 Space space = new Space();
@@ -329,11 +482,219 @@ class TreeLoader {
                 int w = Integer.parseInt(width);
                 space.setWidth(w);
                 list.add(space);
-            } else if (obj.getNodeName().equals("container")) {
             } else if (obj.getNodeName().equals("viewport")) {
+                Viewport viewport = getViewport((Element) obj);
+                if (viewport != null) {
+                    list.add(viewport);
+                }
             } else if (obj.getNodeName().equals("leader")) {
+                Leader leader = getLeader((Element) obj);
+                if (leader != null) {
+                    list.add(leader);
+                }
+            } else if (obj.getNodeName().equals("word")) {
+                Word word = getWord((Element) obj);
+                if (word != null) {
+                    list.add(word);
+                }
             } else {
             }
+        }
+        return list;
+    }
+
+    Viewport getViewport(Element root) {
+        Area child = null;
+        NodeList childs = root.getChildNodes();
+        for (int i = 0; i < childs.getLength(); i++) {
+            Node obj = childs.item(i);
+            if (obj.getNodeName().equals("container")) {
+                child = getContainer((Element) obj);
+            } else if (obj.getNodeName().equals("foreignObject")) {
+                child = getForeignObject((Element) obj);
+            } else if (obj.getNodeName().equals("image")) {
+                child = getImage((Element) obj);
+            }
+        }
+        if (child == null) {
+            return null;
+        }
+        Viewport viewport = new Viewport(child);
+        return viewport;
+    }
+
+    Container getContainer(Element root) {
+        Container cont = new Container();
+        List blocks = getBlocks(root);
+        for (int i = 0; i < blocks.size(); i++) {
+            Block obj = (Block) blocks.get(i);
+            cont.addBlock(obj);
+        }
+        return cont;
+    }
+
+    ForeignObject getForeignObject(Element root) {
+        Document doc;
+        String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
+
+        NodeList childs = root.getChildNodes();
+        for (int i = 0; i < childs.getLength(); i++) {
+            Node obj = childs.item(i);
+            if (obj instanceof Element) {
+                //System.out.println(obj.getNodeName());
+                Element rootEle = (Element) obj;
+                String space = rootEle.getAttribute("xmlns");
+                if (space.equals(svgNS)) {
+                    try {
+                        doc = javax.xml.parsers.DocumentBuilderFactory.newInstance().
+                              newDocumentBuilder().newDocument();
+                        Node node = doc.importNode(obj, true);
+                        doc.appendChild(node);
+                        DOMImplementation impl =
+                          SVGDOMImplementation.getDOMImplementation();
+                        // due to namespace problem attributes are not cloned
+                        //doc = DOMUtilities.deepCloneDocument(doc, impl);
+
+                        ForeignObject fo = new ForeignObject(doc, svgNS);
+                        return fo;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        doc = javax.xml.parsers.DocumentBuilderFactory.newInstance().
+                              newDocumentBuilder().newDocument();
+                        Node node = doc.importNode(obj, true);
+                        doc.appendChild(node);
+                        ForeignObject fo = new ForeignObject(doc, space);
+                        return fo;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    Image getImage(Element root) {
+        String url = root.getAttribute("url");
+        Image image = new Image(url);
+        return image;
+    }
+
+    Leader getLeader(Element root) {
+        Leader leader = new Leader();
+        String rs = root.getAttribute("ruleStyle");
+        if ("solid".equals(rs)) {
+            leader.setRuleStyle(Leader.SOLID);
+        } else if ("dotted".equals(rs)) {
+            leader.setRuleStyle(Leader.DOTTED);
+        } else if ("dashed".equals(rs)) {
+            leader.setRuleStyle(Leader.DASHED);
+        } else if ("double".equals(rs)) {
+            leader.setRuleStyle(Leader.DOUBLE);
+        } else if ("groove".equals(rs)) {
+            leader.setRuleStyle(Leader.GROOVE);
+        } else if ("ridge".equals(rs)) {
+            leader.setRuleStyle(Leader.RIDGE);
+        }
+        String rt = root.getAttribute("ruleThickness");
+        int thick = Integer.parseInt(rt);
+        leader.setRuleThickness(thick);
+        addProperties(root, leader);
+        return leader;
+    }
+
+    Word getWord(Element root) {
+        String url = root.getAttribute("url");
+        Word word = new Word();
+        addProperties(root, word);
+        return word;
+    }
+
+    public void addProperties(Element ele, InlineArea inline) {
+        List props = getProperties(ele);
+        for (int count = 0; count < props.size(); count++) {
+            inline.addProperty((Property) props.get(count));
+        }
+        String str = ele.getAttribute("width");
+
+    }
+
+    public List getProperties(Element ele) {
+        ArrayList list = new ArrayList();
+        String str = ele.getAttribute("props");
+        StringTokenizer st = new StringTokenizer(str, ";");
+        while (st.hasMoreTokens()) {
+            String tok = st.nextToken();
+            int index = tok.indexOf(":");
+            String id = tok.substring(0, index);
+            String val = tok.substring(index + 1);
+            Property prop = new Property();
+            if ("internal-link".equals(id)) {
+                prop.propType = Property.INTERNAL_LINK;
+                prop.data = val;
+                list.add(prop);
+            } else if ("external-link".equals(id)) {
+                prop.propType = Property.EXTERNAL_LINK;
+                prop.data = val;
+                list.add(prop);
+            } else if ("font-family".equals(id)) {
+                prop.propType = Property.FONT_FAMILY;
+                prop.data = val;
+                list.add(prop);
+            } else if ("font-size".equals(id)) {
+                prop.propType = Property.FONT_SIZE;
+                prop.data = Integer.valueOf(val);
+                list.add(prop);
+            } else if ("font-weight".equals(id)) {
+                prop.propType = Property.FONT_WEIGHT;
+                prop.data = val;
+                list.add(prop);
+            } else if ("font-style".equals(id)) {
+                prop.propType = Property.FONT_STYLE;
+                prop.data = val;
+                list.add(prop);
+            } else if ("color".equals(id)) {
+                prop.propType = Property.COLOR;
+                prop.data = val;
+                list.add(prop);
+            } else if ("background".equals(id)) {
+                prop.propType = Property.BACKGROUND;
+                prop.data = val;
+                list.add(prop);
+            } else if ("underline".equals(id)) {
+                prop.propType = Property.UNDERLINE;
+                prop.data = new Boolean(val);
+                list.add(prop);
+            } else if ("overline".equals(id)) {
+                prop.propType = Property.OVERLINE;
+                prop.data = new Boolean(val);
+                list.add(prop);
+            } else if ("linethrough".equals(id)) {
+                prop.propType = Property.LINETHROUGH;
+                prop.data = new Boolean(val);
+                list.add(prop);
+            } else if ("offset".equals(id)) {
+                prop.propType = Property.OFFSET;
+                prop.data = Integer.valueOf(val);
+                list.add(prop);
+            } else if ("shadow".equals(id)) {
+                prop.propType = Property.SHADOW;
+                prop.data = val;
+                list.add(prop);
+            }
+        }
+        return list;
+    }
+
+    public List getRanges(Element ele) {
+        ArrayList list = new ArrayList();
+        String str = ele.getAttribute("ranges");
+        StringTokenizer st = new StringTokenizer(str, ";");
+        while (st.hasMoreTokens()) {
+            String tok = st.nextToken();
         }
         return list;
     }
@@ -350,7 +711,6 @@ class TreeLoader {
         }
         return str;
     }
-
 
 }
 

@@ -23,6 +23,17 @@ public class Footnote {
 
     ArrayList blocks = null;
 
+    public void setSeparator(Block sep) {
+        separator = sep;
+    }
+
+    public void addBlock(Block block) {
+        if (blocks == null) {
+            blocks = new ArrayList();
+        }
+        blocks.add(block);
+    }
+
     public Block getSeparator() {
         return separator;
     }

@@ -12,8 +12,16 @@ import java.util.ArrayList;
 // this is a reference area block area with 0 border and padding
 public class Span extends Area {
     // the list of flow reference areas in this span area
-    ArrayList flowAreas = new ArrayList();
+    ArrayList flowAreas;
     int height;
+
+    public Span(int cols) {
+        flowAreas = new ArrayList(cols);
+    }
+
+    public void addFlow(Flow flow) {
+        flowAreas.add(flow);
+    }
 
     public int getColumnCount() {
         return flowAreas.size();

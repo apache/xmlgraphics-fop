@@ -7,10 +7,11 @@
 
 package org.apache.fop.area;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Region {
+public class Region implements Serializable {
     public static final int BEFORE = 0;
     public static final int START = 1;
     public static final int BODY = 2;

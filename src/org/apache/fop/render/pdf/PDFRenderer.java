@@ -29,6 +29,24 @@ import org.w3c.dom.Document;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import java.awt.geom.Rectangle2D;
+
+/*
+TODO:
+
+viewport clipping
+word rendering and optimistion
+pdf state optimistation
+line and border
+leader
+background pattern
+user agent xml (svg) rendering
+orientation
+writing mode
+text decoration
+
+ */
+
 /**
  * Renderer that renders areas to PDF
  *
@@ -39,6 +57,10 @@ public class PDFRenderer extends PrintRenderer {
      * the PDF Document being created
      */
     protected PDFDocument pdfDoc;
+
+    protected String producer;
+
+    protected OutputStream ostream;
 
     /**
      * the /Resources object of the PDF document being created
@@ -80,7 +102,7 @@ public class PDFRenderer extends PrintRenderer {
     int prevWordX = 0;
 
     /**
-     * The  width of the previous word. Used to calculate space between
+     * The width of the previous word. Used to calculate space between
      */
     int prevWordWidth = 0;
 
@@ -93,7 +115,6 @@ public class PDFRenderer extends PrintRenderer {
      * create the PDF renderer
      */
     public PDFRenderer() {
-        this.pdfDoc = new PDFDocument();
     }
 
     /**
@@ -101,23 +122,50 @@ public class PDFRenderer extends PrintRenderer {
      *
      * @param producer string indicating application producing PDF
      */
-    public void setProducer(String producer) {
-        this.pdfDoc.setProducer(producer);
+    public void setProducer(String prod) {
+        producer = prod;
     }
 
-    public void startRenderer(OutputStream stream)
-    throws IOException {
+    public void startRenderer(OutputStream stream) throws IOException {
+        ostream = stream;
+        this.pdfDoc = new PDFDocument();
+        this.pdfDoc.setProducer(producer);
         pdfDoc.outputHeader(stream);
     }
 
-    public void stopRenderer()
-    throws IOException {
+    public void stopRenderer() throws IOException {
+        FontSetup.addToResources(this.pdfDoc, fontInfo);
+        pdfDoc.outputTrailer(ostream);
+
+        this.pdfDoc = null;
+        ostream = null;
     }
 
-    public void renderPage(PageViewport page) throws IOException, FOPException {
+    /**
+     * This method creates a pdf stream for the current page
+     * uses it as the contents of a new page. The page is wriiten
+     * immediately to the output stream.
+     */
+    public void renderPage(PageViewport page) throws IOException,
+    FOPException {
+
+        this.pdfResources = this.pdfDoc.getResources();
+
+        currentStream = this.pdfDoc.makeStream();
+        currentStream.add("BT\n");
 
         Page p = page.getPage();
-renderPageAreas(p);
+        renderPageAreas(p);
+
+        currentStream.add("ET\n");
+
+        Rectangle2D bounds = page.getViewArea();
+        double w = bounds.getWidth();
+        double h = bounds.getHeight();
+        currentPage = this.pdfDoc.makePage(this.pdfResources, currentStream,
+                                           (int) Math.round(w / 1000), (int) Math.round(h / 1000));
+
+        this.pdfDoc.output(ostream);
 
     }
 

@@ -7,10 +7,12 @@
 
 package org.apache.fop.area;
 
+import java.io.Serializable;
+
 /**
- * base object for all areas
+ * Base object for all areas.
  */
-public class Area {
+public class Area implements Serializable {
     // stacking directions
     public static final int LR = 0;
     public static final int RL = 1;

@@ -937,7 +937,7 @@ public class PDFDocument {
      * @return the created /Page object
      */
     public PDFPage makePage(PDFResources resources, PDFStream contents,
-                            int pagewidth, int pageheight, Page currentPage) {
+                            int pagewidth, int pageheight) {
 
         /*
          * create a PDFPage with the next object number, the given
@@ -959,7 +959,7 @@ public class PDFDocument {
             }
             pendingLinks = null;
         }
-
+/*
         if (currentPage != null) {
             Enumeration enum = currentPage.getIDList().elements();
             while (enum.hasMoreElements()) {
@@ -968,7 +968,7 @@ public class PDFDocument {
                         page.referencePDF());
             }
         }
-
+*/
         /* add it to the list of objects */
         this.objects.addElement(page);
 
