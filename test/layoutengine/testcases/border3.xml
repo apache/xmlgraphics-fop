@@ -131,7 +131,7 @@
     <!-- border-style="hidden" -->
     <eval expected="hidden" xpath="//flow/block[1]/block[20]/block[1]/lineArea"/>
     <eval expected="72000" xpath="//flow/block[1]/block[20]/@ipda"/>
-    <eval expected="62000" xpath="//flow/block[1]/block[20]/@ipd"/>
-    <eval expected="5000 5000 5000 5000" xpath="//flow/block[1]/block[20]/@bap"/>
+    <eval expected="72000" xpath="//flow/block[1]/block[20]/@ipd"/>
+    <eval expected="0 0 0 0" xpath="//flow/block[1]/block[20]/@bap"/>
   </checks>
 </testcase>

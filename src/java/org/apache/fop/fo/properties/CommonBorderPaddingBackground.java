@@ -208,6 +208,7 @@ public class CommonBorderPaddingBackground implements Cloneable {
     public int getBorderWidth(int side, boolean bDiscard) {
         if ((borderInfo[side] == null)
                 || (borderInfo[side].mStyle == Constants.EN_NONE)
+                || (borderInfo[side].mStyle == Constants.EN_HIDDEN)
                 || (bDiscard && borderInfo[side].mWidth.isDiscard())) {
             return 0;
         } else {
