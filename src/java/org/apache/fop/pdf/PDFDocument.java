@@ -52,8 +52,10 @@ package org.apache.fop.pdf;
 
 import org.apache.fop.util.StreamUtilities;
 
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.fonts.CustomFont;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontType;
@@ -97,7 +99,8 @@ import java.awt.geom.Rectangle2D;
  * the object list; enhanced trailer output; cleanups.
  *
  */
-public class PDFDocument {
+public class PDFDocument extends AbstractLogEnabled {
+    
     private static final Integer LOCATION_PLACEHOLDER = new Integer(0);
     /**
      * the version of PDF supported which is 1.4
@@ -304,6 +307,16 @@ public class PDFDocument {
     }
 
     /**
+     * Apply the encryption filter to a PDFStream if encryption is enabled.
+     * @param stream PDFStream to encrypt
+     */
+    public void applyEncryption(PDFStream stream) {
+        if (isEncryptionActive()) {
+            this.encryption.applyFilter(stream);
+        }
+    }
+
+    /**
      * Enables PDF encryption.
      * @param params The encryption parameters for the pdf file
      */
@@ -313,7 +326,7 @@ public class PDFDocument {
             /**@todo this cast is ugly. PDFObject should be transformed to an interface. */
             addTrailerObject((PDFObject)this.encryption);
         } else {
-            System.out.println("PDF encryption is unavailable. PDF will be "
+            getLogger().warn("PDF encryption is unavailable. PDF will be "
                 + "generated without encryption.");
         }
     }
@@ -1308,13 +1321,19 @@ public class PDFDocument {
             throw new IllegalArgumentException("Trying to embed unsupported font type: "
                                                 + desc.getFontType());
         } 
-        if (!(desc instanceof CustomFont)) {
+        
+        Font tempFont;
+        if (desc instanceof LazyFont) {
+            tempFont = ((LazyFont)desc).getRealFont();
+        } else {
+            tempFont = (Font)desc;
+        }
+        if (!(tempFont instanceof CustomFont)) {
             throw new IllegalArgumentException(
                       "FontDescriptor must be instance of CustomFont, but is a "
                        + desc.getClass().getName());
         }
-        
-        CustomFont font = (CustomFont)desc;
+        CustomFont font = (CustomFont)tempFont;
         
         InputStream in = null;
         try {
@@ -1323,8 +1342,9 @@ public class PDFDocument {
                 try {
                     in = resolveURI(font.getEmbedFileName());
                 } catch (Exception e) {
-                    System.out.println("Failed to embed fontfile: "
-                                       + font.getEmbedFileName());
+                    getLogger().error("Failed to embed fontfile: "
+                                       + font.getEmbedFileName() 
+                                       + "(" + e.getMessage() + ")");
                 }
             }
     
@@ -1334,8 +1354,9 @@ public class PDFDocument {
                     in = new java.io.BufferedInputStream(
                             this.getClass().getResourceAsStream(font.getEmbedResourceName()));
                 } catch (Exception e) {
-                    System.out.println("Failed to embed fontresource: "
-                                       + font.getEmbedResourceName());
+                    getLogger().error("Failed to embed fontresource: "
+                                       + font.getEmbedResourceName()
+                                       + "(" + e.getMessage() + ")");
                 }
             }
     
@@ -1349,6 +1370,7 @@ public class PDFDocument {
                         FontFileReader reader = new FontFileReader(in);
 
                         TTFSubSetFile subset = new TTFSubSetFile();
+                        setupLogger(subset);
         
                         byte[] subsetFont = subset.readFont(reader,
                                              mbfont.getTTCName(), mbfont.getUsedGlyphs());
@@ -1367,7 +1389,12 @@ public class PDFDocument {
                         ((PDFTTFStream)embeddedFont).setData(file, file.length);
                     }
                     embeddedFont.addFilter("flate");
-                    embeddedFont.addFilter("ascii-85");
+                    if (isEncryptionActive()) {
+                        this.encryption.applyFilter(embeddedFont);
+                    } else {
+                        embeddedFont.addFilter("ascii-85");
+                    }
+                    
                     return embeddedFont;
                 } finally {
                     in.close();
