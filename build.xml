@@ -197,7 +197,7 @@ list of possible build targets.
     <property name="version.class" value="${version.class.dir}/${version.class.name}"/>
     <property name="version.prefix" value="${fop.prefix}.version"/>
     <property name="tmp.version.dir" value="${build.tmp}"/>
-    <property name="tmp.version.filename" value="version.property"/>
+    <property name="tmp.version.filename" value="version.properties"/>
     <property name="tmp.version.file" value="${build.tmp}/${tmp.version.filename}"/>
 
   </target>
