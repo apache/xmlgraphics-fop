@@ -36,7 +36,7 @@ import org.xml.sax.Locator;
  * Base class for representation of formatting objects and their processing.
  */
 public class FObj extends FONode implements Constants {
-    private static final String FO_URI = "http://www.w3.org/1999/XSL/Format";
+    public static final String FO_URI = "http://www.w3.org/1999/XSL/Format";
 
     public static PropertyMaker[] propertyListTable = null;
     
