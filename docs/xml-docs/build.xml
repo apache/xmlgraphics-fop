@@ -23,38 +23,35 @@ These are the meaningful targets for this build file:
     <tstamp/>
 
     <property name="src.dir" value="./fop"/>
-    <property name="docfile.pdf" value="./fop.pdf"/>
     <property name="allfiles.xml" value="fop-doc.xml"/>
-    <property name="stylesheet.xsl" value="xml2pdf.xsl"/>
-    <property name="outfile.fo" value="fop-doc.fo"/>
-    <property name="outfile.pdf" value="fop-doc.pdf"/>
-
-    <property name="xslt" value="org.apache.xalan.xslt.Process"/>
+    <property name="outfile.fo" value="fop.fo"/>
+    <property name="outfile.pdf" value="fop.pdf"/>
 
     <taskdef name="fop" classname="Fop"/>
-    <taskdef name="collectDocFiles" classname="CollectDocFiles"/>
     <taskdef name="xslt" classname="Xslt"/>
 
   </target>
 
   <!-- =================================================================== -->
-  <!-- compiles all xml files into one and removes the proprietary sbk protocol -->
+  <!-- copies all xml files into one. the infile is a dummy, because the   -->
+  <!-- source files are defined in the stylesheet                          -->
   <!-- =================================================================== -->
   <target name="prepare-files" depends="init">
-    <collectDocFiles configFile="fop.xml" outFile="fop.pdf"/>
+    <xslt infile="fop.xml" xsltfile="xml2xml.xsl"
+        outfile="${allfiles.xml}" smart="yes"/>
   </target>
 
   <!-- =================================================================== -->
-  <!-- Generates the fo file        -->
+  <!-- Generates the fo file                                               -->
   <!-- =================================================================== -->
   <target name="fo" depends="prepare-files">
-    <xslt infile="${allfiles.xml}" xsltfile="${stylesheet.xsl}"
+    <xslt infile="${allfiles.xml}" xsltfile="xml2pdf.xsl"
         outfile="${outfile.fo}" smart="yes"/>
   </target>
 
 
   <!-- =================================================================== -->
-  <!-- Generates the pdf file        -->
+  <!-- Generates the pdf file                                              -->
   <!-- =================================================================== -->
   <target name="pdf" depends="fo">
     <fop fofile="${outfile.fo}"   pdffile="${outfile.pdf}"/> 

@@ -73,7 +73,7 @@ TBD: - The faq doesn't show in the content
                 space-after.optimum="15pt"
                 background-color="blue"
                 color="white"
-                text-align="centered">
+                text-align="center">
         FOP - an xsl:fo renderer
          </fo:block>
 
@@ -133,7 +133,7 @@ TBD: - The faq doesn't show in the content
             space-after.optimum="15pt"
             background-color="blue"
             color="white"
-            text-align="centered"
+            text-align="center"
             >
      <xsl:attribute name="id">
      <xsl:value-of select="translate(.,' ),-.(','____')"/>
@@ -150,7 +150,7 @@ TBD: - The faq doesn't show in the content
             line-height="20pt"
             space-before.optimum="15pt"
             space-after.optimum="12pt"
-            text-align="centered"
+            text-align="center"
             padding-top="3pt"
             >
      <xsl:value-of select="@title"/>
@@ -165,7 +165,7 @@ TBD: - The faq doesn't show in the content
             line-height="18pt"
             space-before.optimum="10pt"
             space-after.optimum="9pt"
-            text-align="centered"
+            text-align="center"
             padding-top="3pt">
      <xsl:value-of select="@title"/>
    </fo:block>
@@ -179,7 +179,7 @@ TBD: - The faq doesn't show in the content
             line-height="13pt"
             space-after.optimum="3pt"
             space-before.optimum="3pt"
-            text-align="justified">
+            text-align="justify">
      <xsl:apply-templates/> 
    </fo:block>
 </xsl:template>
@@ -206,7 +206,7 @@ TBD: - The faq doesn't show in the content
             space-after.optimum="15pt"
             background-color="blue"
             color="white"
-            text-align="centered"
+            text-align="center"
             >
      <xsl:attribute name="id">
      <xsl:value-of select="translate(.,' ),-.(','____')"/>
@@ -229,7 +229,7 @@ TBD: - The faq doesn't show in the content
             line-height="13pt"
             space-after.optimum="3pt"
             space-before.optimum="3pt"
-            text-align="justified">
+            text-align="justify">
       <xsl:apply-templates/> 
     </fo:block>
 </xsl:template>
@@ -289,7 +289,7 @@ TBD: - The faq doesn't show in the content
       </fo:list-item-label>
       <fo:list-item-body>
         <fo:block space-after.optimum="4pt"
-              text-align="justified"
+              text-align="justify"
               padding-top="3pt">
           <xsl:apply-templates/> 
        </fo:block>
@@ -308,7 +308,7 @@ TBD: - The faq doesn't show in the content
       </fo:list-item-label>
       <fo:list-item-body>
         <fo:block space-after.optimum="4pt"
-              text-align="justified"
+              text-align="justify"
               padding-top="3pt">
           <xsl:apply-templates/> 
        </fo:block>
