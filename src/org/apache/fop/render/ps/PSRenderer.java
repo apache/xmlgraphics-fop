@@ -617,6 +617,8 @@ public class PSRenderer extends AbstractRenderer {
             write("gsave");
             if (img.getColorSpace().getColorSpace() == ColorSpace.DEVICE_CMYK)
                 write("/DeviceCMYK setcolorspace");
+            else if (img.getColorSpace().getColorSpace() == ColorSpace.DEVICE_GRAY)
+                write("/DeviceGray setcolorspace");
             else
                 write("/DeviceRGB setcolorspace");
 
@@ -685,7 +687,11 @@ public class PSRenderer extends AbstractRenderer {
                     }
                 }
                 out.write(imgmap);
-                ((Finalizable)out).finalizeStream();
+                if (out instanceof Finalizable) {
+                    ((Finalizable)out).finalizeStream();
+                } else {
+                    out.flush();
+                }
             } catch (IOException e) {
                 if (!ioTrouble)
                     e.printStackTrace();
