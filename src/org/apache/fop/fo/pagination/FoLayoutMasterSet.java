@@ -139,7 +139,7 @@ public class FoLayoutMasterSet extends FONode {
                 foType = ev.getFoType();
                 if (foType == FObjectNames.SIMPLE_PAGE_MASTER) {
                     //System.out.println("Found simple-page-master");
-                    simple = new FoSimplePageMaster(foTree, this, ev);
+                    simple = new FoSimplePageMaster(getFOTree(), this, ev);
                     masterName = simple.getMasterName();
                     if (pageMasters.get(masterName) != null)
                         throw new FOPException
@@ -156,7 +156,7 @@ public class FoLayoutMasterSet extends FONode {
                     //System.out.println("Found page-sequence-master");
                     try {
                         foPageSeq =
-                                new FoPageSequenceMaster(foTree, this, ev);
+                            new FoPageSequenceMaster(getFOTree(), this, ev);
                     } catch (TreeException e) {
                         throw new FOPException
                                 ("TreeException: " + e.getMessage());
