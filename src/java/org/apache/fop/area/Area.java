@@ -18,7 +18,7 @@
  */
 package org.apache.fop.area;
 
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 import org.apache.fop.datastructs.Node;
@@ -43,72 +43,88 @@ import org.apache.fop.fo.properties.WritingMode;
  */
 public class Area extends AreaNode implements Cloneable  {
 
-    /** The total geometrical area covered by this <code>Area</code>, including
-     * content rectangle, padding, borders and spaces.  The <code>width</code>
-     * of this <code>Rectangle</code> is the <code>inline-progression-dimension
-     * </code> of the area, and the <code>height</code> is the
-     * <code>block-progression-dimension</code>.  */
-    protected Rectangle2D space = new Rectangle2D.Float();
-    protected Rectangle2D border = null;
-    protected Rectangle2D padding = null;
-    protected Rectangle2D content = new Rectangle2D.Float();
-    /** True if the the <code>writing-mode</code> of the content area is
+    /**
+     * The total geometrical area covered by this <code>Area</code>, including
+     * content rectangle, padding, borders and spaces or margins.  The
+     * <code>width</code> of this <code>Rectangle</code> is the
+     * <code>inline-progression-dimension</code> of the area, and the
+     * <code>height</code> is the <code>block-progression-dimension</code>.
+     * <p>The spaces are always implicitly defined with respect to the borders.
+     * The only way in which individual margins/spaces can be derived is with
+     * respect to the padding rectangle, so this rectangle is always associated
+     * with a point offset to the top left corner of the padding rectangle. 
+     * Note that spaces/margins are dynamic, in that they are frequently
+     * adjusted or eliminated in the course of layout.
+     * */
+    protected SpacesRectangle spaces = null;
+    /**
+     * @return the space
+     */
+    protected SpacesRectangle getSpaces() {
+        return spaces;
+    }
+    /** Geometrical area embraced by the border rectangle of this area.  Note
+     * that borders may be collapsed.
+     */
+    protected BorderRectangle borders = null;
+    /**
+     * @return the border
+     */
+    protected BorderRectangle getBorders() {
+        return borders;
+    }
+    /** Geometrical area embraced by the padding rectangle of this area.
+     * N.B. The background (if any) is rendered in the padding rectangle. */
+    protected PaddingRectangle padding = null;
+    /**
+     * @return the padding
+     */
+    protected PaddingRectangle getPadding() {
+        return padding;
+    }
+    /** Geometrical area embraced by the content rectangle of this area */
+    protected ContentRectangle content = null;
+    /**
+     * @return the content
+     */
+    protected ContentRectangle getContent() {
+        return content;
+    }
+
+    protected void setMargins(
+    		double before, double after, double start, double end) {
+        spaces.setBefore(before);
+        spaces.setAfter(after);
+        spaces.setStart(start);
+        spaces.setEnd(end);
+    }
+    /** Translates this area into position in its parent area */
+    protected AffineTransform translation = null;
+	/**
+	 * @return the translation
+	 */
+	protected AffineTransform getTranslation() {
+		return translation;
+	}
+	/**
+	 * @param translation to set
+	 */
+	protected void setTranslation(AffineTransform translation) {
+		this.translation = translation;
+	}
+    /** True if the <code>writing-mode</code> of the content area is
      * horizontal */
     protected boolean contentIsHorizontal = true;
     /** True if the the <code>writing-mode</code> of the content area is
      * left-to-right */
     protected boolean contentLeftToRight = true;
 
-    /**
-     * @return the border
-     */
-    public Rectangle2D getBorder() {
-        return border;
-    }
-    /**
-     * @param border to set
-     */
-    public void setBorder(Rectangle2D border) {
-        this.border = border;
-    }
-    /**
-     * @return the content
-     */
-    public Rectangle2D getContent() {
-        return content;
-    }
-    /**
-     * @param content to set
-     */
-    public void setContent(Rectangle2D content) {
-        this.content = content;
-    }
-    /**
-     * @return the padding
-     */
-    public Rectangle2D getPadding() {
-        return padding;
-    }
-    /**
-     * @param padding to set
-     */
-    public void setPadding(Rectangle2D padding) {
-        this.padding = padding;
-    }
-    /**
-     * @return the space
-     */
-    public Rectangle2D getSpace() {
-        return space;
-    }
-    /**
-     * @param space to set
-     */
-    public void setSpace(Rectangle2D space) {
-        this.space = space;
-    }
 
     private void setup() {
+        content = new ContentRectangle();
+        padding = content.getPadding();
+        borders = padding.getBorders();
+        spaces = borders.getSpaces();
         try {
             contentIsHorizontal =
                 WritingMode.isHorizontal(generatedBy.getWritingMode());
@@ -138,7 +154,7 @@ public class Area extends AreaNode implements Cloneable  {
     }
 
     /**
-     * Construct an <code>Area</code> which is the root of a tree, and is
+     * Constructs an <code>Area</code> which is the root of a tree, and is
      * synchronized on itself
      * @param pageSeq through which this area was generated
      * @param generatedBy the given <code>FONode</code> generated this
@@ -210,7 +226,7 @@ public class Area extends AreaNode implements Cloneable  {
      * N.B. The method is synchronized only on this object.
      * @param pts <code>block-progression-dimension</code> to set, in points
      */
-    public void setBPDimPts(float pts) {
+    public void setBPDimPts(double pts) {
         synchronized (this) {
             // TODO - check this
             if (contentIsHorizontal) {
