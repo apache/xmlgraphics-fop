@@ -35,6 +35,8 @@ public class ContentRectangle extends Double {
 	 */
 	public ContentRectangle() {
 		super();
+        padding = new PaddingRectangle();
+        padding.setContents(this);
 	}
 
 	/**
@@ -47,22 +49,18 @@ public class ContentRectangle extends Double {
 	 */
 	public ContentRectangle(double x, double y, double w, double h) {
 		super(x, y, w, h);
+        padding = new PaddingRectangle();
+        padding.setContents(this);
 	}
 
 	private PaddingRectangle padding = null;
-	private BorderRectangle borders = null;
-	private SpacesRectangle spaces = null;
 
-    public void setPadding(PaddingRectangle padding) {
-        this.padding = padding;
+    public PaddingRectangle getPadding() {
+        return padding;
     }
 
-    public void setBorders(BorderRectangle borders) {
-        this.borders = borders;
+    public void setRect(double x, double y, double w, double h) {
+        super.setRect(x, y, w, h);
+        padding.setContents(this);
     }
-
-    public void setSpaces(SpacesRectangle spaces) {
-        this.spaces = spaces;
-    }
-
 }
