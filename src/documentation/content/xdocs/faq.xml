@@ -802,22 +802,7 @@ Can I control this?</question>
     <faq id="pdf-postprocess">
       <question>What tools are available for post-processing my PDF document?</question>
       <answer>
-        <ul>
-          <li>
-            The most popular one that we are aware of is <link
-              href="http://www.lowagie.com/iText">iText</link>, which has tools
-            for adding security features, document properties, watermarks, and
-            many other features to PDF files. FOP and iText can be integrated
-            into one Java application, see sample code for <link
-              href="#pdf-security">encryption</link>.
-            The bad news is that iText swallows PDF bookmarks.
-          </li>
-
-          <li>
-            You can use Adobe Acrobat (the full version, not the Reader) to
-            process the file manually or with scripting that it supports.
-          </li>
-        </ul>
+        <p>See <link href="output.html#pdf-postprocess">PDF Post-processing</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-security">
@@ -825,59 +810,8 @@ Can I control this?</question>
       to my PDF document?</question>
       <answer>
         <p>
-          FOP does not currently support this feature. Possible workarounds
-          include those mentioned in the <link href="#PDF-postprocess">PDF
-            Post-Processing FAQ</link>.
-        </p>
-        <p>
-          Some sample code for encrypting a FOP generated PDF with iText to
-          get you started:
-        </p>
-        <source><![CDATA[public static void main(String args[]) {
-  try {
-    ByteArrayOutputStream fopout=new ByteArrayOutputStream();
-    FileOutputStream outfile=new FileOutputStream(args[2]);
-    Driver driver =new Driver();
-    driver.setOutputStream(fopout);
-    driver.setRenderer(Driver.RENDER_PDF);
-    Transformer transformer=TransformerFactory
-      .newInstance().newTransformer(new StreamSource(new File(args[1])));
-    transformer.transform(new StreamSource(new File(args[0])),
-       new SAXResult(driver.getContentHandler()));
-    PdfReader reader = new PdfReader(fopout.toByteArray());
-    int n = reader.getNumberOfPages();
-    Document document = new Document(reader.getPageSizeWithRotation(1));
-    PdfWriter writer = PdfWriter.getInstance(document, outfile);
-    writer.setEncryption(PdfWriter.STRENGTH40BITS, "pdf", null,
-      PdfWriter.AllowCopy);
-    document.open();
-    PdfContentByte cb = writer.getDirectContent();
-    PdfImportedPage page;
-    int rotation;
-    int i = 0;
-    while (i < n) {
-      i++;
-      document.setPageSize(reader.getPageSizeWithRotation(i));
-      document.newPage();
-      page = writer.getImportedPage(reader, i);
-      rotation = reader.getPageRotation(i);
-      if (rotation == 90 || rotation == 270) {
-        cb.addTemplate(page, 0, -1f, 1f, 0, 0,
-         reader.getPageSizeWithRotation(i).height());  }
-      else {
-        cb.addTemplate(page, 1f, 0, 0, 1f, 0, 0);
-      }
-      System.out.println("Processed page " + i);
-    }
-    document.close();
-  }
-  catch( Exception e) {
-    e.printStackTrace();
-  }
-}]]></source>
-        <p>
-          Check the iText tutorial and documentation for setting access flags,
-          password, encryption strength and other parameters.
+          See <link href="pdfencryption.html">PDF Encryption</link>.
+          See also <link href="output.html#pdf-postprocess">PDF Post-processing</link>.
         </p>
       </answer>
     </faq>
@@ -885,34 +819,13 @@ Can I control this?</question>
       <question>How do I add document properties (title, author, etc.) to my
       PDF document?</question>
       <answer>
-        <p>FOP does not currently support this feature. Possible workarounds
-        include those mentioned in the <link href="#PDF-postprocess">PDF
-        Post-Processing FAQ</link>.</p>
+        <p>See <link href="output.html#pdf-postprocess">PDF Post-processing</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-watermark">
       <question>How do I add watermarks to my PDF document?</question>
       <answer>
-        <p>FOP does not currently support this feature. Possible
-        workarounds:</p>
-        <ul>
-          <li>
-            Use a background image for the body region.
-          </li>
-          <li>
-            See the <link href="#PDF-postprocess">PDF Post-Processing
-              FAQ</link>.
-          </li>
-          <li>
-            (submitted by Trevor_Campbell@kaz.com.au) Place an image in a
-            region that overlaps the flowing text. For example, make
-            region-before large enough to contain your image. Then include a
-            block (if necessary, use an absolutely positioned block-container)
-            containing the watermark image in the static-content for the
-            region-before. Note that the image will be drawn on top of the
-            normal content.
-          </li>
-        </ul>
+        <p>See <link href="output.html#pdf-watermark">PDF Watermarks</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-print-contortion">
