@@ -1,20 +1,80 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.viewer;
 
 //Java
-import java.awt.*;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterJob;
 import java.awt.print.PrinterException;
-import java.awt.image.BufferedImage;
 
 //FOP
 import org.apache.fop.apps.AWTStarter;
@@ -29,8 +89,12 @@ import org.apache.fop.render.awt.AWTRenderer;
  * Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
  */
 public class PreviewDialog extends JFrame {
+    
+    /** The Translator for localization */
     protected Translator translator;
+    /** The AWT renderer */
     protected AWTRenderer renderer;
+    /** The AWT starter */
     protected AWTStarter starter;
 
     private int currentPage = 0;
@@ -102,7 +166,7 @@ public class PreviewDialog extends JFrame {
         //Sets size to be 61%x90% of the screen size
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         //Rather frivolous size - fits A4 page width in 1024x768 screen on my desktop
-        setSize(screen.width*61/100, screen.height*9/10);
+        setSize(screen.width * 61 / 100, screen.height * 9 / 10);
 
         //Page view stuff
         pageLabel = new JLabel();
@@ -123,7 +187,7 @@ public class PreviewDialog extends JFrame {
         scale.setPreferredSize(new Dimension(80, 24));
         scale.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                scale_actionPerformed(e);
+                scaleActionPerformed(e);
             }
         });
         scale.setSelectedItem("100%");
@@ -150,10 +214,12 @@ public class PreviewDialog extends JFrame {
         JPanel statusBar = new JPanel();
         processStatus = new JLabel();
         processStatus.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(0,3,0,0)));
+                BorderFactory.createEtchedBorder(), 
+                BorderFactory.createEmptyBorder(0, 3, 0, 0)));
         infoStatus = new JLabel();
         infoStatus.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(0,3,0,0)));
+                BorderFactory.createEtchedBorder(), 
+                BorderFactory.createEmptyBorder(0, 3, 0, 0)));
 
         statusBar.setLayout(new GridBagLayout());
 
@@ -305,8 +371,9 @@ public class PreviewDialog extends JFrame {
      * Shows the previous page.
      */
     private void goToPreviousPage() {
-        if (currentPage <= 0)
+        if (currentPage <= 0) {
             return;
+        }
         currentPage--;
         goToPage(currentPage);
     }
@@ -316,8 +383,9 @@ public class PreviewDialog extends JFrame {
      * Shows the next page.
      */
     private void goToNextPage() {
-        if (currentPage >= pageCount - 1)
+        if (currentPage >= pageCount - 1) {
             return;
+        }
         currentPage++;
         goToPage(currentPage);
     }
@@ -326,8 +394,9 @@ public class PreviewDialog extends JFrame {
      * Shows the last page.
      */
     private void goToLastPage() {
-        if (currentPage == pageCount - 1)
+        if (currentPage == pageCount - 1) {
             return;
+        }
         currentPage = pageCount - 1;
         goToPage(currentPage);
     }
@@ -372,8 +441,9 @@ public class PreviewDialog extends JFrame {
                       (int)getLocation().getY() + 50);
         d.setVisible(true);
         currentPage = d.getPageNumber();
-        if (currentPage < 1 || currentPage > pageCount)
+        if (currentPage < 1 || currentPage > pageCount) {
             return;
+        }
         currentPage--;
         goToPage(currentPage);
     }
@@ -382,8 +452,9 @@ public class PreviewDialog extends JFrame {
      * Shows the first page.
      */
     private void goToFirstPage() {
-        if (currentPage == 0)
+        if (currentPage == 0) {
             return;
+        }
         currentPage = 0;
         goToPage(currentPage);
     }
@@ -407,29 +478,31 @@ public class PreviewDialog extends JFrame {
      * Scales page image
      */
     private void setScale(double scaleFactor) {
-        if (scaleFactor == 25.0)
+        if (scaleFactor == 25.0) {
             scale.setSelectedIndex(0);
-        else if (scaleFactor == 50.0)
+        } else if (scaleFactor == 50.0) {
             scale.setSelectedIndex(1);
-        else if (scaleFactor == 75.0)
+        } else if (scaleFactor == 75.0) {
             scale.setSelectedIndex(2);
-        else if (scaleFactor == 100.0)
+        } else if (scaleFactor == 100.0) {
             scale.setSelectedIndex(3);
-        else if (scaleFactor == 150.0)
+        } else if (scaleFactor == 150.0) {
             scale.setSelectedIndex(4);
-        else if (scaleFactor == 200.0)
+        } else if (scaleFactor == 200.0) {
             scale.setSelectedIndex(5);
+        }
         renderer.setScaleFactor(scaleFactor);
         showPage();
     }
 
-    private void scale_actionPerformed(ActionEvent e) {
+    private void scaleActionPerformed(ActionEvent e) {
         String item = (String)scale.getSelectedItem();
         setScale(Double.parseDouble(item.substring(0, item.indexOf('%'))));
     }
 
     /**
      * Sets message to be shown in the status bar in a thread safe way.
+     * @param message the message
      */
     public void setStatus(String message) {
         SwingUtilities.invokeLater(new ShowStatus(message));
@@ -442,7 +515,7 @@ public class PreviewDialog extends JFrame {
         /**
          * The message to display
          */
-        String message;
+        private String message;
         /**
          * Constructs  ShowStatus thread
          * @param message message to display
@@ -450,6 +523,7 @@ public class PreviewDialog extends JFrame {
         public ShowStatus(String message) {
             this.message = message;
         }
+        
         public void run() {
             processStatus.setText(message.toString());
         }
@@ -462,8 +536,9 @@ public class PreviewDialog extends JFrame {
         ShowPageImage viewer = new ShowPageImage();
         if (SwingUtilities.isEventDispatchThread()) {
             viewer.run();
-        } else
+        } else {
             SwingUtilities.invokeLater(viewer);
+        }
     }
 
 
@@ -494,6 +569,7 @@ public class PreviewDialog extends JFrame {
 
     /**
      * Opens standard Swing error dialog box and reports given exception details.
+     * @param e the Exception
      */
     public void reportException(Exception e) {
         String msg = translator.getString("Exception.Occured");
@@ -501,8 +577,10 @@ public class PreviewDialog extends JFrame {
         JOptionPane.showMessageDialog(
             getContentPane(),
             "<html><b>" + msg + ":</b><br>"
-          + e.getClass().getName() + "<br>" + e.getMessage() + "</html>", translator.getString("Exception.Error"),
-             JOptionPane.ERROR_MESSAGE
+                + e.getClass().getName() + "<br>"
+                + e.getMessage() + "</html>", 
+            translator.getString("Exception.Error"),
+            JOptionPane.ERROR_MESSAGE
         );
     }
 }
