@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: ImageFactory.java,v 1.7 2004/05/12 23:19:52 gmazza Exp $ */
 
 package org.apache.fop.image;
 
@@ -186,6 +186,9 @@ public class ImageFactory {
             Object[] initArgs = new Object[1];
             initArgs[0] = imgInfo;
             imageInstance = imageConstructor.newInstance(initArgs);
+        } catch (ClassNotFoundException cnfe) {
+            log.error("Class " + imgClassName + " not found. Check that Jimi/JAI is in classpath");
+            return null;
         } catch (java.lang.reflect.InvocationTargetException ex) {
             Throwable t = ex.getTargetException();
             String msg;
