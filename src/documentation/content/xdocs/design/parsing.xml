@@ -3,7 +3,7 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 <document>
   <header>
-    <title>XML Parsing</title>
+    <title>FOP Design: Input Parsing</title>
   </header>
   <body>
     <section id="intro">
@@ -24,6 +24,7 @@ Instead, FOP takes SAX events and builds its own tree-like structure. Why?</p>
         <li>DOM contains an entire document. FOP is able to process individual fo:page-sequence objects discretely, without the need to have the entire document in memory. For documents that have only one fo:page-sequence object, FOP's approach is no advantage, but in other cases it is a huge advantage. A 500-page book that is broken into 100 5-page chapters, each in its own fo:page-sequence, essentially needs only 1% of the document memory that would be required if using DOM as input.</li>
       </ul>
       <p>See the <link href="../embedding.html#input">Input Section of the User Embedding Document</link> for a discussion of input usage patterns and some implementation details.</p>
+      <p>FOP's <link href="fotree.html">FO Tree Mechanism</link> is responsible for catching the SAX events and processing them.</p>
     </section>
     <section id="validation">
       <title>Validation</title>
@@ -36,26 +37,6 @@ Instead, FOP takes SAX events and builds its own tree-like structure. Why?</p>
       <p>To allow for extensions to the XSL-FO language, FOP provides a mechanism for handling foreign namespaces.</p>
       <p>See <link href="../extensions.html">User Extensions</link> for a discussion of standard extensions shipped with FOP, and their related namespaces.</p>
       <p>See <link href="../dev/extenstions.html">Developer Extensions</link> for a discussion of the mechanisms in place to allow developers to add their own extensions, including how to tell FOP about the foreign namespace.</p>
-    </section>
-    <section>
-      <title>Tree Building</title>
-      <p>The SAX Events will fire all the information for the document with start element, end element, text data etc.
-This information is used to build up a representation of the FO document.
-To do this for a namespace there is a set of element mappings.
-When an element + namepsace mapping is found then it can create an object for that element.
-If the element is not found then it creates a dummy object or a generic DOM for unknown namespaces.</p>
-      <p>The object is then setup and then given attributes for the element.
-For the FO Tree the attributes are converted into properties.
-The FO objects use a property list mapping to convert the attributes into a list of properties for the element.
-For other XML, for example SVG, a DOM of the XML is constructed.
-This DOM can then be passed through to the renderer.
-Other element mappings can be used in different ways, for example to create elements that create areas during the layout process or setup information for the renderer etc.</p>
-      <p>While the tree building is mainly about creating the FO Tree there are some stages that can propagate to the renderer.
-At the end of a page sequence we know that all pages in the page sequence can be laid out without being effected by any further XML.
-The significance of this is that the FO Tree for the page sequence may be able to be disposed of.
-The end of the XML document also tells us that we can finalise the output document.
-(The layout of individual pages is accomplished by the layout managers page at a time; i.e. they do not need to wait for the end of the page sequence.
-The page may not yet be complete, however, containing forward page number references, for example.)</p>
     </section>
   </body>
 </document>

@@ -3,41 +3,75 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 <document>
   <header>
-    <title>FO Tree</title>
-    <subtitle>Design of FO Tree Structure</subtitle>
+    <title>FOP Design: FO Tree</title>
     <authors>
       <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
     </authors>
   </header>
   <body>
-      <section id="issue-fo-recycle">
-        <title>Process FO Elements ASAP</title>
-        <p>The issue here is that we wish to recycle FO Tree memory as much as possible. There are at least three possible places that FO Tree fragments can be passed to the Layout process, and their memory recycled:</p>
-        <ul>
-          <li>
-            <strong>fo:block</strong> It might be tempting to start laying out pages as soon as the first fo:block object is finished. However, there are many downstream things that can affect the placement of that block on a page, such as graphics and footnotes. So, in order to maintain conformance to the XSL-FO specification, and create high-quality output, we must see more of the document.</li>
-          <li>
-            <strong>fo:root</strong> The other extreme is to wait until the entire document is read in before processing any of it. This essentially means that there is no memory recycling. Processing the document correctly is more important than saving memory, so this option would be used if there were no better alternative.</li>
-          <li>
-            <strong>fo:page-sequence</strong> The page-sequence object provides a nice clean break in the document. Content from one page-sequence will never interfere with nor affect the placement of the content of another. FOP uses this option as the optimum way to maintain compliance with the standard and to minimize memory consumption.</li>
-        </ul>
-      </section>
-      <section id="issue-fo-serialize">
-        <title>Serialize FO Tree as Necessary</title>
-        <p>This issue is implied by the requirement to process documents of arbitrary size. Unless some arbitrary limit is placed on the size of page-sequence objects, FOP must be able to serialize FO tree fragments as necessary.</p>
-      </section>
     <section id="intro">
       <title>Introduction</title>
-      <p>The FO Tree is an internal representation of the input XSL-FO document.
-The tree is created by building the elements and attributes from the SAX events.
-The process of building the FO Tree corresponds to the <strong>Objectify</strong> step from the spec.
-The <strong>Refinement</strong> step is part of reading and using the properties which may happen immediately or during the layout process.</p>
-      <p>The FO Tree is used as an intermediatory structure which is converted
-into the area tree. The complete FO tree should not be held in memory
-since FOP should be able to handle FO documents of any size.</p>
-      <p>The FO Tree is simply a heirarchy of java objects that represent the fo elements from xml.
-The traversal is done by the layout or structure process only in the flow elements.</p>
+      <p>The FO Tree is an internal hierarchical representation (java objects and properties) of the input XSL-FO document, and is created from the <link href="parsing.html">parsing</link> of that XSL-FO document.
+The process of building the FO Tree corresponds to the <strong>Objectify</strong> step in the XSL-FO spec.
+The FO Tree is an intermediate structure which will later be <link href="layout.html">converted into the area tree</link>.</p>
     </section>
+    <section id="process">
+      <title>Processing</title>
+      <p>The SAX Events that are fired by the parsing process are caught by the FO Tree system.
+Events for starting an element, ending an element, and text data are assembled by the FO Tree system into a set of objects that represent the input FO document.</p>
+      <p>For attributes attached to an XSL-FO element, a property list mapping is used to convert the attribute into properties of the object related to the element.</p>
+      <p>Elements from <link href="parsing.html#namespaces">foreign namespaces</link> that are recognized by FOP fall into the following categories:</p>
+      <ul>
+        <li>Pass-thru: These are placed into a DOM object, which is then passed through FOP directly to the renderer. SVG is an example.</li>
+        <li>FOP Internal: These are placed into objects that can then be used by FOP. An example of this would be an element that the layout process will use to create an area. Another example would be an element that contains setup information for the renderer.</li>
+      </ul>
+      <p>For unrecognized namespaces, a dummy object or a generic DOM is created.</p>
+      <p>While the tree building is mainly about creating the FO Tree, some FO Tree events trigger processes in other parts of FOP.
+The end of a page-sequence element triggers the layout process for that page-sequence (see discussion of <link href="#recycle">Recycling</link>).
+Also, the end of the XML document tells the renderer that it can finalize the output document.</p>
+    </section>
+    <section id="recycle">
+      <title>Recycling FO Tree Memory</title>
+      <p>To minimize the amount of memory used by FOP, we wish to recycle FO Tree memory as much as possible.
+There are at least three possible places that FO Tree fragments could be passed to the Layout process, so that their memory can be reused:</p>
+      <ul>
+        <li>
+          <strong>fo:block</strong> It might be tempting to start laying out pages as soon as the first fo:block object is finished. However, there are many downstream things that can affect the placement of that block on a page, such as graphics and footnotes. So, in order to maintain conformance to the XSL-FO specification, and create high-quality output, we must see more of the document.</li>
+        <li>
+          <strong>fo:root</strong> The other extreme is to wait until the entire document is read in before processing any of it. This essentially means that there is no memory recycling. Processing the document correctly is more important than saving memory, so this option would be used if there were no better alternative.</li>
+        <li>
+          <strong>fo:page-sequence</strong> The page-sequence object provides a nice clean break in the document. Content from one page-sequence will never interfere with nor affect the placement of the content of another. FOP uses this option as the optimum way to maintain compliance with the standard and to minimize memory consumption.</li>
+      </ul>
+    </section>
+    <section id="serialize">
+      <title>FO Tree Serialization</title>
+      <p>This issue is implied by the requirement to process documents of arbitrary size. Unless some arbitrary limit is placed on the size of page-sequence objects, FOP must be able to serialize FO tree fragments as necessary.</p>
+    </section>
+    <section id="specific-elements">
+      <title>Notes About Specific Elements</title>
+      <section id="page-master">
+        <title>page-master</title>
+        <p>The first elements in a document are the elements for the page master setup.
+This is usually only a small number and will be used throughout the document to create new pages.
+These elements are kept as a factory to create the page and appropriate regions whenever a new page is requested by the layout.
+The objects in the FO Tree that represent these elements are themselves the factory.
+The root element keeps these objects as a factory for the page sequences.</p>
+      </section>
+      <section id="flow">
+        <title>flow</title>
+        <p>The elements that are in the flow of the document are a set of elements
+that is needed for the layout process. Each element is important in the
+creation of areas.</p>
+      </section>
+      <section id="other-elements">
+        <title>Other Elements</title>
+        <p>The remaining FO Objects are things like page-sequence, title and color-profile.
+These are handled by their parent element; i.e. the root looks after the declarations and the declarations maintains a list of colour profiles.
+The page-sequences are direct descendents of root.</p>
+      </section>
+    </section>
+    <section id="implement">
+      <title>Implementation Notes</title>
       <section id="fonode">
         <title>FONode</title>
         <p>The base class for all objects in the tree is FONode. The base class for
@@ -51,7 +85,8 @@ may have children.</p>
         <p>Each xml element is represented by a java object. For pagination the
 classes are in <code>org.apache.fop.fo.pagination.*</code>, for elements in the flow
 they are in <code>org.apache.fop.fo.flow.*</code> and some others are in
-<code>org.apache.fop.fo.*.</code></p>
+<code>org.apache.fop.fo.*.</code>
+        </p>
       </section>
       <section id="create-fo">
         <title>Making FO's</title>
@@ -70,91 +105,35 @@ element name. This maker is then used to create a new class that
 represents an FO element. This is then added to the FO tree as a child
 of the current parent.</p>
       </section>
-      <section id="properties">
-        <title>Properties</title>
-        <p>The XML attributes on each element are passed to the object. The objects
-that represent FO objects then convert the attributes into properties.</p>
-        <p>Since properties can be inherited the PropertyList class handles resolving
-properties for a particular element.
-All properties are specified in an XML file. Classes are created
-automatically during the build process.</p>
-        <p>In some cases the element may be moved to have a different parent, for
-example markers, or the inheritance could be different, for example
-initial property set.</p>
-      <p>Properties (recall that FO's have properties, areas have traits, and XML
-nodes have attributes) are also a concern of <em>FOTreeBuilder</em>. It
-accomplishes this by using a <em>PropertyListBuilder</em>. There is a
-separate <em>PropertyListBuilder</em> for each namespace encountered
-while building the FO tree. Each Builder object contains a hash of
-property names and <em>their</em> respective makers. It may also
-contain element-specific property maker hashes; these are based on the
-<em>local name</em> of the flow object, ie. <em>table-row</em>, not
-<em>fo:table-row</em>. If an element-specific property mapping exists,
-it is preferred to the generic mapping.</p>
-      <p>The base class for all
-properties is <em>Property</em>, and all the property makers extend
-<em>Property.Maker</em>. A more complete discussion of the property
-architecture may be found in <jump href="properties.html">Properties</jump>.</p>
-    </section>
-    <section id="foreign">
-      <title>Foreign XML</title>
-      <p>FOP supports the handlingof foreign XML.
-The XML is converted internally into a DOM, this is then available to
-the FO tree to convert the DOM into another format which can be rendered.
-In the case of SVG the DOM needs to be created with Batik, so an element
-mapping is used to read all elements in the SVG namespace and pass them
-into the Batik DOM.</p>
-      <p>The base class for foreign XML is XMLObj. This class handles creating a
+      <section id="foreign">
+        <title>Foreign XML</title>
+        <p>For SVG, the DOM needs to be created with Batik, so an element mapping is used to read all elements in the SVG namespace and pass them into the Batik DOM.</p>
+        <p>The base class for foreign XML is XMLObj. This class handles creating a
 DOM Element and the setting of attributes. It also can create a DOM
 Document if it is a top level element, class XMLElement.
 This class must be extended for the namespace of the XML elements. For
 unknown namespaces the class is UnknowXMLObj.</p>
-      <p>If some special processing is needed then the top level element can extend
+        <p>If some special processing is needed then the top level element can extend
 the XMLObj. For example the SVGElement makes the special DOM required for
 batik and gets the size of the svg.</p>
-      <p>Foreign XML will usually be in an fo:instream-foreign-object, the XML will
+        <p>Foreign XML will usually be in an fo:instream-foreign-object, the XML will
 be passed to the render as a DOM where the render will be able to handle
 it. Other XML from an unknwon namespace will be ignored.</p>
-      <p>By using element mappings it is possible to read other XML and either</p>
-      <ul>
-        <li>set information on the area tree</li>
-        <li>create pseudo FO Objects that create areas in the area tree</li>
-        <li>create FO Objects</li>
-      </ul>
-    </section>
-    <section id="unknown">
-      <title>Unknown Elements</title>
-      <p>If an element is in a known namespace but the element is unknown then an
+        <p>By using element mappings it is possible to read other XML and either</p>
+        <ul>
+          <li>set information on the area tree</li>
+          <li>create pseudo FO Objects that create areas in the area tree</li>
+          <li>create FO Objects</li>
+        </ul>
+      </section>
+      <section id="unknown">
+        <title>Unknown Elements</title>
+        <p>If an element is in a known namespace but the element is unknown then an
 Unknown object is created. This is mainly to provide information to the
 user.
 This could happen if the fo document contains an element from a different
 version or the element is misspelt.</p>
-    </section>
-    <section id="extensions">
-      <title>Extensions</title>
-      <p>It is possible to add extensions to FOP so that you can extend the ability of
-FOP with respect to render output, document specific information or extended
-layout functionality.</p>
-    </section>
-    <section id="page-master">
-      <title>Page Masters</title>
-      <p>The first elements in a document are the elements for the page master setup.
-This is usually only a small number and will be used throughout the document to create new pages.
-These elements are kept as a factory to create the page and appropriate regions whenever a new page is requested by the layout.
-The objects in the FO Tree that represent these elements are themselves the factory.
-The root element keeps these objects as a factory for the page sequences.</p>
-    </section>
-    <section id="flow">
-      <title>Flow</title>
-      <p>The elements that are in the flow of the document are a set of elements
-that is needed for the layout process. Each element is important in the
-creation of areas.</p>
-    </section>
-    <section id="other-elements">
-      <title>Other Elements</title>
-      <p>The remaining FO Objects are things like page-sequence, title and color-profile.
-These are handled by their parent element; i.e. the root looks after the declarations and the declarations maintains a list of colour profiles.
-The page-sequences are direct descendents of root.</p>
+      </section>
     </section>
   </body>
 </document>
