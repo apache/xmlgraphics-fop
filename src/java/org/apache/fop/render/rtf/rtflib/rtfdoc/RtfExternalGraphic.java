@@ -58,15 +58,14 @@
 
 package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
+import org.apache.commons.io.IOUtil;
 import org.apache.fop.render.rtf.rtflib.tools.ImageConstants;
 import org.apache.fop.render.rtf.rtflib.tools.ImageUtil;
 //import org.apache.fop.render.rtf.rtflib.tools.jpeg.Encoder;
 //import org.apache.fop.render.rtf.rtflib.tools.jpeg.JPEGException;
 
-import java.io.BufferedInputStream;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 
 import java.io.File;
@@ -247,18 +246,12 @@ public class RtfExternalGraphic extends RtfElement {
 
         data = null;
         try {
-            // image reading patch provided by Michael Krause <michakurt@web.de>
-            final BufferedInputStream bin = new BufferedInputStream(url.openStream());
-            final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            while (true) {
-                final int datum = bin.read();
-                if (datum == -1) {
-                   break;
-                }
-                bout.write(datum);
-             }
-             bout.flush();
-             data = bout.toByteArray();
+            final InputStream in = url.openStream();
+            try {
+                data = IOUtil.toByteArray(url.openStream());
+            } finally {
+                IOUtil.shutdownStream(in);
+            }
         } catch (Exception e) {
             throw new ExternalGraphicException("The attribute 'src' of "
                     + "<fo:external-graphic> has a invalid value: '"
