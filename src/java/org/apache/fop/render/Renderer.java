@@ -18,8 +18,6 @@
 
 package org.apache.fop.render;
 
-// Java
-import java.awt.GraphicsEnvironment;
 import java.io.OutputStream;
 import java.io.IOException;
 // FOP
@@ -43,8 +41,12 @@ public interface Renderer extends Runnable {
 
     void setOutputStream(OutputStream outputStream);
 
-    /** @return the <code>GraphicsEnvironment</code> of this renderer.  */
-    GraphicsEnvironment getGraphicsEnvironment();
+    /**
+     * Gets the <code>FontData</code> object representing the database of
+     * <code>Font</code>s available to this renderer.
+     * @return the fonts database
+     */
+    FontData getFontData();
 
     /**
      * Set the User Agent.
