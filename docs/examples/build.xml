@@ -35,32 +35,15 @@
 		<echo message=""/>
 	</target>
 	<!-- =================================================================== -->
-	<!-- Produces new test pdf files                                         -->
+	<!-- Produces new test PDF files                                         -->
 	<!-- =================================================================== -->
 	<target name="newPDF" depends="init">
-		<fop fofile="${foDir}/normal.fo" outfile="${testDir}/normal.pdf"/>
-		<fop fofile="${foDir}/table.fo" outfile="${testDir}/table.pdf"/>
-		<fop fofile="${foDir}/list.fo" outfile="${testDir}/list.pdf"/>
-		<fop fofile="${foDir}/link.fo" outfile="${testDir}/link.pdf"/>
-		<fop fofile="${foDir}/newlinktest.fo" outfile="${testDir}/newlinktest.pdf"/>
-		<fop fofile="${foDir}/border.fo" outfile="${testDir}/border.pdf"/>
-		<fop fofile="${foDir}/extensive.fo" outfile="${testDir}/extensive.pdf"/>
-		<fop fofile="${foDir}/images.fo" outfile="${testDir}/images.pdf"/>
-		<fop fofile="${foDir}/readme.fo" outfile="${testDir}/readme.pdf"/>
-		<fop fofile="${foDir}/fonts.fo" outfile="${testDir}/fonts.pdf"/>
-		<fop fofile="${foDir}/leader.fo" outfile="${testDir}/leader.pdf"/>
-		<fop fofile="${foDir}/textdeko.fo" outfile="${testDir}/textdeko.pdf"/>
-		<fop fofile="${foDir}/inhprop.fo" outfile="${testDir}/inhprop.pdf"/>
-		<fop fofile="${foDir}/normalex.fo" outfile="${testDir}/normalex.pdf"/>
-		<fop fofile="${foDir}/simple.fo" outfile="${testDir}/simple.pdf"/>
-		<!-- <fop fofile="${foDir}/hyphen.fo" outfile="${testDir}/hyphen.pdf"/> -->
-		<fop fofile="${foDir}/character.fo" outfile="${testDir}/character.pdf"/>
-		<fop fofile="${foDir}/pdfoutline.fo" outfile="${testDir}/pdfoutline.pdf"/>
-		<fop fofile="${foDir}/corresprop.fo" outfile="${testDir}/corresprop.pdf"/>
-		<fop fofile="${foDir}/bordershorthand.fo" outfile="${testDir}/bordershorthand.pdf"/>
-	</target>
-	<target name="image" depends="init">
-		<fop fofile="${foDir}/images.fo" outfile="${testDir}/images.pdf"/>
+		<fop format="application/pdf" outdir="${testDir}" messagelevel="debug"
+                    basedir="./fo">
+			<fileset dir="${foDir}">
+				<include name="**/*.fo"/>
+			</fileset>
+		</fop>
 	</target>
 	<!-- =================================================================== -->
 	<!-- Produces new test ps files                                         -->
@@ -86,30 +69,19 @@
 	<!-- Compares new test pdf files to reference pdf files                  -->
 	<!-- =================================================================== -->
 	<target name="comparePDF" depends="newPDF">
-		<compare referenceDirectory="${referenceDir}" testDirectory="${testDir}" filenames="normal.pdf,table.pdf,list.pdf,link.pdf,border.pdf,images.pdf,extensive.pdf,readme.pdf,fonts.pdf,list2.pdf"/>
+		<compare referenceDirectory="${referenceDir}" testDirectory="${testDir}" filenames="normal.pdf,table.pdf,list.pdf,link.pdf,border.pdf,images.pdf,extensive.pdf,readme.pdf,fonts.pdf,bordershorthand.pdf,character.pdf,corresprop.pdf,hyphen.pdf,inhprop.pdf,instream.pdf,leader.pdf,newlinktest.pdf,normalex.pdf,pdfoutline.pdf,simple.pdf,textdeko.pdf,tableunits.pdf"/>
 	</target>
 	<!-- =================================================================== -->
 	<!-- Produces new reference pdf files                                         -->
 	<!-- =================================================================== -->
-	<target name="referencePDF">
-		<fop fofile="${foDir}/normal.fo" outfile="${referenceDir}/normal.pdf"/>
-		<fop fofile="${foDir}/table.fo" outfile="${referenceDir}/table.pdf"/>
-		<fop fofile="${foDir}/list.fo" outfile="${referenceDir}/list.pdf"/>
-		<fop fofile="${foDir}/link.fo" outfile="${referenceDir}/link.pdf"/>
-		<fop fofile="${foDir}/newlinktest.fo" outfile="${referenceDir}/newlinktest.pdf"/>
-		<fop fofile="${foDir}/border.fo" outfile="${referenceDir}/border.pdf"/>
-		<fop fofile="${foDir}/extensive.fo" outfile="${referenceDir}/extensive.pdf"/>
-		<fop fofile="${foDir}/images.fo" outfile="${referenceDir}/images.pdf"/>
-		<fop fofile="${foDir}/readme.fo" outfile="${referenceDir}/readme.pdf"/>
-		<fop fofile="${foDir}/fonts.fo" outfile="${referenceDir}/fonts.pdf"/>
-		<fop fofile="${foDir}/leader.fo" outfile="${referenceDir}/leader.pdf"/>
-		<fop fofile="${foDir}/textdeko.fo" outfile="${referenceDir}/textdeko.pdf"/>
-		<fop fofile="${foDir}/inhprop.fo" outfile="${referenceDir}/inhprop.pdf"/>
-		<fop fofile="${foDir}/normalex.fo" outfile="${referenceDir}/normalex.pdf"/>
-		<fop fofile="${foDir}/simple.fo" outfile="${referenceDir}/simple.pdf"/>
-		<!-- <fop fofile="${foDir}/hyphen.fo" outfile="${referenceDir}/hyphen.pdf"/> -->
-		<fop fofile="${foDir}/character.fo" outfile="${referenceDir}/character.pdf"/>
+	<target name="referencePDF" depends="init">
+		<fop format="application/pdf" outdir="${referenceDir}" basedir="./fo">
+			<fileset dir="${foDir}">
+				<include name="**/*.fo"/>
+			</fileset>
+		</fop>
 	</target>
+
 	<!-- =================================================================== -->
 	<!-- Starts the test                                                     -->
 	<!-- =================================================================== -->
@@ -122,5 +94,6 @@
 	<target name="clean" depends="init">
 		<delete dir="${testDir}"/>
 	</target>
+
 </project>
 <!-- End of file -->
