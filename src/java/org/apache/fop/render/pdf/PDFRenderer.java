@@ -229,13 +229,13 @@ public class PDFRenderer extends PrintRenderer {
      * Offset for rendering text, taking into account borders and padding for
      * both region and block.
      */
-    protected int BPMarginOffset = 0;
+    protected int bpMarginOffset = 0;
 
     /**
      * Offset for rendering text, taking into account borders and padding for 
      * both the region and block.
      */
-    protected int IPMarginOffset = 0;
+    protected int ipMarginOffset = 0;
 
     /**
      * create the PDF renderer
@@ -454,8 +454,8 @@ public class PDFRenderer extends PrintRenderer {
             pageReferences.put(page.getKey(), currentPage.referencePDF());
             pvReferences.put(page.getKey(), page);
         }
-        currentStream =
-            this.pdfDoc.getFactory().makeStream(PDFFilterList.CONTENT_FILTER, false);
+        currentStream = this.pdfDoc.getFactory()
+            .makeStream(PDFFilterList.CONTENT_FILTER, false);
 
         currentState = new PDFState();
         currentState.setTransform(new AffineTransform(1, 0, 0, -1, 0,
@@ -507,35 +507,35 @@ public class PDFRenderer extends PrintRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderBlocks(Block, List)
      */
     protected void renderBlocks(Block block, List blocks) {
-        int saveIPMargin = IPMarginOffset;
-        int saveBPMargin = BPMarginOffset;
+        int saveIPMargin = ipMarginOffset;
+        int saveBPMargin = bpMarginOffset;
         if (block != null) {
             Integer spaceStart = (Integer) block.getTrait(Trait.SPACE_START); 
             if (spaceStart != null) {
-                IPMarginOffset += spaceStart.intValue();
+                ipMarginOffset += spaceStart.intValue();
             }
 
             Integer paddingStart = (Integer) block.getTrait(Trait.PADDING_START);
             if (paddingStart != null) {
-                IPMarginOffset += paddingStart.intValue();
+                ipMarginOffset += paddingStart.intValue();
             }
-            Integer paddingBefore= (Integer) block.getTrait(Trait.PADDING_BEFORE);
+            Integer paddingBefore = (Integer) block.getTrait(Trait.PADDING_BEFORE);
             if (paddingBefore != null) {
-                BPMarginOffset += paddingBefore.intValue();
+                bpMarginOffset += paddingBefore.intValue();
             }
 
             BorderProps borderStartWidth = (BorderProps) block.getTrait(Trait.BORDER_START);
             if (borderStartWidth != null) {
-                IPMarginOffset += borderStartWidth.width;
+                ipMarginOffset += borderStartWidth.width;
             }
             BorderProps borderBeforeWidth = (BorderProps) block.getTrait(Trait.BORDER_BEFORE);
             if (borderBeforeWidth != null) {
-                BPMarginOffset += borderBeforeWidth.width;
+                bpMarginOffset += borderBeforeWidth.width;
             }
         }
         super.renderBlocks(block, blocks);
-        IPMarginOffset = saveIPMargin;
-        BPMarginOffset = saveBPMargin;
+        ipMarginOffset = saveIPMargin;
+        bpMarginOffset = saveBPMargin;
     }
 
     /**
@@ -553,10 +553,9 @@ public class PDFRenderer extends PrintRenderer {
         float height = (float)(viewArea.getHeight() / 1000f);
 
         if (region.getRegion().getRegionClass()
-            == org.apache.fop.fo.pagination.Region.BODY_CODE)
-        {
-            BPMarginOffset = region.getBorderAndPaddingWidthBefore();
-            IPMarginOffset = region.getBorderAndPaddingWidthStart();
+                == org.apache.fop.fo.pagination.Region.BODY_CODE) {
+            bpMarginOffset = region.getBorderAndPaddingWidthBefore();
+            ipMarginOffset = region.getBorderAndPaddingWidthStart();
         }
 
         drawBackAndBorders(region, startx, starty, width, height);
@@ -571,12 +570,12 @@ public class PDFRenderer extends PrintRenderer {
      * @param block the block to render the traits
      */
     protected void handleBlockTraits(Block block) {
-		/*  IPMarginOffset for a particular block = region border + 
+        /*  ipMarginOffset for a particular block = region border + 
          *  region padding + parent block padding + current block padding
          */
 
-        float startx = (currentIPPosition + IPMarginOffset) / 1000f;
-        float starty = (currentBPPosition + BPMarginOffset) / 1000f;
+        float startx = (currentIPPosition + ipMarginOffset) / 1000f;
+        float starty = (currentBPPosition + bpMarginOffset) / 1000f;
         float width = block.getWidth() / 1000f;
 
         Integer spaceStart = (Integer) block.getTrait(Trait.SPACE_START); 
@@ -868,8 +867,8 @@ public class PDFRenderer extends PrintRenderer {
      * @param ip the inline parent area
      */
     public void renderInlineParent(InlineParent ip) {
-        float start = (currentBlockIPPosition + IPMarginOffset) / 1000f;
-        float top = (ip.getOffset() + currentBPPosition + BPMarginOffset) / 1000f;
+        float start = (currentBlockIPPosition + ipMarginOffset) / 1000f;
+        float top = (ip.getOffset() + currentBPPosition + bpMarginOffset) / 1000f;
         float width = ip.getWidth() / 1000f;
         float height = ip.getHeight() / 1000f;
         drawBackAndBorders(ip, start, top, width, height);
@@ -942,8 +941,8 @@ public class PDFRenderer extends PrintRenderer {
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
         //  where previous line area failed to take up entire allocated space
-        int rx = currentBlockIPPosition + IPMarginOffset;
-        int bl = currentBPPosition + BPMarginOffset + text.getOffset();
+        int rx = currentBlockIPPosition + ipMarginOffset;
+        int bl = currentBPPosition + bpMarginOffset + text.getOffset();
 /*
         System.out.println("\nBlockIP Position: " + currentBlockIPPosition +
             "; currentBPPosition: " + currentBPPosition +
@@ -1207,8 +1206,8 @@ public class PDFRenderer extends PrintRenderer {
         saveGraphicsState();
         currentStream.add(((float) w) + " 0 0 "
                           + ((float) -h) + " "
-                          + (((float) currentBlockIPPosition + IPMarginOffset) / 1000f + x) + " "
-                          + (((float)(currentBPPosition + BPMarginOffset + 1000 * h)) / 1000f
+                          + (((float) currentBlockIPPosition + ipMarginOffset) / 1000f + x) + " "
+                          + (((float)(currentBPPosition + bpMarginOffset + 1000 * h)) / 1000f
                           + y) + " cm\n" + "/Im" + xobj + " Do\n");
         restoreGraphicsState();
     }
