@@ -60,7 +60,7 @@ public class SVGPropertyListMapping implements PropertyListMapping {
 
     public void addToBuilder(FOTreeBuilder builder) {
 
-	String uri = "http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd";
+	String uri = "http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd";
 	Hashtable propertyTable = new Hashtable();
 		propertyTable.put("height",SVGLengthProperty.maker());
 		propertyTable.put("width",SVGLengthProperty.maker());
@@ -98,9 +98,12 @@ public class SVGPropertyListMapping implements PropertyListMapping {
 	propertyTable.put("font-style",FontStyle.maker());
 	propertyTable.put("font-weight",FontWeight.maker());
 	propertyTable.put("font-size",FontSize.maker());
-//		propertyTable.put("id", SVGStringProperty.maker());
+		propertyTable.put("requiredFeatures", RequiredFeatures.maker());
+		propertyTable.put("requiredExtensions", RequiredExtensions.maker());
+		propertyTable.put("systemLanguage", SystemLanguage.maker());
 
 	propertyTable.put("id",Id.maker());			// attribute for objects
+	propertyTable.put("class",ElementClass.maker()); // class for styling
 
 	builder.addPropertyList(uri, propertyTable);
 	propertyTable = new Hashtable();

@@ -56,7 +56,7 @@ import org.apache.fop.fo.ElementMapping;
 public class SVGElementMapping implements ElementMapping {
 
 	public void addToBuilder(FOTreeBuilder builder) {
-		String uri = "http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd";
+		String uri = "http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd";
 		builder.addMapping(uri, "svg", SVG.maker());
 		builder.addMapping(uri, "rect", Rect.maker());
 		builder.addMapping(uri, "line", Line.maker());
@@ -83,13 +83,13 @@ public class SVGElementMapping implements ElementMapping {
 		builder.addMapping(uri, "linearGradient", LinearGradient.maker());
 		builder.addMapping(uri, "radialGradient", RadialGradient.maker());
 		builder.addMapping(uri, "stop", Stop.maker());
+		builder.addMapping(uri, "a", A.maker());
+		builder.addMapping(uri, "switch", Switch.maker());
 
 // elements below will not work
-		builder.addMapping(uri, "a", A.maker());
 		builder.addMapping(uri, "pattern", Pattern.maker());
 
 		builder.addMapping(uri, "marker", Marker.maker());
-		builder.addMapping(uri, "switch", Switch.maker());
 		builder.addMapping(uri, "animate", Animate.maker());
 		builder.addMapping(uri, "altGlyph", AltGlyph.maker());
 		builder.addMapping(uri, "font", Font.maker());
