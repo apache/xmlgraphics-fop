@@ -249,8 +249,7 @@ public class AreaTreeHandler extends FOEventHandler {
             return;
         }
 
-        log.debug("adding bookmarks to area tree");
-        BookmarkData data = new BookmarkData(model);
+        BookmarkData data = new BookmarkData();
         for (int count = 0; count < bookmarks.getOutlines().size(); count++) {
             Outline out = (Outline)(bookmarks.getOutlines()).get(count);
             data.addSubData(createBookmarkData(out));
@@ -281,21 +280,27 @@ public class AreaTreeHandler extends FOEventHandler {
      * Add a OffDocumentItem to the area tree model
      * This checks if the OffDocumentItem is resolvable and attempts
      * to resolve or add the resolvable ids for later resolution.
-     * @param ext the OffDocumentItem to add.
+     * @param odi the OffDocumentItem to add.
      */
-    private void addOffDocumentItem(OffDocumentItem ext) {
-        if (ext instanceof Resolvable) {
-            Resolvable res = (Resolvable) ext;
+    private void addOffDocumentItem(OffDocumentItem odi) {
+        if (odi instanceof Resolvable) {
+            Resolvable res = (Resolvable) odi;
             String[] ids = res.getIDs();
             for (int count = 0; count < ids.length; count++) {
                 if (idLocations.containsKey(ids[count])) {
                     res.resolveIDRef(ids[count], (List) idLocations.get(ids[count]));
                 } else {
+                    log.warn(odi.getName() + ": Unresolved id reference \"" 
+                        + ids[count] + "\" found.");
                     addUnresolvedIDRef(ids[count], res);
                 }
             }
+            // check to see if ODI is now fully resolved, if so process it
+            if (res.isResolved()) {
+                model.handleOffDocumentItem(odi);
+            }
         } else {
-            model.handleOffDocumentItem(ext);
+            model.handleOffDocumentItem(odi);
         }
     }
 }
