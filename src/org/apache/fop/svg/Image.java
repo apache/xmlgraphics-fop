@@ -135,6 +135,9 @@ public class Image extends SVGObj {
           new SVGImageElementImpl(link, x, y, width, height);
         graph.setStyle(
           ((SVGStyle) this.properties.get("style")).getStyle());
+        graph.setTransform(
+          ((SVGTransform) this.properties.get("transform")).
+          getTransform());
         graph.setId(this.properties.get("id").getString());
         return graph;
     }

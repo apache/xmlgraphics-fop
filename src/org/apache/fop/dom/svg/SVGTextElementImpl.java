@@ -53,6 +53,7 @@ package org.apache.fop.dom.svg;
 import java.util.*;
 
 import org.w3c.dom.svg.*;
+import org.apache.fop.fo.EnumProperty;
 
 /**
  * class representing text in an SVG Area
@@ -65,6 +66,9 @@ public class SVGTextElementImpl extends SVGTextContentElementImpl {
 
 	/** y-coordinate of text */
 	public float y;
+
+	/** alignment of text */
+	public EnumProperty anchor;
 
 	/** vector of text elements, strings, tspan, tref */
 	public Vector textList;

@@ -243,4 +243,47 @@
   </property>
  </element-property-list>
 
+ <element-property-list>
+   <localname>text</localname>
+  <property>
+    <name>x</name>
+    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+  </property>
+  <property>
+    <name>y</name>
+    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+  </property>
+  <property>
+    <name>style</name>
+    <use-generic ispropclass="true">SVGStyle</use-generic>
+  </property>
+  <property>
+    <name>transform</name>
+    <use-generic ispropclass="true">SVGTransform</use-generic>
+  </property>
+  <property>
+	<name>text-anchor</name>
+	<class-name>TextAnchor</class-name>
+	<inherited>true</inherited>
+	<datatype>Enum</datatype>
+      <enumeration>
+        <value const="START">start</value>
+        <value const="MIDDLE">middle</value>
+        <value const="END">end</value>
+        <value const="INHERIT">inherit</value>
+      </enumeration>
+	<default>start</default> 
+  </property>
+  <property>
+	<name>xml:space</name>
+	<class-name>XMLSpace</class-name>
+	<inherited>true</inherited>
+	<datatype>Enum</datatype>
+      <enumeration>
+        <value const="PRESERVE">preserve</value>
+        <value const="DEFAULT">default</value>
+      </enumeration>
+	<default>default</default> 
+  </property>
+ </element-property-list>
 </property-list>

@@ -75,6 +75,8 @@ public class SVGSVGElementImpl extends GraphicElement implements SVGSVGElement {
     SVGAnimatedLength y;
     SVGAnimatedLength width;
     SVGAnimatedLength height;
+    // This will be null if the user supplied no viewBox attribute
+    SVGAnimatedRect viewBox;
 
     public SVGSVGElementImpl() {
     }
@@ -109,6 +111,16 @@ public class SVGSVGElementImpl extends GraphicElement implements SVGSVGElement {
 
     public void setY(SVGAnimatedLength y) {
         this.y = y;
+    }
+
+    public SVGAnimatedRect getViewBox()
+    {
+	    return viewBox;
+    }
+
+    public void setViewBox(SVGAnimatedRect viewBox)
+    {
+	    this.viewBox = viewBox;
     }
 
     public SVGRect getViewport() {
@@ -291,10 +303,6 @@ public class SVGSVGElementImpl extends GraphicElement implements SVGSVGElement {
     }
 
     public void setZoomAndPan(short zoomAndPan) {
-    }
-
-    public SVGAnimatedRect getViewBox() {
-        return null;
     }
 
     public SVGAnimatedPreserveAspectRatio getPreserveAspectRatio() {
