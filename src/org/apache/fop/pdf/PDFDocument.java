@@ -854,17 +854,16 @@ public class PDFDocument {
                                       desc.getStemV(),
                                       desc.getItalicAngle());
         }
-            // Check if the font is embeddable
+	this.objects.addElement(font);
+	
+	// Check if the font is embeddable
         if (desc.isEmbeddable()) {
             PDFStream stream=desc.getFontFile(this.objectcount+1);
             if (stream!=null) {
                 this.objectcount++;
                 font.setFontFile(desc.getSubType(), stream);
-                this.objects.addElement(font);
                 this.objects.addElement(stream);
             }
-        } else {
-            this.objects.addElement(font);
         }
     	return font;
     }
@@ -1080,21 +1079,20 @@ public class PDFDocument {
 
         this.resources.setXObjects(xObjects);
 
-        /* loop through the object numbers */
-        for ( int i=1; i <= this.objectcount; i++ ) {
+	Enumeration en = this.objects.elements();
+	while (en.hasMoreElements()) {
+            /* retrieve the object with the current number */
+            PDFObject object = (PDFObject)en.nextElement();
 
             /* add the position of this object to the list of object
                locations */
             this.location.addElement(new Integer(this.position));
-
-            /* retrieve the object with the current number */
-            PDFObject object = (PDFObject)this.objects.elementAt(i-1);
-
-            /* output the object and increment the character position
+	    
+	    /* output the object and increment the character position
                by the object's length */
             this.position += object.output(stream);
-        }
-
+	}
+	
         /* output the xref table and increment the character position
            by the table's length */
         this.position += outputXref(stream);
@@ -1157,12 +1155,12 @@ public class PDFDocument {
         StringBuffer pdf = new StringBuffer("xref\n0 " + (this.objectcount+1) 
         + "\n0000000000 65535 f \n");
 
-        /* loop through object numbers */
-        for ( int i=1; i < this.objectcount+1; i++ ) {
-
+	Enumeration en = this.location.elements();
+	while (en.hasMoreElements()) {
+	    String x = en.nextElement().toString();
+	    
             /* contruct xref entry for object */
             String padding = "0000000000";
-            String x = this.location.elementAt(i-1).toString();
             String loc = padding.substring(x.length()) + x;
 
             /* append to xref table */
