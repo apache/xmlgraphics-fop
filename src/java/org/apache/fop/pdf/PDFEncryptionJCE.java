@@ -54,12 +54,12 @@ package org.apache.fop.pdf;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.InvalidKeyException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.NoSuchPaddingException;
@@ -89,6 +89,8 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             this.encryption = encryption;
             this.number  = number;
             this.generation = generation;
+            //System.out.println("new encryption filter for number "
+            //    +number+" and generation "+generation);
         }
 
         /** 
@@ -128,6 +130,14 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             out.write(buffer);
         }
         
+        /**
+         * @see org.apache.fop.pdf.PDFFilter#applyFilter(OutputStream)
+         */
+        public OutputStream applyFilter(OutputStream out) throws IOException {
+            return new CipherOutputStream(out, 
+                    encryption.initCipher(number, generation));
+        }
+
     }
 
     private static final char [] PAD = 
@@ -135,9 +145,6 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
                                  0x64, 0x00, 0x4E, 0x56, 0xFF, 0xFA, 0x01, 0x08, 
                                  0x2E, 0x2E, 0x00, 0xB6, 0xD0, 0x68, 0x3E, 0x80, 
                                  0x2F, 0x0C, 0xA9, 0xFE, 0x64, 0x53, 0x69, 0x7A };
-    private static final char[] DIGITS = 
-                                 {'0', '1', '2', '3', '4', '5', '6', '7',
-                                  '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
                                   
     /** Value of PRINT permission */                                  
     public static final int PERMISSION_PRINT            =  4;
@@ -150,7 +157,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
     
     // Encryption tools
     private MessageDigest digest = null;
-    private Cipher cipher = null;
+    //private Cipher cipher = null;
     private Random random = new Random();
     // Control attributes
     private PDFEncryptionParams params;
@@ -160,20 +167,21 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
     private String dictionary = null;
 
     /**
-     * create a /Filter /Standard object.
+     * Create a /Filter /Standard object.
      *
-     * @param number the object's number
+     * @param objnum the object's number
      */
-    public PDFEncryptionJCE(int number) {
+    public PDFEncryptionJCE(int objnum) {
         /* generic creation of object */
-        super(number);
+        super();
+        setObjectNumber(objnum);
         try {
             digest = MessageDigest.getInstance("MD5");
-            cipher = Cipher.getInstance("RC4");
+            //cipher = Cipher.getInstance("RC4");
         } catch (NoSuchAlgorithmException e) {
             throw new UnsupportedOperationException(e.getMessage());
-        } catch (NoSuchPaddingException e) {
-            throw new UnsupportedOperationException(e.getMessage());
+        /*} catch (NoSuchPaddingException e) {
+            throw new UnsupportedOperationException(e.getMessage());*/
         }
     }
 
@@ -227,17 +235,6 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         return obuffer;
     }
 
-    private String toHex(byte[] value) {
-        StringBuffer buffer = new StringBuffer();
-        
-        for (int i = 0; i < value.length; i++) {
-            buffer.append(DIGITS[(value[i] >>> 4) & 0x0F]);
-            buffer.append(DIGITS[value[i] & 0x0F]);
-        }
-        
-        return buffer.toString();
-    }
-    
     /** 
      * Returns the document file ID
      * @return The file ID
@@ -258,38 +255,63 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
      */    
     public String getFileID(int index) {
         if (index == 1) {
-            return toHex(getFileID());
+            return PDFText.toHex(getFileID());
         }
         
         byte[] id = new byte[16];
         random.nextBytes(id);
-        return toHex(id);
+        return PDFText.toHex(id);
     }
         
     private byte[] encryptWithKey(byte[] data, byte[] key) {
         try {
-            SecretKeySpec keyspec = new SecretKeySpec(key, "RC4");
-            cipher.init(Cipher.ENCRYPT_MODE, keyspec);
-            return cipher.doFinal(data);
+            final Cipher c = initCipher(key);
+            return c.doFinal(data);
         } catch (IllegalBlockSizeException e) {
             throw new IllegalStateException(e.getMessage());
         } catch (BadPaddingException e) {
             throw new IllegalStateException(e.getMessage());
+        }
+    }
+    
+    private Cipher initCipher(byte[] key) {
+        try {
+            Cipher c = Cipher.getInstance("RC4");
+            SecretKeySpec keyspec = new SecretKeySpec(key, "RC4");
+            c.init(Cipher.ENCRYPT_MODE, keyspec);
+            return c;
         } catch (InvalidKeyException e) {
             throw new IllegalStateException(e.getMessage());
+        } catch (NoSuchAlgorithmException e) {
+            throw new UnsupportedOperationException(e.getMessage());
+        } catch (NoSuchPaddingException e) {
+            throw new UnsupportedOperationException(e.getMessage());
         }
+    }
+    
+    private Cipher initCipher(int number, int generation) {
+        byte[] hash = calcHash(number, generation);
+        int size = hash.length;
+        hash = digest.digest(hash);
+        byte[] key = calcKey(hash, size);
+        return initCipher(key);
     }
     
     private byte[] encryptWithHash(byte[] data, byte[] hash, int size) {
         hash = digest.digest(hash);
+
+        byte[] key = calcKey(hash, size);        
         
+        return encryptWithKey(data, key);
+    }
+
+    private byte[] calcKey(byte[] hash, int size) {
         byte[] key = new byte[size];
 
         for (int i = 0; i < size; i++) {
             key[i] = hash[i];
         }
-        
-        return encryptWithKey(data, key);
+        return key;
     }
 
     /** 
@@ -344,14 +366,14 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         byte[] uValue = encryptWithKey(prepPassword(""), this.encryptionKey);
         
         // Create the dictionary
-        this.dictionary = this.number + " " + this.generation
-                        + " obj\n<< /Filter /Standard\n"
+        this.dictionary = getObjectID() 
+                        + "<< /Filter /Standard\n"
                         + "/V 1\n"
                         + "/R 2\n"
                         + "/Length 40\n"
                         + "/P "  + permissions + "\n"
-                        + "/O <" + toHex(oValue) + ">\n"
-                        + "/U <" + toHex(uValue) + ">\n"
+                        + "/O " + PDFText.toHex(oValue) + "\n"
+                        + "/U " + PDFText.toHex(uValue) + "\n"
                         + ">>\n"
                         + "endobj\n";
     }
@@ -367,11 +389,23 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         if (this.encryptionKey == null) {
             throw new IllegalStateException("PDF Encryption has not been initialized");
         }
-        
+        //getDocument().getLogger().debug("encrypting with for "+number+" "+generation);
+
+        byte[] hash = calcHash(number, generation);        
+        return encryptWithHash(data, hash, hash.length);
+    }
+
+    /**
+     * @see org.apache.fop.pdf.PDFEncryption#encrypt(byte[], PDFObject)
+     */
+    public byte[] encrypt(byte[] data, PDFObject refObj) {
+        return encryptData(data, refObj.getObjectNumber(), refObj.getGeneration());
+    }
+
+    private byte[] calcHash(int number, int generation) {
         byte[] hash = new byte[this.encryptionKey.length + 5];
             
         int i = 0;
-            
         while (i < this.encryptionKey.length) {
             hash[i] = this.encryptionKey[i]; i++;
         }
@@ -381,8 +415,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         hash[i++] = (byte) (number >>> 16);
         hash[i++] = (byte) (generation >>> 0);
         hash[i++] = (byte) (generation >>> 8);;
-        
-        return encryptWithHash(data, hash, hash.length);
+        return hash;        
     }
 
     /** 
@@ -399,8 +432,9 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
      * Adds a PDFFilter to the PDFStream object
      * @param stream the stream to add an encryption filter to
      */    
-    public void applyFilter(PDFStream stream) {
-        stream.addFilter(this.makeFilter(stream.number, stream.generation));
+    public void applyFilter(AbstractPDFStream stream) {
+        stream.getFilterList().addFilter(
+                this.makeFilter(stream.getObjectNumber(), stream.getGeneration()));
     }
     
     /**
@@ -413,20 +447,15 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             throw new IllegalStateException("PDF Encryption has not been initialized");
         }
         
-        try {
-            return this.dictionary.getBytes(PDFDocument.ENCODING);
-        } catch (UnsupportedEncodingException ue) {
-            return this.dictionary.getBytes();
-        }       
+        return encode(this.dictionary);
     }
 
     /**
      * @see org.apache.fop.pdf.PDFEncryption#getTrailerEntry()
      */
     public String getTrailerEntry() {
-        return "/Encrypt " + number + " " 
-                    + generation + " R\n"
-                    + "/ID[<" + getFileID(1) + "><"
-                    + getFileID(2) + ">]\n";
+        return "/Encrypt " + getObjectNumber() + " " 
+                    + getGeneration() + " R\n"
+                    + "/ID[" + getFileID(1) + getFileID(2) + "]\n";
     }
 }
