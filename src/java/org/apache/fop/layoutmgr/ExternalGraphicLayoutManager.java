@@ -34,8 +34,7 @@ import org.apache.fop.image.ImageFactory;
  * LayoutManager for the fo:external-graphic formatting object
  */
 public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
-
-    ExternalGraphic graphic = null;
+    private ExternalGraphic fobj;
 
     private String url;
     private int breakAfter;
@@ -57,12 +56,11 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
      */
     public ExternalGraphicLayoutManager(ExternalGraphic node) {
         super(node);
-
-        graphic = node;
+        fobj = node;
         setup();
         InlineArea area = getExternalGraphicInlineArea();
         setCurrentArea(area);
-        setAlignment(graphic.getVerticalAlign());
+        setAlignment(fobj.getVerticalAlign());
         setLead(viewHeight);
     }
 
@@ -72,24 +70,24 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
      * @todo see if can simplify property handling logic
      */
     private void setup() {
-        url = ImageFactory.getURL(graphic.getSrc());
+        url = ImageFactory.getURL(fobj.getSrc());
 
         // assume lr-tb for now and just use the .optimum value of the range
-        Length ipd = graphic.getPropertyList().get(PR_INLINE_PROGRESSION_DIMENSION).
+        Length ipd = fobj.getPropertyList().get(PR_INLINE_PROGRESSION_DIMENSION).
                                     getLengthRange().getOptimum().getLength();
         if (!ipd.isAuto()) {
             viewWidth = ipd.getValue();
         } else {
-            ipd = graphic.getPropertyList().get(PR_WIDTH).getLength();
+            ipd = fobj.getPropertyList().get(PR_WIDTH).getLength();
             if (!ipd.isAuto()) {
                 viewWidth = ipd.getValue();
             }
         }
-        Length bpd = graphic.getPropertyList().get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
+        Length bpd = fobj.getPropertyList().get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
         if (!bpd.isAuto()) {
             viewHeight = bpd.getValue();
         } else {
-            bpd = graphic.getPropertyList().get(PR_HEIGHT).getLength();
+            bpd = fobj.getPropertyList().get(PR_HEIGHT).getLength();
             if (!bpd.isAuto()) {
                 viewHeight = bpd.getValue();
             }
@@ -100,7 +98,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
 
         int cwidth = -1;
         int cheight = -1;
-        Length ch = graphic.getPropertyList().get(PR_CONTENT_HEIGHT).getLength();
+        Length ch = fobj.getPropertyList().get(PR_CONTENT_HEIGHT).getLength();
         if (!ch.isAuto()) {
             /*if (ch.scaleToFit()) {
                 if (viewHeight != -1) {
@@ -109,7 +107,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
             } else {*/
             cheight = ch.getValue();
         }
-        Length cw = graphic.getPropertyList().get(PR_CONTENT_WIDTH).getLength();
+        Length cw = fobj.getPropertyList().get(PR_CONTENT_WIDTH).getLength();
         if (!cw.isAuto()) {
             /*if (cw.scaleToFit()) {
                 if (viewWidth != -1) {
@@ -119,10 +117,10 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
             cwidth = cw.getValue();
         }
 
-        int scaling = graphic.getScaling();
+        int scaling = fobj.getScaling();
         if ((scaling == Scaling.UNIFORM) || (cwidth == -1) || cheight == -1) {
             ImageFactory fact = ImageFactory.getInstance();
-            fopimage = fact.getImage(url, graphic.getUserAgent());
+            fopimage = fact.getImage(url, fobj.getUserAgent());
             if (fopimage == null) {
                 // error
                 url = null;
@@ -162,11 +160,11 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         }
 
         if (cwidth > viewWidth || cheight > viewHeight) {
-            int overflow = graphic.getOverflow();
+            int overflow = fobj.getOverflow();
             if (overflow == Overflow.HIDDEN) {
                 clip = true;
             } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {
-                graphic.getLogger().error("Image: " + url
+                fobj.getLogger().error("Image: " + url
                                   + " overflows the viewport, clipping to viewport");
                 clip = true;
             }
@@ -174,7 +172,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
 
         int xoffset = 0;
         int yoffset = 0;
-        switch(graphic.getDisplayAlign()) {
+        switch(fobj.getDisplayAlign()) {
             case DisplayAlign.BEFORE:
             break;
             case DisplayAlign.AFTER:
@@ -188,7 +186,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
             break;
         }
 
-        switch(graphic.getTextAlign()) {
+        switch(fobj.getTextAlign()) {
             case TextAlign.CENTER:
                 xoffset = (viewWidth - cwidth) / 2;
             break;
@@ -211,7 +209,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
       * @return the viewport containing the image area
       */
      public InlineArea getExternalGraphicInlineArea() {
-         Image imArea = new Image(graphic.getSrc());
+         Image imArea = new Image(fobj.getSrc());
          Viewport vp = new Viewport(imArea);
          vp.setIPD(viewWidth);
          vp.setBPD(viewHeight);
@@ -220,14 +218,14 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
          vp.setOffset(0);
 
          // Common Border, Padding, and Background Properties
-         TraitSetter.addBorders(vp, graphic.getCommonBorderPaddingBackground());
-         TraitSetter.addBackground(vp, graphic.getCommonBorderPaddingBackground());
+         TraitSetter.addBorders(vp, fobj.getCommonBorderPaddingBackground());
+         TraitSetter.addBackground(vp, fobj.getCommonBorderPaddingBackground());
 
          return vp;
      }
      
      protected void addId() {
-         addID(graphic.getId());
+         addID(fobj.getId());
      }
 }
 

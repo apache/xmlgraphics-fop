@@ -67,6 +67,7 @@ import org.apache.fop.traits.MinOptMax;
  * It manages all page-related layout.
  */
 public class PageSequenceLayoutManager extends AbstractLayoutManager implements Runnable {
+    private PageSequence fobj;
 
     private static class BlockBreakPosition extends LeafPosition {
         protected BreakPoss breakps;
@@ -108,7 +109,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      */
     private AreaTreeHandler areaTreeHandler;
     private AreaTreeModel areaTreeModel;
-    private PageSequence pageSequence;
 
     /**
      * This is the SimplePageMaster that should be used to create the page. It
@@ -133,11 +133,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      */
     public PageSequenceLayoutManager(AreaTreeHandler areaTreeHandler, PageSequence pageseq) {
         super(pageseq);
+        fobj = pageseq;
         this.areaTreeHandler = areaTreeHandler;
         areaTreeModel = areaTreeHandler.getAreaTreeModel();
-        pageSequence = pageseq;
-        if (pageSequence.getPageSequenceMaster() != null) {
-            pageSequence.getPageSequenceMaster().reset();
+        if (fobj.getPageSequenceMaster() != null) {
+            fobj.getPageSequenceMaster().reset();
         }
     }
 
@@ -164,13 +164,13 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      * rendering process can also run in a parallel thread.
      */
     public void run() {
-        pageSequence.initPageNumber();
-        setPageCounting(pageSequence.getCurrentPageNumber(),
-            pageSequence.getPageNumberGenerator());
+        fobj.initPageNumber();
+        setPageCounting(fobj.getCurrentPageNumber(),
+                fobj.getPageNumberGenerator());
 
         LineArea title = null;
-        if (pageSequence.getTitleFO() != null) {
-            title = getTitleArea(pageSequence.getTitleFO());
+        if (fobj.getTitleFO() != null) {
+            title = getTitleArea(fobj.getTitleFO());
         }
 
         areaTreeModel.startPageSequence(title);
@@ -488,7 +488,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         if (region == null) {
             return;
         }
-        StaticContent flow = pageSequence.getStaticContent(region.getRegionName());
+        StaticContent flow = fobj.getStaticContent(region.getRegionName());
         if (flow == null) {
             return;
         }
@@ -744,8 +744,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
                                    throws FOPException {
         currentSimplePageMaster = getSimplePageMasterToUse(bIsBlank);
         Region body = currentSimplePageMaster.getRegion(FO_REGION_BODY);
-        if (!pageSequence.getMainFlow().getFlowName().equals(body.getRegionName())) {
-          throw new FOPException("Flow '" + pageSequence.getMainFlow().getFlowName()
+        if (!fobj.getMainFlow().getFlowName().equals(body.getRegionName())) {
+          throw new FOPException("Flow '" + fobj.getMainFlow().getFlowName()
                                  + "' does not map to the region-body in page-master '"
                                  + currentSimplePageMaster.getMasterName() + "'");
         }
@@ -765,11 +765,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
 
     private SimplePageMaster getSimplePageMasterToUse(boolean bIsBlank)
             throws FOPException {
-        if (pageSequence.getPageSequenceMaster() == null) {
-            return pageSequence.getSimplePageMaster();
+        if (fobj.getPageSequenceMaster() == null) {
+            return fobj.getSimplePageMaster();
         }
         boolean isOddPage = ((pageCount % 2) == 1);
-        return pageSequence.getPageSequenceMaster()
+        return fobj.getPageSequenceMaster()
               .getNextSimplePageMaster(isOddPage, isFirstPage, bIsBlank);
     }
 
@@ -909,8 +909,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         if (lm != null) {
             return lm;
         }
-        lm = new StaticContentLayoutManager();
-        lm.setFObj(sc);
+        lm = new StaticContentLayoutManager(sc);
         staticContentLMs.put(sc.getFlowName(), lm);
         return lm;
     }
