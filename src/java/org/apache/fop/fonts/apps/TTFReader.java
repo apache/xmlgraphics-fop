@@ -39,6 +39,7 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFCmapEntry;
 import org.apache.fop.fonts.truetype.TTFFile;
+import org.apache.fop.util.CommandLineLogger;
 
 /**
  * A tool which reads TTF files and generates
@@ -49,7 +50,7 @@ public class TTFReader {
     /**
      * logging instance
      */
-    protected Log log = LogFactory.getLog(TTFReader.class);
+    protected static Log log;
 
     /**
      * Parse commandline arguments. put options in the HashMap and return
@@ -62,7 +63,9 @@ public class TTFReader {
         List arguments = new java.util.ArrayList();
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
-                if ((i + 1) < args.length && !args[i + 1].startsWith("-")) {
+                if ("-d".equals(args[i]) || "-q".equals(args[i])) {
+                    options.put(args[i], "");
+                } else if ((i + 1) < args.length && !args[i + 1].startsWith("-")) {
                     options.put(args[i], args[i + 1]);
                     i++;
                 } else {
@@ -82,8 +85,8 @@ public class TTFReader {
                 "java " + TTFReader.class.getName() + " [options] fontfile.ttf xmlfile.xml");
         System.out.println();
         System.out.println("where options can be:");
-        System.out.println("-d <WARN|INFO|DEBUG>");
-        System.out.println("    Set debug level (default: WARN).");
+        System.out.println("-d  Debug mode");
+        System.out.println("-q  Quiet mode");
         System.out.println("-enc ansi");
         System.out.println("    With this option you create a WinAnsi encoded font.");
         System.out.println("    The default is to create a CID keyed font.");
@@ -135,32 +138,27 @@ public class TTFReader {
         Map options = new java.util.HashMap();
         String[] arguments = parseArguments(options, args);
 
-        //Setup simple logger for this command-line application
-        System.setProperty("org.apache.commons.logging.Log", 
-            "org.apache.commons.logging.impl.SimpleLog");
-        System.setProperty("org.apache.commons.logging.simplelog.showShortLogname", 
-            "false");
-            
-        //Determine log level
-        String level;
-        if (options.get("-d") != null) {
-            String lev = (String)options.get("-d");
-            if ("DEBUG".equalsIgnoreCase(lev)) {
-                level = "debug"; 
-            } else if ("INFO".equalsIgnoreCase(lev)) {
-                level = "info";
-            } else {
-                level = "warn";
-            }
-        } else {
-            level = "warn";
+        // Enable the simple command line logging when no other logger is
+        // defined.
+        LogFactory logFactory = LogFactory.getFactory();
+        if (System.getProperty("org.apache.commons.logging.Log") == null) {
+            logFactory.setAttribute("org.apache.commons.logging.Log", 
+                                            CommandLineLogger.class.getName());
         }
-        System.setProperty("org.apache.commons.logging.simplelog.defaultlog",
-            level); 
+
+        //Determine log level
+        if (options.get("-d") != null) {
+            setLogLevel("debug");
+        } else if (options.get("-q") != null) {
+            setLogLevel("error");
+        } else {
+            setLogLevel("info");
+        }
+        log = LogFactory.getLog(TTFReader.class);
 
         TTFReader app = new TTFReader();
 
-        System.out.println("TTF Reader for Apache FOP " + Fop.getVersion() + "\n");
+        log.info("TTF Reader for Apache FOP " + Fop.getVersion() + "\n");
 
         if (options.get("-enc") != null) {
             String enc = (String)options.get("-enc");
@@ -194,7 +192,7 @@ public class TTFReader {
             displayUsage();
         } else {
             try {
-                System.out.println("Parsing font...");
+                log.info("Parsing font...");
                 TTFFile ttf = app.loadTTF(arguments[0], ttcName);
                 if (ttf != null) {
                     org.w3c.dom.Document doc = app.constructFontXML(ttf,
@@ -202,9 +200,9 @@ public class TTFReader {
                             ttcName);
     
                     if (isCid) {
-                        System.out.println("Creating CID encoded metrics...");
+                        log.info("Creating CID encoded metrics...");
                     } else {
-                        System.out.println("Creating WinAnsi encoded metrics...");
+                        log.info("Creating WinAnsi encoded metrics...");
                     }
     
                     if (doc != null) {
@@ -212,18 +210,27 @@ public class TTFReader {
                     }
     
                     if (ttf.isEmbeddable()) {
-                        System.out.println("This font contains no embedding license restrictions.");
+                        log.info("This font contains no embedding license restrictions.");
                     } else {
-                        System.out.println("** Note: This font contains license retrictions for\n"
+                        log.info("** Note: This font contains license retrictions for\n"
                                + "         embedding. This font shouldn't be embedded.");
                     }
                 }
-                System.out.println("\nXML font metrics file successfullly created.");
+                log.info("");
+                log.info("XML font metrics file successfullly created.");
             } catch (Exception e) {
-                System.err.println("Error while building XML font metrics file.");
-                e.printStackTrace(System.err);
+                log.error("Error while building XML font metrics file.", e);
                 System.exit(-1);
             }
+        }
+    }
+
+    private static void setLogLevel(String level) {
+        // Set the evel for future loggers.
+        LogFactory.getFactory().setAttribute("level", level);
+        if (log instanceof CommandLineLogger) {
+            // Set the level for the logger creates already.
+            ((CommandLineLogger) log).setLogLevel(level);
         }
     }
 

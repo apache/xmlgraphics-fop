@@ -38,6 +38,7 @@ import org.apache.commons.logging.LogFactory;
 //FOP
 import org.apache.fop.apps.Fop;
 import org.apache.fop.fonts.type1.PFMFile;
+import org.apache.fop.util.CommandLineLogger;
 
 /**
  * A tool which reads PFM files from Adobe Type 1 fonts and creates
@@ -48,7 +49,7 @@ public class PFMReader {
     /**
      * logging instance
      */
-    protected Log log = LogFactory.getLog(TTFReader.class);
+    protected static Log log;
 
     /**
      * Parse commandline arguments. put options in the HashMap and return
@@ -61,7 +62,9 @@ public class PFMReader {
         List arguments = new java.util.ArrayList();
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
-                if ((i + 1) < args.length && !args[i + 1].startsWith("-")) {
+                if ("-d".equals(args[i]) || "-q".equals(args[i])) {
+                    options.put(args[i], "");
+                } else if ((i + 1) < args.length && !args[i + 1].startsWith("-")) {
                     options.put(args[i], args[i + 1]);
                     i++;
                 } else {
@@ -80,8 +83,8 @@ public class PFMReader {
             "java " + PFMReader.class.getName() + " [options] metricfile.pfm xmlfile.xml");
         System.out.println();
         System.out.println("where options can be:");
-        System.out.println("-d <WARN|INFO|DEBUG>");
-        System.out.println("    Set debug level (default: WARN).");
+        System.out.println("-d  Debug mode");
+        System.out.println("-q  Quiet mode");
         System.out.println("-fn <fontname>");
         System.out.println("    default is to use the fontname in the .pfm file, but");
         System.out.println("    you can override that name to make sure that the");
@@ -119,32 +122,27 @@ public class PFMReader {
         Map options = new java.util.HashMap();
         String[] arguments = parseArguments(options, args);
 
-        //Setup simple logger for this command-line application
-        System.setProperty("org.apache.commons.logging.Log", 
-            "org.apache.commons.logging.impl.SimpleLog");
-        System.setProperty("org.apache.commons.logging.simplelog.showShortLogname", 
-            "false");
+        // Enable the simple command line logging when no other logger is
+        // defined.
+        LogFactory logFactory = LogFactory.getFactory();
+        if (System.getProperty("org.apache.commons.logging.Log") == null) {
+            logFactory.setAttribute("org.apache.commons.logging.Log", 
+                                            CommandLineLogger.class.getName());
+        }
 
         //Determine log level
-        String level;
         if (options.get("-d") != null) {
-            String lev = (String)options.get("-d");
-            if ("DEBUG".equalsIgnoreCase(lev)) {
-                level = "debug"; 
-            } else if ("INFO".equalsIgnoreCase(lev)) {
-                level = "info";
-            } else {
-                level = "warn";
-            }
+            setLogLevel("debug");
+        } else if (options.get("-q") != null) {
+            setLogLevel("error");
         } else {
-            level = "warn";
+            setLogLevel("info");
         }
-        System.setProperty("org.apache.commons.logging.simplelog.defaultlog",
-            level); 
+        log = LogFactory.getLog(PFMReader.class);
 
         PFMReader app = new PFMReader();
 
-        System.out.println("PFM Reader for Apache FOP " + Fop.getVersion() + "\n");
+        log.info("PFM Reader for Apache FOP " + Fop.getVersion() + "\n");
 
         if (options.get("-ef") != null) {
             embFile = (String)options.get("-ef");
@@ -167,7 +165,7 @@ public class PFMReader {
             displayUsage();
         } else {
             try {
-                System.out.println("Parsing font...");
+                log.info("Parsing font...");
                 PFMFile pfm = app.loadPFM(arguments[0]);
                 if (pfm != null) {
                     app.preview(pfm);
@@ -177,15 +175,22 @@ public class PFMReader {
     
                     app.writeFontXML(doc, arguments[1]);
                 }
-                System.out.println("\nXML font metrics file successfullly created.");
+                log.info("XML font metrics file successfullly created.");
             } catch (Exception e) {
-                System.err.println("Error while building XML font metrics file");
-                e.printStackTrace(System.err);
+                log.error("Error while building XML font metrics file", e);
                 System.exit(-1);
             }
         }
     }
 
+    private static void setLogLevel(String level) {
+        // Set the evel for future loggers.
+        LogFactory.getFactory().setAttribute("level", level);
+        if (log instanceof CommandLineLogger) {
+            // Set the level for the logger creates already.
+            ((CommandLineLogger) log).setLogLevel(level);
+        }
+    }
 
     /**
      * Read a PFM file and returns it as an object.

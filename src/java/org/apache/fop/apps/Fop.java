@@ -162,24 +162,9 @@ public class Fop implements Constants {
             if (options.getOutputMode() != CommandLineOptions.RENDER_AWT) {
                 System.exit(0);
             }
-        } catch (FOPException e) {
-            if (e.getMessage() == null) {
-                System.err.println("Exception occured with a null error message");
-            } else {
-                System.err.println("" + e.getMessage());
-            }
-            if (options != null && options.getLogger().isDebugEnabled()) {
-                e.printStackTrace();
-            } else {
-                System.err.println("Turn on debugging for more information");
-            }
-            System.exit(1);
-        } catch (java.io.IOException e) {
-            System.err.println("" + e.getMessage());
-            if (options != null && options.getLogger().isDebugEnabled()) {
-                e.printStackTrace();
-            } else {
-                System.err.println("Turn on debugging for more information");
+        } catch (Exception e) {
+            if (options != null) {
+                options.getLogger().error("Exception", e);
             }
             System.exit(1);
         }

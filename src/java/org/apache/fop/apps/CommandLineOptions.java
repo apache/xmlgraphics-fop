@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Vector;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.util.CommandLineLogger;
 
 // commons logging
 import org.apache.commons.logging.Log;
@@ -74,13 +75,27 @@ public class CommandLineOptions implements Constants {
      * Construct a command line option object from command line arguments
      * @param args command line parameters
      * @throws FOPException for general errors
-     * @throws FileNotFoundException if an input file wasn't found.
+     * @throws FileNotFoundException if an input file wasn't found
+     * @throws IOException if the the configuration file could not be loaded
      */
-    public CommandLineOptions(String[] args)
-            throws FOPException, FileNotFoundException, IOException {
+    public CommandLineOptions(String[] args) throws FOPException, IOException {
+        LogFactory logFactory = LogFactory.getFactory();
+        
+        // Enable the simple command line logging when no other logger is
+        // defined.
+        if (System.getProperty("org.apache.commons.logging.Log") == null) {
+            logFactory.setAttribute("org.apache.commons.logging.Log", 
+                                            CommandLineLogger.class.getName());
+            setLogLevel("info");
+        }
 
         log = LogFactory.getLog("FOP");
         
+        parse(args);
+    }
+    
+    private void parse(String[] args) 
+            throws FOPException, IOException {
         boolean optionsParsed = true;
         
         foUserAgent = new FOUserAgent();
@@ -130,6 +145,10 @@ public class CommandLineOptions implements Constants {
                 i = i + parseLanguageOption(args, i);
             } else if (args[i].equals("-s")) {
                 suppressLowLevelAreas = Boolean.TRUE;
+            } else if (args[i].equals("-d")) {
+                setLogLevel("debug");
+            } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
+                setLogLevel("error");
             } else if (args[i].equals("-fo")) {
                 i = i + parseFOInputOption(args, i);
             } else if (args[i].equals("-xsl")) {
@@ -363,6 +382,15 @@ public class CommandLineOptions implements Constants {
         }
     }
 
+    private void setLogLevel(String level) {
+        // Set the evel for future loggers.
+        LogFactory.getFactory().setAttribute("level", level);
+        if (log instanceof CommandLineLogger) {
+            // Set the level for the logger creates already.
+            ((CommandLineLogger) log).setLogLevel(level);
+        }
+    }
+        
     /**
      * checks whether all necessary information has been given in a consistent way
      */
@@ -376,8 +404,8 @@ public class CommandLineOptions implements Constants {
         }
 
         if ((outputmode == RENDER_AWT || outputmode == RENDER_PRINT) && outfile != null) {
-            throw new FOPException("Output file may not be specified " +
-                "for AWT or PRINT output");
+            throw new FOPException("Output file may not be specified " 
+                    + "for AWT or PRINT output");
         }
 
         if (inputmode == XSLT_INPUT) {
@@ -477,7 +505,7 @@ public class CommandLineOptions implements Constants {
     /**
      * Create an InputHandler object based on command-line parameters
      * @return a new InputHandler instance
-     * @throws IllegalStateException if invalid/missing parameters
+     * @throws IllegalArgumentException if invalid/missing parameters
      */
     private InputHandler createInputHandler() throws IllegalArgumentException {
         switch (inputmode) {
@@ -577,7 +605,9 @@ public class CommandLineOptions implements Constants {
               "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] "
                     + "[-awt|-pdf|-mif|-rtf|-pcl|-ps|-txt|-at|-print] <outfile>\n"
             + " [OPTIONS]  \n"
+            + "  -d          debug mode   \n"
             + "  -x          dump configuration settings  \n"
+            + "  -q          quiet mode  \n"
             + "  -c cfg.xml  use additional configuration file cfg.xml\n"
             + "  -l lang     the language to use for user information \n"
             + "  -s          for area tree XML, down to block areas only\n"
