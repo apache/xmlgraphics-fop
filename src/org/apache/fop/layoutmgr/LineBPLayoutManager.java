@@ -47,12 +47,16 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
     private static class LineBreakPosition extends LeafPosition {
         // int m_iPos;
         double m_dAdjust; // Percentage to adjust (stretch or shrink)
+        int lineHeight;
+        int baseline;
 
         LineBreakPosition(BPLayoutManager lm, int iBreakIndex,
-                          double dAdjust) {
+                          double dAdjust, int lh, int bl) {
             super(lm, iBreakIndex);
             // m_iPos = iBreakIndex;
             m_dAdjust = dAdjust;
+            lineHeight = lh;
+            baseline = bl;
         }
     }
 
@@ -104,7 +108,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
              * (page) should check reference area and possibly
              * create a new one.
              */
-            return new BreakPoss(new LineBreakPosition(this, -1, 0.0),
+            return new BreakPoss(new LineBreakPosition(this, -1, 0.0, lineHeight, lead),
                                  BreakPoss.NEED_IPD);
         }
 
@@ -286,7 +290,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
         // Don't justify last line in the sequence or if forced line-end
         boolean bJustify = (m_bJustify && !m_prevBP.isForcedBreak() &&
                             !isFinished());
-        return makeLineBreak(m_prevBP, availIPD, actual, bJustify);
+        return makeLineBreak(iPrevLineEnd, availIPD, actual, bJustify);
     }
 
 
@@ -343,8 +347,6 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
     protected boolean hasTrailingFence(boolean bNotLast) {
         return true;
     }
-
-
 
     private HyphContext getHyphenContext(BreakPoss prevBP,
                                          BreakPoss newBP) {
@@ -403,8 +405,8 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
     }
 
 
-    private BreakPoss makeLineBreak(BreakPoss inlineBP,
-                                    MinOptMax target, MinOptMax actual, boolean bJustify) {
+    private BreakPoss makeLineBreak(int prevLineEnd, MinOptMax target,
+                                    MinOptMax actual, boolean bJustify) {
         // make a new BP
         // Store information needed to make areas in the LineBreakPosition!
         // Calculate stretch or shrink factor
@@ -421,16 +423,45 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
                           (double)(actual.opt - actual.min);
             }
         }
+
+        // lead to baseline is
+        // max of: baseline fixed alignment and middle/2
+        // after baseline is
+        // max: top height-lead, middle/2 and bottom height-lead
+        int halfLeading = (lineHeight - lead - follow) / 2;
+        // height before baseline
+        int lineLead = lead + halfLeading;
+        // maximum size of top and bottom alignment
+        int maxtb = follow + halfLeading;
+        // max size of middle alignment below baseline
+        int middlefollow = maxtb;
+        for(Iterator iter = m_vecInlineBreaks.listIterator(prevLineEnd);
+                iter.hasNext(); ) {
+            BreakPoss bp = (BreakPoss)iter.next();
+            if(bp.getLead() > lineLead) {
+                lineLead = bp.getLead();
+            } 
+            if(bp.getTotal() > maxtb) {
+                maxtb = bp.getTotal();
+            }
+            if(bp.getMiddle() > middlefollow) {
+                middlefollow = bp.getMiddle();
+            } 
+        }
+        if(maxtb - lineLead > middlefollow) {
+            middlefollow = maxtb - lineLead;
+        }
+
         //log.debug("Adjustment factor=" + dAdjust);
         BreakPoss curLineBP = new BreakPoss( new LineBreakPosition(this,
-                                             m_vecInlineBreaks.size() - 1, dAdjust));
+                                             m_vecInlineBreaks.size() - 1, dAdjust, lineLead + middlefollow, lineLead));
 
         /* FIX ME!!
          * Need to calculate line height based on all inline BP info
          * for this line not just the current inlineBP!
          */
         curLineBP.setFlag(BreakPoss.ISLAST, isFinished());
-        curLineBP.setStackingSize(inlineBP.getNonStackingSize());
+        curLineBP.setStackingSize(new MinOptMax(lineLead + middlefollow));
         return curLineBP;
     }
 
@@ -452,6 +483,9 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
         while (parentIter.hasNext()) {
             LineBreakPosition lbp = (LineBreakPosition) parentIter.next();
             LineArea lineArea = new LineArea();
+            lineArea.setHeight(lbp.lineHeight);
+            lc.setBaseline(lbp.baseline);
+            lc.setLineHeight(lbp.lineHeight);
             setCurrentArea(lineArea);
             // Add the inline areas to lineArea
             PositionIterator inlinePosIter =
@@ -471,7 +505,6 @@ if(lc.getTrailingSpace() != null) {
             addSpace(lineArea, lc.getTrailingSpace().resolve(true),
                      lc.getSpaceAdjust());
 }
-            lineArea.verticalAlign(lineHeight, lead, follow);
             parentLM.addChild(lineArea);
         }
         setCurrentArea(null); // ?? necessary

@@ -11,7 +11,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.inline.InlineArea;
-
+import org.apache.fop.fo.properties.VerticalAlign;
 
 /**
  * Base LayoutManager for leaf-node FObj, ie: ones which have no children.
@@ -21,18 +21,14 @@ import org.apache.fop.area.inline.InlineArea;
 public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
 
     private InlineArea curArea = null;
+    private int alignment;
+    private int lead;
 
     public LeafNodeLayoutManager(FObj fobj) {
         super(fobj);
     }
 
-    public int size() {
-        return 1;
-    }
-
-    public InlineArea get(int index) {
-        if (index > 0)
-            return null;
+    public InlineArea get() {
         return curArea;
     }
 
@@ -48,8 +44,12 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
         curArea = ia;
     }
 
-    protected boolean flush() {
-        return false;
+    public void setAlignment(int al) {
+        alignment = al;
+    }
+
+    public void setLead(int l) {
+        lead = l;
     }
 
     /**
@@ -68,7 +68,7 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
 
     public BreakPoss getNextBreakPoss(LayoutContext context,
                                       Position prevBreakPoss) {
-        curArea = get(0);
+        curArea = get();
         if (curArea == null) {
             setFinished(true);
             return null;
@@ -79,6 +79,24 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
                                      BreakPoss.ISLAST);
         bp.setStackingSize(curArea.getAllocationIPD());
         bp.setNonStackingSize(curArea.getAllocationBPD());
+
+        int bpd = curArea.getHeight();
+        switch(alignment) {
+            case VerticalAlign.MIDDLE:
+                bp.setMiddle(bpd / 2 /* - fontLead/2 */);
+                bp.setLead(bpd / 2 /* + fontLead/2 */);
+            break;
+            case VerticalAlign.TOP:
+                bp.setTotal(bpd);
+            break;
+            case VerticalAlign.BOTTOM:
+                bp.setTotal(bpd);
+            break;
+            case VerticalAlign.BASELINE:
+            default:
+                bp.setLead(bpd);
+            break;
+        }
         setFinished(true);
         return bp;
     }
@@ -92,6 +110,24 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
 
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         parentLM.addChild(curArea);
+
+        int bpd = curArea.getHeight();
+        switch(alignment) {
+            case VerticalAlign.MIDDLE:
+                curArea.setOffset(context.getBaseline() - bpd / 2 /* - fontLead/2 */);
+            break;
+            case VerticalAlign.TOP:
+                //curArea.setOffset(0);
+            break;
+            case VerticalAlign.BOTTOM:
+                curArea.setOffset(context.getLineHeight() - bpd);
+            break;
+            case VerticalAlign.BASELINE:
+            default:
+                curArea.setOffset(context.getBaseline() - bpd);
+            break;
+        }
+
         while (posIter.hasNext()) {
             posIter.next();
         }

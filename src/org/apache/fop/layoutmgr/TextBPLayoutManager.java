@@ -468,7 +468,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
         // Make an area containing all characters between start and end.
         Word word = createWord(
                       new String(chars, iStart, ai.m_iBreakIndex - iStart),
-                      ai.m_ipdArea.opt + iAdjust);
+                      ai.m_ipdArea.opt + iAdjust, context.getBaseline());
         if (iWScount > 0) {
             //log.error("Adjustment per word-space= " +
             //                   iAdjust / iWScount);
@@ -498,16 +498,13 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 
 
 
-    protected Word createWord(String str, int width) {
+    protected Word createWord(String str, int width, int base) {
         Word curWordArea = new Word();
         curWordArea.setWidth(width);
         curWordArea.setHeight(textInfo.fs.getAscender() -
                               textInfo.fs.getDescender());
         curWordArea.setOffset(textInfo.fs.getAscender());
-        curWordArea.info = new LayoutInfo();
-        curWordArea.info.lead = textInfo.fs.getAscender();
-        curWordArea.info.alignment = VerticalAlign.BASELINE;
-        curWordArea.info.blOffset = true;
+        curWordArea.setOffset(base);
 
         curWordArea.setWord(str);
         curWordArea.addTrait(Trait.FONT_NAME, textInfo.fs.getFontName());

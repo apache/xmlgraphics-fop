@@ -211,7 +211,10 @@ public class FObj extends FONode {
      * @return A ListIterator.
      */
     public ListIterator getChildren() {
-        return children.listIterator();
+        if(children != null) {
+            return children.listIterator();
+        }
+        return null;
     }
 
     /**

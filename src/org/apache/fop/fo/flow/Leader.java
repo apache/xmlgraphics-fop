@@ -34,9 +34,7 @@ public class Leader extends FObjMixed {
 
     public void addLayoutManager(List list) {
         list.add(new LeafNodeLayoutManager(this) {
-            public InlineArea get(int index) {
-                if(index > 0)
-                    return null;
+            public InlineArea get() {
                 int contentIPD = parentLM.getContentIPD();
                 return getInlineArea(contentIPD);
             }

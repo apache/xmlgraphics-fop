@@ -48,6 +48,8 @@ public class ExternalGraphic extends FObj {
     public void addLayoutManager(List list) {
         LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
         lm.setCurrentArea(getInlineArea());
+        lm.setAlignment(properties.get("vertical-align").getEnum());
+        lm.setLead(viewHeight);
         list.add(lm);
     }
 
@@ -63,9 +65,6 @@ public class ExternalGraphic extends FObj {
         vp.setClip(clip);
         vp.setContentPosition(placement);
         vp.setOffset(0);
-        vp.info = new LayoutInfo();
-        vp.info.alignment = properties.get("vertical-align").getEnum();
-        vp.info.lead = vp.getHeight();
 
         return vp;
     }

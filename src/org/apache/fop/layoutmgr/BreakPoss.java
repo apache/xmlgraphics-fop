@@ -54,8 +54,11 @@ public class BreakPoss {
     /**
      * Max height above and below the baseline. These are cumulative.
      */
-    private int m_iMaxAscender;
-    private int m_iMaxDescender;
+    private int m_iLead;
+    // the max height of before and after alignment
+    private int m_iTotal;
+    // middle alignment height for after
+    private int m_iMiddle;
 
     /** Size in the non-stacking direction (perpendicular). */
     private MinOptMax m_nonStackSize;
@@ -197,5 +200,38 @@ public class BreakPoss {
 
     public boolean checkIPD() {
         return ((m_flags & NEED_IPD) != 0);
+    }
+
+    public int getLead() {
+        return m_iLead;
+    }
+
+    public int getTotal() {
+        return m_iTotal;
+    }
+
+    public int getMiddle() {
+        return m_iMiddle;
+    }
+
+    /**
+     * set lead height of baseline positioned element
+     */
+    public void setLead(int ld) {
+        m_iLead = ld;
+    }
+
+    /**
+     * Set total height of top or bottom aligned element
+     */
+    public void setTotal(int t) {
+        m_iTotal = t;
+    }
+
+    /**
+     * Set distance below baseline of middle aligned element
+     */
+    public void setMiddle(int t) {
+        m_iMiddle = t;
     }
 }

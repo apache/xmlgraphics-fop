@@ -32,8 +32,6 @@ public class InlineArea extends Area {
 
     // position within the line area, either top or baseline
     int verticalPosition;
-    // width, height, vertical alignment
-    public LayoutInfo info = null;
 
     // store properties in array list, need better solution
     ArrayList props = null;

@@ -85,7 +85,7 @@ public class BidiOverride extends FObjMixed {
         BidiLayoutManager(FObj obj, LeafNodeLayoutManager cLM) {
             super(obj);
             childs = new ArrayList();
-            for (int count = cLM.size() - 1; count >= 0; count--) {
+/*            for (int count = cLM.size() - 1; count >= 0; count--) {
                 InlineArea ia = cLM.get(count);
                 if (ia instanceof Word) {
                     // reverse word
@@ -95,7 +95,7 @@ public class BidiOverride extends FObjMixed {
                 }
                 childs.add(ia);
             }
-        }
+*/        }
 
         public int size() {
             return childs.size();
