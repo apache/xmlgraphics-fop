@@ -130,7 +130,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         pdfStream.add(getString());
         PDFResources pdfResources = this.pdfDoc.getResources();
         PDFPage currentPage = this.pdfDoc.makePage(pdfResources, pdfStream,
-                                                   width, height, null);
+                                                   width, height);
         if(currentAnnotList != null) {
             currentPage.setAnnotList(currentAnnotList);
         }
