@@ -219,6 +219,7 @@ public class Table extends FObj {
                 if (tableHeader != null &&!addedHeader) {
                     if ((status =
                             tableHeader.layout(areaContainer)).isIncomplete()) {
+                        tableHeader.resetMarker();
                         return new Status(Status.AREA_FULL_NONE);
                     }
                     addedHeader = true;
