@@ -563,8 +563,9 @@ list of possible build targets.
     <unjar dest="${transcoder-deps}">
       <patternset>
         <include name="org/apache/avalon/framework/*"/>
-        <include name="org/apache/commons/io/IOUtil.class"/>
-        <include name="org/apache/commons/io/ProxyOutputStream.class"/>
+        <include name="org/apache/commons/io/CopyUtils.class"/>
+        <include name="org/apache/commons/io/IOUtils.class"/>
+        <include name="org/apache/commons/io/output/ProxyOutputStream.class"/>
         <include name="org/apache/commons/io/output/ByteArrayOutputStream.class"/>
         <include name="org/apache/commons/io/output/CountingOutputStream.class"/>
       </patternset>
