@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE testsuite  SYSTEM "testsuite.dtd">
+<testsuite profile="Basic Conformance Tests">
+   <testcases profile="Block Objects">
+      <testcases profile="alignment" > 
+         <test id="bbo1a1" interaction="none" fo="block" xml="xml/1.xml" xsl="xsl/doc.xsl" level="basic">
+
+6-4-2-1.xml contains only one fo:root element.
+
+
+</test>
+      </testcases>
+      </testcases>
+</testsuite>

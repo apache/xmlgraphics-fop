@@ -50,7 +50,7 @@
      <copy todir="${build.src}">
        <fileset dir="${src.dir}"
 	        includes="${tools}/**,${hyph}/**"
-	        excludes="${tools}/anttasks/Fop.java,${hyph}/Hyphenator.java,**/${xalan1},**/${trax}"/>
+	        excludes="${tools}/anttasks/Fop.java,${tools}/TestConverter.java,${hyph}/Hyphenator.java,**/${xalan1},**/${trax}"/>
      </copy>
    </target>
 

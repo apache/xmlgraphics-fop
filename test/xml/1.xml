@@ -1,0 +1,9 @@
+<test  xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+<data>
+
+<fo:block>
+text text text text
+</fo:block>
+
+</data>
+</test>
