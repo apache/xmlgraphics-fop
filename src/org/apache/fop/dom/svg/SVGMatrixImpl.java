@@ -239,6 +239,7 @@ public class SVGMatrixImpl implements SVGMatrix {
 	public SVGMatrix rotate ( float angle )
 	              throws SVGException
 	{
+	    angle = (float)(angle * Math.PI / 180f);
 		SVGMatrix matrix = new SVGMatrixImpl();
 		matrix.setA((float)Math.cos(angle));
 		matrix.setB((float)Math.sin(angle));
@@ -266,8 +267,8 @@ public class SVGMatrixImpl implements SVGMatrix {
 	{
 		SVGMatrix matrix = new SVGMatrixImpl();
 		matrix.setA(1);
-		matrix.setB((float)Math.sin(angle));
-		matrix.setC(0);
+		matrix.setB(0);
+		matrix.setC((float)Math.sin(angle));
 		matrix.setD(1);
 		return multiply(matrix);
 	}
@@ -276,8 +277,8 @@ public class SVGMatrixImpl implements SVGMatrix {
 	{
 		SVGMatrix matrix = new SVGMatrixImpl();
 		matrix.setA(1);
-		matrix.setB(0);
-		matrix.setC((float)-Math.sin(angle));
+		matrix.setB((float)Math.sin(angle));
+		matrix.setC(0);
 		matrix.setD(1);
 		return multiply(matrix);
 	}
