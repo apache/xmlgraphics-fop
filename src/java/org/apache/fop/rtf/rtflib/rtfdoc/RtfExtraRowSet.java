@@ -58,7 +58,6 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-//import java.io.*;
 import java.io.Writer;
 import java.io.IOException;
 import java.util.List;

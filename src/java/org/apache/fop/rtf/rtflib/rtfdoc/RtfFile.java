@@ -59,8 +59,6 @@
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import org.apache.fop.rtf.rtflib.exceptions.RtfStructureException;
-//import org.apache.fop.rtf.rtflib.jfor.converter.ConverterLogChannel;
-//import java.io.*;
 import java.io.Writer;
 import java.io.IOException;
 import java.io.BufferedWriter;
