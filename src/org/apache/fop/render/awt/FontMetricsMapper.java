@@ -66,49 +66,49 @@ public class FontMetricsMapper implements FontMetrics {
     }
 
     /**
-     * @see org.apache.fop.layout.FontMetrics#getFontName()
+     * @see org.apache.fop.fonts.FontMetrics#getFontName()
      */
     public String getFontName() {
         return family;
     }
 
     /**
-     * @see org.apache.fop.layout.FontMetrics#getFontType()
+     * @see org.apache.fop.fonts.FontMetrics#getFontType()
      */
     public FontType getFontType() {
         return FontType.OTHER;
     }
     
     /**
-     * @see org.apache.fop.layout.FontMetrics#getAscender(int)
+     * @see org.apache.fop.fonts.FontMetrics#getAscender(int)
      */
     public int getAscender(int size) {
         return metric.getAscender(family, style, size);
     }
 
     /**
-     * @see org.apache.fop.layout.FontMetrics#getCapHeight(int)
+     * @see org.apache.fop.fonts.FontMetrics#getCapHeight(int)
      */
     public int getCapHeight(int size) {
         return metric.getCapHeight(family, style, size);
     }
 
     /**
-     * @see org.apache.fop.layout.FontMetrics#getDescender(int)
+     * @see org.apache.fop.fonts.FontMetrics#getDescender(int)
      */
     public int getDescender(int size) {
         return metric.getDescender(family, style, size);
     }
 
     /**
-     * @see org.apache.fop.layout.FontMetrics#getXHeight(int)
+     * @see org.apache.fop.fonts.FontMetrics#getXHeight(int)
      */
     public int getXHeight(int size) {
         return metric.getXHeight(family, style, size);
     }
 
     /**
-     * @see org.apache.fop.layout.FontMetrics#getWidth(int, int)
+     * @see org.apache.fop.fonts.FontMetrics#getWidth(int, int)
      */
     public int getWidth(int i, int size) {
         return metric.width(i, family, style, size);
@@ -116,7 +116,7 @@ public class FontMetricsMapper implements FontMetrics {
 
 
     /**
-     * @see org.apache.fop.layout.FontMetrics#getWidths()
+     * @see org.apache.fop.fonts.FontMetrics#getWidths()
      */
     public int[] getWidths() {
         return metric.getWidths(family, style, AWTFontMetrics.FONT_SIZE);
@@ -133,14 +133,14 @@ public class FontMetricsMapper implements FontMetrics {
     }
 
     /**
-     * @see org.apache.fop.layout.FontMetrics#getKerningInfo()
+     * @see org.apache.fop.fonts.FontMetrics#getKerningInfo()
      */
     public Map getKerningInfo() {
         return java.util.Collections.EMPTY_MAP;
     }
 
     /**
-     * @see org.apache.fop.layout.FontMetrics#hasKerningInfo()
+     * @see org.apache.fop.fonts.FontMetrics#hasKerningInfo()
      */
     public boolean hasKerningInfo() {
         return false;
