@@ -55,13 +55,6 @@ public class Marker extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#isMarker()
-     */
-    protected boolean isMarker() {
-        return true;
-    }
-
-    /**
      * Get the marker class name for this marker.
      *
      * @return the marker class name
