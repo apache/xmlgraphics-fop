@@ -50,6 +50,7 @@
  */ 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
@@ -70,7 +71,6 @@ import org.apache.fop.fo.properties.CommonBackground;
  * column properties.
  */
 public class Column extends AbstractLayoutManager {
-    private int columnWidth;
     private CommonBorderAndPadding borderProps = null;
     private CommonBackground backgroundProps;
 
@@ -85,7 +85,6 @@ public class Column extends AbstractLayoutManager {
      */
     public void setFObj(FObj fobj) {
         super.setFObj(fobj);
-        columnWidth = ((TableColumn)fobj).getColumnWidth();
     }
 
     /**
@@ -136,8 +135,8 @@ public class Column extends AbstractLayoutManager {
      *
      * @return the width of the column
      */
-    public int getWidth() {
-        return columnWidth;
+    public Length getWidth() {
+        return ((TableColumn)fobj).getColumnWidth();
     }
 
     /**

@@ -304,6 +304,7 @@ public class FOPropertyMapping implements Constants {
         genericPadding = new LengthProperty.Maker(0);
         genericPadding.setInherited(false);
         genericPadding.setDefault("0pt");
+        genericPadding.setPercentBase(LengthBase.BLOCK_WIDTH);
         genericPadding.addShorthand(s_generics[PR_PADDING]);
         
         // GenericCondBorderWidth
@@ -1189,6 +1190,7 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("0pt");
         m.addShorthand(s_generics[PR_MARGIN]);
+        m.setPercentBase(LengthBase.BLOCK_WIDTH);
         addPropertyMaker("margin-top", m);
 
         // margin-bottom
@@ -1196,6 +1198,7 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("0pt");
         m.addShorthand(s_generics[PR_MARGIN]);
+        m.setPercentBase(LengthBase.BLOCK_WIDTH);
         addPropertyMaker("margin-bottom", m);
 
         // margin-left
@@ -1203,6 +1206,7 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("0pt");
         m.addShorthand(s_generics[PR_MARGIN]);
+        m.setPercentBase(LengthBase.BLOCK_WIDTH);
         addPropertyMaker("margin-left", m);
 
         // margin-right
@@ -1210,6 +1214,7 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("0pt");
         m.addShorthand(s_generics[PR_MARGIN]);
+        m.setPercentBase(LengthBase.BLOCK_WIDTH);
         addPropertyMaker("margin-right", m);
 
         // space-before
@@ -1343,6 +1348,7 @@ public class FOPropertyMapping implements Constants {
         // block-progression-dimension
         m = new LengthRangeProperty.Maker(PR_BLOCK_PROGRESSION_DIMENSION);
         m.setInherited(false);
+        m.setPercentBase(LengthBase.BLOCK_HEIGHT);
         
         l = new LengthProperty.Maker(CP_MINIMUM);
         l.setDefault("auto");
@@ -1372,6 +1378,7 @@ public class FOPropertyMapping implements Constants {
              {PR_MAX_HEIGHT, PR_MAX_HEIGHT, PR_MAX_WIDTH, }
         });
         pdim.setRelative(true);
+        m.setCorresponding(pdim);
         addPropertyMaker("block-progression-dimension", m);
 
         // content-height
@@ -1398,6 +1405,7 @@ public class FOPropertyMapping implements Constants {
         // inline-progression-dimension
         m = new LengthRangeProperty.Maker(PR_INLINE_PROGRESSION_DIMENSION);
         m.setInherited(false);
+        m.setPercentBase(LengthBase.BLOCK_WIDTH);
         
         l = new LengthProperty.Maker(CP_MINIMUM);
         l.setDefault("auto");
@@ -1427,6 +1435,7 @@ public class FOPropertyMapping implements Constants {
             {PR_MIN_WIDTH, PR_MIN_WIDTH, PR_MIN_HEIGHT, },
             {PR_MAX_WIDTH, PR_MAX_WIDTH, PR_MAX_HEIGHT, }
         });
+        m.setCorresponding(pdim);
         addPropertyMaker("inline-progression-dimension", m);
 
         // max-height
@@ -1471,7 +1480,7 @@ public class FOPropertyMapping implements Constants {
         l  = new LengthProperty.Maker(PR_WIDTH);
         l.setInherited(false);
         l.setAutoOk(true);
-        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setPercentBase(LengthBase.BLOCK_WIDTH);
         l.setDefault("auto");
         addPropertyMaker("width", l);
     }
@@ -1580,6 +1589,7 @@ public class FOPropertyMapping implements Constants {
         m  = new LengthProperty.Maker(PR_TEXT_INDENT);
         m.setInherited(false);
         m.setDefault("0pt");
+        m.setPercentBase(LengthBase.BLOCK_WIDTH);
         addPropertyMaker("text-indent", m);
 
         // white-space-collapse
@@ -2222,6 +2232,7 @@ public class FOPropertyMapping implements Constants {
         m  = new LengthProperty.Maker(PR_COLUMN_WIDTH);
         m.setInherited(false);
         m.setDefault("proportional-column-width(1)", true);
+        m.setPercentBase(LengthBase.BLOCK_WIDTH);
         addPropertyMaker("column-width", m);
 
         // empty-cells
@@ -2476,6 +2487,7 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("");
         m.setDatatypeParser(new BoxPropShorthandParser());
+        m.setPercentBase(LengthBase.BLOCK_WIDTH);
         addPropertyMaker("margin", m);
 
         // padding

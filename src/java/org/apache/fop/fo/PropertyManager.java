@@ -465,7 +465,7 @@ public class PropertyManager implements Constants {
      */
     public BlockProps getBlockProps() {
         BlockProps props = new BlockProps();
-        props.firstIndent = this.propertyList.get(PR_TEXT_INDENT).getLength().getValue();
+        props.firstIndent = this.propertyList.get(PR_TEXT_INDENT).getLength();
         props.lastIndent = 0;
             /*this.propertyList.get("last-line-end-indent").getLength().mvalue(); */
         props.textAlign = this.propertyList.get(PR_TEXT_ALIGN).getEnum();

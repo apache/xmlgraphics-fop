@@ -50,6 +50,7 @@
  */
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonHyphenation;
@@ -109,7 +110,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
     private BreakPoss prevBP = null; // Last confirmed break position
     private int bTextAlignment = TextAlign.JUSTIFY;
-    private int iTextIndent = 0;
+    private Length textIndent;
     private int iIndents = 0;
     private CommonHyphenation hyphProps;
 
@@ -146,7 +147,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         iIndents = marginProps.startIndent + marginProps.endIndent;
         BlockProps blockProps = propMgr.getBlockProps();
         bTextAlignment = blockProps.textAlign;
-        iTextIndent = blockProps.firstIndent;
+        textIndent = blockProps.firstIndent;
         hyphProps = propMgr.getHyphenationProps();
     }
 
@@ -178,10 +179,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         clearPrevIPD();
         int iPrevLineEnd = vecInlineBreaks.size();
 
-        // Adjust available line length by text-indent. 
         if (iPrevLineEnd == 0 && bTextAlignment == TextAlign.START) {
-            availIPD.subtract(new MinOptMax(iTextIndent));
-        }        
+            availIPD.subtract(new MinOptMax(textIndent.getValue()));
+        }
         prevBP = null;
 
         while ((curLM = getChildLM()) != null) {
@@ -453,7 +453,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         if (prev == null) {
             vecInlineBreaks.clear();
         } else if ((iPrev = vecInlineBreaks.indexOf(prev)) != -1) {
-            for (int i = vecInlineBreaks.size(); iPrev < i; --i) {
+            for (int i = vecInlineBreaks.size()-1; iPrev < i; --i) {
                 vecInlineBreaks.remove(i);
             }
         }
@@ -623,9 +623,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             break;
             case TextAlign.START:
                 if (prevLineEnd == 0) {
-                    indent = iTextIndent;
+                    indent = textIndent.getValue();
                 }
-            break;
+                break;
             case TextAlign.CENTER:
                 indent = (targetWith - realWidth) / 2;
             break;

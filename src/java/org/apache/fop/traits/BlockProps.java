@@ -50,13 +50,15 @@
  */ 
 package org.apache.fop.traits;
 
+import org.apache.fop.datatypes.Length;
+
 /**
  * Store all block-level layout properties on an FO.
  * Public "structure" allows direct member access.
  */
 public class BlockProps {
     
-    public int firstIndent; // text-indent
+    public Length firstIndent; // text-indent
     public int lastIndent; // last-line-indent
     public int textAlign;
     public int textAlignLast;

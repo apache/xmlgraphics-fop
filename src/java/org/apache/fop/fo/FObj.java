@@ -97,6 +97,11 @@ public class FObj extends FONode implements Constants {
     protected Map markers = null;
 
     /**
+     * Dynamic layout dimension. Used to resolve relative lengths.
+     */
+    protected Map layoutDimension = null;
+
+    /**
      * Create a new formatting object.
      * All formatting object classes extend this class.
      *
@@ -235,6 +240,50 @@ public class FObj extends FONode implements Constants {
     protected PropertyManager makePropertyManager(
             PropertyList propertyList) {
         return new PropertyManager(propertyList);
+    }
+
+    /* This section is the implemenation of the property context. */
+
+    /**
+     * Assign the size of a layout dimension to the key. 
+     * @param key the Layout dimension, from PercentBase.
+     * @param dimension The layout length.
+     */
+    public void setLayoutDimension(Integer key, int dimension) {
+        if (layoutDimension == null){
+            layoutDimension = new HashMap();
+        }
+        layoutDimension.put(key, new Integer(dimension));
+    }
+    
+    /**
+     * Assign the size of a layout dimension to the key. 
+     * @param key the Layout dimension, from PercentBase.
+     * @param dimension The layout length.
+     */
+    public void setLayoutDimension(Integer key, float dimension) {
+        if (layoutDimension == null){
+            layoutDimension = new HashMap();
+        }
+        layoutDimension.put(key, new Float(dimension));
+    }
+    
+    /**
+     * Return the size associated with the key.
+     * @param key The layout dimension key.
+     * @return the length.
+     */
+    public Number getLayoutDimension(Integer key) {
+        if (layoutDimension != null) {
+            Number result = (Number) layoutDimension.get(key);
+            if (result != null) {
+                return result;
+            }
+        }
+        if (parent != null) {
+            return ((FObj) parent).getLayoutDimension(key);
+        }
+        return new Integer(0);
     }
 
     /**

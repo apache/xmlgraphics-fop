@@ -54,6 +54,7 @@ import java.util.ListIterator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.TextInfo;
 import org.apache.fop.fo.PropertyManager;
@@ -212,6 +213,10 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         BreakPoss lastPos = null;
 
+        // Set context for percentage property values.
+        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, ipd);
+        fobj.setLayoutDimension(PercentBase.BLOCK_BPD, -1);
+        
         while ((curLM = getChildLM()) != null) {
             // Make break positions and return blocks!
             // Set up a LayoutContext

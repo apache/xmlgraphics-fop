@@ -63,7 +63,6 @@ import org.apache.fop.fo.FOTreeVisitor;
 
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.Property;
 
 /**
  * Class modelling the fo:table-column object. See Sec. 6.7.4 of the XSL-FO
@@ -73,8 +72,7 @@ public class TableColumn extends FObj {
 
     private ColorType backgroundColor;
 
-    private Length columnWidthPropVal;
-    private int columnWidth;
+    private Length columnWidth;
     private int columnOffset;
     private int numColumnsRepeated;
     private int iColumnNumber;
@@ -91,24 +89,8 @@ public class TableColumn extends FObj {
     /**
      * @return Length object containing column width
      */
-    public Length getColumnWidthAsLength() {
-        return columnWidthPropVal;
-    }
-
-    /**
-     * @return the column width (in millipoints ??)
-     */
-    public int getColumnWidth() {
+    public Length getColumnWidth() {
         return columnWidth;
-    }
-
-    /**
-     * Set the column width value, overriding the value from the column-width
-     * Property.
-     * @param columnWidth the column width value in base units (millipoints ??)
-     */
-    public void setColumnWidth(int columnWidth) {
-        this.columnWidth = columnWidth;
     }
 
     /**
@@ -146,15 +128,7 @@ public class TableColumn extends FObj {
         this.backgroundColor =
             this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
-        Property prop = this.propertyList.get(PR_COLUMN_WIDTH);
-        if (prop != null) {
-            columnWidthPropVal = propertyList.get(PR_COLUMN_WIDTH).getLength();
-
-            // This won't include resolved table-units or % values yet.
-            columnWidth = columnWidthPropVal.getValue();
-        } else {
-            columnWidth = 300000;
-        }
+        columnWidth = this.propertyList.get(PR_COLUMN_WIDTH).getLength();
 
         // initialize id
         setupID();

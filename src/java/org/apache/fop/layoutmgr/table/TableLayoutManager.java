@@ -50,7 +50,10 @@
  */
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.PropertyManager;
+import org.apache.fop.fo.properties.TableColLength;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutProcessor;
 import org.apache.fop.layoutmgr.LeafPosition;
@@ -67,6 +70,7 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonBackground;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -159,6 +163,26 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         // stackSize.add(spaceBefore);
         BreakPoss lastPos = null;
 
+        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, context.getRefIPD());
+        fobj.setLayoutDimension(PercentBase.BLOCK_BPD, context.getStackLimit().opt);
+        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, context.getRefIPD());
+        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, context.getStackLimit().opt);
+        
+        int sumCols = 0;
+        float factors = 0;
+        if (columns != null) { 
+            for (Iterator i = columns.iterator(); i.hasNext(); ) {
+                Column column = (Column) i.next();
+                Length width = column.getWidth();
+                sumCols += width.getValue();
+                if (width instanceof TableColLength) {
+                    factors += ((TableColLength) width).getTableUnits();
+                }
+            }
+        }
+        if (sumCols < context.getRefIPD()) {
+            fobj.setLayoutDimension(PercentBase.TABLE_UNITS, (context.getRefIPD() - sumCols) / factors);
+        }
         MinOptMax headerSize = null;
         if (tableHeader != null) {
             tableHeader.setUserAgent(getUserAgent());
