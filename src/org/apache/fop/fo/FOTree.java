@@ -10,7 +10,6 @@ import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.configuration.Configuration;
-import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
@@ -54,17 +53,13 @@ public class FOTree extends Tree implements Runnable {
     SyncedXmlEventsBuffer xmlevents;
     private Thread parserThread;
     private boolean errorDump;
+    public final PropertyConsts propConsts;
 
     /**
      * The <tt>PropertyParser</tt> which will be used by the FO tree
      * builder.
      */
     protected PropertyParser exprParser;
-
-    /**
-     * Args array for refineParsingMethods[].invoke() calls
-     */
-    Object[] args = new Object[2];
 
     protected PropertyValue[] initialValues
                     = new PropertyValue[PropNames.LAST_PROPERTY_INDEX + 1];
@@ -80,13 +75,14 @@ public class FOTree extends Tree implements Runnable {
         errorDump = Configuration.getBooleanValue("debugMode").booleanValue();
         this.xmlevents = xmlevents;
         exprParser = new PropertyParser(this);
+        propConsts = PropertyConsts.getPropertyConsts();
 
         // Initialize the FontSize first.  Any lengths defined in ems must
         // be resolved relative to the current font size.  This may happen
         // during setup of initial values.
         // Set the initial value
         PropertyValue prop =
-                    PropertyConsts.getInitialValue(PropNames.FONT_SIZE);
+                    propConsts.getInitialValue(PropNames.FONT_SIZE);
         if ( ! (prop instanceof Numeric) || ! ((Numeric)prop).isLength())
             throw new PropertyException("Initial font-size is not a Length");
         initialValues[PropNames.FONT_SIZE] = prop;
@@ -95,7 +91,7 @@ public class FOTree extends Tree implements Runnable {
         for (int i = 1; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
             if (i == PropNames.FONT_SIZE) continue;
             // Set up the initial values for each property
-            prop = PropertyConsts.getInitialValue(i);
+            prop = propConsts.getInitialValue(i);
             //System.out.println("....Setting initial value: "
             //                 + i + ((prop == null) ? " NULL" : " notNULL"));
             initialValues[i] = prop;

@@ -4,6 +4,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FOAttributes;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOPropertySets;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.datatypes.PropertyValue;
@@ -61,6 +62,8 @@ public class FONode extends FOTree.Node{
     protected XMLNamespaces namespaces;
     /** The FO type. */
     public final int type;
+    /** The PropertyConsts singleton. */
+    public final PropertyConsts propertyConsts;
     /** The attributes defined on this node. */
     public FOAttributes foAttributes;
     /** The unmodifiable map of properties defined on this node. */
@@ -82,10 +85,10 @@ public class FONode extends FOTree.Node{
     protected ROBitSet attrBitSet;
     /** The <tt>ROBitSet</tt> of inherited properties for the
         <i>attrSet</i> argument. */
-    protected ROBitSet inheritedBitSet;
-    /** The <tt>ROBitSet</tt> of non-inherited prperties for the
+    //protected ROBitSet inheritedBitSet;
+    /** The <tt>ROBitSet</tt> of non-inherited properties for the
         <i>attrSet</i> argument. */
-    protected ROBitSet nonInheritedBitSet;
+    //protected ROBitSet nonInheritedBitSet;
     /** Ancestor reference area of this FONode. */
     protected FONode ancestorRefArea = null;
 
@@ -105,13 +108,14 @@ public class FONode extends FOTree.Node{
     {
         foTree.super(parent);
         this.foTree = foTree;
+        propertyConsts = PropertyConsts.getPropertyConsts();
         this.type = type;
         this.parent = parent;
         this.event = event;
         this.attrSet = attrSet;
         attrBitSet = FOPropertySets.getAttrROBitSet(attrSet);
-        inheritedBitSet = FOPropertySets.getInheritedROBitSet(attrSet);
-        nonInheritedBitSet = FOPropertySets.getNonInheritedROBitSet(attrSet);
+        //inheritedBitSet = FOPropertySets.getInheritedROBitSet(attrSet);
+        //nonInheritedBitSet = FOPropertySets.getNonInheritedROBitSet(attrSet);
         xmlevents = foTree.xmlevents;
         namespaces = xmlevents.getNamespaces();
         exprParser = foTree.exprParser;
@@ -176,18 +180,17 @@ public class FONode extends FOTree.Node{
     {
         // parse the expression
         exprParser.resetParser();
-        foTree.args[0] = this;
-        foTree.args[1] = exprParser.parse(this, property, attrValue);
-        try {
-            return (PropertyValue)
-                    (((Method)PropertyConsts.refineParsingMethods
-                      .get(property))
-                     .invoke(null, foTree.args));
-        } catch (IllegalAccessException e) {
-            throw new PropertyException (e);
-        } catch (InvocationTargetException e) {
-            throw new PropertyException (e);
-        }
+        Property prop = propertyConsts.setupProperty(property);
+        return prop.refineParsing
+                        (this, exprParser.parse(this, property, attrValue));
+    }
+
+    /**
+     * Get the eclosing <tt>FOTree</tt> instance of this <tt>FONode</tt>.
+     * @return the <tt.FOTree</tt>.
+     */
+    public FOTree getFOTree() {
+        return foTree;
     }
 
     /**
@@ -337,7 +340,7 @@ public class FONode extends FOTree.Node{
         PropertyValue pval;
         if ((pval = propertySet[property]) != null) 
             return IndirectValue.adjustedPropertyValue(pval);
-        if (parent != null && PropertyConsts.inheritedProps.get(property))
+        if (parent != null && propertyConsts.isInherited(property))
             return (propertySet[property] =
                                IndirectValue.adjustedPropertyValue
                                         (parent.getPropertyValue(property)));

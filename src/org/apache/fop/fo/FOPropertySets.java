@@ -105,6 +105,7 @@ public class FOPropertySets {
         throw new FOPException("Invalid attribute set: " + attrSet);
     }
 
+    /*
     public static ROBitSet getInheritedROBitSet(int attrSet)
             throws FOPException
     {
@@ -152,6 +153,7 @@ public class FOPropertySets {
         }
         throw new FOPException("Invalid attribute set: " + attrSet);
     }
+    */
 
     public static int getFoIndex(String name) {
         return ((Integer)(foToIndex.get(name))).intValue();
@@ -1103,11 +1105,11 @@ public class FOPropertySets {
     /**
      * Set of all inherited properties available at fo:root.
      */
-    public static final ROBitSet allInheritedProps;
+    //public static final ROBitSet allInheritedProps;
     /**
      * Set of all non-inherited properties available at fo:root.
      */
-    public static final ROBitSet allNonInheritedProps;
+    //public static final ROBitSet allNonInheritedProps;
 
     /**
      * set of all properties which are
@@ -1118,12 +1120,12 @@ public class FOPropertySets {
      * set of all inherted properties which are
      * usable within the declarations subtree.
      */
-    public static final ROBitSet declarationsInherited;
+    //public static final ROBitSet declarationsInherited;
     /**
      * set of all non-inherited properties which are
      * usable within the declarations subtree.
      */
-    public static final ROBitSet declarationsNonInherited;
+    //public static final ROBitSet declarationsNonInherited;
 
     /**
      * Set of properties for exclusive
@@ -1141,12 +1143,12 @@ public class FOPropertySets {
      * set of all inherited properties which are
      * usable within the page-sequence-master-set subtree.
      */
-    public static final ROBitSet inheritedSeqMasterSet;
+    //public static final ROBitSet inheritedSeqMasterSet;
     /**
      * set of all non-inherited properties which are
      * usable within the page-sequence-master-set subtree.
      */
-    public static final ROBitSet nonInheritedSeqMasterSet;
+    //public static final ROBitSet nonInheritedSeqMasterSet;
 
     /**
      * set of all properties which are
@@ -1157,12 +1159,12 @@ public class FOPropertySets {
      * set of all inherited properties which are
      * usable within the layout-master-set subtree.
      */
-    public static final ROBitSet inheritedLayoutSet;
+    //public static final ROBitSet inheritedLayoutSet;
     /**
      * set of all non-inherited properties which are
      * usable within the layout-master-set subtree.
      */
-    public static final ROBitSet nonInheritedLayoutSet;
+    //public static final ROBitSet nonInheritedLayoutSet;
 
     /**
      * set of all properties which are
@@ -1173,12 +1175,12 @@ public class FOPropertySets {
      * set of all inherited properties which are
      * usable within the page sequence subtree.
      */
-    public static final ROBitSet inheritedPageSeqSet;
+    //public static final ROBitSet inheritedPageSeqSet;
     /**
      * set of all non-inherited properties which are
      * usable within the page sequence subtree.
      */
-    public static final ROBitSet nonInheritedPageSeqSet;
+    //public static final ROBitSet nonInheritedPageSeqSet;
 
     /**
      * set of all properties which are
@@ -1189,12 +1191,12 @@ public class FOPropertySets {
      * set of all inherited properties which are
      * usable within the fo:flow subtree.
      */
-    public static final ROBitSet inheritedFlowSet;
+    //public static final ROBitSet inheritedFlowSet;
     /**
      * set of all non-inherite properties which are
      * usable within the fo:flow subtree.
      */
-    public static final ROBitSet nonInheritedFlowSet;
+    //public static final ROBitSet nonInheritedFlowSet;
 
     /**
      * set of all properties which are
@@ -1205,12 +1207,12 @@ public class FOPropertySets {
      * set of all inherited properties which are
      * usable <i>within</i> the fo:marker subtree.
      */
-    public static final ROBitSet inheritedMarkerSet;
+    //public static final ROBitSet inheritedMarkerSet;
     /**
      * set of all non-inherited properties which are
      * usable <i>within</i> the fo:marker subtree.
      */
-    public static final ROBitSet nonInheritedMarkerSet;
+    //public static final ROBitSet nonInheritedMarkerSet;
 
     /**
      * set of all properties which are
@@ -1221,13 +1223,14 @@ public class FOPropertySets {
      * set of all inherited properties which are
      * usable within the fo:static-content subtree.
      */
-    public static final ROBitSet inheritedStaticSet;
+    //public static final ROBitSet inheritedStaticSet;
     /**
      * set of all non-inherited properties which are
      * usable within the fo:static-content subtree.
      */
-    public static final ROBitSet nonInheritedStaticSet;
+    //public static final ROBitSet nonInheritedStaticSet;
 
+    /*
     private static BitSet makeInheritedSet(BitSet set) {
         BitSet newset = new BitSet(set.size());
         newset.or(set);
@@ -1246,6 +1249,7 @@ public class FOPropertySets {
         newset.andNot(ShorthandPropSets.shorthandCompoundProps);
         return newset;
     }
+    */
 
     static {
 
@@ -1254,10 +1258,10 @@ public class FOPropertySets {
         allprops.set(1, PropNames.LAST_PROPERTY_INDEX);
 
         allProps = new ROBitSet(allprops);
-        allInheritedProps =
-                new ROBitSet(makeInheritedSet(allprops));
-        allNonInheritedProps =
-                new ROBitSet(makeNonInheritedSet(allprops));
+        //allInheritedProps =
+                //new ROBitSet(makeInheritedSet(allprops));
+        //allNonInheritedProps =
+                //new ROBitSet(makeNonInheritedSet(allprops));
 
         //root only set of properties - properties for exclusive use on the
         // root element
@@ -1279,8 +1283,8 @@ public class FOPropertySets {
 
         declarationsAll = new ROBitSet(declarationsall);
         // None of the declarations properties are inherited
-        declarationsInherited = new ROBitSet(new BitSet(1));
-        declarationsNonInherited = new ROBitSet(declarationsall);
+        //declarationsInherited = new ROBitSet(new BitSet(1));
+        //declarationsNonInherited = new ROBitSet(declarationsall);
 
         // seq-master-only set of properties for exclusive use within
         // the page-sequence-master subtree
@@ -1297,9 +1301,9 @@ public class FOPropertySets {
         seqmasterset.set(PropNames.MASTER_REFERENCE);
 
         seqMasterSet = new ROBitSet(seqmasterset);
-        inheritedSeqMasterSet = new ROBitSet(makeInheritedSet(seqmasterset));
-        nonInheritedSeqMasterSet
-                            = new ROBitSet(makeNonInheritedSet(seqmasterset));
+        //inheritedSeqMasterSet = new ROBitSet(makeInheritedSet(seqmasterset));
+        //nonInheritedSeqMasterSet
+                            //= new ROBitSet(makeNonInheritedSet(seqmasterset));
 
         //layout-master-set only set of properties - properties for exclusive
         // use within the layout-master-set SUBTREE
@@ -1334,10 +1338,10 @@ public class FOPropertySets {
         // Add the common background properties
 	layoutmasterset.or(PropertySets.backgroundSet);
         layoutMasterSet = new ROBitSet(layoutmasterset);
-        inheritedLayoutSet =
-            new ROBitSet(makeInheritedSet(layoutmasterset));
-        nonInheritedLayoutSet =
-            new ROBitSet(makeNonInheritedSet(layoutmasterset));
+        //inheritedLayoutSet =
+            //new ROBitSet(makeInheritedSet(layoutmasterset));
+        //nonInheritedLayoutSet =
+            //new ROBitSet(makeNonInheritedSet(layoutmasterset));
 
         BitSet flowonlyset = new BitSet();
         flowonlyset.set(PropNames.MARKER_CLASS_NAME);
@@ -1365,39 +1369,39 @@ public class FOPropertySets {
         pageseqset.andNot(declarationsonly);
         pageseqset.andNot(layoutmasteronly);
         pageSeqSet = new ROBitSet(pageseqset);
-        inheritedPageSeqSet =
-                    new ROBitSet(makeInheritedSet(pageseqset));
-        nonInheritedPageSeqSet =
-                new ROBitSet(makeNonInheritedSet(pageseqset));
+        //inheritedPageSeqSet =
+                    //new ROBitSet(makeInheritedSet(pageseqset));
+        //nonInheritedPageSeqSet =
+                //new ROBitSet(makeNonInheritedSet(pageseqset));
 
         BitSet flowallset = (BitSet)pageseqset.clone();
         flowallset.andNot(pageseqonly);
         flowallset.andNot(staticonlyset);
 
         flowAllSet = new ROBitSet(flowallset);
-        inheritedFlowSet =
-                new ROBitSet(makeInheritedSet(flowallset));
-        nonInheritedFlowSet =
-                new ROBitSet(makeNonInheritedSet(flowallset));
+        //inheritedFlowSet =
+                //new ROBitSet(makeInheritedSet(flowallset));
+        //nonInheritedFlowSet =
+                //new ROBitSet(makeNonInheritedSet(flowallset));
 
         BitSet staticallset = (BitSet)pageseqset.clone();
         staticallset.andNot(pageseqonly);
         staticallset.andNot(flowonlyset);
 
         staticAllSet = new ROBitSet(staticallset);
-        inheritedStaticSet =
-                new ROBitSet(makeInheritedSet(staticallset));
-        nonInheritedStaticSet =
-            new ROBitSet(makeNonInheritedSet(staticallset));
+        //inheritedStaticSet =
+                //new ROBitSet(makeInheritedSet(staticallset));
+        //nonInheritedStaticSet =
+            //new ROBitSet(makeNonInheritedSet(staticallset));
 
         BitSet markerallset = (BitSet)flowallset.clone();
         markerallset.clear(PropNames.MARKER_CLASS_NAME);
 
         markerAllSet = new ROBitSet(markerallset);
-        inheritedMarkerSet =
-                new ROBitSet(makeInheritedSet(markerallset));
-        nonInheritedMarkerSet =
-            new ROBitSet(makeNonInheritedSet(markerallset));
+        //inheritedMarkerSet =
+                //new ROBitSet(makeInheritedSet(markerallset));
+        //nonInheritedMarkerSet =
+            //new ROBitSet(makeNonInheritedSet(markerallset));
     }
 
     /**
