@@ -239,7 +239,7 @@ $Revision$
       </map:match>
 
       <!-- ========================== FOP Additions ========================== -->
-      <map:match pattern="body-compliance.xml">
+      <map:match pattern="body-compliance.html">
         <map:generate type="file" src="content/xdocs/compliance.xml"/>
         <map:transform src="resources/stylesheets/compliance2html.xsl"/>
         <map:serialize type="xml"/>
