@@ -76,13 +76,6 @@ public class BlockContainer extends FObj {
     }
 
     /**
-     * @return false (BlockContainer cannot generate inline areas)
-     */
-    public boolean generatesInlineAreas() {
-        return false;
-    }
-
-    /**
      * @return the span for this object
      */
     public int getSpan() {
@@ -98,6 +91,9 @@ public class BlockContainer extends FObj {
         list.add(blm);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:block-container";
     }

@@ -27,6 +27,7 @@ public class PropertySets {
     private static short[][] mapping = null;
     private static BitSet can_have_markers = null;
     private static BitSet can_have_id = null;
+    private static BitSet no_inline_areas = null;
 
     private Element[] elements = new Element[Constants.ELEMENT_COUNT+1];
     private BitSet block_elems = new BitSet();
@@ -1083,6 +1084,30 @@ public class PropertySets {
             can_have_id.set(Constants.FO_WRAPPER);
         }
         return can_have_id.get(elementId);
+    }
+
+    /**
+     * Determines if the FO generates inline areas.  Used only within flow.Block
+     * for whitespace handling
+     * @param elementId Constants enumeration ID of the FO (e.g., FO_ROOT)
+     * @return true if id property is applicable, false otherwise
+     * @todo see if more values need to be entered here (copied values over
+     *      from legacy code, list of FO's below probably incomplete)
+     * @todo see if still needed (LM has a similar generatesInlineAreas()
+     *      method)
+     */
+    public static boolean generatesInlineAreas(int elementId) {
+        if (no_inline_areas == null) {
+            no_inline_areas = new BitSet();
+            no_inline_areas.set(Constants.FO_UNKNOWN_NODE);
+            no_inline_areas.set(Constants.FO_BLOCK);
+            no_inline_areas.set(Constants.FO_BLOCK_CONTAINER);
+            no_inline_areas.set(Constants.FO_LIST_BLOCK);
+            no_inline_areas.set(Constants.FO_LIST_ITEM);
+            no_inline_areas.set(Constants.FO_TABLE);
+            no_inline_areas.set(Constants.FO_TABLE_AND_CAPTION);
+        }
+        return !(no_inline_areas.get(elementId));
     }
 
     /**

@@ -32,6 +32,7 @@ import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.RecursiveCharIterator;
 import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.fo.Constants;
@@ -91,6 +92,7 @@ public class Block extends FObjMixed {
 
     /**
      * @param parent FONode that is the parent of this object
+     *
      */
     public Block(FONode parent) {
         super(parent);
@@ -176,24 +178,18 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * @return false (Block cannot generate inline areas)
-     */
-    public boolean generatesInlineAreas() {
-        return false;
-    }
-
-    /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
     public void addChildNode(FONode child) {
         // Handle whitespace based on values of properties
         // Handle a sequence of inline-producing child nodes in
         // one pass
-        if (child instanceof FObj && ((FObj) child).generatesInlineAreas()) {
-            if (firstInlineChild == null) {
-                firstInlineChild = child;
-            }
-            // lastInlineChild = childNodes.size();
+        if (child instanceof FObj && ("fo:text".equals(child.getName()) 
+            || PropertySets.generatesInlineAreas(child.getNameId()))) {
+                if (firstInlineChild == null) {
+                    firstInlineChild = child;
+                }
+                // lastInlineChild = childNodes.size();
         } else {
             // Handle whitespace in preceeding inline areas if any
             handleWhiteSpace();

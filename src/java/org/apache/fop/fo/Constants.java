@@ -56,7 +56,7 @@ public interface Constants {
     int RENDER_RTF = 10;
     
     // element constants
-    int FO_UNKNOWN = 0;  // FObj base class
+    int FO_UNKNOWN_NODE = 0;  // FObj base class
     int FO_BASIC_LINK = 1;
     int FO_BIDI_OVERRIDE = 2;
     int FO_BLOCK = 3;

@@ -85,6 +85,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
     /**
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
+     * @todo need to take into account somewhere the effects of fo:initial-property-set,
+     *      if defined for the block.
      */
     protected void initProperties() {
         PropertyManager pm = fobj.getPropertyManager();

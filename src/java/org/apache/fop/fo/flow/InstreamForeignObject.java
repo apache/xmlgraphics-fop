@@ -114,15 +114,6 @@ public class InstreamForeignObject extends FObj {
     }
 
     /**
-     * This flow object generates inline areas.
-     * @see org.apache.fop.fo.FObj#generatesInlineAreas()
-     * @return true
-     */
-    public boolean generatesInlineAreas() {
-        return true;
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
     public void addLayoutManager(List list) {

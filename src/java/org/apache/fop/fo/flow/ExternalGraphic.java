@@ -59,6 +59,7 @@ public class ExternalGraphic extends FObj {
 
     /**
      * @see org.apache.fop.fo.FObj#addProperties
+     * @todo switch method from image() to startImage()?
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);

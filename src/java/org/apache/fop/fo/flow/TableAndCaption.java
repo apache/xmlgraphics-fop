@@ -36,12 +36,8 @@ public class TableAndCaption extends ToBeImplementedElement {
     }
 
     /**
-     * @return false (TableAndCaption doesn't generate inline areas)
+     * @see org.apache.fop.fo.FObj#getName()
      */
-    public boolean generatesInlineAreas() {
-        return false;
-    }
-
     public String getName() {
         return "fo:table-and-caption";
     }

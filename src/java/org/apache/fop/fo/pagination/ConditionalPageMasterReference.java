@@ -152,7 +152,7 @@ public class ConditionalPageMasterReference extends FObj {
      * Check that the parent is the right type of formatting object
      * repeatable-page-master-alternatives.
      * @param parent parent node
-     * @throws FOPException If the parent is invalid
+     * @throws SAXParseException If the parent is invalid
      */
     protected void validateParent(FONode parent) throws SAXParseException {
         if (parent.getName().equals("fo:repeatable-page-master-alternatives")) {

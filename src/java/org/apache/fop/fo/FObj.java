@@ -192,8 +192,8 @@ public class FObj extends FONode implements Constants {
      */
     protected void addChildNode(FONode child) {
         if (PropertySets.canHaveMarkers(getNameId()) && 
-                "fo:marker".equals(child.getName())) {
-            addMarker((Marker) child);
+            child.getNameId() == FO_MARKER) {
+                addMarker((Marker) child);
         } else {
             if (childNodes == null) {
                 childNodes = new ArrayList();
@@ -333,15 +333,6 @@ public class FObj extends FONode implements Constants {
     }
 
     /**
-     * Check if this formatting object generates inline areas.
-     *
-     * @return true if generates inline areas
-     */
-    public boolean generatesInlineAreas() {
-        return true;
-    }
-
-    /**
      * Set writing mode for this FO.
      * Use that from the nearest ancestor, including self, which generates
      * reference areas, or from root FO if no ancestor found.
@@ -386,7 +377,7 @@ public class FObj extends FONode implements Constants {
      * the first child.
      * @param marker Marker to add.
      */
-    public void addMarker(Marker marker) {
+    protected void addMarker(Marker marker) {
         String mcname = marker.getMarkerClassName();
         if (childNodes != null) {
             // check for empty childNodes
@@ -540,22 +531,6 @@ public class FObj extends FONode implements Constants {
             temp = temp.getParent();
         }
         return -1;
-    }
-
-    /**
-     * Returns the name of this FO (e.g., "fo:root");
-     * @return the name of the FO
-     */
-    public String getName() {
-        return null;
-    }
-
-    /**
-     * Returns the Constants class integer value of this formatting object
-     * @return the integer enumeration of this FO (e.g., FO_ROOT)
-     */
-    public int getNameId() {
-        return FO_UNKNOWN;
     }
 }
 

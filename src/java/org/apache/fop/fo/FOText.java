@@ -488,6 +488,10 @@ public class FOText extends FObj {
 
     }
 
+    /**
+     * @todo rename somehow, there isn't an fo:text.
+     * @todo see if should still be a subclass of FObj
+     */
     public String getName() {
         return "fo:text";
     }

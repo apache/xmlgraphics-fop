@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id:$ */
 
 package org.apache.fop.fo.flow;
 
@@ -23,6 +23,7 @@ import java.util.List;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
@@ -31,23 +32,12 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 
 /**
- * Class modelling the fo:list-item object. See Sec. 6.8.3 of the XSL-FO
- * Standard.
+ * Class modelling the fo:list-item object.
  */
 public class ListItem extends FObj {
 
     private ListItemLabel label = null;
     private ListItemBody body = null;
-
-    private int align;
-    private int alignLast;
-    private int breakBefore;
-    private int breakAfter;
-    private int lineHeight;
-    private int startIndent;
-    private int endIndent;
-    private int spaceBefore;
-    private int spaceAfter;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -62,49 +52,68 @@ public class ListItem extends FObj {
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         getFOInputHandler().startListItem(this);
-        this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
-        this.alignLast = this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
-        this.lineHeight =
-            this.propertyList.get(PR_LINE_HEIGHT).getLength().getValue();
-        this.spaceBefore =
-            this.propertyList.get(PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
-        this.spaceAfter =
-            this.propertyList.get(PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* (list-item-label,list-item-body)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+            if (nsURI == FO_URI && localName.equals("marker")) {
+                if (label != null) {
+                    nodesOutOfOrderError(loc, "fo:marker", "fo:list-item-label");
+                }
+            } else if (nsURI == FO_URI && localName.equals("list-item-label")) {
+                if (label != null) {
+                    tooManyNodesError(loc, "fo:list-item-label");
+                }
+            } else if (nsURI == FO_URI && localName.equals("list-item-body")) {
+                if (label == null) {
+                    nodesOutOfOrderError(loc, "fo:list-item-label", "fo:list-item-body");
+                } else if (body != null) {
+                    tooManyNodesError(loc, "fo:list-item-body");
+                }
+            } else {
+                invalidChildError(loc, nsURI, localName);
+            }
     }
 
     /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * @todo see if can/should rely on base class for this 
+     *    (i.e., add to childNodes instead)
      */
     public void addChildNode(FONode child) {
-        if ("fo:list-item-label".equals(child.getName())) {
-            label = (ListItemLabel)child;
-        } else if ("fo:list-item-body".equals(child.getName())) {
-            body = (ListItemBody)child;
-        } else if ("fo:marker".equals(child.getName())) {
-            // marker
-        } else {
-            // error
+        int nameId = ((FObj)child).getNameId();
+        
+        if (nameId == FO_LIST_ITEM_LABEL) {
+            label = (ListItemLabel) child;
+        } else if (nameId == FO_LIST_ITEM_BODY) {
+            body = (ListItemBody) child;
+        } else if (nameId == FO_MARKER) {
+            addMarker((Marker) child);
         }
     }
 
     /**
-     * @return false (ListItem cannot generate inline areas)
+     * Make sure content model satisfied, if so then tell the
+     * FOInputHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#end
      */
-    public boolean generatesInlineAreas() {
-        return false;
+    protected void endOfNode() throws SAXParseException {
+        if (label == null || body == null) {
+            missingChildElementError("marker* (list-item-label,list-item-body)");
+        }
+        getFOInputHandler().endListItem(this);
     }
 
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
-     * @todo remove checks for non-nulls after validateChildNode() added
      */
     public void addLayoutManager(List list) { 	 
-        if (label != null && body != null) {
-            ListItemLayoutManager blm = new ListItemLayoutManager(this);
-            list.add(blm);
-        } else {
-            getLogger().error("list-item requires list-item-label and list-item-body");
-        }
+        ListItemLayoutManager blm = new ListItemLayoutManager(this);
+        list.add(blm);
     }
 
     public ListItemLabel getLabel() {
@@ -115,11 +124,9 @@ public class ListItem extends FObj {
         return body;
     }
 
-    protected void endOfNode() throws SAXParseException {
-        super.endOfNode();
-        getFOInputHandler().endListItem(this);
-    }
-
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:list-item";
     }
