@@ -143,7 +143,6 @@ public class PSRenderer extends AbstractRenderer {
         }
     }
 
-
     /**
      * write out a comment
      */
@@ -151,7 +150,6 @@ public class PSRenderer extends AbstractRenderer {
         if (this.enableComments)
             write(comment);
     }
-
 
     protected void writeFontDict(FontInfo fontInfo) {
         write("%%BeginResource: procset FOPFonts");
@@ -259,122 +257,17 @@ public class PSRenderer extends AbstractRenderer {
         this.fontInfo = fontInfo;
     }
 
-    /**
-     * render an area container to PostScript
-     *
-     * @param area the area container to render
-     */
-    public void renderAreaContainer(AreaContainer area) {
-        int saveY = this.currentYPosition;
-        int saveX = this.currentAreaContainerXPosition;
-        if (area.getPosition() == Position.ABSOLUTE) {
-            // Y position is computed assuming positive Y axis, adjust for negative postscript one
-            this.currentYPosition = area.getYPosition()
-                                    - 2 * area.getPaddingTop()
-                                    - 2 * area.getBorderTopWidth();
-            this.currentAreaContainerXPosition = area.getXPosition();
-        } else if (area.getPosition() == Position.RELATIVE) {
-            this.currentYPosition -= area.getYPosition();
-            this.currentAreaContainerXPosition += area.getXPosition();
-        } else if (area.getPosition() == Position.STATIC) {
-            this.currentYPosition -= area.getPaddingTop()
-                                     + area.getBorderTopWidth();
-            this.currentAreaContainerXPosition += area.getPaddingLeft()
-                                                  + area.getBorderLeftWidth();
-        }
-
-        this.currentXPosition = this.currentAreaContainerXPosition;
-
-        // comment("% --- AreaContainer begin");
-        doFrame(area);
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            b.render(this);
-        }
-        // comment("% --- AreaContainer end");
-
-        if (area.getPosition() != Position.STATIC) {
-            this.currentYPosition = saveY;
-            this.currentAreaContainerXPosition = saveX;
-        } else {
-            this.currentYPosition -= area.getHeight();
-        }
-    }
-
-    /**
-     * render a body area container to PostScript
-     *
-     * @param area the body area container to render
-     */
-    public void renderBodyAreaContainer(BodyAreaContainer area) {
-        int saveY = this.currentYPosition;
-        int saveX = this.currentAreaContainerXPosition;
-
-        if (area.getPosition() == Position.ABSOLUTE) {
-            // Y position is computed assuming positive Y axis, adjust for negative postscript one
-            this.currentYPosition = area.getYPosition();
-            this.currentAreaContainerXPosition = area.getXPosition();
-        } else if (area.getPosition() == Position.RELATIVE) {
-            this.currentYPosition -= area.getYPosition();
-            this.currentAreaContainerXPosition += area.getXPosition();
-        }
-
-        this.currentXPosition = this.currentAreaContainerXPosition;
-        int w, h;
-        int rx = this.currentAreaContainerXPosition;
-        w = area.getContentWidth();
-        h = area.getContentHeight();
-        int ry = this.currentYPosition;
-
-        // comment("% --- BodyAreaContainer begin");
-        doFrame(area);
-        // movetoCurrPosition();
-
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            b.render(this);
-        }
-        // comment("% --- BodyAreaContainer end");
-
-        if (area.getPosition() != Position.STATIC) {
-            this.currentYPosition = saveY;
-            this.currentAreaContainerXPosition = saveX;
-        } else {
-            this.currentYPosition -= area.getHeight();
-        }
-    }
-
-    /**
-     * render a span area to PostScript
-     *
-     * @param area the span area to render
-     */
-    public void renderSpanArea(SpanArea area) {
-        // comment("% --- SpanArea begin");
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            b.render(this);
-        }
-        // comment("% --- SpanArea end");
-    }
-
-    /**
-     * render a block area to PostScript
-     *
-     * @param area the block area to render
-     */
-    public void renderBlockArea(BlockArea area) {
-        // comment("% --- BlockArea begin");
-        doFrame(area);
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            b.render(this);
-        }
-        // comment("% --- BlockArea end");
+    protected void addFilledRect(int x, int y, int w, int h,
+                                 ColorType col) {
+            write("newpath");
+            write(x + " " + y + " M");
+            write(w + " 0 rlineto");
+            write("0 " + (-h) + " rlineto");
+            write((-w) + " 0 rlineto");
+            write("0 " + h + " rlineto");
+            write("closepath");
+            useColor(col);
+            write("fill");
     }
 
     /**
@@ -699,6 +592,7 @@ public class PSRenderer extends AbstractRenderer {
         this.currentXPosition = rx;
 
         int bl = this.currentYPosition;
+        // method is identical to super method except next line
         movetoCurrPosition();
 
         String fontWeight = area.getFontState().getFontWeight();
