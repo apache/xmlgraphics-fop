@@ -401,7 +401,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         if (childArea.getAreaClass() == Area.CLASS_NORMAL) {
             placeFlowRefArea(childArea);
         } else {
-            ; // todo: all the others!
+             // todo: all the others!
         }
     }
 

@@ -55,7 +55,7 @@ import java.util.Hashtable;
 import java.awt.image.ColorModel;
 import java.awt.image.ImageConsumer;
 import java.awt.image.ImageProducer;
-import java.awt.image.PixelGrabber;;
+import java.awt.image.PixelGrabber;
 
 /**
  * ImageConsumer implementation for FopImage classes.

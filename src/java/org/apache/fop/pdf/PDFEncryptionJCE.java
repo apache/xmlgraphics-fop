@@ -414,7 +414,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         hash[i++] = (byte) (number >>> 8);
         hash[i++] = (byte) (number >>> 16);
         hash[i++] = (byte) (generation >>> 0);
-        hash[i++] = (byte) (generation >>> 8);;
+        hash[i++] = (byte) (generation >>> 8);
         return hash;        
     }
 

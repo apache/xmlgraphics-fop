@@ -1245,7 +1245,7 @@ public class PDFRenderer extends PrintRenderer {
         endTextObject();
 
         if (viewport.getClip()) {
-            saveGraphicsState();;
+            saveGraphicsState();
 
             clip(x, y, width, height);
         }
