@@ -8,9 +8,11 @@ package org.apache.fop.layout;
 
 // FOP
 import org.apache.fop.datatypes.*;
+import org.apache.fop.fo.flow.Marker;
 
 // Java
 import java.util.Vector;
+import java.util.Hashtable;
 
 abstract public class Area extends Box {
 
@@ -46,12 +48,29 @@ abstract public class Area extends Box {
 
     private IDReferences idReferences;
 
+	protected Vector markers;
+	
+	// as defined in Section 6.1.1
+	public org.apache.fop.fo.FObj generatedBy;	// corresponds to 'generated-by' trait
+	protected Hashtable returnedBy;
+	
+	// as defined in Section 6.1.1
+	protected String areaClass;
+	
+	// as defined in Section 4.2.2
+	public boolean isFirst = false;
+	public boolean isLast = false;
+	
     /* author : Seshadri G
     ** the fo which created it */	
+	// This is deprecated and should be phased out in
+	// favour of using 'generatedBy'
     public org.apache.fop.fo.FObj foCreator;	
         
     public Area (FontState fontState) {
-	setFontState(fontState);
+		setFontState(fontState);
+		this.markers = new Vector();
+		this.returnedBy = new Hashtable();
     }
 
     /**
@@ -64,10 +83,12 @@ abstract public class Area extends Box {
      * for this Area (its allocation rectangle)
      */
     public Area (FontState fontState, int allocationWidth, int maxHeight) {
-	setFontState(fontState);
+		setFontState(fontState);
         this.allocationWidth = allocationWidth;
         this.contentRectangleWidth = allocationWidth;
         this.maxHeight = maxHeight;
+		this.markers = new Vector();
+		this.returnedBy = new Hashtable();
     }
 
   private void setFontState(FontState fontState) {
@@ -340,4 +361,11 @@ abstract public class Area extends Box {
     return bp;
   }
 
+  public void addMarkers(Vector markers) {
+	  markers.addAll(markers);
+  }
+  
+  public void addLineagePair(org.apache.fop.fo.FObj fo, int areaPosition) {
+	  returnedBy.put(fo, new Integer(areaPosition));
+  }
 }

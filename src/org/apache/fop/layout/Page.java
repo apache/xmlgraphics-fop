@@ -38,10 +38,13 @@ public class Page {
 
     private Vector footnotes = null;
 
+	private Vector markers = null;
+	
     Page(AreaTree areaTree, int height, int width) {
 	this.areaTree = areaTree;
 	this.height = height;
 	this.width = width;
+	markers = new Vector();
     }
 
     public void setNumber(int number) {
@@ -172,4 +175,12 @@ public class Page {
         }
         footnotes.addElement(fb);
     }
+	
+	public void registerMarker(Marker marker) {
+		markers.addElement(marker);
+	}
+	
+	public Vector getMarkers() {
+		return this.markers;
+	}
 }

@@ -241,8 +241,6 @@ public class PageSequence extends FObj {
 
             MessageHandler.log(" [" + currentPageNumber);
 
-            formatStaticContent(areaTree);
-
             if ((status.getCode() == Status.FORCE_PAGE_BREAK_EVEN) &&
                     ((currentPageNumber % 2) == 1)) {
             } else if ( (status.getCode() == Status.FORCE_PAGE_BREAK_ODD) &&
@@ -265,6 +263,10 @@ public class PageSequence extends FObj {
                 }
 
             }
+
+			// because of markers, do after fo:flow
+            formatStaticContent(areaTree);
+
             MessageHandler.log("]");
             areaTree.addPage(currentPage);
 			this.pageCount++;	// used for 'force-page-count' calculations
