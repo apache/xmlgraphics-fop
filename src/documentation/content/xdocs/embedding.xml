@@ -149,28 +149,28 @@ issues should be fixed in the upcoming JDK 1.4</note>
   <p>If you want FOP to be totally silent you can also set an org.apache.avalon.framework.logger.NullLogger instance.</p>
   <p>If you want to use yet another logging facility you simply have to create a class that implements org.apache.avalon.framework.logging.Logger
   and set it on the Driver object. See the existing implementations in Avalon Framework for examples.</p>
-
   </section>
-  <section id="hints">
-    <title>Hints</title>
     <section id="input">
-     <title>XML/XSL/DOM Inputs</title>
-     <p>
-You can supply your input to FOP from a variety of data sources.
+      <title>Input Sources</title>
+      <p>The input XSL-FO document is always handled internally as SAX (see the <link href="design/parsing.html">Parsing Design Document</link> for the rationale).
+However, the input itself can be provided in a variety of ways to FOP, which normalizes the input (if necessary) into SAX events:</p>
+      <ul>
+        <li><strong>SAX Events through SAX Handler</strong>: <code>FOTreeBuilder</code> is the SAX Handler which is obtained through <code>getContentHandler</code> on <code>Driver</code>.</li>
+        <li><strong>DOM (which is converted into SAX Events)</strong>: The conversion of a DOM tree is done via the <code>render(Document)</code> method on <code>Driver</code>.</li>
+        <li><strong>Data Source (which is parsed and converted into SAX Events)</strong>: The <code>Driver</code> can take an <code>InputSource</code> as input.
+This can use a <code>Stream</code>, <code>String</code> etc.</li>
+        <li><strong>XML+XSLT Transformation</strong> (which is transformed using an XSLT Processor and the result is fired as SAX Events: <code>XSLTInputHandler</code> is used as an <code>InputSource</code> in the render(<code>XMLReader</code>, <code>InputSource</code>) method on <code>Driver</code>.</li>
+      </ul>
+      <p>There are a variety of upstream data manipulations possible.
 For example, you may have a DOM and an XSL stylesheet; or you may want to
 set variables in the stylesheet.
-<fork href="http://xml.apache.org/xalan-j/usagepatterns.html">
-Xalan Basic Usage Patterns</fork> provides some interface documentation and cookbook solutions for such situations.
-     </p>
+Interface documentation and some cookbook solutions to these situations are provided in <fork href="http://xml.apache.org/xalan-j/usagepatterns.html">Xalan Basic Usage Patterns</fork>.</p>
      <p>
-You can use the content handler from the driver to create a SAXResult.
-The transformer then can fire SAX events on the content handler which
-will in turn create the rendered output.
-     </p>
-     <p>
-Examples showing this can be found at the bott
+See the <link href="#examples">Examples</link> for some variations on input. 
      </p>
     </section>
+  <section id="hints">
+    <title>Hints</title>
     <section id="object-reuse">
       <title>Object reuse</title>
      <p>
