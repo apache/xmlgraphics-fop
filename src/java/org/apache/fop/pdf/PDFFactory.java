@@ -1078,7 +1078,7 @@ public class PDFFactory {
 
         // Check if the font is embeddable
         if (desc.isEmbeddable()) {
-            PDFStream stream = makeFontFile(desc);
+            AbstractPDFStream stream = makeFontFile(desc);
             if (stream != null) {
                 descriptor.setFontFile(desc.getFontType(), stream);
                 getDocument().registerObject(stream);
@@ -1092,7 +1092,7 @@ public class PDFFactory {
      * @param desc FontDescriptor of the font.
      * @return PDFStream The embedded font file
      */
-    public PDFStream makeFontFile(FontDescriptor desc) {
+    public AbstractPDFStream makeFontFile(FontDescriptor desc) {
         if (desc.getFontType() == FontType.OTHER) {
             throw new IllegalArgumentException("Trying to embed unsupported font type: "
                                                 + desc.getFontType());
@@ -1142,7 +1142,7 @@ public class PDFFactory {
                 return null;
             } else {
                 try {
-                    PDFStream embeddedFont;
+                    AbstractPDFStream embeddedFont;
                     if (desc.getFontType() == FontType.TYPE0) {
                         MultiByteFont mbfont = (MultiByteFont)font;
                         FontFileReader reader = new FontFileReader(in);
