@@ -30,16 +30,16 @@
     <P>You can provide outlines inside the root object (but outside any page-sequences or
        other formatting objects). Here's an example of an outline entry:</P>
     <DIV align="right"><TABLE border="0" cellpadding="0" cellspacing="4" width="464"><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" height="1" width="462"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="462"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#ffffff" width="462"><FONT size="-1"><PRE>
-    &lt;fo:root xmlns:fo=&quot;http://www.w3.org/1999/XSL/Format&quot;
-             &amp;#160;&amp;#160; xmlns:fox=&quot;http://xml.apache.org/fop/extensions&quot;&gt;
-    &lt;fox:outline internal-destination=&quot;sec3&quot;&gt;
-    &amp;#160;&amp;#160;  &lt;fox:label&gt;Running FOP&lt;/fox:label&gt;
+&lt;fo:root xmlns:fo=&quot;http://www.w3.org/1999/XSL/Format&quot;
+               xmlns:fox=&quot;http://xml.apache.org/fop/extensions&quot;&gt;
+  &lt;fox:outline internal-destination=&quot;sec3&quot;&gt;
+    &lt;fox:label&gt;Running FOP&lt;/fox:label&gt;
 
-    &amp;#160;&amp;#160;&lt;fox:outline internal-destination=&quot;sec3-1&quot;&gt;
-    &amp;#160;&amp;#160;&amp;#160;&amp;#160;&lt;fox:label&gt;Prerequisites&lt;/fox:label&gt;
-    &amp;#160;&amp;#160;&lt;/fox:outline&gt;
-    &lt;fox:outline&gt;
-    &lt;/fo:root&gt;
+    &lt;fox:outline internal-destination=&quot;sec3-1&quot;&gt;
+      &lt;fox:label&gt;Prerequisites&lt;/fox:label&gt;
+    &lt;/fox:outline&gt;
+  &lt;fox:outline&gt;
+&lt;/fo:root&gt;
 </PRE></FONT></TD><TD bgcolor="#0086b2" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" height="1" width="462"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="462"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></DIV>
     <P>It works similarly to a basic-link. There is also an external-destination 
        property, but it isn't supported currently. See the pdfoutline.fo file in 

@@ -10,16 +10,16 @@
     <p>You can provide outlines inside the root object (but outside any page-sequences or
        other formatting objects). Here's an example of an outline entry:</p>
     <source>
-    <![CDATA[<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
-             &#160;&#160; xmlns:fox="http://xml.apache.org/fop/extensions">
-    <fox:outline internal-destination="sec3">
-    &#160;&#160;  <fox:label>Running FOP</fox:label>
+<![CDATA[<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+               xmlns:fox="http://xml.apache.org/fop/extensions">
+  <fox:outline internal-destination="sec3">
+    <fox:label>Running FOP</fox:label>
 
-    &#160;&#160;<fox:outline internal-destination="sec3-1">
-    &#160;&#160;&#160;&#160;<fox:label>Prerequisites</fox:label>
-    &#160;&#160;</fox:outline>
-    <fox:outline>
-    </fo:root>
+    <fox:outline internal-destination="sec3-1">
+      <fox:label>Prerequisites</fox:label>
+    </fox:outline>
+  <fox:outline>
+</fo:root>
 ]]></source>
     <p>It works similarly to a basic-link. There is also an external-destination 
        property, but it isn't supported currently. See the pdfoutline.fo file in 
