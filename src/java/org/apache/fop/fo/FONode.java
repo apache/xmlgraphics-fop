@@ -28,6 +28,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.datastructs.SyncedNode;
 import org.apache.fop.datastructs.TreeException;
+import org.apache.fop.datatypes.EnumType;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
@@ -565,6 +566,17 @@ public class FONode extends SyncedNode{
             throw new PropertyException
                     ("font-size value is not a length.");
         return (Numeric)fontsize;
+    }
+
+    /**
+     * Gets the <code>writing-mode</code> applying to this node.
+     * @return an enumerated constant representing the writing-mode
+     * @throws PropertyException
+     */
+    public int getWritingMode()
+    throws PropertyException {
+        PropertyValue wm = getPropertyValue(PropNames.WRITING_MODE);
+        return EnumType.getEnumValue(wm);
     }
 
     /**

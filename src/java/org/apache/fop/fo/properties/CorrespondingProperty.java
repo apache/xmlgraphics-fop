@@ -30,8 +30,6 @@ import org.apache.fop.fo.expr.PropertyException;
  * @version $Revision$ $Name$
  */
 public interface CorrespondingProperty {
-    public int getWritingMode (FONode foNode)
-    throws PropertyException;
     public int getCorrespondingProperty(FONode foNode)
     throws PropertyException;
 }

@@ -55,7 +55,7 @@ extends BorderCommonStyle {
             FONode foNode, int relativeEdge)
     throws PropertyException {
         int absEdge = WritingMode.getCorrespondingAbsoluteEdge(
-                getWritingMode(foNode), relativeEdge);
+                foNode.getWritingMode(), relativeEdge);
         return absBorderStyleProps[absEdge];
     }
 

@@ -51,7 +51,7 @@ public abstract class PaddingCorrespondingRelative extends AbstractCorresponding
             FONode foNode, int relativeEdge)
     throws PropertyException {
         int relEdge = WritingMode.getCorrespondingAbsoluteEdge(
-                getWritingMode(foNode), relativeEdge);
+                foNode.getWritingMode(), relativeEdge);
         return absPaddingProps[relEdge];
     }
 
