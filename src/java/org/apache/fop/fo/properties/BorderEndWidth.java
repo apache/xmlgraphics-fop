@@ -26,7 +26,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 
-public class BorderEndWidth extends BorderCommonWidth {
+public class BorderEndWidth extends BorderCommonWidthRelative {
     public static final int dataTypes =
                             COMPOUND | MAPPED_LENGTH | LENGTH | INHERIT;
 
@@ -64,6 +64,11 @@ public class BorderEndWidth extends BorderCommonWidth {
         return inherited;
     }
 
+    public int getCorrespondingProperty(FONode foNode)
+    throws PropertyException {
+        return getCorrespondingWidthProperty(
+                foNode, WritingMode.END);
+    }
 
 }
 

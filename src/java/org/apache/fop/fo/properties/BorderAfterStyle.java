@@ -57,9 +57,5 @@ extends BorderCommonStyleRelative {
                 foNode, WritingMode.AFTER);
     }
 
-    public boolean overridesCorresponding(FONode foNode) {
-        return false;
-    }
-
 }
 

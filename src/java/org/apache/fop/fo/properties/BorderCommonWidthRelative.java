@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Created on 20/04/2004
+ * Created on 22/04/2004
  * $Id$
  */
 package org.apache.fop.fo.properties;
@@ -24,39 +24,35 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
- * Base class for border-&lt;relative&gt;-style properties, providing the
- * methods necessary to resolve corresponding absolute properties.
- * 
  * @author pbw
  * @version $Revision$ $Name$
  */
-public abstract class BorderCommonStyleRelative
-extends BorderCommonStyle {
+public abstract class BorderCommonWidthRelative extends BorderCommonWidth {
 
-    /** Array of absolute border style properties,
+    /** Array of absolute border width properties,
      * indexed by absolute edge constants */
-    private static int[] absBorderStyleProps = {
+    private static int[] absBorderWidthProps = {
             PropNames.NO_PROPERTY
-            ,PropNames.BORDER_TOP_STYLE
-            ,PropNames.BORDER_BOTTOM_STYLE
-            ,PropNames.BORDER_LEFT_STYLE
-            ,PropNames.BORDER_RIGHT_STYLE
+            ,PropNames.BORDER_TOP_WIDTH
+            ,PropNames.BORDER_BOTTOM_WIDTH
+            ,PropNames.BORDER_LEFT_WIDTH
+            ,PropNames.BORDER_RIGHT_WIDTH
     };
 
     /**
-     * Gets the absolute border style property corresponding to the given
+     * Gets the absolute border width property corresponding to the given
      * relative edge
      * @param foNode the node on which the property is being defined
      * @param relativeEdge
-     * @return the absolute border style property index
+     * @return the absolute border width property index
      * @throws PropertyException
      */
-    protected int getCorrespondingStyleProperty(
+    protected int getCorrespondingWidthProperty(
             FONode foNode, int relativeEdge)
     throws PropertyException {
         int absEdge = WritingMode.getCorrespondingAbsoluteEdge(
                 getWritingMode(foNode), relativeEdge);
-        return absBorderStyleProps[absEdge];
+        return absBorderWidthProps[absEdge];
     }
 
     public boolean overridesCorresponding(FONode foNode) {
