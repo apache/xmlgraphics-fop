@@ -32,8 +32,24 @@ public class BlockAllocationRectangle extends AreaFrame implements
      * @param contents
      */
     public BlockAllocationRectangle(Area area) {
+        // For block-areas, the allocation-area is bounded in the
+        // block-progression-direction by the border-rectangle, and in the
+        // inline-progression-direction by the spaces-rectangle.
+        // See 4.2.3 Geometric Definitions
+        // The contents of the BlockAllocationRectangle is the ContentRectangle.
+        // Initally, set up the AreaFrame representing the allocation
+        // rectangle to co-incide with the content-rectangle.
         super(area, area.getContent());
-        
+        // Now extend the AreaFrame to co-incide with the
+        // edges of the border rectangle in the BPDir, and with the edges of
+        // the spaces rectangle in the IPDir.
+        PaddingRectangle padding = area.getPadding();
+        BorderRectangle borders = area.getBorders();
+        SpacesRectangle spaces = area.getSpaces();
+        setStart(spaces.getStart() + borders.getStart() + padding.getStart());
+        setEnd(spaces.getEnd() + borders.getEnd() + padding.getEnd());
+        setBefore(borders.getBefore() + padding.getBefore());
+        setAfter(borders.getAfter() + padding.getAfter());
     }
 
 }
