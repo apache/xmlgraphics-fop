@@ -150,11 +150,13 @@
           <li>[mailing list info] <jump href="http://xml.apache.org/fop/maillist.html">http://xml.apache.org/fop/maillist.html</jump></li>
           <ul>
             <li>[fop-user archives] <jump href="http://marc.theaimsgroup.com/?l=fop-user">http://marc.theaimsgroup.com/?l=fop-user</jump></li>
+            <li>[fop-user gzip'd archives] <jump href="http://xml.apache.org/mail/fop-user/">http://xml.apache.org/mail/fop-user/</jump></li>
             <li>[fop-user-subscribe] <jump href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</jump></li>
             <li>[fop-user-digest-subscribe] <jump href="mailto:fop-user-digest-subscribe@xml.apache.org">fop-user-digest-subscribe@xml.apache.org</jump></li>
           </ul>
           <ul>
             <li>[fop-dev archives] <jump href="http://marc.theaimsgroup.com/?l=fop-dev">http://marc.theaimsgroup.com/?l=fop-dev</jump></li>
+            <li>[fop-dev gzip'd archives] <jump href="http://xml.apache.org/mail/fop-dev/">http://xml.apache.org/mail/fop-dev/</jump></li>
             <li>[fop-dev-subscribe] <jump href="mailto:fop-dev-subscribe@xml.apache.org">fop-dev-subscribe@xml.apache.org</jump></li>
             <li>[fop-dev-digest-subscribe] <jump href="mailto:fop-dev-digest-subscribe@xml.apache.org">fop-dev-digest-subscribe@xml.apache.org</jump></li>
           </ul>
