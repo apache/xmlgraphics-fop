@@ -8,43 +8,53 @@
   <body>
     <section id="std">
       <title>Standard Hyphenation Support</title>
-      <p>FOP includes hyphenation support for the following languages:</p>
+      <p>The following table summarizes FOP's standard hyphenation support.
+Please note that the "view" links reflect current CVS, and may be different than the contents of released code. See <link href="#patterns">Hyphenation Patterns</link> for a brief explanation of the contents of these files.</p>
       <table>
         <tr>
           <th>language_COUNTRY code</th>
           <th>Description</th>
+          <th>View Patterns (maintenance branch CVS)</th>
         </tr>
         <tr>
           <td>en</td>
           <td>English</td>
+          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/en.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
         </tr>
         <tr>
           <td>es</td>
           <td>Spanish</td>
+          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/es.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
         </tr>
         <tr>
           <td>fi</td>
           <td>Finnish</td>
+          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/fi.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
         </tr>
         <tr>
           <td>hu</td>
           <td>Hungarian</td>
+          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/hu.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
         </tr>
         <tr>
           <td>it</td>
           <td>Italian</td>
+          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/it.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
         </tr>
         <tr>
           <td>pl</td>
           <td>Polish</td>
+          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/pl.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
         </tr>
         <tr>
           <td>pt</td>
           <td>Portuguese</td>
+          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/pt.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
         </tr>
         <tr>
           <td>ru</td>
           <td>Russian</td>
+          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/ru.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
         </tr>
       </table>
     </section>
@@ -90,6 +100,40 @@ NOTE: The ISO 639/ISO 3166 convention is that language names are written in lowe
         </li>
       </ol>
     </section>
+  </section>
+  <section id="patterns">
+    <title>Hyphenation Patterns</title>
+    <p>If you would like to build your own hyphenation pattern files, or modify existing ones, this section will help you understand how to do so. Even when creating a pattern file from scratch, it may be beneficial to start with an existing file and modify it. See <link href="#std">Standard Hyphenation Support</link> or the source distribution (src/hyph) for examples. Here is a brief explanation of the contents of FOP's hyphenation patterns:</p>
+    <ul>
+      <li>The root of the pattern file is the &lt;hyphenation-info> element.</li>
+      <li>&lt;hyphen-char> is self-explanatory: its attribute "value" contains the default character to be used for hyphenating this language. For English, this is the hyphen "-".</li>
+      <li>&lt;hyphen-min> contains two attributes:
+        <ul>
+          <li>before: the minimum number of characters in a word allowed to exist on a line immediately preceding a hyphenated word-break.</li>
+          <li>after: the minimum number of characters in a word allowed to exist on a line immediately after a hyphenated word-break.</li>
+        </ul>
+      </li>
+      <li>&lt;classes> contains whitespace-separated character sets.
+The members of each set should be treated as equivalent for purposes of hyphenation.
+The English patterns, for example, include sets such as "aA" and "bB" to indicate that lower case characters should be treated as equivalent to uppercase characters for purposes of computing potential hyphenation breaks.</li>
+      <li>&lt;exceptions> contains whitespace-separated words, each of which has either explicit hyphen characters to denote acceptable breakage points, or no hyphen characters, to indicate that this word should never be hyphenated.
+Exceptions override the patterns described below.</li>
+      <li>&lt;patterns> includes whitespace-separated patterns, which are what drive most hyphenation decisions.
+The characters in these patterns are explained as follows:
+        <ul>
+          <li>non-numeric characters represent characters in a sub-word to be evaluated</li>
+          <li>the period character (.) represents a word boundary, i.e. either the beginning or ending of a word</li>
+          <li>numeric characters represent a scoring system for indicating the acceptability of a hyphen in this location. Only odd numbers represent an acceptable location for a hyphen, with 5 being most desirable, and 1 being least desirable. Even numbers indicate an unacceptable location, with zero (implied when there is no number present) being unacceptable, and 4 being extremely unacceptable.</li>
+        </ul>
+        Here are some examples from the English patterns file:
+        <ul>
+          <li>Knuth (<em>The TeXBook</em>, Appendix H) uses the example <strong>hach4</strong>, which indicates that it is extremely undesirable to place a hyphen after the substring "hach", for example in the word "toothach-es".</li>
+          <li><strong>.leg5e</strong> indicates that "leg-e", when it occurs at the beginning of a word, is a very good place to place a hyphen, if one is needed. Words like "leg-end" and "leg-er-de-main" fit this pattern.</li>
+        </ul>
+        Note that the algorithm that uses this data searches for each of the word's substrings in the patterns, and chooses the <em>highest</em> value found for letter combination.
+      </li>
+    </ul>
+    <note>An open-source utility called patgen is available on many Unix/Linux distributions to assist in creating pattern files from dictionaries. Consult man pages or the www for details.</note>
   </section>
   </body>
 </document>
