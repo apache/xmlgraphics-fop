@@ -967,5 +967,35 @@
     <default>auto</default>
   </property>
 
+  <!-- svg properties, or should these be in another file -->
+  <property>
+    <name>requiredFeatures</name>
+    <class-name>RequiredFeatures</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default>notpresent</default>
+  </property>
+  <property>
+    <name>requiredExtensions</name>
+    <class-name>RequiredExtensions</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default>notpresent</default>
+  </property>
+  <property>
+    <name>systemLanguage</name>
+    <class-name>SystemLanguage</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default>notpresent</default>
+  </property>
+  <property>
+    <name>class</name>
+    <class-name>ElementClass</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+
 </property-list>
 
