@@ -206,28 +206,28 @@ list of possible build targets.
     <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
     <property name="src.propmaker.xsl" value="${src.codegen}/propmaker.xsl"/>
 
-    <property name="propinc.xsl" value="${build.codegen}/propinc.xsl"/>
+    <property name="propinc.xsl" value="${src.codegen}/propinc.xsl"/>
     <property name="src.charlist.xsl" value="${src.codegen}/code-point-mapping.xsl"/>
-    <property name="encodings.xml" value="${build.codegen}/encodings.xml"/>
-    <property name="charlist.xsl" value="${build.codegen}/code-point-mapping.xsl"/>
-    <property name="fontfile.xsl" value="${build.codegen}/font-file.xsl"/>
-    <property name="t1fontfile.xsl" value="${build.codegen}/t1font-file.xsl"/>
-    <property name="ttffontfile.xsl" value="${build.codegen}/ttffontfile.xsl"/>
+    <property name="encodings.xml" value="${src.codegen}/encodings.xml"/>
+    <property name="charlist.xsl" value="${src.codegen}/code-point-mapping.xsl"/>
+    <property name="fontfile.xsl" value="${src.codegen}/font-file.xsl"/>
+    <property name="t1fontfile.xsl" value="${src.codegen}/t1font-file.xsl"/>
+    <property name="ttffontfile.xsl" value="${src.codegen}/ttffontfile.xsl"/>
 
-    <property name="Courier.xml" value="${build.codegen}/Courier.xml"/>
-    <property name="Courier-Oblique.xml" value="${build.codegen}/CourierOblique.xml"/>
-    <property name="Courier-Bold.xml" value="${build.codegen}/CourierBold.xml"/>
-    <property name="Courier-BoldOblique.xml" value="${build.codegen}/CourierBoldOblique.xml"/>
-    <property name="Helvetica.xml" value="${build.codegen}/Helvetica.xml"/>
-    <property name="Helvetica-Oblique.xml" value="${build.codegen}/HelveticaOblique.xml"/>
-    <property name="Helvetica-Bold.xml" value="${build.codegen}/HelveticaBold.xml"/>
-    <property name="Helvetica-BoldOblique.xml" value="${build.codegen}/HelveticaBoldOblique.xml"/>
-    <property name="Times-Roman.xml" value="${build.codegen}/TimesRoman.xml"/>
-    <property name="Times-Italic.xml" value="${build.codegen}/TimesItalic.xml"/>
-    <property name="Times-Bold.xml" value="${build.codegen}/TimesBold.xml"/>
-    <property name="Times-BoldItalic.xml" value="${build.codegen}/TimesBoldItalic.xml"/>
-    <property name="ZapfDingbats.xml" value="${build.codegen}/ZapfDingbats.xml"/>
-    <property name="Symbol.xml" value="${build.codegen}/Symbol.xml"/>
+    <property name="Courier.xml" value="${src.codegen}/Courier.xml"/>
+    <property name="Courier-Oblique.xml" value="${src.codegen}/CourierOblique.xml"/>
+    <property name="Courier-Bold.xml" value="${src.codegen}/CourierBold.xml"/>
+    <property name="Courier-BoldOblique.xml" value="${src.codegen}/CourierBoldOblique.xml"/>
+    <property name="Helvetica.xml" value="${src.codegen}/Helvetica.xml"/>
+    <property name="Helvetica-Oblique.xml" value="${src.codegen}/HelveticaOblique.xml"/>
+    <property name="Helvetica-Bold.xml" value="${src.codegen}/HelveticaBold.xml"/>
+    <property name="Helvetica-BoldOblique.xml" value="${src.codegen}/HelveticaBoldOblique.xml"/>
+    <property name="Times-Roman.xml" value="${src.codegen}/TimesRoman.xml"/>
+    <property name="Times-Italic.xml" value="${src.codegen}/TimesItalic.xml"/>
+    <property name="Times-Bold.xml" value="${src.codegen}/TimesBold.xml"/>
+    <property name="Times-BoldItalic.xml" value="${src.codegen}/TimesBoldItalic.xml"/>
+    <property name="ZapfDingbats.xml" value="${src.codegen}/ZapfDingbats.xml"/>
+    <property name="Symbol.xml" value="${src.codegen}/Symbol.xml"/>
 
     <property name="tools.pkg" value="org/apache/fop/tools"/>
 
@@ -332,9 +332,9 @@ list of possible build targets.
     <echo message="Resetting codegen directory"/>
 
     <!-- copy codegen directory -->
-    <copy todir="${build.codegen}">
+    <!--copy todir="${build.codegen}">
       <fileset dir="${src.codegen}"/>
-    </copy>
+    </copy-->
 
     <!-- generate the java files from xml resources -->
     <echo message="Generating the java files from xml resources"/>
@@ -625,6 +625,7 @@ list of possible build targets.
          refVersion="${ref-version}"/>
 -->
   </target>
+
   <target name="junit" depends="package, transcoder-pkg" description="Runs FOP's JUnit tests" if="junit.present">
     <mkdir dir="${build.dir}/test-classes"/>
     <javac destdir="${build.dir}/test-classes" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
@@ -724,6 +725,7 @@ list of possible build targets.
       <sourcepath>
         <pathelement path="${src.java}"/>
         <pathelement path="${build.gensrc}"/>
+        <path refid="graphics-configuration-adapter"/>
       </sourcepath>
       <group title="Control and Startup">
         <package name="org.apache.fop.apps"/>
@@ -779,10 +781,10 @@ list of possible build targets.
   <target name="htmldoc" depends="html-fop, html-design" description="Generates documentation in html format"/>
 
   <target name="html-fop" depends="prepare">
-    <copy file="${xdocs}/fop.xml" tofile="${xdocs}/book.xml" filtering="on"/>
+    <copy file="${xdocs.dir}/fop.xml" tofile="${xdocs.dir}/book.xml" filtering="on"/>
     <java classname="${doc.generator}" fork="yes">
       <classpath refid="libs-build-classpath"/>
-      <arg line="targetDirectory=${docs} ${xdocs}/book.xml ${skins}"/>
+      <arg line="targetDirectory=${docs.dir} ${xdocs.dir}/book.xml ${skins}"/>
     </java>
   </target>
 
