@@ -113,7 +113,7 @@ main[1] dump pageSLM
 	  <section>
 		<title>Overview</title>
 
-	<para>Create the layout (<literal>doLayout</literal>) <itemizedlist spacing="compact">
+	<para>Create the layout (<literal>activateLayout</literal>) <itemizedlist spacing="compact">
 		<listitem>
 		  <para>First create a new Page Viewport
 (<literal>makeNewPage</literal>). <itemizedlist spacing="compact"> 
@@ -203,7 +203,7 @@ single flow area without children.
   [2] org.apache.fop.layoutmgr.PageLayoutManager.createPageAreas (PageLayoutManager.java:805)
   [3] org.apache.fop.layoutmgr.PageLayoutManager.createPage (PageLayoutManager.java:748)
   [4] org.apache.fop.layoutmgr.PageLayoutManager.makeNewPage (PageLayoutManager.java:467)
-  [5] org.apache.fop.layoutmgr.PageLayoutManager.doLayout (PageLayoutManager.java:220)
+  [5] org.apache.fop.layoutmgr.PageLayoutManager.activateLayout (PageLayoutManager.java:220)
 </screen>
 </para>
 

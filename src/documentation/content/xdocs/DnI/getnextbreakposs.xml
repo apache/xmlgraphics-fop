@@ -103,55 +103,39 @@ FO nodes?</title>
 <para>Child layout managers are created and retrieved in the method
 <literal>AbstractLayoutManager.getChildLM</literal>.</para>
 
-<para>The layout manager has a layout strategy, which has an
-<literal>AddLMVisitor</literal> object, which is responsible for
-creating layout managers for the FO nodes.</para>
+<para>The layout manager gets the layout manager for its next child
+from its <literal>LMIter</literal> object
+<literal>childLMIter</literal>. This <literal>LMIter</literal> object
+contains an iterator over the children of the layout manager's FO
+node. It behaves itself as an iterator over the list of layout
+managers for the children. It constructs those layout managers when
+needed, in its <literal>preLoadNext</literal> method, which calls the
+convenience method <literal>preLoadList</literal>.  Using the iterator
+<literal>fobjIter</literal>, <literal>preLoadList</literal> iterates
+through the children of the current FO-Object and preloads the
+corresponding LMs
+(<literal>LayoutManagerMaker.makeLayoutManagers()</literal>).  Thus
+<literal>LMIter</literal> has a layout manager for its next child.  It
+returns this layout manager in the call to its
+<literal>next()</literal> method, when the current layout manager
+invokes its <literal>getChildLM</literal> method.</para>
 
-<para>The layout manager gets the layout manager for its next child from its
-<literal>LMIter</literal> object <literal>childLMIter</literal>. This
-<literal>LMIter</literal> object contains an iterator over the
-children of the layout manager's FO node. It behaves itself as an
-iterator over the list of layout managers for the children. It
-constructs those layout managers when needed, in its
-<literal>preLoadNext</literal> method. It does so by calling the
-layout strategy's <literal>AddLMVisitor</literal> object's
-<literal>addLayoutManager</literal> method. The
-<literal>LMIter</literal> object gets the layout strategy via the
-current layout manager, which it knows.</para>
+<para><literal>BlockLayoutManager.ProxyLMiter</literal> has
+its own subclass of <literal>LMIter</literal>, which implements a
+different method of creating child layout managers. See the <link
+linkend="sec.blocklm">next
+section</link>.</para>
 
-<para><literal>AddLMVisitor</literal>'s <literal>addLayoutManager</literal>
-method first registers the LM list in its second argument, i.e. the
-<literal>LMIter</literal> object's LM list, as its own member
-<literal>currentLMlist</literal>. Then it asks the FO node to accept
-it as the <literal>FOTreeVisitor</literal>
-(<literal>acceptVisitor</literal>). The FO node then calls the
-appropriate method of this FO tree visitor, in this case
-(<literal>fo:flow</literal>) the method <literal>serveFlow</literal>
-(<literal>AddLMVisitor.serveFlow</literal>). This method creates a
-<literal>FlowLayoutManager</literal> object and adds it to the
-<literal>currentLMList</literal>. Thus <literal>LMIter</literal> has a
-layout manager for its next child.  It returns this layout manager in
-the call to its <literal>next()</literal> method, when the current
-layout manager invokes its <literal>getChildLM</literal> method.</para>
+<para>The method that creates the LMs,
+<literal>LayoutManagerMaker.makeLayoutManagers()</literal>, is
+implemented by FOP's implementation of the
+<literal>LayoutManagerMaker</literal> interface,
+<literal>LayoutManagerMapping</literal>. A different LM system can be
+hooked into FOP by inserting a different implementation of the
+<literal>LayoutManagerMaker</literal> interface. (See
+<literal>FOUserAgent.setLayoutManagerMakerOverride</literal>.)</para>
 
-<para>Note that layout manager types may have their own subclass of
-<literal>LMIter</literal>,
-e.g. <literal>BlockLayoutManager$BlockLMiter</literal> and
-<literal>AbstractList$ListItr</literal>, which may implement a
-different method of creating child layout managers.</para>
-
-<para>The method <literal>acceptVisitor</literal> of the FO node calls the
-appropriate method of its visitor. This procedure effectively
-implements an indirect mapping from FO node type to layout
-manager. The indirection allows the <literal>AddLMVisitor</literal>
-object to return its own layout manager for each FO node type. Because
-the <literal>AddLMVisitor</literal> object is part of the layout
-strategy, this indirection allows the layout strategy to provide its
-own layout managers for the layout process. In this manner, a
-different layout strategy can be coupled to the other parts of the
-program.</para>
-
-<para>Note that <literal>AbstractLayoutManager.getChildLM</literal> itself
+<para>Also note that <literal>AbstractLayoutManager.getChildLM</literal> itself
 does not behave as an iterator. The current child layout manager is
 returned until it is finished. One can safely make multiple calls to
 <literal>getChildLM</literal>. If the current child layout manager is
@@ -169,41 +153,38 @@ is used in <literal>BlockLayoutManager.getNextBreakPoss</literal>.</para>
 <literal>AbstractLayoutManager.getChildLM</literal>:</para>
 
 <screen>
-  [1] org.apache.fop.layoutmgr.AbstractLayoutManager.&lt;init&gt; (AbstractLayoutManager.java:71)
-  [2] org.apache.fop.layoutmgr.BlockStackingLayoutManager.&lt;init&gt; (BlockStackingLayoutManager.java:70)
-  [3] org.apache.fop.layoutmgr.FlowLayoutManager.&lt;init&gt; (FlowLayoutManager.java:81)
-  [4] org.apache.fop.layoutmgr.AddLMVisitor.serveFlow (AddLMVisitor.java:894)
-  [5] org.apache.fop.fo.pagination.Flow.acceptVisitor (Flow.java:187)
-  [6] org.apache.fop.layoutmgr.AddLMVisitor.addLayoutManager (AddLMVisitor.java:198)
-  [7] org.apache.fop.layoutmgr.LMiter.preLoadNext (LMiter.java:88)
-  [8] org.apache.fop.layoutmgr.LMiter.hasNext (LMiter.java:77)
-  [9] org.apache.fop.layoutmgr.AbstractLayoutManager.getChildLM (AbstractLayoutManager.java:186)
-  [10] org.apache.fop.layoutmgr.PageLayoutManager.getNextBreakPoss (PageLayoutManager.java:253)
-  [11] org.apache.fop.layoutmgr.PageLayoutManager.doLayout (PageLayoutManager.java:228)
+  [1] org.apache.fop.layoutmgr.LayoutManagerMapping.makeLayoutManagers(org.apache.fop.fo.FONode, java.util.List) line: 140
+  [2] org.apache.fop.layoutmgr.PageSequenceLayoutManager(org.apache.fop.layoutmgr.AbstractLayoutManager).preLoadList(int) line: 399
+  [3] org.apache.fop.layoutmgr.PageSequenceLayoutManager(org.apache.fop.layoutmgr.AbstractLayoutManager).preLoadNext(int) line: 409
+  [4] org.apache.fop.layoutmgr.LMiter.hasNext() line: 39
+  [5] org.apache.fop.layoutmgr.PageSequenceLayoutManager(org.apache.fop.layoutmgr.AbstractLayoutManager).getChildLM() line: 168
+  [6] org.apache.fop.layoutmgr.PageSequenceLayoutManager.getNextBreakPoss(org.apache.fop.layoutmgr.LayoutContext) line: 260
+  [7] org.apache.fop.layoutmgr.PageSequenceLayoutManager.activateLayout() line: 232
 </screen>
 
 	</section>
 
-	<section>
+	<section id="sec.blocklm">
 	  <title>Block layout managers and their child layout managers</title>
 
-<para>Block LMs are different in their treatment of their child LMs. For
-this purpose <literal>BlockLayoutManager</literal> defines a nested class <literal>BlockLMiter</literal>,
-which is a subclass of <literal>LMiter</literal>.</para>
+<para>Block LMs are different in their treatment of their child
+LMs. For this purpose <literal>BlockLayoutManager</literal> defines a
+nested class <literal>ProxyLMiter</literal>, which is a subclass of
+<literal>LMiter</literal>.</para>
 
-<para>A <literal>BlockLMiter</literal> object has a member called proxy,
-which is the basic <literal>LMiter</literal> over the children of the
-block. If the proxy produces a child LM that does not generate inline
-areas, the child LM is added to the list of child LMs as normal. But
-if the childLM generates an inline area, a new
+<para>This proxy is the basic <literal>LMiter</literal> over the
+children of the block. If the proxy produces a child LM that does not
+generate inline areas, the child LM is added to the list of child LMs
+as normal. But if the childLM generates an inline area, a new
 <literal>LineLayoutManager</literal> object is created
-(<literal>BlockLayoutManager.BlockLMiter.createLineManager</literal>). This
+(<literal>BlockLayoutManager.ProxyLMiter.createLineManager</literal>). This
 LM asks the proxy to produce more child LMs. As long as these child
 LMs generate inline areas, they are collected by the
 <literal>LineLayoutManager</literal> object. Finally, the
 <literal>LineLayoutManager</literal> object creates its
 <literal>LMiter</literal> object as the
-<literal>ListIterator</literal> over the list of collected child LMs.</para>
+<literal>ListIterator</literal> over the list of collected child
+LMs.</para>
 
 	</section>
 
@@ -265,7 +246,7 @@ same, but their <literal>childLMIter</literal> are different:
   [3] org.apache.fop.layoutmgr.BlockLayoutManager.getNextBreakPoss (BlockLayoutManager.java:229)
   [4] org.apache.fop.layoutmgr.FlowLayoutManager.getNextBreakPoss (FlowLayoutManager.java:111)
   [5] org.apache.fop.layoutmgr.PageLayoutManager.getNextBreakPoss (PageLayoutManager.java:261)
-  [6] org.apache.fop.layoutmgr.PageLayoutManager.doLayout (PageLayoutManager.java:228)
+  [6] org.apache.fop.layoutmgr.PageLayoutManager.activateLayout (PageLayoutManager.java:228)
 </screen>
 
 <para>A <literal>TextLayoutManager</literal>:
