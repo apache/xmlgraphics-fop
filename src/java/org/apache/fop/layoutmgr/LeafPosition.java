@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,14 @@ public class LeafPosition extends Position {
 
     public int getLeafPos() {
         return iLeafPos;
+    }
+    
+    /** @see java.lang.Object#toString()*/
+    public String toString() {
+        StringBuffer sb = new StringBuffer(super.toString());
+        sb.append(" {pos=").append(getLeafPos());
+        sb.append(", lm=").append(getLM()).append("}");
+        return sb.toString();
     }
 }
 

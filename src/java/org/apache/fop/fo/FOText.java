@@ -19,7 +19,6 @@
 package org.apache.fop.fo;
 
 // Java
-import java.util.List;
 import java.util.NoSuchElementException;
 
 // FOP
@@ -32,7 +31,6 @@ import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.layoutmgr.TextLayoutManager;
 
 /**
  * A text node (PCDATA) in the formatting object tree.
@@ -576,6 +574,12 @@ public class FOText extends FONode {
     /** @return the "text-decoration" property. */
     public CommonTextDecoration getTextDecoration() {
         return textDecoration; 
+    }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer(super.toString());
+        sb.append(" (").append(ca).append(")");
+        return sb.toString();
     }
     
 }

@@ -272,6 +272,9 @@ public class BreakPoss {
         if (isForcedBreak()) {
             sb.append(", forced break");
         }
+        if (nextBreakOverflows()) {
+            sb.append(", next break overflows");
+        }
         sb.append(", stackSize={");
         sb.append(stackSize);
         sb.append("}, pos=");
