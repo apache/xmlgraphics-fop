@@ -27,6 +27,10 @@ abstract public class InputHandler {
     abstract public XMLReader getParser() throws FOPException;
 
 
+    static public InputSource urlInputSource(URL url) {
+        return new InputSource(url.toString());
+    }
+
     /**
      * create an InputSource from a File
      *
@@ -55,10 +59,7 @@ abstract public class InputHandler {
      * @return the created SAX parser
      */
     protected static XMLReader createParser() throws FOPException {
-        String parserClassName = System.getProperty("org.xml.sax.parser");
-        if (parserClassName == null) {
-            parserClassName = "org.apache.xerces.parsers.SAXParser";
-        }
+        String parserClassName = Driver.getParserClassName();
         MessageHandler.logln("using SAX parser " + parserClassName);
 
         try {
