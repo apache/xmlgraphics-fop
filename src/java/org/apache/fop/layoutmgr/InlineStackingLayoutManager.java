@@ -26,8 +26,6 @@ import java.util.HashMap;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyManager;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.traits.InlineProps;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;
@@ -66,12 +64,10 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
     /**
      * Size of border and padding in BPD (ie, before and after).
      */
-    private MinOptMax extraBPD;
+    protected MinOptMax extraBPD;
 
 
     private InlineProps inlineProps = null;
-    private CommonBorderAndPadding borderProps = null;
-    private CommonBackground backgroundProps;
 
     private Area currentArea; // LineArea or InlineParent
 
@@ -103,16 +99,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
     protected void initProperties() {
         PropertyManager pm = fobj.getPropertyManager();
         inlineProps = pm.getInlineProps();
-        borderProps = pm.getBorderAndPadding();
-        // Calculdate border and padding size in BPD
-        int iPad = borderProps.getPadding(CommonBorderAndPadding.BEFORE, false);
-        iPad += borderProps.getBorderWidth(CommonBorderAndPadding.BEFORE,
-                                             false);
-        iPad += borderProps.getPadding(CommonBorderAndPadding.AFTER, false);
-        iPad += borderProps.getBorderWidth(CommonBorderAndPadding.AFTER, false);
-        extraBPD = new MinOptMax(iPad);
-
-        backgroundProps = pm.getBackgroundProps();
+        extraBPD = new MinOptMax(0);
     }
 
     /**
@@ -135,28 +122,16 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
     }
 
     private MinOptMax getExtraIPD(boolean bNotFirst, boolean bNotLast) {
-        int iBP = borderProps.getPadding(CommonBorderAndPadding.START,
-                                           bNotFirst);
-        iBP += borderProps.getBorderWidth(CommonBorderAndPadding.START,
-                                            bNotFirst);
-        iBP += borderProps.getPadding(CommonBorderAndPadding.END, bNotLast);
-        iBP += borderProps.getBorderWidth(CommonBorderAndPadding.END, bNotLast);
-        return new MinOptMax(iBP);
+        return new MinOptMax(0);
     }
 
 
     protected boolean hasLeadingFence(boolean bNotFirst) {
-        int iBP = borderProps.getPadding(CommonBorderAndPadding.START,
-                                           bNotFirst);
-        iBP += borderProps.getBorderWidth(CommonBorderAndPadding.START,
-                                            bNotFirst);
-        return (iBP > 0);
+        return false;
     }
 
     protected boolean hasTrailingFence(boolean bNotLast) {
-        int iBP = borderProps.getPadding(CommonBorderAndPadding.END, bNotLast);
-        iBP += borderProps.getBorderWidth(CommonBorderAndPadding.END, bNotLast);
-        return (iBP > 0);
+        return false;
     }
 
     /**
@@ -519,17 +494,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         // Add own trailing space to parent context (or set on area?)
         if (context.getTrailingSpace() != null) {
             context.getTrailingSpace().addSpace(inlineProps.spaceEnd);
-        }
-
-        // Add border and padding to current area and set flags (FIRST, LAST ...)
-        TraitSetter.setBorderPaddingTraits(getCurrentArea(),
-                                           borderProps, bAreaCreated, !bIsLast);
-
-        if (borderProps != null) {
-            TraitSetter.addBorders(getCurrentArea(), borderProps);
-        }
-        if (backgroundProps != null) {
-            TraitSetter.addBackground(getCurrentArea(), backgroundProps);
         }
 
         parentLM.addChild(getCurrentArea());
