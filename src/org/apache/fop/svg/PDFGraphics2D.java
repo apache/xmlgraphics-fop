@@ -747,7 +747,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void drawString(String s, float x, float y) {
         // System.out.println("drawString(String)");
-        currentStream.write("BT\n");
 
         Shape imclip = getClip();
         writeClip(imclip);
@@ -755,6 +754,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         applyColor(c, true);
         c = getBackground();
         applyColor(c, false);
+
+        currentStream.write("BT\n");
 
         Font gFont = getFont();
         String name = gFont.getName();
