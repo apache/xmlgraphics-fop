@@ -30,7 +30,7 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:table table-layout="fixed" width="100%" border="solid 5pt">
+          <fo:table table-layout="fixed" width="100%" border-collapse="separate" border="solid 5pt">
             <fo:table-column column-width="100pt"/>
             <fo:table-column/>
             <fo:table-body>
@@ -52,7 +52,7 @@
               </fo:table-row>
             </fo:table-body>
           </fo:table>
-          <fo:table table-layout="fixed" width="300pt" space-before="10pt" border="solid 5pt">
+          <fo:table table-layout="fixed" width="300pt" space-before="10pt" border-collapse="separate" border="solid 5pt">
             <fo:table-column column-width="100pt"/>
             <fo:table-column column-width="proportional-column-width(0.5)"/>
             <fo:table-column/>
