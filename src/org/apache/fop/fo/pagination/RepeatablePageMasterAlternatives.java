@@ -156,7 +156,7 @@ public class RepeatablePageMasterAlternatives extends FObj
 	public void addConditionalPageMasterReference(
 		ConditionalPageMasterReference cpmr)
 	{
-		this.conditionalPageMasterRefs.add( cpmr );
+		this.conditionalPageMasterRefs.addElement( cpmr );
 	}
 	
 }
