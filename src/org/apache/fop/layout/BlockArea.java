@@ -201,8 +201,18 @@ public class BlockArea extends Area {
                                      - endIndent;
     }
 
+    /**
+     * Return the maximum space remaining for this area's content in
+     * the block-progression-dimension.
+     * Remove top and bottom padding and spacing since these reduce
+     * available space for content and they are not yet accounted for
+     * in the positioning of the object.
+     */
     public int spaceLeft() {
-        return maxHeight - currentHeight;
+        // return maxHeight - currentHeight ;
+        return maxHeight - currentHeight -
+	    (getPaddingTop() + getPaddingBottom()
+	     + getBorderTopWidth() + getBorderBottomWidth());
     }
 
     public int getHalfLeading() {
