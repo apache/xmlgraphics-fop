@@ -61,8 +61,7 @@ import java.util.*;
 import org.apache.xalan.xslt.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
-import org.w3c.dom.*;
-import org.xml.sax.SAXException;
+
 
 /**
  * Task to call the XSLT processor Xalan (part of xml.apache.org), which converts xml files
@@ -213,7 +212,8 @@ public class Xslt extends Task {
                            xsltfile + "\nout: " + outfile);
         System.out.println("============================");
 
-        stylesheet.process(xmlSource, xmlResult);
+        stylesheet.process(XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison()),
+				xmlSource, xmlResult);
 
     } //end transform
 
