@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.fo;
 
 // Java
@@ -100,7 +100,7 @@ public class PropertyManager {
     private static final MessageFormat MSGFMT_PADDING = new MessageFormat("padding-{0}");
 
     private static final String NONE = "none";
-    
+
     /**
      * Main constructor
      * @param pList property list
@@ -118,7 +118,7 @@ public class PropertyManager {
     }
 
     /**
-     * Sets the FontInfo object telling the property manager which fonts are 
+     * Sets the FontInfo object telling the property manager which fonts are
      * available.
      * @param fontInfo available fonts
      */
@@ -128,7 +128,7 @@ public class PropertyManager {
 
 
     /**
-     * Constructs a FontState object. If it was constructed before it is 
+     * Constructs a FontState object. If it was constructed before it is
      * reused.
      * @param fontInfo FontInfo to work with
      * @return a FontState object
@@ -141,7 +141,7 @@ public class PropertyManager {
                 this.fontInfo = fontInfo;
             }
             /**@todo this is ugly. need to improve. */
-            
+
             String fontFamily = properties.get("font-family").getString();
             String fontStyle = properties.get("font-style").getString();
             String fw = properties.get("font-weight").getString();
@@ -177,7 +177,7 @@ public class PropertyManager {
 
 
     /**
-     * Constructs a BorderAndPadding object. If it was constructed before it is 
+     * Constructs a BorderAndPadding object. If it was constructed before it is
      * reused.
      * @return a BorderAndPadding object
      */
@@ -209,7 +209,7 @@ public class PropertyManager {
     }
 
     /**
-     * Constructs a HyphenationProps objects. If it was constructed before it is 
+     * Constructs a HyphenationProps objects. If it was constructed before it is
      * reused.
      * @return a HyphenationProps object
      */
@@ -301,7 +301,7 @@ public class PropertyManager {
 
 
     /**
-     * Constructs a MarginProps objects. If it was constructed before it is 
+     * Constructs a MarginProps objects. If it was constructed before it is
      * reused.
      * @return a MarginProps object
      */
@@ -332,7 +332,7 @@ public class PropertyManager {
     }
 
     /**
-     * Constructs a BackgroundProps objects. If it was constructed before it is 
+     * Constructs a BackgroundProps objects. If it was constructed before it is
      * reused.
      * @return a BackgroundProps object
      */
@@ -363,7 +363,7 @@ public class PropertyManager {
     }
 
     /**
-     * Constructs a MarginInlineProps objects. If it was constructed before it is 
+     * Constructs a MarginInlineProps objects. If it was constructed before it is
      * reused.
      * @return a MarginInlineProps object
      */
@@ -373,7 +373,7 @@ public class PropertyManager {
     }
 
     /**
-     * Constructs a InlineProps objects. If it was constructed before it is 
+     * Constructs a InlineProps objects. If it was constructed before it is
      * reused.
      * @return a InlineProps object
      */
@@ -385,7 +385,7 @@ public class PropertyManager {
     }
 
     /**
-     * Constructs a AccessibilityProps objects. If it was constructed before it is 
+     * Constructs a AccessibilityProps objects. If it was constructed before it is
      * reused.
      * @return a AccessibilityProps object
      */
@@ -404,7 +404,7 @@ public class PropertyManager {
     }
 
     /**
-     * Constructs a AuralProps objects. If it was constructed before it is 
+     * Constructs a AuralProps objects. If it was constructed before it is
      * reused.
      * @return a AuralProps object
      */
@@ -414,7 +414,7 @@ public class PropertyManager {
     }
 
     /**
-     * Constructs a RelativePositionProps objects. If it was constructed before it is 
+     * Constructs a RelativePositionProps objects. If it was constructed before it is
      * reused.
      * @return a RelativePositionProps object
      */
@@ -424,7 +424,7 @@ public class PropertyManager {
     }
 
     /**
-     * Constructs a AbsolutePositionProps objects. If it was constructed before 
+     * Constructs a AbsolutePositionProps objects. If it was constructed before
      * it is reused.
      * @return a AbsolutePositionProps object
      */
@@ -440,14 +440,14 @@ public class PropertyManager {
     }
 
     /**
-     * Constructs a BlockProps objects. If it was constructed before it is 
+     * Constructs a BlockProps objects. If it was constructed before it is
      * reused.
      * @return a BlockProps object
      */
     public BlockProps getBlockProps() {
         BlockProps props = new BlockProps();
         props.firstIndent = this.properties.get("text-indent").getLength().getValue();
-        props.lastIndent = 0; 
+        props.lastIndent = 0;
             /*this.properties.get("last-line-end-indent").getLength().mvalue(); */
         props.textAlign = this.properties.get("text-align").getEnum();
         props.textAlignLast = this.properties.get("text-align-last").getEnum();
@@ -457,7 +457,7 @@ public class PropertyManager {
     }
 
     /**
-     * Constructs a LayoutProps objects. If it was constructed before it is 
+     * Constructs a LayoutProps objects. If it was constructed before it is
      * reused.
      * @return a LayoutProps object
      */
@@ -474,7 +474,7 @@ public class PropertyManager {
     }
 
     /**
-     * Constructs a TextInfo objects. If it was constructed before it is 
+     * Constructs a TextInfo objects. If it was constructed before it is
      * reused.
      * @param fontInfo available fonts
      * @return a TextInfo object
@@ -502,6 +502,10 @@ public class PropertyManager {
 
             textInfo.lineHeight = this.properties.get(
                                     "line-height").getLength().getValue();
+
+            textInfo.textTransform
+                    = this.properties.get("text-transform").getEnum();
+
         }
         return textInfo;
     }
