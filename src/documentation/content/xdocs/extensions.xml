@@ -53,6 +53,12 @@ property, but it isn't supported currently. See the pdfoutline.fo file in
 examples/fo/basic for a more complete example.
         </p>
       </section>
+      <section>
+        <title>Continued-label (for table-header/-footer</title>
+        <p>
+Please see examples/fo/basic/contlabel.fo
+        </p>
+      </section>
     </section>
     <section>
       <title>Adding Your Own</title>

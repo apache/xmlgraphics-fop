@@ -5,13 +5,36 @@
 <document>
     <header>
         <title>Release Notes</title>
-        <subtitle>Fop 0.20.4</subtitle>
-        <authors>
-          <person name="Christian Geisert" email=""/>
-        </authors>
     </header>
 
     <body>
+<section>
+  <title>FOP 0.20.5</title>
+  <p>This is the last planed release in the 0.20.x series (aka maintenance branch).</p>
+  <p>Important changes since the last release (0.20.4):</p>
+  <ul>
+    <li>Documentation is done with <link href="http://xml.apache.org/forrest/">
+        Forrest</link>. You need to install Forrest if you want build the docs
+        yourself. (See
+        <link href="http://xml.apache.org/forrest/your-project.html">Using Forrest</link>)
+    </li>
+    <li>The following JARs have been updated:
+        Xerces to version 2.2.1, Xalan to version 2.4.1 and Batik to version 1.5beta4.
+    </li>
+    <li>Fop has been compiled with Jimi support this time but you still have to download
+        <link href="http://java.sun.com/products/jimi/">Jimi</link>, extract the archive,
+        copy JimiProClasses.zip to FOP's lib dir and rename it to jimi-1.0.jar.
+    </li>
+    <li>Fop has been compiled with
+        <link href="http://java.sun.com/products/java-media/jai/JAI">JAI</link>
+        support. For using JAI you just need to install it.
+    </li>
+    <li>Links in PDF won't generate multiple link rectangles anymore. If this causes
+        a problem you can set the system property "links.merge" to "no".
+    </li>
+  </ul>
+  
+</section>
 <section>
   <title>FOP 0.20.4</title>
   <p>Important changes since 0.20.3:</p>

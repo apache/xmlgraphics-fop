@@ -17,12 +17,12 @@
         build.xml is the replacement of makefile. Look there for detailed information on the build
         process and different targets. </p>
        <p>A help screen is shown by calling "build usage".</p>
-       <p>If you only want to use Fop, you don't need to build it. A fop.jar comes with the distribution.</p>
+       <p>If you only want to use FOP, you don't need to build it. A fop.jar comes with the distribution.</p>
    <section>
      <title>Setting up your classpath</title>
-     <note>You don't have to setup your classpath; all libraries needed to compile Fop are coming with
+     <note>You don't have to setup your classpath; all libraries needed to compile FOP are coming with
               the distribution and are referenced by the build script, so you only need to care about them,
-              if you build Fop in any other way. See build.bat/build.sh for details. </note>
+              if you build FOP in any other way. See build.bat/build.sh for details. </note>
     </section>
     <section>
       <title>Setting of JAVA_HOME</title>
@@ -32,7 +32,7 @@
     </section>
   <section>
     <title>Problems</title>
-    <p>If you have problems compiling Fop, please try this first: </p>
+    <p>If you have problems compiling FOP, please try this first: </p>
     <ul>
       <li>delete the build directory completely and try a new build from scratch</li>
       <li>check, whether you have an older version of xerces.jar, xalan.jar, batik.jar somewhere in
