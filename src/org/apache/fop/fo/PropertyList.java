@@ -67,18 +67,69 @@ public class PropertyList extends Hashtable {
     this.element = el;
   }
 
+  /**
+   * Return the value explicitly specified on this FO.
+   * @param propertyName The name of the property whose value is desired.
+   * @return The value if the property is explicitly set, otherwise null.
+   */
+  public Property getExplicit(String propertyName) {
+    return (Property)super.get(propertyName);
+  }
+
+  /**
+   * Return the value of this property inherited by this FO.
+   * Implements the inherited-property-value function.
+   * The property must be inheritable!
+   * @param propertyName The name of the property whose value is desired.
+   * @return The inherited value, otherwise null.
+   */
+  public Property getInherited(String propertyName) {
+    if (builder != null) {
+      if (parentPropertyList != null &&
+	  builder.isInherited(namespace, element, propertyName)) {
+	return parentPropertyList.get(propertyName);
+      }
+      else {
+	// return the "initial" value
+	try {
+	  return builder.makeProperty(this, namespace, element, propertyName);
+	} catch (org.apache.fop.apps.FOPException e) {
+	  MessageHandler.errorln("Exception in getInherited(): property=" +
+				 propertyName + " : " + e);
+	}
+      }
+    }
+    return null; // No builder or exception in makeProperty!
+  }
+
+  /**
+   * Return the property on the current FlowObject. If it isn't set explicitly,
+   * this will try to compute it based on other properties, or if it is
+   * inheritable, to return the inherited value. If all else fails, it returns
+   * the default value.
+   */
   public Property get(String propertyName) {
 
     if (builder == null)
       MessageHandler.errorln("OH OH, builder has not been set");
-    Property p = (Property)super.get(propertyName);
+
+    /* Handle request for one part of a compound property */
+    int sepchar = propertyName.indexOf('.');
+    String subpropName = null;
+    if (sepchar > -1) {
+      subpropName = propertyName.substring(sepchar+1);
+      propertyName = propertyName.substring(0,sepchar);
+    }
+
+    Property p = getExplicit(propertyName);
 
     if (p == null) { // if not explicit
       p = this.builder.computeProperty(this,namespace, element, propertyName);
-      if (p == null) { // else inherit
-        if ((this.parentPropertyList != null)&&(this.builder.isInherited(namespace, element, propertyName))) { // check for parent
+      if (p == null) { // else inherit (if has parent and is inheritable)
+        if ((this.parentPropertyList != null) &&
+	    (this.builder.isInherited(namespace, element, propertyName))) {
           p = this.parentPropertyList.get(propertyName); // retrieve parent's value
-        } else { // default
+        } else { // default value
           try {
             p = this.builder.makeProperty(this,namespace, element,propertyName);
           } catch (FOPException e) {
@@ -87,15 +138,74 @@ public class PropertyList extends Hashtable {
         }
       }
     }
-    return p;
+    if (subpropName != null) {
+      return this.builder.getSubpropValue(namespace, element, propertyName,
+					   p, subpropName);
+    }
+    else return p;
   }
 
   public void setBuilder(PropertyListBuilder builder) {
     this.builder = builder;
   }
 
-	public String getNameSpace()
-	{
-		return namespace;
-	}
+  public String getNameSpace()
+  {
+    return namespace;
+  }
+
+  public String getElement()
+  {
+    return element;
+  }
+
+  /**
+   * Return the "nearest" specified value for the given property.
+   * Implements the from-nearest-specified-value function.
+   * @param propertyName The name of the property whose value is desired.
+   * @return The computed value if the property is explicitly set on some
+   * ancestor of the current FO, else the initial value.
+   */
+  public Property getNearestSpecified(String propertyName) {
+    Property p = null;
+    for (PropertyList plist = this; p == null && plist != null;
+	   plist = plist.parentPropertyList) {
+	p = plist.getExplicit(propertyName);
+    }
+    if (p == null) {
+      // If no explicit setting found, return initial (default) value.
+      try {
+	p = this.builder.makeProperty(this,namespace, element,propertyName);
+      } catch (FOPException e) {
+	MessageHandler.errorln("Exception in getNearestSpecified(): property=" +
+			       propertyName + " : " + e);
+      }
+    }
+    return p;
+  }
+
+  /**
+   * Return the value of this property on the parent of this FO.
+   * Implements the from-parent function.
+   * @param propertyName The name of the property whose value is desired.
+   * @return The computed value on the parent or the initial value if this
+   * FO is the root or is in a different namespace from its parent.
+   */
+  public Property getFromParent(String propertyName) {
+    if (parentPropertyList != null) {
+      return parentPropertyList.get(propertyName);
+    }
+    else if (builder != null) {
+      // return the "initial" value
+      try {
+	return builder.makeProperty(this, namespace, element, propertyName);
+      } catch (org.apache.fop.apps.FOPException e) {
+	MessageHandler.errorln("Exception in getFromParent(): property=" +
+			       propertyName + " : " + e);
+      }
+    }
+    return null; // No builder or exception in makeProperty!
+  }
+
 }
+
