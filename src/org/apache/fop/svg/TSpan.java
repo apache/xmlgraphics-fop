@@ -57,10 +57,12 @@ import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
+import org.apache.fop.dom.CharacterDataImpl;
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
 
 import org.w3c.dom.svg.SVGElement;
+import org.w3c.dom.CharacterData;
 
 /**
  * class representing svg:tspan pseudo flow object.
@@ -107,8 +109,11 @@ public class TSpan extends SVGObj implements TextElement {
 	 */
 	protected void addCharacters(char data[], int start, int length)
 	{
-		this.text += new String(data, start, length - start);
-		tspan.str = this.text;
+		this.text = new String(data, start, length - start);
+		CharacterData cd = new CharacterDataImpl();
+		cd.setData(text);
+		tspan.appendChild(cd);
+//		tspan.str = this.text;
 	}
 
 	/**
@@ -125,27 +130,18 @@ public class TSpan extends SVGObj implements TextElement {
 	public SVGElement createTextElement()
 	{
 		tspan.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
-//		tspan.dx = ((SVGLengthProperty)this.properties.get("dx")).getSVGLength().mvalue();
-//		tspan.dy = ((SVGLengthProperty)this.properties.get("dy")).getSVGLength().mvalue();
-//		tspan.x = ((SVGLengthListProperty)this.properties.get("x")).getSVGLength().mvalue();
-//		tspan.y = ((SVGLengthProperty)this.properties.get("y")).getSVGLength().mvalue();
+/*		CharacterData cd = new CharacterDataImpl();
+		cd.setData(text);
+		tspan.appendChild(cd);*/
 		Property prop;
 		prop = this.properties.get("x");
-		// bit of a hack, but otherwise the svg:text x element coud be
-		// returned which is not a list
-//		if(prop instanceof SVGLengthListProperty)
-			tspan.xlist = ((SVGLengthListProperty)prop).getSVGLengthList();
+		tspan.xlist = ((SVGLengthListProperty)prop).getSVGLengthList();
 		prop = this.properties.get("y");
-//		if(prop instanceof SVGLengthListProperty)
-			tspan.ylist = ((SVGLengthListProperty)prop).getSVGLengthList();
+		tspan.ylist = ((SVGLengthListProperty)prop).getSVGLengthList();
 		prop = this.properties.get("dx");
-//		if(prop instanceof SVGLengthListProperty)
-			tspan.dxlist = ((SVGLengthListProperty)prop).getSVGLengthList();
+		tspan.dxlist = ((SVGLengthListProperty)prop).getSVGLengthList();
 		prop = this.properties.get("dy");
-//		if(prop instanceof SVGLengthListProperty)
-			tspan.dylist = ((SVGLengthListProperty)prop).getSVGLengthList();
-//		tspan.xlist = ((SVGLengthListProperty)this.properties.get("x")).getSVGLengthList();
-//		tspan.dxlist = ((SVGLengthProperty)this.properties.get("dx")).getSVGLength().valueList();
+		tspan.dylist = ((SVGLengthListProperty)prop).getSVGLengthList();
 		tspan.setId(this.properties.get("id").getString());
 		return tspan;
 	}
