@@ -542,6 +542,7 @@ public class TableRow extends FObj {
         }
 
         area.addChild(areaContainer);
+        areaContainer.setHeight(largestCellHeight);
         areaAdded = true;
         areaContainer.end();
         area.addDisplaySpace(largestCellHeight +
