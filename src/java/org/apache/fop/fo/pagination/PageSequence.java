@@ -73,7 +73,6 @@ public class PageSequence extends FObj {
 
     // page number and related formatting variables
     public int startingPageNumber = 0;
-    private int explicitFirstNumber = 0; // explicitly specified
     private PageNumberGenerator pageNumberGenerator;
     private boolean isForcing = false;
 
