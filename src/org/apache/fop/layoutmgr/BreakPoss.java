@@ -86,7 +86,7 @@ public class BreakPoss {
     /**
      * The top-level layout manager responsible for this break
      */
-    public LayoutManager getLayoutManager() {
+    public LayoutProcessor getLayoutManager() {
         return m_position.getLM();
     }
 

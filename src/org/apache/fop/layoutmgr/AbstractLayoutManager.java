@@ -23,16 +23,16 @@ import java.util.Map;
 /**
  * The base class for all LayoutManagers.
  */
-public abstract class AbstractLayoutManager implements LayoutManager {
+public abstract class AbstractLayoutManager implements LayoutProcessor {
     protected FOUserAgent userAgent;
-    protected LayoutManager parentLM = null;
+    protected LayoutProcessor parentLM = null;
     protected FObj fobj;
     protected String foID = null;
     protected Map markers = null;
 
     /** True if this LayoutManager has handled all of its content. */
     private boolean bFinished = false;
-    protected LayoutManager curChildLM = null;
+    protected LayoutProcessor curChildLM = null;
     protected ListIterator childLMiter;
     protected boolean bInited = false;
 
@@ -76,7 +76,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
         return userAgent.getLogger();
     }
 
-    public void setParentLM(LayoutManager lm) {
+    public void setParent(LayoutProcessor lm) {
         this.parentLM = lm;
     }
 
@@ -128,14 +128,14 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * Note: child must implement LayoutManager! If it doesn't, skip it
      * and print a warning.
      */
-    protected LayoutManager getChildLM() {
+    protected LayoutProcessor getChildLM() {
         if (curChildLM != null && !curChildLM.isFinished()) {
             return curChildLM;
         }
         while (childLMiter.hasNext()) {
-            curChildLM = (LayoutManager) childLMiter.next();
+            curChildLM = (LayoutProcessor) childLMiter.next();
             curChildLM.setUserAgent(getUserAgent());
-            curChildLM.setParentLM(this);
+            curChildLM.setParent(this);
             curChildLM.init();
             return curChildLM;
         }
@@ -172,7 +172,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
             }
             while (curChildLM != lm && childLMiter.hasPrevious()) {
                 curChildLM.resetPosition(null);
-                curChildLM = (LayoutManager) childLMiter.previous();
+                curChildLM = (LayoutProcessor) childLMiter.previous();
             }
             // Otherwise next returns same object
             childLMiter.next();

@@ -8,13 +8,13 @@
 package org.apache.fop.layoutmgr;
 
 public class Position {
-    private LayoutManager layoutManager;
+    private LayoutProcessor layoutManager;
 
-    public Position(LayoutManager lm) {
+    public Position(LayoutProcessor lm) {
         layoutManager = lm;
     }
 
-    public LayoutManager getLM() {
+    public LayoutProcessor getLM() {
         return layoutManager;
     }
 

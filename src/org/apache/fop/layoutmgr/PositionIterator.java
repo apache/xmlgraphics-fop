@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
 public abstract class PositionIterator implements Iterator {
     Iterator parentIter;
     Object nextObj;
-    LayoutManager childLM;
+    LayoutProcessor childLM;
     boolean bHasNext;
 
     PositionIterator(Iterator pIter) {
@@ -23,7 +23,7 @@ public abstract class PositionIterator implements Iterator {
         //checkNext();
     }
 
-    public LayoutManager getNextChildLM() {
+    public LayoutProcessor getNextChildLM() {
         // Move to next "segment" of iterator, ie: new childLM
         if (childLM == null && nextObj != null) {
             childLM = getLM(nextObj);
@@ -32,7 +32,7 @@ public abstract class PositionIterator implements Iterator {
         return childLM;
     }
 
-    protected abstract LayoutManager getLM(Object nextObj);
+    protected abstract LayoutProcessor getLM(Object nextObj);
 
     protected abstract Position getPos(Object nextObj);
 
@@ -46,7 +46,7 @@ public abstract class PositionIterator implements Iterator {
     }
 
     protected boolean checkNext() {
-        LayoutManager lm = getLM(nextObj);
+        LayoutProcessor lm = getLM(nextObj);
         if (childLM == null) {
             childLM = lm;
         } else if (childLM != lm) {
