@@ -6,6 +6,15 @@
 
 <project default="package" basedir=".">
 
+  <path id="libs-build-classpath">
+    <fileset dir="../../lib">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="../../build">
+      <include name="fop.jar"/>
+    </fileset>
+  </path>
+  
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
@@ -20,9 +29,9 @@
     <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
 
     <property name="build.compiler" value="classic"/>
-    <property name="debug" value="off"/>
-    <property name="optimize" value="on"/>
-    <property name="deprecation" value="off"/>
+    <property name="debug" value="on"/>
+    <property name="optimize" value="off"/>
+    <property name="deprecation" value="on"/>
 
     <property name="src.dir" value="./src"/>
     <property name="lib.dir" value="./lib"/>
@@ -35,10 +44,8 @@
     <property name="resource.dir" value="resources"/>
     <property name="plan.dir" value="org/apache/fop/plan"/>
 
-    <property name="xslt" value="org.apache.xalan.xslt.Process"/>
-
     <property name="main.class" value="org.apache.fop.plan.Main"/>
-    <property name="runtime.classpath" value="fop.jar xerces-1.4.3.jar xalan-2.4D11.jar batik.jar"/>
+    <property name="runtime.classpath" value="fop.jar xml-apis.jar xercesImpl-2.2.1.jar xalan-2.4.1.jar batik.jar"/>
    
   </target>
 
@@ -46,22 +53,7 @@
   <!-- Help on usage                                                       -->
   <!-- =================================================================== -->
   <target name="usage">
-    <echo message=""/>
-    <echo message=""/>
-    <echo message="${Name} Build file"/>
-    <echo message="-------------------------------------------------------------"/>
-    <echo message=""/>
-    <echo message=" available targets are:"/>
-    <echo message=""/>
-    <echo message="   package   --> generates the ${name}.jar file (default)"/>
-    <echo message="   compile   --> compiles the source code"/>
-    <echo message="   clean     --> cleans up the directory"/>
-    <echo message="   site      --> generates the ${Name} web site (not yet implemented)"/>
-    <echo message=""/>
-    <echo message=" See the comments inside the build.xml file for more details."/>
-    <echo message="-------------------------------------------------------------"/>
-    <echo message=""/>
-    <echo message=""/>
+    <echo message="Use the -projecthelp option instead"/>
   </target>
 
   <!-- =================================================================== -->
@@ -92,7 +84,7 @@
   <!-- =================================================================== -->
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
-  <target name="compile" depends="prepare-src">
+  <target name="compile" depends="prepare-src" description="Compile the Java sources">
     <echo message="Compiling the sources "/>
     <!-- create directories -->
     <mkdir dir="${build.dest}"/>
@@ -102,13 +94,15 @@
            debug="${debug}"
            deprecation="${deprecation}"
            optimize="${optimize}"
-           excludes=""/>
+           excludes="">
+      <classpath refid="libs-build-classpath"/>
+    </javac>
   </target>
 
   <!-- =================================================================== -->
   <!-- Creates the class package                                           -->
   <!-- =================================================================== -->
-  <target name="package" depends="compile">
+  <target name="package" depends="compile" description="Create jar file">
     <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
@@ -131,7 +125,7 @@
   <!-- =================================================================== -->
   <!-- Clean targets                                                       -->
   <!-- =================================================================== -->
-  <target name="clean" depends="init">
+  <target name="clean" depends="init" description="Cleans the build directory">
     <delete dir="${build.dir}"/>
   </target>
 
