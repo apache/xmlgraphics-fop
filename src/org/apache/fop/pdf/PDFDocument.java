@@ -1132,7 +1132,7 @@ public class PDFDocument {
      * Make an outline object and add it to the given outline
      * @param parent parent PDFOutline object
      * @param label the title for the new outline object
-     * @param action the PDFAction to reference
+     * @param destination the reference string for the action to go to
      */
     public PDFOutline makeOutline(PDFOutline parent, String label,
                                   String destination) {

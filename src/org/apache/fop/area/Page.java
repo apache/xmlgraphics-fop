@@ -8,14 +8,20 @@
 package org.apache.fop.area;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
-public class Page implements Serializable {
+public class Page implements Serializable, Cloneable {
     // contains before, start, body, end and after regions
     RegionViewport regionBefore = null;
     RegionViewport regionStart = null;
     RegionViewport regionBody = null;
     RegionViewport regionEnd = null;
     RegionViewport regionAfter = null;
+
+    // hashmap of markers for this page
+    // start and end are added by the fo that contains the markers
+    HashMap markerStart = null;
+    HashMap markerEnd = null;
 
     public void setRegion(int areaclass, RegionViewport port) {
         if (areaclass == RegionReference.BEFORE) {
@@ -46,4 +52,19 @@ public class Page implements Serializable {
         return null;
     }
 
+    public Object clone() {
+        Page p = new Page();
+        if(regionBefore != null)
+            p.regionBefore = (RegionViewport)regionBefore.clone();
+        if(regionStart != null)
+            p.regionStart = (RegionViewport)regionStart.clone();
+        if(regionBody != null)
+            p.regionBody = (RegionViewport)regionBody.clone();
+        if(regionEnd != null)
+            p.regionEnd = (RegionViewport)regionEnd.clone();
+        if(regionAfter != null)
+            p.regionAfter = (RegionViewport)regionAfter.clone();
+
+        return p;
+    }
 }

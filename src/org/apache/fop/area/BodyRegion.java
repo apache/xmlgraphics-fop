@@ -80,4 +80,13 @@ public class BodyRegion extends RegionReference {
     public MinOptMax getMaxBPD() {
 	return maxBPD;
     }
+
+    public Object clone() {
+        BodyRegion br = new BodyRegion();
+        br.setCTM(getCTM());
+        br.setIPD(getIPD());
+        br.columnGap = columnGap;
+        br.columnCount = columnCount;
+        return br;
+    }
 }

@@ -65,6 +65,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     public void run() {
         generateAreas();
+        flush();
     }
 
 

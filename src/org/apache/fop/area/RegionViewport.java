@@ -11,7 +11,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.io.IOException;
 
-public class RegionViewport extends Area implements Serializable {
+public class RegionViewport extends Area implements Serializable, Cloneable {
     // this rectangle is relative to the page
     RegionReference region;
     Rectangle2D viewArea;
@@ -19,7 +19,7 @@ public class RegionViewport extends Area implements Serializable {
 
 
     public RegionViewport(Rectangle2D viewArea) {
-        this.viewArea =viewArea;
+        this.viewArea = viewArea;
     }
 
     public void setRegion(RegionReference reg) {
@@ -57,4 +57,10 @@ public class RegionViewport extends Area implements Serializable {
         setRegion( (RegionReference) in.readObject());
     }
 
+    public Object clone() {
+        RegionViewport rv = new RegionViewport((Rectangle2D)viewArea.clone());
+        rv.region = (RegionReference)region.clone();
+        rv.region.setParent(rv);
+        return rv;
+    }
 }

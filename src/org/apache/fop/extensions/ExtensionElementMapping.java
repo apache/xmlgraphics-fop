@@ -22,14 +22,23 @@ public class ExtensionElementMapping implements ElementMapping {
     private static synchronized void setupExt() {
         if(foObjs == null) {
             foObjs = new HashMap();
+            foObjs.put("bookmarks", new B());
             foObjs.put("outline", new O());
             foObjs.put("label", new L());
         }
     }
 
     public void addToBuilder(FOTreeBuilder builder) {
-        setupExt();
+        if(foObjs == null) {
+            setupExt();
+        }
         builder.addMapping(URI, foObjs);
+    }
+
+    static class B extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new Bookmarks(parent);
+        }
     }
 
     static class O extends ElementMapping.Maker {
