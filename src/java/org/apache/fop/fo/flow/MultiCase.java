@@ -75,9 +75,9 @@ public class MultiCase extends ToBeImplementedElement {
         CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
 
         setupID();
-        // this.properties.get("starting-state");
-        // this.properties.get("case-name");
-        // this.properties.get("case-title");
+        // this.propertyList.get("starting-state");
+        // this.propertyList.get("case-name");
+        // this.propertyList.get("case-title");
 
     }
 

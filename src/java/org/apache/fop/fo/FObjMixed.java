@@ -87,7 +87,7 @@ public class FObjMixed extends FObj {
     }
 
     private void setup() {
-        if (this.properties != null) {
+        if (this.propertyList != null) {
             setupID();
         }
     }

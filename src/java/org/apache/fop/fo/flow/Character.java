@@ -115,29 +115,29 @@ public class Character extends FObj {
         CommonRelativePosition mRelProps =
           propMgr.getRelativePositionProps();
 
-        // this.properties.get("alignment-adjust");
-        // this.properties.get("treat-as-word-space");
-        // this.properties.get("alignment-baseline");
-        // this.properties.get("baseline-shift");
-        // this.properties.get("character");
-        // this.properties.get("color");
-        // this.properties.get("dominant-baseline");
-        // this.properties.get("text-depth");
-        // this.properties.get("text-altitude");
-        // this.properties.get("glyph-orientation-horizontal");
-        // this.properties.get("glyph-orientation-vertical");
+        // this.propertyList.get("alignment-adjust");
+        // this.propertyList.get("treat-as-word-space");
+        // this.propertyList.get("alignment-baseline");
+        // this.propertyList.get("baseline-shift");
+        // this.propertyList.get("character");
+        // this.propertyList.get("color");
+        // this.propertyList.get("dominant-baseline");
+        // this.propertyList.get("text-depth");
+        // this.propertyList.get("text-altitude");
+        // this.propertyList.get("glyph-orientation-horizontal");
+        // this.propertyList.get("glyph-orientation-vertical");
         setupID();
-        // this.properties.get("keep-with-next");
-        // this.properties.get("keep-with-previous");
-        // this.properties.get("letter-spacing");
-        // this.properties.get("line-height");
-        // this.properties.get("line-height-shift-adjustment");
-        // this.properties.get("score-spaces");
-        // this.properties.get("suppress-at-line-break");
-        // this.properties.get("text-decoration");
-        // this.properties.get("text-shadow");
-        // this.properties.get("text-transform");
-        // this.properties.get("word-spacing");
+        // this.propertyList.get("keep-with-next");
+        // this.propertyList.get("keep-with-previous");
+        // this.propertyList.get("letter-spacing");
+        // this.propertyList.get("line-height");
+        // this.propertyList.get("line-height-shift-adjustment");
+        // this.propertyList.get("score-spaces");
+        // this.propertyList.get("suppress-at-line-break");
+        // this.propertyList.get("text-decoration");
+        // this.propertyList.get("text-shadow");
+        // this.propertyList.get("text-transform");
+        // this.propertyList.get("word-spacing");
     }
 
     /**

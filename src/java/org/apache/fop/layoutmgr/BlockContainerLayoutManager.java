@@ -107,7 +107,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     }
 
     protected int getRotatedIPD() {
-        PropertyList props = propManager.getProperties();
+        PropertyList props = propManager.getPropertyList();
         int height = props.get("height").getLength().getValue();
         height = props.get("inline-progression-dimension.optimum").getLength().getValue();
 

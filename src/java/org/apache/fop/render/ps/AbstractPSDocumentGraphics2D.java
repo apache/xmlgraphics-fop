@@ -51,7 +51,6 @@
 package org.apache.fop.render.ps;
 
 //Java
-import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -60,7 +59,6 @@ import java.io.IOException;
 
 //FOP
 import org.apache.fop.apps.Document;
-import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontSetup;
 
 /**

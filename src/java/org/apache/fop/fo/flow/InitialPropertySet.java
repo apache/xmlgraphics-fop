@@ -91,16 +91,16 @@ public class InitialPropertySet extends ToBeImplementedElement {
         // Common Relative Position Properties
         CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
 
-        // this.properties.get("color");
+        // this.propertyList.get("color");
         setupID();
-        // this.properties.get("letter-spacing");
-        // this.properties.get("line-height");
-        // this.properties.get("line-height-shift-adjustment");
-        // this.properties.get("score-spaces");
-        // this.properties.get("text-decoration");
-        // this.properties.get("text-shadow");
-        // this.properties.get("text-transform");
-        // this.properties.get("word-spacing");
+        // this.propertyList.get("letter-spacing");
+        // this.propertyList.get("line-height");
+        // this.propertyList.get("line-height-shift-adjustment");
+        // this.propertyList.get("score-spaces");
+        // this.propertyList.get("text-decoration");
+        // this.propertyList.get("text-shadow");
+        // this.propertyList.get("text-transform");
+        // this.propertyList.get("word-spacing");
 
     }
 

@@ -109,28 +109,28 @@ public class PageNumber extends FObj {
         CommonRelativePosition mRelProps =
           propMgr.getRelativePositionProps();
 
-        // this.properties.get("alignment-adjust");
-        // this.properties.get("alignment-baseline");
-        // this.properties.get("baseline-shift");
-        // this.properties.get("dominant-baseline");
+        // this.propertyList.get("alignment-adjust");
+        // this.propertyList.get("alignment-baseline");
+        // this.propertyList.get("baseline-shift");
+        // this.propertyList.get("dominant-baseline");
         setupID();
-        // this.properties.get("keep-with-next");
-        // this.properties.get("keep-with-previous");
-        // this.properties.get("letter-spacing");
-        // this.properties.get("line-height");
-        // this.properties.get("line-height-shift-adjustment");
-        // this.properties.get("score-spaces");
-        // this.properties.get("text-decoration");
-        // this.properties.get("text-shadow");
-        // this.properties.get("text-transform");
-        // this.properties.get("word-spacing");
+        // this.propertyList.get("keep-with-next");
+        // this.propertyList.get("keep-with-previous");
+        // this.propertyList.get("letter-spacing");
+        // this.propertyList.get("line-height");
+        // this.propertyList.get("line-height-shift-adjustment");
+        // this.propertyList.get("score-spaces");
+        // this.propertyList.get("text-decoration");
+        // this.propertyList.get("text-shadow");
+        // this.propertyList.get("text-transform");
+        // this.propertyList.get("word-spacing");
 
-        ColorType c = this.properties.get("color").getColorType();
+        ColorType c = this.propertyList.get("color").getColorType();
         this.red = c.getRed();
         this.green = c.getGreen();
         this.blue = c.getBlue();
 
-        this.wrapOption = this.properties.get("wrap-option").getEnum();
+        this.wrapOption = this.propertyList.get("wrap-option").getEnum();
 
     }
 

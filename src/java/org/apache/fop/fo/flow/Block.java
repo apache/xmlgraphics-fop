@@ -132,14 +132,14 @@ public class Block extends FObjMixed {
      */
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
-        this.span = this.properties.get("span").getEnum();
+        this.span = this.propertyList.get("span").getEnum();
         this.wsTreatment =
-          this.properties.get("white-space-treatment").getEnum();
+          this.propertyList.get("white-space-treatment").getEnum();
         this.bWScollapse =
-          (this.properties.get("white-space-collapse").getEnum()
+          (this.propertyList.get("white-space-collapse").getEnum()
            == Constants.TRUE);
         this.lfTreatment =
-          this.properties.get("linefeed-treatment").getEnum();
+          this.propertyList.get("linefeed-treatment").getEnum();
 
         setupID();
 
@@ -171,57 +171,57 @@ public class Block extends FObjMixed {
             CommonRelativePosition mRelProps =
               propMgr.getRelativePositionProps();
 
-            // this.properties.get("break-after");
-            // this.properties.get("break-before");
-            // this.properties.get("color");
-            // this.properties.get("text-depth");
-            // this.properties.get("text-altitude");
-            // this.properties.get("hyphenation-keep");
-            // this.properties.get("hyphenation-ladder-count");
+            // this.propertyList.get("break-after");
+            // this.propertyList.get("break-before");
+            // this.propertyList.get("color");
+            // this.propertyList.get("text-depth");
+            // this.propertyList.get("text-altitude");
+            // this.propertyList.get("hyphenation-keep");
+            // this.propertyList.get("hyphenation-ladder-count");
             setupID();
-            // this.properties.get("keep-together");
-            // this.properties.get("keep-with-next");
-            // this.properties.get("keep-with-previous");
-            // this.properties.get("last-line-end-indent");
-            // this.properties.get("linefeed-treatment");
-            // this.properties.get("line-height");
-            // this.properties.get("line-height-shift-adjustment");
-            // this.properties.get("line-stacking-strategy");
-            // this.properties.get("orphans");
-            // this.properties.get("white-space-treatment");
-            // this.properties.get("span");
-            // this.properties.get("text-align");
-            // this.properties.get("text-align-last");
-            // this.properties.get("text-indent");
-            // this.properties.get("visibility");
-            // this.properties.get("white-space-collapse");
-            // this.properties.get("widows");
-            // this.properties.get("wrap-option");
-            // this.properties.get("z-index");
+            // this.propertyList.get("keep-together");
+            // this.propertyList.get("keep-with-next");
+            // this.propertyList.get("keep-with-previous");
+            // this.propertyList.get("last-line-end-indent");
+            // this.propertyList.get("linefeed-treatment");
+            // this.propertyList.get("line-height");
+            // this.propertyList.get("line-height-shift-adjustment");
+            // this.propertyList.get("line-stacking-strategy");
+            // this.propertyList.get("orphans");
+            // this.propertyList.get("white-space-treatment");
+            // this.propertyList.get("span");
+            // this.propertyList.get("text-align");
+            // this.propertyList.get("text-align-last");
+            // this.propertyList.get("text-indent");
+            // this.propertyList.get("visibility");
+            // this.propertyList.get("white-space-collapse");
+            // this.propertyList.get("widows");
+            // this.propertyList.get("wrap-option");
+            // this.propertyList.get("z-index");
 
-            this.align = this.properties.get("text-align").getEnum();
+            this.align = this.propertyList.get("text-align").getEnum();
             this.alignLast =
-              this.properties.get("text-align-last").getEnum();
-            this.breakAfter = this.properties.get("break-after").getEnum();
-            this.lineHeight = this.properties.get(
+              this.propertyList.get("text-align-last").getEnum();
+            this.breakAfter = this.propertyList.get("break-after").getEnum();
+            this.lineHeight = this.propertyList.get(
                                 "line-height").getLength().getValue();
-            this.startIndent = this.properties.get(
+            this.startIndent = this.propertyList.get(
                                  "start-indent").getLength().getValue();
-            this.endIndent = this.properties.get(
+            this.endIndent = this.propertyList.get(
                                "end-indent").getLength().getValue();
-            this.spaceBefore = this.properties.get(
+            this.spaceBefore = this.propertyList.get(
                                  "space-before.optimum").getLength().getValue();
-            this.spaceAfter = this.properties.get(
+            this.spaceAfter = this.propertyList.get(
                                 "space-after.optimum").getLength().getValue();
-            this.textIndent = this.properties.get(
+            this.textIndent = this.propertyList.get(
                                 "text-indent").getLength().getValue();
             this.keepWithNext =
-              this.properties.get("keep-with-next").getEnum();
+              this.propertyList.get("keep-with-next").getEnum();
 
             this.blockWidows =
-              this.properties.get("widows").getNumber().intValue();
+              this.propertyList.get("widows").getNumber().intValue();
             this.blockOrphans =
-              this.properties.get("orphans").getNumber().intValue();
+              this.propertyList.get("orphans").getNumber().intValue();
 
     }
 

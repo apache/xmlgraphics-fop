@@ -74,7 +74,7 @@ public class InstreamForeignObject extends FObj {
 
     public int computeXOffset (int ipd, int cwidth) {
         int xoffset = 0;
-        int ta = properties.get("text-align").getEnum();
+        int ta = propertyList.get("text-align").getEnum();
         switch (ta) {
             case TextAlign.CENTER:
                 xoffset = (ipd - cwidth) / 2;
@@ -93,7 +93,7 @@ public class InstreamForeignObject extends FObj {
 
     public int computeYOffset(int bpd, int cheight) {
         int yoffset = 0;
-        int da = properties.get("display-align").getEnum();
+        int da = propertyList.get("display-align").getEnum();
         switch (da) {
             case DisplayAlign.BEFORE:
                 break;
@@ -137,58 +137,58 @@ public class InstreamForeignObject extends FObj {
             // Common Relative Position Properties
             RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
 
-            // this.properties.get("alignment-adjust");
-            // this.properties.get("alignment-baseline");
-            // this.properties.get("baseline-shift");
-            // this.properties.get("block-progression-dimension");
-            // this.properties.get("content-height");
-            // this.properties.get("content-type");
-            // this.properties.get("content-width");
-            // this.properties.get("display-align");
-            // this.properties.get("dominant-baseline");
-            // this.properties.get("height");
+            // this.propertyList.get("alignment-adjust");
+            // this.propertyList.get("alignment-baseline");
+            // this.propertyList.get("baseline-shift");
+            // this.propertyList.get("block-progression-dimension");
+            // this.propertyList.get("content-height");
+            // this.propertyList.get("content-type");
+            // this.propertyList.get("content-width");
+            // this.propertyList.get("display-align");
+            // this.propertyList.get("dominant-baseline");
+            // this.propertyList.get("height");
             setupID();
-            // this.properties.get("inline-progression-dimension");
-            // this.properties.get("keep-with-next");
-            // this.properties.get("keep-with-previous");
-            // this.properties.get("line-height");
-            // this.properties.get("line-height-shift-adjustment");
-            // this.properties.get("overflow");
-            // this.properties.get("scaling");
-            // this.properties.get("scaling-method");
-            // this.properties.get("text-align");
-            // this.properties.get("width");
+            // this.propertyList.get("inline-progression-dimension");
+            // this.propertyList.get("keep-with-next");
+            // this.propertyList.get("keep-with-previous");
+            // this.propertyList.get("line-height");
+            // this.propertyList.get("line-height-shift-adjustment");
+            // this.propertyList.get("overflow");
+            // this.propertyList.get("scaling");
+            // this.propertyList.get("scaling-method");
+            // this.propertyList.get("text-align");
+            // this.propertyList.get("width");
 
             /* retrieve properties *
-            int align = this.properties.get("text-align").getEnum();
-            int valign = this.properties.get("vertical-align").getEnum();
-            int overflow = this.properties.get("overflow").getEnum();
+            int align = this.propertyList.get("text-align").getEnum();
+            int valign = this.propertyList.get("vertical-align").getEnum();
+            int overflow = this.propertyList.get("overflow").getEnum();
 
-            this.breakBefore = this.properties.get("break-before").getEnum();
-            this.breakAfter = this.properties.get("break-after").getEnum();
-            this.width = this.properties.get("width").getLength().mvalue();
-            this.height = this.properties.get("height").getLength().mvalue();
+            this.breakBefore = this.propertyList.get("break-before").getEnum();
+            this.breakAfter = this.propertyList.get("break-after").getEnum();
+            this.width = this.propertyList.get("width").getLength().mvalue();
+            this.height = this.propertyList.get("height").getLength().mvalue();
             this.contwidth =
-                this.properties.get("content-width").getLength().mvalue();
+                this.propertyList.get("content-width").getLength().mvalue();
             this.contheight =
-                this.properties.get("content-height").getLength().mvalue();
-            this.wauto = this.properties.get("width").getLength().isAuto();
-            this.hauto = this.properties.get("height").getLength().isAuto();
+                this.propertyList.get("content-height").getLength().mvalue();
+            this.wauto = this.propertyList.get("width").getLength().isAuto();
+            this.hauto = this.propertyList.get("height").getLength().isAuto();
             this.cwauto =
-                this.properties.get("content-width").getLength().isAuto();
+                this.propertyList.get("content-width").getLength().isAuto();
             this.chauto =
-                this.properties.get("content-height").getLength().isAuto();
+                this.propertyList.get("content-height").getLength().isAuto();
 
             this.startIndent =
-                this.properties.get("start-indent").getLength().mvalue();
+                this.propertyList.get("start-indent").getLength().mvalue();
             this.endIndent =
-                this.properties.get("end-indent").getLength().mvalue();
+                this.propertyList.get("end-indent").getLength().mvalue();
             this.spaceBefore =
-                this.properties.get("space-before.optimum").getLength().mvalue();
+                this.propertyList.get("space-before.optimum").getLength().mvalue();
             this.spaceAfter =
-                this.properties.get("space-after.optimum").getLength().mvalue();
+                this.propertyList.get("space-after.optimum").getLength().mvalue();
 
-            this.scaling = this.properties.get("scaling").getEnum();
+            this.scaling = this.propertyList.get("scaling").getEnum();
 
 */
 

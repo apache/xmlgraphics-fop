@@ -97,15 +97,15 @@ public class BasicLink extends Inline {
         // Common Relative Position Properties
         CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
 
-        // this.properties.get("alignment-adjust");
-        // this.properties.get("alignment-baseline");
-        // this.properties.get("baseline-shift");
-        // this.properties.get("destination-place-offset");
-        // this.properties.get("dominant-baseline");
-        String ext =  properties.get("external-destination").getString();
+        // this.propertyList.get("alignment-adjust");
+        // this.propertyList.get("alignment-baseline");
+        // this.propertyList.get("baseline-shift");
+        // this.propertyList.get("destination-place-offset");
+        // this.propertyList.get("dominant-baseline");
+        String ext =  propertyList.get("external-destination").getString();
         setupID();
-        // this.properties.get("indicate-destination");
-        String internal = properties.get("internal-destination").getString();
+        // this.propertyList.get("indicate-destination");
+        String internal = propertyList.get("internal-destination").getString();
         if (ext.length() > 0) {
             link = ext;
             external = true;
@@ -114,15 +114,15 @@ public class BasicLink extends Inline {
         } else {
             getLogger().error("basic-link requires an internal or external destination");
         }
-        // this.properties.get("keep-together");
-        // this.properties.get("keep-with-next");
-        // this.properties.get("keep-with-previous");
-        // this.properties.get("line-height");
-        // this.properties.get("line-height-shift-adjustment");
-        // this.properties.get("show-destination");
-        // this.properties.get("target-processing-context");
-        // this.properties.get("target-presentation-context");
-        // this.properties.get("target-stylesheet");
+        // this.propertyList.get("keep-together");
+        // this.propertyList.get("keep-with-next");
+        // this.propertyList.get("keep-with-previous");
+        // this.propertyList.get("line-height");
+        // this.propertyList.get("line-height-shift-adjustment");
+        // this.propertyList.get("show-destination");
+        // this.propertyList.get("target-processing-context");
+        // this.propertyList.get("target-presentation-context");
+        // this.propertyList.get("target-stylesheet");
 
     }
 

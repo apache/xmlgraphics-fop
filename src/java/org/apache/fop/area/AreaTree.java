@@ -52,7 +52,6 @@ package org.apache.fop.area;
 
 import org.apache.fop.area.extensions.BookmarkData;
 import org.apache.fop.fo.extensions.Outline;
-import org.apache.fop.apps.Document;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -100,12 +100,12 @@ public class TableBody extends FObj {
 
         setupID();
 
-        this.spaceBefore = this.properties.get(
+        this.spaceBefore = this.propertyList.get(
                              "space-before.optimum").getLength().getValue();
-        this.spaceAfter = this.properties.get(
+        this.spaceAfter = this.propertyList.get(
                             "space-after.optimum").getLength().getValue();
         this.backgroundColor =
-          this.properties.get("background-color").getColorType();
+          this.propertyList.get("background-color").getColorType();
 
     }
 

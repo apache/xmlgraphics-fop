@@ -61,7 +61,7 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.util.CharUtilities;
+
 
 /**
  * Class modelling the fo:page-number-citation object. See Sec. 6.6.11 of the
@@ -123,30 +123,30 @@ public class PageNumberCitation extends FObj {
         CommonRelativePosition mRelProps =
           propMgr.getRelativePositionProps();
 
-        // this.properties.get("alignment-adjust");
-        // this.properties.get("alignment-baseline");
-        // this.properties.get("baseline-shift");
-        // this.properties.get("dominant-baseline");
+        // this.propertyList.get("alignment-adjust");
+        // this.propertyList.get("alignment-baseline");
+        // this.propertyList.get("baseline-shift");
+        // this.propertyList.get("dominant-baseline");
         setupID();
-        // this.properties.get("keep-with-next");
-        // this.properties.get("keep-with-previous");
-        // this.properties.get("letter-spacing");
-        // this.properties.get("line-height");
-        // this.properties.get("line-height-shift-adjustment");
-        // this.properties.get("ref-id");
-        // this.properties.get("score-spaces");
-        // this.properties.get("text-decoration");
-        // this.properties.get("text-shadow");
-        // this.properties.get("text-transform");
-        // this.properties.get("word-spacing");
+        // this.propertyList.get("keep-with-next");
+        // this.propertyList.get("keep-with-previous");
+        // this.propertyList.get("letter-spacing");
+        // this.propertyList.get("line-height");
+        // this.propertyList.get("line-height-shift-adjustment");
+        // this.propertyList.get("ref-id");
+        // this.propertyList.get("score-spaces");
+        // this.propertyList.get("text-decoration");
+        // this.propertyList.get("text-shadow");
+        // this.propertyList.get("text-transform");
+        // this.propertyList.get("word-spacing");
 
-        ColorType c = this.properties.get("color").getColorType();
+        ColorType c = this.propertyList.get("color").getColorType();
         this.red = c.getRed();
         this.green = c.getGreen();
         this.blue = c.getBlue();
 
-        this.wrapOption = this.properties.get("wrap-option").getEnum();
-        this.refId = this.properties.get("ref-id").getString();
+        this.wrapOption = this.propertyList.get("wrap-option").getEnum();
+        this.refId = this.propertyList.get("ref-id").getString();
 
         if (this.refId.equals("")) {
             //throw new FOPException("page-number-citation must contain \"ref-id\"");

@@ -88,7 +88,7 @@ public class BodyStartFunction extends FunctionBase {
         }
 
         Numeric startIndent =
-            ((ListItem)item).properties.get("start-indent").getNumeric();
+            ((ListItem)item).propertyList.get("start-indent").getNumeric();
 
         return new NumericProperty(distance.add(startIndent));
     }

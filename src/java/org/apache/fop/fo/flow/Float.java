@@ -70,8 +70,8 @@ public class Float extends ToBeImplementedElement {
 
     private void setup() {
 
-        // this.properties.get("float");
-        // this.properties.get("clear");
+        // this.propertyList.get("float");
+        // this.propertyList.get("clear");
 
     }
 

@@ -111,12 +111,12 @@ public abstract class Region extends FObj {
         super.handleAttrs(attlist);
 
         // regions may have name, or default
-        if (null == this.properties.get(PROP_REGION_NAME)) {
+        if (null == this.propertyList.get(PROP_REGION_NAME)) {
             setRegionName(getDefaultRegionName());
-        } else if (this.properties.get(PROP_REGION_NAME).getString().equals("")) {
+        } else if (this.propertyList.get(PROP_REGION_NAME).getString().equals("")) {
             setRegionName(getDefaultRegionName());
         } else {
-            setRegionName(this.properties.get(PROP_REGION_NAME).getString());
+            setRegionName(this.propertyList.get(PROP_REGION_NAME).getString());
             // check that name is OK. Not very pretty.
             if (isReserved(getRegionName())
                     && !getRegionName().equals(getDefaultRegionName())) {
@@ -133,11 +133,11 @@ public abstract class Region extends FObj {
                     + "of simple-page-master, not "
                     + parent.getName());
         }
-        this.wm = this.properties.get("writing-mode").getEnum();
+        this.wm = this.propertyList.get("writing-mode").getEnum();
 
-        // this.properties.get("clip");
-        // this.properties.get("display-align");
-        this.overflow = this.properties.get("overflow").getEnum();
+        // this.propertyList.get("clip");
+        // this.propertyList.get("display-align");
+        this.overflow = this.propertyList.get("overflow").getEnum();
     }
 
     public abstract Rectangle getViewportRectangle(FODimension pageRefRect);

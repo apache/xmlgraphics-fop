@@ -58,10 +58,7 @@ import org.xml.sax.Attributes;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Property.Maker;
-import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.apache.fop.fo.properties.WritingMode;
-import org.apache.fop.apps.FOPException;
-
 
 
 /**
@@ -130,9 +127,6 @@ public class PropertyList extends HashMap {
     private String element = "";
     private FObj fobj = null;
 
-    private static HashMap propertyListTable = null;
-    private static HashMap elementTable = null;
-    
     /**
      * Basic constructor.
      * @param parentPropertyList the PropertyList belonging to the new objects
@@ -146,21 +140,6 @@ public class PropertyList extends HashMap {
         this.parentPropertyList = parentPropertyList;
         this.namespace = space;
         this.element = elementName;
-        
-        if (propertyListTable == null) {
-            propertyListTable = new HashMap();
-            propertyListTable.putAll(FOPropertyMapping.getGenericMappings());
-        }
-        
-        if (elementTable == null) {
-            elementTable = new HashMap();
-            for (Iterator iter =
-                FOPropertyMapping.getElementMappings().iterator();
-                    iter.hasNext();) {
-                String elem = (String) iter.next();
-                elementTable.put(elem, FOPropertyMapping.getElementMapping(elem));
-            }
-        }
     }
 
     /**
@@ -507,7 +486,7 @@ public class PropertyList extends HashMap {
         FObj parentFO = fobj.findNearestAncestorFObj();
         
         HashMap validProperties;
-        validProperties = (HashMap) elementTable.get(element);
+        validProperties = (HashMap) fobj.elementTable.get(element);
                                                 
         /* Handle "compound" properties, ex. space-before.minimum */
         String basePropertyName = findBasePropertyName(attributeName);
@@ -688,7 +667,7 @@ public class PropertyList extends HashMap {
      */
     protected Property.Maker findMaker(String space, String elementName,
                                        String propertyName) {
-        return findMaker((HashMap)elementTable.get(elementName),
+        return findMaker((HashMap) fobj.elementTable.get(elementName),
                          propertyName);
     }
 
@@ -704,11 +683,11 @@ public class PropertyList extends HashMap {
                                      String propertyName) {
         Property.Maker propertyMaker = null;
         if (elemTable != null) {
-            propertyMaker = (Property.Maker)elemTable.get(propertyName);
+            propertyMaker = (Property.Maker) elemTable.get(propertyName);
         }
         if (propertyMaker == null) {
             propertyMaker =
-                (Property.Maker)propertyListTable.get(propertyName);
+                (Property.Maker) fobj.propertyListTable.get(propertyName);
         }
         return propertyMaker;
     }

@@ -93,7 +93,7 @@ public class BlockContainer extends FObj {
      */
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
-        this.span = this.properties.get("span").getEnum();
+        this.span = this.propertyList.get("span").getEnum();
         setupID();
     }
 
@@ -109,28 +109,28 @@ public class BlockContainer extends FObj {
             // Common Margin-Block Properties
             CommonMarginBlock mProps = propMgr.getMarginProps();
 
-            // this.properties.get("block-progression-dimension");
-            // this.properties.get("break-after");
-            // this.properties.get("break-before");
-            // this.properties.get("clip");
-            // this.properties.get("display-align");
-            // this.properties.get("height");
+            // this.propertyList.get("block-progression-dimension");
+            // this.propertyList.get("break-after");
+            // this.propertyList.get("break-before");
+            // this.propertyList.get("clip");
+            // this.propertyList.get("display-align");
+            // this.propertyList.get("height");
             setupID();
-            // this.properties.get("keep-together");
-            // this.properties.get("keep-with-next");
-            // this.properties.get("keep-with-previous");
-            // this.properties.get("overflow");
-            // this.properties.get("reference-orientation");
-            // this.properties.get("span");
-            // this.properties.get("width");
-            // this.properties.get("writing-mode");
+            // this.propertyList.get("keep-together");
+            // this.propertyList.get("keep-with-next");
+            // this.propertyList.get("keep-with-previous");
+            // this.propertyList.get("overflow");
+            // this.propertyList.get("reference-orientation");
+            // this.propertyList.get("span");
+            // this.propertyList.get("width");
+            // this.propertyList.get("writing-mode");
 
             this.backgroundColor =
-                this.properties.get("background-color").getColorType();
+                this.propertyList.get("background-color").getColorType();
 
-            this.width = this.properties.get("width").getLength().getValue();
-            this.height = this.properties.get("height").getLength().getValue();
-            span = this.properties.get("span").getEnum();
+            this.width = this.propertyList.get("width").getLength().getValue();
+            this.height = this.propertyList.get("height").getLength().getValue();
+            span = this.propertyList.get("span").getEnum();
 
     }
 
