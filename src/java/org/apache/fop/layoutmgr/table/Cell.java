@@ -52,6 +52,7 @@ public class Cell extends BlockStackingLayoutManager {
 
     private int xoffset;
     private int yoffset;
+    private int referenceIPD;
     private int cellIPD;
     private int rowHeight;
     private int usedBPD;
@@ -59,12 +60,23 @@ public class Cell extends BlockStackingLayoutManager {
 
     /**
      * Create a new Cell layout manager.
+     * @node table-cell FO for which to create the LM
      */
     public Cell(TableCell node) {
         super(node);
         fobj = node;
     }
 
+    /** @return the table-cell FO */
+    public TableCell getFObj() {
+        return this.fobj;
+    }
+    
+    /** @return this cell's reference IPD */
+    public int getReferenceIPD() {
+        return this.referenceIPD;
+    }
+    
     private int getIPIndents() {
         int iIndents = 0;
         iIndents += fobj.getCommonBorderPaddingBackground().getIPPaddingAndBorder(false);
@@ -90,7 +102,8 @@ public class Cell extends BlockStackingLayoutManager {
         // stackSize.add(spaceBefore);
         BreakPoss lastPos = null;
 
-        cellIPD = context.getRefIPD();
+        referenceIPD = context.getRefIPD(); 
+        cellIPD = referenceIPD;
         cellIPD -= getIPIndents();
 
         while ((curLM = getChildLM()) != null) {

@@ -134,17 +134,20 @@ public class Row extends BlockStackingLayoutManager {
         LayoutManager curLM; // currently active LM
 
         BreakPoss lastPos = null;
-        List breakList = new ArrayList();
+        List breakList = new java.util.ArrayList();
+        List spannedColumns = new java.util.ArrayList();
 
         int min = 0;
         int opt = 0;
         int max = 0;
 
-        int cellcount = 0;
+        int startColumn = 1;
+        int cellLMIndex = 0;
         boolean over = false;
 
-        while ((curLM = getCellLM(cellcount++)) != null) {
-
+        while ((curLM = getCellLM(cellLMIndex++)) != null) {
+            Cell cellLM = (Cell)curLM;
+            
             List childBreaks = new ArrayList();
             MinOptMax stackSize = new MinOptMax();
 
@@ -158,14 +161,19 @@ public class Row extends BlockStackingLayoutManager {
                   MinOptMax.subtract(context.getStackLimit(),
                                      stackSize));
 
-            int size = columns.size();
-            Column col;
-            if (cellcount > size - 1) {
-                col = (Column)columns.get(size - 1);
-            } else {
-                col = (Column)columns.get(cellcount - 1);
+            getColumnsForCell(cellLM, startColumn, spannedColumns);
+            int childRefIPD = 0;
+            Iterator i = spannedColumns.iterator();
+            while (i.hasNext()) {
+                Column col = (Column)i.next();
+                childRefIPD += col.getWidth().getValue();
             }
-            childLC.setRefIPD(col.getWidth().getValue());
+            //Handle border-separation when border-collapse="separate"
+            if (getTable().getBorderCollapse() == EN_SEPARATE) {
+                childRefIPD += (spannedColumns.size() - 1) 
+                    * getTable().getBorderSeparation().getIPD().getLength().getValue();
+            }
+            childLC.setRefIPD(childRefIPD);
 
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
@@ -210,6 +218,8 @@ public class Row extends BlockStackingLayoutManager {
             }
 
             breakList.add(childBreaks);
+            
+            startColumn += cellLM.getFObj().getNumberColumnsSpanned();
         }
         MinOptMax rowSize = new MinOptMax(min, opt, max);
         LengthRangeProperty specifiedBPD = fobj.getBlockProgressionDimension();
@@ -224,8 +234,9 @@ public class Row extends BlockStackingLayoutManager {
         rowHeight = rowSize.opt;
 
         boolean fin = true;
-        cellcount = 0;
-        while ((curLM = getCellLM(cellcount++)) != null) {
+        cellLMIndex = 0;
+        //Check if any of the cell LMs haven't finished, yet
+        while ((curLM = getCellLM(cellLMIndex++)) != null) {
             if (!curLM.isFinished()) {
                 fin = false;
                 break;
@@ -240,6 +251,34 @@ public class Row extends BlockStackingLayoutManager {
         }
         breakPoss.setStackingSize(rowSize);
         return breakPoss;
+    }
+
+    /**
+     * Gets the Column at a given index.
+     * @param index index of the column (index must be >= 1)
+     * @return the requested Column
+     */
+    private Column getColumn(int index) {
+        int size = columns.size();
+        if (index > size - 1) {
+            return (Column)columns.get(size - 1);
+        } else {
+            return (Column)columns.get(index - 1);
+        }
+    }
+    
+    /**
+     * Determines the columns that are spanned by the given cell.
+     * @param cellLM table-cell LM
+     * @param startCell starting cell index (must be >= 1)
+     * @param spannedColumns List to receive the applicable columns
+     */
+    private void getColumnsForCell(Cell cellLM, int startCell, List spannedColumns) {
+        int count = cellLM.getFObj().getNumberColumnsSpanned();
+        spannedColumns.clear();
+        for (int i = 0; i < count; i++) {
+            spannedColumns.add(getColumn(startCell + i));
+        }
     }
 
     /**
@@ -330,26 +369,19 @@ public class Row extends BlockStackingLayoutManager {
             //int x = (TableLayoutManager)getParent()).;
             for (Iterator iter = lfp.cellBreaks.iterator(); iter.hasNext();) {
                 List cellsbr = (List)iter.next();
-                PositionIterator breakPosIter;
+                BreakPossPosIter breakPosIter;
                 breakPosIter = new BreakPossPosIter(cellsbr, 0, cellsbr.size());
                 iStartPos = lfp.getLeafPos() + 1;
 
-                int size = columns.size();
-                Column col;
-                if (cellcount > size - 1) {
-                   col = (Column)columns.get(size - 1);
-                } else {
-                    col = (Column)columns.get(cellcount);
-                    cellcount++;
-                }
-
+                int cellWidth = 0;
                 while ((childLM = (Cell)breakPosIter.getNextChildLM()) != null) {
+                    cellWidth = childLM.getReferenceIPD();
                     childLM.setXOffset(x);
                     childLM.setYOffset(yoffset);
                     childLM.setRowHeight(rowHeight);
                     childLM.addAreas(breakPosIter, lc);
                 }
-                x += col.getWidth().getValue();
+                x += cellWidth;
                 
                 //Handle border-separation
                 Table table = getTable();
