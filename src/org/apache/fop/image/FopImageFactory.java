@@ -159,11 +159,26 @@ public class FopImageFactory {
       initArgs[0] = absoluteURL;
       initArgs[1] = imgReader;
       imageInstance = imageConstructor.newInstance(initArgs);
-    } catch (Exception ex) {
-      throw new FopImageException(
-        "Error creating FopImage object (" +
-        absoluteURL.toString() + ") : " + ex.getMessage());
-    }
+    } catch (java.lang.reflect.InvocationTargetException ex) {
+			Throwable t = ex.getTargetException();
+			String msg;
+			if (t != null) {
+					msg = t.getMessage();
+			}
+			else {
+					msg = ex.getMessage();
+			}
+			throw new FopImageException(
+				"Error creating FopImage object (" +
+				absoluteURL.toString() + ") : " + msg
+				);
+		} catch (Exception ex) {
+			throw new FopImageException(
+				"Error creating FopImage object (" +
+				"Error creating FopImage object (" +
+				absoluteURL.toString() + ") : " + ex.getMessage()
+				);
+		}
     if (! (imageInstance instanceof org.apache.fop.image.FopImage)) {
       throw new FopImageException(
         "Error creating FopImage object (" +

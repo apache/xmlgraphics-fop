@@ -65,7 +65,7 @@ public class SVGImage extends AbstractFopImage {
     super(href);
   }
 
-  public SVGImage(URL href, ImageReader imgReader) {
+  public SVGImage(URL href, ImageReader imgReader) throws FopImageException {
     super(href, imgReader);
   }
 
