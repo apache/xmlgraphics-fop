@@ -68,19 +68,19 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfContainer;
 
 class BuilderContext {
     /** stack of RtfContainers */
-    private final Stack m_containers = new Stack();
+    private final Stack containers = new Stack();
 
     /** stack of TableContexts */
-    private final Stack m_tableContexts = new Stack();
+    private final Stack tableContexts = new Stack();
 
     /** stack of IBuilders */
-    private final Stack m_builders = new Stack();
+    private final Stack builders = new Stack();
 
     /** Rtf options */
-    IRtfOptions m_options;
+    private IRtfOptions options;
 
     BuilderContext(IRtfOptions rtfOptions) {
-        m_options = rtfOptions;
+        options = rtfOptions;
     }
 
     /** find first object of given class from top of stack s
@@ -103,7 +103,7 @@ class BuilderContext {
     Object getBuilder(Class builderClass,boolean required)
     throws Exception
     {
-        final IBuilder result = (IBuilder)getObjectFromStack(m_builders,builderClass);
+        final IBuilder result = (IBuilder)getObjectFromStack(builders,builderClass);
         if(result == null && required) {
             throw new Exception(
                 "IBuilder of class '" + builderClass.getName() + "' not found on builders stack"
@@ -120,7 +120,7 @@ class BuilderContext {
                               Object /*IBuilder*/ forWhichBuilder) throws Exception {
         // TODO what to do if the desired container is not at the top of the stack?
         // close top-of-stack container?
-        final RtfContainer result = (RtfContainer)getObjectFromStack(m_containers,
+        final RtfContainer result = (RtfContainer)getObjectFromStack(containers,
                 containerClass);
 
         if (result == null && required) {
@@ -135,7 +135,7 @@ class BuilderContext {
 
     /** push an RtfContainer on our stack */
     void pushContainer(RtfContainer c) {
-        m_containers.push(c);
+        containers.push(c);
     }
 
     /**
@@ -149,22 +149,22 @@ class BuilderContext {
     void replaceContainer(RtfContainer oldC, RtfContainer newC)
     throws Exception {
         // treating the Stack as a Vector allows such manipulations (yes, I hear you screaming ;-)
-        final int index = m_containers.indexOf(oldC);
+        final int index = containers.indexOf(oldC);
         if (index < 0) {
             throw new Exception("container to replace not found:" + oldC);
         }
-        m_containers.setElementAt(newC, index);
+        containers.setElementAt(newC, index);
     }
 
     /** pop the topmost RtfContainer from our stack */
     void popContainer() {
-        m_containers.pop();
+        containers.pop();
     }
 
     /* push an IBuilder to our stack /
     void pushBuilder(IBuilder b)
     {
-        m_builders.push(b);
+        builders.push(b);
     }*/
 
     /** pop the topmost IBuilder from our stack and return previous builder on stack
@@ -173,26 +173,26 @@ class BuilderContext {
     IBuilder popBuilderAndGetPreviousOne()
     {
         IBuilder result = null;
-        m_builders.pop();
-        if(!m_builders.isEmpty()) {
-            result = (IBuilder)m_builders.peek();
+        builders.pop();
+        if(!builders.isEmpty()) {
+            result = (IBuilder)builders.peek();
         }
         return result;
     }
     */
     /** return the current TableContext */
     TableContext getTableContext() {
-        return (TableContext)m_tableContexts.peek();
+        return (TableContext)tableContexts.peek();
     }
 
     /** push a TableContext to our stack */
     void pushTableContext(TableContext tc) {
-        m_tableContexts.push(tc);
+        tableContexts.push(tc);
     }
 
     /** pop a TableContext from our stack */
     void popTableContext() {
-        m_tableContexts.pop();
+        tableContexts.pop();
     }
 
 }

@@ -106,7 +106,8 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
         id = idNum;
         parentRow = parent;
         this.cellWidth = cellWidth;
-        setCenter = setRight = false;
+        setCenter = false;
+        setRight = false;
 
     }
 

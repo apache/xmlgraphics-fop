@@ -77,7 +77,7 @@ public interface ITableAttributes {
     String ATTR_ROW_LEFT_INDENT = "trleft";
     
     /** table row header */
-    public final String ATTR_HEADER = "trhdr";
+    String ATTR_HEADER = "trhdr";
 
 // RTF 1.6 Row and table attributes
     /** table row padding, top */

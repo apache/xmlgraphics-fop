@@ -97,7 +97,6 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFile;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTable;
@@ -531,7 +530,7 @@ public class RTFHandler extends FOInputHandler {
             RtfAttributes atts = TableAttributesConverter.convertRowAttributes(tr.properties,
                     tbl.getHeaderAttribs());
                     
-            if(tr.getParent() instanceof TableHeader) {
+            if (tr.getParent() instanceof TableHeader) {
                 atts.set(ITableAttributes.ATTR_HEADER);
             }
 
@@ -614,8 +613,11 @@ public class RTFHandler extends FOInputHandler {
     public void startList(ListBlock lb) {
         try  {
             // create an RtfList in the current list container
-            final IRtfListContainer c = (IRtfListContainer)builderContext.getContainer(IRtfListContainer.class,true,this);
-            final RtfList newList = c.newList(ListAttributesConverter.convertAttributes(lb.properties));
+            final IRtfListContainer c
+                = (IRtfListContainer)builderContext.getContainer(
+                    IRtfListContainer.class, true, this);
+            final RtfList newList = c.newList(
+                ListAttributesConverter.convertAttributes(lb.properties));
             builderContext.pushContainer(newList);
         } catch (IOException ioe) {
             log.error("startList: " + ioe.getMessage());
@@ -642,7 +644,8 @@ public class RTFHandler extends FOInputHandler {
     public void startListItem(ListItem li) {
         // create an RtfListItem in the current RtfList
         try {
-            final RtfList list = (RtfList)builderContext.getContainer(RtfList.class,true,this);
+            final RtfList list = (RtfList)builderContext.getContainer(
+                    RtfList.class, true, this);
             builderContext.pushContainer(list.newListItem());
         } catch (IOException ioe) {
             log.error("startList: " + ioe.getMessage());
@@ -671,7 +674,7 @@ public class RTFHandler extends FOInputHandler {
             RtfListItem item
                 = (RtfListItem)builderContext.getContainer(RtfListItem.class, true, this);
                 
-            RtfListItemLabel label=item.new RtfListItemLabel(item);
+            RtfListItemLabel label = item.new RtfListItemLabel(item);
             builderContext.pushContainer(label);
         } catch (IOException ioe) {
             log.error("startPageNumber:" + ioe.getMessage());

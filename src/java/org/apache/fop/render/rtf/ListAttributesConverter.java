@@ -75,12 +75,12 @@ public class ListAttributesConverter {
     
     
     static RtfAttributes convertAttributes(PropertyList properties)
-    throws FOPException{
+    throws FOPException {
         
         RtfAttributes attrib = new RtfAttributes();
         
-        Property prop=null;
-        int iStartIndentInTwips=0;
+        Property prop = null;
+        int iStartIndentInTwips = 0;
         
         //start-indent
         if ((prop = properties.get("start-indent")) != null) {
@@ -106,7 +106,7 @@ public class ListAttributesConverter {
             attrib.set(RtfText.LEFT_INDENT_BODY,
                     (int) FoUnitsConverter.getInstance().convertToTwips(sValue));
         } else {
-            if(iStartIndentInTwips >= 360) {
+            if (iStartIndentInTwips >= 360) {
                 //if the start indent is greater than default, set to the start indent
                 attrib.set(RtfText.LEFT_INDENT_BODY, iStartIndentInTwips);
             } else {

@@ -64,7 +64,6 @@ import java.util.Iterator;
 
 // FOP
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList;
 
 /** 
  * Class which contains a linear text run. It has methods to add attributes, 
@@ -263,7 +262,7 @@ public class RtfTextrun extends RtfContainer {
         //may contain for example \intbl
         writeAttributes(attrib, null);
         
-        if(rtfListItem!=null) {
+        if (rtfListItem != null) {
             rtfListItem.getRtfListStyle().writeParagraphPrefix(this);
         }
         
@@ -293,7 +292,7 @@ public class RtfTextrun extends RtfContainer {
             if (!bHide) {
                 e.writeRtf(); 
                 
-                if (rtfListItem!=null && e instanceof RtfParagraphBreak) {
+                if (rtfListItem != null && e instanceof RtfParagraphBreak) {
                     rtfListItem.getRtfListStyle().writeParagraphPrefix(this);
                 }
             }
@@ -312,7 +311,7 @@ public class RtfTextrun extends RtfContainer {
     }
     
     public void setRtfListItem(RtfListItem listItem) {
-        rtfListItem=listItem;
+        rtfListItem = listItem;
     }
     
     public RtfListItem getRtfListItem() {

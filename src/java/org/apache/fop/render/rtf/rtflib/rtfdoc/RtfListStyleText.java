@@ -64,10 +64,10 @@ import java.io.IOException;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement;
 
 public class RtfListStyleText extends RtfListStyle {
-    String text;
+    private String text;
     
     public RtfListStyleText(String s) {
-        text=s;    
+        text = s;    
     }
     
     /**
@@ -114,7 +114,7 @@ public class RtfListStyleText extends RtfListStyle {
         element.writeGroupMark(true);
         
         String sCount;
-        if(text.length()<10) {
+        if (text.length() < 10) {
             sCount = "0" + String.valueOf(text.length());
         } else {
             sCount = String.valueOf(text.length());

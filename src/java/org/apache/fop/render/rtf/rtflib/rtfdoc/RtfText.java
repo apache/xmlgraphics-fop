@@ -212,7 +212,7 @@ public class RtfText extends RtfElement {
     RtfText(IRtfTextContainer parent, Writer w, String str, RtfAttributes attr)
            throws IOException {
         super((RtfContainer)parent, w);
-        text = str;
+        this.text = str;
         this.attr = attr;
     }
 
@@ -306,22 +306,14 @@ public class RtfText extends RtfElement {
      * @return true if the text is a tab character
      */
     public boolean isTab() {
-        if (text.trim().length() == 1 && text.charAt(0) == CHAR_TAB) {
-            return true;
-        } else {
-            return false;
-        }
+        return (text.trim().length() == 1 && text.charAt(0) == CHAR_TAB);
     }
 
     /**
      * @return true if text is a newline character
      */
     public boolean isNewLine() {
-        if (text.trim().length() == 1 && text.charAt(0) == CHAR_NEW_LINE) {
-            return true;
-        } else {
-            return false;
-        }
+        return (text.trim().length() == 1 && text.charAt(0) == CHAR_NEW_LINE);
     }
 
     /**
@@ -330,17 +322,10 @@ public class RtfText extends RtfElement {
      */
     public boolean isBold(boolean isStart) {
         if (isStart) {
-            if (text.trim().length() == 1 && text.charAt(0) == CHAR_BOLD_START) {
-                return true;
-            }
+            return (text.trim().length() == 1 && text.charAt(0) == CHAR_BOLD_START);
         } else {
-            if (text.trim().length() == 1 && text.charAt(0) == CHAR_BOLD_END) {
-                return true;
-            } else {
-                return false;
-            }
+            return (text.trim().length() == 1 && text.charAt(0) == CHAR_BOLD_END);
         }
-        return false;
     }
 
     /** @return the attributes of our text */

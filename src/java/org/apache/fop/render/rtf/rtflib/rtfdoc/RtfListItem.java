@@ -66,16 +66,15 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  *  @author Andreas Putz a.putz@skynamics.com
  */
-public class RtfListItem
-extends RtfContainer
-implements IRtfTextrunContainer,
-           IRtfListContainer,
-           IRtfParagraphContainer {
+public class RtfListItem extends RtfContainer
+        implements IRtfTextrunContainer,
+                   IRtfListContainer,
+                   IRtfParagraphContainer {
 
     private RtfList parentList;
     private RtfParagraph paragraph;
     private RtfListStyle listStyle;
-    private int number=0;
+    private int number = 0;
 
     /** special RtfParagraph that writes list item setup code before its content */
     private class RtfListItemParagraph extends RtfParagraph {
@@ -92,12 +91,12 @@ implements IRtfTextrunContainer,
             }
 
     public class RtfListItemLabel extends RtfTextrun implements IRtfTextrunContainer {
-        RtfListItem rtfListItem;
+        private RtfListItem rtfListItem;
         
         public RtfListItemLabel(RtfListItem item) throws IOException {
             super(null, item.writer, null); 
             
-            rtfListItem=item;
+            rtfListItem = item;
         }
 
         public RtfTextrun getTextrun() throws IOException {
@@ -107,7 +106,7 @@ implements IRtfTextrunContainer,
         public void addString(String s) throws IOException {
             
             final String label = s.trim();
-            if(label.length() > 0 && Character.isDigit(label.charAt(0))) {
+            if (label.length() > 0 && Character.isDigit(label.charAt(0))) {
                 rtfListItem.setRtfListStyle(new RtfListStyleNumber());
             } else {
                 rtfListItem.setRtfListStyle(new RtfListStyleText(label));
@@ -150,9 +149,8 @@ implements IRtfTextrunContainer,
         parentList = parent;
     }
 
-    public RtfTextrun getTextrun()
-    throws IOException {
-        RtfTextrun textrun=RtfTextrun.getTextrun(this, writer, null);
+    public RtfTextrun getTextrun() throws IOException {
+        RtfTextrun textrun = RtfTextrun.getTextrun(this, writer, null);
         textrun.setRtfListItem(this);
         return textrun;
     }
@@ -191,7 +189,7 @@ implements IRtfTextrunContainer,
         getRtfListStyle().writeListPrefix(this);
 
         writeGroupMark(false);
-        writeOneAttribute(RtfListTable.LIST_NUMBER,new Integer(number));
+        writeOneAttribute(RtfListTable.LIST_NUMBER, new Integer(number));
     }
     
     /**
@@ -227,7 +225,7 @@ implements IRtfTextrunContainer,
      * @return ListSytle of the List
      */    
     public RtfListStyle getRtfListStyle() {
-        if(listStyle==null) {
+        if (listStyle == null) {
             return parentList.getRtfListStyle();
         } else {
             return listStyle;

@@ -70,7 +70,7 @@ public class RtfListStyle {
     private RtfListItem rtfListItem;
     
     public void setRtfListItem(RtfListItem item) {
-        rtfListItem=item;
+        rtfListItem = item;
     }
     
     public RtfListItem getRtfListItem() {

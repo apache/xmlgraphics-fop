@@ -180,7 +180,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         final RtfTable parentTable = (RtfTable) parent;
         adjustBorderProperties(parentTable);
 
-        writeAttributes(attrib,new String[]{ITableAttributes.ATTR_HEADER});
+        writeAttributes(attrib, new String[]{ITableAttributes.ATTR_HEADER});
         writeAttributes(attrib, ITableAttributes.ROW_BORDER);
         writeAttributes(attrib, ITableAttributes.CELL_BORDER);
         writeAttributes(attrib, BorderAttributesConverter.BORDERS);
@@ -384,11 +384,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
      * @return true if the row is the first in the table
      */
     public boolean isFirstRow() {
-        if (id == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return (id == 1);
     }
 
     /**
