@@ -16,10 +16,10 @@ if [ "$JAVA_HOME" = "" ] ; then
 fi
 
 LIBDIR=../../lib
-LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip:$LIBDIR/ant.jar:$LIBDIR/w3c.jar:$LIBDIR/buildtools.jar:$LIBDIR/xerces-1.2.3.jar:$LIBDIR/xalan-2.0.0.jar:$LIBDIR/xalanj1compat.jar:$LIBDIR/bsf.jar:$LIBDIR/jimi-1.0.jar:$LIBDIR/stylebook.jar:$LIBDIR/../build/fop.jar
+LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip:$LIBDIR/ant.jar:$LIBDIR/w3c.jar:$LIBDIR/buildtools.jar:$LIBDIR/xerces-1.2.3.jar:$LIBDIR/xalan-1.2.2.jar:$LIBDIR/bsf.jar:$LIBDIR/jimi-1.0.jar:$LIBDIR/stylebook.jar:$LIBDIR/../build/fop.jar
 ANT_HOME=$LIBDIR
 
-echo Building with classpath $CLASSPATH:$LOCALCLASSPATH
+echo Building with classpath $LOCALCLASSPATH:$CLASSPATH
 echo
 
 echo Starting Ant...
@@ -27,6 +27,5 @@ echo
 
 $JAVA_HOME/bin/java -Dant.home=$ANT_HOME -classpath "$LOCALCLASSPATH:$CLASSPATH" org.apache.tools.ant.Main $*
 
-echo "sorry, production of html documentation is broken at the moment"
 
-#$JAVA_HOME/bin/java -classpath "$LOCALCLASSPATH:$CLASSPATH" org.apache.stylebook.StyleBook "targetDirectory=../html-docs/" fop.xml style/
+$JAVA_HOME/bin/java -classpath "$LOCALCLASSPATH:$CLASSPATH" org.apache.stylebook.StyleBook "targetDirectory=../html-docs/" fop.xml style/
