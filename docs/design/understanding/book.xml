@@ -9,7 +9,7 @@
   <page id="xml_parsing"          label="XML Parsing"      source="xml_parsing.xml"/>
   <page id="fo_tree"          label="FO Tree"      source="fo_tree.xml"/>
   <page id="properties"          label="Properties"      source="properties.xml"/>
-  <page id="layout_managers"          label="Layout Managers"      source="layout_process.xml"/>
+  <page id="layout_managers"          label="Layout Managers"      source="layout_managers.xml"/>
   <page id="layout_process"          label="Layout Process"      source="layout_process.xml"/>
   <page id="handling_attributes"          label="Handling Attributes"      source="handling_attributes.xml"/>
   <page id="area_tree"          label="Area Tree"      source="area_tree.xml"/>
