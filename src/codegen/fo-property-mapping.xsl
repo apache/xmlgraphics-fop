@@ -137,10 +137,27 @@ public class <xsl:value-of select="@family"/>PropertyMapping implements Constant
   }
 
   public static int getPropertyId(String name) {
-  	Integer i = (Integer) s_htPropNames.get(name);
-  	if (i == null)
-  		return -1;
-    return i.intValue();
+    // check to see if base.compound or just base property
+    int sepchar = name.indexOf('.');
+
+    if (sepchar > -1) {
+        Integer baseId = (Integer) s_htPropNames.get(name.substring(0, sepchar));
+        if (baseId == null) {
+            return -1;
+        } else {
+            int cmpdId = getSubPropertyId(name.substring(sepchar + 1));
+            if (cmpdId == -1) {
+                return -1;
+            } else {
+                return baseId.intValue() + cmpdId;
+            }
+        }
+    } else {
+        Integer baseId = (Integer) s_htPropNames.get(name);
+        if (baseId == null)
+            return -1;
+        return baseId.intValue();
+    }
   }
 
   public static int getSubPropertyId(String name) {
