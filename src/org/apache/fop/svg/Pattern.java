@@ -59,6 +59,8 @@ import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
+
+import org.w3c.dom.svg.*;
 /**
  * class representing svg:Pattern pseudo flow object.
  *
@@ -103,4 +105,27 @@ public class Pattern extends SVGObj {
 		super(parent, propertyList);
 		this.name = "svg:pattern";
 	}
+
+    public SVGElement createGraphic() {
+    	SVGPatternElement pattern = new SVGPatternElementImpl();
+//        pattern.setStyle(
+//          ((SVGStyle) this.properties.get("style")).getStyle());
+//        pattern.setTransform(
+//          ((SVGTransform) this.properties.get("transform")).
+//          getTransform());
+        pattern.setId(this.properties.get("id").getString());
+		int numChildren = this.children.size();
+		for (int i = 0; i < numChildren; i++) {
+			FONode child = (FONode) children.elementAt(i);
+			if(child instanceof GraphicsCreator) {
+				SVGElement impl = ((GraphicsCreator)child).createGraphic();
+				if(impl != null) {
+					if(impl instanceof SVGElementImpl)
+						((SVGElementImpl)impl).setClassName(new SVGAnimatedStringImpl(((FObj)child).getProperty("class").getString()));
+					pattern.appendChild(impl);
+				}
+			}
+		}
+		return pattern;
+    }
 }
