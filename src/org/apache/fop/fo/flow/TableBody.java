@@ -32,7 +32,8 @@ public class TableBody extends AbstractTableBody {
         return new TableBody.Maker();
     }
 
-    public TableBody(FObj parent, PropertyList propertyList) {
+    public TableBody(FObj parent, PropertyList propertyList) 
+      throws FOPException {
         super(parent, propertyList);
         this.name = "fo:table-body";
     }
