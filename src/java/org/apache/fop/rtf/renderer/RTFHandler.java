@@ -56,6 +56,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.StructureHandler;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
@@ -72,6 +73,7 @@ import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfColorTable;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfFile;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
@@ -97,6 +99,12 @@ public class RTFHandler extends StructureHandler {
 
     private static final String ALPHA_WARNING = "WARNING: RTF renderer is "
         + "veryveryalpha at this time, see class org.apache.fop.rtf.renderer.RTFHandler";
+
+    /**
+     * Tracks current background color. BG color is not reset automatically
+     * anywhere, so we need a persistent way to see whether it has changed.
+     */
+    private int currentRTFBackgroundColor = -1;
 
     /**
      * Creates a new RTF structure handler.
@@ -182,7 +190,8 @@ public class RTFHandler extends StructureHandler {
     public void startBlock(Block bl) {
         try {
             RtfAttributes rtfAttr = new RtfAttributes();
-            rtfAttr.set(mapBlockTextAlign(bl));
+            attrBlockTextAlign(bl, rtfAttr);
+            attrBlockBackgroundColor(bl, rtfAttr);
             para = sect.newParagraph(rtfAttr);
         } catch (IOException ioe) {
             // FIXME could we throw Exception in all StructureHandler events?
@@ -397,7 +406,7 @@ public class RTFHandler extends StructureHandler {
         }
     }
 
-    private static String mapBlockTextAlign(Block bl) {
+    private void attrBlockTextAlign(Block bl, RtfAttributes rtfAttr) {
         int fopValue = bl.properties.get("text-align").getEnum();
         String rtfValue = null;
         switch (fopValue) {
@@ -418,7 +427,40 @@ public class RTFHandler extends StructureHandler {
                 break;
             }
         }
-        return rtfValue;
+        rtfAttr.set(rtfValue);
+    }
+
+    private void attrBlockBackgroundColor(Block bl, RtfAttributes rtfAttr) {
+        ColorType fopValue = bl.properties.get("background-color").getColorType();
+        int rtfColor = 0;
+        /* FOP uses a default background color of "transparent", which is
+           actually a transparent black, which is generally not suitable as a
+           default here. Changing FOP's default to "white" causes problems in
+           PDF output, so we will look for the default here & change it to
+           white. */
+        if ((fopValue.getRed() == 0) && (fopValue.getGreen() == 0)
+                && (fopValue.getBlue() == 0) && (fopValue.alpha() == 1)) {
+            rtfColor = RtfColorTable.getInstance().getColorNumber("white");
+        } else {
+            rtfColor = convertFOPColorToRTF(fopValue);
+        }
+        if (rtfColor != currentRTFBackgroundColor) {
+            rtfAttr.set(RtfText.ATTR_BACKGROUND_COLOR, rtfColor);
+            currentRTFBackgroundColor = rtfColor;
+        }
+    }
+
+    /**
+     * Converts a FOP ColorType to the integer pointing into the RTF color table
+     * @param fopColor the ColorType object to be converted
+     * @return integer pointing into the RTF color table
+     */
+    public static int convertFOPColorToRTF(ColorType fopColor) {
+        int redComponent = ColorType.convertChannelToInteger (fopColor.getRed());
+        int greenComponent = ColorType.convertChannelToInteger (fopColor.getGreen());
+        int blueComponent = ColorType.convertChannelToInteger (fopColor.getBlue());
+        return RtfColorTable.getInstance().getColorNumber(redComponent,
+                greenComponent, blueComponent);
     }
 
 }
