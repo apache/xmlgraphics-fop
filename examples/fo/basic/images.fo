@@ -75,6 +75,20 @@
     <fo:external-graphic src="file:../graphics/linux.bmp"/>
   </fo:block>
 </fo:block>
+<fo:block id="N2555">
+  <!--fox:destination internal-destination="N2555"/-->
+  <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A PNG image in FOP</fo:block>
+  <fo:block>
+    <fo:external-graphic src="file:../graphics/asf-logo.png"/>
+  </fo:block>
+</fo:block>
+<fo:block id="N2556">
+  <!--fox:destination internal-destination="N2556"/-->
+  <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A TIFF image in FOP</fo:block>
+  <fo:block>
+    <fo:external-graphic src="file:../graphics/asf-logo.tif"/>
+  </fo:block>
+</fo:block>
 <fo:block id="N2559">
   <!--fox:destination internal-destination="N2559"/-->
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em"/>

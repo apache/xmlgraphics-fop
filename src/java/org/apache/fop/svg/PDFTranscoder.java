@@ -29,6 +29,7 @@ import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.bridge.UserAgent;
+import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.gvt.TextPainter;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
 import org.apache.batik.transcoder.TranscoderException;
@@ -153,6 +154,9 @@ public class PDFTranscoder extends AbstractFOPTranscoder
             graphics.setGraphicContext
                 (new org.apache.batik.ext.awt.g2d.GraphicContext());
             graphics.setTransform(curTxf);
+            graphics.setRenderingHint
+                (RenderingHintsKeyExt.KEY_TRANSCODING,
+                 RenderingHintsKeyExt.VALUE_TRANSCODING_VECTOR);
 
             this.root.paint(graphics);
 

@@ -26,6 +26,8 @@ import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.DCTFilter;
 import org.apache.fop.pdf.PDFColorSpace;
+import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.pdf.BitmapImage;
 
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.JpegImage;
@@ -83,6 +85,17 @@ public class FopPDFImage implements PDFImage {
                 pdfICCStream = doc.getFactory().makePDFICCStream();
                 pdfICCStream.setColorSpace(prof, pdfCS);
             }
+        }
+
+        if (fopImage.hasSoftMask()) {
+            byte [] softMask = fopImage.getSoftMask();
+            if (softMask == null) return;
+            BitmapImage fopimg = new BitmapImage
+                ("Mask:" + key, fopImage.getWidth(), fopImage.getHeight(), 
+                 softMask, null);
+            fopimg.setColorSpace(new PDFColorSpace(PDFColorSpace.DEVICE_GRAY));
+            PDFXObject xobj = doc.addImage(null, fopimg);
+            softMaskRef = xobj.referencePDF();
         }
     }
 
@@ -156,6 +169,7 @@ public class FopPDFImage implements PDFImage {
      * @see org.apache.fop.pdf.PDFImage#getSoftMask()
      */
     public String getSoftMask() {
+
         return softMaskRef;
     }
 

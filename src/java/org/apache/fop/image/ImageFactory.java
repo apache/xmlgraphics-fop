@@ -300,13 +300,13 @@ public class ImageFactory {
         } else if ("image/eps".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.EPSImage";
         } else if ("image/png".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.JimiImage";
+            imgClassName = "org.apache.fop.image.PNGImage";
             // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/tga".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.JimiImage";
             // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/tiff".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.JimiImage";
+            imgClassName = "org.apache.fop.image.TIFFImage";
             // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/svg+xml".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.XMLImage";
