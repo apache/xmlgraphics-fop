@@ -1407,6 +1407,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     public void addAreas(PositionIterator parentIter, double dSpaceAdjust) {
         LayoutManager childLM;
         LayoutContext lc = new LayoutContext(0);
+        iCurrParIndex = 0;
         while (parentIter.hasNext()) {
             ListIterator paragraphIterator = null;
             KnuthElement tempElement = null;
@@ -1459,7 +1460,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             iStartElement = lbp.getLeafPos() + 1;
             if (iStartElement == currPar.size()) {
                 // advance to next paragraph
-                iCurrParIndex ++;
+                iCurrParIndex++;
                 iStartElement = 0;
             }
 
