@@ -28,8 +28,24 @@ import java.util.NoSuchElementException;
  */
 public class SyncedNode extends Node implements Cloneable {
     
-    public final Object sync;
+    protected Object sync;
     
+    /**
+     * @return the sync
+     */
+    public Object getSync() {
+        synchronized (sync) {
+            return sync;
+        }
+    }
+    /**
+     * @param sync to set
+     */
+    public void setSync(Object sync) {
+        synchronized (this.sync) {
+            this.sync = sync;
+        }
+    }
     /**
      * @param sync the object on which synchronization for this
      * node will occur
@@ -39,6 +55,13 @@ public class SyncedNode extends Node implements Cloneable {
         this.sync = sync;
     }
 
+    /**
+     * No argument constructor.  Assumes that this node will sync on itself.
+     */
+    public SyncedNode() {
+        super();
+        this.sync = this;
+    }
     /**
      * @param parent <code>Node</code> of this
      * @param index of this in children of parent
@@ -62,7 +85,7 @@ public class SyncedNode extends Node implements Cloneable {
         throws IndexOutOfBoundsException {
         super(parent);
         this.sync = sync;
-        }
+    }
 
 
     /**
