@@ -465,7 +465,6 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             log.error("no region viewport: shouldn't happen");
         }
         StaticContentLayoutManager lm = getStaticContentLayoutManager(flow);
-        lm.setUserAgent(getUserAgent());
         lm.initialize();
         lm.setRegionReference(reg.getRegion());
         lm.setParent(this);
@@ -894,7 +893,6 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             return lm;
         }
         lm = new StaticContentLayoutManager();
-        lm.setUserAgent(getUserAgent());
         lm.setFObj(sc);
         staticContentLMs.put(sc.getFlowName(), lm);
         return lm;

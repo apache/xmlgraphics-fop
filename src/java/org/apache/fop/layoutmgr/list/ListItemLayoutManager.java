@@ -106,9 +106,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         // currently active LM
         Item curLM;
 
-        label.setUserAgent(getUserAgent());
-        body.setUserAgent(getUserAgent());
-
         BreakPoss lastPos = null;
         List breakList = new ArrayList();
 
