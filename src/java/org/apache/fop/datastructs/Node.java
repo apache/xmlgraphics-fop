@@ -97,7 +97,7 @@ public class Node implements Cloneable {
 
     protected Tree tree;
     protected Node parent;
-    private ArrayList children;     // ArrayList of Node
+    protected ArrayList children;     // ArrayList of Node
     /** Creation size of the <i>children</i> <tt>ArrayList</tt>. */
     private static final int FAMILYSIZE = 4;
 
@@ -199,7 +199,7 @@ public class Node implements Cloneable {
         synchronized (tree) {
             if (children == null)
                 children = new ArrayList(FAMILYSIZE);
-            children.add((Object) child);
+            children.add(child);
             tree.modified();
         }
     }
@@ -221,7 +221,7 @@ public class Node implements Cloneable {
         synchronized (tree) {
             if (children == null)
                 children = new ArrayList(FAMILYSIZE);
-            children.add(index, (Object) child);
+            children.add(index, child);
             tree.modified();
         }
     }
@@ -418,7 +418,7 @@ public class Node implements Cloneable {
     public Node removeChild(Node child)
         throws NoSuchElementException {
         synchronized (tree) {
-            int index = children.indexOf((Object) child);
+            int index = children.indexOf(child);
             if (index == -1) {
                 throw new NoSuchElementException();
             }
@@ -531,7 +531,7 @@ public class Node implements Cloneable {
      * @return the parent <tt>Node</tt>.
      */
     public Node getParent() {
-        return (Node) parent;
+        return parent;
     }
 
     /**
@@ -956,7 +956,7 @@ public class Node implements Cloneable {
                     // Not the root node; siblings may exist
                     // Set up iterator on the parent's children ArrayList
                     ArrayList siblings = refNode.children;
-                    int index = siblings.indexOf((Object) Node.this);
+                    int index = siblings.indexOf(Node.this);
                     // if this is invalid, we are in serious trouble
                     listIterator = siblings.listIterator(index + 1);
                 } // end of if (Node.this.parent != null)
@@ -1068,7 +1068,7 @@ public class Node implements Cloneable {
                     // Not the root node; siblings may exist
                     // Set up iterator on the parent's children ArrayList
                     ArrayList siblings = refNode.children;
-                    int index = siblings.indexOf((Object) Node.this);
+                    int index = siblings.indexOf(Node.this);
                     // if this is invalid, we are in serious trouble
                     listIterator = siblings.listIterator(index);
                 } // end of if (Node.this.parent != null)
