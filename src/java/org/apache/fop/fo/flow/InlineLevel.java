@@ -35,9 +35,9 @@ import org.apache.fop.layoutmgr.InlineLayoutManager;
 
 /**
  * Class modelling the commonalities of several inline-level
- * formatting objects. It should not be instantiated directly.
+ * formatting objects.
  */
-public class InlineLevel extends FObjMixed {
+public abstract class InlineLevel extends FObjMixed {
     protected CommonBorderPaddingBackground commonBorderPaddingBackground;
     protected CommonAccessibility commonAccessibility;
     protected CommonMarginInline commonMarginInline;

@@ -19,15 +19,13 @@
 package org.apache.fop.fo.pagination.bookmarks;
 
 import java.util.ArrayList;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.extensions.Label;
+import org.apache.fop.fo.ValidationException;
 
 
 /**
@@ -36,7 +34,7 @@ import org.apache.fop.fo.extensions.Label;
  * XSL 1.1 WD evolves.
  */
 public class Bookmark extends FObj {
-    private Label bookmarkTitle;
+    private BookmarkTitle bookmarkTitle;
     private ArrayList childBookmarks = new ArrayList();
 
     private String internalDestination;
@@ -76,11 +74,39 @@ public class Bookmark extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+        XSL/FOP: (bookmark-title, bookmark*)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws ValidationException {
+            if (nsURI == FO_URI && localName.equals("bookmark-title")) {
+                if (bookmarkTitle != null) {
+                    tooManyNodesError(loc, "fo:bookmark-title");
+                }
+            } else if (nsURI == FO_URI && localName.equals("bookmark")) {
+                if (bookmarkTitle == null) {
+                    nodesOutOfOrderError(loc, "fo:bookmark-title", "fo:bookmark");
+                }                
+            } else {
+                invalidChildError(loc, nsURI, localName);
+            }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws FOPException {
+        if (bookmarkTitle == null) {
+           missingChildElementError("(bookmark-title, bookmark*)");
+        }
+    }
+
+    /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
     protected void addChildNode(FONode obj) {
-        if (obj instanceof Label) {
-            bookmarkTitle = (Label)obj;
+        if (obj instanceof BookmarkTitle) {
+            bookmarkTitle = (BookmarkTitle)obj;
         } else if (obj instanceof Bookmark) {
             childBookmarks.add(obj);
         }
@@ -92,7 +118,7 @@ public class Bookmark extends FObj {
      * @return the bookmark title string or an empty string if not found
      */
     public String getBookmarkTitle() {
-        return bookmarkTitle == null ? "" : bookmarkTitle.toString();
+        return bookmarkTitle == null ? "" : bookmarkTitle.getTitle();
     }
 
     public String getInternalDestination() {

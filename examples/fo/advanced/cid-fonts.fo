@@ -2,8 +2,7 @@
 <!DOCTYPE fo:root [
 <!ENTITY nbsp "&#160;">
 ]>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
-         xmlns:fox="http://xml.apache.org/fop/extensions">
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
  <fo:layout-master-set>
    <fo:simple-page-master master-name="A4"
             page-width="21cm" 
@@ -18,61 +17,61 @@
 
 <fo:bookmark-tree>
   <fo:bookmark internal-destination="sec0">
-    <fox:label>Adding Fonts to FOP</fox:label>
+    <fo:bookmark-title>Adding Fonts to FOP</fo:bookmark-title>
   </fo:bookmark>
 
   <fo:bookmark internal-destination="sec1">
-    <fox:label>Adding additional Type 1 fonts</fox:label>
+    <fo:bookmark-title>Adding additional Type 1 fonts</fo:bookmark-title>
 
     <fo:bookmark internal-destination="sec1-1">
-      <fox:label>Generating a font metrics file</fox:label>
+      <fo:bookmark-title>Generating a font metrics file</fo:bookmark-title>
     </fo:bookmark>
     <fo:bookmark internal-destination="sec1-2">
-      <fox:label>Register the fonts within FOP</fox:label>
+      <fo:bookmark-title>Register the fonts within FOP</fo:bookmark-title>
     </fo:bookmark>
   </fo:bookmark>
 
   <fo:bookmark internal-destination="sec2">
-    <fox:label>Adding additional TrueType fonts</fox:label>
+    <fo:bookmark-title>Adding additional TrueType fonts</fo:bookmark-title>
 
     <fo:bookmark internal-destination="sec2-1">
-      <fox:label>Generating a font metrics file</fox:label>
+      <fo:bookmark-title>Generating a font metrics file</fo:bookmark-title>
     </fo:bookmark>
     <fo:bookmark internal-destination="sec2-2">
-      <fox:label>TrueType collections</fox:label>
+      <fo:bookmark-title>TrueType collections</fo:bookmark-title>
     </fo:bookmark>
     <fo:bookmark internal-destination="sec2-3">
-      <fox:label>Register the fonts within FOP</fox:label>
+      <fo:bookmark-title>Register the fonts within FOP</fo:bookmark-title>
     </fo:bookmark>
 
   </fo:bookmark>
 
  <fo:bookmark internal-destination="sec3">
-    <fox:label>Embedding fonts in the PDF</fox:label>
+    <fo:bookmark-title>Embedding fonts in the PDF</fo:bookmark-title>
   </fo:bookmark>
 
  <fo:bookmark internal-destination="sec4">
-    <fox:label>Example embedding MSGothic</fox:label>
+    <fo:bookmark-title>Example embedding MSGothic</fo:bookmark-title>
 
    <fo:bookmark internal-destination="sec4-1">
-      <fox:label>Setup CLASSPATH</fox:label>
+      <fo:bookmark-title>Setup CLASSPATH</fo:bookmark-title>
    </fo:bookmark>
 
    <fo:bookmark internal-destination="sec4-2">
-      <fox:label>Create the metrics file</fox:label>
+      <fo:bookmark-title>Create the metrics file</fo:bookmark-title>
    </fo:bookmark>
 
    <fo:bookmark internal-destination="sec4-3">
-      <fox:label>Edit msgothic.xml</fox:label>
+      <fo:bookmark-title>Edit msgothic.xml</fo:bookmark-title>
    </fo:bookmark>
 
    <fo:bookmark internal-destination="sec4-4">
-      <fox:label>Register the font with FOP</fox:label>
+      <fo:bookmark-title>Register the font with FOP</fo:bookmark-title>
    </fo:bookmark>
  </fo:bookmark>
 
  <fo:bookmark internal-destination="sec5">
-    <fox:label>Japanese Examples</fox:label>
+    <fo:bookmark-title>Japanese Examples</fo:bookmark-title>
  </fo:bookmark>
 </fo:bookmark-tree>
 

@@ -11,141 +11,121 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
 - fo:page-number-citation (computes dynamically the page number in section 'content')
 -->
 
-<!-- note the extensions namespace (fox) -->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
-         xmlns:fox="http://xml.apache.org/fop/extensions">
-  <fo:layout-master-set>
-
-    <!-- layout for the first page -->
-    <fo:simple-page-master master-name="first"
-                  page-height="29.7cm"
-                  page-width="21cm"
-                  margin-top="1cm"
-                  margin-bottom="2cm"
-                  margin-left="2.5cm"
-                  margin-right="2.5cm">
-      <fo:region-body margin-top="3cm"/>
-      <fo:region-before extent="3cm"/>
-      <fo:region-after extent="1.5cm"/>
-    </fo:simple-page-master>
-
-    <!-- layout for the other pages -->
-    <fo:simple-page-master master-name="rest"
-                  page-height="29.7cm"
-                  page-width="21cm"
-                  margin-top="1cm"
-                  margin-bottom="2cm"
-                  margin-left="2.5cm"
-                  margin-right="2.5cm">
-      <fo:region-body margin-top="2.5cm"/>
-      <fo:region-before extent="2.5cm"/>
-      <fo:region-after extent="1.5cm"/>
-    </fo:simple-page-master>
-
-    <fo:page-sequence-master master-name="basicPSM" >
-      <fo:repeatable-page-master-alternatives>
-        <fo:conditional-page-master-reference master-reference="first"
-          page-position="first" />
-        <fo:conditional-page-master-reference master-reference="rest"
-          page-position="rest" />
-        <!-- recommended fallback procedure -->
-        <fo:conditional-page-master-reference master-reference="rest" />
-      </fo:repeatable-page-master-alternatives>
-    </fo:page-sequence-master>
-
-  </fo:layout-master-set>
-  <!-- end: defines page layout -->
-
-
-<!-- bookmark section -->
-  <fo:bookmark-tree>
-      <fo:bookmark internal-destination="sec1">
-        <fox:label>What is FOP?</fox:label>
-      </fo:bookmark>
+    <fo:layout-master-set>
+        <!-- layout for the first page -->
+        <fo:simple-page-master master-name="first"
+                      page-height="29.7cm"
+                      page-width="21cm"
+                      margin-top="1cm"
+                      margin-bottom="2cm"
+                      margin-left="2.5cm"
+                      margin-right="2.5cm">
+          <fo:region-body margin-top="3cm"/>
+          <fo:region-before extent="3cm"/>
+          <fo:region-after extent="1.5cm"/>
+        </fo:simple-page-master>
     
-      <fo:bookmark internal-destination="sec2">
-        <fox:label>Downloading FOP</fox:label>
-      </fo:bookmark>
+        <!-- layout for the other pages -->
+        <fo:simple-page-master master-name="rest"
+                      page-height="29.7cm"
+                      page-width="21cm"
+                      margin-top="1cm"
+                      margin-bottom="2cm"
+                      margin-left="2.5cm"
+                      margin-right="2.5cm">
+          <fo:region-body margin-top="2.5cm"/>
+          <fo:region-before extent="2.5cm"/>
+          <fo:region-after extent="1.5cm"/>
+        </fo:simple-page-master>
     
-      <fo:bookmark internal-destination="sec3">
-        <fox:label>Running FOP</fox:label>
+        <fo:page-sequence-master master-name="basicPSM" >
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference master-reference="first"
+              page-position="first" />
+            <fo:conditional-page-master-reference master-reference="rest"
+              page-position="rest" />
+            <!-- recommended fallback procedure -->
+            <fo:conditional-page-master-reference master-reference="rest" />
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+    </fo:layout-master-set>
     
-        <fo:bookmark internal-destination="sec3-1">
-          <fox:label>Prerequisites</fox:label>
     
-          <fo:bookmark internal-destination="sec3-1-1">
-            <fox:label>Java 1.1</fox:label>
-          </fo:bookmark>
-    
-          <fo:bookmark internal-destination="sec3-1-2">
-            <fox:label>XML Parser</fox:label>
-          </fo:bookmark>
-    
-          <fo:bookmark internal-destination="sec3-1-3">
-            <fox:label>XSLT Processor</fox:label>
-          </fo:bookmark>
-    
+    <!-- bookmark section -->
+    <fo:bookmark-tree>
+        <fo:bookmark internal-destination="sec1">
+            <fo:bookmark-title>What is FOP?</fo:bookmark-title>
         </fo:bookmark>
-    
-        <fo:bookmark internal-destination="sec3-2">
-          <fox:label>Starting FOP</fox:label>
+        <fo:bookmark internal-destination="sec2">
+            <fo:bookmark-title>Downloading FOP</fo:bookmark-title>
         </fo:bookmark>
+        <fo:bookmark internal-destination="sec3">
+            <fo:bookmark-title>Running FOP</fo:bookmark-title>
+            <fo:bookmark internal-destination="sec3-1">
+                <fo:bookmark-title>Prerequisites</fo:bookmark-title>
+                <fo:bookmark internal-destination="sec3-1-1">
+                    <fo:bookmark-title>Java 1.1</fo:bookmark-title>
+                </fo:bookmark>
+                <fo:bookmark internal-destination="sec3-1-2">
+                    <fo:bookmark-title>XML Parser</fo:bookmark-title>
+                </fo:bookmark>
+                <fo:bookmark internal-destination="sec3-1-3">
+                    <fo:bookmark-title>XSLT Processor</fo:bookmark-title>
+                </fo:bookmark>
+                </fo:bookmark>
+            <fo:bookmark internal-destination="sec3-2">
+                <fo:bookmark-title>Starting FOP</fo:bookmark-title>
+            </fo:bookmark>
+        </fo:bookmark>
+        <fo:bookmark internal-destination="sec4">
+            <fo:bookmark-title>Embedding FOP</fo:bookmark-title>
+        </fo:bookmark>
+        <fo:bookmark internal-destination="sec5">
+            <fo:bookmark-title>What's Implemented?</fo:bookmark-title>
+        </fo:bookmark>
+        <fo:bookmark internal-destination="sec6">
+            <fo:bookmark-title>Limitations</fo:bookmark-title>
+        </fo:bookmark>
+        <fo:bookmark internal-destination="sec7">
+            <fo:bookmark-title>Bugs</fo:bookmark-title>
+        </fo:bookmark>
+        <fo:bookmark internal-destination="sec8">
+            <fo:bookmark-title>Compiling FOP</fo:bookmark-title>
+        </fo:bookmark>
+        <fo:bookmark internal-destination="sec9">
+            <fo:bookmark-title>Getting Involved</fo:bookmark-title>
+        </fo:bookmark>
+        <fo:bookmark internal-destination="sec10">
+            <fo:bookmark-title>FOP Relevant Specifications</fo:bookmark-title>
+        </fo:bookmark>
+        <fo:bookmark internal-destination="sec11">
+            <fo:bookmark-title>License</fo:bookmark-title>
+        </fo:bookmark>
+    </fo:bookmark-tree>
+
+    <!-- actual layout -->
+    <fo:page-sequence master-reference="basicPSM">
+
+    <fo:static-content flow-name="xsl-region-before">
+        <fo:block text-align="end" font-size="10pt" font-family="serif" line-height="14pt" color="red" >
+        This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:page-number/>
+        </fo:block>
+    </fo:static-content>
+
+    <fo:flow flow-name="xsl-region-body">
     
-      </fo:bookmark>
-    
-      <fo:bookmark internal-destination="sec4">
-        <fox:label>Embedding FOP</fox:label>
-      </fo:bookmark>
-    
-      <fo:bookmark internal-destination="sec5">
-        <fox:label>What's Implemented?</fox:label>
-      </fo:bookmark>
-      <fo:bookmark internal-destination="sec6">
-        <fox:label>Limitations</fox:label>
-      </fo:bookmark>
-      <fo:bookmark internal-destination="sec7">
-        <fox:label>Bugs</fox:label>
-      </fo:bookmark>
-      <fo:bookmark internal-destination="sec8">
-        <fox:label>Compiling FOP</fox:label>
-      </fo:bookmark>
-      <fo:bookmark internal-destination="sec9">
-        <fox:label>Getting Involved</fox:label>
-      </fo:bookmark>
-      <fo:bookmark internal-destination="sec10">
-        <fox:label>FOP Relevant Specifications</fox:label>
-      </fo:bookmark>
-      <fo:bookmark internal-destination="sec11">
-        <fox:label>License</fox:label>
-      </fo:bookmark>
-  </fo:bookmark-tree>
+    <fo:block id="secA" font-size="18pt" font-family="sans-serif" line-height="24pt" space-after.optimum="15pt" background-color="blue" color="white" text-align="center" padding-top="3pt">FOP: An Open-Source XSL Formatter and Renderer</fo:block>
 
-  <!-- actual layout -->
-  <fo:page-sequence master-reference="basicPSM">
-
-
-<fo:static-content flow-name="xsl-region-before">
-<fo:block text-align="end" font-size="10pt" font-family="serif" line-height="14pt" color="red" >
-This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:page-number/>
-</fo:block>
-</fo:static-content>
-
-
-<fo:flow flow-name="xsl-region-body">
-
-<fo:block id="secA" font-size="18pt" font-family="sans-serif" line-height="24pt" space-after.optimum="15pt" background-color="blue" color="white" text-align="center" padding-top="3pt">FOP: An Open-Source XSL Formatter and Renderer</fo:block>
-
-
-
-<fo:block id="sec1" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >A)
-      What is FOP?</fo:block>
-  <fo:block space-after.optimum="3pt" font-family="serif">FOP is the world's first print formatter driven by XSL formatting
-     objects. It is a Java 1.1 application that reads a formatting object
-     tree and then turns it into a PDF document. The formatting object
-     tree, can be in the form of an XML document (output by an XSLT engine
-     like XT or Xalan) or can be passed in memory as a DOM Document or (in
-     the case of XT) SAX events.
+    <fo:block id="sec1" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >A)
+          What is FOP?</fo:block>
+      <fo:block space-after.optimum="3pt" font-family="serif">FOP is the world's first print formatter driven by XSL formatting
+         objects. It is a Java 1.1 application that reads a formatting object
+         tree and then turns it into a PDF document. The formatting object
+         tree, can be in the form of an XML document (output by an XSLT engine
+         like XT or Xalan) or can be passed in memory as a DOM Document or (in
+         the case of XT) SAX events.
 
   </fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">FOP is part of Apache's XML project. The homepage of FOP is
