@@ -274,7 +274,9 @@ want it to.</comment>
         <level-2 name="Area Alignment Properties" citation="§7.13" extURL="slice7.html#area-alignment" ref-name="areaalign">
           <level-3 name="alignment-adjust" citation="§7.13.1" extURL="slice7.html#alignment-adjust" compliance-level="1" comply="no"/>
           <level-3 name="alignment-baseline" citation="§7.13.2" extURL="slice7.html#alignment-baseline" compliance-level="1" comply="no"/>
-          <level-3 name="baseline-shift" citation="§7.13.3" extURL="slice7.html#baseline-shift" compliance-level="1" comply="no"/>
+          <level-3 name="baseline-shift" citation="§7.13.3" extURL="slice7.html#baseline-shift" compliance-level="1" comply="partial">
+            <comment>Only values "super" and "sub" have been implemented.</comment>
+          </level-3>
           <level-3 name="display-align" citation="§7.13.4" extURL="slice7.html#display-align" compliance-level="2" comply="partial">
             <comment>Implemented only for table-cell and block-container.</comment>
             <comment>For table-cell, the "height" attribute must be set for the parent table-row; setting the height of the table or the table-cell results in vertical centering having no effect.
@@ -502,7 +504,9 @@ want it to.</comment>
             <comment>&quot;inherit&quot; not handled</comment>
           </level-3>
           <level-3 name="size" citation="§7.29.21" extURL="slice7.html#size" compliance-level="3" comply="no"/>
-          <level-3 name="vertical-align" citation="§7.29.22" extURL="slice7.html#vertical-align" compliance-level="3" comply="no"/>
+          <level-3 name="vertical-align" citation="§7.29.22" extURL="slice7.html#vertical-align" compliance-level="3" comply="partial">
+            <comment>Only works as a shorthand for baseline-shift property.</comment>
+          </level-3>
           <level-3 name="white-space" citation="§7.29.23" extURL="slice7.html#white-space" compliance-level="3" comply="no"/>
           <level-3 name="xml:lang" citation="§7.29.24" extURL="slice7.html#xml:lang" compliance-level="3" comply="no"/>
         </level-2>
