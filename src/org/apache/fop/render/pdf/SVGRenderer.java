@@ -2187,14 +2187,34 @@ public class SVGRenderer {
 		 * This handles the escaping of special pdf chars and deals with
 		 * whitespace.
 		 */
-		protected float addSVGStr(FontState fs, float currentX, String str,
-															boolean spacing) {
+		protected float addSVGStr(FontState fs, float currentX, String str, boolean spacing) {
 				boolean inbetween = false;
 				boolean addedspace = false;
 				StringBuffer pdf = new StringBuffer();
+				Font f = (Font) fs.getFontInfo().getFonts().get(fs.getFontName());
+			        boolean useMultiByte = false;
+        			if (f instanceof CIDFont) 
+                			useMultiByte=true;
+        			String startText = useMultiByte ? "<" : "(";
+        			String endText = useMultiByte ? ">" : ")";
+
+                		pdf.append(startText);
+
+				if ( useMultiByte ) {
+             			        String enc = ((CIDFont)f).getCharEncoding();
+                		try {
+               				str = new String(str.getBytes(enc), "8859_1");
+                		} catch (java.io.UnsupportedEncodingException ex) { }
+        			} 
+
 				for (int i = 0; i < str.length(); i++) {
 						char ch = str.charAt(i);
-						if (ch > 127) {
+						if ( useMultiByte ) {
+	               						pdf = pdf.append(Integer.toHexString((int) ch));
+                						currentX += fs.width(ch) / 1000f;
+                						inbetween = true;
+                						addedspace = false;
+						} else if (ch > 127) {
 								pdf = pdf.append("\\");
 								pdf = pdf.append(Integer.toOctalString((int) ch));
 								currentX += fs.width(ch) / 1000f;
@@ -2249,6 +2269,7 @@ public class SVGRenderer {
 								}
 						}
 				}
+               			pdf.append(endText);
 				currentStream.write(pdf.toString());
 				return currentX;
 		}
@@ -2379,10 +2400,10 @@ public class SVGRenderer {
 										String str = ((CharacterData) o).getData();
 										currentStream.write(transstr +
 																				(currentX + matrix.getE()) + " " +
-																				(baseY + matrix.getF()) + " Tm " + "(");
+																				(baseY + matrix.getF()) + " Tm " );
 										boolean spacing = "preserve".equals(te.getXMLspace());
 										currentX = addSVGStr(fs, currentX, str, spacing);
-										currentStream.write(") Tj\n");
+										currentStream.write(" Tj\n");
 								} else if (o instanceof SVGTextPathElementImpl) {
 										SVGTextPathElementImpl tpg = (SVGTextPathElementImpl) o;
 										String ref = tpg.str;
