@@ -27,6 +27,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datastructs.ROStringArray;
@@ -138,6 +139,26 @@ public class PropertyConsts {
             throw new PropertyException
                     ("No getInitialValue method in "
                      + classes[property].getName() + ": " + nsme.getMessage());
+        } catch (IllegalAccessException iae) {
+            throw new PropertyException(iae.getMessage());
+        } catch (InvocationTargetException ite) {
+            throw new PropertyException(ite.getMessage());
+        }
+    }
+
+    public static Numeric getMappedNumeric(int property, int enum)
+        throws PropertyException
+    {
+        Method method;
+        if ((method =
+             (Method)(mappednummethods.get(Ints.consts.get(property))))
+            == null)
+            throw new PropertyException("No mappedLength method in "
+                                             + classes[property].getName());
+        try {
+            return (Numeric)
+                    (method.invoke
+                     (null, new Object[] {Ints.consts.get(enum)}));
         } catch (IllegalAccessException iae) {
             throw new PropertyException(iae.getMessage());
         } catch (InvocationTargetException ite) {
@@ -542,10 +563,11 @@ public class PropertyConsts {
                                         ("refineParsing", new Class[]
                                             {org.apache.fop.fo.FOTree.class,
                                                      PropertyValue.class});
-                if ((datatypes[i] & Properties.MAPPED_NUMERIC) != 0)
+                if ((datatypes[i] & Properties.MAPPED_LENGTH) != 0)
                     mappednummethods.put(Ints.consts.get(i),
                                      classes[i].getMethod
-                                     ("getMappedNumArray", new Class[] {}));
+                                     ("getMappedLength", new Class[]
+                                         {Integer.class}));
             }
             catch (NoSuchFieldException e) {
                 throw new RuntimeException(

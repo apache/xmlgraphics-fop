@@ -82,10 +82,21 @@ public class FOTree extends Tree implements Runnable {
     protected LinkedList[] propertyStacks;
 
     /**
-     * A <tt>HashMap</tt> of arrays of <tt>Numeric[]</tt> keyed on the
-     * index of properties which support MAPPED_NUMERIC data types.
+     * An FONode identifier.  This is available to be incremented for
+     * each FONode created.  The only requirement is that active FONodes
+     * have a unique identifier.  An accessor function is defined, but the
+     * responsibility for calling it rests with FONode.
      */
-    private HashMap mappedNumericArrays = new HashMap();
+    private int nodeID = 0;
+
+    /**
+     * Get the next node identifier.  There is no need to synchronize this
+     * as FONodes are created within a single thread.
+     * @return the next node identifier
+     */
+    public int nextNodeID() {
+        return ++nodeID;
+    }
 
     /**
      * @param xmlevents the buffer from which <tt>XMLEvent</tt>s from the
@@ -141,27 +152,6 @@ public class FOTree extends Tree implements Runnable {
             }
         }
 
-        // Initialise the Numeric arrays for properties with
-        // MAPPED_NUMERIC datatypes
-        for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++ ) {
-            if ((PropertyConsts.dataTypes.get(i)
-                 & Properties.MAPPED_NUMERIC) != 0) {
-                try {
-                    Numeric[] numarray =
-                            (Numeric[])
-                                ((Method) (
-                                    PropertyConsts.mappedNumMethods
-                                      .get(Ints.consts.get(i))
-                                    ))
-                                .invoke(null, null);
-                    mappedNumericArrays.put(Ints.consts.get(i),numarray);
-                } catch (IllegalAccessException e) {
-                    throw new PropertyException(e.getMessage());
-                } catch (InvocationTargetException e) {
-                    throw new PropertyException(e.getMessage());
-                }
-            }
-        }
     }
 
     /**
@@ -193,21 +183,6 @@ public class FOTree extends Tree implements Runnable {
         int property = value.getProperty();
         propertyStacks[property].addLast
                 (new PropertyTriplet(property, value));
-    }
-
-    /**
-     * @param property <tt>int</t> property index
-     * @param enumIndex <tt>int</t> enumerated value index into array
-     *  of mapped <tt>Numeric</tt> values
-     * @return <tt>Numeric</tt> corresponding to the <tt>MAPPED_NUMERIC</tt>
-     *  enumeration token for this property
-     */
-    public Numeric getMappedNumArrayValue(int property, int enumIndex)
-    {
-        return
-            ((Numeric[])
-                (mappedNumericArrays.get(Ints.consts.get(property)))
-             )[enumIndex];
     }
 
     /**
