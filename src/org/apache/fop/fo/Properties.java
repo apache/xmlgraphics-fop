@@ -286,12 +286,11 @@ public abstract class Properties {
      *
      * <p>This method is shadowed by individual property classes which
      * require specific processing.
-     * @param property <tt>int</tt> property index
+     * @param foTree the <tt>FOTree</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
-     * @foTree the <tt>FOTree</tt> being built
      */
     public static PropertyValue verifyParsing
-                                        (PropertyValue value, FOTree foTree)
+                                        (FOTree foTree, PropertyValue value)
             throws PropertyException
     {
         int property = value.getProperty();
@@ -1073,25 +1072,35 @@ public abstract class Properties {
                     // the pair, else form a list from this element only
                     PropertyValueList posnList = new PropertyValueList
                                             (PropNames.BACKGROUND_POSITION);
-                    posnList.add(pval);
+                    PropertyValue tmpval = null;
                     // Is it followed by another Numeric?
                     if (elements.hasNext()) {
-                        PropertyValue tmpval;
                         if ((tmpval = (PropertyValue)(elements.next()))
                                     instanceof Numeric) {
+                            posnList.add(pval);
                             posnList.add(tmpval);
                         } else {
                             // Not a following Numeric, so restore the list
                             // cursor
-                            tmpval = (PropertyValue)(elements.previous());
+                            Object tmpo = elements.previous();
+                            tmpval = null;
                         }
                     }
                     // Now send one or two Numerics to BackgroundPosition
                     if (position != null)
                             MessageHandler.log("background: duplicate" +
                             "position overrides previous position");
-                    position =
-                        BackgroundPosition.verifyParsing(foTree, posnList);
+                    if (tmpval == null)
+                        position = BackgroundPosition.verifyParsing
+                                                        (foTree, pval);
+                    else { // 2 elements
+                        // make a space-separated list
+                        PropertyValueList ssList = new PropertyValueList
+                                            (PropNames.BACKGROUND_POSITION);
+                        ssList.add(posnList);
+                        position = BackgroundPosition.verifyParsing
+                                                        (foTree, ssList);
+                    }
                     continue scanning_elements;
                 }
 
@@ -1130,7 +1139,7 @@ public abstract class Properties {
                     // Must be a position indicator
                     // send it to BackgroundPosition.complex for processing
                     // If it is followed by another NCName, form a list from
-                    // the pair, else form a list from this element only
+                    // the pair, else send this element only
 
                     // This is made messy by the syntax of the Background
                     // shorthand.  A following NCName need not be a second
@@ -1160,15 +1169,25 @@ public abstract class Properties {
                     } catch (PropertyException e) {};
 
                     if (pos1ok) {
-                        posnList.add(pval);
-                        // Is it followed by another position NCName?
-                        if (pos2ok) posnList.add(tmpval);
-                        // Now send one or two NCNames to BackgroundPosition
                         if (position != null)
                                 MessageHandler.log("background: duplicate" +
                                 "position overrides previous position");
-                        position =
-                            BackgroundPosition.verifyParsing(foTree, posnList);
+                        // Is it followed by another position NCName?
+                        if (pos2ok) {
+                            posnList.add(pval);
+                            posnList.add(tmpval);
+                            // Now send two NCNames to BackgroundPosition
+                            // as a space-separated list
+                            PropertyValueList ssList = new PropertyValueList
+                                            (PropNames.BACKGROUND_POSITION);
+                            ssList.add(posnList);
+                            position = BackgroundPosition.verifyParsing
+                                                            (foTree, ssList);
+                        } else { // one only
+                        // Now send one NCName to BackgroundPosition
+                            position = BackgroundPosition.verifyParsing
+                                                            (foTree, pval);
+                        }
                         continue scanning_elements;
                     }
                     throw new PropertyException
@@ -1403,7 +1422,7 @@ public abstract class Properties {
             // Only two Numerics allowed
             if (value.size() != 2)
                 throw new PropertyException
-                        ("More that 2 elements in BackgroundPosition list.");
+                        ("Other than 2 elements in BackgroundPosition list.");
             // Analyse the list data.
             // Can be a pair of Numeric values, Length or Percentage,
             // or a pair of enum tokens.  One is from the set
@@ -3569,23 +3588,38 @@ public abstract class Properties {
         /**
          * 'value' is a PropertyValueList or an individual PropertyValue.
          *
-         * If 'value' is a PropertyValueList it may contain, in turn, a
+         * <p>If 'value' is a PropertyValueList it may contain, in turn, a
          * PropertyValueList with the space-separated elements of the
          * original expression, or a list of comma-separated elements if
          * these were the only elements of the expression.
-         *
+         * <p>
          * If a top-level list occurs, i.e. if 'value' is a PropertyValueList
          * which contains multiple elements, it represents a comma-separated
-         * list, which can only legitimately contain a <em>font-family</em>
-         * specification.  However, a <em>font-family</em> cannot occur
-         * without a preceding space-separated <em>font-size</em>, at a
-         * minimum, so such a list is an error.
+         * list.  Commas can only legitimately occur between elements of
+         * a font-family specifier, but more than one may occur.
+         * The font-family specifier MUST be preceded by at least one other
+         * element, a font-size, and MAY be preceded by more than one.
+         * I.e., if a COMMA is present in the list,
+         * <pre>
+         * value (PropertyValueList)
+         *   |
+         *   +  PropertyValueList COMMA element [...]
+         *      (space separated) 
+         *              |
+         *              +- PropertyValue PropertyValue [...]
+         * </pre>
+         * <p>The complication here is that, while the final element of this
+         * list must belong with the comma-separated font-family specifier,
+         * preceding elements MAY also belong to the font-family.
          *
+         * <p>If 'value' is <i>not</i> a PropertyValueList,
          * 'value' can contain a parsed Inherit value or
          *  a parsed NCName value containing one of the system font
          *  enumeration tokens listed in rwEnums, above.
+         *  Note that it cannot contain a font-family, because that MUST
+         *  be preceded by at least one other element.
          *
-         * If 'value' is a space-separated list, it may contain:
+         * <p>If 'value' is a space-separated list, it may contain:
          *   A trailing <em>font-family</em> specification, preceded by
          *   a dimension specification, possibly
          *   preceded by an initial detailed font specification.
@@ -3593,50 +3627,112 @@ public abstract class Properties {
          *   element or a comma-separated list of specific or generic font
          *   names.  A single font name may be a space-separated name.
          *
-         *   The optional initial detailed font specification may be
+         *   <p>The optional initial detailed font specification may be
          *    comprised of a trailing dimension specifier, possibly preceded
          *    by an optional set of font descriptor elements.
          *
-         *   The dimension specifier is comprised of a <em>font-size</em>
+         *   <p>The dimension specifier is comprised of a <em>font-size</em>
          *    specifier, possibly followed by a height
          *    specifier.  The height specifier is made up of a slash
          *    character followed by a <em>line-height</em> specifier proper.
          *
-         *   The optional set of font descriptor elements may include,
+         *   <p>The optional set of font descriptor elements may include,
          *    in any order, from one to three of
-         *    a font-style element
-         *    a font-variant element
-         *    a font-weight element
-         *
+         *    <br>a font-style element
+         *    <br>a font-variant element
+         *    <br>a font-weight element
+         * <p>
          * [ [&lt;font-style&gt;||&lt;font-variant&gt;||&lt;font-weight&gt;]?
          *    &lt;font-size&gt; [/ &lt;line-height&gt;]? &lt;font-family&gt; ]
          *    |caption|icon|menu|message-box|small-caption|status-bar
          *    |inherit
          *
-         *  In other words, this is one of the greatest parsing shambles
-         *   ever conceived by the mind of man.
+         * <p><b>Handling the font-family list.</b>
+         * <p>For any list, the last element or elements must belong to a
+         * font-family specifier.  If only a space-separated list is present
+         * only one font is specified in the font-family, but it may have
+         * space-separated components, e.g. 'Times New' in 'Times New Roman'.
+         * If a comma-separated list is present, there are COMMAs + 1 fonts
+         * given in the font-family, but for the first of these, some parts
+         * of the name may be present in the preceding space-separated list,
+         * e.g. (again) 'Times New'.
+         *
+         * <p>This is handled by splitting the passed PropertyValueList into
+         * two sublists:- initial-list and font-family-list.  The latter
+         * contains those components which MUST bw part of a font-family
+         * specifier.  The trailing elements of the initila-list are scanned
+         * to determine which are components of the font-family-list, and
+         * these are trimmed from initial-list and prepended to
+         * font-family-list.
          *
          * <p>The value(s) provided, if valid, are converted into a list
          * containing the expansion of the shorthand.  A minimum of one
          * value will be present.
          *
+         * <p>N.B. from the specification:<br>
+         * <p>QUOTE<br>
+         * The "font" property is, except as described below, a shorthand
+         * property for setting "font-style", "font-variant", "font-weight",
+         * "font-size", "line-height", and "font-family", at the same place
+         * in the stylesheet. The syntax of this property is based on a
+         * traditional typographical shorthand notation to set multiple
+         * properties related to fonts.
+         * 
+         * <p>All font-related properties are first reset to their initial
+         * values, including those listed in the preceding paragraph plus
+         * "font-stretch" and "font-size-adjust". Then, those properties
+         * that are given explicit values in the "font" shorthand are set
+         * to those values. For a definition of allowed and initial values,
+         * see the previously defined properties. For reasons of backward
+         * compatibility, it is not possible to set "font-stretch" and
+         * "font-size-adjust" to other than their initial values using the
+         * "font" shorthand property; instead, set the individual properties.
+         * <br>ENDQUOTE
+         *
+         * <p>The setup of the shorthand expansion list is determined by the
+         * above considerations.
          */
         public static PropertyValue verifyParsing
                 (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
+            PropertyValueList startList = null;
+            PropertyValueList fontList = null;
             if ( ! (value instanceof PropertyValueList)) {
                 return processValue(foTree, value);
             } else {
-                PropertyValueList list = null;
+                fontList = (PropertyValueList)value;
                 try {
-                    list = spaceSeparatedList((PropertyValueList)value);
+                    startList = spaceSeparatedList(fontList);
+                    // A space-separated list.  Only the last item(s) can
+                    // be part of the font-family-specifier
+                    // Remove the space-separated list element (the only
+                    // element) from fontList, so that the then-empty
+                    // fontList can serve as the
+                    // cachement list for font-family elements discovered
+                    // at the end of startList
+                    fontList.removeFirst();
                 } catch (PropertyException e) {
-                    throw new PropertyException
-                        ("Isolated comma-separated list (possibly a "
-                        + "font-family) found in font expression");
+                    // Must be a comma-separated list
+                    // Pop the first element off the list; this will then
+                    // be equivalent to the space-separated list above.
+                    // Keep the remainder as the seed for a list argument
+                    // to the FontFamily verifier
+                    // Note the assumption that the list is not empty.
+                    // This is consistent with the values returned from the
+                    // parser.
+                    Object tmpo = fontList.removeFirst();
+                    // This MUST be a list, because it must contain both the
+                    // font-family element preceding the implict COMMA which
+                    // separated the original elements, and at least a
+                    // font-size element
+                    if ( ! (tmpo instanceof PropertyValueList))
+                        throw new PropertyException
+                            ("No space-separated list preceding COMMA in "
+                            + "'font' expression");
+                    startList = (PropertyValueList)tmpo;
                 }
-                return processSpaceSepList(foTree, list);
+                return processSpaceSepList(foTree, startList, fontList);
             }
         }
 
@@ -3673,17 +3769,15 @@ public abstract class Properties {
         }
 
         /**
-         * The space separated list must end with a font-family specifier.
-         * This may be a single font, in which case there will be no comma
-         * separated sublist(s) as the final element(s) of the list.
-         * <p>However, because font names may contain spaces and may be
-         * specified "raw", without enclosing quotes, the comma-separated
-         * sublists may be surrounded with space-separated elements which
-         * are also part of the font-family list.
-         * <p>I.e. all elements from the first comma-separated sublist to the
-         * end of the list are part of the font-family value.  In addition,
-         * however, some preceding elements may be part of an initial
-         * font name containing spaces.
+         * The space separated <i>list</i> must end with the first or only
+         * font named in the font-family specifier of the font expression.<br>
+         * The comma-separated <i>fontList</i> contains the second and
+         * subsequent font names from the font-family specifier in the font
+         * expression, or is empty.<br>
+         * <p>Because font names may contain spaces and may be
+         * specified "raw", without enclosing quotes, the font name which
+         * ends the <i>list</i> may occupy more than one element at the end
+         * of the <i>list</i>.
          * <p>The font-family is preceded by a compulsory size/height element;
          * font-size [ / line-height ]?, so searching backwards for a slash
          * character will locate the penultimate and utlimate elements
@@ -3697,20 +3791,28 @@ public abstract class Properties {
          *
          * @param list a <tt>PropertyValueList</tt> containing the actual
          * space-separated list; i.e. the single inner list from the
-         * outer list returned by the parser.
+         * outer list returned by the parser. or removed from the front of
+         * a comma-separated list.
+         * @param fontList a <tt>PropertyValueList</tt> containing any
+         * font-family elements which followed the first comma of the font
+         * expression.  This list may be empty (but is not null) in the case
+         * where there was only one font-family element specified.
          * @return <tt>PropertyValueList</tt> containing a
          * <tt>PropertyValue</tt> for each property in the expansion of the
          * shorthand.
          * @exception PropertyValueException
          */
         private static PropertyValueList
-                processSpaceSepList(FOTree foTree, PropertyValueList list)
+                processSpaceSepList(FOTree foTree,
+                                    PropertyValueList list,
+                                    PropertyValueList fontList)
                         throws PropertyException
         {
             PropertyValueList newlist = null;
 
             // copy the list into an array for random access
             Object[] props = list.toArray();
+            PropertyValue[] propvals = new PropertyValue[props.length];
             int slash = -1;
             int firstcomma = -1;
             int familyStart = -1;
@@ -3719,18 +3821,19 @@ public abstract class Properties {
             PropertyValue style = null;
             PropertyValue variant = null;
             PropertyValue weight = null;
-            Numeric size = null;
-            Numeric height = null;
-            FontFamilySet fontset = null;
+            PropertyValue size = null;
+            PropertyValue height = null;
+            PropertyValue fontset = null;
 
             for (int i = 0; i < props.length; i++) {
-                if (props[i] instanceof Slash)
+                propvals[i] = (PropertyValue)(props[i]);
+                if (propvals[i] instanceof Slash)
                     slash = i;
-                else if (props[i] instanceof PropertyValueList
+                else if (propvals[i] instanceof PropertyValueList
                             && firstcomma == -1)
                     firstcomma = i;
             }
-            if (slash != -1 && slash >= (props.length -2))
+            if (slash != -1 && slash >= (propvals.length -2))
                 throw new PropertyException
                                     ("Invalid slash position in font list");
             if (slash != -1) {
@@ -3738,19 +3841,26 @@ public abstract class Properties {
                 // font-family begins at slash + 2
                 familyStart = slash + 2;
                 fontsize = slash - 1;
+                size = FontSize.verifyParsing(foTree, propvals[fontsize]);
                 // derive the line-height
+                // line-height is at slash + 1
+                height = LineHeight.verifyParsing
+                                            (foTree, propvals[slash + 1]);
+                if (size instanceof Inherit || height instanceof Inherit)
+                    throw new PropertyException
+                        ("'inherit' found in font-size/line-height part "
+                        + "of 'font' shorthand expression");
             } else {
                 // Don''t know where slash is.  If anything precedes the
                 // font-family, it must be a font-size.  Look for that.
-                if (firstcomma == -1) firstcomma = props.length - 1;
+                if (firstcomma == -1) firstcomma = propvals.length - 1;
                 for (fontsize = firstcomma - 1; fontsize >= 0; fontsize--) {
-                    if (props[fontsize] instanceof NCName) {
+                    if (propvals[fontsize] instanceof NCName) {
                         // try for a font-size enumeration
-                        String name = ((NCName)props[fontsize]).getNCName();
+                        String name = ((NCName)propvals[fontsize]).getNCName();
                         try {
-                            size = (new MappedNumeric
-                                        (PropNames.FONT_SIZE, name, foTree)
-                                    ).getMappedNumValue();
+                            size = new MappedNumeric
+                                        (PropNames.FONT_SIZE, name, foTree);
                         } catch (PropertyException e) {
                             // Attempt to derive mapped numeric failed
                             continue;
@@ -3758,10 +3868,10 @@ public abstract class Properties {
                         // Presumably we have a mapped numeric
                         break;
                     }
-                    if (props[fontsize] instanceof Numeric) {
+                    if (propvals[fontsize] instanceof Numeric) {
                         // Length (incl. Ems) or Percentage allowed
-                        if (((Numeric)(props[fontsize])).isDistance()) {
-                            size = (Numeric)(props[fontsize]);
+                        if (((Numeric)(propvals[fontsize])).isDistance()) {
+                            size = propvals[fontsize];
                             break;
                         }
                         // else don't know what this Numeric is doing here -
@@ -3772,15 +3882,107 @@ public abstract class Properties {
                     }
                     // Not an NCName, not a Numeric.  What the ... ?
                     throw new PropertyException
-                        (props[fontsize].getClass().getName() +
+                        (propvals[fontsize].getClass().getName() +
                         " found in 'font' "
                         + "expression while looking for font-size");
                 }
                 // Indicate start of font-family.
                 if (size != null) familyStart = fontsize + 1;
-                else /* no font-size found */ familyStart = 0;
+                else  // no font-size found
+                    // A font-size[/line-height] element is compulsory
+                    throw new PropertyException
+                        ("Required 'font-size' element not found in 'font'"
+                            + " shorthand");
             }
-                
+            // Attempt to derive the FontFamilySet
+            // The discovered font or font-family name must be prepended to
+            // the fontList.  If the font name is a single element, and the
+            // fontList is empty, only that single element is passed to the
+            // verifyParsing() method of FontFamily.  Otherwise the font
+            // name element or elements is formed into a PropertyValueList,
+            // and that list is prepended to fontList.
+            if (fontList.size() == 0
+                                && familyStart == (propvals.length - 1)) {
+                if (propvals[familyStart] instanceof Inherit)
+                    throw new PropertyException
+                        ("'inherit' found in font-family part "
+                        + "of 'font' shorthand expression");
+                fontset =
+                    FontFamily.verifyParsing(foTree, propvals[familyStart]);
+            } else {
+                // Must develop a list to prepend to fontList
+                PropertyValueList tmpList =
+                                new PropertyValueList(PropNames.FONT_FAMILY);
+                for (int i = familyStart; i < propvals.length; i++)
+                    tmpList.add(propvals[i]);
+                fontList.addFirst(tmpList);
+                // Get a FontFamilySet
+                fontset = FontFamily.verifyParsing(foTree, fontList);
+            }
+            // Only font-style font-variant and font-weight, in any order
+            // remain as possibilities at the front of the expression
+            for (int i = 0; i < fontsize; i++) {
+                PropertyValue pv = null;
+                if (propvals[i] instanceof Inherit)
+                    throw new PropertyException
+                        ("'inherit' found in 'font' expression");
+                try {
+                    pv = FontStyle.verifyParsing(foTree, propvals[i]);
+                    if (style != null)
+                        MessageHandler.log("font: duplicate" +
+                        "style overrides previous style");
+                    style = pv;
+                } catch(PropertyException e) {}
+
+                try {
+                    pv = FontVariant.verifyParsing(foTree, propvals[i]);
+                    if (variant != null)
+                        MessageHandler.log("font: duplicate" +
+                        "variant overrides previous variant");
+                    variant = pv;
+                } catch(PropertyException e) {}
+
+                try {
+                    pv = FontWeight.verifyParsing(foTree, propvals[i]);
+                    if (weight != null)
+                        MessageHandler.log("font: duplicate" +
+                        "weight overrides previous weight");
+                    weight = pv;
+                } catch(PropertyException e) {}
+
+            }
+            // Construct the shorthand expansion list from the discovered
+            // values of individual components
+
+            newlist =
+                PropertySets.initialValueExpansion(foTree, PropNames.FONT);
+            // For each discovered property, override the value in the
+            // initial value expansion.
+            ListIterator expansions = newlist.listIterator();
+            while (expansions.hasNext()) {
+                PropertyValue prop = (PropertyValue)expansions.next();
+                switch (prop.getProperty()) {
+                case PropNames.FONT_STYLE:
+                    if (style != null) expansions.set(style);
+                    break;
+                case PropNames.FONT_VARIANT:
+                    if (variant != null) expansions.set(variant);
+                    break;
+                case PropNames.FONT_WEIGHT:
+                    if (weight != null) expansions.set(weight);
+                    break;
+                case PropNames.FONT_SIZE:
+                    if (size != null) expansions.set(size);
+                    break;
+                case PropNames.FONT_FAMILY:
+                    if (fontset != null) expansions.set(fontset);
+                    break;
+                case PropNames.LINE_HEIGHT:
+                    if (height != null) expansions.set(height);
+                    break;
+                }
+            }
+
             return newlist;
         }
     }
@@ -4084,7 +4286,7 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return IntegerType.makeInteger (PropNames.FONT_WEIGHT, 400);
+            return new IntegerType(PropNames.FONT_WEIGHT, 400);
         }
 
         public static final int inherited = COMPUTED;
@@ -4098,6 +4300,23 @@ public abstract class Properties {
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
         public static final ROStringArray enumValues = enums;
+
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
+                        throws PropertyException
+        {
+            // Override the shadowed method to ensure that Integer values
+            // are limited to the valid numbers
+            PropertyValue fw = Properties.verifyParsing(foTree, value);
+            // If the result is an IntegerType, restrict the values
+            if (fw instanceof IntegerType) {
+                int weight = ((IntegerType)fw).getInt();
+                if (weight % 100 != 0 || weight < 100 || weight > 900)
+                    throw new PropertyException
+                        ("Invalid integer font-weight value: " + weight);
+            }
+            return fw;
+        }
     }
 
     public static class ForcePageCount extends Properties {
@@ -4153,7 +4372,8 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Angle.makeAngle (PropNames.GLYPH_ORIENTATION_HORIZONTAL, 0d, Angle.DEG);
+            return new Angle(PropNames.GLYPH_ORIENTATION_HORIZONTAL,
+                                        Angle.DEG, 0d);
         }
         public static final int inherited = COMPUTED;
     }
@@ -4738,7 +4958,7 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return IntegerType.makeInteger (PropNames.LINE_HEIGHT_PRECEDENCE, 0);
+            return new IntegerType(PropNames.LINE_HEIGHT_PRECEDENCE, 0);
         }
 
         public static final int inherited = COMPOUND;
@@ -5040,7 +5260,7 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return IntegerType.makeInteger(PropNames.ORPHANS, 2);
+            return new IntegerType(PropNames.ORPHANS, 2);
         }
 
         public static final int inherited = COMPUTED;
@@ -5510,7 +5730,7 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return IntegerType.makeInteger (PropNames.REFERENCE_ORIENTATION, 0);
+            return new IntegerType(PropNames.REFERENCE_ORIENTATION, 0);
         }
         public static final int inherited = COMPUTED;
 
@@ -5953,7 +6173,7 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return IntegerType.makeInteger (PropNames.SPACE_AFTER_PRECEDENCE, 0);
+            return new IntegerType(PropNames.SPACE_AFTER_PRECEDENCE, 0);
         }
 
         public static final int inherited = COMPOUND;
@@ -6029,7 +6249,7 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return IntegerType.makeInteger (PropNames.SPACE_BEFORE_PRECEDENCE, 0);
+            return new IntegerType(PropNames.SPACE_BEFORE_PRECEDENCE, 0);
         }
 
         public static final int inherited = COMPOUND;
@@ -6105,7 +6325,7 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return IntegerType.makeInteger (PropNames.SPACE_END_PRECEDENCE, 0);
+            return new IntegerType(PropNames.SPACE_END_PRECEDENCE, 0);
         }
 
         public static final int inherited = COMPOUND;
@@ -6181,7 +6401,7 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return IntegerType.makeInteger (PropNames.SPACE_START_PRECEDENCE, 0);
+            return new IntegerType(PropNames.SPACE_START_PRECEDENCE, 0);
         }
 
         public static final int inherited = COMPOUND;
@@ -6957,7 +7177,7 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return IntegerType.makeInteger(PropNames.WIDOWS, 2);
+            return new IntegerType(PropNames.WIDOWS, 2);
         }
 
         public static final int inherited = COMPUTED;
