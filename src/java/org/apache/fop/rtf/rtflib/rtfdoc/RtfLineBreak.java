@@ -71,12 +71,15 @@ public class RtfLineBreak extends RtfElement {
         super((RtfContainer)parent, w);
     }
 
-    /** overridden to write our attributes before our content */
+    /**
+     * Overridden to write our attributes before our content
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfContent() throws IOException {
         writeControlWord("line");
     }
 
-    /** true if this element would generate no "useful" RTF content */
+    /** @return true if this element would generate no "useful" RTF content */
     public boolean isEmpty() {
         return false;
     }
