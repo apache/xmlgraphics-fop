@@ -18,7 +18,6 @@
 
 package org.apache.fop.render;
 
-import java.awt.GraphicsEnvironment;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,10 +56,6 @@ public abstract class AbstractRenderer
      * Wait for requests from layout thread for layout.
      */
     public void run() {
-    }
-
-    public GraphicsEnvironment getGraphicsEnvironment() {
-        return null;
     }
 
     public synchronized void setOutputStream(OutputStream output) {
