@@ -3,7 +3,7 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/faq-v11.dtd">
 
 <faqs title="FOP FAQ">
-  <part>
+  <part id="part_general">
     <title>General questions</title>
     <faq id="fop_general">
       <question>What is FOP?</question>
@@ -120,33 +120,8 @@
       </answer>
     </faq>
   </part>
-  <part>
-    <title>Common stumbling blocks</title>
-    <faq id="blank_page_between_page_sequences">
-      <question>Why does FOP insert a blank page between my page sequences?</question>
-      <answer>
-        <p>
-          This is because spec conformance has been improved.
-        </p>
-        <p>
-          The <link
-          href="http://www.w3.org/TR/xsl/slice7.html#force-page-count">force-page-count
-          property</link> controls how a FO processor pads page sequences in
-          order to get certain page counts or last page numbers. The default is
-          "<code>auto</code>". With this setting, if the next page sequence
-          begins with an odd page number because you set the
-          initial-page-number, and the current page sequence also ends with an
-          odd page number, the processor inserts a blank page to keep odd and
-          even page numbers alternating (similar for the case the current page
-          sequence ends with an even page number and the next page sequence
-          starts with an even page number.
-        </p>
-        <p>
-          If you don't want to have this blank page, use
-          <code>force-page-count="no-force"</code>.
-        </p>
-      </answer>
-    </faq>
+  <part id="part_running">
+    <title>Problems running FOP</title>
     <faq id="no_page_master">
       <question>I get the error: [ERROR]: 'master-reference' for
       'fo:page-sequence'matches no 'simple-page-master' or
@@ -165,25 +140,6 @@
         </p>
         <p>
           See also <link href="relnotes.html">release notes</link>.
-        </p>
-      </answer>
-    </faq>
-    <faq id="png_fails">
-      <question>My PNG images don't work.</question>
-      <answer>
-        <p>
-          The Jimi image library, which is by default used for processing
-          images in PNG and other formats, was removed from the distribution
-          for licensing reasons. You have to <fork
-            href="http://java.sun.com/products/jimi">download</fork>
-          and install it by yourself.
-        </p>
-        <p>
-          Extract the file "JimiProClasses.zip" from the archive you've downloaded, rename it to "jimi-1.0.jar" and move it to FOP's lib directory.
-        </p>
-        <p>
-          An alternative to Jimi is to use Sun's JAI. It is much faster, but
-          not available for all platforms.
         </p>
       </answer>
     </faq>
@@ -443,6 +399,53 @@
         </p>
       </answer>
     </faq>
+  </part>
+  <part id="part_output">
+    <title>Problems with FOP output</title>
+    <faq id="blank_page_between_page_sequences">
+      <question>Why does FOP insert a blank page between my page sequences?</question>
+      <answer>
+        <p>
+          This is because spec conformance has been improved.
+        </p>
+        <p>
+          The <link
+          href="http://www.w3.org/TR/xsl/slice7.html#force-page-count">force-page-count
+          property</link> controls how a FO processor pads page sequences in
+          order to get certain page counts or last page numbers. The default is
+          "<code>auto</code>". With this setting, if the next page sequence
+          begins with an odd page number because you set the
+          initial-page-number, and the current page sequence also ends with an
+          odd page number, the processor inserts a blank page to keep odd and
+          even page numbers alternating (similar for the case the current page
+          sequence ends with an even page number and the next page sequence
+          starts with an even page number.
+        </p>
+        <p>
+          If you don't want to have this blank page, use
+          <code>force-page-count="no-force"</code>.
+        </p>
+      </answer>
+    </faq>
+    <faq id="png_fails">
+      <question>My PNG images don't work.</question>
+      <answer>
+        <p>
+          The Jimi image library, which is by default used for processing
+          images in PNG and other formats, was removed from the distribution
+          for licensing reasons. You have to <fork
+            href="http://java.sun.com/products/jimi">download</fork>
+          and install it by yourself.
+        </p>
+        <p>
+          Extract the file "JimiProClasses.zip" from the archive you've downloaded, rename it to "jimi-1.0.jar" and move it to FOP's lib directory.
+        </p>
+        <p>
+          An alternative to Jimi is to use Sun's JAI. It is much faster, but
+          not available for all platforms.
+        </p>
+      </answer>
+    </faq>
     <faq id="keep-with">
       <question>Keep-with-next, keep-with-previous, keep-together
       don't work.</question>
@@ -588,7 +591,7 @@
       </answer>
     </faq>
   </part>
-  <part>
+  <part id="part_embedding">
     <title>Embedding FOP. Using FOP in a servlet.</title>
     <faq id="servlet">
       <question>How do I use FOP in a servlet?</question>
@@ -785,7 +788,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       </answer>
     </faq>
   </part>
-  <part>
+  <part id="part_svg">
     <title>Batik/SVG specific questions</title>
     <faq id="svg_text">
       <question>SVG text rendered in bad quality. How do I put SVG text as text
@@ -907,7 +910,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       </answer>
     </faq>
   </part>
-  <part>
+  <part id="part_pdf">
     <title>PDF specific (includes Acrobat peculiarities)</title>
     <faq id="pdf_embed_font">
       <question>How do I embed fonts in PDF?</question>
@@ -1083,7 +1086,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       </answer>
     </faq>
   </part>
-  <part>
+  <part id="part_iex">
     <title>IEx specific stuff</title>
     <faq id="iex_servlet_multiple">
       <question>The FOP servlet is called multiple times!</question>
@@ -1141,7 +1144,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       </answer>
     </faq>
   </part>
-  <part>
+  <part id="part_input">
     <title>More general questions regarding XSLT and XSLFO and basic XML</title>
     <faq id="fo_center">
       <question>(FO) How do I vertically center an image or a table (or
@@ -1644,7 +1647,7 @@ class rendtest {
       </answer>
     </faq>
   </part>
-  <part>
+  <part id="part_developer">
     <title>General Developer Questions</title>
     <faq id="javadoc_location">
       <question>How do I get the javadocs for FOP?</question>
@@ -1655,7 +1658,7 @@ class rendtest {
       </answer>
     </faq>
   </part>
-  <part>
+  <part id="part_help">
     <title>General suggestions. How to solve problems.</title>
     <faq id="bugs">
       <question>Where to post bugs.</question>
