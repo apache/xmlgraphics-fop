@@ -297,7 +297,7 @@ public class PageSequence extends FObj {
     public void initPageNumber() {
         this.currentPageNumber = this.root.getRunningPageNumberCounter() + 1;
 
-        if (this.pageNumberType == AUTO_ODD) {
+        if (this.pageNumberType == EN_AUTO_ODD) {
             // Next page but force odd. May force empty page creation!
             // Whose master is used for this??? Assume no.
             // Use force-page-count = auto
@@ -305,7 +305,7 @@ public class PageSequence extends FObj {
             if (currentPageNumber % 2 == 0) {
                 this.currentPageNumber++;
             }
-        } else if (pageNumberType == AUTO_EVEN) {
+        } else if (pageNumberType == EN_AUTO_EVEN) {
             if (currentPageNumber % 2 == 1) {
                 this.currentPageNumber++;
             }

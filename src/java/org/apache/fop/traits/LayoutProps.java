@@ -34,11 +34,11 @@ public class LayoutProps {
     public SpaceVal spaceAfter;
 
     private static final int[] BREAK_PRIORITIES =
-        new int[]{ Constants.AUTO, Constants.COLUMN, Constants.PAGE };
+        new int[]{ Constants.EN_AUTO, Constants.EN_COLUMN, Constants.EN_PAGE };
 
 
     public LayoutProps() {
-        breakBefore = breakAfter = Constants.AUTO;
+        breakBefore = breakAfter = Constants.EN_AUTO;
         bIsSpan = false;
     }
 

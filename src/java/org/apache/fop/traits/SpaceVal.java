@@ -43,13 +43,13 @@ public class SpaceVal {
                               spaceprop.getOptimum().getLength().getValue(),
                               spaceprop.getMaximum().getLength().getValue());
         bConditional = 
-                (spaceprop.getConditionality().getEnum() == Constants.DISCARD);
+                (spaceprop.getConditionality().getEnum() == Constants.EN_DISCARD);
         Property precProp = spaceprop.getPrecedence();
         if (precProp.getNumber() != null) {
             iPrecedence = precProp.getNumber().intValue();
             bForcing = false;
         } else {
-            bForcing = (precProp.getEnum() == Constants.FORCE);
+            bForcing = (precProp.getEnum() == Constants.EN_FORCE);
             iPrecedence = 0;
         }
     }
@@ -70,7 +70,7 @@ public class SpaceVal {
     }
 
     static public SpaceVal makeWordSpacing(Property wordSpacing, SpaceVal letterSpacing, Font fs) {
-        if (wordSpacing.getEnum() == Constants.NORMAL) {
+        if (wordSpacing.getEnum() == Constants.EN_NORMAL) {
             // give word spaces the possibility to shrink by a third,
             // and stretch by a half;
             int spaceCharIPD = fs.getCharWidth(' ');
@@ -85,7 +85,7 @@ public class SpaceVal {
     }
 
     static public SpaceVal makeLetterSpacing(Property letterSpacing) {
-        if (letterSpacing.getEnum() == Constants.NORMAL) {
+        if (letterSpacing.getEnum() == Constants.EN_NORMAL) {
             // letter spaces are set to zero (or use different values?)
             return new SpaceVal(new MinOptMax(0), true, true, 0);
         } else {

@@ -166,7 +166,7 @@ class TextAttributesConverter {
 
 
     private static void attrTextDecoration(int textDecoration, RtfAttributes rtfAttr) {
-        if (textDecoration == Constants.UNDERLINE) {
+        if (textDecoration == Constants.EN_UNDERLINE) {
             rtfAttr.set(RtfText.ATTR_UNDERLINE, 1);
         } else {
             rtfAttr.set(RtfText.ATTR_UNDERLINE, 0);
@@ -186,11 +186,11 @@ class TextAttributesConverter {
     /*
     private static void attrBlockDimension(FObj fobj, FOPRtfAttributes rtfAttr) {
         Length ipd = fobj.getProperty(Constants.PR_INLINE_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
-        if (ipd.getEnum() != Constants.AUTO) {
+        if (ipd.getEnum() != Constants.EN_AUTO) {
             rtfAttr.set(RtfText.FRAME_WIDTH, ipd);
         }
         Length bpd = fobj.getProperty(Constants.PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
-        if (bpd.getEnum() != Constants.AUTO) {
+        if (bpd.getEnum() != Constants.EN_AUTO) {
             rtfAttr.set(RtfText.FRAME_HEIGHT, bpd);
         }
     }
@@ -199,13 +199,13 @@ class TextAttributesConverter {
     private static void attrBlockTextAlign(int alignment, RtfAttributes rtfAttr) {
         String rtfValue = null;
         switch (alignment) {
-            case Constants.CENTER:
+            case Constants.EN_CENTER:
                 rtfValue = RtfText.ALIGN_CENTER;
                 break;
-            case Constants.END:
+            case Constants.EN_END:
                 rtfValue = RtfText.ALIGN_RIGHT;
                 break;
-            case Constants.JUSTIFY:
+            case Constants.EN_JUSTIFY:
                 rtfValue = RtfText.ALIGN_JUSTIFIED;
                 break;
             default:

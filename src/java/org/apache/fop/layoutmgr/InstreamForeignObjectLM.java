@@ -77,22 +77,22 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
             // isn't the block-progression-dimension always in the same
             // direction as the line height?
             len = fobj.getBlockProgressionDimension().getOptimum().getLength();
-            if (len.getEnum() != AUTO) {
+            if (len.getEnum() != EN_AUTO) {
                 bpd = len.getValue();
             } else {
                 len = fobj.getHeight();
-                if (len.getEnum() != AUTO) {
+                if (len.getEnum() != EN_AUTO) {
                     bpd = len.getValue();
                 }
             }
         }
 
         len = fobj.getInlineProgressionDimension().getOptimum().getLength();
-        if (len.getEnum() != AUTO) {
+        if (len.getEnum() != EN_AUTO) {
             ipd = len.getValue();
         } else {
             len = fobj.getWidth();
-            if (len.getEnum() != AUTO) {
+            if (len.getEnum() != EN_AUTO) {
                 ipd = len.getValue();
             }
         }
@@ -102,7 +102,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         int cwidth = -1;
         int cheight = -1;
         len = fobj.getContentWidth();
-        if (len.getEnum() != AUTO) {
+        if (len.getEnum() != EN_AUTO) {
             /*if(len.scaleToFit()) {
                 if(ipd != -1) {
                     cwidth = ipd;
@@ -111,7 +111,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
             cwidth = len.getValue();
         }
         len = fobj.getContentHeight();
-        if (len.getEnum() != AUTO) {
+        if (len.getEnum() != EN_AUTO) {
             /*if(len.scaleToFit()) {
                 if(bpd != -1) {
                     cwidth = bpd;
@@ -134,7 +134,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
             cheight = (int)size.getY() * 1000;
         }
         int scaling = fobj.getScaling();
-        if (scaling == Scaling.UNIFORM) {
+        if (scaling == EN_UNIFORM) {
             // adjust the larger
             double rat1 = cwidth / (size.getX() * 1000f);
             double rat2 = cheight / (size.getY() * 1000f);
@@ -156,9 +156,9 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         boolean clip = false;
         if (cwidth > ipd || cheight > bpd) {
             int overflow = fobj.getOverflow();
-            if (overflow == Overflow.HIDDEN) {
+            if (overflow == EN_HIDDEN) {
                 clip = true;
-            } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {
+            } else if (overflow == EN_ERROR_IF_OVERFLOW) {
                 fobj.getLogger().error("Instream foreign object overflows the viewport: clipping");
                 clip = true;
             }

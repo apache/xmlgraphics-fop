@@ -92,17 +92,17 @@ public class ConditionalPageMasterReference extends FObj {
                               boolean isBlankPage) {
         // page-position
         if (isFirstPage) {
-            if (pagePosition == PagePosition.REST) {
+            if (pagePosition == EN_REST) {
                 return false;
-            } else if (pagePosition == PagePosition.LAST) {
+            } else if (pagePosition == EN_LAST) {
                 // ?? how can one know at this point?
                 getLogger().debug("LAST PagePosition NYI");
                 return false;
             }
         } else {
-            if (pagePosition == PagePosition.FIRST) {
+            if (pagePosition == EN_FIRST) {
                 return false;
-            } else if (pagePosition == PagePosition.LAST) {
+            } else if (pagePosition == EN_LAST) {
                 // ?? how can one know at this point?
                 getLogger().debug("LAST PagePosition NYI");
                 // potentially valid, don't return
@@ -111,22 +111,22 @@ public class ConditionalPageMasterReference extends FObj {
 
         // odd-or-even
         if (isOddPage) {
-            if (oddOrEven == OddOrEven.EVEN) {
+            if (oddOrEven == EN_EVEN) {
               return false;
             }
         } else {
-            if (oddOrEven == OddOrEven.ODD) {
+            if (oddOrEven == EN_ODD) {
               return false;
             }
         }
 
         // blank-or-not-blank
         if (isBlankPage) {
-            if (blankOrNotBlank == BlankOrNotBlank.NOT_BLANK) {
+            if (blankOrNotBlank == EN_NOT_BLANK) {
                 return false;
             }
         } else {
-            if (blankOrNotBlank == BlankOrNotBlank.BLANK) {
+            if (blankOrNotBlank == EN_BLANK) {
                 return false;
             }
         }

@@ -80,15 +80,15 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     private InlineArea getLeaderInlineArea() {
         InlineArea leaderArea = null;
 
-        if (fobj.getLeaderPattern() == LeaderPattern.RULE) {
+        if (fobj.getLeaderPattern() == EN_RULE) {
             org.apache.fop.area.inline.Leader leader = 
                 new org.apache.fop.area.inline.Leader();
             leader.setRuleStyle(fobj.getRuleStyle());
             leader.setRuleThickness(fobj.getRuleThickness().getValue());
             leaderArea = leader;
-        } else if (fobj.getLeaderPattern() == LeaderPattern.SPACE) {
+        } else if (fobj.getLeaderPattern() == EN_SPACE) {
             leaderArea = new Space();
-        } else if (fobj.getLeaderPattern() == LeaderPattern.DOTS) {
+        } else if (fobj.getLeaderPattern() == EN_DOTS) {
             TextArea t = new TextArea();
             char dot = '.'; // userAgent.getLeaderDotCharacter();
 
@@ -112,7 +112,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             fa.setBPD(font.getAscender());
 
             leaderArea = fa;
-        } else if (fobj.getLeaderPattern() == LeaderPattern.USECONTENT) {
+        } else if (fobj.getLeaderPattern() == EN_USECONTENT) {
             if (fobj.getChildNodes() == null) {
                 fobj.getLogger().error("Leader use-content with no content");
                 return null;
@@ -154,55 +154,55 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         int bpd = curArea.getBPD();
 
         switch (pattern) {
-            case LeaderPattern.RULE: 
+            case EN_RULE: 
                 switch (verticalAlignment) {
-                    case VerticalAlign.TOP:
+                    case EN_TOP:
                         curArea.setOffset(0);
                     break;
-                    case VerticalAlign.MIDDLE:
+                    case EN_MIDDLE:
                         curArea.setOffset(context.getMiddleBaseline() - bpd / 2);
                     break;
-                    case VerticalAlign.BOTTOM:
+                    case EN_BOTTOM:
                         curArea.setOffset(context.getLineHeight() - bpd);
                     break;
-                    case VerticalAlign.BASELINE: // fall through
+                    case EN_BASELINE: // fall through
                     default:
                         curArea.setOffset(context.getBaseline() - bpd);
                     break;
                 }
             break;
-            case LeaderPattern.DOTS: 
+            case EN_DOTS: 
                 switch (verticalAlignment) {
-                    case VerticalAlign.TOP:
+                    case EN_TOP:
                         curArea.setOffset(0);
                     break;
-                    case VerticalAlign.MIDDLE:
+                    case EN_MIDDLE:
                         curArea.setOffset(context.getMiddleBaseline());
                     break;
-                    case VerticalAlign.BOTTOM:
+                    case EN_BOTTOM:
                         curArea.setOffset(context.getLineHeight() - bpd + font.getAscender());
                     break;
-                    case VerticalAlign.BASELINE: // fall through
+                    case EN_BASELINE: // fall through
                     default:
                         curArea.setOffset(context.getBaseline());
                     break;
                 }
             break;
-            case LeaderPattern.SPACE: 
+            case EN_SPACE: 
                 // nothing to do
             break;
-            case LeaderPattern.USECONTENT: 
+            case EN_USECONTENT: 
                 switch (verticalAlignment) {
-                    case VerticalAlign.TOP:
+                    case EN_TOP:
                         curArea.setOffset(0);
                     break;
-                    case VerticalAlign.MIDDLE:
+                    case EN_MIDDLE:
                         curArea.setOffset(context.getMiddleBaseline());
                     break;
-                    case VerticalAlign.BOTTOM:
+                    case EN_BOTTOM:
                         curArea.setOffset(context.getLineHeight() - bpd);
                     break;
-                    case VerticalAlign.BASELINE: // fall through
+                    case EN_BASELINE: // fall through
                     default:
                         curArea.setOffset(context.getBaseline());
                     break;
@@ -212,7 +212,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     }
 
     public void addAreas(PositionIterator posIter, LayoutContext context) {
-        if (fobj.getLeaderPattern() != LeaderPattern.USECONTENT) {
+        if (fobj.getLeaderPattern() != EN_USECONTENT) {
             // use LeafNodeLayoutManager.addAreas()
             super.addAreas(posIter, context);
         } else {
@@ -251,12 +251,12 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         int total = 0;
         int middle = 0;
         switch (verticalAlignment) {
-            case VerticalAlign.MIDDLE  : middle = bpd / 2 ;
+            case EN_MIDDLE  : middle = bpd / 2 ;
                                          break;
-            case VerticalAlign.TOP     : // fall through
-            case VerticalAlign.BOTTOM  : total = bpd;
+            case EN_TOP     : // fall through
+            case EN_BOTTOM  : total = bpd;
                                          break;
-            case VerticalAlign.BASELINE: // fall through
+            case EN_BASELINE: // fall through
             default:                     lead = bpd;
                                          break;
         }

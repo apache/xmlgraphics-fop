@@ -190,16 +190,16 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager
     protected void offsetArea(LayoutContext context) {
         int bpd = curArea.getBPD();
         switch (verticalAlignment) {
-            case VerticalAlign.MIDDLE:
+            case EN_MIDDLE:
                 curArea.setOffset(context.getMiddleBaseline() - bpd / 2);
             break;
-            case VerticalAlign.TOP:
+            case EN_TOP:
                 //curArea.setOffset(0);
             break;
-            case VerticalAlign.BOTTOM:
+            case EN_BOTTOM:
                 curArea.setOffset(context.getLineHeight() - bpd);
             break;
-            case VerticalAlign.BASELINE:
+            case EN_BASELINE:
             default:
                 curArea.setOffset(context.getBaseline() - bpd);
             break;
@@ -251,14 +251,14 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager
         int total = 0;
         int middle = 0;
         switch (verticalAlignment) {
-            case VerticalAlign.MIDDLE  : middle = bpd / 2 ;
+            case EN_MIDDLE  : middle = bpd / 2 ;
                                          lead = bpd / 2 ;
                                          break;
-            case VerticalAlign.TOP     : total = bpd;
+            case EN_TOP     : total = bpd;
                                          break;
-            case VerticalAlign.BOTTOM  : total = bpd;
+            case EN_BOTTOM  : total = bpd;
                                          break;
-            case VerticalAlign.BASELINE:
+            case EN_BASELINE:
             default:                     lead = bpd;
                                          break;
         }

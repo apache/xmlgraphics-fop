@@ -377,7 +377,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
                 ImageFactory fact = ImageFactory.getInstance();
                 FopImage fopimage = fact.getImage(back.getURL(), userAgent);
                 if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
-                    if (back.getRepeat() == BackgroundRepeat.REPEAT) {
+                    if (back.getRepeat() == EN_REPEAT) {
                         // create a pattern for the image
                     } else {
                         // place once

@@ -450,21 +450,21 @@ public class XMLRenderer extends AbstractRenderer {
     protected void renderLeader(Leader area) {
         String style = "solid";
         switch (area.getRuleStyle()) {
-            case RuleStyle.DOTTED:
+            case EN_DOTTED:
                 style = "dotted";
                 break;
-            case RuleStyle.DASHED:
+            case EN_DASHED:
                 style = "dashed";
                 break;
-            case RuleStyle.SOLID:
+            case EN_SOLID:
                 break;
-            case RuleStyle.DOUBLE:
+            case EN_DOUBLE:
                 style = "double";
                 break;
-            case RuleStyle.GROOVE:
+            case EN_GROOVE:
                 style = "groove";
                 break;
-            case RuleStyle.RIDGE:
+            case EN_RIDGE:
                 style = "ridge";
                 break;
         }

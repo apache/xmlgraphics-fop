@@ -550,7 +550,7 @@ public class PDFRenderer extends PrintRenderer {
                 ImageFactory fact = ImageFactory.getInstance();
                 FopImage fopimage = fact.getImage(back.getURL(), userAgent);
                 if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
-                    if (back.getRepeat() == BackgroundRepeat.REPEAT) {
+                    if (back.getRepeat() == EN_REPEAT) {
                         // create a pattern for the image
                     } else {
                         // place once
@@ -621,10 +621,10 @@ public class PDFRenderer extends PrintRenderer {
 
     private void updateLineStyle(int style) {
         switch (style) {
-            case Constants.DASHED:
+            case Constants.EN_DASHED:
                 currentStream.add("[3] 0 d\n");
                 break;
-            case Constants.DOTTED:
+            case Constants.EN_DOTTED:
                 currentStream.add("[1 7] 0 d\n");
                 break;
             default:
@@ -1259,18 +1259,18 @@ public class PDFRenderer extends PrintRenderer {
         int style = area.getRuleStyle();
         boolean alt = false;
         switch(style) {
-            case RuleStyle.SOLID:
+            case EN_SOLID:
                 currentStream.add("[] 0 d\n");
             break;
-            case RuleStyle.DOTTED:
+            case EN_DOTTED:
                 currentStream.add("[2] 0 d\n");
             break;
-            case RuleStyle.DASHED:
+            case EN_DASHED:
                 currentStream.add("[6 4] 0 d\n");
             break;
-            case RuleStyle.DOUBLE:
-            case RuleStyle.GROOVE:
-            case RuleStyle.RIDGE:
+            case EN_DOUBLE:
+            case EN_GROOVE:
+            case EN_RIDGE:
                 alt = true;
             break;
         }
@@ -1281,7 +1281,7 @@ public class PDFRenderer extends PrintRenderer {
             currentStream.add(area.getRuleThickness() / 1000f + " w\n");
             drawLine(startx, starty, endx, starty);
         } else {
-            if (style == RuleStyle.DOUBLE) {
+            if (style == EN_DOUBLE) {
                 float third = area.getRuleThickness() / 3000f;
                 currentStream.add(third + " w\n");
                 drawLine(startx, starty, endx, starty);
@@ -1297,7 +1297,7 @@ public class PDFRenderer extends PrintRenderer {
                 currentStream.add(startx + " " + (starty + 2 * half) + " l\n");
                 currentStream.add("h\n");
                 currentStream.add("f\n");
-                if (style == RuleStyle.GROOVE) {
+                if (style == EN_GROOVE) {
                     currentStream.add("0 g\n");
                     currentStream.add(startx + " " + starty + " m\n");
                     currentStream.add(endx + " " + starty + " l\n");

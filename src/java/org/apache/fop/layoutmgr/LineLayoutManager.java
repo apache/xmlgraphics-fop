@@ -81,7 +81,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         hyphProps = fobj.getCommonHyphenation();
         
         //
-        if (bTextAlignment != JUSTIFY && bTextAlignmentLast == JUSTIFY) {
+        if (bTextAlignment != EN_JUSTIFY && bTextAlignmentLast == EN_JUSTIFY) {
             effectiveAlignment = 0;
         } else {
             effectiveAlignment = bTextAlignment;
@@ -118,7 +118,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     private List vecInlineBreaks = new ArrayList();
 
     private BreakPoss prevBP = null; // Last confirmed break position
-    private int bTextAlignment = TextAlign.JUSTIFY;
+    private int bTextAlignment = EN_JUSTIFY;
     private int bTextAlignmentLast;
     private int effectiveAlignment;
     private Length textIndent;
@@ -300,14 +300,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         public void startParagraph(int lineWidth) {
             // set the minimum amount of empty space at the end of the
             // last line
-            if (bTextAlignment == CENTER) {
+            if (bTextAlignment == EN_CENTER) {
                 lineFillerWidth = 0; 
             } else {
                 lineFillerWidth = (int)(lineWidth / 12); 
             }
 
             // add auxiliary elements at the beginning of the paragraph
-            if (bTextAlignment == CENTER && bTextAlignmentLast != JUSTIFY) {
+            if (bTextAlignment == EN_CENTER && bTextAlignmentLast != EN_JUSTIFY) {
                 this.add(new KnuthGlue(0, 3 * DEFAULT_SPACE_WIDTH, 0,
                                        null, false));
                 ignoreAtStart ++;
@@ -330,14 +330,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 this.remove(this.size() - 1);
             }
             if (this.size() > ignoreAtStart) {
-                if (bTextAlignment == CENTER
-                    && bTextAlignmentLast != JUSTIFY) {
+                if (bTextAlignment == EN_CENTER
+                    && bTextAlignmentLast != EN_JUSTIFY) {
                     this.add(new KnuthGlue(0, 3 * DEFAULT_SPACE_WIDTH, 0,
                                            null, false));
                     this.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
                                               false, null, false));
                     ignoreAtEnd = 2;
-                } else if (bTextAlignmentLast != JUSTIFY) {
+                } else if (bTextAlignmentLast != EN_JUSTIFY) {
                     // add the elements representing the space
                     // at the end of the last line
                     // and the forced break
@@ -384,7 +384,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         clearPrevIPD();
         int iPrevLineEnd = vecInlineBreaks.size();
 
-        if (iPrevLineEnd == 0 && bTextAlignment == TextAlign.START) {
+        if (iPrevLineEnd == 0 && bTextAlignment == EN_START) {
             availIPD.subtract(new MinOptMax(textIndent.getValue()));
         }
         prevBP = null;
@@ -502,7 +502,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                                           maxAdjustment, false)) == 0) {
                     // the first try failed, now try something different
                     log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment);
-                    if (hyphProps.hyphenate == Constants.TRUE) {
+                    if (hyphProps.hyphenate == Constants.EN_TRUE) {
                         // consider every hyphenation point as a legal break
                         findHyphenationPoints(currPar);
                     } else {
@@ -518,7 +518,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                         // and force the algorithm to find
                         // a set of breaking points
                         log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment
-                                         + (hyphProps.hyphenate == Constants.TRUE ? " and hyphenation" : ""));
+                                         + (hyphProps.hyphenate == Constants.EN_TRUE ? " and hyphenation" : ""));
                         maxAdjustment = 20;
                         iBPcount
                             = findBreakingPoints(currPar,
@@ -652,13 +652,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 : bestActiveNode.difference + par.lineFillerWidth;
             int textAlign = (bestActiveNode.line < line || bForced)
                 ? bTextAlignment : bTextAlignmentLast;
-            indent += (textAlign == CENTER)
+            indent += (textAlign == EN_CENTER)
                 ? difference / 2
-                : (textAlign == END) ? difference : 0;
+                : (textAlign == EN_END) ? difference : 0;
             indent += (bestActiveNode.line == 1
                        && knuthParagraphs.indexOf(par) == 0)
                 ? textIndent.getValue() : 0;
-            double ratio = (textAlign == JUSTIFY)
+            double ratio = (textAlign == EN_JUSTIFY)
                 ? bestActiveNode.adjustRatio : 0;
 
             makeLineBreakPosition(par,
@@ -1306,20 +1306,20 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         double dAdjust = 0.0;
         int indent = 0;
         switch (textalign) {
-            case TextAlign.JUSTIFY:
+            case EN_JUSTIFY:
                 if (realWidth != 0) {
                     dAdjust = (double) (targetWith - realWidth) / realWidth;
                 }
             break;
-            case TextAlign.START:
+            case EN_START:
                 if (prevLineEnd == 0) {
                     indent = textIndent.getValue();
                 }
                 break;
-            case TextAlign.CENTER:
+            case EN_CENTER:
                 indent = (targetWith - realWidth) / 2;
             break;
-            case TextAlign.END:
+            case EN_END:
                 indent = targetWith - realWidth;
             break;
         }

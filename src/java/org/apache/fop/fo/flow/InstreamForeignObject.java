@@ -150,15 +150,15 @@ public class InstreamForeignObject extends FObj {
     public int computeXOffset (int ipd, int cwidth) {
         int xoffset = 0;
         switch (textAlign) {
-            case TextAlign.CENTER:
+            case EN_CENTER:
                 xoffset = (ipd - cwidth) / 2;
                 break;
-            case TextAlign.END:
+            case EN_END:
                 xoffset = ipd - cwidth;
                 break;
-            case TextAlign.START:
+            case EN_START:
                 break;
-            case TextAlign.JUSTIFY:
+            case EN_JUSTIFY:
             default:
                 break;
         }
@@ -168,15 +168,15 @@ public class InstreamForeignObject extends FObj {
     public int computeYOffset(int bpd, int cheight) {
         int yoffset = 0;
         switch (displayAlign) {
-            case DisplayAlign.BEFORE:
+            case EN_BEFORE:
                 break;
-            case DisplayAlign.AFTER:
+            case EN_AFTER:
                 yoffset = bpd - cheight;
                 break;
-            case DisplayAlign.CENTER:
+            case EN_CENTER:
                 yoffset = (bpd - cheight) / 2;
                 break;
-            case DisplayAlign.AUTO:
+            case EN_AUTO:
             default:
                 break;
         }

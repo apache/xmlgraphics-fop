@@ -275,7 +275,7 @@ public class PageViewport implements Resolvable, Cloneable {
     public Object getMarker(String name, int pos) {
         Object mark = null;
         switch (pos) {
-            case Constants.RetrievePosition.FSWP:
+            case Constants.EN_FSWP:
                 if (markerFirstStart != null) {
                     mark = markerFirstStart.get(name);
                 }
@@ -283,12 +283,12 @@ public class PageViewport implements Resolvable, Cloneable {
                     mark = markerFirstAny.get(name);
                 }
             break;
-            case Constants.RetrievePosition.FIC:
+            case Constants.EN_FIC:
                 if (markerFirstAny != null) {
                     mark = markerFirstAny.get(name);
                 }
             break;
-            case Constants.RetrievePosition.LSWP:
+            case Constants.EN_LSWP:
                 if (markerLastStart != null) {
                     mark = markerLastStart.get(name);
                 }
@@ -296,7 +296,7 @@ public class PageViewport implements Resolvable, Cloneable {
                     mark = markerLastAny.get(name);
                 }
             break;
-            case Constants.RetrievePosition.LEWP:
+            case Constants.EN_LEWP:
                 if (markerLastEnd != null) {
                     mark = markerLastEnd.get(name);
                 }
