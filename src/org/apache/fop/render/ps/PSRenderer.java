@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -74,7 +74,8 @@ TODO-List:
   add a color to grayscale conversion for bitmaps to make output smaller (See
   PCLRenderer)
 - enhanced font support and font embedding
-- support different character encodings
+- fix character encodings (Helvetica uses WinAnsiEncoding internally but is
+  encoded as ISOLatin1 in PS)
 - try to implement image transparency
 - Add PPD support
 - fix border painting (see table.fo)
@@ -706,10 +707,15 @@ public class PSRenderer extends AbstractRenderer {
         for (int i = 0; i < l; i++) {
             char ch = s.charAt(i);
             char mch = fs.mapChar(ch);
-            if (mch > 127) {
+
+            /**@todo Do this in a clean way */
+            // temp fix abe: map ascii '-' to ISO latin 1 hyphen char
+            if (mch == '-') {
+              sb = sb.append("\\" + Integer.toOctalString(173));
+            } else /* fix ends */ if (mch > 127) {
                 sb = sb.append("\\" + Integer.toOctalString(mch));
             } else {
-                String escape = "\\()[]{}";
+                final String escape = "\\()[]{}";
                 if (escape.indexOf(mch) >= 0) {
                     sb.append("\\");
                 }
