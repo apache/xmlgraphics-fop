@@ -163,6 +163,7 @@ public class FOTreeBuilder extends DefaultHandler {
     private void setupDefaultMappings() {
         addElementMapping("org.apache.fop.fo.FOElementMapping");
         addElementMapping("org.apache.fop.fo.extensions.svg.SVGElementMapping");
+        addElementMapping("org.apache.fop.fo.extensions.svg.BatikExtensionElementMapping");
         addElementMapping("org.apache.fop.fo.extensions.ExtensionElementMapping");
 
         // add mappings from available services
