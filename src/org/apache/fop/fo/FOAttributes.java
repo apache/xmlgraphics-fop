@@ -79,7 +79,6 @@ public class FOAttributes {
                                     = new Integer[] { Ints.consts.get(0) };
 
     private FONode foNode;
-    public final PropertyConsts propertyConsts;
 
     /**
      * Construct an <i>FOAttributes</i> object.
@@ -98,8 +97,6 @@ public class FOAttributes {
      * associated.
      */
     public FOAttributes (XMLEvent event, FONode foNode) throws FOPException {
-
-        propertyConsts = PropertyConsts.getPropertyConsts();
 
         // If the event is null, there is no event associated with this
         // node, probably because this is a manufactured node; e.g.,
