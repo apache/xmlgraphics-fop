@@ -33,6 +33,7 @@ public class LazyFont extends Font implements FontDescriptor {
     
     private void load(){
         if(! isMetricsLoaded){
+            isMetricsLoaded = true;
             try{
                 FontReader reader = new FontReader(metricsFileName);
                 reader.useKerning(useKerning);
@@ -41,7 +42,6 @@ public class LazyFont extends Font implements FontDescriptor {
                 if(realFont instanceof FontDescriptor){
                     realFontDescriptor = (FontDescriptor) realFont;
                 }
-                isMetricsLoaded = true;
                 // System.out.println("Metrics " + metricsFileName + " loaded.");
             } catch (Exception ex) {
                 MessageHandler.error("Failed to read font metrics file "
