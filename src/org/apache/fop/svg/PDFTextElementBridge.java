@@ -39,7 +39,7 @@ public class PDFTextElementBridge extends SVGTextElementBridge {
 
     public GraphicsNode createGraphicsNode(BridgeContext ctx, Element e) {
         GraphicsNode node = super.createGraphicsNode(ctx, e);
-        if(isSimple(ctx, e, node)) {
+        if(node != null && isSimple(ctx, e, node)) {
             ((TextNode)node).setTextPainter(getTextPainter());
         }
         return node;
