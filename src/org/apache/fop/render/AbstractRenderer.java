@@ -344,8 +344,9 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     protected void renderFlow(Flow flow) {
         // the normal flow reference area contains stacked blocks
         List blocks = flow.getChildAreas();
-        renderBlocks(blocks);
-
+        if(blocks != null) {
+            renderBlocks(blocks);
+        }
     }
 
     /**
