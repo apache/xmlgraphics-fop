@@ -516,18 +516,20 @@ public class PDFRenderer implements Renderer {
 			     page.getHeight()/1000);
 
 	if (page.hasLinks()) {
-
 	    currentAnnotList = this.pdfDoc.makeAnnotList();
 	    currentPage.setAnnotList(currentAnnotList);
 
 	    Enumeration e = page.getLinkSets().elements();
 	    while (e.hasMoreElements()) {
 		LinkSet linkSet = (LinkSet) e.nextElement();
+
+		linkSet.align();
 		String dest = linkSet.getDest();
 		Enumeration f = linkSet.getRects().elements();
 		while (f.hasMoreElements()) {
-		    Rectangle rect = (Rectangle) f.nextElement();
-		    currentAnnotList.addLink(this.pdfDoc.makeLink(rect, dest));
+		    LinkedRectangle lrect = (LinkedRectangle) f.nextElement();
+		    currentAnnotList.addLink(
+		        this.pdfDoc.makeLink(lrect.getRectangle(), dest));
 		}
 	    }
 	} else {
