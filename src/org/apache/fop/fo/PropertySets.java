@@ -22,8 +22,8 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.expr.PropertyValue;
-import org.apache.fop.fo.expr.PropertyValueList;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.datatypes.PropertyValueList;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datatypes.Ints;

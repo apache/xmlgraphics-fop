@@ -31,7 +31,7 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datastructs.ROStringArray;
-import org.apache.fop.fo.expr.PropertyValue;
+import org.apache.fop.datatypes.PropertyValue;
 
 /**
  * <p>
