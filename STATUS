@@ -29,18 +29,31 @@ Jon Smirl
 **** HISTORY **** 
 Done since 0.16 release
 
-- added: build checks for xalan 1 or xalan 2 support [Kelly Campbell]
+- added: support in pdfrenderer for using TrueType fonts, and embedding of TrueType 
+         and Type1 fonts, and support for kerning [Tore Engvig]
+- added: further support for complete font handling in pdf renderer [Alain Fagot]
+- added: support for fo:footnote, fo:footnote-body [Keiron Liddle]
+- added: support for  values of property textdecoration ('overline','linethrough') [Christian Geisert]
+- added: support for font-variant="small-caps" [Eric Schaeffer]
+- added/changed: organization of build tools / classes  + support for xalan 2 [Kelly Campbell]
 - added: italian hyphenation file [Stephane Bline)]
-- added: support for fo:footnote [Keiron Liddle]
-- changed: moved some inline area classes to org.apache.fop.layout.inline, and also 
-           added a word area [Keiron Liddle]
+- added: uml diagrams to online docs [Stuart Zakon]
+- added: a new faq for fop at http://www.owal.co.uk:8090/ [Alex McLintock]
+- refactoring org.apache.fop.layout  [Keiron Liddle]
 - changed:  XObject to use the stream default filter list [Kelly Campbell]
+- changed: placed svg inline first, part in moving towards proper inline areas [Keiron Liddle]
 - fixed: a problem with spaces before and after a body in table
          also properly sets the width of the table to the sum of the columns [Keiron Liddle]
 - fixed: handling of orphans, keep problem [Keiron Liddle]
 - fixed: handling of column heights properly [Keiron Liddle]
 - fixed: bails out if no rows in table body  [Keiron Liddle]
 - fixed: list-block spanning a page problem [Keiron Liddle]
+- fixed: an off by one error in the end of stream encoding part of ASCII85Filter
+         as reported by Alex Cherepanov [Kelly Campbell]
+- fixed: Clarified error reported for order of static-content, flow within a
+         page-sequence to meet section 6.4.5 of the spec [Kelly Campbell]
+- fixed: leader didn't fill rest of line in table of contents [Fotis Jannidis]
+- fixed: throws a more useful error if non-row inside table body [Keiron Liddle]
 
 
 Done since 0.15 release
