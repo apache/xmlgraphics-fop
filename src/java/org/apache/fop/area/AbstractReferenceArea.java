@@ -20,7 +20,10 @@ package org.apache.fop.area;
 
 import java.awt.geom.AffineTransform;
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.datatypes.IntegerType;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
@@ -46,8 +49,16 @@ public abstract class AbstractReferenceArea
             Node parent,
             Object sync) {
         super(pageSeq, generatedBy, parent, sync);
-        // TODO Auto-generated constructor stub
+        contentOrientation = setContentOrientation();
+        frameOrientation = setFrameOrientation();
+        // What transform is required?
+        // TODO work out the transformation
+        // TODO check for reference-area rotational transformation
+        // in interactions between AreaFrames and ContentAreas
     }
+
+    private int contentOrientation;
+    private int frameOrientation;
 
     /**
      * Set the Coordinate Transformation Matrix which transforms content
@@ -73,6 +84,34 @@ public abstract class AbstractReferenceArea
         synchronized (sync) {
             return this.transformer;
         }
+    }
+
+    private int setContentOrientation() {
+        try {
+            return IntegerType.getIntValue(
+                    generatedBy.getPropertyValue(
+                            PropNames.REFERENCE_ORIENTATION));
+        } catch (PropertyException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getContentOrientation() {
+        return contentOrientation;
+    }
+
+    private int setFrameOrientation() {
+        try {
+            return IntegerType.getIntValue(
+                    ((FONode)generatedBy.getParent()).getPropertyValue(
+                            PropNames.REFERENCE_ORIENTATION));
+        } catch (PropertyException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getFrameOrientation() {
+        return frameOrientation;
     }
 
     /**
