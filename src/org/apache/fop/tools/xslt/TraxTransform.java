@@ -57,6 +57,7 @@ package org.apache.fop.tools.xslt;
 import javax.xml.transform.*;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.Writer;
 
 import java.util.Hashtable;
@@ -133,6 +134,15 @@ public class TraxTransform
 		  new javax.xml.transform.stream.StreamResult(output));
     }
     
+    public static void transform(Document xmlSource, 
+				 InputStream xsl,
+				 Document outputDoc) 
+    {
+	transform(new javax.xml.transform.dom.DOMSource(xmlSource),
+		  new javax.xml.transform.stream.StreamSource(xsl),
+		  new javax.xml.transform.dom.DOMResult(outputDoc));
+    }
+
     public static void transform(Source xmlSource, 
 				 Source xslSource, 
 				 Result result) 
@@ -156,5 +166,5 @@ public class TraxTransform
 	}
 	
     }
-    
+   
 }

@@ -57,6 +57,7 @@ package org.apache.fop.tools.xslt;
 import org.apache.xalan.xslt.*;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Hashtable;
 import org.w3c.dom.Document;
 
@@ -78,20 +79,13 @@ public class Xalan1Transform
 	}
 	
 	// Use XSLTProcessor to instantiate an XSLTProcessor.
-	org.apache.xalan.xslt.XSLTProcessor processor =
-	    org.apache.xalan.xslt.XSLTProcessorFactory.getProcessor
+	XSLTProcessor processor = XSLTProcessorFactory.getProcessor
 	    (new org.apache.xalan.xpath.xdom.XercesLiaison());
 	
 	
-	org.apache.xalan.xslt.XSLTInputSource xslSheet =
-	    new org.apache.xalan.xslt.XSLTInputSource (xsltFilename);
+	XSLTInputSource xslSheet = new XSLTInputSource (xsltFilename);
 
 	// Perform the transformation.
-	/*
-	System.out.println("****************************");
-	System.out.println("new xslt compile \nin: " + xsltFilename);
-	System.out.println("****************************");
-	*/
 	StylesheetRoot compiledSheet =
 	    processor.processStylesheet(xslSheet);
 	if (cache) {
@@ -126,11 +120,8 @@ public class Xalan1Transform
 	       java.net.MalformedURLException, 
 	       org.xml.sax.SAXException
     {
-	// Create the 3 objects the XSLTProcessor needs to perform the transformation.
-	/*  org.apache.xalan.xslt.XSLTInputSource source =
-	    new org.apache.xalan.xslt.XSLTInputSource (xmlSource); */
-        org.apache.xalan.xslt.XSLTResultTarget xmlResult =
-          new org.apache.xalan.xslt.XSLTResultTarget (outputFile);
+
+        XSLTResultTarget xmlResult = new XSLTResultTarget (outputFile);
 
 	StylesheetRoot stylesheet = getStylesheet(xslURL,true);
 	
@@ -147,11 +138,9 @@ public class Xalan1Transform
 	       java.net.MalformedURLException, 
 	       org.xml.sax.SAXException
     {
-	// Create the 3 objects the XSLTProcessor needs to perform the transformation.
-        org.apache.xalan.xslt.XSLTInputSource source =
-          new org.apache.xalan.xslt.XSLTInputSource (xmlSource);
-        org.apache.xalan.xslt.XSLTResultTarget xmlResult =
-          new org.apache.xalan.xslt.XSLTResultTarget (outputFile);
+
+        XSLTInputSource source = new XSLTInputSource (xmlSource);
+        XSLTResultTarget xmlResult = new XSLTResultTarget (outputFile);
 
 	StylesheetRoot stylesheet = getStylesheet(xslURL,true);
 	
@@ -159,5 +148,25 @@ public class Xalan1Transform
         stylesheet.process(XSLTProcessorFactory.getProcessor
 			   (new org.apache.xalan.xpath.xdom.XercesLiaison()),
 			  source, xmlResult);
+    }
+
+    public static void transform(Document xmlSource, 
+				 InputStream xsl,
+				 Document outputDoc) 
+	throws java.io.IOException,
+	       java.net.MalformedURLException, 
+	       org.xml.sax.SAXException
+    {
+
+	XSLTInputSource source = new XSLTInputSource (xmlSource); 
+	XSLTInputSource xslSheet = new XSLTInputSource(xsl);
+	XSLTResultTarget xmlResult = new XSLTResultTarget (outputDoc);
+	
+	
+        // Perform the transformation.
+	XSLTProcessor processor =
+	    XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
+
+        processor.process(source, xslSheet, xmlResult);
     }
 }

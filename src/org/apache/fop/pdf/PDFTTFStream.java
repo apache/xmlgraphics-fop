@@ -1,36 +1,36 @@
-/*-- $Id$ --
+/*-- $Id$ -- 
 
  ============================================================================
                    The Apache Software License, Version 1.1
  ============================================================================
-
+ 
     Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without modifica-
  tion, are permitted provided that the following conditions are met:
-
+ 
  1. Redistributions of  source code must  retain the above copyright  notice,
     this list of conditions and the following disclaimer.
-
+ 
  2. Redistributions in binary form must reproduce the above copyright notice,
     this list of conditions and the following disclaimer in the documentation
     and/or other materials provided with the distribution.
-
+ 
  3. The end-user documentation included with the redistribution, if any, must
     include  the following  acknowledgment:  "This product includes  software
     developed  by the  Apache Software Foundation  (http://www.apache.org/)."
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
-
+ 
  4. The names "Fop" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
-
+ 
  5. Products  derived from this software may not  be called "Apache", nor may
     "Apache" appear  in their name,  without prior written permission  of the
     Apache Software Foundation.
-
+ 
  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
@@ -41,67 +41,51 @@
  ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
  (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+ 
  This software  consists of voluntary contributions made  by many individuals
  on  behalf of the Apache Software  Foundation and was  originally created by
- James Tauber <jtauber@jtauber.com>. For more  information on the Apache
+ James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  Software Foundation, please see <http://www.apache.org/>.
-
+ 
  */
 package org.apache.fop.pdf;
 
-/**
- * class representing a rectangle
- *
- * Rectangles are specified on page 183 of the PDF 1.3 spec.
- */
-public class PDFRectangle {
-	/** lower left x coordinate */
-	protected int llx;
-	/** lower left y coordinate */
-	protected int lly;
-	/** upper right x coordinate */
-	protected int urx;
-	/** upper right y coordinate */
-	protected int ury;
-
-	/**
-	 * create a rectangle giving the four separate values
-	 *
-	 * @param llx  lower left x coordinate
-	 * @param lly  lower left y coordinate
-	 * @param urx  upper right x coordinate
-	 * @param ury  upper right y coordinate
-	 */
-	public PDFRectangle(int llx, int lly, int urx, int ury) {
-		this.llx = llx;
-		this.lly = lly;
-		this.urx = urx;
-		this.ury = ury;
-	}
-
-	/**
-	 * create a rectangle giving an array of four values
-	 *
-	 * @param array values in the order llx, lly, urx, ury
-	 */
-	public PDFRectangle(int[] array) {
-		this.llx = array[0];
-		this.lly = array[1];
-		this.urx = array[2];
-		this.ury = array[3];
-	}
-
-	/**
-	 * produce the PDF representation for the object
-	 *
-	 * @return the PDF
-	 */
-   public byte[] toPDF() {
-      return toPDFString().getBytes();
-   }
+public class PDFTTFStream extends PDFStream {
+   private int origLength;
    
-   public String toPDFString() {
-      return new String(" [" + llx + " " + lly + " " + urx + " " + ury + "] ");
+   public PDFTTFStream(int num, int len) {
+      super(num);
+      origLength=len;
+   }
+       // overload the base object method so we don't have to copy 
+       // byte arrays around so much
+    protected int output(java.io.OutputStream stream) throws java.io.IOException 
+    {
+	int length = 0;
+	String filterEntry = applyFilters();
+        String preData=
+           new String(this.number + " " + this.generation
+                      + " obj\n<< /Length " +
+                      (_data.size()+1) + " "
+                      + filterEntry + " " +
+                      "/Length1 " + origLength +
+                      " >>\n");
+        
+        byte[] p = preData.getBytes();
+        stream.write(p);
+        length += p.length;
+
+	length += outputStreamData(stream);
+	p = "endobj\n".getBytes();
+	stream.write(p);
+	length += p.length;
+	return length;
+    }
+
+   public void setData(byte[] data, int size)
+      throws java.io.IOException {
+      _data.reset();
+      System.out.println("Writing " + size + " bytes of font data");
+      _data.write(data, 0, size);
    }
 }

@@ -195,7 +195,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="xalan1" value="Xalan1Transform.java"/>
     <property name="trax" value="TraxTransform.java"/>
     <property name="xsltransform" value="XSLTransform.java"/>
-    <property name="pfmreader" value="PFMReader.java"/>
 
     <property name="tools.pkg" value="org/apache/fop/tools"/>
 
@@ -305,7 +304,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
       <echo message="Xalan1 is present. Installing Xalan1 support"/>
       <copydir src="${src.dir}"
  	      dest="${build.src}"
- 	      includes="**/${xsltransform},**/${xalan1},**/${pfmreader}"/>
+ 	      includes="**/${xsltransform},**/${xalan1}"/>
   </target>
  
   <target name="prepare-trax" if="trax.present">
@@ -323,7 +322,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <!-- copy src files -->
     <copydir src="${src.dir}"
              dest="${build.src}"
-             excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi},**/${jai},**/${pfmreader},**/${xsltransform},**/${trax},**/${xalan1}"/>
+             excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi},**/${jai},**/${xsltransform},**/${trax},**/${xalan1}"/>
   </target>
 
   <!-- =================================================================== -->

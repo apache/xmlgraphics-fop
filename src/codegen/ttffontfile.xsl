@@ -23,7 +23,7 @@ import org.apache.fop.render.pdf.Font;
 import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.fonts.Glyphs;
 import org.apache.fop.pdf.PDFStream;
-import org.apache.fop.pdf.PDFT1Stream;
+import org.apache.fop.pdf.PDFTTFStream;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.BufferedInputStream;
@@ -42,9 +42,10 @@ public class <xsl:value-of select="class-name"/> extends Font implements FontDes
         <xsl:value-of select="bbox/right"/>,
         <xsl:value-of select="bbox/top"/>
     };
+
     private final static String embedFileName = <xsl:value-of select="embedFile"/>;
     private final static String embedResourceName = <xsl:value-of select="embedResource"/>;
-    private static PDFT1Stream embeddedFont=null; 
+    private static PDFTTFStream embeddedFont=null; 
     private final static int flags = <xsl:value-of select="flags"/>;
     private final static int stemV = <xsl:value-of select="stemv"/>;
     private final static int italicAngle = <xsl:value-of select="italicangle"/>;
@@ -52,11 +53,11 @@ public class <xsl:value-of select="class-name"/> extends Font implements FontDes
     private final static int lastChar = <xsl:value-of select="last-char"/>;
     private final static int[] width;
     private final static Hashtable kerning=new Hashtable();
-
     static {
         width = new int[256];
-<xsl:for-each select="widths/char"><xsl:variable name="char-name" select="@name"/><xsl:variable name="char-num" select="document('charlist.xml')/font-mappings/map[@adobe-name=$char-name]/@win-ansi"/><xsl:if test="$char-num!='-1'">        width[<xsl:value-of select="$char-num"/>] = <xsl:value-of select="@width"/>;
-</xsl:if></xsl:for-each>
+<!--<xsl:for-each select="widths/char"><xsl:variable name="char-name" select="@name"/><xsl:variable name="char-num" select="document('charlist.xml')/font-mappings/map[@adobe-name=$char-name]/@win-ansi"/><xsl:if test="$char-num!='-1'">        width[<xsl:value-of select="$char-num"/>] = <xsl:value-of select="@width"/>;</xsl:if>-->
+<xsl:for-each select="widths/char"><xsl:variable name="char-name" select="@name"/>   width[<xsl:value-of select="$char-name"/>] = <xsl:value-of select="@width"/>;
+</xsl:for-each>
 
     Hashtable tmptable;
 <xsl:for-each select="kerning">
@@ -69,12 +70,11 @@ public class <xsl:value-of select="class-name"/> extends Font implements FontDes
 
     public final boolean hasKerningInfo() {return kerning.isEmpty();}
     public final java.util.Hashtable getKerningInfo() {return kerning;}
-    public byte getSubType() {return org.apache.fop.pdf.PDFFont.TYPE1;}
 
+    public byte getSubType() {return org.apache.fop.pdf.PDFFont.TRUETYPE;}
     public boolean isEmbeddable() {
         return (embedFileName==null &amp;&amp; embedResourceName==null) ? false : true;
     }
-
     public PDFStream getFontFile(int i) {
         InputStream instream=null;
         
@@ -121,7 +121,7 @@ public class <xsl:value-of select="class-name"/> extends Font implements FontDes
              }
           }
 	  
-          embeddedFont=new PDFT1Stream(i, fsize);
+          embeddedFont=new PDFTTFStream(i, fsize);
           embeddedFont.addFilter("flate");
           embeddedFont.addFilter("ascii-85");
           embeddedFont.setData(file, fsize);
@@ -130,7 +130,6 @@ public class <xsl:value-of select="class-name"/> extends Font implements FontDes
 
         return (PDFStream) embeddedFont;
     }
-
     public String encoding() {
         return encoding;
     }
@@ -139,17 +138,9 @@ public class <xsl:value-of select="class-name"/> extends Font implements FontDes
         return fontName;
     }
 
-    public int getAscender() {
-        return ascender;
-    }
-
-    public int getCapHeight() {
-        return capHeight;
-    }
-
-    public int getDescender() {
-        return descender;
-    }
+    public int getAscender() {return ascender;}
+    public int getDescender() {return descender;}
+    public int getCapHeight() {return capHeight;}
 
     public int getAscender(int size) {
         return size * ascender;
@@ -205,4 +196,5 @@ public class <xsl:value-of select="class-name"/> extends Font implements FontDes
 <!--</redirect:write>-->
 </xsl:template>
 </xsl:stylesheet>
+
 

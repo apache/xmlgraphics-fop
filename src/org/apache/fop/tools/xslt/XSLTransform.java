@@ -54,7 +54,7 @@
 
 package org.apache.fop.tools.xslt;
 
-import java.io.Writer;
+import java.io.*;
 import java.lang.reflect.*;
 
 
@@ -91,6 +91,18 @@ public class XSLTransform
     {
 	Class[] argTypes = {String.class, String.class, Writer.class};
 	Object[] params = {xmlSource, xslURL, outputWriter};
+	transform(params, argTypes);
+		
+    }
+ 
+    public static void transform(org.w3c.dom.Document xmlSource,
+				 InputStream xsl,
+				 org.w3c.dom.Document outputDoc)
+	throws Exception
+    {
+	Class[] argTypes = {org.w3c.dom.Document.class, InputStream.class, 
+			    org.w3c.dom.Document.class};
+	Object[] params = {xmlSource, xsl, outputDoc};
 	transform(params, argTypes);
 		
     }

@@ -69,7 +69,7 @@ import org.apache.fop.messaging.MessageHandler;
 public class PDFStream extends PDFObject {
 
     /** the stream of PDF commands */
-    private ByteArrayOutputStream _data;
+    protected ByteArrayOutputStream _data;
 
     /** the filters that should be applied */
     private Vector _filters;

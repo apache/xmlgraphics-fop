@@ -54,16 +54,23 @@ package org.apache.fop.layout;
 public interface FontDescriptor {
 
     //Required
-    public int getAscender(); //Ascent in pdf spec
-	public int getCapHeight();
-    public int getDescender(); //Descent in pdf spec
-	public int getFlags();
-    public int[] getFontBBox();
-    public String fontName(); //should be getFontName(). not?
-	public int getItalicAngle();
-	public int getStemV();
+   public int getAscender(); //Ascent in pdf spec
+   public int getCapHeight();
+   public int getDescender(); //Descent in pdf spec
+   public int getFlags();
+   public int[] getFontBBox();
+   public String fontName(); //should be getFontName(). not?
+   public int getItalicAngle();
+   public int getStemV();
 
-    //Optional
+   public boolean hasKerningInfo();
+   public java.util.Hashtable getKerningInfo();
+   public boolean isEmbeddable();
+   public byte getSubType();
+   public org.apache.fop.pdf.PDFStream getFontFile(int objNum);
+    //Optional - but needed to calculate font-size-adjust...
     //public int getXHeight();
 
 }
+
+

@@ -51,57 +51,73 @@
 package org.apache.fop.pdf;
 
 /**
- * class representing a rectangle
+ * class representing a Type0 font.
  *
- * Rectangles are specified on page 183 of the PDF 1.3 spec.
+ * Type0 fonts are specified on page 208 and onwards of the PDF 1.3 spec.
  */
-public class PDFRectangle {
-	/** lower left x coordinate */
-	protected int llx;
-	/** lower left y coordinate */
-	protected int lly;
-	/** upper right x coordinate */
-	protected int urx;
-	/** upper right y coordinate */
-	protected int ury;
+public class PDFFontType0 extends PDFFont {
+
+	/** this should be an array of CIDFont but only the first one is used */
+	protected PDFCIDFont descendantFonts;
 
 	/**
-	 * create a rectangle giving the four separate values
+	 * create the /Font object
 	 *
-	 * @param llx  lower left x coordinate
-	 * @param lly  lower left y coordinate
-	 * @param urx  upper right x coordinate
-	 * @param ury  upper right y coordinate
+	 * @param number the object's number
+	 * @param fontname the internal name for the font
+	 * @param subtype the font's subtype (PDFFont.TYPE0)
+	 * @param basefont the base font name
+	 * @param encoding the character encoding schema used by the font
+	 * @param mapping the Unicode mapping mechanism
 	 */
-	public PDFRectangle(int llx, int lly, int urx, int ury) {
-		this.llx = llx;
-		this.lly = lly;
-		this.urx = urx;
-		this.ury = ury;
+	public PDFFontType0(int number, String fontname, byte subtype,
+			String basefont, Object encoding/*, PDFToUnicode mapping*/) {
+
+		/* generic creation of PDF object */
+		super(number, fontname, subtype, basefont, encoding/*, mapping*/);
+
+		/* set fields using paramaters */
+		this.descendantFonts = null;
 	}
 
 	/**
-	 * create a rectangle giving an array of four values
+	 * create the /Font object
 	 *
-	 * @param array values in the order llx, lly, urx, ury
+	 * @param number the object's number
+	 * @param fontname the internal name for the font
+	 * @param subtype the font's subtype (PDFFont.TYPE0)
+	 * @param basefont the base font name
+	 * @param encoding the character encoding schema used by the font
+	 * @param mapping the Unicode mapping mechanism
+	 * @param descendantFonts the CIDFont upon which this font is based
 	 */
-	public PDFRectangle(int[] array) {
-		this.llx = array[0];
-		this.lly = array[1];
-		this.urx = array[2];
-		this.ury = array[3];
+	public PDFFontType0(int number, String fontname, byte subtype,
+			String basefont, Object encoding/*, PDFToUnicode mapping*/,
+			PDFCIDFont descendantFonts) {
+
+		/* generic creation of PDF object */
+		super(number, fontname, subtype, basefont, encoding/*, mapping*/);
+
+		/* set fields using paramaters */
+		this.descendantFonts = descendantFonts;
 	}
 
 	/**
-	 * produce the PDF representation for the object
+	 * set the descendant font
 	 *
-	 * @return the PDF
+	 * @param descendantFonts the CIDFont upon which this font is based
 	 */
-   public byte[] toPDF() {
-      return toPDFString().getBytes();
-   }
-   
-   public String toPDFString() {
-      return new String(" [" + llx + " " + lly + " " + urx + " " + ury + "] ");
-   }
+	public void setDescendantFonts(PDFCIDFont descendantFonts) {
+		this.descendantFonts = descendantFonts;
+	}
+
+	/**
+	 * fill in the specifics for the font's subtype
+	 */
+	protected void fillInPDF(StringBuffer p) {
+		if (descendantFonts != null) {
+			p.append("\n/DescendantFonts [ "+ this.descendantFonts.referencePDF() + " ] ");
+		}
+
+	}
 }

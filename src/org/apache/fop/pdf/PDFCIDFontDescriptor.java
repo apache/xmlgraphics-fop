@@ -50,58 +50,53 @@
  */
 package org.apache.fop.pdf;
 
+// based on work by Takayuki Takeuchi
 /**
- * class representing a rectangle
+ * class representing a font descriptor for CID fonts.
  *
- * Rectangles are specified on page 183 of the PDF 1.3 spec.
+ * Font descriptors for CID fonts are specified on page 227 and onwards of the PDF 1.3 spec.
  */
-public class PDFRectangle {
-	/** lower left x coordinate */
-	protected int llx;
-	/** lower left y coordinate */
-	protected int lly;
-	/** upper right x coordinate */
-	protected int urx;
-	/** upper right y coordinate */
-	protected int ury;
+public class PDFCIDFontDescriptor extends PDFFontDescriptor {
 
-	/**
-	 * create a rectangle giving the four separate values
-	 *
-	 * @param llx  lower left x coordinate
-	 * @param lly  lower left y coordinate
-	 * @param urx  upper right x coordinate
-	 * @param ury  upper right y coordinate
-	 */
-	public PDFRectangle(int llx, int lly, int urx, int ury) {
-		this.llx = llx;
-		this.lly = lly;
-		this.urx = urx;
-		this.ury = ury;
+    protected String lang;
+    protected PDFStream cidSet;
+
+    /**
+     * create the /FontDescriptor object
+     *
+     * @param number the object's number
+     * @param basefont the base font name
+     * @param fontBBox the bounding box for the described font
+     * @param flags various characteristics of the font
+     * @param capHeight height of the capital letters
+     * @param stemV the width of the dominant vertical stems of glyphs
+     * @param italicAngle the angle of the vertical dominant strokes
+     * @param lang the language
+     */
+    public PDFCIDFontDescriptor(int number, 
+				String basefont,
+				int[] fontBBox,  
+				int capHeight, 
+				int flags, 
+				int italicAngle, int stemV,
+				String lang) {
+
+	super(number, basefont, fontBBox[3], fontBBox[1], capHeight, flags,
+	      new PDFRectangle(fontBBox), italicAngle, stemV);
+
+	this.lang = lang;
+    }
+
+    public void setCIDSet(PDFStream cidSet) {
+	this.cidSet = cidSet;
+    }
+
+    protected void fillInPDF(StringBuffer p) {
+	if (lang != null) {
+	    p.append("\n/Lang /"); p.append(lang);
 	}
-
-	/**
-	 * create a rectangle giving an array of four values
-	 *
-	 * @param array values in the order llx, lly, urx, ury
-	 */
-	public PDFRectangle(int[] array) {
-		this.llx = array[0];
-		this.lly = array[1];
-		this.urx = array[2];
-		this.ury = array[3];
+	if (cidSet != null) {
+	    p.append("\n/CIDSet /"); this.cidSet.referencePDF();
 	}
-
-	/**
-	 * produce the PDF representation for the object
-	 *
-	 * @return the PDF
-	 */
-   public byte[] toPDF() {
-      return toPDFString().getBytes();
-   }
-   
-   public String toPDFString() {
-      return new String(" [" + llx + " " + lly + " " + urx + " " + ury + "] ");
-   }
+    }
 }

@@ -67,6 +67,13 @@ public abstract class Font implements FontMetric {
      * get the base font name
      */
     public abstract String fontName();
+
+       /**
+        * get the subtype of the font, default is TYPE1
+        */
+   public byte getSubType() {
+      return org.apache.fop.pdf.PDFFont.TYPE1;
+   }
 }
 
 

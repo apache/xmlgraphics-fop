@@ -51,6 +51,7 @@
 package org.apache.fop.fonts;
 
 import java.io.*;
+import java.util.Hashtable;
 
 /**
  * This class represents a PFM file (or parts of it) as a Java object.
@@ -84,7 +85,9 @@ public class PFMFile {
     //Extent table
     private int[]   extentTable;
 
+   private Hashtable kerningTab;
     public PFMFile() {
+       kerningTab=new Hashtable();
     }
 
     /**
@@ -146,8 +149,17 @@ public class PFMFile {
         int size = inStream.readShort();
         long extMetricsOffset = inStream.readInt();
         long extentTableOffset = inStream.readInt();
-        inStream.skip(12);
+        inStream.skip(4);
+        long kernPairOffset = inStream.readInt();
+        long kernTrackOffset = inStream.readInt();
         long driverInfoOffset = inStream.readInt();
+
+        if (kernPairOffset > 0) {
+           inStream.reset();
+           inStream.skip(kernPairOffset);
+           loadKernPairs(inStream);
+        }
+        
         inStream.reset();
         inStream.skip(driverInfoOffset);
         postscriptName = inStream.readString();
@@ -163,6 +175,40 @@ public class PFMFile {
             loadExtentTable(inStream);
         }
 
+    }
+
+    /**
+     * Parses the kernPairs part of the pfm file
+     * 
+     * @param     inStream The stream from which to read the PFM file.
+     */
+    private void loadKernPairs(PFMInputStream inStream) throws IOException {
+        int i = inStream.readShort();
+
+        
+        System.out.println(i + " kerning pairs");
+        while (i > 0) {
+           int g1 = (int)inStream.readByte();
+           i--;
+               //System.out.print ("Char no: ("+g1+", ");
+           
+           int g2 = (int)inStream.readByte();
+               //System.out.print (g2+") kern");
+           
+           int adj = inStream.readShort();
+           if (adj > 0x8000)
+              adj=-(0x10000-adj);
+               //System.out.println (": " + adj);
+
+           String glyph1=Glyphs.tex8r[g1];
+           String glyph2=Glyphs.tex8r[g2];
+
+           Hashtable adjTab=(Hashtable)kerningTab.get(glyph1);
+           if (adjTab==null)
+              adjTab=new Hashtable();
+           adjTab.put(glyph2, new Integer(adj));
+           kerningTab.put(glyph1, adjTab);
+        }
     }
 
     /**
@@ -204,6 +250,15 @@ public class PFMFile {
         return windowsName;
     }
 
+       /**
+        * Return the kerning table. The kerning table is a hastable with
+        * strings with glyphnames as keys, containing hashtables as value.
+        * The value hashtable contain a glyph name string key and an Integer value
+        */
+   public Hashtable getKerning() {
+      return kerningTab;
+   }
+        
     /**
      * Returns the Postscript name of the font.
      * 
