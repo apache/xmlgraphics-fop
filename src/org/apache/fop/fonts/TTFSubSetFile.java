@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+import org.apache.fop.messaging.MessageHandler;
 
 /**
  * Reads a TrueType file and generates a subset
@@ -578,16 +579,52 @@ public class TTFSubSetFile extends TTFFile {
         scanGlyphs(in, glyphs);
 
         createDirectory(); // Create the TrueType header and directory
-        createCvt(in); // copy the cvt table
-        createFpgm(in); // copy fpgm table
+
         createHead(in);
         createHhea(in, glyphs.size()); // Create the hhea table
         createHmtx(in, glyphs); // Create hmtx table
         createMaxp(in, glyphs.size()); // copy the maxp table
-        createPrep(in); // copy prep table
-        createLoca(glyphs.size()); // create empty loca table
-        createGlyf(in, glyphs);
 
+	try {
+	    createCvt(in); // copy the cvt table
+	}
+	catch (IOException ex) {
+	    //  Cvt is optional (only required for OpenType (MS) fonts)
+	    MessageHandler.errorln("TrueType warning: "+ex.getMessage());
+	}
+	
+	try {
+	    createFpgm(in); // copy fpgm table
+	}
+	catch (IOException ex) {
+	    // Fpgm is optional (only required for OpenType (MS) fonts)
+	    MessageHandler.errorln("TrueType warning: "+ex.getMessage());
+	}
+
+	try {
+	    createPrep(in); // copy prep table
+	}
+	catch (IOException ex) {
+	    // Prep is optional (only required for OpenType (MS) fonts)
+	    MessageHandler.errorln("TrueType warning: "+ex.getMessage());
+	}
+	
+	try {
+	    createLoca(glyphs.size()); // create empty loca table
+	}
+	catch (IOException ex) {
+	    // Loca is optional (only required for OpenType (MS) fonts)
+	    MessageHandler.errorln("TrueType warning: "+ex.getMessage());
+	}
+	
+	try {
+	    createGlyf(in, glyphs);
+	}
+	catch (IOException ex) {
+	    // Glyf is optional (only required for OpenType (MS) fonts)
+	    MessageHandler.errorln("TrueType warning: "+ex.getMessage());
+	}
+	
         pad4();
         createCheckSumAdjustment();
 
