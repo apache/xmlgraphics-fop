@@ -240,6 +240,16 @@ public class PropertyParser extends PropertyTokenizer {
                 + getExpr();
     }
 
+
+    /**
+     * Generate an function numeric argument error string.
+     * @return function numeric argument error message.
+     */
+    private String funcNumericErrorStr() {
+        return "Function requires Numeric or integer argument: "
+                + getExpr();
+    }
+
     /**
      * Try to parse an addition or subtraction expression and return the
      * resulting PropertyValue.
@@ -558,7 +568,7 @@ public class PropertyParser extends PropertyTokenizer {
                              Double.parseDouble(currentTokenValue));
             break;
         case RELATIVE_LENGTH:
-            prop = Ems.makeEms(property,
+            prop = Ems.makeEms(node, property,
                                Double.parseDouble(currentTokenValue));
             break;
 
@@ -607,45 +617,119 @@ public class PropertyParser extends PropertyTokenizer {
                 // Numeric functions
                 if (function.equals("floor")) {
                     PropertyValue[] args = parseArgs(1);
-                    prop = new Numeric
-                            (property, ((Numeric)args[0]).floor());
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        args[0] =
+                            new Numeric
+                                (property, ((IntegerType)args[0]).getInt());
+                    case PropertyValue.NUMERIC:
+                        prop = new Numeric
+                                (property, ((Numeric)args[0]).floor());
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
                     break;
                 }
                 if (function.equals("ceiling")) {
                     PropertyValue[] args = parseArgs(1);
-                    prop = new Numeric
-                            (property, ((Numeric)args[0]).ceiling());
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        args[0] =
+                            new Numeric
+                                (property, ((IntegerType)args[0]).getInt());
+                    case PropertyValue.NUMERIC:
+                        prop = new Numeric
+                                (property, ((Numeric)args[0]).ceiling());
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
                     break;
                 }
                 if (function.equals("round")) {
                     PropertyValue[] args = parseArgs(1);
-                    prop = new Numeric
-                            (property, ((Numeric)args[0]).round());
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        args[0] =
+                            new Numeric
+                                (property, ((IntegerType)args[0]).getInt());
+                    case PropertyValue.NUMERIC:
+                        prop = new Numeric
+                                (property, ((Numeric)args[0]).round());
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
                     break;
                 }
                 if (function.equals("min")) {
                     PropertyValue[] args = parseArgs(2);
-                    prop = ((Numeric)args[0]).min((Numeric)args[1]);
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        args[0] =
+                            new Numeric
+                                (property, ((IntegerType)args[0]).getInt());
+                    case PropertyValue.NUMERIC:
+                        prop = ((Numeric)args[0]).min((Numeric)args[1]);
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
                     break;
                 }
                 if (function.equals("max")) {
                     PropertyValue[] args = parseArgs(2);
-                    prop = ((Numeric)args[0]).max((Numeric)args[1]);
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        args[0] =
+                            new Numeric
+                                (property, ((IntegerType)args[0]).getInt());
+                    case PropertyValue.NUMERIC:
+                        prop = ((Numeric)args[0]).max((Numeric)args[1]);
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
                     break;
                 }
                 if (function.equals("abs")) {
                     PropertyValue[] args = parseArgs(1);
-                    prop = ((Numeric)args[0]).abs();
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        args[0] =
+                            new Numeric
+                                (property, ((IntegerType)args[0]).getInt());
+                    case PropertyValue.NUMERIC:
+                        prop = ((Numeric)args[0]).abs();
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
                     break;
                 }
 
                 // Color functions
                 if (function.equals("rgb")) {
+                    // Currently arguments must all be integers.
+                    System.out.println("rgb: " + getExpr());
                     PropertyValue[] args = parseArgs(3);
-                    prop = new ColorType
-                            (property, ((Numeric)args[0]).asInt(),
-                             ((Numeric)args[1]).asInt(),
-                             ((Numeric)args[2]).asInt());
+                    switch (args[0].getType()) {
+                    case PropertyValue.INTEGER:
+                        prop = new ColorType
+                                (property, ((IntegerType)args[0]).getInt(),
+                                 ((IntegerType)args[1]).getInt(),
+                                 ((IntegerType)args[2]).getInt());
+                        break;
+                    case PropertyValue.NUMERIC:
+                        prop = new ColorType
+                                (property, ((Numeric)args[0]).asInt(),
+                                 ((Numeric)args[1]).asInt(),
+                                 ((Numeric)args[2]).asInt());
+                        break;
+                    default:
+                        throw new PropertyException(funcNumericErrorStr());
+                    }
                     break;
                 }
                 if (function.equals("rgb-icc")) {
