@@ -152,6 +152,7 @@ public interface ITableAttributes {
 //Table row attributes
     /** row attribute, keep-together */
     public static final String ROW_KEEP_TOGETHER = "trkeep";
+    public static final String ROW_HEIGHT = "trrh";
 
     /**
      * This control word is nonexistent in RTF, used to simulate the
