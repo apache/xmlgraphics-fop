@@ -43,6 +43,7 @@ import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.AbstractRenderer;
+import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 
 import org.apache.fop.image.FopImage;
@@ -70,7 +71,7 @@ import org.w3c.dom.Document;
  * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id: PSRenderer.java,v 1.31 2003/03/11 08:42:24 jeremias Exp $
  */
-public class PSRenderer extends AbstractRenderer {
+public class PSRenderer extends PrintRenderer {
 
     /** The MIME type for PostScript */
     public static final String MIME_TYPE = "application/postscript";
@@ -91,14 +92,20 @@ public class PSRenderer extends AbstractRenderer {
     private float currGreen;
     private float currBlue;
 
-    private FontInfo fontInfo;
-
     /**
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
     public void configure(Configuration cfg) throws ConfigurationException {
         super.configure(cfg);
         this.autoRotateLandscape = cfg.getChild("auto-rotate-landscape").getValueAsBoolean(false);
+
+        //Font configuration
+        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg);
+        if (this.fontList == null) {
+            this.fontList = cfgFonts;
+        } else {
+            this.fontList.addAll(cfgFonts);
+        }
     }
 
     /**
@@ -220,16 +227,6 @@ public class PSRenderer extends AbstractRenderer {
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
-    }
-
-    /**
-     * Set up the font info
-     *
-     * @param inFontInfo the font info object to set up
-     */
-    public void setupFontInfo(FontInfo inFontInfo) {
-        this.fontInfo = inFontInfo;
-        FontSetup.setup(fontInfo, null);
     }
 
     /**
