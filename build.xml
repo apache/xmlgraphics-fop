@@ -180,6 +180,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
       <include name="batik*.jar"/>
       <include name="jimi*.jar"/>
       <include name="jai*.jar"/>
+      <include name="jce*.jar"/>
     </fileset>
   </path>
   
@@ -296,7 +297,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <available property="jai.present" classname="javax.media.jai.JAI" classpathref="libs-build-classpath"/>
     <available property="trax.present" classname="javax.xml.transform.Transformer" classpathref="libs-build-classpath"/>
     <available property="jdk14.present" classname="java.lang.CharSequence"/>
-    <available property="jce.present" classname="javax.crypto.Cipher"/>
+    <available property="jce.present" classname="javax.crypto.Cipher" classpathref="libs-build-classpath"/>
   </target>
 
   <target name="init-filters-jdk13" depends="init-avail" unless="jdk14.present">
