@@ -85,7 +85,9 @@ document into PDF markup.
    </p>
   <p>
 eg.
-<source><![CDATA[<my:script-link script="app.execMenuItem('AcroSrch:Query');">Search</my:script-link>]]></source>
+<source><![CDATA[<my:script-link script="app.execMenuItem('AcroSrch:Query');">
+Search
+</my:script-link>]]></source>
 
 to result in a text box referencing the following PDF action:
 <source><![CDATA[<< /S /JavaScript /JS (app.execMenuItem("AcroSrch:Query");) >>]]></source>

@@ -6,6 +6,9 @@
     copyright="@year@ The Apache Software Foundation"
     xmlns:xlink="http://www.w3.org/1999/xlink">
 
+    <menu label="Index">
+      <menu-item label="FOP Home" href="../index.html"/>
+    </menu>
     <menu label="About">
       <menu-item label="Index" href="index.html"/>
     </menu>
@@ -14,7 +17,7 @@
     </menu>
     <menu label="Sections">
       <menu-item label="FO Tree" href="fotree.html"/>
-      <menu-item label="Propterties" href="properties.html"/>
+      <menu-item label="Properties" href="properties.html"/>
       <menu-item label="Layout" href="layout.html"/>
       <menu-item label="Area Tree" href="areas.html"/>
       <menu-item label="Renderers" href="renderers.html"/>

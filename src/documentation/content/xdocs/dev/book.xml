@@ -13,11 +13,13 @@
       <menu-item label="Index" href="index.html"/>
       <menu-item label="FAQs" href="faq.html"/>
       <menu-item label="Examples" href="examples.html"/>
-      <menu-item label="SVG" href="svg.html"/>
     </menu>
     <menu label="Using">
       <menu-item label="Extensions" href="extensions.html"/>
       <menu-item label="Configuration" href="configuration.html"/>
+    </menu>
+    <menu label="Extras">
+      <menu-item label="SVG" href="svg.html"/>
     </menu>
     <menu label="Developers">
       <menu-item label="Design" href="../design/index.html"/>
