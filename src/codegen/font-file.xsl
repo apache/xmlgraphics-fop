@@ -17,10 +17,11 @@
   <xsl:variable name="glyphs" select="document('encodings.xml')/encoding-set/encoding[@id=$encoding]/glyph"/>
 
   <xsl:template match="font-metrics">
-package org.apache.fop.render.pdf.fonts;
+package org.apache.fop.fonts.base14;
 
-import org.apache.fop.render.pdf.Font;
-import org.apache.fop.render.pdf.CodePointMapping;
+import org.apache.fop.fonts.FontType;
+import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.CodePointMapping;
 
 public class <xsl:value-of select="class-name"/> extends Font {
     private final static String fontName = "<xsl:value-of select="font-name"/>";
@@ -32,20 +33,24 @@ public class <xsl:value-of select="class-name"/> extends Font {
     private final static int firstChar = <xsl:value-of select="first-char"/>;
     private final static int lastChar = <xsl:value-of select="last-char"/>;
     private final static int[] width;
-    private final CodePointMapping mapping
-        = CodePointMapping.getMapping("<xsl:value-of select="$encoding"/>");
+    private final CodePointMapping mapping =
+        CodePointMapping.getMapping("<xsl:value-of select="$encoding"/>");
 
     static {
         width = new int[256];
         <xsl:apply-templates select="widths"/>
     }
 
-    public String encoding() {
+    public String getEncoding() {
         return encoding;
     }
 
-    public String fontName() {
-        return fontName;
+    public String getFontName() {
+        return fontName;        
+    }
+    
+    public FontType getFontType() {
+        return FontType.TYPE1;
     }
 
     public int getAscender(int size) {
@@ -72,23 +77,32 @@ public class <xsl:value-of select="class-name"/> extends Font {
         return lastChar;
     }
 
-    public int width(int i,int size) {
+    public int getWidth(int i,int size) {
         return size * width[i];
     }
 
-    public int[] getWidths(int size) {
+    public int[] getWidths() {
         int[] arr = new int[getLastChar()-getFirstChar()+1];
         System.arraycopy(width, getFirstChar(), arr, 0, getLastChar()-getFirstChar()+1);
-        for( int i = 0; i &lt; arr.length; i++) arr[i] *= size;
+        //for( int i = 0; i &lt; arr.length; i++) arr[i] *= size;
         return arr;
     }
-
+    
+    public boolean hasKerningInfo() {
+        return false;
+    }
+        
+    public java.util.Map getKerningInfo() {
+        return java.util.Collections.EMPTY_MAP;
+    }
+    
     public char mapChar(char c) {
         char d = mapping.mapChar(c);
-  if(d != 0)
+        if(d != 0) {
             return d;
-        else
-      return '#';
+        } else {
+            return '#';
+        }
     }
 
 }
