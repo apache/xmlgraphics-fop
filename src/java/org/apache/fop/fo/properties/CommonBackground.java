@@ -66,5 +66,13 @@ public class CommonBackground {
     public int backRepeat;
     public Length backPosHorizontal;
     public Length backPosVertical;
-
+    
+    public String toString() {
+        return "CommonBackground:\n" +
+        "backAttachment = " + backAttachment + "; backColor = " + 
+        ((backColor != null) ? backColor.toString() : "null") + "\n" +
+        "backImage = " + backImage + "; backRepeat = " + backRepeat + "\n" +
+        "backPosHorizontal = " + backPosHorizontal + 
+        "; backPosVertical = " + backPosVertical + "\n";
+    }
 }

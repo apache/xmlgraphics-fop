@@ -99,5 +99,13 @@ public class LayoutProps {
         // Parent span always overrides child span
         bIsSpan = parentLP.bIsSpan;
     }
+
+    public String toString() {
+        return "LayoutProps:\n" +
+        "breakBefore = " + breakBefore + "; breakAfter = " + breakAfter + "\n" +
+        "spaceBefore = " + ((spaceBefore != null) ? spaceBefore.toString() : "null") + "\n" +
+        "spaceAfter = " + ((spaceAfter != null) ? spaceAfter.toString() : "null") + "\n" +
+        "bIsSpan = " + bIsSpan + "\n";
+    }
 }
 
