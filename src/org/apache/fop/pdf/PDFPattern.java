@@ -270,6 +270,7 @@ public class PDFPattern extends PDFPathPaint {
 				{
 					p.append(
 					pdfNumber.doubleOut((Double)this.bBox.elementAt(tempInt)));				
+					p.append(" ");
 				}
 				p.append("] \n");
 			}
@@ -283,7 +284,8 @@ public class PDFPattern extends PDFPathPaint {
 				for (tempInt =0; tempInt < vectorSize; tempInt++)
 				{
 					p.append(pdfNumber.doubleOut(
-						(Double)this.matrix.elementAt(tempInt)));				
+						(Double)this.matrix.elementAt(tempInt)));
+					p.append(" ");
 				}
 				p.append("] \n");
 			}
@@ -336,7 +338,8 @@ public class PDFPattern extends PDFPathPaint {
 				for (tempInt =0; tempInt < vectorSize; tempInt++)
 				{
 					p.append(pdfNumber.doubleOut(
-					(Double)this.matrix.elementAt(tempInt)));				
+					(Double)this.matrix.elementAt(tempInt)));
+					p.append(" ");
 				}
 				p.append("] \n");
 			}
