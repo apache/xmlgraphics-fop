@@ -1,5 +1,5 @@
 /*
- * $Id: BookmarkData.java,v 1.5 2003/03/05 20:40:18 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,7 +48,7 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */ 
-package org.apache.fop.extensions;
+package org.apache.fop.area.extensions;
 
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolveable;

@@ -50,7 +50,7 @@
  */
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.extensions.BookmarkData;
+import org.apache.fop.area.extensions.BookmarkData;
 import org.apache.fop.extensions.Outline;
 import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
