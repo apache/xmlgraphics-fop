@@ -54,6 +54,7 @@ package org.apache.fop.render;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
@@ -125,6 +126,11 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     protected String creator = null;
 
     /**
+     * creation time
+     */
+    protected Date creationDate = null;
+
+    /**
      * renderer configuration
      */
     protected Map options;
@@ -172,12 +178,23 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
         creator = inCreator;
     }
 
-    /** @see org.apache.fop.render.Renderer */
+    /**
+     *  @see org.apache.fop.render.Renderer
+     */
     public abstract void setupFontInfo(FOTreeControl foTreeControl);
 
-    /** @see org.apache.fop.render.Renderer */
+    /**
+     *  @see org.apache.fop.render.Renderer
+     */
     public void setUserAgent(FOUserAgent agent) {
         userAgent = agent;
+    }
+
+    /**
+     * @param date
+     */
+    public void setCreationDate(Date date) {
+        creationDate = date;
     }
 
     /** @see org.apache.fop.render.Renderer */

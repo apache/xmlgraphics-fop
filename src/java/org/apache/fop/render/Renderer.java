@@ -53,6 +53,7 @@ package org.apache.fop.render;
 // Java
 import java.io.OutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 // FOP
@@ -142,13 +143,23 @@ public interface Renderer {
     void setProducer(String producer);
 
     /**
-     * Set the creator of the document to be rendered. If this method
-     * isn't called the renderer uses a default.
+     * Set the creator of the document to be rendered.
+     * If this method isn't called the renderer uses a default.
      * Note: Not all renderers support this feature.
      *
      * @param creator  The name of the document creator
      */
     void setCreator(String creator);
+    
+    /**
+     * Set the creator date/timeof the document to be rendered.
+     * If this method isn't called the renderer uses the current date/time
+     * as default.
+     * Note: Not all renderers support this feature.
+     *
+     * @param date The name of the document creator
+     */
+    void setCreationDate(Date date);
 
     /**
      * Reports if out of order rendering is supported. <p>

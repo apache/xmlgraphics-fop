@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
@@ -159,7 +160,8 @@ public class PDFDocument implements LogEnabled {
     /**
      * the colorspace (0=RGB, 1=CMYK)
      */
-    protected PDFColorSpace colorspace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+    protected PDFColorSpace colorspace =
+        new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
 
     /**
      * the counter for Pattern name numbering (e.g. 'Pattern1')
@@ -231,7 +233,6 @@ public class PDFDocument implements LogEnabled {
      * List of GoTos.
      */
     protected List gotos = new java.util.ArrayList();
-
 
     private PDFFactory factory;
 
@@ -325,10 +326,19 @@ public class PDFDocument implements LogEnabled {
     }
 
     /**
-     * set the creator of the document
-     *
-     * @param creator string indicating application creating the document
-     */
+      * Set the creation date of the document.
+      * 
+      * @param date Date to be stored as creation date in the PDF.
+      */
+    public void setCreationDate(Date date) {
+        info.setCreationDate(date);
+    }
+
+    /**
+      * Set the creator of the document.
+      *
+      * @param creator string indicating application creating the document
+      */
     public void setCreator(String creator) {
         this.info.setCreator(creator);
     }
@@ -399,13 +409,15 @@ public class PDFDocument implements LogEnabled {
             throw new NullPointerException("obj must not be null");
         }
         if (obj.hasObjectNumber()) {
-            throw new IllegalStateException("Error registering a PDFObject: "
-                + "PDFObject already has an object number");
+            throw new IllegalStateException(
+                "Error registering a PDFObject: "
+                    + "PDFObject already has an object number");
         }
         PDFDocument currentParent = obj.getDocument();
         if (currentParent != null && currentParent != this) {
-            throw new IllegalStateException("Error registering a PDFObject: "
-                + "PDFObject already has a parent PDFDocument");
+            throw new IllegalStateException(
+                "Error registering a PDFObject: "
+                    + "PDFObject already has a parent PDFDocument");
         }
 
         obj.setObjectNumber(++this.objectcount);
@@ -425,8 +437,9 @@ public class PDFDocument implements LogEnabled {
             throw new NullPointerException("obj must not be null");
         }
         if (!obj.hasObjectNumber()) {
-            throw new IllegalStateException("Error adding a PDFObject: "
-                + "PDFObject doesn't have an object number");
+            throw new IllegalStateException(
+                "Error adding a PDFObject: "
+                    + "PDFObject doesn't have an object number");
         }
 
         //Add object to list
@@ -469,7 +482,6 @@ public class PDFDocument implements LogEnabled {
         }
     }
 
-
     /**
      * Add trailer object.
      * Adds an object to the list of trailer objects.
@@ -499,17 +511,18 @@ public class PDFDocument implements LogEnabled {
      * @param params The encryption parameters for the pdf file
      */
     public void setEncryption(PDFEncryptionParams params) {
-        this.encryption = PDFEncryptionManager.newInstance(++this.objectcount, params);
+        this.encryption =
+            PDFEncryptionManager.newInstance(++this.objectcount, params);
         ((PDFObject)this.encryption).setDocument(this);
         if (encryption != null) {
             /**@todo this cast is ugly. PDFObject should be transformed to an interface. */
             addTrailerObject((PDFObject)this.encryption);
         } else {
-            getLogger().warn("PDF encryption is unavailable. PDF will be "
-                + "generated without encryption.");
+            getLogger().warn(
+                "PDF encryption is unavailable. PDF will be "
+                    + "generated without encryption.");
         }
     }
-
 
     /**
      * Indicates whether encryption is active for this PDF or not.
@@ -681,7 +694,7 @@ public class PDFDocument implements LogEnabled {
      * @return the InputStream from the URI.
      */
     protected InputStream resolveURI(String uri)
-                throws java.io.FileNotFoundException {
+        throws java.io.FileNotFoundException {
         try {
             /**@todo Temporary hack to compile, improve later */
             return new java.net.URL(uri).openStream();
@@ -690,7 +703,6 @@ public class PDFDocument implements LogEnabled {
                 "URI could not be resolved (" + e.getMessage() + "): " + uri);
         }
     }
-
 
     /**
      * Get an image from the image map.
@@ -727,8 +739,7 @@ public class PDFDocument implements LogEnabled {
         // setup image
         img.setup(this);
         // create a new XObject
-        xObject = new PDFXObject(++this.xObjectCount,
-                                 img);
+        xObject = new PDFXObject(++this.xObjectCount, img);
         registerObject(xObject);
         this.resources.addXObject(xObject);
         if (res != null) {
@@ -750,11 +761,17 @@ public class PDFDocument implements LogEnabled {
      * @param key the key for the object
      * @return the PDF Form XObject that references the PDF data
      */
-    public PDFFormXObject addFormXObject(PDFResourceContext res, PDFStream cont,
-                                         PDFResources formres, String key) {
+    public PDFFormXObject addFormXObject(
+        PDFResourceContext res,
+        PDFStream cont,
+        PDFResources formres,
+        String key) {
         PDFFormXObject xObject;
-        xObject = new PDFFormXObject(++this.xObjectCount,
-                                 cont, formres.referencePDF());
+        xObject =
+            new PDFFormXObject(
+                ++this.xObjectCount,
+                cont,
+                formres.referencePDF());
         registerObject(xObject);
         this.resources.addXObject(xObject);
         if (res != null) {
@@ -841,8 +858,7 @@ public class PDFDocument implements LogEnabled {
      * @param stream the OutputStream to write the header to
      * @throws IOException if there is an exception writing to the output stream
      */
-    public void outputHeader(OutputStream stream)
-                throws IOException {
+    public void outputHeader(OutputStream stream) throws IOException {
         this.position = 0;
 
         byte[] pdf = ("%PDF-" + PDF_VERSION + "\n").getBytes();
@@ -850,10 +866,14 @@ public class PDFDocument implements LogEnabled {
         this.position += pdf.length;
 
         // output a binary comment as recommended by the PDF spec (3.4.1)
-        byte[] bin = {
-            (byte)'%', (byte)0xAA, (byte)0xAB, (byte)0xAC, (byte)0xAD,
-            (byte)'\n'
-        };
+        byte[] bin =
+            {
+                (byte)'%',
+                (byte)0xAA,
+                (byte)0xAB,
+                (byte)0xAC,
+                (byte)0xAD,
+                (byte)'\n' };
         stream.write(bin);
         this.position += bin.length;
     }
@@ -864,13 +884,13 @@ public class PDFDocument implements LogEnabled {
      * @param stream the OutputStream to write the trailer to
      * @throws IOException if there is an exception writing to the output stream
      */
-    public void outputTrailer(OutputStream stream)
-                throws IOException {
+    public void outputTrailer(OutputStream stream) throws IOException {
         output(stream);
         for (int count = 0; count < trailerObjects.size(); count++) {
-            PDFObject o = (PDFObject) trailerObjects.get(count);
-            this.location.set(o.getObjectNumber() - 1,
-                              new Integer(this.position));
+            PDFObject o = (PDFObject)trailerObjects.get(count);
+            this.location.set(
+                o.getObjectNumber() - 1,
+                new Integer(this.position));
             this.position += o.output(stream);
         }
         /* output the xref table and increment the character position
@@ -884,13 +904,24 @@ public class PDFDocument implements LogEnabled {
         }
 
         /* construct the trailer */
-        String pdf = "trailer\n" + "<<\n"
-                     + "/Size " + (this.objectcount + 1) + "\n"
-                     + "/Root " + this.root.referencePDF() + "\n"
-                     + "/Info " + this.info.referencePDF() + "\n"
-                     + encryptEntry
-                     + ">>\n" + "startxref\n" + this.xref
-                     + "\n" + "%%EOF\n";
+        String pdf =
+            "trailer\n"
+                + "<<\n"
+                + "/Size "
+                + (this.objectcount + 1)
+                + "\n"
+                + "/Root "
+                + this.root.referencePDF()
+                + "\n"
+                + "/Info "
+                + this.info.referencePDF()
+                + "\n"
+                + encryptEntry
+                + ">>\n"
+                + "startxref\n"
+                + this.xref
+                + "\n"
+                + "%%EOF\n";
 
         /* write the trailer */
         stream.write(encode(pdf));
@@ -909,9 +940,8 @@ public class PDFDocument implements LogEnabled {
 
         /* construct initial part of xref */
         StringBuffer pdf = new StringBuffer(128);
-        pdf.append("xref\n0 "
-            + (this.objectcount + 1)
-            + "\n0000000000 65535 f \n");
+        pdf.append(
+            "xref\n0 " + (this.objectcount + 1) + "\n0000000000 65535 f \n");
 
         for (int count = 0; count < this.location.size(); count++) {
             String x = this.location.get(count).toString();
@@ -931,4 +961,3 @@ public class PDFDocument implements LogEnabled {
     }
 
 }
-
