@@ -797,7 +797,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             PDFResourceContext context = new PDFResourceContext(0, pdfDoc, res);
             PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fi,
                                             pdfDoc, context, pageRef,
-                                            currentFontName, currentFontSize,
+                                            "", 0,
                                             currentYPosition, currentXPosition);
             pattGraphic.gc = (GraphicContext)this.gc.clone();
             pattGraphic.gc.validateTransformStack();
@@ -1008,9 +1008,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             FontMetric metrics = fontInfo.getMetricsFor(fname);
             fontState = new FontState(fname, metrics, siz * 1000);
         } else {
-            fontState = ovFontState;
+            FontMetric metrics = fontInfo.getMetricsFor(ovFontState.getFontName());
+            fontState = new FontState(ovFontState.getFontName(), metrics, ovFontState.getFontSize());
             ovFontState = null;
-        }       
+        }
         String name;
         float size;
         name = fontState.getFontName();

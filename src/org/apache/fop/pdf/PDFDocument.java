@@ -933,8 +933,8 @@ public class PDFDocument {
     public PDFFont makeFont(String fontname, String basefont,
                             String encoding, FontMetric metrics,
                             FontDescriptor descriptor) {
-        if(fontMap.containsKey(basefont)) {
-            return (PDFFont)fontMap.get(basefont);
+        if(fontMap.containsKey(fontname)) {
+            return (PDFFont)fontMap.get(fontname);
         }
 
         /*
