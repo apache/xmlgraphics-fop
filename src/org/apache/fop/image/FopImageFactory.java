@@ -1,7 +1,7 @@
 /* $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.image;
@@ -51,12 +51,16 @@ public class FopImageFactory {
             }
             imgIS = absoluteURL.openStream();
         } catch (MalformedURLException e_context) {
-            throw new FopImageException("Error with image URL: " + e_context.getMessage());
-        } catch (Exception e) {
+            throw new FopImageException("Error with image URL: " +
+                                        e_context.getMessage());
+        }
+        catch (Exception e) {
             // maybe relative
             URL context_url = null;
             try {
-                absoluteURL = new URL(Configuration.getStringValue("baseDir") + absoluteURL.getFile());
+                absoluteURL = new URL(
+                                Configuration.getStringValue("baseDir") +
+                                absoluteURL.getFile());
             } catch (MalformedURLException e_context) {
                 // pb context url
                 throw new FopImageException(
@@ -77,7 +81,8 @@ public class FopImageFactory {
             if (imgIS == null) {
                 imgIS = absoluteURL.openStream();
             }
-            imgReader = ImageReaderFactory.Make(absoluteURL.toExternalForm(), imgIS);
+            imgReader = ImageReaderFactory.Make(
+                          absoluteURL.toExternalForm(), imgIS);
         } catch (Exception e) {
             throw new FopImageException(
               "Error while recovering Image Informations (" +
@@ -113,7 +118,7 @@ public class FopImageFactory {
         } else if ("image/tiff".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.JimiImage";
             //      imgClassName = "org.apache.fop.image.JAIImage";
-        } else if ("image/svg-xml".equals(imgMimeType)) {
+        } else if ("image/svg+xml".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.SVGImage";
         }
         if (imgClassName == null)

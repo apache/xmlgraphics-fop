@@ -1,7 +1,7 @@
 /* $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.image.analyser;
@@ -33,7 +33,7 @@ public class SVGReader extends AbstractImageReader {
     }
 
     public String getMimeType() {
-        return "image/svg-xml";
+        return "image/svg+xml";
     }
 
     /**
@@ -52,6 +52,9 @@ public class SVGReader extends AbstractImageReader {
             this.height =
               (int) svg.getHeight().getBaseVal().getValue();
             return true;
+        } catch (NoClassDefFoundError ncdfe) {
+            MessageHandler.errorln("Batik not in class path");
+            return false;
         } catch (Exception e) {
             MessageHandler.errorln("ERROR LOADING EXTERNAL SVG: " + e.getMessage());
             // assuming any exception means this document is not svg
