@@ -69,6 +69,9 @@ import org.apache.fop.render.awt.viewer.Translator;
  */
 public class AWTRenderer extends AbstractRenderer implements Printable, Pageable {
 
+    /** The MIME type for PostScript */
+    public static final String MIME_TYPE = "application/awt";
+
     protected double scaleFactor = 100.0;
     protected int pageNumber = 0;
     private int pageWidth = 0;
@@ -458,4 +461,10 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         // TODO: render text decorations
         currentBlockIPPosition += text.getWidth();
     }
+
+    /** @see org.apache.fop.render.AbstractRenderer */
+    public String getMimeType() {
+        return MIME_TYPE;
+    }
+
 }

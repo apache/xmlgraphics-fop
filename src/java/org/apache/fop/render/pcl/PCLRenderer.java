@@ -32,6 +32,9 @@ import java.io.OutputStream;
  */
 public class PCLRenderer extends PrintRenderer {
 
+    /** The MIME type for PCL */
+    public static final String MIME_TYPE = "application/vnd.hp-PCL";
+
     /**
      * the current stream to add PCL commands to
      */
@@ -172,6 +175,11 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     public void stopRenderer() throws IOException {
+    }
+
+    /** @see org.apache.fop.render.AbstractRenderer */
+    public String getMimeType() {
+        return MIME_TYPE;
     }
 
 }

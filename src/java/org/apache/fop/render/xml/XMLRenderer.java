@@ -495,5 +495,10 @@ public class XMLRenderer extends AbstractRenderer {
         return strbuf.toString();
     }
 
+    /** @see org.apache.fop.render.AbstractRenderer */
+    public String getMimeType() {
+        return XML_MIME_TYPE;
+    }
+
 }
 

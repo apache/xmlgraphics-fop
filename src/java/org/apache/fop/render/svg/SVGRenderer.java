@@ -414,5 +414,11 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
 
         super.renderCharacter(ch);
     }
+
+    /** @see org.apache.fop.render.AbstractRenderer */
+    public String getMimeType() {
+        return SVG_MIME_TYPE;
+    }
+
 }
 
