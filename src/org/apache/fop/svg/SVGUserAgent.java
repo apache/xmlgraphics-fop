@@ -7,6 +7,8 @@
 
 package org.apache.fop.svg;
 
+import org.apache.fop.fo.FOUserAgent;
+
 import org.apache.log.Logger;
 
 import org.apache.batik.bridge.*;
@@ -34,16 +36,15 @@ import java.awt.Dimension;
 public class SVGUserAgent extends UserAgentAdapter {
     AffineTransform currentTransform = null;
     Logger log;
+    FOUserAgent userAgent;
 
     /**
      * Creates a new SVGUserAgent.
      */
-    public SVGUserAgent(AffineTransform at) {
+    public SVGUserAgent(FOUserAgent ua, AffineTransform at) {
         currentTransform = at;
-    }
-
-    public void setLogger(Logger logger) {
-        log = logger;
+        userAgent = ua;
+        log = userAgent.getLogger();
     }
 
     /**
@@ -79,9 +80,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * Returns a customized the pixel to mm factor.
      */
     public float getPixelToMM() {
-        // this is set to 72dpi as the values in fo are 72dpi
-        return 0.35277777777777777778f; // 72 dpi
-        // return 0.26458333333333333333333333333333f;    // 96dpi
+        return userAgent.getPixelToMM();
     }
 
     /**

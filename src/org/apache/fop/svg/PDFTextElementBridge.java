@@ -10,7 +10,6 @@ package org.apache.fop.svg;
 import org.apache.batik.gvt.TextNode;
 import org.apache.batik.bridge.*;
 
-import org.apache.batik.css.CSSOMReadOnlyStyleDeclaration;
 import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 
@@ -59,12 +58,8 @@ public class PDFTextElementBridge extends SVGTextElementBridge {
      * applied to the text.
      */
     private boolean isSimple(BridgeContext ctx, Element element, GraphicsNode node) {
-        CSSOMReadOnlyStyleDeclaration cssDecl
-            = CSSUtilities.getComputedStyle(element);
-        UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, element);
-
         // Font size, in user space units.
-        float fs = TextUtilities.convertFontSize(element, ctx, cssDecl, uctx);
+        float fs = TextUtilities.convertFontSize(element).floatValue();
         if(((int)fs) != fs) {
             return false;
         }

@@ -30,8 +30,6 @@ import org.apache.batik.gvt.renderer.*;
 import org.apache.batik.gvt.filter.*;
 import org.apache.batik.gvt.event.*;
 import org.apache.batik.bridge.UnitProcessor;
-import org.apache.batik.css.value.ImmutableFloat;
-import org.apache.batik.css.CSSOMReadOnlyValue;
 import org.apache.batik.util.SVGConstants;
 
 import org.w3c.dom.DOMImplementation;
@@ -45,6 +43,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.Dimension;
 
 /**
@@ -67,22 +66,15 @@ public class SVGElement extends SVGObj {
         init();
     }
 
-    public Point2D getDimension(Point2D view) {
+    public Point2D getDimension(final Point2D view) {
 
         // TODO - change so doesn't hold onto fo,area tree
         Element svgRoot = element;
         /* create an SVG area */
         /* if width and height are zero, get the bounds of the content. */
-        FOPSVGContext dc = new FOPSVGContext();
-        dc.svgRoot = element;
-        dc.cwauto = (view.getX() == -1);
-        dc.chauto = (view.getY() == -1);
-        dc.cwidth = (float)view.getX();
-        dc.cheight = (float)view.getY();
-        ((SVGOMDocument)doc).setSVGContext(dc);
 
         try {
-            String baseDir = userAgent.getBaseDirectory();
+            String baseDir = userAgent.getBaseURL();
             if(baseDir != null) {
                 ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
             }
@@ -91,12 +83,28 @@ public class SVGElement extends SVGObj {
         }
 
         Element e = ((SVGDocument)doc).getRootElement();
+        final float ptmm = userAgent.getPixelToMM();
+        SVGContext dc = new SVGContext() {
+            public float getPixelToMM() {
+                return ptmm;
+            }
+
+            public Rectangle2D getBBox() {
+                return new Rectangle2D.Double(0, 0, view.getX(), view.getY());
+            }
+
+            public AffineTransform getCTM() {
+                return new AffineTransform();
+            }
+        };
+        ((SVGOMElement)e).setSVGContext(dc);
 
         //if(!e.hasAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns")) {
             e.setAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns", SVGDOMImplementation.SVG_NAMESPACE_URI);
         //}
 
-        Point2D p2d = getSize(12 /* font size */, svgRoot);
+        Point2D p2d = getSize(12 /* font size */, svgRoot, userAgent.getPixelToMM());
+       ((SVGOMElement)e).setSVGContext(null);
 
         return p2d;
     }
@@ -111,10 +119,10 @@ public class SVGElement extends SVGObj {
         buildTopLevel(doc, element);
     }
 
-    public static Point2D getSize(int size, Element svgRoot) {
+    public static Point2D getSize(int size, Element svgRoot, float ptmm) {
         String str;
         UnitProcessor.Context ctx;
-        ctx = new PDFUnitContext(size, svgRoot);
+        ctx = new PDFUnitContext(size, svgRoot, ptmm);
         str = svgRoot.getAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE);
         if (str.length() == 0) str = "100%";
         float width = UnitProcessor.svgHorizontalLengthToUserSpace
@@ -137,7 +145,9 @@ public class SVGElement extends SVGObj {
         /** The element. */
         protected Element e;
         protected int fontSize;
-        public PDFUnitContext(int size, Element e) { 
+        float pixeltoMM;
+
+        public PDFUnitContext(int size, Element e, float ptmm) { 
             this.e  = e;
             this.fontSize = size;
         }
@@ -162,8 +172,7 @@ public class SVGElement extends SVGObj {
          * Returns the pixel to mm factor.
          */
         public float getPixelToMM() {
-                return 0.264583333333333333333f;
-                // 72 dpi
+            return pixeltoMM;
         }
 
         /**
@@ -176,10 +185,8 @@ public class SVGElement extends SVGObj {
         /**
          * Returns the font-size value.
          */
-        public CSSPrimitiveValue getFontSize() {
-            return new CSSOMReadOnlyValue
-                (new ImmutableFloat(CSSPrimitiveValue.CSS_PT,
-                                    fontSize));
+        public float getFontSize() {
+            return fontSize;
         }
 
         /**
@@ -202,51 +209,6 @@ public class SVGElement extends SVGObj {
         public float getViewportHeight() {
             return 100;
         }
-    }
-}
-
-class FOPSVGContext extends DefaultSVGContext {
-        public boolean cwauto;
-        public boolean chauto;
-        public float cwidth;
-        public float cheight;
-        public Element svgRoot;
-
-            public float getPixelToMM() {
-                // 72 dpi
-                return 0.35277777777777777778f;
-            }
-
-            public float getViewportWidth(Element e) throws IllegalStateException {
-            if(e == svgRoot) {
-                if(!cwauto) {
-                   return cwidth;
-                }
-            }
-                return super.getViewportWidth(e);
-            }
-
-            public float getViewportHeight(Element e) throws IllegalStateException {
-            if(e == svgRoot) {
-                if(!chauto) {
-                    return cheight;
-                }
-            }
-                return super.getViewportHeight(e);
-            }
-
-            public List getDefaultFontFamilyValue() {
-                return FONT_FAMILY;
-    }
-
-    public final static List FONT_FAMILY;
-    static {
-        FONT_FAMILY = new ArrayList();
-        FONT_FAMILY.add("Helvetica");
-        FONT_FAMILY.add("Times");
-        FONT_FAMILY.add("Courier");
-        FONT_FAMILY.add("sans-serif");
-        FONT_FAMILY.add("serif");
     }
 }
 
