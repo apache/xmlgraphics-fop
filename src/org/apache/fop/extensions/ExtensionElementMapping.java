@@ -19,22 +19,26 @@ public class ExtensionElementMapping implements ElementMapping {
 
     private static HashMap foObjs = null;
 
-    public synchronized void addToBuilder(FOTreeBuilder builder) {
+    private static synchronized void setupExt() {
         if(foObjs == null) {
-            foObjs = new HashMap();    
+            foObjs = new HashMap();
             foObjs.put("outline", new O());
             foObjs.put("label", new L());
         }
+    }
+
+    public void addToBuilder(FOTreeBuilder builder) {
+        setupExt();
         builder.addMapping(URI, foObjs);
     }
 
-    class O extends ElementMapping.Maker {
+    static class O extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new Outline(parent);
         }
     }
 
-    class L extends ElementMapping.Maker {
+    static class L extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new Label(parent);
         }
