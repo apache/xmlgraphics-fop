@@ -10,7 +10,7 @@ package org.apache.fop.fo;
 // FOP
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.StreamRenderer;
+import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.extensions.ExtensionObj;
@@ -70,7 +70,7 @@ public class FOTreeBuilder extends DefaultHandler {
      * The class that handles formatting and rendering to a stream
      * (mark-fop@inomial.com)
      */
-    private StreamRenderer streamRenderer;
+    private StructureHandler structHandler;
     private Logger log;
     private FOUserAgent userAgent;
 
@@ -89,8 +89,8 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
 
-    public void setStreamRenderer(StreamRenderer streamRenderer) {
-        this.streamRenderer = streamRenderer;
+    public void setStructHandler(StructureHandler sh) {
+        this.structHandler = sh;
     }
 
     /**
@@ -131,13 +131,13 @@ public class FOTreeBuilder extends DefaultHandler {
     throws SAXException {
         rootFObj = null;    // allows FOTreeBuilder to be reused
         log.info("building formatting object tree");
-        streamRenderer.startRenderer();
+        structHandler.startDocument();
     }
 
     public void endDocument()
     throws SAXException {
         log.info("Parsing of document complete, stopping renderer");
-        streamRenderer.stopRenderer();
+        structHandler.endDocument();
     }
 
     /**
@@ -185,7 +185,7 @@ public class FOTreeBuilder extends DefaultHandler {
             fobj.setUserAgent(userAgent);
             // set the stream renderer so that appropriate
             // elements can add pages and handle resolving references
-            fobj.setStreamRenderer(streamRenderer);
+            fobj.setStructHandler(structHandler);
 
             fobj.handleAttrs(attlist);
         } catch (FOPException e) {
@@ -209,7 +209,7 @@ public class FOTreeBuilder extends DefaultHandler {
     public void reset() {
         currentFObj = null;
         rootFObj = null;
-        streamRenderer = null;
+        structHandler = null;
     }
 
     public boolean hasData() {

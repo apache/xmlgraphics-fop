@@ -17,8 +17,8 @@ public class Fop {
             Starter starter = options.getStarter();
             starter.run();
         } catch (FOPException e) {
-            if("null".equals(e.getMessage())) {
-                System.err.println("NullPointerException");
+            if("null".equals("" + e.getMessage())) {
+                System.err.println("Exception occured with a null error message");
             } else {
                 System.err.println("" + e.getMessage());
             }

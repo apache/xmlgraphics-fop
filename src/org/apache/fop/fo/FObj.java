@@ -11,7 +11,7 @@ package org.apache.fop.fo;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.AreaClass;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.StreamRenderer;
+import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.apache.fop.layout.Area;
@@ -34,7 +34,7 @@ import java.util.HashSet;
  * base class for representation of formatting objects and their processing
  */
 public class FObj extends FONode {
-    protected StreamRenderer streamRenderer;
+    protected StructureHandler structHandler;
     public PropertyList properties;
     protected PropertyManager propMgr;
     protected String areaClass = AreaClass.UNASSIGNED;
@@ -135,8 +135,8 @@ public class FObj extends FONode {
         children.add(child);
     }
 
-    public void setStreamRenderer(StreamRenderer st) {
-        streamRenderer = st;
+    public void setStructHandler(StructureHandler st) {
+        structHandler = st;
     }
 
     /**
@@ -154,7 +154,7 @@ public class FObj extends FONode {
         if(prop != null) {
             String str = prop.getString();
             if(str != null && !str.equals("")) {
-                HashSet idrefs = streamRenderer.getIDReferences();
+                HashSet idrefs = structHandler.getIDReferences();
                 if(!idrefs.contains(str)) {
                     id = str;
                     idrefs.add(id);

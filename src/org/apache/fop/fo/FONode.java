@@ -9,7 +9,7 @@ package org.apache.fop.fo;
 
 // FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.StreamRenderer;
+import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.layout.Area;
 import org.apache.fop.util.CharUtilities;
 
@@ -48,7 +48,7 @@ abstract public class FONode {
         userAgent = ua;
     }
 
-    public void setStreamRenderer(StreamRenderer st) {
+    public void setStructHandler(StructureHandler st) {
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {
