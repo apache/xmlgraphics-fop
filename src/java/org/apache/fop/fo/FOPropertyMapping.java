@@ -412,9 +412,9 @@ public class FOPropertyMapping implements Constants {
      */
     public static Property.Maker[] getGenericMappings() {
         FOPropertyMapping gp = new FOPropertyMapping();
-        gp.createGenerics();
         // Create the shorthand first, they are referenced by the real properties. 
         gp.createShorthandProperties();
+        gp.createGenerics();
         gp.createAccessibilityProperties();
         gp.createAbsolutePositionProperties();
         gp.createAuralProperties();
