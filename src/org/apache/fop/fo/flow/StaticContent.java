@@ -14,17 +14,13 @@ import org.apache.fop.fo.pagination.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.apps.FOPException;
 
-// Java
-import java.util.Enumeration;
-
-public class StaticContent extends Flow {
+public class StaticContent extends AbstractFlow {
 
     public static class Maker extends FObj.Maker {
         public FObj make(FObj parent,
                          PropertyList propertyList) throws FOPException {
             return new StaticContent(parent, propertyList);
         }
-
     }
 
     public static FObj.Maker maker() {
@@ -34,17 +30,14 @@ public class StaticContent extends Flow {
     protected StaticContent(FObj parent,
                             PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        ((PageSequence)parent).setIsFlowSet(false);    // hacquery of sorts
+        setFlowName(getProperty("flow-name").getString());
+        pageSequence.addStaticContent(this);
+//        ((PageSequence)parent).setIsFlowSet(false);    // hacquery of sorts
     }
 
     public String getName() {
         return "fo:static-content";
     }
-
-    public Status layout(Area area) throws FOPException {
-        return layout(area, null);
-    }
-
 
     public Status layout(Area area, Region region) throws FOPException {
 
@@ -100,7 +93,7 @@ public class StaticContent extends Flow {
             throw new FOPException("A 'flow-name' is required for "
                                    + getName() + ".");
         } else {
-            super.setFlowName(name);
+            _flowName = name;
         }
 
     }
