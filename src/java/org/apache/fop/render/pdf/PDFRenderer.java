@@ -259,8 +259,8 @@ public class PDFRenderer extends PrintRenderer {
             List tripleList = new java.util.ArrayList();
             for (int j = 0; j < triple.length; j++) {
                 tripleList.add(new FontTriplet(triple[j].getAttribute("name"),
-                                               triple[j].getAttribute("style"),
-                                               triple[j].getAttribute("weight")));
+                                               triple[j].getAttribute("weight"),
+                                               triple[j].getAttribute("style")));
             }
 
             EmbedFontInfo efi;
@@ -313,6 +313,7 @@ public class PDFRenderer extends PrintRenderer {
         ostream = stream;
         producer = "FOP " + Version.getVersion();
         this.pdfDoc = new PDFDocument(producer);
+        setupLogger(this.pdfDoc);
         this.pdfDoc.setCreator(creator);
         this.pdfDoc.setFilterMap(filterMap);
         this.pdfDoc.outputHeader(stream);
