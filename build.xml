@@ -164,7 +164,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.20.0"/>
+    <property name="version" value="0.20.1"/>
     <filter  token="version" value="${version}"/>
     <property name="year" value="1999-2001"/>
 
@@ -669,7 +669,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <zip zipfile="${Name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
     <tar tarfile="${Name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
     <gzip zipfile="${Name}-${version}-src.tar.gz" src="${Name}-${version}-src.tar" />
-    <delete file="${Name}-${version}-src.tar"/>
 
   </target>
 
@@ -684,9 +683,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <delete dir="${dist.src.dir}"/>
     <delete dir="${dist.bin.dir}"/>
     <delete>
-       <fileset dir="${basedir}" includes="${Name}-${version}*.tar.gz"/>
-       <fileset dir="${basedir}" includes="${Name}-${version}*.tar"/>
-       <fileset dir="${basedir}" includes="${Name}-${version}*.zip"/>
+       <fileset dir="${basedir}" includes="${Name}-*.tar.gz"/>
+       <fileset dir="${basedir}" includes="${Name}-*.zip"/>
     </delete>
   </target>
 
