@@ -124,11 +124,7 @@ public class JpegImage extends AbstractFopImage {
                             int chunkSize = calcBytes(this.m_bitmaps[index + 2],
                                                       this.m_bitmaps[index + 3]) + 2;
 
-                            if (iccStream.size() == 0)
-                                iccStream.write(this.m_bitmaps, index+18, chunkSize - 20);
-                            else
-                                iccStream.write(this.m_bitmaps, index+16, chunkSize - 18); // eller 18..
-
+                            iccStream.write(this.m_bitmaps, index+16, chunkSize - 18); // eller 18..
                         }
 
                         index += calcBytes(this.m_bitmaps[index + 2],
