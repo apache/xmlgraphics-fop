@@ -1,25 +1,33 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.render.pdf;
-import org.apache.fop.render.pdf.fonts.*;
-import org.xml.sax.helpers.DefaultHandler;
+
+//Java
+import java.util.List;
+import java.util.Map;
+import java.io.IOException;
+
+//SAX
 import org.xml.sax.XMLReader;
 import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.Attributes;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import org.apache.fop.pdf.PDFWArray;
-import org.apache.fop.pdf.PDFCIDFont;
+import org.xml.sax.helpers.DefaultHandler;
+
+//FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fonts.BFEntry;
+import org.apache.fop.fonts.CIDFontType;
+import org.apache.fop.fonts.CustomFont;
+import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontType;
+import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.SingleByteFont;
 
 /**
  * Class for reading a metric.xml file and creating a font object.
@@ -32,19 +40,20 @@ import org.apache.fop.apps.FOPException;
  * </pre>
  */
 public class FontReader extends DefaultHandler {
+    
     private Locator locator = null;
     private boolean isCID = false;
+    private CustomFont returnFont = null;
     private MultiByteFont multiFont = null;
     private SingleByteFont singleFont = null;
-    private Font returnFont = null;
-    private String text = null;
+    private StringBuffer text = new StringBuffer();
 
-    private ArrayList cidWidths = null;
+    private List cidWidths = null;
     private int cidWidthIndex = 0;
 
-    private HashMap currentKerning = null;
+    private Map currentKerning = null;
 
-    private ArrayList bfranges = null;
+    private List bfranges = null;
 
     private void createFont(String path) throws FOPException {
         XMLReader parser = null;
@@ -54,8 +63,9 @@ public class FontReader extends DefaultHandler {
         } catch (Exception e) {
             throw new FOPException(e);
         }
-        if (parser == null)
+        if (parser == null) {
             throw new FOPException("Unable to create SAX parser");
+        }
 
         try {
             parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
@@ -78,23 +88,17 @@ public class FontReader extends DefaultHandler {
     }
 
     /**
-     * Sets the path to embed a font. a null value disables font embedding
+     * Sets the path to embed a font. A null value disables font embedding.
      */
     public void setFontEmbedPath(String path) {
-        if (isCID)
-            multiFont.embedFileName = path;
-        else
-            singleFont.embedFileName = path;
+        returnFont.setEmbedFileName(path);
     }
 
     /**
      * Enable/disable use of kerning for the font
      */
-    public void useKerning(boolean kern) {
-        if (isCID)
-            multiFont.useKerning = true;
-        else
-            singleFont.useKerning = true;
+    public void setKerningEnabled(boolean enabled) {
+        returnFont.setKerningEnabled(enabled);
     }
 
 
@@ -128,52 +132,40 @@ public class FontReader extends DefaultHandler {
                 isCID = true;
             } else if ("TRUETYPE".equals(attributes.getValue("type"))) {
                 singleFont = new SingleByteFont();
-                singleFont.subType = org.apache.fop.pdf.PDFFont.TRUETYPE;
+                singleFont.setFontType(FontType.TRUETYPE);
                 returnFont = singleFont;
                 isCID = false;
             } else {
                 singleFont = new SingleByteFont();
-                singleFont.subType = org.apache.fop.pdf.PDFFont.TYPE1;
+                singleFont.setFontType(FontType.TYPE1);
                 returnFont = singleFont;
                 isCID = false;
             }
         } else if ("embed".equals(localName)) {
-            if (isCID) {
-                // This *is* annoying... should create a common
-                // interface for sing/multibytefonts...
-                multiFont.embedFileName = attributes.getValue("file");
-                multiFont.embedResourceName = attributes.getValue("class");
-            } else {
-                singleFont.embedFileName = attributes.getValue("file");
-                singleFont.embedResourceName = attributes.getValue("class");
-            }
+            returnFont.setEmbedFileName(attributes.getValue("file"));
+            returnFont.setEmbedResourceName(attributes.getValue("class"));
         } else if ("cid-widths".equals(localName)) {
             cidWidthIndex = getInt(attributes.getValue("start-index"));
-            cidWidths = new ArrayList();
+            cidWidths = new java.util.ArrayList();
         } else if ("kerning".equals(localName)) {
-            currentKerning = new HashMap();
-            if (isCID)
-                multiFont.kerning.put(new Integer(attributes.getValue("kpx1")),
-                                      currentKerning);
-            else
-                singleFont.kerning.put(new Integer(attributes.getValue("kpx1")),
-                                       currentKerning);
+            currentKerning = new java.util.HashMap();
+            returnFont.putKerningEntry(new Integer(attributes.getValue("kpx1")),
+                                        currentKerning);
         } else if ("bfranges".equals(localName)) {
-            bfranges = new ArrayList();
+            bfranges = new java.util.ArrayList();
         } else if ("bf".equals(localName)) {
-            BFEntry entry = new BFEntry();
-            entry.unicodeStart = getInt(attributes.getValue("us"));
-            entry.unicodeEnd = getInt(attributes.getValue("ue"));
-            entry.glyphStartIndex = getInt(attributes.getValue("gi"));
+            BFEntry entry = new BFEntry(getInt(attributes.getValue("us")),
+                                        getInt(attributes.getValue("ue")),
+                                        getInt(attributes.getValue("gi")));
             bfranges.add(entry);
         } else if ("wx".equals(localName)) {
             cidWidths.add(new Integer(attributes.getValue("w")));
         } else if ("widths".equals(localName)) {
-            singleFont.width = new int[256];
+            //singleFont.width = new int[256];
         } else if ("char".equals(localName)) {
             try {
-                singleFont.width[Integer.parseInt(attributes.getValue("idx"))] =
-                    Integer.parseInt(attributes.getValue("wdt"));
+                singleFont.setWidth( Integer.parseInt(attributes.getValue("idx")), 
+                        Integer.parseInt(attributes.getValue("wdt")));
             } catch (NumberFormatException ne) {
                 System.out.println("Malformed width in metric file: "
                                    + ne.getMessage());
@@ -188,87 +180,57 @@ public class FontReader extends DefaultHandler {
         int ret = 0;
         try {
             ret = Integer.parseInt(str);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            /**@todo log this exception */
+        }
         return ret;
     }
 
     public void endElement(String uri, String localName, String qName) {
-        if ("font-name".equals(localName))
-            if (isCID)
-                multiFont.fontName = text;
-            else
-                singleFont.fontName = text;
-        if ("ttc-name".equals(localName) && isCID)
-            multiFont.ttcName = text;
-        else if ("cap-height".equals(localName))
-            if (isCID)
-                multiFont.capHeight = getInt(text);
-            else
-                singleFont.capHeight = getInt(text);
-        else if ("x-height".equals(localName))
-            if (isCID)
-                multiFont.xHeight = getInt(text);
-            else
-                singleFont.xHeight = getInt(text);
-        else if ("ascender".equals(localName))
-            if (isCID)
-                multiFont.ascender = getInt(text);
-            else
-                singleFont.ascender = getInt(text);
-        else if ("descender".equals(localName))
-            if (isCID)
-                multiFont.descender = getInt(text);
-            else
-                singleFont.descender = getInt(text);
-        else if ("left".equals(localName))
-            if (isCID)
-                multiFont.fontBBox[0] = getInt(text);
-            else
-                singleFont.fontBBox[0] = getInt(text);
-        else if ("bottom".equals(localName))
-            if (isCID)
-                multiFont.fontBBox[1] = getInt(text);
-            else
-                singleFont.fontBBox[1] = getInt(text);
-        else if ("right".equals(localName))
-            if (isCID)
-                multiFont.fontBBox[2] = getInt(text);
-            else
-                singleFont.fontBBox[2] = getInt(text);
-        else if ("first-char".equals(localName))
-            singleFont.firstChar = getInt(text);
-        else if ("last-char".equals(localName))
-            singleFont.lastChar = getInt(text);
-        else if ("top".equals(localName))
-            if (isCID)
-                multiFont.fontBBox[3] = getInt(text);
-            else
-                singleFont.fontBBox[3] = getInt(text);
-        else if ("flags".equals(localName))
-            if (isCID)
-                multiFont.flags = getInt(text);
-            else
-                singleFont.flags = getInt(text);
-        else if ("stemv".equals(localName))
-            if (isCID)
-                multiFont.stemV = getInt(text);
-            else
-                singleFont.stemV = getInt(text);
-        else if ("italic-angle".equals(localName))
-            if (isCID)
-                multiFont.italicAngle = getInt(text);
-            else
-                singleFont.italicAngle = getInt(text);
-        else if ("missing-width".equals(localName))
-            if (isCID)
-                multiFont.missingWidth = getInt(text);
-            else
-                singleFont.missingWidth = getInt(text);
-        else if ("cid-type".equals(localName)) {
-            if ("CIDFontType2".equals(text))
-                multiFont.cidType = PDFCIDFont.CID_TYPE2;
+        if ("font-name".equals(localName)) {
+            returnFont.setFontName(text.toString());
+        } else if ("ttc-name".equals(localName) && isCID) {
+            multiFont.setTTCName(text.toString());
+        } else if ("cap-height".equals(localName)) {
+            returnFont.setCapHeight(getInt(text.toString()));
+        } else if ("x-height".equals(localName)) {
+            returnFont.setXHeight(getInt(text.toString()));
+        } else if ("ascender".equals(localName)) {
+            returnFont.setAscender(getInt(text.toString()));
+        } else if ("descender".equals(localName)) {
+            returnFont.setDescender(getInt(text.toString()));
+        } else if ("left".equals(localName)) {
+            int[] bbox = returnFont.getFontBBox();
+            bbox[0] = getInt(text.toString());
+            returnFont.setFontBBox(bbox);
+        } else if ("bottom".equals(localName)) {
+            int[] bbox = returnFont.getFontBBox();
+            bbox[1] = getInt(text.toString());
+            returnFont.setFontBBox(bbox);
+        } else if ("right".equals(localName)) {
+            int[] bbox = returnFont.getFontBBox();
+            bbox[2] = getInt(text.toString());
+            returnFont.setFontBBox(bbox);
+        } else if ("top".equals(localName)) {
+            int[] bbox = returnFont.getFontBBox();
+            bbox[3] = getInt(text.toString());
+            returnFont.setFontBBox(bbox);
+        } else if ("first-char".equals(localName)) {
+            returnFont.setFirstChar(getInt(text.toString()));
+        } else if ("last-char".equals(localName)) {
+            returnFont.setLastChar(getInt(text.toString()));
+        } else if ("flags".equals(localName)) {
+            returnFont.setFlags(getInt(text.toString()));
+        } else if ("stemv".equals(localName)) {
+            returnFont.setStemV(getInt(text.toString()));
+        } else if ("italic-angle".equals(localName)) {
+            returnFont.setItalicAngle(getInt(text.toString()));
+        } else if ("missing-width".equals(localName)) {
+            returnFont.setMissingWidth(getInt(text.toString()));
+        } else if ("cid-type".equals(localName)) {
+            multiFont.setCIDType(CIDFontType.byName(text.toString()));
         } else if ("default-width".equals(localName)) {
-            multiFont.defaultWidth = getInt(text);
+            multiFont.setDefaultWidth(getInt(text.toString()));
         } else if ("cid-widths".equals(localName)) {
             int[] wds = new int[cidWidths.size()];
             int j = 0;
@@ -277,19 +239,17 @@ public class FontReader extends DefaultHandler {
                 wds[j++] = i.intValue();
             }
 
-            multiFont.warray.addEntry(cidWidthIndex, wds);
-            multiFont.width = wds;
+            multiFont.addCIDWidthEntry(cidWidthIndex, wds);
+            multiFont.setWidthArray(wds);
 
         } else if ("bfranges".equals(localName)) {
-            multiFont.bfentries = (BFEntry[])bfranges.toArray(new BFEntry[0]);
+            multiFont.setBFEntries((BFEntry[])bfranges.toArray(new BFEntry[0]));
         }
-
+        text.setLength(0); //Reset text buffer (see characters())
     }
 
     public void characters(char[] ch, int start, int length) {
-        char c[] = new char[length];
-        System.arraycopy(ch, start, c, 0, length);
-        text = new String(c);
+        text.append(ch, start, length);
     }
 
 }

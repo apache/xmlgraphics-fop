@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -18,6 +18,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Version;
 import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fo.properties.BackgroundRepeat;
+import org.apache.fop.fonts.*;
+import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFInfo;
@@ -51,11 +53,9 @@ import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.FontMetric;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.datatypes.ColorType;
 
-import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
@@ -67,9 +67,8 @@ import java.io.OutputStream;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
-import java.util.ArrayList;
 
 /*
 todo:
@@ -103,15 +102,15 @@ public class PDFRenderer extends PrintRenderer {
      * this is used for prepared pages that cannot be immediately
      * rendered
      */
-    protected HashMap pages = null;
+    protected Map pages = null;
 
     /**
      * Page references are stored using the PageViewport as the key
      * when a reference is made the PageViewport is used
      * for pdf this means we need the pdf page reference
      */
-    protected HashMap pageReferences = new HashMap();
-    protected HashMap pvReferences = new HashMap();
+    protected Map pageReferences = new java.util.HashMap();
+    protected Map pvReferences = new java.util.HashMap();
 
     private String producer = "FOP";
 
@@ -149,7 +148,7 @@ public class PDFRenderer extends PrintRenderer {
     protected int currentFontSize = 0;
     protected int pageHeight;
 
-    protected HashMap filterMap = new HashMap();
+    protected Map filterMap = new java.util.HashMap();
 
     /**
      * true if a TJ command is left to be written
@@ -192,7 +191,7 @@ public class PDFRenderer extends PrintRenderer {
     public void configure(Configuration conf) throws ConfigurationException {
         Configuration filters = conf.getChild("filterList");
         Configuration[] filt = filters.getChildren("value");
-        ArrayList filterList = new ArrayList();
+        List filterList = new java.util.ArrayList();
         for (int i = 0; i < filt.length; i++) {
             String name = filt[i].getValue();
             filterList.add(name);
@@ -203,7 +202,7 @@ public class PDFRenderer extends PrintRenderer {
         Configuration[] font = conf.getChildren("font");
         for (int i = 0; i < font.length; i++) {
             Configuration[] triple = font[i].getChildren("font-triplet");
-            ArrayList tripleList = new ArrayList();
+            List tripleList = new java.util.ArrayList();
             for (int j = 0; j < triple.length; j++) {
                 tripleList.add(new FontTriplet(triple[j].getAttribute("name"),
                                                triple[j].getAttribute("style"),
@@ -216,7 +215,7 @@ public class PDFRenderer extends PrintRenderer {
                                     tripleList, font[i].getAttribute("embed-url"));
 
             if(fontList == null) {
-                fontList = new ArrayList();
+                fontList = new java.util.ArrayList();
             }
             fontList.add(efi);
         }
@@ -354,7 +353,7 @@ public class PDFRenderer extends PrintRenderer {
         currentPage = this.pdfDoc.makePage(this.pdfResources,
                                            (int) Math.round(w / 1000), (int) Math.round(h / 1000));
         if (pages == null) {
-            pages = new HashMap();
+            pages = new java.util.HashMap();
         }
         pages.put(page, currentPage);
         pageReferences.put(page.getKey(), currentPage.referencePDF());
@@ -840,7 +839,7 @@ public class PDFRenderer extends PrintRenderer {
 
         String s = word.getWord();
 
-        FontMetric metrics = fontInfo.getMetricsFor(name);
+        FontMetrics metrics = fontInfo.getMetricsFor(name);
         FontState fs = new FontState(name, metrics, size);
         escapeText(s, fs, useMultiByte, pdf);
         pdf.append(endText);
@@ -856,8 +855,7 @@ public class PDFRenderer extends PrintRenderer {
         String endText = useMultiByte ? "> " : ") ";
 
         boolean kerningAvailable = false;
-        HashMap kerning = null;
-        kerning = fs.getKerning();
+        Map kerning = fs.getKerning();
         if (kerning != null && !kerning.isEmpty()) {
             kerningAvailable = true;
         }
@@ -922,8 +920,8 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     private void addKerning(StringBuffer buf, Integer ch1, Integer ch2,
-                            HashMap kerning, String startText, String endText) {
-        HashMap kernPair = (HashMap) kerning.get(ch1);
+                            Map kerning, String startText, String endText) {
+        Map kernPair = (Map) kerning.get(ch1);
 
         if (kernPair != null) {
             Integer width = (Integer) kernPair.get(ch2);
