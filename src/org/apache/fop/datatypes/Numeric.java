@@ -272,7 +272,7 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     }
 
     /**
-     * Set the value.  This used on <tt>Numeric</tt> clones in the <i>abs>/i>
+     * Set the value.  This used on <tt>Numeric</tt> clones in the <i>abs</i>
      * <i>min</i> and <i>max</i> operations.
      * @param value - the <tt>double</tt> value.
      */
