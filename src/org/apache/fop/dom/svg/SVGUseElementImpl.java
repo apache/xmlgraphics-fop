@@ -60,6 +60,10 @@ import org.w3c.dom.svg.*;
 public class SVGUseElementImpl extends GraphicElement implements SVGUseElement {
 	public String link;
 	String xlinkArcRole;
+	SVGAnimatedLength x;
+	SVGAnimatedLength y;
+	SVGAnimatedLength width;
+	SVGAnimatedLength height;
 
 	public SVGUseElementImpl(String s)
 	{
@@ -132,38 +136,42 @@ public class SVGUseElementImpl extends GraphicElement implements SVGUseElement {
 
 	public SVGAnimatedLength getX( )
 	{
-		return null;
+		return x;
 	}
 
 	public void setX( SVGAnimatedLength x )
 	{
+		this.x = x;
 	}
 
 	public SVGAnimatedLength getY( )
 	{
-		return null;
+		return y;
 	}
 
 	public void setY( SVGAnimatedLength y )
 	{
+		this.y = y;
 	}
 
 	public SVGAnimatedLength getWidth( )
 	{
-		return null;
+		return width;
 	}
 
 	public void setWidth( SVGAnimatedLength width )
 	{
+		this.width = width;
 	}
 
 	public SVGAnimatedLength getHeight( )
 	{
-		return null;
+		return height;
 	}
 
 	public void setHeight( SVGAnimatedLength height )
 	{
+		this.height = height;
 	}
 
 	public SVGElementInstance getInstanceRoot( )

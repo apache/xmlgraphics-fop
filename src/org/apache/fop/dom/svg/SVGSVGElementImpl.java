@@ -71,6 +71,8 @@ import org.w3c.dom.*;
  *
  */
 public class SVGSVGElementImpl extends GraphicElement implements SVGSVGElement {
+	SVGAnimatedLength x;
+	SVGAnimatedLength y;
 	SVGAnimatedLength width;
 	SVGAnimatedLength height;
 
@@ -80,12 +82,12 @@ public class SVGSVGElementImpl extends GraphicElement implements SVGSVGElement {
 
 	public SVGAnimatedLength getX( )
 	{
-		return null;
+		return x;
 	}
 
 	public SVGAnimatedLength getY( )
 	{
-		return null;
+		return y;
 	}
 
 	public SVGAnimatedLength getWidth( )
@@ -106,6 +108,16 @@ public class SVGSVGElementImpl extends GraphicElement implements SVGSVGElement {
 	public void setHeight(SVGAnimatedLength h)
 	{
 		height = h;
+	}
+
+	public void setX(SVGAnimatedLength x)
+	{
+		this.x = x;
+	}
+
+	public void setY(SVGAnimatedLength y)
+	{
+		this.y = y;
 	}
 
 	public SVGRect getViewport( )
