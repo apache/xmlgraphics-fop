@@ -218,6 +218,12 @@ public class TableBody extends FObj {
 										area.increaseHeight(areaContainer.getHeight());
 										area.setAbsoluteHeight(
 											areaContainer.getAbsoluteHeight());
+                    				if (i == numChildren - 1) {
+                                        this.marker = BREAK_AFTER;
+                        				if (spaceAfter != 0) {
+                    						area.increaseHeight(spaceAfter);
+                        				}
+                    				}
 								return status;
 								}
 								if (keepWith.size() > 0) { // && status.getCode() == Status.AREA_FULL_NONE
