@@ -55,12 +55,8 @@
  */
 package org.apache.fop.datatypes;
 
-import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.datatypes.AbstractPropertyValue;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.*;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.datatypes.TextDecorator;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Class for the text decorations to be applied according to the
@@ -86,6 +82,7 @@ public class TextDecorations
     /**
      * @param property the <tt>int</tt> index of the property on which
      * this value is being defined.
+     * @param decorations the decorations being applied.
      * @exception PropertyException
      */
     public TextDecorations(int property, byte decorations)
@@ -98,9 +95,10 @@ public class TextDecorations
     /**
      * @param propertyName the <tt>String</tt> name of the property on which
      * this value is being defined.
+     * @param decorations the decorations being applied.
      * @exception PropertyException
      */
-    public TextDecorations(String propertyName)
+    public TextDecorations(String propertyName, byte decorations)
         throws PropertyException
     {
         super(propertyName, PropertyValue.TEXT_DECORATIONS);
