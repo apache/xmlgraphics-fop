@@ -248,15 +248,11 @@ public class LayoutHandler extends StructureHandler {
      * on the area tree with the page sequence title.
      *
      * @param pageSeq the page sequence starting
-     * @param seqTitle the title of the page sequence
-     * @param lms the layout master set
      */
-    public void startPageSequence(PageSequence pageSeq,
-                                  org.apache.fop.fo.Title seqTitle,
-                                  LayoutMasterSet lms) {
+    public void startPageSequence(PageSequence pageSeq) {
         Title title = null;
-        if (seqTitle != null) {
-            title = seqTitle.getTitleArea();
+        if (pageSeq.getTitleFO() != null) {
+            title = pageSeq.getTitleFO().getTitleArea();
         }
         areaTree.startPageSequence(title);
     }

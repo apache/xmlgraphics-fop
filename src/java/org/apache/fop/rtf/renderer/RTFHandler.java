@@ -150,7 +150,7 @@ public class RTFHandler extends StructureHandler {
     /**
      * @see org.apache.fop.apps.StructureHandler
      */
-    public void startPageSequence(PageSequence pageSeq, Title seqTitle, LayoutMasterSet lms)  {
+    public void startPageSequence(PageSequence pageSeq)  {
         try {
             sect = docArea.newSection();
             if (!warned) {
