@@ -18,16 +18,16 @@
  
 package org.apache.fop.pdf;
 
-import java.awt.Shape;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.Serializable;
+import java.util.List;
 import java.util.Iterator;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Area;
 
 import java.awt.Color;
 import java.awt.Paint;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.GeneralPath;
 
 /**
  * This keeps information about the current state when writing to pdf.
@@ -47,41 +47,10 @@ import java.awt.geom.AffineTransform;
  * the possible combinations after completing.
  */
 public class PDFState {
-    private static final String COLOR = "color";
-    private static final String BACKCOLOR = "backcolor";
-    private static final String PAINT = "paint";
-    private static final String BACKPAINT = "backpaint";
-    private static final String LINECAP = "lineCap";
-    private static final String LINEJOIN = "lineJoin";
-    private static final String LINEWIDTH = "lineWidth";
-    private static final String MITERLIMIT = "miterLimit";
-    private static final String TEXT = "text";
-    private static final String DASHOFFSET = "dashOffset";
-    private static final String DASHARRAY = "dashArray";
-    private static final String TRANSFORM = "transform";
-    private static final String FONTSIZE = "fontSize";
-    private static final String FONTNAME = "fontName";
-    private static final String CLIP = "clip";
-    private static final String GSTATE = "gstate";
 
-    private Color color = Color.black;
-    private Color backcolor = Color.white;
-    private Paint paint = null;
-    private Paint backPaint = null;
-    private int lineCap = 0;
-    private int lineJoin = 0;
-    private float lineWidth = 1;
-    private float miterLimit = 0;
-    private boolean text = false;
-    private int dashOffset = 0;
-    private int[] dashArray = new int[0];
-    private AffineTransform transform = new AffineTransform();
-    private float fontSize = 0;
-    private String fontName = "";
-    private Shape clip = null;
-    private PDFGState gstate = null;
-
-    private ArrayList stateStack = new ArrayList();
+    private Data data = new Data();
+    
+    private List stateStack = new java.util.ArrayList();
 
     /**
      * PDF State for storing graphics state.
@@ -96,54 +65,37 @@ public class PDFState {
      * so that the state is known when popped.
      */
     public void push() {
-        HashMap saveMap = new HashMap();
-        saveMap.put(COLOR, color);
-        saveMap.put(BACKCOLOR, backcolor);
-        saveMap.put(PAINT, paint);
-        saveMap.put(BACKPAINT, backPaint);
-        saveMap.put(LINECAP, new Integer(lineCap));
-        saveMap.put(LINEJOIN, new Integer(lineJoin));
-        saveMap.put(LINEWIDTH, new Float(lineWidth));
-        saveMap.put(MITERLIMIT, new Float(miterLimit));
-        saveMap.put(TEXT, new Boolean(text));
-        saveMap.put(DASHOFFSET, new Integer(dashOffset));
-        saveMap.put(DASHARRAY, dashArray);
-        saveMap.put(TRANSFORM, transform);
-        saveMap.put(FONTSIZE, new Float(fontSize));
-        saveMap.put(FONTNAME, fontName);
-        saveMap.put(CLIP, clip);
-        saveMap.put(GSTATE, gstate);
-
-        stateStack.add(saveMap);
-
-        transform = new AffineTransform();
+        Data copy;
+        try {
+            copy = (Data)getData().clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        stateStack.add(copy);
+        data.resetConcatenations();
     }
 
+    /**
+     * @return the currently valid state
+     */
+    public Data getData() {
+        return data;
+    }
+    
     /**
      * Pop the state from the stack and set current values to popped state.
      * This should be called when a Q operator is used so
      * the state is restored to the correct values.
+     * @return the restored state, null if the stack is empty
      */
-    public void pop() {
+    public Data pop() {
         if (getStackLevel() > 0) {
-            HashMap saveMap = (HashMap)stateStack.get(stateStack.size() - 1);
-            stateStack.remove(stateStack.size() - 1);
-            color = (Color)saveMap.get(COLOR);
-            backcolor = (Color)saveMap.get(BACKCOLOR);
-            paint = (Paint)saveMap.get(PAINT);
-            backPaint = (Paint)saveMap.get(BACKPAINT);
-            lineCap = ((Integer)saveMap.get(LINECAP)).intValue();
-            lineJoin = ((Integer)saveMap.get(LINEJOIN)).intValue();
-            lineWidth = ((Float)saveMap.get(LINEWIDTH)).floatValue();
-            miterLimit = ((Float)saveMap.get(MITERLIMIT)).floatValue();
-            text = ((Boolean)saveMap.get(TEXT)).booleanValue();
-            dashOffset = ((Integer)saveMap.get(DASHOFFSET)).intValue();
-            dashArray = (int[])saveMap.get(DASHARRAY);
-            transform = (AffineTransform)saveMap.get(TRANSFORM);
-            fontSize = ((Float)saveMap.get(FONTSIZE)).floatValue();
-            fontName = (String)saveMap.get(FONTNAME);
-            clip = (Shape)saveMap.get(CLIP);
-            gstate = (PDFGState)saveMap.get(GSTATE);
+            Data popped = (Data)stateStack.remove(stateStack.size() - 1);
+
+            data = popped;
+            return popped;
+        } else {
+            return null;
         }
     }
 
@@ -163,6 +115,7 @@ public class PDFState {
      *
      * @param stack the level to restore to
      */
+    /*
     public void restoreLevel(int stack) {
         int pos = stack;
         while (stateStack.size() > pos + 1) {
@@ -171,7 +124,7 @@ public class PDFState {
         if (stateStack.size() > pos) {
             pop();
         }
-    }
+    }*/
 
     /**
      * Set the current line dash.
@@ -182,9 +135,10 @@ public class PDFState {
      * @param offset the line dash start offset
      * @return true if the line dash has changed
      */
+    /*
     public boolean setLineDash(int[] array, int offset) {
         return false;
-    }
+    }*/
 
     /**
      * Set the current line width.
@@ -192,8 +146,8 @@ public class PDFState {
      * @return true if the line width has changed
      */
     public boolean setLineWidth(float width) {
-        if (lineWidth != width) {
-            lineWidth = width;
+        if (getData().lineWidth != width) {
+            getData().lineWidth = width;
             return true;
         } else {
             return false;
@@ -208,11 +162,13 @@ public class PDFState {
      * @return true if the color has changed
      */
     public boolean setColor(Color col) {
-        if (!col.equals(color)) {
-            color = col;
+        if (!col.equals(getData().color)) {
+            //System.out.println("old: " + getData().color + ", new: " + col);
+            getData().color = col;
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -223,11 +179,12 @@ public class PDFState {
      * @return true if the background color has changed
      */
     public boolean setBackColor(Color col) {
-        if (!col.equals(backcolor)) {
-            backcolor = col;
+        if (!col.equals(getData().backcolor)) {
+            getData().backcolor = col;
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -238,13 +195,13 @@ public class PDFState {
      * @return true if the new paint changes the current paint
      */
     public boolean setPaint(Paint p) {
-        if (paint == null) {
+        if (getData().paint == null) {
             if (p != null) {
-                paint = p;
+                getData().paint = p;
                 return true;
             }
-        } else if (!paint.equals(p)) {
-            paint = p;
+        } else if (!data.paint.equals(p)) {
+            getData().paint = p;
             return true;
         }
         return false;
@@ -263,14 +220,14 @@ public class PDFState {
      * @return true if the clip will change the current clip.
      */
     public boolean checkClip(Shape cl) {
-        if (clip == null) {
+        if (getData().clip == null) {
             if (cl != null) {
                 return true;
             }
-        } else if (!new Area(clip).equals(new Area(cl))) {
+        } else if (!new Area(getData().clip).equals(new Area(cl))) {
             return true;
         }
-        // todo check for clips that are larger than the current
+        //TODO check for clips that are larger than the current
         return false;
     }
 
@@ -282,12 +239,12 @@ public class PDFState {
      * @param cl the new clip in the current state
      */
     public void setClip(Shape cl) {
-        if (clip != null) {
-            Area newClip = new Area(clip);
+        if (getData().clip != null) {
+            Area newClip = new Area(getData().clip);
             newClip.intersect(new Area(cl));
-            clip = new GeneralPath(newClip);
+            getData().clip = new GeneralPath(newClip);
         } else {
-            clip = cl;
+            getData().clip = cl;
         }
     }
 
@@ -301,7 +258,7 @@ public class PDFState {
      * @return true if the new transform is different then the current transform
      */
     public boolean checkTransform(AffineTransform tf) {
-        return !tf.equals(transform);
+        return !tf.equals(getData().transform);
     }
 
     /**
@@ -312,7 +269,7 @@ public class PDFState {
      * @param tf the transform to concatonate to the current level transform
      */
     public void setTransform(AffineTransform tf) {
-        transform.concatenate(tf);
+        getData().concatenate(tf);
     }
 
     /**
@@ -326,11 +283,11 @@ public class PDFState {
         AffineTransform tf;
         AffineTransform at = new AffineTransform();
         for (Iterator iter = stateStack.iterator(); iter.hasNext();) {
-            HashMap map = (HashMap)iter.next();
-            tf = (AffineTransform)map.get(TRANSFORM);
+            Data d = (Data)iter.next();
+            tf = d.transform;
             at.concatenate(tf);
         }
-        at.concatenate(transform);
+        at.concatenate(getData().transform);
 
         return at;
     }
@@ -351,17 +308,92 @@ public class PDFState {
         PDFGState newstate = new PDFGState();
         newstate.addValues(defaultState);
         for (Iterator iter = stateStack.iterator(); iter.hasNext();) {
-            HashMap map = (HashMap)iter.next();
-            state = (PDFGState)map.get(GSTATE);
+            Data d = (Data)iter.next();
+            state = d.gstate;
             if (state != null) {
                 newstate.addValues(state);
             }
         }
-        if (gstate != null) {
-            newstate.addValues(gstate);
+        if (getData().gstate != null) {
+            newstate.addValues(getData().gstate);
         }
 
         return newstate;
+    }
+    
+    public class Data implements Cloneable, Serializable {
+        
+        public Color color = Color.black;
+        public Color backcolor = Color.white;
+        public Paint paint = null;
+        public Paint backPaint = null;
+        public int lineCap = 0;
+        public int lineJoin = 0;
+        public float lineWidth = 1;
+        public float miterLimit = 0;
+        public boolean text = false;
+        public int dashOffset = 0;
+        public int[] dashArray = new int[0];
+        public AffineTransform transform = new AffineTransform();
+        public float fontSize = 0;
+        public String fontName = "";
+        public Shape clip = null;
+        public PDFGState gstate = null;
+        /** Log of all concatenation operations */
+        public List concatenations = null;
+
+        
+        /** @see java.lang.Object#clone() */
+        public Object clone() throws CloneNotSupportedException {
+            Data obj = new Data();
+            obj.color = this.color;
+            obj.backcolor = this.backcolor;
+            obj.paint = this.paint;
+            obj.backPaint = this.paint;
+            obj.lineCap = this.lineCap;
+            obj.lineJoin = this.lineJoin;
+            obj.lineWidth = this.lineWidth;
+            obj.miterLimit = this.miterLimit;
+            obj.text = this.text;
+            obj.dashOffset = this.dashOffset;
+            obj.dashArray = this.dashArray;
+            obj.transform = new AffineTransform(this.transform);
+            obj.fontSize = this.fontSize;
+            obj.fontName = this.fontName;
+            obj.clip = this.clip;
+            obj.gstate = this.gstate;
+            if (this.concatenations != null) {
+                obj.concatenations = new java.util.ArrayList(this.concatenations);
+            }
+            return obj;
+        }
+        
+        /**
+         * Forgets the previously made AffineTransform concatenations.
+         */
+        public void resetConcatenations() {
+            this.concatenations = null;
+        }
+        
+        /**
+         * Concatenate the given AffineTransform with the current thus creating
+         * a new viewport. Note that all concatenation operations are logged
+         * so they can be replayed if necessary (ex. for block-containers with
+         * "fixed" positioning.
+         * @param at Transformation to perform
+         */
+        public void concatenate(AffineTransform at) {
+            if (this.concatenations == null) {
+                this.concatenations = new java.util.ArrayList();
+            }
+            concatenations.add(at);
+            transform.concatenate(at);
+        }
+        
+        /** @see java.lang.Object#toString() */
+        public String toString() {
+            return super.toString() + ", " + this.transform + " | " + this.concatenations;
+        }
     }
 }
 

@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
 
@@ -101,11 +102,15 @@ text decoration
  *
  */
 public class PDFRenderer extends PrintRenderer {
+    
     /**
      * The mime type for pdf
      */
     public static final String MIME_TYPE = "application/pdf";
 
+    /** Controls whether comments are written to the PDF stream. */
+    protected static final boolean WRITE_COMMENTS = true;
+    
     /**
      * the PDF Document being created
      */
@@ -330,6 +335,16 @@ public class PDFRenderer extends PrintRenderer {
             renderBookmarkItem(bookmarkItem.getSubData(i), pdfOutline);
         }
     }
+    
+    /** 
+     * writes out a comment.
+     * @param text text for the comment
+     */
+    protected void comment(String text) {
+        if (WRITE_COMMENTS) {
+            currentStream.add("% " + text + "\n");
+        }
+    }
 
     /** Saves the graphics state of the rendering engine. */
     protected void saveGraphicsState() {
@@ -432,11 +447,17 @@ public class PDFRenderer extends PrintRenderer {
             .makeStream(PDFFilterList.CONTENT_FILTER, false);
 
         currentState = new PDFState();
+        /* This transform shouldn't affect PDFState as it only sets the basic
+         * coordinate system for the rendering process.
+         *
         currentState.setTransform(new AffineTransform(1, 0, 0, -1, 0,
                                    (int) Math.round(pageHeight / 1000)));
+        */
         // Transform origin at top left to origin at bottom left
         currentStream.add("1 0 0 -1 0 "
                            + (int) Math.round(pageHeight / 1000) + " cm\n");
+        
+        
         currentFontName = "";
 
         Page p = page.getPage();
@@ -459,7 +480,7 @@ public class PDFRenderer extends PrintRenderer {
         // Set the given CTM in the graphics state
         currentState.push();
         currentState.setTransform(
-          new AffineTransform(CTMHelper.toPDFArray(ctm)));
+                new AffineTransform(CTMHelper.toPDFArray(ctm)));
 
         saveGraphicsState();
         // multiply with current CTM
@@ -682,7 +703,27 @@ public class PDFRenderer extends PrintRenderer {
         if (bv.getPositioning() == Block.ABSOLUTE
                 || bv.getPositioning() == Block.FIXED) {
 
-            //TODO Handle positioning=FIXED
+            //For FIXED, we need to break out of the current viewports to the
+            //one established by the page. We save the state stack for restoration
+            //after the block-container has been painted. See below.
+            List breakOutList = null;
+            if (bv.getPositioning() == Block.FIXED) {
+                //break out
+                breakOutList = new java.util.ArrayList();
+                PDFState.Data data;
+                while (true) {
+                    data = currentState.getData();
+                    if (currentState.pop() == null) {
+                        break;
+                    }
+                    if (breakOutList.size() == 0) {
+                        comment("------ break out!");
+                    }
+                    breakOutList.add(0, data); //Insert because of stack-popping
+                    //getLogger().debug("Adding to break out list: " + data);
+                    restoreGraphicsState();
+                }
+            }
             
             CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
             ctm = tempctm.multiply(ctm);
@@ -729,6 +770,34 @@ public class PDFRenderer extends PrintRenderer {
 
             // clip if necessary
 
+            if (breakOutList != null) {
+                comment("------ restoring context after break-out...");
+                PDFState.Data data;
+                Iterator i = breakOutList.iterator();
+                while (i.hasNext()) {
+                    data = (PDFState.Data)i.next();
+                    //getLogger().debug("Restoring: " + data);
+                    currentState.push();
+                    saveGraphicsState();
+                    if (data.concatenations != null) {
+                        Iterator tr = data.concatenations.iterator();
+                        while (tr.hasNext()) {
+                            AffineTransform at = (AffineTransform)tr.next();
+                            currentState.setTransform(at);
+                            double[] matrix = new double[6];
+                            at.getMatrix(matrix);
+                            tempctm = new CTM(matrix[0], matrix[1], matrix[2], matrix[3], 
+                                    matrix[4] * 1000, matrix[5] * 1000);
+                            currentStream.add(CTMHelper.toPDFString(tempctm) + " cm\n");
+                        }
+                    }
+                    //TODO Break-out: Also restore items such as line width and color
+                    //Left out for now because all this painting stuff is very
+                    //inconsistent. Some values go over PDFState, some don't.
+                }
+                comment("------ done.");
+            }
+            
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
         } else {
