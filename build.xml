@@ -94,7 +94,6 @@ list of possible build targets.
     <fileset dir="lib">
       <include name="*.jar"/>
       <exclude name="ant.jar"/>
-      <exclude name="buildtools.jar"/>
     </fileset>
     <fileset dir="build">
       <include name="fop.jar"/>
@@ -695,6 +694,10 @@ list of possible build targets.
     </fop>
   </target>
 
+  <!-- =================================================================== -->
+  <!-- Special target for Gump                                             -->
+  <!-- =================================================================== -->
+  <target name="gump" depends="all, javadocs"/>
   <!-- =================================================================== -->
   <!-- Clean targets                                                       -->
   <!-- =================================================================== -->
