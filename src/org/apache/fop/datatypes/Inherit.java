@@ -4,6 +4,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.PropertyTriplet;
 import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.datatypes.IndirectValue;
 
 /*
@@ -31,15 +32,13 @@ public class Inherit extends IndirectValue {
 
     /**
      * Override the dual-property constructor of <tt>IndirectValue</tt>.
-     * <i>'inherit'</i> cannot draw a value from a different property from
-     * the one on which it was defined, so this constructor is private.
      * @param property the <tt>int</tt> index of the property on which
      * this value is being defined.
      * @param sourceProperty the <tt>int</tt> index of the property from
      * which the inherited value is derived.
      * @exception PropertyException
      */
-    private Inherit(int property, int sourceProperty)
+    public Inherit(int property, int sourceProperty)
         throws PropertyException
     {
         super(property, PropertyValue.INHERIT, sourceProperty);
