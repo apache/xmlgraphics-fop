@@ -108,7 +108,7 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
      */
     public void startDocument() throws NoSuchElementException {
         synchronized (events) {
-            FoXMLEvent event = new FoXMLEvent(namespaces);
+            FoXMLEvent event = pool.acquireFoXMLEvent();
             //System.out.println("StartDocument thread "
             //                   + Thread.currentThread().getName());
             event.type = XMLEvent.STARTDOCUMENT;
@@ -122,7 +122,7 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
      */
     public void endDocument() throws NoSuchElementException {
         synchronized (events) {
-            FoXMLEvent event = new FoXMLEvent(namespaces);
+            FoXMLEvent event = pool.acquireFoXMLEvent();
             //System.out.println("EndDocument thread "
                                //+ Thread.currentThread().getName());
             event.type = XMLEvent.ENDDOCUMENT;
@@ -145,7 +145,8 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
         throws NoSuchElementException
     {
         synchronized (events) {
-            FoXMLEvent event = new FoXMLEvent(namespaces);
+            FoXMLEvent event = pool.acquireFoXMLEvent();
+            //System.out.println("startElement: acquired " + event.id);
             //System.out.println("StartElement thread "
             //                   + Thread.currentThread().getName());
             event.type = XMLEvent.STARTELEMENT;
@@ -175,7 +176,8 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
         throws NoSuchElementException
     {
         synchronized (events) {
-            FoXMLEvent event = new FoXMLEvent(namespaces);
+            FoXMLEvent event = pool.acquireFoXMLEvent();
+            //System.out.println("endElement: acquired " + event.id);
             //System.out.println("EndElement thread "
                                //+ Thread.currentThread().getName());
             event.type = XMLEvent.ENDELEMENT;
@@ -202,7 +204,7 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
         throws NoSuchElementException
     {
         synchronized (events) {
-            FoXMLEvent event = new FoXMLEvent(namespaces);
+            FoXMLEvent event = pool.acquireFoXMLEvent();
             //System.out.println("characters thread "
             //                   + Thread.currentThread().getName());
             event.type = XMLEvent.CHARACTERS;
