@@ -55,4 +55,7 @@ public abstract class BorderCommonWidthAbsolute extends BorderCommonWidth {
         return relBorderWidthProps[relEdge];
     }
 
+    public boolean isCorrespondingAbsolute() {
+        return true;
+    }
 }

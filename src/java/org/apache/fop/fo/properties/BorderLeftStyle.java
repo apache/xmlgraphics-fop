@@ -51,7 +51,7 @@ extends BorderCommonStyleAbsolute {
         return inherited;
     }
 
-    public int getCorrespondingRelativeProperty(FONode foNode)
+    public int getCorrespondingProperty(FONode foNode)
     throws PropertyException {
         return getCorrespondingStyleProperty(
                 foNode, WritingMode.LEFT);

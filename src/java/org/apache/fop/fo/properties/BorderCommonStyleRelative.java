@@ -63,4 +63,7 @@ extends BorderCommonStyle {
         return false;
     }
 
+    public boolean isCorrespondingRelative() {
+        return true;
+    }
 }

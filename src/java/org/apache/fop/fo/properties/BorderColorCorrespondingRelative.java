@@ -59,4 +59,7 @@ public class BorderColorCorrespondingRelative extends BorderColorCorresponding {
         return false;
     }
 
+    public boolean isCorrespondingRelative() {
+        return true;
+    }
 }

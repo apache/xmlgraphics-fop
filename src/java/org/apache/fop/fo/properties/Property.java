@@ -251,7 +251,7 @@ public class Property {
      * Such properties must override this method.
      * @return answer
      */
-    public static boolean isCorrespondingAbsolute() {
+    public boolean isCorrespondingAbsolute() {
         return false;
     }
 
@@ -260,7 +260,7 @@ public class Property {
      * Such properties must override this method.
      * @return answer
      */
-    public static boolean isCorrespondingRelative() {
+    public boolean isCorrespondingRelative() {
         return false;
     }
 
