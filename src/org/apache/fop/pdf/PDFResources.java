@@ -67,8 +67,9 @@ public class PDFResources extends PDFObject {
     /** /Font objects keyed by their internal name */
     protected Hashtable fonts = new Hashtable();
 
-    protected Vector xObjects;
-
+    protected Vector xObjects=null;
+	protected Vector patterns= new Vector();
+	protected Vector shadings=new Vector();
     /**
      * create a /Resources object.
      *
@@ -77,7 +78,8 @@ public class PDFResources extends PDFObject {
     public PDFResources(int number) {
 
 	/* generic creation of object */
-	super(number);
+		super(number);
+	
     }
 
     /**
@@ -88,7 +90,14 @@ public class PDFResources extends PDFObject {
     public void addFont(PDFFont font) {
 	this.fonts.put(font.getName(),font);
     }
-
+	
+	public void addShading(PDFShading theShading){
+		this.shadings.addElement(theShading);
+	}
+	
+	public void addPattern(PDFPattern thePattern){
+		this.patterns.addElement(thePattern);
+	}
     public void setXObjects(Vector xObjects) {
 	this.xObjects = xObjects;
     }
@@ -107,16 +116,58 @@ public class PDFResources extends PDFObject {
 			p.append("/Font << ");
 
 			/* construct PDF dictionary of font object references */
-			Enumeration fontEnumeration = fonts.keys();
+			Enumeration fontEnumeration = this.fonts.keys();
 			while (fontEnumeration.hasMoreElements()) {
 	   		String fontName = (String) fontEnumeration.nextElement();
-	   		p = p.append("/" + fontName + " " 
-					+ ((PDFFont) fonts.get(fontName)).referencePDF()
-					+ "\n");  
+	   		p.append("/" + fontName + " " 
+					+ ((PDFFont) this.fonts.get(fontName)).referencePDF()
+					+ " ");  
 			}
 			
-			p = p.append(">>\n");
+			p.append(">> \n");
 		}
+		
+		PDFShading currentShading = null;
+		if(!this.shadings.isEmpty())
+		{			
+			p.append("/Shading << ");
+			
+			for(int currentShadingNumber=0;
+				currentShadingNumber < this.shadings.size();
+				currentShadingNumber++)
+			{
+				currentShading = ((PDFShading)this.shadings.elementAt(currentShadingNumber));
+
+				p.append("/" + currentShading.getName() + " "
+				+ currentShading.referencePDF()
+				+ " "); // \n ??????
+			}
+
+			p.append(">> \n");
+		}
+		//"free" the memory. Sorta.
+		currentShading = null;
+		
+		PDFPattern currentPattern=null;
+		if(!this.patterns.isEmpty())
+		{
+			p.append("/Pattern << ");
+			
+			for(int currentPatternNumber=0;
+				currentPatternNumber < this.patterns.size();
+				currentPatternNumber++)
+			{
+				currentPattern = ((PDFPattern)this.patterns.elementAt(currentPatternNumber));
+
+				p.append("/" + currentPattern.getName() + " "
+				+ currentPattern.referencePDF()
+				+ " ");
+			}
+
+			p.append(">> \n");
+		}
+		//"free" the memory. Sorta.
+		currentPattern = null;
 		
 		p.append("/ProcSet [ /PDF /ImageC /Text ] ");
 
@@ -133,8 +184,8 @@ public class PDFResources extends PDFObject {
 	   	}
 		}
 
-			p = p.append(">>\nendobj\n");
+		p = p.append(">> \nendobj\n");
 
-			return p.toString();
-		}    
+		return p.toString();
+	}    
 }
