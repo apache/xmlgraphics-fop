@@ -10,6 +10,7 @@ package org.apache.fop.fo.expr;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.expr.SystemFontFunction;
 
 import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.PropertyValueList;
@@ -470,8 +471,17 @@ public class PropertyParser extends PropertyTokenizer {
             // Font function
             else if (currentTokenValue.equals("system-font")) {
                 PropertyValue[] args = parseArgs(1, 2);
-                throw new PropertyException
-                        ("system-font function is not supported.");
+                if (args.length == 1) {
+                    prop = SystemFontFunction.systemFontCharacteristic
+                            (property,
+                             ((StringType)args[0]).getString());
+                } else {
+                    // 2 args
+                    prop = SystemFontFunction.systemFontCharacteristic
+                            (property,
+                             ((StringType)args[0]).getString(),
+                             ((StringType)args[0]).getString());
+                }
             }
 
             // Property value functions
