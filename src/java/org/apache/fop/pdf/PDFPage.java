@@ -51,25 +51,19 @@
 package org.apache.fop.pdf;
 
 /**
- * class representing a /Page object.
- *
+ * Class representing a /Page object.
+ * <p>
  * There is one of these for every page in a PDF document. The object
  * specifies the dimensions of the page and references a /Resources
  * object, a contents stream and the page's parent in the page
  * hierarchy.
- *
- * Modified by Mark Lillywhite, mark-fop@inomial.com. The Parent
- * object was being referred to by reference, but all that we
- * ever used from the Parent was it's PDF object ID, and according
- * to the memory profile this was causing OOM issues. So, we store
- * only the object ID of the parent, rather than the parent itself.
  */
 public class PDFPage extends PDFResourceContext {
 
     /**
-     * the page's parent, a PDF reference object
+     * Holds a reference on the parent PDFPages object.
      */
-    protected String parent;
+    private String parentRef;
 
     /**
      * the contents stream
@@ -99,18 +93,16 @@ public class PDFPage extends PDFResourceContext {
     /**
      * create a /Page object
      *
-     * @param doc the PDF document holding this page
-     * @param number the object's number
      * @param resources the /Resources object
      * @param contents the content stream
      * @param pagewidth the page's width in points
      * @param pageheight the page's height in points
      */
-    public PDFPage(PDFDocument doc, int number, PDFResources resources, PDFStream contents,
+    public PDFPage(PDFResources resources, PDFStream contents,
                    int pagewidth, int pageheight) {
 
         /* generic creation of object */
-        super(number, doc, resources);
+        super(resources);
 
         /* set fields using parameters */
         this.contents = contents;
@@ -121,17 +113,15 @@ public class PDFPage extends PDFResourceContext {
     /**
      * create a /Page object
      *
-     * @param doc the PDF document holding this page
-     * @param number the object's number
      * @param resources the /Resources object
      * @param pagewidth the page's width in points
      * @param pageheight the page's height in points
      */
-    public PDFPage(PDFDocument doc, int number, PDFResources resources,
+    public PDFPage(PDFResources resources,
                    int pagewidth, int pageheight) {
 
         /* generic creation of object */
-        super(number, doc, resources);
+        super(resources);
 
         /* set fields using parameters */
         this.pagewidth = pagewidth;
@@ -153,7 +143,7 @@ public class PDFPage extends PDFResourceContext {
      * @param parent the /Pages object that is this page's parent
      */
     public void setParent(PDFPages parent) {
-        this.parent = parent.referencePDF();
+        this.parentRef = parent.referencePDF();
     }
 
     /**
@@ -170,20 +160,34 @@ public class PDFPage extends PDFResourceContext {
     }
 
     /**
-     * represent this object as PDF
-     *
-     * @return the PDF string
+     * Returns the page width.
+     * @return the page width
      */
-    public byte[] toPDF() {
+    public int getWidth() {
+        return this.pagewidth;
+    }
+
+    /**
+     * Returns the page height.
+     * @return the page height
+     */
+    public int getHeight() {
+        return this.pageheight;
+    }
+
+    /**
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     */
+    public String toPDFString() {
         StringBuffer sb = new StringBuffer();
 
-        sb = sb.append(this.number + " " + this.generation + " obj\n"
-                       + "<< /Type /Page\n" + "/Parent "
-                       + this.parent + "\n"
-                       + "/MediaBox [ 0 0 " + this.pagewidth + " "
-                       + this.pageheight + " ]\n" + "/Resources "
-                       + this.resources.referencePDF() + "\n" + "/Contents "
-                       + this.contents.referencePDF() + "\n");
+        sb = sb.append(getObjectID()
+                       + "<< /Type /Page\n" 
+                       + "/Parent " + this.parentRef + "\n"
+                       + "/MediaBox [ 0 0 " + getWidth() + " "
+                       + getHeight() + " ]\n" 
+                       + "/Resources " + this.resources.referencePDF() + "\n" 
+                       + "/Contents " + this.contents.referencePDF() + "\n");
         if (this.annotList != null) {
             sb = sb.append("/Annots " + this.annotList.referencePDF() + "\n");
         }
@@ -195,7 +199,7 @@ public class PDFPage extends PDFResourceContext {
         }
 
         sb = sb.append(">>\nendobj\n");
-        return sb.toString().getBytes();
+        return sb.toString();
     }
 
 }
