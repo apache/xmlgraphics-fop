@@ -39,7 +39,6 @@ public class Item extends BlockStackingLayoutManager {
     private ArrayList childBreaks = new ArrayList();
 
     private int xoffset;
-    private int yoffset;
     private int itemIPD;
 
     /**
@@ -74,7 +73,7 @@ public class Item extends BlockStackingLayoutManager {
         itemIPD = context.getRefIPD();
 
         while ((curLM = getChildLM()) != null) {
-            if(curLM.generatesInlineAreas()) {
+            if (curLM.generatesInlineAreas()) {
                 // error
                 curLM.setFinished(true);
                 continue;
@@ -91,7 +90,7 @@ public class Item extends BlockStackingLayoutManager {
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                     stackSize.add(bp.getStackingSize());
-                    if (stackSize.min > context.getStackLimit().max) {
+                    if (stackSize.opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
                             reset(lastPos.getPosition());
@@ -117,18 +116,9 @@ public class Item extends BlockStackingLayoutManager {
     }
 
     /**
-     * Set the y offset of this cell.
-     * This offset is used to set the absolute position of the cell.
-     *
-     * @param off the y direction offset
-     */
-    public void setYOffset(int off) {
-        yoffset = off;
-    }
-
-    /**
-     * Set the x offset of this cell.
-     * This offset is used to set the absolute position of the cell.
+     * Set the x offset of this list item.
+     * This offset is used to set the absolute position
+     * of the list item within the parent block area.
      *
      * @param off the x offset
      */
@@ -138,7 +128,7 @@ public class Item extends BlockStackingLayoutManager {
 
     /**
      * Add the areas for the break points.
-     * The cell contains block stacking layout managers
+     * The list item contains block stacking layout managers
      * that add block areas.
      *
      * @param parentIter the iterator of the break positions
@@ -164,10 +154,10 @@ public class Item extends BlockStackingLayoutManager {
             }
         }
 
-        if(borderProps != null) {
+        if (borderProps != null) {
             addBorders(curBlockArea, borderProps);
         }
-        if(backgroundProps != null) {
+        if (backgroundProps != null) {
             addBackground(curBlockArea, backgroundProps);
         }
 
@@ -196,7 +186,6 @@ public class Item extends BlockStackingLayoutManager {
             curBlockArea.setPositioning(Block.ABSOLUTE);
             // set position
             curBlockArea.setXOffset(xoffset);
-            curBlockArea.setYOffset(yoffset);
             curBlockArea.setWidth(itemIPD);
             //curBlockArea.setHeight();
 
@@ -211,7 +200,7 @@ public class Item extends BlockStackingLayoutManager {
     }
 
     /**
-     * Add the child to the cell block area.
+     * Add the child to the list item area.
      *
      * @param childArea the child to add to the cell
      * @return unused
