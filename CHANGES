@@ -1,5 +1,7 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fixed bug #15877: ArrayIndexOutOfBoundException with certain TrueType fonts.
+  Reserved name indexes were not ignored. (Jeremias Maerki)
 - Fixed resolution of relative URLs in FopImageFactory with IBM JDK
   Submitted by: Manuel Mall <mm@arcus.com.au> (see bug #14948)
 - Fixed infinite loop when page-height="auto" (Oleg Tkachenko)

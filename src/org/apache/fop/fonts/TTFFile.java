@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -138,7 +138,7 @@ public class TTFFile {
             // " Encoding: "+cmap_eid);
 
             if (cmap_pid == 3 && cmap_eid == 1) {
-                cmap_unioffset = cmap_offset; 
+                cmap_unioffset = cmap_offset;
             }
         }
 
@@ -731,12 +731,14 @@ public class TTFFile {
                     mtx_tab[i].name =
                         Glyphs.mac_glyph_names[mtx_tab[i].index];
                 } else {
-                    k = mtx_tab[i].index - NMACGLYPHS;
-                    /*
-                     * System.out.println(k+" i="+i+" mtx="+mtx_tab.length+
-                     * " ps="+ps_glyphs_buf.length);
-                     */
-                    mtx_tab[i].name = ps_glyphs_buf[k];
+                    if (!mtx_tab[i].isIndexReserved()) {
+                        k = mtx_tab[i].index - NMACGLYPHS;
+                        /*
+                         * System.out.println(k+" i="+i+" mtx="+mtx_tab.length+
+                         * " ps="+ps_glyphs_buf.length);
+                         */
+                        mtx_tab[i].name = ps_glyphs_buf[k];
+                    }
                 }
             }
 
