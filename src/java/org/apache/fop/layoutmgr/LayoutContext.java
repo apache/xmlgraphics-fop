@@ -95,6 +95,7 @@ public class LayoutContext {
         this.trailingSpace = parentLC.trailingSpace; //???
         this.hyphContext = parentLC.hyphContext;
         this.dSpaceAdjust = parentLC.dSpaceAdjust;
+        this.ipdAdjust = parentLC.ipdAdjust;
         this.iLineHeight = parentLC.iLineHeight;
         this.iBaseline = parentLC.iBaseline;
         // Copy other fields as necessary. Use clone???

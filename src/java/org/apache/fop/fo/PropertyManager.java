@@ -19,6 +19,7 @@
 package org.apache.fop.fo;
 
 // FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fo.properties.Property;
@@ -472,28 +473,47 @@ public class PropertyManager implements Constants {
             textInfo.wrapOption = propertyList.get(PR_WRAP_OPTION).getEnum();
             textInfo.bWrap = (textInfo.wrapOption == Constants.WRAP);
 
+            // if word-spacing or letter-spacing is "normal", convert it
+            // into a suitable MinOptMax value
             Property wordSpacing = propertyList.get(PR_WORD_SPACING);
+            Property letterSpacing = propertyList.get(PR_LETTER_SPACING);
             if (wordSpacing.getEnum() == NORMAL) {
-                textInfo.wordSpacing = new SpaceVal(new MinOptMax(0), true, true, 0);
+                if (letterSpacing.getEnum() == NORMAL) {
+                    // letter spaces are set to zero (or use different values?)
+                    textInfo.letterSpacing
+                        = new SpaceVal(new MinOptMax(0), true, true, 0);
+                } else {
+                    textInfo.letterSpacing
+                        = new SpaceVal(letterSpacing.getSpace());
+                }
+                // give word spaces the possibility to shrink by a third,
+                // and stretch by a half;
+                int spaceCharIPD = textInfo.fs.getCharWidth(' ');
+                textInfo.wordSpacing = new SpaceVal
+                    (MinOptMax.add
+                     (new MinOptMax(-spaceCharIPD / 3, 0, spaceCharIPD / 2),
+                      MinOptMax.multiply(textInfo.letterSpacing.getSpace(), 2)),
+                     true, true, 0);
             } else {
                 textInfo.wordSpacing = new SpaceVal(wordSpacing.getSpace());
+                if (letterSpacing.getEnum() == NORMAL) {
+                    // letter spaces are set to zero (or use different values?)
+                    textInfo.letterSpacing
+                        = new SpaceVal(new MinOptMax(0), true, true, 0);
+                } else {
+                    textInfo.letterSpacing
+                        = new SpaceVal(letterSpacing.getSpace());
+                }
             }
 
-            /* textInfo.letterSpacing =
-               new SpaceVal(propertyList.get("letter-spacing").getSpace());*/
-
-            textInfo.whiteSpaceCollapse =
-              propertyList.get(PR_WHITE_SPACE_COLLAPSE).getEnum();
-
-            textInfo.lineHeight = this.propertyList.get(
-                                    PR_LINE_HEIGHT).getLength().getValue();
-
+            textInfo.whiteSpaceCollapse
+                = propertyList.get(PR_WHITE_SPACE_COLLAPSE).getEnum();
+            textInfo.lineHeight
+                = this.propertyList.get(PR_LINE_HEIGHT).getLength().getValue();
             textInfo.textTransform
-                    = this.propertyList.get(PR_TEXT_TRANSFORM).getEnum();
-
-            textInfo.hyphChar = this.propertyList.get(
-                                  PR_HYPHENATION_CHARACTER).getCharacter();
-
+                = this.propertyList.get(PR_TEXT_TRANSFORM).getEnum();
+            textInfo.hyphChar
+                = this.propertyList.get(PR_HYPHENATION_CHARACTER).getCharacter();
         }
         return textInfo;
     }

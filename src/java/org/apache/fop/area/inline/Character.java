@@ -23,15 +23,19 @@ package org.apache.fop.area.inline;
  * This inline area holds a single character.
  */
 public class Character extends InlineArea {
-    private char character;
+    // use a String instead of a character because if this character
+    // ends a syllable the hyphenation character must be added
+    private String character;
+    private int iTextWordSpaceAdjust = 0;
+    private int iTextLetterSpaceAdjust = 0;
 
     /**
-     * Create a new characater inline area with the given character.
+     * Create a new character inline area with the given character.
      *
      * @param ch the character for this inline area
      */
     public Character(char ch) {
-        character = ch;
+        character = new String() + ch;
     }
 
     /**
@@ -39,8 +43,55 @@ public class Character extends InlineArea {
      *
      * @return the character
      */
-    public char getChar() {
+    public String getChar() {
         return character;
+    }
+
+    /**
+     * Add the hyphenation character and its length.
+     *
+     * @param hyphChar the hyphenation character
+     * @param hyphSize the size of the hyphenation character
+     */
+    public void addHyphen(char hyphChar, int hyphSize) {
+        character += hyphChar;
+        this.setIPD(this.getIPD() + hyphSize);
+    }
+
+    /**
+     * Get text word space adjust.
+     *
+     * @return the text word space adjustment
+     */
+    public int getTextWordSpaceAdjust() {
+        return iTextWordSpaceAdjust;
+    }
+
+    /**
+     * Set text word space adjust.
+     *
+     * @param iTWSadjust the text word space adjustment
+     */
+    public void setTextWordSpaceAdjust(int iTWSadjust) {
+        iTextWordSpaceAdjust = iTWSadjust;
+    }
+
+    /**
+     * Get text letter space adjust.
+     *
+     * @return the text letter space adjustment
+     */
+    public int getTextLetterSpaceAdjust() {
+        return iTextLetterSpaceAdjust;
+    }
+
+    /**
+     * Set text letter space adjust.
+     *
+     * @param iTLSadjust the text letter space adjustment
+     */
+    public void setTextLetterSpaceAdjust(int iTLSadjust) {
+        iTextLetterSpaceAdjust = iTLSadjust;
     }
 }
 

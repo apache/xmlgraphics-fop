@@ -26,6 +26,7 @@ import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -294,5 +295,34 @@ public class ContentLayoutManager implements LayoutManager {
         }
     }
 
+    public LinkedList getNextKnuthElements(LayoutContext context,
+                                           int alignment) {
+        setFinished(true);
+        return null;
+    }
+
+    public KnuthElement addALetterSpaceTo(KnuthElement element) {
+        return element;
+    }
+
+    public void getWordChars(StringBuffer sbChars, Position pos) {
+    }
+
+    public void hyphenate(Position pos, HyphContext hc) {
+    }
+
+    public boolean applyChanges(List oldList) {
+        return false;
+    }
+
+    public LinkedList getChangedKnuthElements(List oldList,
+                                              int flaggedPenalty,
+                                              int alignment) {
+        return null;
+    }
+
+    public int getWordSpaceIPD() {
+        return 0;
+    }
 }
 
