@@ -44,7 +44,7 @@ public class CharacterProperty extends Property {
             return new CharacterProperty(c);
         }
 
-    }    // end Charakter.Maker
+    }    // end Character.Maker
 
     private char character;
 

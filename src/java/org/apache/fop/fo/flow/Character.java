@@ -76,6 +76,7 @@ public class Character extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
+        characterValue = propertyList.get(PR_CHARACTER).getCharacter();
         getFOEventHandler().character(this);
     }
 
@@ -84,7 +85,7 @@ public class Character extends FObj {
      */
     public CharIterator charIterator() {
         return new OneCharIterator(characterValue);
-        // But what it the character is ignored due to white space handling?
+        // But what if the character is ignored due to white space handling?
     }
 
     /**
