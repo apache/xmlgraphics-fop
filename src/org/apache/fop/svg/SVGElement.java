@@ -88,6 +88,9 @@ public class SVGElement extends SVGObj {
             public float getPixelToMM() {
                 return ptmm;
             }
+            public float getPixelUnitToMillimeter() {
+                return ptmm;
+            }
 
             public Rectangle2D getBBox() {
                 return new Rectangle2D.Double(0, 0, view.getX(), view.getY());
@@ -188,6 +191,9 @@ public class SVGElement extends SVGObj {
          * Returns the pixel to mm factor.
          */
         public float getPixelToMM() {
+            return pixeltoMM;
+        }
+        public float getPixelUnitToMillimeter() {
             return pixeltoMM;
         }
 

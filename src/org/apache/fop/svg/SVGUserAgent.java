@@ -83,6 +83,10 @@ public class SVGUserAgent extends UserAgentAdapter {
         return userAgent.getPixelToMM();
     }
 
+    public float getPixelUnitToMillimter() {
+        return userAgent.getPixelToMM();
+    }
+
     /**
      * Returns the language settings.
      */
