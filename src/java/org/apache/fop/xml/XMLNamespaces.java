@@ -177,7 +177,7 @@ public class XMLNamespaces {
             i = uris.size();
             //System.out.println("****Adding namespace " + uri + " " + i);
             uriIndices.put(uri, Ints.consts.get(i));
-            uris.add(i, uri.intern());
+            uris.add(i, uri);
             return i;
         }
         // not null - found the integer
