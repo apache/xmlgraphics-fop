@@ -32,7 +32,6 @@ import org.xml.sax.SAXException;
  */
 public class StorePagesModel extends AreaTreeModel {
     private List pageSequence = null;
-    private List titles = new java.util.ArrayList();
     private List currSequence;
     private List extensions = new java.util.ArrayList();
 
@@ -48,7 +47,6 @@ public class StorePagesModel extends AreaTreeModel {
      * @param title the title of the page sequence.
      */
     public void startPageSequence(LineArea title) {
-        titles.add(title);
         if (pageSequence == null) {
             pageSequence = new java.util.ArrayList();
         }
@@ -134,15 +132,6 @@ public class StorePagesModel extends AreaTreeModel {
         return extensions;
     }
 
-    /**
-     * Get the title for a page sequence.    
-     * @param count the page sequence count      
-     * @return the title of the page sequence    
-     */      
-    public LineArea getTitle(int count) {   
-        return (LineArea) titles.get(count);
-    }
-     
     /**
      * End document, do nothing.
      */
