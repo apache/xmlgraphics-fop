@@ -77,6 +77,7 @@ public class SVGReader extends AbstractImageReader {
   {
     // parse document and get the size attributes of the svg element
   try {
+	    // should check the stream contains text data
 	    SVGDriver driver = new SVGDriver();
 	    driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
 	    driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
@@ -88,7 +89,7 @@ public class SVGReader extends AbstractImageReader {
 		this.height = (int)svg.getHeight().getBaseVal().getValue() * 1000;
 		return true;
 	} catch (Exception e) {
-	    MessageHandler.errorln("ERROR LOADING EXTERNAL SVG: " + e.getMessage());
+	    //MessageHandler.errorln("ERROR LOADING EXTERNAL SVG: " + e.getMessage());
 	    // assuming any exception means this document is not svg
 	    // or could not be loaded for some reason
 	    return false;
