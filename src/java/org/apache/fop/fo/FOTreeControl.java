@@ -1,5 +1,5 @@
 /*
- * $Id: FObjMixed.java,v 1.33 2003/03/05 21:48:01 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,73 +48,25 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
+
 package org.apache.fop.fo;
 
-import org.apache.fop.fo.FOTreeControl;
-import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
-import org.apache.fop.layoutmgr.LMiter;
-
-import java.util.List;
+import org.apache.fop.fonts.FontMetrics;
 
 /**
- * Base class for representation of mixed content formatting objects
- * and their processing
+ * An interface for classes that are conceptually the parent class of the
+ * fo.pagination.Root object. The purpose of the interface is to maintain
+ * encapsulation of the FO Tree classes, but to acknowledge that a higher-level
+ * object is needed to control the building of the FO Tree, to provide it
+ * with information about the environment, and to keep track of meta-type
+ * information.
  */
-public class FObjMixed extends FObj {
-    /** TextInfo for this object */
-    protected TextInfo textInfo = null;
-    /** FontInfo for this object */
-    protected FOTreeControl fontInfo = null;
 
-    /**
-     * @param parent FONode that is the parent of this object
-     */
-    public FObjMixed(FONode parent) {
-        super(parent);
-    }
+public interface FOTreeControl {
 
-    /**
-     * @param foih FOInputHandler to set
-     */
-    public void setFOInputHandler(FOInputHandler foih) {
-        super.setFOInputHandler(foih);
-        fontInfo = foih.getFontInfo();
-    }
+    public String fontLookup(String family, String style,
+                             int weight);
 
-    /**
-     * @param data array of characters containing text to be added
-     * @param start starting array element to add
-     * @param length number of characters to add
-     */
-    protected void addCharacters(char data[], int start, int length) {
-        if (textInfo == null) {
-            // Really only need one of these, but need to get fontInfo
-            // stored in propMgr for later use.
-            propMgr.setFontInfo(getFOTreeControl());
-            textInfo = propMgr.getTextLayoutProps(getFOTreeControl());
-        }
+    public FontMetrics getMetricsFor(String fontName);
 
-        FOText ft = new FOText(data, start, length, textInfo, this);
-        ft.setUserAgent(userAgent);
-        ft.setFOInputHandler(foInputHandler);
-        addChild(ft);
-    }
-
-    private void setup() {
-        if (this.properties != null) {
-            setupID();
-        }
-    }
-
-    /**
-     * @return iterator for this object
-     */
-    public CharIterator charIterator() {
-        return new RecursiveCharIterator(this);
-    }
-
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
-    }
 }
-

@@ -251,7 +251,7 @@ public class AddLMVisitor extends FOTreeVisitor {
          BlockLayoutManager blm = new BlockLayoutManager();
          blm.setUserAgent(node.getUserAgent());
          blm.setFObj(node);
-         TextInfo ti = node.getPropertyManager().getTextLayoutProps(node.getDocument());
+         TextInfo ti = node.getPropertyManager().getTextLayoutProps(node.getFOTreeControl());
          blm.setBlockTextInfo(ti);
          currentLMList.add(blm);
      }

@@ -54,7 +54,7 @@ package org.apache.fop.fo.pagination;
 import java.util.List;
 
 // FOP
-import org.apache.fop.control.Document;
+import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
@@ -71,7 +71,7 @@ public class Root extends FObj {
      */
     private int runningPageNumberCounter = 0;
 
-    private Document document = null;
+    private FOTreeControl foTreeControl = null;
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
@@ -144,22 +144,23 @@ public class Root extends FObj {
     }
 
     /**
-     * Sets the Document that this Root is attached to
-     * @param document the Document that this Root is attached to
+     * Sets the FOTreeControl that this Root is attached to
+     * @param foTreeControl the FOTreeControl implementation to which this Root
+     * is attached
      */
-    public void setDocument(Document document) {
-        this.document = document;
+    public void setFOTreeControl(FOTreeControl foTreeControl) {
+        this.foTreeControl = foTreeControl;
     }
 
     /**
      * This method overrides the FONode version. The FONode version calls the
      * method by the same name for the parent object. Since Root is at the top
-     * of the tree, it returns the actual Document object. Thus, any FONode can
-     * use this chain to find which Document it is being built for.
-     * @return the Document that this Root is attached to
+     * of the tree, it returns the actual foTreeControl object. Thus, any FONode
+     * can use this chain to find which foTreeControl it is being built for.
+     * @return the FOTreeControl implementation that this Root is attached to
      */
-    public Document getDocument() {
-        return document;
+    public FOTreeControl getFOTreeControl() {
+        return foTreeControl;
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {

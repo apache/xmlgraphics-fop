@@ -58,7 +58,7 @@ import java.awt.geom.Rectangle2D;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.control.Document;
+import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonMarginInline;
@@ -83,7 +83,7 @@ import org.apache.fop.fo.properties.CommonHyphenation;
 public class PropertyManager {
 
     private PropertyList properties;
-    private Document doc = null;
+    private FOTreeControl foTreeControl = null;
     private Font fontState = null;
     private CommonBorderAndPadding borderAndPadding = null;
     private CommonHyphenation hyphProps = null;
@@ -122,8 +122,8 @@ public class PropertyManager {
      * available.
      * @param doc Document containing font information
      */
-    public void setFontInfo(Document doc) {
-        this.doc = doc;
+    public void setFontInfo(FOTreeControl foTreeControl) {
+        this.foTreeControl = foTreeControl;
     }
 
 
@@ -133,12 +133,12 @@ public class PropertyManager {
      * @param doc Document containing the font information
      * @return a FontState object
      */
-    public Font getFontState(Document doc) {
+    public Font getFontState(FOTreeControl foTreeControl) {
         if (fontState == null) {
-            if (doc == null) {
-                doc = this.doc;
-            } else if (this.doc == null) {
-                this.doc = doc;
+            if (foTreeControl == null) {
+                foTreeControl = this.foTreeControl;
+            } else if (this.foTreeControl == null) {
+                this.foTreeControl = foTreeControl;
             }
             /**@todo this is ugly. need to improve. */
 
@@ -167,9 +167,9 @@ public class PropertyManager {
             // various kinds of keywords too
             int fontSize = properties.get("font-size").getLength().getValue();
             //int fontVariant = properties.get("font-variant").getEnum();
-            String fname = doc.fontLookup(fontFamily, fontStyle,
+            String fname = foTreeControl.fontLookup(fontFamily, fontStyle,
                                                fontWeight);
-            FontMetrics metrics = doc.getMetricsFor(fname);
+            FontMetrics metrics = foTreeControl.getMetricsFor(fname);
             fontState = new Font(fname, metrics, fontSize);
         }
         return fontState;
@@ -479,10 +479,10 @@ public class PropertyManager {
      * @param doc Document containing list of available fonts
      * @return a TextInfo object
      */
-    public TextInfo getTextLayoutProps(Document doc) {
+    public TextInfo getTextLayoutProps(FOTreeControl foTreeControl) {
         if (textInfo == null) {
             textInfo = new TextInfo();
-            textInfo.fs = getFontState(doc);
+            textInfo.fs = getFontState(foTreeControl);
             textInfo.color = properties.get("color").getColorType();
 
             textInfo.verticalAlign =

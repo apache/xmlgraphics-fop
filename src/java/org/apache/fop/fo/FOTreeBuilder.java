@@ -54,7 +54,7 @@ package org.apache.fop.fo;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.apache.fop.control.Document;
+import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.pagination.Root;
 
 // SAX
@@ -122,7 +122,7 @@ public class FOTreeBuilder extends DefaultHandler {
 
     private FOUserAgent userAgent;
 
-    public Document document;
+    public FOTreeControl foTreeControl;
 
     /**
      * Default constructor
@@ -295,7 +295,7 @@ public class FOTreeBuilder extends DefaultHandler {
                                                         + fobj.getName()));
             }
             rootFObj = (Root)fobj;
-            rootFObj.setDocument(document);
+            rootFObj.setFOTreeControl(foTreeControl);
         } else {
             currentFObj.addChild(fobj);
         }

@@ -55,6 +55,7 @@ import java.util.Map;
 
 // FOP
 import org.apache.fop.apps.Driver;
+import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.layout.LayoutStrategy;
@@ -63,7 +64,7 @@ import org.apache.fop.layout.LayoutStrategy;
  * Class storing information for the FOP Document being processed, and managing
  * the processing of it.
  */
-public class Document {
+public class Document implements FOTreeControl {
 
     /** The parent Driver object */
     private Driver driver;
