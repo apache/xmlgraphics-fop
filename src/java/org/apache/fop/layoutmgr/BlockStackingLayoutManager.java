@@ -205,6 +205,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
     protected boolean addKnuthElementsForBreakBefore(LinkedList returnList, 
             Position returnPosition, int breakBefore) {
         if (breakBefore == EN_PAGE
+                || breakBefore == EN_COLUMN 
                 || breakBefore == EN_EVEN_PAGE 
                 || breakBefore == EN_ODD_PAGE) {
             // return a penalty element, representing a forced page break
@@ -226,6 +227,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
     protected boolean addKnuthElementsForBreakAfter(LinkedList returnList, 
             Position returnPosition, int breakAfter) {
         if (breakAfter == EN_PAGE
+                || breakAfter == EN_COLUMN
                 || breakAfter == EN_EVEN_PAGE
                 || breakAfter == EN_ODD_PAGE) {
             // add a penalty element, representing a forced page break
