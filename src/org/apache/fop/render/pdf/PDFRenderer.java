@@ -1243,10 +1243,17 @@ e.printStackTrace();
 			} else if(gi instanceof SVGRadialGradientElement) {
 				SVGRadialGradientElement radial = (SVGRadialGradientElement)gi;
 				handleRadialGradient(radial, di, fill, area);
+			} else if(gi instanceof SVGPatternElement) {
+			    SVGPatternElement pattern = (SVGPatternElement)gi;
+			    handlePattern(pattern, di, fill, area);
 			} else {
 				System.err.println("WARNING Invalid fill reference :" + gi + ":" + address);
 			}
 		}
+	}
+
+	protected void handlePattern(SVGPatternElement linear, DrawingInstruction di, boolean fill, SVGElement area)
+	{
 	}
 
 	protected void handleLinearGradient(SVGLinearGradientElement linear, DrawingInstruction di, boolean fill, SVGElement area)
@@ -1313,31 +1320,18 @@ e.printStackTrace();
 		if(gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE) {
 			if(area instanceof SVGTransformable) {
 				SVGTransformable tf = (SVGTransformable)area;
-				SVGAnimatedTransformList trans = tf.getTransform();
-				SVGTransformList list = trans.getBaseVal();
 				double x1, y1, x2, y2;
 				x1 = ax1.getBaseVal().getValue();
-				y1 = ay1.getBaseVal().getValue();
+				y1 = -ay1.getBaseVal().getValue();
 				x2 = ax2.getBaseVal().getValue();
-				y2 = ay2.getBaseVal().getValue();
-				/*
-				 * The transforms are done in reverse list order since that
-				 * is the way the multiplication should be done.
-				 * The y is negated to handle the different coordinate systems.
-				 * TODO handle transforms in super elements
-				 */
-				for(int count = list.getNumberOfItems() - 1; count >= 0; count--) {
-					SVGMatrix matrix = ((SVGTransform)list.getItem(count)).getMatrix();
-					double oldx = x1;
-					x1 = matrix.getA() * x1 - matrix.getB() * y1 + matrix.getE();
-					y1 = matrix.getC() * oldx + matrix.getD() * y1 + matrix.getF();
-					oldx = x2;
-					x2 = matrix.getA() * x2 - matrix.getB() * y2 + matrix.getE();
-					y2 = matrix.getC() * oldx + matrix.getD() * y2 + matrix.getF();
-//					System.out.println(matrix.getA() + " " + matrix.getB() + " " + matrix.getC()
-//							+ " " + matrix.getD() + " " + matrix.getE() + " " + matrix.getF() + " cm\n");
-				}
-//				System.out.println("x1=" + x1 + " y1=" + y1 + " x2=" + x2 + " y2=" + y2);
+				y2 = -ay2.getBaseVal().getValue();
+				SVGMatrix matrix = tf.getScreenCTM();
+				double oldx = x1;
+				x1 = matrix.getA() * x1 + matrix.getB() * y1 + matrix.getE();
+				y1 = matrix.getC() * oldx + matrix.getD() * y1 + matrix.getF();
+				oldx = x2;
+				x2 = matrix.getA() * x2 + matrix.getB() * y2 + matrix.getE();
+				y2 = matrix.getC() * oldx + matrix.getD() * y2 + matrix.getF();
 				theCoords = new Vector();
 				if(spread == SVGGradientElement.SVG_SPREADMETHOD_REFLECT) {
 				} else if(spread== SVGGradientElement.SVG_SPREADMETHOD_REFLECT) {
@@ -1406,7 +1400,6 @@ e.printStackTrace();
 			theCoords.addElement(new Double(currentYPosition / 1000f
 					- ay2.getBaseVal().getValue()));
 		}
-//System.out.println("coords:" + theCoords);
 
 		Vector theExtend = new Vector();
 		theExtend.addElement(new Boolean(true));
@@ -1538,9 +1531,8 @@ e.printStackTrace();
 		// first get all the gradient values
 		// if values not present follow the href
 		// the gradient units will be where the vals are specified
-		// the spread method will be where there are stop elements
 		SVGAnimatedLength acx, acy, ar, afx, afy;
-		short gradUnits = SVGUnitTypes.SVG_UNIT_TYPE_UNKNOWN;
+		short gradUnits = radial.getGradientUnits().getBaseVal();
 		NodeList stops = null;
 		acx = radial.getCx();
 		acy = radial.getCy();
@@ -1573,27 +1565,27 @@ e.printStackTrace();
 		}
 		if(acx == null) {
 		    SVGLength length = new SVGLengthImpl();
-			length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 0);
+			length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 0.5f);
 		    acx = new SVGAnimatedLengthImpl(length);
 		}
 		if(acy == null) {
 		    SVGLength length = new SVGLengthImpl();
-			length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 0);
+			length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 0.5f);
 		    acy = new SVGAnimatedLengthImpl(length);
 		}
 		if(ar == null) {
 		    SVGLength length = new SVGLengthImpl();
-			length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 0);
+			length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 1);
 		    ar = new SVGAnimatedLengthImpl(length);
 		}
 		if(afx == null) {
 		    SVGLength length = new SVGLengthImpl();
-			length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 0);
+			length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 0.5f);
 		    afx = new SVGAnimatedLengthImpl(length);
 		}
 		if(afy == null) {
 		    SVGLength length = new SVGLengthImpl();
-			length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 0);
+			length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 0.5f);
 		    afy = new SVGAnimatedLengthImpl(length);
 		}
 		ColorSpace aColorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
@@ -1641,60 +1633,148 @@ e.printStackTrace();
 		}
 		Hashtable table = null;
 		Vector someColors = new Vector();
-		Vector theCoords = new Vector();
+		Vector theCoords = null;
 		Vector theBounds = new Vector();
-		// todo handle gradient units
-		SVGRect bbox = null;
-		if(area instanceof SVGRectElement) {
-			bbox = ((SVGRectElement)area).getBBox();
-		}
-		short units = radial.getGradientUnits().getBaseVal();
-		switch(units) {
-			case SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX:
-			break;
-			case SVGUnitTypes.SVG_UNIT_TYPE_UNKNOWN:
-			default:
-		}
 		// the coords should be relative to the current object
 		// check value types, eg. %
-		if(bbox != null) {
-			if(false) {
-				theCoords.addElement(new Double(bbox.getX() +
-					radial.getCx().getBaseVal().getValue() * bbox.getWidth()));
-				theCoords.addElement(new Double(bbox.getY() +
-					radial.getCy().getBaseVal().getValue() * bbox.getHeight()));
-				theCoords.addElement(new Double(radial.getR().getBaseVal().getValue() *
-					bbox.getHeight()));
-				theCoords.addElement(new Double(bbox.getX() +
-					radial.getFx().getBaseVal().getValue() * bbox.getWidth()));
-				theCoords.addElement(new Double(bbox.getY() +
-					radial.getFy().getBaseVal().getValue() * bbox.getHeight()));
-				theCoords.addElement(new Double(radial.getR().getBaseVal().getValue() *
-					bbox.getHeight()));
-			} else {
-				theCoords.addElement(new Double(-bbox.getX() + acx.getBaseVal().getValue()));
-				theCoords.addElement(new Double(-bbox.getY() + acy.getBaseVal().getValue()));
-				theCoords.addElement(new Double(ar.getBaseVal().getValue()));
-				theCoords.addElement(new Double(-bbox.getX() + afx.getBaseVal().getValue())); // Fx
-				theCoords.addElement(new Double(-bbox.getY() + afy.getBaseVal().getValue())); // Fy
-				theCoords.addElement(new Double(ar.getBaseVal().getValue()));
-/*				theCoords.addElement(new Double(bbox.getX() +
-					radial.getCx().getBaseVal().getValue()));
-				theCoords.addElement(new Double(bbox.getY() +
-					radial.getCy().getBaseVal().getValue()));
-				theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
-				theCoords.addElement(new Double(bbox.getX() +
-					radial.getFx().getBaseVal().getValue()));
-				theCoords.addElement(new Double(bbox.getY() +
-					radial.getFy().getBaseVal().getValue()));
-				theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));*/
+		if(gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE) {
+			if(area instanceof SVGTransformable) {
+				SVGTransformable tf = (SVGTransformable)area;
+				double x1, y1, x2, y2;
+				x1 = acx.getBaseVal().getValue();
+				y1 = -acy.getBaseVal().getValue();
+				x2 = afx.getBaseVal().getValue();
+				y2 = -afy.getBaseVal().getValue();
+				SVGMatrix matrix = tf.getScreenCTM();
+				double oldx = x1;
+				x1 = matrix.getA() * x1 + matrix.getB() * y1 + matrix.getE();
+				y1 = matrix.getC() * oldx + matrix.getD() * y1 + matrix.getF();
+				oldx = x2;
+				x2 = matrix.getA() * x2 + matrix.getB() * y2 + matrix.getE();
+				y2 = matrix.getC() * oldx + matrix.getD() * y2 + matrix.getF();
+				theCoords = new Vector();
+//				if(spread == SVGGradientElement.SVG_SPREADMETHOD_REFLECT) {
+//				} else if(spread== SVGGradientElement.SVG_SPREADMETHOD_REFLECT) {
+//				} else {
+					theCoords.addElement(new Double(currentXPosition / 1000f
+							+ x1));
+					// the y val needs to be adjust by 2 * R * rotation
+					// depending on if this value is from an x or y coord
+					// before transformation
+					theCoords.addElement(new Double(currentYPosition / 1000f
+							- y1 + (matrix.getC() - matrix.getD()) * 2 * ar.getBaseVal().getValue()));
+					theCoords.addElement(new Double(0));
+					theCoords.addElement(new Double(currentXPosition / 1000f
+							+ x2));
+					theCoords.addElement(new Double(currentYPosition / 1000f
+							- y2 + (matrix.getC() - matrix.getD()) * 2 * ar.getBaseVal().getValue()));
+					theCoords.addElement(new Double(ar.getBaseVal().getValue()));
+//				}
 			}
-		} else {
-			theCoords.addElement(new Double(acx.getBaseVal().getValue()));
-			theCoords.addElement(new Double(acy.getBaseVal().getValue()));
-			theCoords.addElement(new Double(ar.getBaseVal().getValue()));
-			theCoords.addElement(new Double(afx.getBaseVal().getValue())); // Fx
-			theCoords.addElement(new Double(afy.getBaseVal().getValue())); // Fy
+		} else if(gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && area instanceof GraphicElement) {
+			SVGRect rect = ((GraphicElement)area).getBBox();
+			if(rect != null) {
+				theCoords = new Vector();
+				SVGLength val;
+				val = acx.getBaseVal();
+				if(val.getUnitType() == SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+					|| gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+					theCoords.addElement(new Double(currentXPosition / 1000f
+							+ rect.getX() + val.getValue() * rect.getWidth()));
+				} else {
+					theCoords.addElement(new Double(currentXPosition / 1000f
+							+ val.getValue()));
+				}
+				val = acy.getBaseVal();
+				if(val.getUnitType() == SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+					|| gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+					theCoords.addElement(new Double(currentYPosition / 1000f
+							- rect.getY() - val.getValue() * rect.getHeight()));
+				} else {
+					theCoords.addElement(new Double(currentYPosition / 1000f
+							- val.getValue()));
+				}
+				theCoords.addElement(new Double(0));
+				val = afx.getBaseVal();
+				if(val.getUnitType() == SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+					|| gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+					theCoords.addElement(new Double(currentXPosition / 1000f
+							+ rect.getX() + val.getValue() * rect.getWidth()));
+				} else {
+					theCoords.addElement(new Double(currentXPosition / 1000f
+							+ val.getValue()));
+				}
+				val = afy.getBaseVal();
+				if(val.getUnitType() == SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+					|| gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+					theCoords.addElement(new Double(currentYPosition / 1000f
+							- rect.getY() - val.getValue() * rect.getHeight()));
+				} else {
+					theCoords.addElement(new Double(currentYPosition / 1000f
+							- val.getValue()));
+				}
+				val = ar.getBaseVal();
+				if(val.getUnitType() == SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+					|| gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+					theCoords.addElement(new Double(val.getValue() * rect.getHeight()));
+				} else {
+					theCoords.addElement(new Double(val.getValue()));
+				}
+			}
+		}
+		if(theCoords == null) {
+			// percentage values are expressed according to the viewport.
+			SVGElement vp = ((GraphicElement)area).getNearestViewportElement();
+    		if(area instanceof GraphicElement) {
+				SVGRect rect = ((GraphicElement)area).getBBox();
+				if(rect != null) {
+					theCoords = new Vector();
+					SVGLength val = acx.getBaseVal();
+					if(val.getUnitType() == SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+						|| gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+						theCoords.addElement(new Double(currentXPosition / 1000f + rect.getX() + val.getValue() * rect.getWidth()));
+					} else {
+						theCoords.addElement(new Double(currentXPosition / 1000f + val.getValue()));
+					}
+					val = acy.getBaseVal();
+					if(val.getUnitType() == SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+						|| gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+						theCoords.addElement(new Double(currentYPosition / 1000f - rect.getY() - val.getValue() * rect.getHeight()));
+					} else {
+						theCoords.addElement(new Double(currentYPosition / 1000f - val.getValue()));
+					}
+					theCoords.addElement(new Double(0));
+					val = afx.getBaseVal();
+					if(val.getUnitType() == SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+						|| gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+						theCoords.addElement(new Double(currentXPosition / 1000f + rect.getX() + val.getValue() * rect.getWidth()));
+					} else {
+						theCoords.addElement(new Double(currentXPosition / 1000f + val.getValue()));
+					}
+					val = afy.getBaseVal();
+					if(val.getUnitType() == SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+						|| gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+						theCoords.addElement(new Double(currentYPosition / 1000f - rect.getY() - val.getValue() * rect.getHeight()));
+					} else {
+						theCoords.addElement(new Double(currentYPosition / 1000f - val.getValue()));
+					}
+					val = ar.getBaseVal();
+					if(val.getUnitType() == SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+						|| gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+						theCoords.addElement(new Double(val.getValue() * rect.getHeight()));
+					} else {
+						theCoords.addElement(new Double(val.getValue()));
+					}
+				}
+			}
+		}
+		if(theCoords == null) {
+			theCoords = new Vector();
+			theCoords.addElement(new Double(currentXPosition / 1000f + acx.getBaseVal().getValue()));
+			theCoords.addElement(new Double(currentYPosition / 1000f - acy.getBaseVal().getValue()));
+			theCoords.addElement(new Double(0));
+			theCoords.addElement(new Double(currentXPosition / 1000f + afx.getBaseVal().getValue())); // Fx
+			theCoords.addElement(new Double(currentYPosition / 1000f - afy.getBaseVal().getValue())); // Fy
 			theCoords.addElement(new Double(ar.getBaseVal().getValue()));
 		}
 		float lastoffset = 0;
@@ -1729,7 +1809,7 @@ e.printStackTrace();
 			lastoffset = offset;
 			someColors.addElement(color);
 		}
-		PDFPattern myPat = this.pdfDoc.createGradient(true, aColorSpace, someColors,null,theCoords);
+		PDFPattern myPat = this.pdfDoc.createGradient(true, aColorSpace, someColors,theBounds,theCoords);
 
 		currentStream.add(myPat.getColorSpaceOut(fill));
 		if(fill)
@@ -2087,8 +2167,12 @@ e.printStackTrace();
 			// the x and y pos will be wrong!
 			currentStream.add("q\n");
 			SVGSVGElement svgel = (SVGSVGElement)area;
-			float svgx = svgel.getX().getBaseVal().getValue();
-			float svgy = svgel.getY().getBaseVal().getValue();
+			float svgx = 0;
+			if(svgel.getX() != null)
+				svgx = svgel.getX().getBaseVal().getValue();
+			float svgy = 0;
+			if(svgel.getY() != null)
+				svgy = svgel.getY().getBaseVal().getValue();
 			currentStream.add(1 + " 0 0 " + 1 + " "
 						+ svgx + " " + svgy + " cm\n");
 			renderSVG(fontState, svgel, (int)(x + 1000 * svgx), (int)(y + 1000 * svgy));
@@ -2335,7 +2419,18 @@ e.printStackTrace();
 //					GraphicImpl parent = graph.getGraphicParent();
 //					graph.setParent(trg);
 					SVGTextElementImpl tele = (SVGTextElementImpl)element;
-					applyStyle(tele, tele);
+					// the style should be from tele, but it needs to be placed as a child
+					// of trg to work
+					di = applyStyle(trg, trg);
+					if(di.fill) {
+						if(di.stroke) {
+							currentStream.add("2 Tr\n");
+						} else {
+							currentStream.add("0 Tr\n");
+						}
+					} else if(di.stroke) {
+						currentStream.add("1 Tr\n");
+					}
 					boolean changed = false;
 					FontState oldfs = fs;
 					changed = updateFont(te, fs);
