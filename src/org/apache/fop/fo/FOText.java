@@ -14,7 +14,7 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.TextBPLayoutManager;
+import org.apache.fop.layoutmgr.TextLayoutManager;
 import org.apache.fop.apps.StructureHandler;
 
 import java.util.NoSuchElementException;
@@ -76,7 +76,7 @@ public class FOText extends FObj {
             ca = new char[length];
             System.arraycopy(tmp, 0, ca, 0, length);
         }
-        list.add(new TextBPLayoutManager(this, ca, textInfo));
+        list.add(new TextLayoutManager(this, ca, textInfo));
     }
 
     public CharIterator charIterator() {

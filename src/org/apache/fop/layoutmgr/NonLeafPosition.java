@@ -11,7 +11,7 @@ public class NonLeafPosition extends Position {
 
     private Position m_subPos ;
 
-    public NonLeafPosition(BPLayoutManager lm, Position subPos) {
+    public NonLeafPosition(LayoutManager lm, Position subPos) {
         super(lm);
         m_subPos = subPos;
     }

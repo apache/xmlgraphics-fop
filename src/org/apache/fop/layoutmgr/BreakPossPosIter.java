@@ -38,7 +38,7 @@ public class BreakPossPosIter extends PositionIterator {
         return (BreakPoss) peekNext();
     }
 
-    protected BPLayoutManager getLM(Object nextObj) {
+    protected LayoutManager getLM(Object nextObj) {
         return ((BreakPoss) nextObj).getLayoutManager();
     }
 

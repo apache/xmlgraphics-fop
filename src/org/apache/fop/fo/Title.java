@@ -16,7 +16,7 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.layoutmgr.LMiter;
-import org.apache.fop.layoutmgr.InlineStackingBPLayoutManager;
+import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.ContentLayoutManager;
 
 /**
@@ -32,8 +32,8 @@ public class Title extends FObjMixed {
                  new org.apache.fop.area.Title();
         // use special layout manager to add the inline areas
         // to the Title.
-        InlineStackingBPLayoutManager lm;
-        lm = new InlineStackingBPLayoutManager(this,
+        InlineStackingLayoutManager lm;
+        lm = new InlineStackingLayoutManager(this,
                      new LMiter(children.listIterator()));
         lm.init();
 

@@ -36,7 +36,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
    
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
-        BPLayoutManager curLM ; // currently active LM
+        LayoutManager curLM; // currently active LM
 
         while ((curLM = getChildLM()) != null) {
             // Make break positions and return page break
@@ -63,7 +63,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
 
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
 
-        BPLayoutManager childLM ;
+        LayoutManager childLM;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {

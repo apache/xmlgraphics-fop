@@ -16,7 +16,7 @@ import org.apache.fop.layout.*;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.InlineStackingBPLayoutManager;
+import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 import org.apache.fop.layoutmgr.ContentLayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -117,8 +117,8 @@ public class Leader extends FObjMixed {
 
             leaderArea = fa;
         } else if(leaderPattern == LeaderPattern.USECONTENT) {
-            InlineStackingBPLayoutManager lm;
-            lm = new InlineStackingBPLayoutManager(this,
+            InlineStackingLayoutManager lm;
+            lm = new InlineStackingLayoutManager(this,
                      new LMiter(children.listIterator()));
             lm.init();
 

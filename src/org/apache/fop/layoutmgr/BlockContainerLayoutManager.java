@@ -102,7 +102,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             stackLimit = context.getStackLimit();
         }
 
-        BPLayoutManager curLM ; // currently active LM
+        LayoutManager curLM ; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
@@ -160,7 +160,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
     public BreakPoss getAbsoluteBreakPoss(LayoutContext context) {
 
-        BPLayoutManager curLM ; // currently active LM
+        LayoutManager curLM ; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
 
@@ -205,7 +205,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                          LayoutContext layoutContext) {
         getParentArea(null);
 
-        BPLayoutManager childLM ;
+        LayoutManager childLM ;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {

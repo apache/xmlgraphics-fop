@@ -11,7 +11,7 @@ public class LeafPosition extends Position {
 
     private int m_iLeafPos;
 
-    public LeafPosition(BPLayoutManager lm, int iLeafPos) {
+    public LeafPosition(LayoutManager lm, int iLeafPos) {
         super(lm);
         m_iLeafPos = iLeafPos;
     }
