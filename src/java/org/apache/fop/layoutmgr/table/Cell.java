@@ -19,17 +19,20 @@
 package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.fo.flow.TableCell;
+import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.MinOptMaxUtil;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.CTM;
 import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;
 
@@ -50,7 +53,8 @@ public class Cell extends BlockStackingLayoutManager {
     private int xoffset;
     private int yoffset;
     private int cellIPD;
-    private int height;
+    private int allocBPD;
+    private int usedBPD;
 
     /**
      * Create a new Cell layout manager.
@@ -123,6 +127,19 @@ public class Cell extends BlockStackingLayoutManager {
                                              context.getStackLimit(), stackSize));
                 }
             }
+            
+            usedBPD = stackSize.opt;
+            
+            LengthRangeProperty specifiedBPD = fobj.getBlockProgressionDimension();
+            if (specifiedBPD.getEnum() != EN_AUTO) {
+                if ((specifiedBPD.getMaximum().getEnum() != EN_AUTO)
+                        && (specifiedBPD.getMaximum().getLength().getValue() < stackSize.min)) {
+                    log.warn("maximum height of cell is smaller than the minimum "
+                            + "height of its contents");
+                }
+                MinOptMaxUtil.restrict(stackSize, specifiedBPD);
+            }
+
             BreakPoss breakPoss = new BreakPoss(
                                     new LeafPosition(this, childBreaks.size() - 1));
             if (over) {
@@ -161,7 +178,7 @@ public class Cell extends BlockStackingLayoutManager {
      * @param h the height of the row
      */
     public void setRowHeight(int h) {
-        height = h;
+        allocBPD = h;
     }
 
     /**
@@ -175,7 +192,25 @@ public class Cell extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID(fobj.getId());
+        BreakPoss bp1 = (BreakPoss)parentIter.peekNext();
+        bBogus = !bp1.generatesAreas(); 
+
+        if (!isBogus()) {
+            addID(fobj.getId());
+        }
+
+        //Handle display-align
+        if (usedBPD < allocBPD) {
+            if (fobj.getDisplayAlign() == EN_CENTER) {
+                Block space = new Block();
+                space.setBPD((allocBPD - usedBPD) / 2);
+                curBlockArea.addBlock(space);
+            } else if (fobj.getDisplayAlign() == EN_AFTER) {
+                Block space = new Block();
+                space.setBPD((allocBPD - usedBPD));
+                curBlockArea.addBlock(space);
+            }
+        }
 
         LayoutManager childLM;
         int iStartPos = 0;
@@ -195,7 +230,7 @@ public class Cell extends BlockStackingLayoutManager {
         TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
         TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
         
-        curBlockArea.setBPD(height);
+        curBlockArea.setBPD(allocBPD);
 
         flush();
 

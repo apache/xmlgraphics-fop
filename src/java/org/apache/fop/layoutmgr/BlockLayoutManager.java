@@ -285,13 +285,18 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                          LayoutContext layoutContext) {
         getParentArea(null);
 
+        BreakPoss bp1 = (BreakPoss)parentIter.peekNext();
+        bBogus = !bp1.generatesAreas(); 
+        
         // if adjusted space before
         double adjust = layoutContext.getSpaceAdjust();
         addBlockSpacing(adjust, foBlockSpaceBefore);
         foBlockSpaceBefore = null;
 
-        addID(fobj.getId());
-        addMarkers(true, true);
+        if (!isBogus()) {
+            addID(fobj.getId());
+            addMarkers(true, true);
+        }
 
         try {
             LayoutManager childLM;
@@ -311,7 +316,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                 }
             }
         } finally {
-            addMarkers(false, true);
+            if (!isBogus()) {
+                addMarkers(false, true);
+            }
             flush();
 
             // if adjusted space after

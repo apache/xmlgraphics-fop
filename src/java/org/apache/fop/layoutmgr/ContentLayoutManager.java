@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -157,6 +157,11 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public boolean generatesInlineAreas() {
         return true;
+    }
+
+    /** @see org.apache.fop.layoutmgr.LayoutManager#isBogus() */
+    public boolean isBogus() {
+        return false;
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
@@ -370,5 +375,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
                                               int alignment) {
         return null;
     }
+
 }
 

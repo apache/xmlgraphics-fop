@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,13 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     /** True if this LayoutManager has handled all of its content. */
     private boolean bFinished = false;
     protected boolean bInited = false;
+    
+    /**
+     * Used during addAreas(): signals that a BreakPoss is not generating areas
+     * and therefore doesn't add IDs and markers to the current page.
+     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#isBogus
+     */
+    protected boolean bBogus = false;
 
     /** child LM and child LM iterator during getNextBreakPoss phase */
     protected LayoutManager curChildLM = null;
@@ -145,10 +152,20 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      */
 
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager#generatesInlineAreas() */
     public boolean generatesInlineAreas() {
         return false;
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager#isBogus() */
+    public boolean isBogus() {
+        if (getParent().isBogus()) {
+            return true;
+        } else {
+            return bBogus;
+        }
+    }
+    
     /**
      * Add a child area to the current area. If this causes the maximum
      * dimension of the current area to be exceeded, the parent LM is called
@@ -263,6 +280,9 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }
 
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(org.apache.fop.layoutmgr.PositionIterator, org.apache.fop.layoutmgr.LayoutContext)
+     */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
     }
 
@@ -276,6 +296,9 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      * interface which are declared abstract in AbstractLayoutManager.
      * ---------------------------------------------------------*/
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(org.apache.fop.area.Area)
+     */
     public Area getParentArea(Area childArea) {
         return null;
     }
@@ -309,7 +332,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      * If the id string is not null then add the id to the current page.
      */
     protected void addID(String foID) {
-        if (foID != null) {
+        if (foID != null && foID.length() > 0) {
             addIDToPage(foID);
         }
     }

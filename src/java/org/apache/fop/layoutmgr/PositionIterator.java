@@ -84,13 +84,14 @@ public abstract class PositionIterator implements Iterator {
         if (bHasNext) {
             Object retObj = getPos(nextObj);
             lookAhead();
+            //System.out.println(retObj);
             return retObj;
         } else {
             throw new NoSuchElementException("PosIter");
         }
     }
 
-    protected Object peekNext() {
+    public Object peekNext() {
         return nextObj;
     }
 
