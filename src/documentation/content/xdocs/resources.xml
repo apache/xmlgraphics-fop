@@ -113,8 +113,19 @@ Subscription administration information can be found at <link href="http://www.w
           </li>
   </ul>
   </section>
-  <section id="articles">
-    <title>Tutorials/Articles</title>
+  <section id="documents">
+    <title>Books, Tutorials, Articles</title>
+    <section id="documents-xslt">
+      <title>XSLT</title>
+      <ul>
+        <li><jump href="http://wrox.com/books/1861005067.htm">XSLT Programmer's Reference</jump>, by Michael H. Kay, Wrox Press, ISBN 1-861-00506-7.</li>
+        <li><jump href="http://www.oreilly.com/catalog/xslt">XSLT</jump>, by Doug Tidwell, O'Reilly &amp; Associates, 2001, ISBN 0-596-00053-7.</li>
+        <li><jump href="http://www.oreilly.com/catalog/xsltckbk">XSLT Cookbook</jump>, by Sal Mangano, O'Reilly &amp; Associates, 2002, ISBN 0-596-00372-2.</li>
+      </ul>
+    </section>
+    <section id="documents-xslfo">
+      <title>XSL-FO</title>
+    </section>
     <ul>
           <li>
             <link href="http://www.ibiblio.org/xml/books/bible2/chapters/ch18.html">Elliotte Rusty Harold: Chapter 18 on xsl:fo from his excellent book XML Bible, Second Edition</link>
@@ -131,6 +142,7 @@ Subscription administration information can be found at <link href="http://www.w
           <li>
             <link href="http://www.dpawson.co.uk/xsl/sect3/bk/index.html">Dave Pawson: An introduction to XSL Formatting Objects</link>
           </li>
+          <li><jump href="http://www.oreilly.com/catalog/xslfo">XSL-FO</jump>, by Dave Pawson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00355-2.</li>
     </ul>
   </section>
   <section id="products">
