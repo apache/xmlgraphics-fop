@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -44,19 +43,7 @@ import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
-import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableAndCaption;
-import org.apache.fop.fo.flow.TableBody;
-import org.apache.fop.fo.flow.TableCell;
-import org.apache.fop.fo.flow.TableColumn;
-import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.flow.Wrapper;
-import org.apache.fop.fo.pagination.Title;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.layoutmgr.table.Body;
-import org.apache.fop.layoutmgr.table.Column;
-import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.fo.LMVisited;
 
@@ -404,36 +391,5 @@ public class AddLMVisitor {
          areaCurrent.setOffset(0);
 
          return areaCurrent;
-     }
-
-     public void serveTable(Table node) {
-         TableLayoutManager tlm = new TableLayoutManager(node);
-         ArrayList columns = node.getColumns();
-         if (columns != null) {
-             ArrayList columnLMs = new ArrayList();
-             ListIterator iter = columns.listIterator();
-             while (iter.hasNext()) {
-                 columnLMs.add(getTableColumnLayoutManager((TableColumn)iter.next()));
-             }
-             tlm.setColumns(columnLMs);
-         }
-         if (node.getTableHeader() != null) {
-             tlm.setTableHeader(getTableBodyLayoutManager(node.getTableHeader()));
-         }
-         if (node.getTableFooter() != null) {
-             tlm.setTableFooter(getTableBodyLayoutManager(node.getTableFooter()));
-         }
-         currentLMList.add(tlm);
-     }
-
-     public LayoutManager getTableColumnLayoutManager(TableColumn node) {
-         node.initialize();
-         Column clm = new Column(node);
-         return clm;
-     }
-
-     public Body getTableBodyLayoutManager(TableBody node) {
-         Body blm = new Body(node);
-         return blm;
      }
 }

@@ -67,6 +67,11 @@ public class TableRow extends FObj {
         getFOInputHandler().startRow(this);
     }
 
+
+    protected void endOfNode() throws SAXParseException {
+        getFOInputHandler().endRow(this);
+    }
+
     /**
      * @return keepWithPrevious
      */
@@ -110,11 +115,10 @@ public class TableRow extends FObj {
         Row rlm = new Row(this);
         list.add(rlm); 	 
     }
-
-     protected void endOfNode() throws SAXParseException {
-        getFOInputHandler().endRow(this);
-    }
     
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:table-row";
     }

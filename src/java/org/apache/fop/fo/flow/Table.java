@@ -19,6 +19,8 @@
 package org.apache.fop.fo.flow;
 
 // Java
+import java.util.List;
+import java.util.ListIterator;
 import java.util.ArrayList;
 
 // XML
@@ -29,7 +31,9 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layoutmgr.AddLMVisitor;
+import org.apache.fop.layoutmgr.table.TableLayoutManager;
+import org.apache.fop.layoutmgr.table.Body;
+import org.apache.fop.layoutmgr.table.Column;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
@@ -37,12 +41,11 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.fo.LMVisited;
 
 /**
  * Class modelling the fo:table object. See Sec. 6.7.3 of the XSL-FO Standard.
  */
-public class Table extends FObj implements LMVisited {
+public class Table extends FObj {
     private static final int MINCOLWIDTH = 10000; // 10pt
 
     /** collection of columns in this table */
@@ -104,6 +107,10 @@ public class Table extends FObj implements LMVisited {
         getFOInputHandler().startTable(this);
     }
 
+    protected void endOfNode() throws SAXParseException {
+        getFOInputHandler().endTable(this);
+    }
+
     /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
@@ -130,29 +137,52 @@ public class Table extends FObj implements LMVisited {
         return false;
     }
 
-    public ArrayList getColumns() {
+    private ArrayList getColumns() {
         return columns;
     }
 
-    public TableBody getTableHeader() {
+    private TableBody getTableHeader() {
         return tableHeader;
     }
 
-    public TableBody getTableFooter() {
+    private TableBody getTableFooter() {
         return tableFooter;
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     * @todo see if can/should move much of this logic into TableLayoutManager
+     *      and/or TableBody and TableColumn FO subclasses.
      */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveTable(this);
+    public void addLayoutManager(List list) {
+        TableLayoutManager tlm = new TableLayoutManager(this);
+        ArrayList columns = getColumns();
+        if (columns != null) {
+            ArrayList columnLMs = new ArrayList();
+            ListIterator iter = columns.listIterator();
+            while (iter.hasNext()) {
+                columnLMs.add(getTableColumnLayoutManager((TableColumn)iter.next()));
+            }
+            tlm.setColumns(columnLMs);
+        }
+        if (getTableHeader() != null) {
+            tlm.setTableHeader(getTableBodyLayoutManager(getTableHeader()));
+        }
+        if (getTableFooter() != null) {
+            tlm.setTableFooter(getTableBodyLayoutManager(getTableFooter()));
+        }
+        list.add(tlm);
     }
 
-    protected void endOfNode() throws SAXParseException {
-        getFOInputHandler().endTable(this);
+    public Column getTableColumnLayoutManager(TableColumn node) {
+         node.initialize();
+         Column clm = new Column(node);
+         return clm;
+    }
+    
+    public Body getTableBodyLayoutManager(TableBody node) {
+         Body blm = new Body(node);
+         return blm;
     }
 
     public String getName() {
