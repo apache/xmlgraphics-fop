@@ -22,6 +22,7 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.IntegerType;
 import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 
@@ -53,6 +54,45 @@ public class ReferenceOrientation extends Property  {
 
     public int getInherited() {
         return inherited;
+    }
+
+    public PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
+                    throws PropertyException
+    {
+        return refineParsing(propindex, foNode, value, NOT_NESTED);
+    }
+
+    public PropertyValue refineParsing
+        (int propindex, FONode foNode, PropertyValue value, boolean nested)
+                    throws PropertyException
+    {
+        int proptype = value.getType();
+        switch (proptype) {
+        case PropertyValue.INTEGER:
+            int angle = ((IntegerType)value).getInt();
+            int absangle = Math.abs(angle);
+            if (absangle == 0 || absangle == 90
+                    || absangle == 180 || absangle == 270) {
+                if (angle < 0) {
+                    angle += 360;
+                    ((IntegerType)value).setInt(angle);
+                }
+                return value;
+            } else {
+                int adjangle = angle % 360;
+                if (adjangle < 0) {
+                    adjangle += 360;
+                }
+                adjangle = (int)(Math.round(adjangle / 90.0f)) * 4;
+                logger.warning("Illegal orientation value " + angle +
+                        ". Replaced with " + adjangle);
+                ((IntegerType)value).setInt(adjangle);
+                return value;
+            }
+        default:
+            return super.refineParsing(propindex, foNode, value, nested);
+        }
     }
 
 }
