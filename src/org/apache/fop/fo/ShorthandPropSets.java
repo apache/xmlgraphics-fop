@@ -26,6 +26,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.datatypes.Ints;
@@ -969,7 +970,7 @@ public class ShorthandPropSets {
         for (int i = 0; i < expansion.length; i++) {
             int expandedProp = expansion.get(i);
             PropertyValue specified
-                    = foTree.getInitialValue(expandedProp);
+                    = PropertyConsts.pconsts.getInitialValue(expandedProp);
             list.add(specified);
         }
         return list;
