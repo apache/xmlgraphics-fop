@@ -58,7 +58,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     public boolean generateAreas() {
         ArrayList lms = new ArrayList();
         LayoutManager lm = null;
-
+	FObj curFobj = fobj;
         if (fobj != null) {
             ListIterator children = fobj.getChildren();
             while (children.hasNext()) {
@@ -83,8 +83,13 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                         break;
                     }
                 }
-                lm = new LineLayoutManager(inlines, lineHeight, lead,
+                lm = new LineLayoutManager(curFobj, inlines, lineHeight, lead,
                                            follow);
+		// !!!! To test BreakPoss Line LayoutManager, uncomment!
+		/*
+                lm = new LineBPLayoutManager(curFobj, inlines, lineHeight,
+		                                lead, follow);
+		*/
                 lms.set(count, lm);
             }
             lm.setParentLM(this);

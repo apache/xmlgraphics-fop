@@ -5,21 +5,21 @@
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.layout;
+package org.apache.fop.traits;
 
 
 /**
  * Store all inline "margin" related properties
  * Public "structure" allows direct member access.
  */
-public class MarginInlineProps {
+public class InlineProps {
     public int marginTop;
     public int marginBottom;
     public int marginLeft;
     public int marginRight;
-    public int spaceStart;
-    public int spaceEnd;
+    public SpaceVal spaceStart;
+    public SpaceVal spaceEnd;
 
-    public MarginInlineProps() {}
+    public InlineProps() {}
 
 }

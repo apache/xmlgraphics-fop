@@ -117,13 +117,13 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
 
 
     protected MinOptMax resolveSpaceSpecifier(Area nextArea) {
-        SpaceSpecifier spaceSpec = new SpaceSpecifier();
+        SpaceSpecifier spaceSpec = new SpaceSpecifier(false);
         // 	Area prevArea = getCurrentArea().getLast();
         // 	if (prevArea != null) {
         // 	    spaceSpec.addSpace(prevArea.getSpaceAfter());
         // 	}
         // 	spaceSpec.addSpace(nextArea.getSpaceBefore());
-        return spaceSpec.resolve();
+        return spaceSpec.resolve(false);
     }
 
     /**

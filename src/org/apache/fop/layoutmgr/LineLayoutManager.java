@@ -44,7 +44,7 @@ import java.util.Iterator;
  *
  * How do we handle Unicode BIDI?
  */
-public class LineLayoutManager extends AbstractLayoutManager {
+public class LineLayoutManager extends AbstractBPLayoutManager {
     private LineInfo currentLine = null;
     private boolean bFirstLine = true;
     private MinOptMax totalIPD;
@@ -68,8 +68,8 @@ public class LineLayoutManager extends AbstractLayoutManager {
         // footnotes, floats?
     }
 
-    public LineLayoutManager(List lms, int lh, int l, int f) {
-        super(null);
+    public LineLayoutManager(FObj fobjBlock, List lms, int lh, int l, int f) {
+        super(fobjBlock);
         lmList = lms;
         lineHeight = lh;
         lead = l;
@@ -165,7 +165,7 @@ public class LineLayoutManager extends AbstractLayoutManager {
         if (currentLine != null) {
             // Adjust spacing as necessary
             adjustSpacing();
-            verticalAlign();
+            verticalAlign(currentLine.area);
 
             boolean res = parentLM.addChild(currentLine.area);
 
@@ -278,9 +278,9 @@ public class LineLayoutManager extends AbstractLayoutManager {
 
     }
 
-    private void verticalAlign() {
+    protected void verticalAlign(LineArea lineArea) {
         int maxHeight = lineHeight;
-        List inlineAreas = currentLine.area.getInlineAreas();
+        List inlineAreas = lineArea.getInlineAreas();
 
         // get smallest possible offset to before edge
         // this depends on the height of no and middle alignments
@@ -376,9 +376,9 @@ public class LineLayoutManager extends AbstractLayoutManager {
             }
         }
         if (before + after > maxHeight) {
-            currentLine.area.setHeight(before + after);
+            lineArea.setHeight(before + after);
         } else {
-            currentLine.area.setHeight(maxHeight);
+            lineArea.setHeight(maxHeight);
         }
     }
 
@@ -392,7 +392,7 @@ public class LineLayoutManager extends AbstractLayoutManager {
         return currentLine.area;
     }
 
-    private void createLine() {
+    protected void createLine() {
         currentLine = new LineInfo();
         currentLine.startPos = curPos;
         currentLine.area = new LineArea();

@@ -1282,8 +1282,11 @@
   <property>
     <name>word-spacing</name>
     <inherited>true</inherited>
-    <datatype>ToBeImplemented</datatype>
-    <default>normal</default>
+    <use-generic>GenericSpace</use-generic>
+    <default subproperty="precedence">force</default>
+    <default subproperty="conditionality">discard</default>
+    <default>0pt</default>
+    <!-- <default>normal</default> -->
   </property>
 
 <!-- Color-related Properties -->
