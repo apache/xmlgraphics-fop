@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -193,9 +193,9 @@ public class Driver {
 
     private Logger getLogger() {
         if(log == null) {
-	    log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-	    log.error("Logger not set");
-	}
+	        log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+    	    log.error("Logger not set");
+    	}
 
         return log;
     }
@@ -433,6 +433,8 @@ public class Driver {
      * events but isn't a SAX Parser itself.
      */
     public ContentHandler getContentHandler() {
+        if (_stream == null) throw new NullPointerException("OutputStream has not been set. Set before getting the ContentHandler");
+        if (_renderer == null) throw new NullPointerException("The renderer has not been set. Set before getting the ContentHandler");
         StreamRenderer streamRenderer = new StreamRenderer(_stream, _renderer);
         streamRenderer.setLogger(getLogger());
         _treeBuilder.setLogger(getLogger());
@@ -446,7 +448,7 @@ public class Driver {
      * SAX InputSource
      */
     public synchronized void render(XMLReader parser, InputSource source)
-    throws FOPException {
+                throws FOPException {
         parser.setContentHandler(getContentHandler());
         try {
             parser.parse(source);
@@ -466,7 +468,7 @@ public class Driver {
      * Build the formatting object tree using the given DOM Document
      */
     public synchronized void render(Document document)
-    throws FOPException {
+                throws FOPException {
          DocumentInputSource source = new DocumentInputSource(document);
          DocumentReader reader = new DocumentReader();
          render(reader, source);
