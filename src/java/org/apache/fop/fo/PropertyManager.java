@@ -19,9 +19,9 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -45,7 +45,7 @@ import org.xml.sax.Attributes;
 public class PropertyManager implements Constants {
 
     private PropertyList propertyList;
-    private Document document = null;
+    private FontInfo fontInfo = null;
     private Font fontState = null;
     private CommonBorderAndPadding borderAndPadding = null;
     private CommonHyphenation hyphProps = null;
@@ -71,13 +71,12 @@ public class PropertyManager implements Constants {
     }
 
     /**
-     * Sets the Document object telling the property manager which fonts are
+     * Sets the FontInfo object telling the property manager which fonts are
      * available.
-     * @param document apps.Document implementation containing font
-     * information
+     * @param fontInfo FontInfo object
      */
-    public void setFontInfo(Document document) {
-        this.document = document;
+    public void setFontInfo(FontInfo fontInfo) {
+        this.fontInfo = fontInfo;
     }
 
 
@@ -88,12 +87,12 @@ public class PropertyManager implements Constants {
      * information
      * @return a FontState object
      */
-    public Font getFontState(Document document) {
+    public Font getFontState(FontInfo fontInfo) {
         if (fontState == null) {
-            if (document == null) {
-                document = this.document;
-            } else if (this.document == null) {
-                this.document = document;
+            if (fontInfo == null) {
+                fontInfo = this.fontInfo;
+            } else if (this.fontInfo == null) {
+                this.fontInfo = fontInfo;
             }
             /**@todo this is ugly. need to improve. */
 
@@ -122,9 +121,9 @@ public class PropertyManager implements Constants {
             // various kinds of keywords too
             int fontSize = propertyList.get(PR_FONT_SIZE).getLength().getValue();
             //int fontVariant = propertyList.get("font-variant").getEnum();
-            String fname = document.getFontInfo().fontLookup(fontFamily, fontStyle,
+            String fname = fontInfo.fontLookup(fontFamily, fontStyle,
                                                fontWeight);
-            FontMetrics metrics = document.getFontInfo().getMetricsFor(fname);
+            FontMetrics metrics = fontInfo.getMetricsFor(fname);
             fontState = new Font(fname, metrics, fontSize);
         }
         return fontState;
@@ -458,14 +457,13 @@ public class PropertyManager implements Constants {
     /**
      * Constructs a TextInfo objects. If it was constructed before it is
      * reused.
-     * @param document apps.Document implementation containing list of
-     * available fonts
+     * @param fontInfo FontInfo object containing list of available fonts
      * @return a TextInfo object
      */
-    public TextInfo getTextLayoutProps(Document document) {
+    public TextInfo getTextLayoutProps(FontInfo fontInfo) {
         if (textInfo == null) {
             textInfo = new TextInfo();
-            textInfo.fs = getFontState(document);
+            textInfo.fs = getFontState(fontInfo);
             textInfo.color = propertyList.get(PR_COLOR).getColorType();
 
             textInfo.verticalAlign =

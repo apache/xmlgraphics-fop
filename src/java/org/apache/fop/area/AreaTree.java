@@ -21,6 +21,7 @@ package org.apache.fop.area;
 import org.apache.fop.area.extensions.BookmarkData;
 import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.extensions.Bookmarks;
+import org.apache.fop.render.Renderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +68,9 @@ public class AreaTree {
     /**
      * Constructor.
      */
-    public AreaTree () {
+    public AreaTree (Renderer renderer) {
+        // this.atModel = new CachedRenderPagesModel(renderer);
+        setTreeModel(new RenderPagesModel(renderer));
     }
 
 

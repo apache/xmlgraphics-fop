@@ -160,13 +160,13 @@ public class AreaTreeBuilder {
         }
 
         rend.setLogger(logger);
-        org.apache.fop.apps.Document doc = new org.apache.fop.apps.Document(null);
-        rend.setupFontInfo(doc.getFontInfo());
+        FontInfo fontInfo = new FontInfo();
+        rend.setupFontInfo(fontInfo);
         FOUserAgent ua = new FOUserAgent();
         rend.setUserAgent(ua);
 
         StorePagesModel sm = AreaTree.createStorePagesModel();
-        TreeLoader tl = new TreeLoader(doc);
+        TreeLoader tl = new TreeLoader(rend, fontInfo);
         tl.setLogger(logger);
         tl.setTreeModel(sm);
         try {
@@ -238,12 +238,14 @@ public class AreaTreeBuilder {
 class TreeLoader {
     private AreaTree areaTree;
     private AreaTreeModel model;
-    private org.apache.fop.apps.Document document;
+    private Renderer renderer;
+    private FontInfo fontInfo;
     private Font currentFontState;
     private Log logger = null;
 
-    TreeLoader(org.apache.fop.apps.Document doc) {
-        document = doc;
+    TreeLoader(Renderer renderer, FontInfo fontInfo) {
+        this.renderer = renderer;
+        this.fontInfo = fontInfo;
     }
 
     /**
@@ -271,7 +273,7 @@ class TreeLoader {
         Element root = null;
         root = doc.getDocumentElement();
 
-        areaTree = new AreaTree();
+        areaTree = new AreaTree(renderer);
         areaTree.setTreeModel(model);
 
         readAreaTree(root);
@@ -558,8 +560,8 @@ class TreeLoader {
                 Character ch =
                   new Character(getString((Element) obj).charAt(0));
                 addTraits((Element) obj, ch);
-                String fname = document.getFontInfo().fontLookup("sans-serif", "normal", Font.NORMAL);
-                FontMetrics metrics = document.getFontInfo().getMetricsFor(fname);
+                String fname = fontInfo.fontLookup("sans-serif", "normal", Font.NORMAL);
+                FontMetrics metrics = fontInfo.getMetricsFor(fname);
                 currentFontState =
                     new Font(fname, metrics, 12000);
 
@@ -583,8 +585,8 @@ class TreeLoader {
                     list.add(leader);
                 }
             } else if (obj.getNodeName().equals("word")) {
-                String fname = document.getFontInfo().fontLookup("sans-serif", "normal", Font.NORMAL);
-                FontMetrics metrics = document.getFontInfo().getMetricsFor(fname);
+                String fname = fontInfo.fontLookup("sans-serif", "normal", Font.NORMAL);
+                FontMetrics metrics = fontInfo.getMetricsFor(fname);
                 currentFontState =
                     new Font(fname, metrics, 12000);
                 TextArea text = getText((Element) obj);

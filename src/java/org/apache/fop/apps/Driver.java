@@ -488,19 +488,7 @@ public class Driver {
             }
 
             currentDocument.renderer = renderer;
-            foInputHandler = new FOTreeHandler(currentDocument, true);
-
-            try {
-                renderer.setupFontInfo(currentDocument.getFontInfo());
-                // check that the "any,normal,400" font exists
-                if (!currentDocument.getFontInfo().isSetupValid()) {
-                    throw new FOPException(
-                            "No default font defined by OutputConverter");
-                }
-                renderer.startRenderer(stream);
-            } catch (IOException e) {
-                throw new FOPException(e);
-            }
+            foInputHandler = new FOTreeHandler(currentDocument, stream, true);
         }
         currentDocument.foInputHandler = foInputHandler;
 

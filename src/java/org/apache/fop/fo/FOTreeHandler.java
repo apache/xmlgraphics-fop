@@ -20,6 +20,7 @@ package org.apache.fop.fo;
 
 // Java
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -30,7 +31,6 @@ import org.xml.sax.SAXException;
 import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.AreaTree;
-import org.apache.fop.area.RenderPagesModel;
 import org.apache.fop.area.Title;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.flow.BasicLink;
@@ -104,15 +104,27 @@ public class FOTreeHandler extends FOInputHandler {
      * Main constructor
      * @param document the apps.Document implementation that governs this
      * FO Tree
+     * @param OutputStream stream to use to output results of renderer
+     *              
      * @param store if true then use the store pages model and keep the
      *              area tree in memory
      */
-    public FOTreeHandler(Document doc, boolean store) {
+    public FOTreeHandler(Document doc, OutputStream stream, boolean store) throws FOPException {
         super(doc);
         
-        areaTree = new AreaTree();
-        // this.atModel = new CachedRenderPagesModel(renderer);
-        areaTree.setTreeModel(new RenderPagesModel(doc.getRenderer()));
+        areaTree = new AreaTree(doc.getRenderer());
+
+        try {
+            doc.getRenderer().setupFontInfo(fontInfo);
+            // check that the "any,normal,400" font exists
+            if (!fontInfo.isSetupValid()) {
+                throw new FOPException(
+                        "No default font defined by OutputConverter");
+            }
+            doc.getRenderer().startRenderer(stream);
+        } catch (IOException e) {
+            throw new FOPException(e);
+        }
         
         if (collectStatistics) {
             runtime = Runtime.getRuntime();
@@ -480,15 +492,6 @@ public class FOTreeHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#characters(char[], int, int)
      */
     public void characters(char[] data, int start, int length) {
-    }
-
-    /**
-     * Get the font information for the layout handler.
-     *
-     * @return the font information
-     */
-    public Document getFontInfo() {
-        return doc;
     }
 
     /**

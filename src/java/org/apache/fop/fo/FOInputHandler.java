@@ -45,6 +45,7 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.commons.logging.Log;
 
 import org.xml.sax.SAXException;
@@ -67,6 +68,11 @@ public abstract class FOInputHandler {
      */
     public Document doc = null;
 
+    /** 
+     * The Font information relevant for this document
+     */
+    protected FontInfo fontInfo;
+
     /**
      * logging instance
      */
@@ -85,6 +91,7 @@ public abstract class FOInputHandler {
      */
     public FOInputHandler(Document document) {
         doc = document;
+        this.fontInfo = new FontInfo();
     }
 
     /**
@@ -125,6 +132,14 @@ public abstract class FOInputHandler {
      */
     public Driver getDriver() {
         return doc.getDriver();
+    }
+
+    /**
+     * Retrieve the font information for this document
+     * @return the FontInfo instance for this document
+     */
+    public FontInfo getFontInfo() {
+        return this.fontInfo;
     }
 
     /**

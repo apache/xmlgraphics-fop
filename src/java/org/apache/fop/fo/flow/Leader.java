@@ -66,7 +66,7 @@ public class Leader extends FObjMixed {
         CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Font Properties
-        this.fontState = propMgr.getFontState(getFOInputHandler().getDocument());
+        this.fontState = propMgr.getFontState(getFOInputHandler().getFontInfo());
 
         // Common Margin Properties-Inline
         CommonMarginInline mProps = propMgr.getMarginInlineProps();
