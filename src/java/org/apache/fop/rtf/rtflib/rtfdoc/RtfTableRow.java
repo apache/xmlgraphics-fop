@@ -177,25 +177,8 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
 
         writePaddingAttributes();
 
-        // if we have attributes, manipulate border properties
         final RtfTable parentTable = (RtfTable) parent;
-        if (attrib != null && parentTable != null) {
-
-            //if table is only one row long
-            if (isFirstRow() && parentTable.isHighestRow(id)) {
-                attrib.unset(ITableAttributes.ROW_BORDER_HORIZONTAL);
-                //or if row is the first row
-            } else if (isFirstRow()) {
-                attrib.unset(ITableAttributes.ROW_BORDER_BOTTOM);
-                //or if row is the last row
-            } else if (parentTable.isHighestRow(id)) {
-                attrib.unset(ITableAttributes.ROW_BORDER_TOP);
-                //else the row is an inside row
-            } else {
-                attrib.unset(ITableAttributes.ROW_BORDER_BOTTOM);
-                attrib.unset(ITableAttributes.ROW_BORDER_TOP);
-            }
-        }
+        adjustBorderProperties(parentTable);
 
         writeAttributes(attrib, ITableAttributes.ROW_BORDER);
         writeAttributes(attrib, ITableAttributes.CELL_BORDER);
@@ -203,7 +186,8 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
 
         /**
          * Added by Boris POUDEROUS on 07/02/2002
-         * in order to get the indexes of the cells preceding a cell that contains a nested table.
+         * in order to get the indexes of the cells preceding a cell that
+         * contains a nested table.
          * Thus, the cells of the extra row will be merged with the cells above.
          */
         boolean nestedTableFound = false;
@@ -313,6 +297,27 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
 
         // now children can write themselves, we have the correct RTF prefix code
         super.writeRtfContent();
+    }
+
+    private void adjustBorderProperties(RtfTable parentTable) {
+        // if we have attributes, manipulate border properties
+        if (attrib != null && parentTable != null) {
+
+            //if table is only one row long
+            if (isFirstRow() && parentTable.isHighestRow(id)) {
+                attrib.unset(ITableAttributes.ROW_BORDER_HORIZONTAL);
+            //or if row is the first row
+            } else if (isFirstRow()) {
+                attrib.unset(ITableAttributes.ROW_BORDER_BOTTOM);
+            //or if row is the last row
+            } else if (parentTable.isHighestRow(id)) {
+                attrib.unset(ITableAttributes.ROW_BORDER_TOP);
+            //else the row is an inside row
+            } else {
+                attrib.unset(ITableAttributes.ROW_BORDER_BOTTOM);
+                attrib.unset(ITableAttributes.ROW_BORDER_TOP);
+            }
+        }
     }
 
     /**
