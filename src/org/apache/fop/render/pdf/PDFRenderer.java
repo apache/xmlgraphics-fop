@@ -736,11 +736,13 @@ public class PDFRenderer extends PrintRenderer {
         }
         closeText();
 
+        float w = page.getWidth();
+        float h = page.getHeight();
         currentStream.add("ET\n");
 
         currentPage = this.pdfDoc.makePage(this.pdfResources, currentStream,
-                                           page.getWidth() / 1000,
-                                           page.getHeight() / 1000, page);
+                                           Math.round(w / 1000),
+                                           Math.round(h / 1000), page);
 
         if (page.hasLinks() || currentAnnotList != null) {
             if(currentAnnotList == null) {
