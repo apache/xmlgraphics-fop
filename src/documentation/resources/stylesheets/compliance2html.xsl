@@ -39,7 +39,6 @@
       <h1><xsl:value-of select="/compliance/head/title"/></h1>
     </td>
     <td nowrap="nowrap" width="40" align="center">
-      <a class="dida" href="compliance.pdf"><img alt="PDF" src="skin/images/pdfdoc.gif" border="0"/><br/>PDF</a>
       <a class="dida" href="compliance.pdf"><img alt="PDF" src="skin/images/printer.gif" border="0"/><br/>PDF</a>
     </td>
   </tr>
