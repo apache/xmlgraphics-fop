@@ -8,10 +8,6 @@
     </header>
 
     <body>
-<section>
-  <title>XML Parsing</title>
-<p>Since everyone knows the basics we can get
-                  into the various stages starting with the XML handling.</p>
                 <section>
   <title>XML Input</title>
 <p>FOP can take the input XML in a number of ways:
@@ -107,7 +103,6 @@
           containing forward page number references, for example.)
         </p>
       </section>
-</section>
     </body>
 </document>
 
