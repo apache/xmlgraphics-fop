@@ -342,6 +342,11 @@ public class Area implements Serializable {
         return this.props;
     }
 
+    /** @return true if the area has traits */
+    public boolean hasTraits() {
+        return (this.props != null);
+    }
+    
     /**
      * Get a trait from this area.
      *
@@ -350,6 +355,20 @@ public class Area implements Serializable {
      */
     public Object getTrait(Object oTraitCode) {
         return (props != null ? props.get(oTraitCode) : null);
+    }
+    
+    /**
+     * Get a boolean trait from this area.
+     * @param oTraitCode the trait key
+     * @return the trait value
+     */
+    public boolean getBooleanTrait(Object oTraitCode) {
+        final Object obj = getTrait(oTraitCode);
+        if (obj instanceof Boolean) {
+            return ((Boolean)obj).booleanValue();
+        } else {
+            return false;
+        }
     }
 
     /**
