@@ -103,45 +103,37 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
         // stackSize.add(spaceBefore);
+        BreakPoss lastPos = null;
 
         while ((curLM = getChildLM()) != null) {
             // Make break positions and return blocks!
             // Set up a LayoutContext
-            int ipd = 0;
+            int ipd = context.getRefIPD();
             BreakPoss bp;
 
-            // Force area creation on first call
-            // NOTE: normally not necessary when fully integrated!
             LayoutContext childLC =
-              new LayoutContext(LayoutContext.CHECK_REF_AREA);
+              new LayoutContext(0);
             if(curLM.generatesInlineAreas()) {
-                // Reset stackLimit for non-first lines
-                childLC.setStackLimit(new MinOptMax(ipd/* - m_iIndents*/));
+                // set stackLimit for lines
+                childLC.setStackLimit(new MinOptMax(ipd/* - m_iIndents - m_iTextIndent*/));
             } else {
                 childLC.setStackLimit(MinOptMax.subtract(context.getStackLimit(), stackSize));
+                childLC.setRefIPD(ipd);
             }
 
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC, null)) != null) {
-                    if (bp.checkIPD()) {
-                        // Need IPD in order to layout lines!
-                        // This is supposed to bubble up to PageLM to
-                        // make the necessary flow reference area, depending
-                        // on span and break-before flags set as the BreakPoss
-                        // makes its way back up the call stack.
-                        // Fake it for now!
-                        getParentArea(null);
-                        ipd = getContentIPD();
-                        childLC.flags &= ~LayoutContext.CHECK_REF_AREA;
-                        childLC.setStackLimit(new MinOptMax(ipd/* - m_iIndents -
-                                                              m_iTextIndent*/));
-                    } else {
                         stackSize.add(bp.getStackingSize());
                         if(stackSize.min > context.getStackLimit().max) {
                             // reset to last break
-                            // curLM.reset();
+                            if(lastPos != null) {
+                                reset(lastPos.getPosition());
+                            } else {
+                                curLM.resetPosition(null);
+                            }
                             break;
                         }
+                        lastPos = bp;
                         childBreaks.add(bp);
 
                         if(curLM.generatesInlineAreas()) {
@@ -150,7 +142,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                         } else {
                             childLC.setStackLimit(MinOptMax.subtract(context.getStackLimit(), stackSize));
                         }
-                    }
                 }
             }
             BreakPoss breakPoss = new BreakPoss(
@@ -163,6 +154,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     }
 
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
+        getParentArea(null);
 
         BPLayoutManager childLM ;
         int iStartPos = 0;
@@ -182,6 +174,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         flush();
 
         childBreaks.clear();
+        curBlockArea = null;
     }
 
     /**

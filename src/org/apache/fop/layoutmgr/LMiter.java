@@ -31,13 +31,16 @@ public class LMiter implements ListIterator {
     }
 
     private boolean preLoadNext() {
-        if (m_baseIter.hasNext()) {
+        // skip over child FObj's that don't add lms
+        while (m_baseIter.hasNext()) {
             FObj fobj = (FObj) m_baseIter.next();
             //m_listLMs.add(fobj.getLayoutManager());
             fobj.addLayoutManager(m_listLMs);
-            return m_curPos < m_listLMs.size();
-        } else
-            return false;
+            if(m_curPos < m_listLMs.size()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean hasPrevious() {

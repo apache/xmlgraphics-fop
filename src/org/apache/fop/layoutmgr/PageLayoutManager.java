@@ -25,11 +25,11 @@ import java.util.List;
 public class PageLayoutManager extends AbstractBPLayoutManager implements Runnable {
 
     private static class BlockBreakPosition extends LeafPosition {
-        List blockps;
+        BreakPoss breakps;
 
-        BlockBreakPosition(BPLayoutManager lm, int iBreakIndex, List bps) {
-            super(lm, iBreakIndex);
-            blockps = bps;
+        BlockBreakPosition(BPLayoutManager lm, BreakPoss bp) {
+            super(lm, 0);
+            breakps = bp;
         }
     }
 
@@ -51,6 +51,7 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
     private Flow curFlow;
 
     private int flowBPD = 0;
+    private int flowIPD = 0; 
 
     /** Manager which handles a queue of all pages which are completely
      * laid out and ready for rendering, except for resolution of ID
@@ -86,16 +87,17 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
 
     public void doLayout() {
 
+        // this should be done another way
         makeNewPage(false, false);
+        createBodyMainReferenceArea();
+        createSpan(1);
+        flowIPD = curFlow.getIPD();
 
         BreakPoss bp;
         LayoutContext childLC = new LayoutContext(0);
         while (!isFinished()) {
-        ArrayList vecBreakPoss = new ArrayList();
             if ((bp = getNextBreakPoss(childLC, null)) != null) {
-                vecBreakPoss.add(bp);
-                addAreas( new BreakPossPosIter(vecBreakPoss, 0,
-                                       vecBreakPoss.size()), null);
+                addAreas((BlockBreakPosition)bp.getPosition());
                 // add static areas and resolve any new id areas
 
                 // finish page and add to area tree
@@ -112,33 +114,29 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
         BPLayoutManager curLM ; // currently active LM
 
         while ((curLM = getChildLM()) != null) {
-            ArrayList vecBreakPoss = new ArrayList();
+            BreakPoss bp = null;
 
             LayoutContext childLC = new LayoutContext(0);
             childLC.setStackLimit(new MinOptMax(flowBPD));
+            childLC.setRefIPD(flowIPD);
 
             if (!curLM.isFinished()) {
-                BreakPoss bp;
-                if ((bp = curLM.getNextBreakPoss(childLC, null)) != null) {
-                    vecBreakPoss.add(bp);
-                }
+                bp = curLM.getNextBreakPoss(childLC, null);
             }
-            if(vecBreakPoss.size() > 0) {
+            if(bp != null) {
                 return new BreakPoss(
-                         new BlockBreakPosition(curLM, 0, vecBreakPoss));
+                         new BlockBreakPosition(curLM, bp));
             }
         }
         setFinished(true);
         return null;
     }
 
-    public void addAreas(PositionIterator parentIter, LayoutContext lc) {
-
-        while (parentIter.hasNext()) {
-            BlockBreakPosition bbp = (BlockBreakPosition) parentIter.next();
-            bbp.getLM().addAreas( new BreakPossPosIter(bbp.blockps, 0,
-                                  bbp.blockps.size()), null);
-        }
+    public void addAreas(BlockBreakPosition bbp) {
+        List list = new ArrayList();
+        list.add(bbp.breakps);
+        bbp.getLM().addAreas( new BreakPossPosIter(list, 0,
+                              1), null);
     }
 
     /**

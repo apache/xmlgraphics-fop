@@ -74,6 +74,9 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
     private int lead;
     private int follow;
 
+    // inline start pos when adding areas
+    int iStartPos = 0;    
+
     public LineBPLayoutManager(FObj fobj, List lms, int lh, int l, int f) {
         //super(fobj, lms.listIterator(), lh, l, f);
         super(fobj, lms.listIterator());
@@ -102,15 +105,6 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
                                       Position prevLineBP) {
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
-
-        if ((context.flags & LayoutContext.CHECK_REF_AREA) != 0) {
-            /* Return a BreakPoss indicating that higher level LM
-             * (page) should check reference area and possibly
-             * create a new one.
-             */
-            return new BreakPoss(new LineBreakPosition(this, -1, 0.0, lineHeight, lead),
-                                 BreakPoss.NEED_IPD);
-        }
 
         BPLayoutManager curLM ; // currently active LM
         BreakPoss prevBP = null;
@@ -461,6 +455,21 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
         return curLineBP;
     }
 
+    public void resetPosition(Position resetPos) {
+        if (resetPos == null) {
+            reset(null);
+            m_vecInlineBreaks.clear();
+            m_prevBP = null;
+        } else {
+            m_prevBP = (BreakPoss)m_vecInlineBreaks.get(((LineBreakPosition)resetPos).getLeafPos());
+            while (m_vecInlineBreaks.get(m_vecInlineBreaks.size() - 1) != m_prevBP)
+{
+                m_vecInlineBreaks.remove(m_vecInlineBreaks.size() - 1);
+            }
+            reset(m_prevBP.getPosition());
+        }
+    }
+
     public void addAreas(PositionIterator parentIter,
                          LayoutContext context) {
         addAreas(parentIter, 0.0);
@@ -474,7 +483,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
     // dSpaceAdjust should reference extra space in the BPD
     public void addAreas(PositionIterator parentIter, double dSpaceAdjust) {
         BPLayoutManager childLM ;
-        int iStartPos = 0;
+        //int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
             LineBreakPosition lbp = (LineBreakPosition) parentIter.next();
