@@ -172,6 +172,7 @@ public class TableBody extends FObj {
 																							 -area.borderWidthTop + area.getHeight(),
 																							 area.getAllocationWidth(), area.spaceLeft(),
 																							 Position.RELATIVE);
+				areaContainer.foCreator=this;	// G Seshadri
 				areaContainer.setPage(area.getPage());
 				areaContainer.setBackgroundColor(backgroundColor);
 				areaContainer.setBorderStyle(borderStyle, borderStyle,
