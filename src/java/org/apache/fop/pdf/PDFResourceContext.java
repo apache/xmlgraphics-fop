@@ -60,7 +60,7 @@ package org.apache.fop.pdf;
  *
  * Modified by Mark Lillywhite, mark-fop@inomial.com. The Parent
  * object was being referred to by reference, but all that we
- * ever used from the Parent was it's PDF object ID, and according
+ * ever used from the Parent was its PDF object ID, and according
  * to the memory profile this was causing OOM issues. So, we store
  * only the object ID of the parent, rather than the parent itself.
  */
@@ -77,22 +77,15 @@ public class PDFResourceContext extends PDFObject {
     protected PDFAnnotList annotList;
 
     /**
-     * Reference to document used when creating annotation list
-     */
-    protected PDFDocument document;
-
-    /**
-     *
-     * @param number the object's number
-     * @param doc the PDF document this belongs to
+     * Creates a new ResourceContext.
      * @param resources the /Resources object
      */
-    public PDFResourceContext(int number, PDFDocument doc, PDFResources resources) {
+    public PDFResourceContext(PDFResources resources) {
         /* generic creation of object */
-        super(number);
+        super();
 
         /* set fields using parameters */
-        this.document = doc;
+        //this.document = doc;
         this.resources = resources;
         this.annotList = null;
     }
@@ -113,7 +106,7 @@ public class PDFResourceContext extends PDFObject {
      */
     public void addAnnotation(PDFObject annot) {
         if (this.annotList == null) {
-            this.annotList = document.makeAnnotList();
+            this.annotList = getDocument().getFactory().makeAnnotList();
         }
         this.annotList.addAnnot(annot);
     }
@@ -133,24 +126,16 @@ public class PDFResourceContext extends PDFObject {
      * @param gstate the GState to add
      */
     public void addGState(PDFGState gstate) {
-        this.resources.addGState(gstate);
+        getPDFResources().addGState(gstate);
     }
 
     /**
-     * Add the shading tot he current resource context.
+     * Add the shading to the current resource context.
      *
      * @param shading the shading to add
      */
     public void addShading(PDFShading shading) {
-        this.resources.addShading(shading);
+        getPDFResources().addShading(shading);
     }
 
-    /**
-     * Get the PDF, unused.
-     *
-     * @return null value
-     */
-    public byte[] toPDF() {
-        return null;
-    }
 }

@@ -50,6 +50,8 @@
  */ 
 package org.apache.fop.pdf;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -90,12 +92,11 @@ public class PDFOutline extends PDFObject {
     /**
      * Create a PDF outline with the title and action.
      *
-     * @param number the object id number
      * @param title the title of the outline entry (can only be null for root Outlines obj)
      * @param action the action for this outline
      */
-    public PDFOutline(int number, String title, String action) {
-        super(number);
+    public PDFOutline(String title, String action) {
+        super();
         subentries = new java.util.ArrayList();
         count = 0;
         parent = null;
@@ -152,73 +153,51 @@ public class PDFOutline extends PDFObject {
     }
 
     /**
-     * represent the object in PDF
-     *
-     * @return the PDF for this outline
+     * @see org.apache.fop.pdf.PDFObject#toPDF()
      */
     protected byte[] toPDF() {
-        StringBuffer result = new StringBuffer(this.number + " "
-                                               + this.generation
-                                               + " obj\n<<\n");
-        if (parent == null) {
-            // root Outlines object
-            if (first != null && last != null) {
-                result.append(" /First " + first.referencePDF() + "\n");
-                result.append(" /Last " + last.referencePDF() + "\n");
-                // no count... we start with the outline completely closed for now
+        ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
+        try {
+            bout.write(encode(getObjectID()));
+            bout.write(encode("<<"));
+            if (parent == null) {
+                // root Outlines object
+                if (first != null && last != null) {
+                    bout.write(encode(" /First " + first.referencePDF() + "\n"));
+                    bout.write(encode(" /Last " + last.referencePDF() + "\n"));
+                    // no count... we start with the outline completely closed for now
+                }
+            } else {
+                // subentry Outline object
+                bout.write(encode(" /Title "));
+                bout.write(encodeText(this.title));
+                bout.write(encode("\n"));
+                bout.write(encode(" /Parent " + parent.referencePDF() + "\n"));
+                if (first != null && last != null) {
+                    bout.write(encode(" /First " + first.referencePDF() + "\n"));
+                    bout.write(encode(" /Last " + last.referencePDF() + "\n"));
+                }
+                if (prev != null) {
+                    bout.write(encode(" /Prev " + prev.referencePDF() + "\n"));
+                }
+                if (next != null) {
+                    bout.write(encode(" /Next " + next.referencePDF() + "\n"));
+                }
+                if (count > 0) {
+                    bout.write(encode(" /Count -" + count + "\n"));
+                }
+    
+                if (actionRef != null) {
+                    bout.write(encode(" /A " + actionRef + "\n"));
+                }
+    
+    
             }
-        } else {
-            // subentry Outline object
-            result.append(" /Title (" + escapeString(title) + ")\n");
-            result.append(" /Parent " + parent.referencePDF() + "\n");
-            if (first != null && last != null) {
-                result.append(" /First " + first.referencePDF() + "\n");
-                result.append(" /Last " + last.referencePDF() + "\n");
-            }
-            if (prev != null) {
-                result.append(" /Prev " + prev.referencePDF() + "\n");
-            }
-            if (next != null) {
-                result.append(" /Next " + next.referencePDF() + "\n");
-            }
-            if (count > 0) {
-                result.append(" /Count -" + count + "\n");
-            }
-
-            if (actionRef != null) {
-                result.append(" /A " + actionRef + "\n");
-            }
-
-
+            bout.write(encode(">> endobj\n"));
+        } catch (IOException ioe) {
+            getDocumentSafely().getLogger().error("Ignored I/O exception", ioe);
         }
-        result.append(">> endobj\n");
-        return result.toString().getBytes();
-
-    }
-
-    /**
-     * escape string (see 3.8.1 in PDF reference 2nd edition)
-     */
-    private String escapeString(String s) {
-        StringBuffer result = new StringBuffer();
-        if (s != null) {
-            int l = s.length();
-
-            // byte order marker (0xfeff)
-            result.append("\\376\\377");
-
-            for (int i = 0; i < l; i++) {
-                char ch = s.charAt(i);
-                int high = (ch & 0xff00) >>> 8;
-                int low = ch & 0xff;
-                result.append("\\");
-                result.append(Integer.toOctalString(high));
-                result.append("\\");
-                result.append(Integer.toOctalString(low));
-            }
-        }
-
-        return result.toString();
+        return bout.toByteArray();
     }
 
 }

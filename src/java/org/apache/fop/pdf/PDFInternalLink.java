@@ -77,12 +77,10 @@ public class PDFInternalLink extends PDFAction {
     }
 
     /**
-     * there is nothing to return for the toPDF method, as it should not be called
-     *
-     * @return an empty string
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
-        return new byte[0];
+    protected String toPDFString() {
+        throw new UnsupportedOperationException("This method should not be called");
     }
 
 }

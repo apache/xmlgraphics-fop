@@ -78,7 +78,6 @@ public class PDFCIDFont extends PDFObject {
 
     /**
      * Create the /Font object
-     * @param number PDF object number
      * @param basefont Name of the basefont
      * @param cidtype CID type
      * @param dw default width
@@ -88,11 +87,11 @@ public class PDFCIDFont extends PDFObject {
      * @param supplement Supplement number
      * @param descriptor CID font descriptor
      */
-    public PDFCIDFont(int number, String basefont, CIDFontType cidtype, int dw,
+    public PDFCIDFont(String basefont, CIDFontType cidtype, int dw,
                       int[] w, String registry, String ordering,
                       int supplement, PDFCIDFontDescriptor descriptor) {
 
-        this(number, basefont, cidtype, dw, 
+        this(basefont, cidtype, dw, 
                 new PDFWArray(w), 
                 new PDFCIDSystemInfo(registry, ordering, supplement),
                 descriptor);
@@ -100,7 +99,6 @@ public class PDFCIDFont extends PDFObject {
 
     /**
      * Create the /Font object
-     * @param number PDF object number
      * @param basefont Name of the basefont
      * @param cidtype CID type
      * @param dw default width
@@ -108,11 +106,11 @@ public class PDFCIDFont extends PDFObject {
      * @param systemInfo CID system info
      * @param descriptor CID font descriptor
      */
-    public PDFCIDFont(int number, String basefont, CIDFontType cidtype, int dw,
+    public PDFCIDFont(String basefont, CIDFontType cidtype, int dw,
                       int[] w, PDFCIDSystemInfo systemInfo,
                       PDFCIDFontDescriptor descriptor) {
 
-        this(number, basefont, cidtype, dw, 
+        this(basefont, cidtype, dw, 
                 new PDFWArray(w), 
                 systemInfo,
                 descriptor);
@@ -120,7 +118,6 @@ public class PDFCIDFont extends PDFObject {
 
     /**
      * Create the /Font object
-     * @param number PDF object number
      * @param basefont Name of the basefont
      * @param cidtype CID type
      * @param dw default width
@@ -128,11 +125,11 @@ public class PDFCIDFont extends PDFObject {
      * @param systemInfo CID system info
      * @param descriptor CID font descriptor
      */
-    public PDFCIDFont(int number, String basefont, CIDFontType cidtype, int dw,
+    public PDFCIDFont(String basefont, CIDFontType cidtype, int dw,
                       PDFWArray w, PDFCIDSystemInfo systemInfo,
                       PDFCIDFontDescriptor descriptor) {
 
-        super(number);
+        super();
 
         this.basefont = basefont;
         this.cidtype = cidtype;
@@ -229,24 +226,12 @@ public class PDFCIDFont extends PDFObject {
     }
 
     /**
-     * Produce the PDF representation for the object
-     *
-     * @return the PDF
-     */
-    public byte[] toPDF() {
-        return toPDFString().getBytes();
-    }
-
-    /**
-     * Produce the PDF representation for the object
-     * @return the generated code
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
     public String toPDFString() {
-        StringBuffer p = new StringBuffer();
-        p.append(this.number);
-        p.append(" ");
-        p.append(this.generation);
-        p.append(" obj\n<< /Type /Font");
+        StringBuffer p = new StringBuffer(128);
+        p.append(getObjectID());
+        p.append("<< /Type /Font");
         p.append("\n/BaseFont /");
         p.append(this.basefont);
         if (cidMap != null) {

@@ -50,9 +50,8 @@
  */ 
 package org.apache.fop.pdf;
 
-// Java...
+// Java
 import java.util.List;
-import java.util.HashMap;
 import java.io.OutputStream;
 import java.io.IOException;
 
@@ -138,8 +137,6 @@ public class PDFPattern extends PDFPathPaint {
     /**
      * Create a tiling pattern (type 1).
      *
-     * @param theNumber The object number of this PDF Object
-     * @param thePatternName The name of the pattern such as "Pa1" or "Pattern1"
      * @param theResources the resources associated with this pattern
      * @param thePatternType the type of pattern, which is 1 for tiling.
      * @param thePaintType 1 or 2, colored or uncolored.
@@ -151,14 +148,12 @@ public class PDFPattern extends PDFPathPaint {
      * @param theXUID Optional vector of Integers that uniquely identify the pattern
      * @param thePatternDataStream The stream of pattern data to be tiled.
      */
-    public PDFPattern(int theNumber, String thePatternName,
-                      PDFResources theResources, int thePatternType,    // 1
-    int thePaintType, int theTilingType, List theBBox, double theXStep,
-    double theYStep, List theMatrix, List theXUID,
-    StringBuffer thePatternDataStream) {
-        super(theNumber);
-        this.patternName = thePatternName;
-
+    public PDFPattern(PDFResources theResources, int thePatternType,    // 1
+                      int thePaintType, int theTilingType, List theBBox, 
+                      double theXStep, double theYStep, 
+                      List theMatrix, List theXUID,
+                      StringBuffer thePatternDataStream) {
+        super();
         this.resources = theResources;
         // This next parameter is implicit to all constructors, and is
         // not directly passed.
@@ -177,21 +172,16 @@ public class PDFPattern extends PDFPathPaint {
     /**
      * Create a type 2 pattern (smooth shading)
      *
-     * @param theNumber the object number of this PDF object
-     * @param thePatternName the name of the pattern
      * @param thePatternType the type of the pattern, which is 2, smooth shading
      * @param theShading the PDF Shading object that comprises this pattern
      * @param theXUID optional:the extended unique Identifier if used.
      * @param theExtGState optional: the extended graphics state, if used.
      * @param theMatrix Optional:List of Doubles that specify the matrix.
      */
-    public PDFPattern(int theNumber, String thePatternName,
-                      int thePatternType, PDFShading theShading,
+    public PDFPattern(int thePatternType, PDFShading theShading,
                       List theXUID, StringBuffer theExtGState,
                       List theMatrix) {
-        super(theNumber);
-
-        this.patternName = thePatternName;
+        super();
 
         this.patternType = 2;             // thePatternType;
         this.shading = theShading;
@@ -209,6 +199,19 @@ public class PDFPattern extends PDFPathPaint {
      */
     public String getName() {
         return (this.patternName);
+    }
+
+    /**
+     * Sets the name of the pattern.
+     * @param name the name of the pattern. Can be anything
+     * without spaces. "Pattern1" or "Pa1" are good examples.
+     */
+    public void setName(String name) {
+        if (name.indexOf(" ") >= 0) {
+            throw new IllegalArgumentException(
+                    "Pattern name must not contain any spaces");
+        }
+        this.patternName = name;
     }
 
     /**
@@ -242,9 +245,10 @@ public class PDFPattern extends PDFPathPaint {
 
         int vectorSize = 0;
         int tempInt = 0;
-        StringBuffer p = new StringBuffer();
-        p.append(this.number + " " + this.generation
-                 + " obj\n<< \n/Type /Pattern \n");
+        byte[] buffer;
+        StringBuffer p = new StringBuffer(64);
+        p.append(getObjectID());
+        p.append("<< \n/Type /Pattern \n");
 
         if (this.resources != null) {
             p.append("/Resources " + this.resources.referencePDF() + " \n");
@@ -252,7 +256,8 @@ public class PDFPattern extends PDFPathPaint {
 
         p.append("/PatternType " + this.patternType + " \n");
 
-        PDFStream dataStream = null;
+        PDFStream pdfStream = null;
+        StreamCache encodedStream = null;
 
         if (this.patternType == 1) {
             p.append("/PaintType " + this.paintType + " \n");
@@ -293,12 +298,15 @@ public class PDFPattern extends PDFPathPaint {
 
             // don't forget the length of the stream.
             if (this.patternDataStream != null) {
-                dataStream = new PDFStream(0);
-                dataStream.add(this.patternDataStream.toString());
-                // TODO get the filters from the doc
-                dataStream.addDefaultFilters(new HashMap(), PDFStream.CONTENT_FILTER);
-                p.append(dataStream.applyFilters());
-                p.append("/Length " + (dataStream.getDataLength() + 1)
+                pdfStream = new PDFStream();
+                pdfStream.setDocument(getDocumentSafely());
+                pdfStream.add(this.patternDataStream.toString());
+                pdfStream.getFilterList().addDefaultFilters(
+                        getDocument().getFilterMap(), 
+                        PDFFilterList.CONTENT_FILTER);
+                encodedStream = pdfStream.encodeStream();        
+                p.append(pdfStream.getFilterList().buildFilterDictEntries());
+                p.append("/Length " + (encodedStream.getSize() + 1)
                          + " \n");
             }
 
@@ -335,19 +343,18 @@ public class PDFPattern extends PDFPathPaint {
 
         p.append(">> \n");
 
-        String dict = p.toString();
-        int length = dict.length();
-
-        stream.write(dict.getBytes());
+        buffer = encode(p.toString());
+        int length = buffer.length;
+        stream.write(buffer);
 
         // stream representing the function
-        if (dataStream != null) {
-            length += dataStream.outputStreamData(stream);
+        if (pdfStream != null) {
+            length += pdfStream.outputStreamData(encodedStream, stream);
         }
 
-        String end = "endobj\n";
-        stream.write(end.getBytes());
-        length += end.length();
+        buffer = encode("\nendobj\n");
+        stream.write(buffer);
+        length += buffer.length;
 
         return length;
     }

@@ -72,17 +72,16 @@ public class PDFFontType0 extends PDFFontNonBase14 {
     /**
      * Create the /Font object
      *
-     * @param number the object's number
      * @param fontname the internal name for the font
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
      */
-    public PDFFontType0(int number, String fontname, 
+    public PDFFontType0(String fontname, 
                         String basefont,
                         Object encoding) {
 
         /* generic creation of PDF object */
-        super(number, fontname, FontType.TYPE0, basefont, encoding /* , mapping */);
+        super(fontname, FontType.TYPE0, basefont, encoding /* , mapping */);
 
         /* set fields using paramaters */
         this.descendantFonts = null;
@@ -92,19 +91,18 @@ public class PDFFontType0 extends PDFFontNonBase14 {
     /**
      * Create the /Font object
      *
-     * @param number the object's number
      * @param fontname the internal name for the font
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
      * @param descendantFonts the CIDFont upon which this font is based
      */
-    public PDFFontType0(int number, String fontname, 
+    public PDFFontType0(String fontname, 
                         String basefont,
                         Object encoding, 
                         PDFCIDFont descendantFonts) {
 
         /* generic creation of PDF object */
-        super(number, fontname, FontType.TYPE0, basefont, encoding /* , mapping */);
+        super(fontname, FontType.TYPE0, basefont, encoding /* , mapping */);
 
         /* set fields using paramaters */
         this.descendantFonts = descendantFonts;

@@ -93,11 +93,12 @@ public class PDFResources extends PDFObject {
     /**
      * create a /Resources object.
      *
-     * @param number the object's number
+     * @param objnum the object's number
      */
-    public PDFResources(int number) {
+    public PDFResources(int objnum) {
         /* generic creation of object */
-        super(number);
+        super();
+        setObjectNumber(objnum);
     }
 
     /**
@@ -151,32 +152,33 @@ public class PDFResources extends PDFObject {
      * resource context.
      *
      * @return the PDF
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
-        StringBuffer p = new StringBuffer(this.number + " " + this.generation
-                                          + " obj\n<< \n");
+    public String toPDFString() {
+        StringBuffer p = new StringBuffer(128);
+        p.append(getObjectID() + "<<\n");
         if (!this.fonts.isEmpty()) {
-            p.append("/Font << ");
+            p.append("/Font <<\n");
 
             /* construct PDF dictionary of font object references */
             Iterator fontIterator = this.fonts.keySet().iterator();
             while (fontIterator.hasNext()) {
                 String fontName = (String)fontIterator.next();
-                p.append("/" + fontName + " "
+                p.append("  /" + fontName + " "
                          + ((PDFFont)this.fonts.get(fontName)).referencePDF()
-                         + " ");
+                         + "\n");
             }
 
-            p.append(">> \n");
+            p.append(">>\n");
         }
 
         PDFShading currentShading = null;
         if (!this.shadings.isEmpty()) {
-            p.append("/Shading << ");
+            p.append("/Shading <<\n");
 
             for (Iterator iter = shadings.iterator(); iter.hasNext();) {
                 currentShading = (PDFShading)iter.next();
-                p.append("/" + currentShading.getName() + " "
+                p.append("  /" + currentShading.getName() + " "
                          + currentShading.referencePDF() + " ");    // \n ??????
             }
 
@@ -187,46 +189,46 @@ public class PDFResources extends PDFObject {
 
         PDFPattern currentPattern = null;
         if (!this.patterns.isEmpty()) {
-            p.append("/Pattern << ");
+            p.append("/Pattern <<\n");
 
             for (Iterator iter = patterns.iterator(); iter.hasNext();) {
                 currentPattern = (PDFPattern)iter.next();
-                p.append("/" + currentPattern.getName() + " "
+                p.append("  /" + currentPattern.getName() + " "
                          + currentPattern.referencePDF() + " ");
             }
 
-            p.append(">> \n");
+            p.append(">>\n");
         }
         // "free" the memory. Sorta.
         currentPattern = null;
 
-        p.append("/ProcSet [ /PDF /ImageC /Text ]\n");
+        p.append("/ProcSet [ /PDF /ImageB /ImageC /Text ]\n");
 
         if (this.xObjects != null && !this.xObjects.isEmpty()) {
-            p = p.append("/XObject <<");
+            p = p.append("/XObject <<\n");
             for (Iterator iter = xObjects.iterator(); iter.hasNext();) {
                 PDFXObject xobj = (PDFXObject)iter.next();
-                p = p.append("/Im" + xobj.getXNumber() + " "
+                p = p.append("  /Im" + xobj.getXNumber() + " "
                              + xobj.referencePDF()
                              + "\n");
             }
-            p = p.append(" >>\n");
+            p = p.append(">>\n");
         }
 
         if (!this.gstates.isEmpty()) {
-            p = p.append("/ExtGState <<");
+            p = p.append("/ExtGState <<\n");
             for (Iterator iter = gstates.iterator(); iter.hasNext();) {
                 PDFGState gs = (PDFGState)iter.next();
-                p = p.append("/" + gs.getName() + " "
+                p = p.append("  /" + gs.getName() + " "
                              + gs.referencePDF()
-                             + " ");
+                             + "\n");
             }
             p = p.append(">>\n");
         }
 
         p = p.append(">>\nendobj\n");
 
-        return p.toString().getBytes();
+        return p.toString();
     }
 
 }

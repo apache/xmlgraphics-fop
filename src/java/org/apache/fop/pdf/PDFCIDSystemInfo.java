@@ -77,31 +77,19 @@ public class PDFCIDSystemInfo extends PDFObject {
     }
 
     /**
-     * produce the PDF representation for the object.
-     *
-     * unlike the other objects, the CIDSystemInfo is written directly inside
-     * the referencing object
-     *
-     * @return the PDF
-     */
-    public byte[] toPDF() {
-        return toPDFString().getBytes();
-    }
-
-    /**
      * Create a string for the CIDSystemInfo dictionary.
      * The entries are placed as an inline dictionary.
      *
      * @return the string for the CIDSystemInfo entry with the inline dictionary
      */
     public String toPDFString() {
-        StringBuffer p = new StringBuffer();
+        StringBuffer p = new StringBuffer(64);
         p.setLength(0);
         p.append("/CIDSystemInfo << /Registry (");
         p.append(registry);
-        p.append(")/Ordering (");
+        p.append(") /Ordering (");
         p.append(ordering);
-        p.append(")/Supplement ");
+        p.append(") /Supplement ");
         p.append(supplement);
         p.append(" >>");
         return p.toString();

@@ -85,17 +85,16 @@ public class PDFFontType3 extends PDFFontNonBase14 {
     /**
      * Create the /Font object
      *
-     * @param number the object's number
      * @param fontname the internal name for the font
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
      */
-    public PDFFontType3(int number, String fontname, 
+    public PDFFontType3(String fontname, 
                         String basefont,
                         Object encoding) {
 
         /* generic creation of PDF object */
-        super(number, fontname, FontType.TYPE3, basefont, encoding /* , mapping */);
+        super(fontname, FontType.TYPE3, basefont, encoding /* , mapping */);
 
         this.fontBBox = null;
         this.fontMatrix = null;
@@ -105,7 +104,6 @@ public class PDFFontType3 extends PDFFontNonBase14 {
     /**
      * Create the /Font object
      *
-     * @param number the object's number
      * @param fontname the internal name for the font
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
@@ -113,14 +111,14 @@ public class PDFFontType3 extends PDFFontNonBase14 {
      * @param fontMatrix the font's transformation matrix
      * @param charProcs the glyphs' definitions
      */
-    public PDFFontType3(int number, String fontname, 
+    public PDFFontType3(String fontname, 
                         String basefont,
                         Object encoding,
                         PDFRectangle fontBBox, PDFArray fontMatrix,
                         PDFCharProcs charProcs) {
 
         /* generic creation of PDF object */
-        super(number, fontname, FontType.TYPE3, basefont, encoding /* , mapping */);
+        super(fontname, FontType.TYPE3, basefont, encoding /* , mapping */);
 
         this.fontBBox = fontBBox;
         this.fontMatrix = fontMatrix;

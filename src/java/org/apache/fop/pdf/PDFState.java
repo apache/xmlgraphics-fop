@@ -366,7 +366,7 @@ public class PDFState {
         PDFGState defaultState = PDFGState.DEFAULT;
 
         PDFGState state;
-        PDFGState newstate = new PDFGState(0);
+        PDFGState newstate = new PDFGState();
         newstate.addValues(defaultState);
         for (Iterator iter = stateStack.iterator(); iter.hasNext();) {
             HashMap map = (HashMap)iter.next();

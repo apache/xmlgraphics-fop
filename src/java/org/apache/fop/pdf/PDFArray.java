@@ -62,32 +62,29 @@ public class PDFArray extends PDFObject {
     /**
      * create the array object
      *
-     * @param number the object's number
      * @param values the actual array wrapped by this object
      */
-    public PDFArray(int number, int[] values) {
+    public PDFArray(int[] values) {
 
         /* generic creation of PDF object */
-        super(number);
+        super();
 
         /* set fields using paramaters */
         this.values = values;
     }
 
     /**
-     * produce the PDF representation for the object
-     *
-     * @return the PDF
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
-        StringBuffer p = new StringBuffer();
-        p.append(this.number + " " + this.generation + " obj\n[");
+    public String toPDFString() {
+        StringBuffer p = new StringBuffer(64);
+        p.append(getObjectID() + "[");
         for (int i = 0; i < values.length; i++) {
             p.append(" ");
             p.append(values[i]);
         }
         p.append("]\nendobj\n");
-        return p.toString().getBytes();
+        return p.toString();
     }
 
 }

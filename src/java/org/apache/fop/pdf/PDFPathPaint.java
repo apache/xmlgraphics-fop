@@ -62,22 +62,6 @@ public abstract class PDFPathPaint extends PDFObject {
     protected PDFColorSpace colorSpace;
 
     /**
-     * Create a path paint with a PDF object number.
-     *
-     * @param theNumber the PDF object number
-     */
-    public PDFPathPaint(int theNumber) {
-        super(theNumber);
-    }
-
-    /**
-     * Create an emty path paint.
-     */
-    public PDFPathPaint() {
-        // do nothing
-    }
-
-    /**
      * Get the PDF string for setting the path paint.
      *
      * @param fillNotStroke if true fill otherwise stroke

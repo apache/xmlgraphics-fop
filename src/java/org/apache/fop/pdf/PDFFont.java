@@ -96,18 +96,17 @@ public class PDFFont extends PDFObject {
     /**
      * create the /Font object
      *
-     * @param number the object's number
      * @param fontname the internal name for the font
      * @param subtype the font's subtype
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
      */
-    public PDFFont(int number, String fontname, FontType subtype,
+    public PDFFont(String fontname, FontType subtype,
                    String basefont,
                    Object encoding /* , PDFToUnicode mapping */) {
 
         /* generic creation of PDF object */
-        super(number);
+        super();
 
         /* set fields using paramaters */
         this.fontname = fontname;
@@ -120,28 +119,27 @@ public class PDFFont extends PDFObject {
     /**
      * factory method with the basic parameters
      *
-     * @param number the object's number
      * @param fontname the internal name for the font
      * @param subtype the font's subtype
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
      * @return the generated PDFFont object
      */
-    public static PDFFont createFont(int number, String fontname,
+    public static PDFFont createFont(String fontname,
                                      FontType subtype, String basefont,
                                      Object encoding) {
         if (subtype == FontType.TYPE0) {
-            return new PDFFontType0(number, fontname, basefont,
+            return new PDFFontType0(fontname, basefont,
                                     encoding);
         } else if ((subtype == FontType.TYPE1)
                 || (subtype == FontType.MMTYPE1)) {
-            return new PDFFontType1(number, fontname, basefont,
+            return new PDFFontType1(fontname, basefont,
                                     encoding);
         } else if (subtype == FontType.TYPE3) {
             //return new PDFFontType3(number, fontname, basefont, encoding);
             return null; //NYI
         } else if (subtype == FontType.TRUETYPE) {
-            return new PDFFontTrueType(number, fontname, basefont,
+            return new PDFFontTrueType(fontname, basefont,
                                        encoding);
         } else {
             return null;    // should not happend
@@ -152,7 +150,6 @@ public class PDFFont extends PDFObject {
      * factory method with the extended parameters
      * for Type1, MMType1 and TrueType
      *
-     * @param number the object's number
      * @param fontname the internal name for the font
      * @param subtype the font's subtype
      * @param basefont the base font name
@@ -163,7 +160,7 @@ public class PDFFont extends PDFObject {
      * @param descriptor the descriptor for other font's metrics
      * @return the generated PDFFont object
      */
-    public static PDFFont createFont(int number, String fontname,
+    public static PDFFont createFont(String fontname,
                                      FontType subtype, String basefont,
                                      Object encoding, int firstChar,
                                      int lastChar, PDFArray widths,
@@ -171,13 +168,13 @@ public class PDFFont extends PDFObject {
 
         PDFFontNonBase14 font;
         if (subtype == FontType.TYPE0) {
-            font = new PDFFontType0(number, fontname, basefont,
+            font = new PDFFontType0(fontname, basefont,
                                     encoding);
             font.setDescriptor(descriptor);
             return font;
         } else if ((subtype == FontType.TYPE1) 
                 || (subtype == FontType.MMTYPE1)) {
-            font = new PDFFontType1(number, fontname, basefont,
+            font = new PDFFontType1(fontname, basefont,
                                     encoding);
             font.setWidthMetrics(firstChar, lastChar, widths);
             font.setDescriptor(descriptor);
@@ -185,7 +182,7 @@ public class PDFFont extends PDFObject {
         } else if (subtype == FontType.TYPE3) {
             return null; //NYI, should not happend
         } else if (subtype == FontType.TRUETYPE) {
-            font = new PDFFontTrueType(number, fontname, basefont,
+            font = new PDFFontTrueType(fontname, basefont,
                                        encoding);
             font.setWidthMetrics(firstChar, lastChar, widths);
             font.setDescriptor(descriptor);
@@ -225,15 +222,14 @@ public class PDFFont extends PDFObject {
     }
 
     /**
-     * Produce the PDF representation for the object
-     *
-     * @return the PDF
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
-        StringBuffer p = new StringBuffer();
-        p.append(this.number + " " + this.generation
-                 + " obj\n<< /Type /Font\n/Subtype /"
-                 + getPDFNameForFontType(this.subtype) + "\n/Name /" + this.fontname
+    public String toPDFString() {
+        StringBuffer p = new StringBuffer(128);
+        p.append(getObjectID());
+        p.append("<< /Type /Font\n/Subtype /"
+                 + getPDFNameForFontType(this.subtype)
+                 + "\n/Name /" + this.fontname
                  + "\n/BaseFont /" + this.basefont);
         if (encoding != null) {
             p.append("\n/Encoding ");
@@ -247,7 +243,7 @@ public class PDFFont extends PDFObject {
         }
         fillInPDF(p);
         p.append(" >>\nendobj\n");
-        return p.toString().getBytes();
+        return p.toString();
     }
 
     /**

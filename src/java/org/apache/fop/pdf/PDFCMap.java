@@ -402,12 +402,11 @@ public class PDFCMap extends PDFStream {
     /**
      * create the /CMap object
      *
-     * @param number the pdf object number
      * @param name one the registered names (see Table 7.20 on p 215)
      * @param sysInfo the attributes of the character collection of the CIDFont
      */
-    public PDFCMap(int number, String name, PDFCIDSystemInfo sysInfo) {
-        super(number);
+    public PDFCMap(String name, PDFCIDSystemInfo sysInfo) {
+        super();
         this.name = name;
         this.sysInfo = sysInfo;
         this.base = null;

@@ -81,18 +81,17 @@ public abstract class PDFFontNonBase14 extends PDFFont {
     /**
      * Create the /Font object
      *
-     * @param number the object's number
      * @param fontname the internal name for the font
      * @param subtype the font's subtype
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
      */
-    public PDFFontNonBase14(int number, String fontname, FontType subtype,
+    public PDFFontNonBase14(String fontname, FontType subtype,
                             String basefont,
                             Object encoding) {
 
         /* generic creation of PDF object */
-        super(number, fontname, subtype, basefont, encoding);
+        super(fontname, subtype, basefont, encoding);
 
         this.descriptor = null;
     }

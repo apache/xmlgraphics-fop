@@ -54,7 +54,6 @@ package org.apache.fop.pdf;
 import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
-import java.util.HashMap;
 
 /**
  * class representing an /Encoding object.
@@ -98,17 +97,16 @@ public class PDFEncoding extends PDFObject {
     /**
      * create the /Encoding object
      *
-     * @param number the object's number
      * @param basename the name of the character encoding schema
      */
-    public PDFEncoding(int number, String basename) {
+    public PDFEncoding(String basename) {
 
         /* generic creation of PDF object */
-        super(number);
+        super();
 
         /* set fields using paramaters */
         this.basename = basename;
-        this.differences = new HashMap();
+        this.differences = new java.util.HashMap();
     }
 
     /**
@@ -122,14 +120,12 @@ public class PDFEncoding extends PDFObject {
     }
 
     /**
-     * produce the PDF representation for the object
-     *
-     * @return the PDF
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
-        StringBuffer p = new StringBuffer();
-        p.append(this.number + " " + this.generation
-                 + " obj\n<< /Type /Encoding");
+    public String toPDFString() {
+        StringBuffer p = new StringBuffer(128);
+        p.append(getObjectID() 
+            + "<< /Type /Encoding");
         if ((basename != null) && (!basename.equals(""))) {
             p.append("\n/BaseEncoding /" + this.basename);
         }
@@ -150,7 +146,7 @@ public class PDFEncoding extends PDFObject {
             p.append(" ]");
         }
         p.append(" >>\nendobj\n");
-        return p.toString().getBytes();
+        return p.toString();
     }
 
     /*

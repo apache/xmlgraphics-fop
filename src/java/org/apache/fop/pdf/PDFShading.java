@@ -177,9 +177,6 @@ public class PDFShading extends PDFObject {
     /**
      * Constructor for type function based shading
      *
-     * @param theNumber The object number of this PDF object
-     * @param theShadingName The name of the shading pattern. Can be anything
-     * without spaces. "Shading1" or "Sh1" are good examples.
      * @param theShadingType The type of shading object, which should be 1 for function
      * based shading.
      * @param theColorSpace The colorspace is 'DeviceRGB' or something similar.
@@ -198,13 +195,11 @@ public class PDFShading extends PDFObject {
      * It's optional, the default is the identity matrix
      * @param theFunction The PDF Function that maps an (x,y) location to a color
      */
-    public PDFShading(int theNumber, String theShadingName,
-                      int theShadingType, PDFColorSpace theColorSpace,
+    public PDFShading(int theShadingType, PDFColorSpace theColorSpace,
                       List theBackground, List theBBox,
                       boolean theAntiAlias, List theDomain,
                       List theMatrix, PDFFunction theFunction) {
-        super(theNumber);
-        this.shadingName = theShadingName;
+        super();
         this.shadingType = theShadingType;    // 1
         this.colorSpace = theColorSpace;
         this.background = theBackground;
@@ -220,9 +215,6 @@ public class PDFShading extends PDFObject {
     /**
      * Constructor for Type 2 and 3
      *
-     * @param theNumber The object number of this PDF object.
-     * @param theShadingName The name of the shading pattern. Can be anything
-     * without spaces. "Shading1" or "Sh1" are good examples.
      * @param theShadingType 2 or 3 for axial or radial shading
      * @param theColorSpace "DeviceRGB" or similar.
      * @param theBackground theBackground An array of color components appropriate to the
@@ -241,14 +233,12 @@ public class PDFShading extends PDFObject {
      *                  and end colors past the start and end points
      * The default is [false, false]
      */
-    public PDFShading(int theNumber, String theShadingName,
-                      int theShadingType, PDFColorSpace theColorSpace,
+    public PDFShading(int theShadingType, PDFColorSpace theColorSpace,
                       List theBackground, List theBBox,
                       boolean theAntiAlias, List theCoords,
                       List theDomain, PDFFunction theFunction,
                       List theExtend) {
-        super(theNumber);
-        this.shadingName = theShadingName;
+        super();
         this.shadingType = theShadingType;    // 2 or 3
         this.colorSpace = theColorSpace;
         this.background = theBackground;
@@ -265,12 +255,9 @@ public class PDFShading extends PDFObject {
     /**
      * Constructor for Type 4,6, or 7
      *
-     * @param theNumber The object number of this PDF object.
      * @param theShadingType 4, 6, or 7 depending on whether it's
      * Free-form gouraud-shaded triangle meshes, coons patch meshes,
      * or tensor product patch meshes, respectively.
-     * @param theShadingName The name of the shading pattern. Can be anything
-     * without spaces. "Shading1" or "Sh1" are good examples.
      * @param theColorSpace "DeviceRGB" or similar.
      * @param theBackground theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
@@ -286,13 +273,12 @@ public class PDFShading extends PDFObject {
      * @param theDecode List of Doubles see PDF 1.3 spec pages 303 to 312.
      * @param theFunction the PDFFunction
      */
-    public PDFShading(int theNumber, String theShadingName,
-                      int theShadingType, PDFColorSpace theColorSpace,
+    public PDFShading(int theShadingType, PDFColorSpace theColorSpace,
                       List theBackground, List theBBox,
                       boolean theAntiAlias, int theBitsPerCoordinate,
                       int theBitsPerComponent, int theBitsPerFlag,
                       List theDecode, PDFFunction theFunction) {
-        super(theNumber);
+        super();
 
         this.shadingType = theShadingType;    // 4,6 or 7
         this.colorSpace = theColorSpace;
@@ -311,8 +297,6 @@ public class PDFShading extends PDFObject {
      * Constructor for type 5
      *
      * @param theShadingType 5 for lattice-Form Gouraud shaded-triangle mesh
-     * @param theShadingName The name of the shading pattern. Can be anything
-     * without spaces. "Shading1" or "Sh1" are good examples.
      * @param theColorSpace "DeviceRGB" or similar.
      * @param theBackground theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
@@ -327,16 +311,13 @@ public class PDFShading extends PDFObject {
      * @param theDecode List of Doubles. See page 305 in PDF 1.3 spec.
      * @param theVerticesPerRow number of vertices in each "row" of the lattice.
      * @param theFunction The PDFFunction that's mapped on to this shape
-     * @param theNumber the object number of this PDF object.
      */
-    public PDFShading(int theNumber, String theShadingName,
-                      int theShadingType, PDFColorSpace theColorSpace,
+    public PDFShading(int theShadingType, PDFColorSpace theColorSpace,
                       List theBackground, List theBBox,
                       boolean theAntiAlias, int theBitsPerCoordinate,
                       int theBitsPerComponent, List theDecode,
                       int theVerticesPerRow, PDFFunction theFunction) {
-        super(theNumber);
-        this.shadingName = theShadingName;
+        super();
         this.shadingType = theShadingType;    // 5
         this.colorSpace = theColorSpace;
         this.background = theBackground;
@@ -361,6 +342,19 @@ public class PDFShading extends PDFObject {
     }
 
     /**
+     * Sets the name of the shading
+     * @param name the name of the shading pattern. Can be anything
+     * without spaces. "Shading1" or "Sh1" are good examples.
+     */
+    public void setName(String name) {
+        if (name.indexOf(" ") >= 0) {
+            throw new IllegalArgumentException(
+                    "Shading name must not contain any spaces");
+        }
+        this.shadingName = name;
+    }
+
+    /**
      * represent as PDF. Whatever the shadingType is, the correct
      * representation spits out. The sets of required and optional
      * attributes are different for each type, but if a required
@@ -371,12 +365,12 @@ public class PDFShading extends PDFObject {
      *
      * @return the PDF string.
      */
-    public byte[] toPDF() {
+    public String toPDFString() {
         int vectorSize;
         int tempInt;
-        StringBuffer p = new StringBuffer();
-        p.append(this.number + " " + this.generation
-                 + " obj\n<< \n/ShadingType " + this.shadingType + " \n");
+        StringBuffer p = new StringBuffer(128);
+        p.append(getObjectID() 
+            + "<< \n/ShadingType " + this.shadingType + " \n");
         if (this.colorSpace != null) {
             p.append("/ColorSpace /"
                      + this.colorSpace.getColorSpacePDFString() + " \n");
@@ -563,7 +557,7 @@ public class PDFShading extends PDFObject {
 
         p.append(">> \nendobj\n");
 
-        return (p.toString().getBytes());
+        return (p.toString());
     }
 
     /**

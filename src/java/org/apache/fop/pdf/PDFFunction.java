@@ -239,15 +239,14 @@ public class PDFFunction extends PDFObject {
      * This is not documented in the Function section of the PDF 1.3 spec,
      * it was deduced from samples that this is sometimes used, even if we may never
      * use it in FOP. It is added for completeness sake.
-     * @param theNumber The object number of this PDF object.
      * @param theFunctionType This is the type of function (0,2,3, or 4).
      * It should be 0 as this is the constructor for sampled functions.
      */
-    public PDFFunction(int theNumber, int theFunctionType, List theDomain,
+    public PDFFunction(int theFunctionType, List theDomain,
                        List theRange, List theSize, int theBitsPerSample,
                        int theOrder, List theEncode, List theDecode,
                        StringBuffer theFunctionDataStream, List theFilter) {
-        super(theNumber);
+        super();
 
         this.functionType = 0;      // dang well better be 0;
         this.size = theSize;
@@ -271,7 +270,6 @@ public class PDFFunction extends PDFObject {
      * Use null for an optional object parameter if you choose not to use it.
      * For optional int parameters, pass the default.
      *
-     * @param theNumber the object's number
      * @param theDomain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
@@ -293,10 +291,10 @@ public class PDFFunction extends PDFObject {
      * PDF Spec page 268
      * @param theFunctionType The type of the function, which should be 2.
      */
-    public PDFFunction(int theNumber, int theFunctionType, List theDomain,
+    public PDFFunction(int theFunctionType, List theDomain,
                        List theRange, List theCZero, List theCOne,
                        double theInterpolationExponentN) {
-        super(theNumber);
+        super();
 
         this.functionType = 2;    // dang well better be 2;
 
@@ -316,7 +314,6 @@ public class PDFFunction extends PDFObject {
      * Use null for an optional object parameter if you choose not to use it.
      * For optional int parameters, pass the default.
      *
-     * @param theNumber the object's number
      * @param theDomain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
@@ -346,10 +343,10 @@ public class PDFFunction extends PDFObject {
      * @param theFunctionType This is the function type. It should be 3,
      * for a stitching function.
      */
-    public PDFFunction(int theNumber, int theFunctionType, List theDomain,
+    public PDFFunction(int theFunctionType, List theDomain,
                        List theRange, List theFunctions,
                        List theBounds, List theEncode) {
-        super(theNumber);
+        super();
 
         this.functionType = 3;    // dang well better be 3;
 
@@ -380,13 +377,12 @@ public class PDFFunction extends PDFObject {
      *
      * This attribute is required.
      * It's described on page 269 of the PDF 1.3 spec.
-     * @param theNumber The object number of this PDF object.
      * @param theFunctionType The type of function which should be 4, as this is
      * a Postscript calculator function
      */
-    public PDFFunction(int theNumber, int theFunctionType, List theDomain,
+    public PDFFunction(int theFunctionType, List theDomain,
                        List theRange, StringBuffer theFunctionDataStream) {
-        super(theNumber);
+        super();
 
         this.functionType = 4;    // dang well better be 4;
         this.functionDataStream = theFunctionDataStream;
@@ -413,9 +409,9 @@ public class PDFFunction extends PDFObject {
         int vectorSize = 0;
         int numberOfFunctions = 0;
         int tempInt = 0;
-        StringBuffer p = new StringBuffer();
-        p.append(this.number + " " + this.generation
-                 + " obj\n<< \n/FunctionType " + this.functionType + " \n");
+        StringBuffer p = new StringBuffer(256);
+        p.append(getObjectID() 
+                + "<< \n/FunctionType " + this.functionType + " \n");
 
         // FunctionType 0
         if (this.functionType == 0) {
@@ -727,7 +723,7 @@ public class PDFFunction extends PDFObject {
 
         }
 
-        return (p.toString().getBytes());
+        return encode(p.toString());
 
     }
 

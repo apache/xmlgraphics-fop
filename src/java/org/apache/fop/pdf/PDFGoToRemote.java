@@ -65,12 +65,11 @@ public class PDFGoToRemote extends PDFAction {
     /**
      * create an GoToR object.
      *
-     * @param number the object's number
      * @param pdfFileSpec the fileSpec associated with the action
      */
-    public PDFGoToRemote(int number, PDFFileSpec pdfFileSpec) {
+    public PDFGoToRemote(PDFFileSpec pdfFileSpec) {
         /* generic creation of object */
-        super(number);
+        super();
 
         this.pdfFileSpec = pdfFileSpec;
     }
@@ -78,13 +77,12 @@ public class PDFGoToRemote extends PDFAction {
     /**
      * create an GoToR object.
      *
-     * @param number the object's number
      * @param pdfFileSpec the fileSpec associated with the action
      * @param page a page reference within the remote document
      */
-    public PDFGoToRemote(int number, PDFFileSpec pdfFileSpec, int page) {
+    public PDFGoToRemote(PDFFileSpec pdfFileSpec, int page) {
         /* generic creation of object */
-        super(number);
+        super();
 
         this.pdfFileSpec = pdfFileSpec;
         this.pageReference = page;
@@ -93,13 +91,12 @@ public class PDFGoToRemote extends PDFAction {
     /**
      * create an GoToR object.
      *
-     * @param number the object's number
      * @param pdfFileSpec the fileSpec associated with the action
      * @param dest a named destination within the remote document
      */
-    public PDFGoToRemote(int number, PDFFileSpec pdfFileSpec, String dest) {
+    public PDFGoToRemote(PDFFileSpec pdfFileSpec, String dest) {
         /* generic creation of object */
-        super(number);
+        super();
 
         this.pdfFileSpec = pdfFileSpec;
         this.destination = dest;
@@ -115,24 +112,22 @@ public class PDFGoToRemote extends PDFAction {
     }
 
     /**
-     * represent the object in PDF
-     *
-     * @return the PDF string
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
-        String p = new String(this.number + " " + this.generation + " obj\n"
-                              + "<<\n/S /GoToR\n" + "/F "
-                              + pdfFileSpec.referencePDF() + "\n");
+    public String toPDFString() {
+        StringBuffer sb = new StringBuffer(64);
+        sb.append(getObjectID());
+        sb.append("<<\n/S /GoToR\n/F " + pdfFileSpec.referencePDF() + "\n");
 
         if (destination != null) {
-            p += "/D (" + this.destination + ")";
+            sb.append("/D (" + this.destination + ")");
         } else {
-            p += "/D [ " + this.pageReference + " /XYZ null null null ]";
+            sb.append("/D [ " + this.pageReference + " /XYZ null null null ]");
         }
 
-        p += " \n>>\nendobj\n";
+        sb.append(" \n>>\nendobj\n");
 
-        return p.getBytes();
+        return sb.toString();
     }
 
 
