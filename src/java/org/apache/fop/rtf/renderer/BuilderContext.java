@@ -1,4 +1,5 @@
 /*
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -50,7 +51,8 @@
 package org.apache.fop.rtf.renderer;
 
 import java.util.Stack;
-import org.apache.fop.rtf.rtflib.rtfdoc.*;
+import org.apache.fop.rtf.rtflib.rtfdoc.IRtfOptions;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfContainer;
 
 
 /**  A BuilderContext holds context information when building an RTF document
@@ -64,136 +66,133 @@ import org.apache.fop.rtf.rtflib.rtfdoc.*;
  */
 
 
-class BuilderContext
-{
-	/** stack of RtfContainers */
-	private final Stack m_containers = new Stack();
+class BuilderContext {
+    /** stack of RtfContainers */
+    private final Stack m_containers = new Stack();
 
-	/** stack of TableContexts */
-	private final Stack m_tableContexts = new Stack();
+    /** stack of TableContexts */
+    private final Stack m_tableContexts = new Stack();
 
-	/** stack of IBuilders */
-	private final Stack m_builders = new Stack();
+    /** stack of IBuilders */
+    private final Stack m_builders = new Stack();
 
-	/** Rtf options */
-	IRtfOptions m_options;
+    /** Rtf options */
+    IRtfOptions m_options;
 
-	BuilderContext(IRtfOptions rtfOptions)
-	{
-		m_options = rtfOptions;
-	}
+    BuilderContext(IRtfOptions rtfOptions) {
+        m_options = rtfOptions;
+    }
 
-	/** find first object of given class from top of stack s
-	 *  @return null if not found
-	 */
-	private Object getObjectFromStack(Stack s,Class desiredClass)
-	{
-		Object result = null;
-		final Stack copy = (Stack)s.clone();
-		while(!copy.isEmpty()) {
-			final Object o = copy.pop();
-			if(desiredClass.isAssignableFrom(o.getClass())) {
-				result = o;
-				break;
-			}
-		}
-		return result;
-	}
+    /** find first object of given class from top of stack s
+     *  @return null if not found
+     */
+    private Object getObjectFromStack(Stack s, Class desiredClass) {
+        Object result = null;
+        final Stack copy = (Stack)s.clone();
+        while (!copy.isEmpty()) {
+            final Object o = copy.pop();
+            if (desiredClass.isAssignableFrom(o.getClass())) {
+                result = o;
+                break;
+            }
+        }
+        return result;
+    }
 
-	/* find the "nearest" IBuilder of given class /
-	Object getBuilder(Class builderClass,boolean required)
-	throws Exception
-	{
-		final IBuilder result = (IBuilder)getObjectFromStack(m_builders,builderClass);
-		if(result == null && required) {
-			throw new Exception(
-				"IBuilder of class '" + builderClass.getName() + "' not found on builders stack"
-			   );
-		}
-		return result;
-	}*/
+    /* find the "nearest" IBuilder of given class /
+    Object getBuilder(Class builderClass,boolean required)
+    throws Exception
+    {
+        final IBuilder result = (IBuilder)getObjectFromStack(m_builders,builderClass);
+        if(result == null && required) {
+            throw new Exception(
+                "IBuilder of class '" + builderClass.getName() + "' not found on builders stack"
+               );
+        }
+        return result;
+    }*/
 
-	/** find the "nearest" container that implements the given interface on our stack
-	 *  @param required if true, ConverterException is thrown if no container found
-	 *  @param forWhichBuilder used in error message if container not found
-	 */
-	RtfContainer getContainer(Class containerClass,boolean required,Object /*IBuilder*/ forWhichBuilder) throws Exception
-	{
-		// TODO what to do if the desired container is not at the top of the stack?
-		// close top-of-stack container?
-		final RtfContainer result = (RtfContainer)getObjectFromStack(m_containers,containerClass);
+    /** find the "nearest" container that implements the given interface on our stack
+     *  @param required if true, ConverterException is thrown if no container found
+     *  @param forWhichBuilder used in error message if container not found
+     */
+    RtfContainer getContainer(Class containerClass, boolean required,
+                              Object /*IBuilder*/ forWhichBuilder) throws Exception {
+        // TODO what to do if the desired container is not at the top of the stack?
+        // close top-of-stack container?
+        final RtfContainer result = (RtfContainer)getObjectFromStack(m_containers,
+                containerClass);
 
-		if(result == null && required) {
-			throw new Exception(
-				"No RtfContainer of class '" + containerClass.getName()
-				+ "' available for '" + forWhichBuilder.getClass().getName() + "' builder"
-			   );
-		}
+        if (result == null && required) {
+            throw new Exception(
+                "No RtfContainer of class '" + containerClass.getName()
+                + "' available for '" + forWhichBuilder.getClass().getName() + "' builder"
+               );
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	/** push an RtfContainer on our stack */
-	void pushContainer(RtfContainer c)
-	{
-		m_containers.push(c);
-	}
+    /** push an RtfContainer on our stack */
+    void pushContainer(RtfContainer c) {
+        m_containers.push(c);
+    }
 
-	/** in some cases an RtfContainer must be replaced by another one on the stack.
-	 *  this happens when handling nested fo:blocks for example: after handling a nested block
-	 *  the enclosing block must switch to a new paragraph container to handle what follows the nested block.
-	 *  TODO: what happens to elements that are "more on top" than oldC on the stack? shouldn't they be closed
-	 *  or something?
-	 */
-	void replaceContainer(RtfContainer oldC,RtfContainer newC)
-	throws Exception
-	{
-		// treating the Stack as a Vector allows such manipulations (yes, I hear you screaming ;-)
-		final int index = m_containers.indexOf(oldC);
-		if(index < 0) throw new Exception("container to replace not found:" + oldC);
-		m_containers.setElementAt(newC,index);
-	}
+    /**
+     * In some cases an RtfContainer must be replaced by another one on the
+     * stack. This happens when handling nested fo:blocks for example: after
+     * handling a nested block the enclosing block must switch to a new
+     * paragraph container to handle what follows the nested block.
+     * TODO: what happens to elements that are "more on top" than oldC on the
+     * stack? shouldn't they be closed or something?
+     */
+    void replaceContainer(RtfContainer oldC, RtfContainer newC)
+    throws Exception {
+        // treating the Stack as a Vector allows such manipulations (yes, I hear you screaming ;-)
+        final int index = m_containers.indexOf(oldC);
+        if (index < 0) {
+            throw new Exception("container to replace not found:" + oldC);
+        }
+        m_containers.setElementAt(newC, index);
+    }
 
-	/** pop the topmost RtfContainer from our stack */
-	void popContainer()
-	{
-		m_containers.pop();
-	}
+    /** pop the topmost RtfContainer from our stack */
+    void popContainer() {
+        m_containers.pop();
+    }
 
-	/* push an IBuilder to our stack /
-	void pushBuilder(IBuilder b)
-	{
-		m_builders.push(b);
-	}*/
+    /* push an IBuilder to our stack /
+    void pushBuilder(IBuilder b)
+    {
+        m_builders.push(b);
+    }*/
 
-	/** pop the topmost IBuilder from our stack and return previous builder on stack
-	 *  @return null if builders stack is empty
+    /** pop the topmost IBuilder from our stack and return previous builder on stack
+     *  @return null if builders stack is empty
 
-	IBuilder popBuilderAndGetPreviousOne()
-	{
-		IBuilder result = null;
-		m_builders.pop();
-		if(!m_builders.isEmpty()) {
-			result = (IBuilder)m_builders.peek();
-		}
-		return result;
-	}
+    IBuilder popBuilderAndGetPreviousOne()
+    {
+        IBuilder result = null;
+        m_builders.pop();
+        if(!m_builders.isEmpty()) {
+            result = (IBuilder)m_builders.peek();
+        }
+        return result;
+    }
     */
-	/** return the current TableContext */
-	TableContext getTableContext()
-	{
-		return (TableContext)m_tableContexts.peek();
-	}
+    /** return the current TableContext */
+    TableContext getTableContext() {
+        return (TableContext)m_tableContexts.peek();
+    }
 
-	/** push a TableContext to our stack */
-	void pushTableContext(TableContext tc)
-	{
-		m_tableContexts.push(tc);
-	}
+    /** push a TableContext to our stack */
+    void pushTableContext(TableContext tc) {
+        m_tableContexts.push(tc);
+    }
 
-	/** pop a TableContext from our stack */
-	void popTableContext()
-	{
-		m_tableContexts.pop();
-	}
+    /** pop a TableContext from our stack */
+    void popTableContext() {
+        m_tableContexts.pop();
+    }
+
 }

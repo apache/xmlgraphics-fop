@@ -1,4 +1,5 @@
 /*
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -49,7 +50,7 @@
  */
 package org.apache.fop.rtf.renderer;
 
-import java.util.*;
+import java.util.ArrayList;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
@@ -69,9 +70,8 @@ import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
  *  is now integrated into FOP.
  */
 
-class TableContext implements ITableColumnsInfo
-{
-    private final Logger log=new ConsoleLogger();
+class TableContext implements ITableColumnsInfo {
+    private final Logger log = new ConsoleLogger();
     private final BuilderContext m_context;
     private final ArrayList m_colWidths = new ArrayList();
     private int m_colIndex;
@@ -92,64 +92,53 @@ class TableContext implements ITableColumnsInfo
      * For this purpose the attributes of a cell are stored in this array, as soon
      * as a number-rows-spanned attribute has been found.
      */
-    private final ArrayList m_colRowSpanningAttrs = new ArrayList();  //Added by Peter Herweg on 2002-06-29
+    private final ArrayList m_colRowSpanningAttrs = new ArrayList();
 
-    private boolean m_bNextRowBelongsToHeader=false;
+    private boolean m_bNextRowBelongsToHeader = false;
 
-    public void setNextRowBelongsToHeader(boolean bNextRowBelongsToHeader)
-    {
-    	m_bNextRowBelongsToHeader=bNextRowBelongsToHeader;
+    public void setNextRowBelongsToHeader(boolean bNextRowBelongsToHeader) {
+        m_bNextRowBelongsToHeader = bNextRowBelongsToHeader;
     }
 
-	public boolean getNextRowBelongsToHeader()
-	{
-		return m_bNextRowBelongsToHeader;
-	}
+    public boolean getNextRowBelongsToHeader() {
+        return m_bNextRowBelongsToHeader;
+    }
 
-    TableContext(BuilderContext ctx)
-    {
+    TableContext(BuilderContext ctx) {
         m_context = ctx;
     }
 
     void setNextColumnWidth(String strWidth)
-    throws Exception
-    {
-
-        m_colWidths.add( new Float(FoUnitsConverter.getInstance().convertToTwips(strWidth)));
+            throws Exception {
+        m_colWidths.add(new Float(FoUnitsConverter.getInstance().convertToTwips(strWidth)));
     }
 
     //Added by Peter Herweg on 2002-06-29
-    RtfAttributes getColumnRowSpanningAttrs()
-    {
+    RtfAttributes getColumnRowSpanningAttrs() {
         return (RtfAttributes)m_colRowSpanningAttrs.get(m_colIndex);
     }
 
     //Added by Peter Herweg on 2002-06-29
-    Integer getColumnRowSpanningNumber()
-    {
+    Integer getColumnRowSpanningNumber() {
         return (Integer)m_colRowSpanningNumber.get(m_colIndex);
     }
 
     //Added by Peter Herweg on 2002-06-29
     void setCurrentColumnRowSpanning(Integer iRowSpanning,  RtfAttributes attrs)
-    throws Exception
-    {
+            throws Exception {
 
-        if(m_colIndex<m_colRowSpanningNumber.size())
-        {
+        if (m_colIndex < m_colRowSpanningNumber.size()) {
             m_colRowSpanningNumber.set(m_colIndex, iRowSpanning);
             m_colRowSpanningAttrs.set(m_colIndex, attrs);
-        }
-        else
-        {
+        } else {
             m_colRowSpanningNumber.add(iRowSpanning);
             m_colRowSpanningAttrs.add(m_colIndex, attrs);
         }
     }
 
     //Added by Peter Herweg on 2002-06-29
-    public void setNextColumnRowSpanning(Integer iRowSpanning,  RtfAttributes attrs)
-    {
+    public void setNextColumnRowSpanning(Integer iRowSpanning,
+            RtfAttributes attrs) {
         m_colRowSpanningNumber.add(iRowSpanning);
         m_colRowSpanningAttrs.add(m_colIndex, attrs);
     }
@@ -160,47 +149,50 @@ class TableContext implements ITableColumnsInfo
      * It decreases all values in m_colRowSpanningNumber by 1. If a value
      * reaches 0 row-spanning is finished, and the value won't be decreased anymore.
      */
-    public void decreaseRowSpannings()
-    {
-        for(int z=0;z<m_colRowSpanningNumber.size();++z)
-        {
-            Integer i=(Integer)m_colRowSpanningNumber.get(z);
+    public void decreaseRowSpannings() {
+        for (int z = 0; z < m_colRowSpanningNumber.size(); ++z) {
+            Integer i = (Integer)m_colRowSpanningNumber.get(z);
 
-            if(i.intValue()>0)
-                i=new Integer(i.intValue()-1);
+            if (i.intValue() > 0) {
+                i = new Integer(i.intValue() - 1);
+            }
 
-            m_colRowSpanningNumber.set(z,i);
+            m_colRowSpanningNumber.set(z, i);
 
-            if(i.intValue()==0)
-                m_colRowSpanningAttrs.set(z,null);
+            if (i.intValue() == 0) {
+                m_colRowSpanningAttrs.set(z, null);
+            }
         }
     }
 
-    /** reset the column iteration index, meant to be called when creating a new row
-     * The 'public' modifier has been added by Boris Poudérous for 'number-columns-spanned' processing
+    /**
+     * Reset the column iteration index, meant to be called when creating a new row
+     * The 'public' modifier has been added by Boris Poudérous for
+     * 'number-columns-spanned' processing
      */
-    public void selectFirstColumn()
-    {
+    public void selectFirstColumn() {
         m_colIndex = 0;
     }
 
-    /** increment the column iteration index
-     * The 'public' modifier has been added by Boris Poudérous for 'number-columns-spanned' processing
+    /**
+     * Increment the column iteration index
+     * The 'public' modifier has been added by Boris Poudérous for
+     * 'number-columns-spanned' processing
      */
-    public void selectNextColumn()
-    {
+    public void selectNextColumn() {
         m_colIndex++;
     }
 
-    /** get current column width according to column iteration index
-     *  @return INVALID_COLUMN_WIDTH if we cannot find the value
-     *  The 'public' modifier has been added by Boris Poudérous for 'number-columns-spanned' processing
+    /**
+     * Get current column width according to column iteration index
+     * @return INVALID_COLUMN_WIDTH if we cannot find the value
+     * The 'public' modifier has been added by Boris Poudérous for
+     * 'number-columns-spanned' processing
      */
-    public float getColumnWidth()
-    {
+    public float getColumnWidth() {
         try {
             return ((Float)m_colWidths.get(m_colIndex)).floatValue();
-	} catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ex) {
             // this code contributed by Trembicki-Guy, Ed <GuyE@DNB.com>
             log.warn("fo:table-column width not defined, using " + INVALID_COLUM_WIDTH);
             return INVALID_COLUM_WIDTH;
@@ -208,15 +200,13 @@ class TableContext implements ITableColumnsInfo
     }
 
      /** Added by Boris Poudérous on 07/22/2002 */
-     public int getColumnIndex()
-     {
+     public int getColumnIndex() {
        return m_colIndex;
      }
      /** - end - */
 
      /** Added by Boris Poudérous on 07/22/2002 */
-     public int getNumberOfColumns()
-     {
+     public int getNumberOfColumns() {
        return m_colWidths.size();
      }
      /** - end - */
