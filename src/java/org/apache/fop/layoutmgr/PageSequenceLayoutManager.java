@@ -392,6 +392,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
             }
         }
 
+        if (mark == null) {
+            log.debug("found no marker with name: " + name);
+        }
+
         return mark;
     }
 

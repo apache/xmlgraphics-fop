@@ -23,6 +23,8 @@ import java.util.List;
 
 import org.xml.sax.Locator;
 
+import org.apache.commons.logging.Log;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
@@ -30,7 +32,7 @@ import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.layoutmgr.RetrieveMarkerLayoutManager;
+import org.apache.fop.layoutmgr.LayoutManager;
 
 
 /**
@@ -108,13 +110,14 @@ public class RetrieveMarker extends FObjMixed {
         return retrieveBoundary;
     }
 
-
-    /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {
-        RetrieveMarkerLayoutManager lm = new RetrieveMarkerLayoutManager(this);
-        list.add(lm);
+    public void bindMarker(Marker marker) {
+        // assert(marker != null);
+        try {
+            marker.rebind(getPropertyList());
+        } catch (FOPException exc) {
+            Log log = getLogger();
+            log.error("fo:retrieve-marker unable to rebind property values", exc);
+        }
     }
 
     /**
