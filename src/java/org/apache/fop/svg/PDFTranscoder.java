@@ -64,6 +64,7 @@ import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.BridgeException;
 import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.bridge.ViewBox;
 import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.gvt.GraphicsNode;
@@ -116,9 +117,20 @@ public class PDFTranscoder extends AbstractFOPTranscoder
     public PDFTranscoder() {
         super();
         this.handler = new FOPErrorHandler();
-
     }
 
+    /**
+     * @see org.apache.fop.svg.AbstractFOPTranscoder#createUserAgent()
+     */
+    protected UserAgent createUserAgent() {
+        return new SVGAbstractTranscoderUserAgent() {
+                // The PDF stuff wants everything at 72dpi
+                public float getPixelUnitToMillimeter() {
+                    return 0.3427778f;
+                }
+        };
+    }
+    
     /**
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
@@ -158,7 +170,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
 
         try {
             graphics.setupDocument(output.getOutputStream(), w, h);
-            graphics.setSVGDimension(width, height);
+            graphics.setSVGDimension(w, h);
 
             if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
                 graphics.setBackgroundColor
