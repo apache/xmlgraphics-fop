@@ -274,17 +274,6 @@ public class PropertyList extends HashMap {
         return p;
     }
 
-
-    /**
-     * Return the property on the current FlowObject if it is specified, or if a
-     * corresponding property is specified. If neither is specified, it returns null.
-     * @param propertyName name of property
-     * @return the Property corresponding to that name
-     */
-    public Property getSpecified(String propertyName) {
-        return get(propertyName, false, false);
-    }
-
     /**
      * Return the property on the current FlowObject. If it isn't set explicitly,
      * this will try to compute it based on other properties, or if it is
@@ -295,19 +284,6 @@ public class PropertyList extends HashMap {
      */
     public Property get(int propId) {
         String propertyName = FOPropertyMapping.getPropertyName(propId);
-        return get(propertyName, true, true);
-    }
-
-    /**
-     * TEMPORARY until conversion to int's complete
-     * Return the property on the current FlowObject. If it isn't set explicitly,
-     * this will try to compute it based on other properties, or if it is
-     * inheritable, to return the inherited value. If all else fails, it returns
-     * the default value.
-     * @param propertyName The name of the property whose value is desired.
-     * @return the Property corresponding to that name
-     */
-    public Property get(String propertyName) {
         return get(propertyName, true, true);
     }
 
