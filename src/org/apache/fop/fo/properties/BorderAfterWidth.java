@@ -5,6 +5,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.BorderCommonWidth;
 
 public class BorderAfterWidth extends BorderCommonWidth {
@@ -21,13 +22,13 @@ public class BorderAfterWidth extends BorderCommonWidth {
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
-        return getMappedLength(MEDIUM);
+        return getMappedLength(null, MEDIUM);
     }
 
-    public Numeric getMappedLength(int enum)
+    public Numeric getMappedLength(FONode node, int enum)
         throws PropertyException
     {
-        return getMappedLength (PropNames.BORDER_AFTER_WIDTH, enum);
+        return getMappedLength(node, PropNames.BORDER_AFTER_WIDTH, enum);
     }
 
     public static final int inherited = NO;
