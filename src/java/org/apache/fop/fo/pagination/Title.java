@@ -62,7 +62,7 @@ import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.layout.FontState;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.layoutmgr.ContentLayoutManager;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
@@ -120,7 +120,7 @@ public class Title extends FObjMixed {
         CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Font Properties
-        FontState fontState = propMgr.getFontState(foInputHandler.getFontInfo());
+        Font fontState = propMgr.getFontState(foInputHandler.getFontInfo());
 
         // Common Margin Properties-Inline
         CommonMarginInline mProps = propMgr.getMarginInlineProps();

@@ -71,7 +71,7 @@ import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.control.Document;
-import org.apache.fop.layout.FontState;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.layoutmgr.ContentLayoutManager;
@@ -96,7 +96,7 @@ public class Leader extends FObjMixed {
     /** FontInfo for this object */
     protected Document fontInfo = null;
     /** FontState for this object */
-    protected FontState fontState;
+    protected Font fontState;
     protected InlineArea leaderArea = null;
 
     /**

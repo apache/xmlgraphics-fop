@@ -53,7 +53,8 @@ package org.apache.fop.render.ps;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.Font;
+/* java.awt.Font is not imported to avoid confusion with
+   org.apache.fop.fonts.Font */
 
 import java.text.AttributedCharacterIterator;
 import java.awt.font.TextAttribute;
@@ -73,7 +74,7 @@ import org.apache.batik.bridge.SVGFontFamily;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
 import org.apache.fop.fonts.FontMetrics;
-import org.apache.fop.layout.FontState;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.control.Document;
 
 /**
@@ -189,7 +190,7 @@ public class PSTextPainter implements TextPainter {
                        &&  (taWeight.floatValue() > 1.0)) ? Document.BOLD
                        : Document.NORMAL;
 
-        FontState fontState = null;
+        Font fontState = null;
         Document fi = fontInfo;
         boolean found = false;
         String fontFamily = null;
@@ -207,7 +208,7 @@ public class PSTextPainter implements TextPainter {
                                                        weight);
                     FontMetrics metrics = fontInfo.getMetricsFor(fname);
                     int fsize = (int)(size.floatValue() * 1000);
-                    fontState = new FontState(fname, metrics, fsize);
+                    fontState = new Font(fname, metrics, fsize);
                     found = true;
                     break;
                 }
@@ -218,27 +219,27 @@ public class PSTextPainter implements TextPainter {
               fontInfo.fontLookup("any", style, Document.NORMAL);
             FontMetrics metrics = fontInfo.getMetricsFor(fname);
             int fsize = (int)(size.floatValue() * 1000);
-            fontState = new FontState(fname, metrics, fsize);
+            fontState = new Font(fname, metrics, fsize);
         } else {
             if (g2d instanceof PSGraphics2D) {
                 ((PSGraphics2D) g2d).setOverrideFontState(fontState);
             }
         }
-        int fStyle = Font.PLAIN;
+        int fStyle = java.awt.Font.PLAIN;
         if (weight == Document.BOLD) {
             if (style.equals("italic")) {
-                fStyle = Font.BOLD | Font.ITALIC;
+                fStyle = java.awt.Font.BOLD | java.awt.Font.ITALIC;
             } else {
-                fStyle = Font.BOLD;
+                fStyle = java.awt.Font.BOLD;
             }
         } else {
             if (style.equals("italic")) {
-                fStyle = Font.ITALIC;
+                fStyle = java.awt.Font.ITALIC;
             } else {
-                fStyle = Font.PLAIN;
+                fStyle = java.awt.Font.PLAIN;
             }
         }
-        Font font = new Font(fontFamily, fStyle,
+        java.awt.Font font = new java.awt.Font(fontFamily, fStyle,
                              (int)(fontState.getFontSize() / 1000));
 
         g2d.setFont(font);
@@ -288,7 +289,7 @@ public class PSTextPainter implements TextPainter {
         return hasunsupported;
     }
 
-    private float getStringWidth(String str, FontState fontState) {
+    private float getStringWidth(String str, Font fontState) {
         float wordWidth = 0;
         float whitespaceWidth = fontState.getWidth(fontState.mapChar(' '));
 

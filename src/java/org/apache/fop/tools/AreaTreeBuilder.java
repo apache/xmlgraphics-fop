@@ -101,7 +101,7 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.control.Document;
-import org.apache.fop.layout.FontState;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.render.svg.SVGRenderer;
@@ -249,7 +249,7 @@ class TreeLoader extends AbstractLogEnabled {
     private AreaTree areaTree;
     private AreaTreeModel model;
     private Document fontInfo;
-    private FontState currentFontState;
+    private Font currentFontState;
 
     TreeLoader(Document fi) {
         fontInfo = fi;
@@ -562,7 +562,7 @@ class TreeLoader extends AbstractLogEnabled {
                 String fname = fontInfo.fontLookup("sans-serif", "normal", Document.NORMAL);
                 FontMetrics metrics = fontInfo.getMetricsFor(fname);
                 currentFontState =
-                    new FontState(fname, metrics, 12000);
+                    new Font(fname, metrics, 12000);
 
                 ch.setWidth(currentFontState.getWidth(ch.getChar()));
                 ch.setOffset(currentFontState.getCapHeight());
@@ -587,7 +587,7 @@ class TreeLoader extends AbstractLogEnabled {
                 String fname = fontInfo.fontLookup("sans-serif", "normal", Document.NORMAL);
                 FontMetrics metrics = fontInfo.getMetricsFor(fname);
                 currentFontState =
-                    new FontState(fname, metrics, 12000);
+                    new Font(fname, metrics, 12000);
                 Word word = getWord((Element) obj);
 
                 word.addTrait(Trait.FONT_NAME, fname);

@@ -65,7 +65,7 @@ import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.BitmapImage;
 import org.apache.fop.control.Document;
-import org.apache.fop.layout.FontState;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.render.pdf.FontSetup;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.LazyFont;
@@ -87,7 +87,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.GraphicsConfiguration;
-import java.awt.Font;
+/*  java.awt.Font is not imported to avoid confusion with
+    org.apache.fop.fonts.Font */
 import java.awt.Image;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -159,7 +160,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * The override font state used when drawing text and the font cannot be
      * set using java fonts.
      */
-    protected FontState ovFontState = null;
+    protected Font ovFontState = null;
 
     /**
      * the current stream to add PDF commands to
@@ -266,7 +267,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      *
      * @param infont the font state to use
      */
-    public void setOverrideFontState(FontState infont) {
+    public void setOverrideFontState(Font infont) {
         ovFontState = infont;
     }
 
@@ -1198,9 +1199,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void drawString(String s, float x, float y) {
         // System.out.println("drawString(String)");
 
-        FontState fontState;
+        Font fontState;
         if (ovFontState == null) {
-            Font gFont = getFont();
+            java.awt.Font gFont = getFont();
             String n = gFont.getFamily();
             if (n.equals("sanserif")) {
                 n = "sans-serif";
@@ -1210,10 +1211,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             int weight = gFont.isBold() ? Document.BOLD : Document.NORMAL;
             String fname = fontInfo.fontLookup(n, style, weight);
             FontMetrics metrics = fontInfo.getMetricsFor(fname);
-            fontState = new FontState(fname, metrics, siz * 1000);
+            fontState = new Font(fname, metrics, siz * 1000);
         } else {
             FontMetrics metrics = fontInfo.getMetricsFor(ovFontState.getFontName());
-            fontState = new FontState(ovFontState.getFontName(),
+            fontState = new Font(ovFontState.getFontName(),
                                       metrics, ovFontState.getFontSize());
             ovFontState = null;
         }
@@ -1367,7 +1368,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                            float y) {
         System.err.println("drawString(AttributedCharacterIterator)");
 
-        FontState fontState = null;
+        Font fontState = null;
 
         Shape imclip = getClip();
         writeClip(imclip);
@@ -1587,7 +1588,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see       java.awt.FontMetrics
      * @see       java.awt.Graphics#getFontMetrics()
      */
-    public java.awt.FontMetrics getFontMetrics(Font f) {
+    public java.awt.FontMetrics getFontMetrics(java.awt.Font f) {
         return fmg.getFontMetrics(f);
     }
 

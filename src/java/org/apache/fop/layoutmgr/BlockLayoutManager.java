@@ -63,6 +63,7 @@ import org.apache.fop.area.LineArea;
 import org.apache.fop.traits.LayoutProps;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fonts.*;
 
 /**
  * LayoutManager for a block FO.
