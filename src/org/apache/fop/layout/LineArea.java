@@ -392,7 +392,7 @@ public class LineArea extends Area {
                         }
                     } else if (this.wrapOption == WrapOption.WRAP) {
                       if (this.hyphenate == Hyphenate.TRUE) {
-                        return this.doHyphenation(data,i,wordStart,this.getContentWidth()-finalWidth-pendingWidth-spaceWidth);
+                        return this.doHyphenation(data,i,wordStart,this.getContentWidth() - (finalWidth + spaceWidth + pendingWidth));
                       } else {
                         return wordStart;
                       }
@@ -734,7 +734,7 @@ public class LineArea extends Area {
     /**
      * extracts a complete word from the character data
      */
-    private String getHyphenationWord (char [] characters, int wordStart) {
+    private String  getHyphenationWord (char [] characters, int wordStart) {
         boolean wordendFound = false;
         int counter = 0;
         char [] newWord = new char [100];  //create a buffer
@@ -752,46 +752,99 @@ public class LineArea extends Area {
 
 
     private int doHyphenation (char [] characters, int position, int wordStart, int remainingWidth) {
-        int hyphCharWidth = this.currentFontState.width(this.hyphenationChar);
-        remainingWidth -= hyphCharWidth;
-
-        String wordToHyphenate = getHyphenationWord(characters,wordStart);
         //check whether the language property has been set
         if (this.language.equalsIgnoreCase("none")) {
           MessageHandler.errorln("if property 'hyphenate' is used, a language must be specified");
           return wordStart;
         }
+
+        /** remaining part string of hyphenation */
+        StringBuffer remainingString = new StringBuffer();
+
+        /** for words with some inword punctuation like / or - */
+        StringBuffer preString = null;
+
+        /**  char before the word, probably whitespace  */
+        char startChar = ' ' ;//characters[wordStart-1];
+
+        /** in word punctuation character */
+        char inwordPunctuation;
+
+        /** the complete word handed to the hyphenator */
+        String wordToHyphenate;
+
+        //width of hyphenation character
+        int hyphCharWidth = this.currentFontState.width(this.hyphenationChar);
+        remainingWidth -= hyphCharWidth;
+
+        //handles ' or " at the beginning of the word
+        if (characters[wordStart] == '"' || characters[wordStart] == '\'' ) {
+            remainingString.append(characters[wordStart]);
+            //extracts whole word from string
+            wordToHyphenate = getHyphenationWord(characters,wordStart+1);
+        } else {
+//            remainingString = "";
+            wordToHyphenate = getHyphenationWord(characters,wordStart);
+        }
+
+
+
+        //if the extracted word is smaller than the remaining width
+        //we have a non letter character inside the word. at the moment
+        //we will only handle hard hyphens and slashes
+        if (getWordWidth(wordToHyphenate)< remainingWidth) {
+            inwordPunctuation = characters[wordStart+wordToHyphenate.length()];
+            if (inwordPunctuation == '-' ||
+                inwordPunctuation == '/' ) {
+                preString = new StringBuffer(wordToHyphenate);
+                preString = preString.append(inwordPunctuation);
+                wordToHyphenate = getHyphenationWord(characters,wordStart+wordToHyphenate.length()+1);
+                remainingWidth -= (getWordWidth(wordToHyphenate) + this.currentFontState.width(inwordPunctuation));
+            }
+        }
+
         //are there any hyphenation points
         Hyphenation hyph = Hyphenator.hyphenate(language,country,wordToHyphenate,hyphenationRemainCharacterCount,hyphenationPushCharacterCount);
-        if (hyph != null) {
-            int [] hyphenationPoints = hyph.getHyphenationPoints();
-
-            int index = 0;
-            String wordBegin = "";
-            int wordBeginWidth = 0;
-
-            while (wordBeginWidth < remainingWidth && hyph.length() > index) {
-              wordBegin = hyph.getPreHyphenText(index);
-              wordBeginWidth = getWordWidth(wordBegin);
-              index++;
+        //no hyphenation points and no inword non letter character
+        if (hyph == null && preString == null) {
+            if (remainingString.length() > 0) {
+                return wordStart-1;
+            } else {
+                return wordStart;
             }
-            if (index > 1) {
-              wordBegin = hyph.getPreHyphenText(index-1) + this.hyphenationChar;
-              wordBeginWidth = getWordWidth(wordBegin);
-              InlineArea hia = new InlineArea(currentFontState,
-                                         this.red, this.green, this.blue,
-                                         wordBegin,wordBegin.length());
-              this.addChild(new InlineSpace(currentFontState.width(32)));
-              this.addChild(hia);
 
-              //calculate the space needed
-              finalWidth += wordBeginWidth + currentFontState.width(32);
-              return wordStart + wordBegin.length()-1;
+        //no hyphenation points, but a inword non-letter character
+        } else if (hyph == null && preString != null){
+            remainingString.append(preString);
+            this.addWord(startChar,remainingString);
+            return wordStart + remainingString.length();
+        //hyphenation points and no inword non-letter character
+        } else if (hyph != null && preString == null)  {
+            int index = getFinalHyphenationPoint(hyph,remainingWidth);
+            if (index != -1) {
+                remainingString.append(hyph.getPreHyphenText(index));
+                remainingString.append(this.hyphenationChar);
+                this.addWord(startChar,remainingString);
+                return wordStart + remainingString.length()-1;
+            }
+        //hyphenation points and a inword non letter character
+        } else if (hyph != null && preString != null) {
+            int index = getFinalHyphenationPoint(hyph,remainingWidth);
+            if (index != -1) {
+              remainingString.append(preString.append(hyph.getPreHyphenText(index)));
+              remainingString.append(this.hyphenationChar);
+              this.addWord(startChar,remainingString);
+              return wordStart + remainingString.length()-1;
+            } else {
+              remainingString.append(preString) ;
+              this.addWord(startChar,remainingString);
+              return wordStart + remainingString.length();
             }
         }
         return wordStart;
     }
 
+    /** calculates the wordWidth using the actual fontstate*/
     private int getWordWidth (String word) {
       int wordLength = word.length();
       int width = 0;
@@ -832,4 +885,47 @@ public class LineArea extends Area {
           return org.apache.fop.fo.flow.Character.OK;
         }
     }
+
+    /** adds a string to the line area children. insert a space before the word */
+    private void addWord (char startChar, StringBuffer wordBuf) {
+        String word = wordBuf.toString();
+        InlineArea hia;
+        int startCharWidth = this.currentFontState.width(startChar);
+        if (startChar == ' ') {
+            this.addChild(new InlineSpace(startCharWidth));
+        } else {
+            hia = new InlineArea(currentFontState,
+                                 this.red, this.green, this.blue,
+                                 new Character(startChar).toString(),1);
+            this.addChild(hia);
+        }
+        int wordWidth = this.getWordWidth(word);
+        hia = new InlineArea(currentFontState,
+                                 this.red, this.green, this.blue,
+                                 word,word.length());
+        this.addChild(hia);
+
+        //calculate the space needed
+        finalWidth += startCharWidth + wordWidth ;
+    }
+
+
+    private int getFinalHyphenationPoint(Hyphenation hyph, int remainingWidth) {
+        int [] hyphenationPoints = hyph.getHyphenationPoints();
+        int numberOfHyphenationPoints = hyphenationPoints.length;
+
+        int index = -1;
+        String wordBegin = "";
+        int wordBeginWidth = 0;
+
+        for (int i = 0;i <  numberOfHyphenationPoints; i++){
+            wordBegin = hyph.getPreHyphenText(i);
+            if (this.getWordWidth(wordBegin) > remainingWidth){
+                break;
+            }
+            index = i;
+        }
+        return index;
+    }
+
 }
