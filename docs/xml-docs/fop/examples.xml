@@ -7,9 +7,6 @@
     <p>Examples for the use of xsl:fo can be found in the Fop distribution in 
        the subdirectory /docs/examples/fo. 
     </p>
-    <p>Please be warned: At the moment FOP only supports the 
-       XSL Working Draft 21 April 1999 and the examples are also following this version. 
-    </p>
     <p>At the moment the following files are part of the distribution:</p>
     <ul>
       <li>normal.fo - a very simple file showing the use of a 2 level of headings, normal text and a header.

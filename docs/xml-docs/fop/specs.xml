@@ -6,6 +6,7 @@
 <s1 title="FOP Relevant Specifications">
   <ul>
     <li><jump href="http://www.w3.org/TR/WD-xsl/">Latest XSL-FO Working Draft (27 March 2000)</jump></li>
+    <li><jump href="http://www.renderx.com/Tests/validator/fo2000.dtd.html">A dtd for the XSL-FO Working Draft (27 March 2000) provided by N. Grigoriev from RenderX</jump></li>
     <li><jump href="http://www.w3.org/TR/1999/WD-xsl-19990421/">XSL-FO Working Draft 21 Apr 1999 </jump></li>
     <li><jump href="http://www.w3.org/TR/SVG">Latest SVG Working draft</jump></li>
     <li><jump href="http://www.w3.org/TR/2000/WD-SVG-20000629/index.html">Supported SVG Working Draf</jump></li>
