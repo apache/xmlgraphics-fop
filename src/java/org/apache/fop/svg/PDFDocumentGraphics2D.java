@@ -51,6 +51,7 @@
 package org.apache.fop.svg;
 
 import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFState;
@@ -59,6 +60,15 @@ import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.render.pdf.FontSetup;
+import org.apache.avalon.framework.CascadingRuntimeException;
+import org.apache.avalon.framework.activity.Initializable;
+import org.apache.avalon.framework.configuration.Configurable;
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.avalon.framework.container.ContainerUtil;
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.LogEnabled;
+import org.apache.avalon.framework.logger.Logger;
 import org.apache.fop.layout.FontInfo;
 
 import java.awt.Graphics;
@@ -70,6 +80,7 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * This class is a wrapper for the <tt>PDFGraphics2D</tt> that
@@ -80,11 +91,18 @@ import java.io.IOException;
  * @version $Id: PDFDocumentGraphics2D.java,v 1.27 2003/03/07 09:51:26 jeremias Exp $
  * @see org.apache.fop.svg.PDFGraphics2D
  */
-public class PDFDocumentGraphics2D extends PDFGraphics2D {
+public class PDFDocumentGraphics2D extends PDFGraphics2D
+            implements LogEnabled, Configurable, Initializable {
+    
     private PDFPage currentPage;
     private PDFStream pdfStream;
     private int width;
     private int height;
+    private List fontList;
+    
+    //Avalon-dependent stuff
+    private Logger logger;
+    private Configuration cfg;
 
     /**
      * Create a new PDFDocumentGraphics2D.
@@ -97,7 +115,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @param textAsShapes set this to true so that text will be rendered
      * using curves and not the font.
      */
-    PDFDocumentGraphics2D(boolean textAsShapes) {
+    public PDFDocumentGraphics2D(boolean textAsShapes) {
         super(textAsShapes);
 
         if (!textAsShapes) {
@@ -106,40 +124,12 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
             //FontState fontState = new FontState("Helvetica", "normal",
             //                          FontInfo.NORMAL, 12, 0);
         }
-
-        this.pdfDoc = new PDFDocument("FOP SVG Renderer");
-        this.pdfDoc.enableLogging(new org.apache.avalon.framework.logger.NullLogger());
-
-        graphicsState = new PDFState();
-
-        currentFontName = "";
-        currentFontSize = 0;
-
-        pdfStream = this.pdfDoc.makeStream(PDFStream.CONTENT_FILTER, false);
-    }
-
-    /**
-     * Setup the document.
-     * @param stream the output stream to write the document
-     * @param width the width of the page
-     * @param height the height of the page
-     * @throws IOException an io exception if there is a problem
-     *         writing to the output stream
-     */
-    public void setupDocument(OutputStream stream, int width, int height) throws IOException {
-        this.width = width;
-        this.height = height;
-
-        PDFResources pdfResources = this.pdfDoc.getResources();
-        currentPage = this.pdfDoc.makePage(pdfResources,
-                                                   width, height);
-        resourceContext = currentPage;
-        pageRef = currentPage.referencePDF();
-        currentStream.write("1 0 0 -1 0 " + height + " cm\n");
-        graphicsState.setTransform(new AffineTransform(1.0, 0.0, 0.0, -1.0, 0.0, (double)height));
-        pdfDoc.outputHeader(stream);
-
-        setOutputStream(stream);
+        try {
+            initialize();
+        } catch (Exception e) {
+            //Should never happen
+            throw new CascadingRuntimeException("Internal error", e);
+        }
     }
 
     /**
@@ -160,6 +150,94 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
                                  int width, int height) throws IOException {
         this(textAsShapes);
         setupDocument(stream, width, height);
+    }
+
+    /**
+     * Create a new PDFDocumentGraphics2D.
+     * This is used to create a new pdf document.
+     * For use by the transcoder which needs font information
+     * for the bridge before the document size is known.
+     * The resulting document is written to the stream after rendering.
+     * This constructor is Avalon-style.
+     */
+    public PDFDocumentGraphics2D() {
+        super(false);
+    }
+
+    /**
+     * @see org.apache.avalon.framework.logger.LogEnabled#enableLogging(Logger)
+     */
+    public void enableLogging(Logger logger) {
+        this.logger = logger;
+    }
+
+    /**
+     * Returns the logger.
+     * @return Logger the logger
+     */
+    protected final Logger getLogger() {
+        if (this.logger == null) {
+            this.logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+        }
+        return this.logger;
+    }
+
+    /**
+     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
+     */
+    public void configure(Configuration cfg) throws ConfigurationException {
+        this.cfg = cfg;
+        this.fontList = FontSetup.buildFontListFromConfiguration(cfg);
+    }
+
+    /**
+     * @see org.apache.avalon.framework.activity.Initializable#initialize()
+     */
+    public void initialize() throws Exception {
+        if (this.fontInfo == null) {
+            fontInfo = new FontInfo();
+            FontSetup.setup(fontInfo, this.fontList);
+            //FontState fontState = new FontState("Helvetica", "normal",
+            //                          FontInfo.NORMAL, 12, 0);
+        }
+
+        this.pdfDoc = new PDFDocument("Apache FOP: SVG to PDF Transcoder");
+        ContainerUtil.enableLogging(this.pdfDoc, getLogger().getChildLogger("pdf"));
+        if (this.cfg != null) {
+            this.pdfDoc.setFilterMap(
+                PDFFilterList.buildFilterMapFromConfiguration(cfg));
+        }
+        
+        graphicsState = new PDFState();
+
+        currentFontName = "";
+        currentFontSize = 0;
+
+        pdfStream = this.pdfDoc.getFactory().makeStream(PDFFilterList.CONTENT_FILTER, false);
+    }
+
+    /**
+     * Setup the document.
+     * @param stream the output stream to write the document
+     * @param width the width of the page
+     * @param height the height of the page
+     * @throws IOException an io exception if there is a problem
+     *         writing to the output stream
+     */
+    public void setupDocument(OutputStream stream, int width, int height) throws IOException {
+        this.width = width;
+        this.height = height;
+
+        PDFResources pdfResources = this.pdfDoc.getResources();
+        currentPage = this.pdfDoc.getFactory().makePage(pdfResources,
+                                                   width, height);
+        resourceContext = currentPage;
+        pageRef = currentPage.referencePDF();
+        currentStream.write("1 0 0 -1 0 " + height + " cm\n");
+        graphicsState.setTransform(new AffineTransform(1.0, 0.0, 0.0, -1.0, 0.0, (double)height));
+        pdfDoc.outputHeader(stream);
+
+        setOutputStream(stream);
     }
 
     /**
@@ -222,13 +300,13 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         // restorePDFState();
 
         pdfStream.add(getString());
-        this.pdfDoc.addStream(pdfStream);
+        this.pdfDoc.registerObject(pdfStream);
         currentPage.setContents(pdfStream);
         PDFAnnotList annots = currentPage.getAnnotations();
         if (annots != null) {
-            this.pdfDoc.addAnnotList(annots);
+            this.pdfDoc.addObject(annots);
         }
-        this.pdfDoc.addPage(currentPage);
+        this.pdfDoc.addObject(currentPage);
         if (fontInfo != null) {
             FontSetup.addToResources(pdfDoc, pdfDoc.getResources(), fontInfo);
         }
