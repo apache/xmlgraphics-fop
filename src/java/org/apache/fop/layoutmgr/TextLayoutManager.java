@@ -60,6 +60,7 @@ import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.fonts.*;
+import org.apache.fop.traits.*;
 
 /**
  * LayoutManager for text (a sequence of characters) which generates one

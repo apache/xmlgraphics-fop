@@ -125,6 +125,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.fop.apps.*;
+import org.apache.fop.traits.*;
 
 /**
  * Concrete implementation of FOTreeVisitor for the purpose of adding

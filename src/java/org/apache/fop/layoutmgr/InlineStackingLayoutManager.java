@@ -63,6 +63,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Space;
+import org.apache.fop.traits.*;
 
 /**
  * LayoutManager for objects which stack children in the inline direction,

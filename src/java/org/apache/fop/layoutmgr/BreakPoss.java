@@ -51,6 +51,7 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.traits.LayoutProps;
+import org.apache.fop.traits.*;
 
 /**
  * Represents a break possibility for the layout manager.

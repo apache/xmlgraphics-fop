@@ -63,6 +63,7 @@ import org.apache.fop.fo.properties.Overflow;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
+import org.apache.fop.traits.*;
 
 /**
  * LayoutManager for a block FO.

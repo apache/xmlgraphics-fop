@@ -53,6 +53,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.Block;
+import org.apache.fop.traits.*;
 
 /**
  * Base LayoutManager class for all areas which stack their child

@@ -50,6 +50,8 @@
  */ 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.traits.*;
+
 
 /**
  * This class is used to pass information to the getNextBreakPoss()
