@@ -49,8 +49,7 @@ public class FoPageSequence extends FONode {
 
     /** Map of <tt>Integer</tt> indices of <i>sparsePropsSet</i> array.
         It is indexed by the FO index of the FO associated with a given
-        position in the <i>sparsePropsSet</i> array. See
-        {@link org.apache.fop.fo.FONode#sparsePropsSet FONode.sparsePropsSet}.
+        position in the <i>sparsePropsSet</i> array.
      */
     private static final int[] sparsePropsMap;
 
@@ -139,9 +138,14 @@ public class FoPageSequence extends FONode {
                 new FoStaticContent(getFOTree(), this, (FoXmlEvent)ev);
                 namespaces.relinquishEvent(ev);
             }
+            
+            // Generate a null page for the flow(s)
+            
 
-            // Look for one or more page-sequence
-            // must have at least one
+            // Look for one or more fo:flow
+            // must have at least one: N.B. in 1.0, only one is allowed,
+            // but in 1.1. multiple flows are allowed with different 
+            // flow maps
             nowProcessing = "flow";
             ev = xmlevents.expectStartElement
                         (FObjectNames.FLOW, XmlEvent.DISCARD_W_SPACE);
@@ -154,7 +158,7 @@ public class FoPageSequence extends FONode {
             while ((ev = xmlevents.expectStartElement
                             (FObjectNames.FLOW, XmlEvent.DISCARD_W_SPACE))
                    != null) {
-                // Loop over remaining fo:page-sequences
+                // Loop over remaining fo:flow elements
                 new FoFlow(getFOTree(), this, (FoXmlEvent)ev);
                 ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
                 namespaces.relinquishEvent(ev);
