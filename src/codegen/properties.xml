@@ -195,10 +195,10 @@
     <inherited>true</inherited>
     <datatype>
       <enumeration>
-        <value const="CENTER">center</value>
-        <value const="END">end</value>
         <value const="START">start</value>
+        <value const="END">end</value>
         <value const="JUSTIFY">justify</value>
+        <value const="CENTER">center</value>
       </enumeration>
     </datatype>
     <default>start</default>
