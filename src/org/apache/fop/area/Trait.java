@@ -9,7 +9,6 @@ package org.apache.fop.area;
 
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.layout.FontState;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -256,8 +255,6 @@ public class Trait implements Serializable {
 
     /**
      * Return the string for debugging.
-     *
-     * @param the string from the data value
      */
     public String toString() {
         return data.toString();

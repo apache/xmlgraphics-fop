@@ -7,8 +7,6 @@
 
 package org.apache.fop.layout;
 
-import java.io.*;
-
 import org.apache.fop.area.PageViewport;
 
 public class PageMaster {

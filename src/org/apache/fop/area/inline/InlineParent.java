@@ -8,7 +8,6 @@
 package org.apache.fop.area.inline;
 
 import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
 import org.apache.fop.render.Renderer;
 
 import java.util.List;

@@ -10,13 +10,13 @@ package org.apache.fop.layout;
 import org.apache.fop.apps.FOPException;
 
 public class AreaClass {
-    public static String UNASSIGNED = "unassigned";
+    public static final String UNASSIGNED = "unassigned";
 
-    public static String XSL_NORMAL = "xsl-normal";
-    public static String XSL_ABSOLUTE = "xsl-absolute";
-    public static String XSL_FOOTNOTE = "xsl-footnote";
-    public static String XSL_SIDE_FLOAT = "xsl-side-float";
-    public static String XSL_BEFORE_FLOAT = "xsl-before-float";
+    public static final String XSL_NORMAL = "xsl-normal";
+    public static final String XSL_ABSOLUTE = "xsl-absolute";
+    public static final String XSL_FOOTNOTE = "xsl-footnote";
+    public static final String XSL_SIDE_FLOAT = "xsl-side-float";
+    public static final String XSL_BEFORE_FLOAT = "xsl-before-float";
 
     // checker method
     public static String setAreaClass(String areaClass) throws FOPException {

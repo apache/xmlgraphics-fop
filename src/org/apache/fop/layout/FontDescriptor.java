@@ -7,6 +7,8 @@
 
 package org.apache.fop.layout;
 
+import java.util.HashMap;
+
 public interface FontDescriptor {
 
     // Required
@@ -20,7 +22,7 @@ public interface FontDescriptor {
     public int getStemV();
 
     public boolean hasKerningInfo();
-    public java.util.HashMap getKerningInfo();
+    public HashMap getKerningInfo();
     public boolean isEmbeddable();
     public byte getSubType();
     public org.apache.fop.pdf.PDFStream getFontFile(int objNum);
