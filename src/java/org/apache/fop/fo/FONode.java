@@ -21,6 +21,7 @@ package org.apache.fop.fo;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.fop.apps.FOPException;
@@ -241,14 +242,16 @@ public class FONode extends SyncedNode{
             int property;
             int prop = foKeys[propx].intValue();
             if ( ! attrBitSet.get(prop)) {
-                log.info("Ignoring "
+                if (log.isLoggable(Level.FINE)) {
+                    log.fine("Ignoring "
                                    + PropNames.getPropertyName(prop)
                                    + " on "
                                    + FObjectNames.getFOName(type)
                                    + " for attribute set "
                                    + FOPropertySets.getAttrSetName(stateFlags)
                                    + ".");
-                continue;
+                    continue;
+                }
             }
             String attrValue = foAttributes.getFoAttrValue(prop);
             try {
