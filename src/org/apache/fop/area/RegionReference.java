@@ -7,7 +7,6 @@
 
 package org.apache.fop.area;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +15,7 @@ import java.util.List;
  * This area represents a region on the page. It is cloneable
  * so the page master can make copies from the original page and regions.
  */
-public class RegionReference extends Area implements Serializable, Cloneable {
+public class RegionReference extends Area implements Cloneable {
     /**
      * The before region.
      */

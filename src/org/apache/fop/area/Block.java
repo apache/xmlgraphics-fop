@@ -7,7 +7,6 @@
 
 package org.apache.fop.area;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 // block areas hold either more block areas or line
@@ -21,7 +20,7 @@ import java.util.ArrayList;
  * This is the block area class.
  * It holds child block areas such as other blocks or lines.
  */
-public class Block extends BlockParent implements Serializable {
+public class Block extends BlockParent {
     /**
      * Normally stacked with other blocks.
      */
