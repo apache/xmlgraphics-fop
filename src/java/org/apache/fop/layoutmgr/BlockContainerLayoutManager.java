@@ -234,6 +234,19 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, relDims.bpd);
 
         while ((curLM = getChildLM()) != null) {
+            //Treat bc with fixed BPD as non-breakable
+            if (!autoHeight && (stackLimit.max > context.stackLimit.max)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("block-container does not fit in the available area "
+                            + "(available: " + context.stackLimit.max
+                            + ", needed: " + stackLimit.max + ")");
+                }
+                BreakPoss breakPoss = new BreakPoss(new LeafPosition(this, -1));
+                breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
+                breakPoss.setStackingSize(new MinOptMax());
+                return breakPoss;
+            }
+
             // Make break positions and return blocks!
             // Set up a LayoutContext
             BreakPoss bp;
@@ -247,8 +260,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             boolean over = false;
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    stackSize.add(bp.getStackingSize());
-                    if (stackSize.opt > stackLimit.max) {
+                    if (stackSize.opt + bp.getStackingSize().opt > stackLimit.max) {
                         // reset to last break
                         if (lastPos != null) {
                             reset(lastPos.getPosition());
@@ -258,19 +270,20 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                         over = true;
                         break;
                     }
-                    lastPos = bp;
-                    childBreaks.add(bp);
-
                     if (bp.nextBreakOverflows()) {
                         over = true;
                         break;
                     }                    
                     
+                    stackSize.add(bp.getStackingSize());
+                    lastPos = bp;
+                    childBreaks.add(bp);
+
                     childLC.setStackLimit(MinOptMax.subtract(
                                            stackLimit, stackSize));
                 }
             }
-            if (!rotated) {
+            if (!rotated && autoHeight) {
                 BreakPoss breakPoss;
                 breakPoss = new BreakPoss(new LeafPosition(this,
                                                    childBreaks.size() - 1));
@@ -287,6 +300,14 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             breakPoss = new BreakPoss(new LeafPosition(this,
                                                childBreaks.size() - 1));
             breakPoss.setStackingSize(new MinOptMax(relDims.ipd));
+            return breakPoss;
+        }
+        if (!rotated && !autoHeight) {
+            //Treated as if all content is kept together
+            BreakPoss breakPoss;
+            breakPoss = new BreakPoss(new LeafPosition(this,
+                                               childBreaks.size() - 1));
+            breakPoss.setStackingSize(new MinOptMax(relDims.bpd));
             return breakPoss;
         }
         return null;
