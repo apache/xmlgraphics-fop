@@ -672,6 +672,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
 
         contentLM.addAreas(parentIter, layoutContext);
+        tableHeight += contentLM.getUsedBPD();
 
         // add footer areas
         if (footerBreak != null) {
