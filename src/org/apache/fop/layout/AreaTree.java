@@ -63,10 +63,10 @@ public class AreaTree {
         return this.fontInfo;
     }
 
-    public Page getNextPage(Page current, boolean isWithinPageSequence,
-                            boolean isFirstCall) {
-        return streamRenderer.getNextPage(current, isWithinPageSequence,isFirstCall);
-    }
+//      public Page getNextPage(Page current, boolean isWithinPageSequence,
+//                              boolean isFirstCall) {
+//          return streamRenderer.getNextPage(current, isWithinPageSequence,isFirstCall);
+//      }
 
     public Page getPreviousPage(Page current, boolean isWithinPageSequence,
                                 boolean isFirstCall) {

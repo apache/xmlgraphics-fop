@@ -13,7 +13,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.AreaClass;
 import org.apache.fop.layout.LinkSet;
-import org.apache.fop.fo.flow.Marker;
 
 // Avalon
 import org.apache.avalon.framework.logger.Logger;
@@ -70,18 +69,15 @@ abstract public class FONode {
     // count of areas generated-by/returned-by
     public int areasGenerated = 0;
 
-    // markers
-    protected Hashtable markers;
-
     protected Logger log;
 
     protected FONode(FObj parent) {
         this.parent = parent;
 
-        markers = new Hashtable();
-
-        if (null != parent)
+        if (parent != null) {
             this.areaClass = parent.areaClass;
+            log = parent.log;
+        }
     }
 
     public void setLogger(Logger logger) {
@@ -216,27 +212,6 @@ abstract public class FONode {
             fo.resetMarker();
         }
         ((FONode)children.elementAt(this.marker)).rollback(snapshot);
-    }
-
-
-    public void addMarker(Marker marker) throws FOPException {
-        String mcname = marker.getMarkerClassName();
-        if (!markers.containsKey(mcname) && children.isEmpty()) {
-            markers.put(mcname, marker);
-        } else {
-            log.error("fo:marker must be an initial child,"
-                                   + "and 'marker-class-name' must be unique for same parent");
-            throw new FOPException("fo:marker must be an initial child,"
-                                   + "and 'marker-class-name' must be unique for same parent");
-        }
-    }
-
-    public boolean hasMarkers() {
-        return !markers.isEmpty();
-    }
-
-    public Vector getMarkers() {
-        return new Vector(markers.values());
     }
 
 }
