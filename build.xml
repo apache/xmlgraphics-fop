@@ -176,7 +176,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="name" value="fop"/>
     <property name="version" value="1.0dev"/>
     <filter  token="version" value="${version}"/>
-    <property name="year" value="1999-2001"/>
+    <property name="year" value="1999-2002"/>
 
     <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
 
