@@ -244,7 +244,7 @@ extends RtfContainer {
      * @param args command-line arguments
      * @throws Exception for problems
      */
-    public static void main(String args[])
+    public static void main(String[] args)
     throws Exception {
         Writer w = null;
         if (args.length != 0) {

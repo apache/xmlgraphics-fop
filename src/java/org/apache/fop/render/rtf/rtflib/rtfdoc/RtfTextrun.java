@@ -58,25 +58,23 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Iterator;
-import java.io.IOException;
-import org.apache.fop.render.rtf.rtflib.exceptions.RtfStructureException;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
 
-/**  Class which contains a linear text run. It has methods to add attributes, text, paragraph breaks....
- *  @author Peter Herweg, pherweg@web.de
+/** 
+ * Class which contains a linear text run. It has methods to add attributes, 
+ * text, paragraph breaks....
+ * @author Peter Herweg, pherweg@web.de
  */
-
 public class RtfTextrun extends RtfContainer {
-    private boolean bSuppressLastPar=false;
+    private boolean bSuppressLastPar = false;
     
     /**  Class which represents the opening of a RTF group mark.*/
-    private class RtfOpenGroupMark extends RtfElement
-    {        
+    private class RtfOpenGroupMark extends RtfElement {
+                
         RtfOpenGroupMark(RtfContainer parent, Writer w, RtfAttributes attr)
-        throws IOException {
+                throws IOException {
             super(parent, w, attr);
         }
         
@@ -98,10 +96,10 @@ public class RtfTextrun extends RtfContainer {
     }
     
     /**  Class which represents the closing of a RTF group mark.*/
-    private class RtfCloseGroupMark extends RtfElement
-    {
+    private class RtfCloseGroupMark extends RtfElement {
+        
         RtfCloseGroupMark(RtfContainer parent, Writer w)
-        throws IOException {
+                throws IOException {
             super(parent, w);
         }
         
@@ -122,10 +120,10 @@ public class RtfTextrun extends RtfContainer {
     }
 
     /**  Class which represents a paragraph break.*/
-    private class RtfParagraphBreak extends RtfElement
-    {
+    private class RtfParagraphBreak extends RtfElement {
+        
         RtfParagraphBreak(RtfContainer parent, Writer w)
-        throws IOException {
+                throws IOException {
             super(parent, w);
         }
     
@@ -151,23 +149,23 @@ public class RtfTextrun extends RtfContainer {
     }
     
     public void pushAttributes(RtfAttributes attrs) throws IOException {
-        RtfOpenGroupMark r=new RtfOpenGroupMark(this, writer, attrs);
+        RtfOpenGroupMark r = new RtfOpenGroupMark(this, writer, attrs);
     }
     
     public void popAttributes() throws IOException {
-        RtfCloseGroupMark r=new RtfCloseGroupMark(this, writer);
+        RtfCloseGroupMark r = new RtfCloseGroupMark(this, writer);
     }
     
     public void addString(String s) throws IOException {
-        RtfString r=new RtfString(this, writer, s);
+        RtfString r = new RtfString(this, writer, s);
     }
     
     public void addParagraphBreak() throws IOException {
-        RtfParagraphBreak r=new RtfParagraphBreak(this, writer);
+        RtfParagraphBreak r = new RtfParagraphBreak(this, writer);
     }
     
     public void addPageNumber(RtfAttributes attr) throws IOException {
-        RtfPageNumber r=new RtfPageNumber(this, writer, attr);
+        RtfPageNumber r = new RtfPageNumber(this, writer, attr);
     }
     
     public RtfExternalGraphic newImage() throws IOException {
@@ -182,23 +180,23 @@ public class RtfTextrun extends RtfContainer {
      * @throws IOException for I/O problems
      */
     public static RtfTextrun getTextrun(RtfContainer container, Writer writer, RtfAttributes attrs)
-    throws IOException {
+            throws IOException {
         Object obj;
-        List list=container.getChildren();
+        List list = container.getChildren();
                 
-        if(list.size()==0) {
+        if (list.size() == 0) {
             //add a new RtfTextrun
-            RtfTextrun textrun=new RtfTextrun(container, writer, attrs);
+            RtfTextrun textrun = new RtfTextrun(container, writer, attrs);
             list.add(textrun);
 
             return textrun;
-        } else if ((obj=list.get(list.size()-1)) instanceof RtfTextrun ) {
+        } else if ((obj = list.get(list.size() - 1)) instanceof RtfTextrun ) {
             //if the last child is a RtfTextrun, return it
             return (RtfTextrun)obj;
         }
 
         //add a new RtfTextrun as the last child
-        RtfTextrun textrun=new RtfTextrun(container, writer, attrs);
+        RtfTextrun textrun = new RtfTextrun(container, writer, attrs);
         list.add(textrun);
         
         return textrun;
@@ -207,10 +205,9 @@ public class RtfTextrun extends RtfContainer {
     /**
      * specify, if the last paragraph control word (\par) should be suppressed.
      * @param bSuppress true, if the last \par should be suppressed
-     * @throws IOException for I/O problems
      */    
     public void setSuppressLastPar(boolean bSuppress) {
-        bSuppressLastPar=bSuppress;
+        bSuppressLastPar = bSuppress;
     }
    
     /**
@@ -233,26 +230,26 @@ public class RtfTextrun extends RtfContainer {
         }
         
         //determine, if this RtfTextrun is the last child of its parent
-        boolean bLast=false;
+        boolean bLast = false;
         for (Iterator it = parent.getChildren().iterator(); it.hasNext();) {
-            if(it.next() == this) {
-                bLast=!it.hasNext();
+            if (it.next() == this) {
+                bLast = !it.hasNext();
                 break;
             }
         }
         
         //get last RtfParagraphBreak, which is not followed by any visible child
-        RtfParagraphBreak lastParagraphBreak=null;
-        if(bLast) {
+        RtfParagraphBreak lastParagraphBreak = null;
+        if (bLast) {
             for (Iterator it = getChildren().iterator(); it.hasNext();) {
                 final RtfElement e = (RtfElement)it.next();
-                if(e instanceof RtfParagraphBreak) {
-                    lastParagraphBreak=(RtfParagraphBreak)e;
+                if (e instanceof RtfParagraphBreak) {
+                    lastParagraphBreak = (RtfParagraphBreak)e;
                 } else {
-                    if(!(e instanceof RtfOpenGroupMark)
-                    && !(e instanceof RtfCloseGroupMark)
-                    && e.isEmpty()) {
-                        lastParagraphBreak=null;
+                    if (!(e instanceof RtfOpenGroupMark)
+                            && !(e instanceof RtfCloseGroupMark)
+                            && e.isEmpty()) {
+                        lastParagraphBreak = null;
                     }
                 }
             }
@@ -276,26 +273,27 @@ public class RtfTextrun extends RtfContainer {
              * -If the RtfTextrun is the last child of its parent, write a
              * RtfParagraphBreak only, if it is not the last child.
              */
-            boolean bHide=false;
-            bHide=bRtfParagraphBreak;
-            bHide=bHide &&
-                    (bPrevPar || bFirst || 
-                        (bSuppressLastPar && bLast && lastParagraphBreak!=null && e==lastParagraphBreak)
-                    );
+            boolean bHide = false;
+            bHide = bRtfParagraphBreak;
+            bHide = bHide 
+                && (bPrevPar 
+                    || bFirst 
+                    || (bSuppressLastPar && bLast && lastParagraphBreak != null 
+                        && e == lastParagraphBreak));
                 
-            if( !bHide) {
+            if (!bHide) {
                 e.writeRtf(); 
             }
             
-            if(e instanceof RtfParagraphBreak) {
-                bPrevPar=true;
-            } else if(e instanceof RtfCloseGroupMark) {
+            if (e instanceof RtfParagraphBreak) {
+                bPrevPar = true;
+            } else if (e instanceof RtfCloseGroupMark) {
                 //do nothing
-            } else if(e instanceof RtfOpenGroupMark) {
+            } else if (e instanceof RtfOpenGroupMark) {
                 //do nothing
             } else {
-                bPrevPar=bPrevPar && e.isEmpty();
-                bFirst=bFirst && e.isEmpty();
+                bPrevPar = bPrevPar && e.isEmpty();
+                bFirst = bFirst && e.isEmpty();
             }
         }
     }

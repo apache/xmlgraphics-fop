@@ -130,8 +130,8 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
 
         if (parent.parent instanceof RtfTable) {
             // Get the context of the current table in order to get the width of each column
-            ITableColumnsInfo tableColumnsInfo =
-                    ((RtfTable)parent.parent).getITableColumnsInfo();
+            ITableColumnsInfo tableColumnsInfo
+                = ((RtfTable)parent.parent).getITableColumnsInfo();
             tableColumnsInfo.selectFirstColumn();
 
             // Reach the column index in table context corresponding to the current column cell
@@ -481,7 +481,7 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
         RtfAttributes attrs = new RtfAttributes();
         attrs.set("intbl");
         
-        RtfTextrun textrun=RtfTextrun.getTextrun(this, writer, attrs);
+        RtfTextrun textrun = RtfTextrun.getTextrun(this, writer, attrs);
 
         //Suppress the very last \par, because the closing \cell applies the
         //paragraph attributes. 

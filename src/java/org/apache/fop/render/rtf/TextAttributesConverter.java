@@ -50,23 +50,16 @@
 
 package org.apache.fop.render.rtf;
 
-//XML
-import org.xml.sax.Attributes;
-
 //FOP
 import org.apache.avalon.framework.logger.Logger;
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.EnumProperty;
-import org.apache.fop.fo.expr.NCnameProperty;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.LengthProperty;
-import org.apache.fop.fo.ListProperty;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.Property;
 import org.apache.fop.fo.SpaceProperty;
 import org.apache.fop.fo.ColorTypeProperty;
-import org.apache.fop.fo.NumberProperty;
 import org.apache.fop.datatypes.ColorType;
 
 //RTF
@@ -123,8 +116,8 @@ class TextAttributesConverter {
      * @param props list of FO properites, which are to be converted
      * @param props list of default FO properites (usally null)
      */
-    public static RtfAttributes convertCharacterAttributes(PropertyList props, PropertyList defProps)
-    throws FOPException {
+    public static RtfAttributes convertCharacterAttributes(
+            PropertyList props, PropertyList defProps) throws FOPException {
 
         RtfAttributes attrib = null;
 
@@ -150,7 +143,8 @@ class TextAttributesConverter {
         String fopValue = properties.get("font-family").getString();
         
         if (fopValue != null) {
-            rtfAttr.set(RtfText.ATTR_FONT_FAMILY, RtfFontManager.getInstance().getFontNumber(fopValue));
+            rtfAttr.set(RtfText.ATTR_FONT_FAMILY, 
+                RtfFontManager.getInstance().getFontNumber(fopValue));
         }
     }
 
@@ -161,8 +155,8 @@ class TextAttributesConverter {
     
     private static void attrBlockFontColor(PropertyList properties, RtfAttributes rtfAttr) {
         // Cell background color
-        ColorTypeProperty colorTypeProp=(ColorTypeProperty)properties.get("color");
-        if(colorTypeProp != null) {
+        ColorTypeProperty colorTypeProp = (ColorTypeProperty)properties.get("color");
+        if (colorTypeProp != null) {
             ColorType colorType = colorTypeProp.getColorType();
             if (colorType != null) {
                 if (colorType.getAlpha() != 0
@@ -192,7 +186,7 @@ class TextAttributesConverter {
 
     private static void attrBlockFontItalic(PropertyList properties, RtfAttributes rtfAttr) {
         String fopValue = properties.get("font-style").getString();
-        if(fopValue.equals("italic")) {
+        if (fopValue.equals("italic")) {
             rtfAttr.set(RtfText.ATTR_ITALIC, 1);
         } else {
             rtfAttr.set(RtfText.ATTR_ITALIC, 0);
@@ -200,8 +194,8 @@ class TextAttributesConverter {
     }
     
     private static void attrBlockFontUnderline(PropertyList properties, RtfAttributes rtfAttr) {
-        EnumProperty enumProp=(EnumProperty)properties.get("text-decoration");
-        if(enumProp.getEnum()==Constants.UNDERLINE) {
+        EnumProperty enumProp = (EnumProperty)properties.get("text-decoration");
+        if (enumProp.getEnum() == Constants.UNDERLINE) {
             rtfAttr.set(RtfText.ATTR_UNDERLINE, 1);
         } else {
             rtfAttr.set(RtfText.ATTR_UNDERLINE, 0);
@@ -209,34 +203,36 @@ class TextAttributesConverter {
     }
      
     private static void attrBlockSpaceBeforeAfter(PropertyList properties, RtfAttributes rtfAttr) {
-        SpaceProperty spaceProp=null;
+        SpaceProperty spaceProp = null;
         
         //space-before
-        spaceProp=(SpaceProperty)properties.get("space-before");
-        if(spaceProp!=null) {
-            Float f = new Float(spaceProp.getLengthRange().getOptimum().getLength().getValue() / 1000f);
+        spaceProp = (SpaceProperty)properties.get("space-before");
+        if (spaceProp != null) {
+            Float f = new Float(
+                spaceProp.getLengthRange().getOptimum().getLength().getValue() / 1000f);
             String sValue = f.toString() + "pt";
             
             try {
                 rtfAttr.set(
                         RtfText.SPACE_BEFORE,
                         (int)FoUnitsConverter.getInstance().convertToTwips(sValue));           
-            } catch(FOPException fe) {
+            } catch (FOPException fe) {
                 log.warn("attrBlockSpaceBeforeAfter: " + fe.getMessage()); 
             }
         }
         
         //space-after
-        spaceProp=(SpaceProperty)properties.get("space-after");
-        if(spaceProp!=null) {
-            Float f = new Float(spaceProp.getLengthRange().getOptimum().getLength().getValue() / 1000f);
+        spaceProp = (SpaceProperty)properties.get("space-after");
+        if (spaceProp != null) {
+            Float f = new Float(
+                spaceProp.getLengthRange().getOptimum().getLength().getValue() / 1000f);
             String sValue = f.toString() + "pt";
             
             try {
                 rtfAttr.set(
                         RtfText.SPACE_AFTER,
                         (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
-            } catch(FOPException fe) {
+            } catch (FOPException fe) {
                 log.warn("attrBlockSpaceBeforeAfter: " + fe.getMessage()); 
             }
         }
@@ -244,10 +240,10 @@ class TextAttributesConverter {
 
     private static void attrBlockMargins(PropertyList properties, RtfAttributes rtfAttr) {
         try {
-            LengthProperty lengthProp=null;
+            LengthProperty lengthProp = null;
             
             // margin-left
-            lengthProp=(LengthProperty)properties.get("margin-left");
+            lengthProp = (LengthProperty)properties.get("margin-left");
             if (lengthProp != null) {
                 Float f = new Float(lengthProp.getLength().getValue() / 1000f);
                 String sValue = f.toString() + "pt";
@@ -260,7 +256,7 @@ class TextAttributesConverter {
             }
 
             // margin-right
-            lengthProp=(LengthProperty)properties.get("margin-right");
+            lengthProp = (LengthProperty)properties.get("margin-right");
             if (lengthProp != null) {
                 Float f = new Float(lengthProp.getLength().getValue() / 1000f);
                 String sValue = f.toString() + "pt";
@@ -271,7 +267,7 @@ class TextAttributesConverter {
             } else {
                 rtfAttr.set(RtfText.RIGHT_INDENT_BODY, 0);
             }
-        } catch(FOPException fe) {
+        } catch (FOPException fe) {
             log.warn("attrBlockSpaceBeforeAfter: " + fe.getMessage()); 
         }
     }
@@ -282,22 +278,18 @@ class TextAttributesConverter {
         int fopValue = properties.get("text-align").getEnum();
         String rtfValue = null;
         switch (fopValue) {
-            case Constants.CENTER: {
+            case Constants.CENTER:
                 rtfValue = RtfText.ALIGN_CENTER;
                 break;
-            }
-            case Constants.END: {
+            case Constants.END:
                 rtfValue = RtfText.ALIGN_RIGHT;
                 break;
-            }
-            case Constants.JUSTIFY: {
+            case Constants.JUSTIFY:
                 rtfValue = RtfText.ALIGN_JUSTIFIED;
                 break;
-            }
-            default: {
+            default:
                 rtfValue = RtfText.ALIGN_LEFT;
                 break;
-            }
         }
         
         rtfAttr.set(rtfValue);

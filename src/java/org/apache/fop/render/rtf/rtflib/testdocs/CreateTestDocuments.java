@@ -119,7 +119,7 @@ public class CreateTestDocuments {
      * @param args String array of arguments
      * @throws Exception for errors
      */
-    public static void main(String args[])
+    public static void main(String[] args)
     throws Exception {
         if (args.length < 1) {
             System.err.println("usage: CreateTestDocuments <output directory>");

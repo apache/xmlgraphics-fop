@@ -53,16 +53,9 @@
  * This file is part of the RTF library of the FOP project.
  */
 
-
 package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
-import java.io.Writer;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Iterator;
-import java.io.IOException;
-import org.apache.fop.render.rtf.rtflib.exceptions.RtfStructureException;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
 
 /**  Interface which enables an implementing class to contain linear text runs.
@@ -70,5 +63,5 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
  */
 
 public interface IRtfTextrunContainer {
-    public RtfTextrun getTextrun()  throws IOException;
+    RtfTextrun getTextrun() throws IOException;
 }

@@ -110,10 +110,10 @@ public class RtfPageNumberCitation extends RtfContainer {
             // Build page reference field
             String pageRef = RTF_FIELD_PAGEREF_MODEL;
             final int insertionIndex = pageRef.indexOf("}");
-            pageRef =
-                pageRef.substring(0, insertionIndex) + "\"" + id + "\"" + " "
-                + pageRef.substring(insertionIndex, pageRef.length())
-            ;
+            pageRef = pageRef.substring(0, insertionIndex) 
+                + "\"" + id 
+                + "\"" + " "
+                + pageRef.substring(insertionIndex, pageRef.length());
             id = null;
 
             // Write RTF content

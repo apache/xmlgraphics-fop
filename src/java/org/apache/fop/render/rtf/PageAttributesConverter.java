@@ -114,8 +114,9 @@ class PageAttributesConverter {
                     (int)FoUnitsConverter.getInstance().convertToTwips(f.toString() + "pt"));
             }
         } catch (FOPException e) {
-            log.error("Exception in convertPageAttributes: " + e.getMessage() + "- page attributes ignored");
-            attrib=new RtfAttributes();
+            log.error("Exception in convertPageAttributes: " 
+                + e.getMessage() + "- page attributes ignored");
+            attrib = new RtfAttributes();
         }
 
         return attrib;

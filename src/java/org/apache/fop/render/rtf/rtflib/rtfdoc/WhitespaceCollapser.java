@@ -89,16 +89,16 @@ class WhitespaceCollapser {
 
     /** process one RtfText from our container */
     private void processText(RtfText txt) {
-        final String newString=processString(txt.getText());
-        if(newString!=null) {
+        final String newString = processString(txt.getText());
+        if (newString != null) {
             txt.setText(newString);
         }
     }
     
     /** process one RtfString from our container */
     private void processString(RtfString txt) {
-        final String newString=processString(txt.getText());
-        if(newString!=null) {
+        final String newString = processString(txt.getText());
+        if (newString != null) {
             txt.setText(newString);
         }
     }
@@ -109,7 +109,7 @@ class WhitespaceCollapser {
 
         // tokenize the text based on whitespace and regenerate it so as
         // to collapse multiple spaces into one
-        if(orig==null) {
+        if (orig == null) {
             return null;
         } else if (orig.length() > 0) { 
             final boolean allSpaces = orig.trim().length() == 0;
