@@ -7,13 +7,9 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.TextInfo;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.Block;
-import org.apache.fop.area.LineArea;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layout.AbsolutePositionProps;
 import org.apache.fop.fo.properties.AbsolutePosition;
@@ -22,9 +18,9 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
 
-import java.util.ListIterator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import java.awt.geom.Rectangle2D;
 
@@ -45,6 +41,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     int overflow;
     PropertyManager propManager;
 
+    /**
+     * Create a new block container layout manager.
+     */
     public BlockContainerLayoutManager() {
     }
 
@@ -203,6 +202,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                          LayoutContext layoutContext) {
         getParentArea(null);
 
+        addID();
+        addMarkers(true);
+
         LayoutManager childLM ;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
@@ -225,6 +227,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         curBlockArea = null;
     }
 
+    /**
+     * Get the parent area for children of this block container.
+     * This returns the current block container area
+     * and creates it if required.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(Area)
+     */
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             viewportBlockArea = new BlockViewport();
@@ -272,7 +281,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         return curBlockArea;
     }
 
-
+    /**
+     * Add the child to the block container.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager#addChild(Area)
+     */
     public void addChild(Area childArea) {
         if (curBlockArea != null) {
             curBlockArea.addBlock((Block) childArea);
@@ -285,8 +298,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
     }
 
-    public void addMarker(String name, LayoutManager lm, boolean start) {
-        parentLM.addMarker(name, lm, start);
+    public void addMarkerMap(Map marks, boolean start) {
+        parentLM.addMarkerMap(marks, start);
     }
 
 }

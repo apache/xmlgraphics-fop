@@ -7,22 +7,15 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.TextInfo;
 import org.apache.fop.traits.SpaceVal;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.util.CharUtilities;
-import org.apache.fop.fo.properties.VerticalAlign;
-
-//import org.apache.fop.fo.properties.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * LayoutManager for text (a sequence of characters) which generates one

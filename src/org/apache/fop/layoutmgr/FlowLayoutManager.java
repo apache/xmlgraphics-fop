@@ -1,16 +1,15 @@
 /*
  * $Id$
- * Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2002-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.properties.Constants;
-import org.apache.fop.area.*;
+import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.area.Area;
+import org.apache.fop.area.BlockParent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +26,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
 
     /** Array of areas currently being filled stored by area class */
     private BlockParent[] currentAreas = new BlockParent[Area.CLASS_MAX];
+
+    int iStartPos = 0;
 
     /**
      * This is the top level layout manager.
@@ -90,8 +91,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         return null;
     }
 
-    int iStartPos = 0;
-
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
 
         LayoutManager childLM;
@@ -110,7 +109,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
 
         flush();
     }
-
 
     /**
      * Add child area to a the correct container, depending on its
@@ -143,7 +141,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
      *
      * @see org.apache.fop.layoutmgr.LayoutManager
      */
-    public LayoutManager retrieveMarker(String name, int pos, int boundary) {
+    public Marker retrieveMarker(String name, int pos, int boundary) {
         // error cannot retrieve markers in flow
         getLogger().error("Cannot retrieve a marker from the flow");
         return null;

@@ -7,30 +7,20 @@
 
 package org.apache.fop.layoutmgr;
 
-
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.TextInfo;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layout.MarginProps;
 import org.apache.fop.layout.HyphenationProps;
 import org.apache.fop.layout.hyphenation.Hyphenation;
 import org.apache.fop.layout.hyphenation.Hyphenator;
 import org.apache.fop.traits.BlockProps;
-import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
-import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.fo.properties.TextAlign;
-
-import org.apache.fop.area.inline.Word;
-import org.apache.fop.area.inline.Space;
-import org.apache.fop.area.inline.Character;
 
 import java.util.ListIterator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
-
 
 /**
  * LayoutManager for lines. It builds one or more lines containing

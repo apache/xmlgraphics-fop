@@ -8,6 +8,7 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
@@ -15,8 +16,8 @@ import org.apache.fop.area.PageViewport;
 import org.apache.avalon.framework.logger.Logger;
 
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
-
 
 /**
  * Content Layout Manager.
@@ -213,12 +214,12 @@ public class ContentLayoutManager implements LayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void addMarker(String name, LayoutManager lm, boolean start) {
-        parentLM.addMarker(name, lm, start);
+    public void addMarkerMap(Map marks, boolean start) {
+        parentLM.addMarkerMap(marks, start);
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public LayoutManager retrieveMarker(String name, int pos, int boundary) {
+    public Marker retrieveMarker(String name, int pos, int boundary) {
         return parentLM.retrieveMarker(name, pos, boundary);
     }
 }

@@ -16,7 +16,7 @@ import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
-import org.apache.fop.fo.FObj;
+import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.layoutmgr.MinOptMax;
@@ -258,7 +258,7 @@ public class Body extends BlockStackingLayoutManager {
         Area curBlockArea = new Block();
 
         if(backgroundProps != null) {
-            addBackground(curBlockArea, backgroundProps);
+            TraitSetter.addBackground(curBlockArea, backgroundProps);
         }
         return curBlockArea;
     }

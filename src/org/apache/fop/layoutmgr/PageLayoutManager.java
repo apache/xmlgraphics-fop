@@ -20,6 +20,7 @@ import org.apache.fop.area.Span;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.Resolveable;
+import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.StaticContent;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
@@ -29,6 +30,7 @@ import org.apache.fop.fo.properties.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * LayoutManager for a PageSequence and its flow.
@@ -264,12 +266,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param lm the layout manager for the marker contents
      * @param start true if starting marker area, false for ending
      */
-    public void addMarker(String name, LayoutManager lm, boolean start) {
-        if (start) {
-            // add marker to page on area tree
-        } else {
-            // add end marker to page on area tree
-        }
+    public void addMarkerMap(Map marks, boolean start) {
+        getLogger().debug("adding markers: " + marks + ":" + start);
+        // add markers to page on area tree
+        curPage.addMarkers(marks, start);
     }
 
     /**
@@ -280,9 +280,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param boundary the boundary for locating the marker
      * @return the layout manager for the marker contents
      */
-    public LayoutManager retrieveMarker(String name, int pos, int boundary) {
+    public Marker retrieveMarker(String name, int pos, int boundary) {
         // get marker from the current markers on area tree
-        return null;
+        Marker mark = (Marker)curPage.getMarker(name, pos);
+        return mark;
     }
 
     /**
@@ -342,7 +343,6 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
     protected void placeBeforeFloat(Area area) {
     }
-
 
     protected void placeSideFloat(Area area) {
     }

@@ -11,15 +11,11 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.TextInfo;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
-import org.apache.fop.area.Trait;
 import org.apache.fop.traits.LayoutProps;
 import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.traits.SpaceVal;
-import org.apache.fop.traits.BorderProps;
 
 import java.util.ListIterator;
 import java.util.ArrayList;
@@ -80,6 +76,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             inlines.add(firstlm);
             while (proxy.hasNext()) {
                 lm = (LayoutManager) proxy.next();
+                lm.setParentLM(BlockLayoutManager.this);
                 if (lm.generatesInlineAreas()) {
                     inlines.add(lm);
                 } else {
@@ -222,6 +219,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         addBlockSpacing(adjust, layoutProps.spaceBefore.space);
 
         addID();
+        addMarkers(true);
 
         LayoutManager childLM ;
         LayoutContext lc = new LayoutContext(0);
@@ -265,8 +263,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             curBlockArea = new Block();
 
             // set traits
-            addBorders(curBlockArea, borderProps);
-            addBackground(curBlockArea, backgroundProps);
+            TraitSetter.addBorders(curBlockArea, borderProps);
+            TraitSetter.addBackground(curBlockArea, backgroundProps);
 
             // Set up dimensions
             // Must get dimensions from parent area
