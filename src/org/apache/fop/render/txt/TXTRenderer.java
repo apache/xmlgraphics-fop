@@ -43,7 +43,7 @@ public class TXTRenderer extends PrintRenderer {
     /**
      * the current stream to add Text commands to
      */
-    PCLStream currentStream;
+    TXTStream currentStream;
 
     private int pageHeight = 7920;
 
@@ -1677,7 +1677,7 @@ public class TXTRenderer extends PrintRenderer {
     public void startRenderer(OutputStream outputStream)
     throws IOException {
         log.info("rendering areas to TEXT");
-        currentStream = new PCLStream(outputStream);
+        currentStream = new TXTStream(outputStream);
         firstPage=true;
     }
 
