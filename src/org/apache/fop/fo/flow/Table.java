@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,19 +42,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.*;
-import org.apache.fop.datatypes.*;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.Status;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.properties.TableLayout;
+import org.apache.fop.fo.properties.TableOmitHeaderAtBreak;
+import org.apache.fop.fo.properties.TableOmitFooterAtBreak;
+import org.apache.fop.fo.properties.BreakBefore;
+import org.apache.fop.fo.properties.Position;
+import org.apache.fop.fo.properties.BreakAfter;
+import org.apache.fop.layout.Area;
+import org.apache.fop.layout.AreaContainer;
+import org.apache.fop.layout.AccessibilityProps;
+import org.apache.fop.layout.AuralProps;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.layout.MarginProps;
+import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.layout.BlockArea;
+import org.apache.fop.datatypes.LengthRange;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.apps.FOPException;
 
 // Java
@@ -130,11 +147,11 @@ public class Table extends FObj {
             // Common Margin Properties-Block
             MarginProps mProps = propMgr.getMarginProps();
 
-            // Common Relative Position Properties 
+            // Common Relative Position Properties
             RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
-        
+
             // this.properties.get("block-progression-dimension");
-            // this.properties.get("border-after-precendence");              
+            // this.properties.get("border-after-precendence");
             // this.properties.get("border-before-precedence");
             // this.properties.get("border-collapse");
             // this.properties.get("border-end-precendence");
@@ -148,11 +165,11 @@ public class Table extends FObj {
             // this.properties.get("keep-together");
             // this.properties.get("keep-with-next");
             // this.properties.get("keep-with-previous");
-            // this.properties.get("table-layout");              
-            // this.properties.get("table-omit-footer-at-break");              
+            // this.properties.get("table-layout");
+            // this.properties.get("table-omit-footer-at-break");
             // this.properties.get("table-omit-header-at-break");
-            // this.properties.get("width");              
-            // this.properties.get("writing-mode");              
+            // this.properties.get("width");
+            // this.properties.get("writing-mode");
 
             this.breakBefore = this.properties.get("break-before").getEnum();
             this.breakAfter = this.properties.get("break-after").getEnum();
@@ -164,7 +181,7 @@ public class Table extends FObj {
                 this.properties.get("inline-progression-dimension").
                 getLengthRange();
             this.height = this.properties.get("height").getLength().mvalue();
-            this.bAutoLayout = (this.properties.get("table-layout").getEnum() == 
+            this.bAutoLayout = (this.properties.get("table-layout").getEnum() ==
                 TableLayout.AUTO);
 
             this.id = this.properties.get("id").getString();
@@ -248,12 +265,12 @@ public class Table extends FObj {
                 log.warn("table-layout=auto is not supported, using fixed!");
             }
             // Pretend it's fixed...
-            this.contentWidth = 
+            this.contentWidth =
                 calcFixedColumnWidths(areaContainer.getAllocationWidth());
         }
         areaContainer.setAllocationWidth(this.contentWidth);
         layoutColumns(areaContainer);
-        
+
         for (int i = this.marker; i < numChildren; i++) {
             FONode fo = (FONode)children.get(i);
             if (fo instanceof Marker) {
