@@ -8,6 +8,9 @@
 package org.apache.fop.fo.expr;
 
 public class DataTypeNotImplementedException extends PropertyException {
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     public DataTypeNotImplementedException(String detail) {
         super(detail);
     }
