@@ -64,7 +64,7 @@ import java.io.PrintWriter;
 
 // shouldn't have to do this
 
-import org.apache.xml.fop.image.*;
+import org.apache.fop.image.*;
 
 
 

@@ -288,7 +288,7 @@ public class XMLRenderer implements Renderer {
 
 	/* use PDF's font setup to get PDF metrics */
 
-	org.apache.xml.fop.render.pdf.FontSetup.setup(fontInfo);
+	org.apache.fop.render.pdf.FontSetup.setup(fontInfo);
 
     }
 

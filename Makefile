@@ -96,7 +96,7 @@ distgen:
 
 distorg:
 	rm -f $(JARTOC) && \
-	($(FIND) org -name \*.class -print > $(JARTOC)) && \
+	($(FIND) src/org -name \*.class -print > $(JARTOC)) && \
 	($(TAR) -cf - -T $(JARTOC) | (cd $(JARTEMP); $(TAR) -xf - ))
 
 $(TARGETS:%=%subs): %subs :
