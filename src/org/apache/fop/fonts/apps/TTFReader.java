@@ -6,14 +6,15 @@
  */
 package org.apache.fop.fonts.apps;
 
-import java.io.*;
-import org.w3c.dom.*;
-import org.apache.xerces.dom.*;
-import org.apache.xml.serialize.*;
-import org.apache.xalan.xslt.*;
+import java.io.FileWriter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
 import org.apache.fop.fonts.*;
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.List;
 import java.util.Iterator;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
@@ -42,8 +43,8 @@ public class TTFReader {
      * returns a String[] with the per.ttf and Perpetua.xml. The hash
      * will have the (key, value) pairs: (-fn, Perpetua) and (-cn, PerpetuaBold)
      */
-    private static String[] parseArguments(HashMap options, String[] args) {
-        ArrayList arguments = new ArrayList();
+    private static String[] parseArguments(Map options, String[] args) {
+        List arguments = new java.util.ArrayList();
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
                 if ((i + 1) < args.length &&!args[i + 1].startsWith("-")) {
@@ -111,7 +112,7 @@ public class TTFReader {
         String ttcName = null;
         boolean isCid = true;
 
-        HashMap options = new HashMap();
+        Map options = new java.util.HashMap();
         String[] arguments = parseArguments(options, args);
 
         int level = ConsoleLogger.LEVEL_INFO;
@@ -189,7 +190,7 @@ public class TTFReader {
      */
     public TTFFile loadTTF(String fileName, String fontName) {
         TTFFile ttfFile = new TTFFile();
-        ttfFile.setLogger(log);
+        ttfFile.enableLogging(log);
         try {
             log.info("Reading " + fileName + "...");
 
@@ -339,9 +340,9 @@ public class TTFReader {
                 TTFCmapEntry ce = (TTFCmapEntry)e.next();
                 Element el2 = doc.createElement("bf");
                 el.appendChild(el2);
-                el2.setAttribute("us", String.valueOf(ce.unicodeStart));
-                el2.setAttribute("ue", String.valueOf(ce.unicodeEnd));
-                el2.setAttribute("gi", String.valueOf(ce.glyphStartIndex));
+                el2.setAttribute("us", String.valueOf(ce.getUnicodeStart()));
+                el2.setAttribute("ue", String.valueOf(ce.getUnicodeEnd()));
+                el2.setAttribute("gi", String.valueOf(ce.getGlyphStartIndex()));
             }
 
             el = doc.createElement("cid-widths");
@@ -399,11 +400,11 @@ public class TTFReader {
             root.appendChild(el);
             Element el2 = null;
 
-            HashMap h2;
+            Map h2;
             if (isCid)
-                h2 = (HashMap)ttf.getKerning().get(kpx1);
+                h2 = (Map)ttf.getKerning().get(kpx1);
             else
-                h2 = (HashMap)ttf.getAnsiKerning().get(kpx1);
+                h2 = (Map)ttf.getAnsiKerning().get(kpx1);
 
             for (Iterator enum2 = h2.keySet().iterator(); enum2.hasNext(); ) {
                 Integer kpx2 = (Integer)enum2.next();
