@@ -208,7 +208,6 @@
    <map adobe-name="quotesingle" win-ansi="0x0027" unicode="0x0027"/>
    <map adobe-name="r" win-ansi="0x0072" unicode="0x0072"/>
    <map adobe-name="registered" win-ansi="0x00AE" unicode="0x00AE"/>
-   <map adobe-name="ring" win-ansi="0x00B0" unicode="0x00B0"/>
    <map adobe-name="s" win-ansi="0x0073" unicode="0x0073"/>
    <map adobe-name="scaron" win-ansi="0x009A" unicode="0x0161"/>
    <map adobe-name="scedilla" win-ansi="-1" unicode="0x015F"/>
@@ -360,10 +359,6 @@
    <map adobe-name="a106" win-ansi="0x00A5" unicode="0x2765" unicodeName="ROTATED HEAVY BLACK HEART BULLET"/>
    <map adobe-name="a107" win-ansi="0x00A6" unicode="0x2766" unicodeName="FLORAL HEART"/>
    <map adobe-name="a108" win-ansi="0x00A7" unicode="0x2767" unicodeName="ROTATED FLORAL HEART BULLET"/>
-   <map adobe-name="a112" win-ansi="0x00A8" unicode="0x2663" unicodeName="BLACK CLUB SUIT"/>
-   <map adobe-name="a111" win-ansi="0x00A9" unicode="0x2666" unicodeName="BLACK DIAMOND SUIT"/>
-   <map adobe-name="a110" win-ansi="0x00AA" unicode="0x2665" unicodeName="BLACK HEART SUIT"/>
-   <map adobe-name="a109" win-ansi="0x00AB" unicode="0x2660" unicodeName="BLACK SPADE SUIT"/>
    <map adobe-name="a120" win-ansi="0x00AC" unicode="0x2460" unicodeName="CIRCLED DIGIT ONE"/>
    <map adobe-name="a121" win-ansi="0x00AD" unicode="0x2461" unicodeName="CIRCLED DIGIT TWO"/>
    <map adobe-name="a122" win-ansi="0x00AE" unicode="0x2462" unicodeName="CIRCLED DIGIT THREE"/>
@@ -405,8 +400,6 @@
    <map adobe-name="a158" win-ansi="0x00D2" unicode="0x2792" unicodeName="DINGBAT NEGATIVE CIRCLED SANS-SERIF DIGIT NINE"/>
    <map adobe-name="a159" win-ansi="0x00D3" unicode="0x2793" unicodeName="DINGBAT NEGATIVE CIRCLED SANS-SERIF NUMBER TEN"/>
    <map adobe-name="a160" win-ansi="0x00D4" unicode="0x2794" unicodeName="HEAVY WIDE-HEADED RIGHTWARDS ARROW"/>
-   <map adobe-name="a161" win-ansi="0x00D5" unicode="0x2192" unicodeName="RIGHTWARDS ARROW"/>
-   <map adobe-name="a163" win-ansi="0x00D6" unicode="0x2194" unicodeName="LEFT RIGHT ARROW"/>
    <map adobe-name="a164" win-ansi="0x00D7" unicode="0x2195" unicodeName="UP DOWN ARROW"/>
    <map adobe-name="a196" win-ansi="0x00D8" unicode="0x2798" unicodeName="HEAVY SOUTH EAST ARROW"/>
    <map adobe-name="a165" win-ansi="0x00D9" unicode="0x2799" unicodeName="HEAVY RIGHTWARDS ARROW"/>
@@ -449,25 +442,10 @@
    <!-- the following mappings are used for the Symbol font 
     TBD: remove doublettes  -->
    <map adobe-name="universal" win-ansi="0x22" unicode="0x2200"/>
-   <map adobe-name="numbersign" win-ansi="0x23" unicode="0x0023"/>
    <map adobe-name="existential" win-ansi="0x24" unicode="0x2203"/>
-   <map adobe-name="percent" win-ansi="0x25" unicode="0x0025"/>
-   <map adobe-name="ampersand" win-ansi="0x26" unicode="0x0026"/>
    <map adobe-name="suchthat" win-ansi="0x27" unicode="0x220B"/>
-   <map adobe-name="parenleft" win-ansi="0x28" unicode="0x0028"/>
-   <map adobe-name="parenright" win-ansi="0x29" unicode="0x0029"/>
    <map adobe-name="asteriskmath" win-ansi="0x2A" unicode="0x2217"/>
-   <map adobe-name="plus" win-ansi="0x2B" unicode="0x002B"/>
-   <map adobe-name="comma" win-ansi="0x2C" unicode="0x002C"/>
    <map adobe-name="minus" win-ansi="0x2D" unicode="0x2212"/>
-   <map adobe-name="period" win-ansi="0x2E" unicode="0x002E"/>
-   <map adobe-name="slash" win-ansi="0x2F" unicode="0x002F"/>
-   <map adobe-name="colon" win-ansi="0x3A" unicode="0x003A"/>
-   <map adobe-name="semicolon" win-ansi="0x3B" unicode="0x003B"/>
-   <map adobe-name="less" win-ansi="0x3C" unicode="0x003C"/>
-   <map adobe-name="equal" win-ansi="0x3D" unicode="0x003D"/>
-   <map adobe-name="greater" win-ansi="0x3E" unicode="0x003E"/>
-   <map adobe-name="question" win-ansi="0x3F" unicode="0x003F"/>
    <map adobe-name="congruent" win-ansi="0x40" unicode="0x2245"/>
    <map adobe-name="Alpha" win-ansi="0x41" unicode="0x0391"/>
    <map adobe-name="Beta" win-ansi="0x42" unicode="0x0392"/>
@@ -495,11 +473,8 @@
    <map adobe-name="Xi" win-ansi="0x58" unicode="0x039E"/>
    <map adobe-name="Psi" win-ansi="0x59" unicode="0x03A8"/>
    <map adobe-name="Zeta" win-ansi="0x5A" unicode="0x0396"/>
-   <map adobe-name="bracketleft" win-ansi="0x5B" unicode="0x005B"/>
    <map adobe-name="therefore" win-ansi="0x5C" unicode="0x2234"/>
-   <map adobe-name="bracketright" win-ansi="0x5D" unicode="0x005D"/>
    <map adobe-name="perpendicular" win-ansi="0x5E" unicode="0x22A5"/>
-   <map adobe-name="underscore" win-ansi="0x5F" unicode="0x005F"/>
    <map adobe-name="radicalex" win-ansi="0x60" unicode="0xF8E5"/>
    <map adobe-name="alpha" win-ansi="0x61" unicode="0x03B1"/>
    <map adobe-name="beta" win-ansi="0x62" unicode="0x03B2"/>
@@ -513,7 +488,6 @@
    <map adobe-name="phi1" win-ansi="0x6A" unicode="0x03D5"/>
    <map adobe-name="kappa" win-ansi="0x6B" unicode="0x03BA"/>
    <map adobe-name="lambda" win-ansi="0x6C" unicode="0x03BB"/>
-   <map adobe-name="mu" win-ansi="0x6D" unicode="0x00B5"/>
    <map adobe-name="nu" win-ansi="0x6E" unicode="0x03BD"/>
    <map adobe-name="omicron" win-ansi="0x6F" unicode="0x03BF"/>
    <map adobe-name="pi" win-ansi="0x70" unicode="0x03C0"/>
@@ -527,9 +501,6 @@
    <map adobe-name="xi" win-ansi="0x78" unicode="0x03BE"/>
    <map adobe-name="psi" win-ansi="0x79" unicode="0x03C8"/>
    <map adobe-name="zeta" win-ansi="0x7A" unicode="0x03B6"/>
-   <map adobe-name="braceleft" win-ansi="0x7B" unicode="0x007B"/>
-   <map adobe-name="bar" win-ansi="0x7C" unicode="0x007C"/>
-   <map adobe-name="braceright" win-ansi="0x7D" unicode="0x007D"/>
    <map adobe-name="similar" win-ansi="0x7E" unicode="0x223C"/>
    <map adobe-name="Upsilon1" win-ansi="0xA1" unicode="0x03D2"/>
    <map adobe-name="minute" win-ansi="0xA2" unicode="0x2032"/>
@@ -546,19 +517,13 @@
    <map adobe-name="arrowup" win-ansi="0xAD" unicode="0x2191"/>
    <map adobe-name="arrowright" win-ansi="0xAE" unicode="0x2192"/>
    <map adobe-name="arrowdown" win-ansi="0xAF" unicode="0x2193"/>
-   <map adobe-name="degree" win-ansi="0xB0" unicode="0x00B0"/>
-   <map adobe-name="plusminus" win-ansi="0xB1" unicode="0x00B1"/>
    <map adobe-name="second" win-ansi="0xB2" unicode="0x2033"/>
    <map adobe-name="greaterequal" win-ansi="0xB3" unicode="0x2265"/>
-   <map adobe-name="multiply" win-ansi="0xB4" unicode="0x00D7"/>
    <map adobe-name="proportional" win-ansi="0xB5" unicode="0x221D"/>
    <map adobe-name="partialdiff" win-ansi="0xB6" unicode="0x2202"/>
-   <map adobe-name="bullet" win-ansi="0xB7" unicode="0x2022"/>
-   <map adobe-name="divide" win-ansi="0xB8" unicode="0x00F7"/>
    <map adobe-name="notequal" win-ansi="0xB9" unicode="0x2260"/>
    <map adobe-name="equivalence" win-ansi="0xBA" unicode="0x2261"/>
    <map adobe-name="approxequal" win-ansi="0xBB" unicode="0x2248"/>
-   <map adobe-name="ellipsis" win-ansi="0xBC" unicode="0x2026"/>
    <map adobe-name="arrowvertex" win-ansi="0xBD" unicode="0xF8E6"/>
    <map adobe-name="arrowhorizex" win-ansi="0xBE" unicode="0xF8E7"/>
    <map adobe-name="carriagereturn" win-ansi="0xBF" unicode="0x21B5"/>
@@ -586,7 +551,6 @@
    <map adobe-name="product" win-ansi="0xD5" unicode="0x220F"/>
    <map adobe-name="radical" win-ansi="0xD6" unicode="0x221A"/>
    <map adobe-name="dotmath" win-ansi="0xD7" unicode="0x22C5"/>
-   <map adobe-name="logicalnot" win-ansi="0xD8" unicode="0x00AC"/>
    <map adobe-name="logicaland" win-ansi="0xD9" unicode="0x2227"/>
    <map adobe-name="logicalor" win-ansi="0xDA" unicode="0x2228"/>
    <map adobe-name="arrowdblboth" win-ansi="0xDB" unicode="0x21D4"/>
