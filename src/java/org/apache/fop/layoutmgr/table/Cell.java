@@ -50,6 +50,8 @@ public class Cell extends BlockStackingLayoutManager {
 
     private List childBreaks = new ArrayList();
 
+    private int inRowIPDOffset;
+    
     private int xoffset;
     private int yoffset;
     private int referenceIPD;
@@ -70,11 +72,6 @@ public class Cell extends BlockStackingLayoutManager {
     /** @return the table-cell FO */
     public TableCell getFObj() {
         return this.fobj;
-    }
-    
-    /** @return this cell's reference IPD */
-    public int getReferenceIPD() {
-        return this.referenceIPD;
     }
     
     private int getIPIndents() {
@@ -188,8 +185,8 @@ public class Cell extends BlockStackingLayoutManager {
     }
 
     /**
-     * Set the x offset of this cell.
-     * This offset is used to set the absolute position of the cell.
+     * Set the x offset of this cell (usually the same as its parent row).
+     * This offset is used to determine the absolute position of the cell.
      *
      * @param off the x offset
      */
@@ -197,6 +194,15 @@ public class Cell extends BlockStackingLayoutManager {
         xoffset = off;
     }
 
+    /**
+     * Set the IPD offset of this cell inside the table-row.
+     * This offset is used to determine the absolute position of the cell.
+     * @param off the IPD offset
+     */
+    public void setInRowIPDOffset(int off) {
+        this.inRowIPDOffset = off;
+    }
+    
     /**
      * Set the row height that contains this cell. This method is used during
      * addAreas() stage.
@@ -285,7 +291,8 @@ public class Cell extends BlockStackingLayoutManager {
             curBlockArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             curBlockArea.setPositioning(Block.ABSOLUTE);
             // set position
-            int x = xoffset; //mimic start-indent
+            int x = xoffset + inRowIPDOffset;
+            //mimic start-indent
             x += fobj.getCommonBorderPaddingBackground().getBorderStartWidth(false);
             curBlockArea.setXOffset(x);
             curBlockArea.setYOffset(yoffset);
@@ -294,8 +301,6 @@ public class Cell extends BlockStackingLayoutManager {
 
             // Set up dimensions
             Area parentArea = parentLM.getParentArea(curBlockArea);
-            int referenceIPD = parentArea.getIPD();
-            //curBlockArea.setIPD(referenceIPD);
             // Get reference IPD from parentArea
             setCurrentArea(curBlockArea); // ??? for generic operations
         }
