@@ -1,19 +1,30 @@
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
     <fo:layout-master-set>
-        <fo:simple-page-master margin-right="0.5cm" margin-left="0.5cm" margin-bottom="0.5cm" margin-top="0.75cm" page-width="21cm" page-height="29.7cm" page-master-name="first">
+        <fo:simple-page-master
+		margin-right="0.5cm" margin-left="0.5cm" margin-bottom="0.5cm" margin-top="0.75cm"
+		page-width="21cm" page-height="29.7cm" master-name="first">
             <fo:region-body>
             </fo:region-body>
         </fo:simple-page-master>
-        <fo:simple-page-master margin-right="2.5cm" margin-left="2.5cm" margin-bottom="2cm" margin-top="1cm" page-width="21cm" page-height="29.7cm" page-master-name="rest">
+        <fo:simple-page-master
+		margin-right="2.5cm" margin-left="2.5cm" margin-bottom="2cm" margin-top="1cm"
+		page-width="21cm" page-height="29.7cm" master-name="rest">
             <fo:region-body>
             </fo:region-body>
         </fo:simple-page-master>
+		
+		<fo:page-sequence-master master-name="psmA">
+			<fo:repeatable-page-master-alternatives>
+				<fo:conditional-page-master-reference master-name="first"
+					page-position="first" />
+				<fo:conditional-page-master-reference master-name="rest"
+					page-position="rest" />
+				<!-- recommended fallback procedure -->
+				<fo:conditional-page-master-reference master-name="rest" />
+			</fo:repeatable-page-master-alternatives>
+		</fo:page-sequence-master>
     </fo:layout-master-set>
-    <fo:page-sequence>
-        <fo:sequence-specification>
-            <fo:sequence-specifier-repeating page-master-repeating="rest" page-master-first="first">
-            </fo:sequence-specifier-repeating>
-        </fo:sequence-specification>
+    <fo:page-sequence master-name="psmA">
         <fo:flow flow-name="xsl-body">
             <fo:block-container height="4cm" width="12cm" top="0cm" left="0cm" position="absolute">
                 <fo:block text-align="start" line-height="18pt" font-family="sans-serif" font-weight="bold" font-size="14pt">

@@ -4,7 +4,7 @@
 
   <!-- defines page layout -->
   <fo:layout-master-set>
-    <fo:simple-page-master page-master-name="first" 
+    <fo:simple-page-master master-name="first" 
                            page-height="29.7cm" page-width="21cm" 
                            margin-top="1cm" 
                            margin-bottom="2cm" 
@@ -18,12 +18,7 @@
   <!-- end: defines page layout -->
 
   <!-- actual layout -->
-  <fo:page-sequence>
-
-    <!-- applies layout master -->
-    <fo:sequence-specification>
-      <fo:sequence-specifier-single page-master-name="first"/>
-    </fo:sequence-specification>
+  <fo:page-sequence master-name="first">
 
     <!-- text body -->
     <fo:flow flow-name="xsl-body">
