@@ -65,8 +65,7 @@ import java.util.Hashtable;
  *  @author a.putz@skynamics.com (Andreas Putz)
  */
 
-public class ImageConstants
-{
+public class ImageConstants {
     //////////////////////////////////////////////////
     // @@ Symbolic constants
     //////////////////////////////////////////////////
@@ -107,12 +106,11 @@ public class ImageConstants
 
     /** Defines the file extensions and the RTF property belongs to */
     public static Hashtable SUPPORTED_IMAGE_TYPES = new Hashtable ();
-    static
-    {
+    static {
         SUPPORTED_IMAGE_TYPES.put (EMF_EXT, new Integer (I_EMF));
         SUPPORTED_IMAGE_TYPES.put (PNG_EXT, new Integer (I_PNG));
         SUPPORTED_IMAGE_TYPES.put (JPG_EXT, new Integer (I_JPG_C));
-        SUPPORTED_IMAGE_TYPES.put (JPEG_EXT,new Integer (I_JPG_C));
+        SUPPORTED_IMAGE_TYPES.put (JPEG_EXT, new Integer (I_JPG_C));
         SUPPORTED_IMAGE_TYPES.put (GIF_EXT, new Integer (I_GIF));
     }
 
@@ -123,7 +121,6 @@ public class ImageConstants
     /**
      * Private constructor.
      */
-    private ImageConstants()
-    {
+    private ImageConstants() {
     }
 }

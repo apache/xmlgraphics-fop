@@ -58,25 +58,26 @@
 
 package org.apache.fop.rtf.rtflib.testdocs;
 
-import java.util.Date;
-import java.io.*;
-import org.apache.fop.rtf.rtflib.rtfdoc.*;
+import java.io.IOException;
+
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
 
 /**  Generates a simple RTF test document for the jfor rtflib package.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
 class SimpleDocument
-extends TestDocument
-{
+extends TestDocument {
     /** generate the body of the test document */
-    protected void generateDocument(RtfDocumentArea rda,RtfSection sect)
+    protected void generateDocument(RtfDocumentArea rda, RtfSection sect)
     throws IOException {
         sect.newParagraph().newText("First paragraph of the simple RTF test document.");
 
         final RtfParagraph para = sect.newParagraph();
         para.newText("Second paragraph of simple RTF test document.\n");
-        for(int i=0; i < 242; i++) {
+        for (int i = 0; i < 242; i++) {
             para.newText("This is string " + i);
             para.newLineBreak();
         }

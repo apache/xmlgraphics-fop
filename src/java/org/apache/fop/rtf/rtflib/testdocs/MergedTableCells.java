@@ -58,18 +58,21 @@
 
 package org.apache.fop.rtf.rtflib.testdocs;
 
-import java.util.Date;
-import java.io.*;
-import org.apache.fop.rtf.rtflib.rtfdoc.*;
+import java.io.IOException;
+
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTable;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableRow;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableCell;
 
 /**  Generates an RTF test document containing merged table cells
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-class MergedTableCells extends TestDocument
-{
+class MergedTableCells extends TestDocument {
     /** generate the body of the test document */
-    protected void generateDocument(RtfDocumentArea rda,RtfSection sect)
+    protected void generateDocument(RtfDocumentArea rda, RtfSection sect)
     throws IOException {
         sect.newParagraph().newText("This document contains a table with some merged cells.");
 
@@ -81,7 +84,8 @@ class MergedTableCells extends TestDocument
             RtfTableRow r = tbl.newTableRow();
             RtfTableCell c = r.newTableCell(80 * MM_TO_TWIPS);
             c.setHMerge(c.MERGE_START);
-            c.newParagraph().newText("cell 0,0, width 80mm, merge start, followed by two merged cells totalling 80mm width.");
+            c.newParagraph().newText("cell 0,0, width 80mm, merge start, "
+                    + "followed by two merged cells totalling 80mm width.");
 
             c = r.newTableCell(40 * MM_TO_TWIPS);
             c.setHMerge(c.MERGE_WITH_PREVIOUS);
@@ -137,7 +141,8 @@ class MergedTableCells extends TestDocument
         // fifth row, just one cell
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(160 * MM_TO_TWIPS).newParagraph().newText("cell 4,0, width 160mm, only cell in this row");
+            r.newTableCell(160 * MM_TO_TWIPS).newParagraph().newText
+                    ("cell 4,0, width 160mm, only cell in this row");
         }
     }
 }

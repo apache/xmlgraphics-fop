@@ -58,45 +58,50 @@
 
 package org.apache.fop.rtf.rtflib.testdocs;
 
-import java.util.Date;
-import java.io.*;
-import org.apache.fop.rtf.rtflib.rtfdoc.*;
+import java.io.IOException;
+
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfList;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfListItem;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
 
 /**  Generates a simple RTF test document for the jfor rtflib package.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-class SimpleLists extends TestDocument
-{
+class SimpleLists extends TestDocument {
     /** generate the body of the test document */
-    protected void generateDocument(RtfDocumentArea rda,RtfSection sect)
+    protected void generateDocument(RtfDocumentArea rda, RtfSection sect)
     throws IOException {
         sect.newParagraph().newText("First paragraph of the 'SimpleLists' RTF test document.");
         sect.newParagraph().newText("First bulleted list with 5 items.");
-        makeList(sect,1,5,null);
+        makeList(sect, 1, 5, null);
         sect.newParagraph().newText("Normal paragraph between lists 1 and 2.");
-        makeList(sect,2,3,null);
+        makeList(sect, 2, 3, null);
         sect.newParagraph().newText("Normal paragraph after list 2.");
 
         sect.newParagraph().newText("Now a numbered list (4 items):");
         final RtfList.NumberingStyle nn = new RtfList.NumberingStyle();
         nn.isBulletedList = false;
-        makeList(sect,3,4,nn);
+        makeList(sect, 3, 4, nn);
     }
 
-    private void makeList(RtfSection sect,int listIndex,int nItems,RtfList.NumberingStyle ns)
-    throws IOException
-    {
+    private void makeList(RtfSection sect, int listIndex, int nItems, RtfList.NumberingStyle ns)
+    throws IOException {
         final RtfList list = sect.newList(null);
-        if(ns != null) list.setNumberingStyle(ns);
-        for(int i=0; i < nItems; i++) {
+        if (ns != null) {
+            list.setNumberingStyle(ns);
+        }
+        for (int i = 0; i < nItems; i++) {
             final RtfListItem item = list.newListItem();
-            for(int j=0; j <= i; j++) {
+            for (int j = 0; j <= i; j++) {
                 final RtfParagraph para = item.newParagraph();
                 para.newText("List " + listIndex + ", item " + i + ", paragraph " + j);
-                if(i==0 && j==0) {
+                if (i == 0 && j == 0) {
                     final String txt = "This item takes more than one line to check word-wrapping.";
-                    para.newText(". " + "This list should have " + nItems + " items. " + txt + " " + txt + " " + txt);
+                    para.newText(". " + "This list should have " + nItems
+                            + " items. " + txt + " " + txt + " " + txt);
                 }
             }
         }

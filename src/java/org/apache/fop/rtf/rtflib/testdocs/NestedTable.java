@@ -58,9 +58,15 @@
 
 package org.apache.fop.rtf.rtflib.testdocs;
 
-import java.util.Date;
-import java.io.*;
-import org.apache.fop.rtf.rtflib.rtfdoc.*;
+import java.io.IOException;
+
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTable;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableRow;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableCell;
+
 /**  Generates an RTF document to test nested tables with the jfor rtflib package.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
@@ -69,9 +75,10 @@ class NestedTable extends TestDocument {
     private static final int MM_TO_TWIPS = (int)(1440f / 25.4f);
 
     /** generate the body of the test document */
-    protected void generateDocument(RtfDocumentArea rda,RtfSection sect)
+    protected void generateDocument(RtfDocumentArea rda, RtfSection sect)
     throws IOException {
-        sect.newParagraph().newText("This document demonstrates pseudo-nested tables created using merged table cells");
+        sect.newParagraph().newText("This document demonstrates pseudo-nested "
+                + "tables created using merged table cells");
 
         firstTestTable(sect);
         RtfParagraph p = sect.newParagraph();
@@ -102,21 +109,27 @@ class NestedTable extends TestDocument {
         // second row contains nested table
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText("cell 1,0, width 40mm, to the left of nested table.");
+            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText
+                    ("cell 1,0, width 40mm, to the left of nested table.");
 
             final RtfTableCell c = r.newTableCell(80 * MM_TO_TWIPS);
-            c.newParagraph().newText("cell 1,1, width 80mm, this text is followed by a nested table in the same cell, followed by text that says 'AFTER NESTED TABLE'.");
-            fillNestedTable(c.newTable(new DummyTableColumnsInfo()),1);
+            c.newParagraph().newText("cell 1,1, width 80mm, this text is "
+                    + "followed by a nested table in the same cell, followed "
+                    + "by text that says 'AFTER NESTED TABLE'.");
+            fillNestedTable(c.newTable(new DummyTableColumnsInfo()), 1);
             c.newParagraph().newText("AFTER NESTED TABLE");
 
-            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText("cell 1,2, width 40mm, to the right of nested table.");
+            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText
+                    ("cell 1,2, width 40mm, to the right of nested table.");
         }
 
         // third row, normal
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText("cell 2,0, width 80mm, this row has two cells.");
-            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText("cell 2,1, width 80mm, last cell.");
+            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText
+                    ("cell 2,0, width 80mm, this row has two cells.");
+            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText
+                    ("cell 2,1, width 80mm, last cell.");
         }
 
     }
@@ -129,65 +142,80 @@ class NestedTable extends TestDocument {
         {
             RtfTableRow r = tbl.newTableRow();
             RtfTableCell c = r.newTableCell(160 * MM_TO_TWIPS);
-            c.newParagraph().newText("second test table: cell 0,0, width 160mm, only cell in this row.");
+            c.newParagraph().newText("second test table: cell 0,0, width 160mm, "
+                    + "only cell in this row.");
         }
 
         // second row contains nested table
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText("cell 1,0, width 40mm, to the left of nested tables.");
+            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText
+                    ("cell 1,0, width 40mm, to the left of nested tables.");
 
             final RtfTableCell c = r.newTableCell(80 * MM_TO_TWIPS);
-            c.newParagraph().newText("cell 1,1, width 80mm, this text is followed by a nested table in the same cell, followed by text that says 'BETWEEN', then another table, then 'AFTER'.");
-            fillNestedTable(c.newTable(new DummyTableColumnsInfo()),2);
+            c.newParagraph().newText("cell 1,1, width 80mm, this text is "
+                    + "followed by a nested table in the same cell, followed "
+                    + "by text that says 'BETWEEN', then another table, then 'AFTER'.");
+            fillNestedTable(c.newTable(new DummyTableColumnsInfo()), 2);
             c.newParagraph().newText("BETWEEN");
-            fillNestedTable(c.newTable(new DummyTableColumnsInfo()),3);
+            fillNestedTable(c.newTable(new DummyTableColumnsInfo()), 3);
             c.newParagraph().newText("AFTER");
 
-            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText("cell 1,2, width 40mm, to the right of nested table.");
+            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText
+                    ("cell 1,2, width 40mm, to the right of nested table.");
         }
 
         // third row, normal
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText("cell 2,0, width 80mm, this row has two cells.");
-            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText("cell 2,1, width 80mm, last cell.");
+            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText
+                    ("cell 2,0, width 80mm, this row has two cells.");
+            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText
+                    ("cell 2,1, width 80mm, last cell.");
         }
     }
 
     private void thirdTestTable(RtfSection sect)
     throws IOException {
-        sect.newParagraph().newText("Third test: table with two nested tables in cell 1,1 and one nested table in cell 0,1");
+        sect.newParagraph().newText("Third test: table with two nested tables "
+                + "in cell 1,1 and one nested table in cell 0,1");
         final RtfTable tbl = sect.newTable(new DummyTableColumnsInfo());
         // first row, normal
         {
             RtfTableRow r = tbl.newTableRow();
             RtfTableCell c = r.newTableCell(80 * MM_TO_TWIPS);
-            c.newParagraph().newText("third test table: cell 0,0, width 40mm, the cell to its right contains a nested table with no other text.");
+            c.newParagraph().newText("third test table: cell 0,0, width 40mm, "
+                    + "the cell to its right contains a nested table with no other text.");
             c = r.newTableCell(80 * MM_TO_TWIPS);
-            fillNestedTable(c.newTable(new DummyTableColumnsInfo()),4);
+            fillNestedTable(c.newTable(new DummyTableColumnsInfo()), 4);
         }
 
         // second row contains nested table
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText("cell 1,0, width 40mm, to the left of nested tables.");
+            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText
+                    ("cell 1,0, width 40mm, to the left of nested tables.");
 
             final RtfTableCell c = r.newTableCell(80 * MM_TO_TWIPS);
-            c.newParagraph().newText("cell 1,1, width 80mm, this text is followed by a nested table in the same cell, followed by text that says 'BETWEEN', then another table, then 'AFTER'.");
-            fillNestedTable(c.newTable(new DummyTableColumnsInfo()),5);
+            c.newParagraph().newText("cell 1,1, width 80mm, this text is "
+                    + "followed by a nested table in the same cell, followed "
+                    + "by text that says 'BETWEEN', then another table, then 'AFTER'.");
+            fillNestedTable(c.newTable(new DummyTableColumnsInfo()), 5);
             c.newParagraph().newText("BETWEEN");
-            fillNestedTable(c.newTable(new DummyTableColumnsInfo()),6);
+            fillNestedTable(c.newTable(new DummyTableColumnsInfo()), 6);
             c.newParagraph().newText("AFTER");
 
-            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText("cell 1,2, width 40mm, to the right of nested table.");
+            r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText
+                    ("cell 1,2, width 40mm, to the right of nested table.");
         }
 
         // third row, normal
         {
             RtfTableRow r = tbl.newTableRow();
-            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText("cell 2,0, width 80mm, this row has two cells.");
-            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText("cell 2,1, width 80mm, last cell.");
+            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText
+                    ("cell 2,0, width 80mm, this row has two cells.");
+            r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText
+                    ("cell 2,1, width 80mm, last cell.");
         }
     }
 

@@ -58,7 +58,11 @@
 
 package org.apache.fop.rtf.rtflib.testdocs;
 
-import org.apache.fop.rtf.rtflib.rtfdoc.*;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfHyperLink;
+
 import java.io.IOException;
 
 /**
@@ -67,8 +71,7 @@ import java.io.IOException;
  * @author <a href="mailto:mks@ANDREAS">Andreas Putz</a>
  */
 
-public class BasicLink extends TestDocument
-{
+public class BasicLink extends TestDocument {
     //////////////////////////////////////////////////
     // @@ Construction
     //////////////////////////////////////////////////
@@ -76,13 +79,11 @@ public class BasicLink extends TestDocument
     /**
      * Default constructor.
      */
-    public BasicLink()
-    {
+    public BasicLink() {
     }
 
     /** generate the body of the test document */
-    protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws IOException
-    {
+    protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws IOException {
         RtfParagraph p = sect.newParagraph ();
         p.newLineBreak();
         p.newLineBreak();

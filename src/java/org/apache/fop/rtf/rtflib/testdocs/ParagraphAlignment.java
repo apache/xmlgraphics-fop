@@ -60,7 +60,6 @@ package org.apache.fop.rtf.rtflib.testdocs;
 
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
-import org.apache.fop.rtf.rtflib.rtfdoc.RtfExternalGraphic;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfText;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
@@ -68,11 +67,9 @@ import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
 /**  Generates a simple RTF test document for the jfor rtflib package.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
-public class ParagraphAlignment extends TestDocument
-{
+public class ParagraphAlignment extends TestDocument {
 
-    public ParagraphAlignment()
-    {
+    public ParagraphAlignment() {
     }
     protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws java.io.IOException
     {

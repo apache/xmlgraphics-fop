@@ -67,8 +67,8 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 public class ParagraphKeeptogetherContext {
 
-    private static int m_paraKeepTogetherOpen=0;
-    private static boolean m_paraResetProperties=false;
+    private static int m_paraKeepTogetherOpen = 0;
+    private static boolean m_paraResetProperties = false;
     private static ParagraphKeeptogetherContext m_instance = null;
 
     ParagraphKeeptogetherContext() {
@@ -81,11 +81,15 @@ public class ParagraphKeeptogetherContext {
      * @return The instance of ParagraphKeeptogetherContext
      */
     public static ParagraphKeeptogetherContext getInstance() {
-        if (m_instance==null) m_instance = new     ParagraphKeeptogetherContext();
+        if (m_instance == null) {
+            m_instance = new ParagraphKeeptogetherContext();
+        }
         return m_instance;
     }
 
-    /** Return the level of current "keep whith next" paragraph */
+    /**
+     *  @return the level of current "keep whith next" paragraph
+     */
     public static int getKeepTogetherOpenValue() {
         return m_paraKeepTogetherOpen;
     }
@@ -97,12 +101,13 @@ public class ParagraphKeeptogetherContext {
 
     /** Close a "keep whith next" paragraph */
     public static void KeepTogetherClose() {
-        if(m_paraKeepTogetherOpen > 0) {
+        if (m_paraKeepTogetherOpen > 0) {
             m_paraKeepTogetherOpen--;
 
-            //If the \pard control word is not present, the current paragraph inherits all paragraph properties.
+            //If the \pard control word is not present, the current paragraph
+            //inherits all paragraph properties.
             //Also the next paragraph must reset the properties otherwise the \keepn don't stop.
-            m_paraResetProperties= (m_paraKeepTogetherOpen==0);
+            m_paraResetProperties = (m_paraKeepTogetherOpen == 0);
         }
     }
 
@@ -113,7 +118,7 @@ public class ParagraphKeeptogetherContext {
 
     /** Reset the flag if the paragraph properties have been resested */
     public static void setParagraphResetPropertiesUsed() {
-        m_paraResetProperties=false;
+        m_paraResetProperties = false;
     }
 
 }
