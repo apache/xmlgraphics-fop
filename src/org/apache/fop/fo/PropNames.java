@@ -368,9 +368,14 @@ public class PropNames {
                                          WIDOWS = 304,
                                           WIDTH = 305,
                                    WORD_SPACING = 306,
-                                    WRAP_OPTION = 307,
-                                   WRITING_MODE = 308,
-                                        Z_INDEX = 309,
+                           WORD_SPACING_MINIMUM = 307,
+                           WORD_SPACING_OPTIMUM = 308,
+                           WORD_SPACING_MAXIMUM = 309,
+                    WORD_SPACING_CONDITIONALITY = 310,
+                        WORD_SPACING_PRECEDENCE = 311,
+                                    WRAP_OPTION = 312,
+                                   WRITING_MODE = 313,
+                                        Z_INDEX = 314,
         
                             LAST_PROPERTY_INDEX = Z_INDEX;
 
@@ -703,6 +708,11 @@ public class PropNames {
         "widows",
         "width",
         "word-spacing",
+        "word-spacing-minimum",
+        "word-spacing-optimum",
+        "word-spacing-maximum",
+        "word-spacing-conditionality",
+        "word-spacing-precedence",
         "wrap-option",
         "writing-mode",
         "z-index"
