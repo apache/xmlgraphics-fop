@@ -8,17 +8,14 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.fo.*;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.layout.AuralProps;
 import org.apache.fop.layout.RelativePositionProps;
-import org.apache.fop.fo.flow.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
-import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.LayoutProcessor;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.Word;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -38,9 +35,9 @@ public class BidiOverride extends FObjMixed {
             ArrayList childList = new ArrayList();
             super.addLayoutManager(childList);
             for (int count = childList.size() - 1; count >= 0; count--) {
-                LayoutManager lm = (LayoutManager) childList.get(count);
+                LayoutProcessor lm = (LayoutProcessor) childList.get(count);
                 if (lm.generatesInlineAreas()) {
-                    LayoutManager blm = new BidiLayoutManager((LeafNodeLayoutManager) lm);
+                    LayoutProcessor blm = new BidiLayoutManager((LeafNodeLayoutManager) lm);
                     blm.setFObj(this);
                     list.add(blm);
                 } else {

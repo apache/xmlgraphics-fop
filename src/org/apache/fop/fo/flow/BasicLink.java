@@ -22,7 +22,7 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Area;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.LMiter;
-import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.LayoutProcessor;
 
 // Java
 import java.util.List;
@@ -58,7 +58,7 @@ public class BasicLink extends Inline {
         lms.add(lm);
     }
 
-    protected void setupLinkArea(LayoutManager parentLM, InlineParent area) {
+    protected void setupLinkArea(LayoutProcessor parentLM, InlineParent area) {
         if (link == null) {
             return;
         }
@@ -137,6 +137,12 @@ public class BasicLink extends Inline {
         private String idRef;
         private Area area;
 
+        /**
+         * Create a new link resolver.
+         *
+         * @param id the id to resolve
+         * @param a the area that will have the link attribute
+         */
         public LinkResolver(String id, Area a) {
             idRef = id;
             area = a;

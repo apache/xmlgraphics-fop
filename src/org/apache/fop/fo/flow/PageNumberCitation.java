@@ -8,27 +8,33 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.pagination.*;
-import org.apache.fop.datatypes.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.*;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.util.CharUtilities;
+import java.util.List;
+
 import org.apache.fop.apps.StructureHandler;
-import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.area.inline.Word;
-import org.apache.fop.area.inline.UnresolvedPageNumber;
+import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.Trait;
-
-import java.util.List;
-import java.util.ArrayList;
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.UnresolvedPageNumber;
+import org.apache.fop.area.inline.Word;
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.layout.AccessibilityProps;
+import org.apache.fop.layout.AuralProps;
+import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.MarginInlineProps;
+import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.layout.TextState;
+import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.LayoutProcessor;
+import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
+import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * Page number citation.
@@ -88,7 +94,7 @@ public class PageNumberCitation extends FObj {
 
     // if id can be resolved then simply return a word, otherwise
     // return a resolveable area
-    private InlineArea getInlineArea(LayoutManager parentLM) {
+    private InlineArea getInlineArea(LayoutProcessor parentLM) {
         if (refId.equals("")) {
             getLogger().error("page-number-citation must contain \"ref-id\"");
             return null;
