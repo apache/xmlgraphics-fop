@@ -48,9 +48,9 @@ public class SVGReader extends AbstractImageReader {
             // should check the stream contains text data
             SVGSVGElement svg = doc.getRootElement();
             this.width =
-              (int) svg.getWidth().getBaseVal().getValue() * 1000;
+              (int) svg.getWidth().getBaseVal().getValue();
             this.height =
-              (int) svg.getHeight().getBaseVal().getValue() * 1000;
+              (int) svg.getHeight().getBaseVal().getValue();
             return true;
         } catch (Exception e) {
             MessageHandler.errorln("ERROR LOADING EXTERNAL SVG: " + e.getMessage());
