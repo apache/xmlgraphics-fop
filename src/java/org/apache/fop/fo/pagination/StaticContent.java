@@ -18,10 +18,15 @@
 
 package org.apache.fop.fo.pagination;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 // FOP
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.apps.FOPException;
 
 /**
  * Class modelling the fo:static-content object. See Sec. 6.4.19 of the XSL-FO
@@ -37,6 +42,27 @@ public class StaticContent extends Flow {
     }
 
     private void setup() {
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL/FOP Content Model: (%block;)+
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+        if (!isBlockItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        }
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * StructureRenderer that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void end() {
+        if (children == null) {
+            missingChildElementError("(%block;)+");
+        }
     }
 
     /**

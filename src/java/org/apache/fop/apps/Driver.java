@@ -38,8 +38,6 @@ import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.render.mif.MIFHandler;
 import org.apache.fop.render.rtf.RTFHandler;
-import org.apache.fop.tools.DocumentInputSource;
-import org.apache.fop.tools.DocumentReader;
 
 /**
  * Primary class that drives overall FOP process.
@@ -163,6 +161,9 @@ public class Driver implements Constants {
             throw new IllegalStateException("Driver already initialized");
         }
         treeBuilder = new FOTreeBuilder();
+        if (foUserAgent == null) {
+            foUserAgent = new FOUserAgent();
+        }
     }
 
     /**

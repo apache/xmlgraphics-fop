@@ -73,7 +73,7 @@ public class Flow extends FObj {
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL/FOP Content Model: marker* (%block;)+
      */
-     protected void validateChildNode(Locator loc, String nsURI, String localName) {
+    protected void validateChildNode(Locator loc, String nsURI, String localName) {
         if (nsURI == FOElementMapping.URI && localName.equals("marker")) {
             if (blockItemFound) {
                nodesOutOfOrderError(loc, "fo:marker", "(%block;)");

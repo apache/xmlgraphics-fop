@@ -16,7 +16,7 @@
 
 /* $Id$ */
  
-package org.apache.fop.tools;
+package org.apache.fop.apps;
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -26,7 +26,7 @@ import org.xml.sax.InputSource;
  *
  * @author Kelly A Campbell
  */
-public class DocumentInputSource extends InputSource {
+class DocumentInputSource extends InputSource {
     
     private Document document;
 
