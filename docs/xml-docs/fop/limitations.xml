@@ -32,36 +32,39 @@
        2) Cells have to contain block-level FOs. They can't contain straight character data.
     </p>
     <p>A working basic example of a table looks like this: </p>  
-    <p><code>&lt;fo:table></code></p>
-    <p><code>&#160;&lt;fo:table-column column-width="150pt"/></code></p>
-    <p><code>&#160;&lt;fo:table-column column-width="150pt"/></code></p>
-    <p><code>&#160;&lt;fo:table-body font-size="10pt" font-family="sans-serif"></code></p>
-    <p><code>&#160;&#160;&lt;fo:table-row></code></p>
-    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
-    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
-    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
-    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
-    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
-    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
-    <p><code>&#160;&#160;&lt;/fo:table-row></code></p>
-    <p><code>&#160;&#160;&lt;fo:table-row></code></p>
-    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
-    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
-    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
-    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
-    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
-    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
-    <p><code>&#160;&#160;&lt;/fo:table-row></code></p>
-    <p><code>&#160;&#160;&lt;fo:table-row></code></p>
-    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
-    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
-    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
-    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
-    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
-    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
-    <p><code>&#160;&#160;&lt;/fo:table-row></code></p>
-    <p><code>&#160;&lt;/fo:table-body></code></p>
-    <p><code>&lt;/fo:table></code></p>
+<p>
+  <source><![CDATA[
+<fo:table>
+ <fo:table-column column-width="150pt"/>
+ <fo:table-column column-width="150pt"/>
+ <fo:table-body font-size="10pt" font-family="sans-serif">
+  <fo:table-row>
+   <fo:table-cell>
+    <fo:block>text</fo:block>
+   </fo:table-cell>
+   <fo:table-cell>
+    <fo:block>text</fo:block>
+   </fo:table-cell>
+  </fo:table-row>
+  <fo:table-row>
+   <fo:table-cell>
+    <fo:block>text</fo:block>
+   </fo:table-cell>
+   <fo:table-cell>
+    <fo:block>text</fo:block>
+   </fo:table-cell>
+  </fo:table-row>
+  <fo:table-row>
+   <fo:table-cell>
+    <fo:block>text</fo:block>
+   </fo:table-cell>
+   <fo:table-cell>
+    <fo:block>text</fo:block>
+   </fo:table-cell>
+  </fo:table-row>
+ </fo:table-body>
+</fo:table>]]></source>
+</p>
   </s2>
 
 

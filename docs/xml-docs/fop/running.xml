@@ -33,16 +33,14 @@
       -x          dump configuration settings<br/>
       -q          quiet mode<br/>
       -c cfg.xml  use additional configuration file cfg.xml<br/>
-      -l lang     the language to use for user information<br/>
-    </source>
+      -l lang     the language to use for user information<br/></source>
     </p>
     <p>[INPUT]<br/>
     <source>
       infile            xsl:fo input file (the same as the next)<br/>
       -fo  infile       xsl:fo input file<br/>
       -xml infile       xml input file, must be used together with -xsl<br/>
-      -xsl stylesheet   xslt stylesheet<br/>
-    </source>
+      -xsl stylesheet   xslt stylesheet<br/></source>
     </p>
 
     <p>[OUTPUT]<br/>
@@ -54,8 +52,7 @@
       -pcl outfile      input will be rendered as pcl file (outfile req'd)<br/>
       -txt outfile      input will be rendered as text file (outfile req'd)<br/>
       -print            input file will be rendered and sent to the printer<br/>
-                        see options with "-print help"<br/>
-    </source>
+                        see options with "-print help"<br/></source>
     </p>
 
     <p>[Examples]<br/>
@@ -65,8 +62,7 @@
       Fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf<br/>
       Fop foo.fo -mif foo.mif<br/>
       Fop foo.fo -print or Fop -print foo.fo<br/>
-      Fop foo.fo -awt<br/>
-    </source>
+      Fop foo.fo -awt<br/></source>
     </p>
   </s2>
 
