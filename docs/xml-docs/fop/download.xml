@@ -2,9 +2,16 @@
 
 
 <!-- Download FOP -->
+<document>
+    <header>
+        <title>Download</title>
+        <subtitle>Downloading FOP</subtitle>
+        <authors>
+        </authors>
+    </header>
 
+    <body>
 <s1 title="Downloading FOP">
-  <s2 title="">
     <p>You can download the latest release version from the <jump 
        href="http://xml.apache.org/dist/fop/">distribution directory</jump>. </p>
     <p>The file contains also the documentation (including some example fo files) and the source.  </p>
@@ -18,6 +25,7 @@
        interested in embedding FOP in a Java application of your own, see 
        <jump href="embedding.html">Embedding FOP</jump>.
     </p>
-  </s2>
 </s1>
+    </body>
+</document>
 
