@@ -6,7 +6,7 @@
   <fo:layout-master-set>
 
     <!-- layout for the first page -->
-    <fo:simple-page-master page-master-name="first"
+    <fo:simple-page-master master-name="first"
                   page-height="29.7cm" 
                   page-width="21cm"
                   margin-top="1cm" 
@@ -19,7 +19,7 @@
     </fo:simple-page-master>
 
     <!-- layout for the other pages -->
-    <fo:simple-page-master page-master-name="rest"
+    <fo:simple-page-master master-name="rest"
                   height="29.7cm" 
                   width="21cm"
                   margin-top="1cm" 
@@ -31,17 +31,22 @@
       <fo:region-after extent="1.5cm"/>
     </fo:simple-page-master>
 
+<fo:page-sequence-master master-name="basicPSM" >
+	<fo:repeatable-page-master-alternatives>
+		<fo:conditional-page-master-reference master-name="first"
+			page-position="first" />
+		<fo:conditional-page-master-reference master-name="rest"
+			page-position="rest" />
+		<!-- recommended fallback procedure -->
+		<fo:conditional-page-master-reference master-name="rest" />
+	</fo:repeatable-page-master-alternatives>
+</fo:page-sequence-master>
+
   </fo:layout-master-set>
   <!-- end: defines page layout -->
 
   <!-- actual layout -->
-  <fo:page-sequence>
-
-    <!-- usage of page layout -->
-    <fo:sequence-specification>
-      <fo:sequence-specifier-repeating page-master-first="first" 
-                                       page-master-repeating="rest"/>
-    </fo:sequence-specification>
+  <fo:page-sequence master-name="basicPSM">
 
     <!-- header -->
     <fo:static-content flow-name="xsl-before">

@@ -1,13 +1,10 @@
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/Graphics/SVG/SVG-19990812.dtd">
 <fo:layout-master-set>
-<fo:simple-page-master page-master-name="one">
+<fo:simple-page-master master-name="one">
 <fo:region-body margin-top="50pt" margin-bottom="50pt" margin-left="100pt" margin-right="100pt"/>
 </fo:simple-page-master>
 </fo:layout-master-set>
-<fo:page-sequence>
-<fo:sequence-specification>
-<fo:sequence-specifier-repeating page-master-first="one" page-master-repeating="one"/>
-</fo:sequence-specification>
+<fo:page-sequence master-name="one">
 <fo:flow>
 <fo:block>A Block</fo:block>
 <fo:block text-align="end">An End Aligned Block</fo:block>

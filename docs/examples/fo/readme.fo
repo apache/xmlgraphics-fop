@@ -12,22 +12,51 @@ This files shows next to the trivial usage of fo:block and fo:inline-sequence ex
 
 
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-<fo:layout-master-set>
-<fo:simple-page-master page-master-name="first" page-height="29.7cm" page-width="21cm" margin-top="1cm" margin-bottom="2cm" margin-left="2.5cm" margin-right="2.5cm">
-<fo:region-before extent="6cm"/>
-<fo:region-body margin-top="3cm"/>
-<fo:region-after extent="1.5cm"/>
-</fo:simple-page-master>
-<fo:simple-page-master page-master-name="rest" page-height="29.7cm" page-width="21cm" margin-top="1cm" margin-bottom="2cm" margin-left="2.5cm" margin-right="2.5cm">
-<fo:region-before extent="6cm"/>
-<fo:region-body margin-top="2.5cm"/>
-<fo:region-after extent="1.5cm"/>
-</fo:simple-page-master>
-</fo:layout-master-set>
-<fo:page-sequence>
-<fo:sequence-specification>
-<fo:sequence-specifier-repeating page-master-first="first" page-master-repeating="rest"/>
-</fo:sequence-specification>
+  <fo:layout-master-set>
+
+    <!-- layout for the first page -->
+    <fo:simple-page-master master-name="first"
+                  page-height="29.7cm" 
+                  page-width="21cm"
+                  margin-top="1cm" 
+                  margin-bottom="2cm" 
+                  margin-left="2.5cm" 
+                  margin-right="2.5cm">
+      <fo:region-before extent="3cm"/>
+      <fo:region-body margin-top="3cm"/>
+      <fo:region-after extent="1.5cm"/>
+    </fo:simple-page-master>
+
+    <!-- layout for the other pages -->
+    <fo:simple-page-master master-name="rest"
+                  height="29.7cm" 
+                  width="21cm"
+                  margin-top="1cm" 
+                  margin-bottom="2cm" 
+                  margin-left="2.5cm" 
+                  margin-right="2.5cm">
+      <fo:region-before extent="2.5cm"/>
+      <fo:region-body margin-top="2.5cm"/>
+      <fo:region-after extent="1.5cm"/>
+    </fo:simple-page-master>
+
+<fo:page-sequence-master master-name="basicPSM" >
+	<fo:repeatable-page-master-alternatives>
+		<fo:conditional-page-master-reference master-name="first"
+			page-position="first" />
+		<fo:conditional-page-master-reference master-name="rest"
+			page-position="rest" />
+		<!-- recommended fallback procedure -->
+		<fo:conditional-page-master-reference master-name="rest" />
+	</fo:repeatable-page-master-alternatives>
+</fo:page-sequence-master>
+
+  </fo:layout-master-set>
+  <!-- end: defines page layout -->
+
+  <!-- actual layout -->
+  <fo:page-sequence master-name="basicPSM">
+
 
 <fo:static-content flow-name="xsl-before">
 <fo:block text-align="end" font-size="10pt" font-family="serif" line-height="14pt" color="red" >
