@@ -7,9 +7,11 @@
 
 package org.apache.fop.fo.expr;
 
+import java.util.Vector;
 
 import org.apache.fop.fo.Property;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.FixedLength;
 import org.apache.fop.datatypes.PercentLength;
 import org.apache.fop.datatypes.LinearCombinationLength;
 import org.apache.fop.datatypes.MixedLength;
@@ -91,7 +93,7 @@ public class Numeric {
      * Construct a Numeric object from a Length.
      * @param l The Length.
      */
-    public Numeric(Length l) {
+    public Numeric(FixedLength l) {
         this(ABS_LENGTH, (double)l.mvalue(), 0.0, 0.0, 1, null);
     }
 
@@ -121,19 +123,22 @@ public class Numeric {
      */
     public Length asLength() {
         if (dim == 1) {
-            if (valType == ABS_LENGTH) {
-                return new Length((int)absValue);
+	    Vector len = new Vector(3);
+            if ((valType & ABS_LENGTH) != 0) {
+                len.add(new FixedLength((int)absValue));
             }
-            PercentLength pclen = null;
             if ((valType & PC_LENGTH) != 0) {
-                pclen = new PercentLength(pcValue, pcBase);
-                if (valType == PC_LENGTH)
-                    return pclen;
+                len.add(new PercentLength(pcValue, pcBase));
             }
             if ((valType & TCOL_LENGTH) != 0) {
-                return new TableColLength((int)absValue, pclen, tcolValue);
+                len.add(new TableColLength(tcolValue));
             }
-            return new MixedLength((int)absValue, pclen);
+	    if (len.size() == 1) {
+		return (Length)len.elementAt(0);
+	    }
+	    else {
+		return new MixedLength(len);
+	    }
         } else {
             // or throw exception???
             // can't make Length if dimension != 1
