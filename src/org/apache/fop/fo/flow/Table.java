@@ -47,7 +47,7 @@ public class Table extends FObj {
 
     AreaContainer areaContainer;
 
-    public Table(FObj parent) {
+    public Table(FONode parent) {
         super(parent);
         this.name = "fo:table";
     }
@@ -228,8 +228,8 @@ public class Table extends FObj {
                     addedFooter = true;
                     tableFooter.resetMarker();
                 }
-                fo.setWidows(widows);
-                fo.setOrphans(orphans);
+                //fo.setWidows(widows);
+                //fo.setOrphans(orphans);
                 ((TableBody)fo).setColumns(columns);
 
                 if ((status = fo.layout(areaContainer)).isIncomplete()) {

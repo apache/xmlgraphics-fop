@@ -18,7 +18,7 @@ import org.apache.fop.apps.FOPException;
  */
 public class MultiProperties extends ToBeImplementedElement {
 
-    public MultiProperties(FObj parent) {
+    public MultiProperties(FONode parent) {
         super(parent);
         this.name = "fo:multi-properties";
     }

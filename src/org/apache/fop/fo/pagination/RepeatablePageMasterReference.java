@@ -22,7 +22,7 @@ public class RepeatablePageMasterReference extends PageMasterReference
     private int maximumRepeats;
     private int numberConsumed = 0;
 
-    public RepeatablePageMasterReference(FObj parent) {
+    public RepeatablePageMasterReference(FONode parent) {
         super(parent);
     }
 

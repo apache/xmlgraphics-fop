@@ -15,7 +15,7 @@ import org.xml.sax.Attributes;
 
 /**
  * Base PageMasterReference class. Provides implementation for handling the
- * master-name attribute and containment within a PageSequenceMaster
+ * master-reference attribute and containment within a PageSequenceMaster
  */
 public abstract class PageMasterReference extends FObj
     implements SubSequenceSpecifier {
@@ -23,15 +23,15 @@ public abstract class PageMasterReference extends FObj
     private String _masterName;
     private PageSequenceMaster _pageSequenceMaster;
 
-    public PageMasterReference(FObj parent) {
+    public PageMasterReference(FONode parent) {
         super(parent);
         this.name = getElementName();
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
-        if (getProperty("master-name") != null) {
-            setMasterName(getProperty("master-name").getString());
+        if (getProperty("master-reference") != null) {
+            setMasterName(getProperty("master-reference").getString());
         }
         validateParent(parent);
 
@@ -42,7 +42,7 @@ public abstract class PageMasterReference extends FObj
     }
 
     /**
-     * Returns the "master-name" attribute of this page master reference
+     * Returns the "master-reference" attribute of this page master reference
      */
     public String getMasterName() {
         return _masterName;
@@ -61,9 +61,11 @@ public abstract class PageMasterReference extends FObj
                                              boolean isEmptyPage);
 
     /**
-     * Gets the formating object name for this object. Subclasses must provide this.
+     * Gets the formating object name for this object.
+     * Subclasses must provide this.
      *
-     * @return the element name of this reference. e.g. fo:repeatable-page-master-reference
+     * @return the element name of this reference.
+     * e.g. fo:repeatable-page-master-reference
      */
     protected abstract String getElementName();
 
@@ -71,13 +73,13 @@ public abstract class PageMasterReference extends FObj
      * Checks that the parent is the right element. The default implementation
      * checks for fo:page-sequence-master
      */
-    protected void validateParent(FObj parent) throws FOPException {
+    protected void validateParent(FONode parent) throws FOPException {
         if (parent.getName().equals("fo:page-sequence-master")) {
             _pageSequenceMaster = (PageSequenceMaster)parent;
 
             if (getMasterName() == null) {
                 log.warn("" + getElementName()
-                                       + " does not have a master-name and so is being ignored");
+                                       + " does not have a master-reference and so is being ignored");
             } else {
                 _pageSequenceMaster.addSubsequenceSpecifier(this);
             }
@@ -89,8 +91,5 @@ public abstract class PageMasterReference extends FObj
     }
 
     public abstract void reset();
-
-
-
 
 }

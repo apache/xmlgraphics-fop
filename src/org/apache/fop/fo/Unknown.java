@@ -21,15 +21,15 @@ import org.apache.fop.apps.FOPException;
  * This prevents any further problems arising from the unknown
  * data.
  */
-public class Unknown extends FObj {
+public class Unknown extends FONode {
 
     public static class Maker extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Unknown(parent);
         }
     }
 
-    public Unknown(FObj parent) {
+    public Unknown(FONode parent) {
         super(parent);
     }
 

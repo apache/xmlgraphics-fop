@@ -80,7 +80,6 @@ public class Options {
         if (dumpConfiguration) {
             Configuration.put("dumpConfiguration", "true");
             Configuration.dumpConfiguration();
-            System.exit(0);
         }
 
         // quiet mode

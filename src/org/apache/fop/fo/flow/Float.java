@@ -18,7 +18,7 @@ import org.apache.fop.apps.FOPException;
  */
 public class Float extends ToBeImplementedElement {
 
-    public Float(FObj parent) {
+    public Float(FONode parent) {
         super(parent);
         this.name = "fo:float";
     }

@@ -9,6 +9,7 @@ package org.apache.fop.fo.expr;
 
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.ListItem;
 
 public class BodyStartFunction extends FunctionBase {
@@ -22,7 +23,7 @@ public class BodyStartFunction extends FunctionBase {
         Numeric distance =
             pInfo.getPropertyList().get("provisional-distance-between-starts").getNumeric();
 
-        FObj item = pInfo.getFO();
+        FONode item = pInfo.getFO();
         while (item != null &&!(item instanceof ListItem)) {
             item = item.getParent();
         }
@@ -31,7 +32,7 @@ public class BodyStartFunction extends FunctionBase {
         }
 
         Numeric startIndent =
-            item.properties.get("start-indent").getNumeric();
+            ((ListItem)item).properties.get("start-indent").getNumeric();
 
         return new NumericProperty(distance.add(startIndent));
     }

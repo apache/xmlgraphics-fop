@@ -72,7 +72,6 @@ public class PDFNumber {
     }
 
     public static String doubleOut(double doubleDown, int dec) {
-
         StringBuffer p = new StringBuffer();
         if (doubleDown < 0) {
             doubleDown = -doubleDown;

@@ -23,7 +23,7 @@ public class ConditionalPageMasterReference extends FObj {
     private int oddOrEven;
     private int blankOrNotBlank;
 
-    public ConditionalPageMasterReference(FObj parent) {
+    public ConditionalPageMasterReference(FONode parent) {
         super(parent);
 
         this.name = getElementName();
@@ -132,7 +132,7 @@ public class ConditionalPageMasterReference extends FObj {
     }
 
 
-    protected void validateParent(FObj parent) throws FOPException {
+    protected void validateParent(FONode parent) throws FOPException {
         if (parent.getName().equals("fo:repeatable-page-master-alternatives")) {
             this.repeatablePageMasterAlternatives =
                 (RepeatablePageMasterAlternatives)parent;

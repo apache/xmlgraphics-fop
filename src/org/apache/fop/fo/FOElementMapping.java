@@ -7,7 +7,6 @@
 
 package org.apache.fop.fo;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -112,337 +111,337 @@ public class FOElementMapping implements ElementMapping {
     }
 
     class R extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Root(parent);
         }
     }
 
     class Dec extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Declarations(parent);
         }
     }
 
     class CP extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new ColorProfile(parent);
         }
     }
 
     class PS extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new PageSequence(parent);
         }
     }
 
     class LMS extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new LayoutMasterSet(parent);
         }
     }
 
     class PSM extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new PageSequenceMaster(parent);
         }
     }
 
     class SPMR extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new SinglePageMasterReference(parent);
         }
     }
 
     class RPMR extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new RepeatablePageMasterReference(parent);
         }
     }
 
     class RPMA extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new RepeatablePageMasterAlternatives(parent);
         }
     }
 
     class CPMR extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new ConditionalPageMasterReference(parent);
         }
     }
 
     class SPM extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new SimplePageMaster(parent);
         }
     }
 
     class RB extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new RegionBody(parent);
         }
     }
 
     class RBefore extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new RegionBefore(parent);
         }
     }
 
     class RA extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new RegionAfter(parent);
         }
     }
 
     class RS extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new RegionStart(parent);
         }
     }
 
     class RE extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new RegionEnd(parent);
         }
     }
 
     class Fl extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Flow(parent);
         }
     }
 
     class SC extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new StaticContent(parent);
         }
     }
 
     class T extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Title(parent);
         }
     }
 
     class B extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Block(parent);
         }
     }
 
     class BC extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new BlockContainer(parent);
         }
     }
 
     class BO extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new BidiOverride(parent);
         }
     }
 
     class Ch extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.Character(parent);
         }
     }
 
     class IPS extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new InitialPropertySet(parent);
         }
     }
 
     class EG extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new ExternalGraphic(parent);
         }
     }
 
     class IFO extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new InstreamForeignObject(parent);
         }
     }
 
     class In extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Inline(parent);
         }
     }
 
     class IC extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new InlineContainer(parent);
         }
     }
 
     class L extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Leader(parent);
         }
     }
 
     class PN extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new PageNumber(parent);
         }
     }
 
     class PNC extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new PageNumberCitation(parent);
         }
     }
 
     class TAC extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new TableAndCaption(parent);
         }
     }
 
     class Ta extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Table(parent);
         }
     }
 
     class TC extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new TableColumn(parent);
         }
     }
 
     class TCaption extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new TableCaption(parent);
         }
     }
 
     class TH extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new TableHeader(parent);
         }
     }
 
     class TF extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new TableFooter(parent);
         }
     }
 
     class TB extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new TableBody(parent);
         }
     }
 
     class TR extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new TableRow(parent);
         }
     }
 
     class TCell extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new TableCell(parent);
         }
     }
 
     class LB extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new ListBlock(parent);
         }
     }
 
     class LI extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new ListItem(parent);
         }
     }
 
     class LIB extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new ListItemBody(parent);
         }
     }
 
     class LIL extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new ListItemLabel(parent);
         }
     }
 
     class BL extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new BasicLink(parent);
         }
     }
 
     class MS extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new MultiSwitch(parent);
         }
     }
 
     class MC extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new MultiCase(parent);
         }
     }
 
     class MT extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new MultiToggle(parent);
         }
     }
 
     class MP extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new MultiProperties(parent);
         }
     }
 
     class MPS extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new MultiPropertySet(parent);
         }
     }
 
     class F extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.Float(parent);
         }
     }
 
     class Foot extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Footnote(parent);
         }
     }
 
     class FB extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new FootnoteBody(parent);
         }
     }
 
     class W extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Wrapper(parent);
         }
     }
 
     class M extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Marker(parent);
         }
     }
 
     class RM extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new RetrieveMarker(parent);
         }
     }

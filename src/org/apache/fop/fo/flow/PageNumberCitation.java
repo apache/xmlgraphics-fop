@@ -84,9 +84,8 @@ public class PageNumberCitation extends FObj {
     TextState ts;
 
 
-    public PageNumberCitation(FObj parent) {
+    public PageNumberCitation(FONode parent) {
         super(parent);
-        this.name = "fo:page-number-citation";
     }
 
     public Status layout(Area area) throws FOPException {

@@ -30,7 +30,7 @@ public class TableBody extends FObj {
 
     AreaContainer areaContainer;
 
-    public TableBody(FObj parent) {
+    public TableBody(FONode parent) {
         super(parent);
         this.name = "fo:table-body";
     }

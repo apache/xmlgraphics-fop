@@ -18,9 +18,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class MultiCase extends ToBeImplementedElement {
 
-    public MultiCase(FObj parent) {
+    public MultiCase(FONode parent) {
         super(parent);
-        this.name = "fo:multi-case";
     }
 
     public Status layout(Area area) throws FOPException {

@@ -7,11 +7,11 @@
 
 package org.apache.fop.extensions;
 
-import org.apache.fop.fo.*;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.fo.FOTreeBuilder;
 
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class ExtensionElementMapping implements ElementMapping {
 
@@ -29,13 +29,13 @@ public class ExtensionElementMapping implements ElementMapping {
     }
 
     class O extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Outline(parent);
         }
     }
 
     class L extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new Label(parent);
         }
     }

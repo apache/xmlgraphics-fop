@@ -169,10 +169,11 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         svgCtx.setPixelToMM(userAgent.getPixelToMM());
         ((SVGOMDocument)document).setSVGContext(svgCtx);
 
-        boolean stroke = true;
+        /*boolean stroke = true;
         if (hints.containsKey(KEY_STROKE_TEXT)) {
             stroke = ((Boolean)hints.get(KEY_STROKE_TEXT)).booleanValue();
-        }
+        }*/
+        PDFDocumentGraphics2D graphics = new PDFDocumentGraphics2D(false);
 
         // build the GVT tree
         GVTBuilder builder = new GVTBuilder();
@@ -181,7 +182,10 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         TextPainter textPainter = null;
         textPainter = new StrokingTextPainter();
         ctx.setTextPainter(textPainter);
-        
+
+        PDFTextElementBridge pdfTextElementBridge = new PDFTextElementBridge(graphics.getFontState());
+        ctx.putBridge(pdfTextElementBridge);
+
         PDFAElementBridge pdfAElementBridge = new PDFAElementBridge();
         AffineTransform currentTransform = new AffineTransform(1, 0, 0, 1, 0, 0);
         pdfAElementBridge.setCurrentTransform(currentTransform);
@@ -267,14 +271,13 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         int w = (int)width;
         int h = (int)height;
 
-        PDFDocumentGraphics2D graphics = new PDFDocumentGraphics2D(stroke,
-                output.getOutputStream(), w, h);
+        graphics.setupDocument(output.getOutputStream(), w, h);
         graphics.setSVGDimension(docWidth, docHeight);
         currentTransform.setTransform(1, 0, 0, -1, 0, height);
-        if (!stroke) {
+        /*if (!stroke) {
             textPainter = new PDFTextPainter(graphics.getFontState());
             ctx.setTextPainter(textPainter);
-        }
+        }*/
 
         if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
             graphics.setBackgroundColor((Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));

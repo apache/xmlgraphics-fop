@@ -115,7 +115,6 @@ public class SVGUserAgent implements UserAgent {
     public void openLink(SVGAElement elt) {
     }
 
-
     public Point getClientAreaLocationOnScreen() {
         return new Point(0, 0);
     }
@@ -145,7 +144,6 @@ public class SVGUserAgent implements UserAgent {
     public void registerExtension(BridgeExtension be) {}
 
     public void handleElement(Element elt, Object data) {}
-
 
 }
 

@@ -8,7 +8,6 @@
 package org.apache.fop.render.awt;
 
 // FOP
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.layout.FontState;
@@ -37,7 +36,6 @@ import java.awt.font.TextLayout;
  * Since FontState and FontInfo multiply all factors by
  * size, we assume a "standard" font of FONT_SIZE.
  */
-
 public class AWTFontMetrics {
 
     /**

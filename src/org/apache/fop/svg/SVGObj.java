@@ -8,11 +8,6 @@
 package org.apache.fop.svg;
 
 import org.apache.fop.fo.*;
-import org.apache.fop.layout.Area;
-import org.apache.fop.layout.FontState;
-import org.apache.fop.apps.FOPException;
-
-import org.w3c.dom.Element;
 
 public class SVGObj extends XMLObj {
     /**
@@ -21,7 +16,7 @@ public class SVGObj extends XMLObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public SVGObj(FObj parent) {
+    public SVGObj(FONode parent) {
         super(parent);
     }
 

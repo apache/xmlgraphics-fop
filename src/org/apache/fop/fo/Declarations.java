@@ -18,9 +18,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class Declarations extends ToBeImplementedElement {
 
-    protected Declarations(FObj parent) {
+    protected Declarations(FONode parent) {
         super(parent);
-        this.name = "fo:declarations";
     }
 
 }

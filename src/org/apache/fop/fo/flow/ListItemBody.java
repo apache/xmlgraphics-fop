@@ -19,7 +19,7 @@ import java.util.Enumeration;
 
 public class ListItemBody extends FObj {
 
-    public ListItemBody(FObj parent) {
+    public ListItemBody(FONode parent) {
         super(parent);
         this.name = "fo:list-item-body";
     }

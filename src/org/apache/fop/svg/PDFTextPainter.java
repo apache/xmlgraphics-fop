@@ -103,10 +103,10 @@ public class PDFTextPainter implements TextPainter {
                 String name = fam.getFamilyName();
                 if (fi.hasFont(name, weight, style)) {
                     try {
-                        int fsize = (int)size.floatValue();
+                        int fsize = (int)(size.floatValue() * 1000);
                         fontState = new FontState(fontState.getFontInfo(),
                                                   name, style, weight,
-                                                  fsize * 1000, 0);
+                                                  fsize, 0);
                     } catch (org.apache.fop.apps.FOPException fope) {
                         fope.printStackTrace();
                     }
@@ -117,9 +117,9 @@ public class PDFTextPainter implements TextPainter {
         }
         if (!found) {
             try {
-                int fsize = (int)size.floatValue();
+                int fsize = (int)(size.floatValue() * 1000);
                 fontState = new FontState(fontState.getFontInfo(), "any",
-                                          style, weight, fsize * 1000, 0);
+                                          style, weight, fsize, 0);
             } catch (org.apache.fop.apps.FOPException fope) {
                 fope.printStackTrace();
             }
@@ -230,13 +230,14 @@ public class PDFTextPainter implements TextPainter {
     }
 
     public Shape getDecoratedShape(TextNode node) {
-        System.out.println("PDFText getDecoratedShape");
+        //System.out.println("PDFText getDecoratedShape");
         return new Rectangle(1, 1);
     }
 
     public Rectangle2D getBounds(TextNode node) {
-        System.out.println("PDFText getBounds");
-        return null;
+        //System.out.println("PDFText getBounds");
+        Rectangle2D bounds = new Rectangle2D.Float(0, 0, 100, 12);
+        return bounds;
     }
 
     public Rectangle2D getDecoratedBounds(TextNode node) {

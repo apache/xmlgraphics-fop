@@ -9,6 +9,7 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.RegionArea;
@@ -24,7 +25,7 @@ public abstract class Region extends FObj {
     private SimplePageMaster _layoutMaster;
     private String _regionName;
 
-    protected Region(FObj parent) {
+    protected Region(FONode parent) {
         super(parent);
         this.name = getElementName();
     }

@@ -33,9 +33,8 @@ public class ListBlock extends FObj {
     int spaceBetweenListRows = 0;
     ColorType backgroundColor;
 
-    public ListBlock(FObj parent) {
+    public ListBlock(FONode parent) {
         super(parent);
-        this.name = "fo:list-block";
     }
 
     public Status layout(Area area) throws FOPException {

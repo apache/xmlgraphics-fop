@@ -19,7 +19,7 @@ import java.util.Enumeration;
 
 public class StaticContent extends Flow {
 
-    public StaticContent(FObj parent) {
+    public StaticContent(FONode parent) {
         super(parent);
         ((PageSequence)parent).setIsFlowSet(false);    // hacquery of sorts
     }

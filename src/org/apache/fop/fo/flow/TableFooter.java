@@ -24,7 +24,7 @@ public class TableFooter extends TableBody {
         areaContainer.setYPosition(value + 2 * spaceBefore);
     }
 
-    public TableFooter(FObj parent) {
+    public TableFooter(FONode parent) {
         super(parent);
         this.name = "fo:table-footer";
     }

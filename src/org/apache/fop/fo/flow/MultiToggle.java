@@ -18,7 +18,7 @@ import org.apache.fop.apps.FOPException;
  */
 public class MultiToggle extends ToBeImplementedElement {
 
-    public MultiToggle(FObj parent) {
+    public MultiToggle(FONode parent) {
         super(parent);
         this.name = "fo:multi-toggle";
     }

@@ -20,7 +20,7 @@ public class RegionEnd extends Region {
     public static final String REGION_CLASS = "end";
 
 
-    public RegionEnd(FObj parent) {
+    public RegionEnd(FONode parent) {
         super(parent);
     }
 

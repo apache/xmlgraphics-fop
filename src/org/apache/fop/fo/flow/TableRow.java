@@ -160,9 +160,8 @@ public class TableRow extends FObj {
     }
 
 
-    public TableRow(FObj parent) {
+    public TableRow(FONode parent) {
         super(parent);
-        this.name = "fo:table-row";
     }
 
     public void setColumns(Vector columns) {

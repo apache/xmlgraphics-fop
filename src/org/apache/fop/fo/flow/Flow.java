@@ -52,7 +52,7 @@ public class Flow extends FObj {
     private Status _status = new Status(Status.AREA_FULL_NONE);
 
 
-    public Flow(FObj parent) {
+    public Flow(FONode parent) {
         super(parent);
         this.name = getElementName();
     }

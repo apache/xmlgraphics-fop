@@ -52,7 +52,7 @@ public class SVGElement extends SVGObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public SVGElement(FObj parent) {
+    public SVGElement(FONode parent) {
         super(parent);
     }
 
@@ -75,11 +75,7 @@ public class SVGElement extends SVGObj {
             throw new FOPException("SVG not in fo:instream-foreign-object");
         }
 
-        if (this.marker == START) {
             this.fs = area.getFontState();
-
-            this.marker = 0;
-        }
 
         final Element svgRoot = element;
         /* create an SVG area */

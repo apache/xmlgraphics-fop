@@ -37,7 +37,7 @@ public class Character extends FObj {
     public final static int OK = 0;
     public final static int DOESNOT_FIT = 1;
 
-    public Character(FObj parent) {
+    public Character(FONode parent) {
         super(parent);
         this.name = "fo:character";
     }
@@ -102,7 +102,7 @@ public class Character extends FObj {
 
         int whiteSpaceCollapse =
             this.properties.get("white-space-collapse").getEnum();
-        int wrapOption = this.parent.properties.get("wrap-option").getEnum();
+        int wrapOption = ((FObj)this.parent).properties.get("wrap-option").getEnum();
 
         int tmp = this.properties.get("text-decoration").getEnum();
         if (tmp == org.apache.fop.fo.properties.TextDecoration.UNDERLINE) {

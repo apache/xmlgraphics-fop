@@ -7,10 +7,9 @@
 
 package org.apache.fop.svg;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 
-import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.apps.Driver;
@@ -33,7 +32,7 @@ public class SVGElementMapping implements ElementMapping {
 
                 foObjs = new HashMap();
                 foObjs.put("svg", new SE());
-                foObjs.put("<default>", new SVGMaker());
+                foObjs.put(DEFAULT, new SVGMaker());
             }
 
             String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
@@ -44,13 +43,13 @@ public class SVGElementMapping implements ElementMapping {
     }
 
     class SVGMaker extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new SVGObj(parent);
         }
     }
 
     class SE extends ElementMapping.Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new SVGElement(parent);
         }
     }

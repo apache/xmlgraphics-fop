@@ -19,7 +19,7 @@ import java.util.Enumeration;
 
 public class ListItemLabel extends FObj {
 
-    public ListItemLabel(FObj parent) {
+    public ListItemLabel(FONode parent) {
         super(parent);
         this.name = "fo:list-item-label";
     }

@@ -27,7 +27,7 @@ public class XMLElement extends XMLObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public XMLElement(FObj parent) {
+    public XMLElement(FONode parent) {
         super(parent);
     }
 

@@ -45,9 +45,8 @@ public class InstreamForeignObject extends FObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public InstreamForeignObject(FObj parent) {
+    public InstreamForeignObject(FONode parent) {
         super(parent);
-        this.name = "fo:instream-foreign-object";
     }
 
     /**
@@ -164,7 +163,6 @@ public class InstreamForeignObject extends FObj {
                 if (this.children.size() > 0) {
                     FONode fo = (FONode)children.elementAt(0);
                     Status status;
-                    // currently FONode must be an SVG
                     if ((status =
                             fo.layout(this.areaCurrent)).isIncomplete()) {
                         return status;

@@ -16,7 +16,7 @@ import org.apache.fop.pdf.PDFT1Stream;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.BufferedInputStream;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * Generic SingleByte font
@@ -44,7 +44,7 @@ public class SingleByteFont extends Font implements FontDescriptor {
     public int italicAngle = 0;
     public int missingWidth = 0;
 
-    public Hashtable kerning = new Hashtable();
+    public HashMap kerning = new HashMap();
     public boolean useKerning = true;
 
     public int width[] = null;
@@ -54,11 +54,11 @@ public class SingleByteFont extends Font implements FontDescriptor {
         return (useKerning & kerning.isEmpty());
     }
 
-    public final java.util.Hashtable getKerningInfo() {
+    public final java.util.HashMap getKerningInfo() {
         if (useKerning)
             return kerning;
         else
-            return new Hashtable();
+            return new HashMap();
     }
 
     public byte getSubType() {

@@ -25,9 +25,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class Leader extends FObjMixed {
 
-    public Leader(FObj parent) {
+    public Leader(FONode parent) {
         super(parent);
-        this.name = "fo:leader";
     }
 
     public Status layout(Area area) throws FOPException {

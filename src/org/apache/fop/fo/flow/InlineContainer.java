@@ -20,9 +20,8 @@ import org.xml.sax.Attributes;
  */
 public class InlineContainer extends ToBeImplementedElement {
 
-    public InlineContainer(FObj parent) {
+    public InlineContainer(FONode parent) {
         super(parent);
-        this.name = "fo:inline-container";
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {

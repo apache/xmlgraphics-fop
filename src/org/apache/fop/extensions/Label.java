@@ -9,11 +9,10 @@ package org.apache.fop.extensions;
 
 import org.apache.fop.fo.*;
 
-
 public class Label extends ExtensionObj {
     private String _label = "";
 
-    public Label(FObj parent) {
+    public Label(FONode parent) {
         super(parent);
     }
 
@@ -24,6 +23,5 @@ public class Label extends ExtensionObj {
     public String toString() {
         return _label;
     }
-
 
 }

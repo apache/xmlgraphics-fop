@@ -12,7 +12,6 @@ import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.fo.pagination.Root;
-import org.apache.fop.system.BufferManager;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.extensions.ExtensionObj;
 
@@ -53,14 +52,12 @@ public class FOTreeBuilder extends DefaultHandler {
     /**
      * current formatting object being handled
      */
-    protected FObj currentFObj = null;
+    protected FONode currentFObj = null;
 
     /**
      * the root of the formatting object tree
      */
     protected FObj rootFObj = null;
-
-    public BufferManager bufferManager;
 
     /**
      * set of names of formatting objects encountered but unknown
@@ -73,8 +70,8 @@ public class FOTreeBuilder extends DefaultHandler {
      * (mark-fop@inomial.com)
      */
     private StreamRenderer streamRenderer;
-
     private Logger log;
+    private FOUserAgent userAgent;
 
     public FOTreeBuilder() {}
 
@@ -114,7 +111,7 @@ public class FOTreeBuilder extends DefaultHandler {
     throws SAXException {
         currentFObj.end();
 
-        currentFObj = (FObj)currentFObj.getParent();
+        currentFObj = currentFObj.getParent();
     }
 
     /**
@@ -139,7 +136,7 @@ public class FOTreeBuilder extends DefaultHandler {
     public void startElement(String uri, String localName, String rawName,
                              Attributes attlist) throws SAXException {
         /* the formatting object started */
-        FObj fobj;
+        FONode fobj;
 
         /* the maker for the formatting object started */
         ElementMapping.Maker fobjMaker = null;
@@ -149,7 +146,7 @@ public class FOTreeBuilder extends DefaultHandler {
             fobjMaker = (ElementMapping.Maker)table.get(localName);
             // try default
             if(fobjMaker == null) {
-                fobjMaker = (ElementMapping.Maker)table.get("<default>");
+                fobjMaker = (ElementMapping.Maker)table.get(ElementMapping.DEFAULT);
             }
         }
 
@@ -158,7 +155,7 @@ public class FOTreeBuilder extends DefaultHandler {
             String fullName = uri + "^" + localName;
             if (!this.unknownFOs.containsKey(fullName)) {
                 this.unknownFOs.put(fullName, "");
-                log.error("Unknown formatting object "
+                log.warn("Unknown formatting object "
                                        + fullName);
             }
             if(namespaces.contains(uri.intern())) {
@@ -174,20 +171,25 @@ public class FOTreeBuilder extends DefaultHandler {
             fobj = fobjMaker.make(currentFObj);
             fobj.setName(localName);
             fobj.setLogger(log);
+            // set the user agent for resolving user agent values
+            fobj.setUserAgent(userAgent);
+            // set the stream renderer so that appropriate
+            // elements can add pages and handle resolving references
+            fobj.setStreamRenderer(streamRenderer);
+
             fobj.handleAttrs(attlist);
         } catch (FOPException e) {
             throw new SAXException(e);
         }
 
         if (rootFObj == null) {
-            rootFObj = fobj;
-            rootFObj.setBufferManager(this.bufferManager);
             if (!fobj.getName().equals("fo:root")) {
                 throw new SAXException(new FOPException("Root element must"
-                                                        + " be root, not "
+                                                        + " be fo:root, not "
                                                         + fobj.getName()));
             }
-        } else if(!(fobj instanceof org.apache.fop.fo.pagination.PageSequence)) {
+            rootFObj = (FObj)fobj;
+        } else {
             currentFObj.addChild(fobj);
         }
 
@@ -202,10 +204,6 @@ public class FOTreeBuilder extends DefaultHandler {
 
     public boolean hasData() {
         return (rootFObj != null);
-    }
-
-    public void setBufferManager(BufferManager bufferManager) {
-        this.bufferManager = bufferManager;
     }
 
 }

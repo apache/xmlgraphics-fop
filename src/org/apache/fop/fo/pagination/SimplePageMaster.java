@@ -37,9 +37,8 @@ public class SimplePageMaster extends FObj {
     boolean afterPrecedence;
     int afterHeight;
 
-    public SimplePageMaster(FObj parent) {
+    public SimplePageMaster(FONode parent) {
         super(parent);
-        this.name = "fo:simple-page-master";
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {

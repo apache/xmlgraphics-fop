@@ -9,6 +9,14 @@ package org.apache.fop.area;
 
 import java.io.Serializable;
 
+// If the area appears more than once in the output
+// or if the area has external data it is cached
+// to keep track of it and to minimize rendered output
+// renderers can render the output once and display it
+// for every occurence
+// this should also extend to all outputs (including PDFGraphics2D)
+// and all types of renderers
+
 /**
  * Base object for all areas.
  */
