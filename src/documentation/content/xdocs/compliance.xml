@@ -299,8 +299,12 @@ want it to.</comment>
           <level-3 name="line-stacking-strategy" citation="§7.15.6" extURL="slice7.html#line-stacking-strategy" compliance-level="1" comply="no"/>
           <level-3 name="linefeed-treatment" citation="§7.15.7" extURL="slice7.html#linefeed-treatment" compliance-level="2" comply="no"/>
           <level-3 name="white-space-treatment" citation="§7.15.8" extURL="slice7.html#white-space-treatment" compliance-level="2" comply="no"/>
-          <level-3 name="text-align" citation="§7.15.9" extURL="slice7.html#text-align" compliance-level="1" comply="yes"/>
-          <level-3 name="text-align-last" citation="§7.15.10" extURL="slice7.html#text-align-last" compliance-level="2" comply="yes"/>
+          <level-3 name="text-align" citation="§7.15.9" extURL="slice7.html#text-align" compliance-level="1" comply="partial">
+            <comment>Only start, end, center and justify are supported</comment>
+          </level-3>
+          <level-3 name="text-align-last" citation="§7.15.10" extURL="slice7.html#text-align-last" compliance-level="2" comply="partial">
+            <comment>Only start, end, center and justify are supported</comment>
+          </level-3>
           <level-3 name="text-indent" citation="§7.15.11" extURL="slice7.html#text-indent" compliance-level="1" comply="yes"/>
           <level-3 name="white-space-collapse" citation="§7.15.12" extURL="slice7.html#white-space-collapse" compliance-level="2" comply="yes"/>
           <level-3 name="wrap-option" citation="§7.15.13" extURL="slice7.html#wrap-option" compliance-level="1" comply="yes"/>
