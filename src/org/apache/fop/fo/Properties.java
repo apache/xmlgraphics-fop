@@ -1999,7 +1999,7 @@ public abstract class Properties {
             }
             // Construct the shorthand expansion list
             PropertyValueList borderexp =
-                PropertySets.initialValueExpansion
+                PropertySets.initialValueSHandExpansion
                                             (foNode.foTree, PropNames.BORDER);
             if (style != null)
                 borderexp = PropertySets.overrideSHandElements(borderexp,
@@ -4373,7 +4373,7 @@ public abstract class Properties {
             // values of individual components
 
             newlist =
-                PropertySets.initialValueExpansion
+                PropertySets.initialValueSHandExpansion
                                             (foNode.foTree, PropNames.FONT);
             // For each discovered property, override the value in the
             // initial value expansion.
