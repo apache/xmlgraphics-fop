@@ -7,70 +7,9 @@
 
 package org.apache.fop.apps;
 
-// SAX
-import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+public class CommandLineStarter {
 
-// Java
-import java.io.*;
-import java.net.URL;
-
-
-// FOP
-import org.apache.fop.messaging.MessageHandler;
-import org.apache.fop.configuration.Configuration;
-
-/**
- * super class for all classes which start Fop from the commandline
- *
- * Modified to use new streaming API by Mark Lillywhite, mark-fop@inomial.com
- */
-
-public class CommandLineStarter extends Starter {
-
-    CommandLineOptions commandLineOptions;
-    boolean errorDump;
-
-    public CommandLineStarter(CommandLineOptions commandLineOptions)
-    throws FOPException {
-        this.commandLineOptions = commandLineOptions;
-        options.setCommandLineOptions(commandLineOptions);
-        errorDump = Configuration.getBooleanValue("debugMode").booleanValue();
-        super.setInputHandler(commandLineOptions.getInputHandler());
-    }
-
-    /**
-     * Run the format.
-     * @exception FOPException if there is an error during processing
-     */
-    public void run() throws FOPException {
-        String version = Version.getVersion();
-        MessageHandler.logln(version);
-
-        XMLReader parser = inputHandler.getParser();
-        setParserFeatures(parser);
-
-        Driver driver = new Driver();
-        driver.setBufferFile(commandLineOptions.getBufferFile());
-
-        if (errorDump) {
-            driver.setErrorDump(true);
-        }
-
-        try {
-            driver.setRenderer(commandLineOptions.getRenderer());
-            driver.setOutputStream(new FileOutputStream(commandLineOptions.getOutputFile()));
-            driver.getRenderer().setOptions(commandLineOptions.getRendererOptions());
-            driver.render(parser, inputHandler.getInputSource());
-            System.exit(0);
-        } catch (Exception e) {
-            if (e instanceof FOPException) {
-                throw (FOPException)e;
-            }
-            throw new FOPException(e);
-        }
+    public CommandLineStarter() throws FOPException {
     }
 
 }
