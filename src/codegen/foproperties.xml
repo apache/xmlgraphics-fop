@@ -882,15 +882,11 @@
 
   <property>
     <name>space-end</name>
-    <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
-    <default>none</default>
+    <use-generic>GenericSpace</use-generic>
   </property>
   <property>
     <name>space-start</name>
-    <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
-    <default>none</default>
+    <use-generic>GenericSpace</use-generic>
   </property>
 
 <!-- Common Relative Position Properties -->
