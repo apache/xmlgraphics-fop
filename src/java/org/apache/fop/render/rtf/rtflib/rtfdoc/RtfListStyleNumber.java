@@ -55,84 +55,69 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
 package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
-import java.io.Writer;
+//Java
 import java.io.IOException;
-import java.util.Date;
-import java.util.Random;
 
-/**
- * Model of an RTF list, which can contain RTF list items
- * @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
- * @author Christopher Scott, scottc@westinghouse.com
- * @author Peter Herweg, pherweg@web.de
- */
-public class RtfList extends RtfContainer {
-    private RtfListItem item;
-    private RtfListTable listTable;
-    private final boolean hasTableParent;
-    private RtfListStyle defaultListStyle;
-    private Integer listTemplateId = null;
-    private Integer listId = null;
+//FOP
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement;
 
-    /** Create an RTF list as a child of given container with given attributes */
-    RtfList(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException {
-        super((RtfContainer)parent, w, attr);
-
-        //random number generator for ids
-        Date runTime = new Date();
-        Random listIdGenerator = new Random(runTime.getTime());
-        listId = new Integer(listIdGenerator.nextInt());
-        listTemplateId = new Integer(listIdGenerator.nextInt());
-
-        //create a new list table entry for the list
-        listTable = getRtfFile().startListTable(attr);
-        listTable.addList(this);
-
-        // find out if we are nested in a table
-        hasTableParent = this.getParentOfClass(RtfTable.class) != null;
-    }
-
-    /**
-     * Close current list item and start a new one
-     * @return new RtfListItem
-     * @throws IOException for I/O problems
-     */
-    public RtfListItem newListItem() throws IOException {
-        if (item != null) {
-            item.close();
-        }
-        item = new RtfListItem(this, writer);
-        return item;
-    }
-
-    public Integer getListId() {
-        return listId;
-    }
+public class RtfListStyleNumber extends RtfListStyle {
     
-    public Integer getListTemplateId() {
-        return listTemplateId;
+    /**
+     * Gets call before a RtfListItem has to be written.
+     * 
+     * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle#writeListPrefix()
+     */
+    public void writeListPrefix(RtfList list)
+    throws IOException {
+        list.writeControlWord("pnlvlbody");
+        list.writeControlWord("ilvl0");
+        list.writeOneAttribute(RtfListTable.LIST_NUMBER, "0");
+        list.writeControlWord("pndec");
+        list.writeOneAttribute("pnstart", new Integer(1));
+        list.writeOneAttribute("pnindent",
+                list.attrib.getValue(RtfListTable.LIST_INDENT));
+        list.writeControlWord("pntxta.");
     }
     
     /**
-     * Change list style
-     * @param ls ListStyle to set
+     * Gets call before a paragraph, which is contained by a RtfListItem has to be written.
+     * 
+     * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle#writeParagraphPrefix()
      */
-    public void setRtfListStyle(RtfListStyle ls) {
-        defaultListStyle = ls;
-    }
-
-    /**
-     * Get list style
-     * @return ListSytle of the List
-     */
-    public RtfListStyle getRtfListStyle() {
-        return defaultListStyle;
+    public void writeParagraphPrefix(RtfElement element)
+    throws IOException {
+        element.writeGroupMark(true);
+        element.writeControlWord("pntext");
+        element.writeControlWord("f" + RtfFontManager.getInstance().getFontNumber("Symbol"));
+        element.writeControlWord("'b7");
+        element.writeControlWord("tab");
+        element.writeGroupMark(false);
     }
     
-    public boolean getHasTableParent() {
-        return hasTableParent;
+    /**
+     * Gets call when the list table has to be written.
+     * 
+     * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle#writeLevelGroup()
+     */
+    public void writeLevelGroup(RtfElement element)
+    throws IOException {
+        element.writeOneAttributeNS(
+                RtfListTable.LIST_START_AT, new Integer(1));
+        element.attrib.set(RtfListTable.LIST_NUMBER_TYPE, 0);
+        
+        element.writeGroupMark(true);
+        element.writeOneAttributeNS(
+                RtfListTable.LIST_TEXT_FORM, "\\'03\\\'00. ;");
+        element.writeGroupMark(false);
+            
+        element.writeGroupMark(true);
+        element.writeOneAttributeNS(
+                RtfListTable.LIST_NUM_POSITION, "\\'01;");
+        element.writeGroupMark(false);
+            
+        element.writeOneAttribute(RtfListTable.LIST_FONT_TYPE, new Integer(0));
     }
 }

@@ -56,11 +56,15 @@
 
 package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
+// Java
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import java.util.Iterator;
+
+// FOP
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList;
 
 /** 
  * Class which contains a linear text run. It has methods to add attributes, 
@@ -69,6 +73,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
  */
 public class RtfTextrun extends RtfContainer {
     private boolean bSuppressLastPar = false;
+    private RtfListItem rtfListItem;
     
     /**  Class which represents the opening of a RTF group mark.*/
     private class RtfOpenGroupMark extends RtfElement {
@@ -258,6 +263,10 @@ public class RtfTextrun extends RtfContainer {
         //may contain for example \intbl
         writeAttributes(attrib, null);
         
+        if(rtfListItem!=null) {
+            rtfListItem.getRtfListStyle().writeParagraphPrefix(this);
+        }
+        
         //write all children
         boolean bPrevPar = false;
         boolean bFirst = true;
@@ -283,6 +292,10 @@ public class RtfTextrun extends RtfContainer {
                 
             if (!bHide) {
                 e.writeRtf(); 
+                
+                if (rtfListItem!=null && e instanceof RtfParagraphBreak) {
+                    rtfListItem.getRtfListStyle().writeParagraphPrefix(this);
+                }
             }
             
             if (e instanceof RtfParagraphBreak) {
@@ -296,6 +309,14 @@ public class RtfTextrun extends RtfContainer {
                 bFirst = bFirst && e.isEmpty();
             }
         }
+    }
+    
+    public void setRtfListItem(RtfListItem listItem) {
+        rtfListItem=listItem;
+    }
+    
+    public RtfListItem getRtfListItem() {
+        return rtfListItem;
     }
 }
 

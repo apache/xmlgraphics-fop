@@ -50,6 +50,11 @@
  */
 package org.apache.fop.fo.flow;
 
+// XML
+import org.xml.sax.Attributes;
+
+// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.FObj;
@@ -165,5 +170,19 @@ public class ListItem extends FObj {
         fotv.serveListItem(this);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#handleAttrs
+     */
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
+
+        getFOTreeControl().getFOInputHandler().startListItem(this);
+    }
+    
+    protected void end() {
+        super.end();
+        
+        getFOTreeControl().getFOInputHandler().endListItem(this);
+    }
 }
 

@@ -85,6 +85,7 @@ import org.apache.fop.apps.Document;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfListContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTextrunContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAfter;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
@@ -93,6 +94,9 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFile;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
@@ -608,36 +612,81 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startList(ListBlock)
      */
     public void startList(ListBlock lb) {
+        try  {
+            // create an RtfList in the current list container
+            final IRtfListContainer c = (IRtfListContainer)builderContext.getContainer(IRtfListContainer.class,true,this);
+            final RtfList newList = c.newList(ListAttributesConverter.convertAttributes(lb.properties));
+            builderContext.pushContainer(newList);
+        } catch (IOException ioe) {
+            log.error("startList: " + ioe.getMessage());
+            throw new Error(ioe.getMessage());
+        } catch (FOPException fe) {
+            log.error("startList: " + fe.getMessage());
+            throw new Error(fe.getMessage());
+        } catch (Exception e) {
+            log.error("startList: " + e.getMessage());
+            throw new Error(e.getMessage());
+        }
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#endList(ListBlock)
      */
     public void endList(ListBlock lb) {
+        builderContext.popContainer();
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#startListItem(ListItem)
      */
     public void startListItem(ListItem li) {
+        // create an RtfListItem in the current RtfList
+        try {
+            final RtfList list = (RtfList)builderContext.getContainer(RtfList.class,true,this);
+            builderContext.pushContainer(list.newListItem());
+        } catch (IOException ioe) {
+            log.error("startList: " + ioe.getMessage());
+            throw new Error(ioe.getMessage());
+        } catch (FOPException fe) {
+            log.error("startList: " + fe.getMessage());
+            throw new Error(fe.getMessage());
+        } catch (Exception e) {
+            log.error("startList: " + e.getMessage());
+            throw new Error(e.getMessage());
+        }
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#endListItem(ListItem)
      */
     public void endListItem(ListItem li) {
+        builderContext.popContainer();
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#startListLabel()
      */
     public void startListLabel() {
+        try {
+            RtfListItem item
+                = (RtfListItem)builderContext.getContainer(RtfListItem.class, true, this);
+                
+            RtfListItemLabel label=item.new RtfListItemLabel(item);
+            builderContext.pushContainer(label);
+        } catch (IOException ioe) {
+            log.error("startPageNumber:" + ioe.getMessage());
+            throw new Error(ioe.getMessage());
+        } catch (Exception e) {
+            log.error("startPageNumber: " + e.getMessage());
+            throw new Error(e.getMessage());
+        }
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#endListLabel()
      */
     public void endListLabel() {
+        builderContext.popContainer();
     }
 
     /**
