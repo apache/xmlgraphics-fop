@@ -768,7 +768,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             // this makes the pattern the right way up, since
             // it is outside the original transform around the
             // whole svg document
-            pattStream.write("1 0 0 -1 0 " + rect.getHeight() + " cm\n");
+            pattStream.write("1 0 0 -1 0 " + (rect.getHeight() + rect.getY()) + " cm\n");
 
             pattStream.write(pattGraphic.getString());
             pattStream.write("Q");
@@ -776,16 +776,20 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             ArrayList bbox = new ArrayList();
             bbox.add(new Double(0));
             bbox.add(new Double(0));
-            bbox.add(new Double(rect.getWidth()));
-            bbox.add(new Double(rect.getHeight()));
+            bbox.add(new Double(rect.getWidth() + rect.getX()));
+            bbox.add(new Double(rect.getHeight() + rect.getY()));
+
             ArrayList translate = new ArrayList();
-            // TODO combine with pattern transform
-            translate.add(new Double(1));
-            translate.add(new Double(0));
-            translate.add(new Double(0));
-            translate.add(new Double(1));
-            translate.add(new Double(0/*rect.getX()*/));
-            translate.add(new Double(0/*rect.getY()*/));
+            AffineTransform pattt = pp.getPatternTransform();
+            pattt.translate(rect.getWidth() + rect.getX(), rect.getHeight() + rect.getY());
+            double[] flatmatrix = new double[6];
+            pattt.getMatrix(flatmatrix);
+            translate.add(new Double(flatmatrix[0]));
+            translate.add(new Double(flatmatrix[1]));
+            translate.add(new Double(flatmatrix[2]));
+            translate.add(new Double(flatmatrix[3]));
+            translate.add(new Double(flatmatrix[4]));
+            translate.add(new Double(flatmatrix[5]));
 
             FontSetup.addToResources(pdfDoc, res, fi);
 
