@@ -622,7 +622,7 @@ public class PDFRenderer extends PrintRenderer {
 
                 this.currentFontName = name;
                 this.currentFontSize = size;
-                pdf = pdf.append("/" + name + " " + (size / 1000) + " Tf\n");
+                pdf = pdf.append("/" + name + " " + ((float)size / 1000) + " Tf\n");
             }
 
             //Do letter spacing (must be outside of [..] TJ)
