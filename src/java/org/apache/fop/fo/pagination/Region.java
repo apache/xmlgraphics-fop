@@ -60,8 +60,6 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.area.CTM;
-import org.apache.fop.area.RegionReference;
 
 // SAX
 import org.xml.sax.Attributes;
@@ -136,20 +134,6 @@ public abstract class Region extends FObj {
     }
 
     public abstract Rectangle getViewportRectangle(FODimension pageRefRect);
-
-    /**
-     * Set the region position inside the region viewport.
-     * This sets the trasnform that is used to place the contents of
-     * the region.
-     *
-     * @param r the region reference area
-     * @param absRegVPRect the rectangle to place the region contents
-     */
-    public void setRegionPosition(RegionReference r, Rectangle2D absRegVPRect) {
-        FODimension reldims = new FODimension(0, 0);
-        r.setCTM(CTM.getCTMandRelDims(propMgr.getAbsRefOrient(),
-                propMgr.getWritingMode(), absRegVPRect, reldims));
-    }
 
     /**
      * Return the enumerated value designating this type of region in the
