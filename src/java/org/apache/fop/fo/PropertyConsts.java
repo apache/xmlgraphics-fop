@@ -137,8 +137,8 @@ public class PropertyConsts {
      * of a property class.  The index value is the index of the property
      * class name in the classNames[] array.
      */
-    private final HashMap classToIndex
-                        = new HashMap(PropNames.LAST_PROPERTY_INDEX + 1);
+    private final HashMap classToIndex = new HashMap(
+                    (int)((PropNames.LAST_PROPERTY_INDEX + 1) / 0.75) + 1);
 
     /**
      * An <tt>int[]</tt> containing the <i>inherited</i> values from the
@@ -458,8 +458,6 @@ public class PropertyConsts {
         Class pclass;
         Property property;
 
-        //System.out.println("setupProperty " + propindex + " "
-                            //+ PropNames.getPropertyName(propindex));
         if ((property = properties[propindex]) != null) return property;
 
         // Get the property class name
@@ -484,38 +482,25 @@ public class PropertyConsts {
         // Get the class for this property name
         String name = packageName + ".properties." + cname;
         try {
-            //System.out.println("classes["+propindex+"] "+name);//DEBUG
             pclass = Class.forName(name);
             classes[propindex] = pclass;
 
             // Instantiate the class
             property = (Property)(pclass.newInstance());
             properties[propindex] = property;
-            //System.out.println
-                    //("property name "
-                     //+ property.getClass().getName());
-            //System.out.println
-            //("property name " +
-            //properties[propindex].getClass().getName());
 
             // Set inheritance value
             if ((inherited[propindex]
-                                = pclass.getField("inherited").getInt(null))
+                                = property.getInherited())
                     != Property.NO)
                             inheritedprops.set(propindex);
             // Set datatypes
-            datatypes[propindex] = pclass.getField("dataTypes").getInt(null);
-            //System.out.println("datatypes " + datatypes[propindex] + "\n"
-                           //+ Property.listDataTypes(datatypes[propindex]));
+            datatypes[propindex] = property.getDataTypes();
 
             // Set initialValueTypes
-            initialValueTypes[propindex] =
-                            pclass.getField("initialValueType").getInt(null);
-            //System.out.println("initialValueType "
-                               //+ initialValueTypes[propindex]);
+            initialValueTypes[propindex] = property.getInitialValueType();
 
-            traitMappings[propindex] =
-                                pclass.getField("traitMapping").getInt(null);
+            traitMappings[propindex] = property.getTraitMapping();
 
         } catch (ClassNotFoundException e) {
             throw new PropertyException
@@ -526,10 +511,6 @@ public class PropertyConsts {
         } catch (InstantiationException e) {
             throw new PropertyException
                     ("InstantiationException" + e.getMessage());
-        }
-        catch (NoSuchFieldException e) {
-            throw new PropertyException
-                    ("NoSuchFieldException" + e.getMessage());
         }
 
         return property;
