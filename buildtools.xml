@@ -5,9 +5,8 @@
     Instructions for building the buildtools.jar:
 
  Classpath should contain the following:
-   Xerces 1.2.x
-   Xalan  1.2.x
-   Xalan  2.x
+   Xerces
+   Xalan
    xml-fop/lib/ant.jar
 
   Run "ant -f buildtools.xml" to build a new version of the buildtools jar
@@ -28,12 +27,12 @@
    <property name="trax" value="TraxTransform.java"/>
 
    <available property="trax.present" classname="javax.xml.transform.Transformer"/>
+  </target>
 
    <target name="compile" depends="init,prepare.src">
      <mkdir dir="${build.dest}"/>
      <javac srcdir="${build.src}"
 	    destdir="${build.dest}"/>
-     
    </target>
 
    <target name="buildtools" depends="clean,init,compile">
