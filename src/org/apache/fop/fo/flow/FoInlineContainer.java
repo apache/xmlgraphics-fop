@@ -106,11 +106,11 @@ public class FoInlineContainer extends FONode {
      * attribute set information.
      */
     public FoInlineContainer
-                (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
+            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.INLINE_CONTAINER, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices);
+                          stateFlags, sparsePropsMap, sparseIndices);
         xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         try {
