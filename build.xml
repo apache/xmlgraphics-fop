@@ -179,6 +179,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="charlist.xsl" value="${build.codegen}/code-point-mapping.xsl"/>  
     <property name="fontfile.xsl" value="${build.codegen}/font-file.xsl"/>  
     <property name="t1fontfile.xsl" value="${build.codegen}/t1font-file.xsl"/>
+    <property name="ttffontfile.xsl" value="${build.codegen}/ttffont-file.xsl"/>
     <property name="Courier.xml" value="${build.codegen}/Courier.xml"/>  
     <property name="Courier-Oblique.xml" value="${build.codegen}/Courier-Oblique.xml"/>
     <property name="Courier-Bold.xml" value="${build.codegen}/Courier-Bold.xml"/>  
@@ -405,8 +406,12 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
         outfile="${build.src}/${replacestring}/render/pdf/fonts/Symbol.java" smart="yes"/>
 
     <!-- custom fonts (Use t1fontfile.xsl instead of fontfile.xsl for Type 1 fonts!) step 2/2 -->
-    <!-- use this as a template 
+    <!-- use this as a template for type 1 fonts: 
     <xslt infile="${myfont.xml}" xsltfile="${t1fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/myfont.java" smart="yes"/>
+    -->
+    <!-- use this as a template for truetype fonts 
+    <xslt infile="${myfont.xml}" xsltfile="${ttffontfile.xsl}" 
         outfile="${build.src}/${replacestring}/render/pdf/fonts/myfont.java" smart="yes"/>
     -->
 
