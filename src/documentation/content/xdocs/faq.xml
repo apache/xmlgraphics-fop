@@ -113,8 +113,8 @@
       <question>How can I contribute?</question>
       <answer>
         <p>
-          There is always plenty of things to do. See <link>limitations</link>
-          and <link>bugzilla</link>.
+          There is always plenty of things to do. See
+          <link href="involved.html">getting involved</link>.
         </p>
       </answer>
     </faq>
@@ -139,7 +139,7 @@
           master definitions.
         </p>
         <p>
-          See also <link>release notes</link>.
+          See also <link href="relnotes.html">release notes</link>.
         </p>
       </answer>
     </faq>
@@ -150,14 +150,14 @@
           The Jimi image library, which is used for processing images in PNG and
           other formats, was removed from the distribution for licensing
           reasons. You have to <fork href="http://java.sun.com">download</fork>
-          and <link>install</link> it by yourself.
+          and install it by yourself.
         </p>
       </answer>
     </faq>
     <faq>
       <question>I get a NoClassDefFound exception.</question>
       <answer>
-        <p>This is typically a problem with your <link>classpath</link>.</p>
+        <p>This is typically a problem with your classpath.</p>
         <p>If you are running FOP from the command line:</p>
         <ul>
           <li>
@@ -207,11 +207,11 @@
         </p>
         <ul>
           <li>
-            Avoid forward <link>references</link>. Forward references cause all
+            Avoid forward references. Forward references cause all
             pages from the page with the reference on to be held in memory until
             the page with the referenced element is encountered. Common forward
             references are table of contents at the beginning of the document
-            and the <link>"page N of TOTAL"</link> in footers. Forward
+            and the <link href="#pagenum">"page N of TOTAL"</link> in footers. Forward
             references may be required by the task, however, if you are getting
             a memory overflow you should at least check whether this is really
             as necessary as claimed. A TOC, for example, could often be placed
@@ -233,7 +233,7 @@
             possibly be freed after the page sequence has been rendered.
           </li>
           <li>
-            Increase <link>memory settings of the JVM</link>. Be aware that it
+            Increase memory settings of the JVM. Be aware that it
             is usually unwise to increase the memory allocated to the JVM beyond
             the amount of physical RAM, it will significantly slow down. YMMV.
           </li>
@@ -248,13 +248,14 @@
         </p>
         <p>
           Reducing memory consumption in general and squishing bugs is an
-          ongoing effort, partially addressed in the <link>redesign</link>.
+          ongoing effort, partially addressed in the <link href="dev/index.html">redesign</link>.
         </p>
       </answer>
     </faq>
     <faq>
       <question>I get a MalformedURLException.</question>
       <answer>
+        <anchor id="MalformedURL"/>
         <p>
           What you probably think of as "file names" are usually URLs, in
           particular the src attribute of fo:external-graphic.
@@ -277,12 +278,12 @@
           <code>path/file.ext</code> or <code>../file.ext</code>. The string
           <code>file:path/file.ext</code> is <em>not</em> a relative URL,
           in fact, it isn't a valid URL at all. A relative URL is subject to a
-          <link>resolving process</link>, which transforms it into an absolute
+          resolving process, which transforms it into an absolute
           URL.
         </p>
         <p>
-          See <link>Understanding URIs and URLs</link> and <link>Understanding
-          URL resolving</link>.
+          See Understanding URIs and URLs and Understanding
+          URL resolving.
         </p>
       </answer>
     </faq>
@@ -367,13 +368,13 @@ FO document. This will catch most problems, but should not be relied upon to cat
           Relative URLs are resolved against the baseDir property of FOP. For
           the command line FOP application, the baseDir is the directory of the
           input file, either the FO file or the XML source. If FOP is used
-          embedded in a servlet, <link>baseDir can be set explicitely</link>. If
+          embedded in a servlet, <link href="embedding.html">baseDir can be set explicitely</link>. If
           it's not set, it is usually the current working directory of the
           process which runs FOP.
         </p>
         <p>
-          See <link>Understanding URIs and URLs</link> and <link>Understanding
-          URL resolving</link>.
+          See Understanding URIs and URLs and Understanding
+          URL resolving.
         </p>
       </answer>
     </faq>
@@ -510,7 +511,7 @@ FO document. This will catch most problems, but should not be relied upon to cat
           </li>
         </ul>
         <p>
-          See also <link>supported image formats</link>.
+          See also supported image formats.
         </p>
       </answer>
     </faq>
@@ -530,7 +531,7 @@ FO document. This will catch most problems, but should not be relied upon to cat
     <faq>
       <question>How do I use FOP in a servlet?</question>
       <answer>
-        <p>Look at the <link>servlet example</link>.</p>
+        <p>Look at the servlet example.</p>
         <p>
           A rather minimal code snippet to demonstrate the basics:
         </p>
@@ -545,7 +546,7 @@ driver.run();</source>
           with IEx and view it later. There are other problems with this code.
         </p>
         <p>
-          Please look into <link>Howto embed FOP in a servlet</link> for all
+          Please look into Howto embed FOP in a servlet for all
           kinds of details.
         </p>
       </answer>
@@ -822,12 +823,6 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
           <li>
             Make sure that the reference is valid in the current SVG document.
           </li>
-          <li>
-            **DOES THIS WORK**
-            Let the URL refer to some location where the gradient could be
-            retrieved, for example if the SVG code is embedded in your XSL,
-            try <code>fill="url(my.xsl#PurpleToWhite)"</code>.
-          </li>
         </ul>
         <p>
           In any case, the referenced stuff has to be pointed to by an URL. It
@@ -841,7 +836,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
           but also some effort by a standard committee in order to make the
           semantics of this kind of references in embedded SVG clearer.
         </p>
-        <p>See also <link>MalformedURLException</link></p>
+        <p>See also <link href="#MalformedURL">MalformedURLException</link></p>
       </answer>
     </faq>
   </part>
@@ -851,7 +846,8 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       <question>How do I embed fonts in PDF?</question>
       <answer>
         <p>
-          Provide$$$
+          See the <link href="fonts.html">Fonts</link> page for information
+          about embedding fonts.
         </p>
       </answer>
     </faq>
@@ -859,18 +855,22 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       <question>Characters not displayed, or displayed incorrectly, or displayed
   as "#"</question>
       <answer>
-        <p>  Answers are that fonts must be available on the target platform, and
+        <p>Answers are that fonts must be available for the output format, and
   the selected font must contain glyphs for the desired character.
+PDF has a set of <link href="output.html#pdf-fonts">defined fonts</link>, other fonts can be embedded following the
+<link href="fonts.html">instructions</link>.
+To find out if the characters you need are in the core fonts then
+(todo - find a glyph font table for the fonts).
 </p>
         <p>  For example, for most symbols, the symbol font has to be selected
-  explicitely (actually: is this a feature or a bug?):
+  explicitely (in future it should be possible to specify a list of fonts
+where it will select the font for the specified character):
 </p>
 <p>   &lt;fo:inline font-family="Symbol">&amp;#x2205;&lt;/fo:inline></p>
 <p>  gives EMPTY SET while the same characters in the default font results
   in AE LIGATURE (which happens to occupy the same place in the default
   font as the EMPTY SET in the Symbol font). The "#" shows up if the
   selected font does not define a glyph for the translated index.</p>
-        <p>(Still applicable in 0.20.3?)</p>
       </answer>
     </faq>
     <faq id="PDF-postprocess">
@@ -1236,6 +1236,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       <question>(FO) How do I print the total number of pages, like in "page 1
       of 12"</question>
       <answer>
+        <anchor id="pagenum"/>
         <p>
           (XSL FAQ)
         </p>
@@ -1396,7 +1397,7 @@ class rendtest {
           offending characters.
         </p>
         <p>
-          Refer to the <link>XML specification</link> or to a good tutorial for
+          Refer to the <link href="http://www.w3.org/XML/">XML specification</link> or to a good tutorial for
           details of the XML file format.
         </p>
       </answer>
