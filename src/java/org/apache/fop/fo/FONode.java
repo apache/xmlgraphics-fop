@@ -18,6 +18,7 @@
  */
 package org.apache.fop.fo;
 
+import java.awt.geom.Rectangle2D;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import java.util.logging.Logger;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
+import org.apache.fop.area.AreaListener;
 import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.datastructs.SyncedNode;
 import org.apache.fop.datastructs.TreeException;
@@ -51,7 +53,7 @@ import org.apache.fop.xml.XmlEventReader;
  * @version $Revision: 1.19.2.33 $ $Name:  $
  */
 
-public class FONode extends SyncedNode{
+public class FONode extends SyncedNode implements AreaListener {
 
     private static final String tag = "$Name:  $";
     private static final String revision = "$Revision: 1.19.2.33 $";
@@ -187,7 +189,7 @@ public class FONode extends SyncedNode{
 
     /** The number of markers on this FO. */
     protected int numMarkers = 0;
-    
+
     /**
      * @param foTree an <tt>FOTree</tt> to which this node belongs
      * @param type the fo type of this FONode.
@@ -229,6 +231,15 @@ public class FONode extends SyncedNode{
         // Do not set up the remaining properties now.
         // These will be developed by inheritance or from the initial values
         // as the property values are referenced.
+    }
+
+    /** The area context for resolution of properties on this node */
+    protected Rectangle2D areaContext = null;
+    /* (non-Javadoc)
+     * @see org.apache.fop.area.AreaListener#setDimensions(java.awt.geom.Rectangle2D)
+     */
+    public void setDimensions(Rectangle2D area) {
+        areaContext = area;
     }
 
     private void processAttributes() throws FOPException, PropertyException {
