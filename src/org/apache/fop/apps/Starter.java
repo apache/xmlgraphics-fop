@@ -25,11 +25,9 @@ import java.net.URL;
  */
 public abstract class Starter extends AbstractLogEnabled {
 
-    Options options;
     InputHandler inputHandler;
 
     public Starter() throws FOPException {
-        options = new Options();
     }
 
     public void setInputHandler(InputHandler inputHandler) {

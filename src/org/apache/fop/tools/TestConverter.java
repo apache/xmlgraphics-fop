@@ -8,7 +8,7 @@
 package org.apache.fop.tools;
 
 import org.apache.fop.apps.*;
-import org.apache.fop.configuration.*;
+import org.apache.fop.fo.FOUserAgent;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
@@ -198,10 +198,9 @@ public class TestConverter extends AbstractLogEnabled {
 
         try {
             File xmlFile = new File(baseDir + "/" + xml);
-
+            String baseURL = null;
             try {
-                Configuration.put("baseDir",
-                                  xmlFile.getParentFile().toURL().toExternalForm());
+                baseURL = xmlFile.getParentFile().toURL().toExternalForm();
             } catch (Exception e) {
                 getLogger().error("Error setting base directory");
             }
@@ -221,6 +220,9 @@ public class TestConverter extends AbstractLogEnabled {
             Driver driver = new Driver();
             setupLogger(driver, "fop");
             driver.initialize();
+            FOUserAgent userAgent = new FOUserAgent();
+            userAgent.setBaseURL(baseURL);
+            driver.setUserAgent(userAgent);
             if (outputPDF) {
                 driver.setRenderer(Driver.RENDER_PDF);
             } else {

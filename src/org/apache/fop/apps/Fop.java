@@ -21,14 +21,14 @@ public class Fop {
             } else {
                 System.err.println("" + e.getMessage());
             }
-            if (options != null && options.isDebugMode().booleanValue()) {
+            if (options != null && options.getLogger().isDebugEnabled()) {
                 e.printStackTrace();
             } else {
                 System.err.println("Turn on debugging for more information");
             }
         } catch (java.io.FileNotFoundException e) {
             System.err.println("" + e.getMessage());
-            if (options != null && options.isDebugMode().booleanValue()) {
+            if (options != null && options.getLogger().isDebugEnabled()) {
                 e.printStackTrace();
             } else {
                 System.err.println("Turn on debugging for more information");

@@ -18,9 +18,6 @@ import java.io.*;
 import java.net.URL;
 
 
-// FOP
-import org.apache.fop.configuration.Configuration;
-
 /**
  * super class for all classes which start Fop from the commandline
  *
@@ -29,14 +26,10 @@ import org.apache.fop.configuration.Configuration;
 public class CommandLineStarter extends Starter {
 
     CommandLineOptions commandLineOptions;
-    boolean errorDump;
 
     public CommandLineStarter(CommandLineOptions commandLineOptions)
     throws FOPException {
         this.commandLineOptions = commandLineOptions;
-        options.setCommandLineOptions(commandLineOptions);
-        errorDump =
-          Configuration.getBooleanValue("debugMode").booleanValue();
         super.setInputHandler(commandLineOptions.getInputHandler());
     }
 
@@ -55,10 +48,6 @@ public class CommandLineStarter extends Starter {
         Driver driver = new Driver();
         setupLogger(driver);
         driver.initialize();
-
-        if (errorDump) {
-            driver.setErrorDump(true);
-        }
 
         try {
             driver.setRenderer(commandLineOptions.getRenderer());

@@ -22,13 +22,12 @@ import java.io.*;
 import java.util.*;
 
 // FOP
-import org.apache.fop.apps.Options;
 import org.apache.fop.apps.Starter;
 import org.apache.fop.apps.InputHandler;
 import org.apache.fop.apps.FOInputHandler;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.configuration.Configuration;
+import org.apache.fop.fo.FOUserAgent;
 
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
@@ -189,6 +188,7 @@ public class Fop extends Task {
 
 class FOPTaskStarter extends Starter {
     Fop task;
+    String baseURL = null;
 
     FOPTaskStarter(Fop task) throws FOPException {
         this.task = task;
@@ -255,21 +255,18 @@ class FOPTaskStarter extends Starter {
 
     public void run() throws FOPException {
         if (task.userConfig != null) {
-            new Options (task.userConfig);
         }
 
         try {
             if (task.getFofile() != null) {
-                Configuration.put("baseDir",
-                                  task.getFofile().getParentFile().toURL().
-                                  toExternalForm());
+                baseURL =  task.getFofile().getParentFile().toURL().
+                                  toExternalForm();
             }
         } catch (Exception e) {
             getLogger().error("Error setting base directory", e);
         }
 
-        task.log("Using base directory: " +
-                 Configuration.getValue("baseDir"), Project.MSG_DEBUG);
+        task.log("Using base URL: " + baseURL, Project.MSG_DEBUG);
 
         int rint = determineRenderer(task.getFormat());
         String newExtension = determineExtension(rint);
@@ -304,12 +301,11 @@ class FOPTaskStarter extends Starter {
                     outf = new File(task.getOutdir(), outf.getName());
                 }
                 try {
-                    Configuration.put("baseDir",
-                                      fs.getDir(task.getProject()).toURL().
-                                      toExternalForm());
+                    baseURL = fs.getDir(task.getProject()).toURL().
+                                      toExternalForm();
 
                 } catch (Exception e) {
-                    task.log("Error setting base directory",
+                    task.log("Error setting base URL",
                              Project.MSG_DEBUG);
                 }
 
@@ -344,12 +340,10 @@ class FOPTaskStarter extends Starter {
         try {
             Driver driver = new Driver(inputHandler.getInputSource(), out);
             setupLogger(driver);
+            FOUserAgent userAgent = new FOUserAgent();
+            userAgent.setBaseURL(baseURL);
+            driver.setUserAgent(userAgent);
             driver.setRenderer(renderer);
-        if (renderer == Driver.RENDER_XML) {
-        HashMap rendererOptions = new HashMap();
-        rendererOptions.put("fineDetail", new Boolean(true));
-        driver.getRenderer().setOptions(rendererOptions);
-        }
             driver.setXMLReader(parser);
             driver.run();
             out.close();
