@@ -491,7 +491,6 @@ public class PDFRenderer extends PrintRenderer {
             // transform rect to absolute coords
             AffineTransform transform = currentState.getTransform();
             rect = transform.createTransformedShape(rect).getBounds();
-            rect = new Rectangle2D.Double(rect.getX(), rect.getY() + rect.getHeight(), rect.getWidth(), rect.getHeight());
 
             int type = internal ? PDFLink.INTERNAL : PDFLink.EXTERNAL;
             PDFLink pdflink = pdfDoc.makeLink(rect, dest, type);
