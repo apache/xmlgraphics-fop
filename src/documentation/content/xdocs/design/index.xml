@@ -9,54 +9,29 @@
     </authors>
   </header>
   <body>
-    <note>The articles in this section pertain to the <em>redesign</em> or <em>trunk</em> line of development.
-The redesign is mainly focusing on parts of the layout process (converting the FO tree into the Area Tree).</note>
-
-
-<section>
-  <title>Introduction</title>
-    <section>
-      <title>Overview</title>
-      <p>FOP takes an xml file does its magic and then writes a document to a
-       stream.</p>
-      <p>xml -&gt; [FOP] -&gt; document</p>
-      <p>The document could be pdf, ps etc. or directed to a printer or the
-       screen. The principle remains the same. The xml document must be in the XSL:FO
-       format.</p>
-      <p>For convenience we provide a mechanism to handle XML+XSL as
-       input.</p>
-      <p>The xml document is always handled internally as SAX. The SAX events
-       are used to read the elements, attributes and text data of the FO document.
-       After the manipulation of the data the renderer writes out the pages in the
-       appropriate format. It may write as it goes, a page at a time or the whole
-       document at once. Once finished the document should contain all the data in the
-       chosen format ready for whatever use.</p>
+    <note>The articles in this section pertain mainly to the <em>redesign</em> or <em>trunk</em> line of development.
+The redesign is mainly focusing on parts of the layout process (converting the FO tree into the Area Tree).
+Therefore other (non-layout) sections in this document are probably largely accurate for the maintenance branch, but should be used with care in that context.</note>
+    <section id="black-box">
+      <title>The Black Box View</title>
+      <p>From a user's standpoint, FOP is a black box that an xml file as input, performs some magic, then creates the desired output:</p>
+      <table>
+        <caption>FOP from a User's Standpoint</caption>
+        <tr>
+          <th>Process</th>
+          <th>Result</th>
+        </tr>
+        <tr>
+          <td>.</td>
+          <td>XSL-FO document</td>
+        </tr>
+        <tr>
+          <td>FOP</td>
+          <td>Output: PDF, Postscript, Print, etc.</td>
+        </tr>
+      </table>
+      <p>Although this is simple, it is useful in defining the outer limits of FOP's core processing. There may be other things going on under FOP's control that are not really part of FOP. For example, FOP provides a convenience mechanism that takes semantic XML + an XSLT transformation as input, instead of XSL-FO. This is done outside of FOP's core processing (by Xalan), and it is therefore outside the scope of FOP's design, and outside the scope of the FOP design documents.</p>
     </section>
-    <section>
-      <title>Stages</title>
-      <p>The fo data goes through a few stages. Each piece
-       of data will generally go through the process in the same way but some
-       information may be used a number of times or in a different order. To reduce
-       memory one stage will start before the previous is completed.</p>
-      <p>SAX Handler -&gt; FO Tree -&gt; Layout Managers -&gt; Area Tree
-       -&gt; Render -&gt; document</p>
-      <p>In the case of rtf, mif etc. <br/>SAX Handler -&gt; FO Tree -&gt;
-       Structure Renderer -&gt; document</p>
-      <p>The FO Tree is constructed from the xml document. It is an internal
-       representation of the xml document and it is like a DOM with some differences.
-       The Layout Managers use the FO Tree do their layout stuff and create an Area
-       Tree. The Area Tree is a representation of the final result. It is a
-       representation of a set of pages containing the text and other graphics. The
-       Area Tree is then given to a Renderer. The Renderer can read the Area Tree and
-       convert the information into the render format. For example the PDF Renderer
-       creates a PDF Document. For each page in the Area Tree the renderer creates a
-       PDF Page and places the contents of the page into the PDF Page. Once a PDF Page
-       is complete then it can be written to the output stream.</p>
-      <p>For the structure documents the Structure listener will read
-       directly from the FO Tree and create the document. These documents do not need
-       the layout process or the Area Tree.</p>
-    </section>
-  </section>
     <section id="primary-goals">
       <title>Primary Design Goals</title>
       <p>A discussion of project design properly begins with a list of the goals of the project. Out of these goals will flow the design issues and details, and eventually, the implementation.</p>
@@ -81,6 +56,57 @@ However, many FOP users provide web access to documents that are created in real
 Performance is therefore an important issue in these real-world applications.
 To the extent that it can be done so without jeopardizing the primary design goals, FOP developers have identified keeping a small memory footprint as being an important secondary goal.</p>
       </section>
+    </section>
+    <section id="big-picture">
+      <title>The Big Picture View</title>
+      <p>With our design goals outlines, we'll now open the Black Box and look at the major processes inside.
+FOP has adopted the basic structure of the XSL-FO standard itself as a convenient model for the major processes in FOP. The Result in each row is the input for the next.</p>
+      <table>
+        <caption>FOP from a Big Picture Standpoint</caption>
+        <tr>
+          <th>Process</th>
+          <th>Result</th>
+          <th>Notes</th>
+        </tr>
+        <tr>
+          <td>.</td>
+          <td>XSL-FO document</td>
+          <td>.</td>
+        </tr>
+        <tr>
+          <td>SAX Handler</td>
+          <td>FO Tree</td>
+          <td>.</td>
+        </tr>
+        <tr>
+          <td>Refinement</td>
+          <td>Refined FO Tree</td>
+          <td>.</td>
+        </tr>
+        <tr>
+          <td>Layout</td>
+          <td>Area Tree</td>
+          <td>Layout and Area Tree are not needed or used for the structural outputs (MIF and RTF), as they are not paginated.</td>
+        </tr>
+        <tr>
+          <td>Renderer</td>
+          <td>Output: PDF, Postscript, Print, etc.</td>
+          <td>.</td>
+        </tr>
+      </table>
+      <p>In general, each piece of data will go be processed in the same way.
+However, some information may be used more than once, and some may be used out of order.
+To reduce memory, one process may start before the previous process is completed.</p>
+      <p>The FO Tree is constructed from the xml document. It is an internal
+       representation of the xml document and it is like a DOM with some differences.
+       The Layout Managers use the FO Tree do their layout stuff and create an Area
+       Tree. The Area Tree is a representation of the final result. It is a
+       representation of a set of pages containing the text and other graphics. The
+       Area Tree is then given to a Renderer. The Renderer can read the Area Tree and
+       convert the information into the render format. For example the PDF Renderer
+       creates a PDF Document. For each page in the Area Tree the renderer creates a
+       PDF Page and places the contents of the page into the PDF Page. Once a PDF Page
+       is complete then it can be written to the output stream.</p>
     </section>
     <section id="issues">
       <title>Design Issues</title>
