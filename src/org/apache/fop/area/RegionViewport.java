@@ -95,7 +95,7 @@ public class RegionViewport extends Area implements Cloneable {
     public Object clone() {
         RegionViewport rv = new RegionViewport((Rectangle2D)viewArea.clone());
         rv.region = (RegionReference)region.clone();
-        if(props != null) {
+        if (props != null) {
             rv.props = (HashMap)props.clone();
         }
         return rv;

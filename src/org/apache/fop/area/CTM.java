@@ -23,6 +23,7 @@ public class CTM implements Serializable {
     private static CTM s_CTM_lrtb = new CTM(1, 0, 0, 1, 0, 0);
     private static CTM s_CTM_rltb = new CTM(-1, 0, 0, 1, 0, 0);
     private static CTM s_CTM_tbrl = new CTM(0, 1, -1, 0, 0, 0);
+
     /**
      * Create the identity matrix
      */
@@ -37,6 +38,13 @@ public class CTM implements Serializable {
 
     /**
      * Initialize a CTM from the passed arguments.
+     *
+     * @param a the x scale
+     * @param b the x shear
+     * @param c the y shear
+     * @param d the y scale
+     * @param e the x shift
+     * @param f the y shift
      */
     public CTM(double a, double b, double c, double d, double e, double f) {
         this.a = a;
@@ -49,7 +57,10 @@ public class CTM implements Serializable {
 
     /**
      * Initialize a CTM to the identity matrix with a translation
-     * specified by x and y.
+     * specified by x and y
+     *
+     * @param x the x shift
+     * @param y the y shift.
      */
     public CTM(double x, double y) {
         this.a = 1;
@@ -60,6 +71,11 @@ public class CTM implements Serializable {
         this.f = y;
     }
 
+    /**
+     * Initialize a CTM with the values of another CTM.
+     *
+     * @param ctm another CTM
+     */
     protected CTM(CTM ctm) {
         this.a = ctm.a;
         this.b = ctm.b;
@@ -78,6 +94,7 @@ public class CTM implements Serializable {
      * CTM is being set..
      * @param bpd The block-progression dimension of the reference area whose
      * CTM is being set.
+     * @return a new CTM with the required transform
      */
     public static CTM getWMctm(int wm, int ipd, int bpd) {
         CTM wmctm;
@@ -179,10 +196,10 @@ public class CTM implements Serializable {
         // recalculate the width and height
         int x1t = (int)(inRect.getX() * a + inRect.getY() * c + e);
         int y1t = (int)(inRect.getX() * b + inRect.getY() * d + f);
-        int x2t = (int)((inRect.getX() + inRect.getWidth()) * a +
-                        (inRect.getY() + inRect.getHeight()) * c + e);
-        int y2t = (int)((inRect.getX() + inRect.getWidth()) * b +
-                        (inRect.getY() + inRect.getHeight()) * d + f);
+        int x2t = (int)((inRect.getX() + inRect.getWidth()) * a
+                        + (inRect.getY() + inRect.getHeight()) * c + e);
+        int y2t = (int)((inRect.getX() + inRect.getWidth()) * b
+                        + (inRect.getY() + inRect.getHeight()) * d + f);
         // Normalize with x1 < x2
         if (x1t > x2t) {
             int tmp = x2t;
@@ -197,11 +214,22 @@ public class CTM implements Serializable {
         return new Rectangle(x1t, y1t, x2t - x1t, y2t - y1t);
     }
 
+    /**
+     * Get string for this transform.
+     *
+     * @return a string with the transform values
+     */
     public String toString() {
-        return "[" + a + " " + b + " " + c + " " + d + " " + e + " " +
-               f + "]";
+        return "[" + a + " " + b + " " + c + " " + d + " " + e + " "
+               + f + "]";
     }
 
+    /**
+     * Get an array containing the values of this transform.
+     * This creates and returns a new transform with the values in it.
+     *
+     * @return an array containing the transform values
+     */
     public double[] toArray() {
         return new double[]{a, b, c, d, e, f};
     }
