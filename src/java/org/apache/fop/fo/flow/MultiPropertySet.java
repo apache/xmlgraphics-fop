@@ -25,19 +25,25 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ToBeImplementedElement;
+import org.apache.fop.fo.FObj;
 
 /**
- * Class modelling the fo:multi-property-set object. See Sec. 6.9.7 of the
- * XSL-FO Standard.
+ * Class modelling the fo:multi-property-set object.
  */
-public class MultiPropertySet extends ToBeImplementedElement {
+public class MultiPropertySet extends FObj {
+
+    static boolean notImplementedWarningGiven = false;
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public MultiPropertySet(FONode parent) {
         super(parent);
+
+        if (!notImplementedWarningGiven) {
+            getLogger().warn("fo:multi-property-set is not yet implemented.");
+            notImplementedWarningGiven = true;
+        }
     }
 
     /**

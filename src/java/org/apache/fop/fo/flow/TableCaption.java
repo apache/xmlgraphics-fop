@@ -20,21 +20,30 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ToBeImplementedElement;
+import org.apache.fop.fo.FObj;
 
 /**
- * Class modelling the fo:table-caption object. See Sec. 6.7.5 of the XSL-FO
- * Standard.
+ * Class modelling the fo:table-caption object.
  */
-public class TableCaption extends ToBeImplementedElement {
+public class TableCaption extends FObj {
+
+    static boolean notImplementedWarningGiven = false;
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public TableCaption(FONode parent) {
         super(parent);
+
+        if (!notImplementedWarningGiven) {
+            getLogger().warn("fo:table-caption is not yet implemented.");
+            notImplementedWarningGiven = true;
+        }
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:table-caption";
     }

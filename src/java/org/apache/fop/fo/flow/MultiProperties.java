@@ -28,8 +28,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
 /**
- * Class modelling the fo:multi-properties object. See Sec. 6.9.6 of the XSL-FO
- * Standard.
+ * Class modelling the fo:multi-properties object.
  */
 public class MultiProperties extends FObj {
 
