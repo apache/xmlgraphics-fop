@@ -60,7 +60,7 @@ public class FObjects {
     }
 
     public static BitSet getPageFlowSet() {
-        return (BitSet)(pageFlowSet.clone());
+        return (BitSet)(pageSeqSet.clone());
     }
 
     /**
@@ -1787,14 +1787,14 @@ public class FObjects {
      * root element.  These properties make no sense anywhere below the
      * root element.
      */
-    public static final ROBitSet rootOnly;
+    //public static final ROBitSet rootOnly;
 
     /**
      * declarations only set of properties - properties for exclusive
      * use within the declarations subtree.  These properties make no
      * sense in or under layout-master-set or page-sequences.
      */
-    public static final ROBitSet declarationsOnly;
+    //public static final ROBitSet declarationsOnly;
 
     /**
      * set of all declarations properties - properties which are
@@ -1807,7 +1807,7 @@ public class FObjects {
      * use within the layout-master-set subtree.  These properties make no
      * sense in or under declarations or page-sequences.
      */
-    public static final ROBitSet layoutMasterOnly;
+    //public static final ROBitSet layoutMasterOnly;
 
     /**
      * set of all layout-master-set properties - properties which are
@@ -1816,10 +1816,34 @@ public class FObjects {
     public static final ROBitSet layoutMasterSet;
 
     /**
-     * set of all page flow subtree properties - properties which are
-     * usable within the page flow subtree.
+     * set of all page sequence subtree properties - properties which are
+     * usable within the page sequence subtree.
      */
-    public static final ROBitSet pageFlowSet;
+    public static final ROBitSet pageSeqSet;
+
+    /**
+     * fo:flow only set of properties - properties for exclusive
+     * use within the fo:flow subtree.
+     */
+    //public static final ROBitSet flowOnlySet;
+
+    /**
+     * set of all fo:flow subtree properties - properties which are
+     * usable within the fo:flow subtree.
+     */
+    public static final ROBitSet flowAllSet;
+
+    /**
+     * fo:static-content only set of properties - properties for exclusive
+     * use within the fo:static-content subtree.
+     */
+    //public static final ROBitSet staticOnlySet;
+
+    /**
+     * set of all fo:static-content subtree properties - properties which are
+     * usable within the fo:static-content subtree.
+     */
+    public static final ROBitSet staticAllSet;
 
     static {
 
@@ -1836,22 +1860,24 @@ public class FObjects {
 
         //root only set of properties - properties for exclusive use on the
         // root element
-        BitSet rootonly = new BitSet(1);
+        BitSet rootonly = new BitSet(PropNames.MEDIA_USAGE + 1);
         rootonly.set(PropNames.MEDIA_USAGE);
 
-        rootOnly = new ROBitSet(rootonly);
+        //rootOnly = new ROBitSet(rootonly);
 
         //declarations only set of properties - properties for exclusive use
         // in the declarations SUBTREE
-        BitSet declarationsonly = new BitSet(2);
+        BitSet declarationsonly =
+                                new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
         declarationsonly.set(PropNames.COLOR_PROFILE_NAME);
         declarationsonly.set(PropNames.RENDERING_INTENT);
 
-        declarationsOnly = new ROBitSet(declarationsonly);
+        //declarationsOnly = new ROBitSet(declarationsonly);
 
         // set of all declarations properties - properties which may be
         // used in the declarations SUBTREE
-        BitSet declarationsall = new BitSet(3);
+        BitSet declarationsall =
+                                new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
         declarationsall.set(PropNames.SRC);
         declarationsall.or(declarationsonly);
 
@@ -1859,7 +1885,8 @@ public class FObjects {
 
         //layout-master-set only set of properties - properties for exclusive
         // use within the layout-master-set SUBTREE
-        BitSet layoutmasteronly = new BitSet();
+        BitSet layoutmasteronly =
+                                new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
         layoutmasteronly.set(PropNames.MASTER_NAME);
         layoutmasteronly.set(PropNames.MASTER_REFERENCE);
         layoutmasteronly.set(PropNames.MAXIMUM_REPEATS);
@@ -1874,11 +1901,12 @@ public class FObjects {
         layoutmasteronly.set(PropNames.EXTENT);
         layoutmasteronly.set(PropNames.PRECEDENCE);
 
-        layoutMasterOnly = new ROBitSet(layoutmasteronly);
+        //layoutMasterOnly = new ROBitSet(layoutmasteronly);
 
         // set of all layout-master-set properties - properties which may be
         // used in the layout-master-set SUBTREE
-        BitSet layoutmasterset = new BitSet();
+        BitSet layoutmasterset =
+                                new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
 
         // Add the layout-master-set exclusive properties
         layoutmasterset.or(layoutmasteronly);
@@ -1911,12 +1939,34 @@ public class FObjects {
         }
         layoutMasterSet = new ROBitSet(layoutmasterset);
 
-        BitSet pageflowset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
-        pageflowset.or(allprops);
-        pageflowset.andNot(rootonly);
-        pageflowset.andNot(declarationsonly);
-        pageflowset.andNot(layoutmasteronly);
-        pageFlowSet = new ROBitSet(pageflowset);
+        BitSet flowonlyset = new BitSet(PropNames.MARKER_CLASS_NAME + 1);
+        flowonlyset.set(PropNames.MARKER_CLASS_NAME);
+
+        BitSet staticonlyset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        staticonlyset.set(PropNames.RETRIEVE_CLASS_NAME);
+        staticonlyset.set(PropNames.RETRIEVE_POSITION);
+        staticonlyset.set(PropNames.RETRIEVE_BOUNDARY);
+
+        BitSet pageseqset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        pageseqset.or(allprops);
+        pageseqset.andNot(rootonly);
+        pageseqset.andNot(declarationsonly);
+        pageseqset.andNot(layoutmasteronly);
+        pageseqset.andNot(flowonlyset);
+        pageseqset.andNot(staticonlyset);
+        pageSeqSet = new ROBitSet(pageseqset);
+
+        BitSet flowallset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        flowallset.or(pageseqset);
+        flowallset.or(flowonlyset);
+
+        flowAllSet = new ROBitSet(flowallset);
+
+        BitSet staticallset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        staticallset.or(pageseqset);
+        staticallset.or(staticonlyset);
+
+        staticAllSet = new ROBitSet(staticallset);
     }
 
     static {
