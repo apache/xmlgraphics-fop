@@ -69,20 +69,33 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
      * @see CorrespondingPropertyMaker#compute(PropertyList)
      */
     public Property compute(PropertyList propertyList) throws FOPException {
-        // TODO: bckfnn reenable
-        if (propertyList.getExplicitOrShorthand(
-                propertyList.getWritingMode(lr_tb, rl_tb, tb_rl)) == null) {
-            return null;
-        }
+        PropertyList pList = getWMPropertyList(propertyList);
         // Calculate the values as described in 5.3.2.
         try {
+            int marginProp = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
+            Numeric margin;
+//          Calculate the absolute margin.
+            if (propertyList.getExplicitOrShorthand(marginProp) == null) {
+                Property indent = propertyList.getExplicit(baseMaker.propId);
+                if (indent == null) {
+                    margin = new FixedLength(0);
+                } else {
+                    margin = propertyList.getExplicit(baseMaker.propId).getNumeric();
+                    margin = NumericOp.subtraction(margin, propertyList.getInherited(baseMaker.propId).getNumeric());
+                }
+                margin = NumericOp.subtraction(margin, getCorresponding(paddingCorresponding, propertyList).getNumeric());
+                margin = NumericOp.subtraction(margin, getCorresponding(borderWidthCorresponding, propertyList).getNumeric());
+            } else {
+                margin = propertyList.get(marginProp).getNumeric();
+            }
+            
             Numeric v = new FixedLength(0);
             if (!propertyList.getFObj().generatesReferenceAreas()) {
                 // The inherited_value_of([start|end]-indent)
-                v = NumericOp.addition(v, propertyList.getInherited(this.baseMaker.propId).getNumeric());
+                v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
             }
             // The corresponding absolute margin-[right|left}.
-            v = NumericOp.addition(v, propertyList.get(propertyList.getWritingMode(lr_tb, rl_tb, tb_rl)).getNumeric());
+            v = NumericOp.addition(v, margin);
             v = NumericOp.addition(v, getCorresponding(paddingCorresponding, propertyList).getNumeric());
             v = NumericOp.addition(v, getCorresponding(borderWidthCorresponding, propertyList).getNumeric());
             return (Property) v;
@@ -94,7 +107,8 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
     }
     
     private Property getCorresponding(int[] corresponding, PropertyList propertyList) {
-        int wmcorr = propertyList.getWritingMode(corresponding[0], corresponding[1], corresponding[2]);
+        PropertyList pList = getWMPropertyList(propertyList);
+        int wmcorr = pList.getWritingMode(corresponding[0], corresponding[1], corresponding[2]);
         return propertyList.get(wmcorr);
     }
 }
