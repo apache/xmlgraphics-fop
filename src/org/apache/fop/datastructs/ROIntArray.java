@@ -43,8 +43,13 @@ public class ROIntArray {
         i = 0;
         for (j = 0; j < iarrays.length; j++)
             for (k = 0; k < iarrays[j].length; k++)
-                iarray[i++] = iarrays[j][k]; 
-        length = iarray.length;
+                i++;
+        length = i;
+        iarray = new int[length];
+        i = 0;
+        for (j = 0; j < iarrays.length; j++)
+            for (k = 0; k < iarrays[j].length; k++)
+                iarray[i++] = iarrays[j][k];
     }
 
     /**
