@@ -153,8 +153,6 @@ public class FoFlow extends FOPageSeqNode {
             throw new FOPException
                     ("Block not found or unexpected non-block in fo:flow");
         }
-
-        System.out.println("Making sparsePropsSet for flow.");
         makeSparsePropsSet();
     }
 
