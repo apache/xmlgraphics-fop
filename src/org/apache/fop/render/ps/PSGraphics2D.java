@@ -37,13 +37,11 @@ import java.awt.image.ImageObserver;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
+import java.io.IOException;
 
 // FOP
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontState;
-import org.apache.fop.pdf.PDFColor;
-//import org.apache.fop.pdf.PDFColorSpace;
-import org.apache.fop.pdf.PDFNumber;
 
 // Batik
 import org.apache.batik.ext.awt.g2d.AbstractGraphics2D;
@@ -67,9 +65,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
     private boolean standalone = false;
 
     /**
-     * the PDF Document being created
+     * the PostScript genertaor being created
      */
-    protected PSRenderer psRenderer;
+    protected PSGenerator gen;
 
     /** Currently valid FontState */
     protected FontState fontState;
@@ -97,7 +95,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
     /**
      * the current colour for use in svg
      */
-    protected PDFColor currentColour = new PDFColor(0, 0, 0);
+    protected Color currentColour = new Color(0, 0, 0);
 
     /** FontInfo containing all available fonts */
     protected FontInfo fontInfo;
@@ -106,17 +104,17 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * Create a new Graphics2D that generates PostScript code.
      * @param textAsShapes True if text should be rendered as graphics
      * @param fs currently valid FontState object
-     * @param ren PostScript renderer
+     * @param gen PostScript generator to use for output
      * @param font current font name
      * @param size current font size
      * @param xpos current x pos
      * @param ypos current y pos
      * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D#AbstractGraphics2D(boolean)
      */
-    public PSGraphics2D(boolean textAsShapes, FontState fs, PSRenderer ren,
+    public PSGraphics2D(boolean textAsShapes, FontState fs, PSGenerator gen,
                         String font, int size, int xpos, int ypos) {
         super(textAsShapes);
-        psRenderer = ren;
+        this.gen = gen;
         currentFontName = font;
         currentFontSize = size;
         currentYPosition = ypos;
@@ -156,6 +154,14 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public Graphics create() {
         return new PSGraphics2D(this);
+    }
+
+    /**
+     * Central handler for IOExceptions for this class.
+     * @param ioe IOException to handle
+     */
+    protected void handleIOException(IOException ioe) {
+        ioe.printStackTrace();
     }
 
     /**
@@ -441,7 +447,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public void dispose() {
         // System.out.println("dispose");
-        psRenderer = null;
+        this.gen = null;
         fontState = null;
         currentFontName = null;
         currentColour = null;
@@ -465,58 +471,62 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @see #setComposite
      */
     public void draw(Shape s) {
-        // System.out.println("draw(Shape)");
-        psRenderer.write("gsave");
-        Shape imclip = getClip();
-        writeClip(imclip);
-        Color c = getColor();
-        psRenderer.write(c.getRed() + " " + c.getGreen() + " " + c.getBlue()
-                         + " setrgbcolor");
-
-        applyPaint(getPaint(), false);
-        applyStroke(getStroke());
-
-        psRenderer.write("newpath");
-        PathIterator iter = s.getPathIterator(getTransform());
-        while (!iter.isDone()) {
-            double vals[] = new double[6];
-            int type = iter.currentSegment(vals);
-            switch (type) {
-            case PathIterator.SEG_CUBICTO:
-                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[1]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[2]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[3]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[4]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[5])
-                                 + " curveto");
-                break;
-            case PathIterator.SEG_LINETO:
-                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[1])
-                                 + " lineto");
-                break;
-            case PathIterator.SEG_MOVETO:
-                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[1])
-                                 + " M");
-                break;
-            case PathIterator.SEG_QUADTO:
-                // psRenderer.write((1000 * PDFNumber.doubleOut(vals[0])) +
-                // " " + (1000 * PDFNumber.doubleOut(vals[1])) + " " +
-                // (1000 * PDFNumber.doubleOut(vals[2])) + " " +
-                // (1000 * PDFNumber.doubleOut(vals[3])) + " y\n");
-                break;
-            case PathIterator.SEG_CLOSE:
-                psRenderer.write("closepath");
-                break;
-            default:
-                break;
+        try {
+            // System.out.println("draw(Shape)");
+            gen.writeln("gsave");
+            Shape imclip = getClip();
+            writeClip(imclip);
+            Color c = getColor();
+            gen.writeln(c.getRed() + " " + c.getGreen() + " " + c.getBlue()
+                             + " setrgbcolor");
+            
+            applyPaint(getPaint(), false);
+            applyStroke(getStroke());
+            
+            gen.writeln("newpath");
+            PathIterator iter = s.getPathIterator(getTransform());
+            while (!iter.isDone()) {
+                double vals[] = new double[6];
+                int type = iter.currentSegment(vals);
+                switch (type) {
+                case PathIterator.SEG_CUBICTO:
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                              + gen.formatDouble(1000 * vals[1]) + " "
+                              + gen.formatDouble(1000 * vals[2]) + " "
+                              + gen.formatDouble(1000 * vals[3]) + " "
+                              + gen.formatDouble(1000 * vals[4]) + " "
+                              + gen.formatDouble(1000 * vals[5])
+                              + " curveto");
+                    break;
+                case PathIterator.SEG_LINETO:
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                              + gen.formatDouble(1000 * vals[1])
+                              + " lineto");
+                    break;
+                case PathIterator.SEG_MOVETO:
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                              + gen.formatDouble(1000 * vals[1])
+                              + " M");
+                    break;
+                case PathIterator.SEG_QUADTO:
+                    // psRenderer.write((1000 * PDFNumber.doubleOut(vals[0])) +
+                    // " " + (1000 * PDFNumber.doubleOut(vals[1])) + " " +
+                    // (1000 * PDFNumber.doubleOut(vals[2])) + " " +
+                    // (1000 * PDFNumber.doubleOut(vals[3])) + " y\n");
+                    break;
+                case PathIterator.SEG_CLOSE:
+                    gen.writeln("closepath");
+                    break;
+                default:
+                    break;
+                }
+                iter.next();
             }
-            iter.next();
+            doDrawing(false, true, false);
+            gen.writeln("grestore");
+        } catch (IOException ioe) {
+            handleIOException(ioe);
         }
-        doDrawing(false, true, false);
-        psRenderer.write("grestore");
     }
 
     /**
@@ -524,47 +534,51 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @param s Shape defining the clipping region
      */
     protected void writeClip(Shape s) {
-        PathIterator iter = s.getPathIterator(getTransform());
-        psRenderer.write("newpath");
-        while (!iter.isDone()) {
-            double vals[] = new double[6];
-            int type = iter.currentSegment(vals);
-            switch (type) {
-            case PathIterator.SEG_CUBICTO:
-                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[1]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[2]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[3]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[4]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[5])
-                                 + " curveto");
-                break;
-            case PathIterator.SEG_LINETO:
-                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[1])
-                                 + " lineto");
-                break;
-            case PathIterator.SEG_MOVETO:
-                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[1])
-                                 + " M");
-                break;
-            case PathIterator.SEG_QUADTO:
-                // psRenderer.write(1000 * PDFNumber.doubleOut(vals[0]) +
-                // " " + 1000 * PDFNumber.doubleOut(vals[1]) + " " +
-                // 1000 * PDFNumber.doubleOut(vals[2]) + " " +
-                // 1000 * PDFNumber.doubleOut(vals[3]) + " y\n");
-                break;
-            case PathIterator.SEG_CLOSE:
-                psRenderer.write("closepath");
-                break;
-            default:
-                break;
+        try {
+            PathIterator iter = s.getPathIterator(getTransform());
+            gen.writeln("newpath");
+            while (!iter.isDone()) {
+                double vals[] = new double[6];
+                int type = iter.currentSegment(vals);
+                switch (type) {
+                case PathIterator.SEG_CUBICTO:
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                              + gen.formatDouble(1000 * vals[1]) + " "
+                              + gen.formatDouble(1000 * vals[2]) + " "
+                              + gen.formatDouble(1000 * vals[3]) + " "
+                              + gen.formatDouble(1000 * vals[4]) + " "
+                              + gen.formatDouble(1000 * vals[5])
+                              + " curveto");
+                    break;
+                case PathIterator.SEG_LINETO:
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                              + gen.formatDouble(1000 * vals[1])
+                              + " lineto");
+                    break;
+                case PathIterator.SEG_MOVETO:
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                              + gen.formatDouble(1000 * vals[1])
+                              + " M");
+                    break;
+                case PathIterator.SEG_QUADTO:
+                    // psRenderer.write(1000 * PDFNumber.doubleOut(vals[0]) +
+                    // " " + 1000 * PDFNumber.doubleOut(vals[1]) + " " +
+                    // 1000 * PDFNumber.doubleOut(vals[2]) + " " +
+                    // 1000 * PDFNumber.doubleOut(vals[3]) + " y\n");
+                    break;
+                case PathIterator.SEG_CLOSE:
+                    gen.writeln("closepath");
+                    break;
+                default:
+                    break;
+                }
+                iter.next();
             }
-            iter.next();
+            // clip area
+            gen.writeln("clippath");
+        } catch (IOException ioe) {
+            handleIOException(ioe);
         }
-        // clip area
-        psRenderer.write("clippath");
     }
 
     /**
@@ -609,10 +623,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
 
             List someColors = new java.util.ArrayList();
 
-            PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
+            Color color1 = new Color(c1.getRed(), c1.getGreen(),
                                            c1.getBlue());
             someColors.add(color1);
-            PDFColor color2 = new PDFColor(c2.getRed(), c2.getGreen(),
+            Color color2 = new Color(c2.getRed(), c2.getGreen(),
                                            c2.getBlue());
             someColors.add(color2);
 
@@ -627,54 +641,56 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @param stroke Stroke object to use
      */
     protected void applyStroke(Stroke stroke) {
-        if (stroke instanceof BasicStroke) {
-            BasicStroke bs = (BasicStroke)stroke;
-
-            float[] da = bs.getDashArray();
-            if (da != null) {
-                psRenderer.write("[");
-                for (int count = 0; count < da.length; count++) {
-                    psRenderer.write("" + (1000 * (int)da[count]));
-                    if (count < da.length - 1) {
-                        psRenderer.write(" ");
+        try {
+            if (stroke instanceof BasicStroke) {
+                BasicStroke bs = (BasicStroke)stroke;
+            
+                float[] da = bs.getDashArray();
+                if (da != null) {
+                    gen.writeln("[");
+                    for (int count = 0; count < da.length; count++) {
+                        gen.writeln("" + (1000 * (int)da[count]));
+                        if (count < da.length - 1) {
+                            gen.writeln(" ");
+                        }
                     }
+                    gen.writeln("] ");
+                    float offset = bs.getDashPhase();
+                    gen.writeln((1000 * (int)offset) + " setdash");
                 }
-                psRenderer.write("] ");
-                float offset = bs.getDashPhase();
-                psRenderer.write((1000 * (int)offset) + " setdash");
+                int ec = bs.getEndCap();
+                switch (ec) {
+                case BasicStroke.CAP_BUTT:
+                    gen.writeln(0 + " setlinecap");
+                    break;
+                case BasicStroke.CAP_ROUND:
+                    gen.writeln(1 + " setlinecap");
+                    break;
+                case BasicStroke.CAP_SQUARE:
+                    gen.writeln(2 + " setlinecap");
+                    break;
+                }
+            
+                int lj = bs.getLineJoin();
+                switch (lj) {
+                case BasicStroke.JOIN_MITER:
+                    gen.writeln("0 setlinejoin");
+                    break;
+                case BasicStroke.JOIN_ROUND:
+                    gen.writeln("1 setlinejoin");
+                    break;
+                case BasicStroke.JOIN_BEVEL:
+                    gen.writeln("2 setlinejoin");
+                    break;
+                }
+                float lw = bs.getLineWidth();
+                gen.writeln(gen.formatDouble(1000 * lw) + " setlinewidth");
+            
+                float ml = bs.getMiterLimit();
+                gen.writeln(gen.formatDouble(1000 * ml) + " setmiterlimit");
             }
-            int ec = bs.getEndCap();
-            switch (ec) {
-            case BasicStroke.CAP_BUTT:
-                psRenderer.write(0 + " setlinecap");
-                break;
-            case BasicStroke.CAP_ROUND:
-                psRenderer.write(1 + " setlinecap");
-                break;
-            case BasicStroke.CAP_SQUARE:
-                psRenderer.write(2 + " setlinecap");
-                break;
-            }
-
-            int lj = bs.getLineJoin();
-            switch (lj) {
-            case BasicStroke.JOIN_MITER:
-                psRenderer.write(0 + " setlinejoin");
-                break;
-            case BasicStroke.JOIN_ROUND:
-                psRenderer.write(1 + " setlinejoin");
-                break;
-            case BasicStroke.JOIN_BEVEL:
-                psRenderer.write(2 + " setlinejoin");
-                break;
-            }
-            float lw = bs.getLineWidth();
-            psRenderer.write(PDFNumber.doubleOut(1000 * lw)
-                             + " setlinewidth");
-
-            float ml = bs.getMiterLimit();
-            psRenderer.write(PDFNumber.doubleOut(1000 * ml)
-                             + " setmiterlimit");
+        } catch (IOException ioe) {
+            handleIOException(ioe);
         }
     }
 
@@ -763,28 +779,32 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @see #setClip
      */
     public void drawString(String s, float x, float y) {
-        System.out.println("drawString(String)");
-        psRenderer.write("BT");
-        Shape imclip = getClip();
-        writeClip(imclip);
-        Color c = getColor();
-        psRenderer.write(c.getRed() + " " + c.getGreen() + " " + c.getBlue()
-                         + " setrgbcolor");
-
-        AffineTransform trans = getTransform();
-        trans.translate(x, y);
-        double[] vals = new double[6];
-        trans.getMatrix(vals);
-
-        psRenderer.write(PDFNumber.doubleOut(vals[0]) + " "
-                         + PDFNumber.doubleOut(vals[1]) + " "
-                         + PDFNumber.doubleOut(vals[2]) + " "
-                         + PDFNumber.doubleOut(vals[3]) + " "
-                         + PDFNumber.doubleOut(vals[4]) + " "
-                         + PDFNumber.doubleOut(vals[5]) + " "
-                         + PDFNumber.doubleOut(vals[6]) + " Tm [" + s + "]");
-
-        psRenderer.write("ET");
+        try {
+            System.out.println("drawString(String)");
+            gen.writeln("BT");
+            Shape imclip = getClip();
+            writeClip(imclip);
+            Color c = getColor();
+            gen.writeln(c.getRed() + " " + c.getGreen() + " " + c.getBlue()
+                             + " setrgbcolor");
+            
+            AffineTransform trans = getTransform();
+            trans.translate(x, y);
+            double[] vals = new double[6];
+            trans.getMatrix(vals);
+            
+            gen.writeln(gen.formatDouble(vals[0]) + " "
+                      + gen.formatDouble(vals[1]) + " "
+                      + gen.formatDouble(vals[2]) + " "
+                      + gen.formatDouble(vals[3]) + " "
+                      + gen.formatDouble(vals[4]) + " "
+                      + gen.formatDouble(vals[5]) + " "
+                      + gen.formatDouble(vals[6]) + " Tm [" + s + "]");
+            
+            gen.writeln("ET");
+        } catch (IOException ioe) {
+            handleIOException(ioe);
+        }
     }
 
     /**
@@ -814,38 +834,42 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public void drawString(AttributedCharacterIterator iterator, float x,
                            float y) {
-        System.err.println("drawString(AttributedCharacterIterator)");
-
-        psRenderer.write("BT");
-        Shape imclip = getClip();
-        writeClip(imclip);
-        Color c = getColor();
-        currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
-        psRenderer.write(currentColour.getColorSpaceOut(true));
-        c = getBackground();
-        PDFColor col = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
-        psRenderer.write(col.getColorSpaceOut(false));
-
-        AffineTransform trans = getTransform();
-        trans.translate(x, y);
-        double[] vals = new double[6];
-        trans.getMatrix(vals);
-
-        for (char ch = iterator.first(); ch != CharacterIterator.DONE;
-                ch = iterator.next()) {
-            //Map attr = iterator.getAttributes();
-
-            psRenderer.write(PDFNumber.doubleOut(vals[0]) + " "
-                             + PDFNumber.doubleOut(vals[1]) + " "
-                             + PDFNumber.doubleOut(vals[2]) + " "
-                             + PDFNumber.doubleOut(vals[3]) + " "
-                             + PDFNumber.doubleOut(vals[4]) + " "
-                             + PDFNumber.doubleOut(vals[5]) + " "
-                             + PDFNumber.doubleOut(vals[6]) + " Tm [" + ch
-                             + "]");
+        try {
+            System.err.println("drawString(AttributedCharacterIterator)");
+            
+            gen.writeln("BT");
+            Shape imclip = getClip();
+            writeClip(imclip);
+            Color c = getColor();
+            currentColour = new Color(c.getRed(), c.getGreen(), c.getBlue());
+            //gen.writeln(currentColour.getColorSpaceOut(true));
+            c = getBackground();
+            Color col = new Color(c.getRed(), c.getGreen(), c.getBlue());
+            //gen.writeln(col.getColorSpaceOut(false));
+            
+            AffineTransform trans = getTransform();
+            trans.translate(x, y);
+            double[] vals = new double[6];
+            trans.getMatrix(vals);
+            
+            for (char ch = iterator.first(); ch != CharacterIterator.DONE;
+                    ch = iterator.next()) {
+                //Map attr = iterator.getAttributes();
+            
+                gen.writeln(gen.formatDouble(vals[0]) + " "
+                          + gen.formatDouble(vals[1]) + " "
+                          + gen.formatDouble(vals[2]) + " "
+                          + gen.formatDouble(vals[3]) + " "
+                          + gen.formatDouble(vals[4]) + " "
+                          + gen.formatDouble(vals[5]) + " "
+                          + gen.formatDouble(vals[6]) + " Tm [" + ch
+                          + "]");
+            }
+            
+            gen.writeln("ET");
+        } catch (IOException ioe) {
+            handleIOException(ioe);
         }
-
-        psRenderer.write("ET");
     }
 
     /**
@@ -863,83 +887,90 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @see #setClip
      */
     public void fill(Shape s) {
-        // System.err.println("fill");
-        psRenderer.write("gsave");
-        Shape imclip = getClip();
-        writeClip(imclip);
-        Color c = getColor();
-        psRenderer.write(c.getRed() + " " + c.getGreen() + " " + c.getBlue()
-                         + " setrgbcolor");
-
-        applyPaint(getPaint(), true);
-
-        psRenderer.write("newpath");
-        PathIterator iter = s.getPathIterator(getTransform());
-        while (!iter.isDone()) {
-            double vals[] = new double[6];
-            int type = iter.currentSegment(vals);
-            switch (type) {
-            case PathIterator.SEG_CUBICTO:
-                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[1]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[2]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[3]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[4]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[5])
-                                 + " curveto");
-                break;
-            case PathIterator.SEG_LINETO:
-                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[1])
-                                 + " lineto");
-                break;
-            case PathIterator.SEG_MOVETO:
-                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
-                                 + PDFNumber.doubleOut(1000 * vals[1])
-                                 + " M");
-                break;
-            case PathIterator.SEG_QUADTO:
-                // psRenderer.write(1000 * PDFNumber.doubleOut(vals[0]) +
-                // " " + 1000 * PDFNumber.doubleOut(vals[1]) + " " +
-                // 1000 * PDFNumber.doubleOut(vals[2]) + " " +
-                // 1000 * PDFNumber.doubleOut(vals[3]) + " y\n");
-                break;
-            case PathIterator.SEG_CLOSE:
-                psRenderer.write("closepath");
-                break;
-            default:
-                break;
+        try {
+            // System.err.println("fill");
+            gen.writeln("gsave");
+            Shape imclip = getClip();
+            writeClip(imclip);
+            Color c = getColor();
+            gen.writeln(c.getRed() + " " + c.getGreen() + " " + c.getBlue()
+                             + " setrgbcolor");
+            
+            applyPaint(getPaint(), true);
+            
+            gen.writeln("newpath");
+            PathIterator iter = s.getPathIterator(getTransform());
+            while (!iter.isDone()) {
+                double vals[] = new double[6];
+                int type = iter.currentSegment(vals);
+                switch (type) {
+                case PathIterator.SEG_CUBICTO:
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                              + gen.formatDouble(1000 * vals[1]) + " "
+                              + gen.formatDouble(1000 * vals[2]) + " "
+                              + gen.formatDouble(1000 * vals[3]) + " "
+                              + gen.formatDouble(1000 * vals[4]) + " "
+                              + gen.formatDouble(1000 * vals[5])
+                              + " curveto");
+                    break;
+                case PathIterator.SEG_LINETO:
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                              + gen.formatDouble(1000 * vals[1])
+                              + " lineto");
+                    break;
+                case PathIterator.SEG_MOVETO:
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                              + gen.formatDouble(1000 * vals[1])
+                              + " M");
+                    break;
+                case PathIterator.SEG_QUADTO:
+                    // psRenderer.write(1000 * PDFNumber.doubleOut(vals[0]) +
+                    // " " + 1000 * PDFNumber.doubleOut(vals[1]) + " " +
+                    // 1000 * PDFNumber.doubleOut(vals[2]) + " " +
+                    // 1000 * PDFNumber.doubleOut(vals[3]) + " y\n");
+                    break;
+                case PathIterator.SEG_CLOSE:
+                    gen.writeln("closepath");
+                    break;
+                default:
+                    break;
+                }
+                iter.next();
             }
-            iter.next();
+            doDrawing(true, false,
+                      iter.getWindingRule() == PathIterator.WIND_EVEN_ODD);
+            gen.writeln("grestore");
+        } catch (IOException ioe) {
+            handleIOException(ioe);
         }
-        doDrawing(true, false,
-                  iter.getWindingRule() == PathIterator.WIND_EVEN_ODD);
-        psRenderer.write("grestore");
     }
 
     /**
      * Commits a painting operation.
      * @param fill filling
      * @param stroke stroking
+     * @param nonzero ???
+     * @exception IOException In case of an I/O problem
      */
-    protected void doDrawing(boolean fill, boolean stroke, boolean nonzero) {
+    protected void doDrawing(boolean fill, boolean stroke, boolean nonzero) 
+                throws IOException {
         if (fill) {
             if (stroke) {
                 if (!nonzero) {
-                    psRenderer.write("stroke");
+                    gen.writeln("stroke");
                 } else {
-                    psRenderer.write("stroke");
+                    gen.writeln("stroke");
                 }
             } else {
                 if (!nonzero) {
-                    psRenderer.write("fill");
+                    gen.writeln("fill");
                 } else {
-                    psRenderer.write("fill");
+                    gen.writeln("fill");
                 }
             }
         } else {
             // if(stroke)
-            psRenderer.write("stroke");
+            gen.writeln("stroke");
         }
     }
 
