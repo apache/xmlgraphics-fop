@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ public class BodyRegion extends RegionReference {
     public BodyRegion() {
         super(Constants.FO_REGION_BODY);
         addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+        mainReference = new MainReference();
     }
 
     /**

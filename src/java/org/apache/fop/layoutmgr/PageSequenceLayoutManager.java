@@ -60,8 +60,7 @@ import java.awt.geom.Rectangle2D;
 import org.apache.fop.traits.MinOptMax;
 
 /**
- * LayoutManager for a PageSequence and its flow.
- * It manages all page-related layout.
+ * LayoutManager for a PageSequence.
  */
 public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private PageSequence pageSeq;
@@ -95,18 +94,21 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private int flowBPD = 0;
     private int flowIPD = 0;
 
-    /** Manager which handles a queue of all pages which are completely
-     * laid out and ready for rendering, except for resolution of ID
-     * references?
+    /** 
+     * AreaTreeHandler which activates this PSLM.
      */
     private AreaTreeHandler areaTreeHandler;
+
+    /** 
+     * AreaTreeModel that this PSLM sends pages to.
+     */
     private AreaTreeModel areaTreeModel;
 
     /**
      * This is the SimplePageMaster that should be used to create the page. It
      * will be equal to the PageSequence's simplePageMaster, if it exists, or
      * to the correct member of the PageSequence's pageSequenceMaster, if that
-     * exists instead.
+     * is in effect instead.
      */
     private SimplePageMaster currentSimplePageMaster;
 
@@ -117,10 +119,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     //private HashMap staticContentLMs = new HashMap(4);
 
     /**
-     * This is the top level layout manager.
-     * It is created by the PageSequence FO.
-     *
-     * @param pageseq the page sequence fo
+     * Constructor
+     * 
+     * @param pageseq the page sequence fo to be laid out
      */
     public PageSequenceLayoutManager(PageSequence pageSeq) {
         super(pageSeq);
@@ -185,7 +186,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         log.debug("Starting layout");
 
         makeNewPage(false, false);
-        createBodyMainReferenceArea();
         createSpan(1);
         flowIPD = curFlow.getIPD();
 
@@ -583,7 +583,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 //numCols = curBody.getProperty(NUMBER_OF_COLUMNS);
             }
             if (curSpan == null) {
-                createBodyMainReferenceArea();
                 bNeedSpan = true;
             } else if (numCols != curSpan.getNormalFlowCount()) {
                 // todo: BALANCE EXISTING COLUMNS
@@ -695,10 +694,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         else {
             return true;
         }
-    }
-
-    private void createBodyMainReferenceArea() {
-        curBody.setMainReference(new MainReference());
     }
 
     private void createSpan(int numCols) {
