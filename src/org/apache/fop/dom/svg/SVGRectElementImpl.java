@@ -86,11 +86,73 @@ public class SVGRectElementImpl extends GraphicElement implements SVGRectElement
 
 	public SVGRect getBBox()
 	{
+		SVGMatrix matrix = getScreenCTM();
+		double minx = 10000;
+		double maxx = -10000;
+		double miny = 10000;
+		double maxy = -10000;
+		double[] tl = new double[2];
+		double[] tr = new double[2];
+		double[] bl = new double[2];
+		double[] br = new double[2];
+		double[] res = new double[2];
+		tl[0] = x.getBaseVal().getValue();
+		tl[1] = y.getBaseVal().getValue();
+		res[0] = matrix.getA() * tl[0] + matrix.getB() * tl[1] + matrix.getE();
+		res[1] = matrix.getC() * tl[0] + matrix.getD() * tl[1] + matrix.getF();
+		if(res[0] > maxx)
+		    maxx = res[0];
+		if(res[0] < minx)
+		    minx = res[0];
+		if(res[1] > maxy)
+		    maxy = res[1];
+		if(res[1] < miny)
+		    miny = res[1];
+
+		tl[0] = x.getBaseVal().getValue() + width.getBaseVal().getValue();
+		tl[1] = y.getBaseVal().getValue();
+		res[0] = matrix.getA() * tl[0] + matrix.getB() * tl[1] + matrix.getE();
+		res[1] = matrix.getC() * tl[0] + matrix.getD() * tl[1] + matrix.getF();
+		if(res[0] > maxx)
+		    maxx = res[0];
+		if(res[0] < minx)
+		    minx = res[0];
+		if(res[1] > maxy)
+		    maxy = res[1];
+		if(res[1] < miny)
+		    miny = res[1];
+
+		tl[0] = x.getBaseVal().getValue();
+		tl[1] = y.getBaseVal().getValue() + height.getBaseVal().getValue();
+		res[0] = matrix.getA() * tl[0] + matrix.getB() * tl[1] + matrix.getE();
+		res[1] = matrix.getC() * tl[0] + matrix.getD() * tl[1] + matrix.getF();
+		if(res[0] > maxx)
+		    maxx = res[0];
+		if(res[0] < minx)
+		    minx = res[0];
+		if(res[1] > maxy)
+		    maxy = res[1];
+		if(res[1] < miny)
+		    miny = res[1];
+
+		tl[0] = x.getBaseVal().getValue() + width.getBaseVal().getValue();
+		tl[1] = y.getBaseVal().getValue() + height.getBaseVal().getValue();
+		res[0] = matrix.getA() * tl[0] + matrix.getB() * tl[1] + matrix.getE();
+		res[1] = matrix.getC() * tl[0] + matrix.getD() * tl[1] + matrix.getF();
+		if(res[0] > maxx)
+		    maxx = res[0];
+		if(res[0] < minx)
+		    minx = res[0];
+		if(res[1] > maxy)
+		    maxy = res[1];
+		if(res[1] < miny)
+		    miny = res[1];
+		
 		SVGRect rect = new SVGRectImpl();
-		rect.setX(x.getBaseVal().getValue());
-		rect.setY(y.getBaseVal().getValue());
-		rect.setWidth(width.getBaseVal().getValue());
-		rect.setHeight(height.getBaseVal().getValue());
+		rect.setX((float)minx);
+		rect.setY((float)miny);
+		rect.setWidth((float)(maxx - minx));
+		rect.setHeight((float)(maxy - miny));
 		return rect;
 	}
 
