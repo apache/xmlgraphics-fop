@@ -35,7 +35,7 @@ import org.xml.sax.Locator;
 /**
  * Base class for representation of formatting objects and their processing.
  */
-public class FObj extends FONode implements Constants {
+public abstract class FObj extends FONode implements Constants {
     public static PropertyMaker[] propertyListTable = null;
     
     /** The immediate child nodes of this node. */

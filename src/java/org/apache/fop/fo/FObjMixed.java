@@ -29,7 +29,7 @@ import org.apache.fop.apps.FOPException;
  * (i.e., those that can contain both child FO's and text nodes/PCDATA).
  * It should not be instantiated directly.
  */
-public class FObjMixed extends FObj {
+public abstract class FObjMixed extends FObj {
     /**
      * @param parent FONode that is the parent of this object
      */

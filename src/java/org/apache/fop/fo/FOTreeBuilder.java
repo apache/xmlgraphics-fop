@@ -246,8 +246,9 @@ public class FOTreeBuilder extends DefaultHandler {
                     "Error:  First element must be fo:root formatting object"));
             }
         } else { // check that incoming node is valid for currentFObj
-            if (namespaceURI.equals(FOElementMapping.URI) || 
-                namespaceURI.equals(ExtensionElementMapping.URI)) {
+            if (namespaceURI.equals(FOElementMapping.URI)) {
+                // currently no fox: elements to validate
+                // || namespaceURI.equals(ExtensionElementMapping.URI) */) {
                 try {
                     currentFObj.validateChildNode(locator, namespaceURI, localName);
                 } catch (ValidationException e) {

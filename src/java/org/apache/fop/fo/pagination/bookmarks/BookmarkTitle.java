@@ -14,81 +14,79 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id $ */
 
 package org.apache.fop.fo.pagination.bookmarks;
 
-// Java
-import java.util.ArrayList;
-
 import org.xml.sax.Locator;
 
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.pagination.Root;
-import org.apache.fop.fo.properties.Property;
 
 /**
- * The fo:bookmark-tree formatting object, first introduced in the 
+ * The fo:bookmark-title formatting object, first introduced in the 
  * XSL 1.1 WD.  Prototype version only, subject to change as XSL 1.1 WD
  * evolves.
  */
-public class BookmarkTree extends FObj {
-    private ArrayList bookmarks = new ArrayList();
+public class BookmarkTitle extends FObj {
+    private String title = "";
 
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a new BookmarkTitle object.
+     *
+     * @param parent the fo node parent
      */
-    public BookmarkTree(FONode parent) {
+    public BookmarkTitle(FONode parent) {
         super(parent);
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * Add the characters to this BookmarkTitle.
+     * The text data inside the BookmarkTitle xml element 
+     * is used for the BookmarkTitle string.
+     *
+     * @param data the character data
+     * @param start the start position in the data array
+     * @param end the end position in the character array
+     * @param locator location in fo source file.
      */
-    protected void addChildNode(FONode obj) {
-        if (obj instanceof Bookmark) {
-            bookmarks.add(obj);
-        }
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#endOfNode
-     */
-    protected void endOfNode() throws FOPException {
-        if (bookmarks == null) {
-           missingChildElementError("(fo:bookmark+)");
-        }
-        ((Root) parent).setBookmarkTree(this);
+    protected void addCharacters(char data[], int start, int end,
+                                 PropertyList pList,
+                                 Locator locator) {
+        title += new String(data, start, end - start);
     }
 
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-        XSL/FOP: (bookmark+)
+        XSL/FOP: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (!(nsURI == FO_URI &&
-            localName.equals("bookmark"))) {
-                invalidChildError(loc, nsURI, localName);
-        }
+            invalidChildError(loc, nsURI, localName);
     }
 
-    public ArrayList getBookmarks() {
-        return bookmarks;
+    /**
+     * Get the title for this BookmarkTitle.
+     *
+     * @return the bookmark title
+     */
+    public String getTitle() {
+        return title;
     }
-
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
-        return "fo:bookmark-tree";
+        return "fo:bookmark-title";
     }
 
     /**
      * @see org.apache.fop.fo.FObj#getNameId()
      */
     public int getNameId() {
-        return FO_BOOKMARK_TREE;
+        return FO_BOOKMARK_TITLE;
     }
 }
