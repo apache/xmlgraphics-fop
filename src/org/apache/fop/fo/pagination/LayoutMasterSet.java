@@ -102,7 +102,9 @@ public class LayoutMasterSet extends FObj {
 		throws FOPException {
 	// check against duplication of master-name
 	if (existsName(simplePageMaster.getMasterName()))
-		throw new FOPException( "'master-name' must be unique" +
+		throw new FOPException( "'master-name' (" +
+			simplePageMaster.getMasterName() +
+			") must be unique " +
 			"across page-masters and page-sequence-masters" );
 	this.simplePageMasters.put(simplePageMaster.getMasterName(), simplePageMaster);
     }
@@ -116,7 +118,9 @@ public class LayoutMasterSet extends FObj {
 		throws FOPException {
 	// check against duplication of master-name	
 	if (existsName(masterName))
-		throw new FOPException( "'master-name' must be unique " +
+		throw new FOPException( "'master-name' (" +
+			masterName +
+			") must be unique " +
 			"across page-masters and page-sequence-masters" );
 	this.pageSequenceMasters.put(masterName, pageSequenceMaster);
     }
@@ -155,8 +159,14 @@ public class LayoutMasterSet extends FObj {
 		if (allRegions.containsKey(region.getRegionName())) {
 		    String localClass = (String)allRegions.get(region.getRegionName());
 		    if (!localClass.equals(region.getRegionClass())) {
-			throw new FOPException("Duplicate region-names must map "
-					       + "to the same region-class");
+			throw new FOPException("Duplicate region-names (" +
+					       region.getRegionName() +
+					       ") must map "
+					       + "to the same region-class ("
+					       + localClass
+					       + "!="
+					       + region.getRegionClass()
+					       + ")");
 		    }
 		}
 		allRegions.put(region.getRegionName(),region.getRegionClass());
