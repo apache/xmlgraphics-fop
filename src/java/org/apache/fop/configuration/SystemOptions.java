@@ -31,10 +31,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOFileHandler;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.InputHandler;
 import org.apache.fop.apps.XSLTInputHandler;
 
@@ -398,26 +397,26 @@ public class SystemOptions {
             case NOT_SET:
                 throw new FOPException("Renderer has not been set!");
             case PDF_OUTPUT:
-                return Driver.RENDER_PDF;
+                return Fop.RENDER_PDF;
             case AWT_OUTPUT:
-                return Driver.RENDER_AWT;
+                return Fop.RENDER_AWT;
             case MIF_OUTPUT:
-                return Driver.RENDER_MIF;
+                return Fop.RENDER_MIF;
             case PRINT_OUTPUT:
-                return Driver.RENDER_PRINT;
+                return Fop.RENDER_PRINT;
             case PCL_OUTPUT:
-                return Driver.RENDER_PCL;
+                return Fop.RENDER_PCL;
             case PS_OUTPUT:
-                return Driver.RENDER_PS;
+                return Fop.RENDER_PS;
             case TXT_OUTPUT:
-                return Driver.RENDER_TXT;
+                return Fop.RENDER_TXT;
             case SVG_OUTPUT:
-                return Driver.RENDER_SVG;
+                return Fop.RENDER_SVG;
             case AREA_OUTPUT:
                 rendererOptions.put("fineDetail", coarseAreaXmlValue());
-                return Driver.RENDER_XML;
+                return Fop.RENDER_XML;
             case RTF_OUTPUT:
-                return Driver.RENDER_RTF;
+                return Fop.RENDER_RTF;
             default:
                 throw new FOPException("Invalid Renderer setting!");
         }
