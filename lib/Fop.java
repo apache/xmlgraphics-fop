@@ -162,7 +162,6 @@ public class Fop {
      */
     public void execute () throws BuildException {
         Driver driver = new Driver();
-        driver.loadStandardConfiguration("standard");
         driver.setBaseDir(fofile);
         boolean errors = false;
         String version = Version.getVersion();
