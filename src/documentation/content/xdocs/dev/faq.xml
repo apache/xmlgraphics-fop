@@ -812,7 +812,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       <answer>
         <p>Answers are that fonts must be available for the output format, and
   the selected font must contain glyphs for the desired character.
-PDF has a set of <link href="output.html#pdf-fonts">defined fonts</link>, other fonts can be embedded following the
+  PDF has a set of <link href="../output.html#pdf-fonts">defined fonts</link>, other fonts can be embedded following the
 <link href="fonts.html">instructions</link>.
 To find out if the characters you need are in the core fonts then
 (todo - find a glyph font table for the fonts).
