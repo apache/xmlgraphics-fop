@@ -185,7 +185,7 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
             embeddedFont.addFilter("ascii-85");
             embeddedFont.setData(subsetFont, subsetFont.length);
         } catch (IOException ioe) {
-            MessageHandler.error("Failed to embed font " + fontName +
+            MessageHandler.errorln("Failed to embed font ["+i+"] " + fontName +
                                  ": " + ioe.getMessage());
             return (PDFStream) null;
         }
