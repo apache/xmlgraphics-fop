@@ -20,6 +20,8 @@
 package org.apache.fop.area;
 
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * @author pbw
@@ -30,26 +32,17 @@ public class BeforeFloatRefArea
     implements ReferenceArea {
 
     /**
-     * @param parent
-     * @param index
-     * @param areaSync
-     * @throws IndexOutOfBoundsException
-     */
-    public BeforeFloatRefArea(Node parent, int index, Object areaSync)
-        throws IndexOutOfBoundsException {
-        super(parent, index, areaSync);
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
+     * @param pageSeq through which this area was generated
      * @param parent
      * @param areaSync
      * @throws IndexOutOfBoundsException
      */
-    public BeforeFloatRefArea(Node parent, Object areaSync)
-        throws IndexOutOfBoundsException {
-        super(parent, areaSync);
-        // TODO Auto-generated constructor stub
+    public BeforeFloatRefArea(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object areaSync) {
+        super(pageSeq, generatedBy, parent, areaSync);
     }
 
 }

@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * This is an abstract reference area for the page regions - currently
@@ -37,8 +39,12 @@ implements ReferenceArea {
     /**
      * Create a new region reference area.
      */
-    public RegionRefArea(Node parent, Object sync) {
-        super(parent, sync);
+    public RegionRefArea(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
     }
 
     /**

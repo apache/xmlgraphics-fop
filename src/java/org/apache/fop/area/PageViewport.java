@@ -18,6 +18,7 @@
 package org.apache.fop.area;
 
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 import org.apache.fop.fo.properties.RetrievePosition;
 
 /**
@@ -39,13 +42,12 @@ import org.apache.fop.fo.properties.RetrievePosition;
  * The page reference area is then rendered inside the PageRefArea object
  */
 public class PageViewport
-extends Area
-implements Viewport, Resolveable, Cloneable {
+extends AbstractViewport
+implements Viewport, Resolveable {
 
+    /** Unique ID for this page.  0 is an invalid ID.  */
     private long pageId = 0;
-    private PageRefArea pageRefArea;
-    private Rectangle2D viewArea;
-    private boolean clip = false;
+    /** The formatted page number */
     private String pageNumber = null;
 
     // list of id references and the rectangle on the page
@@ -73,11 +75,15 @@ implements Viewport, Resolveable, Cloneable {
      * @param p the page reference area for the contents of this page
      * @param bounds the dimensions of the viewport
      */
-    public PageViewport(long pageId, PageRefArea p, Rectangle2D bounds) {
-        super();
+    public PageViewport(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            long pageId,
+            Rectangle2D bounds,
+            PageRefArea p) {
+        super(bounds, pageSeq, generatedBy);
         this.pageId = pageId;
-        pageRefArea = p;
-        viewArea = bounds;
+        refArea = p;
     }
 
     /**
@@ -89,12 +95,16 @@ implements Viewport, Resolveable, Cloneable {
      * @param bounds the dimensions of the viewport
      */
     public PageViewport(
-            Node parent, Object sync, long pageId,
-            PageRefArea p, Rectangle2D bounds) {
-        super(parent, sync);
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            long pageId,
+            Rectangle2D bounds,
+            PageRefArea p,
+            Node parent,
+            Object sync) {
+        super(bounds, pageSeq, generatedBy, parent, sync);
         this.pageId = pageId;
-        pageRefArea = p;
-        viewArea = bounds;
+        refArea = p;
     }
 
     /**
@@ -103,35 +113,44 @@ implements Viewport, Resolveable, Cloneable {
      * @param sync
      * @param pageId
      */
-    public PageViewport(Node parent, Object sync, long pageId) {
-        super(parent, sync);
+    public PageViewport(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            long pageId,
+            Node parent,
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
         this.pageId = pageId;
-        pageRefArea = null;
+        refArea = null;
         viewArea = null;
     }
+
+    /**
+     * @return the pageId
+     */
+    public long getPageId() {
+        synchronized (sync) {
+            return pageId;
+        }
+    }
+
+    /**
+     * @param pageId to set
+     */
+    public void setPageId(long pageId) {
+        synchronized (sync) {
+            this.pageId = pageId;
+        }
+    }
     
-    /**
-     * Set if this viewport should clip.
-     * @param c true if this viewport should clip
-     */
-    public void setClip(boolean c) {
-        clip = c;
-    }
-
-    /**
-     * Get the view area rectangle of this viewport.
-     * @return the rectangle for this viewport
-     */
-    public Rectangle2D getViewArea() {
-        return viewArea;
-    }
-
     /**
      * Get the page reference area with the contents.
      * @return the page reference area
      */
     public PageRefArea getPageRefArea() {
-        return pageRefArea;
+        synchronized (sync) {
+            return (PageRefArea)getReferenceArea();
+        }
     }
 
     /**
@@ -139,7 +158,9 @@ implements Viewport, Resolveable, Cloneable {
      * @param num the string representing the page number
      */
     public void setPageNumber(String num) {
-        pageNumber = num;
+        synchronized (sync) {
+            pageNumber = num;
+        }
     }
 
     /**
@@ -147,7 +168,9 @@ implements Viewport, Resolveable, Cloneable {
      * @return the string that represents this page
      */
     public String getPageNumber() {
-        return pageNumber;
+        synchronized (sync) {
+            return pageNumber;
+        }
     }
 
     /**
@@ -159,15 +182,17 @@ implements Viewport, Resolveable, Cloneable {
      * @param res the resolver of the reference
      */
     public void addUnresolvedID(String id, Resolveable res) {
-        if (unresolved == null) {
-            unresolved = new HashMap();
+        synchronized (sync) {
+            if (unresolved == null) {
+                unresolved = new HashMap();
+            }
+            List list = (List)unresolved.get(id);
+            if (list == null) {
+                list = new ArrayList();
+                unresolved.put(id, list);
+            }
+            list.add(res);
         }
-        List list = (List)unresolved.get(id);
-        if (list == null) {
-            list = new ArrayList();
-            unresolved.put(id, list);
-        }
-        list.add(res);
     }
 
     /**
@@ -175,7 +200,9 @@ implements Viewport, Resolveable, Cloneable {
      * @return true if the page is resolved and can be rendered
      */
     public boolean isResolved() {
-        return unresolved == null;
+        synchronized (sync) {
+            return unresolved == null;
+        }
     }
 
     /**
@@ -194,26 +221,28 @@ implements Viewport, Resolveable, Cloneable {
      *              may be null if not found
      */
     public void resolve(String id, List pages) {
-        if (pageRefArea == null) {
-            if (pendingResolved == null) {
-                pendingResolved = new HashMap();
-            }
-            pendingResolved.put(id, pages);
-        } else {
-            if (unresolved != null) {
-                List todo = (List)unresolved.get(id);
-                if (todo != null) {
-                    for (int count = 0; count < todo.size(); count++) {
-                        Resolveable res = (Resolveable)todo.get(count);
-                        res.resolve(id, pages);
+        synchronized (sync) {
+            if (refArea == null) {
+                if (pendingResolved == null) {
+                    pendingResolved = new HashMap();
+                }
+                pendingResolved.put(id, pages);
+            } else {
+                if (unresolved != null) {
+                    List todo = (List)unresolved.get(id);
+                    if (todo != null) {
+                        for (int count = 0; count < todo.size(); count++) {
+                            Resolveable res = (Resolveable)todo.get(count);
+                            res.resolve(id, pages);
+                        }
                     }
                 }
             }
-        }
-        if (unresolved != null) {
-            unresolved.remove(id);
-            if (unresolved.isEmpty()) {
-                unresolved = null;
+            if (unresolved != null) {
+                unresolved.remove(id);
+                if (unresolved.isEmpty()) {
+                    unresolved = null;
+                }
             }
         }
     }
@@ -238,55 +267,60 @@ implements Viewport, Resolveable, Cloneable {
      * @param isfirst isfirst or islast flag
      */
     public void addMarkers(Map marks, boolean start, boolean isfirst) {
-        if (start) {
-            if (isfirst) {
-                if (markerFirstStart == null) {
-                    markerFirstStart = new HashMap();
-                }
-                if (markerFirstAny == null) {
-                    markerFirstAny = new HashMap();
-                }
-                // only put in new values, leave current
-                for (Iterator iter = marks.keySet().iterator(); iter.hasNext();) {
-                    Object key = iter.next();
-                    if (!markerFirstStart.containsKey(key)) {
-                        markerFirstStart.put(key, marks.get(key));
+        synchronized (sync) {
+            if (start) {
+                if (isfirst) {
+                    if (markerFirstStart == null) {
+                        markerFirstStart = new HashMap();
                     }
-                    if (!markerFirstAny.containsKey(key)) {
-                        markerFirstAny.put(key, marks.get(key));
+                    if (markerFirstAny == null) {
+                        markerFirstAny = new HashMap();
+                    }
+                    // only put in new values, leave current
+                    for (
+                            Iterator iter = marks.keySet().iterator();
+                            iter.hasNext();
+                            ) {
+                        Object key = iter.next();
+                        if (!markerFirstStart.containsKey(key)) {
+                            markerFirstStart.put(key, marks.get(key));
+                        }
+                        if (!markerFirstAny.containsKey(key)) {
+                            markerFirstAny.put(key, marks.get(key));
+                        }
+                    }
+                    if (markerLastStart == null) {
+                        markerLastStart = new HashMap();
+                    }
+                    // replace all
+                    markerLastStart.putAll(marks);
+                    
+                } else {
+                    if (markerFirstAny == null) {
+                        markerFirstAny = new HashMap();
+                    }
+                    // only put in new values, leave current
+                    for (Iterator iter = marks.keySet().iterator(); iter.hasNext();) {
+                        Object key = iter.next();
+                        if (!markerFirstAny.containsKey(key)) {
+                            markerFirstAny.put(key, marks.get(key));
+                        }
                     }
                 }
-                if (markerLastStart == null) {
-                    markerLastStart = new HashMap();
-                }
-                // replace all
-                markerLastStart.putAll(marks);
-
             } else {
-                if (markerFirstAny == null) {
-                    markerFirstAny = new HashMap();
-                }
-                // only put in new values, leave current
-                for (Iterator iter = marks.keySet().iterator(); iter.hasNext();) {
-                    Object key = iter.next();
-                    if (!markerFirstAny.containsKey(key)) {
-                        markerFirstAny.put(key, marks.get(key));
+                if (!isfirst) {
+                    if (markerLastEnd == null) {
+                        markerLastEnd = new HashMap();
                     }
+                    // replace all
+                    markerLastEnd.putAll(marks);
                 }
-            }
-        } else {
-            if (!isfirst) {
-                if (markerLastEnd == null) {
-                    markerLastEnd = new HashMap();
+                if (markerLastAny == null) {
+                    markerLastAny = new HashMap();
                 }
                 // replace all
-                markerLastEnd.putAll(marks);
+                markerLastAny.putAll(marks);
             }
-            if (markerLastAny == null) {
-                markerLastAny = new HashMap();
-            }
-            // replace all
-            markerLastAny.putAll(marks);
         }
     }
 
@@ -300,39 +334,41 @@ implements Viewport, Resolveable, Cloneable {
      * @return Object the marker found or null
      */
     public Object getMarker(String name, int pos) {
-        Object mark = null;
-        switch (pos) {
-            case RetrievePosition.FIRST_STARTING_WITHIN_PAGE:
-                if (markerFirstStart != null) {
-                    mark = markerFirstStart.get(name);
-                }
+        synchronized (sync) {
+            Object mark = null;
+            switch (pos) {
+                case RetrievePosition.FIRST_STARTING_WITHIN_PAGE:
+                    if (markerFirstStart != null) {
+                        mark = markerFirstStart.get(name);
+                    }
                 if (mark == null && markerFirstAny != null) {
                     mark = markerFirstAny.get(name);
                 }
-            break;
-            case RetrievePosition.FIRST_INCLUDING_CARRYOVER:
-                if (markerFirstAny != null) {
-                    mark = markerFirstAny.get(name);
-                }
-            break;
-            case RetrievePosition.LAST_STARTING_WITHIN_PAGE:
-                if (markerLastStart != null) {
-                    mark = markerLastStart.get(name);
-                }
+                break;
+                case RetrievePosition.FIRST_INCLUDING_CARRYOVER:
+                    if (markerFirstAny != null) {
+                        mark = markerFirstAny.get(name);
+                    }
+                break;
+                case RetrievePosition.LAST_STARTING_WITHIN_PAGE:
+                    if (markerLastStart != null) {
+                        mark = markerLastStart.get(name);
+                    }
                 if (mark == null && markerLastAny != null) {
                     mark = markerLastAny.get(name);
                 }
-            break;
-            case RetrievePosition.LAST_ENDING_WITHIN_PAGE:
-                if (markerLastEnd != null) {
-                    mark = markerLastEnd.get(name);
-                }
+                break;
+                case RetrievePosition.LAST_ENDING_WITHIN_PAGE:
+                    if (markerLastEnd != null) {
+                        mark = markerLastEnd.get(name);
+                    }
                 if (mark == null && markerLastAny != null) {
                     mark = markerLastAny.get(name);
                 }
-            break;
+                break;
+            }
+            return mark;
         }
-        return mark;
     }
 
     /**
@@ -340,13 +376,18 @@ implements Viewport, Resolveable, Cloneable {
      * The map of unresolved references are set on the pageRefArea so that
      * the resolvers can be properly serialized and reloaded.
      * @param out the object output stream to write the contents
-     * @throws Exception if there is a problem saving the pageRefArea
      */
-    public void savePage(ObjectOutputStream out) throws Exception {
+    public void savePage(ObjectOutputStream out) {
         // set the unresolved references so they are serialized
-        pageRefArea.setUnresolvedReferences(unresolved);
-        out.writeObject(pageRefArea);
-        pageRefArea = null;
+        synchronized (sync) {
+            ((PageRefArea)refArea).setUnresolvedReferences(unresolved);
+            try {
+                out.writeObject(refArea);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            refArea = null;
+        }
     }
 
     /**
@@ -358,15 +399,18 @@ implements Viewport, Resolveable, Cloneable {
      * @throws Exception if there is an error loading the pageRefArea
      */
     public void loadPage(ObjectInputStream in) throws Exception {
-        pageRefArea = (PageRefArea) in.readObject();
-        unresolved = pageRefArea.getUnresolvedReferences();
-        if (unresolved != null && pendingResolved != null) {
-            for (Iterator iter = pendingResolved.keySet().iterator();
-                         iter.hasNext();) {
-                String id = (String) iter.next();
-                resolve(id, (List)pendingResolved.get(id));
+        synchronized (sync) {
+            PageRefArea pageRefArea = (PageRefArea) in.readObject();
+            refArea = pageRefArea;
+            unresolved = pageRefArea.getUnresolvedReferences();
+            if (unresolved != null && pendingResolved != null) {
+                for (Iterator iter = pendingResolved.keySet().iterator();
+                iter.hasNext();) {
+                    String id = (String) iter.next();
+                    resolve(id, (List)pendingResolved.get(id));
+                }
+                pendingResolved = null;
             }
-            pendingResolved = null;
         }
     }
 
@@ -376,15 +420,17 @@ implements Viewport, Resolveable, Cloneable {
      * @return a copy of this page and associated viewports
      */
     public Object clone() {
-        PageViewport pv;
-        try {
-            pv = (PageViewport)(super.clone());
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+        synchronized (sync) {
+            PageViewport pv;
+            try {
+                pv = (PageViewport)(super.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
+            pageId = 0;  // N.B. This invalidates the page id
+            pv.refArea = (PageRefArea)(refArea.clone());
+            return pv;
         }
-        pageId = 0;  // N.B. This invalidates the page id
-        pv.pageRefArea = (PageRefArea)pageRefArea.clone();
-        return pv;
     }
 
     /**
@@ -393,16 +439,20 @@ implements Viewport, Resolveable, Cloneable {
      * it holds id and marker information and is used as a key.
      */
     public void clear() {
-        pageRefArea = null;
+        synchronized (sync) {
+            refArea = null;
+        }
     }
     
     /**
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        StringBuffer sb = new StringBuffer(64);
-        sb.append("PageViewport: page=");
-        sb.append(getPageNumber());
-        return sb.toString();
+        synchronized (sync) {
+            StringBuffer sb = new StringBuffer(64);
+            sb.append("PageViewport: page=");
+            sb.append(getPageNumber());
+            return sb.toString();
+        }
     }
 }

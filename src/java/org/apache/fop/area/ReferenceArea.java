@@ -42,5 +42,7 @@ public interface ReferenceArea extends Cloneable {
      * @return the current transformer to position this reference area.
      */
     public CoordTransformer getCoordTransformer();
+    
+    public Object clone();
         
 }

@@ -18,6 +18,8 @@
 package org.apache.fop.area;
 
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * The body region area.
@@ -37,8 +39,28 @@ implements ReferenceArea {
      * Create a new body region area.
      * This sets the region reference area class to BODY.
      */
-    public RegionBodyRefArea(Node parent, Object sync) {
-        super(parent, sync);
+    public RegionBodyRefArea(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
+    }
+
+    /**
+     * Create a new body region area.
+     * This sets the region reference area class to BODY.
+     */
+    public RegionBodyRefArea(
+            int columnCount,
+            int columnGap,
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
+        this.columnCount = columnCount;
+        this.columnGap = columnGap;
     }
 
     /**
@@ -47,7 +69,9 @@ implements ReferenceArea {
      * @param colCount the number of columns
      */
     public void setColumnCount(int colCount) {
-        this.columnCount = colCount;
+        synchronized (sync) {
+            this.columnCount = colCount;
+        }
     }
 
     /**
@@ -56,7 +80,9 @@ implements ReferenceArea {
      * @return the number of columns
      */
     public int getColumnCount() {
-        return this.columnCount;
+        synchronized (sync) {
+            return this.columnCount;
+        }
     }
 
     /**
@@ -66,9 +92,19 @@ implements ReferenceArea {
      * @param colGap the column gap in millipoints
      */
     public void setColumnGap(int colGap) {
-        this.columnGap = colGap;
+        synchronized (sync) {
+            this.columnGap = colGap;
+        }
     }
 
+    /**
+     * @return the columnGap
+     */
+    public int getColumnGap() {
+        synchronized (sync) {
+            return columnGap;
+        }
+    }
     /**
      * Set the before float area.
      *
@@ -84,7 +120,9 @@ implements ReferenceArea {
      * @param mr the main reference area
      */
     public void setMainReference(MainReferenceArea mr) {
-        mainReference = mr;
+        synchronized (sync) {
+            mainReference = mr;
+        }
     }
 
     /**
@@ -111,7 +149,9 @@ implements ReferenceArea {
      * @return the main reference area
      */
     public MainReferenceArea getMainReference() {
-        return mainReference;
+        synchronized (sync) {
+            return mainReference;
+        }
     }
 
     /**
@@ -129,12 +169,14 @@ implements ReferenceArea {
      * @return a shallow copy of this object
      */
     public Object clone() {
-        RegionBodyRefArea br = (RegionBodyRefArea)(super.clone());
-        br.columnGap = columnGap;
-        br.columnCount = columnCount;
-        //br.beforeFloat = beforeFloat;
-        br.mainReference = mainReference;
-        //br.footnote = footnote;
-        return br;
+        synchronized (sync) {
+            RegionBodyRefArea br = (RegionBodyRefArea)(super.clone());
+            br.columnGap = columnGap;
+            br.columnCount = columnCount;
+            //br.beforeFloat = beforeFloat;
+            br.mainReference = mainReference;
+            //br.footnote = footnote;
+            return br;
+        }
     }
 }

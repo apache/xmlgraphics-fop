@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Created on 21/02/2004
+ * Created on 28/02/2004
  * $Id$
  */
 package org.apache.fop.area;
-
-import java.awt.geom.Rectangle2D;
 
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.FONode;
@@ -29,20 +27,18 @@ import org.apache.fop.fo.flow.FoPageSequence;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class RegionStartVport extends RegionViewport {
-
+public class NormalFlowRefArea extends AbstractReferenceArea
+        implements
+            ReferenceArea {
     /**
+     * @param pageSeq
+     * @param generatedBy
      * @param parent
      * @param sync
-     * @param viewArea
      */
-    public RegionStartVport(
-            Rectangle2D viewArea,
-            FoPageSequence pageSeq,
-            FONode generatedBy,
-            Node parent,
-            Object sync) {
-        super(viewArea, pageSeq, generatedBy, parent, sync);
+    public NormalFlowRefArea(FoPageSequence pageSeq, FONode generatedBy,
+            Node parent, Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
+        // TODO Auto-generated constructor stub
     }
-
 }

@@ -20,6 +20,8 @@
 package org.apache.fop.area;
 
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * @author pbw
@@ -33,8 +35,12 @@ public class RegionAfterRefArea
      * @param parent
      * @param sync
      */
-    public RegionAfterRefArea(Node parent, Object sync) {
-        super(parent, sync);
+    public RegionAfterRefArea(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
         // TODO Auto-generated constructor stub
     }
 

@@ -20,6 +20,8 @@ package org.apache.fop.area;
 
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.datastructs.SyncedNode;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * @author pbw
@@ -37,6 +39,10 @@ import org.apache.fop.datastructs.SyncedNode;
  */
 public class Area extends SyncedNode implements Cloneable  {
 
+    /** The page-sequence which generated this area. */
+    protected FoPageSequence pageSeq = null;
+    /** The FO node that generated this node. */
+    protected FONode generatedBy = null;
     /** Current inline progression dimension.  May be unknown. */
     protected Integer iPDim = null;
     /** Maximum required inline progression dimension.  May be unknown. */
@@ -51,115 +57,178 @@ public class Area extends SyncedNode implements Cloneable  {
     protected Integer bPDimMin = null;
     
     /**
+     * @param pageSeq through which this area was generated
+     * @param generatedBy the given <code>FONode</code> generated this
      * @param parent <code>Node</code> of this
      * @param index of this in children of parent
+     * @param sync the object on which this area is synchronized
      * @throws IndexOutOfBoundsException
      */
-    public Area(Node parent, int index, Object areaSync)
+    public Area(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            int index,
+            Object sync)
         throws IndexOutOfBoundsException {
-        super(parent, index, areaSync);
-        // TODO Auto-generated constructor stub
+        super(parent, index, sync);
+        this.pageSeq = pageSeq;
+        this.generatedBy = generatedBy;
     }
 
     /**
+     * @param pageSeq through which this area was generated
+     * @param generatedBy the given <code>FONode</code> generated this
      * @param parent <code>Node</code> of this
+     * @param sync the object on which this area is synchronized
      * @throws IndexOutOfBoundsException
      */
-    public Area(Node parent, Object areaSync)
-        throws IndexOutOfBoundsException {
-        super(parent, areaSync);
-        // TODO Auto-generated constructor stub
+    public Area(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(parent, sync);
+        this.pageSeq = pageSeq;
+        this.generatedBy = generatedBy;
     }
 
     /**
      * Construct an <code>Area</code> which is the root of a tree, and is
      * synchronized on itself
+     * @param pageSeq through which this area was generated
+     * @param generatedBy the given <code>FONode</code> generated this
      */
-    public Area() {
+    public Area(
+            FoPageSequence pageSeq,
+            FONode generatedBy) {
         super();
+        this.pageSeq = pageSeq;
+        this.generatedBy = generatedBy;
+    }
+
+    /**
+     * @return the generatedBy
+     */
+    public FONode getGeneratedBy() {
+        synchronized (sync) {
+            return generatedBy;
+        }
+    }
+    /**
+     * @param generatedBy to set
+     */
+    public void setGeneratedBy(FONode generatedBy) {
+        synchronized (sync) {
+            this.generatedBy = generatedBy;
+        }
     }
     /**
      * @return the bPDim
      */
     public Integer getBPDim() {
-        return bPDim;
+        synchronized (sync) {
+            return bPDim;
+        }
     }
 
     /**
      * @param dim to set
      */
     public void setBPDim(Integer dim) {
-        bPDim = dim;
+        synchronized (sync) {
+            bPDim = dim;
+        }
     }
 
     /**
      * @return the bPDimMax
      */
     public Integer getBPDimMax() {
-        return bPDimMax;
+        synchronized (sync) {
+            return bPDimMax;
+        }
     }
 
     /**
      * @param dimMax to set
      */
     public void setBPDimMax(Integer dimMax) {
-        bPDimMax = dimMax;
+        synchronized (sync) {
+            bPDimMax = dimMax;
+        }
     }
 
     /**
      * @return the bPDimMin
      */
     public Integer getBPDimMin() {
-        return bPDimMin;
+        synchronized (sync) {
+            return bPDimMin;
+        }
     }
 
     /**
      * @param dimMin to set
      */
     public void setBPDimMin(Integer dimMin) {
-        bPDimMin = dimMin;
+        synchronized (sync) {
+            bPDimMin = dimMin;
+        }
     }
 
     /**
      * @return the iPDim
      */
     public Integer getIPDim() {
-        return iPDim;
+        synchronized (sync) {
+            return iPDim;
+        }
     }
 
     /**
      * @param dim to set
      */
     public void setIPDim(Integer dim) {
-        iPDim = dim;
+        synchronized (sync) {
+            iPDim = dim;
+        }
     }
 
     /**
      * @return the iPDimMax
      */
     public Integer getIPDimMax() {
-        return iPDimMax;
+        synchronized(sync) {
+            return iPDimMax;
+        }
     }
 
     /**
      * @param dimMax to set
      */
     public void setIPDimMax(Integer dimMax) {
-        iPDimMax = dimMax;
+        synchronized (sync) {
+            iPDimMax = dimMax;
+        }
     }
 
     /**
      * @return the iPDimMin
      */
     public Integer getIPDimMin() {
-        return iPDimMin;
+        synchronized (sync) {
+            return iPDimMin;
+        }
     }
 
     /**
      * @param dimMin to set
      */
     public void setIPDimMin(Integer dimMin) {
-        iPDimMin = dimMin;
+        synchronized (sync) {
+            iPDimMin = dimMin;
+        }
     }
 
 }

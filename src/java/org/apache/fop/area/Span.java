@@ -20,7 +20,10 @@ package org.apache.fop.area;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * The span reference areas are children of the main-reference-area
@@ -30,29 +33,69 @@ import org.apache.fop.datastructs.Node;
 public class Span
 extends AbstractReferenceArea
 implements ReferenceArea, Serializable {
-    // the list of flow reference areas in this span area
+    // the list of normal-flow-reference-areas in this span area
     private List flowAreas;
     
-    private Integer cols;
+    private NormalFlowRefArea currentFlowArea = null;
+    
+    /**
+     * Number of columns in this span.  Derived from the <code>span</code>
+     * property on the fo:flow and the column-count prooperty on the
+     * region-body-reference-area.  Defaults to 1.
+     */
+    private int columnCount = 1;
 
     /**
-     * Create a span area with the number of columns for this span area.
-     *
-     * @param cols the number of columns in the span
+     * Create a span area with the number of columns for .
+     * Span-reference-areas are children of main-reference-areas.
      */
-    public Span(Node parent, Object sync, Integer cols) {
-        super(parent, sync);
-        this.cols = cols;
+    public Span(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
     }
 
     /**
-     * Get the column count for this span area.
-     *
-     * @return the number of columns in this span area
+     * Create a span area with the number of columns for .
+     * Span-reference-areas are children of main-reference-areas.
      */
-    public Integer getColumnCount() {
-        return cols;
+    public Span(
+            int columnCount,
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
+        this.columnCount =  columnCount;
     }
 
+    /**
+     * @return the column count
+     */
+    public int getColumnCount() {
+        synchronized (sync) {
+            return columnCount;
+        }
+    }
+    /**
+     * Set spanning condition, only if no main-reference-area exists
+     */
+    public void setColumnCount(int columnCount) throws FOPException {
+        if (flowAreas == null) {
+            this.columnCount = columnCount;
+        }
+        else {
+            throw new FOPException("normal-flow-reference-areas exist");
+        }
+    }
+    
+    public boolean activeFlowRefAreas() {
+        if (flowAreas == null && currentFlowArea == null) {
+            return false;
+        }
+        return true;
+    }
 }
 

@@ -14,35 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Created on 21/02/2004
+ * Created on 27/02/2004
  * $Id$
  */
 package org.apache.fop.area;
-
 import java.awt.geom.Rectangle2D;
-
-import org.apache.fop.datastructs.Node;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.flow.FoPageSequence;
-
 /**
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class RegionStartVport extends RegionViewport {
-
+public interface ViewportI {
     /**
-     * @param parent
-     * @param sync
-     * @param viewArea
+     * Set if this viewport should clip.
+     * @param c true if this viewport should clip
      */
-    public RegionStartVport(
-            Rectangle2D viewArea,
-            FoPageSequence pageSeq,
-            FONode generatedBy,
-            Node parent,
-            Object sync) {
-        super(viewArea, pageSeq, generatedBy, parent, sync);
-    }
-
+    public abstract void setClip(boolean c);
+    /**
+     * Get the view area rectangle of this viewport.
+     * @return the rectangle for this viewport
+     * TODO Thread safety
+     */
+    public abstract Rectangle2D getViewArea();
+    /**
+     * @param viewArea to set
+     */
+    public abstract void setViewArea(Rectangle2D viewArea);
+    /**
+     * Get the page reference area with the contents.
+     * @return the page reference area
+     * TODO Thread safety
+     */
+    public abstract PageRefArea getPageRefArea();
 }

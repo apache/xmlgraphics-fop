@@ -20,6 +20,8 @@ package org.apache.fop.area;
 import java.util.List;
 
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * The main body reference area.
@@ -32,18 +34,18 @@ public class MainReferenceArea
 extends AbstractReferenceArea
 implements ReferenceArea {
     private List spanAreas = new java.util.ArrayList();
-    private int columnGap;
-    private int width;
 
     /**
      * @param parent
      * @param areaSync
      * @throws IndexOutOfBoundsException
      */
-    public MainReferenceArea(Node parent, Object areaSync)
-    throws IndexOutOfBoundsException {
-        super(parent, areaSync);
-        // TODO Auto-generated constructor stub
+    public MainReferenceArea(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object areaSync) {
+        super(pageSeq, generatedBy, parent, areaSync);
     }
     
     /**
@@ -62,24 +64,6 @@ implements ReferenceArea {
      */
     public List getSpans() {
         return spanAreas;
-    }
-
-    /**
-     * Get the column gap in millipoints.
-     *
-     * @return the column gap in millioints
-     */
-    public int getColumnGap() {
-        return columnGap;
-    }
-
-    /**
-     * Get the width of this reference area.
-     *
-     * @return the width
-     */
-    public int getWidth() {
-        return width;
     }
 
 }
