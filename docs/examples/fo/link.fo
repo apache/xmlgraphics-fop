@@ -24,22 +24,28 @@
     <fo:flow flow-name="xsl-body">
 
       <!-- Normal text -->
-      <fo:block text-align="centered">1. <fo:simple-link external-destination="normal.pdf">normal.pdf</fo:simple-link>
+      <fo:block text-align="center">0. Normal text without link
+      </fo:block>
+
+
+      <!-- Normal text -->
+      <fo:block text-align="center"
+                font-family="serif">1. <fo:simple-link external-destination="normal.pdf">normal.pdf</fo:simple-link>
       </fo:block>
 
       <!-- Normal text -->
-      <fo:block text-align="centered">---</fo:block>
+      <fo:block text-align="center">---</fo:block>
 
       <!-- Normal text -->
-      <fo:block text-align="centered">
+      <fo:block text-align="center">
         2. A one line example (text-align='start'): <fo:simple-link external-destination="normal.pdf">normal.pdf</fo:simple-link>
       </fo:block>
 
       <!-- Normal text -->
-      <fo:block text-align="centered">---</fo:block>
+      <fo:block text-align="center">---</fo:block>
 
       <!-- Normal text -->
-      <fo:block text-align="start">
+      <fo:block text-align="start" hyphenate="true">
         3. A multiline text (text-align='start'). The Extensible Markup Language (XML) is a subset of SGML that is completely described in this document. Its goal is to
         enable generic SGML to be served, received, and processed on the Web in the way that is now possible with HTML. XML
         has been designed for ease of implementation and for interoperability with both SGML and HTML. For further information 
@@ -47,10 +53,10 @@
       </fo:block>
 
       <!-- Normal text -->
-      <fo:block text-align="centered">---</fo:block>
+      <fo:block text-align="center">---</fo:block>
 
       <!-- Normal text -->
-      <fo:block text-align="centered">
+      <fo:block text-align="center">
         4. A multiline text (text-align='centered'). The Extensible Markup Language (XML) is a subset of SGML that is completely described in this document. Its goal is to
         enable generic SGML to be served, received, and processed on the Web in the way that is now possible with HTML. XML
         has been designed for ease of implementation and for interoperability with both SGML and HTML. For further information 
@@ -58,7 +64,7 @@
       </fo:block>
 
       <!-- Normal text -->
-      <fo:block text-align="centered">---</fo:block>
+      <fo:block text-align="center">---</fo:block>
 
       <!-- Normal text -->
       <fo:block text-align="end">
@@ -69,7 +75,7 @@
       </fo:block>
 
       <!-- Normal text -->
-      <fo:block text-align="centered">---</fo:block>
+      <fo:block text-align="center">---</fo:block>
 
       <!-- Normal text -->
       <fo:block text-align="start"

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fo:root font-family="Times Roman" font-size="12pt" text-align="justified" xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<fo:root font-family="Times Roman" font-size="12pt" text-align="justify" xmlns:fo="http://www.w3.org/1999/XSL/Format">
 <fo:layout-master-set>
 <fo:simple-page-master master-name="right"
 	margin-top="75pt" margin-bottom="25pt" margin-left="100pt" margin-right="50pt">
@@ -31,7 +31,7 @@
 <fo:page-sequence id="N2528" master-name="psmOddEven">
 
 <fo:static-content flow-name="xsl-after">
-	<fo:block text-align-last="centered" font-size="10pt">
+	<fo:block text-align-last="center" font-size="10pt">
 		<fo:page-number/>
 	</fo:block>
 </fo:static-content>
@@ -47,5 +47,5 @@
 
 <fo:page-sequence id="N2561" master-name="psmOddEven">
 <fo:static-content flow-name="xsl-after">
-<fo:block text-align-last="centered" font-size="10pt"><fo:page-number/></fo:block></fo:static-content><fo:flow><fo:block font-size="18pt" font-weight="bold">A. Appendix</fo:block></fo:flow></fo:page-sequence></fo:root>
+<fo:block text-align-last="center" font-size="10pt"><fo:page-number/></fo:block></fo:static-content><fo:flow><fo:block font-size="18pt" font-weight="bold">A. Appendix</fo:block></fo:flow></fo:page-sequence></fo:root>
 	  
