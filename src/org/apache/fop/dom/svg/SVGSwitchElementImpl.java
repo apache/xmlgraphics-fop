@@ -58,11 +58,6 @@ import org.w3c.dom.svg.*;
  */
 public class SVGSwitchElementImpl extends GraphicElement implements SVGSwitchElement {
 
-	public String sysr;
-	public String sysl;
-
-	public SVGSwitchElementImpl(String sr, String sl) {
-		sysr = sr;
-		sysl = sl;
+	public SVGSwitchElementImpl() {
 	}
 }
