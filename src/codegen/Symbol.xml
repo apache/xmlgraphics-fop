@@ -86,6 +86,7 @@
     <char name="phi1" width="603"/>
     <char name="kappa" width="549"/>
     <char name="lambda" width="549"/>
+    <char name="m" width="576"/>
     <char name="mu" width="576"/>
     <char name="nu" width="521"/>
     <char name="omicron" width="549"/>
