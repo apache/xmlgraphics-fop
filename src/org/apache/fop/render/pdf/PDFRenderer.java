@@ -1801,7 +1801,8 @@ e.printStackTrace();
 				FopImage img = FopImageFactory.Make(href);
 				if(img instanceof SVGImage) {
 					SVGDocument doc = ((SVGImage)img).getSVGDocument();
-					Element ele = doc.getElementById(ref.substring(pos, ref.length()));
+					Element ele = doc.getElementById(ref.substring(pos + 1, ref.length()));
+//System.out.println("def:" + ref.substring(pos + 1, ref.length()) + ":" + ele);
 					if(ele instanceof SVGElement) {
 						return (SVGElement)ele;
 					}
@@ -1912,7 +1913,6 @@ e.printStackTrace();
 				FontState oldfs = fs;
 				changed = updateFont(tsg, fs);
 				boolean spacing = "preserve".equals(tsg.getXMLspace());
-System.out.println("tspan:" + tsg.getChildNodes());
 				renderTextNodes(spacing, tsg.getChildNodes(), tsg.getX().getBaseVal(), tsg.getY().getBaseVal(), tsg.getDx().getBaseVal(), tsg.getDy().getBaseVal());
 
 //				currentX += fs.width(' ') / 1000f;
