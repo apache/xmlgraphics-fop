@@ -1,5 +1,5 @@
 /*
- * $Id: FootnoteBody.java,v 1.12 2003/03/06 11:36:30 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,53 +48,59 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo.flow;
 
-// XML
-import org.xml.sax.Attributes;
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
-// FOP
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOTreeVisitor;
+//Java
+import java.io.Writer;
+import java.io.IOException;
 
-/**
- * Class modelling the fo:footnote-body object. See Sec. 6.10.4 of the XSL-FO
- * Standard.
+//FOP
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
+
+/**  Model of an RTF footnote
+ *  @author Peter Herweg, pherweg@web.de
  */
-public class FootnoteBody extends FObj {
+public class RtfFootnote extends RtfContainer
+        implements IRtfTextrunContainer {
+    RtfTextrun textrunInline = null;
+    RtfTextrun textrunBody = null;
+    boolean bBody = false;
 
-    private int align;
-    private int alignLast;
-    private int lineHeight;
-    private int startIndent;
-    private int endIndent;
-    private int textIndent;
+    /** Create an RTF list item as a child of given container with default attributes */
+    RtfFootnote(RtfContainer parent, Writer w) throws IOException {
+        super(parent, w);
+        textrunInline = new RtfTextrun(this, writer, null);
+        textrunBody = new RtfTextrun(this, writer, null);
+    }
+
+    public RtfTextrun getTextrun() throws IOException {
+        if (bBody) {
+            return textrunBody;
+        } else {
+            return textrunInline;
+        }
+    }
 
     /**
-     * @param parent FONode that is the parent of this object
-     */
-    public FootnoteBody(FONode parent) {
-        super(parent);
-    }
-
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveFootnoteBody(this);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-
-        getFOTreeControl().getFOInputHandler().startFootnoteBody(this);
-    }
-
-    protected void end() {
-        super.end();
+    * write RTF code of all our children
+    * @throws IOException for I/O problems
+    */
+    protected void writeRtfContent() throws IOException {
+        textrunInline.writeRtfContent();
         
-        getFOTreeControl().getFOInputHandler().endFootnoteBody(this);
+        writeGroupMark(true);
+        writeControlWord("footnote");
+        writeControlWord("ftnalt");      
+        textrunBody.writeRtfContent();
+        writeGroupMark(false);
+    }
+    
+    public void startBody() {
+        bBody = true;
+    }
+    
+    public void endBody() {
+        bBody = false;
     }
 }

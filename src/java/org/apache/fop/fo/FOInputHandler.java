@@ -58,6 +58,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
+import org.apache.fop.fo.flow.Footnote;
+import org.apache.fop.fo.flow.FootnoteBody;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
@@ -365,9 +367,28 @@ public abstract class FOInputHandler extends AbstractLogEnabled {
     public abstract void foreignObject(InstreamForeignObject ifo);
 
     /**
-     * Process a footnote.
+     * Process the start of a footnote.
+     * @param footnote Footnote that is starting
      */
-    public abstract void footnote();
+    public abstract void startFootnote(Footnote footnote);
+    
+    /**
+     * Process the ending of a footnote.
+     * @param footnote Footnote that is ending
+     */
+    public abstract void endFootnote(Footnote footnote);
+
+    /**
+     * Process the start of a footnote body.
+     * @param body FootnoteBody that is starting
+     */
+    public abstract void startFootnoteBody(FootnoteBody body);
+    
+    /**
+     * Process the ending of a footnote body.
+     * @param body FootnoteBody that is ending
+     */
+    public abstract void endFootnoteBody(FootnoteBody body);
 
     /**
      * Process a Leader.
