@@ -1,5 +1,114 @@
 <?xml version="1.0" ?>
-<elements prefix="svg" ns="http:">
+<elements prefix="svg" ns="http://www.w3.org/2000/svg">
+    <commonAttributes ref="stdAttrs">
+        <attribute>id</attribute>
+        <attribute>class</attribute>
+    </commonAttributes>
+    <commonAttributes ref="langSpaceAttrs">
+        <attribute>xml:lang</attribute>
+        <attribute>xml:space</attribute>
+    </commonAttributes>
+    <commonAttributes ref="testAttrs">
+        <attribute>requiredFeatures</attribute>
+        <attribute>requiredExtensions</attribute>
+        <attribute>systemLanguage</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-All">
+        <includeAttributes ref="PresentationAttributes-Containers"/>
+        <includeAttributes ref="PresentationAttributes-feFlood"/>
+        <includeAttributes ref="PresentationAttributes-FillStroke"/>
+        <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+        <includeAttributes ref="PresentationAttributes-Gradients"/>
+        <includeAttributes ref="PresentationAttributes-Graphics"/>
+        <includeAttributes ref="PresentationAttributes-Images"/>
+        <includeAttributes ref="PresentationAttributes-LightingEffects"/>
+        <includeAttributes ref="PresentationAttributes-Markers"/>
+        <includeAttributes ref="PresentationAttributes-TextContentElements"/>
+        <includeAttributes ref="PresentationAttributes-TextElements"/>
+        <includeAttributes ref="PresentationAttributes-Viewports"/>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-Containers">
+        <attribute>enable-background</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-feFlood">
+        <attribute>flood-color</attribute>
+        <attribute>flood-opacity</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-FillStroke">
+        <attribute>fill</attribute>
+        <attribute>fill-opacity</attribute>
+        <attribute>fill-rule</attribute>
+        <attribute>stroke</attribute>
+        <attribute>stroke-dasharray</attribute>
+        <attribute>stroke-dashoffset</attribute>
+        <attribute>stroke-linecap</attribute>
+        <attribute>stroke-linejoin</attribute>
+        <attribute>stroke-miterlimit</attribute>
+        <attribute>stroke-opacity</attribute>
+        <attribute>stroke-width</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-FontSpecification">
+        <attribute>font-family</attribute>
+        <attribute>font-size</attribute>
+        <attribute>font-size-adjust</attribute>
+        <attribute>font-stretch</attribute>
+        <attribute>font-style</attribute>
+        <attribute>font-variant</attribute>
+        <attribute>font-weight</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-Gradients">
+        <attribute>stop-color</attribute>
+        <attribute>stop-opacity</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-Graphics">
+        <attribute>clip-path</attribute>
+        <attribute>clip-rule</attribute>
+        <attribute>color</attribute>
+        <attribute>color-interpolation</attribute>
+        <attribute>color-rendering</attribute>
+        <attribute>cursor</attribute>
+        <attribute>display</attribute>
+        <attribute>filter</attribute>
+        <attribute>image-rendering</attribute>
+        <attribute>mask</attribute>
+        <attribute>opacity</attribute>
+        <attribute>pointer-events</attribute>
+        <attribute>space-rendering</attribute>
+        <attribute>text-rendering</attribute>
+        <attribute>visibility</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-Images">
+        <attribute>color-profile</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-LightingEffects">
+        <attribute>lighting-color</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-Markers">
+        <attribute>marker-start</attribute>
+        <attribute>marker-mid</attribute>
+        <attribute>marker-end</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-TextContentElements">
+        <attribute>alignment-baseline</attribute>
+        <attribute>baseline-shift</attribute>
+        <attribute>direction</attribute>
+        <attribute>glyph-orientation-horizontal</attribute>
+        <attribute>glyph-orientation-vertical</attribute>
+        <attribute>kerning</attribute>
+        <attribute>letter-spacing</attribute>
+        <attribute>text-decoration</attribute>
+        <attribute>unicode-bidi</attribute>
+        <attribute>word-spacing</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-TextElements">
+        <attribute>writing-mode</attribute>
+        <attribute>text-anchor</attribute>
+        <attribute>dominant-baseline</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-Viewports">
+        <attribute>clip</attribute>
+        <attribute>overflow</attribute>
+    </commonAttributes>
     <element>
         <tagname>a</tagname>
         <attributes>
@@ -9,6 +118,9 @@
     <element>
         <tagname>circle</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -20,31 +132,37 @@
     <element>
         <tagname>altGlyph</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>animate</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>animateColor</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>animateMotion</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>animateTransform</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>clipPath</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>clipPathUnits</attribute>
@@ -53,11 +171,13 @@
     <element>
         <tagname>cursor</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>defs</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element addText="true">
@@ -68,6 +188,7 @@
     <element>
         <tagname>ellipse</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -80,16 +201,19 @@
     <element>
         <tagname>filter</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>font</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>g</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -99,16 +223,19 @@
     <element>
         <tagname>glyph</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>hkern</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>image</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -123,6 +250,7 @@
     <element>
         <tagname>line</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -136,6 +264,7 @@
     <element>
         <tagname>linearGradient</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -153,11 +282,13 @@
     <element>
         <tagname>marker</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>mask</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
         </attributes>
@@ -165,11 +296,13 @@
     <element>
         <tagname>missing-glyph</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>path</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -180,6 +313,7 @@
     <element>
         <tagname>pattern</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -195,6 +329,7 @@
     <element>
         <tagname>polygon</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -205,6 +340,7 @@
     <element>
         <tagname>polyline</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -215,6 +351,7 @@
     <element>
         <tagname>radialGradient</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -232,6 +369,9 @@
     <element>
         <tagname>rect</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -247,11 +387,13 @@
     <element>
         <tagname>set</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>stop</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>offset</attribute>
@@ -260,11 +402,13 @@
     <element addText="true">
         <tagname>style</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>switch</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>requiredFeatures</attribute>
             <attribute>requiredExtensions</attribute>
@@ -274,6 +418,7 @@
     <element>
         <tagname>symbol</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>viewBox</attribute>
@@ -282,6 +427,7 @@
     <element>
         <tagname>tref</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>xlink:href</attribute>
@@ -294,6 +440,7 @@
     <element addText="true">
         <tagname>tspan</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>x</attribute>
@@ -305,6 +452,7 @@
     <element addText="true">
         <tagname>text</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -317,6 +465,7 @@
     <element addText="true">
         <tagname>textPath</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>xlink:href</attribute>
@@ -325,11 +474,13 @@
     <element addText="true">
         <tagname>title</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
     <element>
         <tagname>use</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
             <attribute>id</attribute>
             <attribute>style</attribute>
             <attribute>transform</attribute>
@@ -343,6 +494,7 @@
     <element>
         <tagname>vkern</tagname>
         <attributes>
+            <includeAttributes ref="stdAttrs"/>
         </attributes>
     </element>
 </elements>

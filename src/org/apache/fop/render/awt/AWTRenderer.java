@@ -21,6 +21,13 @@ import org.apache.fop.apps.*;
 
 import org.w3c.dom.svg.*;
 
+import org.apache.batik.bridge.*;
+import org.apache.batik.swing.svg.*;
+import org.apache.batik.swing.gvt.*;
+import org.apache.batik.gvt.*;
+import org.apache.batik.gvt.renderer.*;
+import org.apache.batik.gvt.filter.*;
+
 import java.awt.*;
 import java.awt.Image;
 import java.awt.image.*;
@@ -627,8 +634,13 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
-            org.apache.fop.layout.Box b =
-              (org.apache.fop.layout.Box) e.nextElement();
+            org.apache.fop.layout.Box b = (org.apache.fop.layout.Box) e.nextElement();
+            if(b instanceof InlineArea) {
+                InlineArea ia = (InlineArea)b;
+                this.currentYPosition = ry - ia.getYOffset();
+            } else {
+                this.currentYPosition = ry - area.getPlacementOffset();
+            }
             b.render(this);
         }
 
@@ -660,18 +672,99 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 	this.currentXPosition += area.getContentWidth();
   }
 
-
     public void renderSVGArea(SVGArea area) {
 
-        int x = this.currentAreaContainerXPosition;
+        int x = this.currentXPosition;
         int y = this.currentYPosition;
         int w = area.getContentWidth();
         int h = area.getHeight();
 
-        this.currentYPosition -= h;
+//        this.currentYPosition -= h;
 
+        SVGDocument doc = area.getSVGDocument();
+
+        UserAgent userAgent = new MUserAgent(new AffineTransform());
+
+        GVTBuilder builder = new GVTBuilder();
+        GraphicsNodeRenderContext rc = getRenderContext();
+        BridgeContext ctx = new BridgeContext(userAgent, rc);
+        GraphicsNode root;
+        try {
+            root = builder.build(ctx, doc);
+            //rc.setTransform(new AffineTransform(1, 0, x, 0, 1, y));
+            graphics.translate(x / 1000f, pageHeight - y / 1000f);
+            root.paint(graphics, rc);
+            graphics.translate(-x / 1000f, y / 1000f - pageHeight);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        this.currentXPosition += area.getContentWidth();
+
+/*        final JSVGComponent svgComponent = new JSVGComponent(userAgent, true, true);
+//        JFrame frame = new JFrame();
+//        frame.setSize(300, 300);
+//        frame.getContentPane().add(svgComponent);
+//        frame.setVisible(true);
+        svgComponent.setSVGDocument(doc);
+
+        svgComponent.addGVTTreeRendererListener(new GVTTreeRendererListener() {
+            public void gvtRenderingPrepare(GVTTreeRendererEvent e)
+            {
+                System.out.println("rendering prepare:" + e);
+            }
+
+            public void gvtRenderingStarted(GVTTreeRendererEvent e)
+            {
+                System.out.println("rendering started:" + e);
+            }
+
+            public void gvtRenderingCancelled(GVTTreeRendererEvent e)
+            {
+            }
+
+            public void gvtRenderingFailed(GVTTreeRendererEvent e)
+            {
+            }
+
+            public void gvtRenderingCompleted(GVTTreeRendererEvent e)
+            {
+                System.out.println("rendering complete:" + e);
+                Object src = e.getSource();
+                Image im = e.getImage();
+                svgComponent.paint(graphics);
+            }
+        });*/
     }
 
+    public GraphicsNodeRenderContext getRenderContext() {
+        GraphicsNodeRenderContext nodeRenderContext = null;
+        if (nodeRenderContext == null) {
+            RenderingHints hints = new RenderingHints(null);
+            hints.put(RenderingHints.KEY_ANTIALIASING,
+                  RenderingHints.VALUE_ANTIALIAS_ON);
+
+            hints.put(RenderingHints.KEY_INTERPOLATION,
+                  RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+            FontRenderContext fontRenderContext =
+                new FontRenderContext(new AffineTransform(), true, true);
+
+            TextPainter textPainter = new StrokingTextPainter();
+
+            GraphicsNodeRableFactory gnrFactory =
+                new ConcreteGraphicsNodeRableFactory();
+
+            nodeRenderContext =
+                new GraphicsNodeRenderContext(new AffineTransform(),
+                                          null,
+                                          hints,
+                                          fontRenderContext,
+                                          textPainter,
+                                          gnrFactory);
+            }
+
+        return nodeRenderContext;
+    }
 
 
     public void setProducer(String producer) {
@@ -776,7 +869,98 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         area.getObject().render(this);
     }
 
+    protected class MUserAgent implements UserAgent {
+        AffineTransform currentTransform = null;
+        /**
+         * Creates a new SVGUserAgent.
+         */
+        protected MUserAgent(AffineTransform at) {
+            currentTransform = at;
+        }
+
+        /**
+         * Displays an error message.
+         */
+        public void displayError(String message) {
+            System.err.println(message);
+        }
+    
+        /**
+         * Displays an error resulting from the specified Exception.
+         */
+        public void displayError(Exception ex) {
+            ex.printStackTrace(System.err);
+        }
+
+        /**
+         * Displays a message in the User Agent interface.
+         * The given message is typically displayed in a status bar.
+         */
+        public void displayMessage(String message) {
+            System.out.println(message);
+        }
+
+        /**
+         * Returns a customized the pixel to mm factor.
+         */
+        public float getPixelToMM() {
+            return 0.264583333333333333333f; // 72 dpi
+        }
+
+        /**
+         * Returns the language settings.
+         */
+        public String getLanguages() {
+            return "en";//userLanguages;
+        }
+
+        /**
+         * Returns the user stylesheet uri.
+         * @return null if no user style sheet was specified.
+         */
+        public String getUserStyleSheetURI() {
+            return null;//userStyleSheetURI;
+        }
+
+        /**
+         * Returns the class name of the XML parser.
+         */
+        public String getXMLParserClassName() {
+	String parserClassName =
+	    System.getProperty("org.xml.sax.parser");
+	if (parserClassName == null) {
+	    parserClassName = "org.apache.xerces.parsers.SAXParser";
+	}
+            return parserClassName;//application.getXMLParserClassName();
+        }
+
+        /**
+         * Opens a link in a new component.
+         * @param doc The current document.
+         * @param uri The document URI.
+         */
+        public void openLink(SVGAElement elt)
+        {
+            //application.openLink(uri);
+        }
+
+        public Point getClientAreaLocationOnScreen()
+        {
+            return new Point(0, 0);
+        }
+
+        public void setSVGCursor(java.awt.Cursor cursor)
+        {
+        }
+
+        public AffineTransform getTransform()
+        {
+            return currentTransform;
+        }
+
+        public Dimension2D getViewportSize()
+        {
+            return new Dimension(100, 100);
+        }
+    }
 }
-
-
-
