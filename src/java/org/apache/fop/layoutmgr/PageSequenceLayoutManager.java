@@ -202,7 +202,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         areaTreeModel.startPageSequence(title);
         log.debug("Starting layout");
 
-        // this should be done another way
         makeNewPage(false, false);
         createBodyMainReferenceArea();
         createSpan(1);

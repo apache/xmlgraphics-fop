@@ -67,6 +67,7 @@ public class RenderPagesModel extends StorePagesModel {
     public RenderPagesModel (FOUserAgent userAgent, int renderType, 
         FontInfo fontInfo, OutputStream stream) throws FOPException {
 
+        super();
         renderer = RendererFactory.createRenderer(userAgent, renderType);
 
         try {
@@ -220,12 +221,12 @@ public class RenderPagesModel extends StorePagesModel {
         processOffDocumentItems(pendingODI);
         pendingODI.clear();
         processOffDocumentItems(endDocODI);
-        
+
         try {
             renderer.stopRenderer();
         } catch (IOException ex) {
             throw new SAXException(ex);
-        }        
+        }
     }
 }
 
