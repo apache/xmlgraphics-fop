@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks markers, especially the retrieval of markers
+belonging to a preceding page -- nested areas.
+    </p>
+  </info>
+  <fo>
+    <fo:root 
+      xmlns:fo="http://www.w3.org/1999/XSL/Format" 
+      xmlns:fox="http://xml.apache.org/fop/extensions"
+      xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="odd"
+          page-width="5in" page-height="5in">
+          <fo:region-body margin="0.5in 0in"/>
+          <fo:region-before extent="0.5in" region-name="before-odd"/>
+          <fo:region-after extent="0.5in" region-name="after-odd"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="even"
+          page-width="5in" page-height="5in">
+          <fo:region-body margin="0.5in 0in"/>
+          <fo:region-before extent="0.5in" region-name="before-even"/>
+          <fo:region-after extent="0.5in" region-name="after-even"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="odd-even">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference
+              master-reference="odd"
+              page-position="any"
+              odd-or-even="odd" />
+            <fo:conditional-page-master-reference
+              master-reference="even"
+              page-position="any"
+              odd-or-even="even" />
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+    
+      <fo:page-sequence master-reference="odd-even">
+        <fo:static-content flow-name="before-odd">
+          <fo:block>
+            <fo:retrieve-marker retrieve-class-name="chapter"
+              retrieve-boundary="page-sequence"
+              retrieve-position="first-including-carryover"/>
+            <fo:leader leader-length.minimum="12pt"
+              leader-length.optimum="80pt"
+              leader-length.maximum="100%" leader-pattern="space">
+            </fo:leader>page <fo:page-number/></fo:block>
+          <fo:block>
+            <fo:retrieve-marker retrieve-class-name="chapter"
+              retrieve-boundary="page-sequence"
+              retrieve-position="first-starting-within-page"/>
+          </fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="before-even">
+          <fo:block>
+           <fo:retrieve-marker retrieve-class-name="section"
+              retrieve-boundary="page-sequence"
+              retrieve-position="first-including-carryover"/>
+            <fo:leader leader-length.minimum="12pt"
+              leader-length.optimum="80pt"
+              leader-length.maximum="100%" leader-pattern="space">
+            </fo:leader>page <fo:page-number/>
+          </fo:block>
+          <fo:block>
+            <fo:retrieve-marker retrieve-class-name="chapter"
+              retrieve-boundary="page-sequence"
+              retrieve-position="first-starting-within-page"/>
+          </fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="after-odd">
+          <fo:block text-align="end">
+            <fo:retrieve-marker retrieve-class-name="chapter"
+              retrieve-boundary="page-sequence"
+              retrieve-position="last-starting-within-page"/>
+          </fo:block>
+          <fo:block text-align="end">
+            <fo:retrieve-marker retrieve-class-name="chapter"
+              retrieve-boundary="page-sequence"
+              retrieve-position="last-ending-within-page"/>
+          </fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="after-even">
+          <fo:block text-align="end">
+            <fo:retrieve-marker retrieve-class-name="section"
+              retrieve-boundary="page-sequence"
+              retrieve-position="last-starting-within-page"/>
+          </fo:block>
+          <fo:block text-align="end">
+            <fo:retrieve-marker retrieve-class-name="section"
+              retrieve-boundary="page-sequence"
+              retrieve-position="last-ending-within-page"/>
+          </fo:block>
+        </fo:static-content>
+    
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block id="ch5" background-color="#EE1">
+            <fo:marker marker-class-name="chapter">5 Property Refinement / Resolution</fo:marker>
+            <fo:marker marker-class-name="section">5 Property Refinement / Resolution</fo:marker>
+          <fo:block space-before="6pt" space-after="6pt" font-weight="bold">
+5 Property Refinement / Resolution
+          </fo:block>
+          <fo:block>
+            During refinement the set of properties that apply to a
+formatting object is transformed into a set of traits that define
+constraints on the result of formatting. For many traits there is a
+one-to-one correspondence with a property; for other traits the
+transformation is more complex. Details on the transformation are
+described below.
+          </fo:block>
+          <fo:block id="sect5-1" background-color="#DD1">
+            <fo:marker marker-class-name="section">5.1 Specified, Computed, and Actual Values, and Inheritance</fo:marker>
+          <fo:block space-before="6pt" space-after="6pt" font-weight="bold">
+5.1 Specified, Computed, and Actual Values, and Inheritance
+          </fo:block>
+          <fo:block>
+            For every property that is applicable to a given
+formatting object, it is necessary to determine the value of the
+property. Three variants of the property value are distinguished: the
+specified value, the computed value, and the actual value.
+          </fo:block>
+        </fo:block>
+          <fo:block id="sect5-2" background-color="#DD1">
+            <fo:marker marker-class-name="section">5.2 Specified Values</fo:marker>
+          <fo:block space-before="6pt" space-after="6pt" font-weight="bold">
+5.2 Specified Values
+          </fo:block>
+          <fo:block>
+            The specified value of a property is determined using the
+following mechanisms (in order of precedence)
+          </fo:block>
+          <fo:block>
+            If the tree-construction process placed the property on
+the formatting object, use the value of that property as the specified
+value. This is called "explicit specification".
+          </fo:block>
+          <fo:block>
+            Otherwise, if the property is inheritable, use the value
+of that property from the parent formatting object, generally the
+computed value (see below).
+          </fo:block>
+        </fo:block>
+      </fo:block>
+          <fo:block id="ch6" background-color="#EE6">
+            <fo:marker marker-class-name="chapter">6 Shorthand Expansion</fo:marker>
+            <fo:marker marker-class-name="section">6 Shorthand Expansion</fo:marker>
+          <fo:block space-before="6pt" space-after="6pt" font-weight="bold">
+6 Shorthand Expansion
+          </fo:block>
+          <fo:block>
+            In XSL there are two kinds of shorthand properties; those
+originating from CSS, such as "border", and those that arise from
+breaking apart and/or combining CSS properties, such as
+"page-break-inside". In XSL both types of shorthands are handled in
+the same way.
+          </fo:block>
+          <fo:block id="sect6-1" background-color="#DD6">
+            <fo:marker marker-class-name="section">6.1 Actual Values</fo:marker>
+          <fo:block space-before="6pt" space-after="6pt" font-weight="bold">
+6.1 Actual Values
+          </fo:block>
+          <fo:block>
+            Specified values may be absolute (i.e., they are not
+specified relative to another value, as in "red" or "2mm") or relative
+(i.e., they are specified relative to another value, as in "auto",
+"2em", and "12%"), or they may be expressions. For most absolute
+values, no computation is needed to find the computed value. Relative
+values, on the other hand, must be transformed into computed values:
+percentages must be multiplied by a reference value (each property
+defines which value that is), values with a relative unit (em) must be
+made absolute by multiplying with the appropriate font size, "auto"
+values must be computed by the formulas given with each property,
+certain property values ("smaller", "bolder") must be replaced
+according to their definitions. The computed value of any property
+that controls a border width where the style of the border is "none"
+is forced to be "0pt".
+          </fo:block>
+        </fo:block>
+      </fo:block>
+
+          <fo:block id="ch7" background-color="#EEE">
+          <fo:block>
+            Some properties have more than one way in which the
+property value can be specified. The simplest example of such
+properties are those which can be specified either in terms of a
+direction relative to the writing-mode (e.g., padding-before) or a
+direction in terms of the absolute geometric orientation of the
+viewport (e.g., padding-top). These two properties are called the
+relative property and the absolute property,
+respectively. Collectively, they are called "corresponding
+properties".
+          </fo:block>
+          <fo:block>
+            Specifying a value for one property determines both a
+computed value for the specified property and a computed value for the
+corresponding property. Which relative property corresponds to which
+absolute property depends on the writing-mode. For example, if the
+"writing-mode" at the top level of a document is "lr-tb", then
+"padding-start" corresponds to "padding-left", but if the
+"writing-mode" is "rl-tb", then "padding-start" corresponds to
+"padding-right". The exact specification of how to compute the values
+of corresponding properties is given in [5.3 Computing the Values of
+Corresponding Properties].
+          </fo:block>
+          <fo:block>
+            In most cases, elements inherit computed values. However,
+there are some properties whose specified value may be inherited
+(e.g., some values for the "line-height" property). In the cases where
+child elements do not inherit the computed value, this is described in
+the property definition.
+          </fo:block>
+          <fo:block>
+            A computed value is in principle ready to be used, but a
+user agent may not be able to make use of the value in a
+given environment. For example, a user agent may only be
+able to render borders with integer pixel widths and may,
+therefore, have to adjust the computed width to an
+integral number of media pixels. The actual value is the
+computed value after any such adjustments have been
+applied. 
+          </fo:block>
+          <fo:block>
+            Some of the properties applicable to formatting objects
+are "inheritable." Such properties are so identified in the property
+description. The inheritable properties can be placed on any
+formatting object. The inheritable properties are propagated down the
+formatting object tree from a parent to each child. (These properties
+are given their initial value at the root of the result tree.) For a
+given inheritable property, if that property is present on a child,
+then that value of the property is used for that child (and its
+descendants until explicitly re-set in a lower descendant); otherwise,
+the specified value of that property on the child is the computed
+value of that property on the parent formatting object. Hence there is
+always a specified value defined for every inheritable property for
+every formatting object.
+          </fo:block>
+        </fo:block>
+
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- page 1 -->
+    <true xpath="starts-with(//pageViewport[@nr=1]//regionBefore/block[1],'5 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=1]//regionBefore/block[2],'5 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=1]//regionAfter/block[1],'5 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=1]//regionAfter/block[2],'5 ')"/>
+    <true xpath="//pageViewport[@nr=1]//regionBody//block[starts-with(.,'5 ')]"/>
+    <true xpath="//pageViewport[@nr=1]//regionBody//block[starts-with(.,'5.1 ')]"/>
+    <true xpath="//pageViewport[@nr=1]//regionBody//block[starts-with(.,'5.2 ')]"/>
+    <!-- page 2 -->
+    <true xpath="starts-with(//pageViewport[@nr=2]//regionBefore/block[1],'5 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=2]//regionBefore/block[2],'6 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=2]//regionAfter/block[1],'6.1 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=2]//regionAfter/block[2],'5 ')"/>
+    <true xpath="//pageViewport[@nr=2]//regionBody//block[starts-with(.,'6 ')]"/>
+    <true xpath="//pageViewport[@nr=2]//regionBody//block[starts-with(.,'6.1 ')]"/>
+    <!-- page 3 -->
+    <true xpath="starts-with(//pageViewport[@nr=3]//regionBefore/block[1],'6 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=3]//regionBefore/block[2],'6 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=3]//regionAfter/block[1],'6 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=3]//regionAfter/block[2],'6 ')"/>
+    <true xpath="not(//pageViewport[@nr=3]//regionBody//block[starts-with(.,'6 ')])"/>
+    <true xpath="not(//pageViewport[@nr=3]//regionBody//block[starts-with(.,'6.1 ')])"/>
+    <!-- page 4 -->
+    <true xpath="starts-with(//pageViewport[@nr=4]//regionBefore/block[1],'6 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=4]//regionBefore/block[2],'6 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=4]//regionAfter/block[1],'6 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=4]//regionAfter/block[2],'6 ')"/>
+    <true xpath="not(//pageViewport[@nr=4]//regionBody//block[starts-with(.,'6 ')])"/>
+    <true xpath="not(//pageViewport[@nr=4]//regionBody//block[starts-with(.,'6.1 ')])"/>
+    <!-- page 5 -->
+    <true xpath="starts-with(//pageViewport[@nr=5]//regionBefore/block[1],'6 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=5]//regionBefore/block[2],'6 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=5]//regionAfter/block[1],'6 ')"/>
+    <true xpath="starts-with(//pageViewport[@nr=5]//regionAfter/block[2],'6 ')"/>
+    <true xpath="not(//pageViewport[@nr=5]//regionBody//block[starts-with(.,'6 ')])"/>
+    <true xpath="not(//pageViewport[@nr=5]//regionBody//block[starts-with(.,'6.1 ')])"/>
+  </checks>
+</testcase>
