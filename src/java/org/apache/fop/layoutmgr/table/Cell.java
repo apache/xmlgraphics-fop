@@ -34,7 +34,6 @@ import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
-import org.apache.fop.area.CTM;
 import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;
 
@@ -61,6 +60,7 @@ public class Cell extends BlockStackingLayoutManager {
     private int rowHeight;
     private int usedBPD;
     private int borderAndPaddingBPD;
+    private boolean emptyCell = true;
 
     /**
      * Create a new Cell layout manager.
@@ -168,6 +168,9 @@ public class Cell extends BlockStackingLayoutManager {
             }
             
             usedBPD = stackSize.opt;
+            if (usedBPD > 0) {
+                emptyCell = false;
+            }
             
             LengthRangeProperty specifiedBPD = fobj.getBlockProgressionDimension();
             if (specifiedBPD.getEnum() != EN_AUTO) {
@@ -249,6 +252,12 @@ public class Cell extends BlockStackingLayoutManager {
             addID(fobj.getId());
         }
 
+        if (!emptyCell || (getTable().getBorderCollapse() == EN_SEPARATE 
+                && fobj.showEmptyCells())) {
+            TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
+        }
+
         //Handle display-align
         if (usedBPD < rowHeight) {
             if (fobj.getDisplayAlign() == EN_CENTER) {
@@ -277,8 +286,6 @@ public class Cell extends BlockStackingLayoutManager {
             }
         }
 
-        TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
-        TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
         
         int contentBPD = rowHeight;
         contentBPD -= borderAndPaddingBPD;

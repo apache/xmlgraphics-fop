@@ -298,6 +298,11 @@ public class TableCell extends FObj {
         return Math.max(columnNumber.getValue(), 0);
     }
 
+    /** @return true if "empty-cells" is "show" */
+    public boolean showEmptyCells() {
+        return (this.emptyCells == EN_SHOW);
+    }
+    
     /**
      * @return the "id" property.
      */
