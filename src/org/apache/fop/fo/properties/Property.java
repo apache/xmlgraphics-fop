@@ -376,6 +376,11 @@ public /*abstract*/ class Property {
                 return value;
             throw new PropertyException
                             ("Numeric value invalid  for " + propName);
+        case PropertyValue.INTEGER:
+            if ((dataTypes & NUMBER) != 0)
+                return value;
+            throw new PropertyException
+                    ("IntegerType value invalid for " + propName);
         case PropertyValue.NCNAME:
             String ncname = ((NCName)value).getNCName();
             // Can by any of
@@ -396,6 +401,10 @@ public /*abstract*/ class Property {
                             (foNode, property, ncname)).getMappedNumValue();
             throw new PropertyException
                             ("NCName value invalid  for " + propName);
+        case PropertyValue.ENUM:
+            if ((dataTypes & ENUM) != 0) return value;
+            throw new PropertyException
+                    ( "Enumerated value invalid for " + propName);
         case PropertyValue.LITERAL:
             // Can be LITERAL or CHARACTER_T
             if ((dataTypes & (LITERAL | CHARACTER_T)) != 0) return value;
