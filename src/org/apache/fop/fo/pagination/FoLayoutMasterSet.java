@@ -11,6 +11,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.XMLNamespaces;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.datastructs.Tree;
@@ -35,6 +36,18 @@ public class FoLayoutMasterSet extends FONode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
+
+    /**
+     * An array with <tt>XMLEvent.UriLocalName</tt> objects identifying
+     * <tt>simple-page-master</tt> and <tt>page-sequence-master</tt>
+     * XML events.
+     */
+    private static final XMLEvent.UriLocalName[] simpleOrSequenceMaster = {
+        new XMLEvent.UriLocalName
+                      (XMLNamespaces.XSLNSpaceIndex, "simple-page-master"),
+        new XMLEvent.UriLocalName
+                     (XMLNamespaces.XSLNSpaceIndex, "page-sequence-master")
+    };
 
     /**
      * Hash of SimplePageMaster and PageSequenceMaster objects,
@@ -68,19 +81,16 @@ public class FoLayoutMasterSet extends FONode {
      * (simple-page-master|page-sequence-master)+
      */
     public void setupPageMasters() throws FOPException {
-        // Set up a list with the two possibilities
-        LinkedList list = new LinkedList();
-        list.add((Object)(new XMLEvent.UriLocalName
-                      (XMLNamespaces.XSLNSpaceIndex, "simple-page-master")));
-        list.add((Object)(new XMLEvent.UriLocalName
-                     (XMLNamespaces.XSLNSpaceIndex, "page-sequence-master")));
+        // Use an array with the two possibilities
         try {
             do {
                 FoSimplePageMaster simple;
                 String simpleName;
                 String localName;
                 FoPageSequenceMaster pageSeq;
-                XMLEvent ev = xmlevents.expectStartElement(list);
+                XMLEvent ev =
+                    xmlevents.expectStartElement
+                        (simpleOrSequenceMaster, XMLEvent.DISCARD_W_SPACE);
                 localName = ev.getLocalName();
                 if (localName.equals("simple-page-master")) {
                     System.out.println("Found simple-page-master");
