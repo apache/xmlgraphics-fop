@@ -186,9 +186,10 @@ public class TextLayoutManager extends AbstractLayoutManager {
      */
     public boolean canBreakBefore(LayoutContext context) {
         char c = chars[iNextStart];
-        return ((c == NEWLINE)
-                || (textInfo.bWrap && (CharUtilities.isBreakableSpace(c)
-                || BREAK_CHARS.indexOf(c) >= 0)));
+        return ((c == NEWLINE) || (textInfo.bWrap 
+                    && (CharUtilities.isBreakableSpace(c)
+                    || (BREAK_CHARS.indexOf(c) >= 0 && (iNextStart == 0 
+                        || Character.isLetterOrDigit(chars[iNextStart-1]))))));
     }
 
     /**
@@ -373,19 +374,20 @@ public class TextLayoutManager extends AbstractLayoutManager {
             // Don't look for hyphenation points here though
             for (; iNextStart < chars.length; iNextStart++) {
                 char c = chars[iNextStart];
-                if ((c == NEWLINE) || // Include any breakable white-space as break char
-                        //  even if fixed width
-                        (textInfo.bWrap && (CharUtilities.isBreakableSpace(c)
-                                            || BREAK_CHARS.indexOf(c) >= 0))) {
-                    iFlags |= BreakPoss.CAN_BREAK_AFTER;
-                    if (c != SPACE) {
-                        iNextStart++;
-                        if (c != NEWLINE) {
-                            wordIPD += textInfo.fs.getCharWidth(c);
-                        } else {
-                            iFlags |= BreakPoss.FORCE;
-                        }
-                    }
+                // Include any breakable white-space as break char
+                if ((c == NEWLINE) || (textInfo.bWrap 
+                    && (CharUtilities.isBreakableSpace(c)
+                    || (BREAK_CHARS.indexOf(c) >= 0 && (iNextStart == 0 
+                        || Character.isLetterOrDigit(chars[iNextStart-1])))))) {
+                            iFlags |= BreakPoss.CAN_BREAK_AFTER;
+                            if (c != SPACE) {
+                                iNextStart++;
+                                if (c != NEWLINE) {
+                                    wordIPD += textInfo.fs.getCharWidth(c);
+                                } else {
+                                    iFlags |= BreakPoss.FORCE;
+                                }
+                            }
                     // If all remaining characters would be suppressed at
                     // line-end, set a flag for parent LM.
                     int iLastChar;
