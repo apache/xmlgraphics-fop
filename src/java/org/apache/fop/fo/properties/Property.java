@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 
 import org.apache.fop.apps.Fop;
 import org.apache.fop.datatypes.Auto;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.CountryType;
 import org.apache.fop.datatypes.EnumType;
 import org.apache.fop.datatypes.LanguageType;
@@ -459,10 +458,9 @@ public class Property {
             // TODO: validate here
             return pv;
         case PropertyValue.LIST:
-            System.out.println(value);
             throw new PropertyException
                 ("PropertyValueList passed to Property.refineParsing for "
-                + propName);
+                + propName + "\n" + value.toString());
         default:
             if ( ! nested) {
                 if ((dataTypes & COMPOUND) != 0)
@@ -531,8 +529,7 @@ public class Property {
      * @throws PropertyException if <i>list</i> contains more than
      * one element or if the contained element is not a list.
      */
-    protected PropertyValueList spaceSeparatedList
-                                                    (PropertyValueList list)
+    protected PropertyValueList spaceSeparatedList (PropertyValueList list)
             throws PropertyException
     {
         if (list.size() != 1)
@@ -653,8 +650,7 @@ public class Property {
     {
         int initialValueType =
                     PropertyConsts.pconsts.getInitialValueType(property);
-        //System.out.println("In Property getInitialValue property "
-                            //+ property);
+        logger.fine("In Property getInitialValue property " + property);
         if ((initialValueType & Property.USE_GET_IT_FUNCTION) != 0)
              throw new PropertyException
                  ("Property.getInitialValue() called for property with "
@@ -669,6 +665,7 @@ public class Property {
         case NONE_IT:
             return new None(property);
         case AURAL_IT:
+            // TODO Arrange to ignore and log PropertyNotImplemented
             throw new PropertyNotImplementedException
                 ("Aural properties not implemented: "
                 + PropNames.getPropertyName(property));
@@ -677,172 +674,6 @@ public class Property {
                 ("Unexpected initial value type " + initialValueType
                 + " for " + PropNames.getPropertyName(property));
         }
-    }
-
-    /**
-     * 'value' is a PropertyValueList or an individual PropertyValue.
-     * If 'value' is a PropertyValueList, it must contain a single
-     * PropertyValueList, which in turn contains the individual elements.
-     *
-     * 'value' can contain a parsed Inherit value,
-     *  parsed FromParent value, parsed FromNearestSpecified value,
-     *  or, in any order;
-     * border-width
-     *     a parsed NCName value containing a standard border width
-     *     or a Numeric length value (including a percentage)
-     * border-style
-     *     a parsed NCName value containing a standard border style
-     * border-color
-     *     a parsed ColorType value, or an NCName containing one of
-     *     the standard colors
-     *
-     * <p>The value(s) provided, if valid, are converted into a list
-     * containing the expansion of the shorthand.  The elements may
-     * be in any order.  A minimum of one value will be present.
-     *
-     *   a border-EDGE-color ColorType or inheritance value
-     *   a border-EDGE-style EnumType or inheritance value
-     *   a border-EDGE-width MappedNumeric or inheritance value
-     *
-     *  N.B. this is the order of elements defined in
-     *       ShorthandPropSets.borderRightExpansion
-     */
-    protected PropertyValue borderEdge
-                        (int propindex, FONode foNode, PropertyValue value,
-                                int styleProp, int colorProp, int widthProp)
-                throws PropertyException
-    {
-        return borderEdge(propindex, foNode, value, styleProp,
-                                            colorProp, widthProp, NOT_NESTED);
-    }
-
-    protected PropertyValue borderEdge
-            (int propindex, FONode foNode, PropertyValue value, int styleProp,
-                                int colorProp, int widthProp, boolean nested)
-                throws PropertyException
-    {
-        if (value.getType() != PropertyValue.LIST) {
-            return processEdgeValue(propindex, foNode, value,
-                                    styleProp, colorProp, widthProp, nested);
-        } else {
-            return processEdgeList(propindex, foNode,
-                        spaceSeparatedList((PropertyValueList)value),
-                                            styleProp, colorProp, widthProp);
-        }
-    }
-
-    private PropertyValueList processEdgeValue
-            (int propindex, FONode foNode, PropertyValue value, int styleProp,
-                int colorProp, int widthProp, boolean nested)
-            throws PropertyException
-    {
-        if ( ! nested) {
-            int type = value.getType();
-            if (type == PropertyValue.INHERIT ||
-                    type == PropertyValue.FROM_PARENT ||
-                        type == PropertyValue.FROM_NEAREST_SPECIFIED)
-            {
-                // Copy the value to each member of the shorthand expansion
-                return refineExpansionList(propindex, foNode,
-                                ShorthandPropSets.expandAndCopySHand(value));
-            }
-        }
-        // Make a list and pass to processList
-        PropertyValueList tmpList = new PropertyValueList(propindex);
-        tmpList.add(value);
-        return processEdgeList
-                (propindex, foNode, tmpList, styleProp, colorProp, widthProp);
-    }
-
-    private PropertyValueList processEdgeList
-            (int property, FONode foNode, PropertyValueList value,
-                                int styleProp, int colorProp, int widthProp)
-                    throws PropertyException
-    {
-        //int property = value.getProperty();
-        String propName = PropNames.getPropertyName(property);
-        PropertyValue   color= null,
-                        style = null,
-                        width = null;
-
-        PropertyValueList newlist = new PropertyValueList(property);
-        // This is a list
-        if (value.size() == 0)
-            throw new PropertyException
-                            ("Empty list for " + propName);
-        Iterator elements = (value).iterator();
-
-        scanning_elements: while (elements.hasNext()) {
-            PropertyValue pval = (PropertyValue)(elements.next());
-            int type = pval.getType();
-            switch (type) {
-            case PropertyValue.COLOR_TYPE:
-                if (color != null) logger.info(propName +
-                            ": duplicate color overrides previous color");
-                color = pval;
-                color.setProperty(colorProp);
-                continue scanning_elements;
-            case PropertyValue.NUMERIC:
-                if (width != null) logger.info(propName +
-                            ": duplicate width overrides previous width");
-                width = pval;
-                width.setProperty(widthProp);
-                continue scanning_elements;
-            case PropertyValue.NCNAME:
-                // Could be standard color, style Enum or width MappedNumeric
-                PropertyValue colorFound = null;
-                PropertyValue styleFound = null;
-                PropertyValue widthFound = null;
-
-                String ncname = ((NCName)pval).getNCName();
-                try {
-                    styleFound = new EnumType(styleProp, ncname);
-                } catch (PropertyException e) {}
-                if (styleFound != null) {
-                    if (style != null) logger.info(propName +
-                            ": duplicate style overrides previous style");
-                    style = styleFound;
-                    continue scanning_elements;
-                }
-
-                try {
-                    widthFound =
-                        (new MappedNumeric
-                            (foNode, widthProp, ncname)).getMappedNumValue();
-                } catch (PropertyException e) {}
-                if (widthFound != null) {
-                    if (width != null) logger.info(propName +
-                            ": duplicate width overrides previous width");
-                    width = widthFound;
-                    continue scanning_elements;
-                }
-
-                try {
-                    colorFound = new ColorType(colorProp, ncname);
-                } catch (PropertyException e) {}
-                if (colorFound != null) {
-                    if (color != null) logger.info(propName +
-                            ": duplicate color overrides previous color");
-                    color = colorFound;
-                    continue scanning_elements;
-                }
-
-                throw new PropertyException
-                    ("Unknown NCName value for " + propName + ": " + ncname);
-            default:
-                throw new PropertyException
-                    ("Invalid " + pval.getClass().getName() +
-                        " property value for " + propName);
-            } // end of switch
-        }
-
-        // Now construct the list of PropertyValues with their
-        // associated property indices, as expanded from the
-        // border-right shorthand.
-        if (style != null) newlist.add(style);
-        if (color != null) newlist.add(color);
-        if (width != null) newlist.add(width);
-        return newlist;
     }
 
 }
