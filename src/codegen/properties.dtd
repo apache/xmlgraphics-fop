@@ -1,3 +1,4 @@
+<!-- $Id$ -->
 <!--
 DTD for foproperties.xml and svgproperties.xml
 -->
@@ -22,7 +23,7 @@ DTD for foproperties.xml and svgproperties.xml
 <!-- Define a single property in the current namespace -->
 <!ELEMENT property (name, (use-generic | datatype), class-name?, inherited?,
 	 default?, enumeration?, datatype-conversion*, compound?,
-	 keyword-equiv*, percent-ok?, auto-ok? ) >
+	 keyword-equiv*, percent-ok?, auto-ok?, derive?, corresponding? ) >
      
 <!-- If type is set to "ref", then this is not a new property definition,
      but rather a reference to a property allready defined (should be in
@@ -111,6 +112,12 @@ DTD for foproperties.xml and svgproperties.xml
           
 <!-- This gives the default value for a property if it is not specified on
      a given FO. (The spec calls this the "initial" value.)
+
+     It may also be used to specify a default value for a particular
+     component of a compound property. This is used to give each component
+     its initial value if components are only partially specified in the
+     FO file.
+
      NOTE: It should be an expression which can be parsed to give a legal
      value for the property! This can't be checked by the generating
      script, so if there is a problem, it will only be seen at runtime.
@@ -120,10 +127,17 @@ DTD for foproperties.xml and svgproperties.xml
      case), it will only make one Property object with the default value
      and return it on each call. Context-dependent default values include
      those specified with relative units (eg. 1em).
+
+     The "subproperty" attribute can be used on properties which are
+     based on generic property specifications to specify a default value
+     for a particular component. For example, the border-end-width property
+     is based on GenericCondBorderWidth and specifies a specific default
+     for the "conditionality" component.
 -->     
 <!ELEMENT default (#PCDATA) >
-<!ELEMENT default
+<!ATTLIST default
 	contextdep	(true | false) "false"
+	subproperty	CDATA #IMPLIED
 >
 	
 
@@ -144,7 +158,23 @@ DTD for foproperties.xml and svgproperties.xml
      and not to a ColorType, the datatype-conversion just uses it to
      directly initialize a ColorType object.
 -->
-<!ELEMENT datatype-conversion >
+<!ELEMENT datatype-conversion (#PCDATA) >
+
+<!-- The attribute from-type gives a possible property datatype, such as
+     Number or String. The varname gives the name of a variable which can
+     be used in the content of the datatype-conversion element. If the type
+     of the variable is not the same as from-type, it may be specified with
+     the attribute vartype.
+
+     An example of usage is from the line-height property. This should be
+     a Length object, but may be specified as a Number, which is interpreted
+     as though it were a percentage of the current font-size.
+-->
+<!ATTLIST datatype-conversion
+    from-type    CDATA   #REQUIRED
+    vartype      CDATA   #IMPLIED
+    varname      CDATA   #REQUIRED
+>
 
 <!-- The compound element indicates that the property is a "compound"
      property as defined in the XSL specification. It is specified as one
@@ -160,7 +190,8 @@ DTD for foproperties.xml and svgproperties.xml
      property, the optimum component has the name optimum and the datatype
      Length.
 -->
-<!ELEMENT subproperty (name, datatype) >
+<!ELEMENT subproperty (name, datatype, auto-ok?, default?, corresponding?,
+   enumeration?, keyword-equiv? ) >
 
 <!-- This element which may be repeated, specifies keyword shorthands for
      non-enumerated properties. For example, the border-width family of
@@ -228,3 +259,54 @@ DTD for foproperties.xml and svgproperties.xml
 <!ATTLIST   if
 	match	CDATA	#REQUIRED
 >
+
+<!-- This element indicates that the value of the property is the same as
+     that of a "corresponding" absolute or writing-mode-relative property.
+     if the "use-if-specified" attribute has the value "true", then the
+     corresponding property value takes precedence over the property on
+     which it is specified. To be conformant to the specification, all the
+     the "absolute" versions of properties have precedence.
+     Example: if a get() call is made on padding-end for a FO using lr-tb
+     writing-mode, then the padding-right property will be used if it is
+     specified, even if padding-end is actually specified.
+     However, if a get() is made on padding-right, the value of padding-end
+     will only be used if padding-right isn't specified on the FO.
+-->
+
+<!ELEMENT   corresponding (propval, propexpr?) >
+<!ATTLIST   corresponding
+    use-if-specified (true|false) "false"
+>
+
+<!-- If the value must be calculated using several other properties, the
+     propexpr element may be used. Then only example I know of are the
+     indent properties which are calculated based on the margin-* values
+     if those are specified, plus the corresponding padding and border-width
+     values.
+-->
+<!ELEMENT   propexpr (propval | #PCDATA)+ >
+
+<!-- The name of the corresponding property is given in the propval element.
+     The conversion between absolute and relative property names is
+     made using wmrel2abs or wm2bs2rel elements, intermixed with text.
+     For example, for the property "padding-left", the corresponding
+     property is "padding-start" if the inline progression direction is
+     left to right. This is expressed in the properties file with the
+     expression "padding-<wmabs2rel dir='LEFT'/>". The wmabs2rel element
+     is replaced by the writing-mode relative direction which corresponds
+     to the absolute direction LEFT using the writing-mode in effect for the
+     flow object where this property is specified.
+-->
+<!ELEMENT   propval (wmrel2abs | wmabs2rel | #PCDATA)+ >
+
+<!ELEMENT   wmrel2abs EMPTY>
+<!ATTLIST   wmrel2abs 
+  dir (BEFORE | AFTER | START | END | BLOCKPROGDIM | INLINEPROGDIM)
+  #REQUIRED
+>
+
+<!ELEMENT   wmabs2rel EMPTY>
+<!ATTLIST   wmabs2rel
+  dir (TOP | BOTTOM | LEFT | RIGHT | HEIGHT | WIDTH )  #REQUIRED
+>
+
