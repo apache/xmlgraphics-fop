@@ -49,6 +49,10 @@ public class Slash extends AbstractPropertyValue {
         super(propertyName);
     }
 
+    public String toString() {
+        return "/";
+    }
+
     /**
      * Validation not supported for <tt>Slash</tt>.
      */
