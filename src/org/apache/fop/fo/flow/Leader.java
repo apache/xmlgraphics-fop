@@ -8,30 +8,35 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.datatypes.*;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.layout.*;
-import org.apache.fop.layout.FontState;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
-import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
-import org.apache.fop.layoutmgr.ContentLayoutManager;
-import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.LMiter;
-import org.apache.fop.layoutmgr.MinOptMax;
-import org.apache.fop.area.inline.Space;
-import org.apache.fop.area.inline.Word;
-import org.apache.fop.area.inline.InlineParent;
-import org.apache.fop.area.inline.FilledArea;
-import org.apache.fop.util.CharUtilities;
+import java.util.List;
+
 import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.area.Trait;
-
-import java.util.List;
-import java.util.ArrayList;
+import org.apache.fop.area.inline.FilledArea;
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.Space;
+import org.apache.fop.area.inline.Word;
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentLength;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.properties.LeaderPattern;
+import org.apache.fop.layout.AccessibilityProps;
+import org.apache.fop.layout.AuralProps;
+import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.MarginInlineProps;
+import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.layoutmgr.ContentLayoutManager;
+import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
+import org.apache.fop.layoutmgr.LMiter;
+import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
+import org.apache.fop.layoutmgr.MinOptMax;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * Implements fo:leader; main property of leader leader-pattern.
@@ -134,7 +139,7 @@ public class Leader extends FObjMixed {
 
             ContentLayoutManager clm = new ContentLayoutManager(fa);
             clm.setUserAgent(getUserAgent());
-            lm.setParentLM(clm);
+            lm.setParent(clm);
 
             clm.fillArea(lm);
             int width = clm.getStackingSize();

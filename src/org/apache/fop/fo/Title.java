@@ -8,16 +8,17 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.datatypes.*;
-import org.apache.fop.layout.*;
-import org.apache.fop.fo.flow.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.apps.FOPException;
-
-import org.apache.fop.layoutmgr.LMiter;
-import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.layout.AccessibilityProps;
+import org.apache.fop.layout.AuralProps;
+import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.MarginInlineProps;
 import org.apache.fop.layoutmgr.ContentLayoutManager;
+import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
+import org.apache.fop.layoutmgr.LMiter;
 
 /**
  */
@@ -43,7 +44,7 @@ public class Title extends FObjMixed {
 
         ContentLayoutManager clm = new ContentLayoutManager(title);
         clm.setUserAgent(getUserAgent());
-        lm.setParentLM(clm);
+        lm.setParent(clm);
 
         clm.fillArea(lm);
 
