@@ -102,7 +102,7 @@ public class FObj extends FONode {
     /**
      * The children of this node.
      */
-    protected ArrayList children = null;
+    public ArrayList children = null;
 
     /**
      * Markers added to this element.
@@ -372,7 +372,7 @@ public class FObj extends FONode {
         return null;
     }
 
-    /**
+   /**
      * Add the marker to this formatting object.
      * If this object can contain markers it checks that the marker
      * has a unique class-name for this object and that it is

@@ -50,20 +50,10 @@
  */
 package org.apache.fop.fo.flow;
 
-// FOP
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-
-import org.apache.fop.area.inline.ForeignObject;
-import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.properties.DisplayAlign;
-import org.apache.fop.fo.properties.Overflow;
-import org.apache.fop.fo.properties.Scaling;
 import org.apache.fop.fo.properties.TextAlign;
 import org.w3c.dom.Document;
 
@@ -74,8 +64,6 @@ import org.w3c.dom.Document;
  */
 public class InstreamForeignObject extends FObj {
 
-    public Viewport areaCurrent;
-
     /**
      * constructs an instream-foreign-object object (called by Maker).
      *
@@ -85,157 +73,7 @@ public class InstreamForeignObject extends FObj {
         super(parent);
     }
 
-    /**
-     * Get the inline area created by this element.
-     *
-     * @return the viewport inline area
-     */
-    public Viewport getInlineArea() {
-        if (children == null) {
-            return areaCurrent;
-        }
-
-        if (this.children.size() != 1) {
-            // error
-            return null;
-        }
-        FONode fo = (FONode)children.get(0);
-        if (!(fo instanceof XMLObj)) {
-            // error
-            return null;
-        }
-        XMLObj child = (XMLObj)fo;
-
-        // viewport size is determined by block-progression-dimension
-        // and inline-progression-dimension
-
-        // if replaced then use height then ignore block-progression-dimension
-        //int h = this.properties.get("height").getLength().mvalue();
-
-        // use specified line-height then ignore dimension in height direction
-        boolean hasLH = false;//properties.get("line-height").getSpecifiedValue() != null;
-
-        Length len;
-
-        int bpd = -1;
-        int ipd = -1;
-        boolean bpdauto = false;
-        if (hasLH) {
-            bpd = properties.get("line-height").getLength().getValue();
-        } else {
-            // this property does not apply when the line-height applies
-            // isn't the block-progression-dimension always in the same
-            // direction as the line height?
-            len = properties.get("block-progression-dimension.optimum").getLength();
-            if (!len.isAuto()) {
-                bpd = len.getValue();
-            } else {
-                len = properties.get("height").getLength();
-                if (!len.isAuto()) {
-                    bpd = len.getValue();
-                }
-            }
-        }
-
-        len = properties.get("inline-progression-dimension.optimum").getLength();
-        if (!len.isAuto()) {
-            ipd = len.getValue();
-        } else {
-            len = properties.get("width").getLength();
-            if (!len.isAuto()) {
-                ipd = len.getValue();
-            }
-        }
-
-        // if auto then use the intrinsic size of the content scaled
-        // to the content-height and content-width
-        int cwidth = -1;
-        int cheight = -1;
-        len = properties.get("content-width").getLength();
-        if (!len.isAuto()) {
-            /*if(len.scaleToFit()) {
-                if(ipd != -1) {
-                    cwidth = ipd;
-                }
-            } else {*/
-            cwidth = len.getValue();
-        }
-        len = properties.get("content-height").getLength();
-        if (!len.isAuto()) {
-            /*if(len.scaleToFit()) {
-                if(bpd != -1) {
-                    cwidth = bpd;
-                }
-            } else {*/
-            cheight = len.getValue();
-        }
-
-        Point2D csize = new Point2D.Float(cwidth == -1 ? -1 : cwidth / 1000f,
-                                          cheight == -1 ? -1 : cheight / 1000f);
-        Point2D size = child.getDimension(csize);
-        if (size == null) {
-            // error
-            return null;
-        }
-        if (cwidth == -1) {
-            cwidth = (int)size.getX() * 1000;
-        }
-        if (cheight == -1) {
-            cheight = (int)size.getY() * 1000;
-        }
-        int scaling = properties.get("scaling").getEnum();
-        if (scaling == Scaling.UNIFORM) {
-            // adjust the larger
-            double rat1 = cwidth / (size.getX() * 1000f);
-            double rat2 = cheight / (size.getY() * 1000f);
-            if (rat1 < rat2) {
-                // reduce cheight
-                cheight = (int)(rat1 * size.getY() * 1000);
-            } else {
-                cwidth = (int)(rat2 * size.getX() * 1000);
-            }
-        }
-
-        if (ipd == -1) {
-            ipd = cwidth;
-        }
-        if (bpd == -1) {
-            bpd = cheight;
-        }
-
-        boolean clip = false;
-        if (cwidth > ipd || cheight > bpd) {
-            int overflow = properties.get("overflow").getEnum();
-            if (overflow == Overflow.HIDDEN) {
-                clip = true;
-            } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {
-                getLogger().error("Instream foreign object overflows the viewport: clipping");
-                clip = true;
-            }
-        }
-
-        int xoffset = computeXOffset(ipd, cwidth);
-        int yoffset = computeYOffset(bpd, cheight);
-
-        Rectangle2D placement = new Rectangle2D.Float(xoffset, yoffset, cwidth, cheight);
-
-        Document doc = child.getDOMDocument();
-        String ns = child.getDocumentNamespace();
-
-        children = null;
-        ForeignObject foreign = new ForeignObject(doc, ns);
-
-        areaCurrent = new Viewport(foreign);
-        areaCurrent.setWidth(ipd);
-        areaCurrent.setHeight(bpd);
-        areaCurrent.setContentPosition(placement);
-        areaCurrent.setClip(clip);
-        areaCurrent.setOffset(0);
-
-        return areaCurrent;
-    }
-
-    private int computeXOffset (int ipd, int cwidth) {
+    public int computeXOffset (int ipd, int cwidth) {
         int xoffset = 0;
         int ta = properties.get("text-align").getEnum();
         switch (ta) {
@@ -254,7 +92,7 @@ public class InstreamForeignObject extends FObj {
         return xoffset;
     }
 
-    private int computeYOffset(int bpd, int cheight) {
+    public int computeYOffset(int bpd, int cheight) {
         int yoffset = 0;
         int da = properties.get("display-align").getEnum();
         switch (da) {
