@@ -500,7 +500,8 @@ public class PropertyList extends HashMap {
             } else { // e.g. "leader-length.maximum"
                 Property baseProperty = findBaseProperty(attributes,
                         parentFO, basePropertyName, propertyMaker);
-                prop = propertyMaker.make(baseProperty, subPropertyName,
+                int subpropId = FOPropertyMapping.getSubPropertyId(subPropertyName);
+                prop = propertyMaker.make(baseProperty, subpropId,
                         this, attributeValue, parentFO);
             }
             if (prop != null) {
