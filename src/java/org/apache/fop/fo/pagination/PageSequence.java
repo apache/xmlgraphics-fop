@@ -180,13 +180,9 @@ public class PageSequence extends FObj {
     }
 
     /**
-     * Validate the child being added and initialize internal variables.
-     * XSL content model for page-sequence:
-     * <pre>(title?,static-content*,flow)</pre>
-     *
-     * @param child The flow object child to be added to the PageSequence.
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    public void addChild(FONode child) {
+    public void addChildNode(FONode child) {
         try {
             String childName = child.getName();
             if (childName.equals("fo:title")) {
@@ -207,7 +203,7 @@ public class PageSequence extends FObj {
                 // Don't add main flow to the flow map
 //              addFlow(mainFlow);
                 startStructuredPageSequence();
-                super.addChild(child); // For getChildren
+                super.addChildNode(child); // For getChildren
             } else if (childName.equals("fo:static-content")) {
                 String flowName = ((StaticContent)child).getFlowName();
                 if (flowMap.containsKey(flowName)) {
@@ -223,7 +219,7 @@ public class PageSequence extends FObj {
                 startStructuredPageSequence();
             } 
         } catch (FOPException fopex) {
-            getLogger().error("Error in PageSequence.addChild(): "
+            getLogger().error("Error in PageSequence.addChildNode(): "
                 + fopex.getMessage(), fopex);
         }
     }

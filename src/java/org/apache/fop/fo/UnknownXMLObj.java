@@ -69,13 +69,13 @@ public class UnknownXMLObj extends XMLObj {
     }
 
     /**
-     * @see XMLObj#addChild
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    protected void addChild(FONode child) {
+    protected void addChildNode(FONode child) {
         if (doc == null) {
             createBasicDocument();
         }
-        super.addChild(child);
+        super.addChildNode(child);
     }
 
     /**

@@ -167,7 +167,7 @@ public abstract class FONode {
     /**
      * @param child child node to be added to the children of this node
      */
-    protected void addChild(FONode child) {
+    protected void addChildNode(FONode child) {
     }
 
     /**

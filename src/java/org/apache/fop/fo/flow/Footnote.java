@@ -53,9 +53,9 @@ public class Footnote extends FObj {
     }
 
     /**
-     * @param child child FONode to be added to this object
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    public void addChild(FONode child) {
+    public void addChildNode(FONode child) {
         String name = child.getName();
         if ("fo:inline".equals(name)) {
             inlineFO = (Inline)child;

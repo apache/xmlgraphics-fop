@@ -105,10 +105,9 @@ public class ListItem extends FObj {
     }
 
     /**
-     * Overridden from FObj
-     * @param child the child object to be added
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    public void addChild(FONode child) {
+    public void addChildNode(FONode child) {
         if ("fo:list-item-label".equals(child.getName())) {
             label = (ListItemLabel)child;
         } else if ("fo:list-item-body".equals(child.getName())) {

@@ -251,11 +251,9 @@ public class FObj extends FONode implements Constants {
     }
 
     /**
-     * Add the child to this object.
-     *
-     * @param child the child node to add
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    protected void addChild(FONode child) {
+    protected void addChildNode(FONode child) {
         if (containsMarkers() && "fo:marker".equals(child.getName())) {
             addMarker((Marker)child);
         } else {

@@ -216,9 +216,9 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addChild
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    public void addChild(FONode child) {
+    public void addChildNode(FONode child) {
         // Handle whitespace based on values of properties
         // Handle a sequence of inline-producing children in
         // one pass
@@ -231,7 +231,7 @@ public class Block extends FObjMixed {
             // Handle whitespace in preceeding inline areas if any
             handleWhiteSpace();
         }
-        super.addChild(child);
+        super.addChildNode(child);
     }
 
     /**

@@ -170,9 +170,9 @@ public abstract class XMLObj extends FONode {
     }
 
     /**
-     * @param child FONode child that should be added to this node
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    protected void addChild(FONode child) {
+    protected void addChildNode(FONode child) {
         if (child instanceof XMLObj) {
             ((XMLObj)child).addElement(doc, element);
         } else {

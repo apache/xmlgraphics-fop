@@ -85,10 +85,9 @@ public class Table extends FObj {
     }
 
     /**
-     * Overrides FObj.
-     * @param child FONode child object to be added
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    protected void addChild(FONode child) {
+    protected void addChildNode(FONode child) {
         if (child.getName().equals("fo:table-column")) {
             if (columns == null) {
                 columns = new ArrayList();
@@ -100,7 +99,7 @@ public class Table extends FObj {
             tableHeader = (TableBody)child;
         } else {
             // add bodies
-            super.addChild(child);
+            super.addChildNode(child);
         }
     }
 

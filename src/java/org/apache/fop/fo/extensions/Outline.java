@@ -69,12 +69,9 @@ public class Outline extends ExtensionObj {
     }
 
     /**
-     * Add the child to this outline.
-     * This checks for the type, label or outline and handles appropriately.
-     *
-     * @param obj the child object
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    protected void addChild(FONode obj) {
+    protected void addChildNode(FONode obj) {
         if (obj instanceof Label) {
             label = (Label)obj;
         } else if (obj instanceof Outline) {
