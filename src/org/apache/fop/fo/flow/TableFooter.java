@@ -73,7 +73,7 @@ public class TableFooter extends TableBody {
 
     public int getYPosition()
     {
-        return areaContainer.getYPosition() - spaceBefore;
+        return areaContainer.getCurrentYPosition() - spaceBefore;
     }
 
     public void setYPosition(int value)

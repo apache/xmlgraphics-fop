@@ -244,6 +244,10 @@ public class Table extends FObj {
 		if ((status = fo.layout(areaContainer)).isIncomplete()) {
 		    this.marker = i;
 		    if (/*(i != 0) && */(status.getCode() == Status.AREA_FULL_NONE)) {
+		        if(tableHeader != null)
+    		        tableHeader.removeLayout(areaContainer);
+		        if(tableFooter != null)
+    		        tableFooter.removeLayout(areaContainer);
 //			status = new Status(Status.AREA_FULL_SOME);
 		    }
 		    //areaContainer.end();

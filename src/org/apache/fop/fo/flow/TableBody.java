@@ -104,12 +104,12 @@ public class TableBody extends FObj {
 
     public int getYPosition()
     {
-        return areaContainer.getYPosition();
+        return areaContainer.getCurrentYPosition();
     }
 
     public int getHeight()
     {
-        return areaContainer.getHeight();
+        return areaContainer.getHeight() + spaceBefore + spaceAfter;
     }
 
     public Status layout(Area area) throws FOPException {
@@ -269,5 +269,11 @@ public class TableBody extends FObj {
 
     public int getAreaHeight() {
 	return areaContainer.getHeight();
+    }
+
+    public void removeLayout(Area area)
+    {
+        area.removeChild(areaContainer);
+        this.resetMarker();
     }
 }
