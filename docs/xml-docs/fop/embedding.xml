@@ -72,6 +72,9 @@
      </p>
      <p>http://localhost:8080/fop/fop?fo=/home/path/to/fofile.fo</p>
      <p>You can also find the source code there in the file FopServlet.java</p>
+     <p>
+        To compile this code you will need servlet_2_2.jar (or compatible), fop.jar and the sax api in your classpath.
+     </p>
   </s2>
 </s1>
 
