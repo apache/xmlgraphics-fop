@@ -78,7 +78,7 @@ import org.apache.fop.dom.svg.SVGArea;
 
 // Java
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.awt.Rectangle;
 import java.util.Vector;
@@ -160,10 +160,10 @@ public class PDFRenderer implements Renderer {
        * render the areas into PDF
        *
        * @param areaTree the laid-out area tree
-       * @param stream the OutputStream to write the PDF to
+       * @param writer the PrintWriter to write the PDF with
        */
     public void render(AreaTree areaTree,
-                       OutputStream stream) throws IOException, FOPException {
+                       PrintWriter writer) throws IOException, FOPException {
         MessageHandler.logln("rendering areas to PDF");
         idReferences = areaTree.getIDReferences();
         this.pdfResources = this.pdfDoc.getResources();
@@ -181,7 +181,7 @@ public class PDFRenderer implements Renderer {
         }
 
         MessageHandler.logln("writing out PDF");
-        this.pdfDoc.output(stream);
+        this.pdfDoc.output(writer);
     }
 
     /**
@@ -300,6 +300,26 @@ public class PDFRenderer implements Renderer {
             this.currentYPosition -= area.getHeight();
     }
 
+	public void renderBodyAreaContainer(BodyAreaContainer area) {
+  		renderAreaContainer(area.getBeforeFloatReferenceArea());
+  		renderAreaContainer(area.getFootnoteReferenceArea());
+		
+		// main reference area
+		Enumeration e = area.getMainReferenceArea().getChildren().elements();
+		while (e.hasMoreElements()) {
+			Box b = (Box) e.nextElement();
+			b.render(this);	// span areas
+		}		
+	}
+
+	public void renderSpanArea(SpanArea area) {
+		Enumeration e = area.getChildren().elements();
+		while (e.hasMoreElements()) {
+			Box b = (Box) e.nextElement();
+			b.render(this);	// column areas
+		}				
+	}
+	
     private void doFrame(Area area) {
         int w, h;
         int rx = this.currentAreaContainerXPosition;
@@ -628,7 +648,8 @@ public class PDFRenderer implements Renderer {
        * @param page page to render
        */
     public void renderPage(Page page) {
-        AreaContainer body, before, after;
+		BodyAreaContainer body;
+        AreaContainer before, after;
 
         currentStream = this.pdfDoc.makeStream();
         body = page.getBody();
@@ -640,7 +661,7 @@ public class PDFRenderer implements Renderer {
 
         currentStream.add("BT\n");
 
-        renderAreaContainer(body);
+        renderBodyAreaContainer(body);
 
         if (before != null) {
             renderAreaContainer(before);

@@ -258,7 +258,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
     public void render(AreaTree areaTree,
-                       OutputStream stream) throws IOException {
+                       PrintWriter writer) throws IOException {
         tree = areaTree;
         render(areaTree, 0);
     }
@@ -286,7 +286,8 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
     public void renderPage(Page page) {
-        AreaContainer body, before, after;
+        BodyAreaContainer body;
+        AreaContainer before, after;
 
         body = page.getBody();
         before = page.getBefore();
@@ -295,7 +296,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         this.currentFontName = "";
         this.currentFontSize = 0;
 
-        renderAreaContainer(body);
+        renderBodyAreaContainer(body);
 
         if (before != null) {
             renderAreaContainer(before);
@@ -355,6 +356,12 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
             this.currentYPosition -= area.getHeight();
         }
     }
+
+	// empty for now
+  	public void renderBodyAreaContainer(BodyAreaContainer area) {}
+
+	// empty for now
+	public void renderSpanArea(SpanArea area) {}
 
     private void doFrame(org.apache.fop.layout.Area area) {
         int w, h;

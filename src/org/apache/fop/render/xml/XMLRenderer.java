@@ -64,7 +64,6 @@ import org.apache.fop.fo.properties.LeaderPattern;
 // Java
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.OutputStream;
 import java.util.Enumeration;
 
 /**
@@ -96,10 +95,10 @@ public class XMLRenderer implements Renderer {
      * @param areaTree the laid-out area tree
      * @param writer the PrintWriter to give the XML to
      */
-    public void render(AreaTree areaTree, OutputStream stream)
+    public void render(AreaTree areaTree, PrintWriter writer)
 	throws IOException {
 	MessageHandler.logln("rendering areas to XML");
-	this.writer = new PrintWriter(stream);
+	this.writer = writer;
 	this.writer.write("<?xml version=\"1.0\"?>\n<!-- produced by "
 			  + this.producer + " -->\n");
 	writeStartTag("<AreaTree>");
@@ -190,6 +189,36 @@ public class XMLRenderer implements Renderer {
 	}
 	writeEndTag("</AreaContainer>");
     }
+
+    /**
+     * render a body area container to XML
+     *
+     * @param area the body area container to render
+     */
+  	public void renderBodyAreaContainer(BodyAreaContainer area) {
+	writeStartTag("<BodyAreaContainer>");
+	Enumeration e = area.getChildren().elements();
+	while (e.hasMoreElements()) {
+	    Box b = (Box) e.nextElement();
+	    b.render(this);
+	}
+	writeEndTag("</BodyAreaContainer>");
+	}
+
+    /**
+     * render a span area to XML
+     *
+     * @param area the span area to render
+     */
+	public void renderSpanArea(SpanArea area) {
+	writeStartTag("<SpanArea>");
+	Enumeration e = area.getChildren().elements();
+	while (e.hasMoreElements()) {
+	    Box b = (Box) e.nextElement();
+	    b.render(this);
+	}
+	writeEndTag("</SpanArea>");
+	}
 
     /**
      * render a block area to XML
@@ -303,7 +332,8 @@ public class XMLRenderer implements Renderer {
      * @param page the page to render
      */
     public void renderPage(Page page) {
-	AreaContainer body, before, after;
+	BodyAreaContainer body;
+	AreaContainer before, after;
 	writeStartTag("<Page>");
 	body = page.getBody();
 	before = page.getBefore();
@@ -311,7 +341,7 @@ public class XMLRenderer implements Renderer {
 	if (before != null) {
 	    renderAreaContainer(before);
 	}
-	renderAreaContainer(body);
+	renderBodyAreaContainer(body);
 	if (after != null) {
 	    renderAreaContainer(after);
 	}
