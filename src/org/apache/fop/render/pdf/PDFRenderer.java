@@ -88,7 +88,7 @@ public class PDFRenderer extends PrintRenderer {
 
     PDFColor currentColor;
 
-    float currentLetterSpacing = Float.NaN;
+    float currentLetterSpacing = Float.MAX_VALUE;
 
     /**
      * true if a TJ command is left to be written
