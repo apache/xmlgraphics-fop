@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,6 @@
 
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
@@ -32,7 +29,6 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.layoutmgr.BlockContainerLayoutManager;
 
 /**
  * Class modelling the fo:block-container object.
@@ -183,10 +179,24 @@ public class BlockContainer extends FObj {
     }
 
     /**
-     * Return the "writing-mode" property.
+     * @return the "writing-mode" property.
      */
     public int getWritingMode() {
         return writingMode;
+    }
+    
+    /**
+     * @return the width property
+     */
+    public Length getWidth() {
+        return width;
+    }
+
+    /**
+     * @return the height property
+     */
+    public Length getHeight() {
+        return height;
     }
 
     /**
