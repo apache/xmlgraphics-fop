@@ -40,7 +40,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     private List cellList = null;
     private List columns = null;
     private int listItemHeight;
-    private int yoffset;
     private BorderAndPadding borderProps = null;
     private BackgroundProps backgroundProps;
 
@@ -122,7 +121,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                     stackSize.add(bp.getStackingSize());
-                    if (stackSize.min > context.getStackLimit().max) {
+                    if (stackSize.opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
                             curLM.resetPosition(lastPos.getPosition());
@@ -130,8 +129,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
                             curLM.resetPosition(null);
                         }
                         break;
+                    } else {
+                        lastPos = bp;
                     }
-                    lastPos = bp;
                     childBreaks.add(bp);
 
                     childLC.setStackLimit(MinOptMax.subtract(
@@ -165,16 +165,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * Set the y position offset of this list item.
-     * This is used to set the position of the areas returned by this list item.
-     *
-     * @param off the y offset
-     */
-    public void setYOffset(int off) {
-        yoffset = off;
-    } 
-
-    /**
      * Add the areas for the break points.
      * This sets the offset of each cell as it is added.
      *
@@ -187,18 +177,15 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         addID();
 
         Item childLM;
-        int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
             ItemPosition lfp = (ItemPosition) parentIter.next();
             // Add the block areas to Area
 
-            int xoffset = 0;
             for (Iterator iter = lfp.cellBreaks.iterator(); iter.hasNext();) {
                 List cellsbr = (List)iter.next();
                 PositionIterator breakPosIter;
                 breakPosIter = new BreakPossPosIter(cellsbr, 0, cellsbr.size());
-                iStartPos = lfp.getLeafPos() + 1;
 
                 while ((childLM = (Item)breakPosIter.getNextChildLM()) != null) {
                     if(childLM == body) {
@@ -206,7 +193,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
                     }
                     childLM.addAreas(breakPosIter, lc);
                 }
-                xoffset += 100000;
             }
         }
 

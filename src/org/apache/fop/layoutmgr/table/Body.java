@@ -53,6 +53,11 @@ public class Body extends BlockStackingLayoutManager {
         super(fobj);
     }
 
+    /**
+     * Initialize properties for this layout manager.
+     *
+     * @param propMgr the property manager from the fo object
+     */
     protected void initProperties(PropertyManager propMgr) {
         borderProps = propMgr.getBorderAndPadding();
         backgroundProps = propMgr.getBackgroundProps();

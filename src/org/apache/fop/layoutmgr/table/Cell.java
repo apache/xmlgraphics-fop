@@ -92,7 +92,7 @@ public class Cell extends BlockStackingLayoutManager {
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                     stackSize.add(bp.getStackingSize());
-                    if (stackSize.min > context.getStackLimit().max) {
+                    if (stackSize.opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
                             reset(lastPos.getPosition());

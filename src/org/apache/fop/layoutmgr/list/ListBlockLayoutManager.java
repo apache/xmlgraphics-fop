@@ -134,11 +134,9 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         getParentArea(null);
         addID();
 
-        // add column, body then row areas
+        // the list block contains areas stacked from each list item
 
-        // add table header areas
-
-        int tableHeight = 0;
+        int listHeight = 0;
 
         ListItemLayoutManager childLM;
         int iStartPos = 0;
@@ -152,13 +150,13 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             iStartPos = lfp.getLeafPos() + 1;
             while ((childLM = (ListItemLayoutManager)breakPosIter.getNextChildLM()) != null) {
                 childLM.addAreas(breakPosIter, lc);
-                tableHeight += childLM.getListItemHeight();
+                listHeight += childLM.getListItemHeight();
             }
         }
 
         // add footer areas
 
-        curBlockArea.setHeight(tableHeight);
+        curBlockArea.setHeight(listHeight);
 
         if(borderProps != null) { 
             addBorders(curBlockArea, borderProps);
