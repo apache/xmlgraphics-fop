@@ -128,7 +128,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
                                      | BreakPoss.ISLAST);
         ipd = getAllocationIPD(context.getRefIPD());
         bp.setStackingSize(ipd);
-        bp.setNonStackingSize(curArea.getAllocationBPD());
+        bp.setNonStackingSize(new MinOptMax(curArea.getHeight()));
         bp.setTrailingSpace(new SpaceSpecifier(false));
 
         int bpd = curArea.getHeight();

@@ -146,11 +146,13 @@ public class Body extends BlockStackingLayoutManager {
               new BreakPossPosIter(childBreaks, iStartPos,
                                    lfp.getLeafPos() + 1);
             iStartPos = lfp.getLeafPos() + 1;
+            int lastheight = 0;
             while ((childLM = (Row)breakPosIter.getNextChildLM()) != null) {
                 childLM.setYOffset(yoffset + rowoffset);
                 childLM.addAreas(breakPosIter, lc);
-                rowoffset += childLM.getRowHeight();
+                lastheight = childLM.getRowHeight();
             }
+            rowoffset += lastheight;
         }
         bodyHeight = rowoffset;
 

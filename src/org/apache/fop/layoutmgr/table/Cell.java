@@ -63,6 +63,11 @@ public class Cell extends BlockStackingLayoutManager {
         cellIPD = context.getRefIPD();
 
         while ((curLM = getChildLM()) != null) {
+            if(curLM.generatesInlineAreas()) {
+                // error
+                curLM.setFinished(true);
+                continue;
+            }
             // Set up a LayoutContext
             int ipd = context.getRefIPD();
             BreakPoss bp;

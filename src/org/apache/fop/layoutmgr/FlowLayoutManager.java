@@ -75,12 +75,12 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
             // check the stack bpd and if greater than available
             // height then go to the last best break and return
             // break position
-            if(stackSize.min > context.getStackLimit().opt) {
+            if(stackSize.opt > context.getStackLimit().opt) {
                 breakPage = true;
             }
             if(breakPage) {
                 return new BreakPoss(
-			     new LeafPosition(this, blockBreaks.size() - 1));
+                      new LeafPosition(this, blockBreaks.size() - 1));
             }
         }
         setFinished(true);

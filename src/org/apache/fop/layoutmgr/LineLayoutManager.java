@@ -166,7 +166,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 if (bBreakOK) {
                     /* Add any non-conditional trailing space, assuming we
                      * end the line here. If we can't break here, we just
-                     * check if the content fits. */
+                     * check if the content fits.
+                     */
                     bpDim.add(bp.resolveTrailingSpace(true));
                 }
                 // TODO: stop if linebreak is forced (NEWLINE)
