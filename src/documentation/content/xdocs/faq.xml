@@ -1661,29 +1661,38 @@ class rendtest {
   <part id="part_help">
     <title>General suggestions. How to solve problems.</title>
     <faq id="bugs">
-      <question>Where to post bugs.</question>
+      <question>I think I have found a bug in FOP. What should I do?</question>
       <answer>
         <p>
-          See <link href="bugs.html">documentation</link>. See also
-          <link href="#postquestions">"where to post
-          questions"</link>.
+          See <link href="bugs.html">the Bugs page</link> for information about
+          bugs already reported and how to report new ones.
         </p>
       </answer>
     </faq>
     <faq id="postquestions">
-      <question>Where to post questions.</question>
+      <question>I have questions that are not addressed in this FAQ. Where
+      should I post them?</question>
       <answer>
-        <p>
-          Decide where to post:
-        </p>
         <ul>
           <li>
-            You get exceptions. First, check the FAQ whether the exception is
-            mentioned. ClassNotFoundException, NoSuchMethodException and
-            NoSuchFieldException problems are almost always a problem with the
-            local environment, try to get local help first. Check <link
-            href="http://nagoya.apache.org">bugzilla</link>. If still not found,
-            post to fop-dev.
+            If you have a runtime exception or other runtime problem:
+            <ul>
+              <li>
+                double-check the <link href="#part_running">Runtime FAQs</link>.
+              </li>
+              <li>
+                ClassNotFoundException, NoSuchMethodException and
+                NoSuchFieldException problems are almost always a problem with
+                the local environment. Try to get local help first.
+              </li>
+              <li>
+                Check <link href="bugs.html#issues_existing">Reported Issues</link>
+                to see if this is a known problem.
+              </li>
+              <li>If none of the above apply, post a question to the fop-dev
+                mailing list.
+              </li>
+            </ul>
           </li>
           <li>
             Something doesn't work with FOP but works with another formatter
