@@ -57,7 +57,7 @@ import org.apache.fop.svg.*;
 
 import org.apache.fop.apps.FOPException;
 
-import org.xml.sax.AttributeList;
+import org.xml.sax.Attributes;
 
 import java.util.Hashtable;
 
@@ -69,7 +69,7 @@ public class PropertyListBuilder {
 	this.propertyTable = new Hashtable();
 
 	propertyTable.put("end-indent",EndIndent.maker());
-	propertyTable.put("page-master-name",PageMasterName.maker());
+	propertyTable.put("master-name",MasterName.maker());
 	propertyTable.put("page-master-first",PageMasterFirst.maker());
 	propertyTable.put("page-master-repeating",PageMasterRepeating.maker());
 	propertyTable.put("page-master-odd",PageMasterOdd.maker());
@@ -167,6 +167,10 @@ public class PropertyListBuilder {
 	propertyTable.put("initial-page-number",InitialPageNumber.maker());
 	propertyTable.put("ref-id",RefId.maker());  // used by page-number-citation
 	propertyTable.put("id",Id.maker());			// attribute for objects, used by page-number-citation
+	propertyTable.put("maximum-repeats",MaximumRepeats.maker());
+	propertyTable.put("page-position",PagePosition.maker());
+	propertyTable.put("odd-or-even",OddOrEven.maker());
+	propertyTable.put("blank-or-not-blank",BlankOrNotBlank.maker());
 
     }
 
@@ -196,13 +200,13 @@ public class PropertyListBuilder {
 	return b;
     }
     
-    public PropertyList makeList(AttributeList attributes, PropertyList parentPropertyList) throws FOPException {
+    public PropertyList makeList(Attributes attributes, PropertyList parentPropertyList) throws FOPException {
 	
 	PropertyList p = new PropertyList(parentPropertyList);
 	p.setBuilder(this);
 	
 	for (int i = 0; i < attributes.getLength(); i++) {
-	    String attributeName = attributes.getName(i);
+	    String attributeName = attributes.getRawName(i);
 	    Property.Maker propertyMaker = (Property.Maker)propertyTable.get(attributeName);
 	    if (propertyMaker != null) {
 		p.put(attributeName,propertyMaker.make(p,attributes.getValue(i)));

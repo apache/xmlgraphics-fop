@@ -57,10 +57,10 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.pagination.Root;
 
 // SAX
-import org.xml.sax.HandlerBase;
+import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
-import org.xml.sax.AttributeList;
+import org.xml.sax.Attributes;
 
 // Java
 import java.util.Hashtable;
@@ -70,7 +70,7 @@ import java.io.IOException;
 /**
  * SAX Handler that builds the formatting object tree.
  */
-public class FOTreeBuilder extends HandlerBase {
+public class FOTreeBuilder extends DefaultHandler {
 
     /**
      * table mapping element names to the makers of objects
@@ -168,7 +168,8 @@ public class FOTreeBuilder extends HandlerBase {
     }
 
     /** SAX Handler for the end of an element */
-    public void endElement(String name) {
+    public void endElement(
+		String uri, String localName, String rawName) {
 	currentFObj.end();
 	currentFObj = (FObj) currentFObj.getParent();
 	level--;
@@ -183,7 +184,8 @@ public class FOTreeBuilder extends HandlerBase {
     }
 
     /** SAX Handler for the start of an element */
-    public void startElement(String name, AttributeList attlist)
+    public void startElement(String uri,
+    	String localName, String rawName, Attributes attlist)
 	throws SAXException { 
 
 	/* the formatting object started */
@@ -195,7 +197,7 @@ public class FOTreeBuilder extends HandlerBase {
 	level++;
 	int length = attlist.getLength();
 	for (int i = 0; i < length; i++) {
-	    String att = attlist.getName(i);
+	    String att = attlist.getRawName(i);
 	    if (att.equals("xmlns")) {
 		namespaceStack.push( new NSMap("",
 					       attlist.getValue(i),
@@ -206,7 +208,8 @@ public class FOTreeBuilder extends HandlerBase {
 					      level));
 	    }
 	}
-	String fullName = mapName(name);
+
+	String fullName = mapName(rawName);
 
 	fobjMaker = (FObj.Maker) fobjTable.get(fullName);
 
@@ -220,12 +223,11 @@ public class FOTreeBuilder extends HandlerBase {
 	}
 	
 	try {
-	    fobj =
-		fobjMaker.make(currentFObj, 
- 	       this.propertyListBuilder.makeList(attlist,  
-		     (currentFObj == null) ? null : currentFObj.properties));
+		PropertyList list = this.propertyListBuilder.makeList(attlist,  
+		     (currentFObj == null) ? null : currentFObj.properties);
+	    fobj = fobjMaker.make(currentFObj, list);
 	} catch (FOPException e) {
-	    throw new SAXException(e);
+		throw new SAXException(e);
 	}
 
 	if (rootFObj == null) {

@@ -69,14 +69,16 @@ public class StandardElementMapping implements ElementMapping {
 	builder.addMapping(uri, "region-before", RegionBefore.maker()); 
 	builder.addMapping(uri, "region-after", RegionAfter.maker()); 
 	builder.addMapping(uri, "page-sequence", PageSequence.maker()); 
-	builder.addMapping(uri, "sequence-specification",
-			   SequenceSpecification.maker()); 
-	builder.addMapping(uri, "sequence-specifier-single",
-			   SequenceSpecifierSingle.maker()); 
-	builder.addMapping(uri, "sequence-specifier-repeating",
-			   SequenceSpecifierRepeating.maker()); 
-	builder.addMapping(uri, "sequence-specifier-alternating",
-			   SequenceSpecifierAlternating.maker()); 
+	builder.addMapping(uri, "page-sequence-master",
+			   PageSequenceMaster.maker()); 
+	builder.addMapping(uri, "single-page-master-reference",
+			   SinglePageMasterReference.maker()); 
+	builder.addMapping(uri, "repeatable-page-master-reference",
+			   RepeatablePageMasterReference.maker()); 
+	builder.addMapping(uri, "conditional-page-master-reference",
+			   ConditionalPageMasterReference.maker()); 
+	builder.addMapping(uri, "repeatable-page-master-alternatives",
+			   RepeatablePageMasterAlternatives.maker()); 
 	builder.addMapping(uri, "flow", Flow.maker()); 
 	builder.addMapping(uri, "static-content",
 			   StaticContent.maker());
