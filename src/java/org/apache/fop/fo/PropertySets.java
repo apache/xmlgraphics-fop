@@ -29,7 +29,7 @@ public class PropertySets {
     private static BitSet can_have_id = null;
     private static BitSet no_inline_areas = null;
 
-    private Element[] elements = new Element[Constants.ELEMENT_COUNT+1];
+    private Element[] elements = new Element[Constants.FRM_OBJ_COUNT+1];
     private BitSet block_elems = new BitSet();
     private BitSet inline_elems = new BitSet();
 
@@ -1001,7 +1001,7 @@ public class PropertySets {
 
     public static short[] getPropertySet(int elementId) {
         if (mapping == null) {
-            mapping = new short[Constants.ELEMENT_COUNT+1][];
+            mapping = new short[Constants.FRM_OBJ_COUNT+1][];
             PropertySets ps = new PropertySets();
             ps.initializeElements();
             ps.initializeCommon();
