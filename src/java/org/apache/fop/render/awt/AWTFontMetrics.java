@@ -111,13 +111,13 @@ public class AWTFontMetrics {
      */
     public int getAscender(String family, int style, int size) {
         setFont(family, style, size);
-        // return (int)(FONT_FACTOR * fmt.getAscent());
+        return FONT_FACTOR * fmt.getAscent();
 
-        // workaround for sun bug on FontMetrics.getAscent()
-        // http://developer.java.sun.com/developer/bugParade/bugs/4399887.html
-        int realAscent = fmt.getAscent()
-                         - (fmt.getDescent() + fmt.getLeading());
-        return FONT_FACTOR * realAscent;
+//        // workaround for sun bug on FontMetrics.getAscent()
+//        // http://developer.java.sun.com/developer/bugParade/bugs/4399887.html
+//        int realAscent = fmt.getAscent()
+//                         - (fmt.getDescent() + fmt.getLeading());
+//        return FONT_FACTOR * realAscent;
     }
 
 
@@ -175,6 +175,7 @@ public class AWTFontMetrics {
         // the output seems to look a little better if the
         // space is rendered larger than given by
         // the FontMetrics object
+        // TODO find out why
         if (i <= 32) {
             w = (int)(1.4 * fmt.charWidth(i) * FONT_FACTOR);
         } else {
