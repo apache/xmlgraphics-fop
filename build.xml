@@ -125,8 +125,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </fileset>
 
     <fileset dir="${basedir}" id="dist.bin.lib">
-       <include name="lib/xerces-1.4.3.jar"/>
+       <include name="lib/xercesImpl-2.0.1.jar"/>
        <include name="lib/xalan-2.2D11.jar"/>
+       <include name="lib/xml-apis.jar"/>
        <include name="lib/batik.jar"/>
        <include name="lib/avalon-framework-cvs-20020315.jar"/>
        <include name="lib/jimi*"/>
@@ -367,7 +368,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <!-- copy src files -->
     <copy todir="${build.src}">
       <fileset dir="${src.dir}" 
-         excludes="**/Makefile*, **/package.html, **/${jimi},**/${jai},**/${xsltransform},**/${trax},**/apps/TraxInputHandler.java"/>
+         excludes="**/${jimi},**/${jai},**/${xsltransform},**/${trax},**/apps/TraxInputHandler.java"/>
     </copy>
   </target>
 
@@ -492,7 +493,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <fileset dir="${build.dest}" includes="org/apache/fop/svg/**"/>
     <fileset dir="${build.dest}" includes="org/apache/fop/render/pdf/**"
              excludes="org/apache/fop/render/pdf/PDFRenderer.class,org/apache/fop/render/pdf/PDFXMLHandler*"/>
-    <fileset dir="${build.dest}" includes="org/apache/fop/layout/Font*.class,org/apache/fop/apps/Version.class,org/apache/fop/image/FopImag*.class,org/apache/fop/image/Jpeg*,org/apache/fop/image/Abstract*,org/apache/fop/configuration/**,org/apache/fop/util/StreamUtilities.class"/>
+    <fileset dir="${build.dest}" includes="org/apache/fop/layout/Font*.class,org/apache/fop/image/FopImag*.class,org/apache/fop/image/Jpeg*,org/apache/fop/image/Abstract*,org/apache/fop/util/StreamUtilities.class"/>
     <manifest>
         <attribute name="Implementation-Title" value="${pdf-transcoder.name}"/>
         <attribute name="Implementation-Version" value="${pdf-transcoder.version}"/>
@@ -529,8 +530,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <target name="prepare-docs" depends="init">
     <mkdir dir="${build.docs}"/>
-    <!-- sets exec permission for antRun on Unix systems. necessary for javadoc-->
-    <chmod file="${lib.dir}/bin/antRun" perm="ugo+rx" />
   </target>
 
 
@@ -548,6 +547,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
              windowtitle="${Name} API"
              doctitle="${Name}"
              bottom="Copyright &#169; ${year} Apache Software Foundation. All Rights Reserved."
+             overview="${build.src}/overview.html"
+             failonerror="true"
     />
   </target>
 
