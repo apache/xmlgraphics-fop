@@ -83,6 +83,7 @@ public class TableCell extends FObj {
     int paddingLeft;
     int paddingRight;
     int position;
+    String id;
     
     protected int startOffset;
     protected int width;
@@ -148,6 +149,8 @@ public class TableCell extends FObj {
 		this.properties.get("space-after.optimum").getLength().mvalue(); 
 	    this.backgroundColor =
 		this.properties.get("background-color").getColorType();
+            this.id =
+                this.properties.get("id").getString();
 
 	    if (area instanceof BlockArea) {
 		area.end();
@@ -156,6 +159,8 @@ public class TableCell extends FObj {
 	    //if (this.isInListBody) {
 	    //startIndent += bodyIndent + distanceBetweenStarts;
 	    //}
+
+            area.getIDReferences().createID(id);                        
 
 	    this.marker = 0;
 
@@ -166,9 +171,8 @@ public class TableCell extends FObj {
 	}
 
         if ( marker==0 ) {
-            // initialize id                       
-            String id = this.properties.get("id").getString();            
-            area.getIDReferences().initializeID(id,area);                        
+            // configure id                                             
+            area.getIDReferences().configureID(id,area);                        
         }
 
 	this.areaContainer =

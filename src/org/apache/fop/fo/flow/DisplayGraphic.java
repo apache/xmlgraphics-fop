@@ -89,6 +89,7 @@ public class DisplayGraphic extends FObj {
     String href;
     int height;
     int width;
+    String id;
 
     ImageArea imageArea;
 
@@ -130,6 +131,10 @@ public class DisplayGraphic extends FObj {
 		this.properties.get("width").getLength().mvalue();
 	    this.height =
 		this.properties.get("height").getLength().mvalue();
+            this.id = 
+            this.properties.get("id").getString();
+
+            area.getIDReferences().createID(id);
 
 	    if (area instanceof BlockArea) {
 		area.end();
@@ -193,9 +198,8 @@ public class DisplayGraphic extends FObj {
 		}
 
             if ( marker == 0 ) {
-                // initialize id                       
-                String id = this.properties.get("id").getString();            
-                area.getIDReferences().initializeID(id,area);                                
+                // configure id                                                  
+                area.getIDReferences().configureID(id,area);                                
             }
 
 		imageArea.start();

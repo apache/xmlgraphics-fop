@@ -86,7 +86,7 @@ public class Table extends FObj {
     ColorType borderColor;
     int borderWidth;
     int borderStyle;
-    
+    String id;
 
     Vector columns = new Vector();
     int currentColumnNumber = 0;
@@ -136,10 +136,14 @@ public class Table extends FObj {
 		this.properties.get("border-width").getLength().mvalue();
 	    this.borderStyle =
 		this.properties.get("border-style").getEnum();
+            this. id = 
+                this.properties.get("id").getString();
 
 	    if (area instanceof BlockArea) {
 		area.end();
 	    }
+
+	    area.getIDReferences().createID(id);                        
 
 	    this.marker = 0;
 
@@ -161,9 +165,8 @@ public class Table extends FObj {
 	}
 
         if ( marker==0 ) {
-            // initialize id                       
-            String id = this.properties.get("id").getString();            
-            area.getIDReferences().initializeID(id,area);                        
+            // configure id                                   
+            area.getIDReferences().configureID(id,area);                        
         }
 
 	this.areaContainer =
