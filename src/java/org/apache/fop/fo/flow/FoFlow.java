@@ -154,8 +154,7 @@ public class FoFlow extends FOPageSeqNode {
     public Area getChildrensLayoutContext() {
         // The layout context for the &block; children of fo:flow is
         // the current normal-flow-reference-area.
-        Page page = pageSequence.getPage();
-        return page.getNormalFlowRefArea();
+        return pageSequence.getPage().getNormalFlowRefArea();
     }
 
 }
