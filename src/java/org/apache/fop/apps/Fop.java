@@ -308,7 +308,22 @@ public class Fop {
         this.inputHandler = inputHandler;
     }
 
+
+    /**
+     * Optionally sets the FOUserAgent instance for FOP to use. The Driver
+     * class sets up its own FOUserAgent if none is set through this method.
+     * @param agent FOUserAgent to use
+     */
+    public void setUserAgent(FOUserAgent agent) {
+        userAgent = agent;
+    }
+
     protected FOUserAgent getUserAgent() {
+        if (userAgent == null) {
+            userAgent = new FOUserAgent();
+            userAgent.enableLogging(logger);
+            userAgent.setBaseURL("");
+        }
         return userAgent;
     }
 
@@ -369,14 +384,15 @@ public class Fop {
 
     /**
      * Set the Renderer to use.
-     * @param renderer the renderer instance to use (Note: Logger must be set at this point)
+     * @param renderer the renderer instance to use
+     * (Note: Logger must be set at this point)
      */
     public void setRenderer(Renderer renderer) {
         // AWTStarter calls this function directly
         if (renderer instanceof AWTRenderer) {
             rendererType = RENDER_AWT;
         }
-        renderer.setProducer(Version.getVersion());
+        renderer.setOption("producer", Version.getVersion());
         renderer.setUserAgent(getUserAgent());
         this.renderer = renderer;
     }
@@ -401,7 +417,7 @@ public class Fop {
                 throws IllegalArgumentException {
         try {
             renderer = (Renderer)Class.forName(rendererClassName).newInstance();
-            renderer.setProducer(Version.getVersion());
+            renderer.setOption("producer", Version.getVersion());
             renderer.setUserAgent(getUserAgent());
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
@@ -433,6 +449,7 @@ public class Fop {
      */
     public synchronized void render(InputHandler inputHandler)
                 throws FOPException {
+        //userAgent.setBaseURL(inputHandler.getBaseURL());
         throw new FOPException("Attempting to run null 'render' method");
     }
 
