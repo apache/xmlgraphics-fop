@@ -9,6 +9,13 @@
      in <jump href="implemented.html">features</jump>, sometimes it does so only in a limited way. 
   </p>
 
+  <s2 title="fo:leader">
+    <p>Only the property leader-length.optimum is used, so for all purposes you can use 
+       "leader-length" instead. leader-length.minimum/maximum should be honored 
+       for line-justification, but this does not happen.
+    </p>
+  </s2>
+
   <s2 title="page-number-citation">
     <p>Only works for table of contents without any problems. The case where the page number doesn't 
     fit on a line isn't handled, and any text on the same line and after the page-number might not 

@@ -20,7 +20,7 @@
        like XT or Xalan) or can be passed in memory as a DOM Document or (in
        the case of XT) SAX events.
     </p>
-    <p>The latest version of Fop is 0.15 and it supports the xsl:fo candidate release.
+    <p>The latest version of Fop is 0.16 and it supports the xsl:fo candidate release.
        You can <jump href="download.html">download</jump> 
        Fop including a precompiled version, the source code and many example files to 
        get you started. Pointers to introductions into xsl:fo can be found in the
@@ -41,7 +41,7 @@
 
   <s2 title="FOP Objectives">
     <p>The goals of the Apache XML FOP Project are to deliver an XSL FO->PDF formatter that is compliant to at least the Basic
-       conformance level described in the 27 March 2000 XSL WD, and that complies with the 11 March 1999 Portable Document
+       conformance level described in the W3C Candidate Recommendation 21 November 2000, and that complies with the 11 March 1999 Portable Document
        Format Specification (Version 1.3) from Adobe Systems. 
     </p>
 
