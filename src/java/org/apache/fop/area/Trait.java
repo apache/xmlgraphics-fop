@@ -182,6 +182,15 @@ public class Trait implements Serializable {
     /** The is-viewport-area trait. */
     public static final Integer IS_VIEWPORT_AREA = new Integer(32);
     
+    /** Blinking trait used when rendering inline parent. */
+    public static final Integer BLINK = new Integer(33);
+    
+    /** Trait for color of underline decorations when rendering inline parent. */
+    public static final Integer UNDERLINE_COLOR = new Integer(34);
+    /** Trait for color of overline decorations when rendering inline parent. */
+    public static final Integer OVERLINE_COLOR = new Integer(35);
+    /** Trait for color of linethrough decorations when rendering inline parent. */
+    public static final Integer LINETHROUGH_COLOR = new Integer(36);
     
     private static final Map TRAIT_INFO = new HashMap();
 
@@ -219,11 +228,16 @@ public class Trait implements Serializable {
         TRAIT_INFO.put(BACKGROUND,
                           new TraitInfo("background", Background.class));
         TRAIT_INFO.put(UNDERLINE,
-                          new TraitInfo("underline", Boolean.class));
+                          new TraitInfo("underline-score", Boolean.class));
+        TRAIT_INFO.put(UNDERLINE_COLOR, new TraitInfo("underline-score-color", String.class));
         TRAIT_INFO.put(OVERLINE,
-                          new TraitInfo("overline", Boolean.class));
+                          new TraitInfo("overline-score", Boolean.class));
+        TRAIT_INFO.put(OVERLINE_COLOR, new TraitInfo("overline-score-color", String.class));
         TRAIT_INFO.put(LINETHROUGH,
-                          new TraitInfo("linethrough", Boolean.class));
+                          new TraitInfo("through-score", Boolean.class));
+        TRAIT_INFO.put(LINETHROUGH_COLOR, new TraitInfo("through-score-color", String.class));
+        TRAIT_INFO.put(BLINK,
+                          new TraitInfo("blink", Boolean.class));
         TRAIT_INFO.put(OFFSET, new TraitInfo("offset", Integer.class));
         TRAIT_INFO.put(SHADOW, new TraitInfo("shadow", Integer.class));
         TRAIT_INFO.put(BORDER_START,
