@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -18,8 +18,8 @@ import java.awt.Shape;
 import java.awt.Paint;
 import java.awt.Stroke;
 import java.awt.Color;
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.List;
+import java.util.Iterator;
 
 import org.apache.batik.gvt.text.Mark;
 import org.apache.batik.gvt.TextPainter;
@@ -29,9 +29,9 @@ import org.apache.batik.gvt.font.GVTFontFamily;
 import org.apache.batik.bridge.SVGFontFamily;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
+import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.FontInfo;
-import org.apache.fop.layout.FontMetric;
 
 /**
  * Renders the attributed character iterator of a <tt>TextNode</tt>.
@@ -90,8 +90,8 @@ public class PDFTextPainter implements TextPainter {
         anchor = (TextNode.Anchor) aci.getAttribute(
                       GVTAttributedCharacterIterator.TextAttribute.ANCHOR_TYPE);
 
-        Vector gvtFonts;
-        gvtFonts = (Vector) aci.getAttribute(
+        List gvtFonts;
+        gvtFonts = (List) aci.getAttribute(
                       GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
         Paint forg = (Paint) aci.getAttribute(TextAttribute.FOREGROUND);
         Paint strokePaint;
@@ -103,10 +103,12 @@ public class PDFTextPainter implements TextPainter {
         }
         Stroke stroke = (Stroke) aci.getAttribute(
                           GVTAttributedCharacterIterator.TextAttribute.STROKE);
+        /*
         Float xpos = (Float) aci.getAttribute(
                        GVTAttributedCharacterIterator.TextAttribute.X);
         Float ypos = (Float) aci.getAttribute(
                        GVTAttributedCharacterIterator.TextAttribute.Y);
+        */
 
         Float posture = (Float) aci.getAttribute(TextAttribute.POSTURE);
         Float taWeight = (Float) aci.getAttribute(TextAttribute.WEIGHT);
@@ -149,9 +151,9 @@ public class PDFTextPainter implements TextPainter {
         boolean found = false;
         String fontFamily = null;
         if (gvtFonts != null) {
-            for (Enumeration e = gvtFonts.elements();
-                    e.hasMoreElements();) {
-                GVTFontFamily fam = (GVTFontFamily) e.nextElement();
+            Iterator i = gvtFonts.iterator();
+            while (i.hasNext()) {
+                GVTFontFamily fam = (GVTFontFamily) i.next();
                 if (fam instanceof SVGFontFamily) {
                     PROXY_PAINTER.paint(node, g2d);
                     return;
@@ -160,7 +162,7 @@ public class PDFTextPainter implements TextPainter {
                 if (fi.hasFont(fontFamily, style, weight)) {
                     String fname = fontInfo.fontLookup(fontFamily, style,
                                                        weight);
-                    FontMetric metrics = fontInfo.getMetricsFor(fname);
+                    FontMetrics metrics = fontInfo.getMetricsFor(fname);
                     int fsize = (int)(size.floatValue() * 1000);
                     fontState = new FontState(fname, metrics, fsize);
                     found = true;
@@ -171,7 +173,7 @@ public class PDFTextPainter implements TextPainter {
         if (!found) {
             String fname =
               fontInfo.fontLookup("any", style, FontInfo.NORMAL);
-            FontMetric metrics = fontInfo.getMetricsFor(fname);
+            FontMetrics metrics = fontInfo.getMetricsFor(fname);
             int fsize = (int)(size.floatValue() * 1000);
             fontState = new FontState(fname, metrics, fsize);
         } else {
@@ -245,13 +247,13 @@ public class PDFTextPainter implements TextPainter {
 
     private float getStringWidth(String str, FontState fontState) {
         float wordWidth = 0;
-        float whitespaceWidth = fontState.width(fontState.mapChar(' '));
+        float whitespaceWidth = fontState.getWidth(fontState.mapChar(' '));
 
         for (int i = 0; i < str.length(); i++) {
             float charWidth;
             char c = str.charAt(i);
             if (!((c == ' ') || (c == '\n') || (c == '\r') || (c == '\t'))) {
-                charWidth = fontState.width(fontState.mapChar(c));
+                charWidth = fontState.getWidth(fontState.mapChar(c));
                 if (charWidth <= 0) {
                     charWidth = whitespaceWidth;
                 }

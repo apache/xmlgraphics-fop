@@ -1,44 +1,75 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.tools;
 
-// FOP
-import org.apache.fop.area.*;
-import org.apache.fop.area.inline.*;
-import org.apache.fop.area.inline.Character;
-import org.apache.fop.render.*;
-import org.apache.fop.render.pdf.*;
-import org.apache.fop.render.svg.*;
-import org.apache.fop.render.xml.*;
-import org.apache.fop.layout.FontInfo;
-import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.FontMetric;
-import org.apache.fop.fo.FOUserAgent;
-import org.apache.fop.fo.properties.RuleStyle;
-
-// Avalon
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
-
 // Java
-import java.io.*;
-import java.util.*;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
 import java.util.StringTokenizer;
 
 // JAXP
 import javax.xml.parsers.DocumentBuilderFactory;
 
 // DOM
-import org.w3c.dom.*;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 // Batik
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+
+// FOP
+import org.apache.fop.area.Area;
+import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.AreaTreeModel;
+import org.apache.fop.area.BeforeFloat;
+import org.apache.fop.area.Block;
+import org.apache.fop.area.BodyRegion;
+import org.apache.fop.area.CTM;
+import org.apache.fop.area.Flow;
+import org.apache.fop.area.Footnote;
+import org.apache.fop.area.LineArea;
+import org.apache.fop.area.MainReference;
+import org.apache.fop.area.Page;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.RegionReference;
+import org.apache.fop.area.RegionViewport;
+import org.apache.fop.area.Span;
+import org.apache.fop.area.StorePagesModel;
+import org.apache.fop.area.Title;
+import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.Character;
+import org.apache.fop.area.inline.Container;
+import org.apache.fop.area.inline.ForeignObject;
+import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.Leader;
+import org.apache.fop.area.inline.Space;
+import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.Word;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.render.Renderer;
+import org.apache.fop.render.pdf.PDFRenderer;
+import org.apache.fop.render.svg.SVGRenderer;
+import org.apache.fop.render.xml.XMLRenderer;
+import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.fo.properties.RuleStyle;
+import org.apache.fop.fonts.FontMetrics;
+
+// Avalon
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
+
 
 /**
  * Area tree tester.
@@ -55,6 +86,8 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 public class AreaTreeBuilder extends AbstractLogEnabled {
 
     /**
+     * Main method
+     * @param args command line arguments
      */
     public static void main(String[] args) {
         AreaTreeBuilder atb = new AreaTreeBuilder();
@@ -65,7 +98,10 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
     }
 
     /**
-     *
+     * Run the tests.
+     * @param in input filename
+     * @param type output format
+     * @param out output filename
      */
     protected void runTests(String in, String type, String out) {
         getLogger().debug("Starting tests");
@@ -74,6 +110,10 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
     }
 
     /**
+     * Run a test.
+     * @param in input filename
+     * @param type output format
+     * @param out output filename
      */
     protected void runTest(String in, String type, String out) {
         Renderer rend = null;
@@ -93,10 +133,11 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
 
         StorePagesModel sm = AreaTree.createStorePagesModel();
         TreeLoader tl = new TreeLoader(fi);
+        setupLogger(tl);
         tl.setTreeModel(sm);
         try {
             InputStream is =
-              new BufferedInputStream(new FileInputStream(in));
+              new java.io.BufferedInputStream(new java.io.FileInputStream(in));
             tl.buildAreaTree(is);
             renderAreaTree(sm, rend, out);
         } catch (IOException e) {
@@ -104,11 +145,17 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
         }
     }
 
+    /**
+     * Renders an area tree to a target format using a renderer.
+     * @param sm area tree pages
+     * @param rend renderer to use for output
+     * @param out target filename
+     */
     protected void renderAreaTree(StorePagesModel sm,
                                   Renderer rend, String out) {
         try {
             OutputStream os =
-              new BufferedOutputStream(new FileOutputStream(out));
+              new java.io.BufferedOutputStream(new java.io.FileOutputStream(out));
 
             rend.startRenderer(os);
 
@@ -154,11 +201,11 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
 
 // this loads an area tree from an xml file
 // the xml format is the same as the xml renderer output
-class TreeLoader {
-    AreaTree areaTree;
-    AreaTreeModel model;
-    FontInfo fontInfo;
-    FontState currentFontState;
+class TreeLoader extends AbstractLogEnabled {
+    private AreaTree areaTree;
+    private AreaTreeModel model;
+    private FontInfo fontInfo;
+    private FontState currentFontState;
 
     TreeLoader(FontInfo fi) {
         fontInfo = fi;
@@ -248,7 +295,7 @@ class TreeLoader {
     }
 
     public Page readPage(Element root) {
-        String bounds = root.getAttribute("bounds");
+        //String bounds = root.getAttribute("bounds");
         Page page = new Page();
         NodeList childs = root.getChildNodes();
         for (int i = 0; i < childs.getLength(); i++) {
@@ -362,7 +409,7 @@ class TreeLoader {
     }
 
     List getSpans(Element root) {
-        ArrayList list = new ArrayList();
+        List list = new java.util.ArrayList();
         NodeList childs = root.getChildNodes();
         for (int i = 0; i < childs.getLength(); i++) {
             Node obj = childs.item(i);
@@ -380,7 +427,7 @@ class TreeLoader {
     }
 
     List getFlows(Element root) {
-        ArrayList list = new ArrayList();
+        List list = new java.util.ArrayList();
         NodeList childs = root.getChildNodes();
         for (int i = 0; i < childs.getLength(); i++) {
             Node obj = childs.item(i);
@@ -409,7 +456,7 @@ class TreeLoader {
 
 
     List getBlocks(Element root) {
-        ArrayList list = new ArrayList();
+        List list = new java.util.ArrayList();
         NodeList childs = root.getChildNodes();
         for (int i = 0; i < childs.getLength(); i++) {
             Node obj = childs.item(i);
@@ -460,7 +507,7 @@ class TreeLoader {
 
     // children of element are inline areas
     List getInlineAreas(Element root) {
-        ArrayList list = new ArrayList();
+        List list = new java.util.ArrayList();
         NodeList childs = root.getChildNodes();
         for (int i = 0; i < childs.getLength(); i++) {
             Node obj = childs.item(i);
@@ -469,11 +516,11 @@ class TreeLoader {
                   new Character(getString((Element) obj).charAt(0));
                 addTraits((Element) obj, ch);
                 String fname = fontInfo.fontLookup("sans-serif", "normal", FontInfo.NORMAL);
-                FontMetric metrics = fontInfo.getMetricsFor(fname);
+                FontMetrics metrics = fontInfo.getMetricsFor(fname);
                 currentFontState =
                     new FontState(fname, metrics, 12000);
 
-                ch.setWidth(currentFontState.width(ch.getChar()));
+                ch.setWidth(currentFontState.getWidth(ch.getChar()));
                 ch.setOffset(currentFontState.getCapHeight());
                 list.add(ch);
             } else if (obj.getNodeName().equals("space")) {
@@ -494,7 +541,7 @@ class TreeLoader {
                 }
             } else if (obj.getNodeName().equals("word")) {
                 String fname = fontInfo.fontLookup("sans-serif", "normal", FontInfo.NORMAL);
-                FontMetric metrics = fontInfo.getMetricsFor(fname);
+                FontMetrics metrics = fontInfo.getMetricsFor(fname);
                 currentFontState =
                     new FontState(fname, metrics, 12000);
                 Word word = getWord((Element) obj);
@@ -563,11 +610,11 @@ class TreeLoader {
                           DocumentBuilderFactory.newInstance();
                         fact.setNamespaceAware(true);
 
-                        doc = fact. newDocumentBuilder().newDocument();
+                        doc = fact.newDocumentBuilder().newDocument();
                         Node node = doc.importNode(obj, true);
                         doc.appendChild(node);
-                        DOMImplementation impl =
-                          SVGDOMImplementation.getDOMImplementation();
+                        //DOMImplementation impl =
+                        //  SVGDOMImplementation.getDOMImplementation();
                         // due to namespace problem attributes are not cloned
                         // serializing causes an npe
                         //doc = DOMUtilities.deepCloneDocument(doc, impl);
@@ -582,7 +629,7 @@ class TreeLoader {
                         DocumentBuilderFactory fact =
                           DocumentBuilderFactory.newInstance();
                         fact.setNamespaceAware(true);
-                        doc = fact. newDocumentBuilder().newDocument();
+                        doc = fact.newDocumentBuilder().newDocument();
                         Node node = doc.importNode(obj, true);
                         doc.appendChild(node);
                         ForeignObject fo = new ForeignObject(doc, space);
@@ -638,7 +685,7 @@ class TreeLoader {
         addTraits(root, word);
         int width = 0;
         for (int count = 0; count < str.length(); count++) {
-            width += currentFontState.width(str.charAt(count));
+            width += currentFontState.getWidth(str.charAt(count));
         }
         word.setWidth(width);
         word.setOffset(currentFontState.getCapHeight());
@@ -654,24 +701,23 @@ class TreeLoader {
             String tok = st.nextToken();
             int index = tok.indexOf(":");
             String id = tok.substring(0, index);
-        Object traitCode = Trait.getTraitCode(id);
-        if (traitCode != null) {
-        area.addTrait(traitCode,
-                  Trait.makeTraitValue(traitCode,
-                           tok.substring(index + 1)));
-        }
-        else {
-        System.err.println("Unknown trait: " + id );
-        }
+            Object traitCode = Trait.getTraitCode(id);
+            if (traitCode != null) {
+                area.addTrait(traitCode,
+                      Trait.makeTraitValue(traitCode,
+                               tok.substring(index + 1)));
+            } else {
+                getLogger().error("Unknown trait: " + id);
+            }
         }
     }
 
     public List getRanges(Element ele) {
-        ArrayList list = new ArrayList();
+        List list = new java.util.ArrayList();
         String str = ele.getAttribute("ranges");
         StringTokenizer st = new StringTokenizer(str, ";");
         while (st.hasMoreTokens()) {
-            String tok = st.nextToken();
+            /*String tok =*/ st.nextToken();
         }
         return list;
     }

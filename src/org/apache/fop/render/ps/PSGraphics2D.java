@@ -1,34 +1,54 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.render.ps;
 
-import org.apache.fop.pdf.*;
-import org.apache.fop.layout.*;
-import org.apache.fop.fonts.*;
-import org.apache.fop.render.pdf.*;
-import org.apache.fop.image.*;
-import org.apache.fop.fo.FOUserAgent;
-
-import org.apache.batik.ext.awt.g2d.*;
-
+//Java
+import java.util.List;
 import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
-import java.awt.image.*;
-import java.awt.font.*;
-import java.awt.geom.*;
-import java.awt.image.renderable.*;
-import java.io.*;
+import java.awt.Paint;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.TexturePaint;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
+import java.awt.image.ImageObserver;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.awt.image.renderable.RenderableImage;
 
-import java.util.Map;
-import java.util.ArrayList;
+// FOP
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.pdf.PDFColor;
+//import org.apache.fop.pdf.PDFColorSpace;
+import org.apache.fop.pdf.PDFNumber;
+
+// Batik
+import org.apache.batik.ext.awt.g2d.AbstractGraphics2D;
+import org.apache.batik.ext.awt.g2d.GraphicContext;
+
 
 /**
  * This concrete implementation of <tt>AbstractGraphics2D</tt> is a
@@ -43,13 +63,15 @@ import java.util.ArrayList;
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
 public class PSGraphics2D extends AbstractGraphics2D {
-    boolean standalone = false;
+
+    private boolean standalone = false;
 
     /**
      * the PDF Document being created
      */
     protected PSRenderer psRenderer;
 
+    /** Currently valid FontState */
     protected FontState fontState;
 
     /**
@@ -75,14 +97,21 @@ public class PSGraphics2D extends AbstractGraphics2D {
     /**
      * the current colour for use in svg
      */
-    PDFColor currentColour = new PDFColor(0, 0, 0);
+    protected PDFColor currentColour = new PDFColor(0, 0, 0);
 
-    FontInfo fontInfo;
+    /** FontInfo containing all available fonts */
+    protected FontInfo fontInfo;
 
     /**
-     * Create a new PDFGraphics2D with the given pdf document info.
-     * This is used to create a Graphics object for use inside an already
-     * existing document.
+     * Create a new Graphics2D that generates PostScript code.
+     * @param textAsShapes True if text should be rendered as graphics
+     * @param fs currently valid FontState object
+     * @param ren PostScript renderer
+     * @param font current font name
+     * @param size current font size
+     * @param xpos current x pos
+     * @param ypos current y pos
+     * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D#AbstractGraphics2D(boolean)
      */
     public PSGraphics2D(boolean textAsShapes, FontState fs, PSRenderer ren,
                         String font, int size, int xpos, int ypos) {
@@ -95,19 +124,28 @@ public class PSGraphics2D extends AbstractGraphics2D {
         fontState = fs;
     }
 
+    /**
+     * Create a new Graphics2D that generates PostScript code.
+     * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D#AbstractGraphics2D(boolean)
+     */
     public PSGraphics2D(boolean textAsShapes) {
         super(textAsShapes);
     }
 
-    public void setGraphicContext(GraphicContext c) {
-        gc = c;
-    }
-
     /**
-     * This constructor supports the create method
+     * Constructor for creating copies
+     * @param g parent PostScript Graphics2D
      */
     public PSGraphics2D(PSGraphics2D g) {
         super(g);
+    }
+
+    /**
+     * Sets the GraphicContext
+     * @param c GraphicContext to use
+     */
+    public void setGraphicContext(GraphicContext c) {
+        gc = c;
     }
 
     /**
@@ -140,6 +178,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @param    y   the <i>y</i> coordinate.
      * @param    observer    object to be notified as more of
      * the image is converted.
+     * @return True if the image has been fully drawn/loaded
      * @see      java.awt.Image
      * @see      java.awt.image.ImageObserver
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
@@ -170,13 +209,13 @@ public class PSGraphics2D extends AbstractGraphics2D {
         g.dispose();
 
         final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3];
-        final byte[] mask = new byte[buf.getWidth() * buf.getHeight()];
+        //final byte[] mask = new byte[buf.getWidth() * buf.getHeight()];
 
         Raster raster = buf.getData();
         DataBuffer bd = raster.getDataBuffer();
 
         int count = 0;
-        int maskpos = 0;
+        //int maskpos = 0;
         switch (bd.getDataType()) {
         case DataBuffer.TYPE_INT:
             int[][] idata = ((DataBufferInt)bd).getBankData();
@@ -219,6 +258,11 @@ public class PSGraphics2D extends AbstractGraphics2D {
         return true;
     }
 
+    /**
+     * Creates a buffered image.
+     * @param size dimensions of the image to be created
+     * @return the buffered image
+     */
     public BufferedImage buildBufferedImage(Dimension size) {
         return new BufferedImage(size.width, size.height,
                                  BufferedImage.TYPE_INT_ARGB);
@@ -357,6 +401,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @param    height the height of the rectangle.
      * @param    observer    object to be notified as more of
      * the image is converted.
+     * @return   True if the image has been fully loaded/drawn
      * @see      java.awt.Image
      * @see      java.awt.image.ImageObserver
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
@@ -474,6 +519,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
         psRenderer.write("grestore");
     }
 
+    /**
+     * Establishes a clipping region
+     * @param s Shape defining the clipping region
+     */
     protected void writeClip(Shape s) {
         PathIterator iter = s.getPathIterator(getTransform());
         psRenderer.write("newpath");
@@ -518,6 +567,11 @@ public class PSGraphics2D extends AbstractGraphics2D {
         psRenderer.write("clippath");
     }
 
+    /**
+     * Applies a new Paint object.
+     * @param paint Paint object to use
+     * @param fill True if to be applied for filling
+     */
     protected void applyPaint(Paint paint, boolean fill) {
         if (paint instanceof GradientPaint) {
             GradientPaint gp = (GradientPaint)paint;
@@ -525,35 +579,35 @@ public class PSGraphics2D extends AbstractGraphics2D {
             Color c2 = gp.getColor2();
             Point2D p1 = gp.getPoint1();
             Point2D p2 = gp.getPoint2();
-            boolean cyclic = gp.isCyclic();
+            //boolean cyclic = gp.isCyclic();
 
-            ArrayList theCoords = new ArrayList();
+            List theCoords = new java.util.ArrayList();
             theCoords.add(new Double(p1.getX()));
             theCoords.add(new Double(p1.getY()));
             theCoords.add(new Double(p2.getX()));
             theCoords.add(new Double(p2.getY()));
 
-            ArrayList theExtend = new ArrayList();
+            List theExtend = new java.util.ArrayList();
             theExtend.add(new Boolean(true));
             theExtend.add(new Boolean(true));
 
-            ArrayList theDomain = new ArrayList();
+            List theDomain = new java.util.ArrayList();
             theDomain.add(new Double(0));
             theDomain.add(new Double(1));
 
-            ArrayList theEncode = new ArrayList();
+            List theEncode = new java.util.ArrayList();
             theEncode.add(new Double(0));
             theEncode.add(new Double(1));
             theEncode.add(new Double(0));
             theEncode.add(new Double(1));
 
-            ArrayList theBounds = new ArrayList();
+            List theBounds = new java.util.ArrayList();
             theBounds.add(new Double(0));
             theBounds.add(new Double(1));
 
-            ArrayList theFunctions = new ArrayList();
+            //List theFunctions = new java.util.ArrayList();
 
-            ArrayList someColors = new ArrayList();
+            List someColors = new java.util.ArrayList();
 
             PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
                                            c1.getBlue());
@@ -562,10 +616,16 @@ public class PSGraphics2D extends AbstractGraphics2D {
                                            c2.getBlue());
             someColors.add(color2);
 
-            PDFColorSpace aColorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
-        } else if (paint instanceof TexturePaint) {}
+            //PDFColorSpace aColorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+        } else if (paint instanceof TexturePaint) {
+            //nop
+        }
     }
 
+    /**
+     * Applies a new Stroke object.
+     * @param stroke Stroke object to use
+     */
     protected void applyStroke(Stroke stroke) {
         if (stroke instanceof BasicStroke) {
             BasicStroke bs = (BasicStroke)stroke;
@@ -691,7 +751,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * left, in which case the coordinate supplied is the location of the
      * leftmost character on the baseline.
      * @param s the <code>String</code> to be rendered
-     * @param x,&nbsp;y the coordinates where the <code>String</code>
+     * @param x the x-coordinate where the <code>String</code>
+     * should be rendered
+     * @param y the y-coordinate where the <code>String</code>
      * should be rendered
      * @see #setPaint
      * @see java.awt.Graphics#setColor
@@ -740,7 +802,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * coordinate supplied is the location of the leftmost character
      * on the baseline.
      * @param iterator the iterator whose text is to be rendered
-     * @param x,&nbsp;y the coordinates where the iterator's text is to be
+     * @param x the x-coordinate where the iterator's text is to be
+     * rendered
+     * @param y the y-coordinate where the iterator's text is to be
      * rendered
      * @see #setPaint
      * @see java.awt.Graphics#setColor
@@ -769,7 +833,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
 
         for (char ch = iterator.first(); ch != CharacterIterator.DONE;
                 ch = iterator.next()) {
-            Map attr = iterator.getAttributes();
+            //Map attr = iterator.getAttributes();
 
             psRenderer.write(PDFNumber.doubleOut(vals[0]) + " "
                              + PDFNumber.doubleOut(vals[1]) + " "
@@ -853,18 +917,25 @@ public class PSGraphics2D extends AbstractGraphics2D {
         psRenderer.write("grestore");
     }
 
+    /**
+     * Commits a painting operation.
+     * @param fill filling
+     * @param stroke stroking
+     */
     protected void doDrawing(boolean fill, boolean stroke, boolean nonzero) {
         if (fill) {
             if (stroke) {
-                if (!nonzero)
+                if (!nonzero) {
                     psRenderer.write("stroke");
-                else
+                } else {
                     psRenderer.write("stroke");
+                }
             } else {
-                if (!nonzero)
+                if (!nonzero) {
                     psRenderer.write("fill");
-                else
+                } else {
                     psRenderer.write("fill");
+                }
             }
         } else {
             // if(stroke)
@@ -875,10 +946,12 @@ public class PSGraphics2D extends AbstractGraphics2D {
     /**
      * Returns the device configuration associated with this
      * <code>Graphics2D</code>.
+     * @return the device configuration
      */
     public GraphicsConfiguration getDeviceConfiguration() {
         // System.out.println("getDeviceConviguration");
-        return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        return GraphicsEnvironment.getLocalGraphicsEnvironment().
+                getDefaultScreenDevice().getDefaultConfiguration();
     }
 
     /**
@@ -901,7 +974,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @see       java.awt.FontMetrics
      * @see       java.awt.Graphics#getFontMetrics()
      */
-    public FontMetrics getFontMetrics(Font f) {
+    public java.awt.FontMetrics getFontMetrics(Font f) {
         return fmg.getFontMetrics(f);
     }
 
