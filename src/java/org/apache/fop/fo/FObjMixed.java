@@ -23,17 +23,17 @@ import java.util.List;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 
 /**
  * Base class for representation of mixed content formatting objects
- * (i.e., those that can contain both child FO's and text nodes/PCDATA)
+ * (i.e., those that can contain both child FO's and text nodes/PCDATA).
+ * It should not be instantiated directly.
  */
 public class FObjMixed extends FObj {
     /**
      * @param parent FONode that is the parent of this object
      */
-    public FObjMixed(FONode parent) {
+    protected FObjMixed(FONode parent) {
         super(parent);
     }
 
@@ -66,11 +66,7 @@ public class FObjMixed extends FObj {
      * @see org.apache.fop.fo.FONode#addLayoutManager(List)
      */
     public void addLayoutManager(List list) {    
-        if (getChildNodes() != null) {
-            InlineStackingLayoutManager lm;
-            lm = new InlineStackingLayoutManager(this);
-            list.add(lm);
-        }
+        // no layout manager
     }
     
 }

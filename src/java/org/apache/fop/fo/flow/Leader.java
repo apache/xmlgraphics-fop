@@ -22,16 +22,9 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.CommonFont;
-import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
@@ -44,19 +37,14 @@ import org.apache.fop.layoutmgr.LeaderLayoutManager;
  * The following patterns are treated: rule, space, dots and use-content.
  * @todo implement validateChildNode()
  */
-public class Leader extends FObjMixed {
+public class Leader extends InlineLevel {
     // The value of properties relevant for fo:leader.
-    private CommonAccessibility commonAccessibility;
-    private CommonAural commonAural;
-    private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private CommonFont commonFont;
-    private CommonMarginInline commonMarginInline;
+    // See also superclass InlineLevel
     private CommonRelativePosition commonRelativePosition;
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private int verticalAlign;
     private Length baselineShift;
-    private ColorType color;
     private int dominantBaseline;
     private Length textDepth;
     private Length textAltitude;
@@ -70,9 +58,7 @@ public class Leader extends FObjMixed {
     private int ruleStyle;
     private Length ruleThickness;
     // private ToBeImplementedProperty letterSpacing;
-    private Length lineHeight;
     // private ToBeImplementedProperty textShadow;
-    private int visibility;
     private SpaceProperty wordSpacing;
     // End of property values
 
@@ -87,17 +73,12 @@ public class Leader extends FObjMixed {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
-        commonAural = pList.getAuralProps();
-        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        commonFont = pList.getFontProps();
-        commonMarginInline = pList.getMarginInlineProps();
+        super.bind(pList);
         commonRelativePosition = pList.getRelativePositionProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
-        color = pList.get(PR_COLOR).getColorType();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         textDepth = pList.get(PR_TEXT_DEPTH).getLength();
         textAltitude = pList.get(PR_TEXT_ALTITUDE).getLength();
@@ -126,9 +107,7 @@ public class Leader extends FObjMixed {
             break;
         }
         // letterSpacing = pList.get(PR_LETTER_SPACING);
-        lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
         // textShadow = pList.get(PR_TEXT_SHADOW);
-        visibility = pList.get(PR_VISIBILITY).getEnum();
         wordSpacing = pList.get(PR_WORD_SPACING).getSpace();
     }
 
@@ -139,26 +118,6 @@ public class Leader extends FObjMixed {
         checkId(id);
     }
 
-    /**
-     * Return the Common Margin Properties-Inline.
-     */
-    public CommonMarginInline getCommonMarginInline() {
-        return commonMarginInline;
-    }
-
-    /**
-     * Return the Common Border, Padding, and Background Properties.
-     */
-    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
-        return commonBorderPaddingBackground;
-    } 
-
-    /**
-     * Return the Common Font Properties.
-     */
-    public CommonFont getCommonFont() {
-        return commonFont;
-    }
 
     /**
      * Return the "id" property.

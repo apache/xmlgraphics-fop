@@ -33,8 +33,9 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.traits.MinOptMax;
 
 /**
- * LayoutManager for objects which stack children in the inline direction,
- * such as Inline or Line
+ * Class modelling the commonalities of layoutmanagers for objects
+ * which stack children in the inline direction, such as Inline or
+ * Line. It should not be instantiated directly.
  */
 public class InlineStackingLayoutManager extends AbstractLayoutManager {
 
@@ -85,7 +86,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
      *
      * @param node the formatting object that creates the area
      */
-    public InlineStackingLayoutManager(FObj node) {
+    protected InlineStackingLayoutManager(FObj node) {
         super(node);
         extraBPD = new MinOptMax(0);
     }

@@ -34,7 +34,7 @@ public class BidiLayoutManager extends LeafNodeLayoutManager {
 
     private List children;
 
-    public BidiLayoutManager(BidiOverride node, InlineStackingLayoutManager cLM) {
+    public BidiLayoutManager(BidiOverride node, InlineLayoutManager cLM) {
         super(node);
         children = new ArrayList();
         setFObj(node);
