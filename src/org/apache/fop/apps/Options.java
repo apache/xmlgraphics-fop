@@ -158,8 +158,9 @@ public class Options {
             try {
                 reader.start();
             } catch (org.apache.fop.apps.FOPException error) {
-                MessageHandler.errorln("Can't find user configuration file "
-                                       + userConfigFile);
+                MessageHandler.errorln("Could not load user configuration file "
+                                       + userConfigFile + " - error: "
+                                       + error.getMessage());
                 MessageHandler.errorln("using default values");
                 if (errorDump) {
                     reader.dumpError(error);
