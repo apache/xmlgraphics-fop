@@ -21,11 +21,15 @@
 		<s3 title="Generating a font metrics file">
 			<p>	Run the class org.apache.fop.fonts.apps.PFMReader to generate the XML file.
 			</p>
-			<p>
-				<code>java -cp fop.jar;xerces.jar;xalan.jar;batik.jar</code>
+			<p>Windows:</p>
+                        <p>
+			<code>java -cp build\fop.jar;lib\xerces.jar;lib\xalan.jar;lib\batik.jar
+			org.apache.fop.fonts.apps.PFMReader pfm-file xml-file</code>
 			</p>
+			<p>Unix:</p>
 			<p>
-				<code>org.apache.fop.fonts.apps.PFMReader pfm-file xml-file</code>
+                        <code>java -cp build/fop.jar:lib/xerces.jar:lib/xalan.jar:lib/batik.jar
+                        org.apache.fop.fonts.apps.PFMReader pfm-file xml-file</code>
 			</p>
 			<note><p>The tool will construct some values (FontBBox, StemV and ItalicAngle) based on assumptions and
 			calculations which are only an approximation to the real values. FontBBox and Italic Angle can be found in

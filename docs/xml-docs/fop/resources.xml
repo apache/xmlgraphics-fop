@@ -38,7 +38,6 @@
   <s2 title="Other resources">
     <ul>
       <li><jump href="http://xml.apache.org/mail/fop-dev/">Apache archive of fop-dev@apache.org</jump></li>
-      <li><jump href="http://marc.theaimsgroup.com/">External, but easier to browse archive fop-dev@apache.org</jump></li>
       <li>The Mailing list ARChives (MARC) at the AIMS group: <jump href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">fop-dev</jump>,
       <jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">fop-user</jump></li>(searchable)
       <li>There is an xsl:fo mailing list: www-xsl-fo@w3.org. Subscription info can be found here: <jump href="http://www.w3.org/Mail/Request">
