@@ -63,7 +63,6 @@ public class PDFLink extends PDFObject {
     float uly;
     float brx;
     float bry;
-    String destination;
     String color;
     PDFAction action;
 	
@@ -73,7 +72,7 @@ public class PDFLink extends PDFObject {
      * @param number the object's number
      * @param producer the application producing the PDF
      */
-    public PDFLink(int number, String destName, Rectangle r) {
+    public PDFLink(int number, Rectangle r) {
 	/* generic creation of PDF object */
 	super(number);
 		
@@ -81,7 +80,6 @@ public class PDFLink extends PDFObject {
 	this.uly = r.y;
 	this.brx = r.x + r.width;
 	this.bry = r.y - r.height;
-	this.destination = destName; // what is this for?
 	this.color = "0 0 0.7";	// just for now
 		
     }
@@ -103,7 +101,7 @@ public class PDFLink extends PDFObject {
 	    (brx/1000f) + " " + (bry/1000f) + " ]\n"
 	    + "/C [ " + color + " ]\n" + 
 	    "/Border [ 0 0 1 ]\n" +
-	    "/A " + action.referencePDF() + "\n" +
+	    "/A " + this.action.referencePDF() + "\n" +
 	    "/H /I\n>>\nendobj\n";
 	return p;
     }
