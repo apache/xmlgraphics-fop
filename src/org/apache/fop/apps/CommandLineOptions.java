@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,18 +8,12 @@
 package org.apache.fop.apps;
 
 // java
-import java.util.Vector;
 import java.io.File;
 import java.io.FileNotFoundException;
-
-// FOP
-import org.apache.fop.apps.FOPException;
 
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
-
-import java.io.*;
 
 /**
  * Options parses the commandline arguments
@@ -54,32 +48,38 @@ public class CommandLineOptions {
     private static final int RTF_OUTPUT = 10;
 
     /* show configuration information */
-    Boolean dumpConfiguration = Boolean.FALSE;
+    private Boolean dumpConfiguration = Boolean.FALSE;
     /* suppress any progress information */
-    Boolean quiet = Boolean.FALSE;
+    private Boolean quiet = Boolean.FALSE;
     /* for area tree XML output, only down to block area level */
-    Boolean suppressLowLevelAreas = Boolean.FALSE;
+    private Boolean suppressLowLevelAreas = Boolean.FALSE;
     /* user configuration file */
-    File userConfigFile = null;
+    private File userConfigFile = null;
     /* input fo file */
-    File fofile = null;
+    private File fofile = null;
     /* xsltfile (xslt transformation as input) */
-    File xsltfile = null;
+    private File xsltfile = null;
     /* xml file (xslt transformation as input) */
-    File xmlfile = null;
+    private File xmlfile = null;
     /* output file */
-    File outfile = null;
+    private File outfile = null;
     /* input mode */
-    int inputmode = NOT_SET;
+    private int inputmode = NOT_SET;
     /* output mode */
-    int outputmode = NOT_SET;
+    private int outputmode = NOT_SET;
     /* language for user information */
-    String language = null;
+    private String language = null;
 
     private java.util.HashMap rendererOptions;
 
     private Logger log;
 
+    /**
+     * Construct a command line option object from command line arguments
+     * @param args command line parameters
+     * @throws FOPException for general errors
+     * @throws FileNotFoundException if an input file wasn't found.
+     */
     public CommandLineOptions(String[] args)
             throws FOPException, FileNotFoundException {
 
@@ -99,16 +99,19 @@ public class CommandLineOptions {
             printUsage();
             throw e;
         }
-
     }
 
+    /**
+     * Get the logger.
+     * @return the logger
+     */
     public Logger getLogger() {
         return log;
     }
 
     /**
      * parses the commandline arguments
-     * @return true if parse was successful and procesing can continue, false if processing should stop
+     * @return true if parse was successful and processing can continue, false if processing should stop
      * @exception FOPException if there was an error in the format of the options
      */
     private boolean parseOptions(String args[]) throws FOPException {
@@ -333,7 +336,8 @@ public class CommandLineOptions {
     }    // end checkSettings
 
     /**
-     * returns the chosen renderer, throws FOPException
+     * @return the type chosen renderer
+     * @throws FOPException for invalid output modes
      */
     public int getRenderer() throws FOPException {
         switch (outputmode) {
@@ -366,7 +370,8 @@ public class CommandLineOptions {
     }
 
     /**
-     *
+     * Get the input handler.
+     * @return the input handler
      */
     public InputHandler getInputHandler() {
         switch (inputmode) {
@@ -379,42 +384,39 @@ public class CommandLineOptions {
         }
     }
 
+    /**
+     * Get the renderer specific options.
+     * @return hash map with option/value pairs.
+     */
     public java.util.HashMap getRendererOptions() {
         return rendererOptions;
     }
 
+    /**
+     * Get the starter for the process.
+     * @return the starter.
+     */
     public Starter getStarter() throws FOPException {
         Starter starter = null;
         switch (outputmode) {
         case AWT_OUTPUT:
             try {
-                starter = ((Starter)Class.forName("org.apache.fop.apps.AWTStarter").getConstructor(new Class[] {
-                    CommandLineOptions.class
-                }).newInstance(new Object[] {
-                    this
-                }));
+                starter = new AWTStarter(this);
+            } catch (FOPException e) {
+                throw e;
             } catch (Exception e) {
-                if (e instanceof FOPException) {
-                    throw (FOPException)e;
-                }
                 throw new FOPException("AWTStarter could not be loaded.", e);
             }
-        break;
+            break;
         case PRINT_OUTPUT:
             try {
-                starter = ((Starter)Class.forName("org.apache.fop.apps.PrintStarter").getConstructor(new Class[] {
-                    CommandLineOptions.class
-                }).newInstance(new Object[] {
-                    this
-                }));
+                starter = new PrintStarter(this);
+            } catch (FOPException e) {
+                throw e;
             } catch (Exception e) {
-                if (e instanceof FOPException) {
-                    throw (FOPException)e;
-                }
-                throw new FOPException("PrintStarter could not be loaded.",
-                                       e);
+                throw new FOPException("PrintStarter could not be loaded.", e);
             }
-        break;
+            break;
         default:
             starter = new CommandLineStarter(this);
         }
@@ -467,7 +469,7 @@ public class CommandLineOptions {
     }
 
     /**
-     * return either the fofile or the xmlfile
+     * @return either the fofile or the xmlfile
      */
     public File getInputFile() {
         switch (inputmode) {
@@ -485,48 +487,48 @@ public class CommandLineOptions {
      */
     public static void printUsage() {
         System.err.println("\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-pcl|-ps|-txt|-at|-print] <outfile>\n"
-                               + " [OPTIONS]  \n"
-                               + "  -d          debug mode   \n"
-                               + "  -x          dump configuration settings  \n"
-                               + "  -q          quiet mode  \n"
-                               + "  -c cfg.xml  use additional configuration file cfg.xml\n"
-                               + "  -l lang     the language to use for user information \n"
-                               + "  -s          for area tree XML, down to block areas only\n\n"
-                               + " [INPUT]  \n"
-                               + "  infile            xsl:fo input file (the same as the next) \n"
-                               + "  -fo  infile       xsl:fo input file  \n"
-                               + "  -xml infile       xml input file, must be used together with -xsl \n"
-                               + "  -xsl stylesheet   xslt stylesheet \n \n"
-                               + " [OUTPUT] \n"
-                               + "  outfile           input will be rendered as pdf file into outfile \n"
-                               + "  -pdf outfile      input will be rendered as pdf file (outfile req'd) \n"
-                               + "  -awt              input will be displayed on screen \n"
-                               + "  -mif outfile      input will be rendered as mif file (outfile req'd)\n"
-                               + "  -rtf outfile      input will be rendered as rtf file (outfile req'd)\n"
-                               + "  -pcl outfile      input will be rendered as pcl file (outfile req'd) \n"
-                               + "  -ps outfile       input will be rendered as PostScript file (outfile req'd) \n"
-                               + "  -txt outfile      input will be rendered as text file (outfile req'd) \n"
-                               + "  -svg outfile      input will be rendered as an svg slides file (outfile req'd) \n"
-                               + "  -at outfile       representation of area tree as XML (outfile req'd) \n"
-                               + "  -print            input file will be rendered and sent to the printer \n"
-                               + "                    see options with \"-print help\" \n\n"
-                               + " [Examples]\n" + "  Fop foo.fo foo.pdf \n"
-                               + "  Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n"
-                               + "  Fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf\n"
-                               + "  Fop foo.fo -mif foo.mif\n"
-                               + "  Fop foo.fo -rtf foo.rtf\n"
-                               + "  Fop foo.fo -print or Fop -print foo.fo \n"
-                               + "  Fop foo.fo -awt \n");
+                           + " [OPTIONS]  \n"
+                           + "  -d          debug mode   \n"
+                           + "  -x          dump configuration settings  \n"
+                           + "  -q          quiet mode  \n"
+                           + "  -c cfg.xml  use additional configuration file cfg.xml\n"
+                           + "  -l lang     the language to use for user information \n"
+                           + "  -s          for area tree XML, down to block areas only\n\n"
+                           + " [INPUT]  \n"
+                           + "  infile            xsl:fo input file (the same as the next) \n"
+                           + "  -fo  infile       xsl:fo input file  \n"
+                           + "  -xml infile       xml input file, must be used together with -xsl \n"
+                           + "  -xsl stylesheet   xslt stylesheet \n \n"
+                           + " [OUTPUT] \n"
+                           + "  outfile           input will be rendered as pdf file into outfile \n"
+                           + "  -pdf outfile      input will be rendered as pdf file (outfile req'd) \n"
+                           + "  -awt              input will be displayed on screen \n"
+                           + "  -mif outfile      input will be rendered as mif file (outfile req'd)\n"
+                           + "  -rtf outfile      input will be rendered as rtf file (outfile req'd)\n"
+                           + "  -pcl outfile      input will be rendered as pcl file (outfile req'd) \n"
+                           + "  -ps outfile       input will be rendered as PostScript file (outfile req'd) \n"
+                           + "  -txt outfile      input will be rendered as text file (outfile req'd) \n"
+                           + "  -svg outfile      input will be rendered as an svg slides file (outfile req'd) \n"
+                           + "  -at outfile       representation of area tree as XML (outfile req'd) \n"
+                           + "  -print            input file will be rendered and sent to the printer \n"
+                           + "                    see options with \"-print help\" \n\n"
+                           + " [Examples]\n" + "  Fop foo.fo foo.pdf \n"
+                           + "  Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n"
+                           + "  Fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf\n"
+                           + "  Fop foo.fo -mif foo.mif\n"
+                           + "  Fop foo.fo -rtf foo.rtf\n"
+                           + "  Fop foo.fo -print or Fop -print foo.fo \n"
+                           + "  Fop foo.fo -awt \n");
     }
-
+    
     /**
      * shows the options for print output
      */
     public void printUsagePrintOutput() {
         System.err.println("USAGE: -print [-Dstart=i] [-Dend=i] [-Dcopies=i] [-Deven=true|false] "
-                               + " org.apache.fop.apps.Fop (..) -print \n"
-                               + "Example:\n"
-                               + "java -Dstart=1 -Dend=2 org.apache.Fop.apps.Fop infile.fo -print ");
+                           + " org.apache.fop.apps.Fop (..) -print \n"
+                           + "Example:\n"
+                           + "java -Dstart=1 -Dend=2 org.apache.Fop.apps.Fop infile.fo -print ");
     }
 
 
@@ -621,22 +623,6 @@ public class CommandLineOptions {
             log.debug("quiet mode off [default]");
         }
 
-    }
-
-    // debug: create class and output all settings
-    public static void main(String args[]) {
-        /*
-         * for (int i = 0; i < args.length; i++) {
-         * log.debug(">"+args[i]+"<");
-         * }
-         */
-        try {
-            CommandLineOptions options = new CommandLineOptions(args);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // options.debug();
     }
 
 }

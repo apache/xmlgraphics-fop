@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources."
  */
@@ -17,7 +17,7 @@ public class FOPException extends Exception {
 
     private static final String EXCEPTION_SEPARATOR = "\n---------\n";
 
-    private Throwable _exception;
+    private Throwable exception;
 
     /**
      * create a new FOP Exception
@@ -39,15 +39,15 @@ public class FOPException extends Exception {
     }
 
     protected void setException(Throwable t) {
-        _exception = t;
+        exception = t;
     }
 
     public Throwable getException() {
-        return _exception;
+        return exception;
     }
 
     protected Throwable getRootException() {
-        Throwable result = _exception;
+        Throwable result = exception;
 
         if (result instanceof SAXException) {
             result = ((SAXException)result).getException();
@@ -56,7 +56,7 @@ public class FOPException extends Exception {
             result =
                 ((java.lang.reflect.InvocationTargetException)result).getTargetException();
         }
-        if (result != _exception) {
+        if (result != exception) {
             return result;
         }
         return null;
@@ -66,9 +66,9 @@ public class FOPException extends Exception {
     public void printStackTrace() {
         synchronized (System.err) {
             super.printStackTrace();
-            if (_exception != null) {
+            if (exception != null) {
                 System.err.println(EXCEPTION_SEPARATOR);
-                _exception.printStackTrace();
+                exception.printStackTrace();
             }
             if (getRootException() != null) {
                 System.err.println(EXCEPTION_SEPARATOR);
@@ -80,9 +80,9 @@ public class FOPException extends Exception {
     public void printStackTrace(java.io.PrintStream stream) {
         synchronized (stream) {
             super.printStackTrace(stream);
-            if (_exception != null) {
+            if (exception != null) {
                 stream.println(EXCEPTION_SEPARATOR);
-                _exception.printStackTrace(stream);
+                exception.printStackTrace(stream);
             }
             if (getRootException() != null) {
                 stream.println(EXCEPTION_SEPARATOR);
@@ -94,9 +94,9 @@ public class FOPException extends Exception {
     public void printStackTrace(java.io.PrintWriter writer) {
         synchronized (writer) {
             super.printStackTrace(writer);
-            if (_exception != null) {
+            if (exception != null) {
                 writer.println(EXCEPTION_SEPARATOR);
-                _exception.printStackTrace(writer);
+                exception.printStackTrace(writer);
             }
             if (getRootException() != null) {
                 writer.println(EXCEPTION_SEPARATOR);
