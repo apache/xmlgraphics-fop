@@ -58,6 +58,26 @@ public class FObjects {
            ,LAST_SET = MARKER_SET
                      ;
 
+    public static String getAttrSetName(int attrSet) throws FOPException {
+        switch (attrSet) {
+        case ROOT_SET:
+            return "ROOT";
+        case DECLARATIONS_SET:
+            return "DECLARATIONS";
+        case LAYOUT_SET:
+            return "LAYOUT";
+        case PAGESEQ_SET:
+            return "PAGESEQ";
+        case FLOW_SET:
+            return "FLOW";
+        case STATIC_SET:
+            return "STATIC";
+        case MARKER_SET:
+            return "MARKER";
+        }
+        throw new FOPException("Invalid attribute set: " + attrSet);
+    }
+
     public static ROBitSet getAttrROBitSet(int attrSet)
             throws FOPException
     {
