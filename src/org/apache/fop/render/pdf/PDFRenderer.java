@@ -148,20 +148,20 @@ public class PDFRenderer implements Renderer {
     }
 
     /**
-      * set the PDF document's producer
-      *
-      * @param producer string indicating application producing PDF
-      */
+       * set the PDF document's producer
+       *
+       * @param producer string indicating application producing PDF
+       */
     public void setProducer(String producer) {
         this.pdfDoc.setProducer(producer);
     }
 
     /**
-      * render the areas into PDF
-      *
-      * @param areaTree the laid-out area tree
-      * @param writer the PrintWriter to write the PDF with
-      */
+       * render the areas into PDF
+       *
+       * @param areaTree the laid-out area tree
+       * @param writer the PrintWriter to write the PDF with
+       */
     public void render(AreaTree areaTree,
                        PrintWriter writer) throws IOException, FOPException {
         MessageHandler.logln("rendering areas to PDF");
@@ -185,17 +185,17 @@ public class PDFRenderer implements Renderer {
     }
 
     /**
-      * add a line to the current stream
-      *
-      * @param x1 the start x location in millipoints
-      * @param y1 the start y location in millipoints
-      * @param x2 the end x location in millipoints
-      * @param y2 the end y location in millipoints
-      * @param th the thickness in millipoints
-      * @param r the red component
-      * @param g the green component
-      * @param b the blue component
-      */
+       * add a line to the current stream
+       *
+       * @param x1 the start x location in millipoints
+       * @param y1 the start y location in millipoints
+       * @param x2 the end x location in millipoints
+       * @param y2 the end y location in millipoints
+       * @param th the thickness in millipoints
+       * @param r the red component
+       * @param g the green component
+       * @param b the blue component
+       */
     protected void addLine(int x1, int y1, int x2, int y2, int th,
                            PDFPathPaint stroke) {
         currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false) +
@@ -205,14 +205,35 @@ public class PDFRenderer implements Renderer {
     }
 
     /**
-      * add a rectangle to the current stream
+      * add a line to the current stream
       *
-      * @param x the x position of left edge in millipoints
-      * @param y the y position of top edge in millipoints
-      * @param w the width in millipoints
-      * @param h the height in millipoints
-      * @param stroke the stroke color/gradient
+      * @param x1 the start x location in millipoints
+      * @param y1 the start y location in millipoints
+      * @param x2 the end x location in millipoints
+      * @param y2 the end y location in millipoints
+      * @param th the thickness in millipoints
+      * @param rs the rule style as String containing dashArray + dashPhase
+      * @param r the red component
+      * @param g the green component
+      * @param b the blue component
       */
+    protected void addLine(int x1, int y1, int x2, int y2, int th,
+                           String rs, PDFPathPaint stroke) {
+        currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false) +
+                          rs + (x1 / 1000f) + " "+ (y1 / 1000f) + " m " +
+                          (x2 / 1000f) + " "+ (y2 / 1000f) + " l " +
+                          (th / 1000f) + " w S\n" + "Q\nBT\n");
+    }
+
+    /**
+       * add a rectangle to the current stream
+       *
+       * @param x the x position of left edge in millipoints
+       * @param y the y position of top edge in millipoints
+       * @param w the width in millipoints
+       * @param h the height in millipoints
+       * @param stroke the stroke color/gradient
+       */
     protected void addRect(int x, int y, int w, int h,
                            PDFPathPaint stroke) {
         currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false) +
@@ -221,15 +242,15 @@ public class PDFRenderer implements Renderer {
     }
 
     /**
-      * add a filled rectangle to the current stream
-      *
-      * @param x the x position of left edge in millipoints
-      * @param y the y position of top edge in millipoints
-      * @param w the width in millipoints
-      * @param h the height in millipoints
-      * @param fill the fill color/gradient
-      * @param stroke the stroke color/gradient
-      */
+       * add a filled rectangle to the current stream
+       *
+       * @param x the x position of left edge in millipoints
+       * @param y the y position of top edge in millipoints
+       * @param w the width in millipoints
+       * @param h the height in millipoints
+       * @param fill the fill color/gradient
+       * @param stroke the stroke color/gradient
+       */
     protected void addRect(int x, int y, int w, int h,
                            PDFPathPaint stroke, PDFPathPaint fill) {
         currentStream.add("ET\nq\n" + fill.getColorSpaceOut(true) +
@@ -239,10 +260,10 @@ public class PDFRenderer implements Renderer {
     }
 
     /**
-      * render area container to PDF
-      *
-      * @param area the area container to render
-      */
+       * render area container to PDF
+       *
+       * @param area the area container to render
+       */
     public void renderAreaContainer(AreaContainer area) {
 
         int saveY = this.currentYPosition;
@@ -322,10 +343,10 @@ public class PDFRenderer implements Renderer {
 
 
     /**
-      * render block area to PDF
-      *
-      * @param area the block area to render
-      */
+       * render block area to PDF
+       *
+       * @param area the block area to render
+       */
     public void renderBlockArea(BlockArea area) {
         doFrame(area);
         Enumeration e = area.getChildren().elements();
@@ -336,20 +357,20 @@ public class PDFRenderer implements Renderer {
     }
 
     /**
-      * render display space to PDF
-      *
-      * @param space the display space to render
-      */
+       * render display space to PDF
+       *
+       * @param space the display space to render
+       */
     public void renderDisplaySpace(DisplaySpace space) {
         int d = space.getSize();
         this.currentYPosition -= d;
     }
 
     /**
-      * render image area to PDF
-      *
-      * @param area the image area to render
-      */
+       * render image area to PDF
+       *
+       * @param area the image area to render
+       */
     public void renderImageArea(ImageArea area) {
         // adapted from contribution by BoBoGi
         int x = this.currentAreaContainerXPosition + area.getXOffset();
@@ -444,10 +465,10 @@ public class PDFRenderer implements Renderer {
     }
 
     /**
-      * render SVG area to PDF
-      *
-      * @param area the SVG area to render
-      */
+       * render SVG area to PDF
+       *
+       * @param area the SVG area to render
+       */
     public void renderSVGArea(SVGArea area) {
         int x = this.currentXPosition;
         int y = this.currentYPosition;
@@ -486,10 +507,10 @@ public class PDFRenderer implements Renderer {
     }
 
     /**
-      * render inline area to PDF
-      *
-      * @param area inline area to render
-      */
+       * render inline area to PDF
+       *
+       * @param area inline area to render
+       */
     public void renderInlineArea(InlineArea area) {
         char ch;
         StringBuffer pdf = new StringBuffer();
@@ -566,19 +587,19 @@ public class PDFRenderer implements Renderer {
     }
 
     /**
-      * render inline space to PDF
-      *
-      * @param space space to render
-      */
+       * render inline space to PDF
+       *
+       * @param space space to render
+       */
     public void renderInlineSpace(InlineSpace space) {
         this.currentXPosition += space.getSize();
     }
 
     /**
-      * render line area to PDF
-      *
-      * @param area area to render
-      */
+       * render line area to PDF
+       *
+       * @param area area to render
+       */
     public void renderLineArea(LineArea area) {
         int rx = this.currentAreaContainerXPosition + area.getStartIndent();
         int ry = this.currentYPosition;
@@ -602,10 +623,10 @@ public class PDFRenderer implements Renderer {
     }
 
     /**
-      * render page into PDF
-      *
-      * @param page page to render
-      */
+       * render page into PDF
+       *
+       * @param page page to render
+       */
     public void renderPage(Page page) {
         AreaContainer body, before, after;
 
@@ -661,10 +682,10 @@ public class PDFRenderer implements Renderer {
     }
 
     /**
-      * render leader area into PDF
-      *
-      * @param area area to render
-      */
+       * render leader area into PDF
+       *
+       * @param area area to render
+       */
     public void renderLeaderArea(LeaderArea area) {
         int rx = this.currentXPosition;
         ;
@@ -674,7 +695,7 @@ public class PDFRenderer implements Renderer {
         int th = area.getRuleThickness();
         int st = area.getRuleStyle();
         String rs = setRuleStylePattern(st);
-        //checks whether thickness is = 0, because of bug in pdf (or where?), 
+        //checks whether thickness is = 0, because of bug in pdf (or where?),
         //a line with thickness 0 is still displayed
         if (th != 0) {
             switch (st) {
@@ -713,18 +734,18 @@ public class PDFRenderer implements Renderer {
     }
 
     /**
-      * set up the font info
-      *
-      * @param fontInfo font info to set up
-      */
+       * set up the font info
+       *
+       * @param fontInfo font info to set up
+       */
     public void setupFontInfo(FontInfo fontInfo) {
         FontSetup.setup(fontInfo);
         FontSetup.addToResources(this.pdfDoc, fontInfo);
     }
 
     /**
-      * defines a string containing dashArray and dashPhase for the rule style
-      */
+       * defines a string containing dashArray and dashPhase for the rule style
+       */
     private String setRuleStylePattern (int style) {
         String rs = "";
         switch (style) {

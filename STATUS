@@ -29,6 +29,7 @@ Jon Smirl
 
 Done since 0.15 release
 - added: FopImage class that uses JAI [Eric Schaeffer] and JAI compile target [Kelly Campbell]
+- added: support for rule-style [Fotis Jannidis]
 - updated: svg stuff for the latest java bindings [Keiron Liddle]
 - fixed: enhanced error messages for page layout (region names, master) [Norm Walsh]
 - fixed: infinite looping bug when TableCell or TableRow is larger than a page [Hani Elabed]
@@ -221,8 +222,9 @@ extended
 - colour not continued onto subsequent pages if coloured block goes over page 
 - keep-next doesn't work and doubles the text lines which should be moved to the next page
 - border width in fo:table is added to the start position of the next block or
-  table (see page 6 in table.fo for a test case)
-
+  table (see page 6 in examples/fo/table.fo for a test case)
+- if a block, which is positioned with space-before, doesn't fit on the current page, 
+  it gets lost. (see space-before.fo in bugtests/fo for a test case)
 
 
 SVG 

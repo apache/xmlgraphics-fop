@@ -375,17 +375,9 @@
                 space-before.optimum="5pt"
                 space-after.optimum="3pt"
                 text-align="start">
-        Here are 3 fo:leader with the property rule and no text 
-      </fo:block>
-
-      <!-- Inserts a leader (rule). Because leader is an inline fo you have 
-           to wrap it into a block element  -->
-      <fo:block text-align="start"
-                   space-before.optimum="12pt"
-                   space-after.optimum="12pt"> 
-        <fo:leader leader-pattern="rule" 
-                   rule-thickness="3.0pt"
-                   leader-length="6cm"/> 
+        Here are some fo:leader with the property rule and different rule styles 
+        (solid, dashed, dotted, double, groove, ridge the last one with colored backgrounds 
+        to the effect)
       </fo:block>
 
       <!-- Inserts a leader (rule). Because leader is an inline fo you have 
@@ -394,18 +386,57 @@
                    space-before.optimum="12pt"
                    space-after.optimum="12pt"> 
         <fo:leader leader-pattern="rule" 
-                   rule-thickness="3.0pt"
-                   leader-length="6cm"/>
+                   rule-thickness="1pt"
+                   leader-length="6cm"/> 
       </fo:block>
 
-      <!-- Inserts a leader (rule). Because leader is an inline fo you have 
-           to wrap it into a block element  -->
-      <fo:block text-align="end"
+      <fo:block text-align="center"
+                   space-before.optimum="12pt"
+                   space-after.optimum="12pt"> 
+
+        <fo:leader leader-pattern="rule" 
+                   leader-length="6cm"
+                   rule-thickness="1pt"
+                   rule-style="dashed"/>
+      </fo:block>
+
+
+      <fo:block text-align="center"
                    space-before.optimum="12pt"
                    space-after.optimum="12pt"> 
         <fo:leader leader-pattern="rule" 
-                   rule-thickness="3.0pt"
-                   leader-length="6cm"/>
+                   leader-length="6cm"
+                   rule-style="dotted"
+                   rule-thickness="1pt"/>
+      </fo:block>
+
+      <fo:block text-align="center"
+                   space-before.optimum="12pt"
+                   space-after.optimum="12pt"> 
+        <fo:leader leader-pattern="rule" 
+                   leader-length="6cm"
+                   rule-thickness="2pt"
+                   rule-style="double"/>
+      </fo:block>
+
+      <fo:block text-align="center" background-color="silver"
+                   space-before.optimum="12pt"
+                   space-after.optimum="12pt"> 
+        <fo:leader leader-pattern="rule" 
+                   leader-length="6cm"
+                   rule-thickness="1pt"
+                   rule-style="groove"
+                   color="black" />
+      </fo:block>
+
+      <fo:block text-align="center" background-color="silver"
+                   space-before.optimum="12pt"
+                   space-after.optimum="12pt"> 
+        <fo:leader leader-pattern="rule" 
+                   leader-length="6cm"
+                   rule-thickness="1pt"
+                   rule-style="ridge"
+                   color="black" />
       </fo:block>
 
       <!-- Normal text -->
