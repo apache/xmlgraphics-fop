@@ -905,6 +905,70 @@ public class PDFRenderer extends PrintRenderer {
      * @see org.apache.fop.render.Renderer#renderCharacter(Character)
      */
     public void renderCharacter(Character ch) {
+        StringBuffer pdf = new StringBuffer();
+
+        String name = (String) ch.getTrait(Trait.FONT_NAME);
+        int size = ((Integer) ch.getTrait(Trait.FONT_SIZE)).intValue();
+
+        // This assumes that *all* CIDFonts use a /ToUnicode mapping
+        Typeface f = (Typeface) fontInfo.getFonts().get(name);
+        boolean useMultiByte = f.isMultiByte();
+
+        // String startText = useMultiByte ? "<FEFF" : "(";
+        String startText = useMultiByte ? "<" : "(";
+        String endText = useMultiByte ? "> " : ") ";
+
+        updateFont(name, size, pdf);
+        ColorType ct = (ColorType) ch.getTrait(Trait.COLOR);
+        if (ct != null) {
+            updateColor(ct, true, pdf);
+        }
+
+        // word.getOffset() = only height of text itself
+        // currentBlockIPPosition: 0 for beginning of line; nonzero
+        //  where previous line area failed to take up entire allocated space
+        int rx = currentBlockIPPosition + ipMarginOffset;
+        int bl = currentBPPosition + bpMarginOffset + ch.getOffset();
+
+/*        System.out.println("Text = " + ch.getTextArea() +
+            "; text width: " + ch.getWidth() +
+            "; BlockIP Position: " + currentBlockIPPosition +
+            "; currentBPPosition: " + currentBPPosition +
+            "; offset: " + ch.getOffset());
+*/
+        // Set letterSpacing
+        //float ls = fs.getLetterSpacing() / this.currentFontSize;
+        //pdf.append(ls).append(" Tc\n");
+
+        if (!textOpen || bl != prevWordY) {
+            closeText();
+
+            pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
+                       + (ch.getTextLetterSpaceAdjust() / 1000f) + " Tc "
+                       + (ch.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
+            prevWordY = bl;
+            textOpen = true;
+        } else {
+                closeText();
+
+                pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
+                           + (ch.getTextLetterSpaceAdjust() / 1000f) + " Tc "
+                           + (ch.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
+                textOpen = true;
+        }
+        prevWordWidth = ch.getWidth();
+        prevWordX = rx;
+
+        String s = ch.getChar();
+
+
+        FontMetrics metrics = fontInfo.getMetricsFor(name);
+        Font fs = new Font(name, metrics, size);
+        escapeText(s, fs, useMultiByte, pdf);
+        pdf.append(endText);
+
+        currentStream.add(pdf.toString());
+
         super.renderCharacter(ch);
     }
 
@@ -951,14 +1015,16 @@ public class PDFRenderer extends PrintRenderer {
             closeText();
 
             pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
-                       + (text.getTextSpaceAdjust() / 1000f) + " Tw [" + startText);
+                       + (text.getTextLetterSpaceAdjust() / 1000f) + " Tc "
+                       + (text.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
             prevWordY = bl;
             textOpen = true;
         } else {
                 closeText();
 
                 pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
-                           + (text.getTextSpaceAdjust() / 1000f) + " Tw [" + startText);
+                       + (text.getTextLetterSpaceAdjust() / 1000f) + " Tc "
+                       + (text.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
                 textOpen = true;
         }
         prevWordWidth = text.getWidth();

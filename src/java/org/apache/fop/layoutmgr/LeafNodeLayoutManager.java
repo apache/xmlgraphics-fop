@@ -23,6 +23,9 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.traits.MinOptMax;
 
+import java.util.List;
+import java.util.LinkedList;
+
 /**
  * Base LayoutManager for leaf-node FObj, ie: ones which have no children.
  * These are all inline objects. Most of them cannot be split (Text is
@@ -35,9 +38,35 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
      * The inline area that this leafnode will add.
      */
     protected InlineArea curArea = null;
-    private int alignment;
+    protected int alignment;
     private int lead;
     private MinOptMax ipd;
+
+    protected boolean bSomethingChanged = false;
+    protected AreaInfo areaInfo = null;
+
+    /**
+     * Store information about the inline area
+     */
+    protected class AreaInfo {
+        protected short iLScount;
+        protected MinOptMax ipdArea;
+        protected boolean bHyphenated;
+        protected int lead;
+        protected int total;
+        protected int middle;
+
+        public AreaInfo(short iLS, MinOptMax ipd, boolean bHyph,
+                        int l, int t, int m) {
+            iLScount = iLS;
+            ipdArea = ipd;
+            bHyphenated = bHyph;
+            lead = l;
+            total = t;
+            middle = m;
+        }
+    }
+
 
     /**
      * Create a Leaf node layout mananger.
@@ -196,12 +225,11 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
      * @param context the layout context for adding the area
      */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
-        parentLM.addChild(curArea);
-
         addID();
 
         offsetArea(context);
         widthAdjustArea(context);
+        parentLM.addChild(curArea);
 
         while (posIter.hasNext()) {
             posIter.next();
@@ -243,11 +271,13 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
      */
     protected void widthAdjustArea(LayoutContext context) {
         double dAdjust = context.getIPDAdjust();
-        int width = ipd.opt;
+        int width = areaInfo.ipdArea.opt;
         if (dAdjust < 0) {
-            width = (int)(width + dAdjust * (ipd.opt - ipd.min));
+            width = (int) (width + dAdjust * (areaInfo.ipdArea.opt
+                                             - areaInfo.ipdArea.min));
         } else if (dAdjust > 0) {
-            width = (int)(width + dAdjust * (ipd.max - ipd.opt));
+            width = (int) (width + dAdjust * (areaInfo.ipdArea.max
+                                             - areaInfo.ipdArea.opt));
         }
         curArea.setWidth(width);
     }
@@ -259,6 +289,84 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
      */
     public boolean canBreakBefore(LayoutContext context) {
         return true;
+    }
+
+    public LinkedList getNextKnuthElements(LayoutContext context,
+                                           int alignment) {
+        MinOptMax ipd;
+        curArea = get(context);
+        LinkedList returnList = new LinkedList();
+
+        if (curArea == null) {
+            setFinished(true);
+            return null;
+        }
+        ipd = getAllocationIPD(context.getRefIPD());
+
+        int bpd = curArea.getHeight();
+        int lead = 0;
+        int total = 0;
+        int middle = 0;
+        switch (alignment) {
+            case VerticalAlign.MIDDLE  : middle = bpd / 2 ;
+                                         lead = bpd / 2 ;
+                                         break;
+            case VerticalAlign.TOP     : total = bpd;
+                                         break;
+            case VerticalAlign.BOTTOM  : total = bpd;
+                                         break;
+            case VerticalAlign.BASELINE:
+            default:                     lead = bpd;
+                                         break;
+        }
+
+        // create the AreaInfo object to store the computed values
+        areaInfo = new AreaInfo((short) 0, ipd, false,
+                                lead, total, middle);
+
+        // node is a fo:ExternalGraphic, fo:InstreamForeignObject,
+        // fo:PageNumber or fo:PageNumberCitation
+        returnList.add(new KnuthBox(areaInfo.ipdArea.opt, areaInfo.lead,
+                                    areaInfo.total, areaInfo.middle,
+                                    new LeafPosition(this, 0), false));
+        setFinished(true);
+        return returnList;
+    }
+
+    public KnuthElement addALetterSpaceTo(KnuthElement element) {
+        // return the unchanged box object
+        return new KnuthBox(areaInfo.ipdArea.opt, areaInfo.lead,
+                            areaInfo.total, areaInfo.middle,
+                            new LeafPosition(this, 0), false);
+    }
+
+    public void hyphenate(Position pos, HyphContext hc) {
+        // use the AbstractLayoutManager.hyphenate() null implementation
+        super.hyphenate(pos, hc);
+    }
+
+    public boolean applyChanges(List oldList) {
+        setFinished(false);
+        return false;
+    }
+
+    public LinkedList getChangedKnuthElements(List oldList,
+                                              int flaggedPenalty,
+                                              int alignment) {
+        if (isFinished()) {
+            return null;
+        }
+
+        LinkedList returnList = new LinkedList();
+
+        // fobj is a fo:ExternalGraphic, fo:InstreamForeignObject,
+        // fo:PageNumber or fo:PageNumberCitation
+        returnList.add(new KnuthBox(areaInfo.ipdArea.opt, areaInfo.lead,
+                                    areaInfo.total, areaInfo.middle,
+                                    new LeafPosition(this, 0), true));
+
+        setFinished(true);
+        return returnList;
     }
 }
 

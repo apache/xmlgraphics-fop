@@ -34,6 +34,8 @@ import java.util.ListIterator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedList;
+
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -58,6 +60,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         iIndents = marginProps.startIndent + marginProps.endIndent;
         BlockProps blockProps = pm.getBlockProps();
         bTextAlignment = blockProps.textAlign;
+        bTextAlignmentLast = blockProps.textAlignLast;
+        //
+        if (bTextAlignment != JUSTIFY && bTextAlignmentLast == JUSTIFY) {
+            effectiveAlignment = 0;
+        } else {
+            effectiveAlignment = bTextAlignment;
+        }
         textIndent = blockProps.firstIndent;
         hyphProps = pm.getHyphenationProps();
     }
@@ -93,6 +102,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
     private BreakPoss prevBP = null; // Last confirmed break position
     private int bTextAlignment = TextAlign.JUSTIFY;
+    private int bTextAlignmentLast;
+    private int effectiveAlignment;
     private Length textIndent;
     private int iIndents = 0;
     private CommonHyphenation hyphProps;
@@ -103,6 +114,237 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
     // inline start pos when adding areas
     private int iStartPos = 0;
+
+    private ArrayList knuthParagraphs = null;
+    private LinkedList activeList = null;
+    private LinkedList inactiveList = null;
+    private ArrayList breakpoints = null;
+    private int iReturnedLBP = 0;
+    private int iStartElement = 0;
+    private int iEndElement = 0;
+    private int iCurrParIndex = 0;
+
+    private KnuthNode lastDeactivatedNode = null;
+
+    //     parameters of Knuth's algorithm:
+    // penalty value for flagged penalties
+    private int flaggedPenalty = 50;
+    // demerit for consecutive lines ending at flagged penalties
+    private int repeatedFlaggedDemerit = 50;
+    // demerit for consecutive lines belonging to incompatible fitness classes 
+    private int incompatibleFitnessDemerit = 50;
+    // suggested modification to the "optimum" number of lines
+    private int looseness = 0;
+
+    private static final int INFINITE_RATIO = 1000;
+
+    // this class represent a feasible breaking point
+    private class KnuthNode {
+        // index of the breakpoint represented by this node
+        public int position;
+
+        // number of the line ending at this breakpoint
+        public int line;
+
+        // fitness class of the line ending at his breakpoint
+        public int fitness;
+
+        // accumulated width of the KnuthElements
+        public int totalWidth;
+
+        // accumulated stretchability of the KnuthElements
+        public int totalStretch;
+
+        // accumulated shrinkability of the KnuthElements
+        public int totalShrink;
+
+        // adjustment ratio if the line ends at this breakpoint
+        public double adjustRatio;
+
+        // difference between target and actual line width
+        public int difference;
+
+        // minimum total demerits up to this breakpoint
+        public double totalDemerits;
+
+        // best node for the preceding breakpoint
+        public KnuthNode previous;
+
+        public KnuthNode(int position, int line, int fitness,
+                         int totalWidth, int totalStretch, int totalShrink,
+                         double adjustRatio, int difference,
+                         double totalDemerits, KnuthNode previous) {
+            this.position = position;
+            this.line = line;
+            this.fitness = fitness;
+            this.totalWidth = totalWidth;
+            this.totalStretch = totalStretch;
+            this.totalShrink = totalShrink;
+            this.adjustRatio = adjustRatio;
+            this.difference = difference;
+            this.totalDemerits = totalDemerits;
+            this.previous = previous;
+        }
+    }
+
+    // this class stores information about how the nodes
+    // which could start a line
+    // ending at the current element
+    private class BestRecords {
+        private static final double INFINITE_DEMERITS = 1E11;
+
+        private double bestDemerits[] = {
+            INFINITE_DEMERITS, INFINITE_DEMERITS,
+            INFINITE_DEMERITS, INFINITE_DEMERITS
+        };
+        private KnuthNode bestNode[] = {null, null, null, null};
+        private double bestAdjust[] = {0.0, 0.0, 0.0, 0.0};
+        private int bestDifference[] = {0, 0, 0, 0};
+        private int bestIndex = -1;
+
+        public BestRecords() {
+        }
+
+        public void addRecord(double demerits, KnuthNode node, double adjust,
+                              int difference, int fitness) {
+            if (demerits > bestDemerits[fitness]) {
+                log.error("New demerits value greter than the old one");
+            }
+            bestDemerits[fitness] = demerits;
+            bestNode[fitness] = node;
+            bestAdjust[fitness] = adjust;
+            bestDifference[fitness] = difference;
+            if (bestIndex == -1 || demerits < bestDemerits[bestIndex]) {
+                bestIndex = fitness;
+            }
+        }
+
+        public boolean hasRecords() {
+            return (bestIndex != -1);
+        }
+
+        public boolean notInfiniteDemerits(int fitness) {
+            return (bestDemerits[fitness] != INFINITE_DEMERITS);
+        }
+
+        public double getDemerits(int fitness) {
+            return bestDemerits[fitness];
+        }
+
+        public KnuthNode getNode(int fitness) {
+            return bestNode[fitness];
+        }
+
+        public double getAdjust(int fitness) {
+            return bestAdjust[fitness];
+        }
+
+        public int getDifference(int fitness) {
+            return bestDifference[fitness];
+        }
+
+        public double getMinDemerits() {
+            if (bestIndex != -1) {
+                return getDemerits(bestIndex);
+            } else {
+                // anyway, this should never happen
+                return INFINITE_DEMERITS;
+            }
+        }
+    }
+
+    // this class is used to remember
+    // which was the first element in the paragraph
+    // returned by each LM
+    private class Update {
+        private LayoutManager inlineLM;
+        private int iFirstIndex;
+
+        public Update(LayoutManager lm, int index) {
+            inlineLM = lm;
+            iFirstIndex = index;
+        }
+    }
+
+    // this class represents a paragraph
+    private class Paragraph extends LinkedList {
+        // number of KnuthElements added by the LineLayoutManager
+        public int ignoreAtStart = 0;
+        public int ignoreAtEnd = 0;
+        // minimum space at the end of the last line (in millipoints)
+        public int lineFillerWidth;
+        // word space dimension (in millipoints)
+        private int wordSpaceIPD;
+
+        public void startParagraph(int lineWidth) {
+            // get the word space dimension, which needs to be known
+            // in order to center text
+            LayoutManager lm;
+            if ((lm = getChildLM()) != null) {
+                wordSpaceIPD = lm.getWordSpaceIPD();
+            }
+
+            // set the minimum amount of empty space at the end of the
+            // last line
+            if (bTextAlignment == CENTER) {
+                lineFillerWidth = 0; 
+            } else {
+                lineFillerWidth = (int)(lineWidth / 6); 
+            }
+
+            // add auxiliary elements at the beginning of the paragraph
+            if (bTextAlignment == CENTER && bTextAlignmentLast != JUSTIFY) {
+                this.add(new KnuthGlue(0, 3 * wordSpaceIPD, 0,
+                                       null, false));
+                ignoreAtStart ++;
+            }
+
+            // add the element representing text indentation
+            // at the beginning of the first paragraph
+            if (knuthParagraphs.size() == 0
+                && textIndent.getValue() != 0) {
+                this.add(new KnuthBox(textIndent.getValue(), 0, 0, 0,
+                                      null, false));
+                ignoreAtStart ++;
+            }
+        }
+
+        public void endParagraph() {
+            // remove glue and penalty item at the end of the paragraph
+            while (this.size() > ignoreAtStart
+                   && !((KnuthElement) this.get(this.size() - 1)).isBox()) {
+                this.remove(this.size() - 1);
+            }
+            if (this.size() > ignoreAtStart) {
+                if (bTextAlignment == CENTER
+                    && bTextAlignmentLast != JUSTIFY) {
+                    this.add(new KnuthGlue(0, 3 * wordSpaceIPD, 0,
+                                           null, false));
+                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
+                                              false, null, false));
+                    ignoreAtEnd = 2;
+                } else if (bTextAlignmentLast != JUSTIFY) {
+                    // add the elements representing the space
+                    // at the end of the last line
+                    // and the forced break
+                    this.add(new KnuthPenalty(0, KnuthElement.INFINITE,
+                                              false, null, false));
+                    this.add(new KnuthGlue(lineFillerWidth, 10000000, 0,
+                                           null, false));
+                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
+                                              false, null, false));
+                    ignoreAtEnd = 3;
+                } else {
+                    // add only the element representing the forced break
+                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
+                                              false, null, false));
+                    ignoreAtEnd = 1;
+                }
+                knuthParagraphs.add(this);
+            }
+        }
+    }
+
 
     /**
      * Create a new Line Layout Manager.
@@ -143,9 +385,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         // IPD remaining in line
         MinOptMax availIPD = context.getStackLimit();
 
-        // QUESTION: maybe LayoutContext holds the Properties which
-        // come from block-level?
-
         LayoutContext inlineLC = new LayoutContext(context);
 
         clearPrevIPD();
@@ -156,185 +395,701 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         }
         prevBP = null;
 
-        while ((curLM = getChildLM()) != null) {
-            // INITIALIZE LAYOUT CONTEXT FOR CALL TO CHILD LM
-            // First break for the child LM in each of its areas
-            boolean bFirstBPforLM = (vecInlineBreaks.isEmpty()
-                    || (((BreakPoss) vecInlineBreaks.get(vecInlineBreaks.size() - 1)).
-                                      getLayoutManager() != curLM));
+        // here starts Knuth's algorithm
+        KnuthElement thisElement = null;
+        LinkedList returnedList = null;
+        LineBreakPosition lbp = null;
 
-            // Need previous breakpoint! ATTENTION when backing up for hyphenation!
-            prev = (vecInlineBreaks.isEmpty())
-                    ? null
-                    : (BreakPoss) vecInlineBreaks.get(vecInlineBreaks.size() - 1);
-            initChildLC(inlineLC, prev,
-                        (vecInlineBreaks.size() == iPrevLineEnd),
-                        bFirstBPforLM, new SpaceSpecifier(true));
+        if (knuthParagraphs == null) {
+            // it's the first time this method is called
+            knuthParagraphs = new ArrayList();
+            breakpoints = new ArrayList();
 
+            // convert all the text in a sequence of paragraphs made
+            // of KnuthBox, KnuthGlue and KnuthPenalty objects
+            boolean bPrevWasKnuthBox = false;
+            KnuthBox prevBox = null;
 
-            /* If first BP in this line but line is not first in this
-             * LM and previous line end decision was not forced (LINEFEED),
-             * then set the SUPPRESS_LEADING_SPACE flag.
-             */
-            inlineLC.setFlags(LayoutContext.SUPPRESS_LEADING_SPACE,
-                              (vecInlineBreaks.size() == iPrevLineEnd
-                               && !vecInlineBreaks.isEmpty()
-                               && ((BreakPoss) vecInlineBreaks.get(vecInlineBreaks.size() - 1)).
-                                    isForcedBreak() == false));
-
-            // GET NEXT POSSIBLE BREAK FROM CHILD LM
-            // prevBP = bp;
-            if ((bp = curLM.getNextBreakPoss(inlineLC)) != null) {
-                // Add any space before and previous content dimension
-                MinOptMax prevIPD = updatePrevIPD(bp, prev,
-                                                  (vecInlineBreaks.size() == iPrevLineEnd),
-                                                  inlineLC.isFirstArea());
-                MinOptMax bpDim =
-                  MinOptMax.add(bp.getStackingSize(), prevIPD);
-
-                // check if this bp fits in line
-                boolean bBreakOK = couldEndLine(bp);
-                if (bBreakOK) {
-                    /* Add any non-conditional trailing space, assuming we
-                     * end the line here. If we can't break here, we just
-                     * check if the content fits.
-                     */
-                    bpDim.add(bp.resolveTrailingSpace(true));
+            Paragraph knuthPar = new Paragraph();
+            knuthPar.startParagraph(availIPD.opt);
+            while ((curLM = getChildLM()) != null) {
+                if ((returnedList
+                     = curLM.getNextKnuthElements(inlineLC,
+                                                  effectiveAlignment))
+                    != null) {
+                    // if there are two consecutive KnuthBox, the first one 
+                    // does not represent a whole word, so it must be given
+                    // one more letter space
+                    thisElement = (KnuthElement) returnedList.getFirst();
+                    if (returnedList.size() > 1
+                        || !(thisElement.isPenalty()
+                             && ((KnuthPenalty) thisElement).getP()
+                             == -KnuthElement.INFINITE)) {
+                        if (thisElement.isBox() && !thisElement.isAuxiliary()
+                            && bPrevWasKnuthBox) {
+                            prevBox = (KnuthBox) knuthPar.removeLast();
+                            if (!prevBox.isAuxiliary()) {
+                                // if letter spacing is constant,
+                                // only prevBox needs to be replaced;
+                                knuthPar.addLast(prevBox.getLayoutManager()
+                                                 .addALetterSpaceTo(prevBox));
+                            } else {
+                                // prevBox is the last element
+                                // in the sub-sequence
+                                //   <box> <aux penalty> <aux glue> <aux box>
+                                // the letter space is added to <aux glue>,
+                                // while the other elements are not changed
+                                KnuthBox auxBox = prevBox;
+                                KnuthGlue auxGlue
+                                    = (KnuthGlue) knuthPar.removeLast();
+                                KnuthPenalty auxPenalty
+                                    = (KnuthPenalty) knuthPar.removeLast();
+                                prevBox = (KnuthBox) knuthPar.getLast();
+                                knuthPar.addLast(auxPenalty);
+                                knuthPar.addLast(prevBox.getLayoutManager()
+                                                 .addALetterSpaceTo(prevBox));
+                                knuthPar.addLast(auxBox);
                 }
-                // TODO: stop if linebreak is forced (NEWLINE)
-                // PROBLEM: interaction with wrap which can be set
-                // at lower levels!
-                // System.err.println("BPdim=" + bpDim.opt);
-
-                // Check if proposed area would fit in line
-                if (bpDim.min > availIPD.max) {
-                    // See if we have already found a potential break
-                    //if (vecPossEnd.size() > 0) break;
-
-                    // This break position doesn't fit
-                    // TODO: If we are in nowrap, we use it as is!
-                    if (hyphProps.hyphenate == Constants.TRUE) {
-                        // If we are already in a hyphenation loop, then stop.
-
-                        if (inlineLC.tryHyphenate()) {
-                            if (prevBP == null) {
-                                vecInlineBreaks.add(bp);
-                                prevBP = bp;
-                            }
-                            break;
                         }
-                        // Otherwise, prepare to try hyphenation
-                        if (!bBreakOK) {
-                            // Make sure we collect the entire word!
-                            vecInlineBreaks.add(bp);
-                            continue;
+                        if (((KnuthElement) returnedList.getLast()).isBox()) {
+                            bPrevWasKnuthBox = true;
+                        } else {
+                            bPrevWasKnuthBox = false;
                         }
-
-                        inlineLC.setHyphContext(
-                          getHyphenContext((prevBP == null) ? prev : prevBP, bp));
-                        if (inlineLC.getHyphContext() == null) {
-                            if (prevBP == null) {
-                                vecInlineBreaks.add(bp);
-                                prevBP = bp;
-                            }
-                            break;
-                        }
-                        inlineLC.setFlags(LayoutContext.TRY_HYPHENATE,
-                                          true);
-                        // Reset to previous acceptable break
-                        resetBP((prevBP == null) ? prev : prevBP);
+                        // add the new elements to the paragraph
+                        knuthPar.addAll(returnedList);
                     } else {
-                        /* If we are not in justified text, we can end the line at
-                         * prevBP.
-                         */
-                        if (prevBP == null) {
-                            vecInlineBreaks.add(bp);
-                            prevBP = bp;
-                        }
-                        break;
+                        // a list with a single penalty item
+                        // whose value is -inf
+                        // represents a preserved linefeed,
+                        // wich forces a line break
+                        knuthPar.endParagraph();
+                        knuthPar = new Paragraph();
+                        knuthPar.startParagraph(availIPD.opt);
+                        bPrevWasKnuthBox = false;
                     }
                 } else {
-                    // Add the BP to the list whether or not we can break
-                    vecInlineBreaks.add(bp);
-                    // Handle end of this LM's areas
-                    if (bBreakOK) {
-                        prevBP = bp; // Save reference to this BP
-                        if (bp.isForcedBreak()) {
-                            break;
-                        }
-                        if (bpDim.max >= availIPD.min) {
-                            /* This is a possible line BP (line could be filled)
-                             * bpDim.max >= availIPD.min
-                             * Keep this as a possible break, depending on
-                             * "cost". We will choose lowest cost.
-                             * Cost depends on stretch
-                             * (ie, bpDim.opt closes to availIPD.opt), keeps
-                             * and hyphenation.
-                             */
-                            vecPossEnd.add(new BreakCost(bp,
-                                    Math.abs(availIPD.opt - bpDim.opt)));
-                        }
-                        // Otherwise it's short
+                    // curLM returned null; this can happen
+                    // if it has nothing more to layout,
+                    // so just iterate once more to see
+                    // if there are other chilren
+                }
+            }
+            knuthPar.endParagraph();
+
+            // find the optimal line breaking points for each paragraph
+            ListIterator paragraphsIterator
+                = knuthParagraphs.listIterator(knuthParagraphs.size());
+            Paragraph currPar = null;
+            while (paragraphsIterator.hasPrevious()) {
+                currPar = (Paragraph) paragraphsIterator.previous();
+                double maxAdjustment = 1;
+                int iBPcount = 0;
+
+                // first try
+                if ((iBPcount
+                     = findBreakingPoints(currPar,
+                                          context.getStackLimit().opt,
+                                          maxAdjustment, false)) == 0) {
+                    // the first try failed, now try something different
+                    log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment);
+                    if (hyphProps.hyphenate == Constants.TRUE) {
+                        // consider every hyphenation point as a legal break
+                        findHyphenationPoints(currPar);
                     } else {
-                        /* Can't end line here. */
+                        // try with a higher threshold
+                        maxAdjustment = 5;
                     }
-                } // end of bpDim.min <= availIPD.max
-            // end of getNextBreakPoss!=null on current child LM
-            } else {
-                /* The child LM can return a null BreakPoss if it has
-                 * nothing (more) to layout. This can happen when backing
-                 * up. Just try the next child LM.
-                 */
+
+                    if ((iBPcount
+                         = findBreakingPoints(currPar,
+                                              context.getStackLimit().opt,
+                                              maxAdjustment, false)) == 0) {
+                        // the second try failed too, try with a huge threshold
+                        // and force the algorithm to find
+                        // a set of breaking points
+                        log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment
+                                         + (hyphProps.hyphenate == Constants.TRUE ? " and hyphenation" : ""));
+                        maxAdjustment = 20;
+                        iBPcount
+                            = findBreakingPoints(currPar,
+                                                 context.getStackLimit().opt,
+                                                 maxAdjustment, true);
+                    }
+                }
             }
-            if (inlineLC.tryHyphenate()
-                    && !inlineLC.getHyphContext().hasMoreHyphPoints()) {
-                break;
-            }
-        } // end of while on child LM
-        if ((curLM = getChildLM()) == null) {
-            // No more content to layout!
+        } else {
+            // this method has been called before
+            // all line breaks are already calculated
+        }
+
+        // get a break point from the list
+        lbp = (LineBreakPosition) breakpoints.get(iReturnedLBP ++);
+        if (iReturnedLBP == breakpoints.size()) {
             setFinished(true);
         }
 
-        if (bp == null) {
-            return null;
-        }
+        BreakPoss curLineBP = new BreakPoss(lbp);
+        curLineBP.setFlag(BreakPoss.ISLAST, isFinished());
+        curLineBP.setStackingSize(new MinOptMax(lbp.lineHeight));
+        return curLineBP;
+    }
 
-        if (prevBP == null) {
-            BreakPoss prevLineEnd = (iPrevLineEnd == 0)
-                ? null
-                : (BreakPoss) vecInlineBreaks.get(iPrevLineEnd);
-            if (allAreSuppressible(prevLineEnd)) {
-                removeAllBP(prevLineEnd);
-                return null;
+    private int findBreakingPoints(Paragraph par, int lineWidth,
+                                   double threshold, boolean force) {
+        int totalWidth = 0;
+        int totalStretch = 0;
+        int totalShrink = 0;
+        boolean bForced = false;
+
+        // current element in the paragraph
+        KnuthElement thisElement = null;
+        // previous element in the paragraph is a KnuthBox
+        boolean previousIsBox = false;
+
+        // create an active node representing the starting point
+        activeList = new LinkedList();
+        activeList.add(new KnuthNode(0, 0, 1, 0, 0, 0, 0, 0, 0, null));
+        inactiveList = new LinkedList();
+
+        // main loop
+        ListIterator paragraphIterator = par.listIterator();
+        while (paragraphIterator.hasNext()) {
+            thisElement = (KnuthElement) paragraphIterator.next();
+            if (thisElement.isBox()) {
+                // a KnuthBox object is not a legal line break
+                totalWidth += thisElement.getW();
+                previousIsBox = true;
+            } else if (thisElement.isGlue()) {
+                // a KnuthGlue object is a legal line break
+                // only if the previous object is a KnuthBox
+                if (previousIsBox) {
+                    considerLegalBreak(par, lineWidth, thisElement,
+                                       totalWidth, totalStretch, totalShrink,
+                                       threshold);
+                }
+                totalWidth += thisElement.getW();
+                totalStretch += ((KnuthGlue) thisElement).getY();
+                totalShrink += ((KnuthGlue) thisElement).getZ();
+                previousIsBox = false;
             } else {
-                prevBP = bp;
+                // a KnuthPenalty is a legal line break
+                // only if its penalty is not infinite
+                if (((KnuthPenalty) thisElement).getP()
+                    < KnuthElement.INFINITE) {
+                    considerLegalBreak(par, lineWidth, thisElement,
+                                       totalWidth, totalStretch, totalShrink,
+                                       threshold);
+                }
+                previousIsBox = false;
             }
         }
 
-        // Choose the best break
-        if (!bp.isForcedBreak() && vecPossEnd.size() > 0) {
-            prevBP = getBestBP(vecPossEnd);
-        }
-        if (bp != prevBP) {
-            /** Remove BPs after prevBP
-                if condAllAreSuppressible returns true,
-                else backup child LM */
-            if (condAllAreSuppressible(prevBP)) {
-                removeAllBP(prevBP);
+        if (activeList.size() == 0) {
+            if (force) {
+                activeList.add(lastDeactivatedNode);
+                bForced = true;
+                log.error("Could not find a set of breaking points");
             } else {
-                reset();
+                inactiveList.clear();
+                return 0;
+                }
+        }
+
+        // there is at least one set of breaking points
+        // choose the active node with fewest total demerits
+        ListIterator activeListIterator = activeList.listIterator();
+        KnuthNode tempNode = null;
+        KnuthNode bestActiveNode = null;
+        double bestDemerits = BestRecords.INFINITE_DEMERITS;
+        int line = 0;
+        while (activeListIterator.hasNext()) {
+            tempNode = (KnuthNode) activeListIterator.next();
+            if (tempNode.totalDemerits < bestDemerits) {
+                bestActiveNode = tempNode;
+                bestDemerits = bestActiveNode.totalDemerits;
+            }
+        }
+        line = bestActiveNode.line;
+
+        if (looseness != 0) {
+            // choose the appropriate active node
+            activeListIterator = activeList.listIterator();
+            int s = 0;
+            while (activeListIterator.hasNext()) {
+                tempNode = (KnuthNode) activeListIterator.next();
+                int delta = tempNode.line - line;
+                if (looseness <= delta && delta < s
+                    || s < delta && delta <= looseness) {
+                    s = delta;
+                    bestActiveNode = tempNode;
+                    bestDemerits = tempNode.totalDemerits;
+                } else if (delta == s
+                           && tempNode.totalDemerits < bestDemerits) {
+                    bestActiveNode = tempNode;
+                    bestDemerits = tempNode.totalDemerits;
+                }
+            }
+            line = bestActiveNode.line;
+        }
+
+        // use the chosen node to determine the optimum breakpoints
+        for (int i = line; i > 0; i--) {
+            // compute indent and adjustment ratio, according to
+            // the value of text-align and text-align-last
+            int indent = 0;
+            int difference = (bestActiveNode.line < line || bForced)
+                ? bestActiveNode.difference
+                : bestActiveNode.difference + par.lineFillerWidth;
+            int textAlign = (bestActiveNode.line < line || bForced)
+                ? bTextAlignment : bTextAlignmentLast;
+            indent += (textAlign == CENTER)
+                ? difference / 2
+                : (textAlign == END) ? difference : 0;
+            indent += (bestActiveNode.line == 1
+                       && knuthParagraphs.indexOf(par) == 0)
+                ? textIndent.getValue() : 0;
+            double ratio = (textAlign == JUSTIFY)
+                ? bestActiveNode.adjustRatio : 0;
+
+            // lead to baseline is
+            // max of: baseline fixed alignment and middle/2
+            // after baseline is
+            // max: top height-lead, middle/2 and bottom height-lead
+            int halfLeading = (lineHeight - lead - follow) / 2;
+            // height before baseline
+            int lineLead = lead + halfLeading;
+            // maximum size of top and bottom alignment
+            int maxtb = follow + halfLeading;
+            // max size of middle alignment below baseline
+            int middlefollow = maxtb;
+
+            // index of the first KnuthElement in this line
+            int firstElementIndex = 0;
+            if (line > 1) {
+                firstElementIndex = bestActiveNode.previous.position + 1;
+            }
+            ListIterator inlineIterator = par.listIterator(firstElementIndex);
+            for (int j = 0;
+                 j < (bestActiveNode.position - firstElementIndex + 1);
+                 j++) {
+                KnuthElement element = (KnuthElement) inlineIterator.next();
+                if (element.isBox()) {
+                    if (((KnuthBox) element).getLead() > lineLead) {
+                        lineLead = ((KnuthBox) element).getLead();
+                    }
+                    if (((KnuthBox) element).getTotal() > maxtb) {
+                        maxtb = ((KnuthBox) element).getTotal();
+                    }
+                    if (((KnuthBox) element).getMiddle() > middlefollow) {
+                        middlefollow = ((KnuthBox) element).getMiddle();
+                    }
+                }
+            }
+
+            if (maxtb - lineLead > middlefollow) {
+                middlefollow = maxtb - lineLead;
+            }
+
+            // add nodes at the beginning of the list, as they are found
+            // backwards, from the last one to the first one
+            breakpoints.add(0,
+                            new LineBreakPosition(this,
+                                                  bestActiveNode.position,
+                                                  ratio, 0, indent,
+                                                  lineLead + middlefollow,
+                                                  lineLead));
+            bestActiveNode = bestActiveNode.previous;
+        }
+        if (bForced) {
+            fallback(par, line);
+        }
+        activeList.clear();
+        inactiveList.clear();
+        return line;
+    }
+
+    private void fallback(Paragraph par, int line) {
+        // lead to baseline is
+        // max of: baseline fixed alignment and middle/2
+        // after baseline is
+        // max: top height-lead, middle/2 and bottom height-lead
+        int halfLeading = (lineHeight - lead - follow) / 2;
+        // height before baseline
+        int lineLead = lead + halfLeading;
+        // maximum size of top and bottom alignment
+        int maxtb = follow + halfLeading;
+        // max size of middle alignment below baseline
+        int middlefollow = maxtb;
+
+        ListIterator inlineIterator
+            = par.listIterator(lastDeactivatedNode.position);
+        for (int j = lastDeactivatedNode.position;
+             j < (par.size());
+             j++) {
+            KnuthElement element = (KnuthElement) inlineIterator.next();
+            if (element.isBox()) {
+                if (((KnuthBox) element).getLead() > lineLead) {
+                    lineLead = ((KnuthBox) element).getLead();
+                }
+                if (((KnuthBox) element).getTotal() > maxtb) {
+                    maxtb = ((KnuthBox) element).getTotal();
+                }
+                if (((KnuthBox) element).getMiddle() > middlefollow) {
+                    middlefollow = ((KnuthBox) element).getMiddle();
+                }
             }
         }
 
-        // Don't justify last line in the sequence or if forced line-end
-        int talign = bTextAlignment;
-        if ((bTextAlignment == TextAlign.JUSTIFY
-                             && (prevBP.isForcedBreak()
-                             || isFinished()))) {
-            talign = TextAlign.START;
+        if (maxtb - lineLead > middlefollow) {
+                    middlefollow = maxtb - lineLead;
         }
-        return makeLineBreak(iPrevLineEnd, availIPD, talign);
+
+        breakpoints.add(line,
+                        new LineBreakPosition(this, par.size() - 1,
+                                              0, 0, 0,
+                                              lineLead + middlefollow,
+                                              lineLead));
+    }
+
+
+    private void considerLegalBreak(LinkedList par, int lineWidth,
+                                    KnuthElement element,
+                                    int totalWidth, int totalStretch,
+                                    int totalShrink, double threshold) {
+        KnuthNode activeNode = null;
+
+        ListIterator activeListIterator = activeList.listIterator();
+        if (activeListIterator.hasNext()) {
+            activeNode = (KnuthNode) activeListIterator.next();
+        } else {
+            activeNode = null;
+        }
+
+        while (activeNode != null) {
+            BestRecords best = new BestRecords();
+
+            // these are the new values that must be computed
+            // in order to define a new active node
+            int newLine = 0;
+            int newFitnessClass = 0;
+            int newWidth = 0;
+            int newStretch = 0;
+            int newShrink = 0;
+            double newIPDAdjust = 0;
+            double newDemerits = 0;
+
+            while (activeNode != null) {
+                // compute the line number
+                newLine = activeNode.line + 1;
+
+                // compute the adjustment ratio
+                int actualWidth = totalWidth - activeNode.totalWidth;
+                if (element.isPenalty()) {
+                    actualWidth += element.getW();
+                }
+                int neededAdjustment = lineWidth - actualWidth;
+                int maxAdjustment = 0;
+                if (neededAdjustment > 0) {
+                    maxAdjustment = totalStretch - activeNode.totalStretch;
+                    if (maxAdjustment > 0) {
+                        newIPDAdjust
+                            = (double) neededAdjustment / maxAdjustment;
+                    } else {
+                        newIPDAdjust = INFINITE_RATIO;
+                    }
+                } else if (neededAdjustment < 0) {
+                    maxAdjustment = totalShrink - activeNode.totalShrink;
+                    if (maxAdjustment > 0) {
+                        newIPDAdjust
+                            = (double) neededAdjustment / maxAdjustment;
+                    } else {
+                        newIPDAdjust = INFINITE_RATIO;
+                    }
+                } else {
+                    // neededAdjustment == 0
+                    newIPDAdjust = 0;
+                }
+                if (newIPDAdjust < -1
+                    || (element.isPenalty()
+                        && ((KnuthPenalty) element).getP()
+                        == -KnuthElement.INFINITE)
+                    && !(activeNode.position == par.indexOf(element))) {
+                    // deactivate activeNode
+                    KnuthNode tempNode
+                        = (KnuthNode) activeListIterator.previous();
+                    int iCallNext = 0;
+                    while (tempNode != activeNode) {
+                        // this is not the node we meant to remove!
+                        tempNode = (KnuthNode) activeListIterator.previous();
+                        iCallNext ++;
+                    }
+                    lastDeactivatedNode = tempNode;
+                    inactiveList.add(tempNode);
+                    activeListIterator.remove();
+                    for (int i = 0; i < iCallNext; i++) {
+                        activeListIterator.next();
+                    }
+                }
+
+                if ((-1 <= newIPDAdjust) && (newIPDAdjust <= threshold)) {
+                    // compute demerits and fitness class
+                    if (element.isPenalty()
+                        && ((KnuthPenalty) element).getP() >= 0) {
+                        newDemerits
+                            = Math.pow((1
+                                        + 100 * Math.pow(Math.abs(newIPDAdjust), 3)
+                                        + ((KnuthPenalty) element).getP()), 2);
+                    } else if (element.isPenalty()
+                               && ((KnuthPenalty) element).getP()
+                               > -INFINITE_RATIO) {
+                        newDemerits
+                            = Math.pow((1
+                                        + 100 * Math.pow(Math.abs(newIPDAdjust), 3)), 2)
+                            - Math.pow(((KnuthPenalty) element).getP(), 2);
+                    } else {
+                        newDemerits
+                            = Math.pow((1
+                                        + 100 * Math.pow(Math.abs(newIPDAdjust), 3)), 2);
+                    }
+                    if (element.isPenalty()
+                        && ((KnuthPenalty) element).isFlagged()
+                        && ((KnuthElement) par.get(activeNode.position)).isPenalty()
+                        && ((KnuthPenalty) par.get(activeNode.position)).isFlagged()) {
+                        // add demerit for consecutive breaks at flagged penalties
+                        newDemerits += repeatedFlaggedDemerit;
+                    }
+                    if (newIPDAdjust < -0.5) {
+                        newFitnessClass = 0;
+                    } else if (newIPDAdjust <= 0.5) {
+                        newFitnessClass = 1;
+                    } else if (newIPDAdjust <= 1) {
+                        newFitnessClass = 2;
+                    } else {
+                        newFitnessClass = 3;
+                    }
+                    if (Math.abs(newFitnessClass - activeNode.fitness) > 1) {
+                        // add demerit for consecutive breaks
+                        // with very different fitness classes
+                        newDemerits += incompatibleFitnessDemerit;
+                    }
+                    newDemerits += activeNode.totalDemerits;
+                    if (newDemerits < best.getDemerits(newFitnessClass)) {
+                        // updates best demerits data
+                        best.addRecord(newDemerits, activeNode, newIPDAdjust,
+                                       neededAdjustment, newFitnessClass);
+                    }
+                }
+
+                 
+                if (activeListIterator.hasNext()) {
+                    activeNode = (KnuthNode) activeListIterator.next();
+                } else {
+                    activeNode = null;
+                    break;
+                }
+                if (activeNode.line >= newLine) {
+                    break;
+                }
+            } // end of the inner while
+
+            if (best.hasRecords()) {
+                // compute width, stratchability and shrinkability
+                newWidth = totalWidth;
+                newStretch = totalStretch;
+                newShrink = totalShrink;
+                ListIterator tempIterator
+                    = par.listIterator(par.indexOf(element));
+                while (tempIterator.hasNext()) {
+                    KnuthElement tempElement
+                        = (KnuthElement) tempIterator.next();
+                    if (tempElement.isBox()) {
+                        break;
+                    } else if (tempElement.isGlue()) {
+                        newWidth += ((KnuthGlue) tempElement).getW();
+                        newStretch += ((KnuthGlue) tempElement).getY();
+                        newShrink += ((KnuthGlue) tempElement).getZ();
+                    } else if (((KnuthPenalty) tempElement).getP()
+                               == -KnuthElement.INFINITE
+                               && tempElement != element) {
+                        break;
+                    }
+                }
+
+                // add nodes to the active nodes list
+                for (int i = 0; i <= 3; i++) {
+                    if (best.notInfiniteDemerits(i)
+                        && best.getDemerits(i)
+                        <= (best.getMinDemerits()
+                            + incompatibleFitnessDemerit)) {
+                        // the nodes in activeList must be ordered
+                        // by line number and position;
+                        // so:
+                        // 1) advance in the list until the end,
+                        // or a node with a higher line number, is reached
+                        int iStepsForward = 0;
+                        KnuthNode tempNode;
+                        while (activeListIterator.hasNext()) {
+                            iStepsForward ++;
+                            tempNode = (KnuthNode) activeListIterator.next();
+                            if (tempNode.line > (best.getNode(i).line + 1)) {
+                                activeListIterator.previous();
+                                iStepsForward --;
+                                break;
+                            }
+                        }
+                        // 2) add the new node
+                        activeListIterator.add
+                            (new KnuthNode(par.indexOf(element),
+                                           best.getNode(i).line + 1, i,
+                                           newWidth, newStretch, newShrink,
+                                           best.getAdjust(i),
+                                           best.getDifference(i),
+                                           best.getDemerits(i),
+                                           best.getNode(i)));
+                        // 3) go back
+                        for (int j = 0;
+                             j <= iStepsForward;
+                             j ++) {
+                            activeListIterator.previous();
+                        }
+                    }
+                }
+            }
+            if (activeNode == null) {
+                break;
+            }
+        } // end of the outer while
+    }
+
+    /**
+     * find hyphenation points for every word int the current paragraph
+     * @ param currPar the paragraph whose words will be hyphenated
+     */
+    private void findHyphenationPoints(Paragraph currPar){
+        // hyphenate every word
+        ListIterator currParIterator
+            = currPar.listIterator(currPar.ignoreAtStart);
+        // list of TLM involved in hyphenation
+        LinkedList updateList = new LinkedList();
+        KnuthElement firstElement = null;
+        KnuthElement nextElement = null;
+        // current TextLayoutManager
+        LayoutManager currLM = null;
+        // number of KnuthBox elements containing word fragments
+        int boxCount;
+        // number of auxiliary KnuthElements between KnuthBoxes
+        int auxCount;
+        StringBuffer sbChars = null;
+
+        // find all hyphenation points
+        while (currParIterator.hasNext()) {
+            firstElement = (KnuthElement) currParIterator.next();
+            // 
+            if (firstElement.getLayoutManager() != currLM) {
+                currLM = firstElement.getLayoutManager();
+                if (currLM != null) { 
+                    updateList.add(new Update(currLM, currParIterator.previousIndex()));
+                } else {
+                    break;
+                }
+            }
+
+            // collect word fragments, ignoring auxiliary elements;
+            // each word fragment was created by a different TextLM
+            if (firstElement.isBox() && !firstElement.isAuxiliary()) {
+                boxCount = 1;
+                auxCount = 0;
+                sbChars = new StringBuffer();
+                currLM.getWordChars(sbChars, firstElement.getPosition());
+                // look if next elements are boxes too
+                while (currParIterator.hasNext()) {
+                    nextElement = (KnuthElement) currParIterator.next();
+                    if (nextElement.isBox() && !nextElement.isAuxiliary()) {
+                        // a non-auxiliary KnuthBox: append word chars
+                        if (currLM != nextElement.getLayoutManager()) {
+                            currLM = nextElement.getLayoutManager();
+                            updateList.add(new Update(currLM, currParIterator.previousIndex()));
+                        }
+                        // append text to recreate the whole word
+                        boxCount ++;
+                        currLM.getWordChars(sbChars, nextElement.getPosition());
+                    } else if (!nextElement.isAuxiliary()) {
+                        // a non-auxiliary non-box KnuthElement: stop
+                        // go back to the last box or auxiliary element
+                        currParIterator.previous(); 
+                        break;
+                    } else {
+                        // an auxiliary KnuthElement: simply ignore it
+                        auxCount ++;
+                    }
+                }
+                log.trace(" Word to hyphenate: " + sbChars.toString());
+                // find hyphenation points
+                HyphContext hc = getHyphenContext(sbChars);
+                // ask each LM to hyphenate its word fragment
+                if (hc != null) {
+                    KnuthElement element = null;
+                    for (int i = 0; i < (boxCount + auxCount); i++) {
+                        currParIterator.previous();
+                    }
+                    for (int i = 0; i < (boxCount + auxCount); i++) {
+                        element = (KnuthElement) currParIterator.next();
+                        if (element.isBox() && !element.isAuxiliary()) {
+                            element.getLayoutManager().hyphenate(element.getPosition(), hc);
+                        } else {
+                            // nothing to do, element is an auxiliary KnuthElement
+                        }
+                    }
+                }
+            }
+        }
+
+        // create iterator for the updateList
+        ListIterator updateListIterator = updateList.listIterator();
+        Update currUpdate = null;
+        int iPreservedElements = 0;
+        int iAddedElements = 0;
+        int iRemovedElements = 0;
+
+        while (updateListIterator.hasNext()) {
+            // ask the LMs to apply the changes and return 
+            // the new KnuthElements to replace the old ones
+            currUpdate = (Update) updateListIterator.next();
+            int fromIndex = currUpdate.iFirstIndex;
+            int toIndex;
+            if (updateListIterator.hasNext()) {
+                Update nextUpdate = (Update) updateListIterator.next();
+                toIndex = nextUpdate.iFirstIndex;
+                updateListIterator.previous();
+            } else {
+                // maybe this is not always correct!
+                toIndex = currPar.size() - currPar.ignoreAtEnd
+                    - iAddedElements;
+            }
+
+            // applyChanges() returns true if the LM modifies its data,
+            // so it must return new KnuthElements to replace the old ones
+            if (currUpdate.inlineLM
+                .applyChanges(currPar.subList(fromIndex + iAddedElements,
+                                              toIndex + iAddedElements))) {
+                // insert the new KnuthElements
+                LinkedList newElements = null;
+                newElements
+                    = currUpdate.inlineLM.getChangedKnuthElements
+                    (currPar.subList(fromIndex + iAddedElements,
+                                     toIndex + iAddedElements),
+                     flaggedPenalty, effectiveAlignment);
+                // remove the old elements
+                currPar.subList(fromIndex + iAddedElements,
+                                toIndex + iAddedElements).clear();
+                // insert the new elements
+                currPar.addAll(fromIndex + iAddedElements, newElements);
+                iAddedElements += newElements.size() - (toIndex - fromIndex);
+            }
+        }
+        updateListIterator = null;
+        updateList.clear();
     }
 
     private void resetBP(BreakPoss resetBP) {
@@ -438,57 +1193,33 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         }
     }
 
-    private HyphContext getHyphenContext(BreakPoss prev,
-                                         BreakPoss newBP) {
-        // Get a "word" to hyphenate by getting characters from all
-        // pending break poss which are in vecInlineBreaks, starting
-        // with the position just AFTER prev.getPosition()
-
-        vecInlineBreaks.add(newBP);
-        ListIterator bpIter =
-            vecInlineBreaks.listIterator(vecInlineBreaks.size());
-        while (bpIter.hasPrevious() && bpIter.previous() != prev) {
-        }
-        if (prev != null && bpIter.next() != prev) {
-            log.error("findHyphenPoss: problem!");
-            return null;
-        }
-        StringBuffer sbChars = new StringBuffer(30);
-        while (bpIter.hasNext()) {
-            BreakPoss bp = (BreakPoss) bpIter.next();
-            if (prev != null &&
-                bp.getLayoutManager() == prev.getLayoutManager()) {
-                bp.getLayoutManager().getWordChars(sbChars,
-                    prev.getPosition(), bp.getPosition());
-            } else {
-                bp.getLayoutManager().getWordChars(sbChars, null,
-                    bp.getPosition());
-            }
-            prev = bp;
-        }
-        vecInlineBreaks.remove(vecInlineBreaks.size() - 1); // remove last
-        log.debug("Word to hyphenate: " + sbChars.toString());
-
-        // Now find all hyphenation points in this word (get in an array of offsets)
-        // hyphProps are from the block level?. Note that according to the spec,
-        // they also "apply to" fo:character. I don't know what that means, since
-        // if we change language in the middle of a "word", the effect would seem
-        // quite strange! Or perhaps in that case, we say that it's several words.
+    private HyphContext getHyphenContext(StringBuffer sbChars) {
+        // Find all hyphenation points in this word
+        // (get in an array of offsets)
+        // hyphProps are from the block level?.
+        // Note that according to the spec,
+        // they also "apply to" fo:character.
+        // I don't know what that means, since
+        // if we change language in the middle of a "word",
+        // the effect would seem quite strange!
+        // Or perhaps in that case, we say that it's several words.
         // We probably should bring the hyphenation props up from the actual
-        // TextLM which generate the hyphenation buffer, since these properties
-        // inherit and could be specified on an inline or wrapper below the block
-        // level.
-        Hyphenation hyph = Hyphenator.hyphenate(hyphProps.language,
-                                                hyphProps.country, sbChars.toString(),
-                                                hyphProps.hyphenationRemainCharacterCount,
-                                                hyphProps.hyphenationPushCharacterCount);
+        // TextLM which generate the hyphenation buffer,
+        // since these properties inherit and could be specified
+        // on an inline or wrapper below the block level.
+        Hyphenation hyph
+            = Hyphenator.hyphenate(hyphProps.language,
+                                   hyphProps.country, sbChars.toString(),
+                                   hyphProps.hyphenationRemainCharacterCount,
+                                   hyphProps.hyphenationPushCharacterCount);
         // They hyph structure contains the information we need
         // Now start from prev: reset to that position, ask that LM to get
         // a Position for the first hyphenation offset. If the offset isn't in
-        // its characters, it returns null, but must tell how many chars it had.
+        // its characters, it returns null,
+        // but must tell how many chars it had.
         // Keep looking at currentBP using next hyphenation point until the
-        // returned size is greater than the available size or no more hyphenation
-        // points remain. Choose the best break.
+        // returned size is greater than the available size
+        // or no more hyphenation points remain. Choose the best break.
         if (hyph != null) {
             return new HyphContext(hyph.getHyphenationPoints());
         } else {
@@ -529,7 +1260,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         LayoutManager lastLM = null;
         for (Iterator iter = vecInlineBreaks.listIterator(prevLineEnd);
                 iter.hasNext();) {
-            BreakPoss bp = (BreakPoss)iter.next();
+            BreakPoss bp = (BreakPoss) iter.next();
             if (bp.getLead() > lineLead) {
                 lineLead = bp.getLead();
             }
@@ -573,7 +1304,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         if (actual.opt > targetWith) {
             if (actual.opt - targetWith < (actual.opt - actual.min)) {
                 ipdAdjust = -(actual.opt - targetWith)
-                                / (float)(actual.opt - actual.min);
+                                / (float) (actual.opt - actual.min);
                 realWidth = targetWith;
             } else {
                 ipdAdjust = -1;
@@ -582,7 +1313,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         } else {
             if (targetWith - actual.opt < actual.max - actual.opt) {
                 ipdAdjust = (targetWith - actual.opt)
-                                / (float)(actual.max - actual.opt);
+                                / (float) (actual.max - actual.opt);
                 realWidth = targetWith;
             } else {
                 ipdAdjust = 1;
@@ -597,7 +1328,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         switch (textalign) {
             case TextAlign.JUSTIFY:
                 if (realWidth != 0) {
-                    dAdjust = (double)(targetWith - realWidth) / realWidth;
+                    dAdjust = (double) (targetWith - realWidth) / realWidth;
                 }
             break;
             case TextAlign.START:
@@ -612,9 +1343,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 indent = targetWith - realWidth;
             break;
         }
-        //System.err.println(" ");
-        //System.err.println("LineLayoutManager> difference to fill= " + (targetWith - realWidth));
-        //System.err.println("LineLayoutManager> ipdAdjust= " + ipdAdjust + " dAdjust= " + dAdjust);
 
         LineBreakPosition lbp;
         lbp = new LineBreakPosition(this,
@@ -635,16 +1363,21 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
      */
     public void resetPosition(Position resetPos) {
         if (resetPos == null) {
-            iStartPos = 0;
-            reset(null);
-            vecInlineBreaks.clear();
-            prevBP = null;
+            setFinished(false);
+            iReturnedLBP = 0;
         } else {
-            prevBP = (BreakPoss)vecInlineBreaks.get(((LineBreakPosition)resetPos).getLeafPos());
-            while (vecInlineBreaks.get(vecInlineBreaks.size() - 1) != prevBP) {
-                vecInlineBreaks.remove(vecInlineBreaks.size() - 1);
+            if (isFinished()) {
+                // if isFinished is true, iReturned LBP == breakpoints.size()
+                // and breakpoints.get(iReturnedLBP) would generate
+                // an IndexOutOfBoundException
+                setFinished(false);
+                iReturnedLBP--;
             }
-            reset(prevBP.getPosition());
+            while ((LineBreakPosition) breakpoints.get(iReturnedLBP)
+                   != (LineBreakPosition) resetPos) {
+                iReturnedLBP --;
+            }
+            iReturnedLBP ++;
         }
     }
 
@@ -675,6 +1408,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         LayoutManager childLM;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
+            ListIterator paragraphIterator = null;
+            KnuthElement tempElement = null;
+            // the TLM which created the last KnuthElement in this line
+            LayoutManager lastLM = null;
+
             LineBreakPosition lbp = (LineBreakPosition) parentIter.next();
             LineArea lineArea = new LineArea();
             lineArea.setStartIndent(lbp.startIndent);
@@ -682,11 +1420,49 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             lc.setBaseline(lbp.baseline);
             lc.setLineHeight(lbp.lineHeight);
             setCurrentArea(lineArea);
+
+            Paragraph currPar = (Paragraph) knuthParagraphs.get(iCurrParIndex);
+            iEndElement = lbp.getLeafPos();
+
+            // ignore the first elements added by the LineLayoutManager
+            iStartElement += (iStartElement == 0) ? currPar.ignoreAtStart : 0;
+
+            // ignore the last elements added by the LineLayoutManager
+            iEndElement -= (iEndElement == (currPar.size() - 1))
+                ? currPar.ignoreAtEnd : 0;
+
+            // ignore the last element in the line if it is a KnuthGlue object
+            paragraphIterator = currPar.listIterator(iEndElement);
+            tempElement = (KnuthElement) paragraphIterator.next();
+            if (tempElement.isGlue()) {
+                iEndElement --;
+                // this returns the same KnuthElement
+                paragraphIterator.previous();
+                tempElement = (KnuthElement) paragraphIterator.previous();
+            }
+            lastLM = tempElement.getLayoutManager();
+
+            // ignore KnuthGlue and KnuthPenalty objects
+            // at the beginning of the line
+            paragraphIterator = currPar.listIterator(iStartElement);
+            tempElement = (KnuthElement) paragraphIterator.next();
+            while (!tempElement.isBox() && paragraphIterator.hasNext()) {
+                tempElement = (KnuthElement) paragraphIterator.next();
+                iStartElement ++;
+            }
+
             // Add the inline areas to lineArea
-            PositionIterator inlinePosIter =
-              new BreakPossPosIter(vecInlineBreaks, iStartPos,
-                                   lbp.getLeafPos() + 1);
-            iStartPos = lbp.getLeafPos() + 1;
+            PositionIterator inlinePosIter
+                = new KnuthPossPosIter(currPar, iStartElement,
+                                       iEndElement + 1);
+
+            iStartElement = lbp.getLeafPos() + 1;
+            if (iStartElement == currPar.size()) {
+                // advance to next paragraph
+                iCurrParIndex ++;
+                iStartElement = 0;
+            }
+
             lc.setSpaceAdjust(lbp.dAdjust);
             lc.setIPDAdjust(lbp.ipdAdjust);
             lc.setLeadingSpace(new SpaceSpecifier(true));
@@ -694,6 +1470,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
             setChildContext(lc);
             while ((childLM = inlinePosIter.getNextChildLM()) != null) {
+                lc.setFlags(LayoutContext.LAST_AREA, (childLM == lastLM));
                 childLM.addAreas(inlinePosIter, lc);
                 lc.setLeadingSpace(lc.getTrailingSpace());
                 lc.setTrailingSpace(new SpaceSpecifier(false));

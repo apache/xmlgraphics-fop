@@ -18,6 +18,7 @@
  
 package org.apache.fop.layoutmgr;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -245,4 +246,18 @@ public interface LayoutManager {
      */
     void addChildLMs(List newLMs);
 
+    LinkedList getNextKnuthElements(LayoutContext context, int alignment);
+
+    KnuthElement addALetterSpaceTo(KnuthElement element);
+
+    void getWordChars(StringBuffer sbChars, Position pos);
+
+    void hyphenate(Position pos, HyphContext hc);
+
+    boolean applyChanges(List oldList);
+
+    LinkedList getChangedKnuthElements(List oldList, int flaggedPenalty,
+                                       int alignment);
+
+    int getWordSpaceIPD();
 }

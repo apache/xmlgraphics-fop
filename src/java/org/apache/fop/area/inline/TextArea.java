@@ -27,7 +27,8 @@ public class TextArea extends InlineArea {
      * The text for this inline area
      */
     protected String text;
-    private int iTextSpaceAdjust = 0;
+    private int iTextWordSpaceAdjust = 0;
+    private int iTextLetterSpaceAdjust = 0;
 
     /**
      * Create a text inline area
@@ -54,21 +55,38 @@ public class TextArea extends InlineArea {
     }
 
     /**
-     * Get text space adjust.
+     * Get text word space adjust.
      *
-     * @return the text space adjustment
+     * @return the text word space adjustment
      */
-    public int getTextSpaceAdjust() {
-        return iTextSpaceAdjust;
+    public int getTextWordSpaceAdjust() {
+        return iTextWordSpaceAdjust;
     }
 
     /**
-     * Set text space adjust.
+     * Set text word space adjust.
      *
-     * @param iTSadjust the text space adjustment
+     * @param iTWSadjust the text word space adjustment
      */
-    public void setTextSpaceAdjust(int iTSadjust) {
-        iTextSpaceAdjust = iTSadjust;
+    public void setTextWordSpaceAdjust(int iTWSadjust) {
+        iTextWordSpaceAdjust = iTWSadjust;
+    }
+    /**
+     * Get text letter space adjust.
+     *
+     * @return the text letter space adjustment
+     */
+    public int getTextLetterSpaceAdjust() {
+        return iTextLetterSpaceAdjust;
+    }
+
+    /**
+     * Set text letter space adjust.
+     *
+     * @param iTLSadjust the text letter space adjustment
+     */
+    public void setTextLetterSpaceAdjust(int iTLSadjust) {
+        iTextLetterSpaceAdjust = iTLSadjust;
     }
 }
 

@@ -30,6 +30,9 @@ import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.traits.MinOptMax;
 
+import java.util.List;
+import java.util.LinkedList;
+
 /**
  * LayoutManager for the fo:leader formatting object
  */
@@ -139,4 +142,103 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         }
         return leaderArea;
      }
+
+    public LinkedList getNextKnuthElements(LayoutContext context,
+                                           int alignment) {
+        MinOptMax ipd;
+        curArea = get(context);
+        LinkedList returnList = new LinkedList();
+
+        if (curArea == null) {
+            setFinished(true);
+            return null;
+        }
+
+        ipd = getAllocationIPD(context.getRefIPD());
+
+        int bpd = curArea.getHeight();
+        int lead = 0;
+        int total = 0;
+        int middle = 0;
+        switch (alignment) {
+            case VerticalAlign.MIDDLE  : middle = bpd / 2 ;
+                                         lead = bpd / 2 ;
+                                         break;
+            case VerticalAlign.TOP     : total = bpd;
+                                         break;
+            case VerticalAlign.BOTTOM  : total = bpd;
+                                         break;
+            case VerticalAlign.BASELINE:
+            default:                     lead = bpd;
+                                         break;
+        }
+
+        // create the AreaInfo object to store the computed values
+        areaInfo = new AreaInfo((short) 0, ipd, false,
+                                lead, total, middle);
+
+        // node is a fo:Leader
+        returnList.add(new KnuthBox(0, areaInfo.lead, areaInfo.total,
+                                    areaInfo.middle,
+                                    new LeafPosition(this, -1), true));
+        returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
+                                        new LeafPosition(this, -1), true));
+        returnList.add
+            (new KnuthGlue(areaInfo.ipdArea.opt,
+                           areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
+                           areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
+                           new LeafPosition(this, 0), false));
+        returnList.add(new KnuthBox(0, areaInfo.lead, areaInfo.total,
+                                    areaInfo.middle,
+                                    new LeafPosition(this, -1), true));
+
+        setFinished(true);
+        return returnList;
+    }
+
+    public KnuthElement addALetterSpaceTo(KnuthElement element) {
+        // return the unchanged glue object
+        return new KnuthGlue(areaInfo.ipdArea.opt,
+                             areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
+                             areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
+                             new LeafPosition(this, 0), false);
+    }
+
+    public void hyphenate(Position pos, HyphContext hc) {
+        // use the AbstractLayoutManager.hyphenate() null implementation
+        super.hyphenate(pos, hc);
+    }
+
+    public boolean applyChanges(List oldList) {
+        setFinished(false);
+        return false;
+    }
+
+    public LinkedList getChangedKnuthElements(List oldList,
+                                              int flaggedPenalty,
+                                              int alignment) {
+        if (isFinished()) {
+            return null;
+        }
+
+        LinkedList returnList = new LinkedList();
+
+        returnList.add(new KnuthBox(0, areaInfo.lead, areaInfo.total,
+                                    areaInfo.middle,
+                                    new LeafPosition(this, -1), true));
+        returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
+                                        new LeafPosition(this, -1), true));
+        returnList.add
+            (new KnuthGlue(areaInfo.ipdArea.opt,
+                           areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
+                           areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
+                           new LeafPosition(this, 0), false));
+        returnList.add(new KnuthBox(0, areaInfo.lead, areaInfo.total,
+                                    areaInfo.middle,
+                                    new LeafPosition(this, -1), true));
+
+        setFinished(true);
+        return returnList;
+    }
+
 }
