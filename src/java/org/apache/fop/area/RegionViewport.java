@@ -26,8 +26,8 @@ import org.apache.fop.fo.flow.FoPageSequence;
  * This area is the viewport for a region and contains a region area.
  */
 public class RegionViewport
-extends AbstractViewport
-implements Viewport, Cloneable {
+extends BlockViewportArea
+implements Viewport {
 
     /**
      * Creates a new region viewport with a null rectangular area
@@ -60,106 +60,6 @@ implements Viewport, Cloneable {
      */
     public RegionRefArea getRegionRefArea() {
         return (RegionRefArea)(getReferenceArea());
-    }
-
-    /**
-     * Return the sum of region border- and padding-before
-     *
-     * @return width in millipoints
-     */
-//    public int getBorderAndPaddingWidthBefore() {
-//        int margin = 0;
-//        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_BEFORE);
-//        if (bps != null) {
-//            margin = bps.width;
-//        }
-//        
-//        Integer padWidth = (Integer) getTrait(Trait.PADDING_BEFORE);
-//        if (padWidth != null) {
-//            margin += padWidth.intValue();
-//        }
-//
-//        return margin;
-//    }
-    
-    /**
-     * Return the sum of region border- and padding-after
-     *
-     * @return width in millipoints
-     */
-//    public int getBorderAndPaddingWidthAfter() {
-//        int margin = 0;
-//        
-//        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_AFTER);
-//        if (bps != null) {
-//            margin = bps.width;
-//        }
-//        
-//        Integer padWidth = (Integer) getTrait(Trait.PADDING_AFTER);
-//        if (padWidth != null) {
-//            margin += padWidth.intValue();
-//        }
-//
-//        return margin;
-//    }
-
-    /**
-     * Return the sum of region border- and padding-start
-     *
-     * @return width in millipoints
-     */
-//    public int getBorderAndPaddingWidthStart() {
-//        int margin = 0;
-//        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_START);
-//        if (bps != null) {
-//            margin = bps.width;
-//        }
-//        
-//        Integer padWidth = (Integer) getTrait(Trait.PADDING_START);
-//        if (padWidth != null) {
-//            margin += padWidth.intValue();
-//        }
-//
-//        return margin;
-//    }
-
-    /**
-     * Return the sum of region border- and padding-end
-     *
-     * @return width in millipoints
-     */
-//    public int getBorderAndPaddingWidthEnd() {
-//        int margin = 0;
-//        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_END);
-//        if (bps != null) {
-//            margin = bps.width;
-//        }
-//        
-//        Integer padWidth = (Integer) getTrait(Trait.PADDING_END);
-//        if (padWidth != null) {
-//            margin += padWidth.intValue();
-//        }
-//
-//        return margin;
-//    }
-
-    /**
-     * Clone this region viewport.
-     * Used when creating a copy from the page master.
-     *
-     * @return a new copy of this region viewport
-     */
-    public Object clone() {
-        synchronized (sync) {
-            RegionViewport rv;
-            try {
-                rv = (RegionViewport)(super.clone());
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-            rv.refArea = (PageRefArea)(refArea.clone());
-            return rv;
-        }
     }
 
 }
