@@ -19,9 +19,14 @@
     </fo:simple-page-master>
 
     <fo:page-sequence-master master-name="repeating_pm">
-      <!-- note for fo:repeatable-page-master-reference, if maximum-repeats
-            property unspecified, as here, "no-limit" is the default value -->
-      <fo:repeatable-page-master-reference master-reference="singleSPM"/>
+      <!-- note for an fo:repeatable-page-master-reference, "no-limit"
+           is the default value for the maximum-repeats property 
+       -->
+      <fo:repeatable-page-master-reference master-reference="singleSPM"
+        maximum-repeats="15"/>
+      <!-- this page-master-reference used after maximum-repeats 
+      above exhausted -->
+      <fo:single-page-master-reference master-reference="singleSPM"/>
     </fo:page-sequence-master>
   </fo:layout-master-set>
   <!-- end: defines page layout -->
