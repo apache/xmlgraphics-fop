@@ -50,7 +50,7 @@
         b) to create entry fields in fill-in-the-blank forms c) to create horizontal rules for use as separators. You 
         define the look and use of fo:leader with the property "leader-pattern". It can have the following values: a) space. This 
         just creates an space. b) dots. This creates a sequence of "." c) rule. This creates a line. d) use-content. This creates a 
-        repeating pattern of the content of fo:leader (not supported yet by Fop). 
+        repeating pattern of the content of fo:leader. 
       </fo:block>
 
 
@@ -718,22 +718,35 @@
       Here is some longer text. Here is some longer text. Here is some longer text. 
       </fo:block>
 
+      <fo:block space-before.optimum="15pt" font-weight="bold" font-size="14pt">
+        Use-Content
+      </fo:block>
 
-      <fo:block text-align="start">Characters:
+      <fo:block space-before.optimum="8pt" font-size="12pt">
+        The following examples show Leader with "use-content".
+        The inline areas from the context of the leader are
+        repeated until the lenght of the leader. The
+        "leader-pattern-width" can be used to set the width
+        of each repeated pattern element. <fo:inline font-style="italic">
+        If this width is less than the inline areas then the width
+        of the inline areas is used.</fo:inline>
+      </fo:block>
+
+      <fo:block space-before.optimum="5pt" text-align="start">Characters:
         <fo:leader leader-pattern="use-content">abcd</fo:leader>
       </fo:block>
 
-      <fo:block text-align="start">Set width:
+      <fo:block space-before.optimum="5pt" text-align="start">Set width:
         <fo:leader leader-pattern="use-content"
             leader-pattern-width="50pt">abcd</fo:leader>
       </fo:block>
 
-      <fo:block text-align="start">Small Width:
+      <fo:block space-before.optimum="5pt" text-align="start">Small Width:
         <fo:leader leader-pattern="use-content"
                    leader-pattern-width="2pt">abcd</fo:leader>
       </fo:block>
 
-      <fo:block text-align="start">SVG:
+      <fo:block space-before.optimum="5pt" text-align="start">SVG:
         <fo:leader leader-pattern="use-content">
 <fo:instream-foreign-object>
 <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">

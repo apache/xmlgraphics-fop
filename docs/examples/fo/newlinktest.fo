@@ -7,7 +7,9 @@
                   margin-bottom="1in" 
                   margin-left="1in" 
                   margin-right="1in">
-      <fo:region-body/>
+      <fo:region-body margin-top="2.5cm" margin-bottom="1.5cm"/>
+      <fo:region-before extent="2.5cm"/>
+      <fo:region-after extent="1.5cm"/>
     </fo:simple-page-master>
 
 
@@ -17,7 +19,18 @@
   <!-- actual layout -->
   <fo:page-sequence master-reference="first">
 
-
+    <!-- header -->
+    <fo:static-content flow-name="xsl-region-before">
+      <fo:block text-align="end"
+            font-size="8pt"
+            font-family="serif"
+            line-height="14pt" >
+            <fo:basic-link external-destination="http://xml.apache.org/fop"
+                           color="rgb(150,150,150)" font-style="italic">
+               http://xml.apache.org/fop
+            </fo:basic-link>
+      </fo:block>
+    </fo:static-content>
 
 
 <fo:flow flow-name="xsl-region-body">
@@ -106,6 +119,27 @@ align="justify"
       </fo:table-body>
     </fo:table>
     <!-- table end -->
+
+  <fo:block break-before="page" space-after.optimum="12pt" font-family="serif" text-align="start" font-weight="bold">
+      Links in different orientations
+  </fo:block>
+
+      <fo:block>
+        This block container has a different reference orientation.
+        <fo:block-container reference-orientation="90" inline-progression-dimension="150pt">
+          <fo:block>
+            A link applies to the inline parent area that is created
+            by the basic-link. This inline area has a trait specifying
+            the link.
+          </fo:block>
+          <fo:block>
+            <fo:basic-link external-destination="http://xml.apache.org/fop"
+                           color="blue" text-decoration="underline">
+               http://xml.apache.org/fop
+            </fo:basic-link>
+          </fo:block>
+        </fo:block-container>
+      </fo:block>
 
 
 </fo:flow>
