@@ -4,7 +4,7 @@
    <map:components>
       <map:generators default="file">
          <map:generator name="file" src="org.apache.cocoon.generation.FileGenerator" label="content" />
-         
+
          <map:generator name="directory" src="org.apache.cocoon.generation.DirectoryGenerator" label="content" />
 
          <map:generator name="html" src="org.apache.cocoon.generation.HTMLGenerator" label="content" />
@@ -171,7 +171,7 @@
          <map:parameter name="isfaq" value="{notoc}" />
          <map:parameter name="nopdf" value="{nopdf}" />
          <map:parameter name="path" value="{path}" />
-<!-- Can set an alternative project skinconfig here 
+<!-- Can set an alternative project skinconfig here
              <map:parameter name="config-file" value="../../../../skinconf.xml"/>
              -->
          </map:transform>
@@ -249,7 +249,7 @@
       </map:pipeline>
 
 <!-- Pipeline that manages the internal URI space
-       For the external URI space manager, see the next pipeline. 
+       For the external URI space manager, see the next pipeline.
        Set it to internal-only="true" in production environment -->
       <map:pipeline internal-only="false">
          <map:match pattern="**tab-**.xml">
@@ -407,7 +407,7 @@
          </map:match>
 
 
-       
+
 <!-- Generates body HTML for files in subdirs -->
          <map:match pattern="body-**/*.xml">
 <!-- if the file is present as ihtml, convert to doc-v11... -->
@@ -456,7 +456,7 @@
                <map:parameter name="src" value="content/xdocs/{1}/{2}.xml" />
                <map:parameter name="linkmap" value="cocoon:/{1}/linkmap" />
             </map:call>
-            
+
             <map:call resource="skinit">
                <map:parameter name="type" value="document2html" />
                <map:parameter name="path" value="{1}/{2}.xml" />
@@ -479,7 +479,7 @@
             </map:act>
 
 
-          
+
 <!-- if the file is present as html, give that to the user... -->
             <map:act type="resource-exists">
                <map:parameter name="url" value="content/xdocs/{1}.ehtml" />
@@ -598,34 +598,34 @@
             <map:redirect-to uri="{request:contextPath}/index.html" />
          </map:match>
 
-              
+
          <map:match pattern="**">
-         
+
 <!-- Generates printerfriendly HTML from the body (link rewriting) -->
 <!-- NKB disabled temporarily till errors are fixed
          <map:match pattern="printer-friendly/**.html">
             <map:generate src="cocoon://body-{1}.xml"/>
             <map:serialize/>
          </map:match>
-         
+
          <map:match pattern="**/printer-friendly/*.html">
             <map:generate src="cocoon://body-{1}/{2}.xml"/>
             <map:serialize/>
          </map:match>
--->         
+-->
 <!-- Generates source HTML from the body (link rewriting) -->
 <!-- NKB disabled temporarily till errors are fixed
          <map:match pattern="doc-source/**.html">
             <map:generate src="content/xdocs/{1}.xml"/>
             <map:serialize type="xml"/>
          </map:match>
-         
+
          <map:match pattern="**/doc-source/*.html">
             <map:generate src="content/xdocs/{1}/{2}.xml"/>
             <map:serialize type="xml"/>
          </map:match>
---> 
-             
+-->
+
 <!-- if the file is present verbatim as content, give that to the user... -->
             <map:act type="resource-exists">
                <map:parameter name="url" value="content/{1}" />
@@ -680,7 +680,7 @@
                </map:match>
             </map:act>
 
-           
+
 <!-- ... otherwise try to generate it using these rules.  -->
             <map:match pattern="apachestats">
                <map:generate type="html" src="http://www.apache.org/~rubys/stats/xml.apache.org/">
