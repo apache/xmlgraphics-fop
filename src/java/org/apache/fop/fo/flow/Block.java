@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.fo.flow;
 
 // Java
@@ -90,6 +90,9 @@ import org.apache.fop.util.CharUtilities;
   there are only a few sematic changes; mostly I just got rid of
   "this." from blockArea since BlockArea is now local.
  */
+ /**
+  * Class modelling the fo:block object. See Sec. 6.5.2 of the XSL-FO Standard.
+  */
 public class Block extends FObjMixed {
 
     private int align;
@@ -121,10 +124,16 @@ public class Block extends FObjMixed {
      */
     private FONode firstInlineChild = null;
 
+    /**
+     * @param parent FONode that is the parent of this object
+     */
     public Block(FONode parent) {
         super(parent);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#handleAttrs
+     */
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
         this.span = this.properties.get("span").getEnum();
@@ -141,7 +150,7 @@ public class Block extends FObjMixed {
         structHandler.startBlock(this);
     }
 
-    public void setup() {
+    private void setup() {
 
             // Common Accessibility Properties
             AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
@@ -220,14 +229,23 @@ public class Block extends FObjMixed {
 
     }
 
+    /**
+     * @return true (Block can contain Markers)
+     */
     protected boolean containsMarkers() {
         return true;
     }
 
+    /**
+     * @return span for this Block, in millipoints (??)
+     */
     public int getSpan() {
         return this.span;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#addLayoutManager
+     */
     public void addLayoutManager(List list) {
         BlockLayoutManager blm = new BlockLayoutManager();
         blm.setUserAgent(getUserAgent());
@@ -237,10 +255,16 @@ public class Block extends FObjMixed {
         list.add(blm);
     }
 
+    /**
+     * @return false (Block cannot generate inline areas)
+     */
     public boolean generatesInlineAreas() {
         return false;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#addChild
+     */
     public void addChild(FONode child) {
         // Handle whitespace based on values of properties
         // Handle a sequence of inline-producing children in
@@ -257,6 +281,9 @@ public class Block extends FObjMixed {
         super.addChild(child);
     }
 
+    /**
+     * @see org.apache.fop.fo.FONode#end
+     */
     public void end() {
         handleWhiteSpace();
         structHandler.endBlock(this);
@@ -296,7 +323,7 @@ public class Block extends FObjMixed {
                         if (bIgnore) {
                             charIter.remove();
                         } else if (bWScollapse) {
-                            if (bInWS || (lfTreatment == Constants.PRESERVE 
+                            if (bInWS || (lfTreatment == Constants.PRESERVE
                                         && (bPrevWasLF || lfCheck.nextIsLF()))) {
                                 charIter.remove();
                             } else {
@@ -368,7 +395,7 @@ public class Block extends FObjMixed {
                     if (c == '\n') {
                         bNextIsLF = true;
                         break;
-                    } else if (CharUtilities.classOf(c) 
+                    } else if (CharUtilities.classOf(c)
                             != CharUtilities.XMLWHITESPACE) {
                         break;
                     }
