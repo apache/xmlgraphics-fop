@@ -55,6 +55,7 @@ import org.apache.fop.fo.*;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.PageMaster;
+import org.apache.fop.layout.BodyRegionArea;
 import org.apache.fop.apps.FOPException;				   
 
 import java.util.*;
@@ -119,7 +120,7 @@ public class SimplePageMaster extends FObj {
 		
 	this.pageMaster = new PageMaster(pageWidth, pageHeight);
 	if (getRegion(RegionBody.REGION_CLASS) != null) {
-	    this.pageMaster.addBody(getRegion(RegionBody.REGION_CLASS).makeRegionArea(contentRectangleXPosition,contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
+	    this.pageMaster.addBody((BodyRegionArea)getRegion(RegionBody.REGION_CLASS).makeRegionArea(contentRectangleXPosition,contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
 	}
 	else {
 	    MessageHandler.errorln("ERROR: simple-page-master must have a region of class "+RegionBody.REGION_CLASS);
