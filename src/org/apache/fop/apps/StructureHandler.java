@@ -10,7 +10,10 @@ package org.apache.fop.apps;
 // Java
 import java.util.HashSet;
 
-import org.apache.avalon.framework.logger.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
+
+// FOP
 import org.apache.fop.fo.pagination.*;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.*;
@@ -23,19 +26,14 @@ import org.xml.sax.SAXException;
  * Sub-classes can then implement various methods to handle
  * the FO Tree when the SAX events occur.
  */
-public class StructureHandler {
+public class StructureHandler extends AbstractLogEnabled {
     /**
        The current set of id's in the FO tree
        This is used so we know if the FO tree contains duplicates
      */
     private HashSet idReferences = new HashSet();
-    protected Logger log;
 
     public StructureHandler() {
-    }
-
-    public void setLogger(Logger logger) {
-        log = logger;
     }
 
     public HashSet getIDReferences() {

@@ -11,7 +11,7 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.properties.*;
 
 // Avalon
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
 // Java
 import java.util.*;
@@ -21,7 +21,7 @@ import java.util.*;
  * and 'letterValue' properties on fo:page-sequence to return a String
  * corresponding to the supplied integer page number.
  */
-public class PageNumberGenerator {
+public class PageNumberGenerator extends AbstractLogEnabled {
 
     private String format;
     private char groupingSeparator;
@@ -43,8 +43,6 @@ public class PageNumberGenerator {
     private String zeros[] = {
         "", "0", "00", "000", "0000", "00000"
     };
-
-    private Logger log;
 
     public PageNumberGenerator(String format, char groupingSeparator,
                                int groupingSize, int letterValue) {
@@ -70,7 +68,7 @@ public class PageNumberGenerator {
                 formatType = UPPERROMAN;
             } else {
                 // token not handled
-                //log.debug("'format' token not recognized; using '1'");
+                //getLogger().debug("'format' token not recognized; using '1'");
                 formatType = DECIMAL;
                 minPadding = 0;
             }
@@ -80,7 +78,7 @@ public class PageNumberGenerator {
             // loop
             for (int i = 0; i < fmtLen - 1; i++) {
                 if (format.charAt(i) != '0') {
-                    //log.debug("'format' token not recognized; using '1'");
+                    //getLogger().debug("'format' token not recognized; using '1'");
                     formatType = DECIMAL;
                     minPadding = 0;
                 } else {
@@ -88,10 +86,6 @@ public class PageNumberGenerator {
                 }
             }
         }
-    }
-
-    public void setLogger(Logger logger) {
-        log = logger;
     }
 
     public String makeFormattedPageNumber(int number) {

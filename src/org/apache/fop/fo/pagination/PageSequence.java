@@ -180,9 +180,9 @@ public class PageSequence extends FObj {
 
 
         masterName = this.properties.get("master-reference").getString();
-	// TODO: Add code here to set a reference to the PageSequenceMaster
-	// if the masterName names a page-sequence-master, else get a
-	// reference to the SimplePageMaster. Throw an exception if neither?
+    // TODO: Add code here to set a reference to the PageSequenceMaster
+    // if the masterName names a page-sequence-master, else get a
+    // reference to the SimplePageMaster. Throw an exception if neither?
 
         // get the 'format' properties
         this.pageNumberGenerator =
@@ -190,6 +190,7 @@ public class PageSequence extends FObj {
                                     this.properties.get("grouping-separator").getCharacter(),
                                     this.properties.get("grouping-size").getNumber().intValue(),
                                     this.properties.get("letter-value").getEnum());
+        this.pageNumberGenerator.enableLogging(getLogger());
 
         this.forcePageCount =
             this.properties.get("force-page-count").getEnum();
@@ -211,7 +212,7 @@ public class PageSequence extends FObj {
             throw new FOPException("flow-names must be unique within an fo:page-sequence");
         }
         if (!this.layoutMasterSet.regionNameExists(flow.getFlowName())) {
-            log.error("region-name '"
+            getLogger().error("region-name '"
                                    + flow.getFlowName()
                                    + "' doesn't exist in the layout-master-set.");
         }
@@ -228,64 +229,59 @@ public class PageSequence extends FObj {
      * @param child The flow object child to be added to the PageSequence.
      */
     public void addChild(FONode child) {
-	try {
-	    String childName = child.getName();
-	    if (childName.equals("fo:title")) {
-		if (this._flowMap.size()>0) {
-		    log.warn("fo:title should be first in page-sequence");
-		} else {
-		    this.titleFO = (Title)child;
-		    structHandler.startPageSequence(this, titleFO, layoutMasterSet);
-		    sequenceStarted = true;
-		}
-	    }
-	    else if (childName.equals("fo:flow")) {
-		if (this.mainFlow != null) {
-		    throw new FOPException("Only a single fo:flow permitted"
-			      + " per fo:page-sequence");
-		}
-		else {
-		    if(!sequenceStarted) {
-                        structHandler.startPageSequence(this, titleFO, layoutMasterSet);
-                        sequenceStarted = true;
-                    }
-		    this.mainFlow = (Flow)child;
-		    addFlow(mainFlow);
-		    super.addChild(child); // For getChildren
-		}
-	    } 
-	    else if (childName.equals("fo:static-content")) {
-		if (this.mainFlow != null) {
-		    throw new FOPException(childName +
-					   " must precede fo:flow; ignoring");
-		}
-		else {
+        try {
+            String childName = child.getName();
+            if (childName.equals("fo:title")) {
+                if (this._flowMap.size()>0) {
+                    getLogger().warn("fo:title should be first in page-sequence");
+                } else {
+                    this.titleFO = (Title)child;
+                    structHandler.startPageSequence(this, titleFO, layoutMasterSet);
+                    sequenceStarted = true;
+                }
+            } else if (childName.equals("fo:flow")) {
+                if (this.mainFlow != null) {
+                    throw new FOPException("Only a single fo:flow permitted"
+                        + " per fo:page-sequence");
+                } else {
                     if(!sequenceStarted) {
                         structHandler.startPageSequence(this, titleFO, layoutMasterSet);
                         sequenceStarted = true;
                     }
-		    addFlow((Flow)child);
-		}
-	    }
-	    else {
-		// Ignore it!
-		log.warn("FO '" + childName +
-			 "' not a legal page-sequence child.");
-		return;
-	    }
-	} catch (FOPException fopex) {
-	    log.error("Error in PageSequence.addChild(): " +
-		      fopex.getMessage());
-	}
+                    this.mainFlow = (Flow)child;
+                    addFlow(mainFlow);
+                    super.addChild(child); // For getChildren
+                }
+            } else if (childName.equals("fo:static-content")) {
+                if (this.mainFlow != null) {
+                    throw new FOPException(childName +
+                            " must precede fo:flow; ignoring");
+                } else {
+                    if(!sequenceStarted) {
+                        structHandler.startPageSequence(this, titleFO, layoutMasterSet);
+                        sequenceStarted = true;
+                    }
+                    addFlow((Flow)child);
+                }
+            } else {
+                // Ignore it!
+                getLogger().warn("FO '" + childName +
+                    "' not a legal page-sequence child.");
+                return;
+            }
+        } catch (FOPException fopex) {
+            getLogger().error("Error in PageSequence.addChild(): " +
+                fopex.getMessage(), fopex);
+        }
     }
 
     public void end() {
-	try {
-	    this.structHandler.endPageSequence(this);
-	} catch (FOPException fopex) {
-	    log.error("Error in PageSequence.end(): " +
-		      fopex.getMessage());
-	}
+        try {
+            this.structHandler.endPageSequence(this);
+        } catch (FOPException fopex) {
+            getLogger().error("Error in PageSequence.end(): " +
+              fopex.getMessage(), fopex);
+        }
     }
 
 
@@ -315,22 +311,22 @@ public class PageSequence extends FObj {
      * Runs the formatting of this page sequence into the given area tree
      */
     public void format(AreaTree areaTree) throws FOPException {
-	// Make a new PageLayoutManager and a FlowLayoutManager
-	// Run the PLM in a thread
-	// Wait for them to finish.
-	
-	// If no main flow, nothing to layout!
-	if (this.mainFlow == null) return;
+    // Make a new PageLayoutManager and a FlowLayoutManager
+    // Run the PLM in a thread
+    // Wait for them to finish.
 
-	// Initialize if already used?
+    // If no main flow, nothing to layout!
+    if (this.mainFlow == null) return;
+
+    // Initialize if already used?
         this.layoutMasterSet.resetPageMasters();
 
         int firstAvailPageNumber = 0;
 
-	// This will layout pages and add them to the area tree
- 	PageLayoutManager pageLM = new PageLayoutManager(areaTree, this);
-	// For now, skip the threading and just call run directly.
-	pageLM.run();
+    // This will layout pages and add them to the area tree
+    PageLayoutManager pageLM = new PageLayoutManager(areaTree, this);
+    // For now, skip the threading and just call run directly.
+    pageLM.run();
 
 // 	Thread layoutThread = new Thread(pageLM);
 //  	layoutThread.start();
@@ -343,30 +339,30 @@ public class PageSequence extends FObj {
 // 	} catch (InterruptedException ie) {
 // 	    log.error("PageSequence.format() interrupted waiting on layout");
 // 	}
-	// Tell the root the last page number we created.
-	this.root.setRunningPageNumberCounter(this.currentPageNumber);
+    // Tell the root the last page number we created.
+    this.root.setRunningPageNumberCounter(this.currentPageNumber);
     }
 
     private void initPageNumber() {
-	this.currentPageNumber = this.root.getRunningPageNumberCounter() + 1;
+    this.currentPageNumber = this.root.getRunningPageNumberCounter() + 1;
 
-	if (this.pageNumberType == AUTO_ODD) {
-	    // Next page but force odd. May force empty page creation!
-	    // Whose master is used for this??? Assume no. 
-	    // Use force-page-count=auto
-	    // on preceding page-sequence to make sure that there is no gap!
-	    if (currentPageNumber % 2 == 0) {
-		this.currentPageNumber++;
-	    }
-	} else if (pageNumberType == AUTO_EVEN) {
-	    if (currentPageNumber % 2 == 1) {
-		this.currentPageNumber++;
-	    }
-	}
-	else if (pageNumberType == EXPLICIT) {
-	    this.currentPageNumber = this.explicitFirstNumber;
-	}
-	this.firstPageNumber = this.currentPageNumber;
+    if (this.pageNumberType == AUTO_ODD) {
+        // Next page but force odd. May force empty page creation!
+        // Whose master is used for this??? Assume no.
+        // Use force-page-count=auto
+        // on preceding page-sequence to make sure that there is no gap!
+        if (currentPageNumber % 2 == 0) {
+        this.currentPageNumber++;
+        }
+    } else if (pageNumberType == AUTO_EVEN) {
+        if (currentPageNumber % 2 == 1) {
+        this.currentPageNumber++;
+        }
+    }
+    else if (pageNumberType == EXPLICIT) {
+        this.currentPageNumber = this.explicitFirstNumber;
+    }
+    this.firstPageNumber = this.currentPageNumber;
     }
 
     /**
@@ -376,22 +372,22 @@ public class PageSequence extends FObj {
      * @param bIsBlank If true, use a master for a blank page.
      * @param bIsLast If true, use the master for the last page in the sequence.
      */
-    public PageViewport createPage(boolean bIsBlank, boolean bIsLast) 
-	throws FOPException
+    public PageViewport createPage(boolean bIsBlank, boolean bIsLast)
+    throws FOPException
     {
 
-	    // Set even/odd flag and first flag based on current state
-	// Should do it this way, but fix it later....
-	/*boolean bEvenPage = ((this.currentPageNumber %2)==0);
-	  currentPage = makePage(bEvenPage, */
-	currentPage = makePage(this.currentPageNumber,
-			       this.currentPageNumber==this.firstPageNumber,
-			       bIsLast, bIsBlank);
-	return currentPage;
-	    // The page will have a viewport/reference area pair defined
-	    // for each region in the master.
-	    // Set up the page itself
-	//            currentPage.setNumber(this.currentPageNumber);
+        // Set even/odd flag and first flag based on current state
+    // Should do it this way, but fix it later....
+    /*boolean bEvenPage = ((this.currentPageNumber %2)==0);
+      currentPage = makePage(bEvenPage, */
+    currentPage = makePage(this.currentPageNumber,
+                   this.currentPageNumber==this.firstPageNumber,
+                   bIsLast, bIsBlank);
+    return currentPage;
+        // The page will have a viewport/reference area pair defined
+        // for each region in the master.
+        // Set up the page itself
+    //            currentPage.setNumber(this.currentPageNumber);
 // SKIP ALL THIS FOR NOW!!!
 //             String formattedPageNumber =
 //                 pageNumberGenerator.makeFormattedPageNumber(this.currentPageNumber);
@@ -412,7 +408,7 @@ public class PageSequence extends FObj {
 //             this.pageCount++;    // used for 'force-page-count' calculations
 
         // handle the 'force-page-count'
-	    //forcePage(areaTree, firstAvailPageNumber);
+        //forcePage(areaTree, firstAvailPageNumber);
     }
 
     /**
@@ -422,13 +418,13 @@ public class PageSequence extends FObj {
      * @param isFirstPage true when this is the first page in the sequence
      * @param isEmptyPage true if this page will be empty
      * (e.g. forced even or odd break)
-     * @return a Page layout object based on the page master selected 
+     * @return a Page layout object based on the page master selected
      * from the params
      * TODO: modify the other methods to use even/odd flag and bIsLast
      */
     private PageViewport makePage(int firstAvailPageNumber,
-		      boolean isFirstPage, boolean bIsLast,
-		      boolean isEmptyPage) throws FOPException {
+              boolean isFirstPage, boolean bIsLast,
+              boolean isEmptyPage) throws FOPException {
         // layout this page sequence
 
         // while there is still stuff in the flow, ask the
@@ -441,7 +437,7 @@ public class PageSequence extends FObj {
 
         // a legal alternative is to use the last sub-sequence
         // specification which should be handled in getNextSubsequence.
-	// That's not done here.
+    // That's not done here.
         if (pageMaster == null) {
             throw new FOPException("page masters exhausted. Cannot recover.");
         }
@@ -587,7 +583,7 @@ public class PageSequence extends FObj {
             SubSequenceSpecifier nextSubsequence =
                 getNextSubsequence(sequenceMaster);
             if (nextSubsequence == null) {
-                log.error("Page subsequences exhausted. Using previous subsequence.");
+                getLogger().error("Page subsequences exhausted. Using previous subsequence.");
                 thisIsFirstPage =
                     true;    // this becomes the first page in the new (old really) page master
                 currentSubsequence.reset();
@@ -679,7 +675,7 @@ public class PageSequence extends FObj {
 
 //         } else {
 
-//             System.out.println("flow is null. regionClass = '" + regionClass
+//             getLogger().error("flow is null. regionClass = '" + regionClass
 //                                + "' currentSPM = "
 //                                + getCurrentSimplePageMaster());
 

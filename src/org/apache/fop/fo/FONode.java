@@ -29,8 +29,6 @@ abstract public class FONode {
     protected FONode parent;
     protected String name;
 
-    protected Logger log;
-
     protected FONode(FONode parent) {
         this.parent = parent;
     }
@@ -39,8 +37,8 @@ abstract public class FONode {
         name = str;
     }
 
-    public void setLogger(Logger logger) {
-        log = logger;
+    public Logger getLogger() {
+        return userAgent.getLogger();
     }
 
     public void setUserAgent(FOUserAgent ua) {
@@ -97,7 +95,7 @@ abstract public class FONode {
      * @return A ListIterator.
      */
     public ListIterator getChildren() {
-	return null;
+    return null;
     }
 
     /**
@@ -108,11 +106,11 @@ abstract public class FONode {
      * this FObj.
      */
     public ListIterator getChildren(FONode childNode) {
-	return null;
+    return null;
     }
 
     public CharIterator charIterator() {
-	return new OneCharIterator(CharUtilities.CODE_EOT);
+    return new OneCharIterator(CharUtilities.CODE_EOT);
     }
 
 }

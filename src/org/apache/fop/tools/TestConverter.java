@@ -11,7 +11,7 @@ import org.apache.fop.apps.*;
 import org.apache.fop.configuration.*;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
 import java.io.*;
 import java.util.*;
@@ -37,14 +37,13 @@ import org.xml.sax.SAXParseException;
  * Modified by Mark Lillywhite mark-fop@inomial.com to use the new Driver
  * interface.
  */
-public class TestConverter {
+public class TestConverter extends AbstractLogEnabled {
     boolean failOnly = false;
     boolean outputPDF = false;
     File destdir;
     File compare = null;
     String baseDir = "./";
     HashMap differ = new HashMap();
-    private Logger log;
 
     /**
      * This main method can be used to run the test converter from
@@ -61,6 +60,7 @@ public class TestConverter {
             System.out.println("test suite file name required");
         }
         TestConverter tc = new TestConverter();
+        tc.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_ERROR));
 
         String testFile = null;
         for (int count = 0; count < args.length; count++) {
@@ -81,14 +81,6 @@ public class TestConverter {
         tc.runTests(testFile, "results", null);
     }
 
-    public TestConverter() {
-        setupLogging();
-    }
-
-    private void setupLogging() {
-	log = new ConsoleLogger(ConsoleLogger.LEVEL_ERROR);
-    }
-
     public void setOutputPDF(boolean pdf) {
         outputPDF = pdf;
     }
@@ -107,7 +99,7 @@ public class TestConverter {
      * The document is read as a dom and each testcase is covered.
      */
     public HashMap runTests(String fname, String dest, String compDir) {
-        log.debug("running tests in file:" + fname);
+        getLogger().debug("running tests in file:" + fname);
         try {
             if (compDir != null) {
                 compare = new File(baseDir + "/" + compDir);
@@ -131,7 +123,7 @@ public class TestConverter {
             if (testsuite.hasAttributes()) {
                 String profile =
                     testsuite.getAttributes().getNamedItem("profile").getNodeValue();
-                log.debug("testing test suite:" + profile);
+                getLogger().debug("testing test suite:" + profile);
             }
 
             NodeList testcases = testsuite.getChildNodes();
@@ -142,7 +134,7 @@ public class TestConverter {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().error("Error while running tests", e);
         }
         return differ;
     }
@@ -157,7 +149,7 @@ public class TestConverter {
         if (tcase.hasAttributes()) {
             String profile =
                 tcase.getAttributes().getNamedItem("profile").getNodeValue();
-            log.debug("testing profile:" + profile);
+            getLogger().debug("testing profile:" + profile);
         }
 
         NodeList cases = tcase.getChildNodes();
@@ -201,7 +193,7 @@ public class TestConverter {
         if (xslNode != null) {
             xsl = xslNode.getNodeValue();
         }
-        log.debug("converting xml:" + xml + " and xsl:" +
+        getLogger().debug("converting xml:" + xml + " and xsl:" +
                   xsl + " to area tree");
 
         try {
@@ -211,7 +203,7 @@ public class TestConverter {
                 Configuration.put("baseDir",
                                   xmlFile.getParentFile().toURL().toExternalForm());
             } catch (Exception e) {
-                log.error("Error setting base directory");
+                getLogger().error("Error setting base directory");
             }
 
             InputHandler inputHandler = null;
@@ -226,9 +218,8 @@ public class TestConverter {
             XMLReader parser = inputHandler.getParser();
             setParserFeatures(parser);
 
-            Logger logger = log.getChildLogger("fop");
             Driver driver = new Driver();
-            driver.setLogger(logger);
+            setupLogger(driver, "fop");
             driver.initialize();
             if (outputPDF) {
                 driver.setRenderer(Driver.RENDER_PDF);
@@ -249,7 +240,7 @@ public class TestConverter {
             driver.setOutputStream(new BufferedOutputStream(
                                        new FileOutputStream(new File(destdir,
                                        outname + (outputPDF ? ".pdf" : ".at.xml")))));
-            log.debug("ddir:" + destdir + " on:" + outname + ".pdf");
+            getLogger().debug("ddir:" + destdir + " on:" + outname + ".pdf");
             driver.render(parser, inputHandler.getInputSource());
 
             // check difference
@@ -261,7 +252,7 @@ public class TestConverter {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().error("Error while running tests", e);
         }
     }
 

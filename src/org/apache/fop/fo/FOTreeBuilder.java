@@ -30,7 +30,7 @@ import java.io.IOException;
 
 /**
  * SAX Handler that builds the formatting object tree.
- * 
+ *
  * Modified by Mark Lillywhite mark-fop@inomial.com. Now uses
  * StreamRenderer to automagically render the document as
  * soon as it receives a page-sequence end-tag. Also,
@@ -70,13 +70,12 @@ public class FOTreeBuilder extends DefaultHandler {
      * (mark-fop@inomial.com)
      */
     private StructureHandler structHandler;
-    private Logger log;
     private FOUserAgent userAgent;
 
     public FOTreeBuilder() {}
 
-    public void setLogger(Logger logger) {
-        log = logger;
+    public Logger getLogger() {
+        return userAgent.getLogger();
     }
 
     public void setUserAgent(FOUserAgent ua) {
@@ -129,13 +128,13 @@ public class FOTreeBuilder extends DefaultHandler {
     public void startDocument()
     throws SAXException {
         rootFObj = null;    // allows FOTreeBuilder to be reused
-        log.info("building formatting object tree");
+        getLogger().info("building formatting object tree");
         structHandler.startDocument();
     }
 
     public void endDocument()
     throws SAXException {
-        log.info("Parsing of document complete, stopping renderer");
+        getLogger().info("Parsing of document complete, stopping renderer");
         structHandler.endDocument();
     }
 
@@ -164,7 +163,7 @@ public class FOTreeBuilder extends DefaultHandler {
             String fullName = uri + "^" + localName;
             if (!this.unknownFOs.containsKey(fullName)) {
                 this.unknownFOs.put(fullName, "");
-                log.warn("Unknown formatting object "
+                getLogger().warn("Unknown formatting object "
                                        + fullName);
             }
             if(namespaces.contains(uri.intern())) {
@@ -179,7 +178,6 @@ public class FOTreeBuilder extends DefaultHandler {
         try {
             fobj = fobjMaker.make(currentFObj);
             fobj.setName(localName);
-            fobj.setLogger(log);
             // set the user agent for resolving user agent values
             fobj.setUserAgent(userAgent);
             // set the stream renderer so that appropriate

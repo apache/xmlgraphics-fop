@@ -75,7 +75,7 @@ public class ConditionalPageMasterReference extends FObj {
             break;
         case PagePosition.LAST:
             // how the hell do you know at this point?
-            log.debug("LAST PagePosition NYI");
+            getLogger().warn("LAST PagePosition NYI");
             okOnPagePosition = true;
             break;
         case PagePosition.REST:
@@ -147,7 +147,7 @@ public class ConditionalPageMasterReference extends FObj {
                 (RepeatablePageMasterAlternatives)parent;
 
             if (getMasterName() == null) {
-                log.warn("single-page-master-reference"
+                getLogger().warn("single-page-master-reference"
                                        + "does not have a master-name and so is being ignored");
             } else {
                 this.repeatablePageMasterAlternatives.addConditionalPageMasterReference(this);

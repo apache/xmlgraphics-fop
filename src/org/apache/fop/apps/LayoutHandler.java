@@ -132,20 +132,26 @@ public class LayoutHandler extends StructureHandler {
         long memoryNow = runtime.totalMemory() - runtime.freeMemory();
         long memoryUsed = (memoryNow - initialMemory) / 1024L;
 
-        log.debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
-        log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
-        log.debug("Total memory used: " + memoryUsed + "Kb");
+        if (getLogger().isDebugEnabled()) {
+            getLogger().debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
+            getLogger().debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
+            getLogger().debug("Total memory used: " + memoryUsed + "Kb");
 
-        if (!MEM_PROFILE_WITH_GC) {
-            log.debug("  Memory use is indicative; no GC was performed");
-            log.debug("  These figures should not be used comparatively");
+            if (!MEM_PROFILE_WITH_GC) {
+                getLogger().debug("  Memory use is indicative; no GC was performed");
+                getLogger().debug("  These figures should not be used comparatively");
+            }
         }
 
         long timeUsed = System.currentTimeMillis() - startTime;
 
-        log.debug("Total time used: " + timeUsed + "ms");
-        log.debug("Pages rendered: " + pageCount);
-        //log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+        if (getLogger().isDebugEnabled()) {
+            getLogger().debug("Total time used: " + timeUsed + "ms");
+            getLogger().debug("Pages rendered: " + pageCount);
+            if (pageCount > 0) {
+                getLogger().debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+            }
+        }
     }
 
     public void startPageSequence(PageSequence pageSeq, org.apache.fop.fo.Title seqTitle, LayoutMasterSet lms) {

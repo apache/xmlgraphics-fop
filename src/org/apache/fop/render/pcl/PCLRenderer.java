@@ -162,7 +162,7 @@ public class PCLRenderer extends PrintRenderer {
 
     public void startRenderer(OutputStream outputStream)
     throws IOException {
-        log.info("rendering areas to PCL");
+        getLogger().info("rendering areas to PCL");
         currentStream = new PCLStream(outputStream);
 
         // Set orientation.

@@ -15,8 +15,6 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.apps.FOPException;
 import java.util.Vector;
 
-import org.apache.avalon.framework.logger.Logger;
-
 public class Property {
 
     public static class Maker {
@@ -132,7 +130,7 @@ public class Property {
                     return setSubprop(baseProp, partName, p);
                 }
             } else {
-                //log.error("compound property component "
+                //getLogger().error("compound property component "
                 //                       + partName + " unknown.");
             }
             return baseProp;
@@ -223,10 +221,10 @@ public class Property {
                 }
             } catch (FOPException e) {
 
-                //log.error("convertShorthandProperty caught FOPException "
+                //getLogger().error("convertShorthandProperty caught FOPException "
                 //                       + e);
             } catch (org.apache.fop.fo.expr.PropertyException propEx) {
-                //log.error("convertShorthandProperty caught PropertyException "
+                //getLogger().error("convertShorthandProperty caught PropertyException "
                 //                       + propEx);
             }
             if (pret != null) {
@@ -332,7 +330,7 @@ public class Property {
                             return make(propertyList, specVal,
                                         propertyList.getParentFObj());
                         } catch (FOPException e) {
-                            //log.error("Error computing property value for "
+                            //getLogger()error("Error computing property value for "
                             //                       + propName + " from "
                             //                       + specVal);
                             return null;
@@ -358,12 +356,6 @@ public class Property {
      * specified values.
      */
     private String specVal;
-
-    protected Logger log;
-
-    public void setLogger(Logger logger) {
-        log = logger;
-    }
 
     /**
      * Set the original value specified for the property attribute.

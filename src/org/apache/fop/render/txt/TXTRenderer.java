@@ -81,7 +81,7 @@ public class TXTRenderer extends PrintRenderer {
 
     void addStr(int row, int col, String str, boolean ischar) {
         if (debug)
-            System.out.println("TXTRenderer.addStr(" + row + ", " + col
+            getLogger().debug("TXTRenderer.addStr(" + row + ", " + col
                                + ", \"" + str + "\", " + ischar + ")");
         if (suppressGraphics &&!ischar)
             return;
@@ -105,14 +105,14 @@ public class TXTRenderer extends PrintRenderer {
         for (int countr = sb.length(); countr < col; countr++)
             sb.append(' ');
         if (debug)
-            System.out.println("TXTRenderer.addStr() sb.length()="
+            getLogger().debug("TXTRenderer.addStr() sb.length()="
                                + sb.length());
         for (int countr = col; countr < (col + str.length()); countr++) {
             if (countr >= sb.length())
                 sb.append(str.charAt(countr - col));
             else {
                 if (debug)
-                    System.out.println("TXTRenderer.addStr() sb.length()="
+                    getLogger().debug("TXTRenderer.addStr() sb.length()="
                                        + sb.length() + " countr=" + countr);
                 sb.setCharAt(countr, str.charAt(countr - col));
             }

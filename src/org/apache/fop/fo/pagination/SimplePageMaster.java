@@ -51,7 +51,7 @@ public class SimplePageMaster extends FObj {
             LayoutMasterSet layoutMasterSet = (LayoutMasterSet)parent;
             masterName = this.properties.get("master-name").getString();
             if (masterName == null) {
-                log.warn("simple-page-master does not have "
+                getLogger().warn("simple-page-master does not have "
                                        + "a master-name and so is being ignored");
             } else {
                 layoutMasterSet.addSimplePageMaster(this);
@@ -79,48 +79,48 @@ public class SimplePageMaster extends FObj {
         // Get absolute margin properties (top, left, bottom, right)
         MarginProps mProps = propMgr.getMarginProps();
 
-	/* Create the page reference area rectangle in first quadrant coordinates
-	 * (ie, 0,0 is at bottom,left of the "page media" and y increases
-	 * when moving towards the top of the page.
-	 * The media rectangle itself is (0,0,pageWidth,pageHeight).
-	 */
-	Rectangle pageRefRect =
-	    new Rectangle(mProps.marginLeft, mProps.marginTop,
-			  pageWidth - mProps.marginLeft - mProps.marginRight,
-			  pageHeight - mProps.marginTop - mProps.marginBottom);
+    /* Create the page reference area rectangle in first quadrant coordinates
+     * (ie, 0,0 is at bottom,left of the "page media" and y increases
+     * when moving towards the top of the page.
+     * The media rectangle itself is (0,0,pageWidth,pageHeight).
+     */
+    Rectangle pageRefRect =
+        new Rectangle(mProps.marginLeft, mProps.marginTop,
+              pageWidth - mProps.marginLeft - mProps.marginRight,
+              pageHeight - mProps.marginTop - mProps.marginBottom);
 
-	// ??? KL shouldn't this take the viewport too???
-	Page page = new Page();  // page reference area
+    // ??? KL shouldn't this take the viewport too???
+    Page page = new Page();  // page reference area
 
         // Set up the CTM on the page reference area based on writing-mode
         // and reference-orientation
-	FODimension reldims=new FODimension(0,0);
-	CTM pageCTM = propMgr.getCTMandRelDims(pageRefRect, reldims);
+    FODimension reldims=new FODimension(0,0);
+    CTM pageCTM = propMgr.getCTMandRelDims(pageRefRect, reldims);
 
-	// Create a RegionViewport/ reference area pair for each page region
+    // Create a RegionViewport/ reference area pair for each page region
 
-	boolean bHasBody=false;
+    boolean bHasBody=false;
 
         for (Iterator regenum = _regions.values().iterator();
                 regenum.hasNext(); ) {
             Region r = (Region)regenum.next();
-	    RegionViewport rvp = r.makeRegionViewport(reldims, pageCTM);
-	    rvp.setRegion(r.makeRegionReferenceArea(rvp.getViewArea()));
-	    page.setRegion(r.getRegionAreaClass(), rvp);
-	    if (r.getRegionAreaClass() == RegionReference.BODY) {
-		bHasBody = true;
-	    }
+        RegionViewport rvp = r.makeRegionViewport(reldims, pageCTM);
+        rvp.setRegion(r.makeRegionReferenceArea(rvp.getViewArea()));
+        page.setRegion(r.getRegionAreaClass(), rvp);
+        if (r.getRegionAreaClass() == RegionReference.BODY) {
+        bHasBody = true;
+        }
         }
 
-	if (!bHasBody) {
-            log.error("simple-page-master has no region-body");
+    if (!bHasBody) {
+            getLogger().error("simple-page-master has no region-body");
         }
 
-	this.pageMaster = new PageMaster(new PageViewport(page,
-					   new Rectangle(0,0,
-							 pageWidth,pageHeight)));
+    this.pageMaster = new PageMaster(new PageViewport(page,
+                       new Rectangle(0,0,
+                             pageWidth,pageHeight)));
 
-	//  _regions = null; // PageSequence access SimplePageMaster....
+    //  _regions = null; // PageSequence access SimplePageMaster....
         children = null;
         properties = null;
     }
@@ -142,19 +142,18 @@ public class SimplePageMaster extends FObj {
     }
 
     protected void addChild(FONode child) {
-	if (child instanceof Region) {
-	    addRegion((Region)child);
-	}
-	else {
-	    log.error("SimplePageMaster cannot have child of type " +
-		      child.getName());
-	}
+        if (child instanceof Region) {
+            addRegion((Region)child);
+        } else {
+            getLogger().error("SimplePageMaster cannot have child of type " +
+                child.getName());
+        }
     }
 
     protected void addRegion(Region region) {
-	String key = region.getRegionClass();
+        String key = region.getRegionClass();
         if (_regions.containsKey(key)) {
-            log.error("Only one region of class "
+            getLogger().error("Only one region of class "
                                    + key
                                    + " allowed within a simple-page-master.");
             // throw new FOPException("Only one region of class "

@@ -138,7 +138,7 @@ public abstract class XMLObj extends FONode {
             // in theory someone might want to embed some defined
             // xml (eg. fo) inside the foreign xml
             // they could use a different namespace
-            log.debug("Invalid element: " + child.getName() + " inside foreign xml markup");
+            getLogger().debug("Invalid element: " + child.getName() + " inside foreign xml markup");
         }
     }
 

@@ -33,6 +33,6 @@ public class Unknown extends FONode {
     }
 
     public void setup() {
-        log.debug("Layout Unknown element");
+        getLogger().debug("Layout Unknown element");
     }
 }

@@ -34,7 +34,7 @@ public class Bookmarks extends ExtensionObj {
     }
 
     public void end() {
-        log.debug("adding bookmarks to area tree");
+        getLogger().debug("adding bookmarks to area tree");
         data = new BookmarkData();
         for(int count = 0; count < outlines.size(); count++) {
             Outline out = (Outline)outlines.get(count);

@@ -13,9 +13,6 @@ import org.apache.fop.area.inline.*;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.fo.FOUserAgent;
 
-// Avalon
-import org.apache.avalon.framework.logger.Logger;
-
 // Java
 import java.io.OutputStream;
 import java.io.IOException;
@@ -32,14 +29,12 @@ import java.util.HashMap;
  */
 public interface Renderer {
 
+    public static final String ROLE = Renderer.class.getName();
+
+
     public void startRenderer(OutputStream outputStream) throws IOException;
 
     public void stopRenderer() throws IOException;
-
-    /**
-     * Set the logger
-     */
-    public void setLogger(Logger logger);
 
     /**
      * Set the User Agent

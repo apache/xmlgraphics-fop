@@ -143,7 +143,7 @@ public class ExternalGraphic extends FObj {
                 cheight = (int)(fopimage.getHeight() * 1000);
             }
             if(scaling == Scaling.UNIFORM) {
-                // adjust the larger 
+                // adjust the larger
                 double rat1 = cwidth / (fopimage.getWidth() * 1000f);
                 double rat2 = cheight / (fopimage.getHeight() * 1000f);
                 if(rat1 < rat2) {
@@ -167,7 +167,7 @@ public class ExternalGraphic extends FObj {
             if(overflow == Overflow.HIDDEN) {
                 clip = true;
             } else if(overflow == Overflow.ERROR_IF_OVERFLOW) {
-                log.error("Image: " + url + " overflows the viewport");
+                getLogger().error("Image: " + url + " overflows the viewport");
                 clip = true;
             }
         }
@@ -208,7 +208,7 @@ public class ExternalGraphic extends FObj {
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
 
-        // Common Aural Properties 
+        // Common Aural Properties
         AuralProps mAurProps = propMgr.getAuralProps();
 
         // Common Border, Padding, and Background Properties

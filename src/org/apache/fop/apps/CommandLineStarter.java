@@ -47,13 +47,13 @@ public class CommandLineStarter extends Starter {
     public void run() throws FOPException {
         String version = Version.getVersion();
 
-        log.info(version);
+        getLogger().info(version);
 
         XMLReader parser = inputHandler.getParser();
         setParserFeatures(parser);
 
         Driver driver = new Driver();
-        driver.setLogger(log);
+        setupLogger(driver);
         driver.initialize();
 
         if (errorDump) {

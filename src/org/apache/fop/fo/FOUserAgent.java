@@ -10,6 +10,7 @@ package org.apache.fop.fo;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 
+import org.apache.avalon.framework.logger.LogEnabled;
 import org.apache.avalon.framework.logger.Logger;
 
 import org.w3c.dom.*;
@@ -31,13 +32,13 @@ import java.util.HashMap;
  * These areas may contain resolveable areas that will be processed
  * with other resolveable areas
  */
-public class FOUserAgent {
+public class FOUserAgent implements LogEnabled {
     HashMap defaults = new HashMap();
     HashMap handlers = new HashMap();
     Logger log;
     String base;
 
-    public void setLogger(Logger logger) {
+    public void enableLogging(Logger logger) {
         log = logger;
     }
 
@@ -83,7 +84,7 @@ public class FOUserAgent {
         mh.put(ns, handler);
     }
 
-    /** 
+    /**
      * Render the xml document with the given xml namespace.
      * The Render Context is by the handle to render into the current
      * rendering target.
@@ -104,11 +105,11 @@ public class FOUserAgent {
                 handler.handleXML(ctx, doc, namespace);
             } catch (Throwable t) {
                 // could not handle document
-                log.error("Could not render XML", t);
+                getLogger().error("Could not render XML", t);
             }
         } else {
             // no handler found for document
-            log.debug("No handler defined for XML: " + namespace);
+            getLogger().debug("No handler defined for XML: " + namespace);
         }
     }
 }
