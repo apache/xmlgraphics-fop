@@ -83,7 +83,8 @@ public class Page implements Serializable, Cloneable {
         } else if (areaclass == Constants.FO_REGION_AFTER) {
             return regionAfter;
         }
-        return null;
+        throw new IllegalArgumentException("No such area class with ID = "
+            + areaclass);
     }
 
     /**
