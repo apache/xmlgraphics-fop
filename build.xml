@@ -155,6 +155,14 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="ignore_this" value="ignore_this.java"/>
     <property name="jimi" value="JimiImage.java"/>
 
+    <property name="ignore_jdk11"
+              value="org/apache/fop/render/awt/**
+                     ,org/apache/fop/image/analyzer/*
+                     ,org/apache/fop/viewer/**
+                     ,org/apache/fop/image/*
+                     ,**/PrintCommandLine.java
+                     ,**/AWTCommandLine.java"/>
+
     <property name="xslt" value="org.apache.xalan.xslt.Process"/>
     <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
     <property name="properties.xml" value="${build.codegen}/properties.xml"/>
@@ -317,12 +325,32 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
            excludes="**/${ignore_this},${jimi}"/>
   </target>
 
+  <target name="compile-jdk11" depends="codegen, prepare-src">
+    <echo message="Compiling the sources for JDK1.1"/>
+    <!-- create directories -->
+    <mkdir dir="${build.dest}"/>
+
+    <javac srcdir="${build.src}"
+           destdir="${build.dest}"
+           debug="${debug}"
+           deprecation="${deprecation}"
+           optimize="${optimize}"
+           excludes="**/${ignore_this},${jimi},${ignore_jdk11}"/>
+  </target>
+
   <!-- =================================================================== -->
   <!-- Creates the class package                                           -->
   <!-- =================================================================== -->
   <target name="package" depends="compile">
     <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
     <jar jarfile="${build.dir}/${name}.jar"
+         basedir="${build.dest}"
+         includes="org/**"/>
+  </target>
+
+  <target name="package-jdk11" depends="compile-jdk11">
+    <echo message="Creating the jar file ${build.dir}/${name}11.jar"/>
+    <jar jarfile="${build.dir}/${name}-jdk11.jar"
          basedir="${build.dest}"
          includes="org/**"/>
   </target>
