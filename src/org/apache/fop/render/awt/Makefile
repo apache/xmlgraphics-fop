@@ -1,19 +1,11 @@
 
 
-BASEDIR:=../../../../..
+BASEDIR:=../../../../../..
 include $(BASEDIR)/Makefile.rules
 
 SUBDIRS=
 
-SOURCES=AWTCommandLine.java \
-	CommandLine.java \
-	Driver.java \
-	ErrorHandler.java \
-	FOPException.java \
-	Version.java \
-	XTCommandLine.java
-
-
+SOURCES=AWTRenderer.java
 
 CLASSES=$(SOURCES:.java=.class)
 

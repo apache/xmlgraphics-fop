@@ -3,7 +3,8 @@
 BASEDIR:=../../../../..
 include $(BASEDIR)/Makefile.rules
 
-SUBDIRS=pdf \
+SUBDIRS=awt \
+	pdf \
 	xml
 
 SOURCES=Renderer.java

@@ -10,7 +10,8 @@ SUBDIRS=apps \
 	layout \
 	pdf \
 	render \
-	svg
+	svg \
+	viewer
 
 all: $(CLASSES) allsubs
 
