@@ -36,6 +36,11 @@ list of possible build targets.
 ============================================================================ -->
 <project default="package" basedir=".">
 
+  <!-- used to set values for testing etc. --> 
+  <!-- build-local.properties is not stored in CVS and overrides values from build.properties -->
+  <property file="build-local.properties"/>
+  <property file="build.properties"/>
+  
   <fileset dir="${basedir}" id="dist.bin">
     <include name="conf/**"/>
     <include name="docs/**"/>
@@ -130,6 +135,7 @@ list of possible build targets.
     <property name="year" value="1999-2002"/>
     
     <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
+    <echo message="See build.properties and build-local.properties for additional build settings"/>
     
     <property name="build.compiler" value="classic"/>
     <property name="debug" value="on"/>
@@ -668,7 +674,7 @@ list of possible build targets.
     <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"
              classpathref="libs-run-classpath"/>
     <mkdir dir="${build.examples.dir}"/>
-    <fop format="application/pdf" outdir="${build.examples.dir}"
+    <fop format="${build.property.examples.mime.type}" outdir="${build.examples.dir}"
          messagelevel="debug" basedir="${fo.examples.dir}">
       <fileset dir="${fo.examples.dir}">
         <include name="**/*.fo"/>
