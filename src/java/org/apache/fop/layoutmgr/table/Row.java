@@ -200,12 +200,13 @@ public class Row extends BlockStackingLayoutManager {
             
         //Border resolution now that the empty grid units are filled
         for (int pos = 1; pos <= gridUnits.size(); pos++) {
-            GridUnit gu = (GridUnit)gridUnits.get(pos - 1);
+            GridUnit starting = (GridUnit)gridUnits.get(pos - 1);
          
             //Border resolution
             if (getTable().isSeparateBorderModel()) {
-                gu.assignBorder(gu.layoutManager);
+                starting.assignBorder(starting.layoutManager);
             } else {
+                //Neighbouring grid unit at start edge 
                 GridUnit start = null;
                 int find = pos - 1;
                 while (find >= 1) {
@@ -216,6 +217,13 @@ public class Row extends BlockStackingLayoutManager {
                     }
                     find--;
                 }
+                
+                //Ending grid unit for current cell
+                GridUnit ending = null;
+                pos += starting.layoutManager.getFObj().getNumberColumnsSpanned() - 1;
+                ending = (GridUnit)gridUnits.get(pos - 1);
+                
+                //Neighbouring grid unit at end edge 
                 GridUnit end = null;
                 find = pos + 1;
                 while (find <= gridUnits.size()) {
@@ -224,15 +232,20 @@ public class Row extends BlockStackingLayoutManager {
                         end = candidate;
                         break;
                     }
+                    find++;
                 }
                 CommonBorderPaddingBackground borders = new CommonBorderPaddingBackground();
-                GridUnit.resolveBorder(getTable(), borders, gu, 
+                GridUnit.resolveBorder(getTable(), borders, starting, 
                         (start != null ? start : null), 
                         CommonBorderPaddingBackground.START);
-                GridUnit.resolveBorder(getTable(), borders, gu, 
+                starting.effBorders = borders;
+                if (starting != ending) {
+                    borders = new CommonBorderPaddingBackground();
+                }
+                GridUnit.resolveBorder(getTable(), borders, ending, 
                         (end != null ? end : null), 
                         CommonBorderPaddingBackground.END);
-                gu.effBorders = borders;
+                ending.effBorders = borders;
                 //Only start and end borders here, before and after during layout
                 //TODO resolve before and after borders during layout
             }
@@ -412,21 +425,21 @@ public class Row extends BlockStackingLayoutManager {
     }
 
     /**
-     * Determines the columns that are spanned by the given cell.
+     * Determines the grid units that are spanned by the given cell.
      * @param cellLM table-cell LM
      * @param startCell starting cell index (must be >= 1)
-     * @param spannedColumns List to receive the applicable columns
+     * @param spannedGridUnits List to receive the applicable grid units
      */
-    private void getGridUnitsForCell(Cell cellLM, int startCell, List spannedColumns) {
+    private void getGridUnitsForCell(Cell cellLM, int startCell, List spannedGridUnits) {
         int count;
         if (cellLM != null) {
             count = cellLM.getFObj().getNumberColumnsSpanned();
         } else {
             count = 1;
         }
-        spannedColumns.clear();
+        spannedGridUnits.clear();
         for (int i = 0; i < count; i++) {
-            spannedColumns.add(this.gridUnits.get(startCell + i - 1));
+            spannedGridUnits.add(this.gridUnits.get(startCell + i - 1));
         }
     }
 
