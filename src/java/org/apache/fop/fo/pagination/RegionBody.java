@@ -45,7 +45,7 @@ public class RegionBody extends Region {
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionBody(FONode parent) {
-        super(parent, FO_REGION_BODY);
+        super(parent);
     }
 
     /**
