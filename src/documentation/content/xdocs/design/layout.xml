@@ -12,8 +12,6 @@
     </header>
 
     <body>
-<section>
-  <title>FO Layout</title>
 <p>
 The aim of the layout system is to be self contained and allow for
 easy changes or extensions for future development. For example the
@@ -445,8 +443,6 @@ the last page (if applicable). The areas are then placed on a last
 page.
   </p>
   </section>
-  </section>
-
   </section>
 
     </body>

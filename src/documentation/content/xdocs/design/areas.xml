@@ -12,8 +12,6 @@
   </header>
 
   <body>
-<section>
-  <title>Area Tree</title>
 <p>
 The code to implement the area tree matches the areas
 defined in the specification. This makes it easier to understand and
@@ -174,7 +172,6 @@ A renderer implementation does the following:
 An abstract renderer will be able to handle the generic positioning
 of child areas, iterating through areas that have child areas.
   </p>
-  </section>
   </section>
 
   </body>
