@@ -972,6 +972,12 @@ Can I control this?</question>
         </p>
       </answer>
     </faq>
+    <faq id="xslt-current-date">
+      <question>(XSLT) How can I use the current date and time in my document?</question>
+      <answer>
+        <p>See <link href="fo.html#xslt-date">Current Date and Time</link>.</p>
+      </answer>
+    </faq>
   </part>
   <part id="part-help">
     <title>General suggestions. How to solve problems.</title>
