@@ -1,8 +1,8 @@
 #!/bin/sh
 # This file should be executable.
 echo
-echo "Fop Build System"
-echo "----------------"
+echo "Apache FOP: Build System"
+echo "--------------------------"
 echo
 
 if [ "$JAVA_HOME" = "" ] ; then
@@ -10,6 +10,21 @@ if [ "$JAVA_HOME" = "" ] ; then
   echo
   echo "Please, set the JAVA_HOME variable in your environment to match the"
   echo "location of the Java Virtual Machine you want to use."
+  exit 1
+fi
+
+if [ "$ANT_HOME" = "" ] ; then
+  echo "ERROR: ANT_HOME not found in your environment."
+  echo
+  echo "Please install Apache Ant first. FOP uses Ant as its build system."
+  echo "You can download Apache Ant from http://ant.apache.org"
+  echo "1. Download and install Ant"
+  echo "2. Set the ANT_HOME environment variable to the directory where you've"
+  echo "   placed Ant."
+  echo "3. Add "\$ANT_HOME/bin" to your PATH so the "ant" script file"
+  echo "   can be be executed from wherever needed."
+  echo "4. (optional) Download JUnit and place junit-*.jar in \$ANT_HOME/lib."
+  echo "   This enables the JUnit test cases."
   exit 1
 fi
 
@@ -21,33 +36,8 @@ esac
 
 # For Cygwin, ensure paths are in UNIX format before anything is touched
 if $cygwin ; then
-  [ -n "$JAVA_HOME" ] &&
-    JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
+  [ -n "$ANT_HOME" ] &&
+    ANT_HOME=`cygpath --unix "$ANT_HOME"`
 fi
-
-LIBDIR=lib
-LOCALCLASSPATH="$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip"
-LOCALCLASSPATH="$LOCALCLASSPATH:$LIBDIR/ant.jar"
-LOCALCLASSPATH="$LOCALCLASSPATH:$LIBDIR/xml-apis.jar"
-LOCALCLASSPATH="$LOCALCLASSPATH:$LIBDIR/xercesImpl-2.2.1.jar"
-LOCALCLASSPATH="$LOCALCLASSPATH:$LIBDIR/xalan-2.4.1.jar"
-
-ANT_HOME="$LIBDIR"
-# antRun must be executable (can't do this in build.xml because Ant uses antRun
-# to do the chmod)
-chmod +rx "$LIBDIR/bin/antRun"
-
-
-# For Cygwin, switch paths to Windows format before running java
-if $cygwin; then
-  JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
-  LOCALCLASSPATH=`cygpath --path --windows "$LOCALCLASSPATH"`
-fi
-
-echo
-echo Building with classpath $LOCALCLASSPATH
-echo Starting Ant...
-echo
-
-"$JAVA_HOME"/bin/java -Dant.home="$ANT_HOME" -classpath "$LOCALCLASSPATH" org.apache.tools.ant.Main "$@"
+"$ANT_HOME"/bin/ant "$@"
 
