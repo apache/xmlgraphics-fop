@@ -21,6 +21,7 @@ package org.apache.fop.fo.extensions;
 import org.xml.sax.Locator;
 
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * Labal for PDF bookmark extension.
@@ -48,6 +49,7 @@ public class Label extends ExtensionObj {
      * @param locator location in fo source file.
      */
     protected void addCharacters(char data[], int start, int end,
+                                 PropertyList pList,
                                  Locator locator) {
         label += new String(data, start, end - start);
     }
