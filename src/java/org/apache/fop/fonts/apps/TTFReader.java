@@ -109,6 +109,8 @@ public class TTFReader extends AbstractLogEnabled {
         getLogger().info(
                 " java org.apache.fop.fonts.apps.TTFReader [options] fontfile.ttf xmlfile.xml");
         getLogger().info(" where options can be:");
+        getLogger().info("-d <DEBUG|INFO>");
+        getLogger().info("     Set debug level (default: INFO).");
         getLogger().info("-enc ansi");
         getLogger().info("     With this option you create a WinAnsi encoded font.");
         getLogger().info("     The default is to create a CID keyed font.");
