@@ -54,7 +54,6 @@ public class PDFPages extends PDFObject {
      * @param objnum the object's number
      */
     public PDFPages(int objnum) {
-        super();
         setObjectNumber(objnum);
     }
 
