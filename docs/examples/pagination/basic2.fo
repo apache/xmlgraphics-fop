@@ -72,7 +72,7 @@
         The Extensible Markup Language (XML) is a subset of SGML that is completely described in this document. Its goal is to
         enable generic SGML to be served, received, and processed on the Web in the way that is now possible with HTML. XML
         has been designed for ease of implementation and for interoperability with both SGML and HTML. For further information 
-        go to <fo:simple-link external-destination="normal.pdf">normal.pdf</fo:simple-link>
+        go to <fo:basic-link external-destination="normal.pdf">normal.pdf</fo:basic-link>
       </fo:block>
 
       <!-- defines text title level 2-->
@@ -96,7 +96,7 @@
         W3C Recommendation. It is a stable document and may be used as reference material or cited as a normative reference from
         another document. W3C's role in making the Recommendation is to draw attention to the specification and to promote its
         widespread deployment. This enhances the functionality and interoperability of the Web. For further information go to 
-        <fo:simple-link external-destination="normal.pdf">normal.pdf</fo:simple-link>
+        <fo:basic-link external-destination="normal.pdf">normal.pdf</fo:basic-link>
       </fo:block>
 
       <!-- Normal text -->
