@@ -229,6 +229,7 @@ public class TestConverter {
             Logger logger = log.getChildLogger("fop");
             Driver driver = new Driver();
             driver.setLogger(logger);
+            driver.initialize();
             if (outputPDF) {
                 driver.setRenderer(Driver.RENDER_PDF);
             } else {
