@@ -965,9 +965,9 @@
       <subproperty set-by-shorthand="true">
         <name>minimum</name>
         <datatype>Length</datatype>
-  <default>auto</default>
-  <auto-ok/>
-  <percent-ok base="CONTAINING_BOX"/>
+        <default>auto</default>
+        <auto-ok/>
+        <percent-ok base="CONTAINING_BOX"/>
         <corresponding>
           <propval>min-<wmrel2abs dir="BLOCKPROGDIM"/></propval>
         </corresponding>>
@@ -975,16 +975,16 @@
       <subproperty set-by-shorthand="true">
         <name>optimum</name>
         <datatype>Length</datatype>
-  <default>auto</default>
-  <auto-ok/>
-  <percent-ok base="CONTAINING_BOX"/>
+        <default>auto</default>
+        <auto-ok/>
+        <percent-ok base="CONTAINING_BOX"/>
       </subproperty>
       <subproperty set-by-shorthand="true">
         <name>maximum</name>
         <datatype>Length</datatype>
-  <auto-ok/>
-  <default>auto</default>
-  <percent-ok base="CONTAINING_BOX"/>
+        <auto-ok/>
+        <default>auto</default>
+        <percent-ok base="CONTAINING_BOX"/>
         <corresponding>
           <propval>max-<wmrel2abs dir="BLOCKPROGDIM"/></propval>
         </corresponding>>
@@ -1015,10 +1015,40 @@
   <property>
     <name>inline-progression-dimension</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
-    <default>auto</default>
-  </property>
-  <property>
+    <datatype>LengthRange</datatype>
+    <corresponding use-if-specified="true">
+      <propval><wmrel2abs dir="INLINEPROGDIM"/></propval>
+    </corresponding>
+    <compound>
+      <subproperty set-by-shorthand="true">
+        <name>minimum</name>
+        <datatype>Length</datatype>
+        <default>auto</default>
+        <auto-ok/>
+        <percent-ok base="CONTAINING_BOX"/>
+        <corresponding>
+          <propval>min-<wmrel2abs dir="INLINEPROGDIM"/></propval>
+        </corresponding>>
+      </subproperty>
+      <subproperty set-by-shorthand="true">
+        <name>optimum</name>
+        <datatype>Length</datatype>
+        <default>auto</default>
+        <auto-ok/>
+        <percent-ok base="CONTAINING_BOX"/>
+      </subproperty>
+      <subproperty set-by-shorthand="true">
+        <name>maximum</name>
+        <datatype>Length</datatype>
+        <auto-ok/>
+        <default>auto</default>
+        <percent-ok base="CONTAINING_BOX"/>
+        <corresponding>
+          <propval>max-<wmrel2abs dir="INLINEPROGDIM"/></propval>
+        </corresponding>>
+      </subproperty>
+    </compound>
+  </property>  <property>
     <name>max-height</name>
     <inherited>false</inherited>
     <datatype>ToBeImplemented</datatype>
@@ -1797,7 +1827,7 @@
     <name>column-width</name>
     <inherited>false</inherited>
     <datatype>Length</datatype>
-    <default>proportional-column-width(1)</default>
+    <default contextdep="true">proportional-column-width(1)</default>
   </property>
   <property>
     <name>empty-cells</name>
@@ -1838,9 +1868,12 @@
   <property>
     <name>table-layout</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>Enum</datatype>
     <default>auto</default>
-  </property>
+    <enumeration>
+      <value const="AUTO">auto</value>
+      <value const="FIXED">fixed</value>
+    </enumeration>  </property>
   <property>
     <name>table-omit-footer-at-break</name>
     <inherited>false</inherited>
