@@ -164,6 +164,21 @@ public class EnumType extends AbstractPropertyValue {
     }
 
     /**
+     * Return the ENUM value from a PropertyValue. 
+     * @param pv
+     * @return the ENUM constant
+     * @exception PropertyException if the <code>PropertyValue</code> is not
+     * an <code>EnumType</code>
+     */
+    public static int getEnumValue(PropertyValue pv)
+    throws PropertyException {
+        if (pv.getType() == PropertyValue.ENUM) {
+            return ((EnumType)pv).getEnumValue();
+        }
+        throw new PropertyException("PropertyValue not an ENUM type");
+    }
+
+    /**
      * @return the <tt>String</tt> enumeration token.
      */
     public String getEnumToken() throws PropertyException {
