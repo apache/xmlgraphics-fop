@@ -60,16 +60,6 @@ public class AreaTree {
         return this.fontInfo;
     }
 
-//      public Page getNextPage(Page current, boolean isWithinPageSequence,
-//                              boolean isFirstCall) {
-//          return streamRenderer.getNextPage(current, isWithinPageSequence,isFirstCall);
-//      }
-
-    public Page getPreviousPage(Page current, boolean isWithinPageSequence,
-                                boolean isFirstCall) {
-        return streamRenderer.getPreviousPage(current,isWithinPageSequence,isFirstCall);
-    }
-
     public void addPage(Page page)
     throws FOPException {
         try {
@@ -92,4 +82,18 @@ public class AreaTree {
         rootExtensions.add(obj);
     }
 
+    // Auxillary function for retrieving markers.
+    public ArrayList getDocumentMarkers() {
+        return streamRenderer.getDocumentMarkers();
+    }
+
+    // Auxillary function for retrieving markers.
+    public PageSequence getCurrentPageSequence() {
+        return streamRenderer.getCurrentPageSequence();
+    }
+
+    // Auxillary function for retrieving markers.
+    public ArrayList getCurrentPageSequenceMarkers() {
+        return streamRenderer.getCurrentPageSequenceMarkers();
+    }
 }

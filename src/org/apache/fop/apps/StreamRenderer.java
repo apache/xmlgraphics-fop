@@ -13,13 +13,14 @@ import java.util.Iterator;
 
 import org.xml.sax.SAXException;
 
+import org.apache.fop.datatypes.IDReferences;
+import org.apache.fop.extensions.ExtensionObj;
+import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.layout.AreaTree;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.Page;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.layout.AreaTree;
-import org.apache.fop.datatypes.IDReferences;
-import org.apache.fop.extensions.ExtensionObj;
-import org.apache.fop.fo.pagination.PageSequence;
 
 import org.apache.avalon.framework.logger.Logger;
 
@@ -98,6 +99,13 @@ public class StreamRenderer {
      */
     private ArrayList extensions = new ArrayList();
 
+    /**
+     * The list of markers.
+     */
+    private ArrayList documentMarkers;
+    private ArrayList currentPageSequenceMarkers;
+    private PageSequence currentPageSequence;
+    
     private Logger log;
 
     public StreamRenderer(OutputStream outputStream, Renderer renderer) {
@@ -126,7 +134,7 @@ public class StreamRenderer {
         pageCount = 0;
 
         if (MEM_PROFILE_WITH_GC)
-            System.gc();		// This takes time but gives better results
+            System.gc();	// This takes time but gives better results
 
         initialMemory = runtime.totalMemory() - runtime.freeMemory();
         startTime = System.currentTimeMillis();
@@ -158,7 +166,7 @@ public class StreamRenderer {
         }
 
         if (MEM_PROFILE_WITH_GC)
-            System.gc();		// This takes time but gives better results
+            System.gc();	// This takes time but gives better results
 
         long memoryNow = runtime.totalMemory() - runtime.freeMemory();
         long memoryUsed = (memoryNow - initialMemory) / 1024L;
@@ -217,31 +225,48 @@ public class StreamRenderer {
 
     public synchronized void queuePage(Page page)
     throws FOPException, IOException {
+
+        // process markers
+        PageSequence pageSequence = page.getPageSequence();
+        if (pageSequence != currentPageSequence) {
+            currentPageSequence = pageSequence;
+            currentPageSequenceMarkers = null;
+        }
+        ArrayList markers = page.getMarkers();
+        if (markers != null) {
+            if (documentMarkers == null) {
+                documentMarkers = new ArrayList();
+            }
+            if (currentPageSequenceMarkers == null) {
+                currentPageSequenceMarkers = new ArrayList();
+            }
+            for (int i=0;i<markers.size();i++) {
+                Marker marker = (Marker)markers.get(i);
+                marker.releaseRegistryArea();
+                currentPageSequenceMarkers.add(marker);
+                documentMarkers.add(marker);
+            }
+        }
+        
         /*
           Try to optimise on the common case that there are
           no pages pending and that all ID references are
           valid on the current pages. This short-cuts the
           pipeline and renders the area immediately.
         */
-        if ((renderQueue.size() == 0) && idReferences.isEveryIdValid())
+        if ((renderQueue.size() == 0) && idReferences.isEveryIdValid()) {
             renderer.render(page, outputStream);
-        else
-            addToRenderQueue(page);
-
+        } else {
+            RenderQueueEntry entry = new RenderQueueEntry(page);
+            renderQueue.add(entry);
+            /*
+              The just-added entry could (possibly) resolve the
+              waiting entries, so we try to process the queue
+              now to see.
+            */
+            processQueue(false);
+        }
         pageCount++;
-    }
-
-    private synchronized void addToRenderQueue(Page page)
-    throws FOPException, IOException {
-        RenderQueueEntry entry = new RenderQueueEntry(page);
-        renderQueue.add(entry);
-
-        /*
-          The just-added entry could (possibly) resolve the
-          waiting entries, so we try to process the queue
-          now to see.
-        */
-        processQueue(false);
     }
 
     /**
@@ -266,7 +291,7 @@ public class StreamRenderer {
       plus a list of outstanding ID references that need to be
       resolved before the Page can be renderered.<P>
     */
-    class RenderQueueEntry extends Object {
+    class RenderQueueEntry {
         /*
           The Page that has outstanding ID references.
         */
@@ -309,55 +334,18 @@ public class StreamRenderer {
         }
     }
 
-  // unused and broken
-//      public Page getNextPage(Page current, boolean isWithinPageSequence,
-//                              boolean isFirstCall) {
-//          Page nextPage = null;
-//          int pageIndex = 0;
-//          if (isFirstCall)
-//              pageIndex = renderQueue.size();
-//          else
-//              pageIndex = renderQueue.indexOf(current);
-//          if ((pageIndex + 1) < renderQueue.size()) {
-//              nextPage = ((RenderQueueEntry)renderQueue
-//                          .get(pageIndex + 1)).getPage();
-//              if (isWithinPageSequence
-//                      &&!nextPage.getPageSequence().equals(current.getPageSequence())) {
-//                  nextPage = null;
-//              }
-//          }
-//          return nextPage;
-//      }
+    // Auxillary function for retrieving markers.
+    public ArrayList getDocumentMarkers() {
+        return documentMarkers;
+    }
 
-    public Page getPreviousPage(Page current, boolean isWithinPageSequence,
-                                boolean isFirstCall) {
-        if (isFirstCall) {
-            int pageIndex = renderQueue.size();
-            if (pageIndex > 0) {
-                Page previousPage = ((RenderQueueEntry)renderQueue
-                                     .get(pageIndex - 1)).getPage();
-                PageSequence currentPS = current.getPageSequence();
-                PageSequence previousPS = previousPage.getPageSequence();
-                if (!isWithinPageSequence || previousPS.equals(currentPS)) {
-                   return previousPage;
-                }
-            }
-        } else {
-            for (int pageIndex=renderQueue.size()-1;pageIndex>0;pageIndex--) {
-                Page page = ((RenderQueueEntry)renderQueue
-                             .get(pageIndex)).getPage();
-                if (current.equals(page)) {
-                    Page previousPage = ((RenderQueueEntry)renderQueue
-                                         .get(pageIndex - 1)).getPage();
-                    PageSequence currentPS = current.getPageSequence();
-                    PageSequence previousPS = previousPage.getPageSequence();
-                    if (!isWithinPageSequence || previousPS.equals(currentPS)) {
-                        return previousPage;
-                    }
-                    return null;
-                }
-            }
-        }
-        return null;
+    // Auxillary function for retrieving markers.
+    public PageSequence getCurrentPageSequence() {
+        return currentPageSequence;
+    }
+
+    // Auxillary function for retrieving markers.
+    public ArrayList getCurrentPageSequenceMarkers() {
+        return currentPageSequenceMarkers;
     }
 }

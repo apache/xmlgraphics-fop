@@ -138,6 +138,10 @@ public abstract class AbstractTableBody extends FObj {
         boolean endKeepGroup = true;
         for (int i = this.marker; i < numChildren; i++) {
             Object child = children.get(i);
+            if (child instanceof Marker) {
+                ((Marker)child).layout(area);
+                continue;
+            }
             if (!(child instanceof TableRow)) {
                 throw new FOPException("Currently only Table Rows are supported in table body, header and footer");
             }

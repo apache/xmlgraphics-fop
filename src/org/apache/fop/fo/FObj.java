@@ -14,7 +14,7 @@ import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.fo.flow.Marker;
 
 // Java
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.ArrayList;
 
 /**
@@ -32,7 +32,7 @@ public abstract class FObj extends FONode {
     protected PropertyManager propMgr;
 
     // markers
-    private HashMap markers;
+    private HashSet markerClassNames;
 
     protected FObj(FObj parent, PropertyList propertyList) {
         super(parent);
@@ -151,40 +151,40 @@ public abstract class FObj extends FONode {
     }
 
 
-    public void addMarker(Marker marker) throws FOPException {
-        String mcname = marker.getMarkerClassName();
-        if (children != null) {
-            for (int i = 0; i < children.size(); i++) {
-                FONode child = (FONode)children.get(i);
-                if (!child.mayPrecedeMarker()) {
-                  throw new FOPException("A fo:marker must be an initial child of '"
-                                         + getName()+"'");
-                }
-            }
-        }
-        if (markers==null) {
-            markers = new HashMap();
-            markers.put(mcname, marker);
-        } else if (!markers.containsKey(mcname) ) {
-            markers.put(mcname, marker);
-        } else {
-            throw new FOPException("marker-class-name '"
-                                   + mcname
-                                   + "' already exists for this parent");
-        }
-    }
+     public void addMarker(String markerClassName) throws FOPException {
+//         String mcname = marker.getMarkerClassName();
+         if (children != null) {
+             for (int i = 0; i < children.size(); i++) {
+                 FONode child = (FONode)children.get(i);
+                 if (!child.mayPrecedeMarker()) {
+                   throw new FOPException("A fo:marker must be an initial child of '"
+                                          + getName()+"'");
+                 }
+             }
+         }
+         if (markerClassNames==null) {
+             markerClassNames = new HashSet();
+             markerClassNames.add(markerClassName);
+         } else if (!markerClassNames.contains(markerClassName) ) {
+             markerClassNames.add(markerClassName);
+         } else {
+             throw new FOPException("marker-class-name '"
+                                    + markerClassName
+                                    + "' already exists for this parent");
+         }
+     }
 
-    public boolean hasMarkers() {
-        return markers!=null;
-    }
+//     public boolean hasMarkers() {
+//         return markers!=null;
+//     }
 
-    public ArrayList getMarkers() {
-        if (markers==null) {
-            log.debug("GetMarkers failed (no markers). Should not happen.");
-            return null;
-        } else {
-            return new ArrayList(markers.values());
-        }
-    }
+//     public ArrayList getMarkers() {
+//         if (markers==null) {
+//             log.debug("GetMarkers failed (no markers). Should not happen.");
+//             return null;
+//         } else {
+//             return new ArrayList(markers.values());
+//         }
+//     }
 }
 

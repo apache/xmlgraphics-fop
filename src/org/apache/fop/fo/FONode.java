@@ -109,6 +109,7 @@ abstract public class FONode {
 
     public void resetMarker() {
         this.marker = START;
+        this.areasGenerated=0;
         int numChildren = this.children.size();
         for (int i = 0; i < numChildren; i++) {
             ((FONode)children.get(i)).resetMarker();

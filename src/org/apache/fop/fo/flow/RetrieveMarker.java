@@ -8,10 +8,15 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.*;
-import org.apache.fop.datatypes.*;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.Status;
+import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.properties.RetrieveBoundary;
+import org.apache.fop.fo.properties.RetrievePosition;
+import org.apache.fop.layout.Area;
+import org.apache.fop.layout.AreaTree;
+import org.apache.fop.layout.Page;
 import org.apache.fop.apps.FOPException;
 
 // Java
@@ -22,6 +27,7 @@ public class RetrieveMarker extends FObj {
     private String retrieveClassName;
     private int retrievePosition;
     private int retrieveBoundary;
+    private Marker bestMarker;
 
     public static class Maker extends FObj.Maker {
         public FObj make(FObj parent,
@@ -51,69 +57,63 @@ public class RetrieveMarker extends FObj {
     }
 
     public int layout(Area area) throws FOPException {
-        // locate qualifying areas by 'marker-class-name' and
-        // 'retrieve-boundary'. Initially we will always check
-        // the containing page
-        Page containingPage = area.getPage();
-        Marker bestMarker = searchPage(containingPage, true);
+        if (marker == START) {
+            marker = 0;
+            // locate qualifying areas by 'marker-class-name' and
+            // 'retrieve-boundary'. Initially we will always check
+            // the containing page
+            Page containingPage = area.getPage();
+            bestMarker = searchPage(containingPage);
 
-        // if marker not yet found, and 'retrieve-boundary' permits,
-        // search backward by Page
-        if (bestMarker == null) {
-            if (retrieveBoundary != RetrieveBoundary.PAGE) {
-//                System.out.println("Null bestMarker and searching...");
-                Page currentPage = containingPage;
-                boolean isFirstCall = true;
-                while (bestMarker == null) {
-                    Page previousPage = locatePreviousPage(currentPage,
-                                                           retrieveBoundary,
-                                                           isFirstCall);
-                    isFirstCall = false;
-                    if (previousPage!=null) {
-                        bestMarker = searchPage(previousPage, false);
-                        currentPage = previousPage;
-                    } else {
-                        return Status.OK;
-                    }
-                }
-            } else {
-                return Status.OK;
+            if (bestMarker != null) {
+                bestMarker.resetMarkerContent();
+                return bestMarker.layoutMarker(area);
             }
+            // If marker not yet found, and 'retrieve-boundary' permits,
+            // search backward.
+            AreaTree areaTree = containingPage.getAreaTree();
+            if (retrieveBoundary == RetrieveBoundary.PAGE_SEQUENCE) {
+                PageSequence pageSequence = areaTree.getCurrentPageSequence();
+                if (pageSequence == containingPage.getPageSequence() ) {
+                    return layoutBestMarker(areaTree.getCurrentPageSequenceMarkers(),area);
+                }
+            } else if (retrieveBoundary == RetrieveBoundary.DOCUMENT) {
+                return layoutBestMarker(areaTree.getDocumentMarkers(),area);
+            } else {
+                throw new FOPException("Illegal 'retrieve-boundary' value");
+            }
+        } else if (bestMarker != null) {
+            return bestMarker.layoutMarker(area);
         }
-
-        int status = Status.OK;
-        // System.out.println("Laying out marker '" + bestMarker + "' in area '" + area + "'");
-        // the 'markers' referred to in this method are internal; they have
-        // nothing to do with fo:marker
-        bestMarker.resetMarker();
-        status = bestMarker.layoutMarker(area);
-        return status;
+        return Status.OK;
     }
 
-    private Marker searchPage(Page page,
-                              boolean isContainingPage) throws FOPException {
-        ArrayList pageMarkers = page.getMarkers();
-        if (pageMarkers.isEmpty()) {
-            // System.out.println("No markers on page");
-            return null;
-        }
-
-        // if no longer the containing page (fo:retrieve-marker, or the page
-        // being processed), grab the last qualifying marker on this one
-        if (!isContainingPage) {
-            for (int c = pageMarkers.size(); c > 0; c--) {
-                Marker currentMarker = (Marker)pageMarkers.get(c - 1);
+    private int layoutBestMarker(ArrayList markers, Area area)
+        throws FOPException {
+        if (markers!=null) {
+            for (int i = markers.size() - 1; i >= 0; i--) {
+                Marker currentMarker = (Marker)markers.get(i);
                 if (currentMarker.getMarkerClassName().equals(retrieveClassName)) {
-                    return currentMarker;
+                    bestMarker = currentMarker;
+                    bestMarker.resetMarkerContent();
+                    return bestMarker.layoutMarker(area);
                 }
             }
+        }
+        return Status.OK;
+    }
+    
+    private Marker searchPage(Page page) throws FOPException {
+        ArrayList pageMarkers = page.getMarkers();
+        if (pageMarkers.isEmpty()) {
+            return null;
         }
 
         // search forward if 'first-starting-within-page' or
         // 'first-including-carryover'
         if (retrievePosition == RetrievePosition.FIC) {
-            for (int c = 0; c < pageMarkers.size(); c++) {
-                Marker currentMarker = (Marker)pageMarkers.get(c);
+            for (int i = 0; i < pageMarkers.size(); i++) {
+                Marker currentMarker = (Marker)pageMarkers.get(i);
                 if (currentMarker.getMarkerClassName().equals(retrieveClassName)) {
                     return currentMarker;
                 }
@@ -128,8 +128,8 @@ public class RetrieveMarker extends FObj {
                 }
             }
         } else if (retrievePosition == RetrievePosition.LSWP) {
-            for (int i = pageMarkers.size(); i > 0; i--) {
-                Marker currentMarker = (Marker)pageMarkers.get(i - 1);
+            for (int i = pageMarkers.size() - 1; i >= 0; i--) {
+                Marker currentMarker = (Marker)pageMarkers.get(i);
                 if (currentMarker.getMarkerClassName().equals(retrieveClassName)) {
                     if (currentMarker.getRegistryArea().isFirst()) {
                         return currentMarker;
@@ -138,8 +138,8 @@ public class RetrieveMarker extends FObj {
             }
 
         } else if (retrievePosition == RetrievePosition.LEWP) {
-            for (int c = pageMarkers.size(); c > 0; c--) {
-                Marker currentMarker = (Marker)pageMarkers.get(c - 1);
+            for (int i = pageMarkers.size() - 1; i >= 0; i--) {
+                Marker currentMarker = (Marker)pageMarkers.get(i);
                 if (currentMarker.getMarkerClassName().equals(retrieveClassName)) {
                     if (currentMarker.getRegistryArea().isLast()) {
                         return currentMarker;
@@ -151,15 +151,6 @@ public class RetrieveMarker extends FObj {
             throw new FOPException("Illegal 'retrieve-position' value");
         }
         return null;
-    }
-
-    private Page locatePreviousPage(Page page, int retrieveBoundary,
-                                    boolean isFirstCall) {
-        boolean pageWithinSequence = true;
-        if (retrieveBoundary == RetrieveBoundary.DOCUMENT)
-            pageWithinSequence = false;
-        return page.getAreaTree().getPreviousPage(page, pageWithinSequence,
-        isFirstCall);
     }
 
 }
