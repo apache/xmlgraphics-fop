@@ -12,15 +12,15 @@
   <section>
     <title>What's Implemented?</title>
       <p>The following formatting objects and properties of the XSL-FO 1.0
-         W3C Recommandation are implemented. Please have also a look at the
+         W3C Recommendation are implemented. Please also have a look at the
          section on <jump href="limitations.html">limitations</jump>.
       </p>
   </section>
   <section>
     <title>1) Formatting Objects</title>
-    <p>This section follows the table "B Formatting Object Summary" in the xsl:fo specification. At the
-       end of each sub-section you find listed what is not implemented.</p>
-
+    <p>This section follows the tables in 
+      <jump href="http://www.w3.org/TR/2001/REC-xsl-20011015/sliceB.html#FO-summary">Appendix B, "Formatting Object Summary"</jump> of the XSL-FO specification. 
+      Items that are not currently implemented are listed at the end of each sub-section.</p>
     <section>
       <title>B.1 Declaration and Pagination and Layout Formatting Objects</title>
       <ul>
@@ -119,7 +119,7 @@
 
   <section>
     <title>2) Properties</title>
-  <p>Property values can be computed. Compound properties are also understood by Fop.</p>
+  <p>Property values can be computed. Compound properties are also understood by FOP.</p>
     <ul>
       <li>background-color </li>
       <li>background-image </li>
@@ -239,15 +239,15 @@
   </section>
 
   <section>
-    <title>3)SVG Support</title>
+    <title>3) SVG Support</title>
 <p>
 FOP uses <jump href="http://xml.apache.org/batik/">Batik</jump> directly for its SVG support. Therefore FOP supports the same
-elements and properties as are supported by Batik. As FOP is designed for
-rendering to a static medium then only static SVG is rendered.
+elements and properties as are supported by Batik. Because FOP is designed for
+rendering to a static medium, only static SVG is supported.
 </p>
 <p>
-Due to some limitations in PDF some SVG images, particularly ones with effects
-or transparency, may not come out correctly. The images should still be renderedcorrectly for the AWT and Print renderers.
+Due to certain PDF limitations, some SVG images, particularly those with filter effects
+or transparency, may not come out correctly.  However, these images should still be rendered correctly by the AWT and Print renderers.
 </p>
   </section>
 </section>
