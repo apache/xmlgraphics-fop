@@ -24,10 +24,78 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
 
     /** True if this LayoutManager has handled all of its content. */
     private boolean m_bFinished = false;
+    private BPLayoutManager m_curChildLM=null;
+    private ListIterator m_childLMiter;
+    private boolean m_bInited=false;
 
 
     public AbstractBPLayoutManager(FObj fobj) {
+	this(fobj, new LMiter(fobj.getChildren()));
+    }
+
+
+    public AbstractBPLayoutManager(FObj fobj, ListIterator lmIter) {
 	super(fobj);
+	m_childLMiter = lmIter;
+    }
+
+
+    /**
+     * Return currently active child LayoutManager or null if
+     * all children have finished layout.
+     * Note: child must implement BPLayoutManager! If it doesn't, skip it
+     * and print a warning.
+     */
+    protected BPLayoutManager getChildLM() {
+	if (m_curChildLM != null && !m_curChildLM.isFinished()) {
+	    return m_curChildLM;
+	}
+	while (m_childLMiter.hasNext()) {
+	    Object obj = m_childLMiter.next();
+	    if (obj instanceof BPLayoutManager) {
+		m_curChildLM = (BPLayoutManager)obj;
+		m_curChildLM.setParentLM(this);
+		m_curChildLM.init();
+		return m_curChildLM;
+	    }
+	    else {
+		m_childLMiter.remove();
+		System.err.println("WARNING: child LM not a BPLayoutManager: "
+				   + obj.getClass().getName());
+	    }
+	}
+	return null;
+    }
+
+
+    /**
+     * Reset the layoutmanager "iterator" so that it will start
+     * with the passed bplm on the next call to getChildLM.
+     * @param bplm Reset iterator to this LayoutManager.
+     */
+    protected void reset(LayoutManager lm, BreakPoss.Position pos) {
+ 	//if (lm == null) return;
+	if (m_curChildLM != lm) {
+	    // ASSERT m_curChildLM == (BPLayoutManager)m_childLMiter.previous()
+	    if (m_curChildLM != (BPLayoutManager)m_childLMiter.previous()) {
+		System.err.println("LMiter problem!");
+	    }
+	    while (m_curChildLM != lm && m_childLMiter.hasPrevious()) {
+		m_curChildLM.resetPosition(null);
+		m_curChildLM = (BPLayoutManager)m_childLMiter.previous();
+	    }
+	    m_childLMiter.next(); // Otherwise next returns same object
+	}
+ 	m_curChildLM.resetPosition(pos);
+ 	if (isFinished()) {
+ 	    setFinished(false);
+ 	}
+    }
+
+    public void resetPosition(BreakPoss.Position resetPos) {
+	if (resetPos == null) {
+	    reset(null, null);
+	}
     }
 
 
@@ -35,9 +103,10 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
      * This method provides a hook for a LayoutManager to intialize traits
      * for the areas it will create, based on Properties set on its FO.
      */
-    protected final void initProperties() {
- 	if (fobj != null) {
+    public void init() {
+ 	if (fobj != null && m_bInited == false) {
 	    initProperties(fobj.getPropertyManager());
+	    m_bInited=true;
  	}
     }
 

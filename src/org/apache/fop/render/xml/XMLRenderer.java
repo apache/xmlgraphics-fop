@@ -348,6 +348,17 @@ public class XMLRenderer extends AbstractRenderer {
         super.renderWord(word);
     }
 
+    public void renderInlineParent(InlineParent ip) {
+        String prop = "";
+        List list = ip.getTraitList();
+        if (list != null) {
+            prop = " props=\"" + getPropString(list) + "\"";
+        }
+        writeStartTag("<inlineparent" + prop + ">");
+        super.renderInlineParent(ip);
+	writeEndTag("</inlineparent>");
+    }
+
     public void renderLeader(Leader area) {
         String style = "solid";
         switch (area.getRuleStyle()) {

@@ -44,7 +44,7 @@ import java.util.Iterator;
  *
  * How do we handle Unicode BIDI?
  */
-public class LineLayoutManager extends AbstractBPLayoutManager {
+public class LineLayoutManager extends AbstractLayoutManager {
     private LineInfo currentLine = null;
     private boolean bFirstLine = true;
     private MinOptMax totalIPD;

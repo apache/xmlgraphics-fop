@@ -10,10 +10,8 @@ package org.apache.fop.render;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.*;
-import org.apache.fop.area.Span;
 import org.apache.fop.area.inline.*;
 import org.apache.fop.area.inline.Character;
-import org.apache.fop.area.inline.Space;
 import org.apache.fop.fo.FOUserAgent;
 
 // Avalon
@@ -25,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Iterator;
 
 /**
  * Abstract base class for all renderers.
@@ -306,6 +305,14 @@ public abstract class AbstractRenderer implements Renderer {
 
     public void renderWord(Word word) {
         currentBlockIPPosition += word.getWidth();
+    }
+
+    public void renderInlineParent(InlineParent ip) {
+        // currentBlockIPPosition += ip.getWidth();
+	Iterator iter = ip.getChildAreas().iterator();
+	while (iter.hasNext()) {
+            ((InlineArea)iter.next()).render(this);
+        }
     }
 
     protected void renderBlocks(List blocks) {

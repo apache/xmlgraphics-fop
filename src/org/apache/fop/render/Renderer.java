@@ -75,6 +75,8 @@ public interface Renderer {
 
     public void renderWord(Word area);
 
+    public void renderInlineParent(InlineParent ip);
+
     public void renderCharacter(
               org.apache.fop.area.inline.Character ch);
 

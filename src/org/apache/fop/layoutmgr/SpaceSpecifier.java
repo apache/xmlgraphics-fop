@@ -16,7 +16,7 @@ import java.util.Vector;
  * areas with a stacking constraint. Provide a way to resolve these into
  * a single MinOptMax value.
  */
-public class SpaceSpecifier {
+public class SpaceSpecifier implements Cloneable {
 
 
     private boolean m_bStartsRefArea;
@@ -26,6 +26,19 @@ public class SpaceSpecifier {
 
     public SpaceSpecifier(boolean bStartsRefArea) {
 	m_bStartsRefArea = bStartsRefArea;
+    }
+
+    public Object clone() {
+	try {
+	    SpaceSpecifier ss = (SpaceSpecifier)super.clone();
+	    // Clone the vector, but share the objects in it!
+	    ss.m_vecSpaceVals = new Vector(this.m_vecSpaceVals.size());
+	    ss.m_vecSpaceVals.addAll(this.m_vecSpaceVals);
+	    return ss;
+	} catch (CloneNotSupportedException cnse) {
+	    return null;
+	}
+	
     }
 
     /**

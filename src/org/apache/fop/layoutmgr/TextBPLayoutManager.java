@@ -195,6 +195,30 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 		 (CharUtilities.isSpace(c) || s_breakChars.indexOf(c)>=0)));
     }
 
+    /** Reset position for returning next BreakPossibility. */
+
+    public void resetPosition(BreakPoss.Position prevPos) {
+	if (prevPos != null) {
+	    TextBreakPosition tbp = (TextBreakPosition)prevPos;
+	    AreaInfo ai =
+		 (AreaInfo) m_vecAreaInfo.elementAt(tbp.m_iAreaIndex);
+	    if (ai.m_iBreakIndex != m_iNextStart) {
+		m_iNextStart = ai.m_iBreakIndex;
+		m_vecAreaInfo.setSize(tbp.m_iAreaIndex+1);
+		System.err.println("Discarded previous text break pos");
+		setFinished(false);
+	    }
+	}
+	else {
+	    // Reset to beginning!
+	    System.err.println("TextBPLM: resetPosition(null)");
+	    m_vecAreaInfo.setSize(0);
+	    m_iNextStart = 0;
+	    setFinished(false);
+	}
+    }
+
+
     /**
      * Return the next break possibility that fits the constraints.
      * @param context An object specifying the flags and input information
@@ -229,17 +253,6 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 	    iFlags |= BreakPoss.ISFIRST;
 	}
 
-	if (prevPos != null) {
-	    TextBreakPosition tbp = (TextBreakPosition)prevPos;
-	    AreaInfo ai =
-		 (AreaInfo) m_vecAreaInfo.elementAt(tbp.m_iAreaIndex);
-	    if (ai.m_iBreakIndex != m_iNextStart) {
-		m_iNextStart = ai.m_iBreakIndex;
-		m_vecAreaInfo.setSize(tbp.m_iAreaIndex+1);
-		System.err.println("Discarded previous text break pos");
-	    }
-	}
-
 
         // HANDLE SUPPRESSED LEADING SPACES
 	if ((context.flags & LayoutContext.SUPPRESS_LEADING_SPACE)!=0) {
@@ -249,6 +262,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 		     chars[m_iNextStart]==SPACE; m_iNextStart++);
 	    // If now at end, nothing to compose here!
 	    if (m_iNextStart >= chars.length) {
+		setFinished(true);
 		return null; // Or an "empty" BreakPoss?
 	    }
 	}
@@ -364,6 +378,10 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 	if (trailingSpace != null) {
 	    bp.setTrailingSpace(trailingSpace);
 	}
+	else {
+	    bp.setTrailingSpace(new SpaceSpecifier(false));
+	}
+	bp.setLeadingSpace(new SpaceSpecifier(false));
         return bp;
     }
 
