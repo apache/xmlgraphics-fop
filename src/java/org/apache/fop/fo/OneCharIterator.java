@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 /**
  * Class providing an iterator for one character.
  */
-public class OneCharIterator extends AbstractCharIterator {
+public class OneCharIterator extends CharIterator {
 
     private boolean bFirst = true;
     private char charCode;

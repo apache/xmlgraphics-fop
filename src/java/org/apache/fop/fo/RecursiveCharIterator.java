@@ -27,7 +27,7 @@ import java.util.NoSuchElementException;
  * class is itself a CharIterator, and manages a collection of CharIterators, it
  * is easy to get confused.
  */
-public class RecursiveCharIterator extends AbstractCharIterator {
+public class RecursiveCharIterator extends CharIterator {
     /** parent node for whose child nodes this iterator iterates */
     private FONode fobj;
     /** iterator for the child nodes */
