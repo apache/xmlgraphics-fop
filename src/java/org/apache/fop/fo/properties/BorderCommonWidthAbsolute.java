@@ -51,7 +51,7 @@ public abstract class BorderCommonWidthAbsolute extends BorderCommonWidth {
             FONode foNode, int absoluteEdge)
     throws PropertyException {
         int relEdge = WritingMode.getCorrespondingRelativeEdge(
-                getWritingMode(foNode), absoluteEdge);
+                foNode.getWritingMode(), absoluteEdge);
         return relBorderWidthProps[relEdge];
     }
 
