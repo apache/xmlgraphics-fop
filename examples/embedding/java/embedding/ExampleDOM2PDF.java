@@ -79,7 +79,7 @@ public class ExampleDOM2PDF {
                 Source src = new DOMSource(xslfoDoc);
                 
                 // Resulting SAX events (the generated FO) must be piped through to FOP
-                Result res = new SAXResult(driver.getContentHandler());
+                Result res = new SAXResult(driver.getDefaultHandler());
                 
                 // Start XSLT transformation and FOP processing
                 transformer.transform(src, res);

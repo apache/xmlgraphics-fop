@@ -86,7 +86,7 @@
 	</target>
 	<target name="example2" depends="compile" description="Runs the FO to PDF example using a SAXParser">
 		<echo message="Running the FO to PDF example using a SAXParser"/>
-		<java classname="${name}.ExampleFO2PDFUsingSAX" fork="yes">
+		<java classname="${name}.ExampleFO2PDFUsingSAXParser" fork="yes">
 		  <classpath>
 		    <path refid="project.class.path"/>
 		    <pathelement location="${build.dest}"/>

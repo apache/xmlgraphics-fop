@@ -208,7 +208,7 @@ public class FopServlet extends HttpServlet {
         driver.setOutputStream(out);
 
         //Make sure the XSL transformation's result is piped through to FOP
-        Result res = new SAXResult(driver.getContentHandler());
+        Result res = new SAXResult(driver.getDefaultHandler());
 
         //Start the transformation and rendering process
         transformer.transform(src, res);

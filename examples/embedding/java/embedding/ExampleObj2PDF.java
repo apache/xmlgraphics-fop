@@ -72,7 +72,7 @@ public class ExampleObj2PDF {
             Source src = team.getSourceForProjectTeam();
         
             // Resulting SAX events (the generated FO) must be piped through to FOP
-            Result res = new SAXResult(driver.getContentHandler());
+            Result res = new SAXResult(driver.getDefaultHandler());
 
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);
