@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
@@ -68,6 +69,21 @@ public class TableColumn extends FObj {
         numberColumnsRepeated = pList.get(PR_NUMBER_COLUMNS_REPEATED).getNumeric();
         numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric();
         visibility = pList.get(PR_VISIBILITY).getEnum();
+        
+        if (columnNumber.getValue() < 0) {
+            //not catching 0 here because it is the indication that no 
+            //column-number has been specified
+            throw new PropertyException("column-number must be 1 or bigger, "
+                    + "but got " + columnNumber.getValue());
+        }
+        if (numberColumnsRepeated.getValue() <= 0) {
+            throw new PropertyException("number-columns-repeated must be 1 or bigger, "
+                    + "but got " + numberColumnsRepeated.getValue());
+        }
+        if (numberColumnsSpanned.getValue() <= 0) {
+            throw new PropertyException("number-columns-spanned must be 1 or bigger, "
+                    + "but got " + numberColumnsSpanned.getValue());
+        }
     }
 
     /**
@@ -94,21 +110,28 @@ public class TableColumn extends FObj {
     }
 
     /**
-     * Return the Common Border, Padding, and Background Properties.
+     * @return the Common Border, Padding, and Background Properties.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
     /**
-     * Return the "column-width" property.
+     * @return the "column-width" property.
      */
     public Length getColumnWidth() {
         return columnWidth;
     }
 
     /**
-     * Return the "column-number" property.
+     * @return true if the "column-number" property was set.
+     */
+    public boolean hasColumnNumber() {
+        return (columnNumber.getValue() >= 1);
+    }
+
+    /**
+     * @return the "column-number" property.
      */
     public int getColumnNumber() {
         return columnNumber.getValue();
@@ -121,13 +144,12 @@ public class TableColumn extends FObj {
         return numberColumnsRepeated.getValue();
     }
     
+    /** @see org.apache.fop.fo.FONode#getName() */
     public String getName() {
         return "fo:table-column";
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_TABLE_COLUMN;
     }
