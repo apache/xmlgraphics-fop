@@ -118,13 +118,18 @@ public class Page extends AreaNode implements Cloneable {
      */
     public static Page setupNullPage(FoPageSequence pageSeq, long id) {
         Page page = new Page(pageSeq, id);
-        page.setVport(PageViewport.nullPageVport(pageSeq, page, page));
+        PageViewport pageVport =
+            PageViewport.nullPageVport(pageSeq, page, page);
+        page.setVport(pageVport);
+        PageRefArea refArea = pageVport.getPageRefArea();
+        page.setPageRefArea(refArea);
         return page;
     }
     /** The <code>simple-page-master</code> that generated this page. */
     protected FoSimplePageMaster pageMaster = null;
     /** The single <code>page-viewport</code> child of this page */
     protected PageViewport vport = null;
+    protected PageRefArea pageRefArea = null;
 
     /**
      * @return the vport
@@ -138,9 +143,23 @@ public class Page extends AreaNode implements Cloneable {
     public void setVport(PageViewport vport) {
         this.vport = vport;
     }
+    /**
+     * @param pageRefArea to set
+     */
+    public void setPageRefArea(PageRefArea pageRefArea) {
+        this.pageRefArea = pageRefArea;
+    }
+    public PageRefArea getPageRefArea() {
+        return vport.getPageRefArea();
+    }
     /** The formatted page number */
     private String pageNumber = null;
 
+    public Area getRegionBodyRefArea() {
+        // TODO - make the real version of this
+        Area regionBodyRef = null;
+        return regionBodyRef;
+    }
     /**
      * Set the page number for this page.
      * @param num the string representing the page number
