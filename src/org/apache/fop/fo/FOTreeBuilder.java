@@ -10,9 +10,6 @@ package org.apache.fop.fo;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.StructureHandler;
-import org.apache.fop.fo.pagination.Root;
-import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.extensions.ExtensionObj;
 
 // Avalon
 import org.apache.avalon.framework.logger.Logger;
@@ -20,13 +17,10 @@ import org.apache.avalon.framework.logger.Logger;
 // SAX
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
 import org.xml.sax.Attributes;
 
 // Java
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.io.IOException;
+import java.util.*;
 
 /**
  * SAX Handler that builds the formatting object tree.
@@ -42,34 +36,32 @@ import java.io.IOException;
 public class FOTreeBuilder extends DefaultHandler {
 
     /**
-     * table mapping element names to the makers of objects
-     * representing formatting objects
+     * Table mapping element names to the makers of objects
+     * representing formatting objects.
      */
-    protected HashMap fobjTable = new HashMap();
-
-    protected ArrayList namespaces = new ArrayList();
+    protected Map fobjTable = new HashMap();
 
     /**
-     * current formatting object being handled
+     * Set of mapped namespaces.
+     */
+    protected Set namespaces = new HashSet();
+
+    /**
+     * Current formatting object being handled
      */
     protected FONode currentFObj = null;
 
     /**
-     * the root of the formatting object tree
+     * The root of the formatting object tree
      */
-    protected FObj rootFObj = null;
+    protected FONode rootFObj = null;
 
     /**
-     * set of names of formatting objects encountered but unknown
-     */
-    protected HashMap unknownFOs = new HashMap();
-
-    /**
-     *
      * The class that handles formatting and rendering to a stream
      * (mark-fop@inomial.com)
      */
     private StructureHandler structHandler;
+
     private FOUserAgent userAgent;
 
     public FOTreeBuilder() {}
@@ -86,17 +78,15 @@ public class FOTreeBuilder extends DefaultHandler {
         return userAgent;
     }
 
-
     public void setStructHandler(StructureHandler sh) {
         this.structHandler = sh;
     }
 
     /**
-     * add a mapping from element name to maker.
+     * Adds a mapping from a namespace to a table of makers.
      *
-     * @param namespaceURI namespace URI of formatting object element
-     * @param localName local name of formatting object element
-     * @param maker Maker for class representing formatting object
+     * @param namespaceURI namespace URI of formatting object elements
+     * @param table table of makers
      */
     public void addMapping(String namespaceURI, HashMap table) {
         this.fobjTable.put(namespaceURI, table);
@@ -118,7 +108,6 @@ public class FOTreeBuilder extends DefaultHandler {
     public void endElement(String uri, String localName, String rawName)
     throws SAXException {
         currentFObj.end();
-
         currentFObj = currentFObj.getParent();
     }
 
@@ -128,13 +117,18 @@ public class FOTreeBuilder extends DefaultHandler {
     public void startDocument()
     throws SAXException {
         rootFObj = null;    // allows FOTreeBuilder to be reused
-        getLogger().debug("building formatting object tree");
+        if (getLogger().isDebugEnabled())
+            getLogger().debug("Building formatting object tree");
         structHandler.startDocument();
     }
 
+    /**
+     * SAX Handler for the end of the document
+     */
     public void endDocument()
     throws SAXException {
-        getLogger().debug("Parsing of document complete");
+        if (getLogger().isDebugEnabled())
+            getLogger().debug("Parsing of document complete");
         structHandler.endDocument();
     }
 
@@ -149,7 +143,7 @@ public class FOTreeBuilder extends DefaultHandler {
         /* the maker for the formatting object started */
         ElementMapping.Maker fobjMaker = null;
 
-        HashMap table = (HashMap)fobjTable.get(uri);
+        Map table = (Map)fobjTable.get(uri);
         if(table != null) {
             fobjMaker = (ElementMapping.Maker)table.get(localName);
             // try default
@@ -158,20 +152,14 @@ public class FOTreeBuilder extends DefaultHandler {
             }
         }
 
-        boolean foreignXML = false;
         if (fobjMaker == null) {
-            String fullName = uri + "^" + localName;
-            if (!this.unknownFOs.containsKey(fullName)) {
-                this.unknownFOs.put(fullName, "");
-                getLogger().warn("Unknown formatting object "
-                                       + fullName);
-            }
+            if (getLogger().isWarnEnabled())
+                getLogger().warn("Unknown formatting object " + uri + "^" + localName);
             if(namespaces.contains(uri.intern())) {
                 // fall back
                 fobjMaker = new Unknown.Maker();
             } else {
                 fobjMaker = new UnknownXMLObj.Maker(uri);
-                foreignXML = true;
             }
         }
 
@@ -195,7 +183,7 @@ public class FOTreeBuilder extends DefaultHandler {
                                                         + " be fo:root, not "
                                                         + fobj.getName()));
             }
-            rootFObj = (FObj)fobj;
+            rootFObj = fobj;
         } else {
             currentFObj.addChild(fobj);
         }
@@ -212,5 +200,4 @@ public class FOTreeBuilder extends DefaultHandler {
     public boolean hasData() {
         return (rootFObj != null);
     }
-
 }
