@@ -22,7 +22,13 @@
           ><code>PropertyConsts</code></fork> object, created during
           the <fork href= "PropertyConsts.html#pconsts" >static
           initialization</fork> of the class.  The methods of these
-          classes are accessed through these classes are intended to
+          classes are accessed through an array of <em>singelton</em>
+          instances of the individual &lt;property&gt; classes, which
+          is maintained in <fork href=
+          "PropertyConsts.html#properties" >PropertyConsts</fork>.
+
+
+          these classes are intended to
           remain as repositories of static data and methods.  The name
           of each property is entered in the
           <code>PropNames.propertyNames</code> array of
