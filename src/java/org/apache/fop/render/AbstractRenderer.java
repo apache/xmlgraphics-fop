@@ -84,6 +84,7 @@ import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineAreaVisitor;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
@@ -106,7 +107,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
  * handle viewports. This keeps track of the current block and inline position.
  */
 public abstract class AbstractRenderer extends AbstractLogEnabled
-         implements Renderer, Configurable {
+         implements Renderer, Configurable, InlineAreaVisitor {
 
     /**
      * user agent
@@ -552,7 +553,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
 
         for (int count = 0; count < children.size(); count++) {
             InlineArea inline = (InlineArea) children.get(count);
-            inline.render(this);
+            inline.acceptVisitor(this);
         }
     }
 
@@ -640,7 +641,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
         int saveIP = currentBlockIPPosition;
         Iterator iter = ip.getChildAreas().iterator();
         while (iter.hasNext()) {
-            ((InlineArea) iter.next()).render(this);
+            ((InlineArea) iter.next()).acceptVisitor(this);
         }
         currentBlockIPPosition = saveIP + ip.getWidth();
     }
@@ -736,6 +737,78 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
             getLogger().warn("Some XML content will be ignored. "
                     + "No handler defined for XML: " + namespace);
         }
+    }
+
+    /**
+     * Render the specified Viewport.
+     * Required by InlineAreaVisitor interface, which is used to determine which
+     * InlineArea subclass should be rendered.
+     *
+     * @param viewport  The Viewport area to be rendered
+     * @see org.apache.fop.area.inline.InlineAreaVisitor
+     */
+    public void serveVisitor(Viewport viewport) {
+        renderViewport(viewport);
+    }
+
+    /**
+     * Render the specified Word.
+     * Required by InlineAreaVisitor interface, which is used to determine which
+     * InlineArea subclass should be rendered.
+     *
+     * @param area  The Word area to be rendered
+     * @see org.apache.fop.area.inline.InlineAreaVisitor
+     */
+    public void serveVisitor(Word area) {
+        renderWord(area);
+    }
+
+    /**
+     * Render the specified InlineParent.
+     * Required by InlineAreaVisitor interface, which is used to determine which
+     * InlineArea subclass should be rendered.
+     *
+     * @param ip  The InlineParent area to be rendered
+     * @see org.apache.fop.area.inline.InlineAreaVisitor
+     */
+    public void serveVisitor(InlineParent ip) {
+        renderInlineParent(ip);
+    }
+
+    /**
+     * Render the specified Character.
+     * Required by InlineAreaVisitor interface, which is used to determine which
+     * InlineArea subclass should be rendered.
+     *
+     * @param ch  The Character area to be rendered
+     * @see org.apache.fop.area.inline.InlineAreaVisitor
+     */
+    public void serveVisitor(org.apache.fop.area.inline.Character ch) {
+        renderCharacter(ch);
+    }
+
+    /**
+     * Render the specified Space.
+     * Required by InlineAreaVisitor interface, which is used to determine which
+     * InlineArea subclass should be rendered.
+     *
+     * @param space  The Space area to be rendered
+     * @see org.apache.fop.area.inline.InlineAreaVisitor
+     */
+    public void serveVisitor(Space space) {
+        renderInlineSpace(space);
+    }
+
+    /**
+     * Render the specified Leader.
+     * Required by InlineAreaVisitor interface, which is used to determine which
+     * InlineArea subclass should be rendered.
+     *
+     * @param area  The Leader area to be rendered
+     * @see org.apache.fop.area.inline.InlineAreaVisitor
+     */
+    public void serveVisitor(Leader area) {
+        renderLeader(area);
     }
 
 }

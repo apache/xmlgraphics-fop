@@ -274,7 +274,7 @@ public class XMLRenderer extends AbstractRenderer {
 
             for (int count = 0; count < children.size(); count++) {
                 InlineArea inline = (InlineArea) children.get(count);
-                inline.render(this);
+                inline.acceptVisitor(this);
             }
 
             writeEndTag("</title>");
