@@ -23,7 +23,7 @@ TBD: - The faq doesn't show in the content
 		<!-- defines page layout -->
 		<fo:layout-master-set>
 
-			<fo:simple-page-master page-master-name="first"
+			<fo:simple-page-master master-name="first"
 										height="29.7cm" 
 										width="21cm"
 										margin-top="1.5cm" 
@@ -35,7 +35,7 @@ TBD: - The faq doesn't show in the content
 				<fo:region-after extent="1.5cm"/>
 			</fo:simple-page-master>
 
-			<fo:simple-page-master page-master-name="rest"
+			<fo:simple-page-master master-name="rest"
 										height="29.7cm" 
 										width="21cm"
 										margin-top="1.5cm" 
@@ -47,14 +47,14 @@ TBD: - The faq doesn't show in the content
 				<fo:region-after extent="1.5cm"/>
 			</fo:simple-page-master>
 
+			<fo:page-sequence-master master-name="all">
+				<fo:single-page-master-reference master-name="first"/>
+				<fo:repeatable-page-master-reference master-name="rest"/>
+			</fo:page-sequence-master>
+
 		</fo:layout-master-set>
 
-		<fo:page-sequence>
-			<fo:sequence-specification>
-			<fo:sequence-specifier-repeating page-master-first="first" 
-														page-master-repeating="rest"/>
-			</fo:sequence-specification>
-
+		<fo:page-sequence master-name="all">
 			<fo:static-content flow-name="xsl-before">
 				<fo:block text-align="end" 
 							font-size="10pt" 
