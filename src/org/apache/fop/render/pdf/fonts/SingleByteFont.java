@@ -7,19 +7,24 @@
 
 package org.apache.fop.render.pdf.fonts;
 
-import org.apache.fop.fonts.Glyphs;
+//Java
+import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.util.Map;
+import java.net.URL;
+
+//FOP
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFT1Stream;
 import org.apache.fop.pdf.PDFTTFStream;
 import org.apache.fop.render.pdf.CodePointMapping;
 import org.apache.fop.render.pdf.Font;
+import org.apache.fop.fonts.type1.PFBParser;
+import org.apache.fop.fonts.type1.PFBData;
+import org.apache.fop.tools.IOUtil;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.util.Map;
-import java.net.URL;
 
 /**
  * Generic SingleByte font
@@ -34,9 +39,7 @@ public class SingleByteFont extends Font implements FontDescriptor {
     public int xHeight = 0;
     public int ascender = 0;
     public int descender = 0;
-    public int[] fontBBox = {
-        0, 0, 0, 0
-    };
+    public int[] fontBBox = {0, 0, 0, 0};
 
     public URL embedFileName = null;
     public String embedResourceName = null;
@@ -60,10 +63,11 @@ public class SingleByteFont extends Font implements FontDescriptor {
     }
 
     public final Map getKerningInfo() {
-        if (useKerning)
+        if (useKerning) {
             return kerning;
-        else
+        } else {
             return new java.util.HashMap();
+        }
     }
 
     public byte getSubType() {
@@ -108,63 +112,45 @@ public class SingleByteFont extends Font implements FontDescriptor {
         InputStream instream = null;
 
         // Get file first
-        if (embedFileName != null)
-            try {
-                instream = embedFileName.openStream();
-            } catch (Exception e) {
-                System.out.println("Failed to embed fontfile: "
-                                   + embedFileName);
-            }
+        if (embedFileName != null) try {
+            instream = embedFileName.openStream();
+        } catch (Exception e) {
+            MessageHandler.error("Failed to embed fontfile: "
+                               + embedFileName);
+        }
 
             // Get resource
-        if (instream == null && embedResourceName != null)
-            try {
-                instream =
-                    new BufferedInputStream(this.getClass().getResourceAsStream(embedResourceName));
-            } catch (Exception e) {
-                System.out.println("Failed to embed fontresource: "
-                                   + embedResourceName);
-            }
+        if (instream == null && embedResourceName != null) try {
+            instream =
+                new BufferedInputStream(this.getClass().getResourceAsStream(embedResourceName));
+        } catch (Exception e) {
+            MessageHandler.error("Failed to embed fontresource: "
+                               + embedResourceName);
+        }
 
-        if (instream == null)
+        if (instream == null) {
             return (PDFStream)null;
+        }
 
-            // Read fontdata
-        byte[] file = new byte[128000];
-        int fsize = 0;
-
+        // Read fontdata
         try {
-            int l = instream.read(file, 0, 128000);
-            fsize += l;
-
-            if (l == 128000) {
-                // More to read - needs to extend
-                byte[] tmpbuf;
-
-                while (l > 0) {
-                    tmpbuf = new byte[file.length + 64000];
-                    System.arraycopy(file, 0, tmpbuf, 0, file.length);
-                    l = instream.read(tmpbuf, file.length, 64000);
-                    fsize += l;
-                    file = tmpbuf;
-
-                    if (l < 64000)    // whole file read. No need to loop again
-                        l = 0;
-                }
-            }
-
             if (subType == org.apache.fop.pdf.PDFFont.TYPE1) {
-                embeddedFont = new PDFT1Stream(i, fsize);
-                ((PDFT1Stream)embeddedFont).setData(file, fsize);
+                PFBParser parser = new PFBParser();
+                PFBData pfb = parser.parsePFB(instream);
+                embeddedFont = new PDFT1Stream(i);
+                ((PDFT1Stream)embeddedFont).setData(pfb);
             } else {
-                embeddedFont = new PDFTTFStream(i, fsize);
-                ((PDFTTFStream)embeddedFont).setData(file, fsize);
+                byte[] file = IOUtil.toByteArray(instream, 128000);
+                embeddedFont = new PDFTTFStream(i, file.length);
+                ((PDFTTFStream)embeddedFont).setData(file, file.length);
             }
 
             embeddedFont.addFilter("flate");
             embeddedFont.addFilter("ascii-85");
             instream.close();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            MessageHandler.error("Failed to read font data for embedded font: "+e.getMessage());
+        }
 
         return (PDFStream)embeddedFont;
     }
@@ -237,17 +223,19 @@ public class SingleByteFont extends Font implements FontDescriptor {
     public int[] getWidths(int size) {
         int[] arr = new int[width.length];
         System.arraycopy(width, 0, arr, 0, width.length - 1);
-        for (int i = 0; i < arr.length; i++)
+        for (int i = 0; i < arr.length; i++) {
             arr[i] *= size;
+        }
         return arr;
     }
 
     public char mapChar(char c) {
         char d = mapping.mapChar(c);
-    if(d != 0)
+        if(d != 0) {
             return d;
-        else
-        return '#';
+        } else {
+            return '#';
+        }
     }
 
 }
