@@ -24,7 +24,6 @@ import org.apache.fop.layoutmgr.LMiter;
 import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Word;
-import org.apache.fop.area.inline.Stretch;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.util.CharUtilities;
