@@ -27,7 +27,7 @@
   </p>
   </section>
   <section>
-    <title>Examples</title>
+    <title>Basics</title>
   <p>The simplest way to use Driver is to instantiate it with the
      InputSource and OutputStream, then set the renderer desired and
      call the run method.
@@ -35,26 +35,42 @@
   <p>Here is an example use of Driver which outputs PDF:
   </p>
     <source><![CDATA[
-   Driver driver = new Driver(new InputSource (args[0]),
+   import org.apache.fop.apps.Driver;
+   
+   /*..*/ 
+    
+   Driver driver = new Driver(new InputSource(args[0]),
                               new FileOutputStream(args[1]));
    driver.setRenderer(Driver.RENDER_PDF);
    driver.run();]]></source>
+  <p>
+In the example above, args[0] contains the path to an XSL-FO file, while 
+args[1] contains a path for the target PDF file.
+  </p>
 
   <p>You also need to set up logging. Global logging for all FOP
     processes is managed by MessageHandler. Per-instance logging
     is handled by Driver. You want to set both using an implementation
-    of org.apache.avalon.framework.logger.Logger. See
-    <link href="http://jakarta.apache.org/avalon/framework/">Jakarta
-    Avalon Framework</link> for more information.
+    of org.apache.avalon.framework.logger.Logger. See 
+    <jump href="#logging">below</jump> for more information.
   </p>
     <source><![CDATA[
-    Logger logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-    MessageHandler.setScreenLogger(logger);
-    driver.setLogger(logger);]]></source>
+   import org.apache.avalon.framework.logger.Logger; 
+   import org.apache.avalon.framework.logger.ConsoleLogger; 
+   
+   /*..*/
+    
+   Logger logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+   MessageHandler.setScreenLogger(logger);
+   driver.setLogger(logger);]]></source>
 
   <p>To setup the user config file you can do the following
   </p>
     <source><![CDATA[
+   import org.apache.fop.apps.Options;
+   
+   /*..*/ 
+    
    userConfigFile = new File(userConfig);
    options = new Options(userConfigFile);]]></source>
     <note>
@@ -63,12 +79,12 @@
 
   <p>Once the Driver is set up, the render method
      is called. Depending on whether DOM or SAX is being used, the
-     invocation of the method is either render(Document) or
-     render(Parser, InputSource) respectively.
+     invocation of the method is either <code>render(Document)</code> or
+     <code>render(Parser, InputSource)</code> respectively.
   </p>
   <p>
      <strong>Another possibility may be used to build the FO Tree. You can
-     call getContentHandler() and fire the SAX events yourself.
+     call <code>getContentHandler()</code> and fire the SAX events yourself.
      </strong>
   </p>
   <p>Once the FO Tree is built, the format() and render() methods may be
@@ -91,23 +107,25 @@
   XMLReader parser = inputHandler.getParser();
   driver.setOutputStream(new FileOutputStream(outFile));
   driver.render(parser, inputHandler.getInputSource());]]></source>
-  <p>Have a look at the classes CommandLineStarter or FopServlet for complete examples.</p>
+  <p>Have a look at the classes CommandLineStarter or FopServlet for complete
+     examples. Also, have a look at the examples at the bottom of this page.
+  </p>
 
-<note>If your FO files contain SVG then batik will be used. When batik is
+<note>If your XSL-FO files contain SVG then Batik will be used. When Batik is
 initialised it uses certain classes in <code>java.awt</code> that
 intialises the java AWT classes. This means that a daemon thread
-is created by the jvm and on unix it will need to connect to a
+is created by the JVM and on Unix it will need to connect to a
 DISPLAY.
-The thread means that the java application will not automatically quit
-when finished, you will need to call <code>System.exit</code>. These
-issues should be fixed in the upcoming JDK1.4</note>
+The thread means that the Java application will not automatically quit
+when finished, you will need to call <code>System.exit()</code>. These
+issues should be fixed in the upcoming JDK 1.4</note>
 
   </section>
-  <section>
+  <section id="logging">
     <title>Controlling logging</title>
     <p>FOP uses Jakarta Avalon's
-      <link href="http://jakarta.apache.org/avalon/api/org/apache/avalon/framework/logger/Logger.html">Logger</link>
-       interface to do logging. See the <link href="http://jakarta.apache.org/avalon/">Jakarta Avalon project</link> for more information.</p>
+      <fork href="http://jakarta.apache.org/avalon/api/org/apache/avalon/framework/logger/Logger.html">Logger</fork>
+       interface to do logging. See the <fork href="http://jakarta.apache.org/avalon/">Jakarta Avalon project</fork> for more information.</p>
     <p>Per default FOP uses the ConsoleLogger which logs to System.out. If you want to do logging using a
     logging framework (such as LogKit, Log4J or JDK 1.4 Logging) you can set a
     different Logger implementation on the Driver object. Here's an example how you would use LogKit:</p>
@@ -125,7 +143,7 @@ issues should be fixed in the upcoming JDK1.4</note>
 
     driver.setLogger(new org.apache.avalon.framework.logger.LogKitLogger(log));]]></source>
   <p>The LogKitLogger class implements the Logger interface so all logging calls are being redirected to LogKit.
-  More information on Jakarta LogKit can be found <link href="http://jakarta.apache.org/avalon/logkit/index.html">here</link>.</p>
+  More information on Jakarta LogKit can be found <fork href="http://jakarta.apache.org/avalon/logkit/index.html">here</fork>.</p>
   <p>Similar implementations exist for Log4J (org.apache.avalon.framework.logger.Log4JLogger) and
   JDK 1.4 logging (org.apache.avalon.framework.logger.Jdk14Logger).</p>
   <p>If you want FOP to be totally silent you can also set an org.apache.avalon.framework.logger.NullLogger instance.</p>
@@ -141,14 +159,17 @@ issues should be fixed in the upcoming JDK1.4</note>
 You may want to supply you input to FOP from different data sources.
 For example you may have a DOM and XSL stylesheet or you may want to
 set variables in the stylesheet. The page here:
-<link href="http://xml.apache.org/xalan-j/usagepatterns.html">
-http://xml.apache.org/xalan-j/usagepatterns.html</link> describes
+<fork href="http://xml.apache.org/xalan-j/usagepatterns.html">
+http://xml.apache.org/xalan-j/usagepatterns.html</fork> describes
 how you can do these things.
      </p>
      <p>
 You can use the content handler from the driver to create a SAXResult.
 The transformer then can fire SAX events on the content handler which
 will in turn create the rendered output.
+     </p>
+     <p>
+Examples showing this can be found at the bott
      </p>
     </section>
     <section>
@@ -168,32 +189,132 @@ IntputStream and renderer.
     <section>
       <title>Getting information on the rendering process</title>
       <p>
-      To get the number of pages that were rendered by FOP you can call Driver.getResults(). This returns a
-      FormattingResults object where you can lookup the number of pages produced. It also gives you the
-      page-sequences that were produced along with their id attribute and their number of pages. This is particularly useful if you
-      render multiple documents (each enclosed by a page-sequence) and have to know the number of pages
-      of each document.
+To get the number of pages that were rendered by FOP you can call 
+<code>Driver.getResults()</code>. This returns a FormattingResults object 
+where you can lookup the number of pages produced. It also gives you the 
+page-sequences that were produced along with their id attribute and their 
+number of pages. This is particularly useful if you render multiple 
+documents (each enclosed by a page-sequence) and have to know the number of 
+pages of each document.
       </p>
     </section>
   </section>
   <section>
-    <title>Using Fop in a servlet</title>
+    <title>Using FOP in a servlet</title>
      <p>
-In the directory xml-fop/docs/examples/embedding you can find a working
-example how to use Fop in a servlet. You can drop the fop.war into the
-webapps directory of Tomcat, then go to a URL like this:
+In the directory xml-fop/examples/servlet you can find a working example how
+to use FOP in a servlet. After building the servlet you can drop the fop.war 
+into the webapps directory of Tomcat, then go to a URL like this:
      </p>
      <p>http://localhost:8080/fop/fop?fo=/home/path/to/fofile.fo</p>
      <p>http://localhost:8080/fop/fop?xml=/home/path/to/xmlfile.xml&amp;xsl=/home/path/to/xslfile.xsl</p>
-     <p>You can also find the source code there in the file FopServlet.java</p>
-     <p>
-        To compile this code you will need servlet_2_2.jar (or compatible), fop.jar and the sax api in your classpath.
-     </p>
+     <p>The source code for the servlet can be found under xml-fop/examples/servlet/src/FopServlet.java.</p>
      <note>
          Some browsers have problems handling the PDF result sent back to
          the browser. IE is particularly bad and different versions behave
-         differently. Having a ".pdf" on the end of the url may help.
+         differently. Having a ".pdf" on the end of the URL may help.
      </note>
+  </section>
+</section>
+<section>
+  <title>Examples</title>
+  <p>
+The directory "xml-fop/examples/embedding" contains several working examples. 
+In contrast of the examples above the examples here primarily use JAXP for 
+XML access. This may be easier to understand for people familiar with JAXP.
+  </p>
+  <section>
+    <title>ExampleFO2PDF.java</title>
+    <p>
+This example demonstrates the basic usage pattern to transform an XSL-FO
+file to PDF using FOP.
+    </p>
+    <figure src="images/EmbeddingExampleFO2PDF.png" alt="Example XSL-FO to PDF"/>
+  </section>
+  <section>
+    <title>ExampleXML2FO.java</title>
+    <p>
+This example has nothing to do with FOP. It is there to show you how an XML 
+file can be converted to XSL-FO using XSLT. The JAXP API is used to do the
+transformation. Make sure you've got a JAXP-compliant XSLT processor in your 
+classpath (ex. <fork href="http://xml.apache.org/xalan-j">Xalan</fork>).
+    </p>
+    <figure src="images/EmbeddingExampleXML2FO.png" alt="Example XML to XSL-FO"/>
+  </section>
+  <section>
+    <title>ExampleXML2PDF.java</title>
+    <p>
+This example demonstrates how you can convert an arbitrary XML file to PDF 
+using XSLT and XSL-FO/FOP. It is a combination of the first two examples 
+above. The example uses JAXP to transform the XML file to XSL-FO and FOP to 
+transform the XSL-FO to PDF.
+    </p>
+    <figure src="images/EmbeddingExampleXML2PDF.png" alt="Example XML to PDF (via XSL-FO)"/>
+    <p>
+The output (XSL-FO) from the XSL transformation is piped through to FOP using 
+SAX events. This is the most efficient way to do this because the 
+intermediate result doesn't have to be saved somewhere. Often, novice users 
+save the intermediate result in a file, a byte array or a DOM tree. We 
+strongly discourage you to do this if it isn't absolutely necessary. The 
+performance is significantly higher with SAX.
+    </p>
+  </section>
+  <section>
+    <title>ExampleObj2XML.java</title>
+    <p>
+This example is a preparatory example for the next one. It's an example that 
+shows how an arbitrary Java object can be converted to XML. It's an often 
+needed task to do this. Often people create a DOM tree from a Java object and 
+use that. This is pretty straightforward. The example here however shows how
+to do this using SAX which will probably be faster and not even more 
+complicated once you know how this works.
+    </p>
+    <figure src="images/EmbeddingExampleObj2XML.png" alt="Example Java object to XML"/>
+    <p>
+For this example we've created two classes: ProjectTeam and ProjectMember 
+(found in xml-fop/examples/embedding/java/embedding/model). They represent 
+the same data structure found in 
+xml-fop/examples/embedding/xml/xml/projectteam.xml. We want to serialize a 
+project team with several members which exist as Java objects to XML. 
+Therefore we created the two classes: ProjectTeamInputSource and 
+ProjectTeamXMLReader (in the same place as ProjectTeam above).
+    </p>
+    <p>
+The XMLReader implementation (regard it as a special kind of XML parser)is 
+responsible for creating SAX events from the Java object. The InputSource 
+class is only used to hold the ProjectTeam object to be used.
+    </p>
+    <p>
+Have a look at the source of ExampleObj2XML.java to find out how this is 
+used. For more detailed information see other resources on JAXP (ex. 
+<fork href="http://java.sun.com/xml/jaxp/dist/1.1/docs/tutorial/xslt/3_generate.html">An older JAXP tutorial</fork>).
+    </p>
+  </section>
+  <section>
+    <title>ExampleObj2PDF.java</title>
+    <p>
+The last example here combines the previous and the third to demonstrate 
+how you can transform a Java object to a PDF directly in one smooth run
+by generating SAX events from the Java object that get fed to an XSL 
+transformation. The result of the transformation is then converted to PDF 
+using FOP as before.
+    </p>
+    <figure src="images/EmbeddingExampleObj2PDF.png" alt="Example Java object to PDF (via XML and XSL-FO)"/>
+  </section>
+  <section>
+    <title>Final notes</title>
+    <p>
+These examples should give you an idea of what's possible. It should be easy 
+to adjust these examples to your needs. For examples, you can use a DOMSource
+instead of a StreamSource to feed a DOM tree as input for an XSL 
+transformation.
+    </p>
+    <p>
+If you think you have a decent example that should be here, contact us via 
+one of the mailing lists and we'll see to it that it gets added. Also, if
+you can't find the solution to your particular problem drop us a message on 
+the fop-user mailing list.
+    </p>
   </section>
 </section>
     </body>
