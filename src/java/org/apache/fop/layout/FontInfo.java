@@ -164,7 +164,9 @@ public class FontInfo {
             }
 
             // then use default
-            f = (String)triplets.get(DEFAULT_FONT);
+            if (f == null) {
+                f = (String)triplets.get(DEFAULT_FONT);
+            }
 
         }
 
