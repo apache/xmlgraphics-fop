@@ -10,6 +10,10 @@ package org.apache.fop.svg;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.XMLObj;
 
+/**
+ * Class for SVG element objects.
+ * This aids in the construction of the SVG Document.
+ */
 public class SVGObj extends XMLObj {
     /**
      * constructs an svg object (called by Maker).
