@@ -441,5 +441,39 @@ public class FObj extends FONode implements Constants {
         return null;
     }
 
+    /**
+     * Convenience method for validity checking.  Checks if the
+     * incoming node is a member of the "%block;" parameter entity
+     * as defined in Sect. 6.2 of the XSL 1.0 & 1.1 Recommendations
+     * @param nsURI namespace URI of incoming invalid node
+     * @param lName local name (i.e., no prefix) of incoming node 
+     * @return true if a member, false if not
+     */
+    protected static boolean isBlockItem(String nsURI, String lName) {
+        return (nsURI == FOElementMapping.URI && 
+            (lName.equals("block") 
+            || lName.equals("table") 
+            || lName.equals("table-and-caption") 
+            || lName.equals("block-container")
+            || lName.equals("list-block") 
+            || lName.equals("float")))
+            || isNeutralItem(nsURI, lName);
+    }
+
+    /**
+     * Convenience method for validity checking.  Checks if the
+     * incoming node is a member of the neutral item list
+     * as defined in Sect. 6.2 of the XSL 1.0 & 1.1 Recommendations
+     * @param nsURI namespace URI of incoming invalid node
+     * @param lName local name (i.e., no prefix) of incoming node 
+     * @return true if a member, false if not
+     */
+    protected static boolean isNeutralItem(String nsURI, String lName) {
+        return (nsURI == FOElementMapping.URI && 
+            (lName.equals("multi-switch") 
+            || lName.equals("multi-properties")
+            || lName.equals("wrapper") 
+            || lName.equals("retrieve-marker")));
+    }
 }
 

@@ -112,16 +112,15 @@ public final class GenericFOPTestCase extends TestCase {
 
     private void renderPDF(String fo, String digestIn, String digestOut)
         throws Exception {
-        PDFRenderer renderer = new PDFRenderer();
         FOUserAgent foUserAgent = new FOUserAgent();
         foUserAgent.setCreationDate(new Date(10000));
-        renderer.setUserAgent(foUserAgent);
         MessageDigest outDigest = MessageDigest.getInstance("MD5");
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
         DigestOutputStream out =
             new DigestOutputStream(new ByteArrayOutputStream(), outDigest);
         Driver driver = new Driver();
-        driver.setRenderer(renderer);
+        driver.setUserAgent(foUserAgent);
+        driver.setRenderer(Driver.RENDER_PDF);
         driver.setOutputStream(out);
         InputSource source = new InputSource(new StringReader(fo));
         DigestFilter filter = new DigestFilter("MD5");

@@ -23,6 +23,8 @@ import java.io.FileNotFoundException;
 import java.util.Locale;
 import java.util.Vector;
 
+import org.apache.fop.fo.Constants;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.SimpleLog;
@@ -30,34 +32,7 @@ import org.apache.commons.logging.impl.SimpleLog;
 /**
  * Options parses the commandline arguments
  */
-public class CommandLineOptions {
-
-    /** input / output not set */
-    public static final int NOT_SET = 0;
-    /** input: fo file */
-    public static final int FO_INPUT = 1;
-    /** input: xml+xsl file */
-    public static final int XSLT_INPUT = 2;
-    /** output: pdf file */
-    public static final int PDF_OUTPUT = 1;
-    /** output: screen using swing */
-    public static final int AWT_OUTPUT = 2;
-    /** output: mif file */
-    public static final int MIF_OUTPUT = 3;
-    /** output: sent swing rendered file to printer */
-    public static final int PRINT_OUTPUT = 4;
-    /** output: pcl file */
-    public static final int PCL_OUTPUT = 5;
-    /** output: postscript file */
-    public static final int PS_OUTPUT = 6;
-    /** output: text file */
-    public static final int TXT_OUTPUT = 7;
-    /** output: svg file */
-    public static final int SVG_OUTPUT = 8;
-    /** output: XML area tree */
-    public static final int AREA_OUTPUT = 9;
-    /** output: RTF file */
-    public static final int RTF_OUTPUT = 10;
+public class CommandLineOptions implements Constants {
 
     /* show configuration information */
     private Boolean showConfiguration = Boolean.FALSE;
@@ -257,12 +232,12 @@ public class CommandLineOptions {
     }
 
     private int parseAWTOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(AWT_OUTPUT);
+        setOutputMode(RENDER_AWT);
         return 0;
     }
 
     private int parsePDFOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(PDF_OUTPUT);
+        setOutputMode(RENDER_PDF);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the pdf output file");
@@ -273,7 +248,7 @@ public class CommandLineOptions {
     }
 
     private int parseMIFOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(MIF_OUTPUT);
+        setOutputMode(RENDER_MIF);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the mif output file");
@@ -284,7 +259,7 @@ public class CommandLineOptions {
     }
 
     private int parseRTFOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(RTF_OUTPUT);
+        setOutputMode(RENDER_RTF);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the rtf output file");
@@ -295,12 +270,12 @@ public class CommandLineOptions {
     }
 
     private int parsePrintOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(PRINT_OUTPUT);
+        setOutputMode(RENDER_PRINT);
         return 0;
     }
 
     private int parsePCLOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(PCL_OUTPUT);
+        setOutputMode(RENDER_PCL);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the pdf output file");
@@ -311,7 +286,7 @@ public class CommandLineOptions {
     }
 
     private int parsePostscriptOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(PS_OUTPUT);
+        setOutputMode(RENDER_PS);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the PostScript output file");
@@ -322,7 +297,7 @@ public class CommandLineOptions {
     }
 
     private int parseTextOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(TXT_OUTPUT);
+        setOutputMode(RENDER_TXT);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the text output file");
@@ -333,7 +308,7 @@ public class CommandLineOptions {
     }
 
     private int parseSVGOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(SVG_OUTPUT);
+        setOutputMode(RENDER_SVG);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the svg output file");
@@ -348,7 +323,7 @@ public class CommandLineOptions {
             inputmode = FO_INPUT;
             fofile = new File(args[i]);
         } else if (outputmode == NOT_SET) {
-            outputmode = PDF_OUTPUT;
+            outputmode = RENDER_PDF;
             outfile = new File(args[i]);
         } else {
             throw new FOPException("Don't know what to do with "
@@ -358,7 +333,7 @@ public class CommandLineOptions {
     }
 
     private int parseAreaTreeOption(String[] args, int i) throws FOPException {
-        setOutputMode(AREA_OUTPUT);
+        setOutputMode(RENDER_XML);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the area-tree output file");
@@ -388,7 +363,7 @@ public class CommandLineOptions {
             throw new FOPException("No output file specified");
         }
 
-        if ((outputmode == AWT_OUTPUT || outputmode == PRINT_OUTPUT) && outfile != null) {
+        if ((outputmode == RENDER_AWT || outputmode == RENDER_PRINT) && outfile != null) {
             throw new FOPException("Output file may not be specified " +
                 "for AWT or PRINT output");
         }
@@ -446,26 +421,26 @@ public class CommandLineOptions {
         switch (outputmode) {
         case NOT_SET:
             throw new FOPException("Renderer has not been set!");
-        case PDF_OUTPUT:
+        case RENDER_PDF:
             return Driver.RENDER_PDF;
-        case AWT_OUTPUT:
+        case RENDER_AWT:
             return Driver.RENDER_AWT;
-        case MIF_OUTPUT:
+        case RENDER_MIF:
             return Driver.RENDER_MIF;
-        case PRINT_OUTPUT:
+        case RENDER_PRINT:
             return Driver.RENDER_PRINT;
-        case PCL_OUTPUT:
+        case RENDER_PCL:
             return Driver.RENDER_PCL;
-        case PS_OUTPUT:
+        case RENDER_PS:
             return Driver.RENDER_PS;
-        case TXT_OUTPUT:
+        case RENDER_TXT:
             return Driver.RENDER_TXT;
-        case SVG_OUTPUT:
+        case RENDER_SVG:
             return Driver.RENDER_SVG;
-        case AREA_OUTPUT:
+        case RENDER_XML:
             foUserAgent.getRendererOptions().put("fineDetail", isCoarseAreaXml());
             return Driver.RENDER_XML;
-        case RTF_OUTPUT:
+        case RENDER_RTF:
             return Driver.RENDER_RTF;
         default:
             throw new FOPException("Invalid Renderer setting!");
@@ -505,7 +480,7 @@ public class CommandLineOptions {
     }
 
     /**
-     * Returns the output mode (output format, ex. NOT_SET or PDF_OUTPUT)
+     * Returns the output mode (output format, ex. NOT_SET or RENDER_PDF)
      * @return the output mode
      */
     public int getOutputMode() {
@@ -653,45 +628,45 @@ public class CommandLineOptions {
         case NOT_SET:
             log.info("not set");
             break;
-        case PDF_OUTPUT:
+        case RENDER_PDF:
             log.info("pdf");
             log.info("output file: " + outfile.toString());
             break;
-        case AWT_OUTPUT:
+        case RENDER_AWT:
             log.info("awt on screen");
             if (outfile != null) {
                 log.error("awt mode, but outfile is set:");
                 log.info("out file: " + outfile.toString());
             }
             break;
-        case MIF_OUTPUT:
+        case RENDER_MIF:
             log.info("mif");
             log.info("output file: " + outfile.toString());
             break;
-        case RTF_OUTPUT:
+        case RENDER_RTF:
             log.info("rtf");
             log.info("output file: " + outfile.toString());
             break;
-        case PRINT_OUTPUT:
+        case RENDER_PRINT:
             log.info("print directly");
             if (outfile != null) {
                 log.error("print mode, but outfile is set:");
                 log.error("out file: " + outfile.toString());
             }
             break;
-        case PCL_OUTPUT:
+        case RENDER_PCL:
             log.info("pcl");
             log.info("output file: " + outfile.toString());
             break;
-        case PS_OUTPUT:
+        case RENDER_PS:
             log.info("PostScript");
             log.info("output file: " + outfile.toString());
             break;
-        case TXT_OUTPUT:
+        case RENDER_TXT:
             log.info("txt");
             log.info("output file: " + outfile.toString());
             break;
-        case SVG_OUTPUT:
+        case RENDER_SVG:
             log.info("svg");
             log.info("output file: " + outfile.toString());
             break;

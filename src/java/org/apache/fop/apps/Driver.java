@@ -30,6 +30,7 @@ import org.xml.sax.XMLReader;
 import org.w3c.dom.Document;
 
 // FOP
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.FOInputHandler;
@@ -86,62 +87,7 @@ import org.apache.fop.tools.DocumentReader;
  * driver.render(parser, fileInputSource(args[0]));
  * </PRE>
  */
-public class Driver {
-
-    /**
-     * private constant to indicate renderer was not defined.
-     */
-    private static final int NOT_SET = 0;
-
-    /**
-     * Render to PDF. OutputStream must be set
-     */
-    public static final int RENDER_PDF = 1;
-
-    /**
-     * Render to a GUI window. No OutputStream neccessary
-     */
-    public static final int RENDER_AWT = 2;
-
-    /**
-     * Render to MIF. OutputStream must be set
-     */
-    public static final int RENDER_MIF = 3;
-
-    /**
-     * Render to XML. OutputStream must be set
-     */
-    public static final int RENDER_XML = 4;
-
-    /**
-     * Render to PRINT. No OutputStream neccessary
-     */
-    public static final int RENDER_PRINT = 5;
-
-    /**
-     * Render to PCL. OutputStream must be set
-     */
-    public static final int RENDER_PCL = 6;
-
-    /**
-     * Render to Postscript. OutputStream must be set
-     */
-    public static final int RENDER_PS = 7;
-
-    /**
-     * Render to Text. OutputStream must be set
-     */
-    public static final int RENDER_TXT = 8;
-
-    /**
-     * Render to SVG. OutputStream must be set
-     */
-    public static final int RENDER_SVG = 9;
-
-    /**
-     * Render to RTF. OutputStream must be set
-     */
-    public static final int RENDER_RTF = 10;
+public class Driver implements Constants {
 
     /**
      * the FO tree builder
@@ -191,6 +137,15 @@ public class Driver {
     }
 
     /**
+     * Constructor for AWTRenderer, which reuses the
+     * same renderer instance for document reloading
+     */
+    public Driver(AWTRenderer renderer) {
+        this();
+        setRenderer(renderer);
+    }
+
+    /**
      * Convenience constructor for directly setting input and output.
      * @param source InputSource to take the XSL-FO input from
      * @param stream Target output stream
@@ -222,8 +177,15 @@ public class Driver {
      */
     public void setUserAgent(FOUserAgent agent) {
         userAgent = agent;
+        if (renderer != null) {
+            renderer.setUserAgent(userAgent);
+        }
     }
 
+    /**
+     * Get the FOUserAgent instance for this process
+     * @return the user agent
+     */
     public FOUserAgent getUserAgent() {
         if (userAgent == null) {
             userAgent = new FOUserAgent();
@@ -243,14 +205,6 @@ public class Driver {
         if (treeBuilder != null) {
             treeBuilder.reset();
         }
-    }
-
-    /**
-     * Indicates whether FOP has already received input data.
-     * @return true, if input data was received
-     */
-    public boolean hasData() {
-        return (treeBuilder.hasData());
     }
 
     /**
@@ -287,7 +241,7 @@ public class Driver {
     }
 
     /**
-     * Shortcut to set the rendering type to use. Must be one of
+     * Method to set the rendering type to use. Must be one of
      * <ul>
      * <li>RENDER_PDF</li>
      * <li>RENDER_AWT</li>
@@ -307,31 +261,31 @@ public class Driver {
         rendererType = renderer;
         switch (renderer) {
         case RENDER_PDF:
-            setRenderer("org.apache.fop.render.pdf.PDFRenderer");
+            setRenderer(new org.apache.fop.render.pdf.PDFRenderer());
             break;
         case RENDER_AWT:
-            setRenderer("org.apache.fop.render.awt.AWTRenderer");
+            setRenderer(new org.apache.fop.render.awt.AWTRenderer());
             break;
         case RENDER_PRINT:
-            setRenderer("org.apache.fop.render.awt.AWTPrintRenderer");
+            setRenderer(new org.apache.fop.render.awt.AWTPrintRenderer());
             break;
         case RENDER_PCL:
-            setRenderer("org.apache.fop.render.pcl.PCLRenderer");
+            setRenderer(new org.apache.fop.render.pcl.PCLRenderer());
             break;
         case RENDER_PS:
-            setRenderer("org.apache.fop.render.ps.PSRenderer");
+            setRenderer(new org.apache.fop.render.ps.PSRenderer());
             break;
         case RENDER_TXT:
-            setRenderer("org.apache.fop.render.txt.TXTRenderer()");
+            setRenderer(new org.apache.fop.render.txt.TXTRenderer());
             break;
         case RENDER_MIF:
             //foInputHandler will be set later
             break;
         case RENDER_XML:
-            setRenderer("org.apache.fop.render.xml.XMLRenderer");
+            setRenderer(new org.apache.fop.render.xml.XMLRenderer());
             break;
         case RENDER_SVG:
-            setRenderer("org.apache.fop.render.svg.SVGRenderer");
+            setRenderer(new org.apache.fop.render.svg.SVGRenderer());
             break;
         case RENDER_RTF:
             //foInputHandler will be set later
@@ -346,43 +300,9 @@ public class Driver {
      * Set the Renderer to use.
      * @param renderer the renderer instance to use
      */
-    public void setRenderer(Renderer renderer) {
-        // AWTStarter calls this function directly
-        if (renderer instanceof AWTRenderer) {
-            rendererType = RENDER_AWT;
-        }
+    private void setRenderer(Renderer renderer) {
         renderer.setUserAgent(getUserAgent());
-        userAgent.setProducer("FOP Version" + Fop.getVersion());
         this.renderer = renderer;
-    }
-
-    /**
-     * Set the class name of the Renderer to use as well as the
-     * producer string for those renderers that can make use of it.
-     * @param rendererClassName classname of the renderer to use such as
-     * "org.apache.fop.render.pdf.PDFRenderer"
-     * @exception IllegalArgumentException if the classname was invalid.
-     * @see #setRenderer(int)
-     */
-    public void setRenderer(String rendererClassName)
-                throws IllegalArgumentException {
-        try {
-            renderer = (Renderer)Class.forName(rendererClassName).newInstance();
-            renderer.setUserAgent(getUserAgent());
-            userAgent.setProducer("FOP Version" + Fop.getVersion());
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Could not find "
-                                               + rendererClassName);
-        } catch (InstantiationException e) {
-            throw new IllegalArgumentException("Could not instantiate "
-                                               + rendererClassName);
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Could not access "
-                                               + rendererClassName);
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException(rendererClassName
-                                               + " is not a renderer");
-        }
     }
 
     /**

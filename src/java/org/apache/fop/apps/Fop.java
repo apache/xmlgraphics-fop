@@ -64,7 +64,7 @@ public class Fop {
             // System.exit(0) called to close AWT/SVG-created threads, if any.
             // AWTRenderer closes with window shutdown, so exit() should not
             // be called here
-            if (options.getOutputMode() != CommandLineOptions.AWT_OUTPUT) {
+            if (options.getOutputMode() != CommandLineOptions.RENDER_AWT) {
                 System.exit(0);
             }
         } catch (FOPException e) {

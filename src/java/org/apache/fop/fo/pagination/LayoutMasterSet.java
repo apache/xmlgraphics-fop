@@ -74,7 +74,7 @@ public class LayoutMasterSet extends FObj {
      */
     protected void end() {
         if (children == null) {
-           missingChildElementError("(simple-page-master|page-sequence-master)+");
+            missingChildElementError("(simple-page-master|page-sequence-master)+");
         }
     }
 
