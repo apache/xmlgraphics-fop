@@ -86,6 +86,12 @@ public class Body extends BlockStackingLayoutManager {
         MinOptMax stackSize = new MinOptMax();
         BreakPoss lastPos = null;
 
+        if (columns == null) {
+            setFinished(true);
+            getLogger().warn("ignoring table body with undefined columns");
+            return null;
+        }
+
         while ((curLM = (Row)getChildLM()) != null) {
             // Make break positions
             // Set up a LayoutContext
