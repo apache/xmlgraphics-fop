@@ -338,6 +338,7 @@ public class XMLRenderer extends AbstractRenderer {
     public void renderPage(PageViewport page) throws IOException, FOPException {
         atts.clear();
         addAttribute("bounds", page.getViewArea());
+        addAttribute("nr", page.getPageNumber());
         startElement("pageViewport", atts);
         startElement("page");
         super.renderPage(page);
