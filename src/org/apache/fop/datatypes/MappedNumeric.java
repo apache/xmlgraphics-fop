@@ -36,8 +36,8 @@ public class MappedNumeric extends EnumType {
      * @param property the <tt>int</tt> index of the property on which
      * this value is being defined.
      * @param enumText the <tt>String</tt> containing the enumeration text.
+     * @param foTree the <tt>FOTree</tt> being built
      * An <i>NCName</i>.
-     * @param foTree the <tt>FOTree</tt> which is being built.
      * @exception PropertyException
      */
     public MappedNumeric(int property, String enumText, FOTree foTree)
@@ -46,15 +46,15 @@ public class MappedNumeric extends EnumType {
         // Set property index in AbstractPropertyValue
         // and enumValue enum constant in EnumType
         super(property, enumText);
-        mappedNum = foTree.getMappedNumValue(property, enumValue);
+        mappedNum = foTree.getMappedNumArrayValue(property, enumValue);
     }
 
     /**
      * @param propertyName the <tt>String</tt> name of the property on which
      * this value is being defined.
      * @param enumText the <tt>String</tt> containing the enumeration text.
+     * @param foTree the <tt>FOTree</tt> being built
      * An <i>NCName</i>.
-     * @param foTree the <tt>FOTree</tt> which is being built.
      * @exception PropertyException
      */
     public MappedNumeric(String propertyName, String enumText, FOTree foTree)
@@ -63,7 +63,7 @@ public class MappedNumeric extends EnumType {
         // Set property index in AbstractPropertyValue
         // and enumValue enum constant in EnumType
         super(propertyName, enumText);
-        mappedNum = foTree.getMappedNumValue(property, enumValue);
+        mappedNum = foTree.getMappedNumArrayValue(property, enumValue);
     }
 
     /**
