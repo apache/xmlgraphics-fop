@@ -22,7 +22,9 @@ package org.apache.fop.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -219,7 +221,7 @@ public abstract class PDFObject {
     
     /** Formatting pattern for PDF date */
     protected static final SimpleDateFormat DATE_FORMAT 
-            = new SimpleDateFormat("'D:'yyyyMMddHHmmssZ");
+            = new SimpleDateFormat("'D:'yyyyMMddHHmmss");
 
     /**
      * Formats a date/time according to the PDF specification 
@@ -228,9 +230,46 @@ public abstract class PDFObject {
      * @return the requested String representation
      */
     protected String formatDateTime(Date time) {
-        String s = DATE_FORMAT.format(time);
-        int i = s.length() - 2;
-        return s.substring(0, i) + "'" + s.substring(i) + "'";
+        StringBuffer sb = new StringBuffer();
+        sb.append(DATE_FORMAT.format(time));
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(time);
+        
+        int era = cal.get(Calendar.ERA);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        int milliseconds = cal.get(Calendar.HOUR_OF_DAY) * 1000 * 60 * 60;
+        milliseconds += cal.get(Calendar.MINUTE) * 1000 * 60;
+        milliseconds += cal.get(Calendar.SECOND) * 1000;
+        milliseconds += cal.get(Calendar.MILLISECOND);
+        
+        int offset = tz.getOffset(era, year, month, day, dayOfWeek, milliseconds);
+        if (offset == 0) {
+            sb.append('Z');
+        } else {
+            if (offset > 0) {
+                sb.append('+');
+            } else {
+                sb.append('-');
+            }
+            final int HOUR = (1000 * 60 * 60);
+            int offsetHour = Math.abs(offset / HOUR);
+            int offsetMinutes = (offset - (offsetHour * HOUR)) / (1000 * 60);
+            if (offsetHour < 10) {
+                sb.append('0');
+            }
+            sb.append(Integer.toString(offsetHour));
+            sb.append('\'');
+            if (offsetMinutes < 10) {
+                sb.append('0');
+            }
+            sb.append(Integer.toString(offsetMinutes));
+            sb.append('\'');
+        }
+        return sb.toString();
     }
 
 }
