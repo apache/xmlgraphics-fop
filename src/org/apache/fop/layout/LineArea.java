@@ -876,7 +876,7 @@ public class LineArea extends Area {
     private String getHyphenationWord(char[] characters, int wordStart) {
         boolean wordendFound = false;
         int counter = 0;
-        char[] newWord = new char[100];    // create a buffer
+        char[] newWord = new char[characters.length];    // create a buffer
         while ((!wordendFound)
                && ((wordStart + counter) < characters.length)) {
             char tk = characters[wordStart + counter];

@@ -186,6 +186,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         AffineTransform currentTransform = new AffineTransform(1, 0, 0, 1, 0, 0);
         pdfAElementBridge.setCurrentTransform(currentTransform);
         ctx.putBridge(pdfAElementBridge);
+        ctx.putBridge(new PDFImageElementBridge());
         GraphicsNode gvtRoot;
         try {
             gvtRoot = builder.build(ctx, svgDoc);
@@ -376,6 +377,11 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
                 return "en";
             }
         }
+
+        public String getMedia() {
+            return "";
+        }
+
 
         /**
          * Returns the user stylesheet specified in the

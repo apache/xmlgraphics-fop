@@ -181,172 +181,69 @@ public class PDFTextPainter implements TextPainter {
         return wordWidth / 1000f;
     }
 
-    /**
-     * Initiates a text selection on a particular AttributedCharacterIterator,
-     * using the text/font metrics employed by this TextPainter instance.
-     * @param x the x coordinate, in the text layout's coordinate system,
-     * of the selection event.
-     * @param y the y coordinate, in the text layout's coordinate system,
-     * of the selection event.
-     * @param aci the AttributedCharacterIterator describing the text
-     * @return an instance of Mark which encapsulates the state necessary to
-     * implement hit testing and text selection.
-     */
-    public Mark selectAt(double x, double y, AttributedCharacterIterator aci,
+    public Mark getMark(TextNode node, int pos, boolean all) {
+        System.out.println("PDFText getMark");
+        return null;
+    }
+
+    public Mark selectAt(double x, double y,
                          TextNode node) {
         System.out.println("PDFText selectAt");
         return null;
     }
 
-    /**
-     * Continues a text selection on a particular AttributedCharacterIterator,
-     * using the text/font metrics employed by this TextPainter instance.
-     * @param x the x coordinate, in the text layout's coordinate system,
-     * of the selection event.
-     * @param y the y coordinate, in the text layout's coordinate system,
-     * of the selection event.
-     * @param aci the AttributedCharacterIterator describing the text
-     * @return an instance of Mark which encapsulates the state necessary to
-     * implement hit testing and text selection.
-     */
-    public Mark selectTo(double x, double y, Mark beginMark,
-                         AttributedCharacterIterator aci,
-                         TextNode node) {
+    public Mark selectTo(double x, double y, Mark beginMark) {
         System.out.println("PDFText selectTo");
         return null;
     }
 
-    /**
-     * Select all of the text represented by an AttributedCharacterIterator,
-     * using the text/font metrics employed by this TextPainter instance.
-     * @param x the x coordinate, in the text layout's coordinate system,
-     * of the selection event.
-     * @param y the y coordinate, in the text layout's coordinate system,
-     * of the selection event.
-     * @param aci the AttributedCharacterIterator describing the text
-     * @return an instance of Mark which encapsulates the state necessary to
-     * implement hit testing and text selection.
-     */
     public Mark selectAll(double x, double y,
-                          AttributedCharacterIterator aci,
                           TextNode node) {
         System.out.println("PDFText selectAll");
         return null;
     }
 
-
-    /**
-     * Selects the first glyph in the text node.
-     */
-    public Mark selectFirst(double x, double y,
-                            AttributedCharacterIterator aci,
-                            TextNode node) {
+    public Mark selectFirst(TextNode node) {
         System.out.println("PDFText selectFirst");
         return null;
     }
 
-
-    /**
-     * Selects the last glyph in the text node.
-     */
-    public Mark selectLast(double x, double y,
-                           AttributedCharacterIterator aci,
-                           TextNode node) {
+    public Mark selectLast(TextNode node) {
         System.out.println("PDFText selectLast");
         return null;
     }
 
-    /*
-     * Get an array of index pairs corresponding to the indices within an
-     * AttributedCharacterIterator regions bounded by two Marks.
-     * Note that the instances of Mark passed to this function
-     * <em>must come</em>
-     * from the same TextPainter that generated them via selectAt() and
-     * selectTo(), since the TextPainter implementation may rely on hidden
-     * implementation details of its own Mark implementation.
-     */
-    public int[] getSelected(AttributedCharacterIterator aci, Mark start,
+    public int[] getSelected(Mark start,
                              Mark finish) {
         System.out.println("PDFText getSelected");
         return null;
     }
 
-
-    /*
-     * Get a Shape in userspace coords which encloses the textnode
-     * glyphs bounded by two Marks.
-     * Note that the instances of Mark passed to this function
-     * <em>must come</em>
-     * from the same TextPainter that generated them via selectAt() and
-     * selectTo(), since the TextPainter implementation may rely on hidden
-     * implementation details of its own Mark implementation.
-     */
     public Shape getHighlightShape(Mark beginMark, Mark endMark) {
         System.out.println("PDFText getHighlightShape");
         return null;
     }
 
-    /*
-     * Get a Shape in userspace coords which defines the textnode glyph outlines.
-     * @param node the TextNode to measure
-     * @param frc the font rendering context.
-     * @param includeDecoration whether to include text decoration
-     * outlines.
-     * @param includeStroke whether to create the "stroke shape outlines"
-     * instead of glyph outlines.
-     */
     public Shape getShape(TextNode node) {
         System.out.println("PDFText getShape");
         return null;
     }
 
-    /*
-     * Get a Shape in userspace coords which defines the textnode glyph outlines.
-     * @param node the TextNode to measure
-     * @param frc the font rendering context.
-     * @param includeDecoration whether to include text decoration
-     * outlines.
-     * @param includeStroke whether to create the "stroke shape outlines"
-     * instead of glyph outlines.
-     */
     public Shape getDecoratedShape(TextNode node) {
         System.out.println("PDFText getDecoratedShape");
         return new Rectangle(1, 1);
     }
 
-    /*
-     * Get a Rectangle2D in userspace coords which encloses the textnode
-     * glyphs composed from an AttributedCharacterIterator.
-     * @param node the TextNode to measure
-     * @param g2d the Graphics2D to use
-     * @param context rendering context.
-     */
     public Rectangle2D getBounds(TextNode node) {
         System.out.println("PDFText getBounds");
         return null;
     }
 
-    /*
-     * Get a Rectangle2D in userspace coords which encloses the textnode
-     * glyphs composed from an AttributedCharacterIterator, inclusive of
-     * glyph decoration (underline, overline, strikethrough).
-     * @param node the TextNode to measure
-     * @param g2d the Graphics2D to use
-     * @param context rendering context.
-     */
     public Rectangle2D getDecoratedBounds(TextNode node) {
         System.out.println("PDFText getDecoratedBounds");
         return null;
     }
 
-    /*
-     * Get a Rectangle2D in userspace coords which encloses the
-     * textnode glyphs (as-painted, inclusive of decoration and stroke, but
-     * exclusive of filters, etc.) composed from an AttributedCharacterIterator.
-     * @param node the TextNode to measure
-     * @param g2d the Graphics2D to use
-     * @param context rendering context.
-     */
     public Rectangle2D getPaintedBounds(TextNode node) {
         // System.out.println("PDFText getPaintedBounds");
         return null;

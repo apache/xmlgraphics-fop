@@ -171,6 +171,26 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         return currentAnnotList;
     }
 
+    public void addJpegImage(JpegImage jpeg, float x, float y, float width, float height) {
+        int xObjectNum = this.pdfDoc.addImage(jpeg);
+
+        AffineTransform at = getTransform();
+        double[] matrix = new double[6];
+        at.getMatrix(matrix);
+        currentStream.write("q\n");
+        Shape imclip = getClip();
+        writeClip(imclip);
+        currentStream.write("" + matrix[0] + " " + matrix[1] + " "
+                            + matrix[2] + " " + matrix[3] + " "
+                            + matrix[4] + " " + matrix[5] + " cm\n");
+
+        currentStream.write("" + width + " 0 0 "
+                          + (-height) + " "
+                          + x + " "
+                          + (y + height) + " cm\n" + "/Im"
+                          + xObjectNum + " Do\nQ\n");
+    }
+
     /**
      * Draws as much of the specified image as is currently available.
      * The image is drawn with its top-left corner at
@@ -205,17 +225,17 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             return false;
         }
 
-        Dimension size = new Dimension(width, height);
+        Dimension size = new Dimension(width * 3, height * 3);
         BufferedImage buf = buildBufferedImage(size);
 
         java.awt.Graphics2D g = buf.createGraphics();
         g.setComposite(AlphaComposite.SrcOver);
         g.setBackground(new Color(1, 1, 1, 0));
         g.setPaint(new Color(1, 1, 1, 0));
-        g.fillRect(0, 0, width, height);
+        g.fillRect(0, 0, width * 3, height * 3);
         g.clip(new Rectangle(0, 0, buf.getWidth(), buf.getHeight()));
 
-        if (!g.drawImage(img, 0, 0, observer)) {
+        if (!g.drawImage(img, 0, 0, buf.getWidth(), buf.getHeight(), observer)) {
             return false;
         }
         g.dispose();
@@ -267,7 +287,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         try {
-            FopImage fopimg = new TempImage(width, height, result, mask);
+            FopImage fopimg = new TempImage(buf.getWidth(), buf.getHeight(), result, mask);
             int xObjectNum = this.pdfDoc.addImage(fopimg);
             AffineTransform at = getTransform();
             double[] matrix = new double[6];
@@ -477,10 +497,15 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void draw(Shape s) {
         // System.out.println("draw(Shape)");
+        Color c;
+        c = getColor();
+        if(c.getAlpha() == 0) {
+            return;
+        }
+
         currentStream.write("q\n");
         Shape imclip = getClip();
         writeClip(imclip);
-        Color c = getColor();
         applyColor(c, false);
 
         applyPaint(getPaint(), false);
@@ -1169,6 +1194,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
          * but it should be fixed...).
          */
         public Rectangle getBounds() {
+System.out.println("getting getBounds");
             return null;
         }
 
@@ -1193,6 +1219,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
          * The default transform (1:1).
          */
         public AffineTransform getDefaultTransform() {
+System.out.println("getting getDefaultTransform");
             return new AffineTransform();
         }
 
@@ -1202,7 +1229,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
          * in the future).
          */
         public AffineTransform getNormalizingTransform() {
-            return new AffineTransform();
+System.out.println("getting getNormalizingTransform");
+            return new AffineTransform(2, 0, 0, 2, 0, 0);
         }
 
         /**
