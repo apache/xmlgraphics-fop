@@ -2081,8 +2081,9 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("master-reference", m);
 
         // maximum-repeats
-        m  = new StringProperty.Maker(PR_MAXIMUM_REPEATS);
+        m  = new NumberProperty.Maker(PR_MAXIMUM_REPEATS);
         m.setInherited(false);
+        m.addEnum("no-limit", makeEnumProperty(NO_LIMIT, "NO_LIMIT"));
         m.setDefault("no-limit");
         addPropertyMaker("maximum-repeats", m);
 
