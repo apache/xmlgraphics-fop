@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -468,11 +468,12 @@ public abstract class AbstractRenderer
         // Calculate the position of the content rectangle.
         if (parent != null) {
             currentBPPosition += parent.getBorderAndPaddingWidthBefore();
+            /* This is unnecessary now as we're going to use the *-indent traits
             currentIPPosition += parent.getBorderAndPaddingWidthStart();
             Integer spaceStart = (Integer) parent.getTrait(Trait.SPACE_START);
             if (spaceStart != null) {
                 currentIPPosition += spaceStart.intValue();
-            }
+            }*/
         }
         
         // the position of the containing block is used for
@@ -495,7 +496,9 @@ public abstract class AbstractRenderer
                 // a line area is rendered from the top left position
                 // of the line, each inline object is offset from there
                 LineArea line = (LineArea) obj;
-                currentIPPosition = contIP + line.getStartIndent();
+                currentIPPosition = contIP 
+                        + parent.getStartIndent() 
+                        + line.getStartIndent();
                 renderLineArea(line);
                 currentBPPosition += line.getAllocBPD();
             }
@@ -547,6 +550,10 @@ public abstract class AbstractRenderer
         }
     }
 
+    protected void renderTextDecoration(InlineArea area) {
+        //getLogger().debug("renderTextDecoration for " + area + " -> " + area.getTrait(Trait.UNDERLINE));
+    }
+
     /**
      * Renders a line area. <p>
      *
@@ -565,6 +572,7 @@ public abstract class AbstractRenderer
     }
 
     protected void renderInlineArea(InlineArea inlineArea) {
+        renderTextDecoration(inlineArea);
         if (inlineArea instanceof TextArea) {
             renderText((TextArea) inlineArea);
         } else if (inlineArea instanceof InlineParent) {

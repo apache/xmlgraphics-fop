@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -186,6 +186,20 @@ public class PDFState {
         return false;
     }
 
+    /**
+     * Set the current line width.
+     * @param width the line width in points
+     * @return true if the line width has changed
+     */
+    public boolean setLineWidth(float width) {
+        if (lineWidth != width) {
+            lineWidth = width;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     /**
      * Set the current color.
      * Check if the new color is a change and then set the current color.

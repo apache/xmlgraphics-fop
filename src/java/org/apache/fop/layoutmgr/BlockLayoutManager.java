@@ -22,6 +22,9 @@ import java.util.ListIterator;
 import java.util.List;
 
 import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -61,6 +64,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
     private int iStartPos = 0;
 
+    private int referenceIPD = 0;
+    //private int contentIPD = 0;
+    
     /** The list of child BreakPoss instances. */
     protected List childBreaks = new java.util.ArrayList();
 
@@ -163,19 +169,22 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         return llm;
     }
 
+    private int getIPIndents() {
+        int iIndents = 0;
+        iIndents += fobj.getCommonMarginBlock().startIndent.getValue();
+        iIndents += fobj.getCommonMarginBlock().endIndent.getValue();
+        return iIndents;
+    }
+    
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#getNextBreakPoss(org.apache.fop.layoutmgr.LayoutContext)
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         LayoutManager curLM; // currently active LM
 
-        int ipd = context.getRefIPD();
-        int iIndents = fobj.getCommonMarginBlock().startIndent.getValue();
-        iIndents += fobj.getCommonMarginBlock().endIndent.getValue();
-        iIndents -= fobj.getCommonMarginBlock().inheritedStartIndent.getValue();
-        iIndents -= fobj.getCommonMarginBlock().inheritedEndIndent.getValue();
-        //int bIndents = fobj.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
-        ipd -= iIndents;
+        //int refipd = context.getRefIPD();
+        referenceIPD = context.getRefIPD();
+        int contentipd = referenceIPD - getIPIndents();
 
         MinOptMax stackSize = new MinOptMax();
 
@@ -193,7 +202,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         BreakPoss lastPos = null;
 
         // Set context for percentage property values.
-        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, ipd);
+        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, contentipd);
         fobj.setLayoutDimension(PercentBase.BLOCK_BPD, -1);
 
         while ((curLM = getChildLM()) != null) {
@@ -206,13 +215,13 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             // line LM actually generates a LineArea which is a block
             if (curLM.generatesInlineAreas()) {
                 // set stackLimit for lines
-                childLC.setStackLimit(new MinOptMax(ipd/* - iIndents - iTextIndent*/));
-                childLC.setRefIPD(ipd);
+                childLC.setStackLimit(new MinOptMax(contentipd));
+                childLC.setRefIPD(contentipd);
             } else {
                 childLC.setStackLimit(
                   MinOptMax.subtract(context.getStackLimit(),
                                      stackSize));
-                childLC.setRefIPD(ipd);
+                childLC.setRefIPD(referenceIPD);
             }
             boolean over = false;
             while (!curLM.isFinished()) {
@@ -242,7 +251,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
                     if (curLM.generatesInlineAreas()) {
                         // Reset stackLimit for non-first lines
-                        childLC.setStackLimit(new MinOptMax(ipd/* - iIndents*/));
+                        childLC.setStackLimit(new MinOptMax(contentipd));
                     } else {
                         childLC.setStackLimit(MinOptMax.subtract(
                                                  context.getStackLimit(), stackSize));
@@ -329,27 +338,28 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         if (curBlockArea == null) {
             curBlockArea = new Block();
 
+            // Must get dimensions from parent area
+            Area parentArea = parentLM.getParentArea(curBlockArea);
+
             // set traits
             TraitSetter.addBorders(curBlockArea, 
                     fobj.getCommonBorderPaddingBackground());
             TraitSetter.addBackground(curBlockArea, 
                     fobj.getCommonBorderPaddingBackground());
-            TraitSetter.addMargins(curBlockArea, 
+            TraitSetter.addMargins(curBlockArea, parentArea,
                     fobj.getCommonBorderPaddingBackground(), 
                     fobj.getCommonMarginBlock());
             TraitSetter.addBreaks(curBlockArea, 
                     fobj.getBreakBefore(), fobj.getBreakAfter());
 
             // Set up dimensions
-            // Must get dimensions from parent area
-            Area parentArea = parentLM.getParentArea(curBlockArea);
-
             // Get reference IPD from parentArea
-            int referenceIPD = parentArea.getIPD();
-            curBlockArea.setIPD(referenceIPD);
+            //int referenceIPD = parentArea.getIPD();
+            //curBlockArea.setIPD(referenceIPD);
 
             // Set the width of the block based on the parent block
             // Need to be careful though, if parent is BC then width may not be set
+            /* TODO remove if really not used anymore
             int parentwidth = 0;
             if (parentArea instanceof BlockParent) {
                 parentwidth = ((BlockParent) parentArea).getIPD();
@@ -357,12 +367,12 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             if (parentwidth == 0) {
                 parentwidth = referenceIPD;
             }
-            parentwidth -= fobj.getCommonMarginBlock().startIndent.getValue();
-            parentwidth -= fobj.getCommonMarginBlock().endIndent.getValue();
-            parentwidth += fobj.getCommonMarginBlock().inheritedStartIndent.getValue();
-            parentwidth += fobj.getCommonMarginBlock().inheritedEndIndent.getValue();
+            parentwidth -= getIPIndents();
+            */
+
+            int contentIPD = referenceIPD - getIPIndents();
             
-            curBlockArea.setIPD(parentwidth);
+            curBlockArea.setIPD(contentIPD/*parentwidth*/);
             setCurrentArea(curBlockArea); // ??? for generic operations
         }
         return curBlockArea;

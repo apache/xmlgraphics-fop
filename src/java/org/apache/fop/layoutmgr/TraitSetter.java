@@ -183,19 +183,26 @@ public class TraitSetter {
      * @param bpProps the border, padding and background properties
      * @param marginProps the margin properties.
      */
-    public static void addMargins(Area area,
+    public static void addMargins(Area area, Area parentArea,
                                   CommonBorderPaddingBackground bpProps,
                                   CommonMarginBlock marginProps) {
+        int startIndent = marginProps.startIndent.getValue();
+        if (startIndent != 0) {
+            area.addTrait(Trait.START_INDENT, new Integer(startIndent));
+        }
+        
         int spaceStart = marginProps.startIndent.getValue()
-                            - marginProps.inheritedStartIndent.getValue()
                             - bpProps.getBorderStartWidth(false)
                             - bpProps.getPaddingStart(false);
         if (spaceStart != 0) {
             area.addTrait(Trait.SPACE_START, new Integer(spaceStart));
         }
 
+        int endIndent = marginProps.endIndent.getValue();
+        if (endIndent != 0) {
+            area.addTrait(Trait.END_INDENT, new Integer(endIndent));
+        }
         int spaceEnd = marginProps.endIndent.getValue()
-                            - marginProps.inheritedEndIndent.getValue()
                             - bpProps.getBorderEndWidth(false)
                             - bpProps.getPaddingEnd(false);
         if (spaceEnd != 0) {
