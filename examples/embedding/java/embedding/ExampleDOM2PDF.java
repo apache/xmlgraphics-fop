@@ -33,10 +33,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
-// Avalon
+//Avalon
 import org.apache.avalon.framework.ExceptionUtil;
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.Logger;
+
+// Commons-Logging
+import org.apache.commons.logging.impl.SimpleLog;
 
 //FOP
 import org.apache.fop.apps.Driver;
@@ -60,18 +61,19 @@ public class ExampleDOM2PDF {
      */
     public void convertDOM2PDF(Document xslfoDoc, File pdf) 
                 throws IOException, FOPException {
-        //Construct driver
+        // Construct driver
         Driver driver = new Driver();
         
-        //Setup logger
-        Logger logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-        driver.enableLogging(logger);
+        // Setup logger
+        SimpleLog logger = new SimpleLog("log");
+        logger.setLevel(SimpleLog.LOG_LEVEL_INFO);
+        driver.setLogger(logger);
         driver.initialize();
         
-        //Setup Renderer (output format)        
+        // Setup Renderer (output format)        
         driver.setRenderer(Driver.RENDER_PDF);
         
-        //Setup output
+        // Setup output
         OutputStream out = new java.io.FileOutputStream(pdf);
         out = new java.io.BufferedOutputStream(out);
         

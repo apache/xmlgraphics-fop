@@ -29,8 +29,9 @@ import org.xml.sax.InputSource;
 
 //Avalon
 import org.apache.avalon.framework.ExceptionUtil;
-import org.apache.avalon.framework.logger.Logger;
-import org.apache.avalon.framework.logger.ConsoleLogger;
+
+// Commons-Logging
+import org.apache.commons.logging.impl.SimpleLog;
 
 //FOP
 import org.apache.fop.apps.Driver;
@@ -50,18 +51,19 @@ public class ExampleFO2PDF {
      */
     public void convertFO2PDF(File fo, File pdf) throws IOException, FOPException {
         
-        //Construct driver
+        // Construct driver
         Driver driver = new Driver();
         
-        //Setup logger
-        Logger logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-        driver.enableLogging(logger);
+        // Setup logger
+        SimpleLog logger = new SimpleLog("log");
+        logger.setLevel(SimpleLog.LOG_LEVEL_INFO);
+        driver.setLogger(logger);
         driver.initialize();
 
-        //Setup Renderer (output format)        
+        // Setup Renderer (output format)        
         driver.setRenderer(Driver.RENDER_PDF);
         
-        //Setup output
+        // Setup output
         OutputStream out = new java.io.FileOutputStream(pdf);
         out = new java.io.BufferedOutputStream(out);
         try {

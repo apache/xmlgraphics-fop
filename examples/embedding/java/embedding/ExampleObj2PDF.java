@@ -34,8 +34,9 @@ import javax.xml.transform.sax.SAXResult;
 
 //Avalon
 import org.apache.avalon.framework.ExceptionUtil;
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.Logger;
+
+// Commons-Logging
+import org.apache.commons.logging.impl.SimpleLog;
 
 //FOP
 import org.apache.fop.apps.Driver;
@@ -61,34 +62,35 @@ public class ExampleObj2PDF {
     public void convertProjectTeam2PDF(ProjectTeam team, File xslt, File pdf) 
                 throws IOException, FOPException, TransformerException {
                     
-        //Construct driver
+        // Construct driver
         Driver driver = new Driver();
         
-        //Setup logger
-        Logger logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-        driver.enableLogging(logger);
+        // Setup logger
+        SimpleLog logger = new SimpleLog("log");
+        logger.setLevel(SimpleLog.LOG_LEVEL_INFO);
+        driver.setLogger(logger);
         driver.initialize();
 
-        //Setup Renderer (output format)        
+        // Setup Renderer (output format)        
         driver.setRenderer(Driver.RENDER_PDF);
 
-        //Setup output
+        // Setup output
         OutputStream out = new java.io.FileOutputStream(pdf);
         out = new java.io.BufferedOutputStream(out);
         try {
             driver.setOutputStream(out);
 
-            //Setup XSLT
+            // Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(new StreamSource(xslt));
         
-            //Setup input for XSLT transformation
+            // Setup input for XSLT transformation
             Source src = team.getSourceForProjectTeam();
         
-            //Resulting SAX events (the generated FO) must be piped through to FOP
+            // Resulting SAX events (the generated FO) must be piped through to FOP
             Result res = new SAXResult(driver.getContentHandler());
 
-            //Start XSLT transformation and FOP processing
+            // Start XSLT transformation and FOP processing
             transformer.transform(src, res);
         } finally {
             out.close();
@@ -105,12 +107,12 @@ public class ExampleObj2PDF {
             System.out.println("FOP ExampleObj2PDF\n");
             System.out.println("Preparing...");
             
-            //Setup directories
+            // Setup directories
             File baseDir = new File(".");
             File outDir = new File(baseDir, "out");
             outDir.mkdirs();
 
-            //Setup input and output
+            // Setup input and output
             File xsltfile = new File(baseDir, "xml/xslt/projectteam2FO.xsl");
             File pdffile = new File(outDir, "ResultObj2PDF.pdf");
 
