@@ -95,7 +95,6 @@ public class PropertyList extends HashMap {
 
     private PropertyList parentPropertyList = null;
     private String namespace = "";
-    private String elementName = "";
     private FObj fobj = null;
 
     /**
@@ -103,14 +102,12 @@ public class PropertyList extends HashMap {
      * @param parentPropertyList the PropertyList belonging to the new objects
      * parent
      * @param space name of namespace
-     * @param elementName name of element
      */
     public PropertyList(FObj fObjToAttach, PropertyList parentPropertyList,
-        String space, String elementName) {
+        String space) {
         this.fobj = fObjToAttach;
         this.parentPropertyList = parentPropertyList;
         this.namespace = space;
-        this.elementName = elementName;
     }
 
     /**
@@ -143,13 +140,6 @@ public class PropertyList extends HashMap {
      */
     public String getNameSpace() {
         return namespace;
-    }
-
-    /**
-     * @return element name for this
-     */
-    public String getElement() {
-        return elementName;
     }
 
     /**

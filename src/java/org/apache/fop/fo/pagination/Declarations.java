@@ -23,13 +23,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 // FOP
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.XMLObj;
-import org.xml.sax.Locator;
 
 
 /**
@@ -53,7 +56,7 @@ public class Declarations extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(String, String)
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
         XSL 1.0: (color-profile)+ (and non-XSL NS nodes)
         FOP/XSL 1.1: (color-profile)* (and non-XSL NS nodes)
      */
@@ -69,7 +72,7 @@ public class Declarations extends FObj {
      * At the end of this element sort out the child into
      * a hashmap of color profiles and a list of external xml.
      */
-    public void end() {
+    protected void end() {
         if (children != null) {
             for (Iterator iter = children.iterator(); iter.hasNext();) {
                 FONode node = (FONode)iter.next();

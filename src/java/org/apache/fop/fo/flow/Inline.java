@@ -22,6 +22,7 @@ package org.apache.fop.fo.flow;
 import org.xml.sax.Attributes;
 
 // FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
@@ -33,7 +34,6 @@ import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.apps.FOPException;
 
 /**
  * Class modelling the fo:inline object. See Sec. 6.6.7 of the XSL-FO Standard.
@@ -138,7 +138,7 @@ public class Inline extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FONode#end
      */
-    public void end() {
+    protected void end() {
         getFOInputHandler().endInline(this);
     }
 

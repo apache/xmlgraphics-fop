@@ -46,12 +46,33 @@ public abstract class FONode {
     /** Name of the node */
     protected String name;
 
+    /** Marks input file containing this object **/
+    public String systemId;
+
+    /** Marks line number of this object in the input file **/
+    public int line;
+
+    /** Marks column number of this object in the input file **/
+    public int column;
+
     /**
      * Main constructor.
      * @param parent parent of this node
      */
     protected FONode(FONode parent) {
         this.parent = parent;
+    }
+
+    /**
+     * Set the location information for this element
+     * @param locator the org.xml.sax.Locator object
+     */
+    public void setLocation(Locator locator) {
+        if (locator != null) {
+            line = locator.getLineNumber();
+            column = locator.getColumnNumber();
+            systemId = locator.getSystemId();
+        }
     }
 
     /**
@@ -80,6 +101,7 @@ public abstract class FONode {
      * @throws FOPException for errors or inconsistencies in the attributes
     */
     public void processNode(String elementName, Locator locator, Attributes attlist) throws FOPException {
+        System.out.println("name = " + elementName);
         this.name = elementName;
     }
 
@@ -223,6 +245,7 @@ public abstract class FONode {
     /**
      * Helper function to standardize "too many" error exceptions
      * (e.g., two fo:declarations within fo:root)
+     * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param offendingNode incoming node that would cause a duplication.
      */
     protected void tooManyNodesError(Locator loc, String offendingNode) {
@@ -234,6 +257,7 @@ public abstract class FONode {
     /**
      * Helper function to standardize "out of order" exceptions
      * (e.g., fo:layout-master-set appearing after fo:page-sequence)
+     * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param tooLateNode string name of node that should be earlier in document
      * @param tooEarlyNode string name of node that should be later in document
      */
@@ -247,22 +271,47 @@ public abstract class FONode {
     /**
      * Helper function to return "invalid child" exceptions
      * (e.g., fo:block appearing immediately under fo:root)
+     * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param nsURI namespace URI of incoming invalid node
      * @param lName local name (i.e., no prefix) of incoming node 
      */
     protected void invalidChildError(Locator loc, String nsURI, String lName) {
         throw new IllegalArgumentException(
             errorText(loc) + getNodeString(nsURI, lName) + 
-            " is not valid child element of " + getName() + ".");
+            " is not a valid child element of " + getName() + ".");
+    }
+    
+    /**
+     * Helper function to return missing child element errors
+     * (e.g., fo:layout-master-set not having any page-master child element)
+     * @param contentModel The XSL Content Model for the fo: object.
+     * or a similar description indicating child elements needed.
+     */
+    protected void missingChildElementError(String contentModel) {
+        throw new IllegalArgumentException(
+            errorText(line, column) + getName() + " is missing child elements. \n" + 
+            "Required Content Model: " + contentModel);
+    }
+
+    /**
+     * Helper function to return "Error (line#/column#)" string for
+     * above exception messages
+     * @param loc org.xml.sax.Locator object
+     * @return String opening error text
+     */
+    protected static String errorText(Locator loc) {
+        return "Error(" + loc.getLineNumber() + "/" + loc.getColumnNumber() + "): ";
     }
     
     /**
      * Helper function to return "Error (line#/column#)" string for
      * above exception messages
-     * @param loc org.xml.sax.Locator object
+     * @param lineNumber - line number of node with error
+     * @param columnNumber - column number of node with error
+     * @return String opening error text
      */
-    protected static String errorText(Locator loc) {
-        return "Error(" + loc.getLineNumber() + "/" + loc.getColumnNumber() + "): ";
+    protected static String errorText(int lineNumber, int columnNumber) {
+        return "Error(" + lineNumber + "/" + columnNumber + "): ";
     }
 }
 

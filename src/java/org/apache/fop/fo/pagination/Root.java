@@ -66,7 +66,7 @@ public class Root extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(String, String)
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
         XSL 1.0 Spec: (layout-master-set,declarations?,page-sequence+)
         FOP: (layout-master-set, declarations?, fox:bookmarks?, page-sequence+)
      */
