@@ -125,6 +125,10 @@ public class PDFTextPainter implements TextPainter {
             } catch (org.apache.fop.apps.FOPException fope) {
                 fope.printStackTrace();
             }
+        } else {
+            if(g2d instanceof PDFGraphics2D) {
+                ((PDFGraphics2D)g2d).setOverrideFontState(fontState);
+            }
         }
         int fStyle = Font.PLAIN;
         if (fontState.getFontWeight().equals("bold")) {

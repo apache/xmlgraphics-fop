@@ -13,6 +13,8 @@ import org.apache.fop.fonts.*;
 import org.apache.fop.render.pdf.*;
 import org.apache.fop.image.*;
 import org.apache.fop.datatypes.ColorSpace;
+import org.apache.fop.render.pdf.CIDFont;
+import org.apache.fop.render.pdf.fonts.LazyFont;
 
 import org.apache.batik.ext.awt.g2d.*;
 import org.apache.batik.ext.awt.image.GraphicsUtil;
@@ -30,6 +32,7 @@ import java.io.*;
 
 import java.util.Map;
 import java.util.Vector;
+import java.util.Hashtable;
 
 /**
  * This concrete implementation of <tt>AbstractGraphics2D</tt> is a
@@ -57,6 +60,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     PDFAnnotList currentAnnotList = null;
 
     protected FontState fontState;
+    protected FontState ovFontState = null;
 
     /**
      * the current stream to add PDF commands to
@@ -114,6 +118,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
     public void setGraphicContext(GraphicContext c) {
         gc = c;
+    }
+
+    public void setOverrideFontState(FontState infont) {
+        ovFontState = infont;
     }
 
     /**
@@ -787,24 +795,29 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         currentStream.write("BT\n");
 
-        Font gFont = getFont();
-        String name = gFont.getName();
-        if (name.equals("sanserif")) {
-            name = "sans-serif";
+        if(ovFontState == null) {
+            Font gFont = getFont();
+            String n = gFont.getFamily();
+            if (n.equals("sanserif")) {
+                n = "sans-serif";
+            }
+            int siz = gFont.getSize();
+            String style = gFont.isItalic() ? "italic" : "normal";
+            String weight = gFont.isBold() ? "bold" : "normal";
+            try {
+                fontState = new FontState(fontState.getFontInfo(), n, style,
+                                          weight, siz * 1000, 0);
+            } catch (org.apache.fop.apps.FOPException fope) {
+                fope.printStackTrace();
+            }
+        } else {
+            fontState = ovFontState;
+            ovFontState = null;
         }
-        int size = gFont.getSize();
-        String style = gFont.isItalic() ? "italic" : "normal";
-        String weight = gFont.isBold() ? "bold" : "normal";
-        try {
-            fontState = new FontState(fontState.getFontInfo(), name, style,
-                                      weight, size * 1000, 0);
-        } catch (org.apache.fop.apps.FOPException fope) {
-            fope.printStackTrace();
-        }
+        String name;
+        int size;
         name = fontState.getFontName();
         size = fontState.getFontSize() / 1000;
-
-        // System.out.println("ffn:" + gFont.getFontName() + "fn:" + gFont.getName() + " ff:" + gFont.getFamily() + " fs:" + fontState.getFontName());
 
         if ((!name.equals(this.currentFontName))
                 || (size != this.currentFontSize)) {
@@ -813,6 +826,31 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             currentStream.write("/" + name + " " + size + " Tf\n");
 
         }
+
+        Hashtable kerning = null;
+        boolean kerningAvailable = false;
+
+        kerning = fontState.getKerning();
+        if (kerning != null &&!kerning.isEmpty()) {
+            kerningAvailable = true;
+        }
+
+        // This assumes that *all* CIDFonts use a /ToUnicode mapping
+        boolean useMultiByte = false;
+        org.apache.fop.render.pdf.Font f =
+            (org.apache.fop.render.pdf.Font)fontState.getFontInfo().getFonts().get(name);
+        if (f instanceof LazyFont){
+            if(((LazyFont) f).getRealFont() instanceof CIDFont){
+                useMultiByte = true;
+            }
+        } else if (f instanceof CIDFont){
+            useMultiByte = true;
+        }
+
+        // String startText = useMultiByte ? "<FEFF" : "(";
+        String startText = useMultiByte ? "<" : "(";
+        String endText = useMultiByte ? "> " : ") ";
+
         AffineTransform trans = getTransform();
         trans.translate(x, y);
         double[] vals = new double[6];
@@ -823,10 +861,87 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                             + PDFNumber.doubleOut(vals[2]) + " "
                             + PDFNumber.doubleOut(-vals[3]) + " "
                             + PDFNumber.doubleOut(vals[4]) + " "
-                            + PDFNumber.doubleOut(vals[5]) + " Tm (" + s
-                            + ") Tj\n");
+                            + PDFNumber.doubleOut(vals[5]) + " Tm [" + startText);
+
+        int l = s.length();
+
+        for (int i = 0; i < l; i++) {
+            char ch = fontState.mapChar(s.charAt(i));
+
+            if (!useMultiByte) {
+                if (ch > 127) {
+                    currentStream.write("\\");
+                    currentStream.write(Integer.toOctalString((int)ch));
+                } else {
+                    switch (ch) {
+                    case '(':
+                    case ')':
+                    case '\\':
+                        currentStream.write("\\");
+                        break;
+                    }
+                    currentStream.write(ch);
+                }
+            } else {
+                currentStream.write(getUnicodeString(ch));
+            }
+
+            if (kerningAvailable && (i + 1) < l) {
+                addKerning(currentStream, (new Integer((int)ch)),
+                           (new Integer((int)fontState.mapChar(s.charAt(i + 1)))),
+                           kerning, startText, endText);
+            }
+
+        }
+        currentStream.write(endText);
+
+
+        currentStream.write("] TJ\n");
 
         currentStream.write("ET\n");
+    }
+
+    private void addKerning(StringWriter buf, Integer ch1, Integer ch2,
+                            Hashtable kerning, String startText,
+                            String endText) {
+        Hashtable kernPair = (Hashtable)kerning.get(ch1);
+
+        if (kernPair != null) {
+            Integer width = (Integer)kernPair.get(ch2);
+            if (width != null) {
+                currentStream.write(endText + (-width.intValue()) + " " + startText);
+            }
+        }
+    }
+
+    /**
+     * Convert a char to a multibyte hex representation
+     */
+    private String getUnicodeString(char c) {
+
+        StringBuffer buf = new StringBuffer(4);
+        byte[] uniBytes = null;
+        try {
+            char[] a = {
+                c
+            };
+            uniBytes = new String(a).getBytes("UnicodeBigUnmarked");
+        } catch (Exception e) {
+            // This should never fail
+        }
+
+        for (int i = 0; i < uniBytes.length; i++) {
+            int b = (uniBytes[i] < 0) ? (int)(256 + uniBytes[i])
+                    : (int)uniBytes[i];
+
+            String hexString = Integer.toHexString(b);
+            if (hexString.length() == 1)
+                buf = buf.append("0" + hexString);
+            else
+                buf = buf.append(hexString);
+        }
+
+        return buf.toString();
     }
 
     /**
@@ -856,13 +971,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                            float y) {
         System.err.println("drawString(AttributedCharacterIterator)");
 
-        currentStream.write("BT\n");
         Shape imclip = getClip();
         writeClip(imclip);
         Color c = getColor();
         applyColor(c, true);
         c = getBackground();
         applyColor(c, false);
+
+        currentStream.write("BT\n");
 
         AffineTransform trans = getTransform();
         trans.translate(x, y);
