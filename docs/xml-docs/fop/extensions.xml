@@ -9,19 +9,21 @@
   <s2 title="Bookmarks">
     <p>You can provide outlines inside the root object (but outside any page-sequences or
        other formatting objects). Here's an example of an outline entry:</p>
+    <source>
+    <![CDATA[<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+             &#160;&#160; xmlns:fox="http://xml.apache.org/fop/extensions">
+    <fox:outline internal-destination="sec3">
+    &#160;&#160;  <fox:label>Running FOP</fox:label>
 
-    <p><code>&lt;fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
-             &#160;&#160; xmlns:fox="http://xml.apache.org/fop/extensions"></code></p> 
-    <p><code>&lt;fox:outline internal-destination="sec3"></code></p>
-    <p><code>&#160;&#160;  &lt;fox:label>Running FOP&lt;/fox:label></code></p>
-
-    <p><code>&#160;&#160;&lt;fox:outline internal-destination="sec3-1"></code></p>
-    <p><code>&#160;&#160;&#160;&#160;&lt;fox:label>Prerequisites&lt;/fox:label></code></p>
-    <p><code>&#160;&#160;&lt;/fox:outline></code></p>
-    <p><code>&lt;fox:outline></code></p>
-    <p><code>&lt;/fo:root></code></p>
+    &#160;&#160;<fox:outline internal-destination="sec3-1">
+    &#160;&#160;&#160;&#160;<fox:label>Prerequisites</fox:label>
+    &#160;&#160;</fox:outline>
+    <fox:outline>
+    </fo:root>
+]]></source>
     <p>It works similarly to a basic-link. There is also an external-destination 
-       property, but it isn't supported currently.</p>
+       property, but it isn't supported currently. See the pdfoutline.fo file in 
+      docs/examples/fo for a more complete example.</p>
   </s2>
 </s1>
 
