@@ -188,10 +188,10 @@
     <inherited>true</inherited>
     <datatype>
       <enumeration>
-        <value const="CENTERED">centered</value>
+        <value const="CENTER">center</value>
         <value const="END">end</value>
         <value const="START">start</value>
-        <value const="JUSTIFIED">justified</value>
+        <value const="JUSTIFY">justify</value>
       </enumeration>
     </datatype>
     <default>start</default>
@@ -257,18 +257,18 @@
     <inherited>true</inherited>
     <datatype>
       <enumeration>
-        <value const="CENTERED">centered</value>
+        <value const="CENTER">center</value>
         <value const="END">end</value>
         <value const="START">start</value>
-        <value const="JUSTIFIED">justified</value>
+        <value const="JUSTIFY">justify</value>
       </enumeration>
     </datatype>
     <default>start</default>
     <derive from="text-align">
-      <if match="TextAlign.JUSTIFIED">START</if>
+      <if match="TextAlign.JUSTIFY">START</if>
       <if match="TextAlign.END">END</if>
       <if match="TextAlign.START">START</if>
-      <if match="TextAlign.CENTERED">CENTERED</if>
+      <if match="TextAlign.CENTER">CENTER</if>
     </derive>
   </property>
   <property>
@@ -290,6 +290,13 @@
     <inherited>false</inherited>
     <datatype>Length</datatype>
     <default>0pt</default>
+  </property>
+  <property>
+    <name>src</name>
+    <class-name>Src</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default> 
   </property>
   <property>
     <name>href</name>
