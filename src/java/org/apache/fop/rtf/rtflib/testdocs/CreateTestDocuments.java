@@ -68,61 +68,61 @@ import java.io.IOException;
  */
 
 public class CreateTestDocuments {
-	public static final String TESTDOCS_PACKAGE = "org.apache.fop.rtf.rtflib.testdocs";
+    public static final String TESTDOCS_PACKAGE = "org.apache.fop.rtf.rtflib.testdocs";
 
-	/** List of all TestDocument subclasses from this package */
-	private final static String [] classNames = {
-		"SimpleDocument",
-		"TextAttributes",
-		"SimpleTable",
-		"SimpleLists",
-		"ListInTable",
-		"Whitespace",
-		"MergedTableCells",
-		"NestedTable",
-		"ExternalGraphic",
-		"BasicLink",
-		"ParagraphAlignment"
-	};
+    /** List of all TestDocument subclasses from this package */
+    private final static String [] classNames = {
+        "SimpleDocument",
+        "TextAttributes",
+        "SimpleTable",
+        "SimpleLists",
+        "ListInTable",
+        "Whitespace",
+        "MergedTableCells",
+        "NestedTable",
+        "ExternalGraphic",
+        "BasicLink",
+        "ParagraphAlignment"
+    };
 
-	CreateTestDocuments(File outDir)
-	throws Exception {
-		if(!outDir.isDirectory() || !outDir.canWrite()) {
-			throw new IOException("output directory (" + outDir + ") must exist and be writable");
-		}
+    CreateTestDocuments(File outDir)
+    throws Exception {
+        if(!outDir.isDirectory() || !outDir.canWrite()) {
+            throw new IOException("output directory (" + outDir + ") must exist and be writable");
+        }
 
-		for(int i=0; i < classNames.length; i++) {
-			createOneTestDocument(classNames[i],outDir);
-		}
-	}
+        for(int i=0; i < classNames.length; i++) {
+            createOneTestDocument(classNames[i],outDir);
+        }
+    }
 
-	/** instantiate one TestDocument and let it generate its document */
-	void createOneTestDocument(String className,File outDir)
-	throws Exception {
-		className = TESTDOCS_PACKAGE + "." + className;
-		TestDocument td = null;
-		try {
-			td = (TestDocument)Class.forName(className).newInstance();
-		} catch(Exception e) {
-			throw new Exception("unable to instantiate '" + className + " as a TestDocument object: " + e);
-		}
-		td.setOutputDir(outDir);
-		td.generateOutput();
-	}
+    /** instantiate one TestDocument and let it generate its document */
+    void createOneTestDocument(String className,File outDir)
+    throws Exception {
+        className = TESTDOCS_PACKAGE + "." + className;
+        TestDocument td = null;
+        try {
+            td = (TestDocument)Class.forName(className).newInstance();
+        } catch(Exception e) {
+            throw new Exception("unable to instantiate '" + className + " as a TestDocument object: " + e);
+        }
+        td.setOutputDir(outDir);
+        td.generateOutput();
+    }
 
-	/** execute this to create test documents from all classes listed in classNames array */
-	public static void main(String args[])
-	throws Exception {
-		if(args.length < 1) {
-			System.err.println("usage: CreateTestDocuments <output directory>");
-			System.exit(1);
-		}
+    /** execute this to create test documents from all classes listed in classNames array */
+    public static void main(String args[])
+    throws Exception {
+        if(args.length < 1) {
+            System.err.println("usage: CreateTestDocuments <output directory>");
+            System.exit(1);
+        }
 
-//		System.err.println("CreateTestDocuments - using " + JForVersionInfo.getLongVersionInfo());
-		System.err.println("Generates documents to test the jfor RTF library.");
-		final File outDir = new File(args[0]);
-		new CreateTestDocuments(outDir);
-		System.err.println("CreateTestDocuments - all done.");
-		System.exit(0);
-	}
+//        System.err.println("CreateTestDocuments - using " + JForVersionInfo.getLongVersionInfo());
+        System.err.println("Generates documents to test the jfor RTF library.");
+        final File outDir = new File(args[0]);
+        new CreateTestDocuments(outDir);
+        System.err.println("CreateTestDocuments - all done.");
+        System.exit(0);
+    }
 }

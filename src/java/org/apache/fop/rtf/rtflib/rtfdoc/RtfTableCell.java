@@ -75,7 +75,7 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
     private RtfExternalGraphic m_externalGraphic;
     private final RtfTableRow m_parentRow;
     private boolean set_center;
-	private boolean set_right;
+    private boolean set_right;
     private int id;
 
     public static final int DEFAULT_CELL_WIDTH = 2000;
@@ -165,20 +165,20 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
         m_paragraph = new RtfParagraph(this,m_writer,attrs);
 
         if(m_paragraph.m_attrib.isSet("qc"))
-		{
-			set_center=true;
+        {
+            set_center=true;
             attrs.set("qc");
-		}
-		else if(m_paragraph.m_attrib.isSet("qr"))
-		{
-			set_right=true;
+        }
+        else if(m_paragraph.m_attrib.isSet("qr"))
+        {
+            set_right=true;
             attrs.set("qr");
-		}
+        }
         else
         {
             attrs.set("ql");
         }
-		attrs.set("intbl");
+        attrs.set("intbl");
 
 
         //lines modified by Chris Scott, Westinghouse
@@ -256,10 +256,10 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
 
         //these lines added by Chris Scott, Westinghouse
         //some attributes need to be writting before opening block
-		if(set_center)
-		{
-			writeControlWord("qc");
-		}
+        if(set_center)
+        {
+            writeControlWord("qc");
+        }
         else if (set_right)
         {
             writeControlWord("qr");
@@ -269,11 +269,11 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
             writeControlWord("ql");
         }
 
-		writeControlWord("cellx" + xPos);
+        writeControlWord("cellx" + xPos);
 
         writeControlWord( "ql" );
 
-		return xPos;
+        return xPos;
 
     }
 
@@ -284,9 +284,9 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
         // but if is not here we generate invalid RTF for word97
 
         if(set_center)
-		{
-			writeControlWord("qc");
-		}
+        {
+            writeControlWord("qc");
+        }
         else if (set_right)
         {
             writeControlWord("qr");
@@ -303,7 +303,7 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
 
             //R.Marra this create useless paragraph
             //Seem working into Word97 with the "intbl" only
-//			writeControlWord("par");
+//            writeControlWord("par");
         }
 
         writeControlWord("cell");

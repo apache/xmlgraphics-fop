@@ -80,127 +80,127 @@ implements
     IRtfAfterContainer,
     IRtfJforCmdContainer
 {
-	private RtfParagraph m_paragraph;
-	private RtfTable m_table;
-	private RtfList m_list;
-	private RtfExternalGraphic m_externalGraphic;
-	private RtfBefore m_before;
+    private RtfParagraph m_paragraph;
+    private RtfTable m_table;
+    private RtfList m_list;
+    private RtfExternalGraphic m_externalGraphic;
+    private RtfBefore m_before;
     private RtfAfter m_after;
     private RtfJforCmd m_jforCmd;
 
-	/** Create an RTF container as a child of given container */
-	RtfSection(RtfDocumentArea parent, Writer w) throws IOException {
-		super(parent,w);
-	}
+    /** Create an RTF container as a child of given container */
+    RtfSection(RtfDocumentArea parent, Writer w) throws IOException {
+        super(parent,w);
+    }
 
-	/** start a new external graphic after closing current paragraph, list and table */
-	public RtfExternalGraphic newImage() throws IOException {
-		closeAll();
-		m_externalGraphic = new RtfExternalGraphic(this,m_writer);
-		return m_externalGraphic;
-	}
+    /** start a new external graphic after closing current paragraph, list and table */
+    public RtfExternalGraphic newImage() throws IOException {
+        closeAll();
+        m_externalGraphic = new RtfExternalGraphic(this,m_writer);
+        return m_externalGraphic;
+    }
 
-	/** start a new paragraph after closing current paragraph, list and table */
-	public RtfParagraph newParagraph(RtfAttributes attrs) throws IOException {
-		closeAll();
-		m_paragraph = new RtfParagraph(this,m_writer,attrs);
-		return m_paragraph;
-	}
+    /** start a new paragraph after closing current paragraph, list and table */
+    public RtfParagraph newParagraph(RtfAttributes attrs) throws IOException {
+        closeAll();
+        m_paragraph = new RtfParagraph(this,m_writer,attrs);
+        return m_paragraph;
+    }
 
-	/** close current paragraph if any and start a new one with default attributes */
-	public RtfParagraph newParagraph() throws IOException {
-		return newParagraph(null);
-	}
+    /** close current paragraph if any and start a new one with default attributes */
+    public RtfParagraph newParagraph() throws IOException {
+        return newParagraph(null);
+    }
 
-	/** close current paragraph if any and start a new one */
-	public RtfParagraphKeepTogether newParagraphKeepTogether() throws IOException {
-		return new RtfParagraphKeepTogether(this,m_writer);
-	}
+    /** close current paragraph if any and start a new one */
+    public RtfParagraphKeepTogether newParagraphKeepTogether() throws IOException {
+        return new RtfParagraphKeepTogether(this,m_writer);
+    }
 
-	/** start a new table after closing current paragraph, list and table
+    /** start a new table after closing current paragraph, list and table
    * @param tc Table context used for number-columns-spanned attribute (added by Boris Poudérous on july 2002)
    */
-	public RtfTable newTable(ITableColumnsInfo tc) throws IOException {
-		closeAll();
-		m_table = new RtfTable(this,m_writer,tc);
-		return m_table;
-	}
+    public RtfTable newTable(ITableColumnsInfo tc) throws IOException {
+        closeAll();
+        m_table = new RtfTable(this,m_writer,tc);
+        return m_table;
+    }
 
-	/** start a new table after closing current paragraph, list and table
+    /** start a new table after closing current paragraph, list and table
    * @param tc Table context used for number-columns-spanned attribute (added by Boris Poudérous on july 2002)
    */
-	public RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException
-	{
-		closeAll();
-		m_table = new RtfTable(this,m_writer, attrs, tc);
-		return m_table;
-	}
+    public RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException
+    {
+        closeAll();
+        m_table = new RtfTable(this,m_writer, attrs, tc);
+        return m_table;
+    }
 
-	/** start a new list after closing current paragraph, list and table */
-	public RtfList newList(RtfAttributes attrs) throws IOException {
-		closeAll();
-		m_list = new RtfList(this,m_writer, attrs);
-		return m_list;
-	}
+    /** start a new list after closing current paragraph, list and table */
+    public RtfList newList(RtfAttributes attrs) throws IOException {
+        closeAll();
+        m_list = new RtfList(this,m_writer, attrs);
+        return m_list;
+    }
 
     /** IRtfBeforeContainer */
-	public RtfBefore newBefore(RtfAttributes attrs) throws IOException {
-		closeAll();
-		m_before = new RtfBefore(this,m_writer,attrs);
-		return m_before;
-	}
+    public RtfBefore newBefore(RtfAttributes attrs) throws IOException {
+        closeAll();
+        m_before = new RtfBefore(this,m_writer,attrs);
+        return m_before;
+    }
 
     /** IRtfAfterContainer */
-	public RtfAfter newAfter(RtfAttributes attrs) throws IOException {
-		closeAll();
-		m_after = new RtfAfter(this,m_writer,attrs);
-		return m_after;
-	}
+    public RtfAfter newAfter(RtfAttributes attrs) throws IOException {
+        closeAll();
+        m_after = new RtfAfter(this,m_writer,attrs);
+        return m_after;
+    }
 
 
-	public RtfJforCmd newJforCmd(RtfAttributes attrs) throws IOException {
-		m_jforCmd  = new RtfJforCmd(this,m_writer,attrs);
-		return m_jforCmd;
-	}
+    public RtfJforCmd newJforCmd(RtfAttributes attrs) throws IOException {
+        m_jforCmd  = new RtfJforCmd(this,m_writer,attrs);
+        return m_jforCmd;
+    }
 
 
 
-	/** can be overridden to write RTF prefix code, what comes before our children */
-	protected void writeRtfPrefix() throws IOException {
-		writeControlWord("sectd");
-	}
+    /** can be overridden to write RTF prefix code, what comes before our children */
+    protected void writeRtfPrefix() throws IOException {
+        writeControlWord("sectd");
+    }
 
-	/** can be overridden to write RTF suffix code, what comes after our children */
-	protected void writeRtfSuffix() throws IOException {
-		writeControlWord("sect");
-	}
+    /** can be overridden to write RTF suffix code, what comes after our children */
+    protected void writeRtfSuffix() throws IOException {
+        writeControlWord("sect");
+    }
 
-	private void closeCurrentTable() throws IOException {
-		if(m_table != null) m_table.close();
-	}
+    private void closeCurrentTable() throws IOException {
+        if(m_table != null) m_table.close();
+    }
 
-	private void closeCurrentParagraph() throws IOException {
-		if(m_paragraph!=null) m_paragraph.close();
-	}
+    private void closeCurrentParagraph() throws IOException {
+        if(m_paragraph!=null) m_paragraph.close();
+    }
 
-	private void closeCurrentList() throws IOException {
-		if(m_list!=null) m_list.close();
-	}
+    private void closeCurrentList() throws IOException {
+        if(m_list!=null) m_list.close();
+    }
 
-	private void closeCurrentExternalGraphic() throws IOException {
-		if(m_externalGraphic!=null) m_externalGraphic.close();
-	}
+    private void closeCurrentExternalGraphic() throws IOException {
+        if(m_externalGraphic!=null) m_externalGraphic.close();
+    }
 
-	private void closeCurrentBefore() throws IOException {
-		if(m_before!=null) m_before.close();
-	}
+    private void closeCurrentBefore() throws IOException {
+        if(m_before!=null) m_before.close();
+    }
 
-	private void closeAll()
-	throws IOException {
-		closeCurrentTable();
-		closeCurrentParagraph();
-		closeCurrentList();
-		closeCurrentExternalGraphic();
-		closeCurrentBefore();
-	}
+    private void closeAll()
+    throws IOException {
+        closeCurrentTable();
+        closeCurrentParagraph();
+        closeCurrentList();
+        closeCurrentExternalGraphic();
+        closeCurrentBefore();
+    }
 }

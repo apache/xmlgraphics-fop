@@ -65,192 +65,192 @@ package org.apache.fop.rtf.rtflib.tools;
 public class ImageUtil
 {
 
-	//////////////////////////////////////////////////
-	// @@ Construction
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Construction
+    //////////////////////////////////////////////////
 
-	/**
-	 * Private constructor.
-	 */
-	private ImageUtil ()
-	{
-	}
+    /**
+     * Private constructor.
+     */
+    private ImageUtil ()
+    {
+    }
 
 
-	//////////////////////////////////////////////////
-	// @@ Public static methods
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Public static methods
+    //////////////////////////////////////////////////
 
-	/**
-	 * Determines the digits from a string.
-	 *
-	 * @param value String with digits
-	 *
-	 * @return
-	 *  -1      There is no digit\n
-	 *  number  The digits as integer
-	 */
-	public static int getInt (String value)
-	{
-		String retString = new String ();
-		StringBuffer s = new StringBuffer (value);
-		int len = s.length ();
+    /**
+     * Determines the digits from a string.
+     *
+     * @param value String with digits
+     *
+     * @return
+     *  -1      There is no digit\n
+     *  number  The digits as integer
+     */
+    public static int getInt (String value)
+    {
+        String retString = new String ();
+        StringBuffer s = new StringBuffer (value);
+        int len = s.length ();
 
-		for (int i = 0; i < len; i++)
-		{
-			if (Character.isDigit (s.charAt (i)))
-			{
-				retString += s.charAt (i);
-			}
-		}
+        for (int i = 0; i < len; i++)
+        {
+            if (Character.isDigit (s.charAt (i)))
+            {
+                retString += s.charAt (i);
+            }
+        }
 
-		if (retString.length () == 0)
-		{
-			return -1;
-		}
-		else
-		{
-			return Integer.parseInt (retString);
-		}
-	}
+        if (retString.length () == 0)
+        {
+            return -1;
+        }
+        else
+        {
+            return Integer.parseInt (retString);
+        }
+    }
 
-	/**
-	 * Checks the string for percent character at the end of string.
-	 *
-	 * @param value String with digits
-	 *
-	 * @return
-	 * true    The string contains a % value
-	 * false   Other string
-	 */
-	public static boolean isPercent (String value)
-	{
-		if (value.endsWith ("%"))
-		{
-			return true;
+    /**
+     * Checks the string for percent character at the end of string.
+     *
+     * @param value String with digits
+     *
+     * @return
+     * true    The string contains a % value
+     * false   Other string
+     */
+    public static boolean isPercent (String value)
+    {
+        if (value.endsWith ("%"))
+        {
+            return true;
 
-		}
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 * Compares two hexadecimal values.
-	 *
-	 * @param pattern Target
-	 * @param data Data
-	 * @param searchAt Position to start compare
-	 * @param searchForward Direction to compare byte arrays
-	 *
-	 * @return
-	 *  true    If equal\n
-	 *  false   If different
-	 */
-	public static boolean compareHexValues (byte[] pattern, byte[] data, int searchAt,
-											boolean searchForward)
-	{
-		if (searchAt >= data.length)
-		{
-			return false;
+    /**
+     * Compares two hexadecimal values.
+     *
+     * @param pattern Target
+     * @param data Data
+     * @param searchAt Position to start compare
+     * @param searchForward Direction to compare byte arrays
+     *
+     * @return
+     *  true    If equal\n
+     *  false   If different
+     */
+    public static boolean compareHexValues (byte[] pattern, byte[] data, int searchAt,
+                                            boolean searchForward)
+    {
+        if (searchAt >= data.length)
+        {
+            return false;
 
-		}
+        }
 
-		int pLen = pattern.length;
+        int pLen = pattern.length;
 
-		if (searchForward)
-		{
-			if (pLen >= (data.length - searchAt))
-			{
-				return false;
+        if (searchForward)
+        {
+            if (pLen >= (data.length - searchAt))
+            {
+                return false;
 
-			}
+            }
 
-			for (int i = 0; i < pLen; i++)
-			{
-				if (pattern[i] != data[searchAt + i])
-				{
-					return false;
-				}
-			}
+            for (int i = 0; i < pLen; i++)
+            {
+                if (pattern[i] != data[searchAt + i])
+                {
+                    return false;
+                }
+            }
 
-			return true;
-		}
-		else
-		{
-			if (pLen > (searchAt + 1))
-			{
-				return false;
+            return true;
+        }
+        else
+        {
+            if (pLen > (searchAt + 1))
+            {
+                return false;
 
-			}
+            }
 
-			for (int i = 0; i < pLen; i++)
-			{
-				if (pattern[pLen - i - 1] != data[searchAt - i])
-				{
-					return false;
-				}
-			}
+            for (int i = 0; i < pLen; i++)
+            {
+                if (pattern[pLen - i - 1] != data[searchAt - i])
+                {
+                    return false;
+                }
+            }
 
-			return true;
-		}
-	}
+            return true;
+        }
+    }
 
-	/**
-	 * Determines a integer value from a hexadecimal byte array.
-	 *
-	 * @param data Image
-	 * @param start Start index to read from
-	 * @param end End index until to read
-	 *
-	 * @return A number
-	 */
-	public static int getIntFromByteArray (byte[] data, int startAt, int length,
-										   boolean searchForward)
-	{
-		int bit = 8;
-		int bitMoving = length * bit;
-		int retVal = 0;
+    /**
+     * Determines a integer value from a hexadecimal byte array.
+     *
+     * @param data Image
+     * @param start Start index to read from
+     * @param end End index until to read
+     *
+     * @return A number
+     */
+    public static int getIntFromByteArray (byte[] data, int startAt, int length,
+                                           boolean searchForward)
+    {
+        int bit = 8;
+        int bitMoving = length * bit;
+        int retVal = 0;
 
-		if (startAt >= data.length)
-		{
-			return retVal;
+        if (startAt >= data.length)
+        {
+            return retVal;
 
-		}
+        }
 
-		if (searchForward)
-		{
-			if (length >= (data.length - startAt))
-			{
-				return retVal;
+        if (searchForward)
+        {
+            if (length >= (data.length - startAt))
+            {
+                return retVal;
 
-			}
+            }
 
-			for (int i = 0; i < length; i++)
-			{
-				bitMoving -= bit;
-				int iData = (int) data[startAt + i];
-				if (iData < 0)
-					iData += 256;
-				retVal += iData << bitMoving;
-			}
-		}
-		else
-		{
-			if (length > (startAt + 1))
-			{
-				return retVal;
+            for (int i = 0; i < length; i++)
+            {
+                bitMoving -= bit;
+                int iData = (int) data[startAt + i];
+                if (iData < 0)
+                    iData += 256;
+                retVal += iData << bitMoving;
+            }
+        }
+        else
+        {
+            if (length > (startAt + 1))
+            {
+                return retVal;
 
-			}
+            }
 
-			for (int i = 0; i < length; i++)
-			{
-				bitMoving -= bit;
-				int iData = (int) data[startAt - i];
-				if (iData < 0)
-					iData += 256;
-				retVal += iData << bitMoving;			}
-		}
+            for (int i = 0; i < length; i++)
+            {
+                bitMoving -= bit;
+                int iData = (int) data[startAt - i];
+                if (iData < 0)
+                    iData += 256;
+                retVal += iData << bitMoving;            }
+        }
 
-		return retVal;
-	}
+        return retVal;
+    }
 }

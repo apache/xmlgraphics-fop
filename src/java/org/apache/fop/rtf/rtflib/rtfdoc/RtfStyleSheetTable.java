@@ -70,220 +70,220 @@ import java.util.Iterator;
  */
 public class RtfStyleSheetTable
 {
-	//////////////////////////////////////////////////
-	// @@ Symbolic constants
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Symbolic constants
+    //////////////////////////////////////////////////
 
-	/** Start index number for the stylesheet reference table */
-	private static int startIndex = 15;
+    /** Start index number for the stylesheet reference table */
+    private static int startIndex = 15;
 
-	/** OK status value for attribute handling */
-	public static int STATUS_OK = 0;
-	/** Status value for attribute handling, if the stylesheet not found and
-	 *  the stylesheet set to the default stylesheet */
-	public static int STATUS_DEFAULT = 1;
+    /** OK status value for attribute handling */
+    public static int STATUS_OK = 0;
+    /** Status value for attribute handling, if the stylesheet not found and
+     *  the stylesheet set to the default stylesheet */
+    public static int STATUS_DEFAULT = 1;
 
-	/** Standard style name */
-	private static String STANDARD_STYLE = "Standard";
-
-
-	//////////////////////////////////////////////////
-	// @@ Singleton
-	//////////////////////////////////////////////////
-
-	/** Singelton instance */
-	private static RtfStyleSheetTable instance = null;
+    /** Standard style name */
+    private static String STANDARD_STYLE = "Standard";
 
 
-	//////////////////////////////////////////////////
-	// @@ Members
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Singleton
+    //////////////////////////////////////////////////
+
+    /** Singelton instance */
+    private static RtfStyleSheetTable instance = null;
 
 
-	/** Table of styles */
-	private Hashtable styles = null;
-
-	/** Used, style attributes to this vector */
-	private Hashtable attrTable = null;
-
-	/** Used, style names to this vector */
-	private Vector nameTable = null;
-
-	/** Default style */
-	private String defaultStyleName = STANDARD_STYLE;
+    //////////////////////////////////////////////////
+    // @@ Members
+    //////////////////////////////////////////////////
 
 
-	//////////////////////////////////////////////////
-	// @@ Construction
-	//////////////////////////////////////////////////
+    /** Table of styles */
+    private Hashtable styles = null;
 
-	/**
-	 * Constructor.
-	 */
-	private RtfStyleSheetTable ()
-	{
-		styles = new Hashtable ();
-		attrTable = new Hashtable ();
-		nameTable = new Vector ();
-	}
+    /** Used, style attributes to this vector */
+    private Hashtable attrTable = null;
 
-	/**
-	 * Singelton.
-	 *
-	 * @return The instance of RtfStyleSheetTable
-	 */
-	public static RtfStyleSheetTable getInstance ()
-	{
-		if (instance == null)
-		{
-			instance = new RtfStyleSheetTable ();
-		}
+    /** Used, style names to this vector */
+    private Vector nameTable = null;
 
-		return instance;
-	}
+    /** Default style */
+    private String defaultStyleName = STANDARD_STYLE;
 
 
-	//////////////////////////////////////////////////
-	// @@ Member access
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Construction
+    //////////////////////////////////////////////////
 
-	/**
-	 * Sets the default style.
-	 * @param styleName Name of the default style, defined in the stylesheet
-	 */
-	public void setDefaultStyle (String styleName)
-	{
-		this.defaultStyleName = styleName;
-	}
+    /**
+     * Constructor.
+     */
+    private RtfStyleSheetTable ()
+    {
+        styles = new Hashtable ();
+        attrTable = new Hashtable ();
+        nameTable = new Vector ();
+    }
 
-	/**
-	 * Gets the name of the default style.
-	 * @return Default style name.
-	 */
-	public String getDefaultStyleName ()
-	{
-		if (attrTable.get (defaultStyleName) != null)
-			return defaultStyleName;
+    /**
+     * Singelton.
+     *
+     * @return The instance of RtfStyleSheetTable
+     */
+    public static RtfStyleSheetTable getInstance ()
+    {
+        if (instance == null)
+        {
+            instance = new RtfStyleSheetTable ();
+        }
 
-		if (attrTable.get (STANDARD_STYLE) != null)
-		{
-			defaultStyleName = STANDARD_STYLE;
-			return defaultStyleName;
-		}
-
-		return null;
-	}
+        return instance;
+    }
 
 
-	//////////////////////////////////////////////////
-	// @@ Public methods
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Member access
+    //////////////////////////////////////////////////
 
-	/**
-	 * Adds a style to the table.
-	 * @param name Name of style to add
-	 * @param attrs Rtf attributes which defines the style
-	 */
-	public void addStyle (String name, RtfAttributes attrs)
-	{
-		nameTable.addElement (name);
-		if (attrs != null)
-			attrTable.put (name, attrs);
-		styles.put (name, new Integer (nameTable.size () - 1 + startIndex));
-	}
+    /**
+     * Sets the default style.
+     * @param styleName Name of the default style, defined in the stylesheet
+     */
+    public void setDefaultStyle (String styleName)
+    {
+        this.defaultStyleName = styleName;
+    }
 
-	/**
-	 * Adds the style attributes to the given attributes.
-	 * @param name Name of style, of which the attributes will copied to attr
-	 * @param attrs Default rtf attributes
-	 * @return Status value
-	 */
-	public int addStyleToAttributes (String name, RtfAttributes attr)
-	{
-		// Sets status to ok
-		int status = STATUS_OK;
+    /**
+     * Gets the name of the default style.
+     * @return Default style name.
+     */
+    public String getDefaultStyleName ()
+    {
+        if (attrTable.get (defaultStyleName) != null)
+            return defaultStyleName;
 
-		// Gets the style number from table
-		Integer style  = (Integer) styles.get (name);
+        if (attrTable.get (STANDARD_STYLE) != null)
+        {
+            defaultStyleName = STANDARD_STYLE;
+            return defaultStyleName;
+        }
 
-		if (style == null && !name.equals (defaultStyleName))
-		{
-			// If style not found, and style was not the default style, try the default style
-			name = defaultStyleName;
-			style = (Integer) styles.get (name);
-			// set status for default style setting
-			status = STATUS_DEFAULT;
-		}
+        return null;
+    }
 
-		// Returns the status for invalid styles
-		if (style == null)
-			return status;
 
-		// Adds the attributes to default attributes, if not available in default attributes
-		attr.set ("cs", style.intValue ());
+    //////////////////////////////////////////////////
+    // @@ Public methods
+    //////////////////////////////////////////////////
 
-		Object o = attrTable.get (name);
-		if (o != null)
-		{
-			RtfAttributes rtfAttr = (RtfAttributes) o;
+    /**
+     * Adds a style to the table.
+     * @param name Name of style to add
+     * @param attrs Rtf attributes which defines the style
+     */
+    public void addStyle (String name, RtfAttributes attrs)
+    {
+        nameTable.addElement (name);
+        if (attrs != null)
+            attrTable.put (name, attrs);
+        styles.put (name, new Integer (nameTable.size () - 1 + startIndex));
+    }
 
-			for (Iterator names = rtfAttr.nameIterator (); names.hasNext ();)
-			{
-				String attrName = (String) names.next ();
-				if (! attr.isSet (attrName))
-				{
-					Integer i = (Integer) rtfAttr.getValue (attrName);
-					if (i == null)
-						attr.set (attrName);
-					else
-						attr.set (attrName, i.intValue ());
-				}
-			}
-		}
-		return status;
-	}
+    /**
+     * Adds the style attributes to the given attributes.
+     * @param name Name of style, of which the attributes will copied to attr
+     * @param attrs Default rtf attributes
+     * @return Status value
+     */
+    public int addStyleToAttributes (String name, RtfAttributes attr)
+    {
+        // Sets status to ok
+        int status = STATUS_OK;
 
-	/**
-	 * Writes the rtf style sheet table.
-	 * @param header Rtf header is the parent
-	 * @throws IOException On write error
-	 */
-	public void writeStyleSheet (RtfHeader header) throws IOException
-	{
-		if (styles == null || styles.size () == 0)
-		{
-			return;
-		}
-		header.writeGroupMark (true);
-		header.writeControlWord ("stylesheet");
+        // Gets the style number from table
+        Integer style  = (Integer) styles.get (name);
 
-		int number = nameTable.size ();
-		for (int i = 0; i < number; i++)
-		{
-			String name = (String) nameTable.elementAt (i);
-			header.writeGroupMark (true);
-			header.writeControlWord ("*\\" + this.getRtfStyleReference (name));
+        if (style == null && !name.equals (defaultStyleName))
+        {
+            // If style not found, and style was not the default style, try the default style
+            name = defaultStyleName;
+            style = (Integer) styles.get (name);
+            // set status for default style setting
+            status = STATUS_DEFAULT;
+        }
 
-			Object o = attrTable.get (name);
-			if (o != null)
-			{
-				header.writeAttributes ((RtfAttributes) o, RtfText.ATTR_NAMES);
-				header.writeAttributes ((RtfAttributes) o, RtfText.ALIGNMENT);
-			}
+        // Returns the status for invalid styles
+        if (style == null)
+            return status;
 
-			header.write (name + ";");
-			header.writeGroupMark (false);
-		}
-		header.writeGroupMark (false);
-	}
+        // Adds the attributes to default attributes, if not available in default attributes
+        attr.set ("cs", style.intValue ());
 
-	/**
-	 * Gets the rtf style reference from the table.
-	 * @param name Name of Style
-	 * @return Rtf attribute of the style reference
-	 */
-	private String getRtfStyleReference (String name)
-	{
-		return "cs" + styles.get (name).toString ();
-	}
+        Object o = attrTable.get (name);
+        if (o != null)
+        {
+            RtfAttributes rtfAttr = (RtfAttributes) o;
+
+            for (Iterator names = rtfAttr.nameIterator (); names.hasNext ();)
+            {
+                String attrName = (String) names.next ();
+                if (! attr.isSet (attrName))
+                {
+                    Integer i = (Integer) rtfAttr.getValue (attrName);
+                    if (i == null)
+                        attr.set (attrName);
+                    else
+                        attr.set (attrName, i.intValue ());
+                }
+            }
+        }
+        return status;
+    }
+
+    /**
+     * Writes the rtf style sheet table.
+     * @param header Rtf header is the parent
+     * @throws IOException On write error
+     */
+    public void writeStyleSheet (RtfHeader header) throws IOException
+    {
+        if (styles == null || styles.size () == 0)
+        {
+            return;
+        }
+        header.writeGroupMark (true);
+        header.writeControlWord ("stylesheet");
+
+        int number = nameTable.size ();
+        for (int i = 0; i < number; i++)
+        {
+            String name = (String) nameTable.elementAt (i);
+            header.writeGroupMark (true);
+            header.writeControlWord ("*\\" + this.getRtfStyleReference (name));
+
+            Object o = attrTable.get (name);
+            if (o != null)
+            {
+                header.writeAttributes ((RtfAttributes) o, RtfText.ATTR_NAMES);
+                header.writeAttributes ((RtfAttributes) o, RtfText.ALIGNMENT);
+            }
+
+            header.write (name + ";");
+            header.writeGroupMark (false);
+        }
+        header.writeGroupMark (false);
+    }
+
+    /**
+     * Gets the rtf style reference from the table.
+     * @param name Name of Style
+     * @return Rtf attribute of the style reference
+     */
+    private String getRtfStyleReference (String name)
+    {
+        return "cs" + styles.get (name).toString ();
+    }
 }

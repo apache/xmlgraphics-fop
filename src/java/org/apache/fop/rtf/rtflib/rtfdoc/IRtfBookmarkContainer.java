@@ -67,15 +67,15 @@ import java.io.IOException;
 public interface IRtfBookmarkContainer
 {
 
-	/**
-	 * Create a new RTF bookmark.
-	 *
-	 * @param bookmark Name of the bookmark
-	 *
-	 * @return RTF bookmark
-	 *
-	 * @throws IOException On eror
-	 */
-	RtfBookmark newBookmark (String bookmark) throws IOException;
+    /**
+     * Create a new RTF bookmark.
+     *
+     * @param bookmark Name of the bookmark
+     *
+     * @return RTF bookmark
+     *
+     * @throws IOException On eror
+     */
+    RtfBookmark newBookmark (String bookmark) throws IOException;
 }
 

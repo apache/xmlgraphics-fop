@@ -81,15 +81,15 @@ extends RtfContainer
     public RtfPage newPage(RtfAttributes attr) throws IOException
     {
         if(m_currentPage != null){
-        	m_currentPage.close();
+            m_currentPage.close();
         }
         m_currentPage = new RtfPage(this,m_writer,attr);
 
         return m_currentPage;
     }
 
-	protected boolean okToWriteRtf()
-	{
-		return true;
-	}
+    protected boolean okToWriteRtf()
+    {
+        return true;
+    }
 }

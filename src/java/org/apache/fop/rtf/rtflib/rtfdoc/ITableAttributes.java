@@ -122,12 +122,12 @@ public interface ITableAttributes {
     String ROW_KEEP_TOGETHER = "trkeep";
 
     //This control word is nonexistent in RTF, used
-	//to simulate the FO:keep-with-next attribute.
+    //to simulate the FO:keep-with-next attribute.
      String ROW_KEEP_WITH_NEXT = "knext";
 
-	//This control word is nonexistent in RTF, used
-	//to simulate the FO:keep-with-previous attribute.
- 	 String ROW_KEEP_WITH_PREVIOUS = "kprevious";
+    //This control word is nonexistent in RTF, used
+    //to simulate the FO:keep-with-previous attribute.
+      String ROW_KEEP_WITH_PREVIOUS = "kprevious";
 
     //shading and color, all are unit based attributes
     String CELL_SHADE = "clshdng";
@@ -144,16 +144,16 @@ public interface ITableAttributes {
     };
 
     String[] CELL_BORDER = {
-        CELL_BORDER_TOP,		CELL_BORDER_BOTTOM,
-        CELL_BORDER_LEFT,		CELL_BORDER_RIGHT
+        CELL_BORDER_TOP,        CELL_BORDER_BOTTOM,
+        CELL_BORDER_LEFT,        CELL_BORDER_RIGHT
     };
 
     String[] ROW_BORDER = {
-        ROW_BORDER_TOP, 		ROW_BORDER_BOTTOM, 		ROW_BORDER_LEFT,
-        ROW_BORDER_RIGHT,	ROW_BORDER_HORIZONTAL,	ROW_BORDER_VERTICAL
+        ROW_BORDER_TOP,         ROW_BORDER_BOTTOM,         ROW_BORDER_LEFT,
+        ROW_BORDER_RIGHT,    ROW_BORDER_HORIZONTAL,    ROW_BORDER_VERTICAL
     };
 
     String[] CELL_COLOR = {
-        CELL_SHADE,	CELL_COLOR_BACKGROUND,	CELL_COLOR_FOREGROUND
+        CELL_SHADE,    CELL_COLOR_BACKGROUND,    CELL_COLOR_FOREGROUND
     };
 }

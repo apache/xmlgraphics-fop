@@ -71,164 +71,164 @@ import java.io.IOException;
 public class RtfHyperLink extends RtfContainer implements IRtfTextContainer
 {
 
-	//////////////////////////////////////////////////
-	// @@ Members
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Members
+    //////////////////////////////////////////////////
 
-	/** The url of the image */
-	protected String url = null;
+    /** The url of the image */
+    protected String url = null;
 
-	/** RtfText */
-	protected RtfText mText = null;
+    /** RtfText */
+    protected RtfText mText = null;
 
-	//////////////////////////////////////////////////
-	// @@ Construction
-	//////////////////////////////////////////////////
-
-
-	/**
-	 * Default constructor.
-	 *
-	 * @param container a <code>RtfContainer</code> value
-	 * @param writer a <code>Writer</code> value
-	 * @param attributes a <code>RtfAttributes</code> value
-	 */
-	public RtfHyperLink (IRtfTextContainer parent, Writer writer, String str, RtfAttributes attr)
-		throws IOException
-	{
-		super ((RtfContainer) parent, writer, attr);
-		new RtfText (this, writer, str, attr);
-	}
+    //////////////////////////////////////////////////
+    // @@ Construction
+    //////////////////////////////////////////////////
 
 
-	//////////////////////////////////////////////////
-	// @@ RtfElement implementation
-	//////////////////////////////////////////////////
-
-	/**
-	 * Writes the RTF content to m_writer.
-	 *
-	 * @exception IOException On error
-	 */
-	public void writeRtfPrefix () throws IOException
-	{
-		super.writeGroupMark (true);
-		super.writeControlWord ("field");
-
-		super.writeGroupMark (true);
-		super.writeStarControlWord ("fldinst");
-
-		m_writer.write ("HYPERLINK \"" + url + "\" ");
-		super.writeGroupMark (false);
-
-		super.writeGroupMark (true);
-		super.writeControlWord ("fldrslt");
-
-		// start a group for this paragraph and write our own attributes if needed
-		if (m_attrib != null && m_attrib.isSet ("cs"))
-		{
-			writeGroupMark (true);
-			writeAttributes(m_attrib, new String [] {"cs"});
-		}
-	}
-
-	/**
-	 * Writes the RTF content to m_writer.
-	 *
-	 * @exception IOException On error
-	 */
-	public void writeRtfSuffix () throws IOException
-	{
-		if (m_attrib != null && m_attrib.isSet ("cs"))
-		{
-			writeGroupMark (false);
-		}
-		super.writeGroupMark (false);
-		super.writeGroupMark (false);
-	}
+    /**
+     * Default constructor.
+     *
+     * @param container a <code>RtfContainer</code> value
+     * @param writer a <code>Writer</code> value
+     * @param attributes a <code>RtfAttributes</code> value
+     */
+    public RtfHyperLink (IRtfTextContainer parent, Writer writer, String str, RtfAttributes attr)
+        throws IOException
+    {
+        super ((RtfContainer) parent, writer, attr);
+        new RtfText (this, writer, str, attr);
+    }
 
 
-	//////////////////////////////////////////////////
-	// @@ IRtfContainer implementation
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ RtfElement implementation
+    //////////////////////////////////////////////////
 
-	/** close current text run if any and start a new one with default attributes
-	 *  @param str if not null, added to the RtfText created
-	 */
-	public RtfText newText (String str) throws IOException {
-		return newText (str,null);
-	}
+    /**
+     * Writes the RTF content to m_writer.
+     *
+     * @exception IOException On error
+     */
+    public void writeRtfPrefix () throws IOException
+    {
+        super.writeGroupMark (true);
+        super.writeControlWord ("field");
 
-	/** close current text run if any and start a new one
-	 *  @param str if not null, added to the RtfText created
-	 */
-	public RtfText newText (String str,RtfAttributes attr) throws IOException
-	{
-		closeAll ();
-		mText = new RtfText (this, m_writer, str, attr);
-		return mText;
-	}
+        super.writeGroupMark (true);
+        super.writeStarControlWord ("fldinst");
 
-	/** IRtfTextContainer requirement: return a copy of our attributes */
-	public RtfAttributes getTextContainerAttributes()
-	{
-		if (m_attrib == null) return null;
-		return (RtfAttributes) this.m_attrib.clone ();
-	}
+        m_writer.write ("HYPERLINK \"" + url + "\" ");
+        super.writeGroupMark (false);
 
+        super.writeGroupMark (true);
+        super.writeControlWord ("fldrslt");
 
-	/** add a line break */
-	public void newLineBreak () throws IOException
-	{
-		new RtfLineBreak (this, m_writer);
-	}
+        // start a group for this paragraph and write our own attributes if needed
+        if (m_attrib != null && m_attrib.isSet ("cs"))
+        {
+            writeGroupMark (true);
+            writeAttributes(m_attrib, new String [] {"cs"});
+        }
+    }
 
-
-	//////////////////////////////////////////////////
-	// @@ Common container methods
-	//////////////////////////////////////////////////
-
-	private void closeCurrentText () throws IOException
-	{
-		if (mText != null) mText.close ();
-	}
-
-	private void closeAll () throws IOException
-	{
-		closeCurrentText();
-	}
+    /**
+     * Writes the RTF content to m_writer.
+     *
+     * @exception IOException On error
+     */
+    public void writeRtfSuffix () throws IOException
+    {
+        if (m_attrib != null && m_attrib.isSet ("cs"))
+        {
+            writeGroupMark (false);
+        }
+        super.writeGroupMark (false);
+        super.writeGroupMark (false);
+    }
 
 
-	//////////////////////////////////////////////////
-	// @@ Member access
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ IRtfContainer implementation
+    //////////////////////////////////////////////////
 
-	/**
-	 * Sets the url of the external link.
-	 *
-	 * @param url Link url like "http://..."
-	 */
-	public void setExternalURL (String url)
-	{
-		this.url = url;
-	}
+    /** close current text run if any and start a new one with default attributes
+     *  @param str if not null, added to the RtfText created
+     */
+    public RtfText newText (String str) throws IOException {
+        return newText (str,null);
+    }
 
-	/**
-	 * Sets the url of the external link.
-	 *
-	 * @param jumpTo Name of the text mark
-	 */
-	public void setInternalURL (String jumpTo)
-	{
-		int now = jumpTo.length ();
-		int max = RtfBookmark.maxBookmarkLength;
-		this.url = "#" + jumpTo.substring (0, now > max ? max : now);
-		this.url = this.url.replace ('.', RtfBookmark.replaceCharacter);
-		this.url = this.url.replace (' ', RtfBookmark.replaceCharacter);
-	}
+    /** close current text run if any and start a new one
+     *  @param str if not null, added to the RtfText created
+     */
+    public RtfText newText (String str,RtfAttributes attr) throws IOException
+    {
+        closeAll ();
+        mText = new RtfText (this, m_writer, str, attr);
+        return mText;
+    }
 
-	public boolean isEmpty ()
-	{
-		return false;
-	}
+    /** IRtfTextContainer requirement: return a copy of our attributes */
+    public RtfAttributes getTextContainerAttributes()
+    {
+        if (m_attrib == null) return null;
+        return (RtfAttributes) this.m_attrib.clone ();
+    }
+
+
+    /** add a line break */
+    public void newLineBreak () throws IOException
+    {
+        new RtfLineBreak (this, m_writer);
+    }
+
+
+    //////////////////////////////////////////////////
+    // @@ Common container methods
+    //////////////////////////////////////////////////
+
+    private void closeCurrentText () throws IOException
+    {
+        if (mText != null) mText.close ();
+    }
+
+    private void closeAll () throws IOException
+    {
+        closeCurrentText();
+    }
+
+
+    //////////////////////////////////////////////////
+    // @@ Member access
+    //////////////////////////////////////////////////
+
+    /**
+     * Sets the url of the external link.
+     *
+     * @param url Link url like "http://..."
+     */
+    public void setExternalURL (String url)
+    {
+        this.url = url;
+    }
+
+    /**
+     * Sets the url of the external link.
+     *
+     * @param jumpTo Name of the text mark
+     */
+    public void setInternalURL (String jumpTo)
+    {
+        int now = jumpTo.length ();
+        int max = RtfBookmark.maxBookmarkLength;
+        this.url = "#" + jumpTo.substring (0, now > max ? max : now);
+        this.url = this.url.replace ('.', RtfBookmark.replaceCharacter);
+        this.url = this.url.replace (' ', RtfBookmark.replaceCharacter);
+    }
+
+    public boolean isEmpty ()
+    {
+        return false;
+    }
 }

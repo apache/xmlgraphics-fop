@@ -85,8 +85,8 @@ class RtfHeader extends RtfContainer {
         writeUserProperties();
         RtfColorTable.getInstance().writeColors(this);
         super.writeRtfContent();
- 		RtfTemplate.getInstance().writeTemplate(this);
-       	RtfStyleSheetTable.getInstance().writeStyleSheet(this);
+         RtfTemplate.getInstance().writeTemplate(this);
+           RtfStyleSheetTable.getInstance().writeStyleSheet(this);
 
     }
 
@@ -121,6 +121,6 @@ class RtfHeader extends RtfContainer {
 
     /** write to our Writer using an RtfStringConverter */
     void writeRtfString(String toWrite) throws IOException {
-	    RtfStringConverter.getInstance().writeRtfString(m_writer,toWrite);
+        RtfStringConverter.getInstance().writeRtfString(m_writer,toWrite);
     }
 }

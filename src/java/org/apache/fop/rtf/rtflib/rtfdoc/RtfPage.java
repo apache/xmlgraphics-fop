@@ -63,39 +63,39 @@ import java.io.*;
 import java.util.*;
 import java.io.IOException;
 /** Specifies rtf control words.  Is the container for page attributes.
- *	Overrides okToWriteRtf.
+ *    Overrides okToWriteRtf.
  *  @author Christopher Scott, scottc@westinghouse.com
  */
 
 public class RtfPage
 extends RtfContainer{
-	private final RtfAttributes m_attrib;
+    private final RtfAttributes m_attrib;
 
-	/**RtfPage attributes*/
-	public final static String PAGE_WIDTH = "paperw";
-	public final static String PAGE_HEIGHT = "paperh";
+    /**RtfPage attributes*/
+    public final static String PAGE_WIDTH = "paperw";
+    public final static String PAGE_HEIGHT = "paperh";
 
-	public final static String MARGIN_TOP = "margt";
-	public final static String MARGIN_BOTTOM = "margb";
-	public final static String MARGIN_LEFT = "margl";
-	public final static String MARGIN_RIGHT = "margr";
+    public final static String MARGIN_TOP = "margt";
+    public final static String MARGIN_BOTTOM = "margb";
+    public final static String MARGIN_LEFT = "margl";
+    public final static String MARGIN_RIGHT = "margr";
 
-	public final static String[] PAGE_ATTR = new String[]{
-		PAGE_WIDTH, PAGE_HEIGHT, MARGIN_TOP, MARGIN_BOTTOM,
-		MARGIN_LEFT, MARGIN_RIGHT
-	};
+    public final static String[] PAGE_ATTR = new String[]{
+        PAGE_WIDTH, PAGE_HEIGHT, MARGIN_TOP, MARGIN_BOTTOM,
+        MARGIN_LEFT, MARGIN_RIGHT
+    };
 
-	/**	RtfPage creates new page attributes with the parent container, the writer
-	   	and the attributes*/
-	RtfPage(RtfPageArea parent, Writer w, RtfAttributes attrs) throws IOException {
-		super((RtfContainer)parent,w);
-		m_attrib = attrs;
-	}
+    /**    RtfPage creates new page attributes with the parent container, the writer
+           and the attributes*/
+    RtfPage(RtfPageArea parent, Writer w, RtfAttributes attrs) throws IOException {
+        super((RtfContainer)parent,w);
+        m_attrib = attrs;
+    }
 
-	/** RtfPage writes the attributes the attributes contained in the string
-		PAGE_ATTR, if not null */
-		protected void writeRtfContent() throws IOException {
-		writeAttributes(m_attrib, PAGE_ATTR);
+    /** RtfPage writes the attributes the attributes contained in the string
+        PAGE_ATTR, if not null */
+        protected void writeRtfContent() throws IOException {
+        writeAttributes(m_attrib, PAGE_ATTR);
 
         if (m_attrib != null)
         {
@@ -108,19 +108,19 @@ extends RtfContainer{
                 writeControlWord( "landscape" );
             }
         }
-	}
+    }
 
-	/** RtfPage - attributes accessor */
-	public RtfAttributes getAttributes(){
-		return m_attrib;
-	}
+    /** RtfPage - attributes accessor */
+    public RtfAttributes getAttributes(){
+        return m_attrib;
+    }
 
-	/** RtfPage - is overwritten here because page attributes have no content
-		only attributes. RtfContainer is defined not to write when empty.
-		Therefore must make this true to print.*/
-	protected boolean okToWriteRtf()
-	{
-		return true;
-	}
+    /** RtfPage - is overwritten here because page attributes have no content
+        only attributes. RtfContainer is defined not to write when empty.
+        Therefore must make this true to print.*/
+    protected boolean okToWriteRtf()
+    {
+        return true;
+    }
 
 }

@@ -70,67 +70,67 @@ import java.io.File;
 
 public class RtfTemplate  {
 
-	/** Singelton instance */
-	private static RtfTemplate instance = null;
+    /** Singelton instance */
+    private static RtfTemplate instance = null;
 
-	private String templateFilePath = null;
+    private String templateFilePath = null;
 
-	/**
-	 * Constructor.
-	 */
-	private RtfTemplate ()
-	{
+    /**
+     * Constructor.
+     */
+    private RtfTemplate ()
+    {
 
-	}
-
-
-	/**
-	 * Singelton.
-	 *
-	 * @return The instance of RtfTemplate
-	 */
-	public static RtfTemplate getInstance ()
-	{
-		if (instance == null) {
-			instance = new RtfTemplate();
-		}
-
-		return instance;
-	}
+    }
 
 
-	/**
-	 *Set the template file and adjust tha path separator
-	 *
-	 *@param templateFilePath The full path of the template
-	 **/
-	public void setTemplateFilePath(String templateFilePath) throws IOException {
-		// no validity checks here - leave this to the RTF client
-		if(templateFilePath == null) {
-			this.templateFilePath = null;
-		} else {
-			this.templateFilePath = templateFilePath.trim();
-		}
-	}
+    /**
+     * Singelton.
+     *
+     * @return The instance of RtfTemplate
+     */
+    public static RtfTemplate getInstance ()
+    {
+        if (instance == null) {
+            instance = new RtfTemplate();
+        }
 
-	/**
-	 * Write the rtf template
-	 * @param header Rtf header is the parent
-	 * @throws IOException On write error
-	 */
-	public void writeTemplate (RtfHeader header) throws IOException
-	{
-		if (templateFilePath == null || templateFilePath.length() == 0) return;
+        return instance;
+    }
 
-		header.writeGroupMark (true);
-		header.writeControlWord ("template");
-		header.writeRtfString(this.templateFilePath);
-		header.writeGroupMark (false);
 
-		header.writeGroupMark (true);
-		header.writeControlWord ("linkstyles");
-		header.writeGroupMark (false);
-	}
+    /**
+     *Set the template file and adjust tha path separator
+     *
+     *@param templateFilePath The full path of the template
+     **/
+    public void setTemplateFilePath(String templateFilePath) throws IOException {
+        // no validity checks here - leave this to the RTF client
+        if(templateFilePath == null) {
+            this.templateFilePath = null;
+        } else {
+            this.templateFilePath = templateFilePath.trim();
+        }
+    }
+
+    /**
+     * Write the rtf template
+     * @param header Rtf header is the parent
+     * @throws IOException On write error
+     */
+    public void writeTemplate (RtfHeader header) throws IOException
+    {
+        if (templateFilePath == null || templateFilePath.length() == 0) return;
+
+        header.writeGroupMark (true);
+        header.writeControlWord ("template");
+        header.writeRtfString(this.templateFilePath);
+        header.writeGroupMark (false);
+
+        header.writeGroupMark (true);
+        header.writeControlWord ("linkstyles");
+        header.writeGroupMark (false);
+    }
 }
 
 

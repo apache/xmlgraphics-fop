@@ -77,7 +77,7 @@ IRtfPageNumberContainer,IRtfPageNumberCitationContainer {
     private RtfPageNumber m_pageNumber;
     private RtfPageNumberCitation m_pageNumberCitation; // Line added by Boris POUDEROUS on 2002/07/09
     private boolean m_keepn=false;
-	private boolean m_resetProperties=false;
+    private boolean m_resetProperties=false;
 
     /* needed for importing Rtf into FrameMaker
        FrameMaker is not as forgiving as word in rtf
@@ -106,12 +106,12 @@ IRtfPageNumberContainer,IRtfPageNumberCitationContainer {
 
     /** Set the keepn attribute for this paragraph */
     public void setKeepn() {
-    	this.m_keepn=true;
+        this.m_keepn=true;
     }
 
     /** Force reset properties */
     public void setResetProperties() {
-    	this.m_resetProperties=true;
+        this.m_resetProperties=true;
     }
 
     /** IRtfTextContainer requirement: return a copy of our attributes */
@@ -131,9 +131,9 @@ IRtfPageNumberContainer,IRtfPageNumberCitationContainer {
         }
 
         //Reset paragraph properties if needed
-       	if(m_resetProperties) {
-       		writeControlWord("pard");
-       	}
+           if(m_resetProperties) {
+               writeControlWord("pard");
+           }
 
         // do not write text attributes here, they are handled
         // by RtfText
