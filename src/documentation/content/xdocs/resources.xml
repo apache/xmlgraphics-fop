@@ -189,6 +189,11 @@ post processing of the generated PDF files: <link href="http://www.lowagie.com/i
       <link href="http://mypage.bluewin.ch/huanderegg/">
       http://mypage.bluewin.ch/huanderegg/</link>.
       </li>
+      <li>
+        The <link href="http://mogwai.sourceforge.net">Mogwai Project</link>
+includes a renderer for FOP that generates output for Okidata dot matrix
+printers.
+      </li>
     </ul>
   </section>
 </section>
