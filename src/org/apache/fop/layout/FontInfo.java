@@ -71,7 +71,7 @@ public class FontInfo {
     /* add the given family, style and weight as a lookup for the font
        with the given name */
 
-    String key = family + "," + style + "," + weight;
+    String key = createFontKey(family,style,weight);
     this.triplets.put(key,name);
   }
 
@@ -81,39 +81,57 @@ public class FontInfo {
     this.fonts.put(name,metrics);
   }
 
-  public String fontLookup(String family, String style, String weight) throws FOPException {
-    // given a family, style and weight, return the font name
-    int i;
-
-    try {
-      i = Integer.parseInt(weight);
-    } catch (NumberFormatException e) {
-      i = 0;
+    public String fontLookup(String family, String style, String weight) 
+	throws FOPException
+    {
+	return fontLookup(createFontKey(family,style,weight));
+    }
+    
+    public String fontLookup(String key) 
+	throws FOPException
+    {
+	
+	String f = (String)this.triplets.get(key);
+	if (f == null) {
+	    int i = key.indexOf(',');
+	    String s = "any"+key.substring(i);
+	    f = (String)this.triplets.get(s);
+	    if (f == null) {
+		f = (String)this.triplets.get("any,normal,normal");
+		if (f == null) {
+		    throw new FOPException("no default font defined by OutputConverter");
+		}
+		MessageHandler.errorln("WARNING: defaulted font to any,normal,normal");
+	    }
+	    MessageHandler.errorln("WARNING: unknown font "+key+" so defaulted font to any");
+	}
+	
+	usedFonts.put(f, fonts.get(f)); 
+	return f;
     }
 
-    if (i > 600)
-      weight = "bold";
-    else if (i > 0)
-      weight = "normal";
-
-    String key = family + "," + style + "," + weight;
-
-    String f = (String)this.triplets.get(key);
-    if (f == null) {
-      f = (String)this.triplets.get("any," + style + "," + weight);
-      if (f == null) {
-        f = (String)this.triplets.get("any,normal,normal");
-        if (f == null) {
-          throw new FOPException("no default font defined by OutputConverter");
-        }
-        MessageHandler.errorln("WARNING: defaulted font to any,normal,normal");
-      }
-      MessageHandler.errorln("WARNING: unknown font "+family+" so defaulted font to any");
+    /**
+     * Creates a key from the given strings
+     */
+    public static String createFontKey(String family, String style, String weight) 
+    {
+	int i;
+	
+	try {
+	    i = Integer.parseInt(weight);
+	} catch (NumberFormatException e) {
+	    i = 0;
+	}
+	
+	if (i > 600)
+	    weight = "bold";
+	else if (i > 0)
+	    weight = "normal";
+	
+	return family + "," + style + "," + weight;
     }
+    
 
-    usedFonts.put(f, fonts.get(f)); 
-    return f;
-  }
 
   public Hashtable getFonts() {
     return this.fonts;
@@ -128,8 +146,4 @@ public class FontInfo {
       return (FontMetric)fonts.get(fontName);
   }
 
-  public FontMetric getMetricsFor(String family, String style, String weight) throws FOPException {
-    // given a family, style and weight, return the metric
-      return (FontMetric)fonts.get(fontLookup(family,style,weight));
-  }
 }
