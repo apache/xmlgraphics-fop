@@ -150,35 +150,26 @@ public class FOAttributes {
         Attributes attributes = event.getAttributes();
         if (attributes == null) throw new FOPException
                                        ("No Attributes in XMLEvent");
-        int propIndex;
-        HashMap tmpHash;
         for (int i = 0; i < attributes.getLength(); i++) {
-            String attrUri = attributes.getURI(i);
-            String attrLocalname = attributes.getLocalName(i);
-            String attrQName = attributes.getQName(i);
-            int sep = attrQName.indexOf(':');
-            String prefix = attrQName.substring(0, (sep == -1 ? 0 : sep));
-            if (prefix.equals("xmlns")) break;
+            String attrUri = attributes.getURI(i).intern();
+            String attrLocalname = attributes.getLocalName(i).intern();
             String attrValue = attributes.getValue(i);
             int attrUriIndex = foNode.namespaces.getURIIndex(attrUri);
 
             //System.out.println("FONode:" + event);
             if (attrUriIndex == XMLNamespaces.DefAttrNSIndex) {
-                // Standard FO namespace
-                // Catch default namespace declaration here.
-                if (attrLocalname.equals("xmlns")) break;
+                // Standard attribute namespace
                 // Is this a known (valid) property?
-                propIndex = PropNames.getPropertyIndex(attrLocalname);
+                int propIndex = PropNames.getPropertyIndex(attrLocalname);
                     // Known attribute name
                 foAttrMap.put(Ints.consts.get(propIndex), attrValue);
             } else { // Not the XSL FO namespace
-                int j;
                 if (nSpaceAttrMaps == null) {
                     //Create the list
                     System.out.println("Creating nSpaceAttrMaps");
                     nSpaceAttrMaps = new ArrayList(attrUriIndex + 1);
                     // Add the fo list
-                    for (j = 0; j < XMLNamespaces.DefAttrNSIndex; j++)
+                    for (int j = 0; j < XMLNamespaces.DefAttrNSIndex; j++)
                         nSpaceAttrMaps.add(new HashMap(0));
 
                     System.out.println("Adding foAttrMap");
@@ -186,10 +177,11 @@ public class FOAttributes {
                 }
                 // Make sure there are elements between the last current
                 // and the one to be added
-                for (j = nSpaceAttrMaps.size(); j <= attrUriIndex; j++)
+                for (int j = nSpaceAttrMaps.size(); j <= attrUriIndex; j++)
                     nSpaceAttrMaps.add(new HashMap(0));
                 
                 // Does a HashMap exist for this namespace?
+                HashMap tmpHash;
                 if ((tmpHash =
                      (HashMap)nSpaceAttrMaps.get(attrUriIndex)) == null) {
                     tmpHash = new HashMap(1);
