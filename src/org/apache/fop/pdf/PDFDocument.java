@@ -51,6 +51,10 @@ import java.awt.Rectangle;
  * ability to write the /Pages object after writing the rest
  * of the document; ability to write to a stream and flush
  * the object list; enhanced trailer output; cleanups.
+ *
+ * Modified by lmckenzi@ca.ibm.com
+ * Sometimes IDs are created, but not validated. This tracks
+ * the difference.
  */
 public class PDFDocument {
     private static final Integer locationPlaceholder = new Integer(0);
@@ -1006,7 +1010,12 @@ public class PDFDocument {
                 addTrailerObject(idReferences.getPDFGoTo(destination));
             }
         } else {        // id was not found, so create it
-            idReferences.createNewId(destination);
+
+            //next line by lmckenzi@ca.ibm.com
+            //solves when IDNode made before IDReferences.createID called
+            //idReferences.createNewId(destination);
+ 
+            idReferences.createUnvalidatedID(destination); 
             idReferences.addToIdValidationList(destination);
             goToReference = idReferences.createInternalLinkGoTo(destination,
                             ++this.objectcount);
