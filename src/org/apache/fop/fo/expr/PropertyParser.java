@@ -270,10 +270,10 @@ public class PropertyParser extends PropertyTokenizer {
                     numLen));
             Length length = null;
             if (unitPart.equals(RELUNIT)) {
-                length = new Length(numPart.doubleValue(),
+                length = new FixedLength(numPart.doubleValue(),
                                     propInfo.currentFontSize());
             } else
-                length = new Length(numPart.doubleValue(), unitPart);
+                length = new FixedLength(numPart.doubleValue(), unitPart);
             if (length == null) {
                 throw new PropertyException("unrecognized unit name: "
                                             + currentTokenValue);
