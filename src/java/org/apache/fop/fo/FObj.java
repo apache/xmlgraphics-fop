@@ -103,6 +103,43 @@ public class FObj extends FONode implements Constants {
     }
 
     /**
+     * Create a default property list for this element. 
+     */
+    protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws SAXParseException {
+        //return foEventHandler.getPropertyListMaker().make(this, parent);
+        return null;
+    }
+
+    /**
+     * Bind property values from the property list to the FO node.
+     * Must be overriden in all FObj subclasses. 
+     * @param pList the PropertyList where the properties can be found.
+     * @throws SAXParseException
+     */
+    public void bind(PropertyList pList) throws SAXParseException {
+        throw new SAXParseException("Unconverted element " + this, locator);
+    }
+
+    /**
+     * Setup the id for this formatting object.
+     * Most formatting objects can have an id that can be referenced.
+     * This methods checks that the id isn't already used by another
+     * fo and sets the id attribute of this object.
+     */
+     protected void checkId(String id) throws SAXParseException {
+        if (!id.equals("")) {
+            Set idrefs = getFOEventHandler().getIDReferences();
+            if (!idrefs.contains(id)) {
+                idrefs.add(id);
+            } else {
+                throw new SAXParseException("Property id \"" + id + 
+                        "\" previously used; id values must be unique" +
+                        " in document.", locator);
+            }
+        }
+    }
+
+    /**
      * Set properties for this FO based on node attributes
      * @param attlist Collection of attributes passed to us from the parser.
      */
@@ -236,11 +273,11 @@ public class FObj extends FONode implements Constants {
      * @return FObj the nearest ancestor FONode that is an FObj
      */
     public FObj findNearestAncestorFObj() {
-      FONode par = parent;
-      while (par != null && !(par instanceof FObj)) {
-          par = par.parent;
-      }
-      return (FObj) par;
+        FONode par = parent;
+        while (par != null && !(par instanceof FObj)) {
+            par = par.parent;
+        }
+        return (FObj) par;
     }
 
     /**
