@@ -183,6 +183,7 @@ public class LineArea extends Area {
           new PageNumberInlineArea(currentFontState, this.red,
                                    this.green, this.blue, refid, width);
 
+        pia.setYOffset(placementOffset);
         pendingAreas.addElement(pia);
         pendingWidth += width;
         wordWidth = 0;
@@ -293,6 +294,7 @@ public class LineArea extends Area {
                                                        this.red, this.green, this.blue,
                                                        new String(data, wordStart,
                                                                   wordLength), wordWidth);
+                        ia.setYOffset(placementOffset);
                         ia.setUnderlined(ul);
                         addChild(ia);
                         if (ls != null) {
@@ -411,6 +413,7 @@ public class LineArea extends Area {
                                             this.green, this.blue,
                                             new String(data, wordStart, wordLength), wordWidth);
 
+            pia.setYOffset(placementOffset);
             pia.setUnderlined(ul);
 
             if (ls != null) {
@@ -466,6 +469,7 @@ public class LineArea extends Area {
                   new LeaderArea(fontState, red, green, blue, "",
                                  leaderLength, leaderPattern, ruleThickness,
                                  ruleStyle);
+                leaderArea.setYOffset(placementOffset);
                 pendingAreas.addElement(leaderArea);
                 break;
             case LeaderPattern.DOTS:
@@ -507,6 +511,7 @@ public class LineArea extends Area {
                       new WordArea(currentFontState, this.red,
                                      this.green, this.blue, new String ("."),
                                      this.currentFontState.width(46));
+                    leaderPatternArea.setYOffset(placementOffset);
                     int dotsFactor = (int) Math.floor (
                                        ((double) leaderLength) /
                                        ((double) leaderPatternWidth));
@@ -611,6 +616,32 @@ public class LineArea extends Area {
         }
     }
 
+    /**
+     * Balance (vertically) the inline areas within this line.
+     */
+    public void verticalAlign()
+    {
+        int superHeight = -this.placementOffset;
+        int maxHeight = this.allocationHeight;
+        Enumeration e = children.elements();
+        while (e.hasMoreElements()) {
+            Box b = (Box) e.nextElement();
+            if(b instanceof InlineArea) {
+                InlineArea ia = (InlineArea)b;
+                if(ia.getHeight() > maxHeight) {
+                    maxHeight = ia.getHeight();
+                }
+                int vert = ia.getVerticalAlign();
+/*                if(vert == VerticalAlign.SUPER) {
+                    int tbe = fontState.getAscender();
+                    ia.setYOffset(placementOffset - (tbe - h));
+                }*/
+            } else {
+            }
+        }
+        this.allocationHeight = maxHeight;
+    }
+
     public void changeColor(float red, float green, float blue) {
         this.red = red;
         this.green = green;
@@ -646,7 +677,8 @@ public class LineArea extends Area {
     }
 
     public boolean isEmpty() {
-        return (prev == 0);
+        return !(pendingAreas.size() > 0 || children.size() > 0);
+//        return (prev == 0);
     }
 
     public Vector getPendingAreas() {
@@ -700,6 +732,7 @@ public class LineArea extends Area {
         WordArea leaderPatternArea =
           new WordArea(currentFontState, this.red, this.green,
                          this.blue, new String (leaderChars), leaderLength);
+        leaderPatternArea.setYOffset(placementOffset);
         return leaderPatternArea;
     }
 
@@ -858,6 +891,18 @@ public class LineArea extends Area {
       return width;
     }
 
+    public int getRemainingWidth()
+    {
+        return this.getContentWidth() - this.getCurrentXPosition();
+    }
+
+    public void addInlineArea(Area box)
+    {
+        addPending();
+        addChild(box);
+        prev = TEXT;
+        finalWidth += box.getContentWidth();
+    }
 
     /** adds a single character to the line area tree*/ 
     public int addCharacter (char data, LinkSet ls, boolean ul) {
@@ -877,6 +922,7 @@ public class LineArea extends Area {
           ia = new WordArea(currentFontState,
                                          this.red, this.green, this.blue,
                                          new Character(data).toString(),width);
+          ia.setYOffset(placementOffset);
           ia.setUnderlined(ul);
           pendingAreas.addElement(ia);
           if (Character.isSpaceChar(data)) {
@@ -902,12 +948,14 @@ public class LineArea extends Area {
             hia = new WordArea(currentFontState,
                                  this.red, this.green, this.blue,
                                  new Character(startChar).toString(),1);
+            hia.setYOffset(placementOffset);
             this.addChild(hia);
         }
         int wordWidth = this.getWordWidth(word);
         hia = new WordArea(currentFontState,
                                  this.red, this.green, this.blue,
                                  word,word.length());
+        hia.setYOffset(placementOffset);
         this.addChild(hia);
 
         //calculate the space needed

@@ -58,8 +58,8 @@ import org.apache.fop.layout.*;
 import java.util.Vector;
 import java.util.Enumeration;
 
-public class ForeignObjectArea extends Area {
-	
+public class ForeignObjectArea extends InlineArea {
+
     protected int xOffset = 0;
     /* text-align of contents */
     protected int align;
@@ -78,22 +78,37 @@ public class ForeignObjectArea extends Area {
     protected int aheight;
     /* width */
     protected int width;
-    /* height */
-    protected int height;
     boolean wauto;
     boolean hauto;
     boolean cwauto;
     boolean chauto;
     int overflow;
 
-    public ForeignObjectArea(FontState fontState, int width,
-		     int height) {
-	super(fontState, width, height);
+    public ForeignObjectArea(FontState fontState, int width) {
+	    super(fontState, width, 0, 0, 0);
     }
 
     public void render(Renderer renderer) {
 	if(foreignObject != null)
 		renderer.renderForeignObjectArea(this);
+    }
+
+    /**
+     * This is NOT the content width of the instream-foreign-object.
+     * This is the content width for a Box.
+     */
+    public int getContentWidth()
+    {
+        return getEffectiveWidth();
+    }
+
+    /**
+     * This is NOT the content height of the instream-foreign-object.
+     * This is the content height for a Box.
+     */
+    public int getHeight()
+    {
+        return getEffectiveHeight();
     }
 
     public int getXOffset()

@@ -132,6 +132,7 @@ public class BlockArea extends Area {
 
 		public void addLineArea(LineArea la) {
 				if (!la.isEmpty()) {
+						la.verticalAlign();
 						this.addDisplaySpace(this.halfLeading);
 						int size = la.getHeight();
 						this.addChild(la);
