@@ -14,6 +14,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.datastructs.Tree;
+import org.apache.fop.datatypes.Ints;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
@@ -25,6 +26,7 @@ import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 
 import org.xml.sax.Attributes;
 
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 /**
@@ -43,6 +45,32 @@ public class FoRoot extends FONode {
 
     private FoLayoutMasterSet layoutMasters;
 
+    /** Map of <tt>Integer</tt> indices of <i>sparsePropsSet</i> array.
+        It is indexed by the FO index of the FO associated with a given
+        position in the <i>sparsePropsSet</i> array.  See
+        {@link org.apache.fop.fo.FONode#sparsePropsSet FONode.sparsePropsSet}.
+     */
+    private static final HashMap sparsePropsMap;
+
+    /** An <tt>int</tt> array of of the applicable property indices, in
+        property index order. */
+    private static final int[] sparseIndices;
+
+    /** The number of applicable properties.  This is the size of the
+        <i>sparsePropsSet</i> array. */
+    private static final int numProps;
+
+    static {
+        // applicableProps is a HashMap containing the indicies of the
+        // sparsePropsSet array, indexed by the FO index of the FO slot
+        // in sparsePropsSet.
+        sparsePropsMap = new HashMap(1);
+        numProps = 1;
+        sparseIndices = new int[] { PropNames.MEDIA_USAGE };
+        sparsePropsMap.put
+            (Ints.consts.get(PropNames.MEDIA_USAGE), Ints.consts.get(0));
+    }
+
     /**
      * @param foTree the FO tree being built
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of this
@@ -53,7 +81,8 @@ public class FoRoot extends FONode {
         throws Tree.TreeException, FOPException, PropertyException
     {
         // This is the root node of the tree; hence the null argument
-        super(foTree, FObjectNames.ROOT, null, event, FOPropertySets.ROOT_SET);
+        super(foTree, FObjectNames.ROOT, null, event, FOPropertySets.ROOT_SET,
+                sparsePropsMap, sparseIndices, numProps);
     }
 
     /**
@@ -82,18 +111,20 @@ public class FoRoot extends FONode {
      */
     public void buildFoTree() throws FOPException{
         FoXMLEvent ev;
-        System.out.println("buildFoTree: " + event);
+        //System.out.println("buildFoTree: " + event);
         // Look for layout-master-set
         try {
             ev = xmlevents.expectStartElement
-                    (XMLNamespaces.XSLNSpaceIndex, "layout-master-set",
-                                                    XMLEvent.DISCARD_W_SPACE);
+                (FObjectNames.LAYOUT_MASTER_SET, XMLEvent.DISCARD_W_SPACE);
         } catch (NoSuchElementException e) {
-            throw new FOPException("buildFoTree: Unexpected EOF in layout-master-set.");
+            throw new FOPException
+                        ("buildFoTree: Unexpected EOF in layout-master-set.");
         }
         // Process the layout-master-set
         try {
             layoutMasters = new FoLayoutMasterSet(foTree, this, ev);
+            // Clean up the fo:layout-master-set event
+            xmlevents.getEndElement(ev);
         } catch(Tree.TreeException e) {
             throw new FOPException("TreeException: " + e.getMessage());
         } catch(PropertyException e) {
@@ -102,17 +133,17 @@ public class FoRoot extends FONode {
         // Look for optional declarations
         try {
             ev = xmlevents.expectStartElement
-                        (XMLNamespaces.XSLNSpaceIndex, "declarations",
-                                                    XMLEvent.DISCARD_W_SPACE);
+                        (FObjectNames.DECLARATIONS, XMLEvent.DISCARD_W_SPACE);
             if (ev != null) {
                 // process the declarations
-                xmlevents.getEndElement
-                        (XMLNamespaces.XSLNSpaceIndex, "declarations");
+                xmlevents.getEndElement(FObjectNames.DECLARATIONS);
             }
         } catch (NoSuchElementException e) {
             throw new FOPException
                 ("Unexpected EOF while processing declarations.");
         }
-
+        // Process page-sequences here
+        // Clean up root's FO tree build environment
+        makeSparsePropsSet();
     }
 }
