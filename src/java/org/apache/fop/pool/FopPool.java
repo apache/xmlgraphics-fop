@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,8 +46,7 @@
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
  *  
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
- * @version $Revision$ $Name$
+ * $Id$
  */
 package org.apache.fop.pool;
 
@@ -57,8 +54,13 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.logging.Logger;
 
+import org.apache.fop.apps.Fop;
+
 /**
  * This class provides a pool of <tt>Poolable</tt> objects.
+ * 
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * @version $Revision$ $Name$
  */
 
 public abstract class FopPool {
@@ -66,7 +68,7 @@ public abstract class FopPool {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
     
-    protected static final Logger logger = Logger.getLogger("org.apache.fop");
+    protected static final Logger logger = Logger.getLogger(Fop.fopPackage);
 
     /** The pool realized as a ArrayList. */
     protected final ArrayList pool;

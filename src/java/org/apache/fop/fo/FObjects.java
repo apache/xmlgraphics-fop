@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,9 +46,7 @@
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
  *  
- *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
- * @version $Id$
+ * $Id$
  */
 
 package org.apache.fop.fo;
@@ -61,6 +57,7 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.fo.flow.FoPcdata;
 import org.apache.fop.xml.FoXmlEvent;
@@ -68,6 +65,9 @@ import org.apache.fop.xml.XmlEvent;
 
 /**
  * Data class for common data and methods relating to Flow Objects.
+ *
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * @version $Id$
  */
 
 public class FObjects {
@@ -75,7 +75,7 @@ public class FObjects {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
-    public static final String packageNamePrefix = "org.apache.fop";
+    public static final String packageNamePrefix = Fop.fopPackage;
 
     /**
      * Create a singleton FObjects object

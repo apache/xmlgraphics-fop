@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,9 +46,7 @@
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
  *  
- *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
- * @version $Id$
+ * $Id$
  */
 
 package org.apache.fop.fo;
@@ -58,10 +54,14 @@ package org.apache.fop.fo;
 import java.util.BitSet;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.datastructs.ROBitSet;
 
 /**
  * Data class relating sets of properties to Flow Objects.
+ * 
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * @version $Id$
  */
 
 public class FOPropertySets {
@@ -69,7 +69,7 @@ public class FOPropertySets {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
-    public static final String packageNamePrefix = "org.apache.fop";
+    public static final String packageNamePrefix = Fop.fopPackage;
 
     public static String getAttrSetName(int ancestry) throws FOPException {
         if ((ancestry & FONode.MC_MARKER) != 0)
