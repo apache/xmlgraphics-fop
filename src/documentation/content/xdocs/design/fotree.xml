@@ -35,10 +35,8 @@ constraints required by the FO hierarchy.
 </p>
 
 <p>
-FONode, among other things, ensures that FO's have a parent, that they
-have children, that they maintain a marker of where the layout was up to
-(for FObj's it is the child number, and for FOText's it is the character
-number), and that they have a <code>layout()</code> method.
+FONode, among other things, ensures that FO's have a parent and that they
+may have children.
 </p>
 </section>
 
@@ -50,7 +48,6 @@ element name. This maker is then used to create a new class that
 represents an FO element. This is then added to the FO tree as a child
 of the current parent.
 </p>
-
 
 <p>
 Properties (recall that FO's have properties, areas have traits, and XML

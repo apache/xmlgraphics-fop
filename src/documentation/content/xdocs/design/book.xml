@@ -31,9 +31,6 @@
       <menu-item label="Optimisations" href="optimise.html"/>
       <menu-item label="User Agent" href="useragent.html"/>
     </menu>
-    <menu label="Status">
-      <menu-item label="Status" href="status.html"/>
-    </menu>
     <menu label="Alternate">
       <menu-item label="ALT DESIGN" href="alt.design/index.html"/>
     </menu>
