@@ -39,6 +39,7 @@ import org.apache.fop.fo.properties.FontStyle;
 import org.apache.fop.fo.properties.FontVariant;
 import org.apache.fop.fo.properties.FontWeight;
 import org.apache.fop.fonts.FontException;
+import org.apache.fop.render.FontData;
 
 /**
  * Java font selection is based on family names.  It seems that Java
@@ -239,7 +240,7 @@ import org.apache.fop.fonts.FontException;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class Fonts {
+public class Fonts implements FontData {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
