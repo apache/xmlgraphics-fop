@@ -28,25 +28,13 @@ inactive??
 
   <todo>
    <actions priority="high">
-    <action context="code" dev="KL">
-      get simple pagination working
-    </action>
     <action context="code" dev="open">
       sort out page sequence details
     </action>
     <action context="code" dev="open">
       complete resolving id areas
     </action>
-    <action context="code" dev="open">
-      add the pdf side part of bookmark extension
-    </action>
 
-    <action context="code" dev="open">
-      Add static areas to page 
-      The static areas will need to be handled in a similar way to the flow
-      except the bpd is unlimited and it will need to reset and repeat for
-      each page. 
-    </action>
     <action context="code" dev="open">
       Add id areas to page when area added.
       When the layout managers add an area to the page it can also add the id
@@ -87,10 +75,17 @@ inactive??
       the area tree. 
     </action>
     <action context="code" dev="open">
+      Implemented spacing between blocks and the adjustment to
+      actual height when adding areas.
+    </action>
+    <action context="code" dev="open">
       Get bookmark extension working.
       Make sure the extension id references are resolved. Once the data is
       fully resolved then implement a way for the pdf renderer to add the
       bookmarks. See branch for code how to add bookmarks. 
+    </action>
+    <action context="code" dev="open">
+      add the pdf side part of bookmark extension
     </action>
 
    </actions>
@@ -121,6 +116,21 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action context="code" dev="KLL" type="update">
+      Fixed a bug in the TTFReader where it tried to read
+      values for the end character. Handles unsupported
+      non-unicode cmap better. Added logging.
+    </action>
+    <action context="code" dev="JP" type="new">
+      Add static areas to page
+      The static areas will need to be handled in a similar way to the flow
+      except the bpd is unlimited and it will need to reset and repeat for
+      each page.
+    </action>
+    <action context="code" dev="KLL" type="update">
+      Implemented leader, get leader working and sort out
+      how inline objects adjust to the ipd
+    </action>
     <action dev="KLL" type="update" context="code">
       Calculate line height.
       The line height is calculated while finding breaks.
