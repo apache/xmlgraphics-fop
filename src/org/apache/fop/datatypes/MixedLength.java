@@ -7,6 +7,12 @@
 
 package org.apache.fop.datatypes;
 
+import java.util.Vector;
+import java.util.Enumeration;
+
+import org.apache.fop.fo.expr.Numeric;
+import org.apache.fop.fo.expr.PropertyException;
+
 /**
  * A length quantity in XSL which is specified with a mixture
  * of absolute and relative and/or percent components.
@@ -14,36 +20,73 @@ package org.apache.fop.datatypes;
  */
 public class MixedLength extends Length {
 
-    private PercentLength pcPart;
+    private Vector lengths ;
 
-    /**
-     * construct an object based on a factor (the percent, as a
-     * a factor) and an object which has a method to return the
-     * Length which provides the "base" for this calculation.
-     */
-    public MixedLength(int absPart, PercentLength pcPart) {
-        super(absPart);
-        this.pcPart = pcPart;
-        super.setIsComputed(false);
+    public MixedLength(Vector lengths) {
+	this.lengths = lengths;
     }
 
-    protected int computeValue() {
-        int rslt = super.computeValue();    // absolute part
-        if (pcPart != null) {
-            rslt += pcPart.computeValue();
+    protected void computeValue() {
+	int computedValue =0;
+	boolean bAllComputed = true;
+	Enumeration e = lengths.elements();
+	while (e.hasMoreElements()) {
+	    Length l = (Length)e.nextElement();
+	    computedValue += l.mvalue();
+	    if (! l.isComputed()) {
+		bAllComputed = false;
+	    }
         }
-        return rslt;
+        setComputedValue(computedValue, bAllComputed);
+    }
+
+
+    public double getTableUnits() {
+	double tableUnits = 0.0;
+	Enumeration e = lengths.elements();
+	while (e.hasMoreElements()) {
+	    tableUnits += ((Length)e.nextElement()).getTableUnits();
+        }
+        return tableUnits;
+    }
+
+    public void resolveTableUnit(double dTableUnit) {
+	Enumeration e = lengths.elements();
+	while (e.hasMoreElements()) {
+	    ((Length)e.nextElement()).resolveTableUnit(dTableUnit);
+        }
     }
 
     public String toString() {
-        // return the factor as a percent
-        // What about the base value?
-        StringBuffer rslt = new StringBuffer(super.toString());
-
-        if (pcPart != null) {
-            rslt.append("+" + pcPart.toString());
+        StringBuffer sbuf = new StringBuffer();
+	Enumeration e = lengths.elements();
+	while (e.hasMoreElements()) {
+	    if (sbuf.length()>0) {
+		sbuf.append('+');
+	    }
+	    sbuf.append(e.nextElement().toString());
         }
-        return rslt.toString();
+	return sbuf.toString();
+    }
+
+    public Numeric asNumeric() {
+	Numeric numeric = null;
+	for (Enumeration e = lengths.elements(); e.hasMoreElements();) {
+	    Length l = (Length)e.nextElement();
+	    if (numeric == null) {
+		numeric = l.asNumeric();
+	    }
+	    else {
+		try {
+		    Numeric sum = numeric.add(l.asNumeric());
+		    numeric = sum;
+		} catch (PropertyException pe) {
+		    System.err.println("Can't convert MixedLength to Numeric: " +
+				       pe);
+		}
+	    }
+	}
+	return numeric;
     }
 
 }

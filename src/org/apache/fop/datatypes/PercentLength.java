@@ -7,6 +7,8 @@
 
 package org.apache.fop.datatypes;
 
+import org.apache.fop.fo.expr.Numeric;
+
 /**
  * a percent specified length quantity in XSL
  */
@@ -25,10 +27,8 @@ public class PercentLength extends Length {
     }
 
     public PercentLength(double factor, PercentBase lbase) {
-        super(0);
         this.factor = factor;
         this.lbase = lbase;
-        super.setIsComputed(false);
     }
 
     public void setBaseLength(PercentBase lbase) {
@@ -43,8 +43,8 @@ public class PercentLength extends Length {
      * Return the computed value in millipoints. This assumes that the
      * base length has been resolved to an absolute length value.
      */
-    protected int computeValue() {
-        return (int)(factor * (double)lbase.getBaseLength());
+    protected void computeValue() {
+        setComputedValue((int)(factor * (double)lbase.getBaseLength()));
     }
 
     public double value() {
@@ -55,6 +55,10 @@ public class PercentLength extends Length {
         // return the factor as a percent
         // What about the base value?
         return (new Double(factor * 100.0).toString()) + "%";
+    }
+
+    public Numeric asNumeric() {
+	return new Numeric(this);
     }
 
 }
