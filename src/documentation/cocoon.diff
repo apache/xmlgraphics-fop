@@ -4,7 +4,7 @@ RCS file: /home/cvspublic/xml-cocoon2/src/blocks/fop/java/org/apache/cocoon/seri
 retrieving revision 1.3
 diff -u -r1.3 FOPSerializer.java
 --- src/blocks/fop/java/org/apache/cocoon/serialization/FOPSerializer.java	23 Sep 2002 03:30:44 -0000	1.3
-+++ src/blocks/fop/java/org/apache/cocoon/serialization/FOPSerializer.java	8 Nov 2002 12:06:40 -0000
++++ src/blocks/fop/java/org/apache/cocoon/serialization/FOPSerializer.java	20 Nov 2002 07:53:48 -0000
 @@ -62,18 +62,28 @@
  import org.apache.cocoon.components.url.URLFactory;
  import org.apache.cocoon.util.ClassUtils;
@@ -113,10 +113,11 @@ diff -u -r1.3 FOPSerializer.java
  
          // Get the mime type.
          this.mimetype = conf.getAttribute("mime-type");
-@@ -232,6 +207,21 @@
+@@ -232,6 +207,22 @@
                  + "no renderer was specified in the sitemap configuration."
              );
          }
++        this.renderer.setCreator("Cocoon");
 +
 +        userAgent = new FOUserAgent();
 +        userAgent.enableLogging(this.logger);
@@ -135,7 +136,7 @@ diff -u -r1.3 FOPSerializer.java
      }
  
      /**
-@@ -241,27 +231,40 @@
+@@ -241,27 +232,40 @@
          return mimetype;
      }
  
@@ -192,7 +193,7 @@ diff -u -r1.3 FOPSerializer.java
          this.driver.setOutputStream(out);
          setContentHandler(this.driver.getContentHandler());
      }
-@@ -295,8 +298,7 @@
+@@ -295,8 +299,7 @@
        */
      public void recycle() {
          super.recycle();
@@ -202,7 +203,7 @@ diff -u -r1.3 FOPSerializer.java
      }
  
      /**
-@@ -306,3 +308,4 @@
+@@ -306,3 +309,4 @@
          return this.setContentLength;
      }
  }
@@ -213,7 +214,7 @@ RCS file: /home/cvspublic/xml-cocoon2/src/java/org/apache/cocoon/components/pipe
 retrieving revision 1.24
 diff -u -r1.24 AbstractProcessingPipeline.java
 --- src/java/org/apache/cocoon/components/pipeline/AbstractProcessingPipeline.java	11 Oct 2002 08:36:30 -0000	1.24
-+++ src/java/org/apache/cocoon/components/pipeline/AbstractProcessingPipeline.java	8 Nov 2002 12:06:40 -0000
++++ src/java/org/apache/cocoon/components/pipeline/AbstractProcessingPipeline.java	20 Nov 2002 07:53:48 -0000
 @@ -62,6 +62,7 @@
  import org.apache.cocoon.ConnectionResetException;
  import org.apache.cocoon.ProcessingException;
