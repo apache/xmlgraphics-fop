@@ -1,7 +1,9 @@
 package org.apache.fop.fo.pagination;
 
+import java.util.Set;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
@@ -16,6 +18,7 @@ import org.apache.fop.xml.XMLNamespaces;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.fo.pagination.FoPageSequenceMaster;
+import org.apache.fop.fo.pagination.PageSequenceMaster;
 
 /*
  * $Id$
@@ -62,6 +65,13 @@ public class FoLayoutMasterSet extends FONode {
     private HashMap simplePageMasters = new HashMap();
 
     /**
+     * Hash of the set of PageSequenceMaster objects derived from the set of
+     * <tt>FoSimplePageMaster</tt>s and the set of
+     * <tt>FoPageSequenceMaster</tt>s.
+     */
+    private HashMap pageSequenceMasters = new HashMap();
+
+    /**
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>XMLEvent</tt> that triggered the creation of
@@ -73,21 +83,25 @@ public class FoLayoutMasterSet extends FONode {
     {
         super(foTree, FObjectNames.LAYOUT_MASTER_SET, parent, event,
               FOPropertySets.LAYOUT_SET);
+	setupPageMasters(event);
     }
 
     /**
      * Set up all the page masters.
      * fo:layout-master-set contents are
      * (simple-page-master|page-sequence-master)+
+     * @param event - the layout page-master-set STARTELEMENT event.
+     * @throws <tt>FOPException</tt>.
      */
-    public void setupPageMasters() throws FOPException {
-        // Use an array with the two possibilities
+    public void setupPageMasters(XMLEvent event)
+	    throws FOPException, PropertyException
+    {
+	FoSimplePageMaster simple;
+	String masterName;
+	String localName;
+	FoPageSequenceMaster foPageSeq;
         try {
             do {
-                FoSimplePageMaster simple;
-                String simpleName;
-                String localName;
-                FoPageSequenceMaster pageSeq;
                 XMLEvent ev =
                     xmlevents.expectStartElement
                         (simpleOrSequenceMaster, XMLEvent.DISCARD_W_SPACE);
@@ -95,39 +109,37 @@ public class FoLayoutMasterSet extends FONode {
                 if (localName.equals("simple-page-master")) {
                     System.out.println("Found simple-page-master");
                     simple = new FoSimplePageMaster(foTree, this, ev);
-                    simpleName = simple.getMasterName();
-                    if (pageMasters.get
-                        ((Object)(simpleName)) != null)
+                    masterName = simple.getMasterName();
+                    if (pageMasters.get(masterName) != null)
                         throw new FOPException
                                 ("simple-page-master master-name clash in"
                                  + "pageMasters: "
-                                 + simpleName);
-                    //pageMasters.put(simpleName, simple);
-                    if (simplePageMasters == null)
-                        simplePageMasters = new HashMap();
-                    if (simplePageMasters.get
-                        ((Object)(simpleName)) != null)
+                                 + masterName);
+                    //pageMasters.put(masterName, simple);
+                    if (simplePageMasters.get(masterName) != null)
                         throw new FOPException
                                 ("simple-page-master master-name clash in "
-                                 + "simplePageMasters: " + simpleName);
-                    simplePageMasters.put(simpleName, simple);
+                                 + "simplePageMasters: " + masterName);
+                    simplePageMasters.put(masterName, simple);
                 } else if (localName.equals("page-sequence-master")) {
                     System.out.println("Found page-sequence-master");
                     try {
-                        pageSeq = new FoPageSequenceMaster(foTree, this, ev);
+                        foPageSeq =
+				new FoPageSequenceMaster(foTree, this, ev);
                     } catch (Tree.TreeException e) {
                         throw new FOPException
                                 ("TreeException: " + e.getMessage());
                     }
-                    if (pageMasters == null)
-                        pageMasters = new HashMap();
-                    if (pageMasters.get
-                        ((Object)(pageSeq.getMasterName())) != null)
+                    masterName = foPageSeq.getMasterName();
+                    if (pageMasters.get(masterName) != null)
                         throw new FOPException
-                                ("page-sequence-master master-name clash: "
-                                 + pageSeq.getMasterName());
-                    pageMasters.put
-                            ((Object)(pageSeq.getMasterName()), pageSeq);
+                                ("page-sequence-master master-name clash in"
+                                 + "pageMasters: " + masterName);
+                    if (simplePageMasters.get(masterName) != null)
+                        throw new FOPException
+                                ("page-sequence-master master-name clash in "
+                                 + "simplePageMasters: " + masterName);
+                    pageMasters.put(masterName, foPageSeq);
                 } else
                     throw new FOPException
                             ("Aargh! expectStartElement(events, list)");
@@ -141,6 +153,33 @@ public class FoLayoutMasterSet extends FONode {
         catch (Tree.TreeException e) {
             throw new FOPException(e);
         }
+	// Create the master set structures.
+	// Scan the page-sequence-masters
+	// N.B. Processing of the page-sequence-masters must be deferred until
+	// now because contained master-references may be to
+	// simple-page-masters which follow the page-sequence-master in the
+	// input tree.
+	Set pageSeqSet = pageMasters.keySet();
+	Iterator pageSeqNames = pageSeqSet.iterator();
+	while (pageSeqNames.hasNext()) {
+	    masterName = (String)(pageSeqNames.next());
+	    // Get the FoPageSequenceMaster
+	    foPageSeq = (FoPageSequenceMaster)(pageMasters.get(masterName));
+	    // Create a new PageSequenceMaster object - NOT an foPageSeqM
+	    PageSequenceMaster pageSeq = new PageSequenceMaster
+				(masterName, foPageSeq, simplePageMasters);
+            pageSequenceMasters.put(masterName, pageSeq);
+	}
+	// Flush to the layout-master-set end event
+	xmlevents.getEndElement(event);
+    }
+
+    /**
+     * Make the <tt>HashMap</tt> of <tt>PageSequenceMaster</tt>s available.
+     * @return - the <i>pageSequenceMasters</i> <tt>HashMap</tt>.
+     */
+    public HashMap getPageSequenceMasters() {
+        return pageSequenceMasters;
     }
         
 }// FoLayoutMasterSet
