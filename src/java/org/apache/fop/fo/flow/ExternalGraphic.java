@@ -90,7 +90,6 @@ public class ExternalGraphic extends FObj {
      * This gets the sizes for the image and the dimensions and clipping.
      */
     private void setup() {
-        setupID();
         url = this.propertyList.get(PR_SRC).getString();
         if (url == null) {
             return;

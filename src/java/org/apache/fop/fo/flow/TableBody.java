@@ -28,14 +28,7 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AddLMVisitor;
-
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.LMVisited;
-
 
 /**
  * Class modelling the fo:table-body object. See Sec. 6.7.8 of the XSL-FO
@@ -59,34 +52,13 @@ public class TableBody extends FObj implements LMVisited {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        setupID();
-        getFOInputHandler().startBody(this);
-    }
-
-    private void setup() {
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        // Common Aural Properties
-        CommonAural mAurProps = propMgr.getAuralProps();
-
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
-        // Common Relative Position Properties
-        CommonRelativePosition mRelProps =
-          propMgr.getRelativePositionProps();
-
-        setupID();
-
         this.spaceBefore = this.propertyList.get(
                              PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
         this.spaceAfter = this.propertyList.get(
                             PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
         this.backgroundColor =
           this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
-
+        getFOInputHandler().startBody(this);
     }
 
     /**

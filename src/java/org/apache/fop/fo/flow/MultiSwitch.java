@@ -21,7 +21,6 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ToBeImplementedElement;
-import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:multi-switch object. See Sec. 6.9.3 of the XSL-FO
@@ -34,16 +33,6 @@ public class MultiSwitch extends ToBeImplementedElement {
      */
     public MultiSwitch(FONode parent) {
         super(parent);
-    }
-
-    private void setup() {
-
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        // this.propertyList.get("auto-restore");
-        setupID();
-
     }
 
     public String getName() {

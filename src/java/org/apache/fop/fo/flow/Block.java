@@ -110,7 +110,6 @@ public class Block extends FObjMixed {
         this.lfTreatment =
           this.propertyList.get(PR_LINEFEED_TREATMENT).getEnum();
 
-        setupID();
         this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
         this.alignLast =
           this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();

@@ -67,7 +67,6 @@ public class ListBlock extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        setupID();
 
         this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
         this.alignLast = this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();

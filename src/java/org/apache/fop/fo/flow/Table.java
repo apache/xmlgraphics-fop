@@ -81,68 +81,6 @@ public class Table extends FObj implements LMVisited {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        setupID();
-        getFOInputHandler().startTable(this);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
-     */
-    protected void addChildNode(FONode child) {
-        if (child.getName().equals("fo:table-column")) {
-            if (columns == null) {
-                columns = new ArrayList();
-            }
-            columns.add(((TableColumn)child));
-        } else if (child.getName().equals("fo:table-footer")) {
-            tableFooter = (TableBody)child;
-        } else if (child.getName().equals("fo:table-header")) {
-            tableHeader = (TableBody)child;
-        } else {
-            // add bodies
-            super.addChildNode(child);
-        }
-    }
-
-    private void setup() {
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        // Common Aural Properties
-        CommonAural mAurProps = propMgr.getAuralProps();
-
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
-        // Common Margin Properties-Block
-        CommonMarginBlock mProps = propMgr.getMarginProps();
-
-        // Common Relative Position Properties
-        CommonRelativePosition mRelProps =
-                propMgr.getRelativePositionProps();
-
-        // this.propertyList.get("block-progression-dimension");
-        // this.propertyList.get("border-after-precendence");
-        // this.propertyList.get("border-before-precedence");
-        // this.propertyList.get("border-collapse");
-        // this.propertyList.get("border-end-precendence");
-        // this.propertyList.get("border-separation");
-        // this.propertyList.get("border-start-precendence");
-        // this.propertyList.get("break-after");
-        // this.propertyList.get("break-before");
-        setupID();
-        // this.propertyList.get("inline-progression-dimension");
-        // this.propertyList.get("height");
-        // this.propertyList.get("keep-together");
-        // this.propertyList.get("keep-with-next");
-        // this.propertyList.get("keep-with-previous");
-        // this.propertyList.get("table-layout");
-        // this.propertyList.get("table-omit-footer-at-break");
-        // this.propertyList.get("table-omit-header-at-break");
-        // this.propertyList.get("width");
-        // this.propertyList.get("writing-mode");
-
         this.breakBefore = this.propertyList.get(PR_BREAK_BEFORE).getEnum();
         this.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
         this.spaceBefore = this.propertyList.get(
@@ -163,7 +101,26 @@ public class Table extends FObj implements LMVisited {
         this.omitFooterAtBreak = this.propertyList.get(
                 PR_TABLE_OMIT_FOOTER_AT_BREAK).getEnum()
                                             == TableOmitFooterAtBreak.TRUE;
+        getFOInputHandler().startTable(this);
+    }
 
+    /**
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     */
+    protected void addChildNode(FONode child) {
+        if (child.getName().equals("fo:table-column")) {
+            if (columns == null) {
+                columns = new ArrayList();
+            }
+            columns.add(((TableColumn)child));
+        } else if (child.getName().equals("fo:table-footer")) {
+            tableFooter = (TableBody)child;
+        } else if (child.getName().equals("fo:table-header")) {
+            tableHeader = (TableBody)child;
+        } else {
+            // add bodies
+            super.addChildNode(child);
+        }
     }
 
     /**

@@ -78,7 +78,6 @@ public class BidiOverride extends FObjMixed {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        setupID();
     }
 
     /**

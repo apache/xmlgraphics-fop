@@ -31,10 +31,6 @@ import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.ICLayoutManager;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonMarginInline;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 
 /**
  * Class modelling the fo:inline-container object. See Sec. 6.6.8 of the XSL-FO
@@ -54,36 +50,6 @@ public class InlineContainer extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
-        // Common Margin Properties-Inline
-        CommonMarginInline mProps = propMgr.getMarginInlineProps();
-
-        // Common Relative Position Properties
-        CommonRelativePosition mRelProps =
-          propMgr.getRelativePositionProps();
-
-        // this.propertyList.get("alignment-adjust");
-        // this.propertyList.get("alignment-baseline");
-        // this.propertyList.get("baseline-shift");
-        // this.propertyList.get("block-progression-dimension");
-        // this.propertyList.get("clip");
-        // this.propertyList.get("display-align");
-        // this.propertyList.get("dominant-baseline");
-        // this.propertyList.get("height");
-        setupID();
-        // this.propertyList.get("inline-progression-dimension");
-        // this.propertyList.get("keep-together");
-        // this.propertyList.get("keep-with-next");
-        // this.propertyList.get("keep-with-previous");
-        // this.propertyList.get("line-height");
-        // this.propertyList.get("line-height-shift-adjustment");
-        // this.propertyList.get("overflow");
-        // this.propertyList.get("reference-orientation");
-        // this.propertyList.get("width");
-        // this.propertyList.get("writing-mode");
     }
 
     /**

@@ -25,7 +25,6 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:list-item-label object. See Sec. 6.8.5 of the XSL-FO
@@ -46,23 +45,12 @@ public class ListItemLabel extends FObj {
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         getFOInputHandler().startListLabel();
-    }
-
-    private void setup() {
-
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        setupID();
-        // this.propertyList.get("keep-together");
-
         /*
          * For calculating the lineage - The fo:list-item-label formatting object
          * does not generate any areas. The fo:list-item-label formatting object
          * returns the sequence of areas created by concatenating the sequences
          * of areas returned by each of the child nodes of the fo:list-item-label.
          */
-
     }
 
     protected void endOfNode() throws SAXParseException {
