@@ -138,18 +138,12 @@ public class PropertyListBuilder {
             nameSpaceURIToUse = nameSpaceURI;
         }
         FObj parentFO = fo.findNearestAncestorFObj();
-
-        PropertyList parentPropertyList = null;
+        PropertyList parentProperties = null;
         if (parentFO != null) {
-            parentPropertyList = parentFO.properties;
-        }
-        PropertyList par = null;
-        if (parentPropertyList != null
-                && nameSpaceURIToUse.equals(parentPropertyList.getNameSpace())) {
-            par = parentPropertyList;
+            parentProperties = parentFO.getPropertiesForNamespace(nameSpaceURIToUse);
         }
 
-        PropertyList p = new PropertyList(par, nameSpaceURIToUse,
+        PropertyList p = new PropertyList(parentProperties, nameSpaceURIToUse,
                                           elementName);
         p.setBuilder(this);
         HashMap table;

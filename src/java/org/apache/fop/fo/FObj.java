@@ -172,6 +172,16 @@ public class FObj extends FONode {
       return (FObj)par;
     }
 
+    public PropertyList getPropertiesForNamespace(String nameSpaceURI) {
+        if (this.properties == null) {
+            return null;
+        }
+        if (! nameSpaceURI.equals(this.properties.getNameSpace())) {
+            return null;
+        }
+        return this.properties;
+    }
+
     protected PropertyManager makePropertyManager(
       PropertyList propertyList) {
         return new PropertyManager(propertyList);
