@@ -93,9 +93,11 @@ public abstract class AbstractFopImage implements FopImage {
     public AbstractFopImage(URL href, FopImage.ImageInfo info) {
         this.m_href = href;
         this.imageInfo = info;
-        this.m_width = this.imageInfo.width;
-        this.m_height = this.imageInfo.height;
-        loaded = loaded | DIMENSIONS;
+        if(this.imageInfo.width != -1) {
+            m_width = imageInfo.width;
+            m_height = imageInfo.height;
+            loaded = loaded | DIMENSIONS;
+        }
     }
 
     public String getMimeType() {
