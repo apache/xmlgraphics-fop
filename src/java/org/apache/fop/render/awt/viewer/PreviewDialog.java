@@ -379,8 +379,7 @@ public class PreviewDialog extends JFrame {
     private class Reloader extends Thread {
         public void run() {
             if (fop == null) {
-                fop = new Fop();
-                fop.setRenderer(renderer);
+                throw new RuntimeException("No Fop process to reload");
             } else {
                 fop.reset();
             }
