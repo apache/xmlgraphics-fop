@@ -11,7 +11,6 @@ import java.net.URL;
 import org.w3c.dom.svg.SVGDocument;
 
 // FOP
-import org.apache.fop.svg.SVGDriver;
 import org.apache.fop.messaging.*;
 import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
@@ -19,6 +18,8 @@ import org.apache.fop.image.analyser.ImageReader;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
+
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 
 /**
  * @see AbstractFopImage
@@ -42,38 +43,18 @@ public class SVGImage extends AbstractFopImage {
      *
      * @return the created SAX parser
      */
-    public static XMLReader createParser() {
+    public static String getParserName() {
         String parserClassName = System.getProperty("org.xml.sax.parser");
         if (parserClassName == null) {
             parserClassName = "org.apache.xerces.parsers.SAXParser";
         }
-        MessageHandler.logln("using SAX parser " + parserClassName);
-
-        try {
-            return (XMLReader) Class.forName(
-                     parserClassName).newInstance();
-        } catch (ClassNotFoundException e) {
-            MessageHandler.errorln("Could not find " + parserClassName);
-        } catch (InstantiationException e) {
-            MessageHandler.errorln("Could not instantiate " +
-                                   parserClassName);
-        } catch (IllegalAccessException e) {
-            MessageHandler.errorln("Could not access " + parserClassName);
-        } catch (ClassCastException e) {
-            MessageHandler.errorln(parserClassName + " is not a SAX driver");
-        }
-        return null;
+        return parserClassName;
     }
 
     protected void loadImage() throws FopImageException {
         try {
-            SVGDriver driver = new SVGDriver();
-            driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
-            driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-            XMLReader parser = createParser();
-            driver.buildSVGTree(parser,
-                                new InputSource(this.m_href.toString()));
-            doc = driver.getSVGDocument();
+            SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(SVGImage.getParserName());
+            doc = factory.createDocument(this.m_href.toExternalForm());
         } catch (Exception e) {
             MessageHandler.errorln("ERROR LOADING EXTERNAL SVG: " +
                                    e.getMessage());
