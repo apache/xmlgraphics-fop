@@ -1,9 +1,11 @@
-**** HISTORY **** 
-
 Done since 0.17 release
 
-- added: support for  body-start and label-end in lists [Peter S. Housel]
-- added: support for  non-rotated arcs in svg [Keiron Liddle]
+- added: enabling CID keyed truetype fonts; this gives support
+         for other encodings besides WinAnsiEncoding (eg japanese, chinese, arabic,
+         iso-whatever, etc). Also makes font inclusion easier [Tore Engvig] 
+- added: new font configuration [Fotis Jannidis]
+- added: support for body-start and label-end in lists [Peter S. Housel]
+- added: support for non-rotated arcs in svg [Keiron Liddle]
 - added: break before and break after for table rows [Keiron Liddle]
 - added: error is reported if the number of columns the cells are using is 
          different to the number of columns in the table [Keiron Liddle]
@@ -11,6 +13,7 @@ Done since 0.17 release
 - fixed: problems if calculated leader-length < 0 [Fotis Jannidis]
 - fixed: fixes problem with page break after last row of table body [Keiron Liddle]
 - fixed: fixed svg placement bug, now puts the image at the correct offset [Keiron Liddle]
+- fixed: broken support of jdk 1.1 [Art Welch]
 
 
 Done since 0.16 release
