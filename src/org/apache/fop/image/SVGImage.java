@@ -40,14 +40,12 @@ public class SVGImage extends AbstractFopImage {
     }
 
     /**
-     * creates a SAX parser, using the value of org.xml.sax.parser
-     * defaulting to org.apache.xerces.parsers.SAXParser
+     * get Parser Class name
      *
-     * @return the created SAX parser
+     * @return the SAX parser name
      */
     public static String getParserName() {
-        String parserClassName = Driver.getParserClassName();
-        return parserClassName;
+        return org.apache.fop.apps.Driver.getParserClassName();
     }
 
     protected void loadImage() throws FopImageException {

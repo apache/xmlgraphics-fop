@@ -333,7 +333,6 @@ class FOPTaskStarter extends Starter {
                         int renderer) throws FOPException {
         InputHandler inputHandler = new FOInputHandler(foFile);
         XMLReader parser = inputHandler.getParser();
-        setParserFeatures(parser);
 
         FileOutputStream out = null;
         try {
