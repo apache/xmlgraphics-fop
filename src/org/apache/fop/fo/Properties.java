@@ -2280,7 +2280,7 @@ public abstract class Properties {
                     // 7.8.2 "font-family" <family-name>
                     Iterator font = ((PropertyValueList)value).iterator();
                     while (font.hasNext())
-                        name = name + " "
+                        name = name + (name.length() == 0 ? "" : " ")
                                 + ((StringType)(font.next())).getString();
                 }
                 else if (value instanceof StringType)
