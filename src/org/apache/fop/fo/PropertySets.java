@@ -503,6 +503,9 @@ public class PropertySets {
             ,PropNames.FONT_WEIGHT
             ,PropNames.FONT_SIZE
             ,PropNames.LINE_HEIGHT
+            ,PropNames.FONT_SIZE_ADJUST
+            ,PropNames.FONT_STRETCH
+            ,PropNames.FONT_SELECTION_STRATEGY
         });
 
     public static final ROIntArray marginExpansion =
