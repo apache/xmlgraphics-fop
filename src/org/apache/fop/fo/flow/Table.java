@@ -215,6 +215,8 @@ public class Table extends FObj {
                 offset += c.getColumnWidth();
             }
         }
+        areaContainer.setAllocationWidth(offset);
+
         for (int i = this.marker; i < numChildren; i++) {
             FONode fo = (FONode) children.elementAt(i);
             if (fo instanceof TableHeader) {

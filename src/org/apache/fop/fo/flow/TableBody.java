@@ -155,7 +155,7 @@ public class TableBody extends FObj {
         }
 
         if ((spaceBefore != 0) && (this.marker == 0)) {
-            area.addDisplaySpace(spaceBefore);
+            area.increaseHeight(spaceBefore);
         }
 
         if (marker == 0) {
@@ -267,13 +267,12 @@ public class TableBody extends FObj {
         area.addChild(areaContainer);
         areaContainer.end();
 
-        /* should this be combined into above? */
         area.increaseHeight(areaContainer.getHeight());
 
         area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
 
         if (spaceAfter != 0) {
-            area.addDisplaySpace(spaceAfter);
+            area.increaseHeight(spaceAfter);
         }
 
         if (area instanceof BlockArea) {
