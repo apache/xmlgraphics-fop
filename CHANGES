@@ -4,6 +4,15 @@ Done since 0.20.3 release
 - Moved from org.apache.log.Logger to org.apache.avalon.framework.logger.Logger
   (this removes dependency from logkit)
   Submitted by: Michael Gratton <mjg@recalldesign.com>
+- Made FOP running with any JAXP1.1 compliant parser/transformer
+  Submitted by: Joerg Pietschmann <joerg.pietschmann@zkb.ch>
+- Updated old servlet code, moved to contrib
+  Submitted By: Jeremias Maerki <jeremias.maerki@outline.ch>
+- Added russian messages for AWTViewer
+  fallback to english messages if resources are not found
+  Submitted by: Alex V. Alishevskikh <alex@openmechanics.net>
+- AWT renderer exit for closing window is only called when started from
+  command line and not on the window (Keiron Liddle)
 - Updated ant to version 1.4.1 (Christian Geisert)
   (ant-optional.jar is no longer needed)
 - Changed build.sh to work under cygwin
@@ -14,15 +23,35 @@ Done since 0.20.3 release
   Submitted by: Paulo Soares <psoares@consiste.pt>
 - Added czech translation for AWT viewer
   Submitted by: Michal Buchtik <BuchtikM@dlsystem.cz>
+- removed xalan1 support (Christian Geisert)
 - Added czech hyphenation patterns
   Submitted by: Michal Buchtik <BuchtikM@dlsystem.cz>
 - Added support for background-image
   Submitted by: Michael Gratton <mjg@recalldesign.com>
-- Fixed PDF-Renderer to work on EBCDIC systems 
+- Updated Batik to 1.5beta2 and improved the useragent usage
+  (Keiron Liddle)
+- Fixed a problem when EPS files have Bounding Boxes containing
+  negative integers.
+  Submitted by:	Claes Bergsten <claes.bergsten@tjgroup.com>
+- Workaround for a bug in JDK 1.3.0.* and 1.4 to improve text output.
+  Submitted by: Ralph LaChance <Ralph_LaChance@compuserve.com>
+- Added support for overline, line-through and text-decoration on
+  inline spaces for AWT renderer (Jeremias Maerki)
+- Added patch to prevent the same image being inserted multiple times
+  into pdf graphics
+  Submitted by:	Paul Reavis <preavis@partnersoft.com>
+- Fixed PDF-Renderer to work on EBCDIC systems
   (Actually on systems where file.encoding != ASCII/ISO-8859)
   Submitted by: Jason West <Jason.West@mail.state.ky.us>
+- Updated xerces to version 2.0.1 and xalan to version 2.3.1
+  (Christian Geisert)
 - Fixed svg links to external url (Keiron)
-  
+- Fixed problem with Win98/ME commandline (Christian Geisert)
+- Removed Tc that were inserted in [...] TJ commands. (Bug 9054)
+- Fixed letter-spacing (Jeremias Maerki)
+- BaseDir property is now used for loading custom fonts (Bug #7608)
+  (thanks to Arnd Beissner and Brian O'Kelley)
+
 ==============================================================================
 Done since 0.20.2 release
 *** General
