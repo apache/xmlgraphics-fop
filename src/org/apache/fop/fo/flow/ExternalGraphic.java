@@ -184,7 +184,7 @@ public class ExternalGraphic extends FObj {
             // scale image if it doesn't fit in the area/page
             // Need to be more tested...
             double ratio = ((double) width) / ((double) height);
-            int areaWidth = area.getAllocationWidth();
+            int areaWidth = area.getAllocationWidth() - startIndent - endIndent;
             int areaHeight = area.getMaxHeight();
             if ((width > areaWidth) || (height > areaHeight)) {
                     if (width > height) {
