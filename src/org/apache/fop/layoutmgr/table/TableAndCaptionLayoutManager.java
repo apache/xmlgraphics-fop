@@ -1,108 +1,65 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.LeafPosition;
+import org.apache.fop.layoutmgr.BreakPoss;
+import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.BreakPossPosIter;
+import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.TextInfo;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.Block;
-import org.apache.fop.area.LineArea;
 import org.apache.fop.area.MinOptMax;
 
-import java.util.ListIterator;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
- * LayoutManager for a block FO.
+ * LayoutManager for a table-and-caption FO.
+ * A table and caption consists of a table and a caption.
+ * The caption contains blocks that are positioned next to the
+ * table on the caption side.
+ * The caption blocks have an implicit keep with the table.
  */
-public class BlockLayoutManager extends BlockStackingLayoutManager {
+public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
 
-    int lead = 12000;
-    int lineHeight = 14000;
-    int follow = 2000;
-
-    ArrayList childBreaks = new ArrayList();
+    private ArrayList childBreaks = new ArrayList();
 
     /**
-     * Iterator for Block layout.
-     * This iterator combines consecutive inline areas and
-     * creates a line layout manager.
-     * The use of this iterator means that it can be reset properly.
+     * Create a new table and caption layout manager.
+     *
+     * @param fobj the table-and-caption formatting object
      */
-    protected class BlockLMiter extends LMiter {
-
-        private ListIterator proxy;
-
-        public BlockLMiter(ListIterator pr) {
-            super(null);
-            proxy = pr;
-        }
-
-        protected boolean preLoadNext() {
-            while (proxy.hasNext()) {
-                LayoutManager lm = (LayoutManager) proxy.next();
-                if(lm.generatesInlineAreas()) {
-                    LineLayoutManager lineLM = createLineManager(lm);
-                    m_listLMs.add(lineLM);
-                } else {
-                    m_listLMs.add(lm);
-                }
-                if (m_curPos < m_listLMs.size()) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        protected LineLayoutManager createLineManager(
-          LayoutManager firstlm) {
-            LayoutManager lm;
-            ArrayList inlines = new ArrayList();
-            inlines.add(firstlm);
-            while (proxy.hasNext()) {
-                lm = (LayoutManager) proxy.next();
-                if (lm.generatesInlineAreas()) {
-                    inlines.add(lm);
-                } else {
-                    proxy.previous();
-                    break;
-                }
-            }
-            LineLayoutManager child;
-            child = new LineLayoutManager(fobj, inlines, lineHeight,
-                                            lead, follow);
-            return child;
-
-        }
-    }
-
-    public BlockLayoutManager(FObj fobj) {
+    public TableAndCaptionLayoutManager(FObj fobj) {
         super(fobj);
-        m_childLMiter = new BlockLMiter(m_childLMiter);
     }
 
-    public void setBlockTextInfo(TextInfo ti) {
-        lead = ti.fs.getAscender();
-        follow = ti.fs.getDescender();
-        lineHeight = ti.lineHeight;
-    }
-
+    /**
+     * Get the next break possibility.
+     *
+     * @param context the layout context for getting breaks
+     * @return the next break possibility
+     */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
-        LayoutManager curLM ; // currently active LM
+        LayoutManager curLM; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
         // stackSize.add(spaceBefore);
         BreakPoss lastPos = null;
+
+        // if there is a caption then get the side and work out when
+        // to handle it
 
         while ((curLM = getChildLM()) != null) {
             // Make break positions and return blocks!
@@ -113,16 +70,10 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             LayoutContext childLC = new LayoutContext(0);
             // if line layout manager then set stack limit to ipd
             // line LM actually generates a LineArea which is a block
-            if (curLM.generatesInlineAreas()) {
-                // set stackLimit for lines
-                childLC.setStackLimit(new MinOptMax(ipd/* - m_iIndents - m_iTextIndent*/));
-                childLC.setRefIPD(ipd);
-            } else {
-                childLC.setStackLimit(
+            childLC.setStackLimit(
                   MinOptMax.subtract(context.getStackLimit(),
                                      stackSize));
-                childLC.setRefIPD(ipd);
-            }
+            childLC.setRefIPD(ipd);
 
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
@@ -139,13 +90,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                     lastPos = bp;
                     childBreaks.add(bp);
 
-                    if (curLM.generatesInlineAreas()) {
-                        // Reset stackLimit for non-first lines
-                        childLC.setStackLimit(new MinOptMax(ipd/* - m_iIndents*/));
-                    } else {
-                        childLC.setStackLimit( MinOptMax.subtract(
-                                                 context.getStackLimit(), stackSize));
-                    }
+                    childLC.setStackLimit(MinOptMax.subtract(
+                                             context.getStackLimit(), stackSize));
                 }
             }
             BreakPoss breakPoss = new BreakPoss(
@@ -157,12 +103,18 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         return null;
     }
 
+    /**
+     * Add the areas.
+     *
+     * @param parentIter the position iterator
+     * @param layoutContext the layout context for adding areas
+     */
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
         addID();
 
-        LayoutManager childLM ;
+        LayoutManager childLM;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
@@ -192,6 +144,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      * Finally, based on the dimensions of the parent area, it initializes
      * its own area. This includes setting the content IPD and the maximum
      * BPD.
+     *
+     * @param childArea the child area to locate the parent
+     * @return the area for this table and caption
      */
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
@@ -207,22 +162,27 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         return curBlockArea;
     }
 
-
+    /**
+     * Add the child to the current area.
+     *
+     * @param childArea the area to add
+     * @return unused
+     */
     public boolean addChild(Area childArea) {
         if (curBlockArea != null) {
-            if (childArea instanceof LineArea) {
-                curBlockArea.addLineArea((LineArea) childArea);
-
-                return false;
-            } else {
                 curBlockArea.addBlock((Block) childArea);
+                //return super.addChild(childArea);
 
                 return false;
-            }
         }
         return false;
     }
 
+    /**
+     * Reset the position of this layout manager.
+     *
+     * @param resetPos the position to reset to
+     */
     public void resetPosition(Position resetPos) {
         if (resetPos == null) {
             reset(null);

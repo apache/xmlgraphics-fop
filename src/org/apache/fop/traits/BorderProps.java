@@ -10,25 +10,25 @@ package org.apache.fop.traits;
 import org.apache.fop.datatypes.ColorType;
 
 public class BorderProps {
-    public int style;          // Enum for border style
-    public ColorType color;    // Border color
-    public int width;          // Border width
+    public int style; // Enum for border style
+    public ColorType color; // Border color
+    public int width; // Border width
 
     public BorderProps(int style, int width, ColorType color) {
-	this.style = style;
-	this.width = width;
-	this.color = color;
+        this.style = style;
+        this.width = width;
+        this.color = color;
     }
 
     public String toString() {
-	StringBuffer sbuf = new StringBuffer();
-	sbuf.append('(');
-	sbuf.append(style); // Should get a String value for this enum constant
-	sbuf.append(',');
-	sbuf.append(color);
-	sbuf.append(',');
-	sbuf.append(width);
-	sbuf.append(')');
-	return sbuf.toString();
+        StringBuffer sbuf = new StringBuffer();
+        sbuf.append('(');
+        sbuf.append(style); // Should get a String value for this enum constant
+        sbuf.append(',');
+        sbuf.append(color);
+        sbuf.append(',');
+        sbuf.append(width);
+        sbuf.append(')');
+        return sbuf.toString();
     }
 }

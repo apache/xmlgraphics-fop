@@ -80,6 +80,19 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
      */
     protected int currentBlockIPPosition = 0;
 
+    /**
+     * the block progression position of the containing block used for
+     * absolutely positioned blocks
+     */
+    protected int containingBPPosition = 0;
+
+    /**
+     * the inline progression position of the containing block used for
+     * absolutely positioned blocks
+     */
+    protected int containingIPPosition = 0;
+
+
     /** @see org.apache.fop.render.Renderer */
     public void setUserAgent(FOUserAgent agent) {
         userAgent = agent;
@@ -344,10 +357,33 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
         List children = block.getChildAreas();
         if (children == null) {
             // simply move position
+            currentBPPosition += block.getHeight();
         } else if (block instanceof BlockViewport) {
             renderBlockViewport((BlockViewport) block, children);
         } else {
-            renderBlocks(children);
+            // save position and offset
+            int saveIP = currentIPPosition;
+            int saveBP = currentBPPosition;
+
+            if (block.getPositioning() == Block.ABSOLUTE) {
+                currentIPPosition += block.getXOffset();
+                currentBPPosition += block.getYOffset();
+
+                renderBlocks(children);
+
+                // absolute blocks do not effect the layout
+                currentBPPosition = saveBP;
+            } else {
+                // relative blocks are offset
+                currentIPPosition += block.getXOffset();
+                currentBPPosition += block.getYOffset();
+
+                renderBlocks(children);
+
+                // stacked and relative blocks effect stacking
+                currentBPPosition = saveBP + block.getHeight();
+            }
+            currentIPPosition = saveIP;
         }
     }
 
@@ -493,10 +529,21 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
      * @param blocks  The block areas
      */
     protected void renderBlocks(List blocks) {
+        // the position of the containing block is used for
+        // absolutely positioned areas
+        int contBP = currentBPPosition;
+        int contIP = currentIPPosition;
+        containingBPPosition = contBP;
+        containingIPPosition = contIP;
+
         for (int count = 0; count < blocks.size(); count++) {
             Object obj = blocks.get(count);
             if (obj instanceof Block) {
+                containingBPPosition = contBP;
+                containingIPPosition = contIP;
                 renderBlock((Block) obj);
+                containingBPPosition = contBP;
+                containingIPPosition = contIP;
             } else {
                 // a line area is rendered from the top left position
                 // of the line, each inline object is offset from there

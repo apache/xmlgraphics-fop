@@ -13,7 +13,7 @@ import java.util.List;
 public class BreakPossPosIter extends PositionIterator {
     private int m_iterCount ;
 
-    BreakPossPosIter(List bpList, int startPos, int endPos) {
+    public BreakPossPosIter(List bpList, int startPos, int endPos) {
         super(bpList.listIterator(startPos));
         m_iterCount = endPos - startPos;
     }

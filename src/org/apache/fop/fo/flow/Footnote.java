@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Footnote extends FObj {
+    Inline inlineFO = null;
+    FootnoteBody body;
 
     public Footnote(FONode parent) {
         super(parent);
@@ -29,9 +31,22 @@ public class Footnote extends FObj {
 
     public void addLayoutManager(List lms) {
         // add inlines layout manager
-        //inline.addLayoutManager(lms);
-        // set start and end footnote reference
+        if(inlineFO == null) {
+            getLogger().error("inline required in footnote");
+            return;
+        }
+        inlineFO.addLayoutManager(lms);
     }
 
+    public void addChild(FONode child) {
+        String name = child.getName();
+        if ("fo:inline".equals(name)) {
+            inlineFO = (Inline)child;
+        } else if ("fo:footnote-body".equals(name)) {
+            body = (FootnoteBody)child;
+        } else {
+            getLogger().error("invalid child of footnote: " + name);
+        }
+    }
 }
 

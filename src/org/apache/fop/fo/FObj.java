@@ -206,6 +206,7 @@ public class FObj extends FONode {
     /**
      * Return a LayoutManager responsible for laying out this FObj's content.
      * Must override in subclasses if their content can be laid out.
+     * @param list the list to add the layout manager(s) to
      */
     public void addLayoutManager(List list) {
     }

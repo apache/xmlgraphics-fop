@@ -360,15 +360,16 @@ public class PDFRenderer extends PrintRenderer {
             currentStream.add("ET\n");
 
             if (bv.getClip()) {
-                Rectangle2D rect = bv.getBounds();
-
                 currentStream.add("q\n");
-                float x = (float)rect.getX() / 1000f;
-                float y = (float)rect.getY() / 1000f;
-                float width = (float)rect.getWidth() / 1000f;
-                float height = (float)rect.getHeight() / 1000f;
+                float x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
+                float y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
+                float width = (float)bv.getWidth() / 1000f;
+                float height = (float)bv.getHeight() / 1000f;
                 clip(x, y, width, height);
             }
+
+            CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
+            ctm = tempctm.multiply(ctm);
 
             startVParea(ctm);
             renderBlocks(children);
@@ -385,8 +386,6 @@ public class PDFRenderer extends PrintRenderer {
             currentBPPosition = saveBP;
         } else {
 
-            Rectangle2D rect = bv.getBounds();
-
             if (ctm != null) {
                 currentIPPosition = 0;
                 currentBPPosition = 0;
@@ -396,20 +395,20 @@ public class PDFRenderer extends PrintRenderer {
                 double[] vals = ctm.toArray();
                 boolean aclock = vals[2] == 1.0;
                 if (vals[2] == 1.0) {
-                    ctm = ctm.translate(-saveBP - rect.getHeight(), -saveIP);
+                    ctm = ctm.translate(-saveBP - bv.getHeight(), -saveIP);
                 } else if (vals[0] == -1.0) {
-                    ctm = ctm.translate(-saveIP - rect.getWidth(), -saveBP - rect.getHeight());
+                    ctm = ctm.translate(-saveIP - bv.getWidth(), -saveBP - bv.getHeight());
                 } else {
-                    ctm = ctm.translate(saveBP, saveIP - rect.getWidth());
+                    ctm = ctm.translate(saveBP, saveIP - bv.getWidth());
                 }
             }
 
             if (bv.getClip()) {
                 currentStream.add("q\n"); 
-                float x = (float)rect.getX() / 1000f;
-                float y = (float)rect.getY() / 1000f;
-                float width = (float)rect.getWidth() / 1000f;
-                float height = (float)rect.getHeight() / 1000f;
+                float x = (float)bv.getXOffset() / 1000f;
+                float y = (float)bv.getYOffset() / 1000f;
+                float width = (float)bv.getWidth() / 1000f;
+                float height = (float)bv.getHeight() / 1000f;
                 clip(x, y, width, height);
             }
 
@@ -430,11 +429,9 @@ public class PDFRenderer extends PrintRenderer {
 
             // clip if necessary
 
-            if (rect != null) {
-                currentIPPosition = saveIP;
-                currentBPPosition = saveBP;
-                currentBPPosition += (int)(rect.getHeight());
-            }
+            currentIPPosition = saveIP;
+            currentBPPosition = saveBP;
+            currentBPPosition += (int)(bv.getHeight());
         }
     }
 

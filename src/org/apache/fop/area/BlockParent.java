@@ -20,7 +20,10 @@ public class BlockParent extends Area implements Serializable {
     // this position is used for absolute position
     // or as an indent
     // this has the size in the block progression dimension
-    Rectangle2D bounds = null;
+    protected int xOffset = 0;
+    protected int yOffset = 0;
+    protected int width = 0;
+    protected int height = 0;
 
     ArrayList children = null;
 
@@ -38,11 +41,36 @@ public class BlockParent extends Area implements Serializable {
         return children;
     }
 
-    public void setBounds(Rectangle2D b) {
-        bounds = b;
+    public void setXOffset(int off) {
+        xOffset = off;
     }
 
-    public Rectangle2D getBounds() {
-        return bounds;
+    public void setYOffset(int off) {
+        yOffset = off;
     }
+
+    public void setWidth(int w) {
+        width = w;
+    }
+
+    public void setHeight(int h) {
+        height = h;
+    }
+
+    public int getXOffset() {
+        return xOffset;
+    }
+
+    public int getYOffset() {
+        return yOffset;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
 }

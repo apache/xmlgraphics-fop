@@ -231,27 +231,26 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         if (curBlockArea == null) {
             viewportBlockArea = new BlockViewport();
             if(abProps.absolutePosition == AbsolutePosition.ABSOLUTE) {
-                Rectangle2D rect = new Rectangle2D.Double(abProps.left,
-                                    abProps.top, abProps.right - abProps.left,
-                                    abProps.bottom - abProps.top);
-                viewportBlockArea.setBounds(rect);
+                viewportBlockArea.setXOffset(abProps.left);
+                viewportBlockArea.setYOffset(abProps.top);
+                viewportBlockArea.setWidth(abProps.right - abProps.left);
+                viewportBlockArea.setHeight(abProps.bottom - abProps.top);
+
                 viewportBlockArea.setCTM(absoluteCTM);
                 viewportBlockArea.setClip(clip);
             } else {
                 double[] vals = absoluteCTM.toArray();
                 boolean rotated = vals[0] == 0.0;
                 if(rotated) {
-                    Rectangle2D rect = new Rectangle2D.Double(0, 0,
-                                    relDims.bpd, getRotatedIPD());
-                    viewportBlockArea.setBounds(rect);
+                    viewportBlockArea.setWidth(relDims.bpd);
+                    viewportBlockArea.setHeight(getRotatedIPD());
                     viewportBlockArea.setCTM(absoluteCTM);
                     viewportBlockArea.setClip(clip);
                 } else if(vals[0] == -1.0) {
                     // need to set bpd to actual size for rotation
                     // and stacking
-                    Rectangle2D rect = new Rectangle2D.Double(0, 0,
-                                    relDims.ipd, relDims.bpd);
-                    viewportBlockArea.setBounds(rect);
+                    viewportBlockArea.setWidth(relDims.ipd);
+                    viewportBlockArea.setWidth(relDims.bpd);
                     viewportBlockArea.setCTM(absoluteCTM);
                     viewportBlockArea.setClip(clip);
                 }
@@ -289,5 +288,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             reset(null);
         }
     }
+
+    public void addMarker(String name, LayoutManager lm, boolean start) {
+        parentLM.addMarker(name, lm, start);
+    }
+
 }
 

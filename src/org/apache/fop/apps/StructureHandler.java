@@ -86,19 +86,19 @@ public class StructureHandler extends AbstractLogEnabled {
 
     }
 
-    public void startHeader(TableHeader th) {
+    public void startHeader(TableBody th) {
 
     }
 
-    public void endHeader(TableHeader th) {
+    public void endHeader(TableBody th) {
 
     }
 
-    public void startFooter(TableFooter tf) {
+    public void startFooter(TableBody tf) {
 
     }
 
-    public void endFooter(TableFooter tf) {
+    public void endFooter(TableBody tf) {
 
     }
 

@@ -23,7 +23,7 @@ public abstract class PositionIterator implements Iterator {
         //checkNext();
     }
 
-    LayoutManager getNextChildLM() {
+    public LayoutManager getNextChildLM() {
         // Move to next "segment" of iterator, ie: new childLM
         if (m_childLM == null && m_nextObj != null) {
             m_childLM = getLM(m_nextObj);
