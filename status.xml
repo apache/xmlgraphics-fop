@@ -10,6 +10,7 @@
   <person name="Jeremias Maerki" email="jeremias@apache.org" id="JM"/>
   <person name="Joerg Pietschmann" email="pietsch@apache.org" id="JP"/>
   <person name="Arved Sandstrom" email="arved@apache.org" id="AS"/>
+  <person name="Oleg Tkachenko" email="olegt@apache.org" id="OT"/>
   <person name="Peter B. West" email="pbwest@apache.org" id="PBW"/>
 
 <!--
@@ -29,8 +30,15 @@ inactive??
   <todo>
    <actions priority="high">
     <action context="code" dev="open">
-      Sort out page sequence details and page numbering.
+      From branch: char encoding for pdf output.
     </action>
+    <action context="code" dev="open">
+      From branch: delete output file if error occured.
+    </action>
+    <action context="code" dev="open">
+      From branch: add CCITT TIFF file support for embedding in pdf.
+    </action>
+
     <action context="code" dev="open">
       Add markers to page when areas added.
       When an area is added that is created by an FO that contains markers
@@ -41,18 +49,6 @@ inactive??
       Retrieve markers from page.
       When doing the static areas the markers will need to be available for
       retrieving. The marker can then be layed out as normal.
-    </action>
-    <action context="code" dev="KLL">
-      Implement table layout.
-      The table layout will use the same technique as the block layout. It
-      will locate suitable breaks between rows or inside rows until table
-      finished or end of bpd reached. 
-    </action>
-    <action context="code" dev="open">
-      Implement list layout.
-      The list layout like the table layout will be looking for suitable
-      breaks from the child objects. The it will add the appropriate areas to
-      the area tree. 
     </action>
     <action context="code" dev="open">
       Implement spacing between blocks and the adjustment to
@@ -70,9 +66,6 @@ inactive??
       Implement footnote.
       A footnote creates an inline parent and a block that is put into
       the footnote area.
-    </action>
-    <action context="code" dev="open">
-      Implement border and background for block and inline areas.
     </action>
     <action context="code" dev="open">
       Implement floats.
@@ -117,6 +110,38 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action context="docs" dev="KLL" type="update"
+            due-to="Victor Mote" due-to-email="vic@outfitr.com">
+      Added links to the Eyebrowse mail list archives.
+      Added help and unsubscribe email addresses for the fop-user
+      &amp; fop-dev lists.
+      Rewrote/rearranged some of the verbiage for better structure.
+    </action>
+    <action context="docs" dev="KLL" type="update"
+            due-to="Victor Mote" due-to-email="vic@outfitr.com">
+      Valid URIs for all xdoc DTD declarations.
+      Some minor changes for xdoc documents that were discovered to be invalid
+      after the DTD declarations were fixed.
+      Changed tabs.xml so that the 2nd tab on our site will now read "Redesign"
+      instead of "dev".
+    </action>
+    <action context="docs" dev="KLL" type="update"
+            due-to="Victor Mote" due-to-email="vic@outfitr.com">
+      Better links to Bugzilla.
+      Reorganized content into a checklist.
+    </action>
+    <action context="code" dev="KLL" type="update">
+      Added support for markers in fo tree. Markers added when valid
+      to proper fo objects.
+    </action>
+    <action context="docs" dev="KLL" type="update"
+            due-to="Victor Mote" due-to-email="vic@outfitr.com">
+      Added compliance document showing table of fop compliance.
+    </action>
+    <action context="code" dev="KLL" type="update"
+            due-to="Stephan Neuhaus" due-to-email="stephan.neuhaus@myview.de">
+      From branch: fixed jpeg icc profile error with acrobat 5.
+    </action>
     <action context="code" dev="KLL" type="update"
             due-to="Oleg Tkachenko" due-to-email="olegt@multiconn.com">
       Awt viewer improvements - uses java PropertyResourceBundle
@@ -194,7 +219,7 @@ inactive??
       values for the end character. Handles unsupported
       non-unicode cmap better. Added logging.
     </action>
-    <action context="code" dev="JP" type="new">
+    <action context="code" dev="JP" type="update">
       Add static areas to page
       The static areas will need to be handled in a similar way to the flow
       except the bpd is unlimited and it will need to reset and repeat for
