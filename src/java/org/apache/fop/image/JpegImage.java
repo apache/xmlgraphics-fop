@@ -57,6 +57,7 @@ import java.awt.color.ICC_Profile;
 
 // FOP
 import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.util.CMYKColorSpace;
 
 /**
  * FopImage object for JPEG images, Using Java native classes.
@@ -111,20 +112,21 @@ public class JpegImage extends AbstractFopImage {
         this.bitsPerPixel = 8;
         this.isTransparent = false;
 
+        //Check for SOI (Start of image) marker (FFD8)
         if (this.bitmaps.length > (index + 2)
-                && uByte(this.bitmaps[index]) == 255
-                && uByte(this.bitmaps[index + 1]) == 216) {
+                && uByte(this.bitmaps[index]) == 255 /*0xFF*/
+                && uByte(this.bitmaps[index + 1]) == 216 /*0xD8*/) {
             index += 2;
 
             while (index < this.bitmaps.length && cont) {
                 //check to be sure this is the begining of a header
                 if (this.bitmaps.length > (index + 2)
-                        && uByte(this.bitmaps[index]) == 255) {
+                        && uByte(this.bitmaps[index]) == 255 /*0xFF*/) {
 
                     //192 or 194 are the header bytes that contain
                     // the jpeg width height and color depth.
-                    if (uByte(this.bitmaps[index + 1]) == 192
-                            || uByte(this.bitmaps[index + 1]) == 194) {
+                    if (uByte(this.bitmaps[index + 1]) == 192 /*0xC0*/
+                            || uByte(this.bitmaps[index + 1]) == 194 /*0xC2*/) {
 
                         this.height = calcBytes(this.bitmaps[index + 5],
                                                   this.bitmaps[index + 6]);
@@ -139,8 +141,11 @@ public class JpegImage extends AbstractFopImage {
                               ColorSpace.CS_LINEAR_RGB);
                         } else if (this.bitmaps[index + 9] == 4) {
                             // howto create CMYK color space
+                            /*
                             this.colorSpace = ColorSpace.getInstance(
                               ColorSpace.CS_CIEXYZ);
+                            */
+                            this.colorSpace = CMYKColorSpace.getInstance();
                         } else {
                             ua.getLogger().error("Unknown ColorSpace for image: "
                                                    + "");
@@ -155,7 +160,7 @@ public class JpegImage extends AbstractFopImage {
                         index += calcBytes(this.bitmaps[index + 2],
                                            this.bitmaps[index + 3]) + 2;
 
-                    } else if (uByte(this.bitmaps[index + 1]) == 226
+                    } else if (uByte(this.bitmaps[index + 1]) == 226 /*0xE2*/
                                    && this.bitmaps.length > (index + 60)) {
                         // Check if ICC profile
                         byte[] iccString = new byte[11];
