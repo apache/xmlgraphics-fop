@@ -128,13 +128,13 @@ public class FOTreeBuilder extends DefaultHandler {
     public void startDocument()
     throws SAXException {
         rootFObj = null;    // allows FOTreeBuilder to be reused
-        getLogger().info("building formatting object tree");
+        getLogger().debug("building formatting object tree");
         structHandler.startDocument();
     }
 
     public void endDocument()
     throws SAXException {
-        getLogger().info("Parsing of document complete, stopping renderer");
+        getLogger().debug("Parsing of document complete");
         structHandler.endDocument();
     }
 
