@@ -32,6 +32,7 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datastructs.ROStringArray;
+import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.datatypes.PropertyValue;
 
 /**
@@ -166,7 +167,7 @@ public class PropertyConsts {
         } catch (IllegalAccessException iae) {
             throw new PropertyException(iae.getMessage());
         } catch (InvocationTargetException ite) {
-            throw new PropertyException(ite.getMessage());
+            throw new PropertyException(ite);
         }
     }
 
@@ -460,14 +461,22 @@ public class PropertyConsts {
     public static final ROIntArray inherited;
 
     /**
+     * An <tt>ROBitSet</tt> of properties which are not normally inherited.
+     * It is defined relative to the set of all properties; i.e. the
+     * non-inheritance of any property can be established by testing the
+     * bit in this set that corresponds to the queried property's index.
+     */
+    public static final ROBitSet nonInheritedProps;
+
+    /**
      * A <tt>BitSet</tt> of properties which are not normally inherited.
      * It is defined relative to the set of all properties; i.e. the
      * non-inheritance of any property can be established by testing the
      * bit in this set that corresponds to the queried property's index.
-     * <p>The <tt>BitSet</tt> is private.  An accessor method is defined
-     * which returns a clone of this set.
+     * <p>The <tt>BitSet</tt> is private and is the basis for
+     * <i>nonInheritedProperties</i>.
      */
-    private static final BitSet nonInheritedProps;
+    private static final BitSet noninheritedprops;
 
     /** <p>
      * An int[] array of the types of the <i>initialValue</i> field of each
@@ -551,7 +560,7 @@ public class PropertyConsts {
         toIndex      = new HashMap(PropNames.LAST_PROPERTY_INDEX + 1);
         classToIndex = new HashMap(PropNames.LAST_PROPERTY_INDEX + 1);
         inherit              = new int[PropNames.LAST_PROPERTY_INDEX + 1];
-        nonInheritedProps    = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        noninheritedprops    = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
         initialValueTypes    = new int[PropNames.LAST_PROPERTY_INDEX + 1];
         traitMappings        = new int[PropNames.LAST_PROPERTY_INDEX + 1];
         datatypes            = new int[PropNames.LAST_PROPERTY_INDEX + 1];
@@ -622,7 +631,7 @@ public class PropertyConsts {
                 Class vclass = classes[i];
                 cname = vclass.getName();
                 inherit[i] = classes[i].getField("inherited").getInt(null);
-                if (inherit[i] == Properties.NO) nonInheritedProps.set(i);
+                if (inherit[i] == Properties.NO) noninheritedprops.set(i);
                 initialValueTypes[i] =
                 classes[i].getField("initialValueType").getInt(null);
                 traitMappings[i] =
@@ -659,6 +668,7 @@ public class PropertyConsts {
         propertyClasses      = Collections.unmodifiableList
                                         (Arrays.asList(classes));
         inherited            = new ROIntArray(inherit);
+        nonInheritedProps    = new ROBitSet(noninheritedprops);
         dataTypes            = new ROIntArray(datatypes);
         refineParsingMethods = Collections.unmodifiableList
                                     (Arrays.asList(refineparsingmethods));
