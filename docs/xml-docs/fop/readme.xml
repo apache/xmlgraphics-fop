@@ -26,7 +26,7 @@
 <p>
         <figure width="480" height="260" src="document.jpg" alt="Render Diagram" />
 </p>
-    <p>The latest version of Fop is 0.20.2 and it supports the xsl:fo
+    <p>The latest version of Fop is 0.20.3 and it supports the xsl:fo
        <jump href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0
        W3C Recommendation</jump>.
        You can <jump href="download.html">download</jump> 
