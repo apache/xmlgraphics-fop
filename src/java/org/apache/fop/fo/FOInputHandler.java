@@ -58,6 +58,7 @@ import java.util.HashSet;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
 // FOP
+import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
@@ -93,10 +94,13 @@ public abstract class FOInputHandler extends AbstractLogEnabled {
      */
     private Set idReferences = new HashSet();
 
+    public Driver driver = null;
+
     /**
      * Main constructor
      */
-    public FOInputHandler() {
+    public FOInputHandler(Driver driver) {
+        this.driver = driver;
     }
 
     /**

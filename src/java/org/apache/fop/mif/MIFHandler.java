@@ -58,6 +58,7 @@ import java.io.OutputStream;
 import org.xml.sax.SAXException;
 
 // FOP
+import org.apache.fop.apps.Driver;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.pagination.Flow;
@@ -100,7 +101,8 @@ public class MIFHandler extends FOInputHandler {
      * Creates a new MIF handler on a given OutputStream.
      * @param os OutputStream to write to
      */
-    public MIFHandler(OutputStream os) {
+    public MIFHandler(Driver driver, OutputStream os) {
+        super(driver);
         outStream = os;
         // use pdf fonts for now, this is only for resolving names
         org.apache.fop.render.pdf.FontSetup.setup(fontInfo, null);
