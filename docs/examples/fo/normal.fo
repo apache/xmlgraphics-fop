@@ -22,8 +22,8 @@ Below fo:root there is always
 
     <!-- layout for the first page -->
     <fo:simple-page-master master-name="first"
-                  page-height="29.7cm" 
-                  page-width="21cm"
+                  page-height="21cm" 
+                  page-width="29.7cm"
                   margin-top="1cm" 
                   margin-bottom="2cm" 
                   margin-left="2.5cm" 
