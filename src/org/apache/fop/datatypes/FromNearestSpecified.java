@@ -4,6 +4,7 @@ import org.apache.fop.datatypes.IndirectValue;
 import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.FONode;
 
 /*
  * $Id$
@@ -75,6 +76,23 @@ public class FromNearestSpecified extends IndirectValue {
         throws PropertyException
     {
         super(propertyName, PropertyValue.FROM_NEAREST_SPECIFIED);
+    }
+
+    /**
+     * Attempt to resolve this object into a "real" property value.  If the
+     * object has no <i>inheritedTriplet</i>, obtain and set one.  The
+     * obtained triplet is from the nearest ancestor node on which a value
+     * has been specified.
+     * Then invoke the superclass' <i>resolve()</i> method.
+     * @param node - the <tt>FONode</tt> with which this object is associated.
+     * @return the resulting <tt>PropertyValue</tt>.  Either a resolved value
+     * or <i>this</i>, if bequeathing triplet has no resolved computed value.
+     */
+    public PropertyValue resolve(FONode node) throws PropertyException {
+        if (inheritedValue == null) {
+            inheritedValue = node.getNearestSpecifiedTriplet(sourceProperty);
+        }
+        return super.resolve(node);
     }
 
     /**
