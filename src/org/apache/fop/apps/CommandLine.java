@@ -51,7 +51,7 @@
 package org.apache.fop.apps;
 
 // SAX
-import org.xml.sax.Parser;
+import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -84,7 +84,7 @@ public class CommandLine {
      *
      * @return the created SAX parser
      */
-    static Parser createParser() {
+    static XMLReader createParser() {
 	String parserClassName =
 	    System.getProperty("org.xml.sax.parser");
 	if (parserClassName == null) {
@@ -93,7 +93,7 @@ public class CommandLine {
 	org.apache.fop.messaging.MessageHandler.logln("using SAX parser " + parserClassName);
 
 	try {
-	    return (Parser)
+	    return (XMLReader)
 		Class.forName(parserClassName).newInstance();
 	} catch (ClassNotFoundException e) {
 	    org.apache.fop.messaging.MessageHandler.errorln("Could not find " + parserClassName);
@@ -154,7 +154,7 @@ public class CommandLine {
 	    System.exit(1);
 	}
 		
-	Parser parser = createParser();
+	XMLReader parser = createParser();
 		
 	if (parser == null) {
 	    MessageHandler.errorln("ERROR: Unable to create SAX parser");

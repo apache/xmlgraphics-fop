@@ -66,11 +66,11 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Attr;
 
 // SAX
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
-import org.xml.sax.Parser;
+import org.xml.sax.XMLReader;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributeListImpl;
+import org.xml.sax.helpers.AttributesImpl;
 
 // Java
 import java.io.PrintWriter;
@@ -214,7 +214,7 @@ public class Driver {
      * SAX parser. A good example is an XSLT engine that fires SAX
      * events but isn't a SAX Parser itself.
      */
-    public DocumentHandler getDocumentHandler() {
+    public ContentHandler getContentHandler() {
 	return this.treeBuilder;
     }
 
@@ -222,9 +222,10 @@ public class Driver {
      * build the formatting object tree using the given SAX Parser and
      * SAX InputSource
      */
-    public void buildFOTree(Parser parser, InputSource source)
-	throws FOPException {
-	parser.setDocumentHandler(this.treeBuilder);
+    public void buildFOTree(XMLReader parser, InputSource source)
+		throws FOPException {
+
+	parser.setContentHandler(this.treeBuilder);
 	try {
 	    parser.parse(source);
 	} catch (SAXException e) {
@@ -246,12 +247,12 @@ public class Driver {
 	/* most of this code is modified from John Cowan's */
 
 	Node currentNode;
-	AttributeListImpl currentAtts;
+	AttributesImpl currentAtts;
 	
 	/* temporary array for making Strings into character arrays */
 	char[] array = null;
 
-	currentAtts = new AttributeListImpl();
+	currentAtts = new AttributesImpl();
 	
 	/* start at the document element */
 	currentNode = document;
@@ -283,13 +284,15 @@ public class Driver {
 		    NamedNodeMap map = currentNode.getAttributes();
 		    currentAtts.clear();
 		    for (int i = map.getLength() - 1; i >= 0; i--) {
-			Attr att = (Attr)(map.item(i));
-			currentAtts.addAttribute(att.getName(),
-						 "CDATA",
-						 att.getValue()); 
+			Attr att = (Attr)map.item(i);
+			currentAtts.addAttribute("",
+                         att.getName(),
+                         "",
+                         "CDATA",
+                         att.getValue());
 		    }
 		    this.treeBuilder.startElement(
-			currentNode.getNodeName(), currentAtts);
+			"", currentNode.getNodeName(), "", currentAtts);
 		    break;
 		}
 		
@@ -306,7 +309,7 @@ public class Driver {
 			break;
 		    case Node.ELEMENT_NODE:
 			this.treeBuilder.endElement(
-			    currentNode.getNodeName());
+			    "", currentNode.getNodeName(), "" );
 			break;
 		    }
 		    
