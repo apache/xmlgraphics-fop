@@ -111,11 +111,6 @@ public class FOTreeBuilder extends DefaultHandler {
         } else if (renderType == Constants.RENDER_RTF) {
             foInputHandler = new RTFHandler(foUserAgent, stream);
         } else {
-            if (renderType == Constants.NOT_SET) {
-                throw new IllegalStateException(
-                        "Desired render type not set.");
-            }
-            
             if (renderType < Constants.RENDER_MIN_CONST 
                 || renderType > Constants.RENDER_MAX_CONST) {
                 throw new IllegalArgumentException(

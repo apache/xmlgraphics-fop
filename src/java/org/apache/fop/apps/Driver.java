@@ -76,11 +76,6 @@ public class Driver implements Constants {
      * @throws IllegalArgumentException if an unsupported renderer type was requested.
      */
     public Driver(int renderType, FOUserAgent ua) {
-        if (renderType == Constants.NOT_SET) {
-            throw new IllegalArgumentException(
-                    "Desired render type not set.");
-        }
-        
         if (renderType < Constants.RENDER_MIN_CONST 
             || renderType > Constants.RENDER_MAX_CONST) {
             throw new IllegalArgumentException(
