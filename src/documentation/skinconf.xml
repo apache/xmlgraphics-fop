@@ -11,10 +11,14 @@ jefft@apache.org
 
   <!ENTITY % links.att 'name CDATA #REQUIRED'>
   <!ENTITY % link.att 'name CDATA #REQUIRED href CDATA #REQUIRED'>
-  <!ELEMENT skinconfig (disable-search?, searchsite-domain?, searchsite-name?, project-name, project-url, project-logo, group-name?, group-url?, group-logo?, host-logo?, year?, vendor?, trail?, credits?)*>
+  <!ELEMENT skinconfig (disable-search?, searchsite-domain?, searchsite-name?,
+  project-name, project-url, project-logo, group-name?, group-url?, group-logo?,
+  host-url?, host-logo?, year?, vendor?, trail?, credits?)*>
   <!ELEMENT credits (credit*)>
-  <!ELEMENT credit (name, url, image, width?, height?)>
-  <!ATTLIST credit role CDATA #IMPLIED>
+  <!ELEMENT credit (name, url, image?, width?, height?)>
+  <!-- id uniquely identifies the tool, and role indicates its function -->
+  <!ATTLIST credit id   CDATA #IMPLIED
+                   role CDATA #IMPLIED>
   <!ELEMENT disable-search (#PCDATA)>
   <!ELEMENT searchsite-domain (#PCDATA)>
   <!ELEMENT searchsite-name (#PCDATA)>
@@ -24,6 +28,7 @@ jefft@apache.org
   <!ELEMENT group-name (#PCDATA)>
   <!ELEMENT group-url (#PCDATA)>
   <!ELEMENT group-logo (#PCDATA)>
+  <!ELEMENT host-url (#PCDATA)>
   <!ELEMENT host-logo (#PCDATA)>
   <!ELEMENT year (#PCDATA)>
   <!ELEMENT vendor (#PCDATA)>
@@ -90,12 +95,12 @@ jefft@apache.org
       <width>138</width>
       <height>31</height>
     </credit>-->
-    <!--credit role="pdf">
+    <credit role="pdf">
       <name>Created by: FOP 1.0dev</name>
       <url>http://xml.apache.org/fop/dev</url>
       <image>images/logo.jpg</image>
       <width>138</width>
       <height>31</height>
-    </credit-->
+    </credit>
   </credits>
 </skinconfig>
