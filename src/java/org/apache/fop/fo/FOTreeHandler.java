@@ -448,25 +448,25 @@ public class FOTreeHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startFootnote()
+     * @see org.apache.fop.fo.FOInputHandler#startFootnote(Footnote)
      */
     public void startFootnote(Footnote footnote) {
     }
     
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endFootnote()
+     * @see org.apache.fop.fo.FOInputHandler#endFootnote(Footnote)
      */
     public void endFootnote(Footnote footnote) {
     }
     
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startFootnoteBody()
+     * @see org.apache.fop.fo.FOInputHandler#startFootnoteBody(FootnoteBody)
      */
     public void startFootnoteBody(FootnoteBody body) {
     }
     
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endFootnoteBody()
+     * @see org.apache.fop.fo.FOInputHandler#endFootnoteBody(FootnoteBody)
      */
     public void endFootnoteBody(FootnoteBody body) {
     }

@@ -62,7 +62,7 @@ package org.apache.fop.render.mif;
 public class RefElement extends MIFElement {
 
     /**
-     * @see org.apache.fop.mif.MIFElement#MIFElement(String)
+     * @see org.apache.fop.render.mif.MIFElement#MIFElement(String)
      */
     public RefElement(String n) {
         super(n);

@@ -457,7 +457,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     }
     
     /**
-     * @see org.apache.fop.render.Renderer#renderText(Text)
+     * @see org.apache.fop.render.Renderer#renderText(TextArea)
      */
     public void renderText(TextArea text) {
         System.out.println("In render text: " + text.getTextArea());
