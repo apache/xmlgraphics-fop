@@ -28,9 +28,9 @@
           <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
-          <td>EPS (Encapsulated PostScript)</td>
+          <td><link href="#eps">EPS</link> (Encapsulated PostScript)</td>
           <td>metafile (both bitmap and vector), probably most frequently used for vector drawings</td>
-          <td>FOP native (limited support)</td>
+          <td><link href="#native">FOP native</link> (limited support)</td>
         </tr>
         <tr>
           <td>GIF (Graphics Interchange Format)</td>
@@ -48,7 +48,7 @@
           <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
-          <td><link href="#jpeg">JPEG (Joint Photographic Experts Group)</link></td>
+          <td><link href="#jpeg">JPEG</link> (Joint Photographic Experts Group)</td>
           <td>bitmap</td>
           <td><link href="#native">FOP native</link></td>
         </tr>
