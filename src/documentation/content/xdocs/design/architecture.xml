@@ -13,7 +13,7 @@
     <p>The purpose of this document is to tie together the FOP design (interface) with some of the key points where control is passed within FOP (implementation), so that developers can quickly find the section of code that is relevant to their needs. The process described is for a "typical" command-line document. All classes are in org.apache.fop unless otherwise designated.</p>
     <section>
       <title>Overview</title>
-      <p>The input FO document is sent to the FO tree builder via SAX events. Fragments of an FO Tree are built from this process. As each page-sequence element is completed, it is passed to a layout processor, which in turn converts it into an Area Tree. The Area Tree is then given to the Renderer, which converts it into a stream of data containing the output document. The sections below will provide additional details.</p>
+      <p>The input FO document is sent to the FO tree builder via SAX events. Fragments of an FO Tree are built from this process. As each page-sequence element is completed, it is passed to a layout processor, which in turn converts it into an Area Tree. The Area Tree is then given to the Renderer, which converts it into a stream of data containing the output document. The sections below will provide additional details. Where needed differences between the trunk and maintenance branches are shown in tabular format.</p>
     </section>
     <section>
       <title>Startup</title>
@@ -25,10 +25,27 @@
     </section>
     <section>
       <title>Formatting Object Tree</title>
-      <ul>
-        <li>The SAX events that the parser creates are handled by <em>fo.FOTreeBuilder</em>, which uses <code>startElement()</code>, <code>endElement()</code>, and <code>characters()</code> methods to build the FO Tree.</li>
-        <li>In the trunk, <em>fo.FOTreeBuilder.endElement()</em> runs the end() method for each node as it is created. The <em>fo.pagination.PageSequence</em> class overrides this end() method to run <em>apps.LayoutHandler.endPageSequence()</em>, which in turn runs <em>fo.pagination.PageSequence.format()</em>. In the maintenance branch, the end of a PageSequence element causes the PageSequence object to be passed to <em>apps.StreamRenderer.render</em>, which in turn runs fo.pagination.PageSequence.format. In both cases, the layout process is then driven from <em>fo.pagination.PageSequence.format</em>.</li>
-      </ul>
+      <table>
+        <tr>
+          <th>Trunk</th><th>Maintenance</th>
+        </tr>
+        <tr>
+          <td colspan="2">The SAX events that the parser creates are handled by <em>fo.FOTreeBuilder</em>, which uses <code>startElement()</code>, <code>endElement()</code>, and <code>characters()</code> methods to build the FO Tree.</td>
+          <td><em>fo.FOTreeBuilder.endElement()</em> runs the end() method for each node as it is created. The <em>fo.pagination.PageSequence</em> class overrides this end() method to run <em>apps.LayoutHandler.endPageSequence()</em>, which in turn runs <em>fo.pagination.PageSequence.format()</em>.</td>
+          <td>the end of a PageSequence element causes the PageSequence object to be passed to <em>apps.StreamRenderer.render</em>, which in turn runs fo.pagination.PageSequence.format.</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><em>fo.pagination.PageSequence.addFlow()</em> programatically adds a Flow object to the page sequence.</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>fo.pagination.PageSequence.makePage() creates a BodyArea and passes it to <em>fo.Flow.layout</em></td>
+        </tr>
+        <tr>
+          <td colspan="2">the layout process is then driven from <em>fo.pagination.PageSequence.format</em>.</td>
+        </tr>
+      </table>
     </section>
     <section>
       <title>Layout</title>
