@@ -151,10 +151,18 @@ A hash 'fobjTable' exists in <em>FOTreeBuilder</em>, and maps the FO names (such
 <p>
 Properties (recall that FO's have properties, areas have traits, and XML
 nodes have attributes) are also a concern of <em>FOTreeBuilder</em>. It
-accomplishes this by using <em>PropertyListBuilder</em>, which contains a hash of
-property names and <ref>their</ref> respective makers. The base class for
-properties is <em>Property</em>, and the property makers extend 
-<em>Property.Maker</em>.
+accomplishes this by using a <em>PropertyListBuilder</em>. There is a
+separate <em>PropertyListBuilder</em> for each namespace encountered
+while building the FO tree. Each Builder object contains a hash of
+property names and <ref>their</ref> respective makers. It may also
+contain element-specific property maker hashes; these are based on the
+<em>local name</em> of the flow object, ie. <em>table-row</em>, not
+<em>fo:table-row</em>. If an element-specific property mapping exists,
+it is preferred to the generic mapping.</p>
+<p>The base class for all
+properties is <em>Property</em>, and all the property makers extend
+<em>Property.Maker</em>. A more complete discussion of the property
+architecture may be found in <jump href="properties.html">Properties</jump>.
 </p>
 </s2>
 <s2 title="FO Formatting">
