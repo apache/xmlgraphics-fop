@@ -92,7 +92,7 @@
 
 
   <s2 title="2) Properties">
-  <p>Property values can be computed</p>
+  <p>Property values can be computed. Compound properties are also understood by Fop.</p>
     <ul>
       <li>background-color </li>
       <li>blank-or-not-blank</li>
@@ -144,7 +144,7 @@
       <li>id</li>
       <li>initial-page-number</li>
       <li>internal-destination</li>
-      <li>keep-with-next</li>
+      <li>keep-with-next (broken)</li>
       <li>left</li>
       <li>line-height </li>
       <li>margin-bottom (only on pages and regions) </li>
@@ -181,10 +181,11 @@
       <li>text-align-last </li>
       <li>text-indent </li>
       <li>top</li>
-      <li>white-space-treatment </li>
+      <li>white-space-treatment (broken)</li>
       <li>width</li>
       <li>wrap-option</li>
     </ul>
+    <p>All other properties are not implemented.</p>
   </s2>
 
   <s2 title="3) SVG elements supported">
@@ -258,14 +259,4 @@
     </ul>
   </s2>
 </s1>
-
-
-
-
-
-
-
-
-
-
 
