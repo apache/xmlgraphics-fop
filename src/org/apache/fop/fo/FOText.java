@@ -16,6 +16,8 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.system.BufferManager;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.TextLayoutManager;
 
 /**
  * a text node in the formatting object tree
@@ -234,5 +236,8 @@ public class FOText extends FObj {
         return -1;
     }
 
+    public LayoutManager getLayoutManager() {
+	return new TextLayoutManager(this, ca);
+    }
 }
 
