@@ -27,4 +27,5 @@
   <separator/>
   <page id="compound-properties" label="Compound properties"  source="compound-properties.xml"/>
   <page id="traits" label="Traits"  source="traits.xml"/>
+  <page id="user-agent-refs" label="User agent refs" source="user-agent-refs.xml"/>
 </book>
