@@ -59,6 +59,7 @@ public class SVGURIReferenceImpl extends GraphicElement implements SVGURIReferen
 	String xlinkTitle;
 	String xlinkShow;
 	String xlinkActuate;
+	String xlinkArcRole;
 	SVGAnimatedString href;
 
 	public String getXlinkType( )
@@ -89,6 +90,16 @@ public class SVGURIReferenceImpl extends GraphicElement implements SVGURIReferen
 	public void setXlinkTitle( String xlinkTitle )
 	{
 		this.xlinkTitle = xlinkTitle;
+	}
+
+	public String getXlinkArcRole()
+	{
+		return xlinkArcRole;
+	}
+
+	public void setXlinkArcRole(String xlinkArcRole)
+	{
+		this.xlinkArcRole = xlinkArcRole;
 	}
 
 	public String getXlinkShow( )
