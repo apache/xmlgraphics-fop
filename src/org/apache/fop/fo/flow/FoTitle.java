@@ -11,7 +11,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
@@ -100,8 +99,7 @@ public class FoTitle extends FONode {
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.TITLE, parent, event,
-              FOPropertySets.TITLE_SET, sparsePropsMap, sparseIndices,
-              numProps);
+              FONode.TITLE_SET, sparsePropsMap, sparseIndices);
         xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         do {
@@ -117,7 +115,8 @@ public class FoTitle extends FONode {
             if (ev != null) {
                 // Generate the flow object
                 FObjects.fobjects.makeFlowObject
-                            (foTree, this, ev, FOPropertySets.TITLE_SET);
+                            (foTree, this, ev, FONode.TITLE_SET);
+                ev = xmlevents.getEndElement(ev);
             }
         } while (ev != null);
 

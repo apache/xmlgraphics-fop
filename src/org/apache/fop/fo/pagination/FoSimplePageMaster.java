@@ -16,7 +16,6 @@ import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.PropertySets;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
@@ -94,8 +93,7 @@ public class FoSimplePageMaster extends FONode {
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.SIMPLE_PAGE_MASTER, parent, event,
-              FOPropertySets.LAYOUT_SET, sparsePropsMap, sparseIndices,
-              numProps);
+              FONode.LAYOUT_SET, sparsePropsMap, sparseIndices);
         // Process regions here
         FoXMLEvent regionEv;
         if ((regionEv = xmlevents.expectStartElement

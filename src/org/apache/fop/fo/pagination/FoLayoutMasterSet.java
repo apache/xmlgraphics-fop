@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
@@ -105,8 +104,7 @@ public class FoLayoutMasterSet extends FONode {
         throws TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.LAYOUT_MASTER_SET, parent, event,
-              FOPropertySets.LAYOUT_SET, sparsePropsMap, sparseIndices,
-              numProps);
+              FONode.LAYOUT_SET, sparsePropsMap, sparseIndices);
         setupPageMasters(event);
         // No need to clean up the build tree, because the whole subtree
         // will be deleted.
