@@ -68,6 +68,8 @@ import java.net.URL;
 // FOP
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.apps.*;
+import org.apache.fop.configuration.Configuration;
+
 
 /**
  * extension to Ant which allows usage of Fop in the
@@ -77,7 +79,7 @@ import org.apache.fop.apps.*;
  * containing org.w3c.dom.svg etc. for svg support
  */
 
-public class Fop {
+public class Fop extends Starter {
     String fofile, pdffile;
 
     /**
@@ -97,96 +99,27 @@ public class Fop {
     }
 
 
-    /**
-      * creates a SAX parser, using the value of org.xml.sax.parser
-      * defaulting to org.apache.xerces.parsers.SAXParser
-      *
-      * @return the created SAX parser
-      */
-    static XMLReader createParser() {
-        String parserClassName = System.getProperty("org.xml.sax.parser");
-        if (parserClassName == null) {
-            parserClassName = "org.apache.xerces.parsers.SAXParser";
-        }
-        MessageHandler.logln("using SAX parser " + parserClassName);
-
-        try {
-            return (XMLReader) Class.forName(
-                     parserClassName).newInstance();
-        } catch (ClassNotFoundException e) {
-            MessageHandler.errorln("Could not find " + parserClassName);
-        }
-        catch (InstantiationException e) {
-            MessageHandler.errorln("Could not instantiate " +
-                                   parserClassName);
-        }
-        catch (IllegalAccessException e) {
-            MessageHandler.errorln("Could not access " + parserClassName);
-        }
-        catch (ClassCastException e) {
-            MessageHandler.errorln(parserClassName + " is not a SAX driver");
-        }
-        return null;
-    } // end: createParser
-
-    /**
-     * create an InputSource from a file name
-     *
-     * @param filename the name of the file
-     * @return the InputSource created
-     */
-    protected static InputSource fileInputSource(String filename) {
-
-        /* this code adapted from James Clark's in XT */
-        File file = new File(filename);
-        String path = file.getAbsolutePath();
-        String fSep = System.getProperty("file.separator");
-        if (fSep != null && fSep.length() == 1)
-            path = path.replace(fSep.charAt(0), '/');
-        if (path.length() > 0 && path.charAt(0) != '/')
-            path = '/' + path;
-        try {
-            return new InputSource(new URL("file", null, path).toString());
-        } catch (java.net.MalformedURLException e) {
-            throw new Error("unexpected MalformedURLException");
-        }
-    } // end: fileInputSource
-
-    /**
-     * main method, starts execution of this task
-     *
-     */
-    public void execute () throws BuildException {
+	public void run () {
         Driver driver = new Driver();
-        driver.setBaseDir(fofile);
-        boolean errors = false;
+		Options options = new Options();
+		boolean errors = false;
         String version = Version.getVersion();
-        MessageHandler.logln("=======================\nTask " +
-                             version + "\nconverting file " + fofile + " to " + pdffile);
 
-        if (!(new File(fofile).exists())) {
+		File fofileF = new File (fofile);
+		Configuration.put("baseDir",new File(fofileF.getAbsolutePath()).getParent());
+		if (!fofileF.exists()) {
             errors = true;
             MessageHandler.errorln(
               "Task Fop - ERROR: Formatting objects file " +
               fofile + " missing.");
         }
 
-        XMLReader parser = createParser();
+		InputHandler inputHandler = new FOInputHandler(fofileF);
+        XMLReader parser = inputHandler.getParser();
+		super.setParserFeatures(parser);
 
-        if (parser == null) {
-            MessageHandler.errorln("Task Fop - ERROR: Unable to create SAX parser");
-            errors = true;
-        }
-
-        // setting the parser features
-        try {
-            parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
-                              true);
-        } catch (SAXException e) {
-            MessageHandler.errorln("Error in setting up parser feature namespace-prefixes");
-            MessageHandler.errorln("You need a parser which supports SAX version 2");
-            System.exit(1);
-        }
+        MessageHandler.logln("=======================\nTask " +
+                             version + "\nconverting file " + fofile + " to " + pdffile);
 
         if (!errors) {
             try {
@@ -194,13 +127,12 @@ public class Fop {
                                    version);
                 driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
                 driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
-		driver.addElementMapping("org.apache.fop.extensions.ExtensionElementMapping");
+				driver.addElementMapping("org.apache.fop.extensions.ExtensionElementMapping");
                 driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
                 driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-		driver.addPropertyList("org.apache.fop.extensions.ExtensionPropertyListMapping");
-
+				driver.addPropertyList("org.apache.fop.extensions.ExtensionPropertyListMapping");
                 driver.setOutputStream(new FileOutputStream(pdffile));
-                driver.buildFOTree(parser, fileInputSource(fofile));
+                driver.buildFOTree(parser, inputHandler.fileInputSource(fofileF));
                 driver.format();
                 driver.render();
             } catch (Exception e) {
@@ -210,6 +142,14 @@ public class Fop {
             }
         }
         MessageHandler.logln("=======================\n");
+	}
+
+    /**
+     * main method, starts execution of this task
+     *
+     */
+    public void execute () throws BuildException {
+		run();
     } // end: execute
 }
 

@@ -1,3 +1,9 @@
+/* 
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the 
+ * LICENSE file included with these sources."
+ */
+
 
 package org.apache.fop.configuration;
 
@@ -97,23 +103,18 @@ public class Configuration {
      *  convenience methods to access boolean values in the configuration
      *  @param key a string containing the key value for the configuration value
      *         role detemines the configuration target
-     *  @return boolean true or false as value
-     *          -1   if the key is not defined.
+     *  @return Boolean true or false as value
+     *          null   if the key is not defined.
      */
     public static Boolean getBooleanValue(String key, int role) {
         Object obj = Configuration.getValue (key, role);
-        if (obj instanceof String) {
-            String value = (String) obj;
-            if (value.equals("true")) {
-                return new Boolean(true);
-            } else if (value.equals("false")) {
-                return new Boolean(false);
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
+		if (obj instanceof String) {
+			return new Boolean((String)obj); 
+		} else if (obj instanceof Boolean) {
+			return (Boolean) obj; 
+		} else {
+			return null;
+		}
     };
 
     /**
@@ -189,7 +190,7 @@ public class Configuration {
        *
        *  @param key a string containing the key value for the configuration value
        *  @return boolean true or false as value
-       *          -1   if the key is not defined.
+       *          null   if the key is not defined.
        */
     public static Boolean getBooleanValue(String key) {
         return Configuration.getBooleanValue(key, Configuration.STANDARD);
