@@ -1,0 +1,58 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Overview -->
+
+<document>
+    <header>
+        <title>FOP Optimisations</title>
+        <subtitle>Notes for Optimising FOP</subtitle>
+        <authors>
+            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="Process Optimisations">
+<p>
+FOP should be able to handle very large documents. A document can be
+supplied using SAX and the information should be passed entirely through
+the system, from fo elements to rendered output as soon as possible.
+  </p>
+  <p>
+A top level block area, immediately below the flow, can be added to the
+page layout as soon as the element is complete.
+  </p>
+  <p>
+The fo elements used to construct a page can be discarded as soon as the
+layout for the page is complete. Some information may be stored in the
+area tree of the page in order to handle unresolved page references
+and links.
+  </p>
+  <p>
+Once the layout of a page has been completed, all elements are fully
+resolved, then the page can be rendered. Some renderers may support
+out of order rendering of pages.
+  </p>
+  <p>
+The main problem that will remain is that any page with forward
+references will need to be stored until the refence is resolved.
+This means that the information contained in the page should be
+as minimal as possible.
+  </p>
+  <p>
+Line areas can be optimised once the layout for the line has
+been finalised. Consecutive characters with the same properties
+can be combined into a "word" to hold the information with
+limited overhead.
+  </p>
+  <p>
+If there are a large number of pages where forward references
+cannot be resolved the a method of writing a page onto disk
+could be used to save memory. The easiest way to achieve this
+is to make the page and all children serializable.
+   </p>
+  </s1>
+
+    </body>
+</document>
+

@@ -1,0 +1,186 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Overview -->
+
+<document>
+    <header>
+        <title>Area Tree</title>
+        <subtitle>Area Tree Design for FOP</subtitle>
+        <authors>
+            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="Area Tree">
+<p>
+The code to implement the area tree will attempt to match the areas
+defined in the specification. A number of optimisations may be possible
+for similar areas and groups of areas. 
+  </p> 
+  <p>
+Since the area tree will be used during the layout by the layout managers
+it will need to store information that affects the layout. The information
+such as spacing and keeps will be held in such a way that it can be
+discarded once the layout is finalised. 
+  </p>
+<s2 title="Structure">
+<p>
+The area tree is a root element that has a list of page-viewport-areas.
+Each page viewport has a page-reference-area which holds the contents of
+the page. To handle the processing better FOP does not maintain a list
+at the root level but lets another class handle each page as it is added.
+  </p>
+  </s2>
+<s2 title="Page">
+<p>
+A page is made up of five area regions. These are before, start, body,
+end and after. Each region has a viewport and contains the areas
+produced from the children in the FO object heirarchy.
+  </p>
+  <p>
+For the body area there are more subdivisions for before floats,
+footnotes and the main reference area. The main reference area is
+made from span areas which have normal flow reference areas as
+children. The flow areas are then created inside these normal flow
+reference areas.
+  </p>
+  <p>
+Since the layout is done inside a page, the page is created from the
+pagemaster with all the appropriate areas. The layout manager then
+uses the page to add areas into the normal flow reference areas
+and floats and footnotes. After the layout of the body region
+is complete then the other regions can be done.
+  </p>
+  </s2>
+<s2 title="Block Areas">
+<p>
+Block areas are created and/or returned by all top level elements
+in the flow. These areas have keep and spacing information that
+needs to be retained until the page is finalised. A block area
+is stacked with other block areas in a particular direction, it
+has a size and it contains either line areas made from a group
+of inline areas or block areas.
+  </p>
+  <p>
+A block area can also be split into two block areas by splitting
+between two line areas or splitting between two block areas (or
+groups) that are stacked in the block progression direction of
+the page. The split may also be in a child block area.
+  </p>
+  </s2>
+<s2 title="Line Areas">
+<p>
+A line areas is simply a collection of inline areas that are stacked
+in the inline progression direction. A line area has a height and
+width. It also contains information about floats and footnotes
+that are associated with the inline areas.
+  </p>
+  <p>
+A line area gets a set of inline areas added until complete then
+it is justified and vertically aligned. If the line area contains
+unresolved areas it will retain the justification information
+until all areas are resolved.
+  </p>
+  </s2>
+<s2 title="Inline Areas">
+<p>
+There are a few different types of inline areas. All inline areas
+have a height. Their width may be variable until the line is
+finalised.
+  </p>
+  <p>
+Unresolved areas can reserve some space to allow for possible
+sizes once it is resolved. Then the line can be re-justified
+and finalised.
+  </p>
+  </s2>
+<s2 title="Cloning">
+<p>
+Any subtree of the area tree should be cloneable so that for
+areas that are repeated the area tree can simply be copied rather
+than going through the layout again. This will only work if the
+width is the same.
+  </p>
+  <p>
+Resolveable areas may be converted into an unresolved form.
+  </p>
+  </s2>
+<s2 title="Classes">
+<p>
+The following class structure will be used to represent the area
+tree.
+  </p>
+<s3 title="Page Area Classes">
+<p>
+The page area classes hold the top level layout of a page. The
+areas are created by the page master and should be ready to have
+flow areas added.
+  </p>
+  </s3>
+<s3 title="Block Area Classes">
+<p>
+The block areas typically hold either a set of line areas or a set of
+block areas. The child areas are usually stacked in a particular
+direction.
+  </p>
+  <p>
+Areas for tables and lists have their child block areas stacked
+in different ways. Lists also can have spacing between the block
+areas.
+  </p>
+  </s3>
+<s3 title="Inline Area Classes">
+<p>
+The inline areas are used to make up a line area. An inline area
+typically has a height, width and some content. The alignment is
+used for block progression direction displacement and to determine
+the height of a line.
+  </p>
+  </s3>
+  </s2>
+
+<s2 title="Rendering Area Tree">
+<p>
+The rendering of an area tree is done by rendering each page
+to a suitable output. The regions are rendered in order and each
+region is contained by a viewport.
+  </p>
+  <p>
+The relevent structures that will need to be rendered are:
+Page
+Viewport
+Region
+Span
+Block
+Line
+Inline
+  </p>
+  <p>
+The renderer will need to be able to:
+       <itemizedlist>
+       <listitem><para>
+render each individual page
+       </para></listitem>
+       <listitem><para>
+clip and align child areas to a viewport
+       </para></listitem>
+       <listitem><para>
+handle all types of inline area, text, image etc.
+       </para></listitem>
+       <listitem><para>
+draw various lines and rectangles
+       </para></listitem>
+       </itemizedlist>
+  </p>
+  <p>
+An abstract renderer will be able to handle the generic positioning
+of child areas, iterating through areas that have child areas.
+  </p>
+  </s2>
+
+  </s1>
+
+    </body>
+</document>
+

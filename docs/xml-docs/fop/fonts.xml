@@ -1,0 +1,121 @@
+<?xml version="1.0" standalone="no"?>
+<!-- Font Support -->
+<!-- Authors: Jeremias Maerki, Tore Engvig-->
+<s1 title="Font Support ">
+	<s2 title="Status">
+		<p>FOP (building PDF files) normally supports only the base 14 font package defined in the Adobe PDF specification.
+		That includes the following fonts: Helvetica, Times, Courier, Symbol and ZapfDingbats.
+		</p>
+		<p>Font support in FOP can be extended by the addition of font metric files (written in XML) created from Adobe
+		Type 1 fonts and Truetype fonts. No other font types (Type 3, etc.) are supported at this time.
+		</p>
+    <note><p>
+        The Font is simply embedded into the PDF file, it is not converted.
+    </p></note>
+	</s2>
+	<s2 title="Adding additional Type 1 fonts">
+		<p>As mentioned above you need an XML file containing font metrics to be able to use an additional font. FOP
+		contains a tool that can generate such a font metrics file from a PFM file, which normally comes with the font file. 
+		</p>
+		<s3 title="Generating a font metrics file">
+			<p>	Run the class org.apache.fop.fonts.apps.PFMReader to generate the XML file.
+			</p>
+			<p>Windows:</p>
+                        <p>
+			<code>java -cp build\fop.jar;lib\xerces.jar;lib\xalan.jar;lib\batik.jar
+			org.apache.fop.fonts.apps.PFMReader pfm-file xml-file</code>
+			</p>
+			<p>Unix:</p>
+			<p>
+                        <code>java -cp build/fop.jar:lib/xerces.jar:lib/xalan.jar:lib/batik.jar
+                        org.apache.fop.fonts.apps.PFMReader pfm-file xml-file</code>
+			</p>
+			<note><p>The tool will construct some values (FontBBox, StemV and ItalicAngle) based on assumptions and
+			calculations which are only an approximation to the real values. FontBBox and Italic Angle can be found in
+			the human-readable part of the PFB file. The PFMReader tool does not yet interpret PFB files, so if you want
+			to be correct, you may have to adjust the values in the XML file manually. The constructed values however
+			appear to have no visible influence.
+			</p></note>
+		</s3>
+		<s3 title="Register the fonts within FOP">
+			<p>
+                Edit conf/userconfig.xml and add entries for the font
+                if the fonts section,
+                ie:
+		</p>
+        <p>
+		<source><![CDATA[
+<font metrics-file="cyberbit.xml" kerning="yes" embed-file="C:\WINNT\Fonts\Cyberbit.ttf">
+  <font-triplet name="Cyberbit" style="normal" weight="normal">
+</font>]]>
+</source>
+</p>
+    <note><p>
+        If you do not want the font embedded in the PDF then remove the
+        "embed-file" attribute. The PDF will then contain text using
+        the font with the font metrics and to view it properly the
+        font will need to be installed where it is being viewed.
+    </p></note>
+    <note><p>
+        Cocoon users will need to setup the config, see FOPSerializer
+        for more information.
+    </p></note>
+		</s3>
+	</s2>
+	<s2 title="Adding additional TrueType">
+        <p>Adding Truetype fonts is almost identical to the process of
+        adding type 1 fonts. The main difference is in the first
+        step.</p>
+
+		<s3 title="Generating a font metrics file">
+            <p>As mentioned above you need an XML file containing font
+            metrics to be able to use an additional font. FOP contains
+            a tool that can generate such a font metrics file from
+            your truetype font file. 
+			</p>
+			<p>
+	    Create metrics for the fontfile (we assume the file has
+            the name cmr10.ttf and exists in c:\myfonts\):            
+			</p>
+			<p>
+	    <code>java org.apache.fop.fonts.apps.TTFReader C:\myfonts\cmr10.ttf C:\myfonts\cmr10.ttf ttfcm.xml</code></p>
+	    </s3>
+	    <s3 title="TrueType collections">
+			<p>
+	    TrueType collections (.ttc files) contains more than one
+	    font. To create metrics for a ttc file you must specify
+	    the font in the collection with the -ttcname option to
+	    TTFReader.
+			</p>
+			<p>
+	    To get a list of the fonts in a collection, just start the
+	    TTFReader as if it were a normal truetype file (without
+	    the -ttcname option). It will then display all the font
+	    names and exit with an Exception...
+			</p>
+			<p>
+	    Example on generating metrics for a .ttc file:
+			</p>
+        <p>
+	    <code>
+	    java org.apache.fop.fonts.apps.TTFReader -ttcname "MS Mincho" msmincho.ttc msminch.xml
+	    </code>
+        </p>
+		</s3>
+
+	    <s3 title="Register the fonts within FOP">
+	    <p>
+	    Same as for Type 1 fonts.
+			</p>
+        </s3>
+
+        <s3 title="Embedding fonts">
+            <p>
+            Font embedding is enabled in the userconfig.xml file.
+	    </p>
+        </s3>
+	</s2>
+    <p>
+	Remember to start fop with -c conf/userconfig.xml
+    </p>
+</s1>

@@ -1,0 +1,56 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Overview -->
+
+<document>
+    <header>
+        <title>FOP Design</title>
+        <subtitle>Design Approach to FOP</subtitle>
+        <authors>
+            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="Introduction">
+<p>
+<note><p>
+The information here is still in the early stage, some information
+may be wrong or misleading. In general there is not a broad enough
+input and it is lacking in depth of information.
+</p></note>
+The information here describes the design and architecture details for FOP.
+Currently this is part of a redesign process for some of the core parts of
+FOP.
+  </p>
+  <p>
+The redesign is mainly focusing on some particular process involved
+with the layout process when converting the FO tree into the Area Tree.
+  </p>
+<s2 title="Aims">
+  <p>
+The main aim for FOP is to comply with the spec and to be able to
+process files of any size.
+   </p>
+  <p>
+In achieving this aim we need to understand the problem and break it
+into small problems that can be solved.
+   </p>
+  <p>
+<ul>
+<li>use SAX as input</li>
+<li>process FO elements ASAP</li>
+<li>dispose of unused memory, keep memory minimal</li>
+<li>layout handles floats, footnotes and keeps in a simple straight forward way</li>
+<li>id references are kept simple</li>
+<li>pages are rendered ASAP, can be cached until resolved</li>
+<li>renderers are totally responsible for their output format</li>
+<li>output is sent to a stream</li>
+</ul>
+   </p>
+</s2>
+  </s1>
+
+    </body>
+</document>
+
