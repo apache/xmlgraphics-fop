@@ -9,7 +9,7 @@ package org.apache.fop.image;
 
 // Java
 import java.net.URL;
-import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.Document;
 
 // FOP
 import org.apache.fop.apps.Driver;
@@ -17,20 +17,20 @@ import org.apache.fop.image.analyser.ImageReader;
 import org.apache.fop.image.analyser.SVGReader;
 import org.apache.fop.fo.FOUserAgent;
 
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-
 /**
  * @see AbstractFopImage
  * @see FopImage
  */
-public class SVGImage extends AbstractFopImage {
-    SVGDocument doc;
+public class XMLImage extends AbstractFopImage {
+    Document doc;
+    String ns = "";
 
-    public SVGImage(URL href, FopImage.ImageInfo imgInfo) {
+    public XMLImage(URL href, FopImage.ImageInfo imgInfo) {
         super(href, imgInfo);
-        if(imgInfo.data instanceof SVGDocument) {
-            doc = (SVGDocument)imgInfo.data;
+        if(imgInfo.data instanceof Document) {
+            doc = (Document)imgInfo.data;
         }
+        ns = imgInfo.str;
     }
 
     /**
@@ -45,20 +45,14 @@ public class SVGImage extends AbstractFopImage {
     }
 
     protected boolean loadData(FOUserAgent ua) {
-        try {
-            SAXSVGDocumentFactory factory =
-              new SAXSVGDocumentFactory(SVGImage.getParserName());
-            doc = factory.createDocument(this.m_href.toExternalForm());
-        } catch (Exception e) {
-            ua.getLogger().error("Could not load external SVG: "
-                                   + e.getMessage(), e);
-            return false;
-        }
         return true;
     }
 
-    public SVGDocument getSVGDocument() {
+    public Document getDocument() {
         return doc;
     }
 
+    public String getNameSpace() {
+        return ns;
+    }
 }

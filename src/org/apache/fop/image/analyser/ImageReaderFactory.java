@@ -30,7 +30,10 @@ public class ImageReaderFactory {
         formats.add(new PNGReader());
         formats.add(new TIFFReader());
         formats.add(new EPSReader());
+        // the xml parser through batik closes the stream when finished
+        // so there is a workaround in the SVGReader
         formats.add(new SVGReader());
+        formats.add(new XMLReader());
     };
 
     // TODO - a way to add other readers

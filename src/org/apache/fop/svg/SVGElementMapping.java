@@ -16,10 +16,11 @@ import org.apache.fop.apps.Driver;
 
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.w3c.dom.DOMImplementation;
 
 public class SVGElementMapping implements ElementMapping {
-
     private static HashMap foObjs = null;
+    private static boolean batik = true;
 
     private static synchronized void setupSVG() {
         if (foObjs == null) {
@@ -36,12 +37,16 @@ public class SVGElementMapping implements ElementMapping {
     }
 
     public void addToBuilder(FOTreeBuilder builder) {
-        try {
-            setupSVG();
-            String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
-            builder.addMapping(svgNS, foObjs);
-        } catch (Throwable t) {
-            // if the classes are not available
+        if(batik) {
+            try {
+                setupSVG();
+                String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
+                builder.addMapping(svgNS, foObjs);
+            } catch (Throwable t) {
+                // if the classes are not available
+                // the DISPLAY is not checked
+                batik = false;
+            }
         }
     }
 

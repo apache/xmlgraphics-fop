@@ -104,6 +104,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentYPosition = ypos;
         currentXPosition = xpos;
         fontState = fs;
+        graphicsState = new PDFState();
     }
 
     protected PDFGraphics2D(boolean textAsShapes) {
