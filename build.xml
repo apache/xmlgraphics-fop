@@ -169,13 +169,16 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="xslt" value="org.apache.xalan.xslt.Process"/>
     <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
     <property name="foproperties.xml" value="${build.codegen}/foproperties.xml"/>
+    <property name="colorkw.xml" value="${build.codegen}/colorkw.xml"/>
     <property name="svgproperties.xml" value="${build.codegen}/svgproperties.xml"/>
     <property name="extproperties.xml" value="${build.codegen}/extproperties.xml"/>
+    <property name="allprops.xml" value="${build.codegen}/allprops.xml"/>
 
     <property name="properties.xsl" value="${build.codegen}/properties.xsl"/>
     <property name="propmap.xsl" value="${build.codegen}/propmap.xsl"/>
     <property name="enumgen.xsl" value="${build.codegen}/enumgen.xsl"/>
     <property name="propinc.xsl" value="${build.codegen}/propinc.xsl"/>
+    <property name="genconst.xsl" value="${build.codegen}/genconst.xsl"/>
     <property name="src.charlist.xsl" value="${src.codegen}/code-point-mapping.xsl"/>
     <property name="charlist.xml" value="${build.codegen}/charlist.xml"/>
     <property name="charlist.xsl" value="${build.codegen}/code-point-mapping.xsl"/>  
@@ -364,8 +367,12 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <!-- generate the java files from xml resources -->
     <echo message="Generating the java files from xml resources"/>
 
+    <xslt infile="${allprops.xml}" xsltfile="${genconst.xsl}"
+        dependent="${foproperties.xml},${svgproperties.xml},${extproperties.xml},${colorkw.xml}"
+        outfile="${build.src}/${replacestring}/fo/properties/Constants.java" smart="yes"/>
+
     <xslt infile="${foproperties.xml}" xsltfile="${properties.xsl}"
-        dependent="${propinc.xsl}"
+        dependent="${propinc.xsl},${colorkw.xml}"
         outfile="${build.src}/${replacestring}/fo/properties/fo_${ignore_this}" smart="yes"/>
     <xslt infile="${foproperties.xml}" xsltfile="${propmap.xsl}"
         dependent="${propinc.xsl}"
