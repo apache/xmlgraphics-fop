@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ public class Row extends BlockStackingLayoutManager {
     private List cellList = null;
     private List columns = null;
     private int rowHeight;
+    private int xoffset;
     private int yoffset;
 
     private class RowPosition extends LeafPosition {
@@ -248,6 +249,16 @@ public class Row extends BlockStackingLayoutManager {
     }
 
     /**
+     * Set the x position offset of this row.
+     * This is used to set the position of the areas returned by this row.
+     *
+     * @param off the x offset
+     */
+    public void setXOffset(int off) {
+        xoffset = off;
+    }
+    
+    /**
      * Set the y position offset of this row.
      * This is used to set the position of the areas returned by this row.
      *
@@ -277,7 +288,8 @@ public class Row extends BlockStackingLayoutManager {
             // Add the block areas to Area
 
             int cellcount = 0;
-            int xoffset = 0;
+            int x = this.xoffset;
+            //int x = (TableLayoutManager)getParent()).;
             for (Iterator iter = lfp.cellBreaks.iterator(); iter.hasNext();) {
                 List cellsbr = (List)iter.next();
                 PositionIterator breakPosIter;
@@ -294,12 +306,12 @@ public class Row extends BlockStackingLayoutManager {
                 }
 
                 while ((childLM = (Cell)breakPosIter.getNextChildLM()) != null) {
-                    childLM.setXOffset(xoffset);
+                    childLM.setXOffset(x);
                     childLM.setYOffset(yoffset);
                     childLM.setRowHeight(rowHeight);
                     childLM.addAreas(breakPosIter, lc);
                 }
-                xoffset += col.getWidth().getValue();
+                x += col.getWidth().getValue();
             }
         }
 
@@ -367,5 +379,6 @@ public class Row extends BlockStackingLayoutManager {
         TraitSetter.addBackground(block, fobj.getCommonBorderPaddingBackground());
         return block;
     }
+
 }
 
