@@ -34,23 +34,24 @@ public class FoRegionBeforeAfter extends FONode {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
-    /** Map of <tt>Integer</tt> indices of <i>applicableProps</i> array.
+    /** Map of <tt>Integer</tt> indices of <i>sparsePropsSet</i> array.
         It is indexed by the FO index of the FO associated with a given
-        position in the <i>applicableProps</i> array. */
-    protected static final HashMap applicablePropsHash;
+        position in the <i>sparsePropsSet</i> array. See
+        {@link org.apache.fop.fo.FONode#sparsePropsSet FONode.sparsePropsSet}.
+     */
+    protected static final HashMap sparsePropsMap;
 
     /** An <tt>int</tt> array of of the applicable property indices, in
         property index order. */
-    protected static final int[] applicableIndices;
+    protected static final int[] sparseIndices;
  
     /** The number of applicable properties.  This is the size of the
-        <i>applicableProps</i> array. */
+        <i>sparsePropsSet</i> array. */
     protected static final int numProps;
 
     static {
-        int propx = 0;
         // Collect the sets of properties that apply
-        BitSet propsets = (BitSet)(PropertySets.backgroundSet.clone());
+        BitSet propsets = PropertySets.backgroundSetClone();
         propsets.or(PropertySets.borderSet);
         propsets.or(PropertySets.paddingSet);
         propsets.set(PropNames.CLIP);
@@ -62,18 +63,19 @@ public class FoRegionBeforeAfter extends FONode {
         propsets.set(PropNames.EXTENT);
         propsets.set(PropNames.PRECEDENCE);
 
-        // Map these properties into applicableProps
-        // applicableProps is a HashMap containing the indicies of the
-        // applicableProps array, indexed by the FO index of the FO slot
-        // in applicableProps.
-        applicablePropsHash = new HashMap();
+        // Map these properties into sparsePropsSet
+        // sparsePropsSet is a HashMap containing the indicies of the
+        // sparsePropsSet array, indexed by the FO index of the FO slot
+        // in sparsePropsSet.
+        sparsePropsMap = new HashMap();
         numProps = propsets.cardinality();
-        applicableIndices = new int[numProps];
+        sparseIndices = new int[numProps];
+        int propx = 0;
         for (int next = propsets.nextSetBit(0);
                 next >= 0;
                 next = propsets.nextSetBit(next + 1)) {
-            applicableIndices[propx] = next;
-            applicablePropsHash.put
+            sparseIndices[propx] = next;
+            sparsePropsMap.put
                         (Ints.consts.get(next), Ints.consts.get(propx++));
         }
     }
@@ -88,7 +90,8 @@ public class FoRegionBeforeAfter extends FONode {
                 (FOTree foTree, int foType, FONode parent, FoXMLEvent event)
         throws Tree.TreeException, FOPException
     {
-        super(foTree, foType, parent, event, FOPropertySets.LAYOUT_SET);
+        super(foTree, foType, parent, event, FOPropertySets.LAYOUT_SET,
+                sparsePropsMap, sparseIndices, numProps);
     }
 
 }
