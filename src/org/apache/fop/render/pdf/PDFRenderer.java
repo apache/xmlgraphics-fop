@@ -230,26 +230,8 @@ public class PDFRenderer implements Renderer {
 			+ "" + (cx - 21 * r / 40f) + " " + (cy + r) + " " + (cx - r) + " " + (cy + 21 * r / 40f) + " " + (cx - r) + " " + cy + " c\n"
 			+ "" + (cx - r) + " " + (cy - 21 * r / 40f) + " " + (cx - 21 * r / 40f) + " " + (cy - r) + " " + cx + " " + (cy - r) + " c\n";
 
-		if(di == null) {
-			currentStream.add(str + "S\n");
-		} else {
-			if(di.fill) {
-				if(di.stroke) {
-					if(!di.nonzero)
-						currentStream.add(str + "B*\n");
-					else
-						currentStream.add(str + "B\n");
-				} else {
-					if(!di.nonzero)
-						currentStream.add(str + "f*\n");
-					else
-						currentStream.add(str + "f\n");
-				}
-			} else {
-//				if(di.stroke)
-					currentStream.add(str + "S\n");
-			}
-		}
+		currentStream.add(str);
+		doDrawing(di);
     }
 
     protected void addEllipse(float cx, float cy, float rx, float ry, DrawingInstruction di)
@@ -260,26 +242,8 @@ public class PDFRenderer implements Renderer {
 			+ "" + (cx + rx) + " " + (cy + 21 * ry / 40f) + " " + (cx + 21 * rx / 40f) + " " + (cy + ry) + " " + cx + " " + (cy + ry) + " c\n"
 			+ "" + (cx - 21 * rx / 40f) + " " + (cy + ry) + " " + (cx - rx) + " " + (cy + 21 * ry / 40f) + " " + (cx - rx) + " " + cy + " c\n"
 			+ "" + (cx - rx) + " " + (cy - 21 * ry / 40f) + " " + (cx - 21 * rx / 40f) + " " + (cy - ry) + " " + cx + " " + (cy - ry) + " c\n";
-		if(di == null) {
-			currentStream.add(str + "S\n");
-		} else {
-			if(di.fill) {
-				if(di.stroke) {
-					if(!di.nonzero)
-						currentStream.add(str + "B*\n");
-					else
-						currentStream.add(str + "B\n");
-				} else {
-					if(!di.nonzero)
-						currentStream.add(str + "f*\n");
-					else
-						currentStream.add(str + "f\n");
-				}
-			} else {
-//				if(di.stroke)
-					currentStream.add(str + "S\n");
-			}
-		}
+		currentStream.add(str);
+		doDrawing(di);
     }
 
     /**
@@ -312,26 +276,8 @@ public class PDFRenderer implements Renderer {
             str += "" + x + " " + (y + ry) + " l\n";
             str += "" + x + " " + y + " " + x + " " + y + " " + (x + rx) + " " + y + " c\n";
         }
-		if(di == null) {
-			currentStream.add(str + "S\n");
-		} else {
-			if(di.fill) {
-				if(di.stroke) {
-					if(!di.nonzero)
-						currentStream.add(str + "B*\n");
-					else
-						currentStream.add(str + "B\n");
-				} else {
-					if(!di.nonzero)
-						currentStream.add(str + "f*\n");
-					else
-						currentStream.add(str + "f\n");
-				}
-			} else {
-//				if(di.stroke)
-					currentStream.add(str + "S\n");
-			}
-		}
+		currentStream.add(str);
+		doDrawing(di);
     }
 
 	/**
@@ -506,8 +452,10 @@ public class PDFRenderer implements Renderer {
 	    			lastx += vals[0];
 	    			lasty += vals[1];
     			break;
-    			// these arcs are wrongs, I can't figure out the
-    			// equations at the moment
+				// get angle between the two points
+				// then get angle of points to centre (ie. both points are on the
+				// apogee and perigee of the ellipse)
+				// then work out the direction from flags
     			case SVGPathSeg.PATHSEG_ARC_ABS:
     				{
 	    				double rx = vals[0];
@@ -516,10 +464,44 @@ public class PDFRenderer implements Renderer {
 	    				boolean largearcflag = (vals[3] == 1.0);
 	    				boolean sweepflag = (vals[4] == 1.0);
 
+	    				double angle = Math.atan((vals[6] - lasty) / (vals[5] - lastx));
+	    				double relangle = Math.acos(rx / Math.sqrt((vals[6] - lasty) * (vals[6] - lasty) + (vals[5] - lastx) * (vals[5] - lastx)));
+	    				double absangle = angle + relangle;
+	    				// change sign depending on flags
+	    				double contrx1;
+	    				double contry1;
+	    				double contrx2;
+	    				double contry2;
+	    				if(largearcflag) {
+	    					if(sweepflag) {
+			    				contrx1 = lastx - rx * Math.cos(absangle);
+			    				contry1 = lasty + rx * Math.sin(absangle);
+			    				contrx2 = vals[5] + ry * Math.cos(absangle);
+			    				contry2 = vals[6] + ry * Math.sin(absangle);
+		    				} else {
+			    				contrx1 = lastx - rx * Math.cos(absangle);
+			    				contry1 = lasty - rx * Math.sin(absangle);
+			    				contrx2 = vals[5] + ry * Math.cos(absangle);
+			    				contry2 = vals[6] - ry * Math.sin(absangle);
+		    				}
+	    				} else {
+	    					if(sweepflag) {
+			    				contrx1 = lastx + rx * Math.cos(absangle);
+			    				contry1 = lasty + rx * Math.sin(absangle);
+			    				contrx2 = contrx1;
+			    				contry2 = contry1;
+		    				} else {
+			    				contrx1 = lastx + ry * Math.cos(absangle);
+			    				contry1 = lasty - ry * Math.sin(absangle);
+			    				contrx2 = contrx1;
+			    				contry2 = contry1;
+		    				}
+	    				}
+
 						double cx = lastx;
 						double cy = lasty;
-						currentStream.add(lastx + " " + lasty + " " +
-											(vals[0]) + " " + (vals[1]) + " " +
+						currentStream.add(contrx1 + " " + contry1 + " " +
+											contrx2 + " " + contry2 + " " +
 											vals[5] + " " + vals[6] +
 											" c\n");
 		    			lastcx = 0; //??
@@ -536,10 +518,52 @@ public class PDFRenderer implements Renderer {
 	    				boolean largearcflag = (vals[3] == 1.0);
 	    				boolean sweepflag = (vals[4] == 1.0);
 
-						currentStream.add(lastx + " " + lasty + " " +
-											(vals[0] + lastx) + " " + (vals[1] + lasty) + " " +
+	    				double angle = Math.atan(vals[6] / vals[5]);
+	    				double relangle = Math.atan(ry / rx);
+//	    				System.out.println((theta * Math.PI / 180f) + ":" + relangle + ":" + largearcflag + ":" + sweepflag);
+	    				double absangle = (theta * Math.PI / 180f);//angle + relangle;
+	    				// change sign depending on flags
+	    				double contrx1;
+	    				double contry1;
+	    				double contrx2;
+	    				double contry2;
+	    				if(largearcflag) {
+	    				    // in a large arc we need to do at least 2 and a bit
+	    				    // segments or curves.
+	    					if(sweepflag) {
+			    				contrx1 = lastx + rx * Math.cos(absangle);
+			    				contry1 = lasty + rx * Math.sin(absangle);
+			    				contrx2 = lastx + vals[5] + ry * Math.cos(absangle);
+			    				contry2 = lasty + vals[6] - ry * Math.sin(absangle);
+		    				} else {
+			    				contrx1 = lastx + rx * Math.sin(absangle);
+			    				contry1 = lasty + rx * Math.cos(absangle);
+			    				contrx2 = lastx + vals[5] + ry * Math.cos(absangle);
+			    				contry2 = lasty + vals[6] + ry * Math.sin(absangle);
+		    				}
+	    				} else {
+	    				    // only need at most two segments
+	    					if(sweepflag) {
+			    				contrx1 = lastx + rx * Math.cos(absangle);
+			    				contry1 = lasty - rx * Math.sin(absangle);
+			    				contrx2 = contrx1;
+			    				contry2 = contry1;
+		    				} else {
+			    				contrx1 = lastx - ry * Math.cos(absangle);
+			    				contry1 = lasty + ry * Math.sin(absangle);
+			    				contrx2 = contrx1;
+			    				contry2 = contry1;
+		    				}
+	    				}
+	    				System.out.println(contrx1 + ":" + contry1 + ":" + contrx2 + ":" + contry2);
+
+						double cx = lastx;
+						double cy = lasty;
+						currentStream.add(contrx1 + " " + contry1 + " " +
+											contrx2 + " " + contry2 + " " +
 											(vals[5] + lastx) + " " + (vals[6] + lasty) +
 											" c\n");
+
 		    			lastcx = 0; //??
 		    			lastcy = 0; //??
 		    			lastx += vals[5];
@@ -551,26 +575,7 @@ public class PDFRenderer implements Renderer {
     			break;
     		}
     	}
-		if(di == null) {
-			currentStream.add("S\n");
-		} else {
-			if(di.fill) {
-				if(di.stroke) {
-					if(!di.nonzero)
-						currentStream.add("B*\n");
-					else
-						currentStream.add("B\n");
-				} else {
-					if(!di.nonzero)
-						currentStream.add("f*\n");
-					else
-						currentStream.add("f\n");
-				}
-			} else {
-//				if(di.stroke)
-					currentStream.add("S\n");
-			}
-		}
+		doDrawing(di);
     }
 
     protected void addPolyline(Vector points, int posx, int posy, DrawingInstruction di, boolean close)
@@ -593,6 +598,11 @@ public class PDFRenderer implements Renderer {
     	}
     	if(close)
 			currentStream.add("h\n");
+		doDrawing(di);
+    }
+
+	protected void doDrawing(DrawingInstruction di)
+	{
 		if(di == null) {
 			currentStream.add("S\n");
 		} else {
@@ -613,7 +623,7 @@ public class PDFRenderer implements Renderer {
 					currentStream.add("S\n");
 			}
 		}
-    }
+	}
 
     /**
      * render area container to PDF
@@ -767,6 +777,13 @@ public class PDFRenderer implements Renderer {
 			System.err.println("could not add image to SVG: " + href);
 		}
 	}
+
+    /** render a foreign object area */
+    public void renderForeignObjectArea(ForeignObjectArea area)
+    {
+        // if necessary need to scale and align the content
+        area.getObject().render(this);
+    }
 
     /**
      * render SVG area to PDF
@@ -924,19 +941,40 @@ public class PDFRenderer implements Renderer {
 						case SVGUnitTypes.SVG_UNIT_TYPE_UNKNOWN:
 						default:
 					}
+					// the coords should be relative to the current object
 					// check value types, eg. %
 					if(bbox != null) {
-						theCoords.addElement(new Double(bbox.getX() +
-							radial.getCx().getBaseVal().getValue() * bbox.getWidth()));
-						theCoords.addElement(new Double(bbox.getY() +
-							radial.getCy().getBaseVal().getValue() * bbox.getHeight()));
-						theCoords.addElement(new Double(radial.getR().getBaseVal().getValue() *
-							bbox.getHeight()));
-						theCoords.addElement(new Double(bbox.getX() +
-							radial.getFx().getBaseVal().getValue() * bbox.getWidth()));
-						theCoords.addElement(new Double(bbox.getY() +
-							radial.getFy().getBaseVal().getValue() * bbox.getHeight()));
-						theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
+						if(false) {
+							theCoords.addElement(new Double(bbox.getX() +
+								radial.getCx().getBaseVal().getValue() * bbox.getWidth()));
+							theCoords.addElement(new Double(bbox.getY() +
+								radial.getCy().getBaseVal().getValue() * bbox.getHeight()));
+							theCoords.addElement(new Double(radial.getR().getBaseVal().getValue() *
+								bbox.getHeight()));
+							theCoords.addElement(new Double(bbox.getX() +
+								radial.getFx().getBaseVal().getValue() * bbox.getWidth()));
+							theCoords.addElement(new Double(bbox.getY() +
+								radial.getFy().getBaseVal().getValue() * bbox.getHeight()));
+							theCoords.addElement(new Double(radial.getR().getBaseVal().getValue() *
+								bbox.getHeight()));
+						} else {
+							theCoords.addElement(new Double(-bbox.getX() + radial.getCx().getBaseVal().getValue()));
+							theCoords.addElement(new Double(-bbox.getY() + radial.getCy().getBaseVal().getValue()));
+							theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
+							theCoords.addElement(new Double(-bbox.getX() + radial.getFx().getBaseVal().getValue())); // Fx
+							theCoords.addElement(new Double(-bbox.getY() + radial.getFy().getBaseVal().getValue())); // Fy
+							theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
+/*							theCoords.addElement(new Double(bbox.getX() +
+								radial.getCx().getBaseVal().getValue()));
+							theCoords.addElement(new Double(bbox.getY() +
+								radial.getCy().getBaseVal().getValue()));
+							theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
+							theCoords.addElement(new Double(bbox.getX() +
+								radial.getFx().getBaseVal().getValue()));
+							theCoords.addElement(new Double(bbox.getY() +
+								radial.getFy().getBaseVal().getValue()));
+							theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));*/
+						}
 					} else {
 						theCoords.addElement(new Double(radial.getCx().getBaseVal().getValue()));
 						theCoords.addElement(new Double(radial.getCy().getBaseVal().getValue()));
@@ -980,6 +1018,7 @@ public class PDFRenderer implements Renderer {
 	 * Should only set style for elements that have changes.
 	 *
 	 */
+	// need mask drawing
 	class DrawingInstruction {
 		boolean stroke = false;
 		boolean nonzero = false; // non-zero fill rule "f*", "B*" operator
@@ -1109,6 +1148,7 @@ public class PDFRenderer implements Renderer {
 		return di;
 	}
 
+	// need to transform about the origin of the current object
 	protected void applyTransform(Vector trans)
 	{
 		PDFNumber pdfNumber = new PDFNumber();
