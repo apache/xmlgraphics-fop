@@ -152,216 +152,32 @@ public class BlockArea extends Area {
 				}
 		}
 
-  // font-variant support : addText is a wrapper for addRealText
-  // added by Eric SCHAEFFER
-  public int addText(FontState fontState, float red, float green,
-		     float blue, int wrapOption, LinkSet ls,
-		     int whiteSpaceCollapse, char data[], int start, int end,
-		     TextState textState) {
-    if (fontState.getFontVariant() == FontVariant.SMALL_CAPS) {
-      FontState smallCapsFontState;
-      try {
-	int smallCapsFontHeight = (int) (((double) fontState.getFontSize()) * 0.8d);
-	smallCapsFontState = new FontState(
-					   fontState.getFontInfo(),
-					   fontState.getFontFamily(),
-					   fontState.getFontStyle(),
-					   fontState.getFontWeight(),
-					   smallCapsFontHeight,
-					   FontVariant.NORMAL);
-      } catch (FOPException ex) {
-	smallCapsFontState = fontState;
-	MessageHandler.errorln("Error creating small-caps FontState: " + ex.getMessage());
-      }
-
-      // parse text for upper/lower case and call addRealText
-      char c;
-      boolean isLowerCase;
-      int caseStart;
-      FontState fontStateToUse;
-      for (int i = start; i < end; ) {
-	caseStart = i;
-	c = data[i];
-	isLowerCase = (java.lang.Character.isLetter(c) && java.lang.Character.isLowerCase(c));
-	while (isLowerCase == (java.lang.Character.isLetter(c) && java.lang.Character.isLowerCase(c))) {
-	  if (isLowerCase) {
-	    data[i] = java.lang.Character.toUpperCase(c);
-	  }
-	  i++;
-	  if (i == end)
-	    break;
-	  c = data[i];
-	}
-	if (isLowerCase) {
-	  fontStateToUse = smallCapsFontState;
-	} else {
-	  fontStateToUse = fontState;
-	}
-	int index = this.addRealText(fontStateToUse, red, green, blue, wrapOption, ls,
-				     whiteSpaceCollapse, data, caseStart, i, textState);
-	if (index != -1) {
-	  return index;
-	}
-      }
-
-      return -1;
-    }
-
-    // font-variant normal
-    return this.addRealText(fontState, red, green, blue, wrapOption, ls,
-			    whiteSpaceCollapse, data, start, end, textState);
-  }
-
-  protected int addRealText(FontState fontState, float red, float green,
-			    float blue, int wrapOption, LinkSet ls,
-			    int whiteSpaceCollapse, char data[], int start, int end,
-			    TextState textState) {
-    int ts, te;
-    char[] ca;
-
-    ts = start;
-    te = end;
-    ca = data;
-
-    if (currentHeight + currentLineArea.getHeight() > maxHeight) {
-      return start;
-    }
-
-    this.currentLineArea.changeFont(fontState);
-    this.currentLineArea.changeColor(red, green, blue);
-    this.currentLineArea.changeWrapOption(wrapOption);
-    this.currentLineArea.changeWhiteSpaceCollapse(whiteSpaceCollapse);
-    this.currentLineArea.changeHyphenation(language, country, hyphenate,
-					   hyphenationChar, hyphenationPushCharacterCount,
-					   hyphenationRemainCharacterCount);
-    if (ls != null) {
-      this.currentLinkSet = ls;
-      ls.setYOffset(currentHeight);
-    }
-
-    ts = this.currentLineArea.addText(ca, ts, te, ls, textState);
-    this.hasLines = true;
-
-    while (ts != -1) {
-      this.currentLineArea.align(this.align);
-      this.addLineArea(this.currentLineArea);
-
-      this.currentLineArea =
-	new LineArea(fontState, lineHeight, halfLeading,
-		     allocationWidth, startIndent, endIndent,
-		     currentLineArea);
-      if (currentHeight + currentLineArea.getHeight() >
-	  this.maxHeight) {
-	return ts;
-      }
-      this.currentLineArea.changeFont(fontState);
-      this.currentLineArea.changeColor(red, green, blue);
-      this.currentLineArea.changeWrapOption(wrapOption);
-      this.currentLineArea.changeWhiteSpaceCollapse(
-						    whiteSpaceCollapse);
-      this.currentLineArea.changeHyphenation(language, country, hyphenate,
-					     hyphenationChar, hyphenationPushCharacterCount,
-					     hyphenationRemainCharacterCount);
-      if (ls != null) {
-	ls.setYOffset(currentHeight);
-      }
-
-      ts = this.currentLineArea.addText(ca, ts, te, ls, textState);
-    }
-    return -1;
-  }
-
-
-  /**
-			* adds a leader to current line area of containing block area
-			* the actual leader area is created in the line area
-			*
-			* @return int +1 for success and -1 for none
-			*/
-  public int addLeader(FontState fontState, float red, float green,
-		       float blue, int leaderPattern, int leaderLengthMinimum,
-		       int leaderLengthOptimum, int leaderLengthMaximum,
-		       int ruleThickness, int ruleStyle, int leaderPatternWidth,
-		       int leaderAlignment) {
-
-				//this should start a new page
-    if (currentHeight + currentLineArea.getHeight() > maxHeight) {
-      return -1;
-    }
-
-    this.currentLineArea.changeFont(fontState);
-    this.currentLineArea.changeColor(red, green, blue);
-
-				//check whether leader fits into the (rest of the) line
-				//using length.optimum to determine where to break the line as defined
-				// in the xsl:fo spec: "User agents may choose to use the value of 'leader-length.optimum'
-				// to determine where to break the line" (7.20.4)
-				//if leader is longer then create a new LineArea and put leader there
-				if (leaderLengthOptimum <= (this.getContentWidth() -
-																		this.currentLineArea.finalWidth -
-																		this.currentLineArea.pendingWidth)) {
-						this.currentLineArea.addLeader(leaderPattern,
-																					 leaderLengthMinimum, leaderLengthOptimum,
-																					 leaderLengthMaximum, ruleStyle, ruleThickness,
-																					 leaderPatternWidth, leaderAlignment);
-				} else {
-						//finish current line area and put it into children vector
-						this.currentLineArea.align(this.align);
-						this.addLineArea(this.currentLineArea);
-
-						//create new line area
-						this.currentLineArea =
-							new LineArea(fontState, lineHeight, halfLeading,
-													 allocationWidth, startIndent, endIndent,
-													 currentLineArea);
-						this.currentLineArea.changeFont(fontState);
-						this.currentLineArea.changeColor(red, green, blue);
-
-						if (currentHeight + currentLineArea.getHeight() >
-										this.maxHeight) {
-								return -1;
-						}
-
-						//check whether leader fits into LineArea at all, otherwise
-						//clip it (should honor the clip option of containing area)
-						if (leaderLengthMinimum <=
-											this.currentLineArea.getContentWidth()) {
-								this.currentLineArea.addLeader(leaderPattern,
-																							 leaderLengthMinimum, leaderLengthOptimum,
-																							 leaderLengthMaximum, ruleStyle, ruleThickness,
-																							 leaderPatternWidth, leaderAlignment);
-						} else {
-								MessageHandler.errorln("Leader doesn't fit into line, it will be clipped to fit.");
-								this.currentLineArea.addLeader(leaderPattern,
-																							 this.currentLineArea.getContentWidth() -
-																							 this.currentLineArea.finalWidth -
-																							 this.currentLineArea.pendingWidth,
-																							 leaderLengthOptimum, leaderLengthMaximum,
-																							 ruleStyle, ruleThickness, leaderPatternWidth,
-																							 leaderAlignment);
-						}
-				}
-				this.hasLines = true;
-				return 1;
-		}
-
     public LineArea getCurrentLineArea()
     {
+		if (currentHeight + this.currentLineArea.getHeight() > maxHeight) {
+				return null;
+		}
+				this.currentLineArea.changeHyphenation(language, country, hyphenate,
+																 hyphenationChar, hyphenationPushCharacterCount,
+																 hyphenationRemainCharacterCount);
+		this.hasLines = true;
         return this.currentLineArea;
     }
 
     public LineArea createNextLineArea()
     {
 				if (this.hasLines) {
-						this.currentLineArea.addPending();
+//						this.currentLineArea.addPending();
 						this.currentLineArea.align(this.align);
-//						this.currentLineArea.verticalAlign();
 						this.addLineArea(this.currentLineArea);
 				}
 						this.currentLineArea =
 							new LineArea(fontState, lineHeight, halfLeading,
 													 allocationWidth, startIndent, endIndent,
 													 currentLineArea);
+				this.currentLineArea.changeHyphenation(language, country, hyphenate,
+																 hyphenationChar, hyphenationPushCharacterCount,
+																 hyphenationRemainCharacterCount);
 				if (currentHeight + lineHeight > maxHeight) {
 						return null;
 				}

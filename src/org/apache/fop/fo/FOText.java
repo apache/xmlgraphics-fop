@@ -56,7 +56,7 @@ import org.apache.fop.layout.Area;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.TextState;
+import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
@@ -164,7 +164,7 @@ public class FOText extends FONode {
 						this.marker = this.start;
 				}
 				int orig_start = this.marker;
-				this.marker = ((BlockArea) area).addText(fs, red, green, blue,
+				this.marker = addText((BlockArea)area, fs, red, green, blue,
 											wrapOption, this.getLinkSet(), whiteSpaceCollapse, ca,
 											this.marker, length, ts);
 				if (this.marker == -1) {
@@ -187,4 +187,114 @@ public class FOText extends FONode {
 						return new Status(Status.AREA_FULL_NONE);
 				}
 		}
+
+		// font-variant support : addText is a wrapper for addRealText
+		// added by Eric SCHAEFFER
+		public static int addText(BlockArea ba, FontState fontState, float red, float green,
+											 float blue, int wrapOption, LinkSet ls,
+											 int whiteSpaceCollapse, char data[], int start, int end,
+											 TextState textState) {
+			if (fontState.getFontVariant() == FontVariant.SMALL_CAPS) {
+				FontState smallCapsFontState;
+				try {
+					int smallCapsFontHeight = (int) (((double) fontState.getFontSize()) * 0.8d);
+					smallCapsFontState = new FontState(
+						fontState.getFontInfo(),
+						fontState.getFontFamily(),
+						fontState.getFontStyle(),
+						fontState.getFontWeight(),
+						smallCapsFontHeight,
+						FontVariant.NORMAL);
+				} catch (FOPException ex) {
+					smallCapsFontState = fontState;
+					MessageHandler.errorln("Error creating small-caps FontState: " + ex.getMessage());
+				}
+
+				// parse text for upper/lower case and call addRealText
+				char c;
+				boolean isLowerCase;
+				int caseStart;
+				FontState fontStateToUse;
+				for (int i = start; i < end; ) {
+					caseStart = i;
+					c = data[i];
+					isLowerCase = (java.lang.Character.isLetter(c) && java.lang.Character.isLowerCase(c));
+					while (isLowerCase == (java.lang.Character.isLetter(c) && java.lang.Character.isLowerCase(c))) {
+						if (isLowerCase) {
+							data[i] = java.lang.Character.toUpperCase(c);
+						}
+						i++;
+						if (i == end)
+							break;
+						c = data[i];
+					}
+					if (isLowerCase) {
+						fontStateToUse = smallCapsFontState;
+					} else {
+						fontStateToUse = fontState;
+					}
+					int index = addRealText(ba, fontStateToUse, red, green, blue, wrapOption, ls,
+						whiteSpaceCollapse, data, caseStart, i, textState);
+					if (index != -1) {
+						return index;
+					}
+				}
+
+				return -1;
+			}
+
+			// font-variant normal
+			return addRealText(ba, fontState, red, green, blue, wrapOption, ls,
+				whiteSpaceCollapse, data, start, end, textState);
+		}
+
+		protected static int addRealText(BlockArea ba, FontState fontState, float red, float green,
+											 float blue, int wrapOption, LinkSet ls,
+											 int whiteSpaceCollapse, char data[], int start, int end,
+											 TextState textState) {
+				int ts, te;
+				char[] ca;
+
+				ts = start;
+				te = end;
+				ca = data;
+
+				LineArea la = ba.getCurrentLineArea();
+				if (la == null) {
+						return start;
+				}
+
+				la.changeFont(fontState);
+				la.changeColor(red, green, blue);
+				la.changeWrapOption(wrapOption);
+				la.changeWhiteSpaceCollapse(whiteSpaceCollapse);
+//				la.changeHyphenation(language, country, hyphenate,
+//																 hyphenationChar, hyphenationPushCharacterCount,
+//																 hyphenationRemainCharacterCount);
+				ba.setupLinkSet(ls);
+
+				ts = la.addText(ca, ts, te, ls, textState);
+//				this.hasLines = true;
+
+				while (ts != -1) {
+						la = ba.createNextLineArea();
+						if (la == null) {
+								return ts;
+						}
+						la.changeFont(fontState);
+						la.changeColor(red, green, blue);
+						la.changeWrapOption(wrapOption);
+						la.changeWhiteSpaceCollapse(
+							whiteSpaceCollapse);
+//						la.changeHyphenation(language, country, hyphenate,
+//																		 hyphenationChar, hyphenationPushCharacterCount,
+//																		 hyphenationRemainCharacterCount);
+        				ba.setupLinkSet(ls);
+
+						ts = la.addText(ca, ts, te, ls, textState);
+				}
+				return -1;
+		}
+
+
 }
