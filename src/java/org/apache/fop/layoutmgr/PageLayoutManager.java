@@ -450,7 +450,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private PageViewport makeNewPage(boolean bIsBlank, boolean bIsLast) {
         finishPage();
         try {
-            curPage = createPage(pageSequence, pageCount, bIsBlank, isFirstPage, bIsLast);
+            curPage = createPage(bIsBlank, bIsLast);
             isFirstPage = false;
         } catch (FOPException fopex) { /* ???? */
             fopex.printStackTrace();
@@ -710,29 +710,16 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     }
 
     /**
-     * Called by PageLayoutManager when it needs a new page on which to
-     * place content. The PageSequence manages the page number (odd/even),
-     * but the PLM tells it if the page is blank or is the last page.
+     * Called when a new page is needed.
      *
-     * @param pageNumber the page number to create page for
      * @param bIsBlank If true, use a master for a blank page.
-     * @param firstPage true if this is the first page
      * @param bIsLast If true, use the master for the last page in the sequence.
      * @return the page viewport created for the page number
      * @throws FOPException if there is an error creating page
      */
-    public PageViewport createPage(PageSequence pageSequence, int pageNumber,
-                                   boolean bIsBlank, boolean firstPage,
-                                   boolean bIsLast)
+    public PageViewport createPage(boolean bIsBlank, boolean bIsLast)
                                    throws FOPException {
-        if (pageSequence.getPageSequenceMaster() == null) {
-            currentSimplePageMaster = pageSequence.getSimplePageMaster();
-        } else {
-            currentSimplePageMaster = pageSequence.getPageSequenceMaster()
-              .getNextSimplePageMaster(((pageNumber % 2) == 1),
-                                       firstPage,
-                                       bIsBlank);
-        }
+        currentSimplePageMaster = getSimpleMasterPageToUse(bIsBlank);
         Region body = currentSimplePageMaster.getRegion(Region.BODY);
         if (!pageSequence.getMainFlow().getFlowName().equals(body.getRegionName())) {
           throw new FOPException("Flow '" + pageSequence.getMainFlow().getFlowName()
@@ -740,7 +727,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                                  + currentSimplePageMaster.getMasterName() + "'");
         }
         PageMaster pageMaster = currentSimplePageMaster.getPageMaster();
-        if ( pageMaster == null) {
+        if (pageMaster == null) {
             createSimplePageMasterAreas(currentSimplePageMaster);
         }
         pageMaster = currentSimplePageMaster.getPageMaster();
@@ -756,6 +743,16 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
         // handle the 'force-page-count'
         //forcePage(areaTree, firstAvailPageNumber);
+    }
+
+    private SimplePageMaster getSimpleMasterPageToUse(boolean bIsBlank)
+            throws FOPException {
+        if (pageSequence.getPageSequenceMaster() == null) {
+            return pageSequence.getSimplePageMaster();
+        }
+        boolean isOddPage = ((pageCount % 2) == 1);
+        return pageSequence.getPageSequenceMaster()
+              .getNextSimplePageMaster(isOddPage, isFirstPage, bIsBlank);
     }
 
     public void createSimplePageMasterAreas(SimplePageMaster node) {
