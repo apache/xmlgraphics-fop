@@ -30,7 +30,9 @@ import org.apache.fop.fo.flow.RetrieveMarker;
 /**
  * LayoutManager for a block FO.
  */
-public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
+public class RetrieveMarkerLayoutManager extends AbstractLayoutManager 
+    implements InlineLevelLayoutManager {
+
     private RetrieveMarker fobj;
     
     private LayoutManager replaceLM = null;
@@ -67,6 +69,9 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
         return replaceLM.getNextBreakPoss(context);
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.InlineLevelLayoutManager#getNextKnuthElements
+     */
     public LinkedList getNextKnuthElements(LayoutContext context,
             int alignment) {
         loadLM();
@@ -75,6 +80,66 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
         }
         return ((InlineLevelLayoutManager) replaceLM)
                .getNextKnuthElements(context, alignment);
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.InlineLevelLayoutManager#addALetterSpaceTo
+     */
+    public KnuthElement addALetterSpaceTo(KnuthElement element) {
+        loadLM();
+        if (replaceLM == null) {
+            return null;
+        }
+        return ((InlineLevelLayoutManager) replaceLM)
+            .addALetterSpaceTo(element);
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.InlineLevelLayoutManager#getWordChars
+     */
+    public void getWordChars(StringBuffer sbChars, Position pos) {
+        loadLM();
+        if (replaceLM != null) {
+            ((InlineLevelLayoutManager) replaceLM)
+                .getWordChars(sbChars, pos);
+        }
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.InlineLevelLayoutManager#hyphenate
+     */
+    public void hyphenate(Position pos, HyphContext hc) {
+        loadLM();
+        if (replaceLM != null) {
+            ((InlineLevelLayoutManager) replaceLM).hyphenate(pos, hc);
+        }
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.InlineLevelLayoutManager#applyChanges
+     */
+    public boolean applyChanges(List oldList) {
+        loadLM();
+        if (replaceLM == null) {
+            return false;
+        }
+        return ((InlineLevelLayoutManager) replaceLM)
+            .applyChanges(oldList);
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.InlineLevelLayoutManager#getChangedKnuthElements
+     */
+    public LinkedList getChangedKnuthElements(List oldList,
+                                              int flaggedPenalty,
+                                              int alignment) {
+        loadLM();
+        if (replaceLM == null) {
+            return null;
+        }
+        return ((InlineLevelLayoutManager) replaceLM)
+               .getChangedKnuthElements(oldList, flaggedPenalty,
+                                        alignment);
     }
 
     public void addAreas(PositionIterator parentIter,
