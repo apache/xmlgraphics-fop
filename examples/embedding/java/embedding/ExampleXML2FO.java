@@ -86,7 +86,7 @@ public class ExampleXML2FO {
 
             //Setup input and output files            
             File xmlfile = new File(baseDir, "xml/xml/projectteam.xml");
-            File xsltfile = new File(baseDir, "xml/xslt/projectteam2FO.xsl");
+            File xsltfile = new File(baseDir, "xml/xslt/projectteam2fo.xsl");
             File fofile = new File(outDir, "ResultXML2FO.fo");
 
             System.out.println("Input: XML (" + xmlfile + ")");
