@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.area.Area;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.flow.RetrieveMarker;
 
 /**
  * LayoutManager for a block FO.
@@ -38,10 +40,11 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
     /**
      * Create a new block container layout manager.
      */
-    public RetrieveMarkerLayoutManager(String n, int pos, int bound) {
-        name = n;
-        position = pos;
-        boundary = bound;
+    public RetrieveMarkerLayoutManager(RetrieveMarker node) {
+        super(node);
+        name = node.getRetrieveClassName();
+        position = node.getRetrievePosition();
+        boundary = node.getRetrieveBoundary();
     }
 
     public boolean generatesInlineAreas() {

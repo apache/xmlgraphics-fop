@@ -24,6 +24,7 @@ import java.awt.geom.Rectangle2D;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.Block;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
@@ -63,6 +64,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
      * Create a new block container layout manager.
      */
     public BlockContainerLayoutManager() {
+    }
+
+    /**
+     * Create a new block container layout manager.
+     */
+    public BlockContainerLayoutManager(FObj node) {
+        super(node);
     }
 
     public void setOverflow(int of) {

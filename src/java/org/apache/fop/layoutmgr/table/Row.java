@@ -18,6 +18,7 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -66,7 +67,8 @@ public class Row extends BlockStackingLayoutManager {
      * Create a new row layout manager.
      *
      */
-    public Row() {
+    public Row(FObj node) {
+        super(node);
     }
 
     /**

@@ -20,6 +20,7 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -37,6 +38,14 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
     private int alignment;
     private int lead;
     private MinOptMax ipd;
+
+    /**
+     * Create a Leaf node layout mananger.
+     * @param node the FObj to attach to this LM.
+     */
+    public LeafNodeLayoutManager(FObj node) {
+        super(node);
+    }
 
     /**
      * Create a Leaf node layout mananger.

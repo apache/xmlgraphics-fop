@@ -187,9 +187,7 @@ public class AddLMVisitor implements FOTreeVisitor {
     public void serveFObjMixed(FObjMixed node) {
         if (node.getChildren() != null) {
             InlineStackingLayoutManager lm;
-            lm = new InlineStackingLayoutManager();
-            lm.setUserAgent(node.getUserAgent());
-            lm.setFObj(node);
+            lm = new InlineStackingLayoutManager(node);
             lm.setLMiter(new LMiter(lm, node.getChildren()));
             currentLMList.add(lm);
         }
@@ -238,9 +236,7 @@ public class AddLMVisitor implements FOTreeVisitor {
         currentLMList = childList;
         serveFObj((FObj)node);
         currentLMList = saveLMList;
-        LayoutManager lm = new ICLayoutManager(childList);
-        lm.setUserAgent(node.getUserAgent());
-        lm.setFObj(node);
+        LayoutManager lm = new ICLayoutManager(node, childList);
         currentLMList.add(lm);
     }
 
@@ -250,15 +246,13 @@ public class AddLMVisitor implements FOTreeVisitor {
     public void serveBasicLink(final BasicLink node) {
         node.setup();
         InlineStackingLayoutManager lm;
-        lm = new InlineStackingLayoutManager() {
+        lm = new InlineStackingLayoutManager(node) {
             protected InlineParent createArea() {
                 InlineParent area = super.createArea();
                 setupBasicLinkArea(node, parentLM, area);
                 return area;
             }
         };
-        lm.setUserAgent(node.getUserAgent());
-        lm.setFObj(node);
         lm.setLMiter(new LMiter(lm, node.getChildren()));
         currentLMList.add(lm);
     }
@@ -287,7 +281,7 @@ public class AddLMVisitor implements FOTreeVisitor {
      }
 
      public void serveLeader(final Leader node) {
-         LeafNodeLayoutManager lm = new LeafNodeLayoutManager() {
+         LeafNodeLayoutManager lm = new LeafNodeLayoutManager(node) {
              public InlineArea get(LayoutContext context) {
                  return getLeaderInlineArea(node, this);
              }
@@ -302,8 +296,6 @@ public class AddLMVisitor implements FOTreeVisitor {
                  }
              }*/
          };
-         lm.setUserAgent(node.getUserAgent());
-         lm.setFObj(node);
          lm.setAlignment(node.propertyList.get(Constants.PR_LEADER_ALIGNMENT).getEnum());
          currentLMList.add(lm);
      }
@@ -360,9 +352,7 @@ public class AddLMVisitor implements FOTreeVisitor {
                  return null;
              }
              InlineStackingLayoutManager lm;
-             lm = new InlineStackingLayoutManager();
-             lm.setUserAgent(node.getUserAgent());
-             lm.setFObj(node);
+             lm = new InlineStackingLayoutManager(node);
              lm.setLMiter(new LMiter(lm, node.getChildren()));
              lm.initialize();
 
@@ -393,20 +383,14 @@ public class AddLMVisitor implements FOTreeVisitor {
 
      public void serveRetrieveMarker(RetrieveMarker node) {
          RetrieveMarkerLayoutManager rmlm;
-         rmlm = new RetrieveMarkerLayoutManager(node.getRetrieveClassName(),
-                 node.getRetrievePosition(),
-                 node.getRetrieveBoundary());
-         rmlm.setUserAgent(node.getUserAgent());
-         rmlm.setFObj(node);
+         rmlm = new RetrieveMarkerLayoutManager(node);
          currentLMList.add(rmlm);
      }
 
      public void serveCharacter(Character node) {
          InlineArea inline = getCharacterInlineArea(node);
          if (inline != null) {
-             LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
-             lm.setUserAgent(node.getUserAgent());
-             lm.setFObj(node);
+             LeafNodeLayoutManager lm = new LeafNodeLayoutManager(node);
              lm.setCurrentArea(inline);
              currentLMList.add(lm);
          }
@@ -431,9 +415,7 @@ public class AddLMVisitor implements FOTreeVisitor {
          InlineArea area = getExternalGraphicInlineArea(node);
          if (area != null) {
              node.setupID();
-             LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
-             lm.setUserAgent(node.getUserAgent());
-             lm.setFObj(node);
+             LeafNodeLayoutManager lm = new LeafNodeLayoutManager(node);
              lm.setCurrentArea(area);
              lm.setAlignment(node.propertyList.get(Constants.PR_VERTICAL_ALIGN).getEnum());
              lm.setLead(node.getViewHeight());
@@ -470,26 +452,20 @@ public class AddLMVisitor implements FOTreeVisitor {
      }
 
      public void serveBlockContainer(BlockContainer node) {
-         BlockContainerLayoutManager blm = new BlockContainerLayoutManager();
-         blm.setUserAgent(node.getUserAgent());
-         blm.setFObj(node);
+         BlockContainerLayoutManager blm = new BlockContainerLayoutManager(node);
          blm.setOverflow(node.propertyList.get(Constants.PR_OVERFLOW).getEnum());
          currentLMList.add(blm);
      }
 
      public void serveListBlock(ListBlock node) {
-         ListBlockLayoutManager blm = new ListBlockLayoutManager();
-         blm.setUserAgent(node.getUserAgent());
-         blm.setFObj(node);
+         ListBlockLayoutManager blm = new ListBlockLayoutManager(node);
          currentLMList.add(blm);
      }
 
      public void serveInstreamForeignObject(InstreamForeignObject node) {
          Viewport areaCurrent = getInstreamForeignObjectInlineArea(node);
          if (areaCurrent != null) {
-             LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
-             lm.setUserAgent(node.getUserAgent());
-             lm.setFObj(node);
+             LeafNodeLayoutManager lm = new LeafNodeLayoutManager(node);
              lm.setCurrentArea(areaCurrent);
              lm.setAlignment(node.propertyList.get(Constants.PR_VERTICAL_ALIGN).getEnum());
              lm.setLead(areaCurrent.getHeight());
@@ -649,9 +625,7 @@ public class AddLMVisitor implements FOTreeVisitor {
 
      public void serveListItem(ListItem node) {
          if (node.getLabel() != null && node.getBody() != null) {
-             ListItemLayoutManager blm = new ListItemLayoutManager();
-             blm.setUserAgent(node.getUserAgent());
-             blm.setFObj(node);
+             ListItemLayoutManager blm = new ListItemLayoutManager(node);
              blm.setLabel(getListItemLabelLayoutManager(node.getLabel()));
              blm.setBody(getListItemBodyLayoutManager(node.getBody()));
              currentLMList.add(blm);
@@ -664,9 +638,7 @@ public class AddLMVisitor implements FOTreeVisitor {
       * @return this object's Item layout manager
       */
      public Item getListItemLabelLayoutManager(ListItemLabel node) {
-         Item itemLabel = new Item();
-         itemLabel.setUserAgent(node.getUserAgent());
-         itemLabel.setFObj(node);
+         Item itemLabel = new Item(node);
          return itemLabel;
      }
 
@@ -674,9 +646,7 @@ public class AddLMVisitor implements FOTreeVisitor {
       * @return Item layout manager
       */
      public Item getListItemBodyLayoutManager(ListItemBody node) {
-         Item item = new Item();
-         item.setUserAgent(node.getUserAgent());
-         item.setFObj(node);
+         Item item = new Item(node);
          return item;
      }
 
@@ -687,7 +657,7 @@ public class AddLMVisitor implements FOTreeVisitor {
      public void servePageNumber(final PageNumber node) {
          node.setup();
          LayoutManager lm;
-         lm = new LeafNodeLayoutManager() {
+         lm = new LeafNodeLayoutManager(node) {
                      public InlineArea get(LayoutContext context) {
                          // get page string from parent, build area
                          TextArea inline = new TextArea();
@@ -715,15 +685,13 @@ public class AddLMVisitor implements FOTreeVisitor {
                          curArea.setOffset(context.getBaseline());
                      }
                  };
-         lm.setUserAgent(node.getUserAgent());
-         lm.setFObj(node);
          currentLMList.add(lm);
      }
 
      public void servePageNumberCitation(final PageNumberCitation node) {
          node.setup();
          LayoutManager lm;
-         lm = new LeafNodeLayoutManager() {
+         lm = new LeafNodeLayoutManager(node) {
                      public InlineArea get(LayoutContext context) {
                          curArea = getPageNumberCitationInlineArea(node, parentLM);
                          return curArea;
@@ -742,8 +710,6 @@ public class AddLMVisitor implements FOTreeVisitor {
                          curArea.setOffset(context.getBaseline());
                      }
                  };
-         lm.setUserAgent(node.getUserAgent());
-         lm.setFObj(node);
          currentLMList.add(lm);
      }
 
@@ -791,9 +757,7 @@ public class AddLMVisitor implements FOTreeVisitor {
      }
 
      public void serveTable(Table node) {
-         TableLayoutManager tlm = new TableLayoutManager();
-         tlm.setUserAgent(node.getUserAgent());
-         tlm.setFObj(node);
+         TableLayoutManager tlm = new TableLayoutManager(node);
          ArrayList columns = node.getColumns();
          if (columns != null) {
              ArrayList columnLMs = new ArrayList();
@@ -813,10 +777,8 @@ public class AddLMVisitor implements FOTreeVisitor {
      }
 
      public LayoutManager getTableColumnLayoutManager(TableColumn node) {
-         node.doSetup();
-         Column clm = new Column();
-         clm.setUserAgent(node.getUserAgent());
-         clm.setFObj(node);
+         node.initialize();
+         Column clm = new Column(node);
          return clm;
      }
 
@@ -825,30 +787,22 @@ public class AddLMVisitor implements FOTreeVisitor {
      }
 
      public Body getTableBodyLayoutManager(TableBody node) {
-         Body blm = new Body();
-         blm.setUserAgent(node.getUserAgent());
-         blm.setFObj(node);
+         Body blm = new Body(node);
          return blm;
      }
 
      public void serveTableCell(TableCell node) {
-         Cell clm = new Cell();
-         clm.setUserAgent(node.getUserAgent());
-         clm.setFObj(node);
+         Cell clm = new Cell(node);
          currentLMList.add(clm);
      }
 
      public void serveTableRow(TableRow node) {
-         Row rlm = new Row();
-         rlm.setUserAgent(node.getUserAgent());
-         rlm.setFObj(node);
+         Row rlm = new Row(node);
          currentLMList.add(rlm);
      }
 
      public void serveFlow(Flow node) {
-         FlowLayoutManager lm = new FlowLayoutManager();
-         lm.setUserAgent(node.getUserAgent());
-         lm.setFObj(node);
+         FlowLayoutManager lm = new FlowLayoutManager(node);
          currentLMList.add(lm);
      }
 

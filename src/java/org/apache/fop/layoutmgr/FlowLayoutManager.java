@@ -18,6 +18,7 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
@@ -46,7 +47,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
      * This is the top level layout manager.
      * It is created by the PageSequence FO.
      */
-    public FlowLayoutManager() {
+    public FlowLayoutManager(FObj node) {
+        super(node);
     }
 
     /**

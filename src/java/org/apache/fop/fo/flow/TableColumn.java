@@ -45,7 +45,7 @@ public class TableColumn extends FObj {
     private int numColumnsRepeated;
     private int iColumnNumber;
 
-    private boolean setup = false;
+    private boolean initialized = false;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -75,7 +75,7 @@ public class TableColumn extends FObj {
         return numColumnsRepeated;
     }
 
-    public void doSetup() {
+    public void initialize() {
 
         // Common Border, Padding, and Background Properties
         // only background apply, border apply if border-collapse
@@ -101,7 +101,7 @@ public class TableColumn extends FObj {
         // initialize id
         setupID();
 
-        setup = true;
+        initialized = true;
     }
 
     /**
@@ -121,7 +121,7 @@ public class TableColumn extends FObj {
      */
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
-        doSetup();    // init some basic property values
+        initialize();    // init some basic property values
 
         getFOTreeControl().getFOInputHandler().startColumn(this);
     }

@@ -131,10 +131,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                 }
             }
             LineLayoutManager child;
-            child = new LineLayoutManager(lineHeight,
+            child = new LineLayoutManager(fobj, lineHeight,
                                             lead, follow);
-            child.setUserAgent(getUserAgent());
-            child.setFObj(fobj);
             child.setLMiter(inlines.listIterator());
             return child;
 

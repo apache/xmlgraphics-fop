@@ -18,6 +18,7 @@
 
 package org.apache.fop.layoutmgr.list;
 
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -64,7 +65,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
      * Create a new list item layout manager.
      *
      */
-    public ListItemLayoutManager() {
+    public ListItemLayoutManager(FObj node) {
+        super(node);
     }
 
     /**

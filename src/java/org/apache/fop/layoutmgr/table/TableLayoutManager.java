@@ -20,6 +20,7 @@ package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.fo.properties.TableColLength;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
@@ -75,7 +76,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
      * Create a new table layout manager.
      *
      */
-    public TableLayoutManager() {
+    public TableLayoutManager(FObj node) {
+        super(node);
     }
 
     /**
