@@ -136,7 +136,7 @@ public class JimiImage extends AbstractFopImage {
             } else {
                 this.m_isTransparent = false;
             }
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             log.error("Error while loading image "
                                + this.m_href.toString(), ex);
             return;

@@ -94,6 +94,10 @@ public class JpegImage extends AbstractFopImage {
                             // howto create CMYK color space
                             this.m_colorSpace = ColorSpace.getInstance(
                               ColorSpace.CS_CIEXYZ);
+                        } else {
+                            ua.getLogger().error("Unknown ColorSpace for image: "
+                                                   + this.m_href.toString());
+                            return false;
                         }
 
                         found_dimensions = true;
@@ -153,6 +157,10 @@ public class JpegImage extends AbstractFopImage {
                 return false;
             }
             iccProfile = ICC_Profile.getInstance(iccStream.toByteArray());
+        } else if(this.m_colorSpace == null) {
+            ua.getLogger().error("ColorSpace not specified for image: "
+                                     + this.m_href.toString());
+            return false;
         }
         return true;
     }
