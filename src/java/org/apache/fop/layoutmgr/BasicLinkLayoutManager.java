@@ -39,7 +39,6 @@ public class BasicLinkLayoutManager extends InlineStackingLayoutManager {
      */
     public BasicLinkLayoutManager(BasicLink node) {
         super(node);
-        setLMiter(new LMiter(this, node.getChildNodes()));
         link = node.getLink();
         isExternalLink = node.isExternalLink();
     }

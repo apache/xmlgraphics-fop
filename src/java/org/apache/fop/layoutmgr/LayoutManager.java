@@ -18,6 +18,7 @@
  
 package org.apache.fop.layoutmgr;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.fop.fo.flow.Marker;
@@ -217,5 +218,31 @@ public interface LayoutManager {
      * @return the layout manaager of the retrieved marker if any
      */
     Marker retrieveMarker(String name, int pos, int boundary);
+
+    /**
+     * Load next child LMs, up to child LM index pos
+     * @param pos index up to which child LMs are requested
+     * @return if requested index does exist
+     */
+    boolean preLoadNext(int pos);
+
+    /**
+     * @return the list of child LMs
+     */
+    List getChildLMs();
+
+    /**
+     * Add the LM in the argument to the list of child LMs;
+     * set this LM as the parent;
+     * initialize the LM.
+     * @param lm the LM to be added
+     */
+    void addChildLM(LayoutManager lm);
+
+    /**
+     * Add the LMs in the argument to the list of child LMs;
+     * @param newLMs the list of LMs to be added
+     */
+    void addChildLMs(List newLMs);
 
 }

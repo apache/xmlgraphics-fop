@@ -75,7 +75,6 @@ public class FObjMixed extends FObj {
         if (getChildNodes() != null) {
             InlineStackingLayoutManager lm;
             lm = new InlineStackingLayoutManager(this);
-            lm.setLMiter(new LMiter(lm, getChildNodes()));
             list.add(lm);
         }
     }

@@ -43,6 +43,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
 
+    protected ListIterator proxyLMiter;
+
     private LayoutProps layoutProps;
     private CommonBorderAndPadding borderProps;
     private CommonBackground backgroundProps;
@@ -71,7 +73,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
     public BlockLayoutManager(org.apache.fop.fo.flow.Block inBlock) {
         super.setFObj(inBlock);
-        childLMiter = new BlockLMiter(this, childLMiter);
+        proxyLMiter = new ProxyLMiter();
         userAgent = inBlock.getUserAgent();
         setBlockTextInfo(inBlock.getPropertyManager().getTextLayoutProps(
             inBlock.getFOInputHandler().getFontInfo()));
@@ -99,59 +101,75 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * Iterator for Block layout.
-     * This iterator combines consecutive inline areas and
-     * creates a line layout manager.
-     * The use of this iterator means that it can be reset properly.
+     * Proxy iterator for Block LM.
+     * This iterator creates and holds the complete list
+     * of child LMs.
+     * It uses fobjIter as its base iterator.
+     * Block LM's preLoadNext uses this iterator
+     * as its base iterator.
      */
-    protected class BlockLMiter extends LMiter {
+    protected class ProxyLMiter extends LMiter {
 
-        private ListIterator proxy;
-
-        public BlockLMiter(LayoutManager lp, ListIterator pr) {
-            super(lp, null);
-            proxy = pr;
+        public ProxyLMiter() {
+            super(BlockLayoutManager.this);
+            listLMs = new ArrayList(10);
         }
 
-        protected boolean preLoadNext() {
-            while (proxy.hasNext()) {
-                LayoutManager lm = (LayoutManager) proxy.next();
-                lm.setParent(BlockLayoutManager.this);
-                if (lm.generatesInlineAreas()) {
-                    LineLayoutManager lineLM = createLineManager(lm);
-                    listLMs.add(lineLM);
-                } else {
-                    listLMs.add(lm);
-                }
-                if (curPos < listLMs.size()) {
-                    return true;
-                }
+        public boolean hasNext() {
+            return (curPos < listLMs.size()) ? true : preLoadNext(curPos);
+        }
+
+        protected boolean preLoadNext(int pos) {
+            List newLMs = preLoadList(pos + 1 - listLMs.size());
+            if (newLMs != null) {
+                listLMs.addAll(newLMs);
             }
-            return false;
+            return pos < listLMs.size();
         }
+    }
 
-        protected LineLayoutManager createLineManager(
-          LayoutManager firstlm) {
-            LayoutManager lm;
-            List inlines = new ArrayList();
-            inlines.add(firstlm);
-            while (proxy.hasNext()) {
-                lm = (LayoutManager) proxy.next();
-                lm.setParent(BlockLayoutManager.this);
-                if (lm.generatesInlineAreas()) {
-                    inlines.add(lm);
-                } else {
-                    proxy.previous();
-                    break;
-                }
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#preLoadNext
+     */
+    public boolean preLoadNext(int pos) {
+
+        while (proxyLMiter.hasNext()) {
+            LayoutManager lm = (LayoutManager) proxyLMiter.next();
+            if (lm.generatesInlineAreas()) {
+                LineLayoutManager lineLM = createLineManager(lm);
+                addChildLM(lineLM);
+            } else {
+                addChildLM(lm);
             }
-            LineLayoutManager child;
-            child = new LineLayoutManager(fobj, lineHeight,
-                                            lead, follow);
-            child.setLMiter(inlines.listIterator());
-            return child;
-
+            if (pos < childLMs.size()) {
+                return true;
+            }
         }
+        return false;
+    }
+
+    /**
+     * Create a new LineLM, and collect all consecutive
+     * inline generating LMs as its child LMs.
+     * @param firstlm First LM in new LineLM
+     * @return the newly created LineLM
+     */
+    private LineLayoutManager createLineManager(LayoutManager firstlm) {
+        LineLayoutManager llm;
+        llm = new LineLayoutManager(fobj, lineHeight, lead, follow);
+        List inlines = new ArrayList();
+        inlines.add(firstlm);
+        while (proxyLMiter.hasNext()) {
+            LayoutManager lm = (LayoutManager) proxyLMiter.next();
+            if (lm.generatesInlineAreas()) {
+                inlines.add(lm);
+            } else {
+                proxyLMiter.previous();
+                break;
+            }
+        }
+        llm.addChildLMs(inlines);
+        return llm;
     }
 
     public BreakPoss getNextBreakPoss(LayoutContext context) {

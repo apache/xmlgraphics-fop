@@ -95,17 +95,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
     }
 
     /**
-     * Set the FO object for this layout manager
-     *
-     * @param fo the fo for this layout manager
-     */
-    public void setFObj(FObj fo) {
-        this.fobj = fo;
-        foID = fobj.getID();
-        childLMiter = null;
-    }
-
-    /**
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
     protected void initProperties() {

@@ -432,20 +432,18 @@ public class AreaTreeHandler extends FOInputHandler {
      * @return the Title area
      */
     private org.apache.fop.area.Title getTitleArea(org.apache.fop.fo.pagination.Title foTitle) {
-        // use special layout manager to add the inline areas
-        // to the Title.
-        InlineStackingLayoutManager lm;
-        lm = new InlineStackingLayoutManager(foTitle);
-        lm.setLMiter(new LMiter(lm, foTitle.getChildNodes()));
-        lm.initialize();
-
         // get breaks then add areas to title
         org.apache.fop.area.Title title =
                  new org.apache.fop.area.Title();
 
         ContentLayoutManager clm = new ContentLayoutManager(title);
         clm.setUserAgent(foTitle.getUserAgent());
-        lm.setParent(clm);
+
+        // use special layout manager to add the inline areas
+        // to the Title.
+        InlineStackingLayoutManager lm;
+        lm = new InlineStackingLayoutManager(foTitle);
+        clm.addChildLM(lm);
 
         clm.fillArea(lm);
 
