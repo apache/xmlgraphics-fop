@@ -1,20 +1,21 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.fo;
 
-
+// Java
+import java.text.MessageFormat;
 import java.awt.geom.Rectangle2D;
+
+// FOP
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.fo.TextInfo; // should be somewhere else probably...
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.FontInfo;
-import org.apache.fop.layout.FontMetric;
 import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.MarginProps;
 import org.apache.fop.layout.MarginInlineProps;
@@ -27,55 +28,77 @@ import org.apache.fop.traits.BlockProps;
 import org.apache.fop.traits.InlineProps;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.traits.LayoutProps; // keep, break, span, space?
-import org.apache.fop.fo.properties.BreakAfter;
-import org.apache.fop.fo.properties.BreakBefore;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.fo.properties.Span;
+import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.layout.HyphenationProps;
-import org.apache.fop.apps.FOPException;
-import java.text.MessageFormat;
-import java.text.FieldPosition;
 
+/**
+ * Helper class for managing groups of properties.
+ */
 public class PropertyManager {
 
     private PropertyList properties;
-    private FontInfo m_fontInfo = null;
+    private FontInfo fontInfo = null;
     private FontState fontState = null;
     private BorderAndPadding borderAndPadding = null;
     private HyphenationProps hyphProps = null;
     private TextInfo textInfo = null;
 
-    private static String[] saBefore = new String[]{"before"};
-    private static String[] saAfter = new String[]{"after"};
-    private static String[] saStart = new String[]{"start"};
-    private static String[] saEnd = new String[]{"end"};
+    private static final String[] SA_BEFORE = new String[]{"before"};
+    private static final String[] SA_AFTER = new String[]{"after"};
+    private static final String[] SA_START = new String[]{"start"};
+    private static final String[] SA_END = new String[]{"end"};
 
-    private static MessageFormat msgColorFmt = new MessageFormat("border-{0}-color");
-    private static MessageFormat msgStyleFmt = new MessageFormat("border-{0}-style");
-    private static MessageFormat msgWidthFmt = new MessageFormat("border-{0}-width");
-    private static MessageFormat msgPaddingFmt = new MessageFormat("padding-{0}");
+    private static final MessageFormat MSGFMT_COLOR = new MessageFormat("border-{0}-color");
+    private static final MessageFormat MSGFMT_STYLE = new MessageFormat("border-{0}-style");
+    private static final MessageFormat MSGFMT_WIDTH = new MessageFormat("border-{0}-width");
+    private static final MessageFormat MSGFMT_PADDING = new MessageFormat("padding-{0}");
 
+    private static final String NONE = "none";
+    
+    /**
+     * Main constructor
+     * @param pList property list
+     */
     public PropertyManager(PropertyList pList) {
         this.properties = pList;
     }
 
+    /**
+     * Returns the property list that is used for lookup.
+     * @return the property list
+     */
     public PropertyList getProperties() {
         return properties;
     }
 
+    /**
+     * Sets the FontInfo object telling the property manager which fonts are 
+     * available.
+     * @param fontInfo available fonts
+     */
     public void setFontInfo(FontInfo fontInfo) {
-        m_fontInfo = fontInfo;
+        this.fontInfo = fontInfo;
     }
 
 
+    /**
+     * Constructs a FontState object. If it was constructed before it is 
+     * reused.
+     * @param fontInfo FontInfo to work with
+     * @return a FontState object
+     */
     public FontState getFontState(FontInfo fontInfo) {
         if (fontState == null) {
             if (fontInfo == null) {
-                fontInfo = m_fontInfo;
-            } else if (m_fontInfo == null) {
-                m_fontInfo = fontInfo;
+                fontInfo = this.fontInfo;
+            } else if (this.fontInfo == null) {
+                this.fontInfo = fontInfo;
             }
+            /**@todo this is ugly. need to improve. */
+            
             String fontFamily = properties.get("font-family").getString();
             String fontStyle = properties.get("font-style").getString();
             String fw = properties.get("font-weight").getString();
@@ -88,7 +111,7 @@ public class PropertyManager {
                 try {
                     fontWeight = Integer.parseInt(fw);
                 } catch (NumberFormatException nfe) {
-                }
+                } /**@todo log that exception */
             }
             fontWeight = ((int) fontWeight / 100) * 100;
             if (fontWeight < 100) {
@@ -100,24 +123,29 @@ public class PropertyManager {
             // NOTE: this is incomplete. font-size may be specified with
             // various kinds of keywords too
             int fontSize = properties.get("font-size").getLength().mvalue();
-            int fontVariant = properties.get("font-variant").getEnum();
+            //int fontVariant = properties.get("font-variant").getEnum();
             String fname = fontInfo.fontLookup(fontFamily, fontStyle,
                                                fontWeight);
-            FontMetric metrics = fontInfo.getMetricsFor(fname);
+            FontMetrics metrics = fontInfo.getMetricsFor(fname);
             fontState = new FontState(fname, metrics, fontSize);
         }
         return fontState;
     }
 
 
+    /**
+     * Constructs a BorderAndPadding object. If it was constructed before it is 
+     * reused.
+     * @return a BorderAndPadding object
+     */
     public BorderAndPadding getBorderAndPadding() {
         if (borderAndPadding == null) {
             this.borderAndPadding = new BorderAndPadding();
 
-            initBorderInfo(BorderAndPadding.BEFORE, saBefore);
-            initBorderInfo(BorderAndPadding.AFTER, saAfter);
-            initBorderInfo(BorderAndPadding.START, saStart);
-            initBorderInfo(BorderAndPadding.END, saEnd);
+            initBorderInfo(BorderAndPadding.BEFORE, SA_BEFORE);
+            initBorderInfo(BorderAndPadding.AFTER, SA_AFTER);
+            initBorderInfo(BorderAndPadding.START, SA_START);
+            initBorderInfo(BorderAndPadding.END, SA_END);
         }
         return borderAndPadding;
     }
@@ -125,18 +153,23 @@ public class PropertyManager {
     private void initBorderInfo(int whichSide, String[] saSide) {
         borderAndPadding.setPadding(whichSide,
                                     properties.get(
-                                      msgPaddingFmt.format(saSide)).getCondLength());
+                                      MSGFMT_PADDING.format(saSide)).getCondLength());
         // If style = none, force width to 0, don't get Color
-        int style = properties.get(msgStyleFmt.format(saSide)).getEnum();
+        int style = properties.get(MSGFMT_STYLE.format(saSide)).getEnum();
         if (style != Constants.NONE) {
             borderAndPadding.setBorder(whichSide, style,
                                        properties.get(
-                                         msgWidthFmt.format(saSide)).getCondLength(),
+                                         MSGFMT_WIDTH.format(saSide)).getCondLength(),
                                        properties.get(
-                                         msgColorFmt.format(saSide)).getColorType());
+                                         MSGFMT_COLOR.format(saSide)).getColorType());
         }
     }
 
+    /**
+     * Constructs a HyphenationProps objects. If it was constructed before it is 
+     * reused.
+     * @return a HyphenationProps object
+     */
     public HyphenationProps getHyphenationProps() {
         if (hyphProps == null) {
             this.hyphProps = new HyphenationProps();
@@ -224,6 +257,11 @@ public class PropertyManager {
      }*/
 
 
+    /**
+     * Constructs a MarginProps objects. If it was constructed before it is 
+     * reused.
+     * @return a MarginProps object
+     */
     public MarginProps getMarginProps() {
         MarginProps props = new MarginProps();
 
@@ -238,20 +276,23 @@ public class PropertyManager {
           this.properties.get("margin-right").getLength().mvalue();
 
         // For now, we only get the optimum value for space-before and after
-        props.spaceBefore = this.properties.get(
-                              "space-before").getSpace(). getOptimum().getLength().
-                            mvalue();
-        props.spaceAfter = this.properties.get(
-                             "space-after").getSpace(). getOptimum().getLength().
-                           mvalue();
-        props.startIndent =
-          this.properties.get("start-indent").getLength().mvalue();
-        props.endIndent =
-          this.properties.get("end-indent").getLength().mvalue();
+        props.spaceBefore = this.properties.get("space-before").
+                        getSpace().getOptimum().getLength().mvalue();
+        props.spaceAfter = this.properties.get("space-after").
+                        getSpace().getOptimum().getLength().mvalue();
+        props.startIndent = this.properties.get("start-indent").
+                        getLength().mvalue();
+        props.endIndent = this.properties.get("end-indent").
+                        getLength().mvalue();
 
         return props;
     }
 
+    /**
+     * Constructs a BackgroundProps objects. If it was constructed before it is 
+     * reused.
+     * @return a BackgroundProps object
+     */
     public BackgroundProps getBackgroundProps() {
         BackgroundProps bp = new BackgroundProps();
         bp.backAttachment = properties.get("background-attachment").getEnum();
@@ -261,16 +302,16 @@ public class PropertyManager {
         }
 
         bp.backImage = properties.get("background-image").getString();
-        if (bp.backImage == null || "none".equals(bp.backImage)) {
+        if (bp.backImage == null || NONE.equals(bp.backImage)) {
             bp.backImage = null;
         } else {
             bp.backRepeat = properties.get("background-repeat").getEnum();
             Property prop = properties.get("background-position-horizontal");
-            if(prop != null) {
+            if (prop != null) {
                 bp.backPosHorizontal = prop.getLength();
             }
             prop = properties.get("background-position-vertical");
-            if(prop != null) {
+            if (prop != null) {
                 bp.backPosVertical = prop.getLength();
             }
         }
@@ -278,44 +319,72 @@ public class PropertyManager {
         return bp;
     }
 
+    /**
+     * Constructs a MarginInlineProps objects. If it was constructed before it is 
+     * reused.
+     * @return a MarginInlineProps object
+     */
     public MarginInlineProps getMarginInlineProps() {
         MarginInlineProps props = new MarginInlineProps();
         return props;
     }
 
+    /**
+     * Constructs a InlineProps objects. If it was constructed before it is 
+     * reused.
+     * @return a InlineProps object
+     */
     public InlineProps getInlineProps() {
         InlineProps props = new InlineProps();
-        props.spaceStart =
-          new SpaceVal(properties.get("space-start"). getSpace());
-        props.spaceEnd =
-          new SpaceVal(properties.get("space-end"). getSpace());
+        props.spaceStart =  new SpaceVal(properties.get("space-start").getSpace());
+        props.spaceEnd =    new SpaceVal(properties.get("space-end").getSpace());
         return props;
     }
 
+    /**
+     * Constructs a AccessibilityProps objects. If it was constructed before it is 
+     * reused.
+     * @return a AccessibilityProps object
+     */
     public AccessibilityProps getAccessibilityProps() {
         AccessibilityProps props = new AccessibilityProps();
         String str;
         str = this.properties.get("source-document").getString();
-        if (!"none".equals(str)) {
+        if (!NONE.equals(str)) {
             props.sourceDoc = str;
         }
         str = this.properties.get("role").getString();
-        if (!"none".equals(str)) {
+        if (!NONE.equals(str)) {
             props.role = str;
         }
         return props;
     }
 
+    /**
+     * Constructs a AuralProps objects. If it was constructed before it is 
+     * reused.
+     * @return a AuralProps object
+     */
     public AuralProps getAuralProps() {
         AuralProps props = new AuralProps();
         return props;
     }
 
+    /**
+     * Constructs a RelativePositionProps objects. If it was constructed before it is 
+     * reused.
+     * @return a RelativePositionProps object
+     */
     public RelativePositionProps getRelativePositionProps() {
         RelativePositionProps props = new RelativePositionProps();
         return props;
     }
 
+    /**
+     * Constructs a AbsolutePositionProps objects. If it was constructed before 
+     * it is reused.
+     * @return a AbsolutePositionProps object
+     */
     public AbsolutePositionProps getAbsolutePositionProps() {
         AbsolutePositionProps props = new AbsolutePositionProps();
         props.absolutePosition =
@@ -327,32 +396,46 @@ public class PropertyManager {
         return props;
     }
 
+    /**
+     * Constructs a BlockProps objects. If it was constructed before it is 
+     * reused.
+     * @return a BlockProps object
+     */
     public BlockProps getBlockProps() {
         BlockProps props = new BlockProps();
-        props.firstIndent =
-          this.properties.get("text-indent"). getLength().mvalue();
-        props.lastIndent = 0; /*this.properties.get("last-line-end-indent").getLength().mvalue(); */
+        props.firstIndent = this.properties.get("text-indent").getLength().mvalue();
+        props.lastIndent = 0; 
+            /*this.properties.get("last-line-end-indent").getLength().mvalue(); */
         props.textAlign = this.properties.get("text-align").getEnum();
-        props.textAlignLast =
-          this.properties.get("text-align-last"). getEnum();
-        props.lineStackType =
-          this.properties. get("line-stacking-strategy").getEnum();
+        props.textAlignLast = this.properties.get("text-align-last").getEnum();
+        props.lineStackType = this.properties.get("line-stacking-strategy").getEnum();
 
         return props;
     }
 
+    /**
+     * Constructs a LayoutProps objects. If it was constructed before it is 
+     * reused.
+     * @return a LayoutProps object
+     */
     public LayoutProps getLayoutProps() {
         LayoutProps props = new LayoutProps();
         props.breakBefore = this.properties.get("break-before").getEnum();
         props.breakAfter = this.properties.get("break-after").getEnum();
         props.bIsSpan = (this.properties.get("span").getEnum() == Span.ALL);
         props.spaceBefore = new SpaceVal(
-                              this.properties.get("space-before"). getSpace());
+                              this.properties.get("space-before").getSpace());
         props.spaceAfter = new SpaceVal(
-                             this.properties.get("space-after"). getSpace());
+                             this.properties.get("space-after").getSpace());
         return props;
     }
 
+    /**
+     * Constructs a TextInfo objects. If it was constructed before it is 
+     * reused.
+     * @param fontInfo available fonts
+     * @return a TextInfo object
+     */
     public TextInfo getTextLayoutProps(FontInfo fontInfo) {
         if (textInfo == null) {
             textInfo = new TextInfo();
@@ -374,19 +457,25 @@ public class PropertyManager {
             textInfo.whiteSpaceCollapse =
               properties.get("white-space-collapse").getEnum();
 
-            textInfo.lineHeight = this.properties. get(
+            textInfo.lineHeight = this.properties.get(
                                     "line-height").getLength().mvalue();
         }
         return textInfo;
     }
 
+    /**
+     * Construct a coordinate transformation matrix (CTM).
+     * @param absVPrect absolute viewpoint rectangle
+     * @param reldims relative dimensions
+     * @return CTM the coordinate transformation matrix (CTM)
+     */
     public CTM getCTMandRelDims(Rectangle2D absVPrect,
                                 FODimension reldims) {
         int width, height;
         // We will use the absolute reference-orientation to set up the CTM.
         // The value here is relative to its ancestor reference area.
-        int absRefOrient = getAbsRefOrient( this.properties.get(
-                                              "reference-orientation"). getNumber().intValue());
+        int absRefOrient = getAbsRefOrient(
+                this.properties.get("reference-orientation").getNumber().intValue());
         if (absRefOrient % 180 == 0) {
             width = (int) absVPrect.getWidth();
             height = (int) absVPrect.getHeight();
