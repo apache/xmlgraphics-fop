@@ -635,6 +635,9 @@ public class PDFRenderer extends PrintRenderer {
             // just to be on the safe side
             currentAnnotList = null;
         }
+		
+		// ensures that color is properly reset for blocks that carry over pages
+		this.currentFill = null;
     }
 
     /**
