@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -13,24 +13,34 @@ import org.apache.fop.fo.FOUserAgent;
  * Class to load images.
  */
 class ImageLoader {
-    String url;
-    ImageCache cache;
-    boolean valid = true;
-    FOUserAgent userAgent;
-    FopImage image = null;
+    
+    private String url;
+    private ImageCache cache;
+    private boolean valid = true;
+    private FOUserAgent userAgent;
+    private FopImage image = null;
 
-    public ImageLoader(String u, ImageCache c, FOUserAgent ua) {
-        url = u;
-        cache = c;
-        userAgent = ua;
+    /**
+     * Main constructor.
+     * @param url URL to the image
+     * @param cache Image cache
+     * @param ua User agent
+     */
+    public ImageLoader(String url, ImageCache cache, FOUserAgent ua) {
+        this.url = url;
+        this.cache = cache;
+        this.userAgent = ua;
     }
 
+    /**
+     * Loads the image.
+     * @return the loaded image
+     */
     public synchronized FopImage loadImage() {
         if (!valid || image != null) {
             return image;
         }
-        String base = userAgent.getBaseURL();
-        image = ImageFactory.loadImage(url, base, userAgent);
+        image = ImageFactory.loadImage(url, userAgent);
         if (image == null) {
             cache.invalidateImage(url, userAgent);
             valid = false;
