@@ -113,6 +113,10 @@ public class Use extends SVGObj {
 		graph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
 		graph.setTransform(((SVGTransform)this.properties.get("transform")).getTransform());
 		graph.setId(this.properties.get("id").getString());
+		graph.setX(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("x")).getSVGLength()));
+		graph.setY(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("y")).getSVGLength()));
+		graph.setWidth(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("width")).getSVGLength()));
+		graph.setHeight(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("height")).getSVGLength()));
 		return graph;
 	}
 }
