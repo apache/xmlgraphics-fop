@@ -59,13 +59,15 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
+import org.apache.fop.layout.Area;
+import org.apache.fop.apps.FOPException;
 
 
-public class IDReferences
-{
+public class IDReferences {
     private Hashtable idReferences;
     private Vector idValidation;
 
+    final static int ID_PADDING = 5000; // space to add before id y position
 
     /**
      * Constructor for IDReferences
@@ -76,6 +78,28 @@ public class IDReferences
         idValidation = new Vector();
     }
 
+
+    /**
+     * Initializes the specified id.  This should be called everytime an id is encountered
+     * 
+     * @param id     The id to initialize
+     * @param area   The area where this id was encountered
+     * @exception FOPException
+     */
+    public void initializeID(String id, Area area) throws FOPException
+    {
+        if ( id!=null && !id.equals("") ) {
+            if ( doesIDExist(id) ) {
+                throw new FOPException("The id \""+id+"\" already exists in this document");
+            }
+            else {
+                createNewId(id);
+                removeFromIdValidationList(id);                 
+                setYPosition(id,area.getPage().getBody().getYPosition() - area.getAbsoluteHeight()+ID_PADDING);                    
+                area.getPage().addToIDList(id);                                    
+            }
+        }
+    }
 
     /**
      * Adds id to validation list to be validated .  This should be used if it is unsure whether the id is valid
