@@ -78,7 +78,7 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
-    private SyncedFoXmlEventsBuffer events;
+    private SyncedXmlEventsBuffer events;
     private XMLReader parser;
     private XMLNamespaces namespaces;
     private InputSource source;
@@ -91,7 +91,7 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
      * @param source the parser input source.
      */
     public FoXMLSerialHandler
-        (SyncedFoXmlEventsBuffer events, XMLReader parser, InputSource source)
+        (SyncedXmlEventsBuffer events, XMLReader parser, InputSource source)
     {
         this.events = events;
         this.parser = parser;
@@ -127,7 +127,7 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
     /**
      * Utility routine for the callback methods.  It captures the
      * <tt>InterruptedException</tt> that is possible from the <i>put</i>
-     * method of a <tt>SyncedFoXmlEventsBuffer</tt>.
+     * method of a <tt>SyncedXmlEventsBuffer</tt>.
      */
     public void putEvent(XMLEvent event) throws NoSuchElementException {
         synchronized (events) {
@@ -177,7 +177,7 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
     private XMLEvent acquireXMLEvent(int nsIndex) {
         try {
             return
-                namespaces.acquireXMLEvent(XMLNamespaces.DefAttrNSIndex);
+                namespaces.acquireXMLEvent(nsIndex);
         } catch (FOPException ex) {
             throw new RuntimeException(
             "Namespace index " + nsIndex + " not recognized");
@@ -208,7 +208,7 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
                 //                   + Thread.currentThread().getName());
                 event.type = XMLEvent.STARTELEMENT;
                 // Is this from the fo: namespace?
-                event.uriIndex = namespaces.getURIIndex(uri);
+                event.uriIndex = uriIndex;
                 event.localName = localName;
                 //event.qName = qName;
                 event.attributes = new AttributesImpl(attributes);
@@ -265,18 +265,20 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
     {
         synchronized (events) {
             try {
-                // TODO chars events are legitimate XSL-FO events
-                // This may cause problems with other namespaces, and will have
-                // to be checked as those namepsaces are implemented.
-                // As SAX provides no URI information for chars, such
-                // such discrimination may have to be done at a higher level.
+                // TODO chars events have no namespace, but a namespace is
+                // essential for subsequent processing.  Use the default
+                // attribute namespace (the empty string), and rely on
+                // downstream processing to determine the environment in
+                // which the characters belong.
                 XMLEvent event
-                    = namespaces.acquireXMLEvent(XMLNamespaces.XSLNSpaceIndex);
+                    = namespaces.acquireXMLEvent(XMLNamespaces.DefAttrNSIndex);
                 //System.out.println("characters thread "
                 //                   + Thread.currentThread().getName());
                 event.type = XMLEvent.CHARACTERS;
                 event.chars = new String(ch, start, length);
-                event.setFoType(FObjectNames.PCDATA);
+                // Can't setFoType, because this event is now an XMLEvent,
+                // not an FoXMLEvent
+                //event.setFoType(FObjectNames.PCDATA);
                 //System.out.println("SerialHandler: " + event);
                 putEvent(event);
             } catch (FOPException e) {
