@@ -50,105 +50,30 @@
  */
 package org.apache.fop.dom.svg;
 
-import org.apache.fop.fo.Property;
-import org.apache.fop.messaging.MessageHandler;
-
-import java.util.*;
-
 import org.w3c.dom.svg.*;
 
 /**
  * a length quantity in XSL
  */
-public class SVGLengthListImpl extends SVGListImpl implements SVGLengthList {
-	protected float fontsize = 12;
+public class SVGAnimatedLengthListImpl extends SVGListImpl implements SVGAnimatedLengthList {
+	SVGLengthList baseVal;
 
-	public void setValueAsString( String valueAsString )
+	public SVGAnimatedLengthListImpl()
 	{
-		convert(valueAsString);
 	}
 
-	/**
-	 * set the length given a particular String specifying length and units
-	 */
-	public SVGLengthListImpl (String len) {
-		convert(len);
-	}
-
-	public SVGLengthListImpl () {
-	}
-
-	/**
-	 * set the length given a particular String specifying length and units,
-	 * and the font-size (necessary for an em)
-	 */
-	public SVGLengthListImpl (String len, int fontsize)
+	public SVGLengthList getBaseVal( )
 	{
-		this.fontsize = fontsize;
-		convert(len);
+		return baseVal;
 	}
 
-	protected void convert(String len)
+	public void setBaseVal(SVGLengthList baseVal)
 	{
-		int l = len.length();
-
-		if (l == 0) {
-//			MessageHandler.errorln("WARNING: empty length");
-		} else {
-			// could be an array of points, as in for svg:text
-			int pos;
-			pos = len.trim().indexOf(" ");
-			if(pos != -1) {
-				StringTokenizer st = new StringTokenizer(len.trim());
-				while(st.hasMoreTokens()) {
-					String val = st.nextToken();
-					float dvalue = getFloatValue(val, val.length());
-					float intValue = dvalue;
-					appendItem(new Float(intValue));
-				}
-			} else {
-				float dvalue = getFloatValue(len, l);
-				appendItem(new Float(dvalue));
-			}
-		}
+		this.baseVal = baseVal;
 	}
 
-	protected float getFloatValue(String len, int l)
+	public SVGLengthList getAnimVal( )
 	{
-		int assumed_resolution = 1; // points/pixel
-
-		float dvalue;
-		try {
-			if(len.endsWith("in")) {
-				dvalue = Float.valueOf(len.substring(0,(l-2))).floatValue();
-				dvalue = dvalue * 72;
-			} else if(len.endsWith("cm")) {
-				dvalue = Float.valueOf(len.substring(0,(l-2))).floatValue();
-				dvalue = dvalue * 28.35f;
-			} else if(len.endsWith("mm")) {
-				dvalue = Float.valueOf(len.substring(0,(l-2))).floatValue();
-				dvalue = dvalue * 2.84f;
-			} else if(len.endsWith("pt")) {
-				dvalue = Float.valueOf(len.substring(0,(l-2))).floatValue();
-				dvalue = dvalue;
-			} else if(len.endsWith("pc")) {
-				dvalue = Float.valueOf(len.substring(0,(l-2))).floatValue();
-				dvalue = dvalue * 12;
-			} else if(len.endsWith("em")) {
-				dvalue = Float.valueOf(len.substring(0,(l-2))).floatValue();
-				dvalue = dvalue * fontsize;
-			} else if(len.endsWith("px")) {
-				dvalue = Float.valueOf(len.substring(0,(l-2))).floatValue();
-				dvalue = dvalue * assumed_resolution;
-			} else if(len.endsWith("%")) {
-				dvalue = Float.valueOf(len.substring(0,(l-1))).floatValue() / 100f; //??
-			} else {
-				dvalue = Float.valueOf(len).floatValue();
-			}
-		} catch (Exception e) {
-			dvalue = 0;
-			MessageHandler.errorln("ERROR: unknown length units in " + len);
-		}
-		return dvalue;
+		return baseVal;
 	}
 }

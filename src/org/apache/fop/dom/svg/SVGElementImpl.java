@@ -51,6 +51,7 @@
 package org.apache.fop.dom.svg;
 
 import org.apache.fop.datatypes.*;
+import org.apache.fop.dom.ElementImpl;
 
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
@@ -66,6 +67,11 @@ public abstract class SVGElementImpl extends ElementImpl implements SVGElement {
 	public String getId()
 	{
 		return idString;
+	}
+
+    public String getNamespaceURI()
+	{
+		return SVGDocumentImpl.namespaceURI;
 	}
 
 	public void setId(String id)
@@ -96,6 +102,9 @@ public abstract class SVGElementImpl extends ElementImpl implements SVGElement {
 	{
 		CSSStyleDeclaration style;
 		style = getStyle();
+		if(style == null) {
+			return null;
+		}
 		CSSValue val;
 		val = style.getPropertyCSSValue(name);
 		if(val == null) {
