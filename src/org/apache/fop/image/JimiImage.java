@@ -64,10 +64,20 @@ import org.apache.fop.image.analyser.ImageReader;
 public class JimiImage extends AbstractFopImage {
   public JimiImage(URL href) throws FopImageException {
     super(href);
+    try {
+			Class c = Class.forName("com.sun.jimi.core.Jimi");
+    } catch (ClassNotFoundException e) {
+			throw new FopImageException("Jimi image library not available");
+    }
   }
 
-  public JimiImage(URL href, ImageReader imgReader) {
+  public JimiImage(URL href, ImageReader imgReader) throws FopImageException {
     super(href, imgReader);
+    try {
+			Class c = Class.forName("com.sun.jimi.core.Jimi");
+    } catch (ClassNotFoundException e) {
+			throw new FopImageException("Jimi image library not available");
+    }
   }
 
   protected void loadImage() throws FopImageException {

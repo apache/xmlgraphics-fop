@@ -62,7 +62,8 @@ public class GifJpegImage extends AbstractFopImage {
     super(href);
   }
 
-  public GifJpegImage(URL href, ImageReader imgReader) {
+  public GifJpegImage(URL href, ImageReader imgReader)
+	throws FopImageException {
     super(href, imgReader);
   }
 
