@@ -15,7 +15,8 @@ FIND=find
 TAR=tar
 JAR=jar
 
-XT=${JAVA} com.jclark.xsl.sax.Driver
+#XT=${JAVA} com.jclark.xsl.sax.Driver
+XALAN=${JAVA} org.apache.xalan.xslt.Process
 
 JAVADOC = javadoc
 JAVADOC_ARGS = -overview $(BASEDIR)/src/overview.html -sourcepath "$(BASEDIR)/src;$(BASEDIR)/generated" -classpath "$(BASEDIR)/src;$(BASEDIR)/generated;$(CLASSPATH)" -d $(APIDOCDIR)
@@ -26,3 +27,4 @@ TARGETS = all clean clobber
 
 .java.class:
 	$(JAVAC) $(JAVAC_ARGS) $<
+

@@ -88,13 +88,13 @@ $(GENDIR):
 	mkdir -p $(GENDIR)/org/apache/fop/render/pdf/fonts;
 
 properties: $(PROPERTIESXML) $(PROPERTIESXSL)
-	cd $(GENDIR) && $(XT) ../$(PROPERTIESXML) ../$(PROPERTIESXSL)
+	cd $(GENDIR) && $(XALAN) -IN ../$(PROPERTIESXML) -XSL ../$(PROPERTIESXSL)
 
 charlist: $(CHARLISTXML) $(CHARLISTXSL)
-	cd $(GENDIR) && $(XT) ../$(CHARLISTXML) ../$(CHARLISTXSL)
+	cd $(GENDIR) && $(XALAN) -IN ../$(CHARLISTXML) -XSL ../$(CHARLISTXSL)
 
 fonts: $(FONTXML) $(FONTXSL)
-	cd $(GENDIR) && for font in $(FONTXML) ; do $(XT) ../$$font ../$(FONTXSL) ; done
+	cd $(GENDIR) && for font in $(FONTXML) ; do $(XALAN) -IN ../$$font -XSL ../$(FONTXSL) ; done
 
 docs: all $(APIDOCDIR) 
 	$(JAVADOC) $(JAVADOC_ARGS) $(PACKAGES)
@@ -129,4 +129,5 @@ $(TARGETS:%=%subs): %subs :
 	for dir in $(SUBDIRS) ; do \
 		(cd $$dir && pwd && $(MAKE) $(MFLAGS) $*) || exit 1 ; \
 	done
+
 
