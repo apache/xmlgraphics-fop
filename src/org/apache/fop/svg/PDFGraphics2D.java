@@ -140,7 +140,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public boolean drawImage(Image img, int x, int y,
                              ImageObserver observer) {
-        System.err.println("drawImage:x, y");
+        //System.err.println("drawImage:x, y");
 
         final int width = img.getWidth(observer);
         final int height = img.getHeight(observer);
@@ -414,10 +414,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 			writeClip(imclip);
         Color c = getColor();
         currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
-        currentStream.write(currentColour.getColorSpaceOut(true));
-        c = getBackground();
-        PDFColor col = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
-        currentStream.write(col.getColorSpaceOut(false));
+        currentStream.write(currentColour.getColorSpaceOut(false));
 
         PDFNumber pdfNumber = new PDFNumber();
 
@@ -869,7 +866,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * <code>Graphics2D</code>.
      */
     public GraphicsConfiguration getDeviceConfiguration() {
-        System.out.println("getDeviceConviguration");
+        //System.out.println("getDeviceConviguration");
         return GraphicsEnvironment.getLocalGraphicsEnvironment().
                getDefaultScreenDevice().getDefaultConfiguration();
     }
