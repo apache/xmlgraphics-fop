@@ -145,6 +145,11 @@ public class Driver implements LogEnabled {
     private FOTreeBuilder _treeBuilder;
 
     /**
+     * the renderer type code given by setRenderer
+     */
+    private int _rendererType;
+
+    /**
      * the renderer to use to output the area tree
      */
     private Renderer _renderer;
@@ -318,6 +323,7 @@ public class Driver implements LogEnabled {
      * @param renderer the type of renderer to use
      */
     public void setRenderer(int renderer) throws IllegalArgumentException {
+        _rendererType = renderer;
         switch (renderer) {
         case RENDER_PDF:
             setRenderer("org.apache.fop.render.pdf.PDFRenderer");
@@ -336,7 +342,7 @@ public class Driver implements LogEnabled {
             setRenderer("org.apache.fop.render.txt.TXTRenderer()");
             break;
         case RENDER_MIF:
-            //structHandler = new org.apache.fop.mif.MIFHandler(_stream);
+            //structHandler will be set later
             break;
         case RENDER_XML:
             setRenderer("org.apache.fop.render.xml.XMLRenderer");
@@ -345,7 +351,7 @@ public class Driver implements LogEnabled {
             setRenderer("org.apache.fop.render.svg.SVGRenderer");
             break;
         case RENDER_RTF:
-            if(true) throw new IllegalArgumentException("-rtf option recognized but RTF output is not implemented yet");
+            //structHandler will be set later
             break;
         default:
             throw new IllegalArgumentException("Unknown renderer type");
@@ -456,11 +462,15 @@ public class Driver implements LogEnabled {
      */
     public ContentHandler getContentHandler() {
         // TODO - do this stuff in a better way
-        if (_renderer != null) {
-            structHandler = new LayoutHandler(_stream, _renderer, true);
-        } else {
+        if(_rendererType == RENDER_MIF) {
             structHandler = new org.apache.fop.mif.MIFHandler(_stream);
+        } else if(_rendererType == RENDER_RTF) {
+            structHandler = new org.apache.fop.rtf.renderer.RTFHandler(_stream);
+        } else {
+            if (_renderer == null) throw new Error("_renderer not set when using standard structHandler");  
+            structHandler = new LayoutHandler(_stream, _renderer, true);
         }
+        
         structHandler.enableLogging(getLogger());
 
         _treeBuilder.setUserAgent(getUserAgent());
