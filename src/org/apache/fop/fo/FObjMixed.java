@@ -81,15 +81,22 @@ public class FObjMixed extends FObj {
 
     public Status layout(Area area) throws FOPException {
 
-        String id = this.properties.get("id").getString();
+        if(this.properties != null) {
+            Property prop = this.properties.get("id");
+            if(prop != null) {
+                String id = prop.getString();
 
-        if ( this.marker == START ) {
-            area.getIDReferences().createID(id);                                
-            this.marker = 0;
-        }
+                if ( this.marker == START ) {
+                    if(area.getIDReferences() != null)
+                        area.getIDReferences().createID(id);                                
+                    this.marker = 0;
+                }
 
-        if ( this.marker == 0 ) {
-            area.getIDReferences().configureID(id,area);                                
+                if ( this.marker == 0 ) {
+                    if(area.getIDReferences() != null)
+                        area.getIDReferences().configureID(id,area);                                
+                }
+            }
         }
 
         int numChildren = this.children.size();
