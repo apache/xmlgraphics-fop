@@ -73,11 +73,11 @@ public class Keep implements CompoundDatatype {
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
-        if (cmpId == Constants.CP_WITHIN_LINE) {
+        if (cmpId == CP_WITHIN_LINE) {
             setWithinLine(cmpnValue, bIsDefault);
-        } else if (cmpId == Constants.CP_WITHIN_COLUMN) {
+        } else if (cmpId == CP_WITHIN_COLUMN) {
             setWithinColumn(cmpnValue, bIsDefault);
-        } else if (cmpId == Constants.CP_WITHIN_PAGE) {
+        } else if (cmpId == CP_WITHIN_PAGE) {
             setWithinPage(cmpnValue, bIsDefault);
         }
     }
@@ -86,11 +86,11 @@ public class Keep implements CompoundDatatype {
      * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
     public Property getComponent(int cmpId) {
-        if (cmpId == Constants.CP_WITHIN_LINE) {
+        if (cmpId == CP_WITHIN_LINE) {
             return getWithinLine();
-        } else if (cmpId == Constants.CP_WITHIN_COLUMN) {
+        } else if (cmpId == CP_WITHIN_COLUMN) {
             return getWithinColumn();
-        } else if (cmpId == Constants.CP_WITHIN_PAGE) {
+        } else if (cmpId == CP_WITHIN_PAGE) {
             return getWithinPage();
         } else {
             return null;

@@ -67,9 +67,9 @@ public class CondLength implements CompoundDatatype {
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
-        if (cmpId == Constants.CP_LENGTH) {
+        if (cmpId == CP_LENGTH) {
             length = cmpnValue;
-        } else if (cmpId == Constants.CP_CONDITIONALITY) {
+        } else if (cmpId == CP_CONDITIONALITY) {
             conditionality = cmpnValue;
         }
     }
@@ -78,9 +78,9 @@ public class CondLength implements CompoundDatatype {
      * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
     public Property getComponent(int cmpId) {
-        if (cmpId == Constants.CP_LENGTH) {
+        if (cmpId == CP_LENGTH) {
             return length;
-        } else if (cmpId == Constants.CP_CONDITIONALITY) {
+        } else if (cmpId == CP_CONDITIONALITY) {
             return conditionality;
         } else {
             return null;

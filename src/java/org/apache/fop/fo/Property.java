@@ -155,7 +155,7 @@ public class Property {
          * property.
          * @param p A property value for a compound property type such as
          * SpaceProperty.
-         * @param subprop The name of the component whose value is to be
+         * @param subprop The Constants ID of the component whose value is to be
          * returned.
          * NOTE: this is only to ease porting when calls are made to
          * PropertyList.get() using a component name of a compound property,
@@ -165,7 +165,7 @@ public class Property {
          * compound properties.
          * @return the Property containing the subproperty
          */
-        public Property getSubpropValue(Property p, String subprop) {
+        public Property getSubpropValue(Property p, int subpropId) {
             return null;
         }
 

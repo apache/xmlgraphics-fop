@@ -576,8 +576,7 @@ public class </xsl:text>
         return baseProp;
     }
 
-    public Property getSubpropValue(Property baseProp, String subpropName) {
-        int subpropId = org.apache.fop.fo.properties.FOPropertyMapping.getSubPropertyId(subpropName);
+    public Property getSubpropValue(Property baseProp, int subpropId) {
         </xsl:text>
         <xsl:value-of select="datatype"/>
         <xsl:text> val = baseProp.get</xsl:text>

@@ -521,8 +521,8 @@ public class PropertyList extends HashMap {
         /* If the baseProperty has already been created, return it
          * e.g. <fo:leader xxxx="120pt" xxxx.maximum="200pt"... />
          */
-        int propId = FOPropertyMapping.getPropertyId(basePropName);
-        Property baseProperty = getExplicitBaseProp(propId);
+
+        Property baseProperty = (Property) super.get(basePropName);
 
         if (baseProperty != null) {
             return baseProperty;
@@ -588,13 +588,10 @@ public class PropertyList extends HashMap {
      */
     private Property getSubpropValue(Property p, int propId) {
 
-        String subpropName = FOPropertyMapping.getPropertyName(propId &
-            Constants.COMPOUND_MASK);
-
         Property.Maker maker = findMaker(propId & Constants.PROPERTY_MASK);
 
         if (maker != null) {
-            return maker.getSubpropValue(p, subpropName);
+            return maker.getSubpropValue(p, propId & Constants.COMPOUND_MASK);
         } else {
             return null;
         }

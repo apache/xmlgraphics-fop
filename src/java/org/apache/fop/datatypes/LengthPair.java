@@ -68,9 +68,9 @@ public class LengthPair implements CompoundDatatype {
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
-        if (cmpId == Constants.CP_BLOCK_PROGRESSION_DIRECTION) {
+        if (cmpId == CP_BLOCK_PROGRESSION_DIRECTION) {
             bpd = cmpnValue;
-        } else if (cmpId == Constants.CP_INLINE_PROGRESSION_DIRECTION) {
+        } else if (cmpId == CP_INLINE_PROGRESSION_DIRECTION) {
             ipd = cmpnValue;
         }
     }
@@ -79,9 +79,9 @@ public class LengthPair implements CompoundDatatype {
      * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
     public Property getComponent(int cmpId) {
-        if (cmpId == Constants.CP_BLOCK_PROGRESSION_DIRECTION) {
+        if (cmpId == CP_BLOCK_PROGRESSION_DIRECTION) {
             return getBPD();
-        } else if (cmpId == Constants.CP_INLINE_PROGRESSION_DIRECTION) {
+        } else if (cmpId == CP_INLINE_PROGRESSION_DIRECTION) {
             return getIPD();
         } else {
             return null;    // SHOULDN'T HAPPEN
