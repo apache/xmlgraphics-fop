@@ -224,6 +224,8 @@ public class PageSequence extends FObj {
                         previousPageSequence.makePage(areaTree,true,null);
                     }
                     currentPageNumber = firstPageNumber;
+                } else {
+                    currentPageNumber = previousPageSequence.currentPageNumber;
                 }
             } else {
                 currentPageNumber = previousPageSequence.currentPageNumber;
