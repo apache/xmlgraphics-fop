@@ -728,6 +728,12 @@ public class PropertySets {
      * expansions for the (shorthand) property
      * @exception <tt>PropertyException</tt>
      */
+     /*
+      Don't do this.  Shorthands should not expand initial values, because
+      a distinction is needed between those properties which are given
+      a specified value and those which are set by normal inheritance or from
+      their initial values.  This so that fromSpecifiedValue() will work.
+
     public static PropertyValueList initialValueSHandExpansion
         (FOTree foTree, int property)
         throws PropertyException
@@ -742,6 +748,7 @@ public class PropertySets {
         }
         return list;
     }
+    */
 
     /**
      * Given a shorthand expansion list and a <tt>PropertyValue</tt>,
@@ -1253,7 +1260,9 @@ public class PropertySets {
     /**
      * Append the initial values of each non-copy property in a
      * compound expansion to a list.  Note that these elements will be
-     * <b>references</b> to the initial values.
+     * <b>references</b> to the initial values. Note also that, in the
+     * expansion of a compound value, the initial value comonents are
+     * regarded as having been specified.
      * @param foTree - the <tt>FOTree</tt> of the node whose properties are
      * being processed.
      * @param expansion - the set of indices of the expansion properties.
