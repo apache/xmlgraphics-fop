@@ -44,7 +44,8 @@ public class FontInfo {
         try {
             return URLBuilder.buildURL(Configuration.getFontBaseURL(), metricsFile);
         } catch (Exception e) {
-            throw new FOPException("Invalid font metrics file: "+metricsFile+" ("+e.getMessage()+")");
+            throw new FOPException("Invalid font metrics file: " + metricsFile 
+            	+ " (" + e.getMessage() + ")");
         }
     }
 
@@ -57,7 +58,8 @@ public class FontInfo {
         try {
             return URLBuilder.buildURL(Configuration.getFontBaseURL(), embedFile);
         } catch (Exception e) {
-            throw new FOPException("Invalid font file (embedFile): "+metricsFile+" ("+e.getMessage()+")");
+            throw new FOPException("Invalid font file (embedFile): " + embedFile 
+            		+ " (" + e.getMessage() + ")");
         }
     }
 
