@@ -9,7 +9,10 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.*;
+import org.apache.fop.fo.flow.StaticContent;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.Region;
+import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.properties.Constants;
 
 import java.util.ArrayList;
@@ -109,13 +112,13 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
         BPLayoutManager curLM ; // currently active LM
 
         while ((curLM = getChildLM()) != null) {
-            BreakPoss bp;
             ArrayList vecBreakPoss = new ArrayList();
 
             LayoutContext childLC = new LayoutContext(0);
             childLC.setStackLimit(new MinOptMax(flowBPD));
 
             if (!curLM.isFinished()) {
+                BreakPoss bp;
                 if ((bp = curLM.getNextBreakPoss(childLC, null)) != null) {
                     vecBreakPoss.add(bp);
                 }
@@ -171,7 +174,7 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
         // The Flow LM sets the "finished" flag on the Flow Area if it has
         // completely filled it. In this case, if on the last column
         // end the page.
-getParentArea(area);
+        getParentArea(area);
         // Alternatively the child LM indicates to parent that it's full?
         //System.out.println("size: " + area.getAllocationBPD().max +
         //                   ":" + curSpan.getMaxBPD().min);
@@ -214,17 +217,56 @@ getParentArea(area);
         } catch (FOPException fopex) { /* ???? */
             fopex.printStackTrace();
         }
-        RegionViewport reg = curPage.getPage(). getRegion(
+        RegionViewport reg = curPage.getPage().getRegion(
                     RegionReference.BODY);
         curBody = (BodyRegion) reg.getRegion();
         flowBPD = (int)reg.getViewArea().getHeight();
         return curPage;
     }
 
+    private void layoutStaticContent(Region region, int regionClass) {
+        if (region != null ) {
+            StaticContent flow = pageSequence
+              .getStaticContent(region.getRegionName());
+            if (flow != null) {
+                RegionViewport reg = curPage.getPage()
+                  .getRegion(regionClass);
+                reg.getRegion().setIPD((int)reg.getViewArea().getWidth());
+                if (reg == null ) {
+                    System.out.println("no region viewport: shouldn't happen");
+                }
+                StaticContentLayoutManager lm = flow.getLayoutManager();
+                lm.init();
+                lm.setRegionReference(reg.getRegion());
+                lm.setParentLM(this);
+                LayoutContext childLC = new LayoutContext(0);
+                childLC.setStackLimit(new MinOptMax((int)curPage.getViewArea().getHeight()));
+                while (!lm.isFinished()) {
+                    BreakPoss bp = lm.getNextBreakPoss(childLC, null);
+                    if (bp != null) {
+                        ArrayList vecBreakPoss = new ArrayList();
+                        vecBreakPoss.add(bp);
+                        lm.addAreas( new BreakPossPosIter(vecBreakPoss, 0,
+                                                          vecBreakPoss.size()), null);
+                    } else {
+                      System.out.println("bp==null  cls="+regionClass);
+                    }
+                }
+                //lm.flush();
+                lm.reset(null);
+            }
+        }
+    }
+  
     private void finishPage() {
         if (curPage != null) {
             // Layout static content into the regions
             // Need help from pageseq for this
+            SimplePageMaster spm = pageSequence.getCurrentSimplePageMaster();
+            layoutStaticContent(spm.getRegion(Region.BEFORE), RegionReference.BEFORE);
+            layoutStaticContent(spm.getRegion(Region.AFTER), RegionReference.AFTER);
+            layoutStaticContent(spm.getRegion(Region.START), RegionReference.START);
+            layoutStaticContent(spm.getRegion(Region.END), RegionReference.END);
             // Queue for ID resolution and rendering
             areaTree.addPage(curPage);
             curPage = null;

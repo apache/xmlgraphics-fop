@@ -36,10 +36,15 @@ public class RepeatablePageMasterReference extends PageMasterReference
 
         String mr = getProperty("maximum-repeats").getString();
         if (mr.equals("no-limit")) {
-            setMaximumRepeats(INFINITE);
+            this.maximumRepeats = INFINITE;
         } else {
             try {
-                setMaximumRepeats(Integer.parseInt(mr));
+                this.maximumRepeats = Integer.parseInt(mr);
+                if (this.maximumRepeats < 0) {
+                    getLogger().debug("negative maximum-repeats: "
+                                      + this.maximumRepeats);
+                    this.maximumRepeats = 0;
+                }
             } catch (NumberFormatException nfe) {
                 throw new FOPException("Invalid number for "
                                        + "'maximum-repeats' property");
@@ -47,31 +52,17 @@ public class RepeatablePageMasterReference extends PageMasterReference
         }
     }
 
-    public String getNextPageMaster(int currentPageNumber,
-                                    boolean thisIsFirstPage,
-                                    boolean isEmptyPage) {
-        String pm = getMasterName();
-
-        if (getMaximumRepeats() != INFINITE) {
-            if (numberConsumed < getMaximumRepeats()) {
+    public String getNextPageMasterName(boolean isOddPage,
+                                        boolean isFirstPage,
+                                        boolean isEmptyPage) {
+        if (maximumRepeats != INFINITE) {
+            if (numberConsumed < maximumRepeats) {
                 numberConsumed++;
             } else {
-                pm = null;
+                return null;
             }
         }
-        return pm;
-    }
-
-    private void setMaximumRepeats(int maximumRepeats) {
-        if (maximumRepeats == INFINITE) {
-            this.maximumRepeats = maximumRepeats;
-        } else {
-            this.maximumRepeats = (maximumRepeats < 0) ? 0 : maximumRepeats;
-        }
-    }
-
-    private int getMaximumRepeats() {
-        return this.maximumRepeats;
+        return getMasterName();
     }
 
     public void reset() {

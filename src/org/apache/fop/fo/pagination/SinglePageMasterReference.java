@@ -26,9 +26,9 @@ public class SinglePageMasterReference extends PageMasterReference
         this.state = FIRST;
     }
 
-    public String getNextPageMaster(int currentPageNumber,
-                                    boolean thisIsFirstPage,
-                                    boolean isEmptyPage) {
+    public String getNextPageMasterName(boolean isOddPage,
+                                        boolean isFirstPage,
+                                        boolean isEmptyPage) {
         if (this.state == FIRST) {
             this.state = DONE;
             return getMasterName();

@@ -27,6 +27,9 @@ import org.xml.sax.Attributes;
 public class PageSequenceMaster extends FObj {
     LayoutMasterSet layoutMasterSet;
     ArrayList subSequenceSpecifiers;
+    private SubSequenceSpecifier currentSubSequence;
+    private int currentSubSequenceNumber;
+    private String masterName;
 
     // The terminology may be confusing. A 'page-sequence-master' consists
     // of a sequence of what the XSL spec refers to as
@@ -63,23 +66,66 @@ public class PageSequenceMaster extends FObj {
         subSequenceSpecifiers.add(pageMasterReference);
     }
 
-    protected SubSequenceSpecifier getSubSequenceSpecifier(int sequenceNumber) {
-        if (sequenceNumber >= 0
-                && sequenceNumber < getSubSequenceSpecifierCount()) {
-            return (SubSequenceSpecifier)subSequenceSpecifiers.get(sequenceNumber);
+    private SubSequenceSpecifier getNextSubSequence() {
+        currentSubSequenceNumber++;
+        if (currentSubSequenceNumber >= 0
+            && currentSubSequenceNumber < subSequenceSpecifiers.size()) {
+            return (SubSequenceSpecifier)subSequenceSpecifiers
+              .get(currentSubSequenceNumber);
         }
         return null;
     }
 
-    protected int getSubSequenceSpecifierCount() {
-        return subSequenceSpecifiers.size();
-    }
-
     public void reset() {
-        for (Iterator e = subSequenceSpecifiers.iterator();
-                e.hasNext(); ) {
-            ((SubSequenceSpecifier)e.next()).reset();
+        currentSubSequenceNumber = -1;
+        currentSubSequence = null;
+        for (int i = 0; i< subSequenceSpecifiers.size(); i++ ) {
+            ((SubSequenceSpecifier)subSequenceSpecifiers.get(i)).reset();
         }
     }
+
+    public SimplePageMaster getNextSimplePageMaster(boolean oddPage,
+                                                    boolean firstPage,
+                                                    boolean blankPage)
+      throws FOPException {
+        if (currentSubSequence==null) {
+            currentSubSequence = getNextSubSequence();
+            if (currentSubSequence==null) {
+                throw new FOPException("no subsequences in page-sequence-master '"
+                                       + masterName + "'");
+            }
+        }
+        String pageMasterName = currentSubSequence
+          .getNextPageMasterName(oddPage, firstPage, blankPage);
+        boolean canRecover = true;
+        while (pageMasterName==null) {
+            SubSequenceSpecifier nextSubSequence = getNextSubSequence();
+            if (nextSubSequence==null) {
+                if (!canRecover) {
+                    throw new FOPException("subsequences exhausted in page-sequence-master '"
+                                           + masterName
+                                           + "', cannot recover");
+                }
+                getLogger().warn("subsequences exhausted in page-sequence-master '"
+                                 + masterName
+                                 + "', use previous subsequence");
+                currentSubSequence.reset();
+                canRecover = false;
+            } else {
+                currentSubSequence = nextSubSequence;
+            }
+            pageMasterName = currentSubSequence
+              .getNextPageMasterName(oddPage, firstPage, blankPage);
+        }
+        SimplePageMaster pageMaster=this.layoutMasterSet
+          .getSimplePageMaster(pageMasterName);
+        if (pageMaster==null) {
+            throw new FOPException("No simple-page-master matching '"
+                                   + pageMasterName + "' in page-sequence-master '"
+                                   + masterName +"'");
+        }
+        return pageMaster;
+    }
+
 }
 

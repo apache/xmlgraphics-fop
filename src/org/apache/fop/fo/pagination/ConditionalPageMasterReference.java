@@ -43,9 +43,9 @@ public class ConditionalPageMasterReference extends FObj {
 
         validateParent(parent);
 
-        setPagePosition(this.properties.get("page-position").getEnum());
-        setOddOrEven(this.properties.get("odd-or-even").getEnum());
-        setBlankOrNotBlank(this.properties.get("blank-or-not-blank").getEnum());
+        this.pagePosition = this.properties.get("page-position").getEnum();
+        this.oddOrEven = this.properties.get("odd-or-even").getEnum();
+        this.blankOrNotBlank = this.properties.get("blank-or-not-blank").getEnum();
     }
 
     protected void setMasterName(String masterName) {
@@ -64,77 +64,49 @@ public class ConditionalPageMasterReference extends FObj {
      * checks the page number and emptyness to determine if this
      * matches.
      */
-    protected boolean isValid(int currentPageNumber, boolean thisIsFirstPage,
+    protected boolean isValid(boolean isOddPage, boolean isFirstPage,
                               boolean isEmptyPage) {
         // page-position
-        boolean okOnPagePosition = true;    // default is 'any'
-        switch (getPagePosition()) {
-        case PagePosition.FIRST:
-            if (!thisIsFirstPage)
-                okOnPagePosition = false;
-            break;
-        case PagePosition.LAST:
-            // how the hell do you know at this point?
-            getLogger().warn("LAST PagePosition NYI");
-            okOnPagePosition = true;
-            break;
-        case PagePosition.REST:
-            if (thisIsFirstPage)
-                okOnPagePosition = false;
-            break;
-        case PagePosition.ANY:
-            okOnPagePosition = true;
+        if( isFirstPage ) {
+            if (pagePosition==PagePosition.REST) {
+                return false;
+            } else if (pagePosition==PagePosition.LAST) {
+                // how the hell do you know at this point?
+                getLogger().debug("LAST PagePosition NYI");
+                return false;
+            }
+        } else {
+            if (pagePosition==PagePosition.FIRST) {
+                return false;
+            } else if (pagePosition==PagePosition.LAST) {
+                // how the hell do you know at this point?
+                getLogger().debug("LAST PagePosition NYI");
+                // potentially valid, don't return
+            }
         }
 
-        // odd or even
-        boolean okOnOddOrEven = true;    // default is 'any'
-        int ooe = getOddOrEven();
-        boolean isOddPage = ((currentPageNumber % 2) == 1) ? true : false;
-        if ((OddOrEven.ODD == ooe) &&!isOddPage) {
-            okOnOddOrEven = false;
-        }
-        if ((OddOrEven.EVEN == ooe) && isOddPage) {
-            okOnOddOrEven = false;
-        }
-
-        // experimental check for blank-or-not-blank
-
-        boolean okOnBlankOrNotBlank = true;    // default is 'any'
-
-        int bnb = getBlankOrNotBlank();
-
-        if ((BlankOrNotBlank.BLANK == bnb) &&!isEmptyPage) {
-            okOnBlankOrNotBlank = false;
-        } else if ((BlankOrNotBlank.NOT_BLANK == bnb) && isEmptyPage) {
-            okOnBlankOrNotBlank = false;
+        // odd-or-even
+        if (isOddPage) {
+            if (oddOrEven==OddOrEven.EVEN) {
+              return false;
+            }
+        } else {
+            if (oddOrEven==OddOrEven.ODD) {
+              return false;
+            }
         }
 
-        return (okOnOddOrEven && okOnPagePosition && okOnBlankOrNotBlank);
-
-    }
-
-    protected void setPagePosition(int pagePosition) {
-        this.pagePosition = pagePosition;
-    }
-
-    protected int getPagePosition() {
-        return this.pagePosition;
-    }
-
-    protected void setOddOrEven(int oddOrEven) {
-        this.oddOrEven = oddOrEven;
-    }
-
-    protected int getOddOrEven() {
-        return this.oddOrEven;
-    }
-
-    protected void setBlankOrNotBlank(int blankOrNotBlank) {
-        this.blankOrNotBlank = blankOrNotBlank;
-    }
-
-    protected int getBlankOrNotBlank() {
-        return this.blankOrNotBlank;
+        // blank-or-not-blank
+        if (isEmptyPage) {
+            if (blankOrNotBlank==BlankOrNotBlank.NOT_BLANK) {
+                return false;
+            }
+        } else {
+            if (blankOrNotBlank==BlankOrNotBlank.BLANK) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
