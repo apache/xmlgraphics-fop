@@ -61,17 +61,21 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 import java.io.Writer;
 import java.io.IOException;
 
-/*
+/**
  * @author Christopher Scott, scottc@westinghouse.com
  * @author Boris Pouderous, boris.pouderous@free.fr
  */
-
 public class RtfPageNumberCitation extends RtfContainer {
-    // Page field :
-    //  "{\field {\*\fldinst {PAGEREF xx}} {\fldrslt}}" where xx represents the
-    // 'id' of the referenced page
+    /* Page field :
+       "{\field {\*\fldinst {PAGEREF xx}} {\fldrslt}}" where xx represents the
+       'id' of the referenced page
+    */
+
+    /** constant for field */
     public static final String RTF_FIELD = "field";
+    /** constant for field pageref model */
     public static final String RTF_FIELD_PAGEREF_MODEL = "fldinst { PAGEREF }";
+    /** constant for field result */
     public static final String RTF_FIELD_RESULT = "fldrslt";
 
     // The 'id' of the referenced page
@@ -96,6 +100,10 @@ public class RtfPageNumberCitation extends RtfContainer {
       this.id = id;
   }
 
+  /**
+   * Write the content
+   * @throws IOException for I/O problems
+   */
     protected void writeRtfContent() throws IOException {
         // If we have a valid ID
         if (isValid()) {
@@ -131,7 +139,9 @@ public class RtfPageNumberCitation extends RtfContainer {
     }
   }
 
-  /** true if this element would generate no "useful" RTF content */
+  /**
+   * @return true if this element would generate no "useful" RTF content
+   */
   public boolean isEmpty() {
       return false;
   }

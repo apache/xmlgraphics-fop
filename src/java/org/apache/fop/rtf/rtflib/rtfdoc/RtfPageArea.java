@@ -61,11 +61,12 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 import java.io.Writer;
 import java.io.IOException;
 
-/* @author Christopher Scott, scottc@westinghouse.com */
-
+/**
+ * @author Christopher Scott, scottc@westinghouse.com
+ */
 public class RtfPageArea
 extends RtfContainer {
-    private RtfPage m_currentPage;
+    private RtfPage currentPage;
     private RtfNull nullChild;
     private RtfAttributes childAttributes;
 
@@ -74,16 +75,24 @@ extends RtfContainer {
         super(f, w);
     }
 
-    /** close current Rtfpage if any and create a new one */
+    /**
+     * Close current Rtfpage if any and create a new one
+     * @param attr attributes for new RtfPage
+     * @return new RtfPage
+     * @throws IOException for I/O problems
+     */
     public RtfPage newPage(RtfAttributes attr) throws IOException {
-        if (m_currentPage != null) {
-            m_currentPage.close();
+        if (currentPage != null) {
+            currentPage.close();
         }
-        m_currentPage = new RtfPage(this, writer, attr);
+        currentPage = new RtfPage(this, writer, attr);
 
-        return m_currentPage;
+        return currentPage;
     }
 
+    /**
+     * @return true
+     */
     protected boolean okToWriteRtf() {
         return true;
     }

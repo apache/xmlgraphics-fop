@@ -61,15 +61,22 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 import java.io.Writer;
 import java.io.IOException;
 
-/* @author Christopher Scott, scottc@westinghouse.com */
+/**
+ * @author Christopher Scott, scottc@westinghouse.com
+ */
 public class RtfPageNumber extends RtfContainer {
-    /** RtfText attributes: fields */
-    //must be carefull of group markings and star control
-    //ie page field:
-    //  "{\field {\*\fldinst {PAGE}} {\fldrslt}}"
-    public static String RTF_FIELD = "field";
-    public static String RTF_FIELD_PAGE = "fldinst { PAGE }";
-    public static String RTF_FIELD_RESULT = "fldrslt";
+    /* RtfText attributes: fields
+       must be carefull of group markings and star control
+       ie page field:
+           "{\field {\*\fldinst {PAGE}} {\fldrslt}}"
+    */
+
+    /** constant for field */
+    public static final String RTF_FIELD = "field";
+    /** constant for field on page */
+    public static final String RTF_FIELD_PAGE = "fldinst { PAGE }";
+    /** constant for field result */
+    public static final String RTF_FIELD_RESULT = "fldrslt";
 
     /** Create an RTF paragraph as a child of given container with default attributes */
     RtfPageNumber(IRtfPageNumberContainer parent, Writer w) throws IOException {
@@ -89,7 +96,10 @@ public class RtfPageNumber extends RtfContainer {
          }
      }
 
-    /** write our attributes and content */
+    /**
+     * Write our attributes and content
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfContent() throws IOException {
         writeGroupMark(true);
         writeControlWord(RTF_FIELD);
@@ -103,7 +113,9 @@ public class RtfPageNumber extends RtfContainer {
         writeGroupMark(false);
     }
 
-    /** true if this element would generate no "useful" RTF content */
+    /**
+     * @return true if this element would generate no "useful" RTF content
+     */
     public boolean isEmpty() {
         return false;
     }

@@ -61,8 +61,9 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 import java.io.Writer;
 import java.io.IOException;
 
-/* @author Christopher Scott, scottc@westinghouse.com */
-
+/**
+ * @author Christopher Scott, scottc@westinghouse.com
+ */
 public class RtfNull
 extends RtfContainer {
 
