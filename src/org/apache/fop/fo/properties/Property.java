@@ -393,8 +393,7 @@ public /*abstract*/ class Property {
                 return new EnumType(property, ncname);
             if ((dataTypes & MAPPED_LENGTH) != 0)
                 return (new MappedNumeric
-                            (property, ncname, foNode.getFOTree()))
-                                                        .getMappedNumValue();
+                            (foNode, property, ncname)).getMappedNumValue();
             throw new PropertyException
                             ("NCName value invalid  for " + propName);
         case PropertyValue.LITERAL:
@@ -618,7 +617,7 @@ public /*abstract*/ class Property {
      * @return a <tt>Numeric</tt>.  This implementation never returns.
      * @throws <tt>PropertyException</tt>.
      */
-    public Numeric getMappedLength(int enum)
+    public Numeric getMappedLength(FONode node, int enum)
             throws PropertyException
     {
         throw new PropertyException
@@ -640,12 +639,13 @@ public /*abstract*/ class Property {
     {
         int initialValueType =
                     PropertyConsts.pconsts.getInitialValueType(property);
-        //System.out.println("In Property getInitialValue property "
-                            //+ property);
+        System.out.println("In Property getInitialValue property "
+                            + property);
         if ((initialValueType & Property.USE_GET_IT_FUNCTION) != 0)
              throw new PropertyException
                  ("Property.getInitialValue() called for property with "
                  + "initial value type in USE_GET_IT_FUNCTION : "
+                 + property + " "
                  + PropNames.getPropertyName(property));
         switch (initialValueType) {
         case NOTYPE_IT:
@@ -787,8 +787,7 @@ public /*abstract*/ class Property {
                 try {
                     widthFound =
                         (new MappedNumeric
-                                (widthProp, ncname, foNode.getFOTree()))
-                                                        .getMappedNumValue();
+                            (foNode, widthProp, ncname)).getMappedNumValue();
                 } catch (PropertyException e) {}
                 if (widthFound != null) {
                     if (width != null) MessageHandler.log(propName +
