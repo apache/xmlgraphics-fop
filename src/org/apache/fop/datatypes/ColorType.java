@@ -413,7 +413,7 @@ public class ColorType {
 		"yellowgreen"
 	};
 
-	int[][] vals = {
+	final static int[][] vals = {
 		{240, 248, 255},
 		{250, 235, 215},
 		{0, 255, 255},
