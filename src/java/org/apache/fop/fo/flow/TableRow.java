@@ -26,7 +26,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.datatypes.KeepValue;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
@@ -38,9 +37,6 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.table.Row;
-import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.properties.Property;
-
 
 /**
  * Class modelling the fo:table-row object.
@@ -124,21 +120,6 @@ public class TableRow extends FObj {
         throws SAXParseException {
         if (!(nsURI == FO_URI && localName.equals("table-cell"))) {
             invalidChildError(loc, nsURI, localName);
-        }
-    }
-
-    private KeepValue getKeepValue(int propId) {
-        Property p = this.propertyList.get(propId);
-        Number n = p.getNumber();
-        if (n != null) {
-            return new KeepValue(KeepValue.KEEP_WITH_VALUE, n.intValue());
-        }
-        switch (p.getEnum()) {
-        case Constants.ALWAYS:
-            return new KeepValue(KeepValue.KEEP_WITH_ALWAYS, 0);
-        case Constants.AUTO:
-        default:
-            return new KeepValue(KeepValue.KEEP_WITH_AUTO, 0);
         }
     }
 

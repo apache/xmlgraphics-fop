@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.fop.fo.flow.Marker;
-import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 
 import org.xml.sax.Attributes;
@@ -39,9 +38,6 @@ import org.xml.sax.SAXParseException;
 public class FObj extends FONode implements Constants {
     public static PropertyMaker[] propertyListTable = null;
     
-    /** Formatting properties for this fo element. */
-    protected PropertyList propertyList;
-
     /** The immediate child nodes of this node. */
     public ArrayList childNodes = null;
 
@@ -96,9 +92,9 @@ public class FObj extends FONode implements Constants {
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist, PropertyList pList) throws SAXParseException {
         setLocator(locator);
-        propertyList.addAttributesToList(attlist);
-        propertyList.setWritingMode();
-        bind(propertyList);
+        pList.addAttributesToList(attlist);
+        pList.setWritingMode();
+        bind(pList);
     }
 
     /**
@@ -106,8 +102,7 @@ public class FObj extends FONode implements Constants {
      */
     protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws SAXParseException {
         //return foEventHandler.getPropertyListMaker().make(this, parent);
-        propertyList = new StaticPropertyList(this, parent);
-        return propertyList;
+        return new StaticPropertyList(this, parent);
     }
 
     /**
@@ -145,60 +140,6 @@ public class FObj extends FONode implements Constants {
      */
     public boolean getIsOutOfLineFODescendant() {
         return isOutOfLineFODescendant;
-    }
-
-    /**
-     * Return the property list object for this FO.  PropertyList tends
-     * to hold the base, pre-trait properties for this FO, either explicitly
-     * declared in the input XML or from inherited values.
-     */
-    public PropertyList getPropertyList() {
-        return propertyList;
-    }
-
-    /**
-     * Helper method to quickly obtain the value of a property
-     * for this FO, without querying for the propertyList first.
-     * @param propId - the Constants ID of the desired property to obtain
-     * @return the property
-     */
-    public Property getProperty(int propId) {
-        return propertyList.get(propId);
-    }
-
-    /**
-     * Convenience method to quickly obtain the String value of a property
-     * for this FO, without querying for the propertyList first.
-     * Meaningful only for properties having a string representation
-     * @param propId - the Constants ID of the desired property to obtain
-     * @return the String value of the property value
-     */
-    public String getPropString(int propId) {
-        return propertyList.get(propId).getString();
-    }
-
-    /**
-     * Convenience method to quickly obtain the length value of a property
-     * for this FO, without querying for the propertyList first.
-     * Meaningful only for properties having a length representation
-     * Note: getValue() only correct after resolution completed, therefore
-     * should be called only in layout manager code.
-     * @param propId - the Constants ID of the desired property to obtain
-     * @return the length value of the property value
-     */
-    public int getPropLength(int propId) {
-        return propertyList.get(propId).getLength().getValue();
-    }
-
-    /**
-     * Convenience method to quickly obtain the Constants class enumeration
-     * value of a property for this FO.  Meaningful only for properties
-     * having an enumeration representation
-     * @param propId - the Constants ID of the desired property to obtain
-     * @return the enumeration value of the property value
-     */
-    public int getPropEnum(int propId) {
-        return propertyList.get(propId).getEnum();
     }
 
     /**
