@@ -50,6 +50,7 @@
  */ 
 package org.apache.fop.pdf;
 
+import org.apache.fop.render.ps.FlateEncodeOutputStream;
 import org.apache.fop.util.StreamUtilities;
 
 import java.io.OutputStream;
@@ -58,7 +59,9 @@ import java.io.IOException;
 import java.util.zip.DeflaterOutputStream;
 
 /**
- * A filter to deflate a stream. Note that the attributes for
+ * A filter to deflate a stream.
+ * <p>
+ * <b>Note</b> that the attributes for
  * prediction, colors, bitsPerComponent, and columns are not supported
  * when this filter is used to handle the data compression. They are
  * only valid for externally encoded data such as that from a graphics
@@ -267,5 +270,12 @@ public class FlateFilter extends PDFFilter {
         return columns;
     }
 
+
+    /**
+     * @see org.apache.fop.pdf.PDFFilter#applyFilter(OutputStream)
+     */
+    public OutputStream applyFilter(OutputStream out) throws IOException {
+        return new FlateEncodeOutputStream(out);
+    }
 
 }

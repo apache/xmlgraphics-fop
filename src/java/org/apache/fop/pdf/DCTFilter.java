@@ -96,5 +96,13 @@ public class DCTFilter extends PDFFilter {
         out.close();
     }
 
+    /**
+     * @see org.apache.fop.pdf.PDFFilter#applyFilter(OutputStream)
+     */
+    public OutputStream applyFilter(OutputStream out) throws IOException {
+        return out;
+        //No active filtering, OutputStream is already expected to be DCT encoded
+    }
+
 }
 

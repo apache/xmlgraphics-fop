@@ -54,6 +54,8 @@ import java.io.OutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
+import org.apache.fop.render.ps.ASCII85OutputStream;
+
 /**
  * PDF Filter for ASCII85.
  * This applies a filter to a pdf stream that converts
@@ -78,6 +80,13 @@ public class ASCII85Filter extends PDFFilter {
         return "/ASCII85Decode";
     }
 
+    /**
+     * @see org.apache.fop.pdf.PDFFilter#isASCIIFilter()
+     */
+    public boolean isASCIIFilter() {
+        return true;
+    }
+    
     /**
      * Get the decode parameters.
      *
@@ -237,6 +246,13 @@ public class ASCII85Filter extends PDFFilter {
 
 
         }
+    }
+
+    /**
+     * @see org.apache.fop.pdf.PDFFilter#applyFilter(OutputStream)
+     */
+    public OutputStream applyFilter(OutputStream out) throws IOException {
+        return new ASCII85OutputStream(out);
     }
 
 }
