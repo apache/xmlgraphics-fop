@@ -204,17 +204,6 @@ public abstract class FONode {
     }
 
     /**
-     * This is a quick check to see if it is a marker.
-     * This is needed since there is no other quick way of checking
-     * for a marker and not adding to the child list.
-     *
-     * @return true if this is a marker
-     */
-    protected boolean isMarker() {
-        return false;
-    }
-
-    /**
      * This is a hook for an FOTreeVisitor subclass to be able to access
      * this object.
      * @param fotv the FOTreeVisitor subclass that can access this object.
