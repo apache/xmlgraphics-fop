@@ -56,7 +56,7 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.TextUtilities;
 import org.apache.batik.gvt.GraphicsNode;
 
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

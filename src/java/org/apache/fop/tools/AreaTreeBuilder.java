@@ -100,7 +100,7 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.Word;
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.pdf.PDFRenderer;

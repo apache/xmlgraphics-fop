@@ -57,7 +57,7 @@ import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.svg.SVGUtilities;
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fo.FOTreeControl;

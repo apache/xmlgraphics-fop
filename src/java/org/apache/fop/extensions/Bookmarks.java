@@ -54,7 +54,7 @@ import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.area.AreaTree;
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 
 import java.util.ArrayList;
 

@@ -117,6 +117,7 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.apps.*;
 
 /*
 todo:
@@ -283,7 +284,7 @@ public class PDFRenderer extends PrintRenderer {
      */
     public void stopRenderer() throws IOException {
         FontSetup.addToResources(pdfDoc, pdfDoc.getResources(),
-                                 (org.apache.fop.control.Document)fontInfo);
+                                 (org.apache.fop.apps.Document)fontInfo);
         pdfDoc.outputTrailer(ostream);
 
         this.pdfDoc = null;

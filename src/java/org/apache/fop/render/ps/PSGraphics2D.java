@@ -84,7 +84,7 @@ import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 
 // FOP
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 import org.apache.fop.fonts.Font;
 
 // Batik

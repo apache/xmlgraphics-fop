@@ -56,7 +56,7 @@ import java.util.Map;
 
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.Glyphs;
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 
 /**
  * This class defines the basic resources (procsets) used by FOP's PostScript

@@ -69,7 +69,7 @@ import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.LogEnabled;
 import org.apache.avalon.framework.logger.Logger;
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 
 import java.awt.Graphics;
 import java.awt.Font;

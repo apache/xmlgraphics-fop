@@ -64,7 +64,7 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.BitmapImage;
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.render.pdf.FontSetup;
 import org.apache.fop.fonts.FontMetrics;
