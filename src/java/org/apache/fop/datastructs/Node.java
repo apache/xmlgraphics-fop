@@ -1,68 +1,29 @@
 /*
+   Copyright 2004 The Apache Software Foundation.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
  * $Id$
- *
- * 
- * ============================================================================
- *                   The Apache Software License, Version 1.1
- * ============================================================================
- * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modifica-
- * tion, are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of  source code must  retain the above copyright  notice,
- *    this list of conditions and the following disclaimer.
- * 
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 
- * 3. The end-user documentation included with the redistribution, if any, must
- *    include  the following  acknowledgment:  "This product includes  software
- *    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
- *    Alternately, this  acknowledgment may  appear in the software itself,  if
- *    and wherever such third-party acknowledgments normally appear.
- * 
- * 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
- *    endorse  or promote  products derived  from this  software without  prior
- *    written permission. For written permission, please contact
- *    apache@apache.org.
- * 
- * 5. Products  derived from this software may not  be called "Apache", nor may
- *    "Apache" appear  in their name,  without prior written permission  of the
- *    Apache Software Foundation.
- * 
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
- * APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
- * DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
- * OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
- * ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
- * This software  consists of voluntary contributions made  by many individuals
- * on  behalf of the Apache Software  Foundation and was  originally created by
- * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
- * Software Foundation, please see <http://www.apache.org/>.
- *  
- *
  */
 
 package org.apache.fop.datastructs;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 import java.util.Iterator;
 import java.util.ListIterator;
 
 /*
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
- * @version $Revision$ $Name$
  */
 
 
@@ -90,12 +51,14 @@ import java.util.ListIterator;
  * <p>Note that there is no payload carried by the Node. This class must
  * be subclassed to carry any actual node contents.
  *
- * <p>See <tt>Tree</tt> for the tree-wide support methods and fields.</p>
+ * <p>See <tt>Tree</tt> for the tree-wide support methods and fields.
+ * 
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * @version $Revision$ $Name$
  */
 
 public class Node implements Cloneable {
 
-    protected Tree tree;
     protected Node parent;
     protected ArrayList children;     // ArrayList of Node
     /** Creation size of the <i>children</i> <tt>ArrayList</tt>. */
@@ -109,20 +72,11 @@ public class Node implements Cloneable {
      * <tt>Tree</tt> object is non-null.
      */
 
-    public Node(Tree tree)
-        throws TreeException {
-        if (tree.getRoot() != null) {
-            throw new TreeException(
-                    "No arg constructor invalid when root exists");
-        }
-        this.tree = tree;
+    public Node() {
         parent = null;
-        tree.setRoot(this);
-        //children = new ArrayList();
     }
 
     /**
-     * @param tree the <tt>Tree</tt> to which this Node belongs.
      * @param parent Node which is the parent of this Node.  if this is
      *               null, the generated Node is assumed to be the root
      *               node.  If the Tree root node is already set, throws
@@ -130,23 +84,12 @@ public class Node implements Cloneable {
      * @param index  int index of child in parent.
      */
 
-    public Node(Tree tree, Node parent, int index)
-        throws TreeException, IndexOutOfBoundsException {
-        this.tree = tree;
-        //children = new ArrayList();
+    public Node(Node parent, int index)
+        throws IndexOutOfBoundsException {
         if (parent == null) {
-            if (tree.root != null) {
-                throw new TreeException("Null Node constructor "
-                                        + "invalid when root exists");
-            }
             this.parent = null;
-            tree.setRoot(this);
         }
         else {
-            // The parent must be a node in the current tree
-            if (parent.getTree() != tree) {
-                throw new TreeException("Parent not in same tree");
-            }
             this.parent = parent;
             // connect me to my parent
             parent.addChild(index, this);
@@ -154,30 +97,17 @@ public class Node implements Cloneable {
     }
 
     /**
-     * @param tree the <tt>Tree</tt> to which this Node belongs.
      * @param parent Node which is the parent of this Node.  if this is
      *               null, the generated Node is assumed to be the root
-     *               node.  If the Tree root node is already set, throws
-     *               a <tt>TreeException</tt>.
+     *               node. 
      */
 
-    public Node(Tree tree, Node parent)
-        throws TreeException, IndexOutOfBoundsException {
-        this.tree = tree;
-        //children = new ArrayList();
+    public Node(Node parent)
+        throws IndexOutOfBoundsException {
         if (parent == null) {
-            if (tree.getRoot() != null) {
-                throw new TreeException("Null Node constructor "
-                                        + "invalid when root exists");
-            }
             this.parent = null;
-            tree.setRoot(this);
         }
         else {
-            // The parent must be a node in the current tree
-            if (parent.getTree() != tree) {
-                throw new TreeException("Parent not in same tree");
-            }
             this.parent = parent;
             // connect me to my parent
             parent.addChild(this);
@@ -195,13 +125,10 @@ public class Node implements Cloneable {
      * @param child  Node to be added.
      */
 
-    public void addChild(Node child) {
-        synchronized (tree) {
-            if (children == null)
-                children = new ArrayList(FAMILYSIZE);
-            children.add(child);
-            tree.modified();
-        }
+    public synchronized void addChild(Node child) {
+        if (children == null)
+            children = new ArrayList(FAMILYSIZE);
+        children.add(child);
     }
 
     /**
@@ -216,59 +143,38 @@ public class Node implements Cloneable {
      * @param child  Node to be added.
      */
 
-    public void addChild(int index, Node child)
-        throws IndexOutOfBoundsException {
-        synchronized (tree) {
-            if (children == null)
-                children = new ArrayList(FAMILYSIZE);
-            children.add(index, child);
-            tree.modified();
-        }
+    public synchronized void addChild(int index, Node child)
+    throws IndexOutOfBoundsException {
+        if (children == null)
+            children = new ArrayList(FAMILYSIZE);
+        children.add(index, child);
+        
     }
 
     /**
      * Insert a subtree at a specified index position in the child list.
-     * Takes advantage of the synchronization on the associated <tt>Tree</tt>
-     * object of the actual <i>addChild</i> call.
-     * <p>Calls the <i>modified</i> method of the tree to maintain the
-     * value of <i>modCount</i>.
+     * Takes advantage of the synchronization of the actual <i>addChild</i> call.
      */
     public void addSubTree(int index, Node subtree)
         throws IndexOutOfBoundsException
     {
         // The subtree must be traversed, and the tree references set
         // to the Tree of this node.
-        subtree.setSubTreeTree(tree);
         subtree.setParent(this);
         addChild(index, subtree);
     }
 
     /**
      * Add a subtree to the child list.
-     * Takes advantage of the synchronization on the associated <tt>Tree</tt>
-     * object of the actual <i>addChild</i> call.
-     * <p>Calls the <i>modified</i> method of the tree to maintain the
-     * value of <i>modCount</i>.
+     * Takes advantage of the synchronization of the actual <i>addChild</i> call.
      */
     public void addSubTree(Node subtree)
         throws IndexOutOfBoundsException
     {
         // The subtree must be traversed, and the tree references set
         // to the Tree of this node.
-        subtree.setSubTreeTree(tree);
         subtree.setParent(this);
         addChild(subtree);
-    }
-
-    /**
-     * Set all of the <i>tree</i> references in a subtree to the given
-     * value.
-     * @param tree - the <tt.Tree</tt> reference to set.
-     */
-    public void setSubTreeTree(Tree tree) {
-        for (int i = 0; i < numChildren(); i++)
-            getChild(i).setSubTreeTree(tree);
-        this.tree = tree;
     }
 
     /**
@@ -292,16 +198,12 @@ public class Node implements Cloneable {
      */
 
     public void copySubTree(Node subtree, int index)
-        throws TreeException, ConcurrentModificationException {
+        throws TreeException {
         copyCheckSubTree(subtree, index, true);
     }
 
     /**
      * Copies a subtree of this tree as a new child of this node.
-     * Synchronized on the containing <tt>Tree</tt> object.
-     *
-     * Calls the <tt>modified</tt> method of the containing Tree to
-     * maintain the value of <tt>modCount</tt>.
      *
      * Note that it is illegal to try to copy a subtree to one of
      * its own descendents or itself.  (This restriction could be lifted
@@ -333,10 +235,10 @@ public class Node implements Cloneable {
      *                     call.
      */
 
-    private void copyCheckSubTree(
+    private synchronized void copyCheckSubTree(
             Node subtree, int index, boolean checkLoops)
-        throws TreeException, ConcurrentModificationException {
-        synchronized (tree) {
+        throws TreeException {
+        
             Node newNode = null;
             if (checkLoops) {
                 checkLoops = false;
@@ -347,7 +249,7 @@ public class Node implements Cloneable {
 
                 // Check that subtree is not an ancestor of this.
                 Ancestor ancestors =
-                        new Ancestor(tree.getModCount());
+                        new Ancestor();
                 while (ancestors.hasNext()) {
                     if ((Node)ancestors.next() == subtree) {
                         throw new TreeException
@@ -379,151 +281,98 @@ public class Node implements Cloneable {
                                              checkLoops);
                 }
             }
-            tree.modified();
-        }
     }
 
 
     /**
      * Removes the child <tt>Node</tt> at the specified index in the
-     * ArrayList.  Synchronized on the enclosing <tt>Tree</tt> object.
-     *
-     * Calls the <tt>modified</tt> method of the containing Tree to
-     * maintain the value of <tt>modCount</tt>.
+     * ArrayList.
      *
      * @param index  The int index of the child to be removed.
      * @return the node removed.
      */
 
-    public Node removeChildAtIndex(int index) {
-        synchronized (tree) {
+    public synchronized Node removeChildAtIndex(int index) {
+        
             Node tmpNode = (Node) children.remove(index);
-            tree.modified();
             return tmpNode;
-        }
+        
     }
 
     /**
      * Removes the specified child <tt>Node</tt> from the children
-     * ArrayList.  Synchronized on the enclosing <tt>Tree</tt> object.
+     * ArrayList.
      *
-     * Implemented by calling <tt>removeChildAtIndex()</tt>.  Relies
-     * on that method to call the <tt>modified</tt> method of the
-     * containing Tree to maintain the value of <tt>modCount</tt>.
+     * Implemented by calling <tt>removeChildAtIndex()</tt>.
      *
      * @param child  The child node to be removed.
      * @return the node removed.
      */
 
-    public Node removeChild(Node child)
+    public synchronized Node removeChild(Node child)
         throws NoSuchElementException {
-        synchronized (tree) {
+        
             int index = children.indexOf(child);
             if (index == -1) {
                 throw new NoSuchElementException();
             }
             Node tmpNode = removeChildAtIndex(index);
-            // Note - no call to tree.modified() here -
-            // done in removeChildAtindex()
             return tmpNode;
-        }
+        
     }
 
     /**
-     * Deletes the entire subtree rooted on <tt>this</tt> from the 
-     * <tt>Tree</tt>.  The Tree is traversed in PostOrder, and each
+     * Deletes the entire subtree rooted on <tt>this</tt>.
+     * The Tree is traversed in PostOrder, and each
      * encountered <tt>Node</tt> has its <i>Tree</i> reference
      * nullified. The <i>parent</i> field, and the parent's child reference
      * to <tt>this</tt>, are nullified only at the top of the subtree.
      * <p>As a result, any remaining reference to any element in the
      * subtree will keep the whole subtree from being GCed.
-     * @return int count of Nodes deleted.
      */
-    public int deleteSubTree() {
-        synchronized (tree) {
-            Tree ttree = tree;
-            int count = delete(this);
-            // At this point, the tree reference has been nullified.
-            // nullify the parent reference
-            if (ttree.getRoot() != this) {
-                // Not the root node - remove from parent
-                parent.removeChild(this);
-                unsetParent();
-            } else {
-                ttree.unsetRoot();
-            } // end of else
-            ttree.modified();
-            return count;
-        }
+    public synchronized Node deleteSubTree() {
+        if (parent != null) {
+            // Not the root node - remove from parent
+            parent.removeChild(this);
+            unsetParent();
+        } // end of else
+        return this;
     }
 
     /**
-     * Deletes the entire subtree rooted on <tt>this</tt> from the 
-     * <tt>Tree</tt>.  The Tree is traversed in PostOrder, and each
-     * encountered <tt>Node</tt> has its <i>Tree</i> reference
-     * nullified. The <i>parent</i> field, and the parent's child reference
-     * to <tt>this</tt>, are nullified only at the top of the subtree.
-     * <p>As a result, any remaining reference to any element in the
-     * subtree will keep the whole subtree from being GCed.
-     * @return <i>this</i>, the <tt>Node</tt> at which the cut subtree is
-     * rooted.  All <i>tree</i> references in the subtree will be nullified.
+     * Delete <code>this</code> subtree and return a count of the deleted
+     * nodes.  The deletion is effected by cutting the references between
+     * <code>this</code> and its parent (if any).  All other relationships
+     * within the subtree are maintained.
+     * @return the number of deleted nodes
      */
-    public Node cutSubTree() {
-        synchronized (tree) {
-            Tree ttree = tree;
-            int count = delete(this);
-            // At this point, the tree reference has been nullified.
-            // nullify the parent reference
-            if (ttree.getRoot() != this) {
-                // Not the root node - remove from parent
-                parent.removeChild(this);
-                unsetParent();
-            } else {
-                ttree.unsetRoot();
-            } // end of else
-            ttree.modified();
-            return this;
+    public synchronized int deleteCountSubTree() {
+        int count = deleteCount(this);
+        // nullify the parent reference
+        if (parent != null) {
+            // Not the root node - remove from parent
+            parent.removeChild(this);
+            unsetParent();
         }
+        return count;
     }
 
     /**
-     * N.B. this private method must only be called from the deleteSubTree
-     * or cutSubTree methods, which are synchronized.  In itself, it is not
+     * N.B. this private method must only be called from the deleteCountSubTree
+     * method, which is synchronized.  In itself, it is not
      * synchronized.
-     * The <i>tree</i> reference in each node is nullified, but otherwise the
-     * internal relationships between the <tt>Node</tt>s are unchanged.
+     * The internal relationships between the <tt>Node</tt>s are unchanged.
      * @param subtree Node at the root of the subtree to be deleted.
      * @return int count of Nodes deleted.
      */
-    private int delete(Node subtree) {
+    private int deleteCount(Node subtree) {
         int count = 0;
         int numkids = subtree.numChildren();
-        //System.out.println("# children "+subtree.numChildren());
 
         for (int i = 0; i < numkids; i++) {
-            //System.out.println("Delete child "+ i);
-            count += delete((Node)subtree.children.get(i));
+            count += deleteCount((Node)subtree.children.get(i));
         }
-        // Delete this node
-        // nullify the tree reference
-        tree = null;
         return ++count;
-    }
-
-    /**
-     * Get the <tt>Tree</tt> reference of this <tt>Node</tt>.
-     * @return the <tt>Tree</tt>.
-     */
-    public Tree getTree() {
-        return tree;
-    }
-
-    /**
-     * Set the <i>tree</i> field of this node.
-     * @param tree - the <tt>Tree</tt> reference to set.
-     */
-    public void setTree(Tree tree) {
-        this.tree = tree;
     }
 
     /**
@@ -547,13 +396,6 @@ public class Node implements Cloneable {
      */
     public void unsetParent() {
         parent = null;
-    }
-
-    /**
-     * Nullify the <tt>Tree</tt> reference of this node.
-     */
-    public void unsetTree() {
-        tree = null;
     }
 
     /**
@@ -598,16 +440,6 @@ public class Node implements Cloneable {
      * The node is returned first, and then for each child, a new
      * PreOrder is instantiated.  That iterator will terminate when the
      * last descendant of that child has been returned.
-     *
-     * The iterator is <i>fast-fail</i>.  If any modifications occur to
-     * the tree as a whole during the lifetime of the iterator, a
-     * subsequent call to next() will throw a
-     * ConcurrentModificationException.  See the discussion of
-     * fast-fail iterators in <tt>AbstractList</tt>.
-     *
-     * The <tt>modCount</tt> field used to maintain information about
-     * structural modifcations is maintained for all nodes in the
-     * containing Tree instance.
      */
 
     public class PreOrder implements Iterator {
@@ -616,109 +448,98 @@ public class Node implements Cloneable {
         // the index of the active child until that child is exhausted.
         // At the start of proceedings, it may already point past the
         // end of the (empty) child vector
-
-        private int age;
+        
         private PreOrder nextChildIterator;
-
+        
         /**
-         * Constructor
-         *
-         * @param age  the current value of the modCount field in the
-         * <tt>Tree</tt> instance which includes this class instance.
+         * Constructor for pre-order iterator.
          */
-        public PreOrder(int age) {
-            this.age = age;
+        public PreOrder() {
             hasNext();  // A call to set up the initial iterators
             // so that a call to next() without a preceding call to
             // hasNext() will behave sanely
         }
-
-        public boolean hasNext() {
+        
+        public synchronized boolean hasNext() {
             // synchronize this against possible changes to the tree
-            synchronized (tree) {
-                if (selfNotReturned) {
-                    return true;
-                }
-                // self has been returned - are there any children?
-                // if so, we must always have an iterator available
-                // even unless it is exhausted.  Assume it is set up this 
-                // way by next().  The iterator has a chance to do this 
-                // because self will always be returned first.
-                // The test of nextChildIndex must always be made because
-                // there may be no children, or the last child may be
-                // exhausted, hence no possibility of an
-                // iterator on the children of any child.
-                if (nextChildIndex < numChildren()) {
-                    return nextChildIterator.hasNext(); 
-                }
-                else { // no kiddies
-                    return false;
-                }
+            
+            if (selfNotReturned) {
+                return true;
             }
+            // self has been returned - are there any children?
+            // if so, we must always have an iterator available
+            // even unless it is exhausted.  Assume it is set up this 
+            // way by next().  The iterator has a chance to do this 
+            // because self will always be returned first.
+            // The test of nextChildIndex must always be made because
+            // there may be no children, or the last child may be
+            // exhausted, hence no possibility of an
+            // iterator on the children of any child.
+            if (nextChildIndex < numChildren()) {
+                return nextChildIterator.hasNext(); 
+            }
+            else { // no kiddies
+                return false;
+            }
+            
         }
 
-        public Object next()
-            throws NoSuchElementException,
-                   ConcurrentModificationException {
-            synchronized (tree) {
-                // synchronize the whole against changes to the tree
-
-                // Check for ConcurrentModification
-                if (! tree.modCountEqualTo(age)) {
-                    throw new ConcurrentModificationException();
-                }
-
-                if (! hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                if (selfNotReturned) {
-                    selfNotReturned = false;
-                    if (nextChildIndex < numChildren()) {
-                        // We have children - create an iterator
-                        // for the first one
-                        nextChildIterator =
-                                ((Node)
-                                 (children.get(nextChildIndex))).new
-                                PreOrder(age);
-                    }
-                    // else do nothing;
-                    // the nextChildIndex test in hasNext()
-                    // will prevent us from getting into trouble
-                    return Node.this;
-                }
-                else { // self has been returned
-                    // there must be a next available, or we would not have
-                    // come this far
-                    /* ---------------------------------
-                    if (! nextChildIterator.hasNext()) {
-                        // last iterator was exhausted;
-                        // if there was another child available, an
-                        //iterator would already have been set up.
-                        // Every iterator will return at least one node -
-                        // the node on which it is defined.
-                        // So why did the initial hasNext succeed?
-                        throw new NoSuchElementException(
-                                "Cannot reach this");
-                    }
-                    ----------------------------------- */
-                    Object tempNode = nextChildIterator.next();
-                    // Check for exhaustion of the child
-                    if (! nextChildIterator.hasNext()) {
-                        // child iterator empty - another child?
-                        if (++nextChildIndex < numChildren()) {
-                            nextChildIterator =
-                                    ((Node)
-                                     (children.get(nextChildIndex))).new
-                                    PreOrder(age);
-                        }
-                        else {
-                            // nullify the iterator
-                            nextChildIterator = null;
-                        }
-                    }
-                    return (Node) tempNode;
-                }
+        public synchronized Object next()
+        throws NoSuchElementException {
+            
+            // synchronize the whole against changes to the tree
+            
+            if (! hasNext()) {
+                throw new NoSuchElementException();
             }
+            if (selfNotReturned) {
+                selfNotReturned = false;
+                if (nextChildIndex < numChildren()) {
+                    // We have children - create an iterator
+                    // for the first one
+                    nextChildIterator =
+                        ((Node)
+                        (children.get(nextChildIndex))).new
+                        PreOrder();
+                }
+                // else do nothing;
+                // the nextChildIndex test in hasNext()
+                // will prevent us from getting into trouble
+                return Node.this;
+            }
+            else { // self has been returned
+                // there must be a next available, or we would not have
+                // come this far
+                /* ---------------------------------
+                if (! nextChildIterator.hasNext()) {
+                    // last iterator was exhausted;
+                    // if there was another child available, an
+                    //iterator would already have been set up.
+                    // Every iterator will return at least one node -
+                    // the node on which it is defined.
+                    // So why did the initial hasNext succeed?
+                    throw new NoSuchElementException(
+                    "Cannot reach this");
+                }
+                ----------------------------------- */
+                Object tempNode = nextChildIterator.next();
+                // Check for exhaustion of the child
+                if (! nextChildIterator.hasNext()) {
+                    // child iterator empty - another child?
+                    if (++nextChildIndex < numChildren()) {
+                        nextChildIterator =
+                            ((Node)
+                            (children.get(nextChildIndex))).new
+                            PreOrder();
+                    }
+                    else {
+                        // nullify the iterator
+                        nextChildIterator = null;
+                    }
+                }
+                return (Node) tempNode;
+            }
+            
         }
 
         public void remove()
@@ -742,16 +563,6 @@ public class Node implements Cloneable {
      * Firstly, for each child a new PostOrder is instantiated.
      * That iterator will terminate when the last descendant of that
      * child has been returned.  finally, the node itself is returned.
-     *
-     * The iterator is <i>fast-fail</i>.  iI any modifications occur to
-     * the tree as a whole during the lifetime of the iterator, a
-     * subsequent call to next() will throw a
-     * ConcurrentModificationException.  See the discussion of
-     * fast-fail iterators in <tt>AbstractList</tt>.
-     *
-     * The <tt>modCount</tt> field used to maintain information about
-     * structural modifcations is maintained for all nodes in the
-     * containing Tree instance.
      */
 
     public class PostOrder implements Iterator {
@@ -761,89 +572,73 @@ public class Node implements Cloneable {
         // At the start of proceedings, it may already point past the
         // end of the (empty) child vector
 
-        private int age;
         private PostOrder nextChildIterator;
 
         /**
-         * Constructor
-         *
-         * @param age  the current value of the modCount field in the
-         * <tt>Tree</tt> instance which includes this class instance.
+         * Constructor for post-order iterator.
          */
-        public PostOrder(int age) {
-            this.age = age;
+        public PostOrder() {
             hasNext();  // A call to set up the initial iterators
             // so that a call to next() without a preceding call to
             // hasNext() will behave sanely
         }
 
-        public boolean hasNext() {
+        public synchronized boolean hasNext() {
             // Synchronize this against changes in the tree
-            synchronized (tree) {
-                // self is always the last to go
-                if (selfReturned) { // nothing left
-                    return false;
-                }
-
-                // Check first for children, and set up an iterator if so
-                if (nextChildIndex < numChildren()) {
-                    if (nextChildIterator == null) {
-                        nextChildIterator =
-                                ((Node)
-                                (children.get(nextChildIndex))).new
-                                PostOrder(age);
-                    }
-                    // else an iterator exists.
-                    // Assume that the next() method
-                    // will keep the iterator current
-                } // end of Any children?
-
-                return true;
+            // self is always the last to go
+            if (selfReturned) { // nothing left
+                return false;
             }
+            
+            // Check first for children, and set up an iterator if so
+            if (nextChildIndex < numChildren()) {
+                if (nextChildIterator == null) {
+                    nextChildIterator =
+                        ((Node)
+                        (children.get(nextChildIndex))).new
+                        PostOrder();
+                }
+                // else an iterator exists.
+                // Assume that the next() method
+                // will keep the iterator current
+            } // end of Any children?
+            
+            return true;
         }
 
-        public Object next()
-            throws NoSuchElementException,
-                   ConcurrentModificationException {
-            synchronized (tree) {
-                // synchronize the whole against changes to the tree
-
-                // Check for ConcurrentModification
-                if (! tree.modCountEqualTo(age)) {
-                    throw new ConcurrentModificationException();
-                }
-
-                if (! hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                // Are there any children?
-                if (nextChildIndex < numChildren()) {
-                    // There will be an active iterator.  Is it empty?
-                    if (nextChildIterator.hasNext()) {
-                        // children remain
-                        Object tempNode = nextChildIterator.next();
-                        // now check for exhaustion of the iterator
-                        if (! nextChildIterator.hasNext()) {
-                            if (++nextChildIndex < numChildren()) {
-                                nextChildIterator =
-                                        ((Node)
-                                        (children.get(nextChildIndex))).new
-                                        PostOrder(age);
-                            }
-                            // else leave the iterator bumping on empty
-                            // next call will return self
-                        }
-                        // else iterator not exhausted
-                        // return the Node
-                        return (Node) tempNode;
-                    }
-                    // else children exhausted - fall through
-                }
-                // No children - return self object
-                selfReturned = true;
-                nextChildIterator = null;
-                return Node.this;
+        public synchronized Object next()
+        throws NoSuchElementException {
+            // synchronize the whole against changes to the tree
+            if (! hasNext()) {
+                throw new NoSuchElementException();
             }
+            // Are there any children?
+            if (nextChildIndex < numChildren()) {
+                // There will be an active iterator.  Is it empty?
+                if (nextChildIterator.hasNext()) {
+                    // children remain
+                    Object tempNode = nextChildIterator.next();
+                    // now check for exhaustion of the iterator
+                    if (! nextChildIterator.hasNext()) {
+                        if (++nextChildIndex < numChildren()) {
+                            nextChildIterator =
+                                ((Node)
+                                (children.get(nextChildIndex))).new
+                                PostOrder();
+                        }
+                        // else leave the iterator bumping on empty
+                        // next call will return self
+                    }
+                    // else iterator not exhausted
+                    // return the Node
+                    return (Node) tempNode;
+                }
+                // else children exhausted - fall through
+            }
+            // No children - return self object
+            selfReturned = true;
+            nextChildIterator = null;
+            return Node.this;
         }
 
         public void remove()
@@ -859,32 +654,16 @@ public class Node implements Cloneable {
      * It implements the <tt>Iterator</tt> interface, excluding the
      * optional <tt>remove</tt> method.  The iterator traverses the
      * ancestors of its containing Node from the Node's immediate
-     * parent back to tge root Node of the containing <tt>Tree</tt>.
-     *
-     * The iterator is <i>fast-fail</i>.  If any modifications occur to
-     * the tree as a whole during the lifetime of the iterator, a
-     * subsequent call to next() will throw a
-     * ConcurrentModificationException.  See the discussion of
-     * fast-fail iterators in <tt>AbstractList</tt>.
-     *
-     * The <tt>modCount</tt> field used to maintain information about
-     * structural modifcations is maintained for all nodes in the
-     * containing Tree instance.
+     * parent back to the root Node.
      */
 
     public class Ancestor implements Iterator {
         private Node nextAncestor;
-        private int age;
 
         /**
-         * Constructor
-         *
-         * @param age  the current value of the modCount field in the
-         * <tt>Tree</tt> instance which includes this class instance.
+         * Constructor for ancestors iterator.
          */
-
-        public Ancestor(int age) {
-            this.age = age;
+        public Ancestor() {
             nextAncestor = Node.this.parent;
         }
 
@@ -892,22 +671,16 @@ public class Node implements Cloneable {
             return nextAncestor != null;
         }
 
-        public Object next()
-            throws NoSuchElementException,
-                   ConcurrentModificationException {
-            synchronized (tree) {
-                // The tree is a
-                // potentially dymanic structure, which could be
-                // undergoing modification as this method is being
-                // executed, and it is possible that the Comod exception
-                // could be set to trigger while this call is in process.
-                if (! tree.modCountEqualTo(age)) {
-                    throw new ConcurrentModificationException();
-                }
-                Node tmpNode = nextAncestor;
-                nextAncestor = tmpNode.parent;
-                return tmpNode;
-            }
+        public synchronized Object next()
+        throws NoSuchElementException {
+            // The tree is a
+            // potentially dynanic structure, which could be
+            // undergoing modification as this method is being
+            // executed.
+            Node tmpNode = nextAncestor;
+            nextAncestor = tmpNode.parent;
+            return tmpNode;
+            
         }
 
         public void remove()
@@ -929,16 +702,6 @@ public class Node implements Cloneable {
      * The listIterator traverses those children in the parent node's
      * <tt>children</tt> <tt>ArrayList</tt> which follow the subject
      * node's entry in that array, using the <tt>next()</tt> method.
-     *
-     * The iterator is <i>fail-fast</i>.  if any modification occur to
-     * the tree as a whole during the lifetime of the iterator, a
-     * subsequent call to next() will throw a
-     * ConcurrentModificationException.  See the discussion of
-     * fast-fail iterators in <tt>AbstractList</tt>.
-     *
-     * The fail-fast ListIterator in ArrayList is the underlying
-     * mechanism for both the listIterator and the fail-fast
-     * behaviour.
      */
 
     public class FollowingSibling implements ListIterator {
@@ -949,7 +712,7 @@ public class Node implements Cloneable {
         // hasNext() will always return false
 
         public FollowingSibling() {
-            synchronized (tree) {
+            synchronized (this) {
                 // Set up iterator on the parent's arrayList of children
                 Node refNode = Node.this.parent;
                 if (refNode != null) {
@@ -967,33 +730,20 @@ public class Node implements Cloneable {
             }
         }
 
-        public boolean hasNext() {
-            // Any CoMod exception will be thrown by the listIterator
-            // provided with ArrayList.  It does not throw such exceptions
-            // on calls to hasNext();
-            synchronized (tree) {
-                return listIterator.hasNext();
-            }
+        public synchronized boolean hasNext() {
+            return listIterator.hasNext();
         }
 
-        public Object next()
-            throws NoSuchElementException,
-                   ConcurrentModificationException {
-            synchronized (tree) {
-                // N.B. synchronization here is still on the Tree
-                // rather than on the Node containing the children
-                // ArryList of interest.  Other ArrayList operations
-                // throughout the Tree are synchronized on the Tree object
-                // itself, so exceptions cannot be made for these more
-                // directly Nodal operations.
-                return listIterator.next();
-            }
+        public synchronized Object next()
+        throws NoSuchElementException {
+            // N.B. synchronization here is on the Node containing
+            // the children ArryList of interest.  Other ArrayList operations
+            // throughout the tree are also synchronized on the Node object.
+            return listIterator.next();
         }
 
-        public int nextIndex() {
-            synchronized (tree) {
-                return listIterator.nextIndex();
-            }
+        public synchronized int nextIndex() {
+            return listIterator.nextIndex();
         }
 
         public void add(Object o)
@@ -1041,16 +791,6 @@ public class Node implements Cloneable {
      * <tt>children</tt> <tt>ArrayList</tt> which precede the subject
      * node's entry in that array, using the <tt>previous()</tt> method.
      * I.e., siblings are produced in reverse sibling order.
-     *
-     * The iterator is <i>fail-fast</i>.  if any modification occur to
-     * the tree as a whole during the lifetime of the iterator, a
-     * subsequent call to previous() will throw a
-     * ConcurrentModificationException.  See the discussion of
-     * fast-fail iterators in <tt>AbstractList</tt>.
-     *
-     * The fail-fast ListIterator in ArrayList is the underlying
-     * mechanism for both the listIterator and the fail-fast
-     * behaviour.
      */
 
     public class PrecedingSibling implements ListIterator {
@@ -1061,7 +801,7 @@ public class Node implements Cloneable {
         // hasNext() will always return false
 
         public PrecedingSibling() {
-            synchronized (tree) {
+            synchronized (this) {
                 // Set up iterator on the parent's arrayList of children
                 Node refNode = Node.this.parent;
                 if (refNode != null) {
@@ -1079,33 +819,20 @@ public class Node implements Cloneable {
             }
         }
 
-        public boolean hasPrevious() {
-            // Any CoMod exception will be thrown by the listIterator
-            // provided with ArrayList.  It does not throw such exceptions
-            // on calls to hasNext();
-            synchronized (tree) {
-                return listIterator.hasPrevious();
-            }
+        public synchronized boolean hasPrevious() {
+            return listIterator.hasPrevious();
         }
 
-        public Object previous()
-            throws NoSuchElementException,
-                   ConcurrentModificationException {
-            synchronized (tree) {
-                // N.B. synchronization here is still on the Tree
-                // rather than on the Node containing the children
-                // ArryList of interest.  Other ArrayList operations
-                // throughout the Tree are synchronized on the Tree object
-                // itself, so exceptions cannot be made for these more
-                // directly Nodal operations.
-                return listIterator.previous();
-            }
+        public synchronized Object previous()
+            throws NoSuchElementException {
+            // N.B. synchronization here is on the Node containing
+            // the children ArryList of interest.  Other ArrayList operations
+            // throughout the tree are also synchronized on the Node object.
+            return listIterator.previous();
         }
 
-        public int previousIndex() {
-            synchronized (tree) {
-                return listIterator.previousIndex();
-            }
+        public synchronized int previousIndex() {
+            return listIterator.previousIndex();
         }
 
         public void add(Object o)
