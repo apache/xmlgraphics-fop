@@ -87,6 +87,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     private Length width;
     private Length height;
 
+    // When viewport should grow with the content.
+    private boolean autoHeight = true; 
+
     /**
      * Create a new block container layout manager.
      */
@@ -111,8 +114,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
         marginProps = pm.getMarginProps();
         borderProps = pm.getBorderAndPadding();
-        height = pm.getPropertyList().get(PR_HEIGHT).getLength();
-        width = pm.getPropertyList().get(PR_WIDTH).getLength();
+        height = pm.getPropertyList().get(PR_BLOCK_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
+        width = pm.getPropertyList().get(PR_INLINE_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
     }
 
     protected int getRotatedIPD() {
@@ -152,8 +155,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         boolean rotated = vals[0] == 0.0;
         if (rotated) {
             // rotated 90 degrees
-            stackLimit = new MinOptMax(1000000);
-            ipd = getRotatedIPD();
+            if (relDims.ipd > context.getRefIPD()) {
+                relDims.ipd = context.getRefIPD();
+            }
+            stackLimit = new MinOptMax(relDims.ipd);
+            if (width.isAuto()) {
+                relDims.bpd = context.getStackLimit().opt;
+            }
             absoluteCTM = new CTM(vals[0], vals[1], vals[2], vals[3], 0, 0);
         } else {
             if (vals[0] == -1.0) {
@@ -324,25 +332,31 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
                 viewportBlockArea.setCTM(absoluteCTM);
                 viewportBlockArea.setClip(clip);
+                autoHeight = false;
             } else {
                 double[] vals = absoluteCTM.toArray();
                 boolean rotated = vals[0] == 0.0;
                 if (rotated) {
-                    viewportBlockArea.setWidth(relDims.bpd);
-                    viewportBlockArea.setHeight(getRotatedIPD());
+                    viewportBlockArea.setWidth(relDims.ipd);
+                    viewportBlockArea.setHeight(relDims.bpd);
                     viewportBlockArea.setCTM(absoluteCTM);
                     viewportBlockArea.setClip(clip);
+                    autoHeight = false;
                 } else if (vals[0] == -1.0) {
                     // need to set bpd to actual size for rotation
                     // and stacking
                     viewportBlockArea.setWidth(relDims.ipd);
-                    viewportBlockArea.setWidth(relDims.bpd);
+                    if (!height.isAuto()) {
+                        viewportBlockArea.setHeight(relDims.bpd);
+                        autoHeight = false;
+                    }
                     viewportBlockArea.setCTM(absoluteCTM);
                     viewportBlockArea.setClip(clip);
                 } else {
                     viewportBlockArea.setWidth(relDims.ipd);
                     if (!height.isAuto()) {
                         viewportBlockArea.setHeight(relDims.bpd);
+                        autoHeight = false;
                     }
                 }
             }
@@ -356,8 +370,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             // Set up dimensions
             // Must get dimensions from parent area
             Area parentArea = parentLM.getParentArea(curBlockArea);
-            int referenceIPD = parentArea.getIPD();
-            curBlockArea.setIPD(referenceIPD);
+            //int referenceIPD = parentArea.getIPD();
+            curBlockArea.setIPD(relDims.ipd);
             // Get reference IPD from parentArea
             setCurrentArea(viewportBlockArea); // ??? for generic operations
         }
@@ -371,7 +385,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
      */
     public void addChild(Area childArea) {
         if (curBlockArea != null) {
-            curBlockArea.addBlock((Block) childArea, height.isAuto());
+            curBlockArea.addBlock((Block) childArea);
         }
     }
 
@@ -385,8 +399,18 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
      * Force current area to be added to parent area.
      */
     protected void flush() {
+        viewportBlockArea.addBlock(curBlockArea, autoHeight);
+        
+        // Fake a 0 height for absolute positioned blocks.
+        int height = viewportBlockArea.getHeight();
+        if (viewportBlockArea.getPositioning() == Block.ABSOLUTE) {
+            viewportBlockArea.setHeight(0);
+        }
         super.flush();
-        viewportBlockArea.addBlock(curBlockArea);
+        // Restore the right height.
+        if (viewportBlockArea.getPositioning() == Block.ABSOLUTE) {
+            viewportBlockArea.setHeight(height);
+        }
     }
     
 }
