@@ -20,6 +20,7 @@
 package org.apache.fop.render;
 
 import java.awt.Font;
+import java.util.Map;
 
 import org.apache.fop.fonts.FontException;
 
@@ -28,10 +29,13 @@ import org.apache.fop.fonts.FontException;
  * @version $Revision$ $Name$
  */
 public interface FontData {
-    public Font getFont ( String family, int style, int variant, int weight,
+    public Font getFont(Map attributes, int strategy);
+    public Font getFont(String family, int style, int variant, int weight,
             int stretch, float size, int strategy) throws FontException;
+    public Font getGenericFont(Map attributes);
     public Font getGenericFont(String type, int style, int variant, int weight,
             int stretch, float size) throws FontException;
     public Font getSystemFont(int type) throws FontException;
-
+    public Map makeFontAttributes(String family, int style, int variant,int
+            weight, int stretch, float size) throws FontException;
 }
