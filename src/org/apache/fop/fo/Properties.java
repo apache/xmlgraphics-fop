@@ -12,10 +12,14 @@ package org.apache.fop.fo;
 
 import java.lang.Class;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.LinkedList;
 import java.util.Collections;
+
+import org.apache.fop.messaging.MessageHandler;
+
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjects;
@@ -37,6 +41,7 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.Bool;
 import org.apache.fop.datatypes.Literal;
 import org.apache.fop.datatypes.Auto;
+import org.apache.fop.datatypes.None;
 import org.apache.fop.datatypes.Inherit;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.FontFamilySet;
@@ -582,6 +587,257 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * 'value' can contain a parsed Inherit value or, in any order;
+         * background-color
+         *     a parsed ColorType value, or an NCName containing one of
+         *     the standard colors
+         * background-image
+         *     a parsed UriType value, or a parsed None value
+         * background-repeat
+         *     a parsed NCName containing a repeat enumeration token
+         * background-attachment
+         *     a parsed NCName containing 'scroll' or 'fixed'
+         * background-position
+         *     one or two parsed Length or Percentage values, or
+         *     one or two parsed NCNames containing enumeration tokens
+         *
+         * <p>The value(s) provided, if valid, are converted into a list
+         * containing the expansion of the shorthand.  The elements may
+         * be in any order.  A minimum of one value will be present.
+         *
+         *   a BackgroundColor ColorType or Inherit value
+         *   a BackgroundImage UriType, None or Inherit value
+         *   a BackgroundRepeat EnumType or Inherit value
+         *   a BackgroundAttachment EnumType or Inherit value
+         *   a BackgroundPositionHorizontal Numeric or Inherit value
+         *   a BackgroundPositionVertical Numeric or Inherit value
+         */
+        public static PropertyValue complex
+            (int property, PropertyValue value) throws PropertyException
+        {
+            if ( ! (value instanceof PropertyValueList)) {
+                return processValue(property, value);
+            } else {
+                return processList(property, (PropertyValueList)value);
+            }
+        }
+
+        private static PropertyValueList processValue
+            (int property, PropertyValue value) throws PropertyException
+        {
+            PropertyValueList newlist = new PropertyValueList(property);
+            // Can be Inherit, ColorType, UriType, None, Numeric, or an
+            // NCName (i.e. enum token)
+            if (value instanceof Inherit) {
+                // Construct a list of Inherit values
+                newlist.add(new Inherit(
+                            PropNames.BACKGROUND_COLOR));
+                newlist.add(new Inherit(
+                            PropNames.BACKGROUND_IMAGE));
+                newlist.add(new Inherit(
+                            PropNames.BACKGROUND_REPEAT));
+                newlist.add(new Inherit(
+                            PropNames.BACKGROUND_ATTACHMENT));
+                newlist.add(new Inherit(
+                            PropNames.BACKGROUND_POSITION_HORIZONTAL));
+                newlist.add(new Inherit(
+                            PropNames.BACKGROUND_POSITION_VERTICAL));
+                return newlist;
+            } else  {
+                // Make a list an pass to processList
+                PropertyValueList tmpList = new PropertyValueList(property);
+                tmpList.add(value);
+                return processList(property, tmpList);
+            }
+        }
+
+        private static PropertyValueList processList
+            (int property, PropertyValueList value) throws PropertyException
+        {
+            PropertyValue color= null,
+                            image = null,
+                            repeat = null,
+                            attachment = null,
+                            position = null;
+
+            PropertyValueList newlist = new PropertyValueList(property);
+            // This is a list
+            if (value.size() == 0)
+                throw new PropertyException
+                                ("Empty list for Background");
+            ListIterator elements = ((PropertyValueList)value).listIterator();
+
+            scanning_elements: while (elements.hasNext()) {
+                PropertyValue pval = (PropertyValue)(elements.next());
+                if (pval instanceof ColorType) {
+                    if (color != null) MessageHandler.log("Background: " +
+                                "duplicate color overrides previous color");
+                    color = pval;
+                    continue scanning_elements;
+                }
+
+                if (pval instanceof UriType) {
+                    if (image != null) MessageHandler.log("Background: " +
+                        "duplicate image uri overrides previous image spec");
+                    image = pval;
+                    continue scanning_elements;
+                }
+
+                if (pval instanceof None) {
+                    if (image != null) MessageHandler.log("Background: " +
+                        "duplicate image spec overrides previous image spec");
+                    image = pval;
+                    continue scanning_elements;
+                }
+
+                if (pval instanceof Numeric) {
+                    // Must be one of the position values
+                    // send it to BackgroundPosition.complex for processing
+                    // If it is followed by another Numeric, form a list from
+                    // the pair, else form a list from this element only
+                    PropertyValueList posnList
+                                        = new PropertyValueList(property);
+                    posnList.add(pval);
+                    // Is it followed by another Numeric?
+                    if (elements.hasNext()) {
+                        PropertyValue tmpval;
+                        if ((tmpval = (PropertyValue)(elements.next()))
+                                    instanceof Numeric) {
+                            posnList.add(tmpval);
+                        } else {
+                            // Not a following Numeric, so restore the list
+                            // cursor
+                            tmpval = (PropertyValue)(elements.previous());
+                        }
+                    }
+                    // Now send one or two Numerics to BackgroundPosition
+                    if (position != null)
+                            MessageHandler.log("Background: duplicate" +
+                            "position overrides previous position");
+                    position = BackgroundPosition.complex
+                                    (PropNames.BACKGROUND_POSITION, posnList);
+                    continue scanning_elements;
+                }
+
+                if (pval instanceof NCName) {
+                    // NCName can be:
+                    //  a standard color name
+                    //  a background attachment mode
+                    //  one or two position indicators
+                    String ncname = ((NCName)pval).getNCName();
+                    ColorType colorval = null;
+                    try {
+                        colorval = new ColorType
+                                        (PropNames.BACKGROUND_COLOR, ncname);
+                    } catch (PropertyException e) {};
+                    if (colorval != null) {
+                        if (color != null) MessageHandler.log("Background: " +
+                                "duplicate color overrides previous color");
+                        color = colorval;
+                        continue scanning_elements;
+                    }
+
+                    // Is it an attachment mode?
+                    EnumType enum = null;
+                    try {
+                        enum = new EnumType
+                                (PropNames.BACKGROUND_ATTACHMENT, ncname);
+                    } catch (PropertyException e) {};
+                    if (enum != null) {
+                        if (attachment != null)
+                                MessageHandler.log("Background: duplicate" +
+                                "attachment overrides previous attachment");
+                        attachment = enum;
+                        continue scanning_elements;
+                    }
+
+                    // Must be a position indicator
+                    // send it to BackgroundPosition.complex for processing
+                    // If it is followed by another NCName, form a list from
+                    // the pair, else form a list from this element only
+
+                    // This is made messy by the syntax of the Background
+                    // shorthand.  A following NCName need not be a second
+                    // position indicator.  So we have to test this element
+                    // and the following element individually.
+                    PropertyValueList posnList
+                                        = new PropertyValueList(property);
+                    PropertyValue tmpval = null;
+                    // Is the current NCName a position token?
+                    boolean pos1ok = false, pos2ok = false;
+                    try {
+                        PropertyConsts.enumValueToIndex
+                                        (ncname, BackgroundPosition.enums);
+                        pos1ok = true;
+                        if (elements.hasNext()) {
+                            tmpval = (PropertyValue)(elements.next());
+                            if (tmpval instanceof NCName) {
+                                String ncname2 = ((NCName)tmpval).getString();
+                                PropertyConsts.enumValueToIndex
+                                        (ncname2, BackgroundPosition.enums);
+                                pos2ok = true;
+                            } else {
+                                // Restore the listIterator cursor
+                                Object tmpo = elements.previous();
+                            }
+                        }
+                    } catch (PropertyException e) {};
+
+                    if (pos1ok) {
+                        posnList.add(pval);
+                        // Is it followed by another position NCName?
+                        if (pos2ok) posnList.add(tmpval);
+                        // Now send one or two NCNames to BackgroundPosition
+                        if (position != null)
+                                MessageHandler.log("Background: duplicate" +
+                                "position overrides previous position");
+                        position = BackgroundPosition.complex
+                                    (PropNames.BACKGROUND_POSITION, posnList);
+                        continue scanning_elements;
+                    }
+                    throw new PropertyException
+                        ("Unknown NCName value for Background: " + ncname);
+                }
+
+                throw new PropertyException
+                    ("Unknown property value for Background: "
+                                                        + pval.toString());
+            }
+
+            // Now construct the list of PropertyValues with their
+            // associated property indices, as expanded from the
+            // Background shorthand.  Note that the position value is a list
+            // containing the expansion of the BackgroundPosition shorthand.
+
+            if (color != null) {
+                color.setProperty(PropNames.BACKGROUND_COLOR);
+                newlist.add(color);
+            }
+            if (image != null) {
+                image.setProperty(PropNames.BACKGROUND_IMAGE);
+                newlist.add(image);
+            }
+            if (repeat != null) {
+                repeat.setProperty(PropNames.BACKGROUND_REPEAT);
+                newlist.add(repeat);
+            }
+            if (attachment != null) {
+                attachment.setProperty(PropNames.BACKGROUND_ATTACHMENT);
+                newlist.add(attachment);
+            }
+            if (position != null) {
+                // position must have two elements
+                Iterator positions = ((PropertyValueList)position).iterator();
+                newlist.add(positions.next());
+                newlist.add(positions.next());
+            }
+            return newlist;
+        }
+
     }
 
     public static class BackgroundAttachment extends Properties {
@@ -668,7 +924,9 @@ public abstract class Properties {
             ,"bottom"
         };
 
-        private static final ROStringArray enums = new ROStringArray(rwEnums);
+        // Background will need access to this array
+        protected static final ROStringArray enums
+                                                = new ROStringArray(rwEnums);
 
         /**
          * 'value' is a PropertyValueList or an individual PropertyValue.
@@ -770,11 +1028,11 @@ public abstract class Properties {
         {
             PropertyValueList newlist = new PropertyValueList(property);
             // This is a list
-            if (((PropertyValueList)value).size() == 0)
+            if (value.size() == 0)
                 throw new PropertyException
                                 ("Empty list for BackgroundPosition");
             // Only two Numerics allowed
-            if (((PropertyValueList)value).size() != 2)
+            if (value.size() != 2)
                 throw new PropertyException
                         ("More that 2 elements in BackgroundPosition list.");
             // Analyse the list data.
@@ -782,7 +1040,7 @@ public abstract class Properties {
             // or a pair of enum tokens.  One is from the set
             // [top center bottom]; the other is from the set
             // [left center right].
-            Iterator positions = ((PropertyValueList)value).iterator();
+            Iterator positions = value.iterator();
             PropertyValue posn = (PropertyValue)(positions.next());
             PropertyValue posn2 = (PropertyValue)(positions.next());
 
