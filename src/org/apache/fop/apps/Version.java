@@ -51,7 +51,7 @@
 
 package org.apache.fop.apps;
 
-/**
+/** 
  * class representing the version of FOP.
  */
 public class Version {

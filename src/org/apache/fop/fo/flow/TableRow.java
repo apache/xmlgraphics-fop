@@ -75,18 +75,20 @@ public class TableRow extends FObj {
     }
 
     FontState fs;
-    int startIndent;
-    int endIndent;
     int spaceBefore;
     int spaceAfter;
     ColorType backgroundColor;
+    
+    ColorType borderColor;
+    int borderWidth;
+    int borderStyle;
 
     int widthOfCellsSoFar = 0;
     int largestCellHeight = 0;
 
     Vector columns;
 
-    BlockArea blockArea;
+    AreaContainer areaContainer;
 
     public TableRow(FObj parent, PropertyList propertyList) {
 	super(parent, propertyList);
@@ -114,24 +116,22 @@ public class TableRow extends FObj {
 	    
 	    this.fs = new FontState(area.getFontInfo(), fontFamily, 
 				    fontStyle, fontWeight, fontSize);  
-	    this.startIndent =
-		this.properties.get("start-indent").getLength().mvalue(); 
-	    this.endIndent =
-		this.properties.get("end-indent").getLength().mvalue(); 
 	    this.spaceBefore =
 		this.properties.get("space-before.optimum").getLength().mvalue();  
 	    this.spaceAfter =
 		this.properties.get("space-after.optimum").getLength().mvalue(); 
 	    this.backgroundColor =
 		this.properties.get("background-color").getColorType();
+	    this.borderColor =
+		this.properties.get("border-color").getColorType();
+	    this.borderWidth =
+		this.properties.get("border-width").getLength().mvalue();
+	    this.borderStyle =
+		this.properties.get("border-style").getEnum();
 
 	    if (area instanceof BlockArea) {
 		area.end();
 	    }
-
-	    //if (this.isInListBody) {
-	    //startIndent += bodyIndent + distanceBetweenStarts;
-	    //}
 
 	    this.marker = 0;
 
@@ -141,13 +141,16 @@ public class TableRow extends FObj {
 	    area.addDisplaySpace(spaceBefore);
 	}
 
-	this.blockArea =
-	    new BlockArea(fs, area.getAllocationWidth(), 
-			  area.spaceLeft(), startIndent, endIndent, 0,
-			  0, 0, 0);
-	blockArea.setPage(area.getPage());
-	blockArea.setBackgroundColor(backgroundColor);
-	blockArea.start();
+	this.areaContainer =
+	    new AreaContainer(fs, -area.borderWidthLeft, -area.borderWidthTop, 
+                           area.getAllocationWidth(), 
+			  area.spaceLeft(), Position.RELATIVE);
+	areaContainer.setPage(area.getPage());
+	areaContainer.setBackgroundColor(backgroundColor);
+        areaContainer.setBorderStyle(borderStyle, borderStyle, borderStyle, borderStyle); 
+        areaContainer.setBorderWidth(borderWidth, borderWidth, borderWidth, borderWidth); 
+        areaContainer.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
+	areaContainer.start();
 
 	int numChildren = this.children.size();
 	if (numChildren != columns.size()) {
@@ -175,27 +178,30 @@ public class TableRow extends FObj {
 	    widthOfCellsSoFar += width;
 
 	    Status status;
-	    if ((status = cell.layout(blockArea)).isIncomplete()) {
+	    if ((status = cell.layout(areaContainer)).isIncomplete()) {
 		this.marker = i;
 		if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
 		    status = new Status(Status.AREA_FULL_SOME);
 		}
-		//blockArea.end();
-		area.addChild(blockArea);
-		area.increaseHeight(blockArea.getHeight());
+    	        area.addChild(areaContainer);
+		//areaContainer.end();
+		area.increaseHeight(areaContainer.getHeight());
 		return status;
 	    }
 
 	    int h = cell.getHeight();
-	    blockArea.addDisplaySpace(-h);
 	    if (h > largestCellHeight) {
 		largestCellHeight = h;
 	    }
-
+	}
+	for (int i = 0; i < numChildren; i++) {
+	    TableCell cell = (TableCell)children.elementAt(i);
+            cell.setHeight(largestCellHeight);
 	}
 
-	blockArea.end();
-	area.addChild(blockArea);
+	area.addChild(areaContainer);
+	areaContainer.end();
+        area.setHeight(largestCellHeight);
 	area.addDisplaySpace(largestCellHeight);
 	// bug fix from Eric Schaeffer
 	//area.increaseHeight(largestCellHeight);
@@ -212,6 +218,6 @@ public class TableRow extends FObj {
     }
 
     public int getAreaHeight() {
-	return blockArea.getHeight();
+	return areaContainer.getHeight();
     }
 }

@@ -77,16 +77,20 @@ public class Table extends FObj {
     FontState fs;
     int breakBefore;
     int breakAfter;
-    int startIndent;
-    int endIndent;
     int spaceBefore;
     int spaceAfter;
     ColorType backgroundColor;
+    int width;
+    int height;
+    ColorType borderColor;
+    int borderWidth;
+    int borderStyle;
+    
 
     Vector columns = new Vector();
     int currentColumnNumber = 0;
 
-    BlockArea blockArea;
+    AreaContainer areaContainer;
 
     public Table(FObj parent, PropertyList propertyList) {
 	super(parent, propertyList);
@@ -114,23 +118,26 @@ public class Table extends FObj {
 		this.properties.get("break-before").getEnum(); 
 	    this.breakAfter =
 		this.properties.get("break-after").getEnum(); 
-	    this.startIndent =
-		this.properties.get("start-indent").getLength().mvalue(); 
-	    this.endIndent =
-		this.properties.get("end-indent").getLength().mvalue(); 
 	    this.spaceBefore =
 		this.properties.get("space-before.optimum").getLength().mvalue();  
 	    this.spaceAfter =
 		this.properties.get("space-after.optimum").getLength().mvalue(); 
 	    this.backgroundColor =
 		this.properties.get("background-color").getColorType();
+	    this.width =
+		this.properties.get("width").getLength().mvalue();
+	    this.height =
+		this.properties.get("height").getLength().mvalue();
+            
+	    this.borderColor =
+		this.properties.get("border-color").getColorType();
+	    this.borderWidth =
+		this.properties.get("border-width").getLength().mvalue();
+	    this.borderStyle =
+		this.properties.get("border-style").getEnum();
 
 	    if (area instanceof BlockArea) {
 		area.end();
-	    }
-
-	    if (this.isInListBody) {
-		startIndent += bodyIndent + distanceBetweenStarts;
 	    }
 
 	    this.marker = 0;
@@ -152,16 +159,19 @@ public class Table extends FObj {
 	    area.addDisplaySpace(spaceBefore);
 	}
 
-	this.blockArea =
-	    new BlockArea(fs, area.getAllocationWidth(), 
-			  area.spaceLeft(), startIndent, endIndent, 0,
-			  0, 0, 0);
-	blockArea.setPage(area.getPage());
-	blockArea.setBackgroundColor(backgroundColor);
-	blockArea.start();
+	this.areaContainer =
+	    new AreaContainer(fs, 0, 0, area.getAllocationWidth(), 
+                          area.spaceLeft(), Position.STATIC);
+	areaContainer.setPage(area.getPage());
+	areaContainer.setBackgroundColor(backgroundColor);
+        areaContainer.setBorderStyle(borderStyle, borderStyle, borderStyle, borderStyle); 
+        areaContainer.setBorderWidth(borderWidth, borderWidth, borderWidth, borderWidth); 
+        areaContainer.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
+	areaContainer.start();
 
 	// added by Eric Schaeffer
 	currentColumnNumber = 0;
+        int offset = 0;
 
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
@@ -177,39 +187,45 @@ public class Table extends FObj {
 		    columns.setSize(num);
 		}
 		columns.setElementAt(c, num-1);
+                c.setColumnOffset(offset);
+		fo.layout(areaContainer);
+                offset += c.getColumnWidth();
 	    } else if (fo instanceof TableBody) {
 		if (columns.size() == 0) {
 		    System.err.println("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
 		    return new Status(Status.OK);
 		}
 		
-		//if (this.isInListBody) {
-		//fo.setIsInListBody();
-		//fo.setDistanceBetweenStarts(this.distanceBetweenStarts);
-		//fo.setBodyIndent(this.bodyIndent);
-		//}
-
 		((TableBody) fo).setColumns(columns);
 
 		Status status;
-		if ((status = fo.layout(blockArea)).isIncomplete()) {
+		if ((status = fo.layout(areaContainer)).isIncomplete()) {
 		    this.marker = i;
 		    if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
 			status = new Status(Status.AREA_FULL_SOME);
 		    }
-		    //blockArea.end();
-		    area.addChild(blockArea);
-		    area.increaseHeight(blockArea.getHeight());
+		    //areaContainer.end();
+		    area.addChild(areaContainer);
+		    area.increaseHeight(areaContainer.getHeight());
 		    return status;
 		}
 	    }
 	}
+        if (height != 0)
+          areaContainer.setHeight(height);
 
-	blockArea.end();
-	area.addChild(blockArea);
+	for (int i = 0; i < numChildren; i++) {
+	    FONode fo = (FONode) children.elementAt(i);
+	    if (fo instanceof TableColumn) {
+		((TableColumn)fo).setHeight(areaContainer.getHeight());
+	    }
+	}
+
+	areaContainer.end();
+	area.addChild(areaContainer);
 
 	/* should this be combined into above? */
-	area.increaseHeight(blockArea.getHeight());
+	area.increaseHeight(areaContainer.getHeight());
 
 	if (spaceAfter != 0) {
 	    area.addDisplaySpace(spaceAfter);
@@ -238,6 +254,6 @@ public class Table extends FObj {
     }
 
     public int getAreaHeight() {
-	return blockArea.getHeight();
+	return areaContainer.getHeight();
     }
 }
