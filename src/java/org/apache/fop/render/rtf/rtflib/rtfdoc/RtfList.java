@@ -61,6 +61,8 @@ public class RtfList extends RtfContainer {
 
         // find out if we are nested in a table
         hasTableParent = this.getParentOfClass(RtfTable.class) != null;
+        
+        this.setRtfListStyle(new RtfListStyleBullet());
     }
 
     /**
