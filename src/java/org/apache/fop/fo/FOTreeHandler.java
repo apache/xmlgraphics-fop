@@ -28,7 +28,7 @@ import java.util.Iterator;
 import org.xml.sax.SAXException;
 
 // FOP
-import org.apache.fop.apps.Document;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.Title;
@@ -56,6 +56,7 @@ import org.apache.fop.layoutmgr.ContentLayoutManager;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.LMiter;
 import org.apache.fop.layoutmgr.PageLayoutManager;
+import org.apache.fop.render.Renderer;
 
 
 /**
@@ -99,29 +100,35 @@ public class FOTreeHandler extends FOInputHandler {
     /** Useful only for allowing subclasses of AddLMVisitor to be set by those
      extending FOP **/
     private AddLMVisitor addLMVisitor = null;
+    
+    /**
+     * the renderer to use to output the area tree
+     */
+    private Renderer renderer;
 
     /**
      * Main constructor
-     * @param document the apps.Document implementation that governs this
-     * FO Tree
+     * @param userAgent the apps.userAgent implementation that governs
+     *      this FO Tree
      * @param OutputStream stream to use to output results of renderer
-     *              
+     *
      * @param store if true then use the store pages model and keep the
-     *              area tree in memory
+     *        area tree in memory
      */
-    public FOTreeHandler(Document doc, OutputStream stream, boolean store) throws FOPException {
-        super(doc);
-        
-        areaTree = new AreaTree(doc.getRenderer());
+    public FOTreeHandler(FOUserAgent userAgent, Renderer renderer, 
+        OutputStream stream, boolean store) throws FOPException {
+        super(userAgent);
+        this.renderer = renderer;
+        areaTree = new AreaTree(renderer);
 
         try {
-            doc.getRenderer().setupFontInfo(fontInfo);
+            renderer.setupFontInfo(fontInfo);
             // check that the "any,normal,400" font exists
             if (!fontInfo.isSetupValid()) {
                 throw new FOPException(
-                        "No default font defined by OutputConverter");
+                    "No default font defined by OutputConverter");
             }
-            doc.getRenderer().startRenderer(stream);
+            renderer.startRenderer(stream);
         } catch (IOException e) {
             throw new FOPException(e);
         }
@@ -161,8 +168,8 @@ public class FOTreeHandler extends FOInputHandler {
                 throw new SAXException("Error: No fo:page-sequence child " +
                     "found within fo:root element.");
             }
-            getAreaTree().endDocument();
-            getDriver().getRenderer().stopRenderer();
+            areaTree.endDocument();
+            renderer.stopRenderer();
         } catch (IOException ex) {
             throw new SAXException(ex);
         }
@@ -226,8 +233,8 @@ public class FOTreeHandler extends FOInputHandler {
             }
         }
 
-        getAreaTree().addBookmarksToAreaTree(pageSequence.getRoot().getBookmarks());
-        formatPageSequence(pageSequence, getAreaTree());
+        areaTree.addBookmarksToAreaTree(pageSequence.getRoot().getBookmarks());
+        formatPageSequence(pageSequence, areaTree);
     }
 
     /**
@@ -609,12 +616,5 @@ public class FOTreeHandler extends FOInputHandler {
      */
     public void endPageNumber(PageNumber pagenum) {
     }
-    
-    /**   
-      * @return the current Area Tree object
-      */   
-     public AreaTree getAreaTree() {
-        return areaTree;
-     } 
-    
+
 }

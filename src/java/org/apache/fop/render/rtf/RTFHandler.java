@@ -27,6 +27,7 @@ import java.util.Iterator;
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.BasicLink;
@@ -57,7 +58,6 @@ import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.StringProperty;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
-import org.apache.fop.apps.Document;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
@@ -122,11 +122,11 @@ public class RTFHandler extends FOInputHandler {
 
     /**
      * Creates a new RTF structure handler.
-     * @param doc the Document for which this RTFHandler is processing
+     * @param userAgent the FOUserAgent for this process
      * @param os OutputStream to write to
      */
-    public RTFHandler(Document doc, OutputStream os) {
-        super(doc);
+    public RTFHandler(FOUserAgent userAgent, OutputStream os) {
+        super(userAgent);
         this.os = os;
         bDefer = false;
         bDeferredExecution = false;

@@ -22,7 +22,7 @@ package org.apache.fop.render.mif;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.apps.Document;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOInputHandler;
@@ -61,6 +61,7 @@ public class MIFHandler extends FOInputHandler {
 
     /** the MIFFile instance */
     protected MIFFile mifFile;
+    
     /** the OutputStream to write to */
     protected OutputStream outStream;
 
@@ -70,10 +71,11 @@ public class MIFHandler extends FOInputHandler {
 
     /**
      * Creates a new MIF handler on a given OutputStream.
+     * @param ua FOUserAgent instance for this process
      * @param os OutputStream to write to
      */
-    public MIFHandler(Document doc, OutputStream os) {
-        super(doc);
+    public MIFHandler(FOUserAgent ua, OutputStream os) {
+        super(ua);
         outStream = os;
         FontSetup.setup(fontInfo, null);
     }

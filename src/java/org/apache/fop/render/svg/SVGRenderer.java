@@ -18,7 +18,6 @@
 
 package org.apache.fop.render.svg;
 
-import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Title;
