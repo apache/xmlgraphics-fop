@@ -15,9 +15,6 @@ import org.apache.fop.xml.XMLNamespaces;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.fo.pagination.FoPageSequenceMaster;
-import org.apache.fop.fo.pagination.FoPageSequenceMaster.SubSequenceSpecifier;
-import org.apache.fop.fo.pagination
-    .FoPageSequenceMaster.SubSequenceSpecifier.ConditionalPageMasterReference;
 
 /*
  * $Id$
@@ -66,8 +63,7 @@ public class FoLayoutMasterSet extends FONode {
     }
 
     /**
-     * Set up all the page masters.  !!!Note that the masters are not entered
-     * in the FO tree.!!!
+     * Set up all the page masters.
      * fo:layout-master-set contents are
      * (simple-page-master|page-sequence-master)+
      */
@@ -88,12 +84,7 @@ public class FoLayoutMasterSet extends FONode {
                 localName = ev.getLocalName();
                 if (localName.equals("simple-page-master")) {
                     System.out.println("Found simple-page-master");
-                    try {
-                        simple = new FoSimplePageMaster(foTree, this, ev);
-                    } catch (Tree.TreeException e) {
-                        throw new FOPException
-                                ("TreeException: " + e.getMessage());
-                    }
+                    simple = new FoSimplePageMaster(foTree, this, ev);
                     simpleName = simple.getMasterName();
                     if (pageMasters == null)
                         pageMasters = new HashMap();
@@ -112,22 +103,6 @@ public class FoLayoutMasterSet extends FONode {
                                 ("simple-page-master master-name clash in "
                                  + "simplePageMasters: " + simpleName);
                     simplePageMasters.put(simpleName, simple);
-                    FoPageSequenceMaster seqMaster;
-                    try {
-                        // Construct a new PageSequenceMaster
-                        seqMaster = new FoPageSequenceMaster
-                                (foTree, this, simpleName);
-                    } catch(Tree.TreeException e) {
-                        throw new FOPException
-                                ("TreeException: " + e.getMessage());
-                    }
-                    // Construct a SubSequence
-                    SubSequenceSpecifier subSeq =
-                            seqMaster.new SubSequenceSpecifier();
-                    // Construct a default ConditionalPageMasterReference
-                    ConditionalPageMasterReference cond = subSeq.new
-                            ConditionalPageMasterReference(simpleName);
-                    pageMasters.put(simpleName, seqMaster);
                 } else if (localName.equals("page-sequence-master")) {
                     System.out.println("Found page-sequence-master");
                     try {
@@ -153,7 +128,10 @@ public class FoLayoutMasterSet extends FONode {
             // Masters exhausted
         }
         catch (PropertyException e) {
-            throw new FOPException("PropertyException: " + e.getMessage());
+            throw new FOPException(e);
+        }
+        catch (Tree.TreeException e) {
+            throw new FOPException(e);
         }
     }
         
