@@ -135,6 +135,23 @@ public class XMLEvent {
         return this;
     }
 
+    /**
+     * Copy the fields of the argument event to this event.
+     * Provided for pool operations.
+     * Neither the <i>namespaces</i> nor the <i>id</i> field is copied.
+     * @param ev the <tt>XMLEvent</tt> to copy.
+     * @return this (copied) event.
+     */
+    public XMLEvent copyEvent(XMLEvent ev) {
+        type = ev.type;
+        chars = ev.chars;
+        uriIndex = ev.uriIndex;
+        localName = ev.localName;
+        qName = ev.qName;
+        attributes = ev.attributes;
+        return this;
+    }
+
     public int getType() { return type; }
     public void setType(int type) {
         if (type < MIN_XML_EV_TYPE || type > MAX_XML_EV_TYPE) {
