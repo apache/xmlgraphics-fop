@@ -1,5 +1,8 @@
 ==============================================================================
 Done since 0.20.4 release
+- Temporary fix for wrong mapping of the hyphen character in the PostScript
+  renderer. Needs to be done in a clean way later.
+  Submitted by: Arnd Beissner <arnd.beissner@cappelino.de>
 - Fix for bug 16257: Get ascender/descender from OS/2 table if the ones in
   hhea are zero (Jeremias Maerki)
 - Reduced the size of the PSRenderer output (removed redundant movetos)
