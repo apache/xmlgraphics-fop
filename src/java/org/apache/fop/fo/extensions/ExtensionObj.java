@@ -18,8 +18,14 @@
 
 package org.apache.fop.fo.extensions;
 
+import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
+
 
 /**
  * Base class for pdf bookmark extension objects.
@@ -33,6 +39,24 @@ public abstract class ExtensionObj extends FObj {
      */
     public ExtensionObj(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#processNode
+     */
+    public void processNode(String elementName, Locator locator, 
+                            Attributes attlist, PropertyList pList)
+        throws SAXParseException
+    {
+        // Empty
+    }
+
+    /**
+     * Create a default property list for this element. 
+     */
+    protected PropertyList createPropertyList(PropertyList parent, 
+                FOEventHandler foEventHandler) throws SAXParseException {
+        return null;
     }
 }
 
