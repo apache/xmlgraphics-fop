@@ -494,8 +494,8 @@ public class PDFRenderer extends PrintRenderer {
 
     /**
      * Handle the traits for a region
-     * This is used to draw the traits for the given page region
-     * (see Sect. 6.4.1.2 of XSL-FO spec.)
+     * This is used to draw the traits for the given page region.
+     * (See Sect. 6.4.1.2 of XSL-FO spec.)
      * @param region the RegionViewport whose region is to be drawn
      */
     protected void handleRegionTraits(RegionViewport region) {

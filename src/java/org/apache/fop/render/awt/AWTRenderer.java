@@ -106,7 +106,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected double scaleFactor = 100.0;
     protected int pageNumber = 0;
     protected Vector pageViewportList = new java.util.Vector();
-    protected Vector pageList = new java.util.Vector(); 
+    protected Vector pageList = new java.util.Vector();
     protected BufferedImage currentPageImage = null;
 
     /** Font configuration */
@@ -243,15 +243,15 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         frame.setStatus(translator.getString("Status.Build.FO.tree"));
         return frame;
     }
-    
+
     /** This method override only stores the PageViewport in a vector.
       * No actual rendering performed -- this is done by getPageImage(pageNum) instead.
       * @param pageViewport the <code>PageViewport</code> object supplied by the Area Tree
-      * @see org.apache.fop.render.Renderer 
+      * @see org.apache.fop.render.Renderer
     */
     public void renderPage(PageViewport pageViewport)  throws IOException, FOPException {
         pageViewportList.add(pageViewport);
-        pageList.add(pageViewport.getPage().clone());        
+        pageList.add(pageViewport.getPage().clone());
     }
 
     /** Generates a desired page from the renderer's page viewport vector.
@@ -261,13 +261,13 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     */
     public BufferedImage getPageImage(int pageNum) throws FOPException {
         if (pageNum < 0 || pageNum >= pageViewportList.size()) {
-            throw new FOPException("out-of-range page number (" + pageNum 
-                + ") requested; only " + pageViewportList.size() 
+            throw new FOPException("out-of-range page number (" + pageNum
+                + ") requested; only " + pageViewportList.size()
                 + " page(s) available.");
         }
         PageViewport pageViewport = (PageViewport) pageViewportList.get(pageNum);
         Page page = (Page) pageList.get(pageNum);
-        
+
         Rectangle2D bounds = pageViewport.getViewArea();
         int pageWidth = (int)((float) bounds.getWidth() / 1000f + .5);
         int pageHeight = (int)((float) bounds.getHeight() / 1000f + .5);
@@ -276,7 +276,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
             + " " + bounds.getY()
             + " " + bounds.getWidth()
             + " " + bounds.getHeight());
-*/      
+*/
         currentPageImage =
             new BufferedImage((int)((pageWidth * (int)scaleFactor) / 100),
                               (int)((pageHeight * (int)scaleFactor) / 100),
@@ -290,7 +290,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         AffineTransform at = graphics.getTransform();
         at.scale(scaleFactor / 100.0, scaleFactor / 100.0);
         graphics.setTransform(at);
-        
+
         // draw page frame
         graphics.setColor(Color.white);
         graphics.fillRect(0, 0, pageWidth, pageHeight);
@@ -309,8 +309,8 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
     /**
      * Handle the traits for a region
-     * This is used to draw the traits for the given page region
-     * (see Sect. 6.4.1.2 of XSL-FO spec.)
+     * This is used to draw the traits for the given page region.
+     * (See Sect. 6.4.1.2 of XSL-FO spec.)
      * @param region the RegionViewport whose region is to be drawn
      */
     protected void handleRegionTraits(RegionViewport region) {
@@ -325,19 +325,19 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
             + " " + viewArea.getY()
             + " " + viewArea.getWidth()
             + " " + viewArea.getHeight());
-*/      
-        int startX = (int)(((float) viewArea.getX() / 1000f + .5) 
+*/
+        int startX = (int)(((float) viewArea.getX() / 1000f + .5)
             * (scaleFactor / 100f));
-        int startY = (int)(((float) viewArea.getY() / 1000f + .5) 
+        int startY = (int)(((float) viewArea.getY() / 1000f + .5)
             * (scaleFactor / 100f));
-        int width = (int)(((float) viewArea.getWidth() / 1000f + .5) 
+        int width = (int)(((float) viewArea.getWidth() / 1000f + .5)
             * (scaleFactor / 100f));
         int height = (int)(((float) viewArea.getHeight() / 1000f + .5)
             * (scaleFactor / 100f));
-         
+
         drawBackAndBorders(region, startX, startY, width, height);
     }
-    
+
     /**
      * Draw the background and borders.
      * This draws the background and border traits for an area given
