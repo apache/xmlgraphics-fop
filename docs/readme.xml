@@ -10,25 +10,27 @@ Usage of attributes:
         p: attr "class" can have "pre" (for code) or "li" for lists. No class attr is the normal
 -->
 
-<?xml-stylesheet type="text/css" href="qaml.css"?>
+<?xml-stylesheet type="text/css" href="qaml-xml.css"?>
 <!DOCTYPE faq SYSTEM "qaml-xml.dtd">
 
 <faq>
 
 <head>
    <title>FOP: An Open-Source XSL Formatter and Renderer</title>
-   <version>1.4 1999/11/29 19:45</version>
+   <version>1.5 1999/12/01 16:00</version>
    <maintain>
       <name>James Tauber</name> 
       <name>Fotis Jannidis</name> 
       <email>jtauber@jtauber.com</email>
-      <email>jannidis@lrz.uni-muenchen.de</email><subject>FOP</subject>
+      <email>fotis.jannidis@lrz.uni-muenchen.de</email>
+      <subject>FOP</subject>
    </maintain>
 </head>
 
 <body>
 
 <section class="level1">
+  <!--<logo href="logo.gif">fop logo</logo>-->
   <title>What is FOP?</title>
   <p>FOP is the world's first print formatter driven by XSL formatting
      objects. It is a Java 1.1 application that reads a formatting object
@@ -51,7 +53,11 @@ Usage of attributes:
     <title>1. Prerequisites</title>
     <section class="level3">
       <title>a) Java 1.1.x or later</title>
-      <p></p>
+      <p>If you use Java 1.1.x you must also seperately include the swing classes, which can
+         be found at the <link href="http://java.sun.com/products/jfc/#download-swing">
+         Sun website</link>. From Java 1.2 on (aka Java 2) they are part of the standard 
+         distribution. 
+      </p>
     </section>
     <section class="level3">
       <title>b) An XML parser</title>
@@ -93,6 +99,12 @@ Usage of attributes:
     <title>1) Prerequisites</title>
     <p>Following software must be installed:</p>
     <p>a) Java 1.1.x or later</p>
+      <p>For the fo-file viewer mode of FOP (see below) you must have the swing classes installed. 
+         From Java 1.2 on (aka Java 2) they are part of the standard java distribution. 
+         If you use Java 1.1.x you must seperately include the swing classes, which can
+         be found at the <link href="http://java.sun.com/products/jfc/#download-swing">
+         Sun website</link>. 
+      </p>
     <p>b) An XML parser which supports SAX and DOM like 
           <link href="http://xml.apache.org/xerces-j/index.html">Xerces-J</link>.</p>
     <p>c) If you have to produce the flow objects files, which are the input for FOP, 
@@ -104,8 +116,8 @@ Usage of attributes:
   </section>
   <section class="level2">
     <title>2) Starting FOP as an standalone application</title>
-    <p>There are three ways of running FOP from the command line.</p>
-    <p>a) Batch processing formatting object files: </p>
+    <p>There are three ways to run FOP from the command line.</p>
+    <p>a) Batch processing formatting objects (fo) files: </p>
     <p class="pre">java org.apache.fop.apps.CommandLine fo-file pdf-file</p>
     <p>b) Batch processing xml files (includes production of the fo-files):</p>
     <p class="pre">java org.apache.fop.apps.CommandLine xml-file xsl-file pdf-file</p>
@@ -118,17 +130,18 @@ Usage of attributes:
       <p>One is to first use an XSLT engine to produce the formatting object tree as an 
          XML document and then running the class org.apache.fop.apps.CommandLine with the
          formatting object file name and PDF filename as arguments. You will need to include 
-         FOP, SAX and your SAX Parser in your classpath and so you might invoke 
+         FOP and your XML Parser in your classpath and so you might invoke 
       </p>
-      <p class="pre">java -cp fop_x_xx_x.jar;sax.jar;xp.jar</p>
-      <p class="pre">org.apache.fop.apps.CommandLine formatting-tree-file pdf-file</p>
-      <p>If your SAX Parser is other than XP, you will need to set the property 
+      <p class="pre">java -cp fop_x_xx_x.jar;xerces.jar</p>
+      <p class="pre">org.apache.fop.apps.CommandLine fo-file pdf-file</p>
+      <p>If your SAX Parser is other than Xerces, you will need to set the property 
          org.xml.sax.parser to the SAX Parser class to use. The following example shows 
-         the command line, if you use Xerces, the xml parser from xml.apache.org: 
+         the command line, if you use XP, the XML parser from James Clark: 
       </p>
-      <p class="pre">java -Dorg.xml.sax.parser=org.apache.xerces.parsers.SAXParser </p>
-      <p class="pre">-cp fop_x_xx_x.jar;xerces.jar</p>
+      <p class="pre">java -Dorg.xml.sax.parser=com.jclark.xml.sax.Driver</p>
+      <p class="pre">-cp fop_x_xx_x.jar;sax.jar;xt.jar;xp.jar;xerces.jar</p>
       <p class="pre">org.apache.fop.apps.AWTCommandLine formatting-tree-file pdf-file</p>
+      <p>(You have to include xerces.jar or another xml parser which supports DOM in your classpath.) </p>
     </section>
     <section class="level3">
       <title>b) Method Two</title>
@@ -139,9 +152,10 @@ Usage of attributes:
          need to include FOP, SAX, your SAX Parser and XT in your classpath and so you might 
          invoke 
       </p>
-      <p class="pre">java -cp fop_x_xx_x.jar;sax.jar;xp.jar;xt.jar</p>
+      <p class="pre">java -Dorg.xml.sax.parser=com.jclark.xml.sax.Driver</p>
+      <p class="pre">-cp fop_x_xx_x.jar;xt.jar;xerces.jar</p>
       <p class="pre">org.apache.fop.apps.CommandLine xml-file xsl-file pdf-file</p>
-      <p>Again, if your SAX Parser is other than XP, you will need to set the property
+      <p>Again, if your SAX Parser is other than Xerces, you will need to set the property
          org.xml.sax.parser to the SAX Parser class to use.
       </p>
     </section>
@@ -149,15 +163,25 @@ Usage of attributes:
       <title>c) Method Three</title>
       <p>If you already produced the FO file, you can preview the results of your 
          transformation without using any pdf viewer by invoking FOP with the viewer 
-         application. You will need to include FOP, SAX and your SAX Parser in your classpath 
+         application. You will need to include FOP and your XML Parser in your classpath 
       </p>
-      <p class="pre">java org.apache.fop.apps.AWTCommandLine formatting-tree-file </p>
+      <p class="pre">java -cp fop_x_xx_x.jar;xerces.jar</p>
+      <p class="pre">org.apache.fop.apps.AWTCommandLine fo-file </p>
+      <p>The viewer uses the swing classes.</p> 
       <p>Note: If you are using java 2 or later (i.e. jdk 1.2. or later) you can put all 
          needed jar files into the subdirectory jdk1.2.x\jre\lib\ext (windows example). Then 
          FOP can be started without classpath: 
       </p>
       <p class="pre">java org.apache.fop.apps.CommandLine fo-file pdf-file</p>
     </section>
+  </section>
+  <section class="level2">
+    <title>3) Problems</title>
+    <p>If you have problems running FOP, please have a look at the 
+       <link href="faq.html">FOP FAQ</link>. If you don't find a solution there,
+       you can ask for help on the list fop-dev@xml.apache.org. Maybe it's bug and 
+       maybe somebody is already working on it. 
+    </p>
   </section>
 </section>
 
@@ -167,7 +191,7 @@ Usage of attributes:
   <title>What's Implemented?</title>
       <p>Also see STATUS for what is being worked on.</p>
   <section class="level2">
-    <title>a) Formatting Objects</title>
+    <title>1) Formatting Objects</title>
     <div class="list">
       <p class="li">root </p>
       <p class="li">layout-master-set </p>
@@ -197,11 +221,11 @@ Usage of attributes:
       <p class="li">table-body (minimal support)</p>
       <p class="li">table-row (minimal support)</p>
       <p class="li">table-cell (minimal support)</p>
-
-</div>
+  </div>
   </section>
+
   <section class="level2">
-    <title>b) Properties</title>
+    <title>2) Properties</title>
     <div class="list">
       <p class="li">end-indent </p>
       <p class="li">page-master-name </p>
@@ -255,6 +279,26 @@ Usage of attributes:
   <p>see STATUS file</p>
 </section>
 
+<!-- getting involved -->
+
+<section class="level1">
+  <title>Getting involved</title>
+  <p>1. Subscribe to fop-dev@xml.apache.org by sending an email 
+        to fop-dev-subscribe@xml.apache.org</p>
+  <p>2. Read the archives to fop-dev to get an idea of the issues being 
+        discussed. </p>
+  <p>3. Subscribe to fop-cvs@xml.apache.org by sending an email to 
+        fop-cvs-subscribe@xml.apache.org (it is important 
+        that you follow changes being made). </p>
+  <p>4. Try :-) to wrap your head around the XSL working draft. </p>
+  <p>5. Get CVS working on your system. </p>
+  <p>6. Ask, on fop-dev, any questions you have at all about the code, design, etc. </p>
+  <p>7. When you feel comfortable modifying the code, send diffs to 
+        fop-dev with your contributions. </p>
+  <p>8. Have fun!</p>
+</section>
+
+
 <!-- FOP Relevant Specifications -->
 
 <section class="level1">
@@ -262,7 +306,7 @@ Usage of attributes:
   <div class="list">
     <p class="li"><link href="http://www.w3.org/TR/REC-xml">XML Recommendation</link></p>
     <p class="li"><link href="http://www.w3.org/TR/WD-xsl/">XSL-FO Working Draft</link></p>
-    <p class="li"><link href="http://www.w3.org/TR/xslt">XSLT Recommandation</link></p>
+    <p class="li"><link href="http://www.w3.org/TR/xslt">XSLT Recommendation</link></p>
     <p class="li"><link href="http://partners.adobe.com/asn/developer/acrosdk/DOCS/pdfspec.pdf">PDF Documentation</link></p>
     <p class="li"><link href="http://www.megginson.com/SAX/">Simple API for XML (SAX)</link></p>
     <p class="li"><link href="http://www.w3.org/TR/REC-DOM-Level-1">Document Object Model (DOM)</link></p>
