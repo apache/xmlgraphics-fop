@@ -6,7 +6,7 @@
     <title>FOP Graphics Formats</title>
   </header>
   <body>
-    <section>
+    <section id="support-overview">
       <title>Overview of Graphics Support</title>
       <p>
         The table below summarizes the <em>theoretical</em> support for graphical formats within FOP. In other words, within the constraints of the limitations listed here, these formats <em>should</em> work. However, many of them have not been tested, and there may be limitations that have not yet been discovered or documented. The packages needed to support some formats are not included in the FOP distribution and must be installed separately. Follow the links in the "Support Thru" column for more details.
