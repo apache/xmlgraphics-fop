@@ -76,6 +76,7 @@ public class RunTest extends Task {
             ClassLoader loader = new URLClassLoader(new URL[]{new URL("file:build/fop.jar")});
             Hashtable diff = runConverter(loader, "areatree", "reference/output/");
             if (diff != null && !diff.isEmpty()) {
+                System.out.println("====================================");
                 System.out.println("The following files differ:");
                 boolean broke = false;
                 for (Enumeration keys = diff.keys();

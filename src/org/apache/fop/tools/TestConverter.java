@@ -208,6 +208,7 @@ public class TestConverter {
             Hashtable rendererOptions = new Hashtable();
             rendererOptions.put("fineDetail", new Boolean(false));
             driver.getRenderer().setOptions(rendererOptions);
+            driver.getRenderer().setProducer("Testsuite Converter");
 
             driver.buildFOTree(parser, inputHandler.getInputSource());
             driver.format();
