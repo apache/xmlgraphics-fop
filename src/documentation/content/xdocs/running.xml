@@ -156,6 +156,11 @@ If you don't use table headers and footers, just start a new table every N rows.
 With headers and footers, consider integrating them as normal table rows, or, if they are used at page breaks, try to put the information into static content.
 You can then use markers to change them.
         </li>
+        <li>
+Clear the image cache. At the moment, images in the cache are not released automatically when an OutOfMemoryError is imminent.
+Starting with version 0.20.5 however, you can call <code>org.apache.fop.image.FopImageFactory.resetCache()</code> to empty the 
+<jump href="graphics.html#caching">image cache</jump>.
+        </li>
       </ul>
       <p>
 There are currently some bugs which cause FOP to go into a nonterminating loop, which will also often result in a memory overflow.
