@@ -1,0 +1,10 @@
+FOP MathML Readme
+
+This directory contains an extension for MathML that can be used with FOP.
+
+This extension works with jeuclid which is available from:
+http://sourceforge.net/projects/jeuclid/
+
+This simply uses jeuclid to convert the mathml xml into svg.
+The svg is then handled as normal.
+
