@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: SVGUserAgent.java,v 1.2 2004/02/27 17:43:22 jeremias Exp $ */
  
-package org.apache.fop.fo.extensions.svg;
+package org.apache.fop.svg;
 
 import org.apache.fop.apps.FOUserAgent;
-
 import org.apache.batik.bridge.UserAgentAdapter;
-
 import org.apache.avalon.framework.logger.Logger;
 
 // Java
