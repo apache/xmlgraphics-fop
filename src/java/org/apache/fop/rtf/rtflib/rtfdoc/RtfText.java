@@ -207,7 +207,7 @@ public class RtfText extends RtfElement {
                     if (m_attr != null && mustWriteAttributes()) {
                         writeAttributes(m_attr, RtfText.ATTR_NAMES);
                     }
-                    RtfStringConverter.getInstance().writeRtfString(m_writer, m_text);
+                    RtfStringConverter.getInstance().writeRtfString(writer, m_text);
                     writeGroupMark(false);
                 }
 
@@ -222,10 +222,10 @@ public class RtfText extends RtfElement {
     /** IRtfTextContainer requirement:
      * @return a copy of our attributes */
     public RtfAttributes getTextContainerAttributes() {
-        if (m_attrib == null) {
+        if (attrib == null) {
             return null;
         }
-        return (RtfAttributes)this.m_attrib.clone();
+        return (RtfAttributes)this.attrib.clone();
     }
 
     /** direct access to our text */

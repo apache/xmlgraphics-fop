@@ -99,14 +99,14 @@ public class RtfTable extends RtfContainer {
         }
 
         highestRow++;
-        m_row = new RtfTableRow(this, m_writer, m_attrib, highestRow);
+        m_row = new RtfTableRow(this, writer, attrib, highestRow);
         return m_row;
     }
     /** close current row if any and start a new one */
     public RtfTableRow newTableRow(RtfAttributes attrs) throws IOException {
         RtfAttributes attr = null;
-        if (m_attrib != null) {
-            attr = (RtfAttributes) m_attrib.clone ();
+        if (attrib != null) {
+            attr = (RtfAttributes) attrib.clone ();
             attr.set (attrs);
         } else {
             attr = attrs;
@@ -116,7 +116,7 @@ public class RtfTable extends RtfContainer {
         }
         highestRow++;
 
-        m_row = new RtfTableRow(this, m_writer, attr, highestRow);
+        m_row = new RtfTableRow(this, writer, attr, highestRow);
         return m_row;
     }
 

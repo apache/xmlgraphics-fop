@@ -187,7 +187,7 @@ public class RtfExtraRowSet extends RtfContainer {
     RtfTableCell createExtraCell(int rowIndex, int xOffset, int cellWidth,
                                  RtfAttributes parentCellAttributes)
     throws IOException {
-        final RtfTableCell c = new RtfTableCell(null, m_writer, cellWidth,
+        final RtfTableCell c = new RtfTableCell(null, writer, cellWidth,
                 parentCellAttributes, DEFAULT_IDNUM);
         m_cells.add(new PositionedCell(c, rowIndex, xOffset));
         return c;
@@ -227,7 +227,7 @@ public class RtfExtraRowSet extends RtfContainer {
             return;
         }
 
-        final RtfTableRow row = new RtfTableRow(null, m_writer, DEFAULT_IDNUM);
+        final RtfTableRow row = new RtfTableRow(null, writer, DEFAULT_IDNUM);
         int cellIndex = 0;
 
         // Get the context of the table that holds the nested table
@@ -255,7 +255,7 @@ public class RtfExtraRowSet extends RtfContainer {
                     xOffset += parentITableColumnsInfo.getColumnWidth();
                     // Create the empty cell merged vertically
                     row.newTableCellMergedVertically((int)parentITableColumnsInfo.getColumnWidth(),
-                           pc.cell.m_attrib);
+                           pc.cell.attrib);
                     // Select next column in order to have its width
                     parentITableColumnsInfo.selectNextColumn();
                 }
@@ -285,7 +285,7 @@ public class RtfExtraRowSet extends RtfContainer {
                   //        => in fact the m_attrib below (last argument) is
                   // empty => should be the attributes of the above cells.
                   row.newTableCellMergedVertically((int)parentITableColumnsInfo.getColumnWidth(),
-                          m_attrib);
+                          attrib);
                   // Select next column in order to have its width
                   parentITableColumnsInfo.selectNextColumn();
                 }

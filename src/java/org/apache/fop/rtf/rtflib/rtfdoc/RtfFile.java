@@ -112,8 +112,8 @@ extends RtfContainer {
         if (m_header != null) {
             throw new RtfStructureException("startHeader called more than once");
         }
-        m_header = new RtfHeader(this, m_writer);
-        m_listTableContainer = new RtfContainer(this, m_writer);
+        m_header = new RtfHeader(this, writer);
+        m_listTableContainer = new RtfContainer(this, writer);
         return m_header;
     }
 
@@ -121,7 +121,7 @@ extends RtfContainer {
     public RtfListTable startListTable(RtfAttributes attr)
     throws IOException {
         listNum++;
-        m_listTable = new RtfListTable(this, m_writer, new Integer(listNum), attr);
+        m_listTable = new RtfListTable(this, writer, new Integer(listNum), attr);
         m_listTableContainer.addChild(m_listTable);
         return m_listTable;
     }
@@ -140,7 +140,7 @@ extends RtfContainer {
             startHeader();
         }
         m_header.close();
-        m_pageArea = new RtfPageArea(this, m_writer);
+        m_pageArea = new RtfPageArea(this, writer);
         addChild(m_pageArea);
         return m_pageArea;
     }
@@ -167,7 +167,7 @@ extends RtfContainer {
             startHeader();
         }
         m_header.close();
-        m_docArea = new RtfDocumentArea(this, m_writer);
+        m_docArea = new RtfDocumentArea(this, writer);
         addChild(m_docArea);
         return m_docArea;
     }
@@ -197,7 +197,7 @@ extends RtfContainer {
     /** must be called when done creating the document */
     public synchronized void flush() throws IOException {
         writeRtf();
-        m_writer.flush();
+        writer.flush();
     }
 
     /** minimal test and usage example */

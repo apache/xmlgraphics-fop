@@ -79,7 +79,7 @@ extends RtfContainer {
         if (m_currentPage != null) {
             m_currentPage.close();
         }
-        m_currentPage = new RtfPage(this, m_writer, attr);
+        m_currentPage = new RtfPage(this, writer, attr);
 
         return m_currentPage;
     }

@@ -180,7 +180,7 @@ public class RtfBookmark extends RtfElement {
         //changed. Now using writeStarControlWord
         this.writeStarControlWord (tag);
 
-        m_writer.write (bookmark);
+        writer.write (bookmark);
         this.writeGroupMark (false);
     }
 

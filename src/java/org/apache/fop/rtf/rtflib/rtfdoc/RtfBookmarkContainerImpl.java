@@ -127,7 +127,7 @@ public class RtfBookmarkContainerImpl extends RtfContainer implements IRtfBookma
             mBookmark.close ();
         }
 
-        mBookmark = new RtfBookmark (this, m_writer, bookmark);
+        mBookmark = new RtfBookmark (this, writer, bookmark);
 
         return mBookmark;
     }

@@ -103,8 +103,8 @@ public class RtfList extends RtfContainer {
             writeControlWord("pard");
         }
 
-        writeOneAttribute(RtfText.LEFT_INDENT_FIRST, m_attrib.getValue(RtfListTable.LIST_INDENT));
-        writeOneAttribute(RtfText.LEFT_INDENT_BODY, m_attrib.getValue(RtfText.LEFT_INDENT_BODY));
+        writeOneAttribute(RtfText.LEFT_INDENT_FIRST, attrib.getValue(RtfListTable.LIST_INDENT));
+        writeOneAttribute(RtfText.LEFT_INDENT_BODY, attrib.getValue(RtfText.LEFT_INDENT_BODY));
 
         // put the whole list in a group
         writeGroupMark(true);
@@ -123,7 +123,7 @@ public class RtfList extends RtfContainer {
             writeOneAttribute(RtfListTable.LIST_NUMBER,
             (m_listTable.getListNumber()).toString());
             writeOneAttribute("pnindent",
-            m_attrib.getValue(RtfListTable.LIST_INDENT));
+            attrib.getValue(RtfListTable.LIST_INDENT));
             writeControlWord("pnf1");
             writeGroupMark(true);
             writeControlWord("pndec");
@@ -139,9 +139,9 @@ public class RtfList extends RtfContainer {
             (m_numberingStyle.isBulletedList) ? "2" : "0");
             writeControlWord("pndec");
             writeOneAttribute("pnstart",
-            m_attrib.getValue(RtfListTable.LIST_START_AT));
+            attrib.getValue(RtfListTable.LIST_START_AT));
             writeOneAttribute("pnindent",
-            m_attrib.getValue(RtfListTable.LIST_INDENT));
+            attrib.getValue(RtfListTable.LIST_INDENT));
             writeControlWord("pntxta.");
         }
 
@@ -169,7 +169,7 @@ public class RtfList extends RtfContainer {
         if (m_item != null) {
             m_item.close();
         }
-        m_item = new RtfListItem(this, m_writer);
+        m_item = new RtfListItem(this, writer);
         return m_item;
     }
 

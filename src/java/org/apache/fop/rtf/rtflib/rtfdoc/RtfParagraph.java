@@ -118,18 +118,18 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
 
     /** IRtfTextContainer requirement: return a copy of our attributes */
     public RtfAttributes getTextContainerAttributes() {
-        if (m_attrib == null) {
+        if (attrib == null) {
             return null;
         }
-        return (RtfAttributes)this.m_attrib.clone();
+        return (RtfAttributes)this.attrib.clone();
     }
 
     /** overridden to write our attributes before our content */
     protected void writeRtfPrefix() throws IOException {
         // collapse whitespace before writing out
         // TODO could be made configurable
-        if (m_attrib != null && m_attrib.isSet("WhiteSpaceFalse")) {
-            m_attrib.unset("WhiteSpaceFalse");
+        if (attrib != null && attrib.isSet("WhiteSpaceFalse")) {
+            attrib.unset("WhiteSpaceFalse");
         } else {
             new WhitespaceCollapser(this);
         }
@@ -141,11 +141,11 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
 
         // do not write text attributes here, they are handled
         // by RtfText
-        writeAttributes(m_attrib, PARA_ATTRIBUTES);
+        writeAttributes(attrib, PARA_ATTRIBUTES);
         // Added by Normand Masse
         // Write alignment attributes after \intbl for cells
-        if (m_attrib.isSet("intbl") && mustWriteAttributes()) {
-            writeAttributes(m_attrib, RtfText.ALIGNMENT);
+        if (attrib.isSet("intbl") && mustWriteAttributes()) {
+            writeAttributes(attrib, RtfText.ALIGNMENT);
         }
 
         //Set keepn if needed (Keep paragraph with the next paragraph)
@@ -163,13 +163,13 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
             // writeAttributes(m_attrib, new String [] {"cs"});
             // Added by Normand Masse
             // If \intbl then attributes have already been written (see higher in method)
-            if (!m_attrib.isSet("intbl")) {
-                writeAttributes(m_attrib, RtfText.ALIGNMENT);
+            if (!attrib.isSet("intbl")) {
+                writeAttributes(attrib, RtfText.ALIGNMENT);
             }
             //this line added by Chris Scott, Westinghouse
-            writeAttributes(m_attrib, RtfText.BORDER);
-            writeAttributes(m_attrib, RtfText.INDENT);
-            writeAttributes(m_attrib, RtfText.TABS);
+            writeAttributes(attrib, RtfText.BORDER);
+            writeAttributes(attrib, RtfText.INDENT);
+            writeAttributes(attrib, RtfText.TABS);
             if (writeForBreak) {
                 writeControlWord("pard\\par");
             }
@@ -181,8 +181,8 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
     protected void writeRtfSuffix() throws IOException {
         // sometimes the end of paragraph mark must be suppressed in table cells
         boolean writeMark = true;
-        if (m_parent instanceof RtfTableCell) {
-            writeMark = ((RtfTableCell)m_parent).paragraphNeedsPar(this);
+        if (parent instanceof RtfTableCell) {
+            writeMark = ((RtfTableCell)parent).paragraphNeedsPar(this);
         }
         if (writeMark) {
             writeControlWord("par");
@@ -207,23 +207,23 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
      */
     public RtfText newText(String str, RtfAttributes attr) throws IOException {
         closeAll();
-        m_text = new RtfText(this, m_writer, str, attr);
+        m_text = new RtfText(this, writer, str, attr);
         return m_text;
     }
 
     /** add a page break */
     public void newPageBreak() throws IOException {
         writeForBreak = true;
-        new RtfPageBreak(this, m_writer);
+        new RtfPageBreak(this, writer);
     }
 
     /** add a line break */
     public void newLineBreak() throws IOException {
-        new RtfLineBreak(this, m_writer);
+        new RtfLineBreak(this, writer);
     }
 
     public RtfPageNumber newPageNumber()throws IOException {
-        m_pageNumber = new RtfPageNumber(this, m_writer);
+        m_pageNumber = new RtfPageNumber(this, writer);
         return m_pageNumber;
     }
 
@@ -231,20 +231,20 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
      * Added by Boris POUDEROUS on 2002/07/09
      */
     public RtfPageNumberCitation newPageNumberCitation(String id) throws IOException {
-       m_pageNumberCitation = new RtfPageNumberCitation(this, m_writer, id);
+       m_pageNumberCitation = new RtfPageNumberCitation(this, writer, id);
        return m_pageNumberCitation;
     }
 
     /** Creates a new hyperlink. */
     public RtfHyperLink newHyperLink(String str, RtfAttributes attr) throws IOException {
-        m_hyperlink = new RtfHyperLink(this, m_writer, str, attr);
+        m_hyperlink = new RtfHyperLink(this, writer, str, attr);
         return m_hyperlink;
     }
 
     /** start a new external graphic after closing all other elements */
     public RtfExternalGraphic newImage() throws IOException {
         closeAll();
-        m_externalGraphic = new RtfExternalGraphic(this, m_writer);
+        m_externalGraphic = new RtfExternalGraphic(this, writer);
         return m_externalGraphic;
     }
 
@@ -269,7 +269,7 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
     protected boolean okToWriteRtf() {
         boolean result = super.okToWriteRtf();
 
-        if (m_parent.getOptions().ignoreEmptyParagraphs() && getChildCount() == 0) {
+        if (parent.getOptions().ignoreEmptyParagraphs() && getChildCount() == 0) {
             // TODO should test that this is the last RtfParagraph in the cell instead
             // of simply testing for last child??
             result = false;

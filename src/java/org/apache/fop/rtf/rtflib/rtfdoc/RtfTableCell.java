@@ -127,10 +127,10 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
         // Get the number of columns spanned
         int nbMergedCells = ((Integer)attrs.getValue("number-columns-spanned")).intValue();
 
-        if (parent.m_parent instanceof RtfTable) {
+        if (parent.parent instanceof RtfTable) {
             // Get the context of the current table in order to get the width of each column
             ITableColumnsInfo ITableColumnsInfo =
-                    ((RtfTable)parent.m_parent).getITableColumnsInfo();
+                    ((RtfTable)parent.parent).getITableColumnsInfo();
             ITableColumnsInfo.selectFirstColumn();
 
             // Reach the column index in table context corresponding to the current column cell
@@ -169,12 +169,12 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
         }
         attrs.set("intbl");
 
-        m_paragraph = new RtfParagraph(this, m_writer, attrs);
+        m_paragraph = new RtfParagraph(this, writer, attrs);
 
-        if (m_paragraph.m_attrib.isSet("qc")) {
+        if (m_paragraph.attrib.isSet("qc")) {
             set_center = true;
             attrs.set("qc");
-        } else if (m_paragraph.m_attrib.isSet("qr")) {
+        } else if (m_paragraph.attrib.isSet("qr")) {
             set_right = true;
             attrs.set("qr");
         } else {
@@ -190,7 +190,7 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
     /** start a new external graphic after closing current paragraph, list and table */
     public RtfExternalGraphic newImage() throws IOException {
         closeAll();
-        m_externalGraphic = new RtfExternalGraphic(this, m_writer);
+        m_externalGraphic = new RtfExternalGraphic(this, writer);
         return m_externalGraphic;
     }
 
@@ -202,14 +202,14 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
     /** start a new list after closing current paragraph, list and table */
     public RtfList newList(RtfAttributes attrib) throws IOException {
         closeAll();
-        m_list = new RtfList(this, m_writer, attrib);
+        m_list = new RtfList(this, writer, attrib);
         return m_list;
     }
 
     /** start a new nested table after closing current paragraph, list and table */
     public RtfTable newTable(ITableColumnsInfo tc) throws IOException {
         closeAll();
-        m_table = new RtfTable(this, m_writer, tc);
+        m_table = new RtfTable(this, writer, tc);
         return m_table;
     }
 
@@ -218,7 +218,7 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
     public RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException
     {
         closeAll();
-        m_table = new RtfTable(this,m_writer, attrs, tc); // Added tc Boris Poudérous 07/22/2002
+        m_table = new RtfTable(this,writer, attrs, tc); // Added tc Boris Poudérous 07/22/2002
         return m_table;
     }
 
@@ -247,12 +247,12 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
          * Added by Boris POUDEROUS on 2002/06/26
          */
         // Cell background color processing :
-        writeAttributes (m_attrib, ITableAttributes.CELL_COLOR);
+        writeAttributes (attrib, ITableAttributes.CELL_COLOR);
         /** - end - */
 
-        writeAttributes (m_attrib, ITableAttributes.ATTRIB_CELL_PADDING);
-        writeAttributes (m_attrib, ITableAttributes.CELL_BORDER);
-        writeAttributes (m_attrib, BorderAttributesConverter.BORDERS);
+        writeAttributes (attrib, ITableAttributes.ATTRIB_CELL_PADDING);
+        writeAttributes (attrib, ITableAttributes.CELL_BORDER);
+        writeAttributes (attrib, BorderAttributesConverter.BORDERS);
 
         // cell width
         final int xPos = widthOffset + this.m_cellWidth;
@@ -370,7 +370,7 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
                 // attributes to the new cells (in order not to have cell without
                 // border for example)
         extraCell = m_parentRow.getExtraRowSet().createExtraCell(extraRowIndex,
-                m_widthOffset, this.getCellWidth(), m_attrib);
+                m_widthOffset, this.getCellWidth(), attrib);
                 extraRowIndex++;
 
             } else if (extraCell != null) {
