@@ -20,12 +20,16 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
     private LayoutManager replaceLM = null;
     private boolean loaded = false;
     private String name;
+    private int position;
+    private int boundary;
 
     /**
      * Create a new block container layout manager.
      */
     public RetrieveMarkerLayoutManager(String n, int pos, int bound) {
         name = n;
+        position = pos;
+        boundary = bound;
     }
 
     public boolean generatesInlineAreas() {
@@ -41,7 +45,6 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
         if (replaceLM == null) {
             return null;
         }
-        getLogger().debug("getting breaks");
         return replaceLM.getNextBreakPoss(context);
     }
 
@@ -55,6 +58,7 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
     }
 
     public boolean isFinished() {
+        loadLM();
         if (replaceLM == null) {
             return true;
         }
@@ -74,15 +78,17 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
         loaded = true;
         if (replaceLM == null) {
             List list = new ArrayList();
-            Marker marker = retrieveMarker(name, 0, 0);
-            marker.addLayoutManager(list);
-            if (list.size() > 0) {
-                replaceLM =  (LayoutManager)list.get(0);
-                replaceLM.setParentLM(this);
-                replaceLM.init();
-                getLogger().debug("retrieved: " + replaceLM + ":" + list.size());
-            } else {
-                getLogger().debug("found no marker with name: " + name);
+            Marker marker = retrieveMarker(name, position, boundary);
+            if (marker != null) {
+                marker.addLayoutManager(list);
+                if (list.size() > 0) {
+                    replaceLM =  (LayoutManager)list.get(0);
+                    replaceLM.setParentLM(this);
+                    replaceLM.init();
+                    getLogger().debug("retrieved: " + replaceLM + ":" + list.size());
+                } else {
+                    getLogger().debug("found no marker with name: " + name);
+                }
             }
         }
     }

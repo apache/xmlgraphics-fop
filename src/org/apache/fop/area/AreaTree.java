@@ -73,6 +73,15 @@ public class AreaTree {
     }
 
     /**
+     * Get the area tree model for this area tree.
+     *
+     * @return AreaTreeModel the model being used for this area tree
+     */
+    public AreaTreeModel getAreaTreeModel() {
+        return model;
+    }
+
+    /**
      * Start a new page sequence.
      * This signals that a new page sequence has started in the document.
      * @param title the title of the new page sequence or null if no title
