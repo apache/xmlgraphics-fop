@@ -1578,12 +1578,6 @@ public class FOPropertyMapping implements Constants {
         m.setDefault("treat-as-space");
         addPropertyMaker("linefeed-treatment", m);
 
-        // space-treatment
-        m  = new ToBeImplementedProperty.Maker(PR_SPACE_TREATMENT);
-        m.setInherited(true);
-        m.setDefault("preserve");
-        addPropertyMaker("space-treatment", m);
-
         // text-align TODO: make it a StringProperty with enums.
         m  = new EnumProperty.Maker(PR_TEXT_ALIGN);
         m.setInherited(true);

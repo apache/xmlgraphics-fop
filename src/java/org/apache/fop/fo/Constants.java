@@ -326,7 +326,7 @@ public interface Constants {
     int PR_SPACE_BEFORE = 201;
     int PR_SPACE_END = 202;
     int PR_SPACE_START = 203;
-    int PR_SPACE_TREATMENT = 204;
+    // space-treatment was removed. TODO: re-number properties.
     int PR_SPAN = 205;
     int PR_SPEAK = 206;
     int PR_SPEAK_HEADER = 207;
