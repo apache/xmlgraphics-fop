@@ -361,9 +361,9 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          * Returns the pixel to millimeter conversion factor specified in the
          * <tt>TranscodingHints</tt> or 0.3528 if any.
          */
-        public float getPixelToMM() {
-            if (getTranscodingHints().containsKey(ImageTranscoder.KEY_PIXEL_TO_MM)) {
-                return ((Float)getTranscodingHints().get(ImageTranscoder.KEY_PIXEL_TO_MM)).floatValue();
+        public float getPixelUnitToMillimeter() {
+            if (getTranscodingHints().containsKey(ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER)) {
+                return ((Float)getTranscodingHints().get(ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER)).floatValue();
             } else {
                 // return 0.3528f; // 72 dpi
                 return 0.26458333333333333333333333333333f;    // 96dpi
