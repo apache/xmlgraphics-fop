@@ -1,0 +1,26 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Overview -->
+
+<document>
+    <header>
+        <title>News</title>
+        <subtitle/>
+        <authors>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="19 April 2002 - New Committers">
+  <p>Welcome Jeremias Maerki, Joerg Pietschmann and Peter B. West!</p>
+ </s1>
+<s1 title="11 March 2002 - Fop 0.20.3 released">
+  <p>This is a maintenance release, the first version which supports the XSL-FO
+   Recommendation syntax. See the
+   <jump href="http://marc.theaimsgroup.com/?l=xml-apache-announce&amp;m=101588818821794">
+   announcement</jump> for more information.</p>
+ </s1>
+
+    </body>
+</document>
+
