@@ -53,7 +53,7 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;                   
 
-public class RepeatablePageMasterReference extends PageMasterReference
+public class RepeatablePageMasterReference extends FObj
 	implements SubSequenceSpecifier {
 	
     public static class Maker extends FObj.Maker {
@@ -72,11 +72,10 @@ public class RepeatablePageMasterReference extends PageMasterReference
 	
     private int maximumRepeats;
     private int numberConsumed = 0;
-
+	
     private int BOUNDED = 1;
     private int UNBOUNDED = 0;
-
-    private int state;
+    private int boundedness;
 	
     public RepeatablePageMasterReference(FObj parent, PropertyList propertyList)
 		throws FOPException {
@@ -94,7 +93,7 @@ public class RepeatablePageMasterReference extends PageMasterReference
 	    }
 	} else {
 	    throw new FOPException("fo:repeatable-page-master-reference must be" +
-                "child of fo:page-sequence, not " 
+                "child of fo:page-sequence-master, not " 
 		+ parent.getName());
 	}
 
@@ -103,23 +102,24 @@ public class RepeatablePageMasterReference extends PageMasterReference
 	{
 	    try {
 			setMaximumRepeats( Integer.parseInt( mr ) );
-			this.state = BOUNDED;
+			this.boundedness = BOUNDED;
 	    } catch (NumberFormatException nfe) {
 			throw new FOPException( "Invalid number for " +
 				"'maximum-repeats' property" );
 	    }
 
 	} else {
-	    this.state = UNBOUNDED;   // unbounded
+	    this.boundedness = UNBOUNDED;   // unbounded
 	}
 
     }
 	
     public String getNextPageMaster( int currentPageNumber,
-		boolean thisIsFirstPage ) {
+		boolean thisIsFirstPage, boolean isEmptyPage ) {
+		
 		String pm = getMasterName();
 		
-		if (this.state == BOUNDED)
+		if (this.boundedness == BOUNDED)
 		{
 			if (numberConsumed < getMaximumRepeats()) {
 				numberConsumed++;
@@ -127,6 +127,11 @@ public class RepeatablePageMasterReference extends PageMasterReference
 				pm = null;
 			}
 		}
+		
+		// is flow OK?
+		if ((pm != null) && this.pageSequenceMaster.isFlowForMasterNameDone( pm ))
+			pm = null;
+			
 		return pm;
 	}
 	
@@ -141,4 +146,18 @@ public class RepeatablePageMasterReference extends PageMasterReference
 		return this.maximumRepeats;
 	}
 
+    public void setMasterName( String masterName )
+	{
+		this.masterName = masterName;
+	}
+
+    public String getMasterName()
+	{
+		return masterName;
+	}
+	
+	public void reset()
+	{
+		numberConsumed = 0;
+	}
 }

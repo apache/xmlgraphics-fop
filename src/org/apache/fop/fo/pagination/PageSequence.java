@@ -174,7 +174,9 @@ public class PageSequence extends FObj
         masterName = ((MasterName) this.properties.get("master-name")).getString();
     }
 
-    protected Page makePage(AreaTree areaTree) throws FOPException {
+    protected Page makePage(AreaTree areaTree, int firstAvailPageNumber,
+		boolean isFirstPage, boolean isEmptyPage)
+		throws FOPException {
         // layout this page sequence
 		
         // while there is still stuff in the flow, ask the
@@ -183,7 +185,7 @@ public class PageSequence extends FObj
 		// page number is 0-indexed
         PageMaster pageMaster =
 			this.layoutMasterSet.getNextPageMaster(
-			masterName, currentPageNumber, thisIsFirstPage );
+			masterName, firstAvailPageNumber, isFirstPage, isEmptyPage );
 			
 		// store the current 'master-name' for access by format()
 		currentPageMasterName = this.layoutMasterSet.getCurrentPageMasterName();
@@ -200,12 +202,19 @@ public class PageSequence extends FObj
     public void format(AreaTree areaTree) throws FOPException {
         Status status = new Status(Status.OK);
 
+		this.layoutMasterSet.resetPageMasters();
+		
         do
         {
-            currentPage = makePage(areaTree);            
-
+			// makePage() moved to after the page-number computations,
+			// but store the page-number at this point for that method,
+			// since we want the 'current' current page-number...
+			int firstAvailPageNumber = this.runningPageNumberCounter;
+			boolean tempIsFirstPage = false;
+			
             if ( thisIsFirstPage )
             {
+				tempIsFirstPage = thisIsFirstPage;
                 if ( pageNumberType==AUTO )
                 {
                     this.currentPageNumber=this.runningPageNumberCounter;
@@ -228,8 +237,30 @@ public class PageSequence extends FObj
                 }
                 thisIsFirstPage=false;
             }
-
-            currentPage.setNumber(++this.currentPageNumber);
+			this.currentPageNumber++;
+			
+			// deliberately moved down here so page-number calculations
+			// are complete;
+			// compute flag for 'blank-or-not-blank'
+			boolean isEmptyPage = false;
+            if ( (status.getCode() == Status.FORCE_PAGE_BREAK_EVEN) &&
+            ((currentPageNumber % 2) == 1) )
+            {
+				isEmptyPage = true;
+            }
+            else if ( (status.getCode() == Status.FORCE_PAGE_BREAK_ODD) &&
+            ((currentPageNumber % 2) == 0) )
+            {
+				isEmptyPage = true;
+            }
+            else
+            {
+				isEmptyPage = false;
+			}
+			
+            currentPage = makePage(areaTree, firstAvailPageNumber, tempIsFirstPage, isEmptyPage);            
+			
+            currentPage.setNumber(this.currentPageNumber);
             this.runningPageNumberCounter=this.currentPageNumber;            
 
             MessageHandler.log(" [" + currentPageNumber);
@@ -266,12 +297,10 @@ public class PageSequence extends FObj
             if ( (status.getCode() == Status.FORCE_PAGE_BREAK_EVEN) &&
             ((currentPageNumber % 2) == 1) )
             {
-				// linkage to ConditionalPageMasterReference for blank pages?
             }
             else if ( (status.getCode() == Status.FORCE_PAGE_BREAK_ODD) &&
             ((currentPageNumber % 2) == 0) )
             {
-				// linkage to ConditionalPageMasterReference for blank pages?
             }
             else
             {
@@ -378,8 +407,16 @@ public class PageSequence extends FObj
 		boolean isIncomplete = false;
     	for (Enumeration e = flows.elements(); e.hasMoreElements(); )
 		{
-			isIncomplete = ((Flow)e.nextElement()).getCurrentStatus().isIncomplete();
+			Flow flow = (Flow)e.nextElement();
+			Status status = flow.getCurrentStatus();
+			isIncomplete |= status.isIncomplete();
 		}
+
 		return isIncomplete;
+	}
+	
+	public Flow getFlow( String flowName )
+	{
+		return (Flow)flows.get( flowName );
 	}
 }

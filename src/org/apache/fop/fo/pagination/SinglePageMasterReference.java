@@ -54,7 +54,7 @@ import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;                   
 import org.apache.fop.messaging.MessageHandler;
 
-public class SinglePageMasterReference extends PageMasterReference
+public class SinglePageMasterReference extends FObj
 	implements SubSequenceSpecifier {
 	
     public static class Maker extends FObj.Maker {
@@ -101,8 +101,15 @@ public class SinglePageMasterReference extends PageMasterReference
 	this.state = FIRST;
     }
 	
-    public String getNextPageMaster( int currentPageNumber, boolean thisIsFirstPage ) {
-	return getMasterName();
+    public String getNextPageMaster( int currentPageNumber, boolean thisIsFirstPage,
+		boolean isEmptyPage) {
+		if (this.state == FIRST)
+		{
+			this.state = DONE;
+			return getMasterName();
+		}
+		else
+			return null;
     }
 
     public void setMasterName( String masterName )
@@ -114,4 +121,10 @@ public class SinglePageMasterReference extends PageMasterReference
 	{
 		return this.masterName;
 	}
+	
+	public void reset()
+	{
+		this.state = FIRST;
+	}
+	
 }

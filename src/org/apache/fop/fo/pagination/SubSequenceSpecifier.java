@@ -56,6 +56,8 @@ package org.apache.fop.fo.pagination;
 public interface SubSequenceSpecifier
 {
     public String getNextPageMaster( int currentPageNumber,
-		boolean thisIsFirstPage );
+		boolean thisIsFirstPage, boolean isEmptyPage );
+		
+	public void reset();
 }
 

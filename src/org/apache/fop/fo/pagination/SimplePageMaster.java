@@ -121,12 +121,15 @@ public class SimplePageMaster extends FObj {
 	int contentRectangleHeight = pageHeight - marginTop - marginBottom;
 		
 	this.pageMaster = new PageMaster(pageWidth, pageHeight);
-	this.pageMaster.addBody(this.regionBody.makeRegion(contentRectangleXPosition,contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
+	this.pageMaster.addBody(this.regionBody.makeRegion(contentRectangleXPosition,
+		contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
 		
 	if (this.regionBefore != null)
-	    this.pageMaster.addBefore(this.regionBefore.makeRegion(contentRectangleXPosition,contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
+	    this.pageMaster.addBefore(this.regionBefore.makeRegion(contentRectangleXPosition,
+			contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
 	if (this.regionAfter != null)
-	    this.pageMaster.addAfter(this.regionAfter.makeRegion(contentRectangleXPosition,contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
+	    this.pageMaster.addAfter(this.regionAfter.makeRegion(contentRectangleXPosition,
+			contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
     }
 
     public PageMaster getPageMaster() {

@@ -60,6 +60,7 @@ import org.apache.fop.messaging.MessageHandler;
 
 // Java
 import java.util.Vector;
+import java.util.Enumeration;
 
 public class PageSequenceMaster extends FObj {
 	
@@ -77,6 +78,7 @@ public class PageSequenceMaster extends FObj {
     LayoutMasterSet layoutMasterSet;
     Vector subSequenceSpecifiers;
     SubSequenceSpecifier currentPmr;
+	private int ssIndex;
 	
 	// SimplePageMasters are not exposed outside this class. Hence, this
 	// variable tracks the current master-name for the last SPM.
@@ -94,6 +96,7 @@ public class PageSequenceMaster extends FObj {
 	this.name = "fo:page-sequence-master";
 
 	subSequenceSpecifiers = new Vector();
+	ssIndex = 0;
 	
 	if (parent.getName().equals("fo:layout-master-set")) {
 	    this.layoutMasterSet = (LayoutMasterSet) parent;
@@ -118,12 +121,15 @@ public class PageSequenceMaster extends FObj {
 
     protected SubSequenceSpecifier getNextSubsequenceSpecifier()
     {
-		currentPmr = (SubSequenceSpecifier)subSequenceSpecifiers.elementAt( 0 );
-		subSequenceSpecifiers.removeElementAt(0);
-		return currentPmr;
+		if (ssIndex == subSequenceSpecifiers.size())
+			return null;
+		SubSequenceSpecifier pmr = (SubSequenceSpecifier)subSequenceSpecifiers.elementAt( ssIndex );
+		ssIndex++;
+		return pmr;
     }
 
-    public PageMaster getNextPageMaster( int currentPageNumber, boolean thisIsFirstPage )
+    public PageMaster getNextPageMaster( int currentPageNumber, boolean thisIsFirstPage,
+		boolean isEmptyPage )
     {
 		if (null == currentPmr)
 		{
@@ -131,17 +137,18 @@ public class PageSequenceMaster extends FObj {
 		}
 		
 	    String nextPageMaster =
-			currentPmr.getNextPageMaster( currentPageNumber, thisIsFirstPage );
+			currentPmr.getNextPageMaster( currentPageNumber, thisIsFirstPage, isEmptyPage );
 		
 		if (null == nextPageMaster)
 		{
 			currentPmr = getNextSubsequenceSpecifier();
 			nextPageMaster =
-				currentPmr.getNextPageMaster( currentPageNumber, thisIsFirstPage );
+				currentPmr.getNextPageMaster( currentPageNumber, thisIsFirstPage, isEmptyPage );
 		}
 		
 		SimplePageMaster spm = this.layoutMasterSet.getSimplePageMaster( nextPageMaster );
 		currentPageMasterName = spm.getMasterName();	// store for outside access
+
 		return spm.getPageMaster();
     }
 	
@@ -153,5 +160,24 @@ public class PageSequenceMaster extends FObj {
 	public String getNextPageMasterName()
 	{
 		return currentPageMasterName;
+	}
+	
+	public void reset()
+	{
+		for (Enumeration e = subSequenceSpecifiers.elements(); e.hasMoreElements(); )
+		{
+			((SubSequenceSpecifier)e.nextElement()).reset();
+		}
+		ssIndex = 0;
+	}
+	
+	public boolean isFlowForMasterNameDone( String masterName )
+	{		
+		// parameter is master-name of PMR; we need to locate PM
+		// referenced by this, and determine whether flow(s) are OK
+		if (this.layoutMasterSet.isFlowForMasterNameDone( masterName ))
+			return true;
+		else
+			return false;
 	}
 }

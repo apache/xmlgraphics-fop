@@ -72,14 +72,14 @@ public class RepeatablePageMasterAlternatives extends FObj
     }
 
 	private PageSequenceMaster pageSequenceMaster;
-	
+
     private int maximumRepeats;
     private int numberConsumed = 0;
-
+	
     private int BOUNDED = 1;
     private int UNBOUNDED = 0;
-
-    private int state;
+    private int boundedness;
+	
     private Vector conditionalPageMasterRefs;
 
     public RepeatablePageMasterAlternatives(FObj parent, PropertyList propertyList)
@@ -103,22 +103,24 @@ public class RepeatablePageMasterAlternatives extends FObj
 	{
 	    try {
 			setMaximumRepeats( Integer.parseInt( mr ) );
-			this.state = BOUNDED;
+			this.boundedness = BOUNDED;
 	    } catch (NumberFormatException nfe) {
 			throw new FOPException( "Invalid number for " +
 				"'maximum-repeats' property" );
 	    }
 
 	} else {
-	    this.state = UNBOUNDED;   // unbounded
+	    this.boundedness = UNBOUNDED;   // unbounded
 	}
 
     }
 	
-    public String getNextPageMaster( int currentPageNumber, boolean thisIsFirstPage ) {
+    public String getNextPageMaster( int currentPageNumber, boolean thisIsFirstPage,
+		boolean isEmptyPage ) {
+			
 		String pm = null;
 		
-		if (this.state == BOUNDED ) {
+		if (this.boundedness == BOUNDED ) {
 			if (numberConsumed < getMaximumRepeats()) {
 				numberConsumed++;
 			} else {
@@ -129,16 +131,19 @@ public class RepeatablePageMasterAlternatives extends FObj
 		for (int i = 0; i < conditionalPageMasterRefs.size(); i++)
 		{
 			ConditionalPageMasterReference cpmr =
-			(ConditionalPageMasterReference)conditionalPageMasterRefs.get(i);
+			(ConditionalPageMasterReference)conditionalPageMasterRefs.elementAt(i);
 
 			// 0-indexed page number
-			if (cpmr.isValid(currentPageNumber + 1, thisIsFirstPage))
+			if (cpmr.isValid(currentPageNumber + 1, thisIsFirstPage, isEmptyPage ))
 			{
 				pm = cpmr.getMasterName();
 				break;
 			}
 		}
 
+		if ((pm != null) && this.pageSequenceMaster.isFlowForMasterNameDone( pm ))
+			pm = null;
+			
 		return pm;
     }
 
@@ -159,4 +164,8 @@ public class RepeatablePageMasterAlternatives extends FObj
 		this.conditionalPageMasterRefs.addElement( cpmr );
 	}
 	
+	public void reset()
+	{
+		numberConsumed = 0;
+	}
 }

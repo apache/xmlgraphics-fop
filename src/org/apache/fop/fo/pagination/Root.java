@@ -76,7 +76,8 @@ public class Root extends FObj {
 
 	LayoutMasterSet layoutMasterSet;
  	Vector pageSequences;	
-		
+	PageSequence currentPageSequence;
+	
 	protected Root(FObj parent, PropertyList propertyList) throws FOPException 
 	{
 		super(parent, propertyList);
@@ -113,13 +114,19 @@ public class Root extends FObj {
 		Enumeration e = pageSequences.elements();
 		while (e.hasMoreElements()) 
 		{
-			((PageSequence) e.nextElement()).format(areaTree);
+			currentPageSequence = (PageSequence) e.nextElement();
+			currentPageSequence.format(areaTree);
 		}
 		
 	}		
 
 
     public void setLayoutMasterSet(LayoutMasterSet layoutMasterSet) {
-	this.layoutMasterSet = layoutMasterSet;
+		this.layoutMasterSet = layoutMasterSet;
     }
+	
+	public PageSequence getCurrentPageSequence()
+	{
+		return currentPageSequence;
+	}
 }

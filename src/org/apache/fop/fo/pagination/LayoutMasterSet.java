@@ -52,6 +52,7 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.fo.flow.Flow;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;				   
 import org.apache.fop.layout.PageMaster;
@@ -80,6 +81,7 @@ public class LayoutMasterSet extends FObj {
 	private Root root;
 	private String currentPageMasterName;
 	private Hashtable allRegions;
+	private PageSequenceMaster lastPageSequenceMaster;
 	
     protected LayoutMasterSet(FObj parent, PropertyList propertyList)
 	throws FOPException {
@@ -101,7 +103,7 @@ public class LayoutMasterSet extends FObj {
     }
 
 	public PageMaster getNextPageMaster( String pageSequenceName,
-		int currentPageNumber, boolean thisIsFirstPage )
+		int currentPageNumber, boolean thisIsFirstPage, boolean isEmptyPage )
 		throws FOPException
 	{
 		PageMaster pm = null;
@@ -109,7 +111,9 @@ public class LayoutMasterSet extends FObj {
 		PageSequenceMaster psm = getPageSequenceMaster( pageSequenceName );
 		if (null != psm)
 		{
-			pm = psm.getNextPageMaster( currentPageNumber, thisIsFirstPage );
+			pm = psm.getNextPageMaster( currentPageNumber, thisIsFirstPage,
+				isEmptyPage );
+			lastPageSequenceMaster = psm;
 			// call in this sequence
 			currentPageMasterName = psm.getNextPageMasterName();
 		} else {
@@ -213,5 +217,27 @@ public class LayoutMasterSet extends FObj {
 				allRegions.put(regionName,regionClass);
 			}
 		}
+	}
+	
+	public void resetPageMasters()
+	{
+    	for (Enumeration e = pageSequenceMasters.elements(); e.hasMoreElements(); )
+		{
+			((PageSequenceMaster)e.nextElement()).reset();
+		}
+		
+	}
+
+	public boolean isFlowForMasterNameDone( String masterName )
+	{		
+		// parameter is master-name of PMR; we need to locate PM
+		// referenced by this, and determine whether flow(s) are OK
+		SimplePageMaster spm = getSimplePageMaster( masterName );
+		PageSequence ps = this.root.getCurrentPageSequence();
+		Flow flow = ps.getFlow( masterName );
+		if ((null == flow) || flow.getCurrentStatus().isIncomplete())
+			return false;
+		else
+			return true;
 	}
 }

@@ -55,8 +55,7 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;                   
 import org.apache.fop.messaging.MessageHandler;
 
-public class ConditionalPageMasterReference
-	extends PageMasterReference implements SubSequenceSpecifier {
+public class ConditionalPageMasterReference extends FObj {
 	
     public static class Maker extends FObj.Maker {
 	public FObj make(FObj parent, PropertyList propertyList)
@@ -103,7 +102,8 @@ public class ConditionalPageMasterReference
 	}
     }
 	
-	protected boolean isValid( int currentPageNumber, boolean thisIsFirstPage )
+	protected boolean isValid( int currentPageNumber, boolean thisIsFirstPage,
+		boolean isEmptyPage )
 	{
 		// page-position
 		boolean okOnPagePosition = true;	// default is 'any'
@@ -137,9 +137,19 @@ public class ConditionalPageMasterReference
 			okOnOddOrEven = false;
 		} 
 		
-		// no check for blankness at the moment
-		
-		return (okOnOddOrEven && okOnPagePosition);
+		// experimental check for blank-or-not-blank
+		boolean okOnBlankOrNotBlank = true;		// default is 'any'
+		int bnb = getBlankOrNotBlank();
+		if ((BlankOrNotBlank.BLANK == bnb) && !isEmptyPage)
+		{
+			okOnBlankOrNotBlank = false;
+		}
+		else if ((BlankOrNotBlank.NOT_BLANK == bnb) && isEmptyPage)
+		{
+			okOnBlankOrNotBlank = false;
+		}
+
+		return (okOnOddOrEven && okOnPagePosition && okOnBlankOrNotBlank);
 	}
 	
     protected void setPagePosition( int pagePosition )
@@ -171,4 +181,15 @@ public class ConditionalPageMasterReference
 	{
 		return this.blankOrNotBlank;
 	}
+
+    public void setMasterName( String masterName )
+	{
+		this.masterName = masterName;
+	}
+
+    public String getMasterName()
+	{
+		return this.masterName;
+	}
+	
 }
