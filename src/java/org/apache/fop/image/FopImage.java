@@ -168,13 +168,21 @@ public interface FopImage {
      * Information loaded from analyser and passed to image object.
      */
     public static class ImageInfo {
+        /** InputStream to load the image from */
         public InputStream inputStream;
+        /** image width (in pixels) */
         public int width;
+        /** image height (in pixels) */
         public int height;
+        /** horizontal bitmap resolution (in dpi) */
         public double dpiHorizontal = 72.0f;
+        /** vertical bitmap resolution (in dpi) */
         public double dpiVertical = 72.0f;
+        /** implementation-specific data object (ex. a SVG DOM for SVG images) */
         public Object data;
+        /** MIME type of the image */
         public String mimeType;
+        /** implementation-specific String (ex. the namespace for XML-based images) */
         public String str;
     }
 
