@@ -1,0 +1,282 @@
+%PDF-1.2
+1 0 obj
+<< /Type /Catalog
+/Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages
+/Count 0
+/Kids [18 0 R ] >>
+endobj
+3 0 obj
+<< /Type /Info
+/Producer (FOP 0.12.1[dev]) >>
+endobj
+4 0 obj
+<< /Font << /F11 5 0 R
+/F10 6 0 R
+/F9 7 0 R
+/F8 8 0 R
+/F7 9 0 R
+/F6 10 0 R
+/F5 11 0 R
+/F4 12 0 R
+/F3 13 0 R
+/F2 14 0 R
+/F1 15 0 R
+/F12 16 0 R
+>>
+/ProcSet [ /PDF /ImageC /Text ] >>
+endobj
+5 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F11
+/BaseFont /Courier-Bold
+/Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F10
+/BaseFont /Courier-Oblique
+/Encoding /WinAnsiEncoding >>
+endobj
+7 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F9
+/BaseFont /Courier
+/Encoding /WinAnsiEncoding >>
+endobj
+8 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F8
+/BaseFont /Times-BoldItalic
+/Encoding /WinAnsiEncoding >>
+endobj
+9 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F7
+/BaseFont /Times-Bold
+/Encoding /WinAnsiEncoding >>
+endobj
+10 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F6
+/BaseFont /Times-Italic
+/Encoding /WinAnsiEncoding >>
+endobj
+11 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F5
+/BaseFont /Times-Roman
+/Encoding /WinAnsiEncoding >>
+endobj
+12 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F4
+/BaseFont /Helvetica-BoldOblique
+/Encoding /WinAnsiEncoding >>
+endobj
+13 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F3
+/BaseFont /Helvetica-Bold
+/Encoding /WinAnsiEncoding >>
+endobj
+14 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F2
+/BaseFont /Helvetica-Oblique
+/Encoding /WinAnsiEncoding >>
+endobj
+15 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F1
+/BaseFont /Helvetica
+/Encoding /WinAnsiEncoding >>
+endobj
+16 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F12
+/BaseFont /Courier-BoldOblique
+/Encoding /WinAnsiEncoding >>
+endobj
+17 0 obj
+<< /Length 4557 >>
+stream
+BT
+1 0 0 1 70.875 678.6 Tm
+/F3 14 Tf
+1 0 0 1 85.875 663.548 Tm (Validity) Tj
+1 0 0 1 139.565 663.548 Tm (Constraint:) Tj
+1 0 0 1 218.119 663.548 Tm (Standalone) Tj
+1 0 0 1 297.471 663.548 Tm (Document) Tj
+1 0 0 1 369.809 663.548 Tm (Declaration) Tj
+/F1 12 Tf
+1 0 0 1 70.875 645.534 Tm (The) Tj
+1 0 0 1 94.887 645.534 Tm (standalone) Tj
+1 0 0 1 156.927 645.534 Tm (document) Tj
+1 0 0 1 212.955 645.534 Tm (declaration) Tj
+1 0 0 1 274.983 645.534 Tm (must) Tj
+1 0 0 1 304.323 645.534 Tm (have) Tj
+1 0 0 1 333.675 645.534 Tm (the) Tj
+1 0 0 1 353.691 645.534 Tm (value) Tj
+1 0 0 1 385.707 645.534 Tm ("no") Tj
+1 0 0 1 410.907 645.534 Tm (if) Tj
+1 0 0 1 420.243 645.534 Tm (any) Tj
+1 0 0 1 442.923 645.534 Tm (external) Tj
+1 0 0 1 70.875 631.434 Tm (markup) Tj
+1 0 0 1 114.219 631.434 Tm (declarations) Tj
+1 0 0 1 182.247 631.434 Tm (contain) Tj
+1 0 0 1 224.271 631.434 Tm (declarations) Tj
+1 0 0 1 292.299 631.434 Tm (of:) Tj
+1 0 0 1 70.875 614.634 Tm (\225) Tj
+1 0 0 1 94.875 614.634 Tm (attributes) Tj
+1 0 0 1 147.567 614.634 Tm (with) Tj
+1 0 0 1 172.239 614.634 Tm (default) Tj
+1 0 0 1 211.599 614.634 Tm (values,) Tj
+1 0 0 1 252.951 614.634 Tm (if) Tj
+1 0 0 1 262.287 614.634 Tm (elements) Tj
+1 0 0 1 314.307 614.634 Tm (to) Tj
+1 0 0 1 327.651 614.634 Tm (which) Tj
+1 0 0 1 361.659 614.634 Tm (these) Tj
+1 0 0 1 394.347 614.634 Tm (attributes) Tj
+1 0 0 1 447.039 614.634 Tm (apply) Tj
+1 0 0 1 94.875 601.134 Tm (appear) Tj
+1 0 0 1 135.567 601.134 Tm (in) Tj
+1 0 0 1 148.239 601.134 Tm (the) Tj
+1 0 0 1 168.255 601.134 Tm (document) Tj
+1 0 0 1 224.283 601.134 Tm (without) Tj
+1 0 0 1 265.635 601.134 Tm (specifications) Tj
+1 0 0 1 340.995 601.134 Tm (of) Tj
+1 0 0 1 354.339 601.134 Tm (values) Tj
+1 0 0 1 392.355 601.134 Tm (for) Tj
+1 0 0 1 409.695 601.134 Tm (these) Tj
+1 0 0 1 442.383 601.134 Tm (attributes,) Tj
+1 0 0 1 94.875 587.634 Tm (or) Tj
+1 0 0 1 70.875 574.134 Tm (\225) Tj
+1 0 0 1 94.875 574.134 Tm (entities) Tj
+1 0 0 1 136.227 574.134 Tm (\(other) Tj
+1 0 0 1 170.907 574.134 Tm (than) Tj
+1 0 0 1 197.595 574.134 Tm (amp,) Tj
+1 0 0 1 227.607 574.134 Tm (lt,) Tj
+1 0 0 1 240.279 574.134 Tm (gt,) Tj
+1 0 0 1 256.959 574.134 Tm (apos,) Tj
+1 0 0 1 289.647 574.134 Tm (quot\),) Tj
+1 0 0 1 323.667 574.134 Tm (if) Tj
+1 0 0 1 333.003 574.134 Tm (references) Tj
+1 0 0 1 393.027 574.134 Tm (to) Tj
+1 0 0 1 406.371 574.134 Tm (those) Tj
+1 0 0 1 439.059 574.134 Tm (entities) Tj
+1 0 0 1 94.875 560.634 Tm (appear) Tj
+1 0 0 1 135.567 560.634 Tm (in) Tj
+1 0 0 1 148.239 560.634 Tm (the) Tj
+1 0 0 1 168.255 560.634 Tm (document,) Tj
+1 0 0 1 227.619 560.634 Tm (or) Tj
+1 0 0 1 70.875 547.134 Tm (\225) Tj
+1 0 0 1 94.875 547.134 Tm (attributes) Tj
+1 0 0 1 147.567 547.134 Tm (with) Tj
+1 0 0 1 172.239 547.134 Tm (values) Tj
+1 0 0 1 210.255 547.134 Tm (subject) Tj
+1 0 0 1 251.607 547.134 Tm (to) Tj
+1 0 0 1 264.951 547.134 Tm (normalization,) Tj
+1 0 0 1 342.975 547.134 Tm (where) Tj
+1 0 0 1 378.987 547.134 Tm (the) Tj
+1 0 0 1 399.003 547.134 Tm (attribute) Tj
+1 0 0 1 445.695 547.134 Tm (appears) Tj
+1 0 0 1 492.387 547.134 Tm (in) Tj
+1 0 0 1 94.875 533.634 Tm (the) Tj
+1 0 0 1 114.891 533.634 Tm (document) Tj
+1 0 0 1 170.919 533.634 Tm (with) Tj
+1 0 0 1 195.591 533.634 Tm (a) Tj
+1 0 0 1 205.599 533.634 Tm (value) Tj
+1 0 0 1 237.615 533.634 Tm (which) Tj
+1 0 0 1 271.623 533.634 Tm (will) Tj
+1 0 0 1 70.875 520.134 Tm (\225) Tj
+1 0 0 1 94.875 520.134 Tm (change) Tj
+1 0 0 1 137.571 520.134 Tm (as) Tj
+1 0 0 1 153.579 520.134 Tm (a) Tj
+1 0 0 1 163.587 520.134 Tm (result) Tj
+1 0 0 1 196.263 520.134 Tm (of) Tj
+1 0 0 1 209.607 520.134 Tm (normalization,) Tj
+1 0 0 1 287.631 520.134 Tm (or) Tj
+1 0 0 1 70.875 506.634 Tm (\225) Tj
+1 0 0 1 94.875 506.634 Tm (element) Tj
+1 0 0 1 140.895 506.634 Tm (types) Tj
+1 0 0 1 172.911 506.634 Tm (with) Tj
+1 0 0 1 197.583 506.634 Tm (element) Tj
+1 0 0 1 243.603 506.634 Tm (content,) Tj
+1 0 0 1 289.635 506.634 Tm (if) Tj
+1 0 0 1 298.971 506.634 Tm (white) Tj
+1 0 0 1 330.315 506.634 Tm (space) Tj
+1 0 0 1 365.667 506.634 Tm (occurs) Tj
+1 0 0 1 404.343 506.634 Tm (directly) Tj
+1 0 0 1 445.683 506.634 Tm (within) Tj
+1 0 0 1 479.691 506.634 Tm (any) Tj
+1 0 0 1 94.875 493.134 Tm (instance) Tj
+1 0 0 1 142.899 493.134 Tm (of) Tj
+1 0 0 1 156.243 493.134 Tm (those) Tj
+1 0 0 1 188.931 493.134 Tm (types.) Tj
+1 0 0 1 70.875 763.65 Tm
+/F5 10 Tf
+1 0 0 1 359.565 754.82 Tm (XSL-FO) Tj
+1 0 0 1 397.065 754.82 Tm (Example:) Tj
+1 0 0 1 437.895 754.82 Tm (simple) Tj
+1 0 0 1 467.065 754.82 Tm (list) Tj
+1 0 0 1 481.795 754.82 Tm (-) Tj
+1 0 0 1 487.625 754.82 Tm (p.) Tj
+1 0 0 1 497.625 754.82 Tm (1) Tj
+1 0 0 1 70.875 99.225 Tm
+ET
+
+endstream
+endobj
+18 0 obj
+<< /Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 576 792 ]
+/Resources 4 0 R
+/Contents 17 0 R
+>>
+endobj
+xref
+0 19
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000117 00000 n 
+0000000178 00000 n 
+0000000373 00000 n 
+0000000484 00000 n 
+0000000598 00000 n 
+0000000703 00000 n 
+0000000817 00000 n 
+0000000925 00000 n 
+0000001036 00000 n 
+0000001146 00000 n 
+0000001266 00000 n 
+0000001379 00000 n 
+0000001495 00000 n 
+0000001603 00000 n 
+0000001722 00000 n 
+0000006331 00000 n 
+trailer
+<<
+/Size 19
+/Root 1 0 R
+/Info 3 0 R
+>>
+startxref
+6439
+%%EOF
