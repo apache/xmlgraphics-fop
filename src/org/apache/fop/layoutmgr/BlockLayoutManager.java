@@ -35,7 +35,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
     LayoutProps layoutProps;
     BorderAndPadding borderProps;
-    BackgroundProps backgroundsPops;
+    BackgroundProps backgroundProps;
 
     int lead = 12000;
     int lineHeight = 14000;
@@ -114,7 +114,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     protected void initProperties(PropertyManager pm) {
         layoutProps = pm.getLayoutProps();
         borderProps = pm.getBorderAndPadding();
-        backgroundsPops = pm.getBackgroundProps();
+        backgroundProps = pm.getBackgroundProps();
     }
     
     public BreakPoss getNextBreakPoss(LayoutContext context) {
@@ -231,44 +231,19 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             curBlockArea = new Block();
 
             // set traits
-            addBorders(curBlockArea);
+            addBorders(curBlockArea, borderProps);
+            addBackground(curBlockArea, backgroundProps);
 
             // Set up dimensions
             // Must get dimensions from parent area
             Area parentArea = parentLM.getParentArea(curBlockArea);
             int referenceIPD = parentArea.getIPD();
             curBlockArea.setIPD(referenceIPD);
+            curBlockArea.setWidth(referenceIPD);
             // Get reference IPD from parentArea
             setCurrentArea(curBlockArea); // ??? for generic operations
         }
         return curBlockArea;
-    }
-
-    public void addBorders(Block curBlock) {
-        BorderProps bps = getBorderProps(BorderAndPadding.TOP);
-        if(bps.width != 0) {
-            curBlock.addTrait(Trait.BORDER_START, bps);
-        }
-        bps = getBorderProps(BorderAndPadding.BOTTOM);
-        if(bps.width != 0) {
-            curBlock.addTrait(Trait.BORDER_END, bps);
-        }
-        bps = getBorderProps(BorderAndPadding.LEFT);
-        if(bps.width != 0) {
-            curBlock.addTrait(Trait.BORDER_BEFORE, bps);
-        }
-        bps = getBorderProps(BorderAndPadding.RIGHT);
-        if(bps.width != 0) {
-            curBlock.addTrait(Trait.BORDER_AFTER, bps);
-        }
-    }
-
-    private BorderProps getBorderProps(int side) {
-        BorderProps bps;
-        bps = new BorderProps(borderProps.getBorderStyle(side),
-                              borderProps.getBorderWidth(side, false),
-                              borderProps.getBorderColor(side));
-        return bps;
     }
 
     public boolean addChild(Area childArea) {

@@ -101,7 +101,7 @@ public class Trait implements Serializable {
     public static final Integer PADDING_BEFORE = new Integer(21);
     public static final Integer PADDING_AFTER = new Integer(22);
 
-    static HashMap s_hmTraitInfo;
+    static HashMap shmTraitInfo;
 
     private static class TraitInfo {
         String sName;
@@ -114,48 +114,48 @@ public class Trait implements Serializable {
 
     static {
         // Create a hashmap mapping trait code to name for external representation
-        s_hmTraitInfo = new HashMap();
-        s_hmTraitInfo.put(ID_LINK, new TraitInfo("id-link", String.class));
-        s_hmTraitInfo.put(INTERNAL_LINK,
+        shmTraitInfo = new HashMap();
+        shmTraitInfo.put(ID_LINK, new TraitInfo("id-link", String.class));
+        shmTraitInfo.put(INTERNAL_LINK,
                           new TraitInfo("internal-link", PageViewport.class));
-        s_hmTraitInfo.put(EXTERNAL_LINK,
+        shmTraitInfo.put(EXTERNAL_LINK,
                           new TraitInfo("external-link", String.class));
-        s_hmTraitInfo.put(FONT_NAME,
+        shmTraitInfo.put(FONT_NAME,
                           new TraitInfo("font-family", String.class));
-        s_hmTraitInfo.put(FONT_SIZE,
+        shmTraitInfo.put(FONT_SIZE,
                           new TraitInfo("font-size", Integer.class));
-        s_hmTraitInfo.put(COLOR, new TraitInfo("color", String.class));
-        s_hmTraitInfo.put(ID_AREA, new TraitInfo("id-area", String.class));
-        s_hmTraitInfo.put(BACKGROUND,
+        shmTraitInfo.put(COLOR, new TraitInfo("color", String.class));
+        shmTraitInfo.put(ID_AREA, new TraitInfo("id-area", String.class));
+        shmTraitInfo.put(BACKGROUND,
                           new TraitInfo("background", Background.class));
-        s_hmTraitInfo.put(UNDERLINE,
-                          new TraitInfo("underline", Integer.class));
-        s_hmTraitInfo.put(OVERLINE,
-                          new TraitInfo("overline", Integer.class));
-        s_hmTraitInfo.put(LINETHROUGH,
-                          new TraitInfo("linethrough", Integer.class));
-        s_hmTraitInfo.put(OFFSET, new TraitInfo("offset", Integer.class));
-        s_hmTraitInfo.put(SHADOW, new TraitInfo("shadow", Integer.class));
-        s_hmTraitInfo.put(BORDER_START,
+        shmTraitInfo.put(UNDERLINE,
+                          new TraitInfo("underline", Boolean.class));
+        shmTraitInfo.put(OVERLINE,
+                          new TraitInfo("overline", Boolean.class));
+        shmTraitInfo.put(LINETHROUGH,
+                          new TraitInfo("linethrough", Boolean.class));
+        shmTraitInfo.put(OFFSET, new TraitInfo("offset", Integer.class));
+        shmTraitInfo.put(SHADOW, new TraitInfo("shadow", Integer.class));
+        shmTraitInfo.put(BORDER_START,
                           new TraitInfo("border-start", BorderProps.class));
-        s_hmTraitInfo.put(BORDER_END,
+        shmTraitInfo.put(BORDER_END,
                           new TraitInfo("border-end", BorderProps.class));
-        s_hmTraitInfo.put(BORDER_BEFORE,
+        shmTraitInfo.put(BORDER_BEFORE,
                           new TraitInfo("border-before", BorderProps.class));
-        s_hmTraitInfo.put(BORDER_AFTER,
+        shmTraitInfo.put(BORDER_AFTER,
                           new TraitInfo("border-after", BorderProps.class));
-        s_hmTraitInfo.put(PADDING_START,
+        shmTraitInfo.put(PADDING_START,
                           new TraitInfo("padding-start", Integer.class));
-        s_hmTraitInfo.put(PADDING_END,
+        shmTraitInfo.put(PADDING_END,
                           new TraitInfo("padding-end", Integer.class));
-        s_hmTraitInfo.put(PADDING_BEFORE,
+        shmTraitInfo.put(PADDING_BEFORE,
                           new TraitInfo("padding-before", Integer.class));
-        s_hmTraitInfo.put(PADDING_AFTER,
+        shmTraitInfo.put(PADDING_AFTER,
                           new TraitInfo("padding-after", Integer.class));
     }
 
     public static String getTraitName(Object traitCode) {
-        Object obj = s_hmTraitInfo.get(traitCode);
+        Object obj = shmTraitInfo.get(traitCode);
         if (obj != null) {
             return ((TraitInfo) obj).sName;
         } else {
@@ -164,7 +164,7 @@ public class Trait implements Serializable {
     }
 
     public static Object getTraitCode(String sTraitName) {
-        Iterator iter = s_hmTraitInfo.entrySet().iterator();
+        Iterator iter = shmTraitInfo.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             TraitInfo ti = (TraitInfo) entry.getValue();
@@ -176,7 +176,7 @@ public class Trait implements Serializable {
     }
 
     private static Class getTraitClass(Object oTraitCode) {
-        TraitInfo ti = (TraitInfo) s_hmTraitInfo.get(oTraitCode);
+        TraitInfo ti = (TraitInfo) shmTraitInfo.get(oTraitCode);
         return (ti != null ? ti.sClass : null);
     }
 
@@ -230,11 +230,11 @@ public class Trait implements Serializable {
     }
 
     public static class Background {
-        ColorType color;
-        String url;
-        int repeat;
-        int horiz;
-        int vertical;
+        public ColorType color = null;
+        public String url = null;
+        public int repeat;
+        public int horiz;
+        public int vertical;
     }
 
 }

@@ -352,7 +352,8 @@ public class AreaTree {
      * each page is either rendered if ready or prepared
      * for later rendering.
      * Once a page is rendered it is cleared to release the
-     * contents but the PageViewport is retained.
+     * contents but the PageViewport is retained. So even
+     * though the pages are stored the contents are discarded.
      */
     public static class RenderPagesModel extends StorePagesModel {
         /**

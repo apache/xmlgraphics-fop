@@ -33,11 +33,14 @@ public class LMiter implements ListIterator {
     protected boolean preLoadNext() {
         // skip over child FObj's that don't add lms
         while (m_baseIter.hasNext()) {
-            FObj fobj = (FObj) m_baseIter.next();
-            //m_listLMs.add(fobj.getLayoutManager());
-            fobj.addLayoutManager(m_listLMs);
-            if(m_curPos < m_listLMs.size()) {
-                return true;
+            Object theobj = m_baseIter.next();
+            if(theobj instanceof FObj) {
+                FObj fobj = (FObj) theobj;
+                //m_listLMs.add(fobj.getLayoutManager());
+                fobj.addLayoutManager(m_listLMs);
+                if(m_curPos < m_listLMs.size()) {
+                    return true;
+                }
             }
         }
         return false;

@@ -79,7 +79,7 @@ public class TableCell extends FObj {
     /**
      * Set to true if all content completely laid out.
      */
-    boolean bDone=false;
+    boolean bDone = false;
 
     /**
      * Border separation value in the block-progression dimension.

@@ -396,25 +396,31 @@
   <property>
     <name>background-image</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>String</datatype>
     <default>none</default>
   </property>
   <property>
     <name>background-repeat</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>Enum</datatype>
+      <enumeration>
+        <value const="REPEAT">repeat</value>
+        <value const="REPEATX">repeat-x</value>
+        <value const="REPEATY">repeat-y</value>
+        <value const="NOREPEAT">no-repeat</value>
+      </enumeration>
     <default>repeat</default>
   </property>
   <property>
     <name>background-position-horizontal</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>Length</datatype>
     <default>0%</default>
   </property>
   <property>
     <name>background-position-vertical</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>Length</datatype>
     <default>0%</default>
   </property>
   <property>

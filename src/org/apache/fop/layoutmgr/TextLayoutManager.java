@@ -515,9 +515,9 @@ public class TextLayoutManager extends AbstractLayoutManager {
         curWordArea.addTrait(Trait.FONT_NAME, textInfo.fs.getFontName());
         curWordArea.addTrait(Trait.FONT_SIZE,
                              new Integer(textInfo.fs.getFontSize()));
+        curWordArea.addTrait(Trait.COLOR, this.textInfo.color);
         return curWordArea;
     }
-
 
 }
 

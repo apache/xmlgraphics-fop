@@ -161,8 +161,6 @@ public class Block extends FObjMixed {
                                 "text-indent").getLength().mvalue();
             this.keepWithNext =
               this.properties.get("keep-with-next").getEnum();
-            this.backgroundColor = this.properties.get(
-                                     "background-color").getColorType();
 
             this.blockWidows =
               this.properties.get("widows").getNumber().intValue();

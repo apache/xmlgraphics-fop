@@ -7,6 +7,7 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
@@ -19,6 +20,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.MinOptMax;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
     private List columns = null;
     private Body tableHeader = null;
     private Body tableFooter = null;
+
+    private BorderAndPadding borderProps = null;
+    private BackgroundProps backgroundProps;
 
     private Block curBlockArea;
 
@@ -57,6 +63,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
      */
     public TableLayoutManager(FObj fobj) {
         super(fobj);
+    }
+
+    protected void initProperties(PropertyManager propMgr) {
+        borderProps = propMgr.getBorderAndPadding();
+        backgroundProps = propMgr.getBackgroundProps();
     }
 
     /**
@@ -228,6 +239,13 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         // add footer areas
 
         curBlockArea.setHeight(tableHeight);
+
+        if(borderProps != null) { 
+            addBorders(curBlockArea, borderProps);
+        }
+        if(backgroundProps != null) {
+            addBackground(curBlockArea, backgroundProps);
+        }
 
         flush();
 

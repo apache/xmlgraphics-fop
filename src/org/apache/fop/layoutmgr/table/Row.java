@@ -7,6 +7,7 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
@@ -17,7 +18,10 @@ import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
 import org.apache.fop.area.MinOptMax;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
 
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -36,6 +40,8 @@ public class Row extends BlockStackingLayoutManager {
     private List columns = null;
     private int rowHeight;
     private int yoffset;
+    private BorderAndPadding borderProps = null;
+    private BackgroundProps backgroundProps;
 
     private class RowPosition extends LeafPosition {
         protected List cellBreaks;
@@ -52,6 +58,11 @@ public class Row extends BlockStackingLayoutManager {
      */
     public Row(FObj fobj) {
         super(fobj);
+    }
+
+    protected void initProperties(PropertyManager propMgr) {
+        borderProps = propMgr.getBorderAndPadding();
+        backgroundProps = propMgr.getBackgroundProps();
     }
 
     /**
@@ -124,7 +135,13 @@ public class Row extends BlockStackingLayoutManager {
                   MinOptMax.subtract(context.getStackLimit(),
                                      stackSize));
 
-            Column col = (Column)columns.get(cellcount - 1);
+            int size = columns.size();
+            Column col;
+            if (cellcount > size - 1) {
+                col = (Column)columns.get(size - 1);
+            } else {
+                col = (Column)columns.get(cellcount - 1);
+            }
             childLC.setRefIPD(col.getWidth());
 
             while (!curLM.isFinished()) {
@@ -210,7 +227,16 @@ public class Row extends BlockStackingLayoutManager {
                 PositionIterator breakPosIter;
                 breakPosIter = new BreakPossPosIter(cellsbr, 0, cellsbr.size());
                 iStartPos = lfp.getLeafPos() + 1;
-                Column col = (Column)columns.get(cellcount++);
+
+                int size = columns.size();
+                Column col;
+                if (cellcount > size - 1) {
+                   col = (Column)columns.get(size - 1);
+                } else {
+                    col = (Column)columns.get(cellcount);
+                    cellcount++;
+                }
+
                 while ((childLM = (Cell)breakPosIter.getNextChildLM()) != null) {
                     childLM.setXOffset(xoffset);
                     childLM.setYOffset(yoffset);
@@ -272,6 +298,20 @@ public class Row extends BlockStackingLayoutManager {
         if (resetPos == null) {
             reset(null);
         }
+    }
+
+
+    /**
+     * Get the area for this row for background.
+     *
+     * @return the row area
+     */
+    public Area getRowArea() {
+        Area block = new Block();
+        if(backgroundProps != null) {
+            addBackground(block, backgroundProps);
+        }
+        return block;
     }
 }
 

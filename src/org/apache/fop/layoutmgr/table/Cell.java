@@ -7,6 +7,7 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
@@ -19,6 +20,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.MinOptMax;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
 
 import java.util.ArrayList;
 
@@ -27,6 +30,9 @@ import java.util.ArrayList;
  * A cell contains blocks. These blocks fill the cell.
  */
 public class Cell extends BlockStackingLayoutManager {
+
+    private BorderAndPadding borderProps = null;
+    private BackgroundProps backgroundProps;
 
     private Block curBlockArea;
 
@@ -42,6 +48,11 @@ public class Cell extends BlockStackingLayoutManager {
      */
     public Cell(FObj fobj) {
         super(fobj);
+    }
+
+    protected void initProperties(PropertyManager propMgr) {
+        borderProps = propMgr.getBorderAndPadding();
+        backgroundProps = propMgr.getBackgroundProps();
     }
 
     /**
@@ -151,6 +162,13 @@ public class Cell extends BlockStackingLayoutManager {
             while ((childLM = breakPosIter.getNextChildLM()) != null) {
                 childLM.addAreas(breakPosIter, lc);
             }
+        }
+
+        if(borderProps != null) {
+            addBorders(curBlockArea, borderProps);
+        }
+        if(backgroundProps != null) {
+            addBackground(curBlockArea, backgroundProps);
         }
 
         flush();

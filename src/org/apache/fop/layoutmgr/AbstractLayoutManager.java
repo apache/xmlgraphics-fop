@@ -12,6 +12,10 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.PropertyManager;
+import org.apache.fop.area.Trait;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.traits.BorderProps;
 
 import java.util.ListIterator;
 
@@ -311,5 +315,61 @@ public abstract class AbstractLayoutManager implements LayoutManager {
         return parentLM.retrieveMarker(name, pos, boundary);
     }
 
+    /**
+     * Add borders to an area.
+     * Layout managers that create areas with borders can use this to
+     * add the borders to the area.
+     */
+    public void addBorders(Area curBlock, BorderAndPadding bordProps) {
+        BorderProps bps = getBorderProps(bordProps, BorderAndPadding.TOP);
+        if(bps.width != 0) {
+            curBlock.addTrait(Trait.BORDER_BEFORE, bps);
+        }
+        bps = getBorderProps(bordProps, BorderAndPadding.BOTTOM);
+        if(bps.width != 0) {
+            curBlock.addTrait(Trait.BORDER_AFTER, bps);
+        }
+        bps = getBorderProps(bordProps, BorderAndPadding.LEFT);
+        if(bps.width != 0) {
+            curBlock.addTrait(Trait.BORDER_START, bps);
+        }
+        bps = getBorderProps(bordProps, BorderAndPadding.RIGHT);
+        if(bps.width != 0) {
+            curBlock.addTrait(Trait.BORDER_END, bps);
+        }
+    }
+
+    private BorderProps getBorderProps(BorderAndPadding bordProps, int side) {
+        BorderProps bps;
+        bps = new BorderProps(bordProps.getBorderStyle(side),
+                              bordProps.getBorderWidth(side, false),
+                              bordProps.getBorderColor(side));
+        return bps;
+    }
+
+    /**
+     * Add background to an area.
+     * Layout managers that create areas with a background can use this to 
+     * add the background to the area.
+     */
+    public void addBackground(Area curBlock, BackgroundProps backProps) {
+        Trait.Background back = new Trait.Background();
+        back.color = backProps.backColor;
+
+        if(backProps.backImage != null) {
+            back.url = backProps.backImage;
+            back.repeat = backProps.backRepeat;
+            if(backProps.backPosHorizontal != null) {
+                back.horiz = backProps.backPosHorizontal.mvalue();
+            }
+            if(backProps.backPosVertical != null) {
+                back.vertical = backProps.backPosVertical.mvalue();
+            }
+        }
+    
+        if(back.color != null || back.url != null) {
+            curBlock.addTrait(Trait.BACKGROUND, back);
+        }
+    }
 }
 
