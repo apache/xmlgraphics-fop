@@ -314,5 +314,53 @@ public class WritingMode extends Property  {
         return relAbsMaps[writingMode][relativeEdge];
     }
 
+    /** Map of <code>isHorizontal</code> values for writing modes */
+    private static final boolean[] horizontal = {
+            false
+            ,true   // lr_tb
+            ,true   // rl_tb
+            ,false  // tb_rl
+    };
+
+    /**
+     * Mimics <code>isHorizontal</code> method from
+     * <code>java.awt.ComponentOrientation</code>.
+     * @param writingMode
+     * @return
+     * @throws PropertyException if the writing mode is invalid
+     */
+    public static boolean isHorizontal(int writingMode)
+    throws PropertyException {
+        if (writingMode <= 0 || writingMode > MAX_WRITING_MODE) {
+            throw new PropertyException(
+                    "Writing mode out of range:" + writingMode);
+        }
+        return horizontal[writingMode];
+    }
+
+    /** Map of <code>isLeftToRight</code> values for writing modes */
+    private static final boolean[] leftToRight = {
+            false
+            ,true   // lr_tb
+            ,false  // rl_tb
+            ,false  // tb_rl
+    };
+
+    /**
+     * Mimics <code>isLeftToRight</code> method from
+     * <code>java.awt.ComponentOrientation</code>.
+     * @param writingMode
+     * @return
+     * @throws PropertyException is the writing mode is invalid
+     */
+    public static boolean isLeftToRight(int writingMode)
+    throws PropertyException {
+        if (writingMode <= 0 || writingMode > MAX_WRITING_MODE) {
+            throw new PropertyException(
+                    "Writing mode out of range:" + writingMode);
+        }
+        return leftToRight[writingMode];
+    }
+
 }
 
