@@ -35,7 +35,7 @@ public class FontUtil {
         int weight = 400;
         try {
             weight = Integer.parseInt(text);
-            weight = ((int)weight / 100) * 100;
+            weight = (weight / 100) * 100;
             weight = Math.max(weight, 100);
             weight = Math.min(weight, 900);
         } catch (NumberFormatException nfe) {

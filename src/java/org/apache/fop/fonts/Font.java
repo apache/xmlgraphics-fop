@@ -182,7 +182,6 @@ public class Font {
      * This also performs some guessing on widths on various
      * versions of space that might not exists in the font.
      * @param c character to inspect
-     * @param fs FontState to use
      * @return the width of the character
      */
     public int getCharWidth(char c) {
