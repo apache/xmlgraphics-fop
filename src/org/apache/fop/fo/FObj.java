@@ -176,6 +176,11 @@ public class FObj extends FONode {
         return false;
     }
 
+
+    public boolean generatesInlineAreas() {
+        return true;
+    }
+
     /**
      * Set writing mode for this FO.
      * Find nearest ancestor, including self, which generates

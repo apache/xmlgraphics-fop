@@ -356,4 +356,8 @@ public class Block extends FObjMixed {
 	return new BlockLayoutManager(this);
     }
 
+
+    public boolean generatesInlineAreas() {
+        return false;
+    }
 }

@@ -48,4 +48,8 @@ public class TableAndCaption extends ToBeImplementedElement {
 
         return super.layout(area);
     }
+
+    public boolean generatesInlineAreas() {
+        return false;
+    }
 }

@@ -168,4 +168,8 @@ public class ListItem extends FObj {
             return 0;                              // not laid out yet
     }
 
+    public boolean generatesInlineAreas() {
+        return false;
+    }
+
 }

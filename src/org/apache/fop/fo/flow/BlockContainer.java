@@ -167,6 +167,10 @@ public class BlockContainer extends FObj {
         return true;
     }
 
+    public boolean generatesInlineAreas() {
+        return false;
+    }
+
     public int getSpan() {
         return this.span;
     }
