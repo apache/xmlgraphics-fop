@@ -50,6 +50,8 @@
  */
 package org.apache.fop.datatypes;
 
+import java.util.*;
+
 /**
  * a colour quantity in XSL
  */
@@ -96,6 +98,46 @@ public class ColorType {
 		this.blue = 0;
 		System.err.println("ERROR: unknown colour format. Must be #RGB or #RRGGBB");
 	    }
+	} else if (value.startsWith("rgb(")) {
+		int poss = value.indexOf("(");
+		int pose = value.indexOf(")");
+		if(poss != -1 && pose != -1) {
+			value = value.substring(poss + 1, pose);
+			StringTokenizer st = new StringTokenizer(value, ",");
+			try {
+				if(st.hasMoreTokens()) {
+					String str = st.nextToken().trim();
+					if(str.endsWith("%")) {
+						this.red = Integer.parseInt(str.substring(0, str.length() - 1)) * 2.55f;
+					} else {
+					    this.red = Integer.parseInt(str)/255f;
+				    }
+				}
+				if(st.hasMoreTokens()) {
+					String str = st.nextToken().trim();
+					if(str.endsWith("%")) {
+						this.green = Integer.parseInt(str.substring(0, str.length() - 1)) * 2.55f;
+					} else {
+					    this.green = Integer.parseInt(str)/255f;
+				    }
+				}
+				if(st.hasMoreTokens()) {
+					String str = st.nextToken().trim();
+					if(str.endsWith("%")) {
+						this.blue = Integer.parseInt(str.substring(0, str.length() - 1)) * 2.55f;
+					} else {
+					    this.blue = Integer.parseInt(str)/255f;
+				    }
+				}
+		    } catch (Exception e) {
+				this.red = 0;
+				this.green = 0;
+				this.blue = 0;
+				System.err.println("ERROR: unknown colour format. Must be #RGB or #RRGGBB");
+		    }
+	    }
+	} else if (value.startsWith("url(")) {
+		// refers to a gradient
 	} else {
 	    if (value.toLowerCase().equals("black")) {
 		this.red = 0;
