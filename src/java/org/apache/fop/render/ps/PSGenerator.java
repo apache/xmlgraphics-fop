@@ -113,9 +113,10 @@ public class PSGenerator {
      * @exception IOException  In case of an I/O problem
      */
     public void write(String cmd) throws IOException {
+        /* @todo Check disabled until clarification.
         if (cmd.length() > 255) {
             throw new RuntimeException("PostScript command exceeded limit of 255 characters");
-        }
+        } */
         out.write(cmd.getBytes("US-ASCII"));
     }
 
@@ -130,6 +131,13 @@ public class PSGenerator {
         newLine();
     }
 
+    /**
+     * Writes a comment to the stream and ends the line. Output of comments can 
+     * be disabled to reduce the size of the generated file. 
+     * 
+     * @param comment          comment to write
+     * @exception IOException  In case of an I/O problem
+     */
     public void commentln(String comment) throws IOException {
         if (this.commentsEnabled) {
             writeln(comment);
