@@ -285,7 +285,7 @@ public class FObj extends FONode {
         if (prop != null) {
             String str = prop.getString();
             if (str != null && !str.equals("")) {
-                Set idrefs = foInputHandler.getIDReferences();
+                Set idrefs = getFOTreeControl().getIDReferences();
                 if (!idrefs.contains(str)) {
                     id = str;
                     idrefs.add(id);

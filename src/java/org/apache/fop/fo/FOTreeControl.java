@@ -53,6 +53,7 @@ package org.apache.fop.fo;
 
 // Java
 import java.util.Map;
+import java.util.Set;
 
 // FOP
 import org.apache.fop.fo.extensions.Bookmarks;
@@ -106,5 +107,11 @@ public interface FOTreeControl {
      * @return the Bookmark object encapsulating the bookmarks for the FO Tree.
      */
     Bookmarks getBookmarks();
+
+    /**
+     * Returns the set of ID references found in the FO Tree.
+     * @return the ID references
+     */
+    Set getIDReferences();
 
 }
