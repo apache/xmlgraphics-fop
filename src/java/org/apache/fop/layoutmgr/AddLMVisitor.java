@@ -292,11 +292,11 @@ public class AddLMVisitor implements FOTreeVisitor {
     /**
      * Add start and end properties for the link
      */
-    public void serveBasicLink(BasicLink node) {
+    public void serveBasicLink(final BasicLink node) {
         node.setup();
         InlineStackingLayoutManager lm;
         lm = new InlineStackingLayoutManager() {
-            protected InlineParent createArea(BasicLink node) {
+            protected InlineParent createArea() {
                 InlineParent area = super.createArea();
                 setupBasicLinkArea(node, parentLM, area);
                 return area;
