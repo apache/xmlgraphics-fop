@@ -77,7 +77,7 @@ public class FOTreeBuilder extends DefaultHandler {
     private FOUserAgent userAgent;
 
     /** The FOTreeControl object managing the FO Tree that is being built */
-    public FOTreeControl foTreeControl;
+    private FOTreeControl foTreeControl;
 
     /** The SAX locator object maneging the line and column counters */
     private Locator locator; 
@@ -103,6 +103,14 @@ public class FOTreeBuilder extends DefaultHandler {
 
     private FOUserAgent getUserAgent() {
         return userAgent;
+    }
+
+    /**
+     * Sets the FO Tree Control for this object
+     * @param fotc FOTreeControl instance
+     */
+    public void setFOTreeControl(FOTreeControl fotc) {
+        this.foTreeControl = fotc;
     }
 
     /**

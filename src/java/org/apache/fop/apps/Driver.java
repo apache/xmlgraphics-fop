@@ -540,8 +540,7 @@ public class Driver implements LogEnabled {
 
         treeBuilder.setUserAgent(getUserAgent());
         treeBuilder.setFOInputHandler(foInputHandler);
-        treeBuilder.foTreeControl = currentDocument;
-
+        treeBuilder.setFOTreeControl(currentDocument);
 
         return new ProxyContentHandler(treeBuilder) {
             

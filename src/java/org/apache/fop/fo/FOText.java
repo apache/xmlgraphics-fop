@@ -44,7 +44,12 @@ public class FOText extends FObj {
     public char[] ca;
 
     /**
-     * the length of the character array containing the text
+     * The actual length of the text to be rendered within ca,
+     * starting from position 0 of the array.  
+     *
+     * This value is originally equal to ca.length, but becomes decremented
+     * during whitespace removal by the flow.Block class, via the 
+     * TextCharIterator.remove() method below.
      */
     public int length;
 
@@ -87,7 +92,7 @@ public class FOText extends FObj {
     /**
      *
      * @param chars array of chars which contains the text in this object (may
-     * be a superset of the text in this object
+     * be a superset of the text in this object)
      * @param start starting index into char[] for the text in this object
      * @param end ending index into char[] for the text in this object
      * @param ti TextInfo object for the text in this object
@@ -163,6 +168,10 @@ public class FOText extends FObj {
             } else if (curIndex == length) {
                 curIndex = --length;
             }
+//          Temporary until leading space problem in 1.0 fixed
+//          System.out.println("\n\nremove called: ca = \"" + 
+//              new String(ca) + "\", length/node length: " + length 
+//              + ", " + ca.length);
         }
 
 
