@@ -192,7 +192,8 @@ public class Property {
             if (spMaker != null) {
                 Property p = spMaker.make(propertyList, value, fo);
                 if (p != null) {
-                    return setSubprop(baseProp, partName, p);
+                    int partId = FOPropertyMapping.getSubPropertyId(partName);
+                    return setSubprop(baseProp, partId, p);
                 }
             } else {
                 //getLogger().error("compound property component "
@@ -210,12 +211,12 @@ public class Property {
          * compound properties.
          * @param baseProp The Property object representing the compound property,
          * such as SpaceProperty.
-         * @param partName The name of the component whose value is specified.
+         * @param partId The ID of the component whose value is specified.
          * @param subProp A Property object holding the specified value of the
          * component to be set.
          * @return The modified compound property object.
          */
-        protected Property setSubprop(Property baseProp, String partName,
+        protected Property setSubprop(Property baseProp, int partId,
                                       Property subProp) {
             return baseProp;
         }
