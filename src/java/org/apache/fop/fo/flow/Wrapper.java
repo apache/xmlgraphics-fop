@@ -55,7 +55,7 @@ public class Wrapper extends FObjMixed {
             return;
         }
         while (baseIter.hasNext()) {
-            FObj child = (FObj) baseIter.next();
+            FONode child = (FONode) baseIter.next();
             child.addLayoutManager(list);
         }
     }
