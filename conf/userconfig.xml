@@ -21,7 +21,7 @@
 
   <entry>
     <key>foFileName</key>
-    <value>/usr/local/src/xml-fop_20_Alt/docs/examples/fo/test.fo</value>
+    <value>examples/fo/test.fo</value>
   </entry>
 
   <entry>
@@ -31,7 +31,7 @@
 
   <entry>
     <key>outputFileName</key>
-    <value>/usr/local/src/xml-fop_20_Alt/docs/examples/tests/test.pdf</value>
+    <value>examples/tests/test.pdf</value>
   </entry>
 
 <!--  NOT IMPLEMENTED
