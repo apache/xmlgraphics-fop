@@ -2,9 +2,6 @@
 REM creates pdf and html documentation
 
 
-echo makedoc doesn't work at the moment. please use the html documentation.
-goto end
-
 echo Building Fop documentation (pdf,html)
 echo ----------------
 
@@ -17,8 +14,9 @@ set ANT_HOME=%LIBDIR%
 
 %JAVA_HOME%\bin\java.exe -Dant.home=%ANT_HOME% -classpath %LOCALCLASSPATH%;%CLASSPATH% org.apache.tools.ant.Main %1 %2 %3 %4 %5
 
+echo sorry, production of html documentation is broken at the moment
 
-%JAVA_HOME%\bin\java.exe -classpath %LOCALCLASSPATH%;%CLASSPATH% org.apache.stylebook.StyleBook "targetDirectory=../html-docs/" fop.xml style/
+rem %JAVA_HOME%\bin\java.exe -classpath %LOCALCLASSPATH%;%CLASSPATH% org.apache.stylebook.StyleBook "targetDirectory=../html-docs/" fop.xml style/
 
 goto end
 
