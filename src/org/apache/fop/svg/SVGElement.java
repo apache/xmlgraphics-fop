@@ -96,6 +96,18 @@ public class SVGElement extends SVGObj {
             public AffineTransform getCTM() {
                 return new AffineTransform();
             }
+
+            public float getViewportWidth() {
+                return (float)view.getX();
+            }
+
+            public float getViewportHeight() {
+                return (float)view.getY();
+            }
+
+            public float getFontSize(){
+                return 12;
+            }
         };
         ((SVGOMElement)e).setSVGContext(dc);
 
