@@ -1,31 +1,64 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
-// Author : Seshadri G
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 
 package org.apache.fop.mif;
 
 // images are the one place that FOP classes outside this package get
 // referenced and I'd rather not do it
 
-import org.apache.fop.image.FopImage;
 import org.apache.fop.messaging.MessageHandler;
-import org.apache.fop.layout.LinkSet;
-import org.apache.fop.datatypes.ColorSpace;
 
-import org.apache.fop.datatypes.IDReferences;
-import org.apache.fop.layout.Page;
-import org.apache.fop.layout.FontMetric;
-import org.apache.fop.layout.FontDescriptor;
 // Java
 import java.io.*;
-import java.io.PrintWriter;
 import java.util.*;
-import java.awt.Rectangle;
 
 /**
  * class representing a MIF document.
@@ -33,6 +66,7 @@ import java.awt.Rectangle;
  * The document is built up by calling various methods and then finally
  * output to given filehandle using output method.
  *
+ * @author Seshadri G
  */
 public class MIFDocument {
 
@@ -47,7 +81,7 @@ public class MIFDocument {
     // a table
     private ID curIDCounter = new ID();
 
-    public final static String MIFEncode(String val) {
+    public static final String MIFEncode(String val) {
         int len = val.length();
         StringBuffer buf = new StringBuffer(len * 2);
         char c;
@@ -55,42 +89,42 @@ public class MIFDocument {
         for(int i = 0; i < len; i++) {
             c = val.charAt(i);
             switch(c) {
-                case '\u00e0':	buf.append("\\x88 ");	break;
-                case '\u00e8':	buf.append("\\x8f ");	break;
-                case '\u00ec':	buf.append("\\x93 ");	break;
-                case '\u00f2':	buf.append("\\x98 ");	break;
-                case '\u00f9':	buf.append("\\x9d ");	break;
-                case '\u00c0':	buf.append("\\xcb ");	break;
-                case '\u00c8':	buf.append("\\xe9 ");	break;
-                case '\u00cc':	buf.append("\\xed ");	break;
-                case '\u00d2':	buf.append("\\xf1 ");	break;
-                case '\u00d9':	buf.append("\\xf4 ");	break;
+                case '\u00e0':  buf.append("\\x88 "); break;
+                case '\u00e8':  buf.append("\\x8f "); break;
+                case '\u00ec':  buf.append("\\x93 "); break;
+                case '\u00f2':  buf.append("\\x98 "); break;
+                case '\u00f9':  buf.append("\\x9d "); break;
+                case '\u00c0':  buf.append("\\xcb "); break;
+                case '\u00c8':  buf.append("\\xe9 "); break;
+                case '\u00cc':  buf.append("\\xed "); break;
+                case '\u00d2':  buf.append("\\xf1 "); break;
+                case '\u00d9':  buf.append("\\xf4 "); break;
                     
-                case '\u00e1':	buf.append("\\x87 ");	break;
-                case '\u00e9':	buf.append("\\x8e ");	break;
-                case '\u00ed':	buf.append("\\x92 ");	break;
-                case '\u00f3':	buf.append("\\x97 ");	break;
-                case '\u00fa':	buf.append("\\x9c ");	break;
-                case '\u00c1':	buf.append("\\xe7 ");	break;
-                case '\u00c9':	buf.append("\\x83 ");	break;
-                case '\u00cd':	buf.append("\\xea ");	break;
-                case '\u00d3':	buf.append("\\xee ");	break;
-                case '\u00da':	buf.append("\\xf2 ");	break;
+                case '\u00e1':  buf.append("\\x87 "); break;
+                case '\u00e9':  buf.append("\\x8e "); break;
+                case '\u00ed':  buf.append("\\x92 "); break;
+                case '\u00f3':  buf.append("\\x97 "); break;
+                case '\u00fa':  buf.append("\\x9c "); break;
+                case '\u00c1':  buf.append("\\xe7 "); break;
+                case '\u00c9':  buf.append("\\x83 "); break;
+                case '\u00cd':  buf.append("\\xea "); break;
+                case '\u00d3':  buf.append("\\xee "); break;
+                case '\u00da':  buf.append("\\xf2 "); break;
                     
-                case '\u00f1':	buf.append("\\x96 ");	break;
-                case '\u00d1':	buf.append("\\x84 ");	break;
+                case '\u00f1':  buf.append("\\x96 "); break;
+                case '\u00d1':  buf.append("\\x84 "); break;
                     
-                case '\u00e7':	buf.append("\\x8d ");	break;
-                case '\u00c7':	buf.append("\\x82 ");	break;
+                case '\u00e7':  buf.append("\\x8d "); break;
+                case '\u00c7':  buf.append("\\x82 "); break;
                     
-                case '`':	buf.append("\\xd4 ");	break;
-                case '\'':	buf.append("\\xd5 ");	break;
-                case '\u00b4':	buf.append("\\xab ");	break;
-                case '\u00aa':	buf.append("\\xbb ");	break;
-                case '\u00ba':	buf.append("\\xbc ");	break;
+                case '`':       buf.append("\\xd4 "); break;
+                case '\'':      buf.append("\\xd5 "); break;
+                case '\u00b4':  buf.append("\\xab "); break;
+                case '\u00aa':  buf.append("\\xbb "); break;
+                case '\u00ba':  buf.append("\\xbc "); break;
                     
-                case '>':	buf.append("\\>");		break;
-                default:	buf.append(c);
+                case '>':       buf.append("\\>"); break;
+                default:        buf.append(c);
             }
         }
         return buf.toString();
@@ -383,7 +417,7 @@ public class MIFDocument {
 
         ArrayList paras;
         private int ID;    // This ID is used within ParaLine, however it is
-        // logical to keep it unique	to a textflow
+        // logical to keep it unique to a textflow
 
         public TextFlow() {
 
