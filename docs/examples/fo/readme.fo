@@ -66,7 +66,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
 
 <fo:flow flow-name="xsl-body">
-<fo:block font-size="18pt" font-family="sans-serif" line-height="24pt" space-after.optimum="15pt" background-color="blue" color="white" text-align="centered" padding-top="3pt">FOP: An Open-Source XSL Formatter and Renderer</fo:block>
+<fo:block font-size="18pt" font-family="sans-serif" line-height="24pt" space-after.optimum="15pt" background-color="blue" color="white" text-align="center" padding-top="3pt">FOP: An Open-Source XSL Formatter and Renderer</fo:block>
 <fo:block id="sec1" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >A) 
       What is FOP?</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">FOP is the world's first print formatter driven by XSL formatting

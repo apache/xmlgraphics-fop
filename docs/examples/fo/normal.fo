@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- example for a simple fo file. At the beginning the page layout is set. 
+Below fo:root there is always 
+- a single fo:layout-master-set which defines one or more page layouts
+- an optional fo:declarations,
+- and a sequence of one or more fo:page-sequences containing the text and formatting instructions -->
+
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
-  <!-- defines page layout -->
   <fo:layout-master-set>
+  <!-- fo:layout-master-set defines in its children the page layout: 
+       the pagination and layout specifications
+       - page-masters: have the role of describing the intended subdivisions 
+                       of a page and the geometry of these subdivisions 
+       - page-sequence-masters: have the role of describing the sequence 
+                                of page-masters that will be used to generate 
+                                pages during the formatting of an fo:page-sequence  
+
+  -->
 
     <!-- layout for the first page -->
     <fo:simple-page-master master-name="first"
@@ -67,7 +81,7 @@
             space-after.optimum="15pt"
             background-color="blue"
             color="white"
-            text-align="centered"
+            text-align="center"
             padding-top="3pt">
         Extensible Markup Language (XML) 1.0
       </fo:block>
