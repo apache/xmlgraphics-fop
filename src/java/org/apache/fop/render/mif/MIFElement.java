@@ -1,5 +1,5 @@
 /*
- * $Id: MIFElement.java,v 1.3 2003/03/07 08:09:26 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,7 +48,7 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */ 
-package org.apache.fop.mif;
+package org.apache.fop.render.mif;
 
 // Java
 import java.io.IOException;

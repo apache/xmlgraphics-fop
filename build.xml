@@ -768,10 +768,10 @@ list of possible build targets.
       </group>
       <group title="Structural Rendering">
         <package name="org.apache.fop.rtf.renderer"/>
+        <package name="org.apache.fop.render.mif"/>
       </group>
       <group title="Utility">
         <package name="org.apache.fop.pdf"/>
-        <package name="org.apache.fop.mif"/>
         <package name="org.apache.fop.tools"/>
         <package name="org.apache.fop.tools.*"/>
         <package name="org.apache.fop.svg"/>
