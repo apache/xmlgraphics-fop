@@ -14,7 +14,6 @@ import org.apache.fop.fo.pagination.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.BodyAreaContainer;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.messaging.MessageHandler;
 
 // Java
 import java.util.Hashtable;
@@ -91,7 +90,7 @@ public class Flow extends FObj {
 
     protected void setFlowName(String name) throws FOPException {
         if (name == null || name.equals("")) {
-            MessageHandler.errorln("WARNING: A 'flow-name' is required for "
+            log.error("WARNING: A 'flow-name' is required for "
                                    + getElementName()
                                    + ". This constraint will be enforced in future versions of FOP");
             _flowName = "xsl-region-body";

@@ -7,8 +7,6 @@
 
 package org.apache.fop.datatypes;
 
-import org.apache.fop.messaging.MessageHandler;
-
 /**
  * A table-column width specification, possibly including some
  * number of proportional "column-units". The absolute size of a

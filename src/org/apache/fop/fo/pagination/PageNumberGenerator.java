@@ -8,7 +8,8 @@
 package org.apache.fop.fo.pagination;
 
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.messaging.MessageHandler;
+
+import org.apache.log.*;
 
 // Java
 import java.util.*;
@@ -41,6 +42,8 @@ public class PageNumberGenerator {
         "", "0", "00", "000", "0000", "00000"
     };
 
+    private Logger log;
+
     public PageNumberGenerator(String format, char groupingSeparator,
                                int groupingSize, int letterValue) {
         this.format = format;
@@ -65,7 +68,7 @@ public class PageNumberGenerator {
                 formatType = UPPERROMAN;
             } else {
                 // token not handled
-                MessageHandler.log("'format' token not recognized; using '1'");
+                //log.debug("'format' token not recognized; using '1'");
                 formatType = DECIMAL;
                 minPadding = 0;
             }
@@ -75,7 +78,7 @@ public class PageNumberGenerator {
             // loop
             for (int i = 0; i < fmtLen - 1; i++) {
                 if (format.charAt(i) != '0') {
-                    MessageHandler.log("'format' token not recognized; using '1'");
+                    //log.debug("'format' token not recognized; using '1'");
                     formatType = DECIMAL;
                     minPadding = 0;
                 } else {
@@ -83,6 +86,10 @@ public class PageNumberGenerator {
                 }
             }
         }
+    }
+
+    public void setLogger(Logger logger) {
+        log = logger;
     }
 
     public String makeFormattedPageNumber(int number) {

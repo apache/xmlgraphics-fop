@@ -9,7 +9,6 @@ package org.apache.fop.fo.pagination;
 
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.messaging.MessageHandler;
 
 // Java
 import java.util.Vector;

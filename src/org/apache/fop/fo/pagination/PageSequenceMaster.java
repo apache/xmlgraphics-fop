@@ -12,7 +12,6 @@ import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.messaging.MessageHandler;
 
 // Java
 import java.util.*;
@@ -52,7 +51,7 @@ public class PageSequenceMaster extends FObj {
             this.layoutMasterSet = (LayoutMasterSet)parent;
             String pm = this.properties.get("master-name").getString();
             if (pm == null) {
-                MessageHandler.errorln("WARNING: page-sequence-master does not have "
+                log.error("WARNING: page-sequence-master does not have "
                                        + "a page-master-name and so is being ignored");
             } else {
                 this.layoutMasterSet.addPageSequenceMaster(pm, this);

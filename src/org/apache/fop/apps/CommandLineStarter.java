@@ -13,6 +13,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import org.apache.log.*;
+
 // Java
 import java.io.*;
 import java.net.URL;
@@ -37,7 +39,8 @@ public class CommandLineStarter extends Starter {
     throws FOPException {
         this.commandLineOptions = commandLineOptions;
         options.setCommandLineOptions(commandLineOptions);
-        errorDump = Configuration.getBooleanValue("debugMode").booleanValue();
+        errorDump =
+          Configuration.getBooleanValue("debugMode").booleanValue();
         super.setInputHandler(commandLineOptions.getInputHandler());
     }
 
@@ -47,12 +50,14 @@ public class CommandLineStarter extends Starter {
      */
     public void run() throws FOPException {
         String version = Version.getVersion();
-        MessageHandler.logln(version);
+
+        log.info(version);
 
         XMLReader parser = inputHandler.getParser();
         setParserFeatures(parser);
 
         Driver driver = new Driver();
+        driver.setLogger(log);
         driver.setBufferFile(commandLineOptions.getBufferFile());
 
         if (errorDump) {
@@ -61,13 +66,15 @@ public class CommandLineStarter extends Starter {
 
         try {
             driver.setRenderer(commandLineOptions.getRenderer());
-            driver.setOutputStream(new FileOutputStream(commandLineOptions.getOutputFile()));
-            driver.getRenderer().setOptions(commandLineOptions.getRendererOptions());
+            driver.setOutputStream( new FileOutputStream(
+                                      commandLineOptions.getOutputFile()));
+            driver.getRenderer().setOptions(
+              commandLineOptions.getRendererOptions());
             driver.render(parser, inputHandler.getInputSource());
             System.exit(0);
         } catch (Exception e) {
             if (e instanceof FOPException) {
-                throw (FOPException)e;
+                throw (FOPException) e;
             }
             throw new FOPException(e);
         }

@@ -10,6 +10,10 @@ package org.apache.fop.tools.anttasks;
 // Ant
 import org.apache.tools.ant.*;
 
+import org.apache.log.*;
+import org.apache.log.format.*;
+import org.apache.log.output.io.*;
+import org.apache.log.output.*;
 
 // SAX
 import org.xml.sax.XMLReader;
@@ -143,13 +147,30 @@ public class Fop extends Task {
 
 class FOPTaskStarter extends Starter {
     Fop task;
-    MessageLogger logger;
+    Logger log;
 
     FOPTaskStarter(Fop task) throws FOPException {
         this.task = task;
-        MessageHandler.setOutputMethod(MessageHandler.EVENT);
-        logger = new MessageLogger(new MessageHandler(), task);
-        logger.setMessageLevel(task.getMessageType());
+
+        Hierarchy hierarchy = new Hierarchy();
+        // PatternFormatter formatter = new PatternFormatter(
+        //   "[%{priority}] %{category}: %{message}\n%{throwable}" );
+        PatternFormatter formatter = new PatternFormatter("%{message}\n%{throwable}");
+
+        LogTarget target = null;
+        boolean doConsoleLogging = true;
+        if (doConsoleLogging) {
+            target = new StreamTarget(System.out, formatter);
+        } else {
+            try {
+                File f = new File("fop.log");
+                target = new FileTarget(f, false, formatter);
+            } catch (IOException e) {}
+        }
+
+        hierarchy.setDefaultLogTarget(target);
+        log = hierarchy.getLoggerFor("fop");
+        log.setPriority(Priority.INFO);
     }
 
     public void run() throws FOPException {
@@ -169,7 +190,7 @@ class FOPTaskStarter extends Starter {
         try {
             pdfOut = new FileOutputStream(task.getPdffile());
         } catch (Exception ex) {
-            MessageHandler.errorln("Failed to open " + task.getPdffile());
+            log.error("Failed to open " + task.getPdffile());
             throw new BuildException(ex);
         }
 
@@ -180,14 +201,14 @@ class FOPTaskStarter extends Starter {
 
         try {
             Driver driver = new Driver(inputHandler.getInputSource(), pdfOut);
+            driver.setLogger(log);
             driver.setRenderer(Driver.RENDER_PDF);
             driver.setXMLReader(parser);
             driver.run();
         } catch (Exception ex) {
-            MessageHandler.logln("Error: " + ex.getMessage());
+            log.error("Couldn't render pdf: " + ex.getMessage());
             throw new BuildException(ex);
         }
-        logger.die();
     }
 
 }

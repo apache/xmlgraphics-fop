@@ -11,7 +11,6 @@ package org.apache.fop.fo;
 import org.apache.fop.fo.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.layout.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.AreaTree;

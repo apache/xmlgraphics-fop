@@ -9,7 +9,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
@@ -199,21 +198,21 @@ public class Table extends FObj {
             FONode fo = (FONode)children.elementAt(i);
             if (fo instanceof TableHeader) {
                 if (columns.size() == 0) {
-                    MessageHandler.errorln("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
+                    log.error("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
                     return new Status(Status.OK);
                 }
                 tableHeader = (TableHeader)fo;
                 tableHeader.setColumns(columns);
             } else if (fo instanceof TableFooter) {
                 if (columns.size() == 0) {
-                    MessageHandler.errorln("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
+                    log.error("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
                     return new Status(Status.OK);
                 }
                 tableFooter = (TableFooter)fo;
                 tableFooter.setColumns(columns);
             } else if (fo instanceof TableBody) {
                 if (columns.size() == 0) {
-                    MessageHandler.errorln("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
+                    log.error("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
                     return new Status(Status.OK);
                 }
                 Status status;
@@ -291,7 +290,7 @@ public class Table extends FObj {
                 // from the last table body and place it on the
                 // next page so that it can have a footer at
                 // the end of the table.
-                MessageHandler.errorln("WARNING: footer could not fit on page, moving last body row to next page");
+                log.error("WARNING: footer could not fit on page, moving last body row to next page");
                 area.addChild(areaContainer);
                 area.increaseHeight(areaContainer.getHeight());
                 area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());

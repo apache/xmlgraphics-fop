@@ -7,6 +7,8 @@
 
 package org.apache.fop.apps;
 
+import org.apache.log.*;
+
 // SAX
 import org.xml.sax.XMLReader;
 import org.xml.sax.SAXException;
@@ -27,9 +29,14 @@ public abstract class Starter {
 
     Options options;
     InputHandler inputHandler;
+    protected Logger log;
 
     public Starter() throws FOPException {
         options = new Options();
+    }
+
+    public void setLogger(Logger logger) {
+        log = logger;
     }
 
     public void setInputHandler(InputHandler inputHandler) {

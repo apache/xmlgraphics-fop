@@ -17,6 +17,13 @@ import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.apps.FOPException;
 
+import org.apache.log.*;
+import org.apache.log.format.*;
+import org.apache.log.output.io.*;
+import org.apache.log.output.*;
+
+import java.io.*;
+
 /**
  * Options parses the commandline arguments
  */
@@ -80,8 +87,30 @@ public class CommandLineOptions {
 
     private java.util.Hashtable rendererOptions;
 
+    private Logger log;
+
     public CommandLineOptions(String[] args)
             throws FOPException, FileNotFoundException {
+
+        Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
+        PatternFormatter formatter = new PatternFormatter(
+           "[%{priority}]: %{message}\n%{throwable}" );
+
+        LogTarget target = null;
+        boolean doConsoleLogging = true;
+        if (doConsoleLogging) {
+            target = new StreamTarget(System.out, formatter);
+        } else {
+            try {
+                File f = new File("fop.log");
+                target = new FileTarget(f, false, formatter);
+            } catch (IOException e) {}
+        }
+
+        hierarchy.setDefaultLogTarget(target);
+        log = hierarchy.getLoggerFor("fop");
+        log.setPriority(Priority.INFO);
+
         boolean optionsParsed = true;
         rendererOptions = new java.util.Hashtable();
         try {
@@ -232,12 +261,12 @@ public class CommandLineOptions {
                 if (buffermode == NOT_SET) {
                     buffermode = BUFFER_FILE;
                 } else {
-                    MessageHandler.errorln("ERROR: you can only set one buffer method");
+                    log.error("you can only set one buffer method");
                     printUsage();
                 }
                 if ((i + 1 == args.length)
                         || (args[i + 1].charAt(0) == '-')) {
-                    MessageHandler.errorln("ERROR: you must specify the buffer output file");
+                    log.error("you must specify the buffer output file");
                     printUsage();
                 } else {
                     bufferFile = new File(args[i + 1]);
@@ -291,7 +320,7 @@ public class CommandLineOptions {
 
             // warning if fofile has been set in xslt mode
             if (fofile != null) {
-                MessageHandler.errorln("WARNING: Can't use fo file with transform mode! Ignoring.\n"
+                log.warn("Can't use fo file with transform mode! Ignoring.\n"
                                        + "Your input is " + "\n xmlfile: "
                                        + xmlfile.getAbsolutePath()
                                        + "\nxsltfile: "
@@ -312,9 +341,9 @@ public class CommandLineOptions {
 
         } else if (inputmode == FO_INPUT) {
             if (xmlfile != null || xsltfile != null) {
-                MessageHandler.errorln("WARNING: fo input mode, but xmlfile or xslt file are set:");
-                MessageHandler.errorln("xml file: " + xmlfile.toString());
-                MessageHandler.errorln("xslt file: " + xsltfile.toString());
+                log.warn("fo input mode, but xmlfile or xslt file are set:");
+                log.error("xml file: " + xmlfile.toString());
+                log.error("xslt file: " + xsltfile.toString());
             }
             if (!fofile.exists()) {
                 throw new FileNotFoundException("fo file "
@@ -373,10 +402,11 @@ public class CommandLineOptions {
     }
 
     public Starter getStarter() throws FOPException {
+        Starter starter = null;
         switch (outputmode) {
         case AWT_OUTPUT:
             try {
-                return ((Starter)Class.forName("org.apache.fop.apps.AWTStarter").getConstructor(new Class[] {
+                starter = ((Starter)Class.forName("org.apache.fop.apps.AWTStarter").getConstructor(new Class[] {
                     CommandLineOptions.class
                 }).newInstance(new Object[] {
                     this
@@ -389,7 +419,7 @@ public class CommandLineOptions {
             }
         case PRINT_OUTPUT:
             try {
-                return ((Starter)Class.forName("org.apache.fop.apps.PrintStarter").getConstructor(new Class[] {
+                starter = ((Starter)Class.forName("org.apache.fop.apps.PrintStarter").getConstructor(new Class[] {
                     CommandLineOptions.class
                 }).newInstance(new Object[] {
                     this
@@ -403,8 +433,10 @@ public class CommandLineOptions {
             }
 
         default:
-            return new CommandLineStarter(this);
+            starter = new CommandLineStarter(this);
         }
+        starter.setLogger(log);
+        return starter;
     }
 
     public int getInputMode() {
@@ -477,7 +509,7 @@ public class CommandLineOptions {
      * shows the commandline syntax including a summary of all available options and some examples
      */
     public static void printUsage() {
-        MessageHandler.errorln("\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-ps|-txt|-at|-print] <outfile>\n"
+        System.err.println("\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-ps|-txt|-at|-print] <outfile>\n"
                                + " [OPTIONS]  \n"
                                + "  -d          debug mode   \n"
                                + "  -x          dump configuration settings  \n"
@@ -513,7 +545,7 @@ public class CommandLineOptions {
      * shows the options for print output
      */
     public void printUsagePrintOutput() {
-        MessageHandler.errorln("USAGE: -print [-Dstart=i] [-Dend=i] [-Dcopies=i] [-Deven=true|false] "
+        System.err.println("USAGE: -print [-Dstart=i] [-Dend=i] [-Dcopies=i] [-Deven=true|false] "
                                + " org.apache.fop.apps.Fop (..) -print \n"
                                + "Example:\n"
                                + "java -Dstart=1 -Dend=2 org.apache.Fop.apps.Fop infile.fo -print ");
@@ -524,88 +556,88 @@ public class CommandLineOptions {
      * debug mode. outputs all commandline settings
      */
     private void debug() {
-        System.out.print("Input mode: ");
+        log.debug("Input mode: ");
         switch (inputmode) {
         case NOT_SET:
-            MessageHandler.logln("not set");
+            log.debug("not set");
             break;
         case FO_INPUT:
-            MessageHandler.logln("FO ");
-            MessageHandler.logln("fo input file: " + fofile.toString());
+            log.debug("FO ");
+            log.debug("fo input file: " + fofile.toString());
             break;
         case XSLT_INPUT:
-            MessageHandler.logln("xslt transformation");
-            MessageHandler.logln("xml input file: " + xmlfile.toString());
-            MessageHandler.logln("xslt stylesheet: " + xsltfile.toString());
+            log.debug("xslt transformation");
+            log.debug("xml input file: " + xmlfile.toString());
+            log.debug("xslt stylesheet: " + xsltfile.toString());
             break;
         default:
-            MessageHandler.logln("unknown input type");
+            log.debug("unknown input type");
         }
-        System.out.print("Output mode: ");
+        log.debug("Output mode: ");
         switch (outputmode) {
         case NOT_SET:
-            MessageHandler.logln("not set");
+            log.debug("not set");
             break;
         case PDF_OUTPUT:
-            MessageHandler.logln("pdf");
-            MessageHandler.logln("output file: " + outfile.toString());
+            log.debug("pdf");
+            log.debug("output file: " + outfile.toString());
             break;
         case AWT_OUTPUT:
-            MessageHandler.logln("awt on screen");
+            log.debug("awt on screen");
             if (outfile != null) {
-                MessageHandler.logln("ERROR: awt mode, but outfile is set:");
-                MessageHandler.logln("out file: " + outfile.toString());
+                log.error("awt mode, but outfile is set:");
+                log.debug("out file: " + outfile.toString());
             }
             break;
         case MIF_OUTPUT:
-            MessageHandler.logln("mif");
-            MessageHandler.logln("output file: " + outfile.toString());
+            log.debug("mif");
+            log.debug("output file: " + outfile.toString());
             break;
         case PRINT_OUTPUT:
-            MessageHandler.logln("print directly");
+            log.debug("print directly");
             if (outfile != null) {
-                MessageHandler.logln("ERROR: print mode, but outfile is set:");
-                MessageHandler.logln("out file: " + outfile.toString());
+                log.error("print mode, but outfile is set:");
+                log.error("out file: " + outfile.toString());
             }
             break;
         case PCL_OUTPUT:
-            MessageHandler.logln("pcl");
-            MessageHandler.logln("output file: " + outfile.toString());
+            log.debug("pcl");
+            log.debug("output file: " + outfile.toString());
             break;
         case PS_OUTPUT:
-            MessageHandler.logln("PostScript");
-            MessageHandler.logln("output file: " + outfile.toString());
+            log.debug("PostScript");
+            log.debug("output file: " + outfile.toString());
             break;
         case TXT_OUTPUT:
-            MessageHandler.logln("txt");
-            MessageHandler.logln("output file: " + outfile.toString());
+            log.debug("txt");
+            log.debug("output file: " + outfile.toString());
             break;
         default:
-            MessageHandler.logln("unknown input type");
+            log.debug("unknown input type");
         }
 
 
-        MessageHandler.logln("OPTIONS");
+        log.debug("OPTIONS");
         if (userConfigFile != null) {
-            MessageHandler.logln("user configuration file: "
+            log.debug("user configuration file: "
                                  + userConfigFile.toString());
         } else {
-            MessageHandler.logln("no user configuration file is used [default]");
+            log.debug("no user configuration file is used [default]");
         }
         if (errorDump != null) {
-            MessageHandler.logln("debug mode on");
+            log.debug("debug mode on");
         } else {
-            MessageHandler.logln("debug mode off [default]");
+            log.debug("debug mode off [default]");
         }
         if (dumpConfiguration != null) {
-            MessageHandler.logln("dump configuration");
+            log.debug("dump configuration");
         } else {
-            MessageHandler.logln("don't dump configuration [default]");
+            log.debug("don't dump configuration [default]");
         }
         if (quiet != null) {
-            MessageHandler.logln("quiet mode on");
+            log.debug("quiet mode on");
         } else {
-            MessageHandler.logln("quiet mode off [default]");
+            log.debug("quiet mode off [default]");
         }
 
     }
@@ -614,7 +646,7 @@ public class CommandLineOptions {
     public static void main(String args[]) {
         /*
          * for (int i = 0; i < args.length; i++) {
-         * MessageHandler.logln(">"+args[i]+"<");
+         * log.debug(">"+args[i]+"<");
          * }
          */
         try {

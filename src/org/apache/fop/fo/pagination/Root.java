@@ -9,7 +9,6 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.AreaTree;
@@ -104,7 +103,7 @@ public class Root extends FObj {
     }
 
     public void format(AreaTree areaTree) throws FOPException {
-        // MessageHandler.errorln(" Root[" + marker + "] ");
+        // log.debug(" Root[" + marker + "] ");
         if (layoutMasterSet == null) {
             throw new FOPException("No layout master set.");
         }

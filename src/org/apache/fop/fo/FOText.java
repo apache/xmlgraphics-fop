@@ -9,7 +9,6 @@ package org.apache.fop.fo;
 
 // FOP
 import org.apache.fop.layout.Area;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.*;
@@ -106,7 +105,7 @@ public class FOText extends FONode {
         // ML - remove refs to BufferManager
         // char ca[] = this.bufferManager.readBuffer((Object)this);
         if (!(area instanceof BlockArea)) {
-            MessageHandler.errorln("WARNING: text outside block area"
+            log.error("WARNING: text outside block area"
                                    + new String(ca, start, length));
             return new Status(Status.OK);
         }
@@ -193,8 +192,8 @@ public class FOText extends FONode {
                                                    FontVariant.NORMAL);
             } catch (FOPException ex) {
                 smallCapsFontState = fontState;
-                MessageHandler.errorln("Error creating small-caps FontState: "
-                                       + ex.getMessage());
+                //log.error("Error creating small-caps FontState: "
+                //                       + ex.getMessage());
             }
 
             // parse text for upper/lower case and call addRealText

@@ -9,7 +9,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
@@ -46,7 +45,7 @@ public class Marker extends FObjMixed {
         try {
             parent.addMarker(this);
         } catch (FOPException fopex) {
-            MessageHandler.error("marker cannot be added to '" + parent
+            log.error("marker cannot be added to '" + parent
                                  + "'");
         }
     }

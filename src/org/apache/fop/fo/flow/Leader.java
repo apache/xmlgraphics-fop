@@ -17,7 +17,6 @@ import org.apache.fop.layout.inline.LeaderArea;
 import org.apache.fop.layout.LineArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.messaging.MessageHandler;
 
 /**
  * Implements fo:leader; main property of leader leader-pattern.
@@ -48,7 +47,7 @@ public class Leader extends FObjMixed {
         BlockArea blockArea;
         // restriction in this version
         if (!(area instanceof BlockArea)) {
-            MessageHandler.errorln("WARNING: in this version of Fop fo:leader must be a direct child of fo:block ");
+            log.error("WARNING: in this version of Fop fo:leader must be a direct child of fo:block ");
             return new Status(Status.OK);
         } else {
             blockArea = (BlockArea)area;
@@ -198,7 +197,7 @@ public class Leader extends FObjMixed {
                              ruleStyle, ruleThickness, leaderPatternWidth,
                              leaderAlignment);
             } else {
-                MessageHandler.errorln("Leader doesn't fit into line, it will be clipped to fit.");
+                log.error("Leader doesn't fit into line, it will be clipped to fit.");
                 la.addLeader(leaderPattern, la.getRemainingWidth(),
                              leaderLengthOptimum, leaderLengthMaximum,
                              ruleStyle, ruleThickness, leaderPatternWidth,

@@ -8,7 +8,6 @@ package org.apache.fop.fo.pagination;
 
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.messaging.MessageHandler;
 
 public class SinglePageMasterReference extends PageMasterReference
     implements SubSequenceSpecifier {
@@ -53,10 +52,8 @@ public class SinglePageMasterReference extends PageMasterReference
         this.state = FIRST;
     }
 
-
     protected String getElementName() {
         return "fo:single-page-master-reference";
     }
-
 
 }

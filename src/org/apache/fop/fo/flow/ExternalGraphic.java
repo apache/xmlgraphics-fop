@@ -9,7 +9,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
@@ -236,11 +235,11 @@ public class ExternalGraphic extends FObj {
 
         } catch (MalformedURLException urlex) {
             // bad URL
-            MessageHandler.errorln("Error while creating area : "
+            log.error("Error while creating area : "
                                    + urlex.getMessage());
         } catch (FopImageException imgex) {
             // image error
-            MessageHandler.errorln("Error while creating area : "
+            log.error("Error while creating area : "
                                    + imgex.getMessage());
         }
 
