@@ -60,6 +60,7 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Space;
+import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Viewport;
@@ -712,7 +713,8 @@ public class AddLMVisitor extends FOTreeVisitor {
          LayoutManager lm;
          lm = new LeafNodeLayoutManager() {
                      public InlineArea get(LayoutContext context) {
-                         return node.getInlineArea(parentLM);
+                         curArea = getPageNumberCitationInlineArea(node, parentLM);
+                         return curArea;
                      }
 
                      public void addAreas(PositionIterator posIter,
@@ -720,7 +722,7 @@ public class AddLMVisitor extends FOTreeVisitor {
                          super.addAreas(posIter, context);
                          if (node.getUnresolved()) {
                              parentLM.addUnresolvedArea(node.getRefId(),
-                                                        (Resolveable) node.getInline());
+                                                        (Resolveable) curArea);
                          }
                      }
 
@@ -731,6 +733,49 @@ public class AddLMVisitor extends FOTreeVisitor {
          lm.setUserAgent(node.getUserAgent());
          lm.setFObj(node);
          currentLMList.add(lm);
+     }
+
+     // if id can be resolved then simply return a word, otherwise
+     // return a resolveable area
+     public InlineArea getPageNumberCitationInlineArea(PageNumberCitation node,
+             LayoutProcessor parentLM) {
+         if (node.getRefId().equals("")) {
+             node.getLogger().error("page-number-citation must contain \"ref-id\"");
+             return null;
+         }
+         PageViewport page = parentLM.resolveRefID(node.getRefId());
+         InlineArea inline = null;
+         if (page != null) {
+             String str = page.getPageNumber();
+             // get page string from parent, build area
+             Word word = new Word();
+             inline = word;
+             int width = node.getStringWidth(str);
+             word.setWord(str);
+             inline.setIPD(width);
+             inline.setHeight(node.getFontState().getAscender()
+                              - node.getFontState().getDescender());
+             inline.setOffset(node.getFontState().getAscender());
+
+             inline.addTrait(Trait.FONT_NAME, node.getFontState().getFontName());
+             inline.addTrait(Trait.FONT_SIZE,
+                             new Integer(node.getFontState().getFontSize()));
+             node.setUnresolved(false);
+         } else {
+             node.setUnresolved(true);
+             inline = new UnresolvedPageNumber(node.getRefId());
+             String str = "MMM"; // reserve three spaces for page number
+             int width = node.getStringWidth(str);
+             inline.setIPD(width);
+             inline.setHeight(node.getFontState().getAscender()
+                              - node.getFontState().getDescender());
+             inline.setOffset(node.getFontState().getAscender());
+
+             inline.addTrait(Trait.FONT_NAME, node.getFontState().getFontName());
+             inline.addTrait(Trait.FONT_SIZE,
+                             new Integer(node.getFontState().getFontSize()));
+         }
+         return inline;
      }
 
      public void serveVisitor(Table node) {

@@ -51,11 +51,6 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Trait;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.UnresolvedPageNumber;
-import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.FONode;
@@ -93,7 +88,6 @@ public class PageNumberCitation extends FObj {
     private String pageNumber;
     private String refId;
     private TextState ts;
-    private InlineArea inline = null;
     private boolean unresolved = false;
 
     /**
@@ -111,52 +105,11 @@ public class PageNumberCitation extends FObj {
         fontInfo = foih.getFontInfo();
     }
 
-    // if id can be resolved then simply return a word, otherwise
-    // return a resolveable area
-    public InlineArea getInlineArea(LayoutProcessor parentLM) {
-        if (refId.equals("")) {
-            getLogger().error("page-number-citation must contain \"ref-id\"");
-            return null;
-        }
-        PageViewport page = parentLM.resolveRefID(refId);
-        if (page != null) {
-            String str = page.getPageNumber();
-            // get page string from parent, build area
-            Word word = new Word();
-            inline = word;
-            int width = getStringWidth(str);
-            word.setWord(str);
-            inline.setIPD(width);
-            inline.setHeight(fontState.getAscender()
-                             - fontState.getDescender());
-            inline.setOffset(fontState.getAscender());
-
-            inline.addTrait(Trait.FONT_NAME, fontState.getFontName());
-            inline.addTrait(Trait.FONT_SIZE,
-                            new Integer(fontState.getFontSize()));
-            unresolved = false;
-        } else {
-            unresolved = true;
-            inline = new UnresolvedPageNumber(refId);
-            String str = "MMM"; // reserve three spaces for page number
-            int width = getStringWidth(str);
-            inline.setIPD(width);
-            inline.setHeight(fontState.getAscender()
-                             - fontState.getDescender());
-            inline.setOffset(fontState.getAscender());
-
-            inline.addTrait(Trait.FONT_NAME, fontState.getFontName());
-            inline.addTrait(Trait.FONT_SIZE,
-                            new Integer(fontState.getFontSize()));
-        }
-        return inline;
-    }
-
     /**
      * @param str string to be measured
      * @return width (in millipoints ??) of the string
      */
-    protected int getStringWidth(String str) {
+    public int getStringWidth(String str) {
         int width = 0;
         for (int count = 0; count < str.length(); count++) {
             width += CharUtilities.getCharWidth(str.charAt(count),
@@ -222,16 +175,20 @@ public class PageNumberCitation extends FObj {
         return refId;
     }
 
-    public InlineArea getInline() {
-        return inline;
-    }
-
     public boolean getUnresolved() {
         return unresolved;
     }
 
+    public void setUnresolved(boolean isUnresolved) {
+        unresolved = isUnresolved;
+    }
+
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
+    }
+
+    public Font getFontState() {
+        return fontState;
     }
 
 }
