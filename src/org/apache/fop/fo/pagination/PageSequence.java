@@ -249,11 +249,11 @@ public class PageSequence extends FObj
     }
 
     public void setStaticContent(String name, StaticContent staticContent) {
-        if ( name.equals("xsl-before") )
+        if ( name.equals("xsl-region-before") )
         {
             this.staticBefore = staticContent;
         }
-        else if ( name.equals("xsl-after") )
+        else if ( name.equals("xsl-region-after") )
         {
             this.staticAfter = staticContent;
         }
