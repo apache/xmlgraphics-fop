@@ -278,6 +278,11 @@
       &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
       &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</fo:inline>
       </fo:block>
+      
+      <fo:block>The following blocks demonstrate the letter-spacing attribute:</fo:block>
+      <fo:block>This block does not use any letter-spacing.</fo:block>
+      <fo:block letter-spacing="1mm">This block uses a letter-spacing of 1mm.</fo:block>
+      <fo:block>This block uses an fo:inline element to demonstrate <fo:inline letter-spacing="1mm">letter-spacing</fo:inline>.</fo:block>
 
     </fo:flow>
   </fo:page-sequence>
