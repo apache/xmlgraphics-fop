@@ -17,9 +17,10 @@ import java.util.NoSuchElementException;
 import org.apache.fop.fo.FOAttributes;
 import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.XMLNamespaces;
+import org.apache.fop.xml.UriLocalName;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
@@ -28,7 +29,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.NCName;
-import org.apache.fop.xml.XMLEvent;
 
 /**
  * Implements the fo:page-sequence-master flow object.  These Fos are
@@ -42,23 +42,26 @@ public class FoPageSequenceMaster extends FONode {
     private static final String revision = "$Revision$";
 
     /**
-     * An array with <tt>XMLEvent.UriLocalName</tt> objects identifying
+     * An array with <tt>UriLocalName</tt> objects identifying
      * <tt>single-page-master-reference</tt>,
      * <tt>repeatable-page-master-reference</tt> and
      * <tt>repeatable-page-master-alternatives</tt> XML events.
      */
-    private static final XMLEvent.UriLocalName[]
-                                            singleOrRepeatableMasterRefs = {
-        new XMLEvent.UriLocalName
+    private static final UriLocalName[] singleOrRepeatableMasterRefs = {
+        new UriLocalName
               (XMLNamespaces.XSLNSpaceIndex, "single-page-master-reference"),
-        new XMLEvent.UriLocalName
+        new UriLocalName
          (XMLNamespaces.XSLNSpaceIndex, "repeatable-page-master-reference"),
-        new XMLEvent.UriLocalName
+        new UriLocalName
          (XMLNamespaces.XSLNSpaceIndex, "repeatable-page-master-alternatives")
     };
 
-    private static final XMLEvent.UriLocalName conditionalPageMasterRef =
-	new XMLEvent.UriLocalName(XMLNamespaces.XSLNSpaceIndex,
+    /**
+     * A <tt>UriLocalName</tt> object identifying a
+     * <tt>conditional-page-master-reference</tt>,
+     */
+    private static final UriLocalName conditionalPageMasterRef =
+	new UriLocalName(XMLNamespaces.XSLNSpaceIndex,
 				    "conditional-page-master-reference");
 
     private String masterName;
@@ -77,21 +80,21 @@ public class FoPageSequenceMaster extends FONode {
                     (singleOrRepeatableMasterRefs, XMLEvent.DISCARD_W_SPACE);
                 String localName = ev.getLocalName();
                 if (localName.equals("single-page-master-reference")) {
-                    System.out.println("Found single-page-master-reference");
+                    //System.out.println("Found single-page-master-reference");
 		    //subSequenceList.add(new FoSinglePageMasterReference
 							//(foTree, this, ev));
 		    new FoSinglePageMasterReference(foTree, this, ev);
                 } else if (localName.equals
                            ("repeatable-page-master-reference")) {
-                    System.out.println
-                            ("Found repeatable-page-master-reference");
+                    //System.out.println
+                    //        ("Found repeatable-page-master-reference");
 		    //subSequenceList.add(new FoRepeatablePageMasterReference
 							//(foTree, this, ev));
 		    new FoRepeatablePageMasterReference(foTree, this, ev);
                 } else if (localName.equals
                            ("repeatable-page-master-alternatives")) {
-                    System.out.println
-                            ("Found repeatable-page-master-alternatives");
+                    //System.out.println
+                    //        ("Found repeatable-page-master-alternatives");
 		    //subSequenceList.add(new FoRepeatablePageMasterAlternatives
 							//(foTree, this, ev));
 		    new FoRepeatablePageMasterAlternatives(foTree, this, ev);
@@ -187,8 +190,8 @@ public class FoPageSequenceMaster extends FONode {
 			(conditionalPageMasterRef.uriIndex,
 			    conditionalPageMasterRef.localName,
 						XMLEvent.DISCARD_W_SPACE);
-			System.out.println
-			    ("Found conditional-page-master-reference");
+			//System.out.println
+			//    ("Found conditional-page-master-reference");
 			new FoConditionalPageMasterReference(foTree, this, ev);
 			this.xmlevents.getEndElement(ev);
 		} while (true);
