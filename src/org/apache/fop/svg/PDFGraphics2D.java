@@ -536,7 +536,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         Shape imclip = getClip();
         boolean newClip = graphicsState.checkClip(imclip);
-        boolean newTransform = graphicsState.checkTransform(trans);
+        boolean newTransform = graphicsState.checkTransform(trans)
+                               && !trans.isIdentity();
 
         if(newClip || newTransform) { 
             currentStream.write("q\n");
@@ -553,6 +554,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                             + PDFNumber.doubleOut(tranvals[5], 5) + " cm\n");
             }
         }
+
+        if(c.getAlpha() != 255) {
+            PDFGState gstate = pdfDoc.makeGState();
+            gstate.setAlpha(c.getAlpha() / 255f, false);
+            currentPage.addGState(gstate);
+            currentStream.write("/" + gstate.getName() + " gs\n");
+        }
+
         applyColor(c, false);
 
         applyPaint(getPaint(), false);
@@ -1134,6 +1143,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             writeClip(imclip);
             graphicsState.setClip(imclip);
         }
+
+        if(c.getAlpha() != 255) {
+            PDFGState gstate = pdfDoc.makeGState();
+            gstate.setAlpha(c.getAlpha() / 255f, true);
+            currentPage.addGState(gstate);
+            currentStream.write("/" + gstate.getName() + " gs\n");
+        }
+
         c = getColor();
         if(graphicsState.setColor(c)) {
             applyColor(c, true);

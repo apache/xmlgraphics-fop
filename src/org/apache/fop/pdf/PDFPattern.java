@@ -81,8 +81,8 @@ public class PDFPattern extends PDFPathPaint {
      * String representing the extended Graphics state.
      * Probably will never be used like this.
      */
-    protected StringBuffer extGState =
-        null;                                                           // eventually, need a PDFExtGSState object... but not now.
+    protected StringBuffer extGState = null;
+    // eventually, need a PDFExtGSState object... but not now.
 
     /**
      * ArrayList of Doubles representing the Transformation matrix.
