@@ -21,7 +21,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 /**
  * class representing a PDF document.
@@ -1174,7 +1174,7 @@ public class PDFDocument {
      * @param linkType the link type
      * @return the PDFLink object created
      */
-    public PDFLink makeLink(Rectangle rect, String destination,
+    public PDFLink makeLink(Rectangle2D rect, String destination,
                             int linkType) {
 
         PDFLink linkObject;
@@ -1216,7 +1216,7 @@ public class PDFDocument {
         this.trailerObjects.add(object);
     }
 
-    public PDFLink makeLink(Rectangle rect, String page, String dest) {
+    public PDFLink makeLink(Rectangle2D rect, String page, String dest) {
         PDFLink link = new PDFLink(++this.objectcount, rect);
         this.objects.add(link);
 

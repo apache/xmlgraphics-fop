@@ -9,12 +9,13 @@ package org.apache.fop.area.inline;
 
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.Trait;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class UnresolvedPageNumber extends Word implements Resolveable {
-    boolean resolved = false;
-    String pageRefId;
+    private boolean resolved = false;
+    private String pageRefId;
 
     public UnresolvedPageNumber(String id) {
         pageRefId = id;
@@ -25,11 +26,19 @@ public class UnresolvedPageNumber extends Word implements Resolveable {
         return new String[] {pageRefId};
     }
 
-    public void resolve(String id, ArrayList pages) {
+    public void resolve(String id, List pages) {
         resolved = true;
-        PageViewport page = (PageViewport)pages.get(0);
-        String str = page.getPageNumber();
-        word = str;
+        if(pages != null) {
+            PageViewport page = (PageViewport)pages.get(0);
+            String str = page.getPageNumber();
+            word = str;
+
+            // update ipd
+            String name = (String) getTrait(Trait.FONT_NAME);
+            int size = ((Integer) getTrait(Trait.FONT_SIZE)).intValue();
+            //FontMetric metrics = fontInfo.getMetricsFor(name);
+            //FontState fs = new FontState(name, metrics, size);
+        }
     }
 
     public boolean isResolved() {

@@ -23,6 +23,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
     private InlineArea curArea = null;
     private int alignment;
     private int lead;
+    private MinOptMax ipd;
 
     public LeafNodeLayoutManager(FObj fobj) {
         super(fobj);
@@ -76,7 +77,8 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
                                      BreakPoss.CAN_BREAK_AFTER |
                                      BreakPoss.CAN_BREAK_BEFORE | BreakPoss.ISFIRST |
                                      BreakPoss.ISLAST);
-        bp.setStackingSize(curArea.getAllocationIPD());
+        ipd = getAllocationIPD(context.getRefIPD());
+        bp.setStackingSize(ipd);
         bp.setNonStackingSize(curArea.getAllocationBPD());
         bp.setTrailingSpace(new SpaceSpecifier(false));
 
@@ -101,6 +103,10 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
         return bp;
     }
 
+    protected MinOptMax getAllocationIPD(int refIPD) {
+        return new MinOptMax(curArea.getIPD());
+    }
+
     public void resetPosition(Position resetPos) {
         // only reset if setting null, start again
         if(resetPos == null) {
@@ -113,6 +119,15 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
 
         addID();
 
+        offsetArea(context);
+        widthAdjustArea(context);
+
+        while (posIter.hasNext()) {
+            posIter.next();
+        }
+    }
+
+    protected void offsetArea(LayoutContext context) {
         int bpd = curArea.getHeight();
         switch(alignment) {
             case VerticalAlign.MIDDLE:
@@ -129,9 +144,10 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
                 curArea.setOffset(context.getBaseline() - bpd);
             break;
         }
+    }
 
+    protected void widthAdjustArea(LayoutContext context) {
         double dAdjust = context.getIPDAdjust();
-        MinOptMax ipd = curArea.getAllocationIPD();
         int width = ipd.opt;
         if(dAdjust < 0) {
             width = (int)(width + dAdjust * (ipd.opt - ipd.min));
@@ -139,10 +155,6 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
             width = (int)(width + dAdjust * (ipd.max - ipd.opt));
         }
         curArea.setWidth(width);
-
-        while (posIter.hasNext()) {
-            posIter.next();
-        }
     }
 
     public boolean canBreakBefore(LayoutContext context) {

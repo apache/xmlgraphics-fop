@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -14,7 +14,6 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.fo.properties.VerticalAlign;
 
-import java.util.List;
 import java.util.ArrayList;
 
 /**
@@ -29,8 +28,8 @@ public class InlineArea extends Area {
     int height;
     protected int contentIPD = 0;
 
-    // position within the line area, either top or baseline
-    int verticalPosition = VerticalAlign.BASELINE;
+    // offset position from top of parent area
+    int verticalPosition = 0;
 
     // store properties in array list, need better solution
     ArrayList props = null;
@@ -51,6 +50,10 @@ public class InlineArea extends Area {
 
     public void setIPD(int ipd) {
         this.contentIPD = ipd;
+    }
+
+    public int getIPD() {
+        return this.contentIPD;
     }
 
     public void increaseIPD(int ipd) {

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -34,45 +34,74 @@ import java.util.Iterator;
 public class AreaTree {
     // allows for different models to deal with adding/rendering
     // in different situations
-    AreaTreeModel model;
+    private AreaTreeModel model;
 
     // hashmap of arraylists containing pages with id area
-    HashMap idLocations = new HashMap();
+    private HashMap idLocations = new HashMap();
     // list of id's yet to be resolved and arraylists of pages
-    HashMap resolve = new HashMap();
-    ArrayList treeExtensions = new ArrayList();
+    private HashMap resolve = new HashMap();
+    private ArrayList treeExtensions = new ArrayList();
 
+    /**
+     * Create a render pages area tree model.
+     * @param rend the renderer that will be used
+     * @return RenderPagesModel the new area tree model
+     */
     public RenderPagesModel createRenderPagesModel(Renderer rend) {
         return new RenderPagesModel(rend);
     }
 
+    /**
+     * Create a new store pages model.
+     * @return StorePagesModel the new model
+     */
     public static StorePagesModel createStorePagesModel() {
         return new StorePagesModel();
     }
 
+    /**
+     * Set the tree model to use for this area tree.
+     * The different models can have different behaviour
+     * when pages area added and other changes.
+     * @param m the area tree model
+     */
     public void setTreeModel(AreaTreeModel m) {
         model = m;
     }
 
+    /**
+     * Start a new page sequence.
+     * This signals that a new page sequence has started in the document.
+     * @param title the title of the new page sequence or null if no title
+     */
     public void startPageSequence(Title title) {
         model.startPageSequence(title);
     }
 
+    /**
+     * Add a new page to the area tree.
+     * @param page the page to add
+     */
     public void addPage(PageViewport page) {
         model.addPage(page);
     }
 
+    /**
+     * Add an id reference pointing to a page viewport.
+     * @param id the id of the reference
+     * @param pv the page viewport that contains the id reference
+     */
     public void addIDRef(String id, PageViewport pv) {
-        ArrayList list = (ArrayList)idLocations.get(id);
-        if(list == null) {
+        List list = (List)idLocations.get(id);
+        if (list == null) {
             list = new ArrayList();
             idLocations.put(id, list);
         }
         list.add(pv);
 
-        ArrayList todo = (ArrayList)resolve.get(id);
-        if(todo != null) {
-            for(int count = 0; count < todo.size(); count++) {
+        List todo = (List)resolve.get(id);
+        if (todo != null) {
+            for (int count = 0; count < todo.size(); count++) {
                 Resolveable res = (Resolveable)todo.get(count);
                 res.resolve(id, list);
             }
@@ -80,47 +109,80 @@ public class AreaTree {
         }
     }
 
+    /**
+     * Get the list of id references for an id.
+     * @param id the id to lookup
+     * @return the list of id references.
+     */
+    public List getIDReferences(String id) {
+        return (List)idLocations.get(id);
+    }
+
+    /**
+     * Add an unresolved object with a given id.
+     * @param id the id reference that needs resolving
+     * @param res the Resolveable object to resolve
+     */
     public void addUnresolvedID(String id, Resolveable res) {
         ArrayList todo = (ArrayList)resolve.get(id);
-        if(todo == null) {
+        if (todo == null) {
             todo = new ArrayList();
             resolve.put(id, todo);
         }
         todo.add(res);
     }
 
+    /**
+     * Add a tree extension.
+     * This checks if the extension is resolveable and attempts
+     * to resolve or add the resolveable ids for later resolution.
+     * @param ext the tree extension to add.
+     */
     public void addTreeExtension(TreeExt ext) {
         treeExtensions.add(ext);
-        if(ext.isResolveable()) {
+        if (ext.isResolveable()) {
             Resolveable res = (Resolveable)ext;
             String[] ids = res.getIDs();
-            for(int count = 0; count < ids.length; count++) {
-                if(idLocations.containsKey(ids[count])) {
+            for (int count = 0; count < ids.length; count++) {
+                if (idLocations.containsKey(ids[count])) {
                     res.resolve(ids[count], (ArrayList)idLocations.get(ids[count]));
                 } else {
                     ArrayList todo = (ArrayList)resolve.get(ids[count]);
-                    if(todo == null) {
+                    if (todo == null) {
                         todo = new ArrayList();
                         resolve.put(ids[count], todo);
                     }
                     todo.add(ext);
                 }
             }
+        } else {
+            handleTreeExtension(ext, TreeExt.IMMEDIATELY);
         }
     }
 
+    /**
+     * Handle a tree extension.
+     * This sends the extension to the model for handling.
+     * @param ext the tree extension to handle
+     * @param when when the extension should be handled by the model
+     */
     public void handleTreeExtension(TreeExt ext, int when) {
         // queue tree extension according to the when
         model.addExtension(ext, when);
     }
 
+    /**
+     * Signal end of document.
+     * This indicates that the document is complete and any unresolved
+     * reference can be dealt with.
+     */
     public void endDocument() {
-        for(Iterator iter = resolve.keySet().iterator(); iter.hasNext(); ) {
+        for (Iterator iter = resolve.keySet().iterator(); iter.hasNext();) {
             String id = (String)iter.next();
             ArrayList list = (ArrayList)resolve.get(id);
-            for(int count = 0; count < list.size(); count++) {
+            for (int count = 0; count < list.size(); count++) {
                 Resolveable res = (Resolveable)list.get(count);
-                if(!res.isResolved()) {
+                if (!res.isResolved()) {
                     res.resolve(id, null);
                 }
             }
@@ -128,24 +190,59 @@ public class AreaTree {
         model.endDocument();
     }
 
-    // this is the model for the area tree object
-    public static abstract class AreaTreeModel {
+    /**
+     * This is the model for the area tree object.
+     * The model implementation can handle the page sequence,
+     * page and extensions.
+     */
+    public abstract static class AreaTreeModel {
+        /**
+         * Start a page sequence on this model.
+         * @param title the title of the new page sequence
+         */
         public abstract void startPageSequence(Title title);
+
+        /**
+         * Add a page to this moel.
+         * @param page the page to add to the model.
+         */
         public abstract void addPage(PageViewport page);
+
+        /**
+         * Add an extension to this model.
+         * @param ext the extension to add
+         * @param when when the extension should be handled
+         */
         public abstract void addExtension(TreeExt ext, int when);
+
+        /**
+         * Signal the end of the document for any processing.
+         */
         public abstract void endDocument();
     }
 
-    // this class stores all the pages in the document
-    // for interactive agents
+    /**
+     * This class stores all the pages in the document
+     * for interactive agents.
+     * The pages are stored and can be retrieved in any order.
+     */
     public static class StorePagesModel extends AreaTreeModel {
-        ArrayList pageSequence = null;
-        ArrayList titles = new ArrayList();
-        ArrayList currSequence;
-        ArrayList extensions = new ArrayList();
+        private ArrayList pageSequence = null;
+        private ArrayList titles = new ArrayList();
+        private ArrayList currSequence;
+        private ArrayList extensions = new ArrayList();
 
-        public StorePagesModel() {}
+        /**
+         * Create a new store pages model
+         */
+        public StorePagesModel() {
+        }
 
+        /**
+         * Start a new page sequence.
+         * This creates a new list for the pages in the new page sequence.
+         * @param title the title of the page sequence.
+         */
         public void startPageSequence(Title title) {
             titles.add(title);
             if (pageSequence == null) {
@@ -155,28 +252,59 @@ public class AreaTree {
             pageSequence.add(currSequence);
         }
 
+        /**
+         * Add a page.
+         * @param page the page to add to the current page sequence
+         */
         public void addPage(PageViewport page) {
             currSequence.add(page);
         }
 
+        /**
+         * Get the page sequence count.
+         * @return the number of page sequences in the document.
+         */
         public int getPageSequenceCount() {
             return pageSequence.size();
         }
 
+        /**
+         * Get the title for a page sequence.
+         * @param count the page sequence count
+         * @return the title of the page sequence
+         */
         public Title getTitle(int count) {
             return (Title) titles.get(count);
         }
 
+        /**
+         * Get the page count.
+         * @param seq the page sequence to count.
+         * @return returns the number of pages in a page sequence
+         */
         public int getPageCount(int seq) {
             ArrayList sequence = (ArrayList) pageSequence.get(seq);
             return sequence.size();
         }
 
+        /**
+         * Get the page for a position in the document.
+         * @param seq the page sequence number
+         * @param count the page count in the sequence
+         * @return the PageViewport for the particular page
+         */
         public PageViewport getPage(int seq, int count) {
             ArrayList sequence = (ArrayList) pageSequence.get(seq);
             return (PageViewport) sequence.get(count);
         }
 
+        /**
+         * Add an extension to the store page model.
+         * The extension is stored so that it can be retrieved in the
+         * appropriate position.
+         * @param ext the extension to add
+         * @param when when the extension should be handled
+         */
         public void addExtension(TreeExt ext, int when) {
             int seq, page;
             switch(when) {
@@ -192,42 +320,78 @@ public class AreaTree {
             extensions.add(ext);
         }
 
+        /**
+         * Get the list of extensions that apply at a particular
+         * position in the document.
+         * @param seq the page sequence number
+         * @param count the page count in the sequence
+         * @return the list of extensions
+         */
         public List getExtensions(int seq, int count) {
             return null;
         }
 
+        /**
+         * Get the end of document extensions for this stroe pages model.
+         * @return the list of end extensions
+         */
         public List getEndExtensions() {
             return extensions;
         }
 
+        /**
+         * End document, do nothing.
+         */
         public void endDocument() {
         }
     }
 
-    // this uses the store pages model to store the pages
-    // each page is either rendered if ready or prepared
-    // for later rendering
+    /**
+     * This uses the store pages model to store the pages
+     * each page is either rendered if ready or prepared
+     * for later rendering.
+     * Once a page is rendered it is cleared to release the
+     * contents but the PageViewport is retained.
+     */
     public static class RenderPagesModel extends StorePagesModel {
-        Renderer renderer;
-        ArrayList prepared = new ArrayList();
-        ArrayList pendingExt = new ArrayList();
-        ArrayList endDocExt = new ArrayList();
+        private Renderer renderer;
+        private ArrayList prepared = new ArrayList();
+        private ArrayList pendingExt = new ArrayList();
+        private ArrayList endDocExt = new ArrayList();
 
+        /**
+         * Create a new render pages model with the given renderer.
+         * @param rend the renderer to render pages to
+         */
         public RenderPagesModel(Renderer rend) {
             renderer = rend;
         }
 
+        /**
+         * Start a new page sequence.
+         * This tells the renderer that a new page sequence has
+         * started with the given title.
+         * @param title the title of the new page sequence
+         */
         public void startPageSequence(Title title) {
             super.startPageSequence(title);
             renderer.startPageSequence(title);
         }
 
+        /**
+         * Add a page to the render page model.
+         * If the page is finished it can be rendered immediately.
+         * If the page needs resolving then if the renderer supports
+         * out of order rendering it can prepare the page. Otherwise
+         * the page is added to a queue.
+         * @param page the page to add to the model
+         */
         public void addPage(PageViewport page) {
             super.addPage(page);
             // if page finished
             try {
                 renderer.renderPage(page);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 // use error handler to handle this FOP or IO Exception
             }
             page.clear();
@@ -240,6 +404,15 @@ public class AreaTree {
             prepared.add(page);
         }
 
+        /**
+         * Add an extension to this model.
+         * If handle immediately then send directly to the renderer.
+         * The after page ones are handled after the next page is added.
+         * End of document extensions are added to a list to be
+         * handled at the end.
+         * @param ext the extension
+         * @param when when to render the extension
+         */
         public void addExtension(TreeExt ext, int when) {
             switch(when) {
                 case TreeExt.IMMEDIATELY:
@@ -255,12 +428,15 @@ public class AreaTree {
         }        
 
         private void renderExtensions(ArrayList list) {
-            for(int count = 0; count < list.size(); count++) {
+            for (int count = 0; count < list.size(); count++) {
                 TreeExt ext = (TreeExt)list.get(count);
                 renderer.renderExtension(ext);
             }
         }
 
+        /**
+         * End the document. Render any end document extensions.
+         */
         public void endDocument() {
             renderExtensions(endDocExt);
         }

@@ -138,7 +138,11 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         return "" + pageCount;
     }
 
-    public String resolveRefID(String ref) {
+    public PageViewport resolveRefID(String ref) {
+        List list = areaTree.getIDReferences(ref);
+        if(list != null && list.size() > 0) {
+            return (PageViewport)list.get(0);
+        }
         return null;
     }
 
@@ -155,6 +159,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
     public void addUnresolvedArea(String id, Resolveable res) {
         // add unresolved to tree
+        // should really add to the page viewport so it can serialize
         areaTree.addUnresolvedID(id, res);
     }
 

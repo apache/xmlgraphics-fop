@@ -14,17 +14,23 @@ import org.apache.fop.render.Renderer;
 import java.util.List;
 import java.util.ArrayList;
 
-// this is an inline area that can have other inlines as children
+/**
+ * Inline parent area.
+ * This is an inline area that can have other inlines as children.
+ */
 public class InlineParent extends InlineArea {
     protected ArrayList inlines = new ArrayList();
 
     public InlineParent() {
     }
 
+    /**
+     * Render this area.
+     * @param renderer the renderer to render this area in
+     */
     public void render(Renderer renderer) {
         renderer.renderInlineParent(this);
     }
-
 
     /**
      * Override generic Area method.

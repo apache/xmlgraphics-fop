@@ -7,9 +7,15 @@
 
 package org.apache.fop.area;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.io.Serializable;
 
-public interface Resolveable {
+/**
+ * Resolveable Interface.
+ * Classes that implement this can be resolved when
+ * an id is added to the area tree.
+ */
+public interface Resolveable extends Serializable {
 
     public boolean isResolved();
 
@@ -22,5 +28,5 @@ public interface Resolveable {
      * @param pages the list of pages with the id area
      *              may be null if not found
      */
-    public void resolve(String id, ArrayList pages);
+    public void resolve(String id, List pages);
 }

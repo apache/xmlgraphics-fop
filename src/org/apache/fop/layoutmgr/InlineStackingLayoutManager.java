@@ -378,6 +378,10 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
       }
      *****/
 
+    protected InlineParent createArea() {
+        return new InlineParent();
+    }
+
     /**
      * Generate and add areas to parent area.
      * Set size of each area.
@@ -388,7 +392,10 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
      */
     public void addAreas(PositionIterator parentIter,
                          LayoutContext context) {
-        setCurrentArea(new InlineParent());
+        InlineParent parent = createArea();
+        parent.setHeight(context.getLineHeight());
+        parent.setOffset(0);
+        setCurrentArea(parent);
 
         setChildContext(new LayoutContext(context)); // Store current value
 

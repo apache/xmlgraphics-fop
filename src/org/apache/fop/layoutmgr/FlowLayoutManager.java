@@ -42,6 +42,12 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         MinOptMax stackSize = new MinOptMax();
 
         while ((curLM = getChildLM()) != null) {
+            if(curLM.generatesInlineAreas()) {
+                // problem
+                curLM.setFinished(true);
+                continue;
+            }
+
             // Make break positions and return page break
             // Set up a LayoutContext
             MinOptMax bpd = context.getStackLimit();

@@ -57,7 +57,7 @@ public class Trait implements Serializable {
 	s_hmTraitInfo.put(ID_LINK,
 			   new TraitInfo("id-link", String.class));
 	s_hmTraitInfo.put(INTERNAL_LINK,
-			   new TraitInfo("internal-link", String.class));
+			   new TraitInfo("internal-link", PageViewport.class));
 	s_hmTraitInfo.put(EXTERNAL_LINK,
 			   new TraitInfo("external-link", String.class));
 	s_hmTraitInfo.put(FONT_NAME,

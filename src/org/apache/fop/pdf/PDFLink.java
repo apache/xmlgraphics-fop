@@ -8,7 +8,7 @@
 package org.apache.fop.pdf;
 
 // Java
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 /**
  * class representing an /Annot object of /Subtype /Link
@@ -30,14 +30,14 @@ public class PDFLink extends PDFObject {
      * @param number the object's number
      * @param producer the application producing the PDF
      */
-    public PDFLink(int number, Rectangle r) {
+    public PDFLink(int number, Rectangle2D r) {
         /* generic creation of PDF object */
         super(number);
 
-        this.ulx = r.x;
-        this.uly = r.y;
-        this.brx = r.x + r.width;
-        this.bry = r.y - r.height;
+        this.ulx = (float)r.getX();
+        this.uly = (float)r.getY();
+        this.brx = (float)(r.getX() + r.getWidth());
+        this.bry = (float)(r.getY() - r.getHeight());
         this.color = "0 0 0";    // just for now
 
     }

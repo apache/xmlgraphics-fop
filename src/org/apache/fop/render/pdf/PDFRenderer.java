@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -35,6 +35,7 @@ import org.w3c.dom.Document;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.List;
@@ -178,7 +179,7 @@ public class PDFRenderer extends PrintRenderer {
 
     public void renderExtension(TreeExt ext) {
         // render bookmark extension
-        if(ext instanceof BookmarkData) {
+        if (ext instanceof BookmarkData) {
             renderRootExtensions((BookmarkData)ext);
         }
     }
@@ -209,7 +210,7 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     public void startPageSequence(Title seqTitle) {
-        if(seqTitle != null) {
+        if (seqTitle != null) {
             String str = convertTitleToString(seqTitle);
             PDFInfo info = this.pdfDoc.getInfo();
             info.setTitle(str);
@@ -326,7 +327,7 @@ public class PDFRenderer extends PrintRenderer {
 
             currentStream.add("ET\n");
 
-            if(bv.getClip()) {
+            if (bv.getClip()) {
                 Rectangle2D rect = bv.getBounds();
 
                 currentStream.add("q\n");
@@ -354,7 +355,7 @@ public class PDFRenderer extends PrintRenderer {
 
             Rectangle2D rect = bv.getBounds();
 
-            if(ctm != null) {
+            if (ctm != null) {
                 currentIPPosition = 0;
                 currentBPPosition = 0;
 
@@ -362,16 +363,16 @@ public class PDFRenderer extends PrintRenderer {
 
                 double[] vals = ctm.toArray();
                 boolean aclock = vals[2] == 1.0;
-                if(vals[2] == 1.0) {
+                if (vals[2] == 1.0) {
                     ctm = ctm.translate(-saveBP - rect.getHeight(), -saveIP);
-                } else if(vals[0] == -1.0) {
+                } else if (vals[0] == -1.0) {
                     ctm = ctm.translate(-saveIP - rect.getWidth(), -saveBP - rect.getHeight());
                 } else {
                     ctm = ctm.translate(saveBP, saveIP - rect.getWidth());
                 }
             }
 
-            if(bv.getClip()) {
+            if (bv.getClip()) {
                 currentStream.add("q\n"); 
                 float x = (float)rect.getX() / 1000f;
                 float y = (float)rect.getY() / 1000f;
@@ -380,24 +381,24 @@ public class PDFRenderer extends PrintRenderer {
                 clip(x, y, width, height);
             }
 
-            if(ctm != null) {
+            if (ctm != null) {
                 startVParea(ctm);
             }
             renderBlocks(children);
-            if(ctm != null) {
+            if (ctm != null) {
                 endVParea();
             }
         
             if (bv.getClip()) {
                 currentStream.add("Q\n");
             }
-            if(ctm != null) {
+            if (ctm != null) {
                 currentStream.add("BT\n");
             }
 
             // clip if necessary
 
-            if(rect != null) {
+            if (rect != null) {
                 currentIPPosition = saveIP;
                 currentBPPosition = saveBP;
                 currentBPPosition += (int)(rect.getHeight());
@@ -405,6 +406,15 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
+    /**
+     * Clip an area.
+     * write a clipping operation given coordinates in the current
+     * transform.
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param width the width of the area
+     * @param height the height of the area
+     */
     protected void clip(float x, float y, float width, float height) {
         currentStream.add(x + " " + y + " m\n");
         currentStream.add((x + width) + " " + y + " l\n");
@@ -418,6 +428,45 @@ public class PDFRenderer extends PrintRenderer {
     protected void renderLineArea(LineArea line) {
         super.renderLineArea(line);
         closeText();
+    }
+
+    /**
+     * Render inline parent area.
+     * For pdf this handles the inline parent area traits such as
+     * links, border, background.
+     * @param ip the inline parent area
+     */
+    public void renderInlineParent(InlineParent ip) {
+        Object tr = ip.getTrait(Trait.INTERNAL_LINK);
+        boolean internal = false;
+        String dest = null;
+        if (tr == null) {
+            dest = (String)ip.getTrait(Trait.EXTERNAL_LINK);
+        } else {
+            PageViewport pv = (PageViewport)tr;
+            dest = (String)pageReferences.get(pv);
+            internal = true;
+        }
+        if (dest != null) {
+            float start = currentBlockIPPosition;
+            float top = (ip.getOffset() + currentBPPosition) / 1000f;
+            float height = ip.getHeight() / 1000f;
+            super.renderInlineParent(ip);
+            float width = (currentBlockIPPosition - start) / 1000f;
+            start = start / 1000f;
+            // add link to pdf document
+            Rectangle2D rect = new Rectangle2D.Float(start, top, width, height);
+            // transform rect to absolute coords
+            AffineTransform transform = currentState.getTransform();
+            rect = transform.createTransformedShape(rect).getBounds();
+            rect = new Rectangle2D.Double(rect.getX(), rect.getY() + rect.getHeight(), rect.getWidth(), rect.getHeight());
+
+            int type = internal ? PDFLink.INTERNAL : PDFLink.EXTERNAL;
+            PDFLink pdflink = pdfDoc.makeLink(rect, dest, type);
+            currentPage.addAnnotation(pdflink);
+        } else {
+            super.renderInlineParent(ip);
+        }
     }
 
     public void renderCharacter(Character ch) {
@@ -453,8 +502,8 @@ public class PDFRenderer extends PrintRenderer {
         if (!textOpen || bl != prevWordY) {
             closeText();
 
-            pdf.append("1 0 0 -1 " + (rx / 1000f) + " " +
-                       (bl / 1000f) + " Tm [" + startText);
+            pdf.append("1 0 0 -1 " + (rx / 1000f) + " "
+                       + (bl / 1000f) + " Tm [" + startText);
             prevWordY = bl;
             textOpen = true;
         } else {
@@ -467,8 +516,8 @@ public class PDFRenderer extends PrintRenderer {
             if (emDiff < -33000) {
                 closeText();
 
-                pdf.append("1 0 0 1 " + (rx / 1000f) + " " +
-                           (bl / 1000f) + " Tm [" + startText);
+                pdf.append("1 0 0 1 " + (rx / 1000f) + " "
+                           + (bl / 1000f) + " Tm [" + startText);
                 textOpen = true;
             } else {
                 pdf.append(Float.toString(emDiff));
@@ -553,10 +602,11 @@ public class PDFRenderer extends PrintRenderer {
                     (int) uniBytes[i];
 
             String hexString = Integer.toHexString(b);
-            if (hexString.length() == 1)
+            if (hexString.length() == 1) {
                 buf = buf.append("0" + hexString);
-            else
+            } else {
                 buf = buf.append(hexString);
+            }
         }
         return buf.toString();
     }
@@ -608,8 +658,8 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     private void updateFont(String name, int size, StringBuffer pdf) {
-        if ((!name.equals(this.currentFontName)) ||
-                (size != this.currentFontSize)) {
+        if ((!name.equals(this.currentFontName))
+                || (size != this.currentFontSize)) {
             closeText();
 
             this.currentFontName = name;
@@ -693,16 +743,16 @@ public class PDFRenderer extends PrintRenderer {
         try {
             this.pdfDoc.output(ostream);
         } catch (IOException ioe) {
-
+            // ioexception will be caught later
         }
     }
 
     protected void placeImage(int x, int y, int w, int h, int xobj) {
-        currentStream.add("q\n" + ((float) w) + " 0 0 " +
-                          ((float) - h) + " " +
-                          (((float) currentBlockIPPosition) / 1000f + x) + " " +
-                          (((float)(currentBPPosition + 1000 * h)) / 1000f +
-                           y) + " cm\n" + "/Im" + xobj + " Do\nQ\n");
+        currentStream.add("q\n" + ((float) w) + " 0 0 "
+                          + ((float) - h) + " "
+                          + (((float) currentBlockIPPosition) / 1000f + x) + " "
+                          + (((float)(currentBPPosition + 1000 * h)) / 1000f
+                          + y) + " cm\n" + "/Im" + xobj + " Do\nQ\n");
 
     }
 
@@ -738,6 +788,11 @@ public class PDFRenderer extends PrintRenderer {
 
     }
 
+    /**
+     * Render an inline viewport.
+     * This renders an inline viewport by clipping if necessary.
+     * @param viewport the viewport to handle
+     */
     public void renderViewport(Viewport viewport) {
         closeText();
         currentStream.add("ET\n");
@@ -758,6 +813,11 @@ public class PDFRenderer extends PrintRenderer {
         currentStream.add("BT\n");
     }
 
+    /**
+     * Render leader area.
+     * This renders a leader area which is an area with a rule.
+     * @param area the leader area to render
+     */
     public void renderLeader(Leader area) {
         closeText();
         currentStream.add("ET\n");
@@ -783,14 +843,14 @@ public class PDFRenderer extends PrintRenderer {
         float startx = ((float) currentBlockIPPosition) / 1000f;
         float starty = ((currentBPPosition + area.getOffset()) / 1000f);
         float endx = (currentBlockIPPosition + area.getWidth()) / 1000f;
-        if(!alt) {
+        if (!alt) {
             currentStream.add(area.getRuleThickness() / 1000f + " w\n");
 
             currentStream.add(startx + " " + starty + " m\n");
             currentStream.add(endx + " " + starty + " l\n");
             currentStream.add("S\n");
         } else {
-            if(style == RuleStyle.DOUBLE) {
+            if (style == RuleStyle.DOUBLE) {
                 float third = area.getRuleThickness() / 3000f;
                 currentStream.add(third + " w\n");
                 currentStream.add(startx + " " + starty + " m\n");
@@ -810,7 +870,7 @@ public class PDFRenderer extends PrintRenderer {
                 currentStream.add(startx + " " + (starty + 2 * half) + " l\n");
                 currentStream.add("h\n");
                 currentStream.add("f\n");
-                if(style == RuleStyle.GROOVE) {
+                if (style == RuleStyle.GROOVE) {
                     currentStream.add("0 g\n");
                     currentStream.add(startx + " " + starty + " m\n");
                     currentStream.add(endx + " " + starty + " l\n");
