@@ -140,13 +140,13 @@ public class PageNumberCitation extends FObj {
         // this.propertyList.get("text-transform");
         // this.propertyList.get("word-spacing");
 
-        ColorType c = this.propertyList.get("color").getColorType();
+        ColorType c = this.propertyList.get(PR_COLOR).getColorType();
         this.red = c.getRed();
         this.green = c.getGreen();
         this.blue = c.getBlue();
 
-        this.wrapOption = this.propertyList.get("wrap-option").getEnum();
-        this.refId = this.propertyList.get("ref-id").getString();
+        this.wrapOption = this.propertyList.get(PR_WRAP_OPTION).getEnum();
+        this.refId = this.propertyList.get(PR_REF_ID).getString();
 
         if (this.refId.equals("")) {
             //throw new FOPException("page-number-citation must contain \"ref-id\"");

@@ -130,14 +130,14 @@ public class Leader extends FObjMixed {
         // this.propertyList.get("z-index");
 
         // color properties
-        ColorType c = this.propertyList.get("color").getColorType();
+        ColorType c = this.propertyList.get(PR_COLOR).getColorType();
         float red = c.getRed();
         float green = c.getGreen();
         float blue = c.getBlue();
 
         // fo:leader specific properties
         // determines the pattern of leader; allowed values: space, rule,dots, use-content
-        leaderPattern = this.propertyList.get("leader-pattern").getEnum();
+        leaderPattern = this.propertyList.get(PR_LEADER_PATTERN).getEnum();
         switch(leaderPattern) {
             case LeaderPattern.SPACE:
                 // use Space
@@ -146,8 +146,8 @@ public class Leader extends FObjMixed {
                 // the following properties only apply
                 // for leader-pattern = "rule"
                 ruleThickness =
-                         propertyList.get("rule-thickness").getLength().getValue();
-                ruleStyle = propertyList.get("rule-style").getEnum();
+                         propertyList.get(PR_RULE_THICKNESS).getLength().getValue();
+                ruleStyle = propertyList.get(PR_RULE_STYLE).getEnum();
             break;
             case LeaderPattern.DOTS:
             break;
@@ -159,7 +159,7 @@ public class Leader extends FObjMixed {
 
         // if leaderPatternWidth = 0 = default = use-font-metric
         patternWidth =
-            this.propertyList.get("leader-pattern-width").getLength().getValue();
+            this.propertyList.get(PR_LEADER_PATTERN_WIDTH).getLength().getValue();
 
     }
 

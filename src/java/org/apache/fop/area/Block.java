@@ -93,10 +93,22 @@ public class Block extends BlockParent {
      * @param block the block area to add
      */
     public void addBlock(Block block) {
+        addBlock(block, true);
+    }
+
+    /**
+     * Add the block to this block area.
+     *
+     * @param block the block area to add
+     * @param autoHeight increase the height of the block.
+     */
+    public void addBlock(Block block, boolean autoHeight) {
         if (children == null) {
             children = new ArrayList();
         }
-        height += block.getHeight();
+        if (autoHeight) {
+            height += block.getHeight();
+        }
         children.add(block);
     }
 

@@ -169,25 +169,25 @@ public class Table extends FObj {
         // this.propertyList.get("width");
         // this.propertyList.get("writing-mode");
 
-        this.breakBefore = this.propertyList.get("break-before").getEnum();
-        this.breakAfter = this.propertyList.get("break-after").getEnum();
+        this.breakBefore = this.propertyList.get(PR_BREAK_BEFORE).getEnum();
+        this.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
         this.spaceBefore = this.propertyList.get(
-                             "space-before.optimum").getLength().getValue();
+                             PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
         this.spaceAfter = this.propertyList.get(
-                            "space-after.optimum").getLength().getValue();
+                            PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
         this.backgroundColor =
-          this.propertyList.get("background-color").getColorType();
+          this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
         this.ipd = this.propertyList.get(
-                     "inline-progression-dimension").getLengthRange();
-        this.height = this.propertyList.get("height").getLength().getValue();
+                     PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
+        this.height = this.propertyList.get(PR_HEIGHT).getLength().getValue();
         this.bAutoLayout = (this.propertyList.get(
-                "table-layout").getEnum() == TableLayout.AUTO);
+                PR_TABLE_LAYOUT).getEnum() == TableLayout.AUTO);
 
         this.omitHeaderAtBreak = this.propertyList.get(
-                "table-omit-header-at-break").getEnum()
+                PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum()
                                             == TableOmitHeaderAtBreak.TRUE;
         this.omitFooterAtBreak = this.propertyList.get(
-                "table-omit-footer-at-break").getEnum()
+                PR_TABLE_OMIT_FOOTER_AT_BREAK).getEnum()
                                             == TableOmitFooterAtBreak.TRUE;
 
     }

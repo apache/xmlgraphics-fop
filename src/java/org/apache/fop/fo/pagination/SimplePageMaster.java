@@ -92,7 +92,7 @@ public class SimplePageMaster extends FObj {
 
         if (parent.getName().equals("fo:layout-master-set")) {
             LayoutMasterSet layoutMasterSet = (LayoutMasterSet)parent;
-            masterName = this.propertyList.get("master-name").getString();
+            masterName = this.propertyList.get(PR_MASTER_NAME).getString();
             if (masterName == null) {
                 getLogger().warn("simple-page-master does not have "
                         + "a master-name and so is being ignored");

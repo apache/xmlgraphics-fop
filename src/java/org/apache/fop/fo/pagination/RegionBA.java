@@ -86,7 +86,7 @@ public abstract class RegionBA extends RegionBASE {
     public void end() {
         super.end();
         bPrecedence =
-            (this.propertyList.get("precedence").getEnum() == Precedence.TRUE);
+            (this.propertyList.get(PR_PRECEDENCE).getEnum() == Precedence.TRUE);
     }
 
     /**

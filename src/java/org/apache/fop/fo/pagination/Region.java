@@ -133,11 +133,11 @@ public abstract class Region extends FObj {
                     + "of simple-page-master, not "
                     + parent.getName());
         }
-        this.wm = this.propertyList.get("writing-mode").getEnum();
+        this.wm = this.propertyList.get(PR_WRITING_MODE).getEnum();
 
         // this.propertyList.get("clip");
         // this.propertyList.get("display-align");
-        this.overflow = this.propertyList.get("overflow").getEnum();
+        this.overflow = this.propertyList.get(PR_OVERFLOW).getEnum();
     }
 
     public abstract Rectangle getViewportRectangle(FODimension pageRefRect);
