@@ -160,7 +160,7 @@ public class AreaTreeHandler extends FOEventHandler {
     /**
      * Add an Resolvable object with an unresolved idref
      * @param idref the idref whose target id has not yet been located
-     * @param res the Resolvable object with the unresolved idref
+     * @param res the Resolvable object needing the idref to be resolved
      */
     public void addUnresolvedIDRef(String idref, Resolvable res) {
         Set todo = (Set) unresolvedIDRefs.get(idref);
@@ -193,15 +193,19 @@ public class AreaTreeHandler extends FOEventHandler {
      * @throws SAXException if there is some error
      */
     public void endDocument() throws SAXException {
-        // deal with unresolved references
+        /* 
+         * inform Resolveable objects that certain idrefs
+         * could not be found
+         * @todo unsure if this block is needed. 
+         */
         for (Iterator iter = unresolvedIDRefs.keySet().iterator(); 
                 iter.hasNext();) {
-            String id = (String)iter.next();
-            Set list = (Set) unresolvedIDRefs.get(id);
+            String idref = (String) iter.next();
+            Set list = (Set) unresolvedIDRefs.get(idref);
             for (Iterator resIter = list.iterator(); resIter.hasNext();) {
-                Resolvable res = (Resolvable)resIter.next();
+                Resolvable res = (Resolvable) resIter.next();
                 if (!res.isResolved()) {
-                    res.resolveIDRef(id, null);
+                    res.resolveIDRef(idref, null);
                 }
             }
         }

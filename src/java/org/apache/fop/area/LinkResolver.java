@@ -62,8 +62,8 @@ public class LinkResolver implements Resolvable, Serializable {
      * Resolve by adding an internal link.
      */
     public void resolveIDRef(String id, List pages) {
-        resolved = true;
         if (idRef.equals(id) && pages != null) {
+            resolved = true;
             PageViewport page = (PageViewport)pages.get(0);
             area.addTrait(Trait.INTERNAL_LINK, page.getKey());
         }

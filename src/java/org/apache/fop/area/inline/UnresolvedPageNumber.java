@@ -60,16 +60,13 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
      *
      * @param id the id associated with the pages parameter
      * @param pages the list of PageViewports associated with this ID
-     * @todo determine why the ID passed in will (always?) equal the pageIDRef,
-     *      explain in comments above
      */
     public void resolveIDRef(String id, List pages) {
-        resolved = true;
         if (pages != null) {
+            resolved = true;
             PageViewport page = (PageViewport)pages.get(0);
             String str = page.getPageNumber();
             text = str;
-
             /**@todo Update IPD ??? */
         }
     }
