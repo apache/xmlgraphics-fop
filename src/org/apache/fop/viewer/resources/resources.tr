@@ -14,6 +14,7 @@ First page=İlk Sayfa
 Print=Yazdır
 Page=Sayfa
 of=
+Zoom=Zum (Yakınlaştırmak)
 Init parser=Grammer İnceleyiciyi (Parser)  başlat
 Init mappings=Eşlemeleri Başlat 
 Build FO tree=FO ağacını yarat
@@ -21,6 +22,8 @@ Layout FO tree=FO ağacı düzeni
 Render=Çevir
 Close=Kapat
 Go to Page=Sayfaya Git
+Reload=Yeniden Yükle
 Cancel=Vazgeç
 Page number=Sayfa numarası
+
 
