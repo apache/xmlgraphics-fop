@@ -326,16 +326,16 @@ public class PageSequence extends FObj {
         pageLM.run();
 
         // Thread layoutThread = new Thread(pageLM);
-//  	layoutThread.start();
-// 	log.debug("Layout thread started");
+//  layoutThread.start();
+// log.debug("Layout thread started");
 
-// 	// wait on both managers
-// 	try {
-// 	    layoutThread.join();
-// 	    log.debug("Layout thread done");
-// 	} catch (InterruptedException ie) {
-// 	    log.error("PageSequence.format() interrupted waiting on layout");
-// 	}
+// // wait on both managers
+// try {
+//     layoutThread.join();
+//     log.debug("Layout thread done");
+// } catch (InterruptedException ie) {
+//     log.error("PageSequence.format() interrupted waiting on layout");
+// }
         // Tell the root the last page number we created.
         this.root.setRunningPageNumberCounter(this.currentPageNumber);
     }
@@ -398,7 +398,7 @@ public class PageSequence extends FObj {
 //             String formattedPageNumber =
 //                 pageNumberGenerator.makeFormattedPageNumber(this.currentPageNumber);
 //             currentPage.setFormattedNumber(formattedPageNumber);
-// 	    this.currentPageNumber++;
+//     this.currentPageNumber++;
 //             //this.root.setRunningPageNumberCounter(this.currentPageNumber);
 
 //                 BodyAreaContainer bodyArea = currentPage.getBody();

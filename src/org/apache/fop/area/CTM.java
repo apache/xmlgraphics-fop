@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -17,7 +17,6 @@ import org.apache.fop.fo.properties.WritingMode;
  * The matrix encodes translations, scaling and rotations of the coordinate
  * system used to render pages.
  */
-
 public class CTM implements Serializable {
     private double a, b, c, d, e, f;
 
@@ -80,7 +79,7 @@ public class CTM implements Serializable {
      * @param bpd The block-progression dimension of the reference area whose
      * CTM is being set.
      */
-    static public CTM getWMctm(int wm, int ipd, int bpd) {
+    public static CTM getWMctm(int wm, int ipd, int bpd) {
         CTM wmctm;
         switch (wm) {
             case WritingMode.LR_TB:
@@ -207,3 +206,4 @@ public class CTM implements Serializable {
         return new double[]{a, b, c, d, e, f};
     }
 }
+

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -39,8 +39,9 @@ public class PDFICCStream extends PDFStream {
         pb.append(this.number).append(" ").append(this.generation).append(" obj\n<< ");
         pb.append("/N ").append(cp.getNumComponents()).append(" ");
         
-        if (pdfColorSpace != null)
+        if (pdfColorSpace != null) {
             pb.append("/Alternate /").append(pdfColorSpace.getColorSpacePDFString()).append(" ");
+        }
         
         pb.append("/Length ").append((_data.getSize() + 1)).append(" ").append(filterEntry);
         pb.append(" >>\n");

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -101,9 +101,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /**
-     * Call child layout managers to generate content as long as they
-     * generate inline areas. If a block-level generating LM is found,
-     * finish any line being filled and return to the parent LM.
+     * Call child layout managers to generate content.
+     * This gets the next break which is a full line.
+     * 
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         // Get a break from currently active child LM
@@ -269,7 +269,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
         // Don't justify last line in the sequence or if forced line-end
         int talign = bTextAlignment;
-        if((bTextAlignment == TextAlign.JUSTIFY
+        if ((bTextAlignment == TextAlign.JUSTIFY
                              && (m_prevBP.isForcedBreak()
                              || isFinished()))) {
             talign = TextAlign.START;
@@ -384,8 +384,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         // points remain. Choose the best break.
         if (hyph != null) {
             return new HyphContext(hyph.getHyphenationPoints());
-        } else
+        } else {
             return null;
+        }
     }
 
 
@@ -413,27 +414,27 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         for(Iterator iter = m_vecInlineBreaks.listIterator(prevLineEnd);
                 iter.hasNext(); ) {
             BreakPoss bp = (BreakPoss)iter.next();
-            if(bp.getLead() > lineLead) {
+            if (bp.getLead() > lineLead) {
                 lineLead = bp.getLead();
             } 
-            if(bp.getTotal() > maxtb) {
+            if (bp.getTotal() > maxtb) {
                 maxtb = bp.getTotal();
             }
-            if(bp.getMiddle() > middlefollow) {
+            if (bp.getMiddle() > middlefollow) {
                 middlefollow = bp.getMiddle();
             }
 
             // the stacking size of textLM accumulate for each break
             // so the ipd is only added at the end of each LM
-            if(bp.getLayoutManager() != lastLM) {
-                if(lastLM != null) {
+            if (bp.getLayoutManager() != lastLM) {
+                if (lastLM != null) {
                     actual.add(lastBP.getStackingSize());
                 }
                 lastLM = bp.getLayoutManager();
             }
             lastBP = bp;
         }
-        if(lastBP != null) {
+        if (lastBP != null) {
             // add final ipd
             actual.add(lastBP.getStackingSize());
             // ATTENTION: make sure this hasn't gotten start space for next
@@ -441,7 +442,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             actual.add(lastBP.resolveTrailingSpace(true));
         }
 
-        if(maxtb - lineLead > middlefollow) {
+        if (maxtb - lineLead > middlefollow) {
             middlefollow = maxtb - lineLead;
         }
 
@@ -481,7 +482,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         int indent = 0;
         switch (textalign) {
             case TextAlign.JUSTIFY:
-                if(realWidth != 0) {
+                if (realWidth != 0) {
                     dAdjust = (targetWith - realWidth) / realWidth;
                 }
             break;
@@ -562,10 +563,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 lc.setLeadingSpace(lc.getTrailingSpace());
                 lc.setTrailingSpace(new SpaceSpecifier(false));
             }
-if(lc.getTrailingSpace() != null) {
             addSpace(lineArea, lc.getTrailingSpace().resolve(true),
                      lc.getSpaceAdjust());
-}
             parentLM.addChild(lineArea);
         }
         setCurrentArea(null); // ?? necessary

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -60,9 +60,11 @@ public class PrintStarter extends CommandLineStarter {
         setParserFeatures(parser);
 
         PrinterJob pj = PrinterJob.getPrinterJob();
-        if(System.getProperty("dialog") != null)
-            if(!pj.printDialog())
+        if (System.getProperty("dialog") != null) {
+            if (!pj.printDialog()) {
                 throw new FOPException("Printing cancelled by operator");
+            }
+        }
 
         PrintRenderer renderer = new PrintRenderer(pj);
         int copies = getIntProperty("copies", 1);
@@ -84,7 +86,7 @@ public class PrintStarter extends CommandLineStarter {
     }
     int getIntProperty(String name, int def) {
         String propValue = System.getProperty(name);
-        if(propValue != null) {
+        if (propValue != null) {
             try {
                 return Integer.parseInt(propValue);
             } catch (Exception e) {
@@ -131,8 +133,9 @@ public class PrintStarter extends CommandLineStarter {
         throws IOException {
             super.stopRenderer();
 
-            if(endNumber == -1)
+            if (endNumber == -1) {
                 endNumber = getPageCount();
+            }
 
             Vector numbers = getInvalidPageNumbers();
             for (int i = numbers.size() - 1; i > -1; i--) {
@@ -164,14 +167,16 @@ public class PrintStarter extends CommandLineStarter {
                 if (i < startNumber || i > endNumber) {
                     isValid = false;
                 } else if (mode != EVEN_AND_ALL) {
-                    if (mode == EVEN && ((i + 1) % 2 != 0))
+                    if (mode == EVEN && ((i + 1) % 2 != 0)) {
                         isValid = false;
-                    else if (mode == ODD && ((i + 1) % 2 != 1))
+                    } else if (mode == ODD && ((i + 1) % 2 != 1)) {
                         isValid = false;
+                    }
                 }
 
-                if (!isValid)
+                if (!isValid) {
                     vec.add(i + "");
+                }
             }
 
             return vec;

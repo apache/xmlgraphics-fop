@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -73,7 +73,7 @@ public class PageNumberGenerator extends AbstractLogEnabled {
                 minPadding = 0;
             }
         } else {
-            // only accepted token is '0+1'at this stage.	 Because of the
+            // only accepted token is '0+1'at this stage. Because of the
             // wonderful regular expression support in Java, we will resort to a
             // loop
             for (int i = 0; i < fmtLen - 1; i++) {

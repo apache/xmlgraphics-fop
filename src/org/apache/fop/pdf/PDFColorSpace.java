@@ -33,14 +33,15 @@ public class PDFColorSpace {
     }
 
     private int calculateNumComponents() {
-        if (currentColorSpace == DEVICE_GRAY)
+        if (currentColorSpace == DEVICE_GRAY) {
             return 1;
-        else if (currentColorSpace == DEVICE_RGB)
+        } else if (currentColorSpace == DEVICE_RGB) {
             return 3;
-        else if (currentColorSpace == DEVICE_CMYK)
+        } else if (currentColorSpace == DEVICE_CMYK) {
             return 4;
-        else
+        } else {
             return 0;
+        }
     }
 
     public void setColorSpace(int theColorSpace) {

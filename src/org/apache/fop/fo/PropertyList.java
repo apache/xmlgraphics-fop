@@ -37,7 +37,7 @@ public class PropertyList extends HashMap {
         "inline-progression-dimension"
     };
 
-    static private final HashMap wmtables = new HashMap(4);
+    private static final HashMap wmtables = new HashMap(4);
     {
         wmtables.put(new Integer(WritingMode.LR_TB),    /* lr-tb */
         new byte[] {

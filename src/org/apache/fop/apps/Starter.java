@@ -34,7 +34,7 @@ public abstract class Starter extends AbstractLogEnabled {
         this.inputHandler = inputHandler;
     }
 
-    abstract public void run() throws FOPException;
+    public abstract void run() throws FOPException;
 
     // setting the parser features
     public void setParserFeatures(XMLReader parser) throws FOPException {

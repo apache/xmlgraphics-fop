@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -84,7 +84,8 @@ public class JimiImage extends AbstractFopImage {
             // this.m_bitsPerPixel = cm.getPixelSize();
             this.m_colorSpace = ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB);
             if (cm.hasAlpha()) {
-                int transparencyType = cm.getTransparency(); // java.awt.Transparency. BITMASK or OPAQUE or TRANSLUCENT
+                // java.awt.Transparency. BITMASK or OPAQUE or TRANSLUCENT
+                int transparencyType = cm.getTransparency();
                 if (transparencyType == java.awt.Transparency.OPAQUE) {
                     this.m_isTransparent = false;
                 } else if (transparencyType ==

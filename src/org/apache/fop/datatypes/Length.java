@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -24,7 +24,7 @@ public class Length {
     public int mvalue() {
         if (!bIsComputed) {
             computeValue();
-	}
+        }
         return millipoints;
     }
 
@@ -33,7 +33,7 @@ public class Length {
 
 
     protected void setComputedValue(int millipoints) {
-	setComputedValue(millipoints, true);
+        setComputedValue(millipoints, true);
     }
 
     protected void setComputedValue(int millipoints, boolean bSetComputed) {
@@ -46,7 +46,7 @@ public class Length {
     }
 
     public boolean isComputed() {
-	return this.bIsComputed;
+        return this.bIsComputed;
     }
 
     /**
@@ -69,7 +69,7 @@ public class Length {
     }
 
     public Numeric asNumeric() {
-	return null;
+        return null;
     }
 
     public String toString() {

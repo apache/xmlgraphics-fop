@@ -25,6 +25,11 @@ public class InlineParent extends InlineArea {
     protected ArrayList inlines = new ArrayList();
 
     /**
+     * An inline parent is a reference area somay have clipping
+     */
+    protected boolean clip = false;
+
+    /**
      * Create a new inline parent to add areas to.
      */
     public InlineParent() {
@@ -61,3 +66,4 @@ public class InlineParent extends InlineArea {
     }
 
 }
+

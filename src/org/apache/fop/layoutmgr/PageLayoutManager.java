@@ -181,12 +181,14 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * For now, only handle normal flow areas.
      */
     public boolean addChild(Area childArea) {
-        if (childArea == null)
+        if (childArea == null) {
             return false;
+        }
         if (childArea.getAreaClass() == Area.CLASS_NORMAL) {
             return placeFlowRefArea(childArea);
-        } else
+        } else {
             ; // TODO: all the others!
+        }
         return false;
     }
 
@@ -421,20 +423,20 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     private boolean needEmptyPage(int breakValue) {
         return false;
-        // 	if (breakValue == Constants.PAGE || curPage.isEmpty()) {
-        // 	    // any page is OK or we already have an empty page
-        // 	    return false;
-        // 	}
-        // 	else {
-        // 	    /* IF we are on the kind of page we need, we'll need a new page. */
-        // 	    if (curPage.getPageNumber()%2 != 0) {
-        // 		// Current page is odd
-        // 		return (breakValue == Constants.ODD_PAGE);
-        // 	    }
-        // 	    else {
-        // 		return (breakValue == Constants.EVEN_PAGE);
-        // 	    }
-        // 	}
+        // if (breakValue == Constants.PAGE || curPage.isEmpty()) {
+        //     // any page is OK or we already have an empty page
+        //     return false;
+        // }
+        // else {
+        //     /* IF we are on the kind of page we need, we'll need a new page. */
+        //     if (curPage.getPageNumber()%2 != 0) {
+        // // Current page is odd
+        // return (breakValue == Constants.ODD_PAGE);
+        //     }
+        //     else {
+        // return (breakValue == Constants.EVEN_PAGE);
+        //     }
+        // }
     }
 
     /**

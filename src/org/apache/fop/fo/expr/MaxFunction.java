@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -20,9 +20,11 @@ public class MaxFunction extends FunctionBase {
                          PropertyInfo pInfo) throws PropertyException {
         Numeric n1 = args[0].getNumeric();
         Numeric n2 = args[1].getNumeric();
-        if (n1 == null || n2 == null)
+        if (n1 == null || n2 == null) {
             throw new PropertyException("Non numeric operands to max function");
+        }
         return new NumericProperty(n1.max(n2));
     }
 
 }
+

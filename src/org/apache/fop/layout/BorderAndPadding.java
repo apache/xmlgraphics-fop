@@ -24,7 +24,7 @@ public class BorderAndPadding implements Cloneable {
     public static final int RIGHT = END;
 
     private static class ResolvedCondLength implements Cloneable {
-        int iLength;    // Resolved length value
+        int iLength; // Resolved length value
         boolean bDiscard;
 
         ResolvedCondLength(CondLength length) {
@@ -32,9 +32,9 @@ public class BorderAndPadding implements Cloneable {
             iLength = length.mvalue();
         }
 
-	public Object clone() throws CloneNotSupportedException {
-	    return super.clone();
-	}
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone();
+        }
 
     }
 
@@ -44,23 +44,23 @@ public class BorderAndPadding implements Cloneable {
      * @return The copy.
      */
     public Object clone() throws CloneNotSupportedException {
-	BorderAndPadding bp = (BorderAndPadding) super.clone();
-	bp.padding = (ResolvedCondLength[])padding.clone();
-	bp.borderInfo = (BorderInfo[])borderInfo.clone();
-	for (int i=0; i<padding.length; i++) {
-	    if (padding[i] != null) {
-		bp.padding[i]=(ResolvedCondLength)padding[i].clone();
-	    }
-	    if (borderInfo[i] != null) {
-		bp.borderInfo[i]=(BorderInfo)borderInfo[i].clone();
-	    }
-	}
-	return bp;
+        BorderAndPadding bp = (BorderAndPadding) super.clone();
+        bp.padding = (ResolvedCondLength[]) padding.clone();
+        bp.borderInfo = (BorderInfo[]) borderInfo.clone();
+        for (int i = 0; i < padding.length; i++) {
+            if (padding[i] != null) {
+                bp.padding[i] = (ResolvedCondLength) padding[i].clone();
+            }
+            if (borderInfo[i] != null) {
+                bp.borderInfo[i] = (BorderInfo) borderInfo[i].clone();
+            }
+        }
+        return bp;
     }
 
     public static class BorderInfo implements Cloneable {
-        private int mStyle;          // Enum for border style
-        private ColorType mColor;    // Border color
+        private int mStyle; // Enum for border style
+        private ColorType mColor; // Border color
         private ResolvedCondLength mWidth;
 
         BorderInfo(int style, CondLength width, ColorType color) {
@@ -69,12 +69,12 @@ public class BorderAndPadding implements Cloneable {
             mColor = color;
         }
 
-	public Object clone() throws CloneNotSupportedException {
-	    BorderInfo bi = (BorderInfo) super.clone();
-	    bi.mWidth = (ResolvedCondLength)mWidth.clone();
-	    // do we need to clone the Color too???
-	    return bi;
-	}
+        public Object clone() throws CloneNotSupportedException {
+            BorderInfo bi = (BorderInfo) super.clone();
+            bi.mWidth = (ResolvedCondLength) mWidth.clone();
+            // do we need to clone the Color too???
+            return bi;
+        }
     }
 
     private BorderInfo[] borderInfo = new BorderInfo[4];
@@ -134,12 +134,12 @@ public class BorderAndPadding implements Cloneable {
 
     public int getBorderWidth(int side, boolean bDiscard) {
         if ((borderInfo[side] == null) ||
-	    (borderInfo[side].mStyle == Constants.NONE) ||
-	    (bDiscard && borderInfo[side].mWidth.bDiscard)) {
+                (borderInfo[side].mStyle == Constants.NONE) ||
+                (bDiscard && borderInfo[side].mWidth.bDiscard)) {
             return 0;
         } else {
             return borderInfo[side].mWidth.iLength;
-	}
+        }
     }
 
     public ColorType getBorderColor(int side) {
@@ -157,7 +157,8 @@ public class BorderAndPadding implements Cloneable {
     }
 
     public int getPadding(int side, boolean bDiscard) {
-        if ((padding[side] == null) || (bDiscard && padding[side].bDiscard)) {
+        if ((padding[side] == null) ||
+                (bDiscard && padding[side].bDiscard)) {
             return 0;
         } else
             return padding[side].iLength;

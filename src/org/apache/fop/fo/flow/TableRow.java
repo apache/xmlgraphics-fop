@@ -1,6 +1,6 @@
 /*
- * -- $Id$ --
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * $Id$
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -93,8 +93,9 @@ public class TableRow extends FObj {
     private KeepValue getKeepValue(String sPropName) {
         Property p = this.properties.get(sPropName);
         Number n = p.getNumber();
-        if (n != null)
+        if (n != null) {
             return new KeepValue(KeepValue.KEEP_WITH_VALUE, n.intValue());
+        }
         switch (p.getEnum()) {
         case Constants.ALWAYS:
             return new KeepValue(KeepValue.KEEP_WITH_ALWAYS, 0);

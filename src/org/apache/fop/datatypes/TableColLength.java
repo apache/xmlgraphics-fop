@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -34,8 +34,6 @@ public class TableColLength extends Length {
         this.tcolUnits = tcolUnits;
     }
 
-
-
     /**
      * Override the method in Length to return the number of specified
      * proportional table-column units.
@@ -48,23 +46,23 @@ public class TableColLength extends Length {
      * Calculate the number of millipoints and set it.
      */
     public void resolveTableUnit(double mpointsPerUnit) {
-	setComputedValue((int)(tcolUnits * mpointsPerUnit));
+        setComputedValue((int)(tcolUnits * mpointsPerUnit));
     }
 
-// 	If the table-unit can be resolved, set the computed value
-//     protected void computeValue() {
-// 	if (tblUnitBase.canResolveUnit()) {
-// 	    rslt += (int)(tcolUnits * (double)tblUnitBase.getUnitValue());
-// 	    setComputedValue(rslt);
-// 	}
-//     }
-
+    //If the table-unit can be resolved, set the computed value
+    /*protected void computeValue() {
+        if (tblUnitBase.canResolveUnit()) {
+            rslt += (int)(tcolUnits * (double)tblUnitBase.getUnitValue());
+            setComputedValue(rslt);
+        }
+    }*/
 
     public String toString() {
         return (Double.toString(tcolUnits) + " table-column-units");
     }
 
     public Numeric asNumeric() {
-	return new Numeric(this);
+        return new Numeric(this);
     }
 }
+

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -21,19 +21,21 @@ public class CondLength implements CompoundDatatype {
     // From CompoundDatatype
     public void setComponent(String sCmpnName, Property cmpnValue,
                              boolean bIsDefault) {
-        if (sCmpnName.equals("length"))
+        if (sCmpnName.equals("length")) {
             length = cmpnValue;
-        else if (sCmpnName.equals("conditionality"))
+        } else if (sCmpnName.equals("conditionality")) {
             conditionality = cmpnValue;
+        }
     }
 
     public Property getComponent(String sCmpnName) {
-        if (sCmpnName.equals("length"))
+        if (sCmpnName.equals("length")) {
             return length;
-        else if (sCmpnName.equals("conditionality"))
+        } else if (sCmpnName.equals("conditionality")) {
             return conditionality;
-        else
+        } else {
             return null;
+        }
     }
 
     public Property getConditionality() {
@@ -53,3 +55,4 @@ public class CondLength implements CompoundDatatype {
     }
 
 }
+

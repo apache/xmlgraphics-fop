@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -71,7 +71,7 @@ class PropertyTokenizer {
         boolean currentMaybeOperator = recognizeOperator;
         boolean bSawDecimal;
         recognizeOperator = true;
-        for (; ; ) {
+        for (; ;) {
             if (exprIndex >= exprLength) {
                 currentToken = TOK_EOF;
                 return;
@@ -145,8 +145,9 @@ class PropertyTokenizer {
                         exprIndex++;
                         scanDigits();
                     }
-                } else
+                } else {
                     bSawDecimal = false;
+                }
                 if (exprIndex < exprLength && expr.charAt(exprIndex) == '%') {
                     exprIndex++;
                     currentToken = TOK_PERCENT;
@@ -195,14 +196,16 @@ class PropertyTokenizer {
                                                        exprIndex);
                     // Probably should have some multiple of 3 for length!
                     return;
-                } else
+                } else {
                     throw new PropertyException("illegal character '#'");
+                }
 
             default:
                 --exprIndex;
                 scanName();
-                if (exprIndex == currentTokenStartIndex)
+                if (exprIndex == currentTokenStartIndex) {
                     throw new PropertyException("illegal character");
+                }
                 currentTokenValue = expr.substring(currentTokenStartIndex,
         exprIndex);
                 // if (currentMaybeOperator) {
@@ -236,9 +239,10 @@ class PropertyTokenizer {
      * Attempt to recognize a valid NAME token in the input expression.
      */
     private void scanName() {
-        if (exprIndex < exprLength && isNameStartChar(expr.charAt(exprIndex)))
+        if (exprIndex < exprLength && isNameStartChar(expr.charAt(exprIndex))) {
             while (++exprIndex < exprLength
-                   && isNameChar(expr.charAt(exprIndex)));
+                   && isNameChar(expr.charAt(exprIndex))) { }
+        }
     }
 
     /**
@@ -246,8 +250,9 @@ class PropertyTokenizer {
      * input expression.
      */
     private void scanDigits() {
-        while (exprIndex < exprLength && isDigit(expr.charAt(exprIndex)))
+        while (exprIndex < exprLength && isDigit(expr.charAt(exprIndex))) {
             exprIndex++;
+        }
     }
 
     /**
@@ -255,8 +260,9 @@ class PropertyTokenizer {
      * input expression.
      */
     private void scanHexDigits() {
-        while (exprIndex < exprLength && isHexDigit(expr.charAt(exprIndex)))
+        while (exprIndex < exprLength && isHexDigit(expr.charAt(exprIndex))) {
             exprIndex++;
+        }
     }
 
     /**
@@ -282,11 +288,11 @@ class PropertyTokenizer {
     }
 
 
-    static private final String nameStartChars =
+    private static final String nameStartChars =
         "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    static private final String nameChars = ".-0123456789";
-    static private final String digits = "0123456789";
-    static private final String hexchars = digits + "abcdefABCDEF";
+    private static final String nameChars = ".-0123456789";
+    private static final String digits = "0123456789";
+    private static final String hexchars = digits + "abcdefABCDEF";
 
     /**
      * Return a boolean value indicating whether the argument is a
@@ -342,3 +348,4 @@ class PropertyTokenizer {
     }
 
 }
+

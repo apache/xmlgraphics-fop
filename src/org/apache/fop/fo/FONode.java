@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
  * base class for nodes in the XML tree
  *
  */
-abstract public class FONode {
+public abstract class FONode {
     protected FOUserAgent userAgent;
     protected FONode parent;
     protected String name;

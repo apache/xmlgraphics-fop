@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -138,10 +138,12 @@ public class AWTStarter extends CommandLineStarter {
         // center window
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = frame.getSize();
-        if (frameSize.height > screenSize.height)
+        if (frameSize.height > screenSize.height) {
             frameSize.height = screenSize.height;
-        if (frameSize.width > screenSize.width)
+        }
+        if (frameSize.width > screenSize.width) {
             frameSize.width = screenSize.width;
+        }
         frame.setLocation((screenSize.width - frameSize.width) / 2,
                           (screenSize.height - frameSize.height) / 2);
         frame.setVisible(true);

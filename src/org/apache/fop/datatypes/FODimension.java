@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -20,7 +20,7 @@ public class FODimension {
 
 
     public FODimension(int ipd, int bpd) {
-	this.ipd = ipd;
-	this.bpd = bpd;
+        this.ipd = ipd;
+        this.bpd = bpd;
     }
 }

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -24,12 +24,13 @@ public abstract class RegionBASE extends Region {
     }
 
     public void end() {
-	// The problem with this is that it might not be known yet....
-	// Supposing extent is calculated in terms of percentage
+        // The problem with this is that it might not be known yet....
+        // Supposing extent is calculated in terms of percentage
         this.extent = this.properties.get("extent").getLength().mvalue();
     }
 
     int getExtent() {
-	return this.extent;
+        return this.extent;
     }
 }
+

@@ -13,16 +13,16 @@ import java.util.NoSuchElementException;
     
 public abstract class AbstractCharIterator implements CharIterator, Cloneable {
 
-    abstract public boolean hasNext();
+    public abstract boolean hasNext();
 
-    abstract public char nextChar() throws NoSuchElementException ;
+    public abstract char nextChar() throws NoSuchElementException ;
 
     public Object next() throws NoSuchElementException {
-	return new Character(nextChar());
+        return new Character(nextChar());
     }
 
     public void remove() {
-	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
 
@@ -30,10 +30,11 @@ public abstract class AbstractCharIterator implements CharIterator, Cloneable {
     }
 
     public Object clone() {
-	try {
-	    return super.clone();
-	} catch (CloneNotSupportedException ex) {
-	    return null;
-	}
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException ex) {
+            return null;
+        }
     }
-};
+}
+

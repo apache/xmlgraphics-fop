@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -9,8 +9,6 @@ package org.apache.fop.pdf;
 
 // Java
 import java.util.ArrayList;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 public class PDFColor extends PDFPathPaint {
     protected static double blackFactor = 2.0;    // could be 3.0 as well.
@@ -306,3 +304,4 @@ public class PDFColor extends PDFPathPaint {
     }
 
 }
+

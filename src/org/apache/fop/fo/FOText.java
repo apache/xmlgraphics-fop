@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources."
  */
@@ -69,7 +69,7 @@ public class FOText extends FObj {
 
     public void addLayoutManager(List list) {
         // if nothing left (length=0)?
-        if(length == 0) return;
+        if(length == 0) { return; }
 
         if (length < ca.length) {
             char[] tmp = ca;
@@ -93,8 +93,9 @@ public class FOText extends FObj {
             if (curIndex < length) {
                 // Just a char class? Don't actually care about the value!
                 return ca[curIndex++];
-            } else
+            } else {
                 throw new NoSuchElementException();
+            }
         }
 
         public void remove() {

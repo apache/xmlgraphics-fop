@@ -40,8 +40,8 @@ import java.util.List;
  *
  */
 public class Character extends FObj {
-    public final static int OK = 0;
-    public final static int DOESNOT_FIT = 1;
+    public static final int OK = 0;
+    public static final int DOESNOT_FIT = 1;
 
     private char characterValue;
 

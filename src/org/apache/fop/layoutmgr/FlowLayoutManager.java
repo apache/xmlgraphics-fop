@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -42,7 +42,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         MinOptMax stackSize = new MinOptMax();
 
         while ((curLM = getChildLM()) != null) {
-            if(curLM.generatesInlineAreas()) {
+            if (curLM.generatesInlineAreas()) {
                 // problem
                 curLM.setFinished(true);
                 continue;
@@ -65,7 +65,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
                     // set stackLimit for remaining space
                     childLC.setStackLimit(MinOptMax.subtract(bpd, stackSize));
 
-                    if(bp.isForcedBreak()) {
+                    if (bp.isForcedBreak()) {
                         breakPage = true;
                         break;
                     }
@@ -75,16 +75,16 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
             // check the stack bpd and if greater than available
             // height then go to the last best break and return
             // break position
-            if(stackSize.opt > context.getStackLimit().opt) {
+            if (stackSize.opt > context.getStackLimit().opt) {
                 breakPage = true;
             }
-            if(breakPage) {
+            if (breakPage) {
                 return new BreakPoss(
                       new LeafPosition(this, blockBreaks.size() - 1));
             }
         }
         setFinished(true);
-        if(blockBreaks.size() > 0) {
+        if (blockBreaks.size() > 0) {
             return new BreakPoss(
                              new LeafPosition(this, blockBreaks.size() - 1));
         }

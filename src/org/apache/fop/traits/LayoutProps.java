@@ -32,13 +32,13 @@ public class LayoutProps {
     }
 
     //     public static int higherBreak(int brkParent, int brkChild) {
-    // 	if (brkParent == brkChild) return brkChild;
-    // 	for (int i=0; i < s_breakPriorities.length; i++) {
-    // 	    int bp = s_breakPriorities[i];
-    // 	    if (bp == brkParent) return brkChild;
-    // 	    else if (bp == brkChild) return brkParent;
-    // 	}
-    // 	return brkChild;
+    // if (brkParent == brkChild) return brkChild;
+    // for (int i=0; i < s_breakPriorities.length; i++) {
+    //     int bp = s_breakPriorities[i];
+    //     if (bp == brkParent) return brkChild;
+    //     else if (bp == brkChild) return brkParent;
+    // }
+    // return brkChild;
     //     }
 
     public void combineWithParent(LayoutProps parentLP) {
@@ -48,11 +48,13 @@ public class LayoutProps {
                 if (bp == breakBefore) {
                     breakBefore = parentLP.breakBefore;
                     break;
-                } else if (bp == parentLP.breakBefore)
+                } else if (bp == parentLP.breakBefore) {
                     break;
+                }
             }
         }
         // Parent span always overrides child span
         bIsSpan = parentLP.bIsSpan;
     }
 }
+

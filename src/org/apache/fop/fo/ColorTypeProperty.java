@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -19,11 +19,13 @@ public class ColorTypeProperty extends Property {
 
         public Property convertProperty(Property p,
                                         PropertyList propertyList, FObj fo) {
-            if (p instanceof ColorTypeProperty)
+            if (p instanceof ColorTypeProperty) {
                 return p;
+            }
             ColorType val = p.getColorType();
-            if (val != null)
+            if (val != null) {
                 return new ColorTypeProperty(val);
+            }
             return convertPropertyDatatype(p, propertyList, fo);
         }
 
@@ -45,3 +47,4 @@ public class ColorTypeProperty extends Property {
     }
 
 }
+

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -170,8 +170,9 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         LayoutManager lm = getChildLM();
         if (lm != null) {
             return lm.canBreakBefore(context);
-        } else
+        } else {
             return false; // ??? NO child LM?
+        }
     }
 
     protected MinOptMax getPrevIPD(LayoutManager lm) {
@@ -322,7 +323,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
 
         m_prevBP = bp;
         //         if (bIsLast) {
-        // 	    setFinished(true);  // Our last area, so indicate done
+        //     setFinished(true);  // Our last area, so indicate done
         //         }
         return myBP;
     }

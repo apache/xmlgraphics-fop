@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -17,19 +17,21 @@ public class OneCharIterator extends AbstractCharIterator {
     private char charCode;
 
     public OneCharIterator(char c) {
-	this.charCode = c;
+        this.charCode = c;
     }
 
     public boolean hasNext() {
-	return bFirst;
+        return bFirst;
     }
 
     public char nextChar() throws NoSuchElementException {
-	if (bFirst) {
-	    bFirst=false;
-	    return charCode;
-	}
-	else throw new NoSuchElementException();
+        if (bFirst) {
+            bFirst = false;
+            return charCode;
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 
 }
+

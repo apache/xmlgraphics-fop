@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -28,18 +28,19 @@ public abstract class RegionSE extends RegionBASE {
      * diminish by extend of start and end if present.
      */
     protected void adjustIPD(Rectangle refRect) {
-	int yoff = 0;
-	Region before = getSiblingRegion(Region.BEFORE);
-	if (before != null && before.getPrecedence()) {
-	    yoff = before.getExtent();
-	    refRect.translate(0, yoff);
-	}
-	Region after = getSiblingRegion(Region.AFTER);
-	if (after != null && after.getPrecedence()) {
-	    yoff += after.getExtent();
-	}
-	if (yoff > 0) {
-	    refRect.grow(0,-yoff);
-	}
+        int yoff = 0;
+        Region before = getSiblingRegion(Region.BEFORE);
+        if (before != null && before.getPrecedence()) {
+            yoff = before.getExtent();
+            refRect.translate(0, yoff);
+        }
+        Region after = getSiblingRegion(Region.AFTER);
+        if (after != null && after.getPrecedence()) {
+            yoff += after.getExtent();
+        }
+        if (yoff > 0) {
+            refRect.grow(0,-yoff);
+        }
     }
 }
+

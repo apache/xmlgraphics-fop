@@ -32,8 +32,8 @@ public class FontMetricsMapper implements org.apache.fop.layout.FontMetric {
     /**
      * The first and last non space-character
      */
-    private final static int FIRST_CHAR = 32;
-    private final static int LAST_CHAR = 255;
+    private static final int FIRST_CHAR = 32;
+    private static final int LAST_CHAR = 255;
 
     /**
      * This is a AWTFontMetrics that does the real calculation.

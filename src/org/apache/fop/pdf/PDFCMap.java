@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -210,7 +210,7 @@ public class PDFCMap extends PDFStream {
          * p.append("\n/UseCMap ");
          * if (base instanceof String) {
          * p.append("/"+base);
-         * } else {	// base instanceof PDFStream
+         * } else {// base instanceof PDFStream
          * p.append(((PDFStream)base).referencePDF());
          * }
          * }

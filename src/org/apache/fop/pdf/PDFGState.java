@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -81,7 +81,7 @@ public class PDFGState extends PDFObject {
     }
 
     public void setAlpha(float val, boolean fill) {
-        if(fill) {
+        if (fill) {
             values.put(ca, new Float(val));
         } else {
             values.put(CA, new Float(val));
@@ -113,7 +113,7 @@ public class PDFGState extends PDFObject {
 
     private void appendVal(StringBuffer sb, String name) {
         Object val = values.get(name);
-        if(val != null) {
+        if (val != null) {
             sb.append("/" + name + " " + val + "\n");
         }
     }
@@ -129,21 +129,21 @@ public class PDFGState extends PDFObject {
      */
 
     public boolean equals(Object obj) {
-        if(obj == this) {
+        if (obj == this) {
             return true;
         }
-        if(!(obj instanceof PDFGState)) {
+        if (!(obj instanceof PDFGState)) {
             return false;
         }
         HashMap vals1 = values;
         HashMap vals2 = ((PDFGState)obj).values;
-        if(vals1.size() != vals2.size()) {
+        if (vals1.size() != vals2.size()) {
             return false;
         }
-        for(Iterator iter = vals1.keySet().iterator(); iter.hasNext(); ) {
+        for(Iterator iter = vals1.keySet().iterator(); iter.hasNext();) {
             Object str = iter.next();
             Object obj1 = vals1.get(str);
-            if(!obj1.equals(vals2.get(str))) {
+            if (!obj1.equals(vals2.get(str))) {
                 return false;
             }
         }

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -76,19 +76,23 @@ public class TableColumn extends FObj {
         // this.properties.get("number-columns-spanned");
         // this.properties.get("visibility");
 
-        this.iColumnNumber =
-	    this.properties.get("column-number").getNumber().intValue();
+        iColumnNumber = properties.get("column-number").getNumber().intValue();
 
-        this.numColumnsRepeated =
-            this.properties.get("number-columns-repeated").getNumber().intValue();
+        numColumnsRepeated =
+            properties.get("number-columns-repeated").getNumber().intValue();
 
         this.backgroundColor =
             this.properties.get("background-color").getColorType();
 
-        this.columnWidthPropVal =
-            this.properties.get("column-width").getLength();
-	// This won't include resolved table-units or % values yet.
-	this.columnWidth = columnWidthPropVal.mvalue();
+        Property prop = this.properties.get("column-width");
+        if(prop != null) {
+            columnWidthPropVal = properties.get("column-width").getLength();
+
+            // This won't include resolved table-units or % values yet.
+            columnWidth = columnWidthPropVal.mvalue();
+        } else {
+            columnWidth = 300000;
+        }
 
         // initialize id
         setupID();

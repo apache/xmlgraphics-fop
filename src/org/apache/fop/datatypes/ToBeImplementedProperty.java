@@ -1,6 +1,6 @@
 /*
  * $Id$ --
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -19,27 +19,24 @@ public class ToBeImplementedProperty extends Property {
 
         public Property convertProperty(Property p,
                                         PropertyList propertyList, FObj fo) {
-            if (p instanceof ToBeImplementedProperty)
+            if (p instanceof ToBeImplementedProperty) {
                 return p;
+            }
             ToBeImplementedProperty val =
-    new ToBeImplementedProperty(getPropName());
+                new ToBeImplementedProperty(getPropName());
             return val;
         }
-
     }
 
     public ToBeImplementedProperty(String propName) {
 
-	// XXX: (mjg@recalldesign.com) This is a bit of a kluge, perhaps an
-	// UnimplementedPropertyException or something similar should
-	// get thrown here instead.
-	//
-	// This was solved on the maintenance branch by using
-	// MessageHandler, btu that doesn't exist on the trunk
+        //XXX: (mjg@recalldesign.com) This is a bit of a kluge, perhaps an
+        //UnimplementedPropertyException or something similar should
+        //get thrown here instead.
 
 //         Logger log = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
 //         log.warn("property - \"" + propName
 //                                + "\" is not implemented yet.");
     }
-
 }
+

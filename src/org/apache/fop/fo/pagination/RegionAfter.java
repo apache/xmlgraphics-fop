@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -18,23 +18,20 @@ import org.xml.sax.Attributes;
 
 public class RegionAfter extends RegionBA {
 
-
     public RegionAfter(FONode parent) {
         super(parent);
     }
 
-
     protected Rectangle getViewportRectangle (FODimension reldims) {
-	// Depends on extent and precedence
-	Rectangle vpRect =
-	    new Rectangle(0, reldims.bpd - getExtent(),
-			  reldims.ipd, getExtent());
-	if (getPrecedence() == false) {
-	    adjustIPD(vpRect);
-	}
-	return vpRect;
+        // Depends on extent and precedence
+        Rectangle vpRect =
+            new Rectangle(0, reldims.bpd - getExtent(),
+        reldims.ipd, getExtent());
+        if (getPrecedence() == false) {
+            adjustIPD(vpRect);
+        }
+        return vpRect;
     }
-
 
     protected String getDefaultRegionName() {
         return "xsl-region-after";
@@ -48,5 +45,5 @@ public class RegionAfter extends RegionBA {
         return Region.AFTER;
     }
 
-
 }
+

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -244,22 +244,22 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         return curBlockArea;
     }
 
-    public void addBorders(Block curBlockArea) {
+    public void addBorders(Block curBlock) {
         BorderProps bps = getBorderProps(BorderAndPadding.TOP);
         if(bps.width != 0) {
-            curBlockArea.addTrait(Trait.BORDER_START, bps);
+            curBlock.addTrait(Trait.BORDER_START, bps);
         }
         bps = getBorderProps(BorderAndPadding.BOTTOM);
         if(bps.width != 0) {
-            curBlockArea.addTrait(Trait.BORDER_END, bps);
+            curBlock.addTrait(Trait.BORDER_END, bps);
         }
         bps = getBorderProps(BorderAndPadding.LEFT);
         if(bps.width != 0) {
-            curBlockArea.addTrait(Trait.BORDER_BEFORE, bps);
+            curBlock.addTrait(Trait.BORDER_BEFORE, bps);
         }
         bps = getBorderProps(BorderAndPadding.RIGHT);
         if(bps.width != 0) {
-            curBlockArea.addTrait(Trait.BORDER_AFTER, bps);
+            curBlock.addTrait(Trait.BORDER_AFTER, bps);
         }
     }
 
