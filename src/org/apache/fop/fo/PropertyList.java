@@ -119,9 +119,56 @@ public class PropertyList extends Hashtable {
   /**
    * Return the value explicitly specified on this FO.
    * @param propertyName The name of the property whose value is desired.
+   * It may be a compound name, such as space-before.optimum.
+   * @return The value if the property is explicitly set or set by
+   * a shorthand property, otherwise null.
+   */
+  public Property getExplicitOrShorthand(String propertyName) {
+    /* Handle request for one part of a compound property */
+    int sepchar = propertyName.indexOf('.');
+    String baseName;
+    if (sepchar > -1) {
+      baseName = propertyName.substring(0,sepchar);
+    }
+    else baseName = propertyName;
+    Property p =getExplicitBaseProp(baseName);
+    if (p == null) {
+      p = builder.getShorthand(this, namespace, element, baseName);
+    }
+    if (p != null && sepchar > -1) {
+      return builder.getSubpropValue(namespace, element, baseName,
+				     p, propertyName.substring(sepchar+1));
+    }
+    return p;
+  }
+
+  /**
+   * Return the value explicitly specified on this FO.
+   * @param propertyName The name of the property whose value is desired.
+   * It may be a compound name, such as space-before.optimum.
    * @return The value if the property is explicitly set, otherwise null.
    */
   public Property getExplicit(String propertyName) {
+    /* Handle request for one part of a compound property */
+    int sepchar = propertyName.indexOf('.');
+    if (sepchar > -1) {
+      String baseName = propertyName.substring(0,sepchar);
+      Property p =getExplicitBaseProp(baseName);
+      if (p != null) {
+	return this.builder.getSubpropValue(namespace, element, baseName,
+					    p, propertyName.substring(sepchar+1));
+      }
+      else return null;
+    }
+    return (Property)super.get(propertyName);
+  }
+
+  /**
+   * Return the value explicitly specified on this FO.
+   * @param propertyName The name of the base property whose value is desired.
+   * @return The value if the property is explicitly set, otherwise null.
+   */
+  public Property getExplicitBaseProp(String propertyName) {
     return (Property)super.get(propertyName);
   }
 
@@ -158,24 +205,36 @@ public class PropertyList extends Hashtable {
      * we try to compute it from the corresponding relative property: this
      * happends in computeProperty.
      */
-  private Property findProperty(String propertyName) {
+  private Property findProperty(String propertyName, boolean bTryInherit) {
     Property p = null;
     if (builder.isCorrespondingForced(this, namespace, element, propertyName)) {
       p = builder.computeProperty(this,namespace, element, propertyName);
     }
     else {
-        p = getExplicit(propertyName);
+        p = getExplicitBaseProp(propertyName);
         if (p == null) {
           p = this.builder.computeProperty(this,namespace, element, propertyName);
         }
-        if (p == null) { // else inherit (if has parent and is inheritable)
+        if (p == null) { // check for shorthand specification
+            p = builder.getShorthand(this, namespace, element, propertyName);
+        }
+        if (p == null && bTryInherit) { // else inherit (if has parent and is inheritable)
             if (this.parentPropertyList != null &&
     	    builder.isInherited(namespace, element, propertyName)) {
-              p = parentPropertyList.findProperty(propertyName);
+              p = parentPropertyList.findProperty(propertyName, true);
             }
         }
     }
     return p;
+  }
+
+
+  /**
+   * Return the property on the current FlowObject if it is specified, or if a
+   * corresponding property is specified. If neither is specified, it returns null.
+   */
+  public Property getSpecified(String propertyName) {
+    return get(propertyName, false, false);
   }
   
 
@@ -186,6 +245,16 @@ public class PropertyList extends Hashtable {
    * the default value.
    */
   public Property get(String propertyName) {
+    return get(propertyName, true, true);
+  }
+
+  /**
+   * Return the property on the current FlowObject. Depending on the passed flags,
+   * this will try to compute it based on other properties, or if it is
+   * inheritable, to return the inherited value. If all else fails, it returns
+   * the default value.
+   */
+  private Property get(String propertyName, boolean bTryInherit, boolean bTryDefault) {
 
     if (builder == null)
       MessageHandler.errorln("OH OH, builder has not been set");
@@ -198,15 +267,15 @@ public class PropertyList extends Hashtable {
       propertyName = propertyName.substring(0,sepchar);
     }
 
-    Property p = findProperty(propertyName);
-    if (p == null) { // default value for this FO!
+    Property p = findProperty(propertyName, bTryInherit);
+    if (p == null && bTryDefault) { // default value for this FO!
       try {
 	p = this.builder.makeProperty(this,namespace, element,propertyName);
       } catch (FOPException e) {
 	// don't know what to do here
       }
     }
-    if (subpropName != null) {
+    if (subpropName != null && p != null) {
       return this.builder.getSubpropValue(namespace, element, propertyName,
 					   p, subpropName);
     }

@@ -78,15 +78,21 @@ public class FObj extends FONode {
 
 //    protected PropertyList properties;
   public PropertyList properties;
+  protected PropertyManager propMgr;
 
   protected String name;
 
   protected FObj(FObj parent, PropertyList propertyList) {
     super(parent);
-    this.properties = propertyList;
+    this.properties = propertyList;  // TO BE REMOVED!!!
     propertyList.setFObj(this);
+    this.propMgr = makePropertyManager(propertyList);
     this.name = "default FO";
     setWritingMode();
+  }
+
+  protected PropertyManager makePropertyManager(PropertyList propertyList) {
+    return new PropertyManager(propertyList);
   }
 
   /**
@@ -187,17 +193,15 @@ public class FObj extends FONode {
      * Set writing mode for this FO.
      * Find nearest ancestor, including self, which generates
      * reference areas and use the value of its writing-mode property.
+     * If no such ancestor is found, use the value on the root FO.
      */
   private void setWritingMode() {
-    FObj p = this;
-    while (p!= null && !p.generatesReferenceAreas())
-      p = p.getParent();
-    if (p != null) {
-      this.properties.setWritingMode(p.getProperty("writing-mode").getEnum());
-    }
-    else {
-      // shouldn't happen!!!
-    }
+    FObj p ;
+    FObj parent;
+    for (p=this;
+	 !p.generatesReferenceAreas() && (parent = p.getParent()) != null;
+	 p=parent);
+    this.properties.setWritingMode(p.getProperty("writing-mode").getEnum());
   }
 
 
