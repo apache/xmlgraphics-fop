@@ -41,6 +41,11 @@ public class PageViewport implements Resolveable, Cloneable {
 
     private Map pendingResolved = null;
 
+    // hashmap of markers for this page
+    // start and end are added by the fo that contains the markers
+    private Map markerStart = null;
+    private Map markerEnd = null;
+
     /**
      * Create a page viewport.
      * @param p the page reference area that holds the contents
@@ -168,6 +173,32 @@ public class PageViewport implements Resolveable, Cloneable {
                 unresolved = null;
             }
         }
+    }
+
+    /**
+     * Add the start markers for this page.
+     *
+     * @param marks the map of start markers to add
+     */
+    public void addMarkers(Map marks, boolean start) {
+        if (start) {
+            if (markerStart == null) {
+                markerStart = new HashMap();
+            }
+            markerStart.putAll(marks);
+        } else {
+            if (markerEnd == null) {
+                markerEnd = new HashMap();
+            }
+            markerEnd.putAll(marks);
+        }
+    }
+
+    public Object getMarker(String name, int pos) {
+        if (markerStart != null) {
+            return markerStart.get(name);
+        }
+        return null;
     }
 
     /**
