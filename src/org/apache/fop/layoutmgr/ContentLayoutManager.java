@@ -1,19 +1,17 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
-
 package org.apache.fop.layoutmgr;
 
+import java.util.List;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
-
-import java.util.ArrayList;
 
 /**
  * Content Layout Manager.
@@ -21,17 +19,23 @@ import java.util.ArrayList;
  * leader use-content and title.
  */
 public class ContentLayoutManager implements LayoutManager {
-    Area holder;
-    int stackSize;
-    LayoutManager parentLM;
 
+    private Area holder;
+    private int stackSize;
+    private LayoutManager parentLM;
+
+    /**
+     * Constructs a new ContentLayoutManager
+     *
+     * @param area  The parent area
+     */
     public ContentLayoutManager(Area area) {
         holder = area;
     }
 
     public void fillArea(LayoutManager curLM) {
 
-        ArrayList childBreaks = new ArrayList();
+        List childBreaks = new java.util.ArrayList();
         MinOptMax stack = new MinOptMax();
         int ipd = 1000000;
         BreakPoss bp;
@@ -60,19 +64,19 @@ public class ContentLayoutManager implements LayoutManager {
                 stack.add(bp.getStackingSize());
                 childBreaks.add(bp);
 
-            if(bp.getLead() > lineLead) {
-                lineLead = bp.getLead();
-            }
-            if(bp.getTotal() > maxtb) {
-                maxtb = bp.getTotal();
-            }
-            if(bp.getMiddle() > middlefollow) {
-                middlefollow = bp.getMiddle();
-            }
+                if (bp.getLead() > lineLead) {
+                    lineLead = bp.getLead();
+                }
+                if (bp.getTotal() > maxtb) {
+                    maxtb = bp.getTotal();
+                }
+                if (bp.getMiddle() > middlefollow) {
+                    middlefollow = bp.getMiddle();
+                }
             }
         }
 
-        if(maxtb - lineLead > middlefollow) {
+        if (maxtb - lineLead > middlefollow) {
             middlefollow = maxtb - lineLead;
         }
 
@@ -88,7 +92,7 @@ public class ContentLayoutManager implements LayoutManager {
         lc.setLeadingSpace(new SpaceSpecifier(false));
         lc.setTrailingSpace(new SpaceSpecifier(false));
         PositionIterator breakPosIter =
-          new BreakPossPosIter(childBreaks, 0, childBreaks.size());
+                new BreakPossPosIter(childBreaks, 0, childBreaks.size());
         curLM.addAreas(breakPosIter, lc);
         stackSize = stack.opt;
     }
@@ -97,63 +101,80 @@ public class ContentLayoutManager implements LayoutManager {
         return stackSize;
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public boolean generatesInlineAreas() {
         return true;
     }
 
-    public Area getParentArea (Area childArea) {
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    public Area getParentArea(Area childArea) {
         return holder;
     }
 
-    public boolean addChild (Area childArea) {
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    public boolean addChild(Area childArea) {
         holder.addChild(childArea);
         return true;
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void setParentLM(LayoutManager lm) {
         parentLM = lm;
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public boolean canBreakBefore(LayoutContext lc) {
         return false;
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         return null;
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public boolean isFinished() {
         return false;
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void setFinished(boolean isFinished) {
+        //to be done
     }
 
-    public void addAreas(PositionIterator posIter, LayoutContext context) {
-    }
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    public void addAreas(PositionIterator posIter, LayoutContext context) { }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void init() {
+        //to be done
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void resetPosition(Position position) {
+        //to be done
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void getWordChars(StringBuffer sbChars, Position bp1,
-                             Position bp2) {
-    }
+            Position bp2) { }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public String getCurrentPageNumber() {
         return parentLM.getCurrentPageNumber();
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public PageViewport resolveRefID(String ref) {
-        return parentLM.resolveRefID(ref);;
+        return parentLM.resolveRefID(ref);
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void addIDToPage(String id) {
         parentLM.addIDToPage(id);
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void addUnresolvedArea(String id, Resolveable res) {
         parentLM.addUnresolvedArea(id, res);
     }
