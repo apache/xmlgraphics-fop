@@ -5,6 +5,9 @@
 <document>
   <header>
     <title>PDF encryption.</title>
+    <authors>
+      <person name="Patrick C. Lankswert" email=""/>
+    </authors>
   </header>
   <body>
     <section>
@@ -20,9 +23,9 @@
         limited.
       </p>
       <p>
-        For further information about features and restrictions regarrding PDFF
+        For further information about features and restrictions regarding PDF
         encryption, look at the documentation coming with Adobe Acrobat or the
-        technial documentation on the Adobe web site.
+        technical documentation on the Adobe web site.
       </p>
     </section>
     <section>
