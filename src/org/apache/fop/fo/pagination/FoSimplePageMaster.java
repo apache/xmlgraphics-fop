@@ -104,6 +104,7 @@ public class FoSimplePageMaster extends FONode {
         // Process region-body
         regionBody = new FoRegionBody(foTree, this, regionEv);
         xmlevents.getEndElement(regionEv);
+        pool.surrenderEvent(regionEv);
 
         // Remaining regions are optional
         if ((regionEv = xmlevents.expectStartElement
@@ -112,6 +113,7 @@ public class FoSimplePageMaster extends FONode {
         {
             regionBefore = new FoRegionBefore(foTree, this, regionEv);
             xmlevents.getEndElement(regionEv);
+            pool.surrenderEvent(regionEv);
         }
 
         if ((regionEv = xmlevents.expectStartElement
@@ -120,6 +122,7 @@ public class FoSimplePageMaster extends FONode {
         {
             regionAfter = new FoRegionAfter(foTree, this, regionEv);
             xmlevents.getEndElement(regionEv);
+            pool.surrenderEvent(regionEv);
         }
 
         if ((regionEv = xmlevents.expectStartElement
@@ -128,6 +131,7 @@ public class FoSimplePageMaster extends FONode {
         {
             regionStart = new FoRegionStart(foTree, this, regionEv);
             xmlevents.getEndElement(regionEv);
+            pool.surrenderEvent(regionEv);
         }
 
         if ((regionEv = xmlevents.expectStartElement
@@ -136,6 +140,7 @@ public class FoSimplePageMaster extends FONode {
         {
             regionEnd = new FoRegionEnd(foTree, this, regionEv);
             xmlevents.getEndElement(regionEv);
+            pool.surrenderEvent(regionEv);
         }
 
         // Clean up the build environment

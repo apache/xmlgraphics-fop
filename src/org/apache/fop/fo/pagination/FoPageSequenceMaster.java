@@ -215,6 +215,7 @@ public class FoPageSequenceMaster extends FONode {
                     throw new FOPException
                             ("Aargh! expectStartElement(events, list)");
                 xmlevents.getEndElement(ev);
+                pool.surrenderEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
             throw new FOPException("Unexpected EOF in page-sequence-master.");
@@ -304,6 +305,7 @@ public class FoPageSequenceMaster extends FONode {
                     //    ("Found conditional-page-master-reference");
                     new FoConditionalPageMasterReference(foTree, this, ev);
                     this.xmlevents.getEndElement(ev);
+                    this.pool.surrenderEvent(ev);
                 } while (true);
             } catch (NoSuchElementException e) {
                 // End of file reached
