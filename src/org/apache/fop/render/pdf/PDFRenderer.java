@@ -668,6 +668,7 @@ public class PDFRenderer implements Renderer {
                                           fontRenderContext,
                                           textPainter,
                                           gnrFactory);
+                nodeRenderContext.setTextPainter(textPainter);
             }
 
         return nodeRenderContext;

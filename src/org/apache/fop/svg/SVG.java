@@ -109,7 +109,99 @@ public class SVG extends SVGObj implements GraphicsCreator {
 				super(parent, propertyList);
 				this.name = "svg:svg";
 	tagName = "svg";
-	props = new String[] {"width", "height", "x", "y", "id", "style"};
+	props = new String[] {"width", "height", "x", "y", "id", "style", "class", "visibility",
+        "id", 
+        "class", 
+    
+            
+        
+        "enable-background", 
+    
+        
+        "flood-color", 
+        "flood-opacity", 
+    
+        
+        "fill", 
+        "fill-opacity", 
+        "fill-rule", 
+        "stroke", 
+        "stroke-dasharray", 
+        "stroke-dashoffset", 
+        "stroke-linecap", 
+        "stroke-linejoin", 
+        "stroke-miterlimit", 
+        "stroke-opacity", 
+        "stroke-width", 
+    
+        
+        "font-family", 
+        "font-size", 
+        "font-size-adjust", 
+        "font-stretch", 
+        "font-style", 
+        "font-variant", 
+        "font-weight", 
+    
+        
+        "stop-color", 
+        "stop-opacity", 
+    
+        
+        "clip-path", 
+        "clip-rule", 
+        "color", 
+        "color-interpolation", 
+        "color-rendering", 
+        "cursor", 
+        "display", 
+        "filter", 
+        "image-rendering", 
+        "mask", 
+        "opacity", 
+        "pointer-events", 
+        "space-rendering", 
+        "text-rendering", 
+        "visibility", 
+    
+        
+        "color-profile", 
+    
+        
+        "lighting-color", 
+    
+        
+        "marker-start", 
+        "marker-mid", 
+        "marker-end", 
+    
+        
+        "alignment-baseline", 
+        "baseline-shift", 
+        "direction", 
+        "glyph-orientation-horizontal", 
+        "glyph-orientation-vertical", 
+        "kerning", 
+        "letter-spacing", 
+        "text-decoration", 
+        "unicode-bidi", 
+        "word-spacing", 
+    
+        
+        "writing-mode", 
+        "text-anchor", 
+        "dominant-baseline", 
+    
+        
+        "clip", 
+        "overflow", 
+    
+    
+            "id", 
+            "style", 
+            "transform", 
+            "class", 
+	};
 		}
 
 /*    public void addGraphic(Document doc, Element parent) {
@@ -217,8 +309,12 @@ public class SVG extends SVGObj implements GraphicsCreator {
 							this.properties.get("font-style").getString();
 						String fontWeight =
 							this.properties.get("font-weight").getString();
-						int fontSize =
-							this.properties.get("font-size").getLength().mvalue();
+						String fontSz = this.properties.get("font-size").getString();
+						int fontSize = area.getFontState().getFontSize();
+						try {
+						    fontSize = Integer.parseInt(fontSz);
+						} catch(Exception e) {
+						}
 
 						// FIX-ME: should get the font-variant property
 						this.fs = new FontState(area.getFontInfo(), fontFamily,
@@ -247,11 +343,13 @@ public class SVG extends SVGObj implements GraphicsCreator {
                     };
                 doc.setSVGContext(dc);
 
-                //System.out.println("tag:" + tagName);
                 Element topLevel = doc.createElementNS("http://www.w3.org/2000/svg", tagName);
                 for(int count = 0; count < props.length; count++) {
-                    String rf = this.properties.get(props[count]).getString();
-                    topLevel.setAttribute(props[count], rf);
+                    if(this.properties.get(props[count]) != null) {
+                        String rf = this.properties.get(props[count]).getString();
+                        if(rf != null)
+                            topLevel.setAttribute(props[count], rf);
+                    }
                 }
 				doc.appendChild(topLevel);
                 int numChildren = this.children.size();

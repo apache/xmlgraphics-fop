@@ -93,7 +93,7 @@ public class SVGStringProperty extends Property {
          */
         public Property make(PropertyList propertyList)
         throws FOPException {
-            return make(propertyList, "", null);
+            return make(propertyList, null, null);
         }
     }
 

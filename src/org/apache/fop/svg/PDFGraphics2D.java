@@ -10,6 +10,8 @@ package org.apache.fop.svg;
 
 import org.apache.fop.pdf.*;
 import org.apache.fop.layout.*;
+import org.apache.fop.fonts.*;
+import org.apache.fop.render.pdf.*;
 
 import org.apache.batik.ext.awt.g2d.*;
 
@@ -38,6 +40,8 @@ import java.util.Map;
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
 public class PDFGraphics2D extends AbstractGraphics2D {
+        boolean standalone = false;
+
 		/** the PDF Document being created */
 		protected PDFDocument pdfDoc;
 
@@ -45,6 +49,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
 		/** the current stream to add PDF commands to */
 		StringWriter currentStream = new StringWriter();
+
+        PDFStream pdfStream;
 
 		/** the current (internal) font name */
 		protected String currentFontName;
@@ -61,8 +67,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 		/** the current colour for use in svg */
 		private PDFColor currentColour = new PDFColor(0, 0, 0);
 
+    private FontInfo fontInfo;
+
     /**
-     * Default constructor
+     * Create a new PDFGraphics2D with the given pdf document info.
+     * This is used to create a Graphics object for use inside an already
+     * existing document.
      */
     public PDFGraphics2D(boolean textAsShapes, FontState fs, PDFDocument doc, String font,
 											 int size, int xpos, int ypos){
@@ -73,6 +83,39 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 				currentYPosition = ypos;
 				currentXPosition = xpos;
 				fontState = fs;
+    }
+
+    /**
+     * Create a new PDFGraphics2D with the given pdf document info.
+     * This is used to create a Graphics object for use inside an already
+     * existing document.
+     * Maybe this could be handled as a subclass (PDFDocumentGraphics2d)
+     */
+    public PDFGraphics2D(boolean textAsShapes, OutputStream stream)
+	{
+        super(textAsShapes);
+        standalone = true;
+        this.pdfDoc = new PDFDocument();
+        this.pdfDoc.setProducer("FOP SVG Renderer");
+        pdfStream = this.pdfDoc.makeStream();
+
+				currentFontName = "";
+				currentFontSize = 0;
+				currentYPosition = 0;
+				currentXPosition = 0;
+//				fontState = fs;
+
+        // end part
+        /*
+        FontSetup.addToResources(this.pdfDoc, fontInfo);
+        pdfStream.write(getString())
+        this.pdfResources = this.pdfDoc.getResources();
+        currentPage = this.pdfDoc.makePage(this.pdfResources, currentStream,
+                                           page.getWidth() / 1000,
+					   page.getHeight() / 1000, page);
+        this.pdfDoc.output(stream);
+		*/
+
     }
 
 		public String getString() {
@@ -101,6 +144,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         return new PDFGraphics2D(this);
     }
 
+    public void setColor(Color c){
+        super.setColor(c);
+        currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
+		currentStream.write(currentColour.getColorSpaceOut(false));
+		currentStream.write(currentColour.getColorSpaceOut(true));
+    }
+
     /**
      * Draws as much of the specified image as is currently available.
      * The image is drawn with its top-left corner at
@@ -127,6 +177,16 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public boolean drawImage(Image img, int x, int y, ImageObserver observer){
         System.err.println("drawImage");
+/*        int width = img.getWidth(observer);
+        int height = img.getHeight(observer);
+        FopImage fopimg = new FopImage() {
+        };
+        int xObjectNum = this.pdfDoc.addImage(fopimg);
+        currentStream.add("q\n" + (((float) w) / 1000f) +
+                          " 0 0 " + (((float) h) / 1000f) + " " +
+                          x + " " +
+                          ((float)(y - h)) + " cm\n" + "/Im" +
+                          xObjectNum + " Do\nQ\n");*/
         return true;
     }
 
@@ -219,6 +279,37 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void draw(Shape s){
         System.out.println("draw(Shape)");
+		PDFNumber pdfNumber = new PDFNumber();
+
+        PathIterator iter = s.getPathIterator(new AffineTransform());
+        while(!iter.isDone()) {
+            double vals[] = new double[6];
+            int type = iter.currentSegment(vals);
+            switch(type) {
+                case PathIterator.SEG_CUBICTO:
+					currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) +
+															" " + pdfNumber.doubleOut(vals[2]) + " " + pdfNumber.doubleOut(vals[3]) + " " +
+															pdfNumber.doubleOut(vals[4]) + " " + pdfNumber.doubleOut(vals[5]) + " c\n");
+                break;
+                case PathIterator.SEG_LINETO:
+					currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " l\n");
+                break;
+                case PathIterator.SEG_MOVETO:
+					currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " m\n");
+                break;
+                case PathIterator.SEG_QUADTO:
+					currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " " +
+															pdfNumber.doubleOut(vals[2]) + " " + pdfNumber.doubleOut(vals[3]) + " y\n");
+                break;
+                case PathIterator.SEG_CLOSE:
+					currentStream.write("h\n");
+                break;
+                default:
+                break;
+            }
+            iter.next();
+        }
+        doDrawing(false, true, false);
     }
 
     /**
@@ -401,7 +492,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 												currentStream.write("f\n");
 								}
 						} else {
-								//				if(di.stroke)
+								//if(stroke)
 								currentStream.write("S\n");
 						}
 		}

@@ -169,6 +169,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <property name="xslt" value="org.apache.xalan.xslt.Process"/>
     <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
+    <property name="src.propmaker.xsl" value="${src.codegen}/propmaker.xsl"/>
     <property name="foproperties.xml" value="${build.codegen}/foproperties.xml"/>
     <property name="svgproperties.xml" value="${build.codegen}/svgproperties.xml"/>
     <property name="extproperties.xml" value="${build.codegen}/extproperties.xml"/>
@@ -358,6 +359,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
         dependent="${propinc.xsl}"
         outfile="${build.src}/${replacestring}/fo/properties/foenums_${ignore_this}" smart="yes"/>
 
+    <xslt infile="${svgelements.xml}" xsltfile="${src.propmaker.xsl}"
+        dependent="${propinc.xsl}"
+        outfile="${svgproperties.xml}" smart="yes"/>
 
     <xslt infile="${svgproperties.xml}" xsltfile="${properties.xsl}"
         dependent="${propinc.xsl}"
