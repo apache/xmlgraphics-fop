@@ -32,7 +32,11 @@ import org.apache.fop.fo.flow.FoPageSequence;
 public class RegionBodyVport extends RegionViewport {
 
     /**
-     * @param area
+     * Creates a <code>region-body-viewport</code> with the given rectangular
+     * area
+     * @param area the rectangular area
+     * @param pageSeq the generating <code>page-sequence</code>
+     * @param generatedBy
      * @param parent
      * @param sync
      */
@@ -46,6 +50,9 @@ public class RegionBodyVport extends RegionViewport {
     }
 
     /**
+     * Creates a <code>region-body-viewport</code> with no rectangular area
+     * @param pageSeq the generating <code>page-sequence</code>
+     * @param generatedBy
      * @param parent
      * @param sync
      */
@@ -57,6 +64,19 @@ public class RegionBodyVport extends RegionViewport {
         super(pageSeq, generatedBy, parent, sync);
     }
 
+    /**
+
+    /**
+     * Creates and returns a <code>RegionBodyVport</code> with no rectangular
+     * area. The area created references a null <code>RegionBodyRefArea</code>.
+     * <b>N.B.</b> this is a <code>static</code> method.
+     * @param pageSeq the <code>page-sequence</code> to which this area belongs
+     * @param generatedBy the node which generated this reference area; in this
+     * case, the <code>page-sequence</code>
+     * @param parent the <code>page-reference-area</code>
+     * @param sync
+     * @return the created reference area
+     */
     public static RegionBodyVport nullRegionBodyVport(
             FoPageSequence pageSeq, FONode generatedBy,
             Node parent, Object sync) {

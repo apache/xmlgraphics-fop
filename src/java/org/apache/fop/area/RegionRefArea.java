@@ -17,6 +17,7 @@
  */
 package org.apache.fop.area;
 
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,11 @@ implements ReferenceArea {
     private ArrayList blocks = new ArrayList();
 
     /**
-     * Create a new region reference area.
+     * Creates a new region reference area, without a defined rectangular area
+     * @param pageSeq the generating page sequence
+     * @param generatedBy the generating node; in this case, the page sequence
+     * @param parent the associated viewport area
+     * @param sync
      */
     public RegionRefArea(
             FoPageSequence pageSeq,
@@ -45,6 +50,23 @@ implements ReferenceArea {
             Node parent,
             Object sync) {
         super(pageSeq, generatedBy, parent, sync);
+    }
+
+    /**
+     * Creates a new region reference area, with a defined rectangular area
+     * @param area the geometry of this area
+     * @param pageSeq the generating page sequence
+     * @param generatedBy the generating node; in this case, the page sequence
+     * @param parent the associated viewport area
+     * @param sync
+     */
+    public RegionRefArea(
+            Rectangle2D area,
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(area, pageSeq, generatedBy, parent, sync);
     }
 
     /**

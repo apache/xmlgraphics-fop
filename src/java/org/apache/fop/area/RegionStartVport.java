@@ -32,17 +32,58 @@ import org.apache.fop.fo.flow.FoPageSequence;
 public class RegionStartVport extends RegionViewport {
 
     /**
-     * @param parent
+     * Creates a new region-start area with no defined rectangular area
+     * @param pageSeq the generating <code>page-sequence</code>
+     * @param generatedBy the node which generated this reference area; in this
+     * case, the <code>page-sequence</code>
+     * @param parent the page-reference-area
      * @param sync
-     * @param viewArea
      */
     public RegionStartVport(
-            Rectangle2D viewArea,
             FoPageSequence pageSeq,
             FONode generatedBy,
             Node parent,
             Object sync) {
-        super(viewArea, pageSeq, generatedBy, parent, sync);
+        super(pageSeq, generatedBy, parent, sync);
+    }
+
+    /**
+     * Creates a new region-start area with the defined rectangular area
+     * @param area the rectangular area
+     * @param pageSeq the generating <code>page-sequence</code>
+     * @param generatedBy the node which generated this reference area; in this
+     * case, the <code>page-sequence</code>
+     * @param parent the page-reference-area
+     * @param sync
+     */
+    public RegionStartVport(
+            Rectangle2D area,
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(area, pageSeq, generatedBy, parent, sync);
+    }
+
+    /**
+     * Creates and returns a <code>RegionStartVport</code> with no
+     * rectangular area.
+     * <b>N.B.</b> this is a <code>static</code> method.
+     * @param pageSeq the <code>page-sequence</code> to which this area belongs
+     * @param generatedBy the node which generated this reference area; in this
+     * case, the <code>page-sequence</code>
+     * @param parent the <code>region-body-viewport-area</code>
+     * @param sync
+     * @return the created reference area
+     */
+    public static RegionStartVport nullRegionStartVport(
+            FoPageSequence pageSeq, FONode generatedBy,
+            Node parent, Object sync) {
+        RegionStartVport vport =
+            new RegionStartVport(pageSeq, generatedBy, parent, sync);
+        vport.setRegion(RegionStartRefArea.nullRegionStartRef(
+                pageSeq, generatedBy, vport, sync));
+        return vport;
     }
 
 }

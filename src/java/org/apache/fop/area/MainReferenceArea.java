@@ -49,6 +49,18 @@ implements ReferenceArea {
         super(pageSeq, generatedBy, parent, sync);
     }
 
+
+    /**
+     * Creates and returns a <code>MainReferenceArea</code> with no rectangular
+     * area. The span created references a null <code>NormalFlowRefArea</code>.
+     * <b>N.B.</b> this is a <code>static</code> method.
+     * @param pageSeq the <code>page-sequence</code> to which this area belongs
+     * @param generatedBy the node which generated this reference area; in this
+     * case, the <code>page-sequence</code>
+     * @param parent the <code>region-body-reference-area</code>
+     * @param sync
+     * @return the created reference area
+     */
     public static MainReferenceArea nullMainRefArea(
             FoPageSequence pageSeq, FONode generatedBy,
             Node parent, Object sync) {
