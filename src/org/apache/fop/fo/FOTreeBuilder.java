@@ -196,9 +196,8 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
                 MessageHandler.errorln("WARNING: Unknown formatting object "
                                        + fullName);
             }
-            fobjMaker = new FObjMixed.Maker();    // fall back
+            fobjMaker = new Unknown.Maker();    // fall back
         }
-
 
         try {
             PropertyList list = null;

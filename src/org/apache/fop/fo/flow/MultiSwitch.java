@@ -12,7 +12,7 @@ import org.apache.fop.fo.*;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.AreaTree;
+import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -37,4 +37,14 @@ public class MultiSwitch extends ToBeImplementedElement {
         this.name = "fo:multi-switch";
     }
 
+    public Status layout(Area area) throws FOPException {
+
+        // Common Accessibility Properties
+        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+
+        // this.properties.get("auto-restore");
+        // this.properties.get("id");
+
+        return super.layout(area);
+    }
 }

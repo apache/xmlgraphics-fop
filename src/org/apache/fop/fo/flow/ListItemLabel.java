@@ -10,7 +10,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.Area;
+import org.apache.fop.layout.*;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
@@ -42,6 +42,12 @@ public class ListItemLabel extends FObj {
         if (numChildren != 1) {
             throw new FOPException("list-item-label must have exactly one block in this version of FOP");
         }
+
+        // Common Accessibility Properties
+        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+     
+        // this.properties.get("id");
+        // this.properties.get("keep-together");
 
         // initialize id
         String id = this.properties.get("id").getString();

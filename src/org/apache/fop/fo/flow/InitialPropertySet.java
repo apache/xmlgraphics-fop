@@ -9,6 +9,7 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.layout.*;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
@@ -37,4 +38,35 @@ public class InitialPropertySet extends ToBeImplementedElement {
         this.name = "fo:initial-property-set";
     }
 
+    public Status layout(Area area) throws FOPException {
+
+        // Common Accessibility Properties
+        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+
+        // Common Aural Properties
+        AuralProps mAurProps = propMgr.getAuralProps();
+
+        // Common Border, Padding, and Background Properties
+        BorderAndPadding bap = propMgr.getBorderAndPadding();
+        BackgroundProps bProps = propMgr.getBackgroundProps();
+
+        // Common Font Properties
+        //this.fontState = propMgr.getFontState(area.getFontInfo());
+
+        // Common Relative Position Properties
+        RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+
+        // this.properties.get("color");
+        // this.properties.get("id");
+        // this.properties.get("letter-spacing");
+        // this.properties.get("line-height");
+        // this.properties.get("line-height-shift-adjustment");
+        // this.properties.get("score-spaces");
+        // this.properties.get("text-decoration");
+        // this.properties.get("text-shadow");
+        // this.properties.get("text-transform");
+        // this.properties.get("word-spacing");
+
+        return super.layout(area);
+    }
 }

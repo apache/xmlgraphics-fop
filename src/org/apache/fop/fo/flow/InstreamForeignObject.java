@@ -93,6 +93,45 @@ public class InstreamForeignObject extends FObj {
         }
 
         if (this.marker == START) {
+
+            // Common Accessibility Properties
+            AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+        
+            // Common Aural Properties
+            AuralProps mAurProps = propMgr.getAuralProps();
+
+            // Common Border, Padding, and Background Properties
+            BorderAndPadding bap = propMgr.getBorderAndPadding();
+            BackgroundProps bProps = propMgr.getBackgroundProps();
+
+            // Common Margin Properties-Inline
+            MarginInlineProps mProps = propMgr.getMarginInlineProps();
+
+            // Common Relative Position Properties
+            RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+
+            // this.properties.get("alignment-adjust");
+            // this.properties.get("alignment-baseline");
+            // this.properties.get("baseline-shift");
+            // this.properties.get("block-progression-dimension");
+            // this.properties.get("content-height");
+            // this.properties.get("content-type");
+            // this.properties.get("content-width");
+            // this.properties.get("display-align");
+            // this.properties.get("dominant-baseline");
+            // this.properties.get("height");  
+            // this.properties.get("id");
+            // this.properties.get("inline-progression-dimension");
+            // this.properties.get("keep-with-next");
+            // this.properties.get("keep-with-previous");
+            // this.properties.get("line-height");
+            // this.properties.get("line-height-shift-adjustment");
+            // this.properties.get("overflow");
+            // this.properties.get("scaling");
+            // this.properties.get("scaling-method");
+            // this.properties.get("text-align");
+            // this.properties.get("width");
+
             /* retrieve properties */
             String id = this.properties.get("id").getString();
             int align = this.properties.get("text-align").getEnum();

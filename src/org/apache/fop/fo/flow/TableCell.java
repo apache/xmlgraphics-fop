@@ -122,6 +122,36 @@ public class TableCell extends FObj {
 
     public void doSetup()    // throws FOPException
      {
+        // Common Accessibility Properties
+        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+
+        // Common Aural Properties
+        AuralProps mAurProps = propMgr.getAuralProps();
+
+        // Common Border, Padding, and Background Properties
+        BorderAndPadding bap = propMgr.getBorderAndPadding();
+        BackgroundProps bProps = propMgr.getBackgroundProps();
+
+        // Common Relative Position Properties
+        RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+
+        // this.properties.get("border-after-precedence");
+        // this.properties.get("border-before-precendence");
+        // this.properties.get("border-end-precendence");
+        // this.properties.get("border-start-precendence");
+        // this.properties.get("block-progression-dimension");
+        // this.properties.get("column-number");
+        // this.properties.get("display-align");
+        // this.properties.get("relative-align");
+        // this.properties.get("empty-cells");
+        // this.properties.get("ends-row");
+        // this.properties.get("height");
+        // this.properties.get("id");
+        // this.properties.get("number-columns-spanned");
+        // this.properties.get("number-rows-spanned");
+        // this.properties.get("starts-row");
+        // this.properties.get("width");
+
         this.iColNumber =
             properties.get("column-number").getNumber().intValue();
         if (iColNumber < 0) {

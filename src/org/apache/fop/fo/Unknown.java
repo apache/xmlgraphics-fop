@@ -5,45 +5,45 @@
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.fo.flow;
+package org.apache.fop.fo;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.layout.*;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.*;
+import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
 
 /**
+ * This represents an unknown element.
+ * For example with unsupported namespaces.
+ * This prevents any further problems arising from the unknown
+ * data.
  */
-public class MultiProperties extends ToBeImplementedElement {
+public class Unknown extends FObj {
 
     public static class Maker extends FObj.Maker {
         public FObj make(FObj parent,
                          PropertyList propertyList) throws FOPException {
-            return new MultiProperties(parent, propertyList);
+            return new Unknown(parent, propertyList);
         }
 
     }
 
     public static FObj.Maker maker() {
-        return new MultiProperties.Maker();
+        return new Unknown.Maker();
     }
 
-    protected MultiProperties(FObj parent,
-                              PropertyList propertyList) throws FOPException {
+    protected Unknown(FObj parent,
+                    PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:multi-properties";
+        this.name = "unknown";
     }
 
     public Status layout(Area area) throws FOPException {
-
-        // Common Accessibility Properties
-        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
-
-        // this.properties.get("id");
-
-        return super.layout(area);
+        MessageHandler.logln("Layout Unknown element");
+        return new Status(Status.OK);
     }
 }
