@@ -284,4 +284,8 @@ public class AreaTree {
         return data;
     }
 
+    public AreaTreeControl getAreaTreeControl() {
+        return atControl;
+    }
+
 }

@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.image;
 
 // Java
@@ -74,9 +74,9 @@ import org.apache.fop.apps.FOUserAgent;
  * @author Eric SCHAEFFER
  */
 public class ImageFactory {
-    
+
     private static ImageFactory factory = new ImageFactory();
-    
+
     private ImageCache cache = new ContextImageCache(true);
 
     private ImageFactory() {
@@ -161,7 +161,7 @@ public class ImageFactory {
      * @param ua the user agent context
      * @return the fop image instance
      */
-    protected static FopImage loadImage(String href, FOUserAgent ua) {
+    public static FopImage loadImage(String href, FOUserAgent ua) {
         Logger log = ua.getLogger();
 
         InputStream in = openStream(href, ua);
@@ -176,7 +176,7 @@ public class ImageFactory {
             imgInfo = ImageReaderFactory.make(
                           href, in, ua);
         } catch (Exception e) {
-            log.error("Error while recovering image information (" 
+            log.error("Error while recovering image information ("
                     + href + ") : " + e.getMessage(), e);
             return null;
         }
@@ -187,7 +187,7 @@ public class ImageFactory {
             } catch (Exception e) {
                 log.debug("Error closing the InputStream for the image", e);
             }
-            log.error("No ImageReader for this type of image (" 
+            log.error("No ImageReader for this type of image ("
                     + href + ")");
             return null;
         }
@@ -195,7 +195,7 @@ public class ImageFactory {
         String imgMimeType = imgInfo.mimeType;
         String imgClassName = getImageClassName(imgMimeType);
         if (imgClassName == null) {
-            log.error("Unsupported image type (" 
+            log.error("Unsupported image type ("
                     + href + "): " + imgMimeType);
             return null;
         }
@@ -222,18 +222,18 @@ public class ImageFactory {
             } else {
                 msg = ex.getMessage();
             }
-            log.error("Error creating FopImage object (" 
+            log.error("Error creating FopImage object ("
                     + href + "): " + msg, (t == null) ? ex : t);
             return null;
         } catch (Exception ex) {
-            log.error("Error creating FopImage object (" 
+            log.error("Error creating FopImage object ("
                     + href + "): " + ex.getMessage(), ex);
             return null;
         }
         if (!(imageInstance instanceof org.apache.fop.image.FopImage)) {
-            log.error("Error creating FopImage object (" 
-                    + href + "): " + "class " 
-                    + imageClass.getName() 
+            log.error("Error creating FopImage object ("
+                    + href + "): " + "class "
+                    + imageClass.getName()
                     + " doesn't implement org.apache.fop.image.FopImage interface");
             return null;
         }
@@ -254,7 +254,7 @@ public class ImageFactory {
         try {
             in = ua.getStream(href);
         } catch (IOException ioe) {
-            log.error("Error while opening stream for (" 
+            log.error("Error while opening stream for ("
                     + href + "): " + ioe.getMessage(), ioe);
             return null;
         }
@@ -277,7 +277,7 @@ public class ImageFactory {
             } catch (Exception e) {
                 // maybe relative
                 if (ua.getBaseURL() == null) {
-                    log.error("Error with image URL: " + e.getMessage() 
+                    log.error("Error with image URL: " + e.getMessage()
                             + " and no base URL is specified", e);
                     return null;
                 }
@@ -285,7 +285,7 @@ public class ImageFactory {
                     absoluteURL = new URL(ua.getBaseURL() + absoluteURL.getFile());
                 } catch (MalformedURLException e_context) {
                     // pb context url
-                    log.error("Invalid Image URL - error on relative URL: " 
+                    log.error("Invalid Image URL - error on relative URL: "
                             + e_context.getMessage(), e_context);
                     return null;
                 }
@@ -300,11 +300,11 @@ public class ImageFactory {
                 log.error("Could not resolve URI for image: " + href);
                 return null;
             }
-            
+
             //Decorate the InputStream with a BufferedInputStream
             return new java.io.BufferedInputStream(in);
         } catch (Exception e) {
-            log.error("Error while opening stream for (" 
+            log.error("Error while opening stream for ("
                     + href + "): " + e.getMessage(), e);
             return null;
         }
@@ -346,7 +346,7 @@ public class ImageFactory {
  * This keeps track of invalid images.
  */
 class BasicImageCache implements ImageCache {
-    
+
     private Set invalid = Collections.synchronizedSet(new java.util.HashSet());
     private Map contextStore = Collections.synchronizedMap(new java.util.HashMap());
 
@@ -385,7 +385,7 @@ class BasicImageCache implements ImageCache {
  * weak hashmap so they may be garbage collected.
  */
 class ContextImageCache implements ImageCache {
-    
+
     // if this cache is collective then images can be shared
     // among contexts, this implies that the base directory
     // is either the same or does not effect the images being

@@ -176,7 +176,7 @@ public class LayoutMasterSet extends FObj {
      * duplicate, that it maps to the same region-class.
      * @throws FOPException if there's a name duplication
      */
-    protected void checkRegionNames() throws FOPException {
+    public void checkRegionNames() throws FOPException {
         Map allRegions = new java.util.HashMap();
         for (Iterator spm = simplePageMasters.values().iterator();
                 spm.hasNext();) {
@@ -210,7 +210,7 @@ public class LayoutMasterSet extends FObj {
      * @param regionName name of the region
      * @return true when the region name specified has a region in this LayoutMasterSet
      */
-    protected boolean regionNameExists(String regionName) {
+    public boolean regionNameExists(String regionName) {
         for (Iterator e = simplePageMasters.values().iterator();
                 e.hasNext();) {
             if (((SimplePageMaster)e.next()).regionNameExists(regionName)) {

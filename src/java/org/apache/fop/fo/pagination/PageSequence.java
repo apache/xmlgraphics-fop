@@ -70,10 +70,10 @@ public class PageSequence extends FObj {
     //
     // intial-page-number types
     //
-    private static final int EXPLICIT = 0;
-    private static final int AUTO = 1;
-    private static final int AUTO_EVEN = 2;
-    private static final int AUTO_ODD = 3;
+    public static final int EXPLICIT = 0;
+    public static final int AUTO = 1;
+    public static final int AUTO_EVEN = 2;
+    public static final int AUTO_ODD = 3;
 
     //
     // associations
@@ -96,7 +96,7 @@ public class PageSequence extends FObj {
     /**
      * Map of flows to their flow name (flow-name, Flow)
      */
-    private HashMap flowMap;
+    public HashMap flowMap;
 
     // according to communication from Paul Grosso (XSL-List,
     // 001228, Number 406), confusion in spec section 6.4.5 about
@@ -113,19 +113,19 @@ public class PageSequence extends FObj {
 
     // page number and related formatting variables
     private String ipnValue;
-    private int currentPageNumber = 0;
+    public int currentPageNumber = 0;
     private int explicitFirstNumber = 0; // explicitly specified
-    private int firstPageNumber = 0; // actual
-    private PageNumberGenerator pageNumberGenerator;
+    public int firstPageNumber = 0; // actual
+    public PageNumberGenerator pageNumberGenerator;
 
-    private int forcePageCount = 0;
+    public int forcePageCount = 0;
     private int pageCount = 0;
     private boolean isForcing = false;
 
     /**
      * specifies page numbering type (auto|auto-even|auto-odd|explicit)
      */
-    private int pageNumberType;
+    public int pageNumberType;
 
     /**
      * used to determine whether to calculate auto, auto-even, auto-odd
@@ -139,8 +139,8 @@ public class PageSequence extends FObj {
      * The pageSequenceMaster is null if master-reference refers to a
      * simple-page-master.
      */
-    private SimplePageMaster simplePageMaster;
-    private PageSequenceMaster pageSequenceMaster;
+    public SimplePageMaster simplePageMaster;
+    public PageSequenceMaster pageSequenceMaster;
 
     /**
      * The main content flow for this page-sequence.
