@@ -80,7 +80,7 @@ public class SVGElement extends SVGObj {
         }
 
         Element e = ((SVGDocument)doc).getRootElement();
-        final float ptmm = userAgent.getPixelToMM();
+        final float ptmm = userAgent.getPixelUnitToMillimeter();
         SVGContext dc = new SVGContext() {
             public float getPixelToMM() {
                 return ptmm;
@@ -118,8 +118,8 @@ public class SVGElement extends SVGObj {
         //if(!e.hasAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns")) {
             e.setAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns", SVGDOMImplementation.SVG_NAMESPACE_URI);
         //}
-
-        Point2D p2d = getSize(12 /* font size */, svgRoot, userAgent.getPixelToMM());
+        int fontSize = 12;
+        Point2D p2d = getSize(fontSize, svgRoot, userAgent.getPixelUnitToMillimeter());
        ((SVGOMElement)e).setSVGContext(null);
 
         return p2d;

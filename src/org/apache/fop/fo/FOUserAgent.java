@@ -54,7 +54,7 @@ public class FOUserAgent implements LogEnabled {
         return base;
     }
 
-    public float getPixelToMM() {
+    public float getPixelUnitToMillimeter() {
         return 0.35277777777777777778f;
     }
 

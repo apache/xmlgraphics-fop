@@ -80,7 +80,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * Returns a customized the pixel to mm factor.
      */
     public float getPixelUnitToMillimter() {
-        return userAgent.getPixelToMM();
+        return userAgent.getPixelUnitToMillimeter();
     }
 
     /**
