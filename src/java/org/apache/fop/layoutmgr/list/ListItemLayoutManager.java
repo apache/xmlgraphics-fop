@@ -70,11 +70,12 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties(PropertyManager)
+     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
-    protected void initProperties(PropertyManager propMgr) {
-        borderProps = propMgr.getBorderAndPadding();
-        backgroundProps = propMgr.getBackgroundProps();
+    protected void initProperties() {
+        PropertyManager pm = fobj.getPropertyManager();
+        borderProps = pm.getBorderAndPadding();
+        backgroundProps = pm.getBackgroundProps();
     }
 
     /**

@@ -84,6 +84,19 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
+     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
+     */
+    protected void initProperties() {
+        PropertyManager pm = fobj.getPropertyManager();
+        layoutProps = pm.getLayoutProps();
+        borderProps = pm.getBorderAndPadding();
+        backgroundProps = pm.getBackgroundProps();
+        marginProps = pm.getMarginProps();
+        foBlockSpaceBefore = layoutProps.spaceBefore.getSpace();
+        prevFoBlockSpaceAfter = foBlockSpaceAfter;
+    }
+
+    /**
      * Iterator for Block layout.
      * This iterator combines consecutive inline areas and
      * creates a line layout manager.
@@ -137,19 +150,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             return child;
 
         }
-    }
-
-    /**
-     * This method provides a hook for a LayoutManager to intialize traits
-     * for the areas it will create, based on Properties set on its FO.
-     */
-    protected void initProperties(PropertyManager pm) {
-        layoutProps = pm.getLayoutProps();
-        borderProps = pm.getBorderAndPadding();
-        backgroundProps = pm.getBackgroundProps();
-        marginProps = pm.getMarginProps();
-        foBlockSpaceBefore = layoutProps.spaceBefore.getSpace();
-        prevFoBlockSpaceAfter = foBlockSpaceAfter;
     }
 
     public BreakPoss getNextBreakPoss(LayoutContext context) {

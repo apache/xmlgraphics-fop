@@ -84,6 +84,24 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }
 
     /**
+     * This method provides a hook for a LayoutManager to initialize traits
+     * for the areas it will create, based on Properties set on its FO.
+     */
+    public void initialize() {
+        if (fobj != null && bInited == false) {
+            initProperties();
+            bInited = true;
+        }
+    }
+
+    /**
+     * This method is called by initialize() to set any method variables
+     * based on Properties set on its FO.
+     */
+    protected void initProperties() {
+    }
+
+    /**
      * Set the user agent.
      *
      * @param ua the user agent
@@ -223,27 +241,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         //      reset(null);
         //  }
     }
-
-
-    /**
-     * This method provides a hook for a LayoutManager to initialize traits
-     * for the areas it will create, based on Properties set on its FO.
-     */
-    public void initialize() {
-        if (fobj != null && bInited == false) {
-            initProperties(fobj.getPropertyManager());
-            bInited = true;
-        }
-    }
-
-    /**
-     * This method provides a hook for a LayoutManager to initialize traits
-     * for the areas it will create, based on Properties set on its FO.
-     */
-    protected void initProperties(PropertyManager pm) {
-        //log.debug("AbstractLayoutManager.initProperties");
-    }
-
 
     /**
      * Tell whether this LayoutManager has handled all of its content.

@@ -63,40 +63,40 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     /**
      * Create a new block container layout manager.
      */
-    public BlockContainerLayoutManager() {
+    public BlockContainerLayoutManager(FObj node) {
+        super(node);
     }
 
     /**
-     * Create a new block container layout manager.
+     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
-    public BlockContainerLayoutManager(FObj node) {
-        super(node);
+    protected void initProperties() {
+        propManager = fobj.getPropertyManager();
+
+        abProps = propManager.getAbsolutePositionProps();
+        if (abProps.absolutePosition == AbsolutePosition.ABSOLUTE) {
+            Rectangle2D rect = new Rectangle2D.Double(abProps.left,
+                                abProps.top, abProps.right - abProps.left,
+                                abProps.bottom - abProps.top);
+            relDims = new FODimension(0, 0);
+            absoluteCTM = CTM.getCTMandRelDims(propManager.getAbsRefOrient(),
+                propManager.getWritingMode(), rect, relDims);
+        }
+        
+        marginProps = propManager.getMarginProps();
+        borderProps = propManager.getBorderAndPadding();
+        height = propManager.getPropertyList().get(
+            PR_BLOCK_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
+        width = propManager.getPropertyList().get(
+            PR_INLINE_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
     }
 
     public void setOverflow(int of) {
         overflow = of;
     }
 
-    protected void initProperties(PropertyManager pm) {
-        propManager = pm;
-
-        abProps = pm.getAbsolutePositionProps();
-        if (abProps.absolutePosition == AbsolutePosition.ABSOLUTE) {
-            Rectangle2D rect = new Rectangle2D.Double(abProps.left,
-                                abProps.top, abProps.right - abProps.left,
-                                abProps.bottom - abProps.top);
-            relDims = new FODimension(0, 0);
-            absoluteCTM = CTM.getCTMandRelDims(pm.getAbsRefOrient(),
-                pm.getWritingMode(), rect, relDims);
-        }
-        marginProps = pm.getMarginProps();
-        borderProps = pm.getBorderAndPadding();
-        height = pm.getPropertyList().get(PR_BLOCK_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
-        width = pm.getPropertyList().get(PR_INLINE_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
-    }
-
     protected int getRotatedIPD() {
-        PropertyList props = propManager.getPropertyList();
+        PropertyList props = fobj.getPropertyList();
         int height = props.get(PR_HEIGHT).getLength().getValue();
         height = props.get(PR_INLINE_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength().getValue();
 
