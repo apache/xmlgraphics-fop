@@ -1,41 +1,97 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.render.xml;
-
-// FOP
-import org.apache.fop.svg.*;
-import org.apache.fop.render.Renderer;
-import org.apache.fop.render.AbstractRenderer;
-import org.apache.fop.render.RendererContext;
-import org.apache.fop.render.XMLHandler;
-import org.apache.fop.area.*;
-import org.apache.fop.area.inline.*;
-import org.apache.fop.pdf.*;
-import org.apache.fop.fo.properties.LeaderPattern;
-import org.apache.fop.fo.FOUserAgent;
-import org.apache.fop.layout.FontInfo;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.properties.RuleStyle;
-
-// Avalon
-import org.apache.avalon.framework.logger.Logger;
 
 // Java
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.OutputStream;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
 import java.awt.geom.Rectangle2D;
 
+// XML
 import org.w3c.dom.Document;
+
+// FOP
+import org.apache.fop.render.AbstractRenderer;
+import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.XMLHandler;
+import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.BeforeFloat;
+import org.apache.fop.area.Block;
+import org.apache.fop.area.BodyRegion;
+import org.apache.fop.area.Flow;
+import org.apache.fop.area.Footnote;
+import org.apache.fop.area.LineArea;
+import org.apache.fop.area.MainReference;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.RegionReference;
+import org.apache.fop.area.RegionViewport;
+import org.apache.fop.area.Span;
+import org.apache.fop.area.Title;
+import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.Container;
+import org.apache.fop.area.inline.ForeignObject;
+import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.area.inline.Leader;
+import org.apache.fop.area.inline.Space;
+import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.Word;
+import org.apache.fop.fo.properties.RuleStyle;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -45,11 +101,16 @@ import org.w3c.dom.Document;
  * which can be rendered to any renderer.
  */
 public class XMLRenderer extends AbstractRenderer {
-    public static final String mimeType = "text/xml";
+    
+    /** XML MIME type */
+    public static final String XML_MIME_TYPE = "text/xml";
 
-    boolean startedSequence = false;
-    RendererContext context;
+    private boolean startedSequence = false;
+    private RendererContext context;
 
+    /**
+     * @see org.apache.fop.render.Renderer#setProducer(String)
+     */
     public void setProducer(String producer) {
     }
 
@@ -73,19 +134,25 @@ public class XMLRenderer extends AbstractRenderer {
      */
     private boolean consistentOutput = false;
 
+    /**
+     * Creates a new XML renderer.
+     */
     public XMLRenderer() {
-        context = new RendererContext(mimeType);
+        context = new RendererContext(XML_MIME_TYPE);
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
+     */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
 
         //
         //userAgent.addExtensionHandler();
         XMLHandler handler = new XMLXMLHandler();
-        userAgent.setDefaultXMLHandler(mimeType, handler);
+        userAgent.setDefaultXMLHandler(XML_MIME_TYPE, handler);
         String svg = "http://www.w3.org/2000/svg";
-        userAgent.addXMLHandler(mimeType, svg, handler);
+        userAgent.addXMLHandler(XML_MIME_TYPE, svg, handler);
     }
 
     /**
@@ -157,17 +224,19 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     /**
+     * @see org.apache.fop.render.Renderer#startRenderer(OutputStream)
      */
     public void startRenderer(OutputStream outputStream)
-    throws IOException {
+                throws IOException {
         getLogger().debug("rendering areas to XML");
         this.writer = new PrintWriter(outputStream);
-        this.writer.write( "<?xml version=\"1.0\"?>\n<!-- produced by " +
-                           this.producer + " -->\n");
+        this.writer.write("<?xml version=\"1.0\"?>\n"
+                + "<!-- produced by " + this.producer + " -->\n");
         writeStartTag("<areaTree>");
     }
 
     /**
+     * @see org.apache.fop.render.Renderer#stopRenderer()
      */
     public void stopRenderer() throws IOException {
         writeEndTag("</pageSequence>");
@@ -176,10 +245,12 @@ public class XMLRenderer extends AbstractRenderer {
         getLogger().debug("written out XML");
     }
 
-    public void renderPage(PageViewport page) throws IOException,
-    FOPException {
-        writeStartTag("<pageViewport bounds=\"" +
-                      createString(page.getViewArea()) + "\">");
+    /**
+     * @see org.apache.fop.render.Renderer#renderPage(PageViewport)
+     */
+    public void renderPage(PageViewport page) throws IOException, FOPException {
+        writeStartTag("<pageViewport bounds=\""
+                      + createString(page.getViewArea()) + "\">");
         writeStartTag("<page>");
         super.renderPage(page);
         writeEndTag("</page>");
@@ -187,10 +258,13 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     private String createString(Rectangle2D rect) {
-        return "" + (int) rect.getX() + " " + (int) rect.getY() + " " +
-               (int) rect.getWidth() + " " + (int) rect.getHeight();
+        return "" + (int) rect.getX() + " " + (int) rect.getY() + " "
+                  + (int) rect.getWidth() + " " + (int) rect.getHeight();
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#startPageSequence(Title)
+     */
     public void startPageSequence(Title seqTitle) {
         if (startedSequence) {
             writeEndTag("</pageSequence>");
@@ -210,10 +284,13 @@ public class XMLRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderRegionViewport(RegionViewport)
+     */
     protected void renderRegionViewport(RegionViewport port) {
         if (port != null) {
-            writeStartTag("<regionViewport rect=\"" +
-                          createString(port.getViewArea()) + "\">");
+            writeStartTag("<regionViewport rect=\""
+                          + createString(port.getViewArea()) + "\">");
             RegionReference region = port.getRegion();
             if (region.getRegionClass() == RegionReference.BEFORE) {
                 writeStartTag("<regionBefore>");
@@ -240,21 +317,30 @@ public class XMLRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderBeforeFloat(BeforeFloat)
+     */
     protected void renderBeforeFloat(BeforeFloat bf) {
         writeStartTag("<beforeFloat>");
         super.renderBeforeFloat(bf);
         writeEndTag("</beforeFloat>");
     }
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderFootnote(Footnote)
+     */
     protected void renderFootnote(Footnote footnote) {
         writeStartTag("<footnote>");
         super.renderFootnote(footnote);
         writeEndTag("</footnote>");
     }
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderMainReference(MainReference)
+     */
     protected void renderMainReference(MainReference mr) {
-        writeStartTag("<mainReference columnGap=\"" +
-                      mr.getColumnGap() + "\" width=\"" + mr.getWidth() + "\">");
+        writeStartTag("<mainReference columnGap=\""
+                      + mr.getColumnGap() + "\" width=\"" + mr.getWidth() + "\">");
 
         Span span = null;
         List spans = mr.getSpans();
@@ -271,13 +357,19 @@ public class XMLRenderer extends AbstractRenderer {
         writeEndTag("</mainReference>");
     }
 
-    // the normal flow reference area contains stacked blocks
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderFlow(Flow)
+     */
     protected void renderFlow(Flow flow) {
+        // the normal flow reference area contains stacked blocks
         writeStartTag("<flow>");
         super.renderFlow(flow);
         writeEndTag("</flow>");
     }
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderBlock(Block)
+     */
     protected void renderBlock(Block block) {
         String prop = "";
         Map map = block.getTraits();
@@ -289,28 +381,41 @@ public class XMLRenderer extends AbstractRenderer {
         writeEndTag("</block>");
     }
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderLineArea(LineArea)
+     */
     protected void renderLineArea(LineArea line) {
         String prop = "";
         Map map = line.getTraits();
         if (map != null) {
             prop = " props=\"" + getPropString(map) + "\"";
         }
-        writeStartTag("<lineArea height=\"" + line.getHeight() + "\"" +
-                      prop + ">");
+        writeStartTag("<lineArea height=\"" + line.getHeight() + "\""
+                      + prop + ">");
         super.renderLineArea(line);
         writeEndTag("</lineArea>");
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#renderViewport(Viewport)
+     */
     public void renderViewport(Viewport viewport) {
         writeStartTag("<viewport>");
         super.renderViewport(viewport);
         writeEndTag("</viewport>");
     }
 
+    /**
+     * Renders an image
+     * @param image the image
+     */
     public void renderImage(Image image) {
         writeElement("<image url=\"" + image.getURL() + "\"/>");
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#renderContainer(Container)
+     */
     public void renderContainer(Container cont) {
         writeStartTag("<container>");
 
@@ -318,6 +423,10 @@ public class XMLRenderer extends AbstractRenderer {
         writeEndTag("</container>");
     }
 
+    /**
+     * Renders an fo:foreing-object.
+     * @param fo the foreign object
+     */
     public void renderForeignObject(ForeignObject fo) {
         writeStartTag("<foreignObject>");
         Document doc = fo.getDocument();
@@ -327,6 +436,9 @@ public class XMLRenderer extends AbstractRenderer {
         writeEndTag("</foreignObject>");
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#renderCharacter(Character)
+     */
     public void renderCharacter(org.apache.fop.area.inline.Character ch) {
         String prop = "";
         Map map = ch.getTraits();
@@ -336,21 +448,30 @@ public class XMLRenderer extends AbstractRenderer {
         writeElement("<char" + prop + ">" + ch.getChar() + "</char>");
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#renderInlineSpace(Space)
+     */
     public void renderInlineSpace(Space space) {
         writeElement("<space width=\"" + space.getWidth() + "\"/>");
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#renderWord(Word)
+     */
     public void renderWord(Word word) {
         String prop = "";
         Map map = word.getTraits();
         if (map != null) {
             prop = " props=\"" + getPropString(map) + "\"";
         }
-        writeElement("<word wsadjust=\"" + word.getWSadjust() + "\"" +
-             prop + ">" + word.getWord() + "</word>");
+        writeElement("<word wsadjust=\"" + word.getWSadjust() + "\""
+             + prop + ">" + word.getWord() + "</word>");
         super.renderWord(word);
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#renderInlineParent(InlineParent)
+     */
     public void renderInlineParent(InlineParent ip) {
         String prop = "";
         Map map = ip.getTraits();
@@ -362,6 +483,9 @@ public class XMLRenderer extends AbstractRenderer {
     writeEndTag("</inlineparent>");
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#renderLeader(Leader)
+     */
     public void renderLeader(Leader area) {
         String style = "solid";
         switch (area.getRuleStyle()) {
@@ -383,22 +507,29 @@ public class XMLRenderer extends AbstractRenderer {
                 style = "ridge";
                 break;
         }
-        writeElement("<leader width=\"" + area.getWidth() + "\" ruleStyle=\"" + style +
-                     "\" ruleThickness=\"" + area.getRuleThickness() + "\"/>");
+        writeElement("<leader width=\"" + area.getWidth() 
+                        + "\" ruleStyle=\"" + style
+                        + "\" ruleThickness=\"" + area.getRuleThickness() 
+                        + "\"/>");
         super.renderLeader(area);
     }
 
+    /**
+     * Builds a String with attributes from the trait map.
+     * @param traitMap the trait map
+     * @return String the generated attributes
+     */
     protected String getPropString(Map traitMap) {
         StringBuffer strbuf = new StringBuffer();
-    Iterator iter = traitMap.entrySet().iterator();
-    while (iter.hasNext()) {
+        Iterator iter = traitMap.entrySet().iterator();
+        while (iter.hasNext()) {
             Map.Entry traitEntry = (Map.Entry) iter.next();
-        strbuf.append(Trait.getTraitName(traitEntry.getKey()));
-        strbuf.append(':');
-        strbuf.append(traitEntry.getValue().toString());
-        strbuf.append(';');
-    }
-    return strbuf.toString();
+            strbuf.append(Trait.getTraitName(traitEntry.getKey()));
+            strbuf.append(':');
+            strbuf.append(traitEntry.getValue().toString());
+            strbuf.append(';');
+        }
+        return strbuf.toString();
     }
 
 }

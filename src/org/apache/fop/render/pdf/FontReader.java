@@ -1,10 +1,53 @@
 /*
  * $Id$
- * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.render.pdf;
 
 //Java
@@ -89,6 +132,7 @@ public class FontReader extends DefaultHandler {
 
     /**
      * Sets the path to embed a font. A null value disables font embedding.
+     * @param path URI for the embeddable file
      */
     public void setFontEmbedPath(String path) {
         returnFont.setEmbedFileName(path);
@@ -96,6 +140,7 @@ public class FontReader extends DefaultHandler {
 
     /**
      * Enable/disable use of kerning for the font
+     * @param enabled true to enable kerning, false to disable
      */
     public void setKerningEnabled(boolean enabled) {
         returnFont.setKerningEnabled(enabled);
@@ -104,6 +149,7 @@ public class FontReader extends DefaultHandler {
 
     /**
      * Get the generated font object
+     * @return the font
      */
     public Font getFont() {
         return returnFont;
@@ -112,17 +158,29 @@ public class FontReader extends DefaultHandler {
     /**
      * Construct a FontReader object from a path to a metric.xml file
      * and read metric data
+     * @param path URI to the font metric file
+     * @throws FOPException if loading the font fails
      */
     public FontReader(String path) throws FOPException {
         createFont(path);
     }
 
-    public void startDocument() {}
+    /**
+     * @see org.xml.sax.ContentHandler#startDocument()
+     */
+    public void startDocument() {
+    }
 
+    /**
+     * @see org.xml.sax.ContentHandler#setDocumentLocator(Locator)
+     */
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
     }
 
+    /**
+     * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
+     */
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes) {
         if (localName.equals("font-metrics")) {
@@ -164,7 +222,7 @@ public class FontReader extends DefaultHandler {
             //singleFont.width = new int[256];
         } else if ("char".equals(localName)) {
             try {
-                singleFont.setWidth( Integer.parseInt(attributes.getValue("idx")), 
+                singleFont.setWidth(Integer.parseInt(attributes.getValue("idx")), 
                         Integer.parseInt(attributes.getValue("wdt")));
             } catch (NumberFormatException ne) {
                 System.out.println("Malformed width in metric file: "
@@ -186,6 +244,9 @@ public class FontReader extends DefaultHandler {
         return ret;
     }
 
+    /**
+     * @see org.xml.sax.ContentHandler#endElement(String, String, String)
+     */
     public void endElement(String uri, String localName, String qName) {
         if ("font-name".equals(localName)) {
             returnFont.setFontName(text.toString());
@@ -248,6 +309,9 @@ public class FontReader extends DefaultHandler {
         text.setLength(0); //Reset text buffer (see characters())
     }
 
+    /**
+     * @see org.xml.sax.ContentHandler#characters(char[], int, int)
+     */
     public void characters(char[] ch, int start, int length) {
         text.append(ch, start, length);
     }

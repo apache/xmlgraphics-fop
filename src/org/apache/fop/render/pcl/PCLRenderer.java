@@ -1,31 +1,61 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.render.pcl;
 
 // FOP
 import org.apache.fop.render.PrintRenderer;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.datatypes.*;
-import org.apache.fop.pdf.PDFPathPaint;
-import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.layout.*;
-import org.apache.fop.image.*;
-
-import org.w3c.dom.svg.SVGSVGElement;
-import org.w3c.dom.svg.SVGDocument;
-
 
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
 
 /**
  * Renderer that renders areas to PCL
@@ -37,37 +67,37 @@ public class PCLRenderer extends PrintRenderer {
     /**
      * the current stream to add PCL commands to
      */
-    public PCLStream currentStream;
+    protected PCLStream currentStream;
 
     private int pageHeight = 7920;
 
     // These variables control the virtual paggination functionality.
-    public int curdiv = 0;
+    private int curdiv = 0;
     private int divisions = -1;
-    public int paperheight = -1;    // Paper height in decipoints?
-    public int orientation =
-        -1;                         // -1=default/unknown, 0=portrait, 1=landscape.
-    public int topmargin = -1;      // Top margin in decipoints?
-    public int leftmargin = -1;     // Left margin in decipoints?
+    private int paperheight = -1;    // Paper height in decipoints?
+    private int orientation = -1;    // -1=default/unknown, 0=portrait, 1=landscape.
+    private int topmargin = -1;      // Top margin in decipoints?
+    private int leftmargin = -1;     // Left margin in decipoints?
     private int fullmargin = 0;
     private final boolean debug = false;
 
-    private int xoffset =
-        -180;                       // X Offset to allow for PCL implicit 1/4" left margin.
+    private int xoffset = -180;     // X Offset to allow for PCL implicit 1/4" left margin.
 
     private java.util.Hashtable options;
 
     /**
      * Create the PCL renderer
      */
-    public PCLRenderer() {}
+    public PCLRenderer() {
+    }
 
     /**
      * set the PCL document's producer
      *
      * @param producer string indicating application producing PCL
      */
-    public void setProducer(String producer) {}
+    public void setProducer(String producer) {
+    }
 
     public void setFont(String name, float size) {
         int fontcode = 0;
@@ -147,7 +177,8 @@ public class PCLRenderer extends PrintRenderer {
 
             currentStream.add("\033(19M\033(s1p" + (size / 1000)
                               + "v0s0b16686T");
-            // currentStream.add("\033(9U\033(s1p" + (size / 1000) + "v0s0b25093T"); // ECMA Latin 1 Symbol Set in Times Roman???
+            // ECMA Latin 1 Symbol Set in Times Roman???
+            // currentStream.add("\033(9U\033(s1p" + (size / 1000) + "v0s0b25093T");
             break;
         case 14:    // F14 = Zapf Dingbats
 
@@ -160,27 +191,27 @@ public class PCLRenderer extends PrintRenderer {
         }
     }
 
-    public void startRenderer(OutputStream outputStream)
-    throws IOException {
+    public void startRenderer(OutputStream outputStream) throws IOException {
         getLogger().info("rendering areas to PCL");
         currentStream = new PCLStream(outputStream);
 
         // Set orientation.
-        if (orientation > -1)
+        if (orientation > -1) {
             currentStream.add("\033&l" + orientation + "O");
-        else
+        } else {
             currentStream.add("\033&l0O");
-        if (orientation == 1 || orientation == 3)
+        }
+        if (orientation == 1 || orientation == 3) {
             xoffset = -144;
-        else
+        } else {
             xoffset = -180;
+        }
 
         // Reset the margins.
         currentStream.add("\033" + "9\033&l0E");
     }
 
-    public void stopRenderer()
-    throws IOException {
+    public void stopRenderer() throws IOException {
     }
 
 }
