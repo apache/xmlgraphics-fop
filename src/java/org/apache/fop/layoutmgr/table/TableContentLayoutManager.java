@@ -52,6 +52,7 @@ public class TableContentLayoutManager {
     private TableLayoutManager tableLM;
     private TableRowIterator trIter;
 
+    private int startXOffset;
     private int usedBPD;
     
     public TableContentLayoutManager(TableLayoutManager parent) {
@@ -308,7 +309,7 @@ public class TableContentLayoutManager {
     
     protected int getXOffsetOfGridUnit(GridUnit gu) {
         int col = gu.getStartCol();
-        return getTableLM().getColumns().getXOffset(col + 1);
+        return startXOffset + getTableLM().getColumns().getXOffset(col + 1);
     }
     
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
@@ -430,6 +431,14 @@ public class TableContentLayoutManager {
                 start, end + 1), layoutContext);
     }
     
+    /**
+     * Sets the overall starting x-offset. Used for proper placement of cells.
+     * @param startXOffset starting x-offset (table's start-indent)
+     */
+    public void setStartXOffset(int startXOffset) {
+        this.startXOffset = startXOffset;
+    }
+
     public int getUsedBPD() {
         return this.usedBPD;
     }
