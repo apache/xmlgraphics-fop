@@ -69,7 +69,8 @@ public class FOTreeHandler extends FOInputHandler {
     // TODO: Collecting of statistics should be configurable
     private final boolean collectStatistics = true;
     private static final boolean MEM_PROFILE_WITH_GC = false;
-
+    private boolean pageSequenceFound = false;
+    
     /**
      * Somewhere to get our stats from.
      */
@@ -135,6 +136,10 @@ public class FOTreeHandler extends FOInputHandler {
      */
     public void endDocument() throws SAXException {
         try {
+            if (pageSequenceFound == false) {
+                throw new SAXException("Error: No fo:page-sequence child " +
+                    "found within fo:root element.");
+            }
             getAreaTree().endDocument();
             getDriver().getRenderer().stopRenderer();
         } catch (IOException ex) {
@@ -174,6 +179,7 @@ public class FOTreeHandler extends FOInputHandler {
      * @param pageSeq the page sequence starting
      */
     public void startPageSequence(PageSequence pageSeq) {
+        pageSequenceFound = true;
     }
 
     /**

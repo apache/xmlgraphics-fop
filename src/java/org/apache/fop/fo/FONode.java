@@ -195,5 +195,16 @@ public abstract class FONode {
         fotv.serveFONode(this);
     }
 
+    /**
+     * Helper function to standardize the names of all namespace URI - local
+     * name pairs in text messages.
+     * @param namespaceURI URI of node found 
+     *         (e.g., "http://www.w3.org/1999/XSL/Format")
+     * @param localName local name of node, (e.g., "root" for "fo:root")
+     * @return a string combining the two values
+     */
+    public static String getNodeString(String namespaceURI, String localName) {
+        return "(Namespace URI: \"" + namespaceURI + "\", Local Name: \"" + localName + "\")";
+    }
 }
 

@@ -34,6 +34,8 @@ public class Root extends FObj {
     private LayoutMasterSet layoutMasterSet;
     private Declarations declarations;
     private List pageSequences;
+    // temporary until above list populated
+    private boolean pageSequenceFound = false;
 
     /**
      * Keeps count of page number from over PageSequence instances
@@ -72,7 +74,7 @@ public class Root extends FObj {
                 } else if (declarations != null) { // only one fo:declarations
                     throw new IllegalArgumentException("Error: Only one" +
                         " fo:declarations may be defined per fo:root");
-                } else if (!pageSequences.isEmpty()) { // no page-seqs yet
+                } else if (pageSequenceFound) { // no page-seqs yet
                     throw new IllegalArgumentException("Error: fo:declarations" +
                         " must be defined before fo:page-sequence declarations");
                 }
@@ -80,13 +82,15 @@ public class Root extends FObj {
                 if (layoutMasterSet == null) { // must already have a l-m-s
                     throw new IllegalArgumentException("Error:" +
                     " fo:layout-master-set must be first child of fo:root");
+                } else {
+                    pageSequenceFound = true;
                 }
             } else
                 throw new IllegalArgumentException("Error: Invalid child" +
                     " node \"fo:" + localName + "\" of fo:root");
         } else {
-            throw new IllegalArgumentException("Error: Invalid child node (" 
-                + namespaceURI + ") \"" + localName + "\" of fo:root");
+            throw new IllegalArgumentException("Error: Invalid child node " +
+                FONode.getNodeString(namespaceURI, localName) + " of fo:root");
         }
     }
 
@@ -146,6 +150,22 @@ public class Root extends FObj {
      */
     public void setLayoutMasterSet(LayoutMasterSet layoutMasterSet) {
         this.layoutMasterSet = layoutMasterSet;
+    }
+
+    /**
+     * Returns the associated Declarations.
+     * @return the Declarations instance
+     */
+    public Declarations getDeclarations() {
+        return this.declarations;
+    }
+
+    /**
+     * Sets the associated Declarations.
+     * @param Declarations the Declarations to use
+     */
+    public void setDeclarations(Declarations declarations) {
+        this.declarations = declarations;
     }
 
     /**

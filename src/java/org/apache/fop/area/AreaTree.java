@@ -18,6 +18,7 @@
 
 package org.apache.fop.area;
 
+import org.apache.fop.apps.Document;
 import org.apache.fop.area.extensions.BookmarkData;
 import org.apache.fop.fo.extensions.Outline;
 
@@ -50,7 +51,7 @@ public class AreaTree {
     // allows for different models to deal with adding/rendering
     // in different situations
     private AreaTreeModel model;
-    private AreaTreeControl atControl;
+    private Document document;
 
     // hashmap of arraylists containing pages with id area
     private Map idLocations = new HashMap();
@@ -60,10 +61,10 @@ public class AreaTree {
 
     /**
      * Constructor.
-     * @param atControl the AreaTreeControl object controlling this AreaTree
+     * @param document the apps.Document object controlling this AreaTree
      */
-    public AreaTree (AreaTreeControl atControl) {
-        this.atControl = atControl;
+    public AreaTree (Document document) {
+        this.document = document;
     }
 
 
@@ -219,13 +220,13 @@ public class AreaTree {
      * Create the bookmark data in the area tree.
      */
     public void addBookmarksToAreaTree() {
-        if (atControl.getBookmarks() == null) {
+        if (document.getBookmarks() == null) {
             return;
         }
-        atControl.getDriver().getLogger().debug("adding bookmarks to area tree");
+        document.getDriver().getLogger().debug("adding bookmarks to area tree");
         BookmarkData data = new BookmarkData();
-        for (int count = 0; count < atControl.getBookmarks().getOutlines().size(); count++) {
-            Outline out = (Outline)(atControl.getBookmarks().getOutlines()).get(count);
+        for (int count = 0; count < document.getBookmarks().getOutlines().size(); count++) {
+            Outline out = (Outline)(document.getBookmarks().getOutlines()).get(count);
             data.addSubData(createBookmarkData(out));
         }
         addTreeExtension(data);
@@ -251,8 +252,8 @@ public class AreaTree {
         return data;
     }
 
-    public AreaTreeControl getAreaTreeControl() {
-        return atControl;
+    public Document getDocument() {
+        return document;
     }
 
 }
