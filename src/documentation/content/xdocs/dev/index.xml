@@ -104,6 +104,7 @@ To unsubscribe: Send email to <link href="mailto:fop-dev-unsubscribe@xml.apache.
         <p>When changes are committed to the code repository, a record of the diffs is emailed to the fop-cvs mailing list. FOP developers are encouraged to subscribe to this list because it helps in following the progress of the project.
         </p>
         <ul>
+          <li>Review the archives at <link href="http://marc.theaimsgroup.com/?l=fop-cvs&amp;r=1&amp;w=2">Mailing list ARChives</link> (MARC) at the AIMS group (search).</li>
           <li>Subscribe by sending an email to <link href="mailto:fop-cvs-subscribe@xml.apache.org">fop-cvs-subscribe@xml.apache.org</link>.</li>
         </ul>
       </section>
