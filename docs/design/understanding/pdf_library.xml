@@ -1,13 +1,13 @@
 <?xml version="1.0" standalone="no"?>
 <!-- Overview -->
-<document> 
-  <header> 
-	 <title>PDF Library</title> 
-	 <subtitle>All you wanted to know about the PDF Library !</subtitle> 
-	 <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/> 
-	 </authors> 
-  </header> 
-  <body><s1 title="PDF Library"> 
+<document>
+  <header>
+   <title>PDF Library</title>
+   <subtitle>All you wanted to know about the PDF Library !</subtitle>
+   <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+   </authors>
+  </header>
+  <body><s1 title="PDF Library">
 
 <p>The PDF Library is an independant package of classes in FOP. These class
 provide a simple way to construct documents and add the contents. The
@@ -26,12 +26,12 @@ There are a number of methods that can be used to create/add certain PDF objects
 <p>The PDF Document is built by creating a page for each page in the Area Tree.</p>
 <p> This page then has all the contents added.
  The page is then added to the document and available objects can be written to the output stream.</p>
-<p>The contents of the page are things such as text, lines, images etc. 
-The PDFRenderer inserts the text directly into a pdf stream. 
+<p>The contents of the page are things such as text, lines, images etc.
+The PDFRenderer inserts the text directly into a pdf stream.
 The text consists of markup to set fonts, set text position and add text.</p>
-<p>Most of the simple pdf markup is inserted directly into a pdf stream. 
+<p>Most of the simple pdf markup is inserted directly into a pdf stream.
 Other more complex objects or commonly used objects are added through java classes.
-Some pdf objects such as an image consists of two parts.</p> 
+Some pdf objects such as an image consists of two parts.</p>
 <p>It has a separate object for the image data and another bit of markup to display the image in a certain position on the page.
 </p><p>The java objects that represent a pdf object implement a method that returns the markup for inserting into a stream.
 The method is: byte[] toPDF().</p>
@@ -74,5 +74,5 @@ The method is: byte[] toPDF().</p>
 
 
 
-  </s1> 
+  </s1>
   </body></document>

@@ -1,13 +1,13 @@
 <?xml version="1.0" standalone="no"?>
 <!-- Overview -->
-<document> 
-  <header> 
-	 <title>Properties</title> 
-	 <subtitle>All you wanted to know about the Properties !</subtitle> 
-	 <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/> 
-	 </authors> 
-  </header> 
-  <body><s1 title="Property Handling"> 
+<document>
+  <header>
+   <title>Properties</title>
+   <subtitle>All you wanted to know about the Properties !</subtitle>
+   <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+   </authors>
+  </header>
+  <body><s1 title="Property Handling">
 <p>During XML Parsing, the FO tree is constructed. For each FO object (some
 subclass of FObj), the tree builder then passes the list of all
 attributes specified on the FO element to the handleAttrs method. This
@@ -115,7 +115,7 @@ but may not be completely up-to-date</dd></dl></s2>
 
 
 <s2 title="To Do"> <s3 title="documentation">
-                                                                 
+
 <ul><li>explain PropertyManager vs. direct access</li>
 <li>Explain corresponding properties</li></ul></s3>
 
@@ -126,5 +126,5 @@ but may not be completely up-to-date</dd></dl></s2>
 keyword values and shorthand values (one attribute which sets several
 properties)</p></s3></s2>
 
-</s1> 
+</s1>
   </body></document>
