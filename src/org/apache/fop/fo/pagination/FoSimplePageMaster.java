@@ -31,8 +31,6 @@ public class FoSimplePageMaster extends FONode {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
-    private String masterName;
-
     /**
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
@@ -40,18 +38,10 @@ public class FoSimplePageMaster extends FONode {
      * this node
      */
     public FoSimplePageMaster(FOTree foTree, FONode parent, XMLEvent event)
-        throws Tree.TreeException, FOPException, PropertyException
+        throws Tree.TreeException, FOPException
     {
         super(foTree, FObjectNames.SIMPLE_PAGE_MASTER, parent, event,
               FOPropertySets.LAYOUT_SET);
-        System.out.println("FOAttributes: " + event);
-        // Check that the property has been set
-        PropertyValue name = propertySet[PropNames.MASTER_NAME];
-        if (name == null)
-            throw new PropertyException("master-name property not set");
-        if (name.getType() != PropertyValue.NCNAME)
-            throw new PropertyException("master-name property not an NCName.");
-        masterName = ((NCName)name).getNCName();
         // Process regions here
         XMLEvent ev = xmlevents.getEndElement(event);
     }
@@ -59,7 +49,7 @@ public class FoSimplePageMaster extends FONode {
     /**
      * @return a <tt>String</tt> with the "master-name" attribute value.
      */
-    public String getMasterName() {
-        return masterName;
+    public String getMasterName() throws PropertyException {
+        return ((NCName)propertySet[PropNames.MASTER_NAME]).getNCName();
     }
 }
