@@ -77,19 +77,24 @@ public class FObjects {
 
     public static final String packageNamePrefix = "org.apache.fop";
 
+    /**
+     * Create a singleton FObjects object
+     */
     public static final FObjects fobjects;
     static {
-        //try {
-            fobjects = new FObjects();
-        //} catch (FOPException e) {
-            //throw new RuntimeException(e.getMessage());
-        //}
+        fobjects = new FObjects();
     }
 
+    /**
+     * @return the singleton
+     */
     public static final FObjects getFObjects() {
         return fobjects;
     }
 
+    /**
+     * FObjects cannot be instantiated
+     */
     private FObjects() {}
 
     /**
@@ -300,23 +305,41 @@ public class FObjects {
                     "Attempt to makeFlowObject() with XMLEvent for event type "
                     + XMLEvent.eventTypeName(event.getType()));
         }
-        int foType = FObjectNames.PCDATA;
-
         return new FoPcdata(foTree, parent, event, stateFlags);
     }
 
+    /**
+     * Get the index of an unqualified FO class name
+     * @param name of the FO
+     * @return the index
+     */
     public static int getFoIndex(String name) {
         return ((Integer)(foToIndex.get(name))).intValue();
     }
 
+    /**
+     * Get the unqualified class name of the indicated FO
+     * @param foIndex of the rwquired FO
+     * @return the unqualified class name
+     */
     public static String getClassName(int foIndex) {
         return foClassNames[foIndex];
     }
 
+    /**
+     * Get the fully-qualified class name of the indicated FO
+     * @param foIndex of the required FO
+     * @return the fully-qualified class name
+     */
     public static String getPkgClassName(int foIndex) {
         return foPkgClassNames[foIndex];
     }
 
+    /**
+     * Get the <code>Constructor</code> object for a given FO
+     * @param foIndex of the FO
+     * @return the <code>Constructor</code>
+     */
     public Constructor getConstructor(int foIndex) {
         return foConstructors[foIndex];
     }
