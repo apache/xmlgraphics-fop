@@ -3,9 +3,10 @@ package org.apache.fop.fo;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.PropertyConsts;
+import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.messaging.MessageHandler;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.xml.XMLNamespaces;
 
 import org.xml.sax.Attributes;
@@ -89,18 +90,21 @@ public class FOAttributes {
      * value is entered into the appropriate <tt>HashMap</tt> in the
      * <tt>ArrayList</tt> <i>nSpaceAttrMaps</i>, indexed by the attribute's
      * local name.
-     * @param event - the XML event which triggered construction of the parent
-     * <tt>FONode</tt>.
+     * @param event - the FO XML event which triggered construction of the
+     * parent <tt>FONode</tt>.
      * @param foNode - the <tt>FONode</tt> with which these attributes are
      * associated.
      */
-    public FOAttributes (XMLEvent event, FONode foNode) throws FOPException {
+    public FOAttributes(FoXMLEvent event, FONode foNode) throws FOPException {
 
         // If the event is null, there is no event associated with this
         // node, probably because this is a manufactured node; e.g.,
         // an "invented" FopageSequenceMaster.  The default initialisation
         // includes an empty foAttrMap HashMap.
         if (event == null) return;
+
+        if (event.getFoType() == FObjectNames.PCDATA)
+            return;  // go with the empty foAttrMap
 
         // Create the foAttrMap.
         Attributes attributes = event.getAttributes();
