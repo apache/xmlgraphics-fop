@@ -65,8 +65,8 @@ public class BoxPropShorthandParser extends GenericShorthandParser {
      * Stores 1 to 4 values of same type.
      * Set the given property based on the number of values set.
      * Example: padding, border-width, border-color, border-style, margin
-     * @see org.apache.fop.fo.GenericShorthandParser#convertValueForProperty(String,
-     * Property.Maker, PropertyList)
+     * @see org.apache.fop.fo.GenericShorthandParser#convertValueForProperty(
+     * int, ListProperty, Property.Maker, PropertyList)
      */
     protected Property convertValueForProperty(int propId,
                                                ListProperty listProperty,
