@@ -329,7 +329,7 @@ public class PDFRenderer extends PrintRenderer {
         // place at the current instream offset
         int x = this.currentXPosition;
         int y = this.currentYPosition;
-        SVGSVGElement svg = area.getSVGDocument().getRootElement();
+        SVGSVGElement svg = ((SVGDocument)area.getSVGDocument()).getRootElement();
         int w = (int)(svg.getWidth().getBaseVal().getValue() * 1000);
         int h = (int)(svg.getHeight().getBaseVal().getValue() * 1000);
         float sx = 1, sy = -1;
@@ -358,7 +358,7 @@ public class PDFRenderer extends PrintRenderer {
                           " " + yOffset / 1000f + " cm\n");
 
 
-        SVGDocument doc = area.getSVGDocument();
+        Document doc = area.getSVGDocument();
 
         UserAgent userAgent = new MUserAgent(new AffineTransform());
 

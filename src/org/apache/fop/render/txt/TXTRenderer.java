@@ -16,7 +16,6 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
-import org.apache.fop.svg.PathPoint;
 import org.apache.fop.pdf.PDFPathPaint;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.*;
@@ -790,35 +789,6 @@ System.out.println("TXTRenderer.addRect(" + x + ", " + y + ", " + w + ", " + h +
 	// Add a polyline or polygon. Does not support fills yet!!!
     protected void addPolyline(Vector points, int posx, int posy, PDFColor fc, PDFColor sc, float sw, boolean close)
     {
-		PathPoint pc;
-    	float lastx = 0;
-    	float lasty = 0;
-    	float curx = 0;
-    	float cury = 0;
-    	float startx = 0;
-    	float starty = 0;
-    	Enumeration e = points.elements();
-    	if(e.hasMoreElements())
-    	{
-    		pc = (PathPoint)e.nextElement();
-			lastx = pc.x + posx / 1000;
-			lasty = ((pageHeight / 10) - posy/1000) + pc.y;
-			startx = lastx;
-			starty = lasty;
-    	}
-    	while(e.hasMoreElements())
-    	{
-    		pc = (PathPoint)e.nextElement();
-			curx = pc.x + posx / 1000;
-			cury = ((pageHeight / 10) - posy/1000) + pc.y;
-    		addLine(lastx, lasty, curx, cury, sc, sw);
-			lastx = curx;
-			lasty = cury;
-    	}
-    	if(close)
-		{
-    		addLine(lastx, lasty, startx, starty, sc, sw);
-		}
     }
 
 	boolean printBMP(FopImage img, int x, int y, int w, int h) throws FopImageException
