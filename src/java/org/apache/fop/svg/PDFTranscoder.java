@@ -27,6 +27,7 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.gvt.TextPainter;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
@@ -34,6 +35,7 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.w3c.dom.Document;
+import org.w3c.dom.svg.SVGLength;
 
 /**
  * This class enables to transcode an input to a pdf document.
@@ -83,8 +85,8 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         return new AbstractFOPTranscoder.FOPTranscoderUserAgent() {
             // The PDF stuff wants everything at 72dpi
             public float getPixelUnitToMillimeter() {
-                //return super.getPixelUnitToMillimeter();
-                return 25.4f / 72; //72dpi = 0.352778f;
+                return super.getPixelUnitToMillimeter();
+                //return 25.4f / 72; //72dpi = 0.352778f;
             }
         };
     }
@@ -126,12 +128,23 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         getLogger().trace("document size: " + width + " x " + height);
         
         // prepare the image to be painted
-        int w = (int)(width + 0.5);
-        int h = (int)(height + 0.5);
+        UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, 
+                    document.getDocumentElement());
+        float widthInPt = UnitProcessor.userSpaceToSVG(width, SVGLength.SVG_LENGTHTYPE_PT, 
+                    UnitProcessor.HORIZONTAL_LENGTH, uctx);
+        int w = (int)(widthInPt + 0.5);
+        float heightInPt = UnitProcessor.userSpaceToSVG(height, SVGLength.SVG_LENGTHTYPE_PT, 
+                UnitProcessor.HORIZONTAL_LENGTH, uctx);
+        int h = (int)(heightInPt + 0.5);
+        getLogger().trace("document size: " + w + "pt x " + h + "pt");
+
+        // prepare the image to be painted
+        //int w = (int)(width + 0.5);
+        //int h = (int)(height + 0.5);
 
         try {
             graphics.setupDocument(output.getOutputStream(), w, h);
-            graphics.setSVGDimension(w, h);
+            graphics.setSVGDimension(width, height);
 
             if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
                 graphics.setBackgroundColor
