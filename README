@@ -1,4 +1,4 @@
-FOP readme
+FOP README
 
     What is FOP?
     FOP is the world's first print formatter driven by XSL formatting
@@ -20,3 +20,19 @@ FOP readme
     http://xml.apache.org/fop/fo.html.
 
 
+Instructions for building FOP from source code:
+
+    FOP uses Apache Ant as its build system.  You can download Apache Ant
+    from http://ant.apache.org.
+    
+    Ant installation instructions:
+    1. Download and install Ant
+    2. Set the ANT_HOME environment variable to the directory where you've
+       placed Ant.
+    3. Add "%%ANT_HOME%%\bin" to your PATH so the "ant.bat" batch file
+       can be executed from wherever needed.
+    4. (optional) Download JUnit and place junit-*.jar in %%ANT_HOME%%\lib.
+       This enables the JUnit test cases.
+	
+    After Ant is installed, you can build FOP simply by navigating to
+    the FOP base directory and typing "ant".
