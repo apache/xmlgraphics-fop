@@ -60,6 +60,10 @@ public class LayoutMasterSet extends FObj {
 
         if (parent.getName().equals("fo:root")) {
             Root root = (Root)parent;
+            if (root.getLayoutMasterSet() != null) {
+                throw new FOPException("Multiple fo:layout-master-sets " +
+                "found; only one allowed per document");
+            }
             root.setLayoutMasterSet(this);
         } else {
             throw new FOPException("fo:layout-master-set must be child of fo:root, not "

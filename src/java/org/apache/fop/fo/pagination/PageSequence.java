@@ -138,12 +138,16 @@ public class PageSequence extends FObj {
             this.root = (Root)parent;
             // this.root.addPageSequence(this);
         } else {
-            throw new FOPException("page-sequence must be child of root, not "
+            throw new FOPException("Error: page-sequence must be child of root, not "
                                    + parent.getName());
         }
 
         layoutMasterSet = root.getLayoutMasterSet();
-
+        
+        if (layoutMasterSet == null) {
+            throw new FOPException("Error: fo:layout-master-set undefined for this document");
+        }
+        
         // best time to run some checks on LayoutMasterSet
         layoutMasterSet.checkRegionNames();
 
