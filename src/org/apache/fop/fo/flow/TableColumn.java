@@ -31,7 +31,6 @@ public class TableColumn extends FObj {
                          PropertyList propertyList) throws FOPException {
             return new TableColumn(parent, propertyList);
         }
-
     }
 
     public static FObj.Maker maker() {
@@ -41,11 +40,14 @@ public class TableColumn extends FObj {
     public TableColumn(FObj parent, PropertyList propertyList)
         throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:table-column";
         if (!(parent instanceof Table)) {
             throw new FOPException("A table column must be child of fo:table, not "
                                    + parent.getName());
         }
+    }
+
+    public String getName() {
+        return "fo:table-column";
     }
 
     public Length getColumnWidthAsLength() {

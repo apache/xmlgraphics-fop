@@ -37,6 +37,9 @@ public class RegionStart extends Region {
         super(parent, propertyList);
     }
 
+    public String getName() {
+        return "fo:region-start";
+    }
 
     RegionArea makeRegionArea(int allocationRectangleXPosition,
                               int allocationRectangleYPosition,
@@ -86,10 +89,6 @@ public class RegionStart extends Region {
 
     protected String getDefaultRegionName() {
         return "xsl-region-start";
-    }
-
-    protected String getElementName() {
-        return "fo:region-start";
     }
 
     public String getRegionClass() {

@@ -33,7 +33,10 @@ public class Float extends ToBeImplementedElement {
     protected Float(FObj parent,
                     PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:float";
+    }
+
+    public String getName() {
+        return "fo:float";
     }
 
     public Status layout(Area area) throws FOPException {

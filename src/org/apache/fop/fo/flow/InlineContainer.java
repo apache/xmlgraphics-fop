@@ -23,7 +23,6 @@ public class InlineContainer extends ToBeImplementedElement {
                          PropertyList propertyList) throws FOPException {
             return new InlineContainer(parent, propertyList);
         }
-
     }
 
     public static FObj.Maker maker() {
@@ -33,7 +32,6 @@ public class InlineContainer extends ToBeImplementedElement {
     protected InlineContainer(FObj parent,
                               PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:inline-container";
 
         // Common Border, Padding, and Background Properties
         BorderAndPadding bap = propMgr.getBorderAndPadding();
@@ -64,6 +62,10 @@ public class InlineContainer extends ToBeImplementedElement {
         // this.properties.get("reference-orientation");
         // this.properties.get("width");
         // this.properties.get("writing-mode");
+    }
+
+    public String getName() {
+        return "fo:inline-container";
     }
 
 }

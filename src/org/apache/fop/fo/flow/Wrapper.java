@@ -34,6 +34,10 @@ public class Wrapper extends FObjMixed {
         return new Wrapper.Maker();
     }
 
+    public String getName() {
+        return "fo:wrapper";
+    }
+
     public Wrapper(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
         // check that this occurs inside an fo:flow

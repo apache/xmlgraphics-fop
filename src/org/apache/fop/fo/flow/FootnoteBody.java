@@ -42,8 +42,11 @@ public class FootnoteBody extends FObj {
     public FootnoteBody(FObj parent,
                         PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:footnote-body";
         this.areaClass = AreaClass.setAreaClass(AreaClass.XSL_FOOTNOTE);
+    }
+
+    public String getName() {
+        return "fo:footnote-body";
     }
 
     public Status layout(Area area) throws FOPException {

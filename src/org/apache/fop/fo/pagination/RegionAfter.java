@@ -39,6 +39,10 @@ public class RegionAfter extends Region {
         precedence = this.properties.get("precedence").getEnum();
     }
 
+    public String getName() {
+        return "fo:region-after";
+    }
+
     RegionArea makeRegionArea(int allocationRectangleXPosition,
                               int allocationRectangleYPosition,
                               int allocationRectangleWidth,
@@ -82,10 +86,6 @@ public class RegionAfter extends Region {
 
     protected String getDefaultRegionName() {
         return "xsl-region-after";
-    }
-
-    protected String getElementName() {
-        return "fo:region-after";
     }
 
     public String getRegionClass() {

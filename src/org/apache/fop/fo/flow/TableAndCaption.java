@@ -33,7 +33,10 @@ public class TableAndCaption extends ToBeImplementedElement {
     protected TableAndCaption(FObj parent,
                               PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:table-and-caption";
+    }
+
+    public String getName() {
+        return "fo:table-and-caption";
     }
 
     public Status layout(Area area) throws FOPException {

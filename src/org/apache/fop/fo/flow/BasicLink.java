@@ -25,7 +25,6 @@ public class BasicLink extends Inline {
                          PropertyList propertyList) throws FOPException {
             return new BasicLink(parent, propertyList);
         }
-
     }
 
     public static FObj.Maker maker() {
@@ -35,7 +34,10 @@ public class BasicLink extends Inline {
     public BasicLink(FObj parent,
                      PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:basic-link";
+    }
+
+    public String getName() {
+        return "fo:basic-link";
     }
 
     public Status layout(Area area) throws FOPException {

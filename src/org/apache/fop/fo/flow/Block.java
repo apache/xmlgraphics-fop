@@ -69,9 +69,12 @@ public class Block extends FObjMixed {
         throws FOPException {
 
         super(parent, propertyList);
-        this.name = "fo:block";
         this.span = this.properties.get("span").getEnum();
         ts = propMgr.getTextDecoration(parent);
+    }
+
+    public String getName() {
+        return "fo:block";
     }
 
     public Status layout(Area area) throws FOPException {

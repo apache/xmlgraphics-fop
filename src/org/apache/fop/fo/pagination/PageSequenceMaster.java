@@ -45,7 +45,6 @@ public class PageSequenceMaster extends FObj {
     protected PageSequenceMaster(FObj parent, PropertyList propertyList)
             throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:page-sequence-master";
 
         if (parent.getName().equals("fo:layout-master-set")) {
             this.layoutMasterSet = (LayoutMasterSet)parent;
@@ -133,4 +132,9 @@ public class PageSequenceMaster extends FObj {
         }
         return pageMaster;
     }
+
+    public String getName() {
+        return "fo:page-sequence-master";
+    }
+
 }

@@ -38,7 +38,10 @@ public class Unknown extends FObj {
     protected Unknown(FObj parent,
                     PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "unknown";
+    }
+
+    public String getName() {
+        return "(unknown)";
     }
 
     public Status layout(Area area) throws FOPException {

@@ -16,7 +16,7 @@ import org.apache.fop.apps.FOPException;
 
 /**
  */
-public class ToBeImplementedElement extends FObj {
+public abstract class ToBeImplementedElement extends FObj {
 
     protected ToBeImplementedElement(FObj parent, PropertyList propertyList)
             throws FOPException {
@@ -24,8 +24,8 @@ public class ToBeImplementedElement extends FObj {
     }
 
     public Status layout(Area area) throws FOPException {
-        log.debug("This element \"" + this.name
-                             + "\" is not yet implemented.");
+      log.debug("The element '" + this.getName()
+                + "' is not yet implemented.");
         return new Status(Status.OK);
     }
 

@@ -11,19 +11,15 @@ package org.apache.fop.fo;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
 
-/**
- */
-public class Declarations extends ToBeImplementedElement {
+public class Declarations extends FObj {
 
     public static class Maker extends FObj.Maker {
         public FObj make(FObj parent,
                          PropertyList propertyList) throws FOPException {
             return new Declarations(parent, propertyList);
         }
-
     }
 
     public static FObj.Maker maker() {
@@ -33,7 +29,10 @@ public class Declarations extends ToBeImplementedElement {
     protected Declarations(FObj parent,
                            PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:declarations";
+        log.warn("declarations not implemented");
     }
 
+    public String getName() {
+        return "fo:declarations";
+    }
 }

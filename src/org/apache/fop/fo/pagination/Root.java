@@ -47,8 +47,6 @@ public class Root extends FObj {
     protected Root(FObj parent,
                    PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:root";
-
         // this.properties.get("media-usage");
 
         if (parent != null) {
@@ -70,5 +68,9 @@ public class Root extends FObj {
 
     public void setLayoutMasterSet(LayoutMasterSet layoutMasterSet) {
         this.layoutMasterSet = layoutMasterSet;
+    }
+
+    public String getName() {
+        return "fo:root";
     }
 }

@@ -33,7 +33,6 @@ public class Marker extends FObjMixed {
 
     public Marker(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
-        this.name = "fo:marker";
 
         // do check to see that 'this' is under fo:flow
 
@@ -49,6 +48,10 @@ public class Marker extends FObjMixed {
             //log.error("marker cannot be added to '" + parent
             //                     + "'");
         }
+    }
+
+    public String getName() {
+        return "fo:marker";
     }
 
     public Status layout(Area area) throws FOPException {

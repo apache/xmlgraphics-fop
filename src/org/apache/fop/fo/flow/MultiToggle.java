@@ -33,7 +33,10 @@ public class MultiToggle extends ToBeImplementedElement {
     protected MultiToggle(FObj parent,
                           PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:multi-toggle";
+    }
+
+    public String getName() {
+        return "fo:multi-toggle";
     }
 
     public Status layout(Area area) throws FOPException {

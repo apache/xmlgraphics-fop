@@ -103,6 +103,9 @@ public class Outline extends ExtensionObj {
         return _internalDestination;
     }
 
+    public String getName() {
+        return "fop:outline";
+    }
 
 
 }

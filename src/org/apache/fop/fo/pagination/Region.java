@@ -25,7 +25,6 @@ public abstract class Region extends FObj {
     protected Region(FObj parent,
                      PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = getElementName();
 
         // regions may have name, or default
         if (null == this.properties.get(PROP_REGION_NAME)) {
@@ -38,7 +37,7 @@ public abstract class Region extends FObj {
             if (isReserved(getRegionName())
                     &&!getRegionName().equals(getDefaultRegionName())) {
                 throw new FOPException(PROP_REGION_NAME + " '" + _regionName
-                                       + "' for " + this.name
+                                       + "' for " + this.getName()
                                        + " not permitted.");
             }
         }
@@ -47,7 +46,7 @@ public abstract class Region extends FObj {
             _layoutMaster = (SimplePageMaster)parent;
             getPageMaster().addRegion(this);
         } else {
-            throw new FOPException(getElementName() + " must be child "
+            throw new FOPException(getName() + " must be child "
                                    + "of simple-page-master, not "
                                    + parent.getName());
         }
@@ -66,12 +65,6 @@ public abstract class Region extends FObj {
      * etc.)
      */
     protected abstract String getDefaultRegionName();
-
-    /**
-     * Returns the element name ("fo:region-body", "fo:region-start",
-     * etc.)
-     */
-    protected abstract String getElementName();
 
     public abstract String getRegionClass();
 

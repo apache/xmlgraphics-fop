@@ -33,7 +33,6 @@ public class RepeatablePageMasterReference extends PageMasterReference
     public RepeatablePageMasterReference(FObj parent, PropertyList propertyList)
             throws FOPException {
         super(parent, propertyList);
-        name = "fo:repeatable-page-master-reference";
         if (getProperty("master-reference") != null) {
             this.masterName = getProperty("master-reference").getString();
             if (parent.getName().equals("fo:page-sequence-master")) {
@@ -61,6 +60,10 @@ public class RepeatablePageMasterReference extends PageMasterReference
                                        + "'for 'maximum-repeats' property");
             }
         }
+    }
+
+    public String getName() {
+        return "fo:repeatable-page-master-reference";
     }
 
     public String getNextPageMasterName(boolean isOddPage,

@@ -98,9 +98,11 @@ public class PageNumberCitation extends FObj {
 
     public PageNumberCitation(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
-        this.name = "fo:page-number-citation";
     }
 
+    public String getName() {
+        return "fo:page-number-citation";
+    }
 
     public Status layout(Area area) throws FOPException {
         if (!(area instanceof BlockArea)) {

@@ -65,13 +65,11 @@ public class Flow extends FObj {
     protected Flow(FObj parent,
                    PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = getElementName();
 
         if (parent.getName().equals("fo:page-sequence")) {
             this.pageSequence = (PageSequence)parent;
         } else {
-            throw new FOPException("flow must be child of "
-                                   + "page-sequence, not "
+            throw new FOPException("flow must be child of page-sequence, not "
                                    + parent.getName());
         }
         setFlowName(getProperty("flow-name").getString());
@@ -82,21 +80,25 @@ public class Flow extends FObj {
         // fo:flow per fo:page-sequence only.
 
         if (pageSequence.isFlowSet()) {
-            if (this.name.equals("fo:flow")) {
+            if (getName().equals("fo:flow")) {
                 throw new FOPException("Only a single fo:flow permitted"
                                        + " per fo:page-sequence");
             } else {
-                throw new FOPException(this.name
+                throw new FOPException(getName()
                                        + " not allowed after fo:flow");
             }
         }
         pageSequence.addFlow(this);
     }
 
+    public String getName() {
+        return "fo:flow";
+    }
+
     protected void setFlowName(String name) throws FOPException {
         if (name == null || name.equals("")) {
             log.warn("A 'flow-name' is required for "
-                     + getElementName()
+                     + getName()
                      + ". This constraint will be enforced in future versions of FOP");
             _flowName = "xsl-region-body";
         } else {
@@ -216,10 +218,6 @@ public class Flow extends FObj {
      */
     public int getContentWidth() {
 	return this.contentWidth;
-    }
-
-    protected String getElementName() {
-        return "fo:flow";
     }
 
     public Status getStatus() {

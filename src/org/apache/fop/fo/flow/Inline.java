@@ -33,7 +33,6 @@ public class Inline extends FObjMixed {
     public Inline(FObj parent,
                   PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:inline";
         if (parent.getName().equals("fo:flow")) {
             throw new FOPException("inline formatting objects cannot"
                                    + " be directly under flow");
@@ -77,4 +76,9 @@ public class Inline extends FObjMixed {
         ts = propMgr.getTextDecoration(parent);
 
     }
+
+    public String getName() {
+        return "fo:inline";
+    }
+
 }

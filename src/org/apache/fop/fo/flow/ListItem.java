@@ -46,7 +46,10 @@ public class ListItem extends FObj {
 
     public ListItem(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
-        this.name = "fo:list-item";
+    }
+
+    public String getName() {
+        return "fo:list-item";
     }
 
     public Status layout(Area area) throws FOPException {

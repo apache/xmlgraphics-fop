@@ -24,7 +24,6 @@ public class BidiOverride extends ToBeImplementedElement {
                          PropertyList propertyList) throws FOPException {
             return new BidiOverride(parent, propertyList);
         }
-
     }
 
     public static FObj.Maker maker() {
@@ -34,7 +33,10 @@ public class BidiOverride extends ToBeImplementedElement {
     protected BidiOverride(FObj parent,
                            PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:bidi-override";
+    }
+
+    public String getName() {
+        return "fo:bidi-override";
     }
 
     public Status layout(Area area) throws FOPException {

@@ -35,7 +35,10 @@ public class Footnote extends FObj {
     public Footnote(FObj parent,
                     PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:footnote";
+    }
+
+    public String getName() {
+        return "fo:footnote";
     }
 
     public Status layout(Area area) throws FOPException {

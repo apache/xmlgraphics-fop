@@ -59,14 +59,9 @@ public class UnknownXMLObj extends XMLObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    protected UnknownXMLObj(FObj parent, PropertyList propertyList, String space, String tag) {
-        super(parent, propertyList, tag);
-        this.namespace = space;
-				if(!"".equals(space)) {
-            this.name = this.namespace + ":" + tag;
-        } else {
-            this.name = "(none):" + tag;
-        }
+    protected UnknownXMLObj(FObj parent, PropertyList propertyList, String namespace, String name) {
+        super(parent, propertyList, name);
+        this.namespace = namespace;
     }
 
     public String getNameSpace() {
@@ -92,10 +87,14 @@ public class UnknownXMLObj extends XMLObj {
             // this is an error
             //throw new FOPException("Foreign XML not in fo:instream-foreign-object");
         //}
-        log.error("no handler defined for " + this.name + " foreign xml");
+        log.error("no handler defined for " + this.getName() + " foreign xml");
 
         /* return status */
         return new Status(Status.OK);
+    }
+
+    public String getName() {
+        return ""+namespace+":"+tagName;
     }
 }
 

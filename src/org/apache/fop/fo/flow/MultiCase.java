@@ -23,7 +23,6 @@ public class MultiCase extends ToBeImplementedElement {
                          PropertyList propertyList) throws FOPException {
             return new MultiCase(parent, propertyList);
         }
-
     }
 
     public static FObj.Maker maker() {
@@ -33,7 +32,10 @@ public class MultiCase extends ToBeImplementedElement {
     protected MultiCase(FObj parent,
                         PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:multi-case";
+    }
+
+    public String getName() {
+        return "fo:multi-case";
     }
 
     public Status layout(Area area) throws FOPException {

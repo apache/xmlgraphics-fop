@@ -33,7 +33,10 @@ public class MultiSwitch extends ToBeImplementedElement {
     protected MultiSwitch(FObj parent,
                           PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:multi-switch";
+    }
+
+    public String getName() {
+        return "fo:multi-switch";
     }
 
     public Status layout(Area area) throws FOPException {

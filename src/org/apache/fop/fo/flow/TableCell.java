@@ -98,12 +98,15 @@ public class TableCell extends FObj {
     public TableCell(FObj parent, PropertyList propertyList)
         throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:table-cell";
         if (!(parent instanceof TableRow)) {
             throw new FOPException("A table cell must be child of fo:table-row,"
                                    + " not " + parent.getName());
         }
         doSetup();    // init some basic property values
+    }
+
+    public String getName() {
+        return "fo:table-cell";
     }
 
     // Set position relative to table (set by body?)

@@ -40,6 +40,10 @@ public class RegionBody extends Region {
         super(parent, propertyList);
     }
 
+    public String getName() {
+        return "fo:region-body";
+    }
+
     RegionArea makeRegionArea(int allocationRectangleXPosition,
                               int allocationRectangleYPosition,
                               int allocationRectangleWidth,
@@ -99,10 +103,6 @@ public class RegionBody extends Region {
 
     protected String getDefaultRegionName() {
         return "xsl-region-body";
-    }
-
-    protected String getElementName() {
-        return "fo:region-body";
     }
 
     public String getRegionClass() {

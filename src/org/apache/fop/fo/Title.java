@@ -35,7 +35,10 @@ public class Title extends ToBeImplementedElement {
     protected Title(FObj parent,
                     PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:title";
+    }
+
+    public String getName() {
+        return "fo:title";
     }
 
     public Status layout(Area area) throws FOPException {

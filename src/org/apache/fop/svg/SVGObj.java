@@ -56,7 +56,10 @@ public class SVGObj extends XMLObj {
      */
     protected SVGObj(FObj parent, PropertyList propertyList, String tag) {
         super(parent, propertyList, tag);
-        this.name = "svg:" + tag;
+    }
+
+    public String getName() {
+        return "svg:"+tagName;
     }
 
     public String getNameSpace() {

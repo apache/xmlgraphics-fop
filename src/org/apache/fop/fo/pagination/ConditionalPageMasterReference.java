@@ -37,7 +37,6 @@ public class ConditionalPageMasterReference extends FObj {
             throws FOPException {
         super(parent, propertyList);
 
-        this.name = "fo:conditional-page-master-reference";
         if (getProperty("master-reference") != null) {
             this.masterName = getProperty("master-reference").getString();
         }
@@ -57,6 +56,10 @@ public class ConditionalPageMasterReference extends FObj {
         this.pagePosition = this.properties.get("page-position").getEnum();
         this.oddOrEven = this.properties.get("odd-or-even").getEnum();
         this.blankOrNotBlank = this.properties.get("blank-or-not-blank").getEnum();
+    }
+
+    public String getName() {
+        return "fo:conditional-page-master-reference";
     }
 
     protected boolean isValid(boolean isOddPage, boolean isFirstPage,
