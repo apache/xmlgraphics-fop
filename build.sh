@@ -17,15 +17,8 @@ LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip:$LIBDIR/ant.j
 ANT_HOME=$LIBDIR
 
 echo
-CP=$LOCALCLASSPATH
-if [ ! "$CLASSPATH" = "" ]
-then
-CP=$CP:$CLASSPATH
-fi
-echo Building with classpath $CP
-
-
+echo Building with classpath $LOCALCLASSPATH
 echo Starting Ant...
 echo
 
-$JAVA_HOME/bin/java -Dant.home=$ANT_HOME -classpath "$CP" org.apache.tools.ant.Main $*
+$JAVA_HOME/bin/java -Dant.home=$ANT_HOME -classpath "$LOCALCLASSPATH" org.apache.tools.ant.Main $*

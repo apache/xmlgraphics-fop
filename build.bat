@@ -9,11 +9,11 @@ set LIBDIR=lib
 set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;%LIBDIR%\ant.jar;%LIBDIR%\batik.jar;%LIBDIR%\buildtools.jar;%LIBDIR%\xerces-1.2.3.jar;%LIBDIR%\xalan-2.0.0.jar;%LIBDIR%\xalanj1compat.jar;%LIBDIR%\bsf.jar;%LIBDIR%\jimi-1.0.jar
 set ANT_HOME=%LIBDIR%
 
-echo Building with classpath %LOCALCLASSPATH%;%CLASSPATH%
+echo Building with classpath %LOCALCLASSPATH%
 
 echo Starting Ant...
 
-%JAVA_HOME%\bin\java.exe -Dant.home=%ANT_HOME% -classpath %LOCALCLASSPATH%;%CLASSPATH% org.apache.tools.ant.Main %1 %2 %3 %4 %5
+%JAVA_HOME%\bin\java.exe -Dant.home=%ANT_HOME% -classpath "%LOCALCLASSPATH%" org.apache.tools.ant.Main %1 %2 %3 %4 %5
 
 goto end
 
