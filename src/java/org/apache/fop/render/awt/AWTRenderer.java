@@ -448,7 +448,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         graphics.setFont(new java.awt.Font("monospaced", java.awt.Font.PLAIN,
             10));
         
-        int rx = currentBlockIPPosition;
+        int rx = currentIPPosition;
         int bl = currentBPPosition + text.getOffset();
 
         int newx = (int) (rx + 500) / 1000;
@@ -459,7 +459,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         graphics.drawString(s, 220, 200);
 
         // TODO: render text decorations
-        currentBlockIPPosition += text.getAllocIPD();
+        currentIPPosition += text.getAllocIPD();
     }
 
     /** @see org.apache.fop.render.AbstractRenderer */

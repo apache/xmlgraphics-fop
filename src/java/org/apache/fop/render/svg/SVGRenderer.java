@@ -337,8 +337,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
             Element view = svgDocument.createElementNS(SVG_NAMESPACE, "svg");
             Node newsvg = svgDocument.importNode(svg, true);
             //view.setAttributeNS(null, "viewBox", "0 0 ");
-            view.setAttributeNS(null, "x",
-                                "" + currentBlockIPPosition / 1000f);
+            view.setAttributeNS(null, "x", "" + currentIPPosition / 1000f);
             view.setAttributeNS(null, "y", "" + currentBPPosition / 1000f);
 
             // this fixes a problem where the xmlns is repeated sometimes
@@ -377,10 +376,10 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
                 break;
         }
         Element line = SVGUtilities.createLine(svgDocument,
-                        currentBlockIPPosition / 1000,
+                        currentIPPosition / 1000,
                         (currentBPPosition + area.getOffset()
                             - area.getRuleThickness() / 2) / 1000,
-                        (currentBlockIPPosition + area.getIPD()) / 1000,
+                        (currentIPPosition + area.getIPD()) / 1000,
                         (currentBPPosition + area.getOffset()
                             - area.getRuleThickness() / 2) / 1000);
         line.setAttributeNS(null, "style", style);
@@ -394,7 +393,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
      */
     public void renderText(TextArea text) {
         Element textElement = SVGUtilities.createText(svgDocument,
-                                               currentBlockIPPosition / 1000,
+                                               currentIPPosition / 1000,
                                                (currentBPPosition + text.getOffset()) / 1000,
                                                text.getTextArea());
         currentPageG.appendChild(textElement);
@@ -407,7 +406,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
      */
     public void renderCharacter(org.apache.fop.area.inline.Character ch) {
         Element text = SVGUtilities.createText(svgDocument,
-                                               currentBlockIPPosition / 1000,
+                                               currentIPPosition / 1000,
                                                (currentBPPosition + ch.getOffset()) / 1000,
                                                "" + ch.getChar());
         currentPageG.appendChild(text);
