@@ -25,11 +25,7 @@ import java.awt.Rectangle;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.FOPropertyMapping;
 
 /**
  * The fo:region-body element.
@@ -57,36 +53,9 @@ public class RegionBody extends Region {
         * set but indent is explicitly set, it will return that.
         */
         CommonMarginBlock mProps = propMgr.getMarginProps();
-        int start = getRelMargin(PropertyList.START, PR_START_INDENT);
-        Rectangle vpRect;
-        if (this.wm == WritingMode.LR_TB || this.wm == WritingMode.RL_TB) {
-            vpRect = new Rectangle(start, mProps.spaceBefore,
-                    reldims.ipd - start
-                        - getRelMargin(PropertyList.END, PR_END_INDENT),
+        return new Rectangle(mProps.startIndent, mProps.spaceBefore,
+                    reldims.ipd - mProps.startIndent - mProps.endIndent,
                     reldims.bpd - mProps.spaceBefore - mProps.spaceAfter);
-        } else {
-            vpRect = new Rectangle(start, mProps.spaceBefore,
-                    reldims.bpd - mProps.spaceBefore - mProps.spaceAfter,
-                    reldims.ipd - start
-                        - getRelMargin(PropertyList.END, PR_END_INDENT));
-        }
-        return vpRect;
-    }
-
-    /**
-     * Get the relative margin using parent's writing mode, not own
-     * writing mode.
-     */
-    private int getRelMargin(int reldir, int relPropId) {
-        FObj parent = (FObj) getParent();
-        String sPropName = "margin-"
-                + parent.getPropertyList().getAbsoluteWritingMode(reldir);
-        int propId = FOPropertyMapping.getPropertyId(sPropName);
-        Property prop = propertyList.getExplicitOrShorthand(propId);
-        if (prop == null) {
-            prop = propertyList.getExplicitOrShorthand(relPropId);
-        }
-        return ((prop != null) ? prop.getLength().getValue() : 0);
     }
 
     /**
