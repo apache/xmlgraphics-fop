@@ -15,7 +15,7 @@
 <section>
   <title>Introduction</title>
 <p>
-A render is primarily design to convert a given area tree into the output
+A renderer is primarily designed to convert a given area tree into the output
 document format. It should be able to produce pages and fill the pages
 with the text and graphical content. Usually the output is sent to
 an output stream.
@@ -24,6 +24,16 @@ an output stream.
 Some output formats may support extra information that is not available
 from the area tree or depends on the destination of the document.
    </p>
+    <p>
+Each renderer is given an area tree to render to its output format.
+The area tree is simply a representation of the pages and the placement
+of text and graphical objects on those pages.
+    </p>
+    <p>
+The renderer will be given each page as it is ready and an output stream
+to write the data out. The renderer is responsible for managing the
+output format and associated data and flow.
+    </p>
   </section>
 
     </body>
