@@ -57,7 +57,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 
 // Jimi
-import com.sun.jimi.core.*;
+import com.sun.jimi.core.Jimi;
 
 // FOP
 import org.apache.fop.datatypes.ColorSpace;
