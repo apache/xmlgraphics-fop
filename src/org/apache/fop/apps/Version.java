@@ -62,6 +62,6 @@ public class Version {
      * @return the version string
      */
     public static String getVersion() {
-	return "FOP 0.12.0";
+	return "FOP 0.12.1[dev]";
     }
 }

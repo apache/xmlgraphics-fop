@@ -84,6 +84,10 @@ public class Block extends FObjMixed {
     int textIndent;
     int keepWithNext;
     ColorType backgroundColor;
+    int paddingTop;
+    int paddingBottom;
+    int paddingLeft;
+    int paddingRight;
 
     BlockArea blockArea;
 
@@ -137,6 +141,14 @@ public class Block extends FObjMixed {
 		this.properties.get("keep-with-next").getEnum();
 	    this.backgroundColor =
 		this.properties.get("background-color").getColorType();
+	    this.paddingTop =
+		this.properties.get("padding-top").getLength().mvalue();
+	    this.paddingLeft =
+		this.properties.get("padding-left").getLength().mvalue();
+	    this.paddingBottom =
+		this.properties.get("padding-bottom").getLength().mvalue();
+	    this.paddingRight =
+		this.properties.get("padding-right").getLength().mvalue();
 
 	    if (area instanceof BlockArea) {
 		area.end();
@@ -187,6 +199,8 @@ public class Block extends FObjMixed {
 			  textIndent, align, alignLast, lineHeight);
 	blockArea.setPage(area.getPage());
 	blockArea.setBackgroundColor(backgroundColor);
+	blockArea.setPadding(paddingTop, paddingLeft, paddingBottom,
+			     paddingRight);
 	blockArea.start();
 
 	int numChildren = this.children.size();

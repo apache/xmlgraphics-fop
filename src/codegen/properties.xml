@@ -330,5 +330,33 @@
     <datatype>ColorType</datatype>
     <default>transparent</default>
   </property>
+  <property>
+    <name>padding-top</name>
+    <class-name>PaddingTop</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>padding-left</name>
+    <class-name>PaddingLeft</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>padding-bottom</name>
+    <class-name>PaddingBottom</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>padding-right</name>
+    <class-name>PaddingRight</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
 </property-list>
-
+ 
