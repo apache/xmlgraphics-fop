@@ -114,6 +114,44 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
 <project default="package" basedir=".">
 
+    <fileset dir="${basedir}" id="dist.bin">
+       <include name="conf/**"/>
+       <include name="docs/**"/>
+       <include name="hyph/**"/>
+       <include name="CHANGES"/>
+       <include name="LICENSE"/>
+       <include name="README"/>
+       <include name="STATUS"/>
+       <exclude name="src/**"/>
+       <exclude name="dist/**"/>
+       <exclude name="build/**"/>
+       <exclude name="lib/**"/>
+    </fileset>
+
+    <fileset dir="${basedir}" id="dist.bin.lib">
+       <include name="lib/xerces-1.2.3.jar"/>
+       <include name="lib/xalan-2.0.0.jar"/>
+       <include name="lib/xalanj1compat.jar"/>
+       <include name="lib/w3c.jar"/>
+       <include name="lib/jimi*"/>
+    </fileset>
+
+    <fileset dir="${basedir}" id="dist.src">
+       <exclude name="lib/classes/**"/>
+       <exclude name="lib/org/**"/>
+       <exclude name="lib/src/**"/>
+       <exclude name="build/**"/>
+       <include name="src/**"/>
+       <include name="conf/**"/>
+       <include name="docs/**"/>
+       <include name="lib/**"/>
+       <include name="CHANGES"/>
+       <include name="LICENSE"/>
+       <include name="README"/>
+       <include name="STATUS"/>
+       <include name="build*"/>
+    </fileset>
+
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
@@ -121,7 +159,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.17.0"/>
+    <property name="version" value="0.18.0-DEV"/>
     <property name="year" value="1999-2001"/>
 
     <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
@@ -149,7 +187,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="build.docs" value="./build/docs"/>
     <property name="build.javadocs" value="./build/javadocs"/>
 
-    <property name="dist.dir" value="./dist"/>
+   <!-- <property name="dist.dir" value="./dist"/> -->
+    <property name="dist.bin.dir" value="./dist-bin"/>
+    <property name="dist.src.dir" value="./dist-src"/>
 
     <property name="properties.dir" value="org/apache/fop/fo/properties"/>
     <property name="fonts.dir" value="org/apache/fop/render/pdf/fonts"/>
@@ -214,7 +254,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern"/> 
     <taskdef name="xslt" classname="org.apache.fop.tools.anttasks.Xslt"/>
-															
+    <taskdef name="manifest" classname="org.apache.fop.tools.anttasks.Manifest"/>
+
+    <property name="main.class" value="org.apache.fop.apps.Fop"/>
+    <property name="runtime.classpath" value="lib/xerces-1.2.3.jar lib/xalan-2.0.0.jar lib/xalanj1compat.jar lib/w3c.jar lib/jimi-1.0.jar"/>
+   
     <filter filtersfile="${build.src}/codegen/filter"/>
 
   </target>
@@ -482,7 +526,12 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <target name="package" depends="compile,hyphenation">
     <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
-    <jar jarfile="${build.dir}/${name}.jar"
+    <manifest file="${build.dir}/Manifest.txt" overwrite="yes"
+	      mainclass="${main.class}" 
+              classpath="${runtime.classpath}"
+              impltitle="${Name}" implversion="${version}"
+	      implvendor="Apache Software Foundation (http://xml.apache.org/fop/)"/>
+    <jar jarfile="${build.dir}/${name}.jar" manifest="${build.dir}/Manifest.txt"
          basedir="${build.dest}"
          includes="org/**,conf/**,hyph/**"/>
   </target>
@@ -503,23 +552,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <chmod file="${lib.dir}/bin/antRun" perm="ugo+rx" />
   </target>
 
-  <!-- =================================================================== -->
-  <!-- Copying the documentation files                                     -->
-  <!-- =================================================================== -->
-  <target name="docs" depends="prepare-docs">
-    <echo message="Copying doc files "/>
-    <copy todir="${build.docs}">
-      <fileset dir="${docs.dir}"/>
-    </copy>
-    <copy todir="${build.dir}/${lib.dir}">
-      <fileset dir="${lib.dir}"/>
-    </copy>
-   
-    <copy file="build.xml" tofile="${build.dir}/build.xml" /> 
-    <copy file="${basedir}/README" tofile="${build.dir}/README" />
-    <copy file="${basedir}/STATUS" tofile="${build.dir}/STATUS" />
-    <copy file="${basedir}/LICENSE" tofile="${build.dir}/LICENSE" />
-  </target>
 
   <!-- =================================================================== -->
   <!-- Creates the API documentation                                       -->
@@ -541,28 +573,42 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Creates the distribution                                            -->
   <!-- =================================================================== -->
-  <target name="dist" depends="package, docs, javadocs">
-    <echo message="Building the distribution files (zip,tar)"/>
-    <mkdir dir="${dist.dir}"/>
-    <mkdir dir="${dist.dir}/conf"/>
-    <mkdir dir="${dist.dir}/hyph"/>
-    <copy file="${basedir}/build.sh" tofile="${dist.dir}/build.sh" />
-    <chmod file="${dist.dir}/build.sh" perm="ugo+rx" />
-    <copy file="${basedir}/build.bat" tofile="${dist.dir}/build.bat" />
-    <copy todir="${dist.dir}">
-      <fileset dir="${build.dir}" excludes="**/classes/**, **/${ignore_this}"/>
-    </copy>
-    <copy todir="${dist.dir}/hyph">
-      <fileset dir="${hyph.dir}"/>
-    </copy>
-    <copy todir="${dist.dir}/conf">
-      <fileset dir="${conf.dir}"/>
-    </copy>
+  <target name="dist" depends="dist-src, dist-bin"/>
 
-    <zip zipfile="${Name}-${version}.zip" basedir="${dist.dir}" includes="**"/>
-    <tar tarfile="${Name}-${version}.tar" basedir="${dist.dir}" includes="**"/>
-    <gzip zipfile="${Name}-${version}.tar.gz" src="${Name}-${version}.tar" />
-    <delete file="${Name}-${version}.tar"/>
+  <target name="dist-bin" depends="package, javadocs">
+    <echo message="Building the binary distribution files (zip,tar)"/>
+    <mkdir dir="${dist.bin.dir}"/>
+    <copy todir="${dist.bin.dir}">
+      <fileset refid="dist.bin"/>
+      <fileset refid="dist.bin.lib"/>
+    </copy>
+    <copy todir="${dist.bin.dir}" file="build/fop.jar"/>
+      
+    <zip zipfile="${Name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
+    <tar tarfile="${Name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
+    <gzip zipfile="${Name}-${version}-bin.tar.gz" src="${Name}-${version}-bin.tar" />
+    <delete file="${Name}-${version}-bin.tar"/>
+
+  </target>
+
+
+  <target name="dist-src" depends="package, javadocs">
+    <echo message="Building the source distribution files (zip,tar)"/>
+    <mkdir dir="${dist.src.dir}"/>
+    <copy todir="${dist.src.dir}">
+      <fileset refid="dist.src"/>
+    </copy>
+    <copy todir="${dist.src.dir}/javadocs">
+      <fileset dir="${build.javadocs}"/>
+    </copy>
+    <copy todir="${dist.src.dir}" file="build/fop.jar"/>
+    <chmod file="${dist.src.dir}/build.sh" perm="ugo+rx" />
+
+    <zip zipfile="${Name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
+    <tar tarfile="${Name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
+    <gzip zipfile="${Name}-${version}-src.tar.gz" src="${Name}-${version}-src.tar" />
+    <delete file="${Name}-${version}-src.tar"/>
+
   </target>
 
   <!-- =================================================================== -->
@@ -573,10 +619,13 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </target>
 
   <target name="distclean" depends="clean">
-    <delete dir="${dist.dir}"/>
-    <delete file="${Name}-${version}.tar.gz"/>
-    <delete file="${Name}-${version}.tar"/>
-    <delete file="${Name}-${version}.zip"/>
+    <delete dir="${dist.src.dir}"/>
+    <delete dir="${dist.bin.dir}"/>
+    <delete>
+       <fileset dir="${basedir}" includes="${Name}-${version}*.tar.gz"/>
+       <fileset dir="${basedir}" includes="${Name}-${version}*.tar"/>
+       <fileset dir="${basedir}" includes="${Name}-${version}*.zip"/>
+    </delete>
   </target>
 
 </project>
