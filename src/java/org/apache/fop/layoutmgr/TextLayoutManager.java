@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr;
 import java.util.ArrayList;
 
 import org.apache.fop.fo.FOText;
-import org.apache.fop.fo.TextInfo;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
@@ -63,9 +62,8 @@ public class TextLayoutManager extends AbstractLayoutManager {
     /** Non-space characters on which we can end a line. */
     private static final String BREAK_CHARS = "-/" ;
 
+    private FOText foText;
     private char[] textArray;
-    private int textArrayLength;
-    private TextInfo textInfo;
 
     private static final char NEWLINE = '\n';
     private static final char SPACE = '\u0020'; // Normal space
@@ -95,25 +93,23 @@ public class TextLayoutManager extends AbstractLayoutManager {
     /**
      * Create a Text layout manager.
      *
-     * @param chars character array
-     * @param length length of the above array to be processed
-     * @param textInfo the text information for doing layout
+     * @param node The FOText object to be rendered
      */
     public TextLayoutManager(FOText node) {
         super(node);
-        this.textArray = new char[node.ca.length - node.start];
-        System.arraycopy(node.ca, node.start, this.textArray, 0,
+        foText = node;
+        textArray = new char[node.ca.length - node.start];
+        System.arraycopy(node.ca, node.start, textArray, 0,
             node.ca.length - node.start);
-        this.textArrayLength = node.ca.length - node.start;
-        this.textInfo = node.textInfo;
-        this.vecAreaInfo = new java.util.ArrayList();
+
+        vecAreaInfo = new java.util.ArrayList();
 
         // With CID fonts, space isn't neccesary currentFontState.width(32)
-        spaceCharIPD = textInfo.fs.getCharWidth(' ');
+        spaceCharIPD = foText.textInfo.fs.getCharWidth(' ');
         // Use hyphenationChar property
-        hyphIPD = textInfo.fs.getCharWidth('-');
+        hyphIPD = foText.textInfo.fs.getCharWidth('-');
         // Make half-space: <space> on either side of a word-space)
-        SpaceVal ws = textInfo.wordSpacing;
+        SpaceVal ws = foText.textInfo.wordSpacing;
         halfWS = new SpaceVal(MinOptMax.multiply(ws.getSpace(), 0.5),
                 ws.isConditional(), ws.isForcing(), ws.getPrecedence());
     }
@@ -161,7 +157,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
      */
     public boolean canBreakBefore(LayoutContext context) {
         char c = textArray[iNextStart];
-        return ((c == NEWLINE) || (textInfo.bWrap 
+        return ((c == NEWLINE) || (foText.textInfo.bWrap 
                     && (CharUtilities.isBreakableSpace(c)
                     || (BREAK_CHARS.indexOf(c) >= 0 && (iNextStart == 0 
                         || Character.isLetterOrDigit(textArray[iNextStart-1]))))));
@@ -205,15 +201,15 @@ public class TextLayoutManager extends AbstractLayoutManager {
         boolean bCanHyphenate = true;
         int iStopIndex = iNextStart + hc.getNextHyphPoint();
 
-        if (textArrayLength < iStopIndex || textInfo.bCanHyphenate == false) {
-            iStopIndex = textArrayLength;
+        if (textArray.length < iStopIndex || foText.textInfo.bCanHyphenate == false) {
+            iStopIndex = textArray.length;
             bCanHyphenate = false;
         }
         hc.updateOffset(iStopIndex - iNextStart);
 
         for (; iNextStart < iStopIndex; iNextStart++) {
             char c = textArray[iNextStart];
-            hyphIPD.opt += textInfo.fs.getCharWidth(c);
+            hyphIPD.opt += foText.textInfo.fs.getCharWidth(c);
             // letter-space?
         }
         // Need to include hyphen size too, but don't count it in the
@@ -261,11 +257,11 @@ public class TextLayoutManager extends AbstractLayoutManager {
          * retained.
          */
         if (context.suppressLeadingSpace()) {
-            for (; iNextStart < textArrayLength
+            for (; iNextStart < textArray.length
                     && textArray[iNextStart] == SPACE; iNextStart++) {
             }
             // If now at end, nothing to compose here!
-            if (iNextStart >= textArrayLength) {
+            if (iNextStart >= textArray.length) {
                 setFinished(true);
                 return null; // Or an "empty" BreakPoss?
             }
@@ -286,7 +282,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
         short iWScount = 0; // Count of word spaces
         boolean bSawNonSuppressible = false;
 
-        for (; iNextStart < textArrayLength; iNextStart++) {
+        for (; iNextStart < textArray.length; iNextStart++) {
             char c = textArray[iNextStart];
             if (CharUtilities.isAnySpace(c) == false) {
                 break;
@@ -320,11 +316,11 @@ public class TextLayoutManager extends AbstractLayoutManager {
                 bSawNonSuppressible = true;
                 spaceIPD.add(pendingSpace.resolve(false));
                 pendingSpace.clear();
-                wordIPD += textInfo.fs.getCharWidth(c);
+                wordIPD += foText.textInfo.fs.getCharWidth(c);
             }
         }
 
-        if (iNextStart < textArrayLength) {
+        if (iNextStart < textArray.length) {
             spaceIPD.add(pendingSpace.resolve(false));
         } else {
             // This FO ended with spaces. Return the BP
@@ -347,10 +343,10 @@ public class TextLayoutManager extends AbstractLayoutManager {
             // Look for a legal line-break: breakable white-space and certain
             // characters such as '-' which can serve as word breaks.
             // Don't look for hyphenation points here though
-            for (; iNextStart < textArrayLength; iNextStart++) {
+            for (; iNextStart < textArray.length; iNextStart++) {
                 char c = textArray[iNextStart];
                 // Include any breakable white-space as break char
-                if ((c == NEWLINE) || (textInfo.bWrap 
+                if ((c == NEWLINE) || (foText.textInfo.bWrap 
                     && (CharUtilities.isBreakableSpace(c)
                     || (BREAK_CHARS.indexOf(c) >= 0 && (iNextStart == 0 
                         || Character.isLetterOrDigit(textArray[iNextStart-1])))))) {
@@ -358,7 +354,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                             if (c != SPACE) {
                                 iNextStart++;
                                 if (c != NEWLINE) {
-                                    wordIPD += textInfo.fs.getCharWidth(c);
+                                    wordIPD += foText.textInfo.fs.getCharWidth(c);
                                 } else {
                                     iFlags |= BreakPoss.FORCE;
                                 }
@@ -367,18 +363,18 @@ public class TextLayoutManager extends AbstractLayoutManager {
                     // line-end, set a flag for parent LM.
                     int iLastChar;
                     for (iLastChar = iNextStart;
-                            iLastChar < textArrayLength
+                            iLastChar < textArray.length
                             && textArray[iLastChar] == SPACE; iLastChar++) {
                         //nop
                     }
-                    if (iLastChar == textArrayLength) {
+                    if (iLastChar == textArray.length) {
                         iFlags |= BreakPoss.REST_ARE_SUPPRESS_AT_LB;
                     }
                     return makeBreakPoss(iThisStart, spaceIPD, wordIPD,
                                          context.getLeadingSpace(), null, iFlags,
                                          iWScount);
                 }
-                wordIPD += textInfo.fs.getCharWidth(c);
+                wordIPD += foText.textInfo.fs.getCharWidth(c);
                 // Note, if a normal non-breaking space, is it stretchable???
                 // If so, keep a count of these embedded spaces.
             }
@@ -412,15 +408,15 @@ public class TextLayoutManager extends AbstractLayoutManager {
             bp.setStackingSize(ipd);
         }
         // TODO: make this correct (see Keiron's vertical alignment code)
-        bp.setNonStackingSize(new MinOptMax(textInfo.lineHeight));
+        bp.setNonStackingSize(new MinOptMax(foText.textInfo.lineHeight));
 
         /* Set max ascender and descender (offset from baseline),
          * used for calculating the bpd of the line area containing
          * this text.
          */
-        //bp.setDescender(textInfo.fs.getDescender());
-        //bp.setAscender(textInfo.fs.getAscender());
-        if (iNextStart == textArrayLength) {
+        //bp.setDescender(foText.textInfo.fs.getDescender());
+        //bp.setAscender(foText.textInfo.fs.getAscender());
+        if (iNextStart == textArray.length) {
             flags |= BreakPoss.ISLAST;
             setFinished(true);
         }
@@ -518,12 +514,12 @@ public class TextLayoutManager extends AbstractLayoutManager {
         // Set LAST flag if done making characters
         int iLastChar;
         for (iLastChar = ai.iBreakIndex;
-                iLastChar < textArrayLength && textArray[iLastChar] == SPACE;
+                iLastChar < textArray.length && textArray[iLastChar] == SPACE;
                 iLastChar++) {
             //nop
         }
         context.setFlags(LayoutContext.LAST_AREA,
-                         iLastChar == textArrayLength);
+                         iLastChar == textArray.length);
 
         // Can we have any trailing space? Yes, if last char was a space!
         context.setTrailingSpace(new SpaceSpecifier(false));
@@ -548,16 +544,16 @@ public class TextLayoutManager extends AbstractLayoutManager {
     protected TextArea createTextArea(String str, int width, int base) {
         TextArea textArea = new TextArea();
         textArea.setWidth(width);
-        textArea.setHeight(textInfo.fs.getAscender()
-                              - textInfo.fs.getDescender());
-        textArea.setOffset(textInfo.fs.getAscender());
+        textArea.setHeight(foText.textInfo.fs.getAscender()
+                              - foText.textInfo.fs.getDescender());
+        textArea.setOffset(foText.textInfo.fs.getAscender());
         textArea.setOffset(base);
 
         textArea.setTextArea(str);
-        textArea.addTrait(Trait.FONT_NAME, textInfo.fs.getFontName());
+        textArea.addTrait(Trait.FONT_NAME, foText.textInfo.fs.getFontName());
         textArea.addTrait(Trait.FONT_SIZE,
-                             new Integer(textInfo.fs.getFontSize()));
-        textArea.addTrait(Trait.COLOR, this.textInfo.color);
+                             new Integer(foText.textInfo.fs.getFontSize()));
+        textArea.addTrait(Trait.COLOR, foText.textInfo.color);
         return textArea;
     }
 
