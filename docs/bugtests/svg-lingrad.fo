@@ -6,6 +6,7 @@
 </fo:layout-master-set>
 <fo:page-sequence master-name="one">
 <fo:flow flow-name="xsl-region-body">
+<fo:block>
 <fo:instream-foreign-object>
 <svg:svg width="500" height="400">
   <svg:defs>
@@ -20,6 +21,7 @@
   </svg:g>
 </svg:svg>
 </fo:instream-foreign-object>
+</fo:block>
       <fo:block>The above is an example of an SVG graphic</fo:block>
     </fo:flow>
   </fo:page-sequence>
