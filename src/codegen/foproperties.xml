@@ -1277,7 +1277,13 @@
   <property>
     <name>text-transform</name>
     <inherited>true</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>Enum</datatype>
+    <enumeration>
+      <value const="NONE">none</value>
+      <value const="CAPITALIZE">capitalize</value>
+      <value const="UPPERCASE">uppercase</value>
+      <value const="LOWERCASE">lowercase</value>
+    </enumeration>
     <default>none</default>
   </property>
   <property>
