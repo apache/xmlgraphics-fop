@@ -95,7 +95,7 @@ public class GifJpegImage implements FopImage {
 			FopImageConsumer consumer = new FopImageConsumer(ip);
 			ip.startProduction(consumer);
 
-			while (! consumer.isImageReady()) {}
+			while (! consumer.isImageReady()) {Thread.sleep(500);}
 			this.m_height = consumer.getHeight();
 			this.m_width = consumer.getWidth();
 
@@ -132,6 +132,7 @@ public class GifJpegImage implements FopImage {
 							}
 						}
 					} else {
+						// TRANSLUCENT
 /*
 						this.m_isTransparent = false;
 						for (int i = 0; i < this.m_width * this.m_height; i++) {
