@@ -72,7 +72,7 @@ import java.util.List;
 import org.apache.fop.apps.Starter;
 import org.apache.fop.apps.InputHandler;
 import org.apache.fop.apps.FOInputHandler;
-import org.apache.fop.apps.Session;
+import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOUserAgent;
 
@@ -307,27 +307,27 @@ class FOPTaskStarter extends Starter {
         if ((format == null)
                 || format.equalsIgnoreCase("application/pdf")
                 || format.equalsIgnoreCase("pdf")) {
-            return Session.RENDER_PDF;
+            return Driver.RENDER_PDF;
         } else if (format.equalsIgnoreCase("application/postscript")
                 || format.equalsIgnoreCase("ps")) {
-            return Session.RENDER_PS;
+            return Driver.RENDER_PS;
         } else if (format.equalsIgnoreCase("application/vnd.mif")
                 || format.equalsIgnoreCase("mif")) {
-            return Session.RENDER_MIF;
+            return Driver.RENDER_MIF;
         } else if (format.equalsIgnoreCase("application/msword")
                 || format.equalsIgnoreCase("application/rtf")
                 || format.equalsIgnoreCase("rtf")) {
-            return Session.RENDER_RTF;
+            return Driver.RENDER_RTF;
         } else if (format.equalsIgnoreCase("application/vnd.hp-PCL")
                 || format.equalsIgnoreCase("pcl")) {
-            return Session.RENDER_PCL;
+            return Driver.RENDER_PCL;
         } else if (format.equalsIgnoreCase("text/plain")
                 || format.equalsIgnoreCase("txt")) {
-            return Session.RENDER_TXT;
+            return Driver.RENDER_TXT;
         } else if (format.equalsIgnoreCase("text/xml")
                 || format.equalsIgnoreCase("at")
                 || format.equalsIgnoreCase("xml")) {
-            return Session.RENDER_XML;
+            return Driver.RENDER_XML;
         } else {
             String err = "Couldn't determine renderer to use: " + format;
             throw new BuildException(err);
@@ -336,19 +336,19 @@ class FOPTaskStarter extends Starter {
 
     private String determineExtension(int renderer) {
         switch (renderer) {
-            case Session.RENDER_PDF:
+            case Driver.RENDER_PDF:
                 return ".pdf";
-            case Session.RENDER_PS:
+            case Driver.RENDER_PS:
                 return ".ps";
-            case Session.RENDER_MIF:
+            case Driver.RENDER_MIF:
                 return ".mif";
-            case Session.RENDER_RTF:
+            case Driver.RENDER_RTF:
                 return ".rtf";
-            case Session.RENDER_PCL:
+            case Driver.RENDER_PCL:
                 return ".pcl";
-            case Session.RENDER_TXT:
+            case Driver.RENDER_TXT:
                 return ".txt";
-            case Session.RENDER_XML:
+            case Driver.RENDER_XML:
                 return ".xml";
             default:
                 String err = "Unknown renderer: " + renderer;
@@ -478,16 +478,16 @@ class FOPTaskStarter extends Starter {
         }
 
         try {
-            Session session = new Session();
-            setupLogger(session);
-            session.initialize();
+            Driver driver = new Driver();
+            setupLogger(driver);
+            driver.initialize();
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(this.baseURL);
             userAgent.enableLogging(getLogger());
-            session.setUserAgent(userAgent);
-            session.setRenderer(renderer);
-            session.setOutputStream(out);
-            session.render(parser, inputHandler.getInputSource());
+            driver.setUserAgent(userAgent);
+            driver.setRenderer(renderer);
+            driver.setOutputStream(out);
+            driver.render(parser, inputHandler.getInputSource());
         } catch (Exception ex) {
             throw new BuildException(ex);
         } finally {
