@@ -291,7 +291,7 @@ public class PageSequence extends FObj {
      */
     private void startStructuredPageSequence() {
         if (!sequenceStarted) {
-            getFOTreeControl().getFOInputHandler().startPageSequence(this);
+            getDocument().getFOInputHandler().startPageSequence(this);
             sequenceStarted = true;
         }
     }
@@ -303,7 +303,7 @@ public class PageSequence extends FObj {
      */
     public void end() {
         try {
-            this.getFOTreeControl().getFOInputHandler().endPageSequence(this);
+            this.getDocument().getFOInputHandler().endPageSequence(this);
         } catch (FOPException fopex) {
             getLogger().error("Error in PageSequence.end(): "
               + fopex.getMessage(), fopex);

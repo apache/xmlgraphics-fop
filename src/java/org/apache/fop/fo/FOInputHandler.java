@@ -94,8 +94,8 @@ public abstract class FOInputHandler {
     }
 
     /**
-     * Returns the FOTreeControl object associated with this FOInputHandler.
-     * @return the FOTreeControl object
+     * Returns the Document object associated with this FOInputHandler.
+     * @return the Document object
      */
     public Document getDocument() {
         return doc;

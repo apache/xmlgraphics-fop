@@ -28,7 +28,6 @@ import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.AreaTreeModel;
 
 import org.apache.fop.fo.FOInputHandler;
-import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fonts.FontInfo;
 
 import org.apache.commons.logging.Log;
@@ -40,7 +39,7 @@ import org.xml.sax.SAXException;
  * Class storing information for the FOP Document being processed, and managing
  * the processing of it.
  */
-public class Document implements FOTreeControl {
+public class Document {
             
     /** The parent Driver object */
     private Driver driver;

@@ -18,6 +18,7 @@
 
 package org.apache.fop.render.svg;
 
+import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Title;
@@ -27,7 +28,6 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.svg.SVGUtilities;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.FOTreeControl;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGSVGElement;
@@ -132,7 +132,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#setupFontInfo(FOTreeControl)
+     * @see org.apache.fop.render.Renderer#setupFontInfo(FontInfo)
      */
     public void setupFontInfo(FontInfo fontInfo) {
         // create a temp Image to test font metrics on

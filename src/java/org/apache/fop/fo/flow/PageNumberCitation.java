@@ -82,7 +82,7 @@ public class PageNumberCitation extends FObj {
         CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Font Properties
-        this.fontState = propMgr.getFontState(getFOTreeControl());
+        this.fontState = propMgr.getFontState(getDocument());
 
         // Common Margin Properties-Inline
         CommonMarginInline mProps = propMgr.getMarginInlineProps();

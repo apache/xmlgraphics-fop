@@ -111,7 +111,7 @@ public class Block extends FObjMixed {
 
         setupID();
 
-        getFOTreeControl().getFOInputHandler().startBlock(this);
+        getDocument().getFOInputHandler().startBlock(this);
     }
 
     private void setup() {
@@ -238,7 +238,7 @@ public class Block extends FObjMixed {
      */
     public void end() {
         handleWhiteSpace();
-        getFOTreeControl().getFOInputHandler().endBlock(this);
+        getDocument().getFOInputHandler().endBlock(this);
     }
 
     private void handleWhiteSpace() {

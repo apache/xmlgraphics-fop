@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.InputHandler;
 import org.apache.fop.area.Area;
@@ -55,7 +56,6 @@ import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.render.AbstractRenderer;

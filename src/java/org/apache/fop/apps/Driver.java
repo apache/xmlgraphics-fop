@@ -511,7 +511,7 @@ public class Driver {
         foInputHandler.setLogger(getLogger());
 
         treeBuilder.setFOInputHandler(foInputHandler);
-        treeBuilder.setFOTreeControl(currentDocument);
+        treeBuilder.setDocument(currentDocument);
 
         return new ProxyContentHandler(treeBuilder) {
             
