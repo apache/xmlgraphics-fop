@@ -118,7 +118,7 @@ TBD: - The faq doesn't show in the content
             color="white"
             text-align="center"
             >
-     <xsl:attribute name="id">
+     <xsl:attribute name="ref-id">
      <xsl:value-of select="translate(.,' ),-.(','____')"/>
      </xsl:attribute>
      <xsl:value-of select="@title"/>
@@ -191,7 +191,7 @@ TBD: - The faq doesn't show in the content
             color="white"
             text-align="center"
             >
-     <xsl:attribute name="id">
+     <xsl:attribute name="ref-id">
      <xsl:value-of select="translate(.,' ),-.(','____')"/>
      </xsl:attribute>
      <xsl:value-of select="@title"/>
