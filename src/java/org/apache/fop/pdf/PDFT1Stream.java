@@ -52,7 +52,7 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.OutputStream;
 
 // FOP
 import org.apache.fop.fonts.type1.PFBData;
@@ -60,17 +60,20 @@ import org.apache.fop.fonts.type1.PFBData;
 /**
  * Special PDFStream for embedding Type 1 fonts.
  */
-public class PDFT1Stream extends PDFStream {
+public class PDFT1Stream extends AbstractPDFStream {
     
     private PFBData pfb;
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#PDFObject(int)
+     * @see org.apache.fop.pdf.AbstractPDFStream#getSizeHint()
      */
-    public PDFT1Stream(int num) {
-        super(num);
+    protected int getSizeHint() throws IOException {
+        if (this.pfb != null) {
+            return pfb.getLength();
+        } else {
+            return 0; //no hint available
+        }
     }
-
 
     /**
      * Overload the base object method so we don't have to copy
@@ -82,37 +85,35 @@ public class PDFT1Stream extends PDFStream {
         if (pfb == null) {
             throw new IllegalStateException("pfb must not be null at this point");
         }
-        int length = 0;
-        String filterEntry = applyFilters();
-        String preData = this.number + " " + this.generation
-                + " obj\n<< /Length " + pfb.getLength() + " " 
-                + filterEntry  
-                + " /Length1 " + pfb.getLength1()
-                + " /Length2 " + pfb.getLength2()
-                + " /Length3 " + pfb.getLength3() + " >>\n";
+        getDocumentSafely().getLogger().debug("Writing " 
+                + pfb.getLength() + " bytes of Type 1 font data");
 
-        byte[] p;
-        try {
-            p = preData.getBytes(PDFDocument.ENCODING);
-        } catch (UnsupportedEncodingException ue) {
-            p = preData.getBytes();
-        }       
-
-        stream.write(p);
-        length += p.length;
-
-        length += outputStreamData(stream);
-        try {
-            p = "endobj\n".getBytes(PDFDocument.ENCODING);
-        } catch (UnsupportedEncodingException ue) {
-            p = "endobj\n".getBytes();
-        }       
-        stream.write(p);
-        length += p.length;
-        //System.out.println("Embedded Type1 font");
+        int length = super.output(stream);
+        getDocumentSafely().getLogger().debug("Embedded Type1 font");
         return length;
     }
 
+    /**
+     * @see org.apache.fop.pdf.AbstractPDFStream#buildStreamDict(String)
+     */
+    protected String buildStreamDict(String lengthEntry) {
+        final String filterEntry = getFilterList().buildFilterDictEntries();
+        return (getObjectID() 
+                + "<< /Length " + lengthEntry 
+                + " /Length1 " + pfb.getLength1()
+                + " /Length2 " + pfb.getLength2()
+                + " /Length3 " + pfb.getLength3() 
+                + "\n" + filterEntry  
+                + "\n>>\n");
+    }
+
+    /**
+     * @see org.apache.fop.pdf.PDFStream#outputRawStreamData(OutputStream)
+     */
+    protected void outputRawStreamData(OutputStream out) throws IOException {
+        this.pfb.outputAllParts(out);
+    }
+    
     /**
      * Used to set the PFBData object that represents the embeddable Type 1 
      * font.
@@ -120,10 +121,7 @@ public class PDFT1Stream extends PDFStream {
      * @throws IOException in case of an I/O problem
      */
     public void setData(PFBData pfb) throws IOException {
-        data.reset();
-        // System.out.println("Writing " + size + " bytes of font data");
         this.pfb = pfb;
-        pfb.outputAllParts(data.getOutputStream());
     }
 
 }
