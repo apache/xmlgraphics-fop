@@ -262,7 +262,16 @@ public abstract class FObj extends FONode implements Constants {
         return null;
     }
 
-   /**
+    /**
+     * Notifies a FObj that one of it's children is removed.
+     * This method is subclassed by Block to clear the firstInlineChild variable.
+     * @param node the node that was removed
+     */
+    protected void notifyChildRemoval(FONode node) {
+        //nop
+    }
+    
+    /**
      * Add the marker to this formatting object.
      * If this object can contain markers it checks that the marker
      * has a unique class-name for this object and that it is
@@ -282,6 +291,7 @@ public abstract class FObj extends FONode implements Constants {
                         return;
                     } else {
                         iter.remove();
+                        notifyChildRemoval(node);
                     }
                 } else {
                     getLogger().error("fo:marker must be an initial child: " + mcname);
