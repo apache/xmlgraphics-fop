@@ -122,7 +122,7 @@ public class XSLTInputHandler extends InputHandler {
      * XMLReaders or XMLFilters
      * @throws FOPException if setting up the XMLFilter fails
      */
-    public static XMLFilter getXMLFilter(Source xsltSource, Vector inParams)
+    public XMLFilter getXMLFilter(Source xsltSource, Vector inParams)
     throws FOPException {
         try {
             // Instantiate  a TransformerFactory.
@@ -150,7 +150,7 @@ public class XSLTInputHandler extends InputHandler {
 */                  
                 
                 // Create an XMLReader.
-                XMLReader parser = FOFileHandler.createParser();
+                XMLReader parser = createParser();
                 if (parser == null) {
                     throw new FOPException("Unable to create SAX parser");
                 }
