@@ -305,7 +305,6 @@ public class FOPropertyMapping implements Constants {
         genericBorderWidth.addKeyword("thick", "2pt");
         // TODO: bckfnn reenable
         genericBorderWidth.setDefault("0pt");
-        genericBorderWidth.addShorthand(s_generics[PR_BORDER_WIDTH]);
 
         // GenericBorderStyle
         genericBorderStyle = new EnumProperty.Maker(0);
@@ -321,7 +320,6 @@ public class FOPropertyMapping implements Constants {
         genericBorderStyle.addEnum("inset", makeEnumProperty(INSET, "INSET"));
         genericBorderStyle.addEnum("outset", makeEnumProperty(OUTSET, "OUTSET"));
         genericBorderStyle.setDefault("none");
-        genericBorderWidth.addShorthand(s_generics[PR_BORDER_STYLE]);
         
         // GenericBreak
         genericBreak = new EnumProperty.Maker(0);
