@@ -55,6 +55,7 @@ package org.apache.fop.render.pdf;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
@@ -139,18 +140,27 @@ public class PDFRenderer implements Renderer {
 	 *
 	 * @param areaTree the laid-out area tree
 	 * @param writer the PrintWriter to write the PDF with
-	 */
-	public void render(AreaTree areaTree, PrintWriter writer)
-	throws IOException {
-	System.err.println("rendering areas to PDF");
-	this.pdfResources = this.pdfDoc.getResources();
-	Enumeration e = areaTree.getPages().elements();
-	while (e.hasMoreElements()) {
-		this.renderPage((Page) e.nextElement());
-	}
-	System.err.println("writing out PDF");
-	this.pdfDoc.output(writer);
-	}
+	 */	
+        public void render(AreaTree areaTree, PrintWriter writer)
+        throws IOException, FOPException {      
+            System.err.println("rendering areas to PDF");
+            IDReferences idReferences=areaTree.getIDReferences();           
+            this.pdfResources = this.pdfDoc.getResources();            
+            this.pdfDoc.setIDReferences(idReferences);
+            Enumeration e = areaTree.getPages().elements(); 
+            while ( e.hasMoreElements() ) {
+                this.renderPage((Page) e.nextElement());                
+            }
+    
+            if ( !idReferences.isEveryIdValid() ) {
+                throw new FOPException("The id \""+idReferences.getNextInvalidId()+"\" was referenced but does not exist\n");            
+            }
+    
+            System.err.println("writing out PDF");
+            this.pdfDoc.output(writer);
+        }
+
+
 
 	/**
 	 * add a line to the current stream
@@ -510,7 +520,7 @@ public class PDFRenderer implements Renderer {
 
 	currentPage = this.pdfDoc.makePage(this.pdfResources, currentStream,
 				 page.getWidth()/1000,
-				 page.getHeight()/1000);
+				 page.getHeight()/1000, page);
 
 	if (page.hasLinks()) {
 		currentAnnotList = this.pdfDoc.makeAnnotList();
@@ -522,11 +532,12 @@ public class PDFRenderer implements Renderer {
 
 		linkSet.align();
 		String dest = linkSet.getDest();
+                int linkType = linkSet.getLinkType();
 		Enumeration f = linkSet.getRects().elements();
 		while (f.hasMoreElements()) {
 			LinkedRectangle lrect = (LinkedRectangle) f.nextElement();
 			currentAnnotList.addLink(
-				this.pdfDoc.makeLink(lrect.getRectangle(), dest));
+				this.pdfDoc.makeLink(lrect.getRectangle(), dest, linkType));
 		}
 		}
 	} else {
