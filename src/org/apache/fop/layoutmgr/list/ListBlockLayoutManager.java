@@ -104,6 +104,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
                         } else {
                             curLM.resetPosition(null);
                         }
+                        over = true;
                         break;
                     }
                     stackSize.add(bp.getStackingSize());

@@ -258,6 +258,7 @@ public class Cell extends BlockStackingLayoutManager {
     public void resetPosition(Position resetPos) {
         if (resetPos == null) {
             reset(null);
+            childBreaks.clear();
         }
     }
 }

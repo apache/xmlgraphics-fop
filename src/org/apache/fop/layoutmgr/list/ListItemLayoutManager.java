@@ -135,6 +135,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
                         } else {
                             curLM.resetPosition(null);
                         }
+                        over = true;
                         break;
                     } else {
                         lastPos = bp;

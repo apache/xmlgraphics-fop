@@ -86,6 +86,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
      */
     public void setTableHeader(Body th) {
         tableHeader = th;
+        tableHeader.setParentLM(this);
     }
 
     /**
@@ -95,6 +96,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
      */
     public void setTableFooter(Body tf) {
         tableFooter = tf;
+        tableFooter.setParentLM(this);
     }
 
     /**
@@ -115,14 +117,26 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
 
         MinOptMax headerSize = null;
         if (tableHeader != null) {
+            tableHeader.resetPosition(null);
             headerBreak = getHeight(tableHeader, context);
             headerSize = headerBreak.getStackingSize();
+            stackSize.add(headerSize);
         }
 
         MinOptMax footerSize = null;
         if (tableFooter != null) {
+            tableFooter.resetPosition(null);
             footerBreak = getHeight(tableFooter, context);
             footerSize = footerBreak.getStackingSize();
+            stackSize.add(footerSize);
+        }
+
+        if (stackSize.opt > context.getStackLimit().max) {
+            BreakPoss breakPoss = new BreakPoss(
+                                    new LeafPosition(this, 0));
+            breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
+            breakPoss.setStackingSize(stackSize);
+            return breakPoss;
         }
 
         while ((curLM = (Body)getChildLM()) != null) {
@@ -213,7 +227,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
                                new SectionPosition(this, breaks.size() - 1, breaks));
         breakPoss.setStackingSize(stackSize);
         return breakPoss;
-
     }
 
     /**
@@ -230,13 +243,22 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
 
         // add column, body then row areas
 
-        // add table header areas
-
         int tableHeight = 0;
-
         Body childLM;
-        int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
+
+        // add table header areas
+        if (headerBreak != null) {
+            SectionPosition pos = (SectionPosition)headerBreak.getPosition();
+            List list = pos.list;
+            PositionIterator breakPosIter = new BreakPossPosIter(list, 0, list.size() + 1);
+            while ((childLM = (Body)breakPosIter.getNextChildLM()) != null) {
+                childLM.addAreas(breakPosIter, lc);
+                tableHeight += childLM.getBodyHeight();
+            }
+        }
+
+        int iStartPos = 0;
         while (parentIter.hasNext()) {
             LeafPosition lfp = (LeafPosition) parentIter.next();
             // Add the block areas to Area
@@ -245,12 +267,23 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
                                    lfp.getLeafPos() + 1);
             iStartPos = lfp.getLeafPos() + 1;
             while ((childLM = (Body)breakPosIter.getNextChildLM()) != null) {
+                childLM.setYOffset(tableHeight);
                 childLM.addAreas(breakPosIter, lc);
                 tableHeight += childLM.getBodyHeight();
             }
         }
 
         // add footer areas
+        if (footerBreak != null) {
+            SectionPosition pos = (SectionPosition)footerBreak.getPosition();
+            List list = pos.list;
+            PositionIterator breakPosIter = new BreakPossPosIter(list, 0, list.size() + 1);
+            while ((childLM = (Body)breakPosIter.getNextChildLM()) != null) {
+                childLM.setYOffset(tableHeight);
+                childLM.addAreas(breakPosIter, lc);
+                tableHeight += childLM.getBodyHeight();
+            }
+        }
 
         curBlockArea.setHeight(tableHeight);
 
