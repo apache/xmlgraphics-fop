@@ -9,7 +9,7 @@
 <xsl:output method="text" />
 
 <xsl:template match="extfile">
-<xsl:message>Do <xsl:value-of select="@href"/></xsl:message>
+<!--<xsl:message>Do <xsl:value-of select="@href"/></xsl:message>-->
    <xsl:apply-templates select="document(@href)/*"/>
 </xsl:template>
 
@@ -44,7 +44,9 @@
 <xsl:template match="enumeration">
     public Property checkEnumValues(String value) {
     <xsl:for-each select="value">
-      if (value.equals("<xsl:value-of select="."/>")) { return s_prop<xsl:value-of select="@const"/>; }
+      <xsl:call-template name="enumvals">
+          <xsl:with-param name="specvals" select="concat(.,' ')"/>
+      </xsl:call-template>
     </xsl:for-each>
 	return super.checkEnumValues(value);
     }
@@ -62,12 +64,6 @@
   </xsl:for-each>
     }
     protected String checkValueKeywords(String keyword) {
-<!--  <xsl:for-each select="../keyword-equiv">
-      if (value.equals("<xsl:value-of select="@match"/>")) {
-	return new String("<xsl:value-of select="."/>");
-      }
-  </xsl:for-each>
--->
       String value = (String)s_htKeywords.get(keyword);
       if (value == null) {
 	return super.checkValueKeywords(keyword);
@@ -442,17 +438,6 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
    }
 </xsl:if>
 
-<!-- Handle enumerated values -->
-<!--
-<xsl:if test="enumeration/value">
-    public Property checkEnumValues(String value) {
-    <xsl:for-each select="enumeration/value">
-      if (value.equals("<xsl:value-of select="."/>")) { return s_prop<xsl:value-of select="@const"/>; }
-    </xsl:for-each>
-	return super.checkEnumValues(value);
-    }
-</xsl:if>
--->
 
 <!-- Currently only works for Enum values -->
 <xsl:if test="derive">
@@ -535,8 +520,6 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
          listprop = (ListProperty)propertyList.getExplicit("<xsl:value-of select='$shprop'/>");
          if (listprop != null) {
            // Get a parser for the shorthand to set the individual properties
-<!--           ShorthandParser shparser = new <xsl:value-of select="//property[name=$shprop]/datatype-parser"/>(listprop);
--->
            ShorthandParser shparser = new <xsl:value-of select="key('shorthandref', $shprop)/datatype-parser"/>(listprop);
              p = shparser.getValueForProperty(getPropName(), this, propertyList);
          }
@@ -593,5 +576,18 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
     <xsl:value-of select='$dt'/>
 </xsl:template>
 
+<!-- If the value of an enumeration constant contains two or more words,
+     separated by a blank, map all of these words to the same constant.
+-->
+<xsl:template name="enumvals">
+   <xsl:param name="specvals"/>
+   <xsl:if test='string-length($specvals)>0'>
+   <xsl:variable name="oneval" select="substring-before($specvals, ' ')"/>
+      if (value.equals("<xsl:value-of select="$oneval"/>")) { return s_prop<xsl:value-of select="@const"/>; }
+    <xsl:call-template name="enumvals">
+       <xsl:with-param name="specvals" select="substring-after($specvals, ' ')"/>
+    </xsl:call-template>
+    </xsl:if>
+</xsl:template>
 
 </xsl:stylesheet>
