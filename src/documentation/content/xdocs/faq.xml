@@ -660,7 +660,7 @@ See <link href="#usercfg">loading the user configuration file</link> for further
       <question>The rendering of SVG text in my PDF is of poor quality.
 Can I control this?</question>
       <answer>
-        <p>See <link href="svg.html#pdf_text">Placing SVG Text into PDF</link>.</p>
+        <p>See <link href="svg.html#svg-pdf-text">Placing SVG Text into PDF</link>.</p>
       </answer>
     </faq>
     <faq id="svg-headless">
