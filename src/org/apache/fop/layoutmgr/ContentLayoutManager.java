@@ -6,10 +6,13 @@
  */
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
+
+import org.apache.avalon.framework.logger.Logger;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -21,7 +24,7 @@ import java.util.ArrayList;
  * leader use-content and title.
  */
 public class ContentLayoutManager implements LayoutManager {
-
+    private FOUserAgent userAgent;
     private Area holder;
     private int stackSize;
     private LayoutManager parentLM;
@@ -120,6 +123,23 @@ public class ContentLayoutManager implements LayoutManager {
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void addChild(Area childArea) {
         holder.addChild(childArea);
+    }
+
+    /**
+     * Set the user agent.
+     *
+     * @param ua the user agent
+     */
+    public void setUserAgent(FOUserAgent ua) {
+        userAgent = ua;
+    }
+
+    public FOUserAgent getUserAgent() {
+        return userAgent;
+    }
+
+    protected Logger getLogger() {
+        return userAgent.getLogger();
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */

@@ -38,12 +38,13 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
 
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
-        LayoutManager curLM ; // currently active LM
+        // currently active LM
+        LayoutManager curLM;
         MinOptMax stackSize = new MinOptMax();
 
         while ((curLM = getChildLM()) != null) {
             if (curLM.generatesInlineAreas()) {
-                // problem
+                getLogger().error("inline area not allowed under flow - ignoring");
                 curLM.setFinished(true);
                 continue;
             }
@@ -65,9 +66,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
                     // set stackLimit for remaining space
                     childLC.setStackLimit(MinOptMax.subtract(bpd, stackSize));
 
-                    if (bp.isForcedBreak()) {
+                    if (bp.isForcedBreak() || bp.nextBreakOverflows()) {
                         breakPage = true;
-                        break;
                     }
                 }
             }
@@ -91,10 +91,11 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         return null;
     }
 
+    int iStartPos = 0;
+
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
 
-        LayoutManager childLM ;
-        int iStartPos = 0;
+        LayoutManager childLM;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
             LeafPosition lfp = (LeafPosition) parentIter.next();
@@ -109,8 +110,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         }
 
         flush();
-        // clear the breaks for the page to start for the next page
-        blockBreaks.clear();
     }
 
 
@@ -147,6 +146,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
      */
     public LayoutManager retrieveMarker(String name, int pos, int boundary) {
         // error cannot retrieve markers in flow
+        getLogger().error("Cannot retrieve a marker from the flow");
         return null;
     }
 }

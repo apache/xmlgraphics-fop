@@ -339,6 +339,7 @@ public class PageSequence extends FObj {
 
         // This will layout pages and add them to the area tree
         PageLayoutManager pageLM = new PageLayoutManager(areaTree, this);
+        pageLM.setUserAgent(getUserAgent());
         pageLM.setPageCounting(currentPageNumber, pageNumberGenerator);
 
         // For now, skip the threading and just call run directly.

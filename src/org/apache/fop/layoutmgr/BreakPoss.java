@@ -162,6 +162,10 @@ public class BreakPoss {
         return ((m_flags & FORCE) != 0);
     }
 
+    public boolean nextBreakOverflows() {
+        return ((m_flags & NEXT_OVERFLOWS) != 0);
+    }
+
     public boolean isSuppressible() {
         return ((m_flags & ALL_ARE_SUPPRESS_AT_LB) != 0);
     }

@@ -8,6 +8,7 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
@@ -17,12 +18,15 @@ import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.traits.BorderProps;
 
+import org.apache.avalon.framework.logger.Logger;
+
 import java.util.ListIterator;
 
 /**
  * The base class for all LayoutManagers.
  */
 public abstract class AbstractLayoutManager implements LayoutManager {
+    protected FOUserAgent userAgent;
     protected LayoutManager parentLM;
     protected FObj fobj;
     protected String foID = null;
@@ -49,6 +53,23 @@ public abstract class AbstractLayoutManager implements LayoutManager {
         foID = fobj.getID();
         this.parentLM = null;
         childLMiter = lmIter;
+    }
+
+    /**
+     * Set the user agent.
+     *
+     * @param ua the user agent
+     */
+    public void setUserAgent(FOUserAgent ua) {
+        userAgent = ua;
+    }
+
+    public FOUserAgent getUserAgent() {
+        return userAgent;
+    }
+
+    protected Logger getLogger() {
+        return userAgent.getLogger();
     }
 
     public void setParentLM(LayoutManager lm) {
@@ -109,6 +130,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
         }
         while (childLMiter.hasNext()) {
             curChildLM = (LayoutManager) childLMiter.next();
+            curChildLM.setUserAgent(getUserAgent());
             curChildLM.setParentLM(this);
             curChildLM.init();
             return curChildLM;

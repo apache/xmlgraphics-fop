@@ -70,7 +70,8 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
      * @return the next break possibility
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
-        LayoutManager curLM; // currently active LM
+        // currently active LM
+        LayoutManager curLM;
 
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
@@ -89,20 +90,30 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
                                      stackSize));
             childLC.setRefIPD(ipd);
 
+            boolean over = false;
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    stackSize.add(bp.getStackingSize());
-                    if (stackSize.opt > context.getStackLimit().max) {
+                    if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
-                            reset(lastPos.getPosition());
+                            LayoutManager lm = lastPos.getLayoutManager();
+                            lm.resetPosition(lastPos.getPosition());
+                            if (lm != curLM) {
+                                curLM.resetPosition(null);
+                            }
                         } else {
                             curLM.resetPosition(null);
                         }
                         break;
                     }
+                    stackSize.add(bp.getStackingSize());
                     lastPos = bp;
                     bodyBreaks.add(bp);
+
+                    if (bp.nextBreakOverflows()) {
+                        over = true;
+                        break;
+                    }
 
                     childLC.setStackLimit(MinOptMax.subtract(
                                              context.getStackLimit(), stackSize));
@@ -110,6 +121,9 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             }
             BreakPoss breakPoss = new BreakPoss(
                                     new LeafPosition(this, bodyBreaks.size() - 1));
+            if (over) { 
+                breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
+            }
             breakPoss.setStackingSize(stackSize);
             return breakPoss;
         }
@@ -209,6 +223,8 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         if (resetPos == null) {
             bodyBreaks.clear();
             reset(null);
+        } else {
+            
         }
     }
 }

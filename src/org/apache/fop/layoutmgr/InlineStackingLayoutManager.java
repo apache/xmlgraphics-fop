@@ -149,7 +149,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         if (prevPos != null) {
             // ASSERT (prevPos.getLM() == this)
             if (prevPos.getLM() != this) {
-                //log.error(
+                //getLogger().error(
                 //  "InlineStackingLayoutManager.resetPosition: " +
                 //  "LM mismatch!!!");
             }
@@ -239,7 +239,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
 
             // ignore nested blocks for now
             if (!curLM.generatesInlineAreas()) {
-                System.err.println("WARNING: ignoring block inside inline fo");
+                getLogger().warn("ignoring block inside inline fo");
                 curLM.setFinished(true);
                 continue;
             }
@@ -547,7 +547,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
                                           spaceRange.min) * dSpaceAdjust);
             }
             if (iAdjust != 0) {
-                //log.error("Add leading space: " + iAdjust);
+                //getLogger().debug("Add leading space: " + iAdjust);
                 Space ls = new Space();
                 ls.setWidth(iAdjust);
                 parentArea.addChild(ls);

@@ -328,7 +328,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         // end the page.
         getParentArea(area);
         // Alternatively the child LM indicates to parent that it's full?
-        //System.out.println("size: " + area.getAllocationBPD().max +
+        //getLogger().debug("size: " + area.getAllocationBPD().max +
         //                   ":" + curSpan.getMaxBPD().min);
         /*if (area.getAllocationBPD().max >= curSpan.getMaxBPD().min) {
             // Consider it filled
@@ -385,9 +385,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                   .getRegion(regionClass);
                 reg.getRegion().setIPD((int)reg.getViewArea().getWidth());
                 if (reg == null) {
-                    System.out.println("no region viewport: shouldn't happen");
+                    getLogger().error("no region viewport: shouldn't happen");
                 }
                 StaticContentLayoutManager lm = flow.getLayoutManager();
+                lm.setUserAgent(getUserAgent());
                 lm.init();
                 lm.setRegionReference(reg.getRegion());
                 lm.setParentLM(this);
@@ -403,7 +404,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                         lm.addAreas(new BreakPossPosIter(vecBreakPoss, 0,
                                                           vecBreakPoss.size()), null);
                     } else {
-                      System.out.println("bp==null  cls=" + regionClass);
+                      getLogger().error("bp==null  cls=" + regionClass);
                     }
                 }
                 //lm.flush();

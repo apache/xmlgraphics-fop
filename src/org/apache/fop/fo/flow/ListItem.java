@@ -43,6 +43,8 @@ public class ListItem extends FObj {
             blm.setLabel(label.getItemLayoutManager());
             blm.setBody(body.getItemLayoutManager());
             list.add(blm);
+        } else {
+            getLogger().error("list-item requires list-item-label and list-item-body");
         }
     }
 
