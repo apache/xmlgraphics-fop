@@ -67,8 +67,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected Hashtable fontStyles = new Hashtable();
     protected Color saveColor = null;
 
-    protected IDReferences idReferences = null;
-
     /**
      * Image Object and Graphics Object. The Graphics Object is the Graphics
      * object that is contained within the Image Object.

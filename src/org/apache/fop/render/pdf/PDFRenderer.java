@@ -19,7 +19,6 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.pdf.*;
 import org.apache.fop.image.*;
 import org.apache.fop.extensions.*;
-import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.render.pdf.fonts.LazyFont;
 
 import org.apache.fop.area.*;
