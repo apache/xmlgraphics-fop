@@ -81,7 +81,9 @@ public class FOText extends FObj {
     }
 
     public void addLayoutManager(List list) {
-        // What if nothing left (length=0)?
+        // if nothing left (length=0)?
+        if(length == 0) return;
+
         if (length < ca.length) {
             char[] tmp = ca;
             ca = new char[length];
