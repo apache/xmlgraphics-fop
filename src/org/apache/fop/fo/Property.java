@@ -50,6 +50,7 @@
  */
 package org.apache.fop.fo;
 
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.expr.Numeric;
 import org.apache.fop.fo.expr.PropertyParser;
@@ -163,7 +164,10 @@ public class Property {
 	  return setSubprop(baseProp, partName, p);
 	}
       }
-      return null;
+      else {
+	MessageHandler.errorln("WARNING: compound property component " + partName + " unknown.");
+      }
+      return baseProp;
     }
 
     /**
@@ -208,7 +212,7 @@ public class Property {
 	  pret.setSpecifiedValue(pvalue);
 	return pret;
       } catch (org.apache.fop.fo.expr.PropertyException propEx) {
-	System.err.println("Error in " + propName + " property value: "
+	MessageHandler.errorln("Error in " + propName + " property value: "
 			   + propEx);
 	throw new FOPException("Property error");
       }
@@ -295,7 +299,7 @@ public class Property {
 	    try {
 	      return make(propertyList, specVal, null);
 	    } catch (FOPException e) {
-	      System.err.println("Error computing property value for " +
+	      MessageHandler.errorln("Error computing property value for " +
 				 propName + " from " + specVal);
 	      return null;
 	    }
