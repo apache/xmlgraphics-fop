@@ -108,6 +108,15 @@ public class ImageFactory {
     }
 
     /**
+     * Release the context and all images in the context.
+     *
+     * @param context the context to remove
+     */
+    public void removeContext(FOUserAgent context) {
+        cache.removeContext(context);
+    }
+
+    /**
      * create an FopImage objects.
      * @param href image URL as a String
      * @return a new FopImage object
