@@ -48,7 +48,7 @@
       <fo:block text-align="end"
             font-size="10pt"
             font-family="serif"
-            line-height="14pt" >
+            line-height="14pt">
         XML Recommendation - p. <fo:page-number/>
       </fo:block>
     </fo:static-content>
