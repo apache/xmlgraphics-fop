@@ -18,8 +18,9 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.apps.Driver;
-import org.apache.fop.configuration.Configuration;
+import java.util.logging.Level;
+
+import org.apache.fop.apps.Fop;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PropertyValue;
@@ -63,7 +64,10 @@ public class FOTree extends Tree implements Runnable {
         throws PropertyException
     {
         super();
-        errorDump = Configuration.getBooleanValue("debugMode").booleanValue();
+        Level level = Fop.logger.getLevel();
+        if (level.intValue() <= Level.FINE.intValue()) {
+            errorDump = true;
+        }
         this.xmlevents = xmlevents;
         exprParser = new PropertyParser(this);
 
@@ -127,7 +131,9 @@ public class FOTree extends Tree implements Runnable {
             // Get the end of document
             xmlevents.getEndDocument();
         } catch (Exception e) {
-            if (errorDump) Driver.dumpError(e);
+            if (errorDump) {
+                e.printStackTrace();
+            }
             if (parserThread != null) {
                 try {
                     parserThread.interrupt();
