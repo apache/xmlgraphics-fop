@@ -18,6 +18,7 @@ SOURCES=AlternatingPageMasterFactory.java \
 	InlineArea.java \
 	InlineSpace.java \
 	LineArea.java \
+	LinkSet.java \
 	Page.java \
 	PageMaster.java \
 	PageMasterFactory.java \
