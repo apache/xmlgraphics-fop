@@ -197,7 +197,7 @@ public class Table extends FObj {
         boolean addedHeader = false;
         boolean addedFooter = false;
         int numChildren = this.children.size();
-        for (int i = this.marker; i < numChildren; i++) {
+        for (int i = 0; i < numChildren; i++) {
             FONode fo = (FONode) children.elementAt(i);
             if (fo instanceof TableColumn) {
                 TableColumn c = (TableColumn) fo;
@@ -213,7 +213,11 @@ public class Table extends FObj {
                 c.setColumnOffset(offset);
                 fo.layout(areaContainer);
                 offset += c.getColumnWidth();
-            } else if (fo instanceof TableHeader) {
+            }
+        }
+        for (int i = this.marker; i < numChildren; i++) {
+            FONode fo = (FONode) children.elementAt(i);
+            if (fo instanceof TableHeader) {
                 if (columns.size() == 0) {
                     MessageHandler.errorln("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
                     return new Status(Status.OK);
@@ -281,6 +285,7 @@ public class Table extends FObj {
                               tableFooter.getYPosition() +
                               ((TableBody) fo).getHeight());
                         }
+                        setupColumnHeights();
                         status = new Status(Status.AREA_FULL_SOME);
                     }
                     return status;
@@ -322,12 +327,7 @@ public class Table extends FObj {
         if (height != 0)
             areaContainer.setHeight(height);
 
-        for (int i = 0; i < numChildren; i++) {
-            FONode fo = (FONode) children.elementAt(i);
-            if (fo instanceof TableColumn) {
-                ((TableColumn) fo).setHeight(areaContainer.getHeight());
-            }
-        }
+        setupColumnHeights();
 
         areaContainer.end();
         area.addChild(areaContainer);
@@ -361,6 +361,17 @@ public class Table extends FObj {
         }
 
         return new Status(Status.OK);
+    }
+
+    protected void setupColumnHeights()
+    {
+        int numChildren = this.children.size();
+        for (int i = 0; i < numChildren; i++) {
+            FONode fo = (FONode) children.elementAt(i);
+            if (fo instanceof TableColumn) {
+                ((TableColumn) fo).setHeight(areaContainer.getHeight());
+            }
+        }
     }
 
     public int getAreaHeight() {
