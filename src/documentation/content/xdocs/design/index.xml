@@ -30,15 +30,19 @@ Therefore other (non-layout) sections in this document are probably largely accu
           <td>Output: PDF, Postscript, Print, etc.</td>
         </tr>
       </table>
-      <p>Although this is simple, it is useful in defining the outer limits of FOP's core processing. There may be other things going on under FOP's control that are not really part of FOP. For example, FOP provides a convenience mechanism that takes semantic XML + an XSLT transformation as input, instead of XSL-FO. This is done outside of FOP's core processing (by Xalan), and it is therefore outside the scope of FOP's design, and outside the scope of the FOP design documents.</p>
+      <p>Although this is simple, it is useful in defining the outer limits of FOP's core processing.
+There may be other things going on under FOP's control that are not really part of FOP.
+For example, FOP provides a convenience mechanism that takes semantic XML + an XSLT transformation as input, instead of XSL-FO.
+This is done outside of FOP's core processing (by Xalan), and it is therefore outside the scope of FOP's design, and outside the scope of the FOP design documents.</p>
     </section>
     <section id="primary-goals">
       <title>Primary Design Goals</title>
-      <p>A discussion of project design properly begins with a list of the goals of the project. Out of these goals will flow the design issues and details, and eventually, the implementation.</p>
+      <p>A discussion of project design properly begins with a list of the goals of the project.
+Out of these goals will flow the design issues and details, and eventually, the implementation.</p>
       <section id="pri-goal-conformance">
         <title>Conformance to the XSL-FO Specification</title>
         <p>The current design goal is to reach the "basic" level of conformance, and to have enough flexibility in the design to reach "complete" conformance without major rewriting.
-After "basic" conformance is achieved, it is probably that higher levels of conformance will be sought.</p>
+After "basic" conformance is achieved, it is probable that higher levels of conformance will be sought.</p>
       </section>
       <section id="pri-goal-unlimited-size">
         <title>Process Files of Arbitrary Size</title>
@@ -48,7 +52,7 @@ After "basic" conformance is achieved, it is probably that higher levels of conf
     <section id="secondary-goals">
       <title>Secondary Design Goals</title>
       <section id="sec-goal-memory">
-        <title>Keep Memory Minimal</title>
+        <title>Minimize Memory Use</title>
         <p>Many FOP design decisions revolve around trying to minimize the use of memory.
 The primary purpose here is to reduce the amount of data that must be serialized to storage during processing.
 Since our primary design goals include the ability to process files of arbitrary size, there is no way to avoid the need to serialize.
@@ -59,13 +63,13 @@ To the extent that it can be done so without jeopardizing the primary design goa
     </section>
     <section id="big-picture">
       <title>The Big Picture View</title>
-      <p>With our design goals outlines, we'll now open the Black Box and look at the major processes inside.
+      <p>With our design goals outlined, we'll now open the Black Box and look at the major processes inside.
 FOP has adopted the basic structure of the XSL-FO standard itself as a convenient model for the major processes in FOP. The Result in each row is the input for the next.</p>
       <table>
-        <caption>FOP from a Big Picture Standpoint</caption>
+        <caption>FOP's Big Picture Design</caption>
         <tr>
           <th>Process</th>
-          <th>Result</th>
+          <th>Process Result/Input for Next</th>
           <th>Notes</th>
         </tr>
         <tr>
@@ -74,90 +78,33 @@ FOP has adopted the basic structure of the XSL-FO standard itself as a convenien
           <td>.</td>
         </tr>
         <tr>
-          <td>SAX Handler</td>
-          <td>FO Tree</td>
+          <td><link href="parsing.html">Parsing</link></td>
+          <td><link href="fotree.html">FO Tree</link></td>
           <td>.</td>
         </tr>
         <tr>
-          <td>Refinement</td>
-          <td>Refined FO Tree</td>
+          <td><link href="properties.html#refine">Refinement</link></td>
+          <td><link href="properties.html#refined-fo-tree">Refined FO Tree</link></td>
           <td>.</td>
         </tr>
         <tr>
-          <td>Layout</td>
-          <td>Area Tree</td>
+          <td><link href="layout.html">Layout</link></td>
+          <td><link href="areas.html">Area Tree</link></td>
           <td>Layout and Area Tree are not needed or used for the structural outputs (MIF and RTF), as they are not paginated.</td>
         </tr>
         <tr>
-          <td>Renderer</td>
+          <td><link href="renderers.html">Renderer</link></td>
           <td>Output: PDF, Postscript, Print, etc.</td>
           <td>.</td>
         </tr>
       </table>
-      <p>In general, each piece of data will go be processed in the same way.
+      <p>In general, each piece of data will be processed in the same way.
 However, some information may be used more than once, and some may be used out of order.
 To reduce memory, one process may start before the previous process is completed.</p>
-      <p>The FO Tree is constructed from the xml document. It is an internal
-       representation of the xml document and it is like a DOM with some differences.
-       The Layout Managers use the FO Tree do their layout stuff and create an Area
-       Tree. The Area Tree is a representation of the final result. It is a
-       representation of a set of pages containing the text and other graphics. The
-       Area Tree is then given to a Renderer. The Renderer can read the Area Tree and
-       convert the information into the render format. For example the PDF Renderer
-       creates a PDF Document. For each page in the Area Tree the renderer creates a
-       PDF Page and places the contents of the page into the PDF Page. Once a PDF Page
-       is complete then it can be written to the output stream.</p>
-    </section>
-    <section id="issues">
-      <title>Design Issues</title>
-      <p>As with any significant programming project, we need to first understand the big problem, then break it into smaller solvable problems.
-To achieve our design goals, we have identified and attempted to resolve some design issues.
-Since they are in support of the primary and secondary goals, they are not necessarily written in stone.
+      <p>For a detailed discussion of the design of any component, follow its link in the table above.
+Each component outlines the design issues which have already been addressed.
+These resolution of these design issues is in support of the primary and secondary goals, so they are not necessarily written in stone.
 However, most of them have been discussed at length among the developers, and are reasonably well settled.</p>
-      <section id="issue-input">
-        <title>Use SAX as Input</title>
-        <p>The two standard ways of dealing with XML input are SAX and DOM. SAX basically creates events as it parses an XML document in a serial fashion; a program using SAX (and not storing anything internally) will only see a small window of the document at any point in time, and can never look forward in the document. DOM creates and stores a tree representation of the document, allowing a view of the entire document as an integrated whole. One issue that may seem counter-intuitive to some new FOP developers, and which has from time to time been contentious, is that FOP uses SAX for input. (DOM can be used as input as well, but it is converted into SAX events before entering FOP, effectively negating its advantages).</p>
-        <p>Since FOP essentially needs a tree representation of the FO input, at first glance it seems to make sense to use DOM. Instead, FOP takes SAX events and builds its own tree-like structure. Why?</p>
-        <ul>
-          <li>DOM has a relatively large memory footprint. FOP's FO Tree is a lighter-weight structure.</li>
-          <li>DOM contains an entire document. FOP is able to process individual fo:page-sequence objects discretely, without the need to have the entire document in memory. For documents that have only one fo:page-sequence object, FOP's approach is no advantage, but in other cases it is a huge advantage. A 500-page book that is broken into 100 5-page chapters, each in its own fo:page-sequence, essentially needs only 1% of the document memory that would be required if using DOM as input.</li>
-        </ul>
-      </section>
-      <section id="issue-fo-recycle">
-        <title>Process FO Elements ASAP</title>
-        <p>The issue here is that we wish to recycle FO Tree memory as much as possible. There are at least three possible places that FO Tree fragments can be passed to the Layout process, and their memory recycled:</p>
-        <ul>
-          <li>
-            <strong>fo:block</strong> It might be tempting to start laying out pages as soon as the first fo:block object is finished. However, there are many downstream things that can affect the placement of that block on a page, such as graphics and footnotes. So, in order to maintain conformance to the XSL-FO specification, and create high-quality output, we must see more of the document.</li>
-          <li>
-            <strong>fo:root</strong> The other extreme is to wait until the entire document is read in before processing any of it. This essentially means that there is no memory recycling. Processing the document correctly is more important than saving memory, so this option would be used if there were no better alternative.</li>
-          <li>
-            <strong>fo:page-sequence</strong> The page-sequence object provides a nice clean break in the document. Content from one page-sequence will never interfere with nor affect the placement of the content of another. FOP uses this option as the optimum way to maintain compliance with the standard and to minimize memory consumption.</li>
-        </ul>
-      </section>
-      <section id="issue-fo-serialize">
-        <title>Serialize FO Tree as Necessary</title>
-        <p>This issue is implied by the requirement to process documents of arbitrary size. Unless some arbitrary limit is placed on the size of page-sequence objects, FOP must be able to serialize FO tree fragments as necessary.</p>
-      </section>
-      <section id="issue-simple-layout">
-        <title>Keep Layouts Simple</title>
-        <p>Layout should handle floats, footnotes and keeps in a simple, straightforward way.</p>
-      </section>
-      <section id="issue-simple-id-refs">
-        <title>Keep ID References Simple</title>
-      </section>
-      <section id="issue-area-recycle">
-        <title>Render Pages ASAP</title>
-        <p>The issue here is that we wish to recycle the Area Tree memory as much as possible. The problem is that forward references prevent pages from being resolved until the forward references are resolved. If memory is insufficient to store unresolved pages, Area Tree fragments must be serialized until resolved.</p>
-        <p>FOP developers have discussed adding the capability of using an Area Tree to render to more than one output target in the same run, which would be a complicating factor in disposal of pages as they are rendered.</p>
-      </section>
-      <section id="issue-renderers-responsible">
-        <title>Renderers are Responsible</title>
-        <p>Each renderer is totally responsible for its output format.</p>
-      </section>
-      <section id="issue-output-stream">
-        <title>Send Output to a Stream</title>
-      </section>
     </section>
   </body>
 </document>

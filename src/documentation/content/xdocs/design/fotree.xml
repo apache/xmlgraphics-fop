@@ -10,6 +10,22 @@
     </authors>
   </header>
   <body>
+      <section id="issue-fo-recycle">
+        <title>Process FO Elements ASAP</title>
+        <p>The issue here is that we wish to recycle FO Tree memory as much as possible. There are at least three possible places that FO Tree fragments can be passed to the Layout process, and their memory recycled:</p>
+        <ul>
+          <li>
+            <strong>fo:block</strong> It might be tempting to start laying out pages as soon as the first fo:block object is finished. However, there are many downstream things that can affect the placement of that block on a page, such as graphics and footnotes. So, in order to maintain conformance to the XSL-FO specification, and create high-quality output, we must see more of the document.</li>
+          <li>
+            <strong>fo:root</strong> The other extreme is to wait until the entire document is read in before processing any of it. This essentially means that there is no memory recycling. Processing the document correctly is more important than saving memory, so this option would be used if there were no better alternative.</li>
+          <li>
+            <strong>fo:page-sequence</strong> The page-sequence object provides a nice clean break in the document. Content from one page-sequence will never interfere with nor affect the placement of the content of another. FOP uses this option as the optimum way to maintain compliance with the standard and to minimize memory consumption.</li>
+        </ul>
+      </section>
+      <section id="issue-fo-serialize">
+        <title>Serialize FO Tree as Necessary</title>
+        <p>This issue is implied by the requirement to process documents of arbitrary size. Unless some arbitrary limit is placed on the size of page-sequence objects, FOP must be able to serialize FO tree fragments as necessary.</p>
+      </section>
     <section id="intro">
       <title>Introduction</title>
       <p>The FO Tree is an internal representation of the input XSL-FO document.

@@ -27,6 +27,18 @@ Note: it may be possible to start immediately after a block formatting object ha
 It is also possible to layout all pages in a page sequence after each page sequence has been added from the xml.</p>
     <p>The layout process is handled by a set of layout managers.
 The block level layout managers are used to create the block areas which are added to the region area of a page.</p>
+      <section id="issue-simple-layout">
+        <title>Keep Layouts Simple</title>
+        <p>Layout should handle floats, footnotes and keeps in a simple, straightforward way.</p>
+      </section>
+      <section id="issue-simple-id-refs">
+        <title>Keep ID References Simple</title>
+      </section>
+      <section id="issue-area-recycle">
+        <title>Render Pages ASAP</title>
+        <p>The issue here is that we wish to recycle the Area Tree memory as much as possible. The problem is that forward references prevent pages from being resolved until the forward references are resolved. If memory is insufficient to store unresolved pages, Area Tree fragments must be serialized until resolved.</p>
+        <p>FOP developers have discussed adding the capability of using an Area Tree to render to more than one output target in the same run, which would be a complicating factor in disposal of pages as they are rendered.</p>
+      </section>
     <section id="lm">
       <title>Layout Managers</title>
       <p>The layout managers are set up from the hierarchy of the formatting object tree.
