@@ -25,7 +25,9 @@ public class ListItemBody extends FObj {
     }
 
     public Item getItemLayoutManager() {
-        Item item = new Item(this);
+        Item item = new Item();
+        item.setUserAgent(getUserAgent());
+        item.setFObj(this);
         return item;
     }
 

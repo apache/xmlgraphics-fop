@@ -45,8 +45,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     int overflow;
     PropertyManager propManager;
 
-    public BlockContainerLayoutManager(FObj fobj) {
-        super(fobj);
+    public BlockContainerLayoutManager() {
     }
 
     public void setOverflow(int of) {

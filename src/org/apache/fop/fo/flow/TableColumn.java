@@ -36,7 +36,10 @@ public class TableColumn extends FObj {
 
     public LayoutManager getLayoutManager() {
         doSetup();
-        return new Column(this);
+        Column clm = new Column();
+        clm.setUserAgent(getUserAgent());
+        clm.setFObj(this);
+        return clm;
     }
 
     public Length getColumnWidthAsLength() {

@@ -26,8 +26,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
     protected LayoutManager curChildLM = null;
     protected BlockParent parentArea = null;
 
-    public BlockStackingLayoutManager(FObj fobj) {
-        super(fobj);
+    public BlockStackingLayoutManager() {
     }
 
     private BreakCost evaluateBreakCost(Area parent, Area child) {

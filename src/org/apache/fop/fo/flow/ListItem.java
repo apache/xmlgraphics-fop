@@ -39,7 +39,9 @@ public class ListItem extends FObj {
 
     public void addLayoutManager(List list) {
         if(label != null && body != null) {
-            ListItemLayoutManager blm = new ListItemLayoutManager(this);
+            ListItemLayoutManager blm = new ListItemLayoutManager();
+            blm.setUserAgent(getUserAgent());
+            blm.setFObj(this);
             blm.setLabel(label.getItemLayoutManager());
             blm.setBody(body.getItemLayoutManager());
             list.add(blm);

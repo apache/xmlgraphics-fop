@@ -46,8 +46,7 @@ public class Item extends BlockStackingLayoutManager {
      * Create a new Cell layout manager.
      * @param fobj the formatting object for the cell
      */
-    public Item(FObj fobj) {
-        super(fobj);
+    public Item() {
     }
 
     protected void initProperties(PropertyManager propMgr) {

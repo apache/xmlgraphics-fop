@@ -59,10 +59,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
     /**
      * Create a new table layout manager.
      *
-     * @param fobj the table formatting object
      */
-    public TableLayoutManager(FObj fobj) {
-        super(fobj);
+    public TableLayoutManager() {
     }
 
     protected void initProperties(PropertyManager propMgr) {

@@ -99,7 +99,9 @@ public class TableCell extends FObj {
     /**
      */
     public void addLayoutManager(List list) {
-        Cell clm = new Cell(this);
+        Cell clm = new Cell();
+        clm.setUserAgent(getUserAgent());
+        clm.setFObj(this);
         list.add(clm);
     }
 

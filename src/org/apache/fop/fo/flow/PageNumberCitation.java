@@ -62,7 +62,8 @@ public class PageNumberCitation extends FObj {
 
     public void addLayoutManager(List lms) {
         setup();
-        lms.add(new LeafNodeLayoutManager(this) {
+        LayoutManager lm;
+        lm = new LeafNodeLayoutManager() {
                     public InlineArea get(LayoutContext context) {
                         return getInlineArea(parentLM);
                     }
@@ -79,8 +80,10 @@ public class PageNumberCitation extends FObj {
                     protected void offsetArea(LayoutContext context) {
                         curArea.setOffset(context.getBaseline());
                     }
-                }
-               );
+                };
+        lm.setUserAgent(getUserAgent());
+        lm.setFObj(this);
+        lms.add(lm);
     }
 
     // if id can be resolved then simply return a word, otherwise

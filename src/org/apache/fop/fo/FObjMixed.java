@@ -36,8 +36,12 @@ public class FObjMixed extends FObj {
 
     public void addLayoutManager(List lms) {
         if (children != null) {
-            lms.add(new InlineStackingLayoutManager(this,
-                     new LMiter(children.listIterator())));
+            InlineStackingLayoutManager lm;
+            lm = new InlineStackingLayoutManager();
+            lm.setUserAgent(getUserAgent());
+            lm.setFObj(this);
+            lm.setLMiter(new LMiter(children.listIterator()));
+            lms.add(lm);
         }
     }
 

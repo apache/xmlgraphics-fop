@@ -72,7 +72,9 @@ public class Table extends FObj {
      * Must override in subclasses if their content can be laid out.
      */
     public void addLayoutManager(List list) {
-        TableLayoutManager tlm = new TableLayoutManager(this);
+        TableLayoutManager tlm = new TableLayoutManager();
+        tlm.setUserAgent(getUserAgent());
+        tlm.setFObj(this);
         tlm.setColumns(columns);
         if(tableHeader != null) {
             tlm.setTableHeader(tableHeader.getLayoutManager());

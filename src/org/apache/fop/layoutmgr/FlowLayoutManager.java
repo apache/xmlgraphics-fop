@@ -32,8 +32,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
      * This is the top level layout manager.
      * It is created by the PageSequence FO.
      */
-    public FlowLayoutManager(FObj fobj) {
-        super(fobj);
+    public FlowLayoutManager() {
     }
 
     public BreakPoss getNextBreakPoss(LayoutContext context) {

@@ -56,7 +56,9 @@ public class InstreamForeignObject extends FObj {
     public void addLayoutManager(List list) {
         areaCurrent = getInlineArea();
         if(areaCurrent != null) {
-            LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
+            LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
+            lm.setUserAgent(getUserAgent());
+            lm.setFObj(this);
             lm.setCurrentArea(areaCurrent);
             lm.setAlignment(properties.get("vertical-align").getEnum());
             lm.setLead(areaCurrent.getHeight());

@@ -54,10 +54,8 @@ public class Row extends BlockStackingLayoutManager {
     /**
      * Create a new row layout manager.
      *
-     * @param fobj the table-row formatting object
      */
-    public Row(FObj fobj) {
-        super(fobj);
+    public Row() {
     }
 
     /**

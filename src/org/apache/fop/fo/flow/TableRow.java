@@ -41,7 +41,9 @@ public class TableRow extends FObj {
     /**
      */
     public void addLayoutManager(List list) {
-        Row rlm = new Row(this);
+        Row rlm = new Row();
+        rlm.setUserAgent(getUserAgent());
+        rlm.setFObj(this);
         list.add(rlm);
     }
 

@@ -85,7 +85,6 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param pageseq the page sequence fo
      */
     public PageLayoutManager(AreaTree areaTree, PageSequence pageseq) {
-        super(pageseq);
         this.areaTree = areaTree;
         pageSequence = pageseq;
     }

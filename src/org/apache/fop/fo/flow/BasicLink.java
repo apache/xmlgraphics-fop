@@ -44,14 +44,18 @@ public class BasicLink extends Inline {
     // add start and end properties for the link
     public void addLayoutManager(List lms) {
         setup();
-        lms.add(new InlineStackingLayoutManager(this,
-                     new LMiter(children.listIterator())) {
+        InlineStackingLayoutManager lm;
+        lm = new InlineStackingLayoutManager() {
                     protected InlineParent createArea() {
                         InlineParent area = super.createArea();
                         setupLinkArea(parentLM, area);
                         return area;
                     }
-                });
+                };
+        lm.setUserAgent(getUserAgent());
+        lm.setFObj(this);
+        lm.setLMiter(new LMiter(children.listIterator()));
+        lms.add(lm);
     }
 
     protected void setupLinkArea(LayoutManager parentLM, InlineParent area) {

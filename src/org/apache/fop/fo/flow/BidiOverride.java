@@ -40,8 +40,9 @@ public class BidiOverride extends FObjMixed {
             for (int count = childList.size() - 1; count >= 0; count--) {
                 LayoutManager lm = (LayoutManager) childList.get(count);
                 if (lm.generatesInlineAreas()) {
-                    list.add( new BidiLayoutManager(this,
-                                                    (LeafNodeLayoutManager) lm));
+                    LayoutManager blm = new BidiLayoutManager((LeafNodeLayoutManager) lm);
+                    blm.setFObj(this);
+                    list.add(blm);
                 } else {
                     list.add(lm);
                 }
@@ -86,8 +87,7 @@ public class BidiOverride extends FObjMixed {
     class BidiLayoutManager extends LeafNodeLayoutManager {
         List childs;
 
-        BidiLayoutManager(FObj obj, LeafNodeLayoutManager cLM) {
-            super(obj);
+        BidiLayoutManager(LeafNodeLayoutManager cLM) {
             childs = new ArrayList();
 /*            for (int count = cLM.size() - 1; count >= 0; count--) {
                 InlineArea ia = cLM.get(count);

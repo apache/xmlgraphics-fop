@@ -18,6 +18,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.util.CharUtilities;
 
 import org.apache.fop.apps.StructureHandler;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.area.inline.InlineArea;
@@ -49,7 +50,8 @@ public class PageNumber extends FObj {
 
     public void addLayoutManager(List lms) {
         setup();
-        lms.add(new LeafNodeLayoutManager(this) {
+        LayoutManager lm;
+        lm = new LeafNodeLayoutManager() {
                     public InlineArea get(LayoutContext context) {
                         // get page string from parent, build area
                         Word inline = new Word();
@@ -76,8 +78,10 @@ public class PageNumber extends FObj {
                     protected void offsetArea(LayoutContext context) {
                         curArea.setOffset(context.getBaseline());
                     }
-                }
-               );
+                };
+        lm.setUserAgent(getUserAgent());
+        lm.setFObj(this);
+        lms.add(lm);
     }
 
     public void setup() {

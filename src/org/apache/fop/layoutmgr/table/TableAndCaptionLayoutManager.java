@@ -39,10 +39,8 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
     /**
      * Create a new table and caption layout manager.
      *
-     * @param fobj the table-and-caption formatting object
      */
-    public TableAndCaptionLayoutManager(FObj fobj) {
-        super(fobj);
+    public TableAndCaptionLayoutManager() {
     }
 
     /**

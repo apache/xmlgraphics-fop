@@ -39,7 +39,9 @@ public class StaticContent extends Flow {
 
     public StaticContentLayoutManager getLayoutManager() {
         if (lm == null) {
-            lm = new StaticContentLayoutManager(this);
+            lm = new StaticContentLayoutManager();
+            lm.setUserAgent(getUserAgent());
+            lm.setFObj(this);
         }
         return lm;
     }

@@ -33,9 +33,10 @@ public class Title extends FObjMixed {
         // use special layout manager to add the inline areas
         // to the Title.
         InlineStackingLayoutManager lm;
-        lm = new InlineStackingLayoutManager(this,
-                     new LMiter(children.listIterator()));
+        lm = new InlineStackingLayoutManager();
         lm.setUserAgent(getUserAgent());
+        lm.setFObj(this);
+        lm.setLMiter(new LMiter(children.listIterator()));
         lm.init();
 
         // get breaks then add areas to title

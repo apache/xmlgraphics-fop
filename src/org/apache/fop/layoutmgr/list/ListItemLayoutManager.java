@@ -53,10 +53,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     /**
      * Create a new list item layout manager.
      *
-     * @param fobj the list-item formatting object
      */
-    public ListItemLayoutManager(FObj fobj) {
-        super(fobj);
+    public ListItemLayoutManager() {
     }
 
     protected void initProperties(PropertyManager propMgr) {
