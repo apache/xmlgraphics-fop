@@ -36,6 +36,9 @@ import org.apache.fop.messaging.MessageHandler;
  *
  */
 public class PrintCommandLine extends CommandLine {
+  public PrintCommandLine(String args []) {
+    super (args);
+  }
 
 
   public static void main(String[] args) {
