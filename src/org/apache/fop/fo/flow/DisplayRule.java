@@ -132,6 +132,10 @@ public class DisplayRule extends FObj {
 		forcedStartOffset;
 	}
 
+        // initialize id                       
+        String id = this.properties.get("id").getString();            
+        area.getIDReferences().initializeID(id,area);                                
+
 	RuleArea ruleArea = new RuleArea(fs,
 					 area.getAllocationWidth(),
 					 area.spaceLeft(),

@@ -79,6 +79,9 @@ public class DisplaySequence extends FObj {
 
     public Status layout(Area area) throws FOPException {
 	if (this.marker == START) {
+	    // initialize id                       
+            String id = this.properties.get("id").getString();            
+            area.getIDReferences().initializeID(id,area);                                
 	    this.marker = 0;
 	}
 	// this is such common code, perhaps it should be in the super class
