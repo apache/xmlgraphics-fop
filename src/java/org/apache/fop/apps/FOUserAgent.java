@@ -55,17 +55,12 @@ import java.util.Map;
 import java.io.IOException;
 import java.io.InputStream;
 
-// XML
-import org.w3c.dom.Document;
-
 // Avalon
 import org.apache.avalon.framework.logger.LogEnabled;
 import org.apache.avalon.framework.logger.Logger;
 
 // FOP
 import org.apache.fop.pdf.PDFEncryptionParams;
-import org.apache.fop.render.XMLHandler;
-import org.apache.fop.render.RendererContext;
 
 /**
  * The User Agent for fo.
@@ -186,40 +181,6 @@ public class FOUserAgent implements LogEnabled {
      */
     public boolean linkToFootnotes() {
         return true;
-    }
-
-    /**
-     * Render the xml document with the given xml namespace.
-     * The Render Context is by the handle to render into the current
-     * rendering target.
-     * @param ctx rendering context
-     * @param doc DOM Document containing the source document
-     * @param namespace Namespace URI of the document
-     */
-    public void renderXML(RendererContext ctx, Document doc,
-                          String namespace) {
-        String mime = ctx.getMimeType();
-        Map mh = (Map) handlers.get(mime);
-        XMLHandler handler = null;
-        if (mh != null) {
-            handler = (XMLHandler) mh.get(namespace);
-        }
-        if (handler == null) {
-            handler = (XMLHandler) defaults.get(mime);
-        }
-        if (handler != null) {
-            try {
-                handler.handleXML(ctx, doc, namespace);
-            } catch (Throwable t) {
-                // could not handle document
-                getLogger().error("Some XML content will be ignored. "
-                        + "Could not render XML", t);
-            }
-        } else {
-            // no handler found for document
-            getLogger().warn("Some XML content will be ignored. "
-                    + "No handler defined for XML: " + namespace);
-        }
     }
 
 }

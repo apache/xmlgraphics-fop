@@ -429,7 +429,7 @@ public class XMLRenderer extends AbstractRenderer {
         org.w3c.dom.Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
         context.setProperty(XMLXMLHandler.WRITER, writer);
-        userAgent.renderXML(context, doc, ns);
+        renderXML(userAgent, context, doc, ns);
         writeEndTag("</foreignObject>");
     }
 
