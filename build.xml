@@ -122,6 +122,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <include name="LICENSE"/>
        <include name="README"/>
        <include name="STATUS"/>
+       <include name="ReleaseNotes.html"/>
        <include name="fop.bat"/>
        <include name="fop.sh"/>
        <exclude name="src/**"/>
@@ -160,6 +161,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <include name="LICENSE"/>
        <include name="README"/>
        <include name="STATUS"/>
+       <include name="ReleaseNotes.html"/>
        <include name="build*"/>
        <include name="fop.bat"/>
        <include name="fop.sh"/>
@@ -671,7 +673,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <target name="dist" depends="dist-src,dist-bin"/>
 
-  <target name="dist-bin" depends="package">
+  <target name="dist-bin" depends="package, htmldoc">
     <echo message="Building the binary distribution files (zip,tar)"/>
     <mkdir dir="${dist.bin.result.dir}"/>
     <copy todir="${dist.bin.result.dir}">
@@ -691,7 +693,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </target>
 
 
-  <target name="dist-src" depends="package, javadocs">
+  <target name="dist-src" depends="package, javadocs, htmldoc">
     <echo message="Building the source distribution files (zip,tar)"/>
     <mkdir dir="${dist.src.result.dir}"/>
     <copy todir="${dist.src.result.dir}">
