@@ -330,11 +330,11 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
             currentBlockIPPosition = currentIPPosition;
 
             RegionReference region = port.getRegion();
+            handleRegionTraits(port);
+
             //  shouldn't the viewport have the CTM
             startVParea(region.getCTM());
-
             // do after starting viewport area
-            handleRegionTraits(port);
             if (region.getRegionClass() == Region.BODY_CODE) {
                 renderBodyRegion((BodyRegion) region);
             } else {

@@ -546,9 +546,9 @@ public class PDFRenderer extends PrintRenderer {
      */
     protected void handleRegionTraits(RegionViewport region) {
         currentFontName = "";
-        float startx = 0;
-        float starty = 0;
         Rectangle2D viewArea = region.getViewArea();
+        float startx = (float)(viewArea.getX() / 1000f);
+        float starty = (float)(viewArea.getY() / 1000f);;
         float width = (float)(viewArea.getWidth() / 1000f);
         float height = (float)(viewArea.getHeight() / 1000f);
 
@@ -557,8 +557,9 @@ public class PDFRenderer extends PrintRenderer {
             bpMarginOffset = region.getBorderAndPaddingWidthBefore();
             ipMarginOffset = region.getBorderAndPaddingWidthStart();
         }
-
+        beginTextObject();
         drawBackAndBorders(region, startx, starty, width, height);
+        endTextObject();
     }
 
     /**
