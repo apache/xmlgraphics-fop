@@ -347,7 +347,7 @@ public class TableRow extends FObj {
 					
 				CellState state = new CellState( i, false, cumulativeWidth );
 					// add the state of a cell.
-				cells.add( i, state );
+				cells.insertElementAt( state,i);
 					// cumulative width, i.e start offset of cell
 					// also known as widthOfCellSoFar...
 				cumulativeWidth += width;
