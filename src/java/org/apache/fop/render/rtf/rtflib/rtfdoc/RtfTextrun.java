@@ -235,7 +235,7 @@ public class RtfTextrun extends RtfContainer {
         if (rtfListItem != null) {
             rtfListItem.getRtfListStyle().writeParagraphPrefix(this);
         }
-        
+
         //write all children
         boolean bPrevPar = false;
         boolean bFirst = true;
@@ -260,6 +260,7 @@ public class RtfTextrun extends RtfContainer {
                         && e == lastParagraphBreak));
                 
             if (!bHide) {
+                newLine();
                 e.writeRtf(); 
                 
                 if (rtfListItem != null && e instanceof RtfParagraphBreak) {

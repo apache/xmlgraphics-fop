@@ -184,6 +184,7 @@ public class RtfColorTable {
             return;
         }
 
+        header.newLine();
         header.writeGroupMark (true);
         //Don't use writeControlWord, because it appends a blank,
         //which may confuse Wordpad.
@@ -196,11 +197,13 @@ public class RtfColorTable {
         for (int i = 0; i < len; i++) {
             int identifier = ((Integer) colorTable.get (i)).intValue ();
 
+            header.newLine();
             header.write ("\\red" + determineColorLevel (identifier, RED));
             header.write ("\\green" + determineColorLevel (identifier, GREEN));
             header.write ("\\blue" + determineColorLevel (identifier, BLUE) + ";");
         }
 
+        header.newLine();
         header.writeGroupMark (false);
     }
 

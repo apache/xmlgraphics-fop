@@ -37,12 +37,13 @@ public class RtfGenerator extends RtfElement {
      * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement#writeRtfContent()
      */
     protected void writeRtfContent() throws IOException {
-        parent.writeGroupMark(true);
-        parent.writeStarControlWord("generator");
-        parent.writer.write("Apache FOP ");
-        parent.writer.write(Fop.getVersion());
-        parent.writer.write(";");
-        parent.writeGroupMark(false);
+        newLine();
+        writeGroupMark(true);
+        writeStarControlWord("generator");
+        writer.write("Apache FOP ");
+        writer.write(Fop.getVersion());
+        writer.write(";");
+        writeGroupMark(false);
     }
 
     /**

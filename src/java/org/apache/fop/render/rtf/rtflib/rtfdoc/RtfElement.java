@@ -90,6 +90,15 @@ public abstract class RtfElement {
     }
 
     /**
+     * Starts a new line in the RTF file being written. This is only to format
+     * the RTF file itself (for easier debugging), not its content.
+     * @throws IOException in case of an I/O problem
+     */
+    protected void newLine() throws IOException {
+        writer.write("\n");
+    }
+    
+    /**
      * Write an RTF control word to our Writer
      * @param word RTF control word to write
      * @throws IOException for I/O problems

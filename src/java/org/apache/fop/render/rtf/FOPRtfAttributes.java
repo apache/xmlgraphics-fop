@@ -42,6 +42,17 @@ public class FOPRtfAttributes extends RtfAttributes {
     }
 
     /**
+     * Set an attribute using a value in millipoints (internal units in twips)
+     * @param name name of attribute
+     * @param value value of attribute (in millipoints)
+     * @return this (which now contains the new entry)
+     */
+    public RtfAttributes setTwips(String name, int value) {
+        set(name, value / (1000 / 20)); //Convert millipoints to twips
+        return this;
+    }
+
+    /**
      * Set an attribute that has a Length value (internal units in half-points)
      * @param name name of attribute
      * @param value value of attribute

@@ -103,9 +103,10 @@ class RtfHeader extends RtfContainer {
      *write properties for footnote handling
      */
     private void writeFootnoteProperties() throws IOException {
-    writeControlWord("fet0");  //footnotes, not endnotes
-    writeControlWord("ftnbj"); //place footnotes at the end of the
-                               //page (should be the default, but
-                               //Word 2000 thinks otherwise)
+        newLine();
+        writeControlWord("fet0");  //footnotes, not endnotes
+        writeControlWord("ftnbj"); //place footnotes at the end of the
+                                   //page (should be the default, but
+                                   //Word 2000 thinks otherwise)
     }
 }
