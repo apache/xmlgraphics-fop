@@ -124,7 +124,7 @@ public class FOElementMapping extends ElementMapping {
             foObjs.put("table", new Ta());
             foObjs.put("table-column", new TC());
             foObjs.put("table-caption", new TCaption());
-            foObjs.put("table-header", new TB());
+            foObjs.put("table-header", new TH());
             foObjs.put("table-footer", new TB());
             foObjs.put("table-body", new TB());
             foObjs.put("table-row", new TR());
@@ -371,6 +371,12 @@ public class FOElementMapping extends ElementMapping {
     static class TB extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.TableBody(parent);
+        }
+    }
+    
+    static class TH extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new org.apache.fop.fo.flow.TableHeader(parent);
         }
     }
 

@@ -73,6 +73,7 @@ import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
+import org.apache.fop.fo.flow.TableHeader;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
@@ -81,6 +82,7 @@ import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.apps.Document;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTextrunContainer;
@@ -117,8 +119,6 @@ public class RTFHandler extends FOInputHandler {
     private final Logger log = new ConsoleLogger();
     private RtfSection sect;
     private RtfDocumentArea docArea;
-    //private RtfParagraph para; //never used
-    private boolean warned = false;
     private boolean bPrevHeaderSpecified = false;//true, if there has been a
                                                  //header in any page-sequence
     private boolean bPrevFooterSpecified = false;//true, if there has been a
@@ -242,11 +242,6 @@ public class RTFHandler extends FOInputHandler {
                     contAfter.newAfter(attr);
                 }
 
-                // print ALPHA_WARNING
-                if (!warned) {
-                    sect.newParagraph().newText(ALPHA_WARNING);
-                    warned = true;
-                }
             } else if (fl.getFlowName().equals("xsl-region-before")) {
                 bHeaderSpecified = true;
                 bPrevHeaderSpecified = true;
@@ -529,10 +524,12 @@ public class RTFHandler extends FOInputHandler {
             final RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class,
                     true, null);
 
-            RtfAttributes tblAttribs = tbl.getRtfAttributes();
-            RtfAttributes tblRowAttribs = new RtfAttributes();
             RtfAttributes atts = TableAttributesConverter.convertRowAttributes(tr.properties,
                     tbl.getHeaderAttribs());
+                    
+            if(tr.getParent() instanceof TableHeader) {
+                atts.set(ITableAttributes.ATTR_HEADER);
+            }
 
             builderContext.pushContainer(tbl.newTableRow(atts));
 

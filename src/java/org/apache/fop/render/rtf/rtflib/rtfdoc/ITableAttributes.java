@@ -75,6 +75,9 @@ public interface ITableAttributes {
     /** half the space between the cells of a table row in twips */
     String ATTR_RTF_15_TRGAPH = "trgaph";
     String ATTR_ROW_LEFT_INDENT = "trleft";
+    
+    /** table row header */
+    public final String ATTR_HEADER = "trhdr";
 
 // RTF 1.6 Row and table attributes
     /** table row padding, top */
