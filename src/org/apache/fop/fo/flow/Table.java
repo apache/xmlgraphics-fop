@@ -179,18 +179,20 @@ public class Table extends FObj {
 						FONode fo = (FONode) children.elementAt(i);
 						if (fo instanceof TableColumn) {
 								TableColumn c = (TableColumn) fo;
-								int num = c.getColumnNumber();
-								if (num == 0) {
-										num = currentColumnNumber + 1;
+								c.doSetup(areaContainer);
+								int numColumnsRepeated = c.getNumColumnsRepeated();
+								//int currentColumnNumber = c.getColumnNumber();
+									
+								for (int j = 0; j < numColumnsRepeated; j++) {
+									currentColumnNumber++;
+									if (currentColumnNumber > columns.size()) {
+										columns.setSize(currentColumnNumber);
+									}
+									columns.setElementAt(c, currentColumnNumber - 1);
+									c.setColumnOffset(offset);
+									c.layout(areaContainer);
+									offset += c.getColumnWidth();
 								}
-								currentColumnNumber = num;
-								if (num > columns.size()) {
-										columns.setSize(num);
-								}
-								columns.setElementAt(c, num - 1);
-								c.setColumnOffset(offset);
-								fo.layout(areaContainer);
-								offset += c.getColumnWidth();
 						}
 				}
 				areaContainer.setAllocationWidth(offset);
