@@ -155,7 +155,7 @@ list of possible build targets.
     <property name="packages" value="org.apache.fop.*"/>
 
     <property name="viewer.resources.src.dir" value="${src.java}/org/apache/fop/viewer/resources"/>
-    <property name="viewer.images.src.dir" value="${src.java}/org/apache/fop/viewer/Images"/>
+    <property name="viewer.images.src.dir" value="${src.java}/org/apache/fop/viewer/images"/>
 
     <property name="build.dir" value="./build"/>
     <property name="build.src" value="./build/src"/>
