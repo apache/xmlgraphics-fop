@@ -54,9 +54,9 @@ public class Inline extends FObjMixed {
        /* Check to see if this node can have block-level children.
         * See validateChildNode() below.
         */
-       int lvlLeader = findAncestor("fo:leader");
-       int lvlFootnote = findAncestor("fo:footnote");
-       int lvlInCntr = findAncestor("fo:inline-container");
+       int lvlLeader = findAncestor(FO_LEADER);
+       int lvlFootnote = findAncestor(FO_FOOTNOTE);
+       int lvlInCntr = findAncestor(FO_INLINE_CONTAINER);
 
        if (lvlLeader > 0) {
            if (lvlInCntr < 0 ||
