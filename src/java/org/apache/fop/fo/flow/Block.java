@@ -179,43 +179,39 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * Return the Common Margin Properties-Block.
+     * @return the Common Margin Properties-Block.
      */
     public CommonMarginBlock getCommonMarginBlock() {
         return commonMarginBlock;
     }
 
     /**
-     * Return the Common Border, Padding, and Background Properties.
+     * @return the Common Border, Padding, and Background Properties.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
     /**
-     * Return the Common Font Properties.
+     * @return the Common Font Properties.
      */
     public CommonFont getCommonFont() {
         return commonFont;
     }
 
     /**
-     * Return the Common Hyphenation Properties.
+     * @return the Common Hyphenation Properties.
      */
     public CommonHyphenation getCommonHyphenation() {
         return commonHyphenation;
     }
 
-    /**
-     * Return the "break-after" property.
-     */
+    /** @return the "break-after" property. */
     public int getBreakAfter() {
         return breakAfter;
     }
 
-    /**
-     * Return the "break-before" property.
-     */
+    /** @return the "break-before" property. */
     public int getBreakBefore() {
         return breakBefore;
     }
@@ -251,49 +247,49 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * Return the "color" property.
+     * @return the "color" property.
      */
     public ColorType getColor() {
         return color;
     }
 
     /**
-     * Return the "id" property.
+     * @return the "id" property.
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Return the "line-height" property.
+     * @return the "line-height" property.
      */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
 
     /**
-     * Return the "span" property.
+     * @return the "span" property.
      */
     public int getSpan() {
         return this.span;
     }
 
     /**
-     * Return the "text-align" property.
+     * @return the "text-align" property.
      */
     public int getTextAlign() {
         return textAlign;
     }
 
     /**
-     * Return the "text-align-last" property.
+     * @return the "text-align-last" property.
      */
     public int getTextAlignLast() {
         return textAlignLast;
     }
 
     /**
-     * Return the "text-indent" property.
+     * @return the "text-indent" property.
      */
     public Length getTextIndent() {
         return textIndent;
