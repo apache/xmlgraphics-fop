@@ -68,7 +68,7 @@ public class RtfListStyleNumber extends RtfListStyle {
     /**
      * Gets call before a RtfListItem has to be written.
      * 
-     * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle#writeListPrefix()
+     * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle#writeListPrefix(RtfListItem)
      */
     public void writeListPrefix(RtfListItem item)
     throws IOException {
