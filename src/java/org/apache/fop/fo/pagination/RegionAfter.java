@@ -34,7 +34,7 @@ public class RegionAfter extends RegionBA {
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionAfter(FONode parent) {
-        super(parent, Region.AFTER_CODE);
+        super(parent, FO_REGION_AFTER);
     }
 
     /**
@@ -62,12 +62,8 @@ public class RegionAfter extends RegionBA {
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.Region#getRegionClassCode()
+     * @see org.apache.fop.fo.FObj#getName()
      */
-    public int getRegionClassCode() {
-        return Region.AFTER_CODE;
-    }
-
     public String getName() {
         return "fo:region-after";
     }

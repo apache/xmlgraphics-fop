@@ -176,7 +176,7 @@ public class SimplePageMaster extends FObj {
      * @param region region to add
      */
     protected void addRegion(Region region) {
-        String key = String.valueOf(region.getRegionClassCode());
+        String key = String.valueOf(region.getNameId());
         regions.put(key, region);
     }
 

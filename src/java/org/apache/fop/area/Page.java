@@ -21,7 +21,7 @@ package org.apache.fop.area;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.apache.fop.fo.pagination.Region;
+import org.apache.fop.fo.Constants;
 
 /**
  * The page.
@@ -52,15 +52,15 @@ public class Page implements Serializable, Cloneable {
      * @param port the region viewport to set
      */
     public void setRegionViewport(int areaclass, RegionViewport port) {
-        if (areaclass == Region.BEFORE_CODE) {
+        if (areaclass == Constants.FO_REGION_BEFORE) {
             regionBefore = port;
-        } else if (areaclass == Region.START_CODE) {
+        } else if (areaclass == Constants.FO_REGION_START) {
             regionStart = port;
-        } else if (areaclass == Region.BODY_CODE) {
+        } else if (areaclass == Constants.FO_REGION_BODY) {
             regionBody = port;
-        } else if (areaclass == Region.END_CODE) {
+        } else if (areaclass == Constants.FO_REGION_END) {
             regionEnd = port;
-        } else if (areaclass == Region.AFTER_CODE) {
+        } else if (areaclass == Constants.FO_REGION_AFTER) {
             regionAfter = port;
         }
     }
@@ -72,15 +72,15 @@ public class Page implements Serializable, Cloneable {
      * @return the region viewport or null if none
      */
     public RegionViewport getRegionViewport(int areaclass) {
-        if (areaclass == Region.BEFORE_CODE) {
+        if (areaclass == Constants.FO_REGION_BEFORE) {
             return regionBefore;
-        } else if (areaclass == Region.START_CODE) {
+        } else if (areaclass == Constants.FO_REGION_START) {
             return regionStart;
-        } else if (areaclass == Region.BODY_CODE) {
+        } else if (areaclass == Constants.FO_REGION_BODY) {
             return regionBody;
-        } else if (areaclass == Region.END_CODE) {
+        } else if (areaclass == Constants.FO_REGION_END) {
             return regionEnd;
-        } else if (areaclass == Region.AFTER_CODE) {
+        } else if (areaclass == Constants.FO_REGION_AFTER) {
             return regionAfter;
         }
         return null;

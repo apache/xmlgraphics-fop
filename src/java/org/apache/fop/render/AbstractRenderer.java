@@ -238,15 +238,15 @@ public abstract class AbstractRenderer
         decision is to have fo:region-body on top, hence it is rendered
         last here. */
         RegionViewport viewport;
-        viewport = page.getRegionViewport(Region.BEFORE_CODE);
+        viewport = page.getRegionViewport(FO_REGION_BEFORE);
         renderRegionViewport(viewport);
-        viewport = page.getRegionViewport(Region.START_CODE);
+        viewport = page.getRegionViewport(FO_REGION_START);
         renderRegionViewport(viewport);
-        viewport = page.getRegionViewport(Region.END_CODE);
+        viewport = page.getRegionViewport(FO_REGION_END);
         renderRegionViewport(viewport);
-        viewport = page.getRegionViewport(Region.AFTER_CODE);
+        viewport = page.getRegionViewport(FO_REGION_AFTER);
         renderRegionViewport(viewport);
-        viewport = page.getRegionViewport(Region.BODY_CODE);
+        viewport = page.getRegionViewport(FO_REGION_BODY);
         renderRegionViewport(viewport);
     }
 
@@ -274,7 +274,7 @@ public abstract class AbstractRenderer
             //  shouldn't the viewport have the CTM
             startVParea(region.getCTM());
             // do after starting viewport area
-            if (region.getRegionClass() == Region.BODY_CODE) {
+            if (region.getRegionClass() == FO_REGION_BODY) {
                 renderBodyRegion((BodyRegion) region);
             } else {
                 renderRegion(region);

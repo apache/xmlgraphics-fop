@@ -21,7 +21,7 @@ package org.apache.fop.area;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.fop.fo.pagination.Region;
+import org.apache.fop.fo.Constants;
 
 /**
  * This is a region reference area for the page regions.
@@ -29,7 +29,7 @@ import org.apache.fop.fo.pagination.Region;
  * so the page master can make copies from the original page and regions.
  */
 public class RegionReference extends Area implements Cloneable {
-    private int regionClass = Region.BEFORE_CODE;
+    private int regionClass = Constants.FO_REGION_BEFORE;
     private CTM ctm;
     // the list of block areas from the static flow
     private List blocks = new ArrayList();

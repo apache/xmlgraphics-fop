@@ -442,7 +442,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
         curPage.setPageNumber(getCurrentPageNumber());
         RegionViewport rv = curPage.getPage().getRegionViewport(
-                    Region.BODY_CODE);
+                    FO_REGION_BODY);
         curBody = (BodyRegion) rv.getRegion();
         flowBPD = (int) curBody.getBPD() -
             rv.getBorderAndPaddingWidthBefore() - rv.getBorderAndPaddingWidthAfter();
@@ -490,14 +490,14 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         }
         // Layout static content into the regions
         // Need help from pageseq for this
-        layoutStaticContent(currentSimplePageMaster.getRegion(Region.BEFORE_CODE),
-                            Region.BEFORE_CODE);
-        layoutStaticContent(currentSimplePageMaster.getRegion(Region.AFTER_CODE),
-                            Region.AFTER_CODE);
-        layoutStaticContent(currentSimplePageMaster.getRegion(Region.START_CODE),
-                            Region.START_CODE);
-        layoutStaticContent(currentSimplePageMaster.getRegion(Region.END_CODE),
-                            Region.END_CODE);
+        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_BEFORE),
+                            FO_REGION_BEFORE);
+        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_AFTER),
+                            FO_REGION_AFTER);
+        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_START),
+                            FO_REGION_START);
+        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_END),
+                            FO_REGION_END);
         // Queue for ID resolution and rendering
         areaTreeHandler.addPage(curPage);
         curPage = null;
@@ -682,7 +682,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         curSpan = new Span(numCols);
         // get Width or Height as IPD for span
 
-        RegionViewport rv = curPage.getPage().getRegionViewport(Region.BODY_CODE);
+        RegionViewport rv = curPage.getPage().getRegionViewport(FO_REGION_BODY);
         int ipdWidth = (int) rv.getRegion().getIPD() -
             rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
 
@@ -708,7 +708,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private PageViewport createPage(boolean bIsBlank, boolean bIsLast)
                                    throws FOPException {
         currentSimplePageMaster = getSimplePageMasterToUse(bIsBlank);
-        Region body = currentSimplePageMaster.getRegion(Region.BODY_CODE);
+        Region body = currentSimplePageMaster.getRegion(FO_REGION_BODY);
         if (!pageSequence.getMainFlow().getFlowName().equals(body.getRegionName())) {
           throw new FOPException("Flow '" + pageSequence.getMainFlow().getFlowName()
                                  + "' does not map to the region-body in page-master '"
@@ -777,13 +777,13 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
            r.setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
            r.setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM);
-           if (r.getRegionClassCode() == Region.BODY_CODE) {
+           if (r.getNameId() == FO_REGION_BODY) {
                rvp.setRegion(makeRegionBodyReferenceArea(r, rvp.getViewArea()));
            } else {
                rvp.setRegion(makeRegionReferenceArea(r, rvp.getViewArea()));
            }
-           page.setRegionViewport(r.getRegionClassCode(), rvp);
-           if (r.getRegionClassCode() == Region.BODY_CODE) {
+           page.setRegionViewport(r.getNameId(), rvp);
+           if (r.getNameId() == FO_REGION_BODY) {
                bHasBody = true;
            }
        }
@@ -857,7 +857,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     private RegionReference makeRegionReferenceArea(Region r,
             Rectangle2D absRegVPRect) {
-        RegionReference rr = new RegionReference(r.getRegionClassCode());
+        RegionReference rr = new RegionReference(r.getNameId());
         setRegionPosition(r, rr, absRegVPRect);
         return rr;
     }
