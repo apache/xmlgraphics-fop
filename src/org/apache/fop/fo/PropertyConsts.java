@@ -260,6 +260,25 @@ public class PropertyConsts {
     }
 
     /**
+     * @param propertyIndex int index of the FO property
+     * @return <tt>boolean</tt> is property a compound?
+     */
+    public static boolean isCompound(int propertyIndex) {
+        return (datatypes[propertyIndex] & Properties.COMPOUND) != 0;
+    }
+
+    /**
+     * @param property String name of the FO property
+     * @return <tt>boolean</tt> is property a compound?
+     */
+    public static boolean isCompound(String property)
+                throws PropertyException
+    {
+        return (datatypes[getPropertyIndex(property)] & Properties.COMPOUND)
+                    != 0;
+    }
+
+    /**
      * Map the String value of an enum to its integer equivalent.
      * @param value the enum text
      * @param values an <tt>ROStringArray</tt> of all of the enum text values.
