@@ -43,16 +43,6 @@ public class BlockParent extends Area {
     protected int yOffset = 0;
 
     /**
-     * The width of this block parent.
-     */
-    protected int width = 0;
-
-    /**
-     * The height of this block parent.
-     */
-    protected int height = 0;
-
-    /**
      * The children of this block parent area.
      */
     protected List children = null;
@@ -100,24 +90,6 @@ public class BlockParent extends Area {
     }
 
     /**
-     * Set the width of this block parent area.
-     *
-     * @param w the width of the area
-     */
-    public void setWidth(int w) {
-        width = w;
-    }
-
-    /**
-     * Set the height of this block parent area.
-     *
-     * @param h the height of the block parent area
-     */
-    public void setHeight(int h) {
-        height = h;
-    }
-
-    /**
      * Get the X offset of this block parent area.
      *
      * @return the x offset of the block parent area
@@ -134,23 +106,4 @@ public class BlockParent extends Area {
     public int getYOffset() {
         return yOffset;
     }
-
-    /**
-     * Get the width of this block parent area.
-     *
-     * @return the width of the area
-     */
-    public int getWidth() {
-        return width;
-    }
-
-    /**
-     * Get the height of this block parent area.
-     *
-     * @return the height of the block parent area
-     */
-    public int getHeight() {
-        return height;
-    }
-
 }

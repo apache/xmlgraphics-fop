@@ -32,9 +32,6 @@ public class BodyRegion extends RegionReference {
     private int columnGap;
     private int columnCount;
 
-    /** Reference inline progression dimension for the body. */
-    private int refIPD;
-
     /**
      * Create a new body region area.
      * This sets the region reference area class to BODY.

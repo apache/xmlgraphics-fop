@@ -25,7 +25,5 @@ package org.apache.fop.area;
 public class Flow extends BlockParent {
     // the list of blocks created from the flow
     private int stacking = TB;
-    private int width;
-
 }
 
