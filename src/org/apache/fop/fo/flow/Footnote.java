@@ -104,7 +104,7 @@ public class Footnote extends FObj {
                 } else {
                     Page page = area.getPage();
                     layoutFootnote(page, (FootnoteBody)fbody, area);
-                }
+				}
             }
         }
         if(fbody == null) {
@@ -134,7 +134,7 @@ public class Footnote extends FObj {
                 return false;
             } else {
                 if(area != null) {
-                    area.setMaxHeight(area.getMaxHeight() - footArea.getHeight());
+                    area.setMaxHeight(area.getMaxHeight() - footArea.getHeight() + oldHeight);
                 }
                 //bac.setMaxHeight(bac.getMaxHeight() - footArea.getHeight() + oldHeight);
                 if(bac.getFootnoteState() == 0) {
