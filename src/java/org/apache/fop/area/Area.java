@@ -29,7 +29,7 @@ import org.apache.fop.fo.flow.FoPageSequence;
 import org.apache.fop.fo.properties.WritingMode;
 
 /**
- * The base class for all gemetrical areas.  <code>Area</code> extends
+ * The base class for all geometrical areas.  <code>Area</code> extends
  * <code>AreaNode</code> because all areas will find themselves in a tree of
  * some kind.  It represents its geometry with a
  * <code>Rectangle2D.Double</code>, whose dimensions are expressed in Java
@@ -121,6 +121,8 @@ public class Area extends AreaNode implements Cloneable  {
     /** True if the the <code>writing-mode</code> of the content area is
      * left-to-right */
     protected boolean contentLeftToRight = true;
+    /** The rotation trait for the content rectangle of this area */
+    protected int contentRotation = 0;
     /** The writing-mode of the parent of the generating FO.  This may
      * differ from the writing mode of the generating FO if this is a
      * <code>reference-area</code>. */
@@ -133,6 +135,8 @@ public class Area extends AreaNode implements Cloneable  {
      * left-to-right.  May differ from contentIsHorizontal if this is a
      * <code>reference-area</code>. */
     protected boolean frameLeftToRight = true;
+    /** The rotation trait for the framing rectangles of this area */
+    protected int frameRotation = 0;
 
 
     protected void setup() {
@@ -140,10 +144,13 @@ public class Area extends AreaNode implements Cloneable  {
             contentWritingMode = generatedBy.getWritingMode();
             contentIsHorizontal = WritingMode.isHorizontal(contentWritingMode);
             contentLeftToRight = WritingMode.isLeftToRight(contentWritingMode);
+            contentRotation = generatedBy.getRefOrientation();
             frameWritingMode =
                 ((FONode)generatedBy.getParent()).getWritingMode();
             frameIsHorizontal = WritingMode.isHorizontal(frameWritingMode);
             frameLeftToRight = WritingMode.isLeftToRight(frameWritingMode);
+            frameRotation =
+                ((FONode)generatedBy.getParent()).getRefOrientation();
         } catch (PropertyException e) {
             throw new RuntimeException(e.getMessage());
         }
