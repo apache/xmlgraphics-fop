@@ -185,7 +185,7 @@ public class TableRow extends FObj {
 		}
     	        area.addChild(areaContainer);
 		//areaContainer.end();
-		area.increaseHeight(areaContainer.getHeight());
+		area.addDisplaySpace(areaContainer.getHeight());
 		return status;
 	    }
 
@@ -201,7 +201,7 @@ public class TableRow extends FObj {
 
 	area.addChild(areaContainer);
 	areaContainer.end();
-        area.setHeight(largestCellHeight);
+        area.addDisplaySpace(largestCellHeight);
 
 	// bug fix from Eric Schaeffer
 	//area.increaseHeight(largestCellHeight);
@@ -220,8 +220,4 @@ public class TableRow extends FObj {
     public int getAreaHeight() {
 	return areaContainer.getHeight();
     }
-	public int getLargestCellHeight()
-	{
-		return largestCellHeight;
-	}
 }
