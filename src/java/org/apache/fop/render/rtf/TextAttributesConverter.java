@@ -72,16 +72,16 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 /**  Converts FO properties to RtfAttributes
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  *  @author Andreas Putz a.putz@skynamics.com
- *  @author Boris Poudérous boris.pouderous@eads-telecom.com
+ *  @author Boris Poud&#x00E9;rous boris.pouderous@eads-telecom.com
  *  @author Peter Herweg, pherweg@web.de
- *  @author Normand Massé
+ *  @author Normand Mass&#x00E9;
  *  @author Chris Scott
  *  @author rmarra
  */
 
 class TextAttributesConverter {
     private static Logger log = new ConsoleLogger();
-    
+
     /**
      * Converts all known text FO properties to RtfAttributes
      * @param props list of FO properites, which are to be converted
@@ -96,7 +96,7 @@ class TextAttributesConverter {
         } else {
             attrib = new RtfAttributes();
         }
-        
+
         attrBlockFontFamily(props, attrib);
         attrBlockFontWeight(props, attrib);
         attrBlockFontSize(props, attrib);
@@ -107,10 +107,10 @@ class TextAttributesConverter {
         attrBlockSpaceBeforeAfter(props, attrib);
         attrBlockMargins(props, attrib);
         attrBlockTextAlign(props, attrib);
-        
-        return attrib;      
+
+        return attrib;
     }
-  
+
     /**
      * Converts all character related FO properties to RtfAttributes.
      * @param props list of FO properites, which are to be converted
@@ -141,9 +141,9 @@ class TextAttributesConverter {
 
     private static void attrBlockFontFamily(PropertyList properties, RtfAttributes rtfAttr) {
         String fopValue = properties.get("font-family").getString();
-        
+
         if (fopValue != null) {
-            rtfAttr.set(RtfText.ATTR_FONT_FAMILY, 
+            rtfAttr.set(RtfText.ATTR_FONT_FAMILY,
                 RtfFontManager.getInstance().getFontNumber(fopValue));
         }
     }
@@ -152,7 +152,7 @@ class TextAttributesConverter {
         int fopValue = properties.get("font-size").getLength().getValue() / 500;
         rtfAttr.set("fs", fopValue);
     }
-    
+
     private static void attrBlockFontColor(PropertyList properties, RtfAttributes rtfAttr) {
         // Cell background color
         ColorTypeProperty colorTypeProp = (ColorTypeProperty)properties.get("color");
@@ -172,7 +172,7 @@ class TextAttributesConverter {
             }
         }
     }
-    
+
 
 
     private static void attrBlockFontWeight(PropertyList properties, RtfAttributes rtfAttr) {
@@ -192,7 +192,7 @@ class TextAttributesConverter {
             rtfAttr.set(RtfText.ATTR_ITALIC, 0);
         }
     }
-    
+
     private static void attrBlockFontUnderline(PropertyList properties, RtfAttributes rtfAttr) {
         EnumProperty enumProp = (EnumProperty)properties.get("text-decoration");
         if (enumProp.getEnum() == Constants.UNDERLINE) {
@@ -201,39 +201,39 @@ class TextAttributesConverter {
             rtfAttr.set(RtfText.ATTR_UNDERLINE, 0);
         }
     }
-     
+
     private static void attrBlockSpaceBeforeAfter(PropertyList properties, RtfAttributes rtfAttr) {
         SpaceProperty spaceProp = null;
-        
+
         //space-before
         spaceProp = (SpaceProperty)properties.get("space-before");
         if (spaceProp != null) {
             Float f = new Float(
                 spaceProp.getLengthRange().getOptimum().getLength().getValue() / 1000f);
             String sValue = f.toString() + "pt";
-            
+
             try {
                 rtfAttr.set(
                         RtfText.SPACE_BEFORE,
-                        (int)FoUnitsConverter.getInstance().convertToTwips(sValue));           
+                        (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
             } catch (FOPException fe) {
-                log.warn("attrBlockSpaceBeforeAfter: " + fe.getMessage()); 
+                log.warn("attrBlockSpaceBeforeAfter: " + fe.getMessage());
             }
         }
-        
+
         //space-after
         spaceProp = (SpaceProperty)properties.get("space-after");
         if (spaceProp != null) {
             Float f = new Float(
                 spaceProp.getLengthRange().getOptimum().getLength().getValue() / 1000f);
             String sValue = f.toString() + "pt";
-            
+
             try {
                 rtfAttr.set(
                         RtfText.SPACE_AFTER,
                         (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
             } catch (FOPException fe) {
-                log.warn("attrBlockSpaceBeforeAfter: " + fe.getMessage()); 
+                log.warn("attrBlockSpaceBeforeAfter: " + fe.getMessage());
             }
         }
     }
@@ -241,13 +241,13 @@ class TextAttributesConverter {
     private static void attrBlockMargins(PropertyList properties, RtfAttributes rtfAttr) {
         try {
             LengthProperty lengthProp = null;
-            
+
             // margin-left
             lengthProp = (LengthProperty)properties.get("margin-left");
             if (lengthProp != null) {
                 Float f = new Float(lengthProp.getLength().getValue() / 1000f);
                 String sValue = f.toString() + "pt";
-            
+
                 rtfAttr.set(
                         RtfText.LEFT_INDENT_BODY,
                         (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
@@ -260,7 +260,7 @@ class TextAttributesConverter {
             if (lengthProp != null) {
                 Float f = new Float(lengthProp.getLength().getValue() / 1000f);
                 String sValue = f.toString() + "pt";
-            
+
                 rtfAttr.set(
                         RtfText.RIGHT_INDENT_BODY,
                         (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
@@ -268,7 +268,7 @@ class TextAttributesConverter {
                 rtfAttr.set(RtfText.RIGHT_INDENT_BODY, 0);
             }
         } catch (FOPException fe) {
-            log.warn("attrBlockSpaceBeforeAfter: " + fe.getMessage()); 
+            log.warn("attrBlockSpaceBeforeAfter: " + fe.getMessage());
         }
     }
 
@@ -291,7 +291,7 @@ class TextAttributesConverter {
                 rtfValue = RtfText.ALIGN_LEFT;
                 break;
         }
-        
+
         rtfAttr.set(rtfValue);
     }
 
@@ -309,7 +309,7 @@ class TextAttributesConverter {
            default here. Changing FOP's default to "white" causes problems in
            PDF output, so we will look for the default here & change it to
            "auto". */
-        if ((fopValue.getRed() == 0) 
+        if ((fopValue.getRed() == 0)
                 && (fopValue.getGreen() == 0)
                 && (fopValue.getBlue() == 0)
                 && (fopValue.getAlpha() == 0)) {
@@ -317,7 +317,7 @@ class TextAttributesConverter {
         } else {
             rtfColor = convertFOPColorToRTF(fopValue);
         }
-        
+
         rtfAttr.set(RtfText.ATTR_BACKGROUND_COLOR, rtfColor);
    }
 
