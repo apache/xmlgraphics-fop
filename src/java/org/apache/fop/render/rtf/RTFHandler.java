@@ -53,7 +53,6 @@ import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SimplePageMaster;
-import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
@@ -105,10 +104,10 @@ public class RTFHandler extends FOEventHandler {
     private boolean bDeferredExecution;  //true, if currently called handler was not
                                          //called while SAX parsing, but was called
                                          //by invokeDeferredEvent.
-    private boolean bPrevHeaderSpecified = false;//true, if there has been a
-                                                 //header in any page-sequence
-    private boolean bPrevFooterSpecified = false;//true, if there has been a
-                                                 //footer in any page-sequence
+    private boolean bPrevHeaderSpecified = false; //true, if there has been a
+                                                  //header in any page-sequence
+    private boolean bPrevFooterSpecified = false; //true, if there has been a
+                                                  //footer in any page-sequence
     private boolean bHeaderSpecified = false;  //true, if there is a header
                                                //in current page-sequence
     private boolean bFooterSpecified = false;  //true, if there is a footer
@@ -128,7 +127,7 @@ public class RTFHandler extends FOEventHandler {
         this.os = os;
         bDefer = false;
         bDeferredExecution = false;
-        iNestCount=0;
+        iNestCount = 0;
         FontSetup.setup(fontInfo, null);
         log.warn(ALPHA_WARNING);
     }
@@ -169,7 +168,7 @@ public class RTFHandler extends FOEventHandler {
             }
 
             sect = docArea.newSection();
-
+            
             //read page size and margins, if specified
             
             String reference = pageSeq.getMasterReference();
@@ -182,6 +181,8 @@ public class RTFHandler extends FOEventHandler {
                 sect.getRtfAttributes().set(
                     PageAttributesConverter.convertPageAttributes(
                             pagemaster));
+            } else {
+                log.warn("Only simple-page-masters are supported on page-sequences: " + reference);
             }
 
             builderContext.pushContainer(sect);
@@ -215,6 +216,7 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
+            log.debug("starting flow: " + fl.getFlowName());
             if (fl.getFlowName().equals("xsl-region-body")) {
                 // if there is no header in current page-sequence but there has been
                 // a header in a previous page-sequence, insert an empty header.
@@ -354,22 +356,22 @@ public class RTFHandler extends FOEventHandler {
     public void endBlock(Block bl) {
         --iNestCount;
         
-        if (!bDeferredExecution && iNestCount==0) {
+        if (!bDeferredExecution && iNestCount == 0) {
             //If endBlock was called while SAX parsing, and the passed FO is Block
             //nested within another Block, stop deferring.
             //Now process all deferred FOs.
             bDefer = false;
             
-            bDeferredExecution=true;
+            bDeferredExecution = true;
             recurseFONode(bl);
-            bDeferredExecution=false;
+            bDeferredExecution = false;
             
             //exit function, because the code has already beed executed while 
             //deferred execution.   
             return;
         }
         
-        if(bDefer) {
+        if (bDefer) {
             return;
         }
         
@@ -428,7 +430,7 @@ public class RTFHandler extends FOEventHandler {
      * @see org.apache.fop.fo.FOEventHandler#endBlockContainer(BlockContainer)
      */
     public void endBlockContainer(BlockContainer bl) {
-        if(bDefer) {
+        if (bDefer) {
             return;
         }
         
@@ -903,9 +905,9 @@ public class RTFHandler extends FOEventHandler {
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class, true, this);
             
-            RtfTextrun textrun=container.getTextrun();
+            RtfTextrun textrun = container.getTextrun();
             
-            RtfHyperLink link=textrun.addHyperlink(new RtfAttributes());
+            RtfHyperLink link = textrun.addHyperlink(new RtfAttributes());
             
             if (basicLink.getExternalDestination() != null) {
                 link.setExternalURL(basicLink.getExternalDestination());
@@ -952,7 +954,7 @@ public class RTFHandler extends FOEventHandler {
             
             final RtfExternalGraphic newGraphic = c.getTextrun().newImage();
        
-            Property p = null; 
+            //Property p = null; 
                
             //get source file
             newGraphic.setURL(eg.getSrc());
@@ -1099,8 +1101,8 @@ public class RTFHandler extends FOEventHandler {
         }
         
         try {
-            RtfAttributes rtfAttr= 
-                    TextAttributesConverter.convertCharacterAttributes(c);
+            RtfAttributes rtfAttr 
+                    = TextAttributesConverter.convertCharacterAttributes(c);
 
             IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
@@ -1109,7 +1111,7 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
             
             textrun.pushAttributes(rtfAttr);            
-            textrun.addString(new String(new char[] { c.getCharacter() }));
+            textrun.addString(new String(new char[] {c.getCharacter()}));
             textrun.popAttributes();
          } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOEventHandler events?
@@ -1135,7 +1137,7 @@ public class RTFHandler extends FOEventHandler {
                     IRtfTextrunContainer.class, true, this);
                     
             RtfTextrun textrun = container.getTextrun();
-            textrun.addString(new String(data, start, length-start));
+            textrun.addString(new String(data, start, length - start));
          } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOEventHandler events?
             log.error("characters: " + ioe.getMessage());
@@ -1292,7 +1294,7 @@ public class RTFHandler extends FOEventHandler {
         invokeDeferredEvent(foNode, true);
         
         if (foNode.getChildNodes() != null) {
-            for(Iterator it = foNode.getChildNodes(); it.hasNext() ; ) {
+            for (Iterator it = foNode.getChildNodes(); it.hasNext();) {
                 recurseFONode( (FONode) it.next() );
             }
         }
