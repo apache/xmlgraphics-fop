@@ -1,0 +1,92 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Overview -->
+
+<document>
+    <header>
+        <title>FO Tree</title>
+        <subtitle>Design of FO Tree Structure</subtitle>
+        <authors>
+            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="Introduction">
+<p>
+The FO Tree is an internal representation of the input FO document.
+The tree is created by building the elements and attributes from
+the SAX events.
+  </p>
+  <p>
+The FO Tree is used as an intermediatory structure which is converted
+into the area tree. The complete FO tree should not be held in memory
+since FOP should be able to handle FO documents of any size.
+   </p>
+
+<s2 title="FONode"> 
+<p>
+The class inheritance described above only describes the nature of the
+content. Every FO in FOP also has a parent, and a Vector of children. The
+parent attribute (in the Java sense), in particular, is used to enforce
+constraints required by the FO hierarchy.
+</p>
+
+<p>
+FONode, among other things, ensures that FO's have a parent, that they
+have children, that they maintain a marker of where the layout was up to
+(for FObj's it is the child number, and for FOText's it is the character
+number), and that they have a <code>layout()</code> method.
+</p>
+</s2>
+
+<s2 title="Making FO's">
+<p>
+An FO maker is read from a hashmap lookup using the namespace and
+element name. This maker is then used to create a new class that
+represents an FO element. This is then added to the FO tree as a child
+of the current parent.
+</p>
+
+<p>
+Properties (recall that FO's have properties, areas have traits, and XML
+nodes have attributes) are also a concern of <em>FOTreeBuilder</em>. It
+accomplishes this by using a <em>PropertyListBuilder</em>. There is a
+separate <em>PropertyListBuilder</em> for each namespace encountered
+while building the FO tree. Each Builder object contains a hash of
+property names and <ref>their</ref> respective makers. It may also
+contain element-specific property maker hashes; these are based on the
+<em>local name</em> of the flow object, ie. <em>table-row</em>, not
+<em>fo:table-row</em>. If an element-specific property mapping exists,
+it is preferred to the generic mapping.</p>
+<p>The base class for all
+properties is <em>Property</em>, and all the property makers extend
+<em>Property.Maker</em>. A more complete discussion of the property
+architecture may be found in <jump href="properties.html">Properties</jump>.
+</p>
+</s2>
+
+<s2 title="Foreign XML">
+<p>
+FOP supports the handlingof foreign XML.
+The XML is converted internally into a DOM, this is then available to
+the FO tree to convert the DOM into another format which can be rendered.
+In the case of SVG the DOM needs to be created with Batik, so an element
+mapping is used to read all elements in the SVG namespace and pass them
+into the Batik DOM.
+</p>
+</s2>
+
+<s2 title="Extensions">
+<p>
+It is possible to add extensions to FOP so that you can extend the ability of
+FOP with respect to render output, document specific information or extended
+layout functionality.
+</p>
+</s2>
+
+  </s1>
+
+    </body>
+</document>
+
