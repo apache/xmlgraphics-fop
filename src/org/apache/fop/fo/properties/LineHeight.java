@@ -5,6 +5,7 @@ import org.apache.fop.datatypes.Ems;
 import org.apache.fop.datastructs.ROStringArray;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.Property;
 
 public class LineHeight extends Property  {
@@ -20,13 +21,13 @@ public class LineHeight extends Property  {
         ,"normal"
     };
 
-    public Numeric getMappedLength(int enum)
+    public Numeric getMappedLength(FONode node, int enum)
         throws PropertyException
     {
         if (enum != NORMAL)
             throw new PropertyException("Invalid MAPPED_LENGTH enum: "
                                         + enum);
-        return Ems.makeEms(PropNames.LINE_HEIGHT, 1.2d); // normal
+        return Ems.makeEms(node, PropNames.LINE_HEIGHT, 1.2d); // normal
     }
 }
 
