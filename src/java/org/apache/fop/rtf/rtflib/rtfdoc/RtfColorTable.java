@@ -60,7 +60,6 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.util.Vector;
 import java.util.Hashtable;
-import java.awt.Color;
 import java.io.IOException;
 
 /**
@@ -69,8 +68,7 @@ import java.io.IOException;
  * @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
  */
 
-public class RtfColorTable
-{
+public class RtfColorTable {
     //////////////////////////////////////////////////
     // @@ Symbolic constants
     //////////////////////////////////////////////////
@@ -103,8 +101,7 @@ public class RtfColorTable
     /**
      * Constructor.
      */
-    private RtfColorTable ()
-    {
+    private RtfColorTable () {
         colorTable = new Vector ();
         colorIndex = new Hashtable ();
                 namedColors = new Hashtable ();
@@ -117,10 +114,8 @@ public class RtfColorTable
      *
      * @return The instance of RTFColorTable
      */
-    public static RtfColorTable getInstance ()
-    {
-        if (instance == null)
-        {
+    public static RtfColorTable getInstance () {
+        if (instance == null) {
             instance = new RtfColorTable ();
         }
 
@@ -135,16 +130,15 @@ public class RtfColorTable
     /**
      * Initialize the color table.
      */
-    private void init ()
-    {
-        addNamedColor("black",getColorNumber (0, 0, 0));
-        addNamedColor("white",getColorNumber (255, 255, 255));
-        addNamedColor("red",getColorNumber (255, 0, 0));
-        addNamedColor("green",getColorNumber (0, 255, 0));
-        addNamedColor("blue",getColorNumber (0, 0, 255));
-        addNamedColor("cyan",getColorNumber (0, 255, 255));
-        addNamedColor("magenta",getColorNumber (255, 0, 255));
-        addNamedColor("yellow",getColorNumber (255, 255, 0));
+    private void init () {
+        addNamedColor("black", getColorNumber (0, 0, 0));
+        addNamedColor("white", getColorNumber (255, 255, 255));
+        addNamedColor("red", getColorNumber (255, 0, 0));
+        addNamedColor("green", getColorNumber (0, 255, 0));
+        addNamedColor("blue", getColorNumber (0, 0, 255));
+        addNamedColor("cyan", getColorNumber (0, 255, 255));
+        addNamedColor("magenta", getColorNumber (255, 0, 255));
+        addNamedColor("yellow", getColorNumber (255, 255, 0));
 
         getColorNumber (0, 0, 128);
         getColorNumber (0, 128, 128);
@@ -156,15 +150,14 @@ public class RtfColorTable
 
          // Added by Normand Masse
           // Gray color added
-        addNamedColor( "gray", getColorNumber( 128, 128, 128 ) );
+        addNamedColor("gray", getColorNumber(128, 128, 128));
 
         getColorNumber (192, 192, 192);
     }
 
         /** define a named color for getColorNumber(String) */
-        private void addNamedColor(String name,int colorNumber)
-        {
-            namedColors.put(name.toLowerCase(),new Integer(colorNumber));
+        private void addNamedColor(String name, int colorNumber) {
+            namedColors.put(name.toLowerCase(), new Integer(colorNumber));
         }
 
     //////////////////////////////////////////////////
@@ -174,8 +167,7 @@ public class RtfColorTable
         /** get the RTF number of a named color
          *  @return null if name not found
          */
-    public Integer getColorNumber (String name)
-    {
+    public Integer getColorNumber (String name) {
             return (Integer)namedColors.get(name.toLowerCase());
         }
 
@@ -188,20 +180,16 @@ public class RtfColorTable
      *
      * @return The number of the color in the table
      */
-    public int getColorNumber (int red, int green, int blue)
-    {
+    public int getColorNumber (int red, int green, int blue) {
         Integer identifier = new Integer (determineIdentifier (red, green, blue));
         Object o = colorIndex.get (identifier);
         int retVal;
 
-        if (o == null)
-        {
+        if (o == null) {
             addColor (identifier);
 
             retVal = colorTable.size ();
-        }
-        else
-        {
+        } else {
             retVal = ((Integer) o).intValue ();
         }
 
@@ -215,10 +203,8 @@ public class RtfColorTable
      *
      * @throws IOException On error
      */
-    public void writeColors (RtfHeader header) throws IOException
-    {
-        if (colorTable == null || colorTable.size () == 0)
-        {
+    public void writeColors (RtfHeader header) throws IOException {
+        if (colorTable == null || colorTable.size () == 0) {
             return;
         }
 
@@ -227,8 +213,7 @@ public class RtfColorTable
 
         int len = colorTable.size ();
 
-        for (int i = 0; i < len; i++)
-        {
+        for (int i = 0; i < len; i++) {
             int identifier = ((Integer) colorTable.get (i)).intValue ();
 
             header.write ("\\red" + determineColorLevel (identifier, RED));
@@ -249,8 +234,7 @@ public class RtfColorTable
      *
      * @param i Identifier of color
      */
-    private void addColor (Integer i)
-    {
+    private void addColor (Integer i) {
         colorIndex.put (i, new Integer (colorTable.size () + 1));
         colorTable.addElement (i);
     }
@@ -264,8 +248,7 @@ public class RtfColorTable
      *
      * @return Unique identifier of color
      */
-    private int determineIdentifier (int red, int green, int blue)
-    {
+    private int determineIdentifier (int red, int green, int blue) {
         int c = red << RED;
 
         c += green << GREEN;
@@ -282,8 +265,7 @@ public class RtfColorTable
      *
      * @return Color level in byte size
      */
-    private int determineColorLevel (int identifier, int color)
-    {
+    private int determineColorLevel (int identifier, int color) {
         int retVal = (byte) (identifier >> color);
 
         return retVal < 0 ? retVal + 256 : retVal;

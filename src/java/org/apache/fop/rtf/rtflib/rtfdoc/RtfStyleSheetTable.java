@@ -68,8 +68,7 @@ import java.util.Iterator;
  * This class belongs to the <jfor:stylesheet> tag processing.
  * @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
  */
-public class RtfStyleSheetTable
-{
+public class RtfStyleSheetTable {
     //////////////////////////////////////////////////
     // @@ Symbolic constants
     //////////////////////////////////////////////////
@@ -120,8 +119,7 @@ public class RtfStyleSheetTable
     /**
      * Constructor.
      */
-    private RtfStyleSheetTable ()
-    {
+    private RtfStyleSheetTable () {
         styles = new Hashtable ();
         attrTable = new Hashtable ();
         nameTable = new Vector ();
@@ -132,10 +130,8 @@ public class RtfStyleSheetTable
      *
      * @return The instance of RtfStyleSheetTable
      */
-    public static RtfStyleSheetTable getInstance ()
-    {
-        if (instance == null)
-        {
+    public static RtfStyleSheetTable getInstance () {
+        if (instance == null) {
             instance = new RtfStyleSheetTable ();
         }
 
@@ -151,8 +147,7 @@ public class RtfStyleSheetTable
      * Sets the default style.
      * @param styleName Name of the default style, defined in the stylesheet
      */
-    public void setDefaultStyle (String styleName)
-    {
+    public void setDefaultStyle (String styleName) {
         this.defaultStyleName = styleName;
     }
 
@@ -160,13 +155,12 @@ public class RtfStyleSheetTable
      * Gets the name of the default style.
      * @return Default style name.
      */
-    public String getDefaultStyleName ()
-    {
-        if (attrTable.get (defaultStyleName) != null)
+    public String getDefaultStyleName () {
+        if (attrTable.get (defaultStyleName) != null) {
             return defaultStyleName;
+        }
 
-        if (attrTable.get (STANDARD_STYLE) != null)
-        {
+        if (attrTable.get (STANDARD_STYLE) != null) {
             defaultStyleName = STANDARD_STYLE;
             return defaultStyleName;
         }
@@ -184,30 +178,28 @@ public class RtfStyleSheetTable
      * @param name Name of style to add
      * @param attrs Rtf attributes which defines the style
      */
-    public void addStyle (String name, RtfAttributes attrs)
-    {
+    public void addStyle (String name, RtfAttributes attrs) {
         nameTable.addElement (name);
-        if (attrs != null)
+        if (attrs != null) {
             attrTable.put (name, attrs);
+        }
         styles.put (name, new Integer (nameTable.size () - 1 + startIndex));
     }
 
     /**
      * Adds the style attributes to the given attributes.
      * @param name Name of style, of which the attributes will copied to attr
-     * @param attrs Default rtf attributes
+     * @param attr Default rtf attributes
      * @return Status value
      */
-    public int addStyleToAttributes (String name, RtfAttributes attr)
-    {
+    public int addStyleToAttributes (String name, RtfAttributes attr) {
         // Sets status to ok
         int status = STATUS_OK;
 
         // Gets the style number from table
         Integer style  = (Integer) styles.get (name);
 
-        if (style == null && !name.equals (defaultStyleName))
-        {
+        if (style == null && !name.equals (defaultStyleName)) {
             // If style not found, and style was not the default style, try the default style
             name = defaultStyleName;
             style = (Integer) styles.get (name);
@@ -216,27 +208,26 @@ public class RtfStyleSheetTable
         }
 
         // Returns the status for invalid styles
-        if (style == null)
+        if (style == null) {
             return status;
+        }
 
         // Adds the attributes to default attributes, if not available in default attributes
         attr.set ("cs", style.intValue ());
 
         Object o = attrTable.get (name);
-        if (o != null)
-        {
+        if (o != null) {
             RtfAttributes rtfAttr = (RtfAttributes) o;
 
-            for (Iterator names = rtfAttr.nameIterator (); names.hasNext ();)
-            {
+            for (Iterator names = rtfAttr.nameIterator (); names.hasNext ();) {
                 String attrName = (String) names.next ();
-                if (! attr.isSet (attrName))
-                {
+                if (!attr.isSet (attrName)) {
                     Integer i = (Integer) rtfAttr.getValue (attrName);
-                    if (i == null)
+                    if (i == null) {
                         attr.set (attrName);
-                    else
+                    } else {
                         attr.set (attrName, i.intValue ());
+                    }
                 }
             }
         }
@@ -248,25 +239,21 @@ public class RtfStyleSheetTable
      * @param header Rtf header is the parent
      * @throws IOException On write error
      */
-    public void writeStyleSheet (RtfHeader header) throws IOException
-    {
-        if (styles == null || styles.size () == 0)
-        {
+    public void writeStyleSheet (RtfHeader header) throws IOException {
+        if (styles == null || styles.size () == 0) {
             return;
         }
         header.writeGroupMark (true);
         header.writeControlWord ("stylesheet");
 
         int number = nameTable.size ();
-        for (int i = 0; i < number; i++)
-        {
+        for (int i = 0; i < number; i++) {
             String name = (String) nameTable.elementAt (i);
             header.writeGroupMark (true);
             header.writeControlWord ("*\\" + this.getRtfStyleReference (name));
 
             Object o = attrTable.get (name);
-            if (o != null)
-            {
+            if (o != null) {
                 header.writeAttributes ((RtfAttributes) o, RtfText.ATTR_NAMES);
                 header.writeAttributes ((RtfAttributes) o, RtfText.ALIGNMENT);
             }
@@ -282,8 +269,7 @@ public class RtfStyleSheetTable
      * @param name Name of Style
      * @return Rtf attribute of the style reference
      */
-    private String getRtfStyleReference (String name)
-    {
+    private String getRtfStyleReference (String name) {
         return "cs" + styles.get (name).toString ();
     }
 }

@@ -66,21 +66,20 @@ import java.io.IOException;
  */
 
 public class RtfDocumentArea
-extends RtfContainer
-{
+extends RtfContainer {
     private RtfSection m_currentSection;
 
     /** Create an RTF element as a child of given container */
-    RtfDocumentArea(RtfFile f,Writer w) throws IOException
-    {
-        super(f,w);
+    RtfDocumentArea(RtfFile f, Writer w) throws IOException {
+        super(f, w);
     }
 
     /** close current RtfSection if any and create a new one */
-    public RtfSection newSection() throws IOException
-    {
-        if(m_currentSection != null) m_currentSection.close();
-        m_currentSection = new RtfSection(this,m_writer);
+    public RtfSection newSection() throws IOException {
+        if (m_currentSection != null) {
+            m_currentSection.close();
+        }
+        m_currentSection = new RtfSection(this, m_writer);
         return m_currentSection;
     }
 }

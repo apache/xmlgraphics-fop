@@ -58,16 +58,11 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import java.io.Writer;
-import java.util.*;
-import java.io.IOException;
-
 /**  Simplistic options definitions for RTF generation
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-public class RtfOptions
-{
+public class RtfOptions {
     /** if true, RtfParagraphs that have no children do not generate any RTF code */
     public boolean ignoreEmptyParagraphs() { return true; }
 

@@ -81,7 +81,7 @@ public class RtfList extends RtfContainer {
 
     /** Create an RTF list as a child of given container with given attributes */
     RtfList(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException {
-        super((RtfContainer)parent,w,attr);
+        super((RtfContainer)parent, w, attr);
         m_numberingStyle = new NumberingStyle();
         //create a new list table entry for the list
         m_listTable = (getRtfFile()).startListTable(attr);
@@ -99,10 +99,12 @@ public class RtfList extends RtfContainer {
     /** overridden to setup the list: start a group with appropriate attributes */
     protected void writeRtfPrefix() throws IOException {
         // pard causes word97 (and sometimes 2000 too) to crash if the list is nested in a table
-        if(!m_hasTableParent) writeControlWord("pard");
+        if (!m_hasTableParent) {
+            writeControlWord("pard");
+        }
 
-        writeOneAttribute(RtfText.LEFT_INDENT_FIRST,m_attrib.getValue(RtfListTable.LIST_INDENT));
-        writeOneAttribute(RtfText.LEFT_INDENT_BODY,m_attrib.getValue(RtfText.LEFT_INDENT_BODY));
+        writeOneAttribute(RtfText.LEFT_INDENT_FIRST, m_attrib.getValue(RtfListTable.LIST_INDENT));
+        writeOneAttribute(RtfText.LEFT_INDENT_BODY, m_attrib.getValue(RtfText.LEFT_INDENT_BODY));
 
         // put the whole list in a group
         writeGroupMark(true);
@@ -114,7 +116,7 @@ public class RtfList extends RtfContainer {
         //Modified by Chris Scott
         //fixes second line indentation
 
-        if(m_numberingStyle.isBulletedList) {
+        if (m_numberingStyle.isBulletedList) {
             // bulleted list
             writeControlWord("pnlvlblt");
             writeControlWord("ilvl0");
@@ -125,7 +127,7 @@ public class RtfList extends RtfContainer {
             writeControlWord("pnf1");
             writeGroupMark(true);
             writeControlWord("pndec");
-            writeOneAttribute(RtfListTable.LIST_FONT_TYPE,"2");
+            writeOneAttribute(RtfListTable.LIST_FONT_TYPE, "2");
             writeControlWord("pntxtb");
             writeControlWord("'b7");
             writeGroupMark(false);
@@ -153,15 +155,21 @@ public class RtfList extends RtfContainer {
         // close group that encloses the whole list
         writeGroupMark(false);
 
-        // reset paragraph defaults to make sure list ends
-         // but pard causes word97 (and sometimes 2000 too) to crash if the list is nested in a table
-        if(!m_hasTableParent) writeControlWord("pard");
+        /* reset paragraph defaults to make sure list ends
+         * but pard causes word97 (and sometimes 2000 too) to crash if the list
+         * is nested in a table
+         */
+        if (!m_hasTableParent) {
+            writeControlWord("pard");
+        }
     }
 
     /** close current list item and start a new one */
     public RtfListItem newListItem() throws IOException {
-        if(m_item != null) m_item.close();
-        m_item = new RtfListItem(this,m_writer);
+        if (m_item != null) {
+            m_item.close();
+        }
+        m_item = new RtfListItem(this, m_writer);
         return m_item;
     }
 

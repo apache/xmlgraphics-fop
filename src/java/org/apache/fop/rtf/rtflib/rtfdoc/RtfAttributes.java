@@ -58,7 +58,8 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -68,42 +69,39 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 
 public class RtfAttributes
-implements java.lang.Cloneable
-{
+implements java.lang.Cloneable {
     private HashMap m_values = new HashMap();
 
     /** set attributes from a other attributes object.
      *  @return this object, for chaining calls
      */
-    public RtfAttributes set (RtfAttributes attrs)
-    {
-        if (attrs != null)
-        {
+    public RtfAttributes set (RtfAttributes attrs) {
+        if (attrs != null) {
             Iterator it = attrs.nameIterator ();
-            while (it.hasNext ())
-            {
+            while (it.hasNext ()) {
                 String name = (String) it.next ();
-                if (attrs.getValue(name) instanceof Integer){
+                if (attrs.getValue(name) instanceof Integer) {
                     Integer value = (Integer)attrs.getValue (name);
-                    if (value == null)
+                    if (value == null) {
                         set (name);
-                    else
+                    }  else {
                         set (name, value.intValue ());
-                }
-                else if(attrs.getValue(name) instanceof String){
+                    }
+                } else if (attrs.getValue(name) instanceof String) {
                     String value = (String)attrs.getValue (name);
-                    if (value == null)
+                    if (value == null) {
                         set (name);
-                    else
+                    } else {
                         set (name, value);
-                }else{
+                    }
+                } else {
                         set (name);
                 }
 
 
             }
             // indicate the XSL attributes used to build the Rtf attributes
-            setXslAttributes( attrs.getXslAttributes() );
+            setXslAttributes(attrs.getXslAttributes());
         }
         return this;
     }
@@ -111,37 +109,33 @@ implements java.lang.Cloneable
     /** set an attribute that has no value.
      *  @return this object, for chaining calls
      */
-    public RtfAttributes set(String name)
-    {
-        m_values.put(name,null);
+    public RtfAttributes set(String name) {
+        m_values.put(name, null);
         return this;
     }
 
     /** unset an attribute that has no value
      *  @return this object, for chaining calls
      */
-    public RtfAttributes unset(String name)
-    {
+    public RtfAttributes unset(String name) {
         m_values.remove(name);
         return this;
     }
 
     /** debugging log */
-    public String toString()
-    {
+    public String toString() {
         return m_values.toString() + "(" + super.toString() + ")";
     }
 
     /** implement cloning */
-    public Object clone()
-    {
+    public Object clone() {
         final RtfAttributes result = new RtfAttributes();
         result.m_values = (HashMap)m_values.clone();
 
         // Added by Normand Masse
         // indicate the XSL attributes used to build the Rtf attributes
-        if ( m_xsl_attributes != null ) {
-            result.m_xsl_attributes = new org.xml.sax.helpers.AttributesImpl( m_xsl_attributes );
+        if (m_xsl_attributes != null) {
+            result.m_xsl_attributes = new org.xml.sax.helpers.AttributesImpl(m_xsl_attributes);
         }
 
         return result;
@@ -150,33 +144,28 @@ implements java.lang.Cloneable
     /** set an attribute that has an integer value
      *  @return this object, for chaining calls
      */
-    public RtfAttributes set(String name,int value)
-    {
-        m_values.put(name,new Integer(value));
+    public RtfAttributes set(String name, int value) {
+        m_values.put(name, new Integer(value));
         return this;
     }
 
-    public RtfAttributes set(String name, String type)
-    {
-        m_values.put(name,type);
+    public RtfAttributes set(String name, String type) {
+        m_values.put(name, type);
         return this;
     }
 
     /** get the value of an attribute, null if not found */
-    public Object getValue(String name)
-    {
+    public Object getValue(String name) {
         return m_values.get(name);
     }
 
     /** true if given attribute is set */
-    public boolean isSet(String name)
-    {
+    public boolean isSet(String name) {
         return m_values.containsKey(name);
     }
 
     /** return an Iterator on all names that are set */
-    public Iterator nameIterator()
-    {
+    public Iterator nameIterator() {
         return m_values.keySet().iterator();
     }
 
@@ -190,27 +179,27 @@ implements java.lang.Cloneable
 
     // Added by Normand Masse
     // Used for attribute inheritance
-    public void setXslAttributes( Attributes pAttribs ) {
-        if ( pAttribs == null ) {
+    public void setXslAttributes(Attributes pAttribs) {
+        if (pAttribs == null) {
             return;
         }
         // copy/replace the xsl attributes into the current attributes
-        if ( m_xsl_attributes != null ) {
-            for ( int i = 0; i < pAttribs.getLength(); i++ ) {
-                String wKey = pAttribs.getQName( i );
-                int wPos = m_xsl_attributes.getIndex( wKey );
-                if ( wPos == -1 ) {
-                    ((AttributesImpl)m_xsl_attributes).addAttribute( pAttribs.getURI( i ),
+        if (m_xsl_attributes != null) {
+            for (int i = 0; i < pAttribs.getLength(); i++) {
+                String wKey = pAttribs.getQName(i);
+                int wPos = m_xsl_attributes.getIndex(wKey);
+                if (wPos == -1) {
+                    ((AttributesImpl)m_xsl_attributes).addAttribute(pAttribs.getURI(i),
                             pAttribs.getLocalName(i), pAttribs.getQName(i),
                             pAttribs.getType(i), pAttribs.getValue(i));
                 } else {
-                    ((AttributesImpl)m_xsl_attributes).setAttribute( wPos, pAttribs.getURI( i ),
+                    ((AttributesImpl)m_xsl_attributes).setAttribute(wPos, pAttribs.getURI(i),
                             pAttribs.getLocalName(i), pAttribs.getQName(i),
                             pAttribs.getType(i), pAttribs.getValue(i));
                 }
             }
         } else {
-            m_xsl_attributes = new org.xml.sax.helpers.AttributesImpl( pAttribs );
+            m_xsl_attributes = new org.xml.sax.helpers.AttributesImpl(pAttribs);
         }
     }
 }

@@ -59,16 +59,14 @@
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
-import java.io.*;
-import java.util.*;
 import java.io.IOException;
 
 /* @author Christopher Scott, scottc@westinghouse.com */
 
 public class RtfNull
-extends RtfContainer{
+extends RtfContainer {
 
     RtfNull(RtfPage parent, Writer w) throws IOException {
-        super((RtfContainer)parent,w);
+        super((RtfContainer)parent, w);
     }
 }

@@ -67,8 +67,7 @@ import java.io.IOException;
  * implemented as stand alone.
  * @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
  */
-public class RtfBookmarkContainerImpl extends RtfContainer implements IRtfBookmarkContainer
-{
+public class RtfBookmarkContainerImpl extends RtfContainer implements IRtfBookmarkContainer {
     //////////////////////////////////////////////////
     // @@ Members
     //////////////////////////////////////////////////
@@ -90,8 +89,7 @@ public class RtfBookmarkContainerImpl extends RtfContainer implements IRtfBookma
      *
      * @exception IOException On error
      */
-    RtfBookmarkContainerImpl (RtfContainer parent, Writer w) throws IOException
-    {
+    RtfBookmarkContainerImpl (RtfContainer parent, Writer w) throws IOException {
         super (parent, w, null);
     }
 
@@ -124,10 +122,8 @@ public class RtfBookmarkContainerImpl extends RtfContainer implements IRtfBookma
      *
      * @throws IOException On eror
      */
-    public RtfBookmark newBookmark (String bookmark) throws IOException
-    {
-        if (mBookmark != null)
-        {
+    public RtfBookmark newBookmark (String bookmark) throws IOException {
+        if (mBookmark != null) {
             mBookmark.close ();
         }
 

@@ -60,7 +60,12 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import org.apache.fop.rtf.rtflib.exceptions.RtfStructureException;
 //import org.apache.fop.rtf.rtflib.jfor.converter.ConverterLogChannel;
-import java.io.*;
+//import java.io.*;
+import java.io.Writer;
+import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.OutputStreamWriter;
 
 /**  Models the top-level structure of an RTF file.
  *  @see RtfFileExample
@@ -77,11 +82,11 @@ extends RtfContainer {
     private RtfDocumentArea m_docArea;
 //    private ConverterLogChannel m_log;
     private RtfContainer m_listTableContainer;
-    private int listNum=0;
+    private int listNum = 0;
 
     /** Create an RTF file that outputs to the given Writer */
     public RtfFile(Writer w) throws IOException {
-        super(null,w);
+        super(null, w);
     }
 
     /** optional log channel */
@@ -104,17 +109,19 @@ extends RtfContainer {
     /** If called, must be called before startDocumentArea */
     public RtfHeader startHeader()
     throws IOException {
-        if(m_header!=null) throw new RtfStructureException("startHeader called more than once");
-        m_header = new RtfHeader(this,m_writer);
-        m_listTableContainer = new RtfContainer(this,m_writer);
+        if (m_header != null) {
+            throw new RtfStructureException("startHeader called more than once");
+        }
+        m_header = new RtfHeader(this, m_writer);
+        m_listTableContainer = new RtfContainer(this, m_writer);
         return m_header;
     }
 
     /** Creates the list table.*/
     public RtfListTable startListTable(RtfAttributes attr)
-    throws IOException{
+    throws IOException {
         listNum++;
-        m_listTable = new RtfListTable(this,m_writer,new Integer(listNum),attr);
+        m_listTable = new RtfListTable(this, m_writer, new Integer(listNum), attr);
         m_listTableContainer.addChild(m_listTable);
         return m_listTable;
     }
@@ -124,20 +131,26 @@ extends RtfContainer {
         must be able to have multiple page definition, and corresponding
         Document areas */
     public RtfPageArea startPageArea()
-    throws IOException,RtfStructureException {
-        if(m_pageArea!=null) throw new RtfStructureException("startPageArea called more than once");
+    throws IOException, RtfStructureException {
+        if (m_pageArea != null) {
+            throw new RtfStructureException("startPageArea called more than once");
+        }
         // create an empty header if there was none
-        if(m_header==null) startHeader();
+        if (m_header == null) {
+            startHeader();
+        }
         m_header.close();
-        m_pageArea = new RtfPageArea(this,m_writer);
+        m_pageArea = new RtfPageArea(this, m_writer);
         addChild(m_pageArea);
         return m_pageArea;
     }
 
     /** Call startPageArea if needed and return the page area object. */
     public RtfPageArea getPageArea()
-    throws IOException,RtfStructureException {
-        if(m_pageArea== null) return startPageArea();
+    throws IOException, RtfStructureException {
+        if (m_pageArea == null) {
+            return startPageArea();
+        }
         return m_pageArea;
     }
 
@@ -145,12 +158,16 @@ extends RtfContainer {
      *  Must be called once only.
      */
     public RtfDocumentArea startDocumentArea()
-    throws IOException,RtfStructureException {
-        if(m_docArea!=null) throw new RtfStructureException("startDocumentArea called more than once");
+    throws IOException, RtfStructureException {
+        if (m_docArea != null) {
+            throw new RtfStructureException("startDocumentArea called more than once");
+        }
         // create an empty header if there was none
-        if(m_header==null) startHeader();
+        if (m_header == null) {
+            startHeader();
+        }
         m_header.close();
-        m_docArea = new RtfDocumentArea(this,m_writer);
+        m_docArea = new RtfDocumentArea(this, m_writer);
         addChild(m_docArea);
         return m_docArea;
     }
@@ -159,21 +176,21 @@ extends RtfContainer {
 
     /** Call startDocumentArea if needed and return the document area object. */
     public RtfDocumentArea getDocumentArea()
-    throws IOException,RtfStructureException {
-        if(m_docArea == null) return startDocumentArea();
+    throws IOException, RtfStructureException {
+        if (m_docArea == null) {
+            return startDocumentArea();
+        }
         return m_docArea;
     }
 
     /** overridden to write RTF prefix code, what comes before our children */
-    protected void writeRtfPrefix() throws IOException
-    {
+    protected void writeRtfPrefix() throws IOException {
         writeGroupMark(true);
         writeControlWord("rtf1");
     }
 
     /** overridden to write RTF suffix code, what comes after our children */
-    protected void writeRtfSuffix() throws IOException
-    {
+    protected void writeRtfSuffix() throws IOException {
         writeGroupMark(false);
     }
 
@@ -187,7 +204,7 @@ extends RtfContainer {
     public static void main(String args[])
     throws Exception {
         Writer w = null;
-        if(args.length != 0) {
+        if (args.length != 0) {
             final String outFile = args[0];
             System.err.println("Outputting RTF to file '" + outFile + "'");
             w = new BufferedWriter(new FileWriter(outFile));
@@ -200,12 +217,12 @@ extends RtfContainer {
         final RtfSection sect = f.startDocumentArea().newSection();
 
         final RtfParagraph p = sect.newParagraph();
-        p.newText("Hello, RTF world.\n",null);
+        p.newText("Hello, RTF world.\n", null);
         final RtfAttributes attr = new RtfAttributes();
         attr.set(RtfText.ATTR_BOLD);
         attr.set(RtfText.ATTR_ITALIC);
-        attr.set(RtfText.ATTR_FONT_SIZE,36);
-        p.newText("This is bold, italic, 36 points",attr);
+        attr.set(RtfText.ATTR_FONT_SIZE, 36);
+        p.newText("This is bold, italic, 36 points", attr);
 
         f.flush();
         System.err.println("RtfFile test: all done.");

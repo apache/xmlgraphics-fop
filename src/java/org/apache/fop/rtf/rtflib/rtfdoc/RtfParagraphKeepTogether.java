@@ -60,21 +60,19 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 
 import java.io.Writer;
-import java.io.*;
-import java.util.*;
 import java.io.IOException;
 
-public class RtfParagraphKeepTogether extends RtfContainer{
+public class RtfParagraphKeepTogether extends RtfContainer {
 
-    public static final int STATUS_NULL=0;
-    public static final int STATUS_OPEN_PARAGRAPH=1;
-    public static final int STATUS_CLOSE_PARAGRAPH=2;
-    private int m_status =STATUS_NULL;
+    public static final int STATUS_NULL = 0;
+    public static final int STATUS_OPEN_PARAGRAPH = 1;
+    public static final int STATUS_CLOSE_PARAGRAPH = 2;
+    private int m_status = STATUS_NULL;
 
 
     /**    RtfParagraphKeepTogether*/
     RtfParagraphKeepTogether(IRtfParagraphContainer parent, Writer w) throws IOException {
-        super((RtfContainer)parent,w);
+        super((RtfContainer)parent, w);
     }
 
 
@@ -82,7 +80,7 @@ public class RtfParagraphKeepTogether extends RtfContainer{
 
         //First reet paragraph properties
         // create a new one with keepn
-        if (m_status==STATUS_OPEN_PARAGRAPH) {
+        if (m_status == STATUS_OPEN_PARAGRAPH) {
             writeControlWord("pard");
             writeControlWord("par");
             writeControlWord("keepn");
@@ -105,8 +103,7 @@ public class RtfParagraphKeepTogether extends RtfContainer{
     }
 
     /** true if this element would generate no "useful" RTF content */
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return false;
     }
 

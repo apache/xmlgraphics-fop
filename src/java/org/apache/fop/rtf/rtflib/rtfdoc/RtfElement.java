@@ -58,10 +58,10 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import java.io.*;
-import java.util.*;
+import java.io.Writer;
+import java.io.IOException;
+import java.util.Iterator;
 //import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
-import org.xml.sax.Attributes;
 
 /**  Base class for all elements of an RTF file.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
@@ -77,18 +77,20 @@ public abstract class RtfElement {
     private static int m_idCounter;
 
     /** Create an RTF element as a child of given container */
-    RtfElement(RtfContainer parent,Writer w) throws IOException {
-        this(parent,w,null);
+    RtfElement(RtfContainer parent, Writer w) throws IOException {
+        this(parent, w, null);
     }
 
 
     /** Create an RTF element as a child of given container with given attributes */
-    RtfElement(RtfContainer parent,Writer w,RtfAttributes attr) throws IOException {
+    RtfElement(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException {
 
         m_id = m_idCounter++;
         m_parent = parent;
         m_attrib = (attr != null ? attr : new RtfAttributes());
-        if(m_parent != null) m_parent.addChild(this);
+        if (m_parent != null) {
+            m_parent.addChild(this);
+        }
         m_writer = w;
         m_written = false;
     }
@@ -101,9 +103,9 @@ public abstract class RtfElement {
 
     /** write the RTF code of this element to our Writer */
     public final void writeRtf() throws IOException {
-        if(!m_written) {
+        if (!m_written) {
             m_written = true;
-            if(okToWriteRtf()) {
+            if (okToWriteRtf()) {
                 writeRtfPrefix();
                 writeRtfContent();
                 writeRtfSuffix();
@@ -162,49 +164,51 @@ public abstract class RtfElement {
     /** write given attribute values to our Writer
      *  @param nameList if given, only attribute names from this list are considered
      */
-    protected void writeAttributes(RtfAttributes attr,String [] nameList)
+    protected void writeAttributes(RtfAttributes attr, String [] nameList)
     throws IOException {
-        if(attr==null) return;
+        if (attr == null) {
+            return;
+        }
 
-        if(nameList != null) {
+        if (nameList != null) {
             // process only given attribute names
-            for(int i=0; i < nameList.length; i++) {
+            for (int i = 0; i < nameList.length; i++) {
                 final String name = nameList[i];
-                if(attr.isSet(name)) {
-                    writeOneAttribute(name,attr.getValue(name));
+                if (attr.isSet(name)) {
+                    writeOneAttribute(name, attr.getValue(name));
                 }
             }
         } else {
             // process all defined attributes
-            for(Iterator it = attr.nameIterator(); it.hasNext(); ) {
+            for (Iterator it = attr.nameIterator(); it.hasNext();) {
                 final String name = (String)it.next();
-                if(attr.isSet(name)) {
-                    writeOneAttribute(name,attr.getValue(name));
+                if (attr.isSet(name)) {
+                    writeOneAttribute(name, attr.getValue(name));
                 }
             }
         }
     }
 
     /** write one attribute to our Writer */
-    protected void writeOneAttribute(String name,Object value)
+    protected void writeOneAttribute(String name, Object value)
     throws IOException {
         String cw = name;
-        if(value instanceof Integer) {
+        if (value instanceof Integer) {
             // attribute has integer value, must write control word + value
             cw += value;
-        }else if(value instanceof String){
+        } else if (value instanceof String) {
             cw += value;
         }
         writeControlWord(cw);
     }
     /** write one attribute to our Writer without a space*/
-    protected void writeOneAttributeNS(String name,Object value)
+    protected void writeOneAttributeNS(String name, Object value)
     throws IOException {
         String cw = name;
-        if(value instanceof Integer) {
+        if (value instanceof Integer) {
             // attribute has integer value, must write control word + value
             cw += value;
-        }else if(value instanceof String){
+        } else if (value instanceof String) {
             cw += value;
         }
         writeControlWordNS(cw);
@@ -216,9 +220,9 @@ public abstract class RtfElement {
     }
 
     /** debugging to given PrintWriter */
-    void dump(Writer w,int indent)
+    void dump(Writer w, int indent)
     throws IOException {
-        for(int i=0; i < indent; i++) {
+        for (int i = 0; i < indent; i++) {
             w.write(' ');
         }
         w.write(this.toString());
@@ -240,7 +244,7 @@ public abstract class RtfElement {
     RtfFile getRtfFile() {
         // go up the chain of parents until we find the topmost one
         RtfElement result = this;
-        while(result.m_parent != null) {
+        while (result.m_parent != null) {
             result = result.m_parent;
         }
 
@@ -252,13 +256,12 @@ public abstract class RtfElement {
     /** find the first parent where c.isAssignableFrom(parent.getClass()) is true
      *  @return null if not found
      */
-    RtfElement getParentOfClass(Class c)
-    {
+    RtfElement getParentOfClass(Class c) {
         RtfElement result = null;
         RtfElement current = this;
-        while(current.m_parent != null) {
+        while (current.m_parent != null) {
             current = current.m_parent;
-            if(c.isAssignableFrom(current.getClass())) {
+            if (c.isAssignableFrom(current.getClass())) {
                 result = current;
                 break;
             }
@@ -277,11 +280,12 @@ public abstract class RtfElement {
 
         // make the exception message stand out so that the problem is visible
         writeControlWord("fs48");
-//        RtfStringConverter.getInstance().writeRtfString(m_writer,JForVersionInfo.getShortVersionInfo() + ": ");
-        RtfStringConverter.getInstance().writeRtfString(m_writer,ie.getClass().getName());
+//        RtfStringConverter.getInstance().writeRtfString(m_writer,
+//                JForVersionInfo.getShortVersionInfo() + ": ");
+        RtfStringConverter.getInstance().writeRtfString(m_writer, ie.getClass().getName());
 
         writeControlWord("fs20");
-        RtfStringConverter.getInstance().writeRtfString(m_writer," " + ie.toString());
+        RtfStringConverter.getInstance().writeRtfString(m_writer, " " + ie.toString());
 
         writeControlWord("par");
         writeGroupMark(false);

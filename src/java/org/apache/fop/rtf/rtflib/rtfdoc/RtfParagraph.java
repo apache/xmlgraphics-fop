@@ -69,15 +69,17 @@ import java.util.List;
  */
 
 public class RtfParagraph extends RtfBookmarkContainerImpl
-implements IRtfTextContainer,IRtfPageBreakContainer,IRtfHyperLinkContainer,IRtfExternalGraphicContainer,
-IRtfPageNumberContainer,IRtfPageNumberCitationContainer {
+implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
+        IRtfExternalGraphicContainer, IRtfPageNumberContainer,
+        IRtfPageNumberCitationContainer {
     private RtfText m_text;
     private RtfHyperLink m_hyperlink;
     private RtfExternalGraphic m_externalGraphic;
     private RtfPageNumber m_pageNumber;
-    private RtfPageNumberCitation m_pageNumberCitation; // Line added by Boris POUDEROUS on 2002/07/09
-    private boolean m_keepn=false;
-    private boolean m_resetProperties=false;
+    private RtfPageNumberCitation m_pageNumberCitation;
+    // Above line added by Boris POUDEROUS on 2002/07/09
+    private boolean m_keepn = false;
+    private boolean m_resetProperties = false;
 
     /* needed for importing Rtf into FrameMaker
        FrameMaker is not as forgiving as word in rtf
@@ -92,31 +94,33 @@ IRtfPageNumberContainer,IRtfPageNumberCitationContainer {
 
     /** Create an RTF paragraph as a child of given container with default attributes */
     RtfParagraph(IRtfParagraphContainer parent, Writer w) throws IOException {
-        super((RtfContainer)parent,w);
+        super((RtfContainer)parent, w);
     }
 
     /** Create an RTF paragraph as a child of given container with given attributes */
-    RtfParagraph(IRtfParagraphContainer parent, Writer w,RtfAttributes attr) throws IOException {
-        super((RtfContainer)parent,w,attr);
+    RtfParagraph(IRtfParagraphContainer parent, Writer w, RtfAttributes attr) throws IOException {
+        super((RtfContainer)parent, w, attr);
     }
 
-    public String getText(){
-        return(m_text.getText());
+    public String getText() {
+        return (m_text.getText());
     }
 
     /** Set the keepn attribute for this paragraph */
     public void setKeepn() {
-        this.m_keepn=true;
+        this.m_keepn = true;
     }
 
     /** Force reset properties */
     public void setResetProperties() {
-        this.m_resetProperties=true;
+        this.m_resetProperties = true;
     }
 
     /** IRtfTextContainer requirement: return a copy of our attributes */
     public RtfAttributes getTextContainerAttributes() {
-        if(m_attrib == null) return null;
+        if (m_attrib == null) {
+            return null;
+        }
         return (RtfAttributes)this.m_attrib.clone();
     }
 
@@ -124,45 +128,49 @@ IRtfPageNumberContainer,IRtfPageNumberCitationContainer {
     protected void writeRtfPrefix() throws IOException {
         // collapse whitespace before writing out
         // TODO could be made configurable
-        if(m_attrib != null && m_attrib.isSet("WhiteSpaceFalse")){
+        if (m_attrib != null && m_attrib.isSet("WhiteSpaceFalse")) {
             m_attrib.unset("WhiteSpaceFalse");
         } else {
             new WhitespaceCollapser(this);
         }
 
         //Reset paragraph properties if needed
-           if(m_resetProperties) {
+           if (m_resetProperties) {
                writeControlWord("pard");
            }
 
         // do not write text attributes here, they are handled
         // by RtfText
-        writeAttributes(m_attrib,PARA_ATTRIBUTES);
+        writeAttributes(m_attrib, PARA_ATTRIBUTES);
         // Added by Normand Masse
         // Write alignment attributes after \intbl for cells
-        if ( m_attrib.isSet( "intbl" ) && mustWriteAttributes() ) {
+        if (m_attrib.isSet("intbl") && mustWriteAttributes()) {
             writeAttributes(m_attrib, RtfText.ALIGNMENT);
         }
 
         //Set keepn if needed (Keep paragraph with the next paragraph)
-        if(m_keepn) writeControlWord("keepn");
+        if (m_keepn) {
+            writeControlWord("keepn");
+        }
 
         // start a group for this paragraph and write our own attributes if needed
-        if(mustWriteGroupMark()) writeGroupMark(true);
+        if (mustWriteGroupMark()) {
+            writeGroupMark(true);
+        }
 
 
-        if(mustWriteAttributes()) {
+        if (mustWriteAttributes()) {
             // writeAttributes(m_attrib, new String [] {"cs"});
             // Added by Normand Masse
             // If \intbl then attributes have already been written (see higher in method)
-            if ( !m_attrib.isSet( "intbl" ) ) {
+            if (!m_attrib.isSet("intbl")) {
                 writeAttributes(m_attrib, RtfText.ALIGNMENT);
             }
             //this line added by Chris Scott, Westinghouse
             writeAttributes(m_attrib, RtfText.BORDER);
             writeAttributes(m_attrib, RtfText.INDENT);
             writeAttributes(m_attrib, RtfText.TABS);
-            if(writeForBreak){
+            if (writeForBreak) {
                 writeControlWord("pard\\par");
             }
         }
@@ -173,14 +181,16 @@ IRtfPageNumberContainer,IRtfPageNumberCitationContainer {
     protected void writeRtfSuffix() throws IOException {
         // sometimes the end of paragraph mark must be suppressed in table cells
         boolean writeMark = true;
-        if(m_parent instanceof RtfTableCell) {
+        if (m_parent instanceof RtfTableCell) {
             writeMark = ((RtfTableCell)m_parent).paragraphNeedsPar(this);
         }
-        if(writeMark) {
+        if (writeMark) {
             writeControlWord("par");
         }
 
-        if(mustWriteGroupMark()) writeGroupMark(false);
+        if (mustWriteGroupMark()) {
+            writeGroupMark(false);
+        }
 
 
     }
@@ -189,40 +199,39 @@ IRtfPageNumberContainer,IRtfPageNumberCitationContainer {
      *  @param str if not null, added to the RtfText created
      */
     public RtfText newText(String str) throws IOException {
-        return newText(str,null);
+        return newText(str, null);
     }
 
     /** close current text run if any and start a new one
      *  @param str if not null, added to the RtfText created
      */
-    public RtfText newText(String str,RtfAttributes attr) throws IOException {
+    public RtfText newText(String str, RtfAttributes attr) throws IOException {
         closeAll();
-        m_text = new RtfText(this,m_writer,str,attr);
+        m_text = new RtfText(this, m_writer, str, attr);
         return m_text;
     }
 
     /** add a page break */
     public void newPageBreak() throws IOException {
         writeForBreak = true;
-        new RtfPageBreak(this,m_writer);
+        new RtfPageBreak(this, m_writer);
     }
 
     /** add a line break */
     public void newLineBreak() throws IOException {
-        new RtfLineBreak(this,m_writer);
+        new RtfLineBreak(this, m_writer);
     }
 
     public RtfPageNumber newPageNumber()throws IOException {
-        m_pageNumber = new RtfPageNumber(this,m_writer);
+        m_pageNumber = new RtfPageNumber(this, m_writer);
         return m_pageNumber;
     }
 
     /**
      * Added by Boris POUDEROUS on 2002/07/09
      */
-    public RtfPageNumberCitation newPageNumberCitation(String id) throws IOException
-    {
-       m_pageNumberCitation = new RtfPageNumberCitation(this,m_writer, id);
+    public RtfPageNumberCitation newPageNumberCitation(String id) throws IOException {
+       m_pageNumberCitation = new RtfPageNumberCitation(this, m_writer, id);
        return m_pageNumberCitation;
     }
 
@@ -235,16 +244,20 @@ IRtfPageNumberContainer,IRtfPageNumberCitationContainer {
     /** start a new external graphic after closing all other elements */
     public RtfExternalGraphic newImage() throws IOException {
         closeAll();
-        m_externalGraphic = new RtfExternalGraphic(this,m_writer);
+        m_externalGraphic = new RtfExternalGraphic(this, m_writer);
         return m_externalGraphic;
     }
 
     private void closeCurrentText() throws IOException {
-        if(m_text != null) m_text.close();
+        if (m_text != null) {
+            m_text.close();
+        }
     }
 
     private void closeCurrentHyperLink() throws IOException {
-        if(m_hyperlink != null) m_hyperlink.close();
+        if (m_hyperlink != null) {
+            m_hyperlink.close();
+        }
     }
 
     private void closeAll() throws IOException {
@@ -256,7 +269,7 @@ IRtfPageNumberContainer,IRtfPageNumberCitationContainer {
     protected boolean okToWriteRtf() {
         boolean result = super.okToWriteRtf();
 
-        if(m_parent.getOptions().ignoreEmptyParagraphs() && getChildCount() == 0) {
+        if (m_parent.getOptions().ignoreEmptyParagraphs() && getChildCount() == 0) {
             // TODO should test that this is the last RtfParagraph in the cell instead
             // of simply testing for last child??
             result = false;
@@ -273,15 +286,14 @@ IRtfPageNumberContainer,IRtfPageNumberCitationContainer {
             final List childList = getChildren();
             for (int i = 0; i < children; i++) {
                 final RtfElement el = (RtfElement) childList.get(i);
-                if (! el.isEmpty()) {
-                    if (el.getClass() == RtfText.class ) {
+                if (!el.isEmpty()) {
+                    if (el.getClass() == RtfText.class) {
                         boolean tmp = ((RtfText) el).isNbsp();
-                        if (! tmp) {
+                        if (!tmp) {
                             writeAttributes = true;
                             break;
                         }
-                    }
-                    else {
+                    } else {
                         writeAttributes = true;
                         break;
                     }
@@ -292,15 +304,20 @@ IRtfPageNumberContainer,IRtfPageNumberCitationContainer {
     }
 
     /** true if we must write a group mark around this paragraph
-     *  TODO is this correct, study interaction with mustWriteAttributes() <-- On implementation i have noticed if the groupmark set, the format attributes are only for this content, i think this implementation is ok
+     *  TODO is this correct, study interaction with mustWriteAttributes()
+     *       <-- On implementation i have noticed if the groupmark set, the
+     *       format attributes are only for this content, i think this
+     *       implementation is ok
      */
     private boolean mustWriteGroupMark() {
         return getChildCount() > 0;
     }
 
     /** get the attributes of our text */
-    public RtfAttributes getTextAttributes(){
-        if(m_text == null) return null;
+    public RtfAttributes getTextAttributes() {
+        if (m_text == null) {
+            return null;
+        }
         return m_text.getTextAttributes();
     }
 }

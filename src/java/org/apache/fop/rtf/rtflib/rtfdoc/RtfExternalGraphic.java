@@ -58,28 +58,20 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import org.apache.fop.rtf.rtflib.rtfdoc.RtfElement;
-import org.apache.fop.rtf.rtflib.rtfdoc.RtfContainer;
-import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
-
 import org.apache.fop.rtf.rtflib.tools.ImageConstants;
 import org.apache.fop.rtf.rtflib.tools.ImageUtil;
 //import org.apache.fop.rtf.rtflib.tools.jpeg.Encoder;
 //import org.apache.fop.rtf.rtflib.tools.jpeg.JPEGException;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.InputStreamReader;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
 import java.io.Writer;
 
 import java.io.File;
 import java.net.URL;
 import java.net.MalformedURLException;
-import java.util.Hashtable;
 
 /**
  * Creates an RTF image from an external graphic file.
@@ -101,13 +93,10 @@ import java.util.Hashtable;
  *  @author Gianugo Rabellino gianugo@rabellino.it
  */
 
-public class RtfExternalGraphic extends RtfElement
-{
+public class RtfExternalGraphic extends RtfElement {
     /** Exception thrown when an image file/URL cannot be read */
-    public static class ExternalGraphicException extends IOException
-    {
-        ExternalGraphicException(String reason)
-        {
+    public static class ExternalGraphicException extends IOException {
+        ExternalGraphicException(String reason) {
             super(reason);
         }
     }
@@ -212,7 +201,7 @@ public class RtfExternalGraphic extends RtfElement
     protected void writeRtfContent() throws IOException {
             try {
                 writeRtfContentWithException();
-            } catch(ExternalGraphicException ie) {
+            } catch (ExternalGraphicException ie) {
                 writeExceptionInRtf(ie);
             }
         }
@@ -230,17 +219,17 @@ public class RtfExternalGraphic extends RtfElement
 
 
         if (url == null) {
-            throw new ExternalGraphicException("The attribute 'url' of <fo:external-graphic> is null.");
+            throw new ExternalGraphicException("The attribute 'url' of "
+                    + "<fo:external-graphic> is null.");
         }
 
-        String linkToRoot = System.getProperty( "jfor_link_to_root" );
-        if (linkToRoot != null)
-        {
-            m_writer.write( "{\\field {\\* \\fldinst { INCLUDEPICTURE \"" );
-            m_writer.write( linkToRoot );
-            File urlFile = new File( url.getFile() );
-            m_writer.write( urlFile.getName() );
-            m_writer.write( "\" \\\\* MERGEFORMAT \\\\d }}}" );
+        String linkToRoot = System.getProperty("jfor_link_to_root");
+        if (linkToRoot != null) {
+            m_writer.write("{\\field {\\* \\fldinst { INCLUDEPICTURE \"");
+            m_writer.write(linkToRoot);
+            File urlFile = new File(url.getFile());
+            m_writer.write(urlFile.getName());
+            m_writer.write("\" \\\\* MERGEFORMAT \\\\d }}}");
             return;
         }
 
@@ -248,21 +237,23 @@ public class RtfExternalGraphic extends RtfElement
 
 
         byte[] data = null;
-        try
-        {
-        // image reading patch provided by Michael Krause <michakurt@web.de>
-        final BufferedInputStream bin = new BufferedInputStream(url.openStream());
-        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-              while (true) {
-                  final int datum = bin.read();
-                 if (datum == -1) break;
-                  bout.write(datum);
+        try {
+            // image reading patch provided by Michael Krause <michakurt@web.de>
+            final BufferedInputStream bin = new BufferedInputStream(url.openStream());
+            final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            while (true) {
+                final int datum = bin.read();
+                if (datum == -1) {
+                   break;
+                }
+                bout.write(datum);
              }
              bout.flush();
              data = bout.toByteArray();
-        }
-        catch (Exception e) {
-            throw new ExternalGraphicException("The attribute 'src' of <fo:external-graphic> has a invalid value: '" + url + "' (" + e + ")");
+        } catch (Exception e) {
+            throw new ExternalGraphicException("The attribute 'src' of "
+                    + "<fo:external-graphic> has a invalid value: '"
+                    + url + "' (" + e + ")");
         }
 
         if (data == null) {
@@ -288,20 +279,23 @@ public class RtfExternalGraphic extends RtfElement
 //                    type = to;
 //                }
 //                catch (JPEGException e) {
-//                    e.setMessage("Image from tag <fo:external-graphic> could not be created (src = '" + url + "'");
+//                    e.setMessage("Image from tag <fo:external-graphic> could "
+//                            + "not be created (src = '" + url + "'");
 //                }
 //                finally {
                     out.close();
 //                }
-            }
-            else {
+            } else {
                 type = ImageConstants.I_NOT_SUPPORTED;
             }
         }
 
 
         if (type == ImageConstants.I_NOT_SUPPORTED) {
-            throw new ExternalGraphicException("The tag <fo:external-graphic> does not support " + file.substring(file.lastIndexOf(".") + 1) + " - image type.");
+            throw new ExternalGraphicException("The tag <fo:external-graphic> "
+                    + "does not support "
+                    + file.substring(file.lastIndexOf(".") + 1)
+                    + " - image type.");
         }
 
         String rtfImageCode = ImageConstants.RTF_TAGS [type];
@@ -320,20 +314,22 @@ public class RtfExternalGraphic extends RtfElement
         if (type == ImageConstants.I_PNG) {
             width = ImageUtil.getIntFromByteArray(data, 16, 4, true);
             height = ImageUtil.getIntFromByteArray(data, 20, 4, true);
-        }
-        else if (type == ImageConstants.I_JPG) {
+        } else if (type == ImageConstants.I_JPG) {
             int basis = -1;
             byte ff = (byte) 0xff;
             byte c0 = (byte) 0xc0;
             for (int i = 0; i < data.length; i++) {
                 byte b = data[i];
-                if (b != ff)
+                if (b != ff) {
                     continue;
-                if (i == data.length - 1)
+                }
+                if (i == data.length - 1) {
                     continue;
+                }
                 b = data[i + 1];
-                if (b != c0)
+                if (b != c0) {
                     continue;
+                }
                 basis = i + 5;
                 break;
             }
@@ -342,8 +338,7 @@ public class RtfExternalGraphic extends RtfElement
                 width = ImageUtil.getIntFromByteArray(data, basis + 2, 2, true);
                 height = ImageUtil.getIntFromByteArray(data, basis, 2, true);
             }
-        }
-        else if (type == ImageConstants.I_EMF) {
+        } else if (type == ImageConstants.I_EMF) {
             width = ImageUtil.getIntFromByteArray(data, 151, 4, false);
             height = ImageUtil.getIntFromByteArray(data, 155, 4, false);
         }
@@ -359,18 +354,15 @@ public class RtfExternalGraphic extends RtfElement
         if (widthDesired != -1) {
             if (perCentW) {
                 writeControlWord("picscalex" + widthDesired);
-            }
-            else {
+            } else {
                 writeControlWord("picscalex" + widthDesired * 100 / width);
             }
 
             writeControlWord("picwgoal" + widthDesired);
-        }
-        else if (scaleUniform && heightDesired != -1) {
+        } else if (scaleUniform && heightDesired != -1) {
             if (perCentH) {
                 writeControlWord("picscalex" + heightDesired);
-            }
-            else {
+            } else {
                 writeControlWord("picscalex" + heightDesired * 100 / height);
             }
         }
@@ -378,18 +370,15 @@ public class RtfExternalGraphic extends RtfElement
         if (heightDesired != -1) {
             if (perCentH) {
                 writeControlWord("picscaley" + heightDesired);
-            }
-            else {
+            } else {
                 writeControlWord("picscaley" + heightDesired * 100 / height);
             }
 
             writeControlWord("pichgoal" + heightDesired);
-        }
-        else if (scaleUniform && widthDesired != -1) {
+        } else if (scaleUniform && widthDesired != -1) {
             if (perCentW) {
                 writeControlWord("picscaley" + widthDesired);
-            }
-            else {
+            } else {
                 writeControlWord("picscaley" + widthDesired * 100 / width);
             }
         }
@@ -398,8 +387,9 @@ public class RtfExternalGraphic extends RtfElement
             int iData = data [i];
 
             // Make positive byte
-            if (iData < 0)
+            if (iData < 0) {
                 iData += 256;
+            }
 
             if (iData < 16) {
                 // Set leading zero and append
@@ -465,22 +455,17 @@ public class RtfExternalGraphic extends RtfElement
      * @param urlString Image url like "file://..."
      * @throws IOException On error
      */
-    public void setURL(String urlString) throws IOException
-    {
+    public void setURL(String urlString) throws IOException {
         URL tmpUrl = null;
-        try
-        {
+        try {
             tmpUrl = new URL (urlString);
-        }
-        catch (MalformedURLException e)
-        {
-            try
-            {
+        } catch (MalformedURLException e) {
+            try {
                 tmpUrl = new File (urlString).toURL ();
-            }
-            catch (MalformedURLException ee)
-            {
-                throw new ExternalGraphicException("The attribute 'src' of <fo:external-graphic> has a invalid value: '" + urlString + "' (" + ee + ")");
+            } catch (MalformedURLException ee) {
+                throw new ExternalGraphicException("The attribute 'src' of "
+                        + "<fo:external-graphic> has a invalid value: '"
+                        + urlString + "' (" + ee + ")");
             }
         }
         this.url = tmpUrl;
@@ -490,8 +475,7 @@ public class RtfExternalGraphic extends RtfElement
      * Gets  the compression rate for the image in percent.
      * @return Compression rate
      */
-    public int getCompressionRate ()
-    {
+    public int getCompressionRate () {
         return graphicCompressionRate;
     }
 
@@ -503,10 +487,10 @@ public class RtfExternalGraphic extends RtfElement
      *  true:   The compression rate is valid (0..100)\n
      *  false:  The compression rate is invalid
      */
-    public boolean setCompressionRate (int percent)
-    {
-        if (percent < 1 || percent > 100)
+    public boolean setCompressionRate (int percent) {
+        if (percent < 1 || percent > 100) {
             return false;
+        }
 
         graphicCompressionRate = percent;
         return true;
@@ -611,17 +595,13 @@ public class RtfExternalGraphic extends RtfElement
 
         if (isPNG(data)) {
             type = ImageConstants.I_PNG;
-        }
-        else if (isJPEG(data)) {
+        } else if (isJPEG(data)) {
             type = ImageConstants.I_JPG_C;
-        }
-        else if (isEMF(data)) {
+        } else if (isEMF(data)) {
             type = ImageConstants.I_EMF;
-        }
-        else if (isGIF(data)) {
+        } else if (isGIF(data)) {
             type = ImageConstants.I_GIF;
-        }
-        else {
+        } else {
             Object tmp = ImageConstants.SUPPORTED_IMAGE_TYPES.get(ext.toLowerCase());
             if (tmp != null) {
                 type = ((Integer) tmp).intValue();
@@ -632,8 +612,7 @@ public class RtfExternalGraphic extends RtfElement
     }
 
     /** true if this element would generate no "useful" RTF content */
-    public boolean isEmpty()
-    {
-        return url==null;
+    public boolean isEmpty() {
+        return url == null;
     }
 }

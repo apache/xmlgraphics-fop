@@ -68,8 +68,7 @@ import java.io.IOException;
  *
  * {\field {\*\fldinst HYPERLINK "http://www.test.de"   }{\fldrslt Joe Smith}}
  */
-public class RtfHyperLink extends RtfContainer implements IRtfTextContainer
-{
+public class RtfHyperLink extends RtfContainer implements IRtfTextContainer {
 
     //////////////////////////////////////////////////
     // @@ Members
@@ -94,8 +93,7 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer
      * @param attributes a <code>RtfAttributes</code> value
      */
     public RtfHyperLink (IRtfTextContainer parent, Writer writer, String str, RtfAttributes attr)
-        throws IOException
-    {
+        throws IOException {
         super ((RtfContainer) parent, writer, attr);
         new RtfText (this, writer, str, attr);
     }
@@ -110,8 +108,7 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer
      *
      * @exception IOException On error
      */
-    public void writeRtfPrefix () throws IOException
-    {
+    public void writeRtfPrefix () throws IOException {
         super.writeGroupMark (true);
         super.writeControlWord ("field");
 
@@ -125,8 +122,7 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer
         super.writeControlWord ("fldrslt");
 
         // start a group for this paragraph and write our own attributes if needed
-        if (m_attrib != null && m_attrib.isSet ("cs"))
-        {
+        if (m_attrib != null && m_attrib.isSet ("cs")) {
             writeGroupMark (true);
             writeAttributes(m_attrib, new String [] {"cs"});
         }
@@ -137,10 +133,8 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer
      *
      * @exception IOException On error
      */
-    public void writeRtfSuffix () throws IOException
-    {
-        if (m_attrib != null && m_attrib.isSet ("cs"))
-        {
+    public void writeRtfSuffix () throws IOException {
+        if (m_attrib != null && m_attrib.isSet ("cs")) {
             writeGroupMark (false);
         }
         super.writeGroupMark (false);
@@ -156,30 +150,29 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer
      *  @param str if not null, added to the RtfText created
      */
     public RtfText newText (String str) throws IOException {
-        return newText (str,null);
+        return newText (str, null);
     }
 
     /** close current text run if any and start a new one
      *  @param str if not null, added to the RtfText created
      */
-    public RtfText newText (String str,RtfAttributes attr) throws IOException
-    {
+    public RtfText newText (String str, RtfAttributes attr) throws IOException {
         closeAll ();
         mText = new RtfText (this, m_writer, str, attr);
         return mText;
     }
 
     /** IRtfTextContainer requirement: return a copy of our attributes */
-    public RtfAttributes getTextContainerAttributes()
-    {
-        if (m_attrib == null) return null;
+    public RtfAttributes getTextContainerAttributes() {
+        if (m_attrib == null) {
+            return null;
+        }
         return (RtfAttributes) this.m_attrib.clone ();
     }
 
 
     /** add a line break */
-    public void newLineBreak () throws IOException
-    {
+    public void newLineBreak () throws IOException {
         new RtfLineBreak (this, m_writer);
     }
 
@@ -188,13 +181,13 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer
     // @@ Common container methods
     //////////////////////////////////////////////////
 
-    private void closeCurrentText () throws IOException
-    {
-        if (mText != null) mText.close ();
+    private void closeCurrentText () throws IOException {
+        if (mText != null) {
+            mText.close ();
+        }
     }
 
-    private void closeAll () throws IOException
-    {
+    private void closeAll () throws IOException {
         closeCurrentText();
     }
 
@@ -208,8 +201,7 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer
      *
      * @param url Link url like "http://..."
      */
-    public void setExternalURL (String url)
-    {
+    public void setExternalURL (String url) {
         this.url = url;
     }
 
@@ -218,8 +210,7 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer
      *
      * @param jumpTo Name of the text mark
      */
-    public void setInternalURL (String jumpTo)
-    {
+    public void setInternalURL (String jumpTo) {
         int now = jumpTo.length ();
         int max = RtfBookmark.maxBookmarkLength;
         this.url = "#" + jumpTo.substring (0, now > max ? max : now);
@@ -227,8 +218,7 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer
         this.url = this.url.replace (' ', RtfBookmark.replaceCharacter);
     }
 
-    public boolean isEmpty ()
-    {
+    public boolean isEmpty () {
         return false;
     }
 }
