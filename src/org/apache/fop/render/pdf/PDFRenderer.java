@@ -519,7 +519,7 @@ public class PDFRenderer extends PrintRenderer {
             int l = s.length();
 
             for (int i = 0; i < l; i++) {
-                char ch = s.charAt(i);
+                char ch = area.getFontState().mapChar(s.charAt(i));
 
                 if (!useMultiByte) {
                     if (ch > 127) {
@@ -542,7 +542,7 @@ public class PDFRenderer extends PrintRenderer {
 
                 if (kerningAvailable && (i + 1) < l) {
                     addKerning(pdf, (new Integer((int) ch)),
-                               (new Integer((int) s.charAt(i + 1))),
+                               (new Integer((int) area.getFontState().mapChar(s.charAt(i + 1)))),
                                kerning, startText, endText);
                 }
 

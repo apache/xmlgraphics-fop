@@ -185,8 +185,8 @@ public class LineArea extends Area {
             char c = data[i];
             if (!((c == ' ') || (c == '\n') || (c == '\r') ||
                   (c == '\t'))) {
-               c = data[i] = currentFontState.mapChar(c);
-               charWidth = currentFontState.width(c);
+                    //c = data[i] = currentFontState.mapChar(c);
+               charWidth = currentFontState.width(currentFontState.mapChar(c));
                isText = true;
                if (charWidth <= 0)
                   charWidth = whitespaceWidth;
@@ -373,7 +373,7 @@ public class LineArea extends Area {
                             return wordStart;
                         }
                     } else if (this.wrapOption == WrapOption.WRAP) {
-                      if (this.hyphProps.hyphenate == Hyphenate.TRUE) {
+                      if (hyphProps.hyphenate == Hyphenate.TRUE) {
                         return this.doHyphenation(dataCopy,i,wordStart,this.getContentWidth() - (finalWidth + spaceWidth + pendingWidth));
                       } else {
                         return wordStart;
@@ -445,10 +445,12 @@ public class LineArea extends Area {
                           int leaderAlignment) {
         WordArea leaderPatternArea;
         int leaderLength = 0;
-        char dotIndex = currentFontState.mapChar('.');
-        int dotWidth = currentFontState.width(dotIndex);
-        char whitespaceIndex = currentFontState.mapChar(' ');
-        int whitespaceWidth = currentFontState.width(whitespaceIndex);
+        char dotIndex = '.'; // currentFontState.mapChar('.');
+        int dotWidth =
+            currentFontState.width(currentFontState.mapChar(dotIndex));
+        char whitespaceIndex = ' ';//currentFontState.mapChar(' ');
+        int whitespaceWidth =
+            currentFontState.width(currentFontState.mapChar(whitespaceIndex));
         
         int remainingWidth =
           this.getContentWidth() - this.getCurrentXPosition();
@@ -888,7 +890,8 @@ public class LineArea extends Area {
         //no hyphenation points, but a inword non-letter character
         } else if (hyph == null && preString != null){
             remainingString.append(preString);
-            this.addMapWord(startChar,remainingString);
+                //is.addMapWord(startChar,remainingString);
+            this.addWord(startChar,remainingString);
             return wordStart + remainingString.length();
         //hyphenation points and no inword non-letter character
         } else if (hyph != null && preString == null)  {
@@ -896,7 +899,8 @@ public class LineArea extends Area {
             if (index != -1) {
                 remainingString.append(hyph.getPreHyphenText(index));
                 remainingString.append(this.hyphProps.hyphenationChar);
-                this.addMapWord(startChar,remainingString);
+                    //is.addMapWord(startChar,remainingString);
+                this.addWord(startChar,remainingString);
                 return wordStart + remainingString.length()-1;
             }
         //hyphenation points and a inword non letter character
@@ -905,11 +909,13 @@ public class LineArea extends Area {
             if (index != -1) {
               remainingString.append(preString.append(hyph.getPreHyphenText(index)));
               remainingString.append(this.hyphProps.hyphenationChar);
-              this.addMapWord(startChar,remainingString);
+                  //is.addMapWord(startChar,remainingString);
+              this.addWord(startChar,remainingString);
               return wordStart + remainingString.length()-1;
             } else {
               remainingString.append(preString) ;
-              this.addMapWord(startChar,remainingString);
+                  //is.addMapWord(startChar,remainingString);
+              this.addWord(startChar,remainingString);
               return wordStart + remainingString.length();
             }
         }
@@ -930,20 +936,22 @@ public class LineArea extends Area {
                   assume that it's already done.
     */
     private int getWordWidth (String word, boolean doMap) {
-      int wordLength = word.length();
-      int width = 0;
-      char [] characters = new char [wordLength];
-      word.getChars(0,wordLength,characters,0);
-      char currentChar;
-      for (int i = 0; i < wordLength; i++) {
-          if (doMap)
-              currentChar = currentFontState.mapChar(characters[i]);
-          else
-              currentChar=characters[i];
-          
-          width += this.currentFontState.width(currentChar);
-      }
-      return width;
+        if (word == null)
+            return 0;
+        int wordLength = word.length();
+        int width = 0;
+        char [] characters = new char [wordLength];
+        word.getChars(0,wordLength,characters,0);
+        char currentChar;
+        for (int i = 0; i < wordLength; i++) {
+            if (doMap)
+                currentChar = currentFontState.mapChar(characters[i]);
+            else
+                currentChar=characters[i];
+            
+            width += this.currentFontState.width(currentChar);
+        }
+        return width;
     }
 
     public int getRemainingWidth()
@@ -1018,9 +1026,11 @@ public class LineArea extends Area {
 
     /** adds a InlineArea containing the String startChar+wordBuf to the line area children.  */
     private void addWord (char startChar, StringBuffer wordBuf) {
-        String word = wordBuf.toString();
+        String word = (wordBuf != null) ? wordBuf.toString() : ""; 
         WordArea hia;
-        int startCharWidth = this.currentFontState.width(currentFontState.mapChar(startChar));
+        int startCharWidth =
+            this.currentFontState.width(currentFontState.mapChar(startChar));
+
         if (startChar == ' ') {
             this.addChild(new InlineSpace(startCharWidth));
         } else {
@@ -1030,7 +1040,7 @@ public class LineArea extends Area {
             hia.setYOffset(placementOffset);
             this.addChild(hia);
         }
-        int wordWidth = this.getWordWidth(word, false);
+        int wordWidth = this.getWordWidth(word);
         hia = new WordArea(currentFontState,
                                  this.red, this.green, this.blue,
                                  word,word.length());
