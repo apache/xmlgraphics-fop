@@ -51,6 +51,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.Constants;
 
 /**
  * a space quantity in XSL (space-before, space-after)
@@ -61,34 +62,29 @@ public class Space extends LengthRange {
     private Property conditionality;
 
     /**
-     * From CompoundDatatype
-     * @param sCmpnName name of component
-     * @param cmpnValue Property object for the component
-     * @param bIsDefault true if this is the default (??)
+     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
      */
-    public void setComponent(String sCmpnName, Property cmpnValue,
+    public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
-        if (sCmpnName.equals("precedence")) {
+        if (cmpId == Constants.CP_PRECEDENCE) {
             setPrecedence(cmpnValue, bIsDefault);
-        } else if (sCmpnName.equals("conditionality")) {
+        } else if (cmpId == Constants.CP_CONDITIONALITY) {
             setConditionality(cmpnValue, bIsDefault);
         } else {
-            super.setComponent(sCmpnName, cmpnValue, bIsDefault);
+            super.setComponent(cmpId, cmpnValue, bIsDefault);
         }
     }
 
     /**
-     * From CompoundDatatype
-     * @param sCmpnName name of component
-     * @return Property matching the component name
+     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
-    public Property getComponent(String sCmpnName) {
-        if (sCmpnName.equals("precedence")) {
+    public Property getComponent(int cmpId) {
+        if (cmpId == Constants.CP_PRECEDENCE) {
             return getPrecedence();
-        } else if (sCmpnName.equals("conditionality")) {
+        } else if (cmpId == Constants.CP_CONDITIONALITY) {
             return getConditionality();
         } else {
-            return super.getComponent(sCmpnName);
+            return super.getComponent(cmpId);
         }
     }
 

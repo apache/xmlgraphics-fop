@@ -51,6 +51,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.Constants;
 
 /**
  * XSL FO Keep Property datatype (keep-together, etc)
@@ -68,33 +69,28 @@ public class Keep implements CompoundDatatype {
 
 
     /**
-     * From CompoundDatatype
-     * @param sCmpnName name of compound property to set
-     * @param cmpnValue property containing value to be set
-     * @param bIsDefault not used (??)
+     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
      */
-    public void setComponent(String sCmpnName, Property cmpnValue,
+    public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
-        if (sCmpnName.equals("within-line")) {
+        if (cmpId == Constants.CP_WITHIN_LINE) {
             setWithinLine(cmpnValue, bIsDefault);
-        } else if (sCmpnName.equals("within-column")) {
+        } else if (cmpId == Constants.CP_WITHIN_COLUMN) {
             setWithinColumn(cmpnValue, bIsDefault);
-        } else if (sCmpnName.equals("within-page")) {
+        } else if (cmpId == Constants.CP_WITHIN_PAGE) {
             setWithinPage(cmpnValue, bIsDefault);
         }
     }
 
     /**
-     * From CompoundDatatype
-     * @param sCmpnName compound property name
-     * @return property corresponding to compound property string
+     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
-    public Property getComponent(String sCmpnName) {
-        if (sCmpnName.equals("within-line")) {
+    public Property getComponent(int cmpId) {
+        if (cmpId == Constants.CP_WITHIN_LINE) {
             return getWithinLine();
-        } else if (sCmpnName.equals("within-column")) {
+        } else if (cmpId == Constants.CP_WITHIN_COLUMN) {
             return getWithinColumn();
-        } else if (sCmpnName.equals("within-page")) {
+        } else if (cmpId == Constants.CP_WITHIN_PAGE) {
             return getWithinPage();
         } else {
             return null;

@@ -59,16 +59,16 @@ public interface CompoundDatatype {
     
     /**
      * Sets a component of the compound datatype.
-     * @param sCmpnName name of the component
+     * @param Constants ID of the component
      * @param cmpnValue value of the component
      * @param bIsDefault Indicates if it's the default value
      */
-    void setComponent(String sCmpnName, Property cmpnValue, boolean bIsDefault);
+    void setComponent(int cmpId, Property cmpnValue, boolean bIsDefault);
 
     /**
      * Returns a component of the compound datatype.
-     * @param sCmpnName name of the component
+     * @param Constants ID of the component
      * @return the value of the component
      */
-    Property getComponent(String sCmpnName);
+    Property getComponent(int cmpId);
 }

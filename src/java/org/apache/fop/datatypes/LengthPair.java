@@ -51,6 +51,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.Constants;
 
 /**
  * Models a pair of lengths, one specifiying the dimensions for the
@@ -63,31 +64,24 @@ public class LengthPair implements CompoundDatatype {
     private Property bpd;
 
     /**
-     * From CompoundDatatype
-     * @param sCmpnName component name ("block-progression-direction" or
-     * "inline-progression-direction") which is being set
-     * @param cmpnValue Property containing the value to be set
-     * @param bIsDefault true if this is the default property (??)
+     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
      */
-    public void setComponent(String sCmpnName, Property cmpnValue,
+    public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
-        if (sCmpnName.equals("block-progression-direction")) {
+        if (cmpId == Constants.CP_BLOCK_PROGRESSION_DIRECTION) {
             bpd = cmpnValue;
-        } else if (sCmpnName.equals("inline-progression-direction")) {
+        } else if (cmpId == Constants.CP_INLINE_PROGRESSION_DIRECTION) {
             ipd = cmpnValue;
         }
     }
 
     /**
-     * From CompoundDatatype
-     * @param sCmpnName component name ("block-progression-direction" or
-     * "inline-progression-direction") for which the length is sought
-     * @return Property containing the length sought
+     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
-    public Property getComponent(String sCmpnName) {
-        if (sCmpnName.equals("block-progression-direction")) {
+    public Property getComponent(int cmpId) {
+        if (cmpId == Constants.CP_BLOCK_PROGRESSION_DIRECTION) {
             return getBPD();
-        } else if (sCmpnName.equals("inline-progression-direction")) {
+        } else if (cmpId == Constants.CP_INLINE_PROGRESSION_DIRECTION) {
             return getIPD();
         } else {
             return null;    // SHOULDN'T HAPPEN
