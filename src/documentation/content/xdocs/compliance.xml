@@ -423,7 +423,9 @@ want it to.</comment>
         <level-2 name="Table Properties" citation="§7.26" extURL="slice7.html#section-N52000-Table-Properties" ref-name="table">
           <level-3 name="border-after-precedence" citation="§7.26.1" extURL="slice7.html#border-after-precedence" compliance-level="1" comply="no"/>
           <level-3 name="border-before-precedence" citation="§7.26.2" extURL="slice7.html#border-before-precedence" compliance-level="1" comply="no"/>
-          <level-3 name="border-collapse" citation="§7.26.3" extURL="slice7.html#border-collapse" compliance-level="2" comply="no"/>
+          <level-3 name="border-collapse" citation="§7.26.3" extURL="slice7.html#border-collapse" compliance-level="2" comply="partial">
+              <comment>Implementation of collapsed table model not complete.</comment>
+          </level-3>
           <level-3 name="border-end-precedence" citation="§7.26.4" extURL="slice7.html#border-end-precedence" compliance-level="1" comply="no"/>
           <level-3 name="border-separation" citation="§7.26.5" extURL="slice7.html#border-separation" compliance-level="2" comply="no"/>
           <level-3 name="border-start-precedence" citation="§7.26.6" extURL="slice7.html#border-start-precedence" compliance-level="1" comply="no"/>
