@@ -321,22 +321,27 @@ You can find UML diagramms for all Fop packages (latest release version)
 <s2 title="SVG">
 
 <p>
-FOP supports some svg rendering. SVG is supported as an instream-foreign-object
-embedded in an FO document. FOP also supports rendering of an external SVG image.
+FOP supports svg rendering. SVG is supported as an instream-foreign-object
+embedded in an FO document or as an external SVG image.
 </p>
 
 <p>
-Since the intream object that contains the SVG returns a single fo area then
-the construction of the SVG document is handled differently. The SVG is created
-by calling the <code>createGraphic()</code> on each SVG element. The element is then
-responsible for loading the necessary information and child elements and creating
-the corresponding SVG DOM element. When the FO tree is being layed out the
-SVG tree is turned into the SVG DOM document which is stored for later rendering.
+If the svg is embedded in an instream-foreign-object then all the elements and
+attributes are read directly and converted into an SVG DOM representation
+using the Batik library. This is then stored as a DOM until required for rendering.
+The rendering process depends on the what type of renderer is being used.
 </p>
 
 <p>
-The SVG document is then held as a DOM tree which is then rendered by going through
-the elements of the tree and rendering then in turn.
+The SVG DOM is rendered in the PDF renderer by using the abitlity of Batik to render
+DOM to a Graphics2D. First the DOM is converted into an intermediate representation
+then this is rendered to a PDFGraphics2D graphic object which writes the drawing
+instructions directly as PDF markup.
+</p>
+
+<p>
+The AWTRenderer and the PrintRenderer use Batik directly to draw the SVG image
+into the current java Graphics2D context.
 </p>
 
 <p>

@@ -221,75 +221,17 @@ border and padding shorthand properties
     <p>All other properties are not implemented.</p>
   </s2>
 
-  <s2 title="3) SVG elements supported">
-    <ul>
-      <li>rect</li>
-      <li>circle</li>
-      <li>line</li>
-      <li>text - tref, tspan</li>
-      <li>path</li>
-      <li>polygon</li>
-      <li>ellipse</li>
-      <li>g</li>
-      <li>svg (inside)</li>
-      <li>image</li>
-      <li>use</li>
-      <li>defs (including referenced items not in defs element)</li>
-      <li>linearGradient</li>
-      <li>radialGradient</li>
-      <li>stop</li>
-    </ul>
-  </s2>
-  <s2 title="4) SVG properties supported">
-    <ul>
-      <li>style</li>
-      <li>fill (style)</li>
-      <li>stroke (style)</li>
-      <li>stroke-width (style)</li>
-      <li>stroke-dasharray (style)</li>
-      <li>stroke-offset (style)</li>
-      <li>stroke-linecap (style)</li>
-      <li>stroke-linejoin (style)</li>
-      <li>stroke-miterlimit (style)</li>
-      <li>stop-color (style)</li>
-      <li>color (style)</li>
-      <li>font (style)</li>
-      <li>font-size (style)</li>
-      <li>font-family (style)</li>
-      <li>font-weight (style)</li>
-      <li>font-style (style)</li>
-      <li>x</li>
-      <li>y</li>
-      <li>x1</li>
-      <li>y1</li>
-      <li>x2</li>
-      <li>y2</li>
-      <li>r</li>
-      <li>cx</li>
-      <li>cy</li>
-      <li>x (list)</li>
-      <li>y (list)</li>
-      <li>dx</li>
-      <li>dy</li>
-      <li>transform</li>
-      <li>rotate (transform)</li>
-      <li>translate (transform)</li>
-      <li>scale (transform)</li>
-      <li>matrix (transform)</li>
-      <li>skewX (transform)</li>
-      <li>skewY (transform)</li>
-      <li>d</li>
-      <li>id</li>
-      <li>width</li>
-      <li>height</li>
-      <li>xlink:href</li>
-      <li>refX</li>
-      <li>refY</li>
-      <li>offset</li>
-      <li>points</li>
-      <li>fx</li>
-      <li>fy</li>
-    </ul>
+  <s2 title="3)SVG Support">
+<p>
+FOP uses <jump href="http://xml.apache.org/batik/">Batik</jump> directly for its SVG support. Therefore FOP supports the same
+elements and properties as are supported by Batik. As FOP is designed for
+rendering to a static medium then only static SVG is rendered.
+</p>
+<p>
+Due to some limitations in PDF some SVG images, particularly ones with effects
+or transparency, may not come out correctly. The images should still be rendered
+correctly for the AWT and Print renderers.
+</p>
   </s2>
 </s1>
 

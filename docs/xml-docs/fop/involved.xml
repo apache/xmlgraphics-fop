@@ -31,12 +31,13 @@
      fop-cvs-subscribe@xml.apache.org</jump>. If you want to contribute to the development of Fop you should subscribe, 
      because it is important that you follow changes being made. </p>
   </s2>
-  <s2 title="Contributing code and documentation">
-  <p>If you want to contribute code (p.e. a bugfix) or documentation (p.e. an additional example), please do the following: </p>
+  <s2 title="Contributing code, tests and documentation">
+  <p>If you want to contribute code (p.e. a bugfix), a test or documentation (p.e. an additional example), please do the following: </p>
   <p>1) Make sure your code doesn't break the existing one and that Fop still compiles.</p>
   <p>2) Create a file which shows the differences to the existing code.</p>
-  <p>3) Send this file to fop-dev@xml.apache.org.</p>
+  <p>3) Send this file to <jump href="mailto:fop-dev@xml.apache.org">fop-dev@xml.apache.org.</jump></p>
   <p>One of the committers will test your code and commit it to the code repository.</p>
+  <p>If you have a test or useful bug test you should <jump href="testing.html">read this page</jump>.</p>
   <p>BTW: The Apache project knows different roles for contributors, namely 'users', 'developers', 'committers' and the 'Project 
      Management Committee' (An explanation of these roles can be found <jump href="http://xml.apache.org/roles.html">here</jump>).</p>
   </s2>
