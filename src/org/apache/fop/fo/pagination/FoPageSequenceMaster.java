@@ -35,7 +35,6 @@ import org.apache.fop.xml.XMLEvent;
  * children of fo:layout-master-set FOs.  Their contents are specified by
  * (single-page-master-reference|repeatable-page-master-reference
  *                                |repeatable-page-master-alternatives)+
- * N.B. The FoPageSequenceMaster is a subclass of FONode.
  */
 public class FoPageSequenceMaster extends FONode {
 
@@ -57,6 +56,10 @@ public class FoPageSequenceMaster extends FONode {
         new XMLEvent.UriLocalName
          (XMLNamespaces.XSLNSpaceIndex, "repeatable-page-master-alternatives")
     };
+
+    private static final XMLEvent.UriLocalName conditionalPageMasterRef =
+	new XMLEvent.UriLocalName(XMLNamespaces.XSLNSpaceIndex,
+				    "conditional-page-master-reference");
 
     private String masterName;
 
@@ -83,14 +86,20 @@ public class FoPageSequenceMaster extends FONode {
                 String localName = ev.getLocalName();
                 if (localName.equals("single-page-master-reference")) {
                     System.out.println("Found single-page-master-reference");
+		    subSequenceList.add(new FoSinglePageMasterReference
+							(foTree, this, ev));
                 } else if (localName.equals
                            ("repeatable-page-master-reference")) {
                     System.out.println
                             ("Found repeatable-page-master-reference");
+		    subSequenceList.add(new FoRepeatablePageMasterReference
+							(foTree, this, ev));
                 } else if (localName.equals
                            ("repeatable-page-master-alternatives")) {
                     System.out.println
-                            ("Found repeatable-page-master-reference");
+                            ("Found repeatable-page-master-alternatives");
+		    subSequenceList.add(new FoRepeatablePageMasterAlternatives
+							(foTree, this, ev));
                 } else
                     throw new FOPException
                             ("Aargh! expectStartElement(events, list)");
@@ -107,5 +116,118 @@ public class FoPageSequenceMaster extends FONode {
     public String getMasterName() {
         return masterName;
     }
+
+    /**
+     * Implements the fo:single-page-master-reference flow object.  It is
+     * always a child of an fo:page-sequence-master.
+     */
+    public class FoSinglePageMasterReference extends FONode {
+
+	public FoSinglePageMasterReference
+			    (FOTree foTree, FONode parent, XMLEvent event)
+	    throws Tree.TreeException, FOPException, PropertyException
+	{
+	    super(foTree, FObjectNames.SINGLE_PAGE_MASTER_REFERENCE, parent,
+					event, FOPropertySets.SEQ_MASTER_SET);
+	    this.xmlevents.getEndElement(event);
+	}
+
+	public PropertyValue getMasterReference() throws PropertyException {
+	    return this.getPropertyValue(PropNames.MASTER_REFERENCE);
+	}
+
+    }// FoSinglePageMasterReference
+
+    /**
+     * Implements the fo:repeatable-page-master-reference flow object.  It is
+     * always a child of an fo:page-sequence-master.
+     */
+    public class FoRepeatablePageMasterReference extends FONode {
+
+	public FoRepeatablePageMasterReference
+			    (FOTree foTree, FONode parent, XMLEvent event)
+	    throws Tree.TreeException, FOPException, PropertyException
+	{
+	    super(foTree, FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE,
+				parent, event, FOPropertySets.SEQ_MASTER_SET);
+	    this.xmlevents.getEndElement(event);
+	}
+
+	public PropertyValue getMasterReference() throws PropertyException {
+	    return this.getPropertyValue(PropNames.MASTER_REFERENCE);
+	}
+
+	public PropertyValue getMaximumRepeats() throws PropertyException {
+	    return this.getPropertyValue(PropNames.MAXIMUM_REPEATS);
+	}
+
+    }// FoRepeatablePageMasterReference
+
+    /**
+     * Implements the fo:repeatable-page-master-alternatives flow object.
+     * It is always a child of an fo:page-sequence-master.
+     */
+    public class FoRepeatablePageMasterAlternatives extends FONode {
+
+	public FoRepeatablePageMasterAlternatives
+			    (FOTree foTree, FONode parent, XMLEvent event)
+	    throws Tree.TreeException, FOPException, PropertyException
+	{
+	    super(foTree, FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES,
+				parent, event, FOPropertySets.SEQ_MASTER_SET);
+
+	    // Process conditional-page-master-references here
+	    try {
+		do {
+		    XMLEvent ev = this.xmlevents.expectStartElement
+			(conditionalPageMasterRef.uriIndex,
+			    conditionalPageMasterRef.localName,
+						XMLEvent.DISCARD_W_SPACE);
+			System.out.println
+			    ("Found conditional-page-master-reference");
+			new FoConditionalPageMasterReference(foTree, this, ev);
+			this.xmlevents.getEndElement(ev);
+		} while (true);
+	    } catch (NoSuchElementException e) {
+		// sub-sequence specifiers exhausted
+	    }
+	    XMLEvent ev = this.xmlevents.getEndElement(event);
+	}
+
+	public PropertyValue getMaximumRepeats() throws PropertyException {
+	    return this.getPropertyValue(PropNames.MAXIMUM_REPEATS);
+	}
+
+	public class FoConditionalPageMasterReference extends FONode {
+
+	    public FoConditionalPageMasterReference
+			    (FOTree foTree, FONode parent, XMLEvent event)
+	    throws Tree.TreeException, FOPException, PropertyException
+	    {
+		super(foTree, FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE,
+				parent, event, FOPropertySets.SEQ_MASTER_SET);
+	    }
+
+	    public PropertyValue getMasterReference() throws PropertyException
+	    {
+		return this.getPropertyValue(PropNames.MASTER_REFERENCE);
+	    }
+
+	    public PropertyValue getPagePosition() throws PropertyException {
+		return this.getPropertyValue(PropNames.PAGE_POSITION);
+	    }
+
+	    public PropertyValue getOddOrEven() throws PropertyException {
+		return this.getPropertyValue(PropNames.ODD_OR_EVEN);
+	    }
+
+	    public PropertyValue getBlankOrNotBlank() throws PropertyException
+	    {
+		return this.getPropertyValue(PropNames.BLANK_OR_NOT_BLANK);
+	    }
+
+	} // FoConditionalPageMasterReference
+
+    }// FoRepeatablePageMasterAlternatives
 
 }
