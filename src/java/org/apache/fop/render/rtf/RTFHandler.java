@@ -64,6 +64,8 @@ import org.apache.fop.datatypes.FixedLength;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
+import org.apache.fop.fo.flow.Footnote;
+import org.apache.fop.fo.flow.FootnoteBody;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
@@ -96,6 +98,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFile;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFootnote;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfHyperLink;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem;
@@ -852,9 +855,80 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#footnote()
+     * @see org.apache.fop.fo.FOInputHandler#startFootnote()
      */
-    public void footnote() {
+    public void startFootnote(Footnote footnote) {
+        try {
+            RtfAttributes rtfAttr
+                = TextAttributesConverter.convertAttributes(footnote.propertyList, null);
+                    
+            IRtfTextrunContainer container 
+                = (IRtfTextrunContainer)builderContext.getContainer(
+                    IRtfTextrunContainer.class,
+                    true, this);
+
+            RtfTextrun textrun = container.getTextrun();
+            RtfFootnote rtfFootnote = textrun.addFootnote();
+            
+            builderContext.pushContainer(rtfFootnote);
+            
+        } catch (IOException ioe) {
+            // TODO could we throw Exception in all FOInputHandler events?
+            log.error("startFootnote: " + ioe.getMessage());
+            throw new Error("IOException: " + ioe);
+        } catch (Exception e) {
+            log.error("startFootnote: " + e.getMessage());
+            throw new Error("Exception: " + e);
+        }
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FOInputHandler#endFootnote()
+     */
+    public void endFootnote(Footnote footnote) {
+        builderContext.popContainer();
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FOInputHandler#startFootnoteBody()
+     */
+    public void startFootnoteBody(FootnoteBody body) {
+        try {
+            RtfFootnote rtfFootnote
+                = (RtfFootnote)builderContext.getContainer(
+                    RtfFootnote.class,
+                    true, this);
+
+            rtfFootnote.startBody();
+        } catch (IOException ioe) {
+            // TODO could we throw Exception in all FOInputHandler events?
+            log.error("startFootnoteBody: " + ioe.getMessage());
+            throw new Error("IOException: " + ioe);
+        } catch (Exception e) {
+            log.error("startFootnoteBody: " + e.getMessage());
+            throw new Error("Exception: " + e);
+        }
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FOInputHandler#endFootnoteBody()
+     */
+    public void endFootnoteBody(FootnoteBody body) {
+        try {
+            RtfFootnote rtfFootnote
+                = (RtfFootnote)builderContext.getContainer(
+                    RtfFootnote.class,
+                    true, this);
+
+            rtfFootnote.endBody();
+        } catch (IOException ioe) {
+            // TODO could we throw Exception in all FOInputHandler events?
+            log.error("endFootnoteBody: " + ioe.getMessage());
+            throw new Error("IOException: " + ioe);
+        } catch (Exception e) {
+            log.error("endFootnoteBody: " + e.getMessage());
+            throw new Error("Exception: " + e);
+        }
     }
 
     /**

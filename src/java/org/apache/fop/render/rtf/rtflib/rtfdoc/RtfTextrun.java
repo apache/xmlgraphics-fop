@@ -164,6 +164,10 @@ public class RtfTextrun extends RtfContainer {
         RtfString r = new RtfString(this, writer, s);
     }
     
+    public RtfFootnote addFootnote() throws IOException {
+        return new RtfFootnote(this, writer);
+    }
+    
     public void addParagraphBreak() throws IOException {
         RtfParagraphBreak r = new RtfParagraphBreak(this, writer);
     }

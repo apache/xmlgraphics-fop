@@ -62,6 +62,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
+import org.apache.fop.fo.flow.Footnote;
+import org.apache.fop.fo.flow.FootnoteBody;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.Leader;
@@ -446,11 +448,29 @@ public class FOTreeHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#footnote()
+     * @see org.apache.fop.fo.FOInputHandler#startFootnote()
      */
-    public void footnote() {
+    public void startFootnote(Footnote footnote) {
     }
-
+    
+    /**
+     * @see org.apache.fop.fo.FOInputHandler#endFootnote()
+     */
+    public void endFootnote(Footnote footnote) {
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FOInputHandler#startFootnoteBody()
+     */
+    public void startFootnoteBody(FootnoteBody body) {
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FOInputHandler#endFootnoteBody()
+     */
+    public void endFootnoteBody(FootnoteBody body) {
+    }
+    
     /**
      * @see org.apache.fop.fo.FOInputHandler#leader(Leader)
      */
