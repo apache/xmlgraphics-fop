@@ -194,9 +194,9 @@ public final class PSProcSets {
         // write("/gfF1{/Helvetica findfont} bd");
         // write("/gfF3{/Helvetica-Bold findfont} bd");
         Map fonts = fontInfo.getFonts();
-        Iterator enum = fonts.keySet().iterator();
-        while (enum.hasNext()) {
-            String key = (String)enum.next();
+        Iterator iter = fonts.keySet().iterator();
+        while (iter.hasNext()) {
+            String key = (String)iter.next();
             Typeface fm = (Typeface)fonts.get(key);
             gen.writeln("/" + key + " /" + fm.getFontName() + " def");
         }
@@ -205,9 +205,9 @@ public final class PSProcSets {
         defineWinAnsiEncoding(gen);
         
         //Rewrite font encodings
-        enum = fonts.keySet().iterator();
-        while (enum.hasNext()) {
-            String key = (String)enum.next();
+        iter = fonts.keySet().iterator();
+        while (iter.hasNext()) {
+            String key = (String)iter.next();
             Typeface fm = (Typeface)fonts.get(key);
             if (null == fm.getEncoding()) {
                 //ignore (ZapfDingbats and Symbol run through here
