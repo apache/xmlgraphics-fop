@@ -518,7 +518,6 @@ public class Driver {
             public void startDocument() throws SAXException {
                 if (foInputHandler instanceof FOTreeHandler) {
                     FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
-                    foTreeHandler.addFOTreeListener(currentDocument);
                 }
                 super.startDocument();
             }
@@ -527,7 +526,6 @@ public class Driver {
                 super.endDocument();
                 if (foInputHandler instanceof FOTreeHandler) {
                     FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
-                    foTreeHandler.removeFOTreeListener(currentDocument);
                 }
             }
                 
@@ -638,4 +636,12 @@ public class Driver {
         }
     }
 
+    /**   
+      * Public accessor for getting the document used by this generation
+      * @return the current Document object
+      */   
+     public Document getCurrentDocument() {
+        return currentDocument;
+     }
+     
 }
