@@ -6,22 +6,22 @@
   <fo:layout-master-set>
 
     <!-- layout for the first page -->
-      <fo:simple-page-master master-name="repeating"
+    <fo:simple-page-master master-name="singleSPM"
             page-height="21.7cm"
             page-width="16cm"
             margin-top="1cm"
             margin-bottom="1cm"
             margin-left="2.5cm"
             margin-right="2.5cm">
-      <fo:region-body margin-top="2cm" margin-bottom="2cm"/>
-      <fo:region-before extent="2cm"/>
-      <fo:region-after extent="2cm"/>
+        <fo:region-body margin-top="2cm" margin-bottom="2cm"/>
+        <fo:region-before extent="2cm"/>
+        <fo:region-after extent="2cm"/>
     </fo:simple-page-master>
 
     <fo:page-sequence-master master-name="repeating_pm">
-      <fo:repeatable-page-master-reference master-reference="repeating"
+      <fo:repeatable-page-master-reference master-reference="singleSPM"
         maximum-repeats="no-limit"/>
-      <fo:single-page-master-reference master-reference="repeating"/>
+      <fo:single-page-master-reference master-reference="singleSPM"/>
     </fo:page-sequence-master>
   </fo:layout-master-set>
   <!-- end: defines page layout -->
