@@ -855,7 +855,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startFootnote()
+     * @see org.apache.fop.fo.FOInputHandler#startFootnote(Footnote)
      */
     public void startFootnote(Footnote footnote) {
         try {
@@ -883,14 +883,14 @@ public class RTFHandler extends FOInputHandler {
     }
     
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endFootnote()
+     * @see org.apache.fop.fo.FOInputHandler#endFootnote(Footnote)
      */
     public void endFootnote(Footnote footnote) {
         builderContext.popContainer();
     }
     
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startFootnoteBody()
+     * @see org.apache.fop.fo.FOInputHandler#startFootnoteBody(FootnoteBody)
      */
     public void startFootnoteBody(FootnoteBody body) {
         try {
@@ -911,7 +911,7 @@ public class RTFHandler extends FOInputHandler {
     }
     
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endFootnoteBody()
+     * @see org.apache.fop.fo.FOInputHandler#endFootnoteBody(FootnoteBody)
      */
     public void endFootnoteBody(FootnoteBody body) {
         try {

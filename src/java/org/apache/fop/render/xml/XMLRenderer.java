@@ -452,7 +452,7 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderText(Text)
+     * @see org.apache.fop.render.Renderer#renderText(TextArea)
      */
     public void renderText(TextArea text) {
         String prop = "";

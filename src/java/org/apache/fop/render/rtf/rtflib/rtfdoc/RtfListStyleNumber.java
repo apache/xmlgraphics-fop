@@ -85,7 +85,7 @@ public class RtfListStyleNumber extends RtfListStyle {
     /**
      * Gets call before a paragraph, which is contained by a RtfListItem has to be written.
      * 
-     * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle#writeParagraphPrefix()
+     * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle#writeParagraphPrefix(RtfElement)
      */
     public void writeParagraphPrefix(RtfElement element)
     throws IOException {
@@ -100,7 +100,7 @@ public class RtfListStyleNumber extends RtfListStyle {
     /**
      * Gets call when the list table has to be written.
      * 
-     * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle#writeLevelGroup()
+     * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle#writeLevelGroup(RtfElement)
      */
     public void writeLevelGroup(RtfElement element)
     throws IOException {

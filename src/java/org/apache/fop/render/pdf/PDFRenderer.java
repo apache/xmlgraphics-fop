@@ -885,7 +885,7 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderText(Text)
+     * @see org.apache.fop.render.Renderer#renderText(TextArea)
      */
     public void renderText(TextArea text) {
         StringBuffer pdf = new StringBuffer();
