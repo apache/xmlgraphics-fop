@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.area;
 
 import java.awt.geom.Rectangle2D;
@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
 
@@ -38,7 +41,7 @@ import org.apache.fop.fo.Constants;
  * The page (reference area) is then rendered inside the page object
  */
 public class PageViewport implements Resolvable, Cloneable {
-    
+
     private Page page;
     private Rectangle2D viewArea;
     private boolean clip = false;
@@ -51,7 +54,7 @@ public class PageViewport implements Resolvable, Cloneable {
     // once an idref is resolved it is removed
     // when this is empty the page can be rendered
     private HashMap unresolvedIDRefs = new HashMap();
-    
+
     private Map pendingResolved = null;
 
     // hashmap of markers for this page
@@ -61,6 +64,11 @@ public class PageViewport implements Resolvable, Cloneable {
     private Map markerFirstAny = null;
     private Map markerLastEnd = null;
     private Map markerLastAny = null;
+
+    /**
+     * logging instance
+     */
+    protected static Log log = LogFactory.getLog(PageViewport.class);
 
     /**
      * Create a page viewport.
@@ -206,11 +214,14 @@ public class PageViewport implements Resolvable, Cloneable {
      * Should this logic be placed in the Page layout manager.
      *
      * @param marks the map of markers to add
-     * @param start if the area being added is starting or ending
-     * @param isfirst isfirst or islast flag
+     * @param starting if the area being added is starting or ending
+     * @param isfirst if the area being added has is-first trait
+     * @param islast if the area being added has is-last trait
      */
-    public void addMarkers(Map marks, boolean start, boolean isfirst) {
-        if (start) {
+    public void addMarkers(Map marks, boolean starting,
+            boolean isfirst, boolean islast) {
+        // at the start of the area, register is-first and any areas
+        if (starting) {
             if (isfirst) {
                 if (markerFirstStart == null) {
                     markerFirstStart = new HashMap();
@@ -218,47 +229,54 @@ public class PageViewport implements Resolvable, Cloneable {
                 if (markerFirstAny == null) {
                     markerFirstAny = new HashMap();
                 }
-                // only put in new values, leave current
+                // first on page: only put in new values, leave current
                 for (Iterator iter = marks.keySet().iterator(); iter.hasNext();) {
                     Object key = iter.next();
                     if (!markerFirstStart.containsKey(key)) {
                         markerFirstStart.put(key, marks.get(key));
+                        log.trace("page " + pageNumberString + ": " + "Adding marker " + key + " to FirstStart");
                     }
                     if (!markerFirstAny.containsKey(key)) {
                         markerFirstAny.put(key, marks.get(key));
+                        log.trace("page " + pageNumberString + ": " + "Adding marker " + key + " to FirstAny");
                     }
                 }
                 if (markerLastStart == null) {
                     markerLastStart = new HashMap();
                 }
-                // replace all
+                // last on page: replace all
                 markerLastStart.putAll(marks);
-
+                log.trace("page " + pageNumberString + ": " + "Adding all markers to LastStart");
             } else {
                 if (markerFirstAny == null) {
                     markerFirstAny = new HashMap();
                 }
-                // only put in new values, leave current
+                // first on page: only put in new values, leave current
                 for (Iterator iter = marks.keySet().iterator(); iter.hasNext();) {
                     Object key = iter.next();
                     if (!markerFirstAny.containsKey(key)) {
                         markerFirstAny.put(key, marks.get(key));
+                        log.trace("page " + pageNumberString + ": " + "Adding marker " + key + " to FirstAny");
                     }
                 }
             }
-        } else {
-            if (!isfirst) {
+        }
+        // at the end of the area, register is-last and any areas
+        else {
+            if (islast) {
                 if (markerLastEnd == null) {
                     markerLastEnd = new HashMap();
                 }
-                // replace all
+                // last on page: replace all
                 markerLastEnd.putAll(marks);
+                log.trace("page " + pageNumberString + ": " + "Adding all markers to LastEnd");
             }
             if (markerLastAny == null) {
                 markerLastAny = new HashMap();
             }
-            // replace all
+            // last on page: replace all
             markerLastAny.putAll(marks);
+            log.trace("page " + pageNumberString + ": " + "Adding all markers to LastAny");
         }
     }
 
@@ -273,38 +291,47 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public Object getMarker(String name, int pos) {
         Object mark = null;
+        String posName = null;
         switch (pos) {
             case Constants.EN_FSWP:
                 if (markerFirstStart != null) {
                     mark = markerFirstStart.get(name);
+                    posName = "FSWP";
                 }
                 if (mark == null && markerFirstAny != null) {
                     mark = markerFirstAny.get(name);
+                    posName = "FirstAny after " + posName;
                 }
             break;
             case Constants.EN_FIC:
                 if (markerFirstAny != null) {
                     mark = markerFirstAny.get(name);
+                    posName = "FIC";
                 }
             break;
             case Constants.EN_LSWP:
                 if (markerLastStart != null) {
                     mark = markerLastStart.get(name);
+                    posName = "LSWP";
                 }
                 if (mark == null && markerLastAny != null) {
                     mark = markerLastAny.get(name);
+                    posName = "LastAny after " + posName;
                 }
             break;
             case Constants.EN_LEWP:
                 if (markerLastEnd != null) {
                     mark = markerLastEnd.get(name);
+                    posName = "LEWP";
                 }
                 if (mark == null && markerLastAny != null) {
                     mark = markerLastAny.get(name);
+                    posName = "LastAny after " + posName;
                 }
             break;
         }
-        return mark;
+        log.trace("page " + pageNumberString + ": " + "Retrieving marker " + name + "at position " + posName); 
+        return mark;    
     }
 
     /**
@@ -361,7 +388,7 @@ public class PageViewport implements Resolvable, Cloneable {
     public void clear() {
         page = null;
     }
-    
+
     /**
      * @see java.lang.Object#toString()
      */

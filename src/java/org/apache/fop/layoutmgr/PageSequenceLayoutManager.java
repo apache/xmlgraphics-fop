@@ -335,14 +335,12 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     /**
      * Add the marker to the page layout manager.
      *
-     * @param name the marker class name
-     * @param lm the layout manager for the marker contents
-     * @param start true if starting marker area, false for ending
+     * @see org.apache.fop.layoutmgr.LayoutManager
      */
-    public void addMarkerMap(Map marks, boolean start, boolean isfirst) {
+    public void addMarkerMap(Map marks, boolean starting, boolean isfirst, boolean islast) {
         //getLogger().debug("adding markers: " + marks + ":" + start);
         // add markers to page on area tree
-        curPage.addMarkers(marks, start, isfirst);
+        curPage.addMarkers(marks, starting, isfirst, islast);
     }
 
     /**
@@ -351,6 +349,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * current page. For page-sequence and document it will
      * lookup preceding pages from the area tree and try to find
      * a marker.
+     * If we retrieve a marker from a preceding page,
+     * then the containing page does not have a qualifying area,
+     * and all qualifying areas have ended.
+     * Therefore we use last-ending-within-page (Constants.EN_LEWP)
+     * as the position. 
      *
      * @param name the marker class name to lookup
      * @param pos the position to locate the marker
@@ -372,7 +375,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             }
             while (page >= 0) {
                 PageViewport pv = areaTreeModel.getPage(seq, page);
-                mark = (Marker)pv.getMarker(name, pos);
+                mark = (Marker)pv.getMarker(name, Constants.EN_LEWP);
                 if (mark != null) {
                     return mark;
                 }
