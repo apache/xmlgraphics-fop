@@ -41,17 +41,6 @@ inactive??
     </action>
 
     <action context="code" dev="open">
-      Add markers to page when areas added.
-      When an area is added that is created by an FO that contains markers
-      then the markers can also be added. There are four types of positions
-      for markers.
-    </action>
-    <action context="code" dev="open">
-      Retrieve markers from page.
-      When doing the static areas the markers will need to be available for
-      retrieving. The marker can then be layed out as normal.
-    </action>
-    <action context="code" dev="open">
       Implement spacing between blocks and the adjustment to
       actual height when adding areas.
     </action>
@@ -115,6 +104,17 @@ inactive??
 
   <changes>
    <release version="2003" date="2003">
+    <action context="code" dev="KLL" type="update">
+      Added markers to page when areas added.
+      When an area is added that is created by an FO that contains markers
+      then the markers can also be added. There are four types of positions
+      for markers.
+    </action>
+    <action context="code" dev="KLL" type="update">
+      Retrieved markers from page.
+      When doing the static areas the markers will need to be available for
+      retrieving. Layout currently has some issues.
+    </action>
    	<action context="code" dev="JM" type="update">
    		PDF and PS transcoders now have a common base class. It also
    		optionally supports Avalon Logging and Configuration. Support for
