@@ -156,12 +156,15 @@ public class IndirectValue extends AbstractPropertyValue {
     public PropertyValue resolve(FONode node) throws PropertyException {
         PropertyValue pv;
         if (inheritedValue == null)
-            inheritedValue = node.getParentPropertyValue(sourceProperty);
+            inheritedValue = node.fromParent(sourceProperty);
         if (isUnresolved(inheritedValue))
             return this;
         pv = inheritedValue;
         // Check that the property is the same
         if (property != pv.getProperty()) {
+            // Don't clone if it's another indirect value - just keep this one
+            // When the value finally resolves into a length, we will clone.
+            if (pv instanceof IndirectValue) return this;
             try {
                 pv = (PropertyValue)(pv.clone());
             } catch (CloneNotSupportedException e) {
@@ -176,6 +179,17 @@ public class IndirectValue extends AbstractPropertyValue {
     {
         return (value.getType() == PropertyValue.NUMERIC
                                     && ((Numeric)(value)).isPercentage());
+    }
+
+    public static PropertyValue adjustedPropertyValue(PropertyValue value)
+                    throws PropertyException
+    {
+        if (isUnresolved(value)) {
+            Inherit inherit = new Inherit(value.getProperty());
+            inherit.setInheritedValue(value);
+            return inherit;
+        }
+        return value;
     }
 
     // N.B. no validation on this class - subclasses will validate
