@@ -720,14 +720,14 @@ public class TextLayoutManager extends AbstractLayoutManager
                                       (short) 1, (short) 0,
                                       wordSpaceIPD, false));
                     returnList.add
-                        (new KnuthGlue(0, 3 * wordSpaceIPD.opt, 0,
+                        (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, vecAreaInfo.size() - 1), false));
                     returnList.add
                         (new KnuthPenalty(0, 0, false,
                                           new LeafPosition(this, -1), true));
                     returnList.add
                         (new KnuthGlue(wordSpaceIPD.opt,
-                                       - 3 * wordSpaceIPD.opt, 0,
+                                       - 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, -1), true));
                     iNextStart ++;
                     break;
@@ -1016,14 +1016,14 @@ public class TextLayoutManager extends AbstractLayoutManager
                 case EN_START  : // fall through
                 case EN_END    :
                     returnList.add
-                        (new KnuthGlue(0, 3 * wordSpaceIPD.opt, 0,
+                        (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, iReturnedIndex), false));
                     returnList.add
                         (new KnuthPenalty(0, 0, false,
                                           new LeafPosition(this, -1), true));
                     returnList.add
                         (new KnuthGlue(wordSpaceIPD.opt,
-                                       - 3 * wordSpaceIPD.opt, 0,
+                                       - 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, -1), true));
                     iReturnedIndex ++;
                     break;
