@@ -26,8 +26,12 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
     }
 
 
-    protected void setCurrentArea(InlineArea ia) {
+    public void setCurrentArea(InlineArea ia) {
         curArea = ia;
+    }
+
+    public void generateAreas() {
+        flush();
     }
 
     protected void flush() {
