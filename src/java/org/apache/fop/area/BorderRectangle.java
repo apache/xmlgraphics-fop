@@ -22,6 +22,8 @@ package org.apache.fop.area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import org.apache.fop.area.Area.AreaGeometry;
+
 /**
  * @author pbw
  * @version $Revision$ $Name$
@@ -55,6 +57,11 @@ public class BorderRectangle extends AreaFrame {
 
     public SpacesRectangle getSpaces() {
         return spaces;
+    }
+
+    public void setContents(AreaGeometry contents) {
+        super.setContents(contents);
+        spaces.setContents(this);
     }
 
     /**
