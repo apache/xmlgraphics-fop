@@ -134,8 +134,9 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         if (fontInfo != null) {
             FontSetup.addToResources(this.pdfDoc, fontInfo);
         }
+        pdfDoc.outputHeader(stream);
         this.pdfDoc.output(stream);
-
+        pdfDoc.outputTrailer(stream);
     }
 
     public void setGraphicContext(GraphicContext c) {
