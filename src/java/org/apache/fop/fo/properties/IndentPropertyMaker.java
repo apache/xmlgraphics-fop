@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
     
     /**
      * Create a start-indent or end-indent property maker.
-     * @param baseMaker
+     * @param baseMaker the property maker to use
      */
     public IndentPropertyMaker(PropertyMaker baseMaker) {
         super(baseMaker);
@@ -71,6 +71,9 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         PropertyList pList = getWMPropertyList(propertyList);
         // Calculate the values as described in 5.3.2.
 
+        Numeric padding = getCorresponding(paddingCorresponding, propertyList).getNumeric();
+        Numeric border = getCorresponding(borderWidthCorresponding, propertyList).getNumeric();
+        
         int marginProp = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
         Numeric margin;
 //          Calculate the absolute margin.
@@ -80,10 +83,11 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
                 margin = new FixedLength(0);
             } else {
                 margin = propertyList.getExplicit(baseMaker.propId).getNumeric();
-                margin = NumericOp.subtraction(margin, propertyList.getInherited(baseMaker.propId).getNumeric());
+                margin = NumericOp.subtraction(margin, 
+                        propertyList.getInherited(baseMaker.propId).getNumeric());
             }
-            margin = NumericOp.subtraction(margin, getCorresponding(paddingCorresponding, propertyList).getNumeric());
-            margin = NumericOp.subtraction(margin, getCorresponding(borderWidthCorresponding, propertyList).getNumeric());
+            margin = NumericOp.subtraction(margin, padding);
+            margin = NumericOp.subtraction(margin, border);
         } else {
             margin = propertyList.get(marginProp).getNumeric();
         }
@@ -95,14 +99,13 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         }
         // The corresponding absolute margin-[right|left}.
         v = NumericOp.addition(v, margin);
-        v = NumericOp.addition(v, getCorresponding(paddingCorresponding, propertyList).getNumeric());
-        v = NumericOp.addition(v, getCorresponding(borderWidthCorresponding, propertyList).getNumeric());
+        v = NumericOp.addition(v, padding);
+        v = NumericOp.addition(v, border);
         return (Property) v;
     }
     
     private Property getCorresponding(int[] corresponding, PropertyList propertyList)
-        throws PropertyException 
-    {
+                throws PropertyException {
         PropertyList pList = getWMPropertyList(propertyList);
         int wmcorr = pList.getWritingMode(corresponding[0], corresponding[1], corresponding[2]);
         return propertyList.get(wmcorr);
