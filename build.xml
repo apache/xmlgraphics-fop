@@ -149,9 +149,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </fileset>
 
     <fileset dir="${basedir}" id="dist.src">
-       <exclude name="lib/classes/**"/>
-       <exclude name="lib/org/**"/>
-       <exclude name="lib/src/**"/>
+       <exclude name="lib/jimi*"/>
        <exclude name="build/**"/>
        <include name="src/**"/>
        <include name="conf/**"/>
@@ -673,7 +671,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <target name="dist" depends="dist-src,dist-bin"/>
 
-  <target name="dist-bin" depends="package, htmldoc">
+  <target name="dist-bin" depends="package">
     <echo message="Building the binary distribution files (zip,tar)"/>
     <mkdir dir="${dist.bin.result.dir}"/>
     <copy todir="${dist.bin.result.dir}">
@@ -692,7 +690,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </target>
 
 
-  <target name="dist-src" depends="package, htmldoc">
+  <target name="dist-src" depends="package">
     <echo message="Building the source distribution files (zip,tar)"/>
     <mkdir dir="${dist.src.result.dir}"/>
     <copy todir="${dist.src.result.dir}">
