@@ -13,172 +13,258 @@
   <body>
     <section>
       <title>Properties: packages</title>
-      <ul>
-        <li>
-          org.apache.fop.fo
-          <dl>
-            <dt><fork href="PropNames.html">PropNames</fork></dt>
-            <dd>
-              This class maintains an array of <fork href=
-              "PropNames.html#propertyNames" >property names</fork>,
-              synchronized to a complete set of property name <fork
-              href= "PropNames.html#NO_PROPERTY" >constants</fork> for
-              indexing property-based arrays.  It includes methods to
-              <fork href= "PropNames.html#getPropertyName" >convert an
-              index to a name</fork> and to <fork href=
-              "PropNames.html#getPropertyIndex" >convert a property
-              name to an index</fork>.
-            </dd>
+      <section>
+        <title>org.apache.fop.fo</title>
+        <dl>
+          <dt>
+            <fork href="PropNames.html"><em>PropNames</em></fork>
+          </dt>
+          <dd>
+            This class maintains an array of <fork href=
+            "PropNames.html#propertyNames" >property names</fork>,
+            synchronized to a complete set of property name <fork
+            href= "PropNames.html#NO_PROPERTY" >constants</fork> for
+            indexing property-based arrays.  It includes methods to
+            <fork href= "PropNames.html#getPropertyName" >convert an
+            index to a name</fork> and to <fork href=
+            "PropNames.html#getPropertyIndex" >convert a property name
+            to an index</fork>.
+          </dd>
 
-            <dt>
-              <fork href= "PropertyConsts.html" >PropertyConsts</fork>
-            </dt>
-            <dd>
-              A singleton instance of <strong>PropertyConsts</strong>
-              is created by the static initializer of the <fork href=
-              "PropertyConsts.html#pconsts" >pconsts</fork> field.
-              Working from the &lt;property&gt; indices defined in
-              PropNames, the methods in this class collect and supply
-              the values of fields defined in &lt;property&gt; objects
-              into arrays.<br/>
-              
-              The heart of this class in the method <fork href=
-              "PropertyConsts.html#setupProperty"
-              >setupProperty</fork>, which constructs the
-              &lt;property&gt; name from the index, instantiates a
-              singleton of the appropriate class, and extracts static
-              fields by reflection from that instance into the arrays
-              of field values.
-            </dd>
+          <dt>
+            <fork href= "PropertyConsts-class.html"
+                  ><em>PropertyConsts</em></fork>
+          </dt>
+          <dd>
+            A singleton instance of <code>PropertyConsts</code> is
+            created by the static initializer of the <fork href=
+            "PropertyConsts.html#pconsts" >pconsts</fork> field.
+            Working from the &lt;property&gt; indices defined in
+            PropNames, the methods in this class collect and supply
+            the values of fields defined in &lt;property&gt; objects
+            into arrays.<br/>
+            
+            The heart of this class in the method <fork href=
+            "PropertyConsts.html#setupProperty" >setupProperty</fork>,
+            which constructs the &lt;property&gt; name from the index,
+            instantiates a singleton of the appropriate class, and
+            extracts static fields by reflection from that instance
+            into the arrays of field values.
+          </dd>
 
-            <dt><fork href= "PropertySets.html" >PropertySets</fork></dt>
-            <dd>
-              This class provides a number of
-              <strong>ROBitSet</strong>s representing many of the sets
-              of properties defined in <em>Section 7</em> of the
-              specification.  Note that the <em>Border</em>,
-              <em>Padding</em> and <em>Background</em> sets are
-              defined separately.
-            </dd>
+          <dt>
+            <fork href= "PropertySets.html"
+                  ><em>PropertySets</em></fork>
+          </dt>
+          <dd>
+            This class provides a number of
+            <code>ROBitSet</code>s representing many of the sets
+            of properties defined in <em>Section 7</em> of the
+            specification.  Note that the <em>Border</em>,
+            <em>Padding</em> and <em>Background</em> sets are
+            defined separately.
+          </dd>
 
-            <dt><fork href= "FOPropertySets.html"
-                      >FOPropertySets</fork></dt>
-            <dd>
-              This class provides a number of
-              <strong>ROBitSet</strong>s representing sets of
-              properties which are applicable in particular subtrees
-              of the FO tree.  These sets are provided so that other
-              properties can be ignored during processing of the
-              subtrees.
-            </dd>
+          <dt><fork href= "FOPropertySets.html"
+                    ><em>FOPropertySets</em></fork></dt>
+          <dd>
+            This class provides a number of
+            <code>ROBitSet</code>s representing sets of
+            properties which are applicable in particular subtrees
+            of the FO tree.  These sets are provided so that other
+            properties can be ignored during processing of the
+            subtrees.
+          </dd>
 
-            <dt><fork href= "ShorthandPropSets.html"
-                      >ShorthandPropSets</fork></dt>
-            <dd>
-              This class contains arrays of <fork href=
-              "ShorthandPropSets.html#shorthands" >shorthand property
-              indices</fork> and <fork href=
-              "ShorthandPropSets.html#compounds" >compound property
-              indices</fork>, and <strong>ROBitSet</strong>s
-              representing the expansion sets of these shorthands and
-              compounds.  Various methods useful in the expansion of
-              these properties are also included.
-            </dd>
+          <dt><fork href= "ShorthandPropSets.html"
+                    ><em>ShorthandPropSets</em></fork></dt>
+          <dd>
+            This class contains arrays of <fork href=
+            "ShorthandPropSets.html#shorthands" >shorthand property
+            indices</fork> and <fork href=
+            "ShorthandPropSets.html#compounds" >compound property
+            indices</fork>, and <code>ROBitSet</code>s representing
+            the expansion sets of these shorthands and compounds.
+            Various methods useful in the expansion of these
+            properties are also included.
+          </dd>
 
-            <dt>FOAttributes</dt>
-            <dd></dd>
-          </dl>
-        </li>
-        <li>
-          org.apache.fop.fo.properties
-          <dl>
-            <dt>Property</dt>
-            <dd>
-              The base class for all individual &lt;property&gt; classes.
-            </dd>
-            <dt>ColumnNumber</dt>
-            <dd>
-              The actual &lt;property&gt; class with the lowest index
-              number, followed in the oindex order by properties
-              required for further processing, e.g. FontSize.
-            </dd>
-            <dt>....</dt>
-            <dd>....</dd>
-            <dt>Background</dt>
-            <dd>
-              First in index order of the remainining shorthand
-              properties, followed in index order by all other
-              remaining shorthands.
-            </dd>
-            <dt>....</dt>
-            <dd>....</dd>
-            <dt>AbsolutePosition</dt>
-            <dd>
-              First in index order of the remaining properties.
-              Within this ordering, compound properties precede their
-              expansion properties, and corresponding relative
-              properties precede corresponding absolute properties.
-            </dd>
-            <dt>....</dt>
-            <dd>....</dd>
-            <dt>ZIndex</dt>
-            <dd>
-              The &lt;property&gt; class with the highest index
-              number.
-            </dd>
-          </dl>
-        </li>
-        <li>
-          org.apache.fop.fo.expr
-          <dl>
-            <dt><fork href= "PropertyTokenizer.html"
-                      >PropertyTokenizer</fork></dt>
-            <dd>
-              The tokenizer for the &lt;property&gt; expression
-              parser.  Defines a set of <fork href=
-              "PropertyTokenizer.html#EOF" >token constants</fork> and
-              returns these with associated token values.
-            </dd>
+          <dt>
+            <fork href= "FOAttributes.html"
+                  ><em>FOAttributes</em></fork>
+          </dt>
+          <dd>
+            This class manages the attribute set that is associated
+            with a SAX <code>startElement</code> event.  <em>fo:</em>
+            namespace attributes are entered into a
+            <code>HashMap</code>, indexed by the <em>fo:</em>
+            &lt;property&gt; index.  As other namespaces are
+            encountered, the values are entered into
+            namespace-specific <code>HashMap</code>s, indexed by the
+            <em>local name</em> of the attribute.
+          </dd>
 
-            <dt><fork href= "PropertyParser.html"
-                      >PropertyParser</fork></dt>
-            <dd>
-              This extends <strong>PropertyTokenizer</strong>.  It
-              parses &lt;property&gt; expressions on the basis of the
-              tokens passed to it by its superclass, generating
-              <strong>PropertyValue</strong>s, including
-              <strong>PropertyValueList</strong>s.
-            </dd>
+        </dl>
+      </section>
+      <section>
+        <title>org.apache.fop.fo.properties</title>
+        <dl>
+          <dt><em>Property</em></dt>
+          <dd>
+            The base class for all individual &lt;property&gt;
+            classes.  There are 320 properties in all.
+          </dd>
+          <dt><em>ColumnNumber</em></dt>
+          <dd>
+            The actual &lt;property&gt; class with the lowest index
+            number, followed in the index order by properties
+            required for further processing, e.g. FontSize.
+          </dd>
+          <dt><em>....</em></dt>
+          <dd>....</dd>
+          <dt><em>Background</em></dt>
+          <dd>
+            First in index order of the remainining shorthand
+            properties, followed in index order by all other
+            remaining shorthands.
+          </dd>
+          <dt><em>....</em></dt>
+          <dd>....</dd>
+          <dt><em>AbsolutePosition</em></dt>
+          <dd>
+            First in index order of the remaining properties.
+            Within this ordering, compound properties precede their
+            expansion properties, and corresponding relative
+            properties precede corresponding absolute properties.
+          </dd>
+          <dt><em>....</em></dt>
+          <dd>....</dd>
+          <dt><em>ZIndex</em></dt>
+          <dd>
+            The &lt;property&gt; class with the highest index
+            number.
+          </dd>
+        </dl>
+      </section>
+      <section>
+        <title>org.apache.fop.fo.expr</title>
+        <dl>
+          <dt><fork href= "PropertyTokenizer.html"
+                    ><em>PropertyTokenizer</em></fork></dt>
+          <dd>
+            The tokenizer for the &lt;property&gt; expression parser.
+            Defines a set of <fork href= "PropertyTokenizer.html#EOF"
+            >token constants</fork> and returns these with associated
+            token values.
+          </dd>
 
-            <dt>PropertyException</dt>
-            <dd>
-              The basic class for all &lt;property&gt;-related
-              exceptions.  It extends
-              <strong>FOPException</strong>. It is housed in this
-              package by historical accident.
-            </dd>
+          <dt><fork href= "PropertyParser.html"
+                    ><em>PropertyParser</em></fork></dt>
+          <dd>
+            This extends <code>PropertyTokenizer</code>.  It
+            parses &lt;property&gt; expressions on the basis of the
+            tokens passed to it by its superclass, generating
+            <code>PropertyValue</code>s, including
+            <code>PropertyValueList</code>s.
+          </dd>
 
-            <dt>
-              DataTypeNotImplementedException<br/>
-              FunctionNotImplementedException<br/>
-              PropertyNotImplementedException
-            </dt>
-            <dd>
-             A set of particular exceptions extending
-             <strong>PropertyException</strong>.  Also in this package
-             by accident.
-            </dd>
+          <dt><em>PropertyException</em></dt>
+          <dd>
+            The basic class for all &lt;property&gt;-related
+            exceptions.  It extends
+            <code>FOPException</code>. It is housed in this
+            package by historical accident.
+          </dd>
 
-          </dl>
-        </li>
-        <li>org.apache.fop.datatypes</li>
-        <li>org.apache.fop.datatypes.indirect</li>
-      </ul>
+          <dt>
+            <em>DataTypeNotImplementedException</em><br/>
+            <em>FunctionNotImplementedException</em><br/>
+            <em>PropertyNotImplementedException</em>
+          </dt>
+          <dd>
+            A set of particular exceptions extending
+            <code>PropertyException</code>.  Also in this package
+            by accident.
+          </dd>
+
+        </dl>
+      </section>
+      <section>
+        <title>org.apache.fop.datatypes</title>
+        <dl>
+          <dt>
+            <fork href= "PropertyValue.html"
+                  ><em>PropertyValue</em></fork>
+          </dt>
+          <dd>
+            An <em>interface</em> which all
+            <code>PropertyValue</code> classes must implement.  In
+            addition to a few methods, <code>PropertyValue</code>
+            defines the set of <fork href=
+            "PropertyValue.html#NO_TYPE" >constants</fork> which the
+            <code>getType()</code> method may return; i.e. the valid
+            set of <code>PropertyValue</code> types.
+          </dd>
+
+          <dt><em>AbstractPropertyValue</em></dt>
+          <dd>
+            An abstract implementation of the
+            <code>PropertyValue</code> interface.  Most actual
+            property value classes extend
+            <code>AbstractPropertyValue</code>.
+          </dd>
+
+          <dt><em>PropertyValueList</em></dt>
+          <dd>
+            This class extends <code>LinkedList</code> and implements
+            <code>PropertyValue</code>.  It is used whenever the
+            process of resolving a property expression yields a list
+            of <code>PropertyValue</code> elements; notably during the
+            processing of shorthands and "compound" properties.
+          </dd>
+
+          <dt><em>StringType</em></dt>
+          <dd>
+            A basic type extending <code>AbstractPropertyValue</code>.
+            Extended by <code>NCName</code>.
+          </dd>
+
+          <dt><em>NCName</em></dt>
+          <dd>
+            Extends <code>StringType</code> to represent
+            NCName strings.
+          </dd>
+
+          <dt><em>EnumType</em></dt>
+          <dd>
+            Extends <code>AbstractPropertyValue</code> to represented
+            enumerated types.
+          </dd>
+
+          <dt>
+            <em>Other types</em>
+          </dt>
+          <dd>
+            All other types extend one of the above classes.
+          </dd>
+
+        </dl>
+      </section>
+      <section>
+        <title>org.apache.fop.datatypes.indirect</title>
+        <dl>
+          <dt><em>IndirectValue</em></dt>
+          <dd>
+            The base type for all indirect value types; extends
+            <code>AbstractPropertyValue</code>.
+          </dd>
+        </dl>
+      </section>
     </section>
-      <p>
-        <strong>Previous:</strong> <link href= "alt-properties.html"
-        >alt.properties</link>
-      </p>
+    <p>
+      <strong>Previous:</strong> <link href= "alt-properties.html"
+                                       >alt.properties</link>
+    </p>
     <!--
       <p>
         <strong>Next:</strong> <link href= "properties-classes.html"

@@ -24,12 +24,13 @@
   <menu label="Properties">
     <menu-item label="alt.properties" href="alt-properties.html"/>
     <menu-item label="Classes overview" href="classes-overview.html"/>
-    <!--
     <menu-item label="Properties classes" href="properties-classes.html"/>
     <menu-item label="Property parsing" href="propertyExpressions.html"/>
-    -->
     <menu-item label="Compound types" href="compound-properties.html"/>
     <menu-item label="Traits" href="traits.html"/>
+  </menu>
+  <menu label="Prop class details">
+    <menu-item label="PropertyConsts" href="PropertyConsts-class.html"/>
   </menu>
   <menu label="Other">
     <menu-item label="User agent refs" href="user-agent-refs.html"/>
