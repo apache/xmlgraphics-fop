@@ -253,11 +253,15 @@ public class TestConverter {
 
     /**
      * Compare files.
+     * Returns true if equal.
      */
     protected boolean compareFiles(File f1, File f2) {
+        if(f1.length() != f2.length()) {
+            return false;
+        }
         try {
-            InputStream is1 = new FileInputStream(f1);
-            InputStream is2 = new FileInputStream(f2);
+            InputStream is1 = new BufferedInputStream(new FileInputStream(f1));
+            InputStream is2 = new BufferedInputStream(new FileInputStream(f2));
             while (true) {
                 int ch1 = is1.read();
                 int ch2 = is2.read();
