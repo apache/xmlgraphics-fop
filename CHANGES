@@ -1,5 +1,11 @@
 Done since 0.17 release
 
+- added: Fop is now self-contained (all necessary jar files included) and 
+         a runnable jar (can be started with java -jar fop.jar) [Kelly Campbell] 
+- added: support for border and padding shorthand properties [Karen Lease]
+- added: use of property manager, new properties handling [Karen Lease]
+- added: support for region-start, region-end [Arved Sandstrom]
+- added: to migrate FOP to use the svg facilities from Batik in a special cvs branch [Keiron Liddle]
 - added: enabling CID keyed truetype fonts; this gives support
          for other encodings besides WinAnsiEncoding (eg japanese, chinese, arabic,
          iso-whatever, etc). Also makes font inclusion easier [Tore Engvig] 
@@ -9,17 +15,24 @@ Done since 0.17 release
 - added: break before and break after for table rows [Keiron Liddle]
 - added: error is reported if the number of columns the cells are using is 
          different to the number of columns in the table [Keiron Liddle]
+- updated: the FOP build to fix the problems of the output location for the 
+           property code generation. updated ant.jar to version 1.2, added all needed jar files [Kelly Campbell] 
+- changed: Driver to make embedding Fop easier [Kelly Campbell] 
 - changed: apps package and commandline usage of Fop [Fotis Jannidis]
 - fixed: problems if calculated leader-length < 0 [Fotis Jannidis]
 - fixed: fixes problem with page break after last row of table body [Keiron Liddle]
 - fixed: fixed svg placement bug, now puts the image at the correct offset [Keiron Liddle]
 - fixed: broken support of jdk 1.1 [Art Welch]
+- fixed: xalan 1 support works again, was broken after changes in apps [Kelly Campbell]
+- fixed: properly adjusts the max height of table parts, when a footnote is added
+         table will not overlap with the footnote [Keiron Liddle]  
+
 
 
 Done since 0.16 release
 
-- added a branch for a Fop version which supports Japanese text
-  (not yet part of the main branch) [Satoshi Ishigami]
+- added: a branch for a Fop version which supports Japanese text
+        (not yet part of the main branch) [Satoshi Ishigami]
 - added support for text-anchor in svg:text, viewBox in svg:svg [Aaron Optimizer Digulla]
 - added: MIF Renderer [G. Seshadri]
 - added: vertical-align to text [Keiron Liddle]
