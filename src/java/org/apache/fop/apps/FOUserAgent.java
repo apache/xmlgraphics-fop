@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,6 +97,13 @@ public class FOUserAgent {
      * (Some renderers can store this in the document.)
      */
     protected Date creationDate = null;
+    
+    /** Author of the content of the document. */
+    protected String author = null;
+    /** Title of the document. */
+    protected String title = null;
+    /** Set of keywords applicable to this document. */
+    protected String keywords = null;
     
     /**
      * Sets the InputHandler object for this process
@@ -231,6 +238,55 @@ public class FOUserAgent {
      */
     public Date getCreationDate() {
         return creationDate;
+    }
+
+    /**
+     * Sets the author of the document.  
+     * @param author of document
+     */
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    /**
+     * Returns the author of the document
+     * @return author name
+     */
+    public String getAuthor() {
+        return author;
+    }
+
+    /**
+     * Sets the title of the document. This will override any title coming from
+     * an fo:title element.  
+     * @param title of document
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * Returns the title of the document
+     * @return title name
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * Sets the keywords for the document.  
+     * @param keywords for the document
+     */
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
+
+    /**
+     * Returns the keywords for the document
+     * @return the keywords
+     */
+    public String getKeywords() {
+        return keywords;
     }
 
     /**
