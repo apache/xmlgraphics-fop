@@ -10,9 +10,11 @@ package org.apache.fop.area.inline;
 import org.apache.fop.render.Renderer;
 
 public class Word extends InlineArea {
-
     // character info: font, char spacing, colour, baseline
-    private String word;
+    /**
+     * The word for this word area.
+     */
+    protected String word;
     private int iWSadjust = 0;
 
     public void render(Renderer renderer) {
