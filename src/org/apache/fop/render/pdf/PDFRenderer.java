@@ -17,7 +17,6 @@ import org.apache.fop.image.ImageFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Version;
 import org.apache.fop.fo.properties.RuleStyle;
-//import org.apache.fop.datatypes.*;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFDocument; 
 import org.apache.fop.pdf.PDFInfo;
@@ -50,6 +49,7 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.FontMetric;
+import org.apache.fop.traits.BorderProps;
 
 import org.w3c.dom.Document;
 
@@ -117,47 +117,47 @@ public class PDFRenderer extends PrintRenderer {
     /**
      * the current stream to add PDF commands to
      */
-    PDFStream currentStream;
+    protected PDFStream currentStream;
 
     /**
      * the current annotation list to add annotations to
      */
-    PDFAnnotList currentAnnotList;
+    protected PDFAnnotList currentAnnotList;
 
     /**
      * the current page to add annotations to
      */
-    PDFPage currentPage;
+    protected PDFPage currentPage;
 
     // drawing state
-    PDFState currentState = null;
+    protected PDFState currentState = null;
 
-    PDFColor currentColor;
-    String currentFontName = "";
-    int currentFontSize = 0;
-    int pageHeight;
+    protected PDFColor currentColor;
+    protected String currentFontName = "";
+    protected int currentFontSize = 0;
+    protected int pageHeight;
 
     /**
      * true if a TJ command is left to be written
      */
-    boolean textOpen = false;
+    protected boolean textOpen = false;
 
     /**
      * the previous Y coordinate of the last word written.
      * Used to decide if we can draw the next word on the same line.
      */
-    int prevWordY = 0;
+    protected int prevWordY = 0;
 
     /**
      * the previous X coordinate of the last word written.
      * used to calculate how much space between two words
      */
-    int prevWordX = 0;
+    protected int prevWordX = 0;
 
     /**
      * The width of the previous word. Used to calculate space between
      */
-    int prevWordWidth = 0;
+    protected int prevWordWidth = 0;
 
     /**
      * reusable word area string buffer to reduce memory usage
@@ -341,12 +341,44 @@ public class PDFRenderer extends PrintRenderer {
         super.renderRegion(region);
     }
 
+    protected void handleBlockTraits(Block block) {
+        // draw border and background
+        BorderProps bps = (BorderProps)block.getTrait(Trait.BORDER_BEFORE);
+        if(bps != null) {
+            float startx = ((float) currentBlockIPPosition) / 1000f;
+            float starty = (currentBPPosition / 1000f);
+            float endx = (currentBlockIPPosition + block.getWidth()) / 1000f;
+
+            currentStream.add("ET\n");
+            currentStream.add("q\n");
+
+            currentStream.add(bps.width / 1000f + " w\n");
+
+            currentStream.add(startx + " " + starty + " m\n");
+            currentStream.add(endx + " " + starty + " l\n");
+            currentStream.add("S\n");
+
+            currentStream.add("Q\n");
+            currentStream.add("BT\n");
+        }
+        bps = (BorderProps)block.getTrait(Trait.BORDER_START);
+        if(bps != null) {
+        }
+        bps = (BorderProps)block.getTrait(Trait.BORDER_AFTER);
+        if(bps != null) {
+        }
+        bps = (BorderProps)block.getTrait(Trait.BORDER_END);
+        if(bps != null) {
+        }
+    }
+
     protected void renderBlockViewport(BlockViewport bv, List children) {
         // clip and position viewport if necessary
 
         // save positions
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
+        String saveFontName = currentFontName;
 
         CTM ctm = bv.getCTM();
 
@@ -372,6 +404,7 @@ public class PDFRenderer extends PrintRenderer {
             ctm = tempctm.multiply(ctm);
 
             startVParea(ctm);
+            handleBlockTraits(bv);
             renderBlocks(children);
             endVParea();
 
@@ -415,6 +448,7 @@ public class PDFRenderer extends PrintRenderer {
             if (ctm != null) {
                 startVParea(ctm);
             }
+            handleBlockTraits(bv);
             renderBlocks(children);
             if (ctm != null) {
                 endVParea();
@@ -433,6 +467,7 @@ public class PDFRenderer extends PrintRenderer {
             currentBPPosition = saveBP;
             currentBPPosition += (int)(bv.getHeight());
         }
+        currentFontName = saveFontName;
     }
 
     /**
