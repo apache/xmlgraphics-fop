@@ -108,6 +108,7 @@ public class PageSequence extends FObj
 
         if ( parent.getName().equals("fo:root") )
         {
+            this.runningPageNumberCounter=0; //else not initialized correctly
             this.root = (Root) parent;
             this.root.addPageSequence(this);
         }
