@@ -41,7 +41,6 @@ import java.util.Map;
 public abstract class AbstractLayoutManager implements LayoutManager, Constants {
     protected LayoutManager parentLM = null;
     protected List childLMs = new ArrayList(10);
-    protected FObj fobj;
     protected ListIterator fobjIter = null;
     protected Map markers = null;
 
@@ -82,9 +81,8 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      * @param fo the formatting object for this layout manager
      */
     public void setFObj(FObj fo) {
-        this.fobj = fo;
-        markers = fobj.getMarkers();
-        fobjIter = fobj.getChildNodes();
+        markers = fo.getMarkers();
+        fobjIter = fo.getChildNodes();
         childLMiter = new LMiter(this);
     }
 
@@ -93,7 +91,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      * for the areas it will create, based on Properties set on its FO.
      */
     public void initialize() {
-        if (fobj != null && bInited == false) {
+        if (bInited == false) {
             initProperties();
             bInited = true;
         }
