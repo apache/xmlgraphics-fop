@@ -137,8 +137,9 @@ public class TTFFile {
             // System.out.println("Platform ID: "+cmap_pid+
             // " Encoding: "+cmap_eid);
 
-            if (cmap_pid == 3 && cmap_eid == 1)
-                cmap_unioffset = cmap_offset;
+            if (cmap_pid == 3 && cmap_eid == 1) {
+                cmap_unioffset = cmap_offset; 
+            }
         }
 
         if (cmap_unioffset <= 0) {
@@ -185,7 +186,7 @@ public class TTFFile {
                 cmap_deltas[i] = in.readTTFShort();
             }
 
-            int startRangeOffset = in.getCurrentPos();
+            //int startRangeOffset = in.getCurrentPos();
 
             for (int i = 0; i < (cmap_segCountX2 / 2); i++) {
                 cmap_rangeOffsets[i] = in.readTTFUShort();
@@ -205,12 +206,15 @@ public class TTFFile {
                         j++) {
 
                     // Update lastChar
-                    if (j < 256 && j > lastChar)
+                    if (j < 256 && j > lastChar) {
                         lastChar = (short)j;
+                    }
 
                     if (mtxPtr < mtx_tab.length) {
                         int glyphIdx;
-                        if (cmap_rangeOffsets[i] != 0) {
+                        // the last character 65535 = .notdef
+                        // may have a range offset
+                        if (cmap_rangeOffsets[i] != 0 && j != 65535) {
                             int glyphOffset =
                                 glyphIdArrayOffset
                                 + ((cmap_rangeOffsets[i] / 2) + (j - cmap_startCounts[i]) + (i) - cmap_segCountX2 / 2)
@@ -222,21 +226,20 @@ public class TTFFile {
                             unicodeMapping.add(new UnicodeMapping(glyphIdx, j));
                             mtx_tab[glyphIdx].unicodeIndex.add(new Integer(j));
                             // Also add winAnsiWidth
-                ArrayList v =
-                (ArrayList)ansiIndex.get(new Integer(j));
-                if (v != null) {
-                for (int k = 0; k < v.size(); k++ ) {
-                    Integer aIdx = (Integer)v.get(k);
-                    ansiWidth[aIdx.intValue()] =
-                    mtx_tab[glyphIdx].wx;
-                    /*
-                     * System.out.println("Added width "+
-                     * mtx_tab[glyphIdx].wx +
-                     * " uni: " + j +
-                     * " ansi: " + aIdx.intValue());
-                     */
-                }
-                }
+                            ArrayList v = (ArrayList)ansiIndex.get(new Integer(j));
+                            if (v != null) {
+                                for (int k = 0; k < v.size(); k++ ) {
+                                    Integer aIdx = (Integer)v.get(k);
+                                    ansiWidth[aIdx.intValue()] =
+                                    mtx_tab[glyphIdx].wx;
+                                    /*
+                                     * System.out.println("Added width "+
+                                     * mtx_tab[glyphIdx].wx +
+                                     * " uni: " + j +
+                                     * " ansi: " + aIdx.intValue());
+                                     */
+                                }
+                            }
                             /*
                              * System.out.println("Idx: "+
                              * glyphIdx +
@@ -250,34 +253,35 @@ public class TTFFile {
 
                             glyphIdx = (j + cmap_deltas[i]) & 0xffff;
 
-                            if (glyphIdx < mtx_tab.length)
+                            if (glyphIdx < mtx_tab.length) {
                                 mtx_tab[glyphIdx].unicodeIndex.add(new Integer(j));
-                            else
+                            } else {
                                 System.out.println("Glyph " + glyphIdx
                                                    + " out of range: "
                                                    + mtx_tab.length);
+                            }
 
                             unicodeMapping.add(new UnicodeMapping(glyphIdx,
                                     j));
-                            if (glyphIdx < mtx_tab.length)
+                            if (glyphIdx < mtx_tab.length) {
                                 mtx_tab[glyphIdx].unicodeIndex.add(new Integer(j));
-                            else
+                            } else {
                                 System.out.println("Glyph " + glyphIdx
                                                    + " out of range: "
                                                    + mtx_tab.length);
+                            }
 
 
 
                             // Also add winAnsiWidth
-                ArrayList v =
-                (ArrayList)ansiIndex.get(new Integer(j));
-                if (v != null) {
-                for (int k = 0; k < v.size(); k++ ) {
-                    Integer aIdx = (Integer)v.get(k);
-                    ansiWidth[aIdx.intValue()] =
-                    mtx_tab[glyphIdx].wx;
-                }
-                }
+                            ArrayList v = (ArrayList)ansiIndex.get(new Integer(j));
+                            if (v != null) {
+                                for (int k = 0; k < v.size(); k++ ) {
+                                    Integer aIdx = (Integer)v.get(k);
+                                    ansiWidth[aIdx.intValue()] =
+                                    mtx_tab[glyphIdx].wx;
+                                }
+                            }
 
                             /*
                              * System.out.println("IIdx: "+
@@ -328,8 +332,9 @@ public class TTFFile {
      */
     private void initAnsiWidths() {
         ansiWidth = new int[256];
-        for (int i = 0; i < 256; i++)
+        for (int i = 0; i < 256; i++) {
             ansiWidth[i] = mtx_tab[0].wx;
+        }
 
         // Create an index hash to the ansiWidth
         // Can't just index the winAnsiEncoding when inserting widths
@@ -361,8 +366,9 @@ public class TTFFile {
          * Check if TrueType collection, and that the name
          * exists in the collection
          */
-        if (!checkTTC(in, name, true))
+        if (!checkTTC(in, name, true)) {
             throw new IOException("Failed to read font");
+        }
 
         readDirTabs(in);
         readFontHeader(in);
@@ -424,10 +430,11 @@ public class TTFFile {
         int italic = (int)(italicAngle >> 16);
         System.out.println("Italic: " + italic);
         System.out.print("ItalicAngle: " + (short)(italicAngle / 0x10000));
-        if ((italicAngle % 0x10000) > 0)
+        if ((italicAngle % 0x10000) > 0) {
             System.out.print("."
                              + (short)((italicAngle % 0x10000) * 1000)
                                / 0x10000);
+        }
         System.out.println();
         System.out.println("Ascender:    " + get_ttf_funit(ascender));
         System.out.println("Descender:   " + get_ttf_funit(descender));
@@ -443,8 +450,9 @@ public class TTFFile {
             FontFileReader reader = new FontFileReader(args[0]);
 
             String name = null;
-            if (args.length >= 2)
+            if (args.length >= 2) {
                 name = args[1];
+            }
 
             ttfFile.readFont(reader, name);
             ttfFile.printStuff();
@@ -459,10 +467,11 @@ public class TTFFile {
     }
 
     public String getPostscriptName() {
-        if ("Regular".equals(subFamilyName) || "Roman".equals(subFamilyName))
+        if ("Regular".equals(subFamilyName) || "Roman".equals(subFamilyName)) {
             return familyName;
-        else
+        } else {
             return familyName + "," + subFamilyName;
+        }
     }
 
     public String getFamilyName() {
@@ -483,12 +492,15 @@ public class TTFFile {
 
     public int getFlags() {
         int flags = 32;    // Use Adobe Standard charset
-        if (italicAngle != 0)
+        if (italicAngle != 0) {
             flags = flags | 64;
-        if (isFixedPitch != 0)
+        }
+        if (isFixedPitch != 0) {
             flags = flags | 2;
-        if (hasSerifs)
+        }
+        if (hasSerifs) {
             flags = flags | 1;
+        }
         return flags;
     }
 
@@ -539,8 +551,9 @@ public class TTFFile {
 
     public int[] getWidths() {
         int[] wx = new int[mtx_tab.length];
-        for (int i = 0; i < wx.length; i++)
+        for (int i = 0; i < wx.length; i++) {
             wx[i] = (int)get_ttf_funit(mtx_tab[i].wx);
+        }
 
         return wx;
     }
@@ -641,8 +654,9 @@ public class TTFFile {
         mtx_tab = new TTFMtxEntry[mtx_size];
 
         // System.out.println("*** Widths array: \n");
-        for (int i = 0; i < mtx_size; i++)
+        for (int i = 0; i < mtx_size; i++) {
             mtx_tab[i] = new TTFMtxEntry();
+        }
         for (int i = 0; i < nhmtx; i++) {
             mtx_tab[i].wx = in.readTTFUShort();
             mtx_tab[i].lsb = in.readTTFShort();
@@ -745,12 +759,14 @@ public class TTFFile {
         if (dirTabs.get("OS/2") != null) {
             seek_tab(in, "OS/2", 2 * 4);
             int fsType = in.readTTFUShort();
-            if (fsType == 2)
+            if (fsType == 2) {
                 is_embeddable = false;
-            else
+            } else {
                 is_embeddable = true;
-        } else
+            }
+        } else {
             is_embeddable = true;
+        }
     }
 
     /**
@@ -813,8 +829,6 @@ public class TTFFile {
      * Read the "name" table
      */
     private final void readName(FontFileReader in) throws IOException {
-        int platform_id, encoding_id, language_id;
-
         seek_tab(in, "name", 2);
         int i = in.getCurrentPos();
         int n = in.readTTFUShort();
@@ -824,9 +838,9 @@ public class TTFFile {
         while (n-- > 0) {
             // System.out.println("Iteration: "+n);
             in.seek_set(i);
-            platform_id = in.readTTFUShort();
-            encoding_id = in.readTTFUShort();
-            language_id = in.readTTFUShort();
+            int platform_id = in.readTTFUShort();
+            int encoding_id = in.readTTFUShort();
+            int language_id = in.readTTFUShort();
 
             int k = in.readTTFUShort();
             int l = in.readTTFUShort();
@@ -880,10 +894,11 @@ public class TTFFile {
             int serifStyle = in.readTTFUByte();
             serifStyle = serifStyle >> 6;
             serifStyle = serifStyle & 3;
-            if (serifStyle == 1)
+            if (serifStyle == 1) {
                 hasSerifs = false;
-            else
+            } else {
                 hasSerifs = true;
+            }
 
         } else {
             // Approximate capHeight from height of "H"
@@ -892,8 +907,9 @@ public class TTFFile {
             // Should look it up int the cmap (that wouldn't help
             // for charsets without H anyway...)
             for (int i = 0; i < mtx_tab.length; i++) {
-                if ("H".equals(mtx_tab[i].name))
+                if ("H".equals(mtx_tab[i].name)) {
                     capHeight = mtx_tab[i].bbox[3] - mtx_tab[i].bbox[1];
+                }
             }
         }
     }
@@ -912,10 +928,12 @@ public class TTFFile {
             for (int n = in.readTTFUShort(); n > 0; n--) {
                 in.skip(2 * 2);
                 int k = in.readTTFUShort();
-                if (!((k & 1) != 0) || (k & 2) != 0 || (k & 4) != 0)
+                if (!((k & 1) != 0) || (k & 2) != 0 || (k & 4) != 0) {
                     return;
-                if ((k >> 8) != 0)
+                }
+                if ((k >> 8) != 0) {
                     continue;
+                }
 
                 k = in.readTTFUShort();
                 in.skip(3 * 2);
@@ -927,8 +945,9 @@ public class TTFFile {
                         // CID table
                         Integer iObj = new Integer(i);
                         HashMap adjTab = (HashMap)kerningTab.get(iObj);
-                        if (adjTab == null)
+                        if (adjTab == null) {
                             adjTab = new HashMap();
+                        }
                         adjTab.put(new Integer(j),
                                    new Integer((int)get_ttf_funit(kpx)));
                         kerningTab.put(iObj, adjTab);
@@ -1026,11 +1045,13 @@ public class TTFFile {
                 if (fullName.equals(name)) {
                     found = true;
                     dirTabOffset = dirOffsets[i];
-                    if (verbose)
+                    if (verbose) {
                         System.out.println("* " + fullName);
+                    }
                 } else {
-                    if (verbose)
+                    if (verbose) {
                         System.out.println(fullName);
+                    }
                 }
 
                 // Reset names
@@ -1055,9 +1076,11 @@ public class TTFFile {
      */
     private Integer[] unicodeToWinAnsi(int unicode) {
         ArrayList ret = new ArrayList();
-        for (int i = 32; i < Glyphs.winAnsiEncoding.length; i++)
-            if (unicode == Glyphs.winAnsiEncoding[i])
+        for (int i = 32; i < Glyphs.winAnsiEncoding.length; i++) {
+            if (unicode == Glyphs.winAnsiEncoding[i]) {
                 ret.add(new Integer(i));
+            }
+        }
         Integer[] itg = new Integer[ret.size()];
         ret.toArray(itg);
         return itg;
