@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<fo:root font-family="Times Roman" font-size="12pt" text-align="center" xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<fo:root font-family="Times Roman" font-size="12pt" text-align="center"
+    xmlns:fo="http://www.w3.org/1999/XSL/Format"
+    xmlns:fox="http://xml.apache.org/fop/extensions">
 
 <fo:layout-master-set>
 <fo:simple-page-master master-name="right"
@@ -41,43 +43,56 @@
 <fo:flow flow-name="xsl-region-body">
 <fo:block font-size="18pt" font-weight="bold">1. FOP test for images</fo:block>
 <fo:block id="N2531">
+  <fox:destination internal-destination="N2531"/>
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A GIF image in FOP</fo:block>
   <fo:block>
     <fo:external-graphic src="file:../graphics/xml_feather.gif"/>
   </fo:block>
 </fo:block>
 <fo:block id="N2535">
+  <fox:destination internal-destination="N2535"/>
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A transparent GIF image in FOP</fo:block>
   <fo:block>
     <fo:external-graphic src="file:../graphics/xml_feather_transparent.gif"/>
   </fo:block>
 </fo:block>
 <fo:block id="N2545">
+  <fox:destination internal-destination="N2545"/>
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A JPEG image in FOP</fo:block>
   <fo:block>
     <fo:external-graphic src="file:../graphics/fop.jpg"/>
   </fo:block>
 </fo:block>
 <fo:block id="N2550">
+  <fox:destination internal-destination="N2550"/>
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A BMP image in FOP</fo:block>
   <fo:block>
     <fo:external-graphic src="file:../graphics/linux.bmp"/>
   </fo:block>
 </fo:block>
 <fo:block id="N2559">
+  <fox:destination internal-destination="N2559"/>
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em"/>
   This section is only required to show that the layout still works.
 </fo:block>
 </fo:flow>
+
 </fo:page-sequence>
 
 <fo:page-sequence id="N2561" master-reference="psmOddEven">
+
 <fo:static-content flow-name="xsl-region-after">
 <fo:block text-align-last="center" font-size="10pt">
-<fo:page-number/></fo:block>
+  <fo:page-number/>
+</fo:block>
 </fo:static-content>
+
 <fo:flow flow-name="xsl-region-body">
-<fo:block font-size="18pt" font-weight="bold">A. Appendix</fo:block></fo:flow>
+<fo:block id="AppendixA" font-size="18pt" font-weight="bold">A. Appendix</fo:block>
+  <fox:destination internal-destination="AppendixA"/>
+</fo:flow>
+
 </fo:page-sequence>
+
 </fo:root>
 
