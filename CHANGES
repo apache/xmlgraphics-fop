@@ -31,6 +31,20 @@ remaining for content. (Karen Lease)
 - Add support for letter-spacing.
   Submitted by: Raymond Penners <raymond@duologix.nl>
 
+*** SVG
+- updated to cvs batik 3/12/2001 for api changes
+- fixed problem where width of scaled lines was not correct
+
+*** Images
+- fixed problem where streams where opened for cached images
+
+*** Messages
+- Improved for some common errors
+
+*** FOTreeBuilder
+- fixed npe problem when text outside root element
+- handles document errors and unknown namespace better
+
 ==============================================================================
 Done since 0.20 release
 
