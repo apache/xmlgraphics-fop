@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE xml-lang>
+<xml-lang>
+  <countrycodes>
+    <country name="AFGHANISTAN" code="AF"/>
+    <country name="ALBANIA" code="AL"/>
+    <country name="ALGERIA" code="DZ"/>
+    <country name="AMERICAN SAMOA" code="AS"/>
+    <country name="ANDORRA" code="AD"/>
+    <country name="ANGOLA" code="AO"/>
+    <country name="ANGUILLA" code="AI"/>
+    <country name="ANTARCTICA" code="AQ"/>
+    <country name="ANTIGUA AND BARBUDA" code="AG"/>
+    <country name="ARGENTINA" code="AR"/>
+    <country name="ARMENIA" code="AM"/>
+    <country name="ARUBA" code="AW"/>
+    <country name="AUSTRALIA" code="AU"/>
+    <country name="AUSTRIA" code="AT"/>
+    <country name="AZERBAIJAN" code="AZ"/>
+    <country name="BAHAMAS" code="BS"/>
+    <country name="BAHRAIN" code="BH"/>
+    <country name="BANGLADESH" code="BD"/>
+    <country name="BARBADOS" code="BB"/>
+    <country name="BELARUS" code="BY"/>
+    <country name="BELGIUM" code="BE"/>
+    <country name="BELIZE" code="BZ"/>
+    <country name="BENIN" code="BJ"/>
+    <country name="BERMUDA" code="BM"/>
+    <country name="BHUTAN" code="BT"/>
+    <country name="BOLIVIA" code="BO"/>
+    <country name="BOSNIA AND HERZEGOVINA" code="BA"/>
+    <country name="BOTSWANA" code="BW"/>
+    <country name="BOUVET ISLAND" code="BV"/>
+    <country name="BRAZIL" code="BR"/>
+    <country name="BRITISH INDIAN OCEAN TERRITORY" code="IO"/>
+    <country name="BRUNEI DARUSSALAM" code="BN"/>
+    <country name="BULGARIA" code="BG"/>
+    <country name="BURKINA FASO" code="BF"/>
+    <country name="BURUNDI" code="BI"/>
+    <country name="CAMBODIA" code="KH"/>
+    <country name="CAMEROON" code="CM"/>
+    <country name="CANADA" code="CA"/>
+    <country name="CAPE VERDE" code="CV"/>
+    <country name="CAYMAN ISLANDS" code="KY"/>
+    <country name="CENTRAL AFRICAN REPUBLIC" code="CF"/>
+    <country name="CHAD" code="TD"/>
+    <country name="CHILE" code="CL"/>
+    <country name="CHINA" code="CN"/>
+    <country name="CHRISTMAS ISLAND" code="CX"/>
+    <country name="COCOS (KEELING) ISLANDS" code="CC"/>
+    <country name="COLOMBIA" code="CO"/>
+    <country name="COMOROS" code="KM"/>
+    <country name="CONGO" code="CG"/>
+    <country name="CONGO, THE DEMOCRATIC REPUBLIC OF THE" code="CD"/>
+    <country name="COOK ISLANDS" code="CK"/>
+    <country name="COSTA RICA" code="CR"/>
+    <country name="COTE D'IVOIRE" code="CI"/>
+    <country name="CROATIA" code="HR"/>
+    <country name="CUBA" code="CU"/>
+    <country name="CYPRUS" code="CY"/>
+    <country name="CZECH REPUBLIC" code="CZ"/>
+    <country name="DENMARK" code="DK"/>
+    <country name="DJIBOUTI" code="DJ"/>
+    <country name="DOMINICA" code="DM"/>
+    <country name="DOMINICAN REPUBLIC" code="DO"/>
+    <country name="EAST TIMOR" code="TP"/>
+    <country name="ECUADOR" code="EC"/>
+    <country name="EGYPT" code="EG"/>
+    <country name="EL SALVADOR" code="SV"/>
+    <country name="EQUATORIAL GUINEA" code="GQ"/>
+    <country name="ERITREA" code="ER"/>
+    <country name="ESTONIA" code="EE"/>
+    <country name="ETHIOPIA" code="ET"/>
+    <country name="FALKLAND ISLANDS (MALVINAS)" code="FK"/>
+    <country name="FAROE ISLANDS" code="FO"/>
+    <country name="FIJI" code="FJ"/>
+    <country name="FINLAND" code="FI"/>
+    <country name="FRANCE" code="FR"/>
+    <country name="FRENCH GUIANA" code="GF"/>
+    <country name="FRENCH POLYNESIA" code="PF"/>
+    <country name="FRENCH SOUTHERN TERRITORIES" code="TF"/>
+    <country name="GABON" code="GA"/>
+    <country name="GAMBIA" code="GM"/>
+    <country name="GEORGIA" code="GE"/>
+    <country name="GERMANY" code="DE"/>
+    <country name="GHANA" code="GH"/>
+    <country name="GIBRALTAR" code="GI"/>
+    <country name="GREECE" code="GR"/>
+    <country name="GREENLAND" code="GL"/>
+    <country name="GRENADA" code="GD"/>
+    <country name="GUADELOUPE" code="GP"/>
+    <country name="GUAM" code="GU"/>
+    <country name="GUATEMALA" code="GT"/>
+    <country name="GUINEA" code="GN"/>
+    <country name="GUINEA-BISSAU" code="GW"/>
+    <country name="GUYANA" code="GY"/>
+    <country name="HAITI" code="HT"/>
+    <country name="HEARD ISLAND AND MCDONALD ISLANDS" code="HM"/>
+    <country name="HOLY SEE (VATICAN CITY STATE)" code="VA"/>
+    <country name="HONDURAS" code="HN"/>
+    <country name="HONG KONG" code="HK"/>
+    <country name="HUNGARY" code="HU"/>
+    <country name="ICELAND" code="IS"/>
+    <country name="INDIA" code="IN"/>
+    <country name="INDONESIA" code="ID"/>
+    <country name="IRAN, ISLAMIC REPUBLIC OF" code="IR"/>
+    <country name="IRAQ" code="IQ"/>
+    <country name="IRELAND" code="IE"/>
+    <country name="ISRAEL" code="IL"/>
+    <country name="ITALY" code="IT"/>
+    <country name="JAMAICA" code="JM"/>
+    <country name="JAPAN" code="JP"/>
+    <country name="JORDAN" code="JO"/>
+    <country name="KAZAKSTAN" code="KZ"/>
+    <country name="KENYA" code="KE"/>
+    <country name="KIRIBATI" code="KI"/>
+    <country name="KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF" code="KP"/>
+    <country name="KOREA, REPUBLIC OF" code="KR"/>
+    <country name="KUWAIT" code="KW"/>
+    <country name="KYRGYZSTAN" code="KG"/>
+    <country name="LAO PEOPLE'S DEMOCRATIC REPUBLIC" code="LA"/>
+    <country name="LATVIA" code="LV"/>
+    <country name="LEBANON" code="LB"/>
+    <country name="LESOTHO" code="LS"/>
+    <country name="LIBERIA" code="LR"/>
+    <country name="LIBYAN ARAB JAMAHIRIYA" code="LY"/>
+    <country name="LIECHTENSTEIN" code="LI"/>
+    <country name="LITHUANIA" code="LT"/>
+    <country name="LUXEMBOURG" code="LU"/>
+    <country name="MACAU" code="MO"/>
+    <country name="MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF" code="MK"/>
+    <country name="MADAGASCAR" code="MG"/>
+    <country name="MALAWI" code="MW"/>
+    <country name="MALAYSIA" code="MY"/>
+    <country name="MALDIVES" code="MV"/>
+    <country name="MALI" code="ML"/>
+    <country name="MALTA" code="MT"/>
+    <country name="MARSHALL ISLANDS" code="MH"/>
+    <country name="MARTINIQUE" code="MQ"/>
+    <country name="MAURITANIA" code="MR"/>
+    <country name="MAURITIUS" code="MU"/>
+    <country name="MAYOTTE" code="YT"/>
+    <country name="MEXICO" code="MX"/>
+    <country name="MICRONESIA, FEDERATED STATES OF" code="FM"/>
+    <country name="MOLDOVA, REPUBLIC OF" code="MD"/>
+    <country name="MONACO" code="MC"/>
+    <country name="MONGOLIA" code="MN"/>
+    <country name="MONTSERRAT" code="MS"/>
+    <country name="MOROCCO" code="MA"/>
+    <country name="MOZAMBIQUE" code="MZ"/>
+    <country name="MYANMAR" code="MM"/>
+    <country name="NAMIBIA" code="NA"/>
+    <country name="NAURU" code="NR"/>
+    <country name="NEPAL" code="NP"/>
+    <country name="NETHERLANDS" code="NL"/>
+    <country name="NETHERLANDS ANTILLES" code="AN"/>
+    <country name="NEW CALEDONIA" code="NC"/>
+    <country name="NEW ZEALAND" code="NZ"/>
+    <country name="NICARAGUA" code="NI"/>
+    <country name="NIGER" code="NE"/>
+    <country name="NIGERIA" code="NG"/>
+    <country name="NIUE" code="NU"/>
+    <country name="NORFOLK ISLAND" code="NF"/>
+    <country name="NORTHERN MARIANA ISLANDS" code="MP"/>
+    <country name="NORWAY" code="NO"/>
+    <country name="OMAN" code="OM"/>
+    <country name="PAKISTAN" code="PK"/>
+    <country name="PALAU" code="PW"/>
+    <country name="PALESTINIAN TERRITORY, OCCUPIED" code="PS"/>
+    <country name="PANAMA" code="PA"/>
+    <country name="PAPUA NEW GUINEA" code="PG"/>
+    <country name="PARAGUAY" code="PY"/>
+    <country name="PERU" code="PE"/>
+    <country name="PHILIPPINES" code="PH"/>
+    <country name="PITCAIRN" code="PN"/>
+    <country name="POLAND" code="PL"/>
+    <country name="PORTUGAL" code="PT"/>
+    <country name="PUERTO RICO" code="PR"/>
+    <country name="QATAR" code="QA"/>
+    <country name="REUNION" code="RE"/>
+    <country name="ROMANIA" code="RO"/>
+    <country name="RUSSIAN FEDERATION" code="RU"/>
+    <country name="RWANDA" code="RW"/>
+    <country name="SAINT HELENA" code="SH"/>
+    <country name="SAINT KITTS AND NEVIS" code="KN"/>
+    <country name="SAINT LUCIA" code="LC"/>
+    <country name="SAINT PIERRE AND MIQUELON" code="PM"/>
+    <country name="SAINT VINCENT AND THE GRENADINES" code="VC"/>
+    <country name="SAMOA" code="WS"/>
+    <country name="SAN MARINO" code="SM"/>
+    <country name="SAO TOME AND PRINCIPE" code="ST"/>
+    <country name="SAUDI ARABIA" code="SA"/>
+    <country name="SENEGAL" code="SN"/>
+    <country name="SEYCHELLES" code="SC"/>
+    <country name="SIERRA LEONE" code="SL"/>
+    <country name="SINGAPORE" code="SG"/>
+    <country name="SLOVAKIA" code="SK"/>
+    <country name="SLOVENIA" code="SI"/>
+    <country name="SOLOMON ISLANDS" code="SB"/>
+    <country name="SOMALIA" code="SO"/>
+    <country name="SOUTH AFRICA" code="ZA"/>
+    <country name="SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS" code="GS"/>
+    <country name="SPAIN" code="ES"/>
+    <country name="SRI LANKA" code="LK"/>
+    <country name="SUDAN" code="SD"/>
+    <country name="SURINAME" code="SR"/>
+    <country name="SVALBARD AND JAN MAYEN" code="SJ"/>
+    <country name="SWAZILAND" code="SZ"/>
+    <country name="SWEDEN" code="SE"/>
+    <country name="SWITZERLAND" code="CH"/>
+    <country name="SYRIAN ARAB REPUBLIC" code="SY"/>
+    <country name="TAIWAN, PROVINCE OF CHINA" code="TW"/>
+    <country name="TAJIKISTAN" code="TJ"/>
+    <country name="TANZANIA, UNITED REPUBLIC OF" code="TZ"/>
+    <country name="THAILAND" code="TH"/>
+    <country name="TOGO" code="TG"/>
+    <country name="TOKELAU" code="TK"/>
+    <country name="TONGA" code="TO"/>
+    <country name="TRINIDAD AND TOBAGO" code="TT"/>
+    <country name="TUNISIA" code="TN"/>
+    <country name="TURKEY" code="TR"/>
+    <country name="TURKMENISTAN" code="TM"/>
+    <country name="TURKS AND CAICOS ISLANDS" code="TC"/>
+    <country name="TUVALU" code="TV"/>
+    <country name="UGANDA" code="UG"/>
+    <country name="UKRAINE" code="UA"/>
+    <country name="UNITED ARAB EMIRATES" code="AE"/>
+    <country name="UNITED KINGDOM" code="GB"/>
+    <country name="UNITED STATES" code="US"/>
+    <country name="UNITED STATES MINOR OUTLYING ISLANDS" code="UM"/>
+    <country name="URUGUAY" code="UY"/>
+    <country name="UZBEKISTAN" code="UZ"/>
+    <country name="VANUATU" code="VU"/>
+    <country name="VENEZUELA" code="VE"/>
+    <country name="VIET NAM" code="VN"/>
+    <country name="VIRGIN ISLANDS, BRITISH" code="VG"/>
+    <country name="VIRGIN ISLANDS, U.S." code="VI"/>
+    <country name="WALLIS AND FUTUNA" code="WF"/>
+    <country name="WESTERN SAHARA" code="EH"/>
+    <country name="YEMEN" code="YE"/>
+    <country name="YUGOSLAVIA" code="YU"/>
+    <country name="ZAMBIA" code="ZM"/>
+    <country name="ZIMBABWE" code="ZW"/>
+  </countrycodes>
+  <languagecodes>
+    <language name="ABKHAZIAN" code="AB"/>
+    <language name="AFAN (OROMO)" code="OM"/>
+    <language name="AFAR" code="AA"/>
+    <language name="AFRIKAANS" code="AF"/>
+    <language name="ALBANIAN" code="SQ"/>
+    <language name="AMHARIC" code="AM"/>
+    <language name="ARABIC" code="AR"/>
+    <language name="ARMENIAN" code="HY"/>
+    <language name="ASSAMESE" code="AS"/>
+    <language name="AYMARA" code="AY"/>
+    <language name="AZERBAIJANI" code="AZ"/>
+    <language name="BASHKIR" code="BA"/>
+    <language name="BASQUE" code="EU"/>
+    <language name="BENGALI;BANGLA" code="BN"/>
+    <language name="BHUTANI" code="DZ"/>
+    <language name="BIHARI" code="BH"/>
+    <language name="BISLAMA" code="BI"/>
+    <language name="BRETON" code="BR"/>
+    <language name="BULGARIAN" code="BG"/>
+    <language name="BURMESE" code="MY"/>
+    <language name="BYELORUSSIAN" code="BE"/>
+    <language name="CAMBODIAN" code="KM"/>
+    <language name="CATALAN" code="CA"/>
+    <language name="CHINESE" code="ZH"/>
+    <language name="CORSICAN" code="CO"/>
+    <language name="CROATIAN" code="HR"/>
+    <language name="CZECH" code="CS"/>
+    <language name="DANISH" code="DA"/>
+    <language name="DUTCH" code="NL"/>
+    <language name="ENGLISH" code="EN"/>
+    <language name="ESPERANTO" code="EO"/>
+    <language name="ESTONIAN" code="ET"/>
+    <language name="FAROESE" code="FO"/>
+    <language name="FIJI" code="FJ"/>
+    <language name="FINNISH" code="FI"/>
+    <language name="FRENCH" code="FR"/>
+    <language name="FRISIAN" code="FY"/>
+    <language name="GALICIAN" code="GL"/>
+    <language name="GEORGIAN" code="KA"/>
+    <language name="GERMAN" code="DE"/>
+    <language name="GREEK" code="EL"/>
+    <language name="GREENLANDIC" code="KL"/>
+    <language name="GUARANI" code="GN"/>
+    <language name="GUJARATI" code="GU"/>
+    <language name="HAUSA" code="HA"/>
+    <language name="HEBREW" code="HE"/>
+    <language name="HINDI" code="HI"/>
+    <language name="HUNGARIAN" code="HU"/>
+    <language name="ICELANDIC" code="IS"/>
+    <language name="INDONESIAN" code="ID"/>
+    <language name="INTERLINGUA" code="IA"/>
+    <language name="INTERLINGUE" code="IE"/>
+    <language name="INUKTITUT" code="IU"/>
+    <language name="INUPIAK" code="IK"/>
+    <language name="IRISH" code="GA"/>
+    <language name="ITALIAN" code="IT"/>
+    <language name="JAPANESE" code="JA"/>
+    <language name="JAVANESE" code="JV"/>
+    <language name="KANNADA" code="KN"/>
+    <language name="KASHMIRI" code="KS"/>
+    <language name="KAZAKH" code="KK"/>
+    <language name="KINYARWANDA" code="RW"/>
+    <language name="KIRGHIZ" code="KY"/>
+    <language name="KURUNDI" code="RN"/>
+    <language name="KOREAN" code="KO"/>
+    <language name="KURDISH" code="KU"/>
+    <language name="LAOTHIAN" code="LO"/>
+    <language name="LATIN" code="LA"/>
+    <language name="LATVIAN;LETTISH" code="LV"/>
+    <language name="LINGALA" code="LN"/>
+    <language name="LITHUANIAN" code="LT"/>
+    <language name="MACEDONIAN" code="MK"/>
+    <language name="MALAGASY" code="MG"/>
+    <language name="MALAY" code="MS"/>
+    <language name="MALAYALAM" code="ML"/>
+    <language name="MALTESE" code="MT"/>
+    <language name="MAORI" code="MI"/>
+    <language name="MARATHI" code="MR"/>
+    <language name="MOLDAVIAN" code="MO"/>
+    <language name="MONGOLIAN" code="MN"/>
+    <language name="NAURU" code="NA"/>
+    <language name="NEPALI" code="NE"/>
+    <language name="NORWEGIAN" code="NO"/>
+    <language name="OCCITAN" code="OC"/>
+    <language name="ORIYA" code="OR"/>
+    <language name="PASHTO;PUSHTO" code="PS"/>
+    <language name="PERSIAN (farsi)" code="FA"/>
+    <language name="POLISH" code="PL"/>
+    <language name="PORTUGUESE" code="PT"/>
+    <language name="PUNJABI" code="PA"/>
+    <language name="QUECHUA" code="QU"/>
+    <language name="RHAETO-ROMANCE" code="RM"/>
+    <language name="ROMANIAN" code="RO"/>
+    <language name="RUSSIAN" code="RU"/>
+    <language name="SAMOAN" code="SM"/>
+    <language name="SANGHO" code="SG"/>
+    <language name="SANSKRIT" code="SA"/>
+    <language name="SCOTS GAELIC" code="GD"/>
+    <language name="SERBIAN" code="SR"/>
+    <language name="SERBO-CROATIAN" code="SH"/>
+    <language name="SESOTHO" code="ST"/>
+    <language name="SETSWANA" code="TN"/>
+    <language name="SHONA" code="SN"/>
+    <language name="SINDHI" code="SD"/>
+    <language name="SINGHALESE" code="SI"/>
+    <language name="SISWATI" code="SS"/>
+    <language name="SLOVAK" code="SK"/>
+    <language name="SLOVENIAN" code="SL"/>
+    <language name="SOMALI" code="SO"/>
+    <language name="SPANISH" code="ES"/>
+    <language name="SUNDANESE" code="SU"/>
+    <language name="SWAHILI" code="SW"/>
+    <language name="SWEDISH" code="SV"/>
+    <language name="TAGALOG" code="TL"/>
+    <language name="TAJIK" code="TG"/>
+    <language name="TAMIL" code="TA"/>
+    <language name="TATAR" code="TT"/>
+    <language name="TELUGU" code="TE"/>
+    <language name="THAI" code="TH"/>
+    <language name="TIBETAN" code="BO"/>
+    <language name="TIGRINYA" code="TI"/>
+    <language name="TONGA" code="TO"/>
+    <language name="TSONGA" code="TS"/>
+    <language name="TURKISH" code="TR"/>
+    <language name="TURKMEN" code="TK"/>
+    <language name="TWI" code="TW"/>
+    <language name="UIGUR" code="UG"/>
+    <language name="UKRAINIAN" code="UK"/>
+    <language name="URDU" code="UR"/>
+    <language name="UZBEK" code="UZ"/>
+    <language name="VIETNAMESE" code="VI"/>
+    <language name="VOLAPUK" code="VO"/>
+    <language name="WELSH" code="CY"/>
+    <language name="WOLOF" code="WO"/>
+    <language name="XHOSA" code="XH"/>
+    <language name="YIDDISH" code="YI"/>
+    <language name="YORUBA" code="YO"/>
+    <language name="ZHUANG" code="ZA"/>
+    <language name="ZULU" code="ZU"/>
+  </languagecodes>
+  <scriptcodes>
+    <script name="Abur" code="Ab"/>
+    <script name="Ahom" code="Ah"/>
+    <script name="Aiha (Kesh)" code="Ai"/>
+    <script name="Albanian" code="Sq"/>
+    <script name="Arabic" code="Ar"/>
+    <script name="Arabic (Kufi variant)" code="Ak"/>
+    <script name="Aramaic" code="Aw"/>
+    <script name="Armenian" code="Hy"/>
+    <script name="Assyrian cuneiform (Babylonian &amp; Akkadian)" code="Xa"/>
+    <script name="Aymara pictograms" code="Ay"/>
+    <script name="Aztec pictograms" code="Az"/>
+    <script name="Balinese" code="Bl"/>
+    <script name="Balti" code="Bt"/>
+    <script name="Bamum (Cameroon)" code="Bm"/>
+    <script name="Batak" code="Bk"/>
+    <script name="Bengali" code="Bn"/>
+    <script name="Bisaya" code="Bs"/>
+    <script name="Blissymbols" code="By"/>
+    <script name="Bopomofo" code="Bp"/>
+    <script name="Box-headed script" code="Bx"/>
+    <script name="Brahmi (Ashoka)" code="Br"/>
+    <script name="Braille" code="Ba"/>
+    <script name="Buginese (Makassar)" code="Bg"/>
+    <script name="Burmese" code="My"/>
+    <script name="Buthakukye (Albanian)" code="Bu"/>
+    <script name="Canadian Syllabic (Unified)" code="Sl"/>
+    <script name="Carian" code="Cr"/>
+    <script name="Chakma" code="Ck"/>
+    <script name="Cham" code="Ch"/>
+    <script name="Cherokee syllabary" code="Jl"/>
+    <script name="Chinook shorthand" code="Cn"/>
+    <script name="Chola" code="Cl"/>
+    <script name="Chu Nom" code="Cu"/>
+    <script name="Cirth" code="Ci"/>
+    <script name="Code for undetermined script" code="Zy"/>
+    <script name="Code for unwritten languages" code="Zx"/>
+    <script name="Coptic" code="Qb"/>
+    <script name="Cypriote syllabary" code="Cp"/>
+    <script name="Cypro-Minoan" code="Cm"/>
+    <script name="Cyrillic" code="Cy"/>
+    <script name="Dai" code="Da"/>
+    <script name="Deseret (Mormon)" code="Ds"/>
+    <script name="Devanagari" code="Dn"/>
+    <script name="Egyptian demotic" code="Ed"/>
+    <script name="Egyptian hieroglyphic alphabet" code="Ea"/>
+    <script name="Egyptian hieroglyphs" code="Eh"/>
+    <script name="Elbassen (Albanian)" code="Es"/>
+    <script name="Engsvanyali" code="En"/>
+    <script name="Ethiopic" code="Et"/>
+    <script name="Etruscan &amp; Oscan" code="Eo"/>
+    <script name="Gargoyle" code="Gr"/>
+    <script name="Gaudiya" code="Gd"/>
+    <script name="Georgian (Mxedruli)" code="Ka"/>
+    <script name="Georgian (Xucuri)" code="Kx"/>
+    <script name="Glagolitic" code="Gl"/>
+    <script name="Gothic" code="Gt"/>
+    <script name="Greek" code="El"/>
+    <script name="Gujarati" code="Gu"/>
+    <script name="Gurmukhi" code="Pa"/>
+    <script name="Han ideographs" code="Hn"/>
+    <script name="Hangul" code="Hg"/>
+    <script name="Hebrew" code="He"/>
+    <script name="Hiragana" code="Hr"/>
+    <script name="Hittite cuneiform" code="Xh"/>
+    <script name="Hittite syllabic &amp; hieroglyphic" code="Hh"/>
+    <script name="Hmong" code="Hm"/>
+    <script name="Iberian" code="Ib"/>
+    <script name="Ilianore" code="Il"/>
+    <script name="Indus Valley" code="Iv"/>
+    <script name="Javanese" code="Jw"/>
+    <script name="Jindai" code="Jn"/>
+    <script name="Kadamba" code="Kb"/>
+    <script name="Kaithi" code="Ki"/>
+    <script name="Kannada" code="Kn"/>
+    <script name="Karenni (Kayah Li)" code="Kr"/>
+    <script name="Katakana" code="Kk"/>
+    <script name="Kauder (Micmac)" code="Kd"/>
+    <script name="Kawi" code="Kw"/>
+    <script name="Khamti (Kham)" code="Kh"/>
+    <script name="Kharoshthi" code="Ks"/>
+    <script name="Khitan (Ch'i-tan, Liao)" code="Kt"/>
+    <script name="Khmer" code="Km"/>
+    <script name="Khotanese" code="Kq"/>
+    <script name="Kinya" code="Ky"/>
+    <script name="Kirat (Limbu)" code="Lb"/>
+    <script name="Klingon pIQaD" code="Pq"/>
+    <script name="Kök Turki runes" code="Hu"/>
+    <script name="Koleruttu" code="Kl"/>
+    <script name="Kuoyu" code="Ku"/>
+    <script name="Kutila" code="Kf"/>
+    <script name="Lahnda (Khudawadi)" code="Lk"/>
+    <script name="Lahnda (Sindhi)" code="Ln"/>
+    <script name="Lampong" code="Lm"/>
+    <script name="Lao" code="Lo"/>
+    <script name="Latin" code="La"/>
+    <script name="Latin (Fraktur variant)" code="Lf"/>
+    <script name="Latin (Gaelic variant)" code="Lg"/>
+    <script name="Lepcha (Róng)" code="Lp"/>
+    <script name="Linear A" code="Na"/>
+    <script name="Linear B" code="Nb"/>
+    <script name="Lisu" code="Ls"/>
+    <script name="Lolo" code="Ll"/>
+    <script name="Lycian" code="Lc"/>
+    <script name="Lydian" code="Ld"/>
+    <script name="Maghreb" code="Mg"/>
+    <script name="Maithli" code="Mj"/>
+    <script name="Malayalam" code="Ml"/>
+    <script name="Manchu" code="Mc"/>
+    <script name="Mandaean" code="Md"/>
+    <script name="Mangyan" code="Ma"/>
+    <script name="Manichaean" code="Mi"/>
+    <script name="Mayan hieroglyphs" code="Mh"/>
+    <script name="Meitei (Manipuri)" code="Mp"/>
+    <script name="Meroitic" code="Me"/>
+    <script name="Modi" code="Mo"/>
+    <script name="Mongolian" code="Mn"/>
+    <script name="Multani" code="Mu"/>
+    <script name="Nabataean" code="Nt"/>
+    <script name="Naxi (Moso) phonetic" code="Mt"/>
+    <script name="Naxi (Nahsi, Nasi, Moso) ideograms" code="Ms"/>
+    <script name="Newari" code="Nw"/>
+    <script name="Nuchen (Yu-Chen)" code="Nu"/>
+    <script name="Numidian" code="Nm"/>
+    <script name="Ogham" code="Og"/>
+    <script name="Old Church Slavonic" code="Cv"/>
+    <script name="Old Hungarian runes" code="Hv"/>
+    <script name="Old Peguan" code="Pg"/>
+    <script name="Old Persian cuneiform" code="Xp"/>
+    <script name="Oriya" code="Or"/>
+    <script name="Osmanya" code="Os"/>
+    <script name="Pahlavi (Avestan)" code="Av"/>
+    <script name="Pali (Kyoktsa &amp; Painted)" code="Pk"/>
+    <script name="Palmyrene" code="Pm"/>
+    <script name="Pancartambo" code="Pc"/>
+    <script name="Parthian" code="Pr"/>
+    <script name="'Phags-pa" code="Pp"/>
+    <script name="Phaistos Disk" code="Ps"/>
+    <script name="Phoenician" code="Ph"/>
+    <script name="Pollard Phonetic" code="Pl"/>
+    <script name="Proto-Byblic" code="Pb"/>
+    <script name="Proto-Elamic" code="Pe"/>
+    <script name="Pyu (Tircul)" code="Py"/>
+    <script name="Rejang" code="Rj"/>
+    <script name="Rongo-rongo" code="Rr"/>
+    <script name="Runic (Germanic)" code="Rn"/>
+    <script name="Saki" code="Sk"/>
+    <script name="Samaritan" code="Sm"/>
+    <script name="Sarada" code="Sr"/>
+    <script name="Satavahana" code="Sv"/>
+    <script name="Seuss" code="Su"/>
+    <script name="Shavian (Shaw)" code="Sw"/>
+    <script name="Siddham" code="Sd"/>
+    <script name="Siddhamatrka" code="St"/>
+    <script name="Sidetic" code="Se"/>
+    <script name="Sinhalese" code="Si"/>
+    <script name="Sogdian" code="Sg"/>
+    <script name="Solresol" code="Ss"/>
+    <script name="South Arabian" code="Sa"/>
+    <script name="Sumerian pictograms" code="Xs"/>
+    <script name="Syriac" code="Sy"/>
+    <script name="Tagalog" code="Tg"/>
+    <script name="Tai Lue (Chiang Mai)" code="Tl"/>
+    <script name="Tai Nua (Tai Mau)" code="Tn"/>
+    <script name="Takri (Chameali)" code="Tc"/>
+    <script name="Takri (Jaunsari)" code="Tj"/>
+    <script name="Tamil" code="Ta"/>
+    <script name="Tamil Granta" code="Tr"/>
+    <script name="Tankri" code="Tk"/>
+    <script name="Telugu" code="Te"/>
+    <script name="Tengwar" code="Tw"/>
+    <script name="Thaana" code="Dv"/>
+    <script name="Thai" code="Th"/>
+    <script name="Tibetan" code="Bo"/>
+    <script name="Tifinagh" code="Tf"/>
+    <script name="Tocharian" code="To"/>
+    <script name="Tungut (Xixia) ideograms" code="Tu"/>
+    <script name="Ugaritic cuneiform" code="Xu"/>
+    <script name="Uighur" code="Ui"/>
+    <script name="Unifon" code="Un"/>
+    <script name="Vai" code="Va"/>
+    <script name="Vattelluttu" code="Vt"/>
+    <script name="Verdurian" code="Vd"/>
+    <script name="Veso Bei" code="Vb"/>
+    <script name="Visible Speech" code="Vs"/>
+    <script name="Woleai" code="Wo"/>
+    <script name="Yi" code="Yy"/>
+  </scriptcodes>
+</xml-lang>
