@@ -50,7 +50,7 @@
  */ 
 package org.apache.fop.traits;
 
-import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.Constants;
 
 /**
  * Store properties affecting layout: break-before, break-after, keeps, span.

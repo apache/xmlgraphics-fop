@@ -81,7 +81,7 @@ import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.Overflow;
 
 import java.util.ArrayList;

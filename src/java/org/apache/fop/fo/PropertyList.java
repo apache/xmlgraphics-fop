@@ -57,7 +57,7 @@ import org.xml.sax.Attributes;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Property.Maker;
-import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.apache.fop.fo.properties.WritingMode;
 

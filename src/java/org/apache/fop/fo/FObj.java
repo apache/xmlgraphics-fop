@@ -59,7 +59,7 @@ import java.util.Set;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Marker;
-import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.xml.sax.Attributes;
 

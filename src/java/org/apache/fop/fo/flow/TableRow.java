@@ -61,7 +61,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.Constants;
 
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;

@@ -55,7 +55,7 @@ import org.apache.avalon.framework.logger.Logger;
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.EnumProperty;
-import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.SpaceProperty;

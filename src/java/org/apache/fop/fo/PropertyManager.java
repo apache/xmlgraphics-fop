@@ -67,7 +67,7 @@ import org.apache.fop.traits.BlockProps;
 import org.apache.fop.traits.InlineProps;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.traits.LayoutProps; // keep, break, span, space?
-import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.Span;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fo.properties.CommonHyphenation;
