@@ -4,7 +4,7 @@
  *                    The Apache Software License, Version 1.1
  * ============================================================================
  *
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -57,7 +57,7 @@ import java.util.Map;
 
 // Apache libs
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
-import org.apache.commons.io.IOUtil;
+import org.apache.commons.io.IOUtils;
 
 // FOP
 import org.apache.fop.fonts.Glyphs;
@@ -101,7 +101,7 @@ public class PFMFile extends AbstractLogEnabled {
      * @throws IOException In case of an I/O problem
      */
     public void load(InputStream inStream) throws IOException {
-        final byte[] buf = IOUtil.toByteArray(inStream);
+        final byte[] buf = IOUtils.toByteArray(inStream);
         final InputStream bufin = new java.io.ByteArrayInputStream(buf);
         PFMInputStream in = new PFMInputStream(bufin);
         /*final int version =*/ in.readShort();

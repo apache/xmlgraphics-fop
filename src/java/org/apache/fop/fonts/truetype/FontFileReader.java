@@ -4,7 +4,7 @@
  *                    The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -54,7 +54,7 @@ import java.io.InputStream;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.IOUtil;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Reads a TrueType font file into a byte array and
@@ -73,15 +73,9 @@ public class FontFileReader {
      * @throws IOException In case of an I/O problem
      */
     private void init(InputStream in) throws java.io.IOException {
-        java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
-        try {
-            IOUtil.copy(in, bout);
-            this.file = bout.toByteArray();
-            this.fsize = this.file.length;
-            this.current = 0;
-        } finally {
-            bout.close();
-        }
+        this.file = IOUtils.toByteArray(in);
+        this.fsize = this.file.length;
+        this.current = 0;
     }
 
     /**

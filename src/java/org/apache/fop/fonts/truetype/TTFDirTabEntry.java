@@ -51,6 +51,7 @@
 package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 
 /**
@@ -76,9 +77,11 @@ class TTFDirTabEntry {
 
         offset = in.readTTFULong();
         length = in.readTTFULong();
+        String tagStr = new String(tag, "ISO-8859-1");
+        // System.err.println("tag='" + tagStr + "'");
 
         //System.out.println(this.toString());
-        return new String(tag, "ISO-8859-1");
+        return tagStr;
     }
 
 
@@ -115,11 +118,23 @@ class TTFDirTabEntry {
     }
 
     /**
-     * Returns the tag.
+     * Returns the tag bytes.
      * @return byte[]
      */
     public byte[] getTag() {
         return tag;
+    }
+
+    /**
+     * Returns the tag bytes.
+     * @return byte[]
+     */
+    public String getTagString() {
+        try {
+            return new String(tag, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            return this.toString(); // Should never happen.
+        }
     }
 
 }
