@@ -19,6 +19,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.pagination.FoLayoutMasterSet;
+import org.apache.fop.fo.declarations.FoDeclarations;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.XMLNamespaces;
@@ -43,7 +44,7 @@ public class FoRoot extends FONode {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
-    private FoLayoutMasterSet layoutMasters;
+    private HashMap pageSequenceMasters;
 
     /** Map of <tt>Integer</tt> indices of <i>sparsePropsSet</i> array.
         It is indexed by the FO index of the FO associated with a given
@@ -122,9 +123,12 @@ public class FoRoot extends FONode {
         }
         // Process the layout-master-set
         try {
-            layoutMasters = new FoLayoutMasterSet(foTree, this, ev);
+            FoLayoutMasterSet layoutMasters =
+                                new FoLayoutMasterSet(getFOTree(), this, ev);
             // Clean up the fo:layout-master-set event
+            pageSequenceMasters = layoutMasters.getPageSequenceMasters();
             xmlevents.getEndElement(ev);
+            layoutMasters.deleteSubTree();
         } catch(TreeException e) {
             throw new FOPException("TreeException: " + e.getMessage());
         } catch(PropertyException e) {
@@ -136,6 +140,7 @@ public class FoRoot extends FONode {
                         (FObjectNames.DECLARATIONS, XMLEvent.DISCARD_W_SPACE);
             if (ev != null) {
                 // process the declarations
+                new FoDeclarations(getFOTree(), this, ev);
                 xmlevents.getEndElement(FObjectNames.DECLARATIONS);
             }
         } catch (NoSuchElementException e) {
