@@ -33,6 +33,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.Page;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
@@ -191,7 +192,7 @@ public class FoPageSequence extends FONode {
                 staticContents = Collections.unmodifiableMap(staticSubtrees);
             }
             // Generate a null page for the flow(s)
-            
+            Page page = Page.setupNullPage(this, foTree.getNextPageId());
 
             // Look for one or more fo:flow
             // must have at least one: N.B. in 1.0, only one is allowed,
