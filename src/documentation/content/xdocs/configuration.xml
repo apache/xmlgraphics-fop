@@ -45,7 +45,7 @@ Also, since the configuration file is XML, be sure to keep it well-formed.</p>
       <tr>
         <td>baseDir</td>
         <td>URL</td>
-        <td>directory containing the input FO file</td>
+        <td>For command-line, the directory containing the input FO or XML file. For embedded, the current working directory.</td>
       </tr>
       <tr>
         <td>fontBaseDir</td>
@@ -53,7 +53,7 @@ Also, since the configuration file is XML, be sure to keep it well-formed.</p>
         <td>value of baseDir</td>
       </tr>
       <tr>
-        <td>hyphenation-dir</td>
+        <td><link href="#hyphenation-dir">hyphenation-dir</link></td>
         <td>URL</td>
         <td>None. This is for custom hyphenation patterns.</td>
       </tr>
