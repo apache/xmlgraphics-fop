@@ -13,8 +13,6 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.traits.BorderProps;
 
-import org.apache.fop.layoutmgr.LayoutInfo;
-
 import java.util.List;
 import java.util.ArrayList;
 

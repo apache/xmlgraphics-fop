@@ -456,10 +456,6 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
         BreakPoss curLineBP = new BreakPoss( new LineBreakPosition(this,
                                              m_vecInlineBreaks.size() - 1, dAdjust, lineLead + middlefollow, lineLead));
 
-        /* FIX ME!!
-         * Need to calculate line height based on all inline BP info
-         * for this line not just the current inlineBP!
-         */
         curLineBP.setFlag(BreakPoss.ISLAST, isFinished());
         curLineBP.setStackingSize(new MinOptMax(lineLead + middlefollow));
         return curLineBP;
