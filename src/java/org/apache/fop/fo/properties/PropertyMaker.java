@@ -25,6 +25,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.CompoundDatatype;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOPropertyMapping;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -238,14 +239,16 @@ public class PropertyMaker implements Cloneable {
     {
         Property p = null;
         
-        log.trace("PropertyMaker.findProperty: "
+        if (log.isTraceEnabled()) {
+            log.trace("PropertyMaker.findProperty: "
                   + FOPropertyMapping.getPropertyName(propId)
                   + ", " + propertyList.getFObj().getName());
+        }
 
         if (corresponding != null && corresponding.isCorrespondingForced(propertyList)) {
             p = corresponding.compute(propertyList);
         } else {
-            p = propertyList.getExplicitBaseProp(propId);
+            p = propertyList.getExplicit(propId);
             if (p == null) {
                 p = this.compute(propertyList);
             }
@@ -256,12 +259,7 @@ public class PropertyMaker implements Cloneable {
                 // else inherit (if has parent and is inheritable)
                 PropertyList parentPropertyList = propertyList.getParentPropertyList(); 
                 if (parentPropertyList != null && isInherited()) {
-                    if (!contextDep) {
-                        // use the cache
-                        p = parentPropertyList.findProperty(propId, this);
-                    } else {
-                        p = findProperty(parentPropertyList, bTryInherit);
-                    }
+                    p = parentPropertyList.get(propId, true, false);
                 }
             }
         }
@@ -283,14 +281,7 @@ public class PropertyMaker implements Cloneable {
                         boolean bTryInherit, boolean bTryDefault)
         throws FOPException
     {
-        Property p;
-
-        if (!contextDep && bTryInherit) {
-            // use the cache
-            p = propertyList.findProperty(propId, this);
-        } else {
-            p = findProperty(propertyList, bTryInherit);
-        }
+        Property p = findProperty(propertyList, bTryInherit);
 
         if (p == null && bTryDefault) {    // default value for this FO!
             try {
@@ -376,13 +367,17 @@ public class PropertyMaker implements Cloneable {
      */
     public Property make(PropertyList propertyList) throws FOPException {
         if (defaultProperty != null) {
-            log.trace("PropertyMaker.make: reusing defaultProperty, "
-                  + FOPropertyMapping.getPropertyName(propId));
+            if (log.isTraceEnabled()) {
+                log.trace("PropertyMaker.make: reusing defaultProperty, "
+                      + FOPropertyMapping.getPropertyName(propId));
+            }
             return defaultProperty;
         }
-        log.trace("PropertyMaker.make: making default property value, "
+        if (log.isTraceEnabled()) {
+            log.trace("PropertyMaker.make: making default property value, "
                   + FOPropertyMapping.getPropertyName(propId)
                   + ", " + propertyList.getFObj().getName());
+        }
         Property p = make(propertyList, defaultValue, propertyList.getParentFObj());
         if (!contextDep) {
             defaultProperty = p;
@@ -404,7 +399,10 @@ public class PropertyMaker implements Cloneable {
             Property newProp = null;
             String pvalue = value;
             if ("inherit".equals(value)) {
-                newProp = propertyList.getFromParent(this.propId);
+                newProp = propertyList.getFromParent(this.propId & Constants.PROPERTY_MASK);
+                if ((propId & Constants.COMPOUND_MASK) != 0) {
+                    newProp = getSubprop(newProp, propId & Constants.COMPOUND_MASK);
+                }
             } else {
                 newProp = checkEnumValues(value);
             }
