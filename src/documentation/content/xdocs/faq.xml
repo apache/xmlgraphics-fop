@@ -302,8 +302,8 @@
           whether you got them right.
         </p>
         <p>
-          You can use the <link>FOP DTD</link> or <link>FOP Schema</link> to
-          validate your soure. This will catch most, but still not all problems.
+          You may find it helpful to use the <link href="#FO-validate">validation tools</link> to validate your
+FO document. This will catch most problems, but should not be relied upon to catch all.
         </p>
         <p>
           If you use XSLT, problems in your style sheet and in your source XML
@@ -874,24 +874,35 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         <p>(Still applicable in 0.20.3?)</p>
       </answer>
     </faq>
-    <faq>
-      <question>PDF encryption, PDF protection (read-only)</question>
+    <faq id="PDF-postprocess">
+      <question>What tools are available for post-processing my PDF document?</question>
       <answer>
-  <p>use some other tool to postprocess the PDF (itext, or something?)</p>
+        <ul>
+          <li>The most popular one that we are aware of is <link href="http://www.lowagie.com/iText">iText</link>, which has tools for adding security features, document properties, watermarks, and many other features to PDF files. See also Joerg Pietschmann's <link href="http://marc.theaimsgroup.com/?l=fop-dev&amp;m=102002975028427&amp;w=2">posting on PDF Encryption</link> for an example of Java application using iText.</li>
+        <li>You can use Adobe Acrobat (the full version, not the Reader) to process the file manually or with scripting that it supports.</li>
+        </ul>
       </answer>
     </faq>
     <faq>
-      <question>Watermarks</question>
+      <question>How do I add security features (encryption, for example) to my PDF document?</question>
       <answer>
-        <p>  Answer: see 3.3, or use a a region overlapping the flowing text and put
-  an image there:
-</p>
-        <p>   > From: Trevor_Campbell@kaz.com.au
-    Use the region-before.  Make it large enough to contain your image and then
-    include a block (and if required an absolutely positioned block-container)
-    with your image in the static-content for the region-before.
-  Could use some code here...
-        </p>
+        <p>FOP does not currently support this feature. Possible workarounds include those mentioned in the <link href="#PDF-postprocess">PDF Post-Processing FAQ</link>.</p>
+      </answer>
+    </faq>
+    <faq>
+      <question>How do I add document properties (title, author, etc.) to my PDF document?</question>
+      <answer>
+        <p>FOP does not currently support this feature. Possible workarounds include those mentioned in the <link href="#PDF-postprocess">PDF Post-Processing FAQ</link>.</p>
+      </answer>
+    </faq>
+    <faq>
+      <question>How do I add watermarks to my PDF document?</question>
+      <answer>
+        <p>FOP does not currently support this feature. Possible workarounds:</p>
+        <ul>
+          <li>See the <link href="#PDF-postprocess">PDF Post-Processing FAQ</link>.</li>
+          <li>(submitted by Trevor_Campbell@kaz.com.au) Place an image in a region that overlaps the flowing text. For example, make region-before large enough to contain your image. Then include a block (if necessary, use an absolutely positioned block-container) containing the watermark image in the static-content for the region-before.</li>
+        </ul>
       </answer>
     </faq>
     <faq>
@@ -1339,6 +1350,13 @@ class rendtest {
             Insert a graphic. GIF, PNG SVG, whatever.
           </li>
         </ul>
+      </answer>
+    </faq>
+    <faq id="FO-validate">
+      <question>(FO) How do I validate my FO document?</question>
+      <answer>
+        <p><link href="http://www.renderx.com">RenderX</link> has provided an <link href="http://www.renderx.com/Tests/validator/fo.dtd.html">Unofficial DTD for FO Documents</link>. This document may be helpful in validating general FO issues.</p>
+        <p>FOP also maintains an <link href="http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-fop/docs/foschema/fop.xsd?rev=HEAD&amp;content-type=text/plain">Unofficial FOP Schema</link> in the FOP CVS Repository. This document can be used either to validate against the FO standard, or against the actual FOP implementation. See the notes near the beginning of the document for instructions on how to use it.</p>
       </answer>
     </faq>
     <faq>
