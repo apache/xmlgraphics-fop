@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,6 @@ public class TableFooter extends TableBody {
         super(parent);
     }
 
-    private boolean tableRowsFound = false;
-    private boolean tableColumnsFound = false;
-
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
@@ -48,44 +45,11 @@ public class TableFooter extends TableBody {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * XSL Content Model: marker* (table-row+|table-cell+)
-     */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (nsURI == FO_URI) {
-            if (localName.equals("marker")) {
-                if (tableRowsFound || tableColumnsFound) {
-                   nodesOutOfOrderError(loc, "fo:marker", "(table-row+|table-cell+)");
-                }
-            } else if (localName.equals("table-row")) {
-                tableRowsFound = true;
-                if (tableColumnsFound) {
-                    invalidChildError(loc, nsURI, localName, "Either fo:table-rows" +
-                      " or fo:table-columns may be children of an fo:table-footer" +
-                      " but not both");
-                }
-            } else if (localName.equals("table-column")) {
-                tableColumnsFound = true;
-                if (tableRowsFound) {
-                    invalidChildError(loc, nsURI, localName, "Either fo:table-rows" +
-                      " or fo:table-columns may be children of an fo:table-footer" +
-                      " but not both");
-                }  
-            } else {
-                invalidChildError(loc, nsURI, localName);
-            }
-        } else {
-            invalidChildError(loc, nsURI, localName);
-        }
-    }
-
-    /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
 //      getFOEventHandler().endFooter(this);
-        if (!(tableRowsFound || tableColumnsFound)) {
+        if (!(tableRowsFound || tableCellsFound)) {
             missingChildElementError("marker* (table-row+|table-cell+)");
         }
 //      convertCellsToRows();
