@@ -1,6 +1,5 @@
 /*-- $Id$-- */
-/*
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+/* Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -159,10 +158,10 @@ public class Block extends FObjMixed {
 				this.blockArea = new BlockArea(propMgr.getFontState(area.getFontInfo()), area.getAllocationWidth(),
 								area.spaceLeft(), startIndent, endIndent, textIndent,
 								align, alignLast, lineHeight);
-				this.blockArea.generatedBy = this;
+				this.blockArea.setGeneratedBy(this);
 				this.areasGenerated++;
 				if (this.areasGenerated == 1)
-					this.blockArea.isFirst = true;
+					this.blockArea.isFirst(true);
 				// for normal areas this should be the only pair
 				this.blockArea.addLineagePair(this, this.areasGenerated);
 				
@@ -259,7 +258,7 @@ public class Block extends FObjMixed {
 				}
 
 				//MessageHandler.error(" b:OK" + marker + " ");
-				this.blockArea.isLast = true;
+				this.blockArea.isLast(true);
 				return new Status(Status.OK);
 		}
 
