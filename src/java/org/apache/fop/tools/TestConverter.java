@@ -103,6 +103,8 @@ public class TestConverter {
                 tc.setFailOnly(true);
             } else if (args[count].equals("-pdf")) {
                 tc.setRenderType(Fop.RENDER_PDF);
+            } else if (args[count].equals("-rtf")) {
+                tc.setRenderType(Fop.RENDER_RTF);
             } else if (args[count].equals("-d")) {
                 tc.setDebug(true);
             } else if (args[count].equals("-b")) {
@@ -313,8 +315,8 @@ public class TestConverter {
             if (outname.endsWith(".xml") || outname.endsWith(".pdf")) {
                 outname = outname.substring(0, outname.length() - 4);
             }
-            File outputFile = new File(destdir, // assuming only RENDER_PDF or RENDER_XML here
-                                 outname + ((renderType==Fop.RENDER_PDF) ? ".pdf" : ".at.xml"));
+            File outputFile = new File(destdir, 
+                                       outname + makeResultExtension());
 
             outputFile.getParentFile().mkdirs();
             OutputStream outStream = new java.io.BufferedOutputStream(
@@ -335,6 +337,19 @@ public class TestConverter {
             }
         } catch (Exception e) {
             getLogger().error("Error while running tests", e);
+        }
+    }
+
+    /**
+     * Return a suitable file extension for the output format.
+     */
+    private String makeResultExtension() {
+        if (renderType == Fop.RENDER_PDF) {
+           return ".pdf";
+        } else if (renderType == Fop.RENDER_RTF) {
+           return ".rtf";
+        } else {
+            return ".at.xml";
         }
     }
 
