@@ -502,7 +502,9 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
       <xsl:apply-templates select="propval"/>
       subprop= propertyList.getExplicitOrShorthand(sbExpr.toString());
       </xsl:otherwise></xsl:choose>
-      setSubprop(p, "<xsl:value-of select='../name'/>", subprop);
+      if (subprop != null) {
+        setSubprop(p, "<xsl:value-of select='../name'/>", subprop);
+      }
       </xsl:for-each>
       </xsl:if>
       return p;
