@@ -378,10 +378,9 @@ public class LineArea extends Area {
                 Object o = children.get(i);
                 if ( o instanceof PageNumberInlineArea) {
                     PageNumberInlineArea pia = (PageNumberInlineArea)o;
-                    FontState piaFontState = pia.getFontState();
-                    finalWidth-=piaFontState.getWordWidth(pia.getText());
+                    finalWidth-=pia.getContentWidth();
                     pia.resolve(idReferences);
-                    finalWidth+=piaFontState.getWordWidth(pia.getText());
+                    finalWidth+=pia.getContentWidth();
                 }
             }
         }

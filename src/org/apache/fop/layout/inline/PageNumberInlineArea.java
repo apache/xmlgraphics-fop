@@ -59,7 +59,7 @@ public class PageNumberInlineArea extends WordArea {
 
     public PageNumberInlineArea(FontState fontState, float red, float green,
                                 float blue, String refid, int width) {
-        super(fontState, red, green, blue, "?", width);
+        super(fontState, red, green, blue, "   ", width);
         this.pageNumberId = refid;
     }
 
@@ -68,5 +68,6 @@ public class PageNumberInlineArea extends WordArea {
         if (text == null) {
             text = "";
         }
+        contentRectangleWidth = getFontState().getWordWidth(text);
     }
 }
