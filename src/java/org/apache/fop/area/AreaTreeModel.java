@@ -34,7 +34,7 @@ public abstract class AreaTreeModel {
      * Start a page sequence on this model.
      * @param title the title of the new page sequence
      */
-    public abstract void startPageSequence(Title title);
+    public abstract void startPageSequence(LineArea title);
 
     /**
      * Add a page to this moel.
@@ -80,6 +80,6 @@ public abstract class AreaTreeModel {
      * @param count the page sequence count
      * @return the title of the page sequence
      */
-    public abstract Title getTitle(int count);
+    public abstract LineArea getTitle(int count);
 
 }

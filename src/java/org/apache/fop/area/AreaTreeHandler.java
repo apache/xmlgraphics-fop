@@ -39,6 +39,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.layoutmgr.ContentLayoutManager;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.PageLayoutManager;
@@ -370,7 +371,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * @throws FOPException if there is an error formatting the contents
      */
     private void formatPageSequence(PageSequence pageSeq) {
-        Title title = null;
+        LineArea title = null;
         if (pageSeq.getTitleFO() != null) {
             title = getTitleArea(pageSeq.getTitleFO());
         }
@@ -422,10 +423,9 @@ public class AreaTreeHandler extends FOEventHandler {
     /**
      * @return the Title area
      */
-    private org.apache.fop.area.Title getTitleArea(org.apache.fop.fo.pagination.Title foTitle) {
+    private LineArea getTitleArea(Title foTitle) {
         // get breaks then add areas to title
-        org.apache.fop.area.Title title =
-                 new org.apache.fop.area.Title();
+        LineArea title = new LineArea();
 
         ContentLayoutManager clm = new ContentLayoutManager(title);
         clm.setUserAgent(foTitle.getUserAgent());

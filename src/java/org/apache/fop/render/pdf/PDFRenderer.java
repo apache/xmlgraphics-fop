@@ -45,7 +45,6 @@ import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Page;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
-import org.apache.fop.area.Title;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.TreeExt;
 import org.apache.fop.area.extensions.BookmarkData;
@@ -361,7 +360,7 @@ public class PDFRenderer extends PrintRenderer {
      *
      * @param seqTitle the title of the page sequence
      */
-    public void startPageSequence(Title seqTitle) {
+    public void startPageSequence(LineArea seqTitle) {
         if (seqTitle != null) {
             String str = convertTitleToString(seqTitle);
             PDFInfo info = this.pdfDoc.getInfo();

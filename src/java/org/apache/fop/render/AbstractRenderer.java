@@ -46,7 +46,6 @@ import org.apache.fop.area.Page;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
-import org.apache.fop.area.Title;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.TreeExt;
 import org.apache.fop.area.inline.Container;
@@ -182,7 +181,7 @@ public abstract class AbstractRenderer
      * @param title  The Title to convert
      * @return       An expanded string representing the title
      */
-    protected String convertTitleToString(Title title) {
+    protected String convertTitleToString(LineArea title) {
         List children = title.getInlineAreas();
         String str = convertToString(children);
         return str.trim();
@@ -207,7 +206,7 @@ public abstract class AbstractRenderer
     }
 
     /** @see org.apache.fop.render.Renderer */
-    public void startPageSequence(Title seqTitle) {
+    public void startPageSequence(LineArea seqTitle) {
         //do nothing
     }
 

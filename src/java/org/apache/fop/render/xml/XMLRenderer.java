@@ -46,7 +46,6 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Span;
-import org.apache.fop.area.Title;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
@@ -225,7 +224,7 @@ public class XMLRenderer extends AbstractRenderer {
     /**
      * @see org.apache.fop.render.Renderer#startPageSequence(Title)
      */
-    public void startPageSequence(Title seqTitle) {
+    public void startPageSequence(LineArea seqTitle) {
         if (startedSequence) {
             writeEndTag("</pageSequence>");
         }
