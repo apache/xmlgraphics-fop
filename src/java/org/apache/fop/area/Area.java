@@ -398,8 +398,6 @@ public class Area extends AreaNode implements Cloneable  {
                 double ipOrigin, double bpOrigin, double ipDim, double bpDim) {
             this(writingMode);
             try {
-                // TODO move rectRelToAbs from WritingMode to a more suitable
-                // place
                 setRect(rectRelToAbs(
                         ipOrigin, bpOrigin, ipDim, bpDim, writingMode));
             } catch (PropertyException e) {
