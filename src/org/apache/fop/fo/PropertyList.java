@@ -60,11 +60,27 @@ public class PropertyList extends Hashtable {
   private PropertyList parentPropertyList = null;
   String namespace = "";
   String element = "";
+  FObj fobj=null;
 
   public PropertyList(PropertyList parentPropertyList, String space, String el) {
     this.parentPropertyList = parentPropertyList;
     this.namespace = space;
     this.element = el;
+  }
+
+  public void setFObj(FObj fobj) {
+    this.fobj = fobj;
+  }
+
+  public FObj getFObj() {
+    return this.fobj;
+  }
+
+  public FObj getParentFObj() {
+    if (parentPropertyList != null) {
+      return parentPropertyList.getFObj();
+    }
+    else return null;
   }
 
   /**
@@ -102,6 +118,21 @@ public class PropertyList extends Hashtable {
     return null; // No builder or exception in makeProperty!
   }
 
+  private Property findProperty(String propertyName) {
+    Property p = getExplicit(propertyName);
+    if (p == null) {
+      p = this.builder.computeProperty(this,namespace, element, propertyName);
+    }
+    if (p == null) { // else inherit (if has parent and is inheritable)
+        if (this.parentPropertyList != null &&
+	    builder.isInherited(namespace, element, propertyName)) {
+          p = parentPropertyList.findProperty(propertyName);
+        }
+    }
+    return p;
+  }
+
+
   /**
    * Return the property on the current FlowObject. If it isn't set explicitly,
    * this will try to compute it based on other properties, or if it is
@@ -121,21 +152,12 @@ public class PropertyList extends Hashtable {
       propertyName = propertyName.substring(0,sepchar);
     }
 
-    Property p = getExplicit(propertyName);
-
-    if (p == null) { // if not explicit
-      p = this.builder.computeProperty(this,namespace, element, propertyName);
-      if (p == null) { // else inherit (if has parent and is inheritable)
-        if ((this.parentPropertyList != null) &&
-	    (this.builder.isInherited(namespace, element, propertyName))) {
-          p = this.parentPropertyList.get(propertyName); // retrieve parent's value
-        } else { // default value
-          try {
-            p = this.builder.makeProperty(this,namespace, element,propertyName);
-          } catch (FOPException e) {
-            // don't know what to do here
-          }
-        }
+    Property p = findProperty(propertyName);
+    if (p == null) { // default value for this FO!
+      try {
+	p = this.builder.makeProperty(this,namespace, element,propertyName);
+      } catch (FOPException e) {
+	// don't know what to do here
       }
     }
     if (subpropName != null) {

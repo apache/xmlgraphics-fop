@@ -57,17 +57,8 @@ import org.apache.fop.datatypes.LengthRange;
 public class SpaceProperty extends Property {
 
   public static class Maker extends LengthRangeProperty.Maker {
-
     protected Maker(String name) {
 	super(name);
-    }
-
-    protected Property convertProperty(Property p, PropertyList propertyList,
-				       FObj fo) {
-      Length val = p.getLength();
-      if (val != null)
-	return new SpaceProperty(new Space(val));
-      return convertPropertyDatatype(p, propertyList, fo);
     }
   }
 

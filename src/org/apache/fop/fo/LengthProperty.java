@@ -54,6 +54,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentLength;
 import org.apache.fop.datatypes.TableColLength;
 import org.apache.fop.fo.expr.Numeric;
+import org.apache.fop.apps.FOPException;
 
 public class LengthProperty extends Property {
 
@@ -77,7 +78,7 @@ public class LengthProperty extends Property {
     }
 
     protected Property convertProperty(Property p, PropertyList propertyList,
-				       FObj fo) {
+				       FObj fo) throws FOPException {
       if (isAutoLengthAllowed()) {
 	String pval = p.getString();
 	if (pval != null && pval.equals("auto"))

@@ -100,6 +100,7 @@ public class Property {
      */
     public boolean inheritsSpecified() { return false; }
 
+
     /**
      * Return an object implementing the PercentBase interface.
      * This is used to handle properties specified as a percentage of
@@ -157,6 +158,9 @@ public class Property {
 			 PropertyList propertyList, String value, FObj fo)
       throws FOPException
     {
+      if (baseProp==null) {
+	baseProp = makeCompound(propertyList, fo);
+      }
       Maker spMaker = getSubpropMaker(partName);
       if (spMaker != null) {
 	Property p = spMaker.make(propertyList, value, fo);
@@ -188,7 +192,6 @@ public class Property {
 				  Property subProp) {
       return baseProp;
     }
-
 
     /**
      * Create a Property object from an attribute specification.
@@ -252,7 +255,7 @@ public class Property {
      * can't be converted to the correct type.
      */
     protected Property convertProperty(Property p,
-	PropertyList propertyList, FObj fo) {
+	PropertyList propertyList, FObj fo) throws FOPException {
       return null;
     }
 
@@ -266,17 +269,17 @@ public class Property {
      * @param propertyList The PropertyList object being built for this FO.
      */
     public Property make(PropertyList propertyList) throws FOPException {
-      return make(propertyList, false);
+      return null;
     }
 
     /**
      * Return a Property object representing the initial value.
      * @param propertyList The PropertyList object being built for this FO.
-     * @param bForceNew A boolean value indicating whether a new Property
-     * object must be constructed or whether a reference to the
-     * default Property object may be returned.
+     * @param parentFO The parent FO for the FO whose property is being made.
+     * @return a Property subclass object holding a "compound" property object
+     * initialized to the default values for each component.
      */
-    public Property make(PropertyList propertyList, boolean bForceNew) throws FOPException {
+    protected Property makeCompound(PropertyList propertyList, FObj parentFO) throws FOPException {
       return null;
     }
 
@@ -299,9 +302,8 @@ public class Property {
 	  // Only need to do this if the value is relative!!!
 	  String specVal = specProp.getSpecifiedValue();
 	  if (specVal != null) {
-	    // SHOULD HAVE FO!!! get from PropertyList ?
 	    try {
-	      return make(propertyList, specVal, null);
+	      return make(propertyList, specVal, propertyList.getParentFObj());
 	    } catch (FOPException e) {
 	      MessageHandler.errorln("Error computing property value for " +
 				 propName + " from " + specVal);
@@ -340,8 +342,14 @@ public class Property {
    */
   public Length getLength() { return null; }
   public ColorType getColorType() { return null; }
+  public CondLength getCondLength() { return null; }
   public LengthRange getLengthRange() { return null; }
   public Space getSpace() { return null; }
+  /* KL: first decide which direction to go with this!
+  public Keep getKeep() { return null; }
+  public KeepValue getKeepValue() { return null; }
+  public Precedence getPrecedence() { return null; }
+  */
   public int getEnum() { return 0; }
   public char getCharacter() { return 0;}
 
