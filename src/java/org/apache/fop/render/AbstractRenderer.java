@@ -58,6 +58,9 @@ import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
 
+// XML
+import org.w3c.dom.Document;
+
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
@@ -700,6 +703,40 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
             foua.handlers.put(mime, mh);
         }
         mh.put(ns, handler);
+    }
+
+    /**
+     * Render the xml document with the given xml namespace.
+     * The Render Context is by the handle to render into the current
+     * rendering target.
+     * @param ctx rendering context
+     * @param doc DOM Document containing the source document
+     * @param namespace Namespace URI of the document
+     */
+    public void renderXML(FOUserAgent foua, RendererContext ctx, Document doc,
+                          String namespace) {
+        String mime = ctx.getMimeType();
+        Map mh = (Map) foua.handlers.get(mime);
+        XMLHandler handler = null;
+        if (mh != null) {
+            handler = (XMLHandler) mh.get(namespace);
+        }
+        if (handler == null) {
+            handler = (XMLHandler) foua.defaults.get(mime);
+        }
+        if (handler != null) {
+            try {
+                handler.handleXML(ctx, doc, namespace);
+            } catch (Throwable t) {
+                // could not handle document
+                getLogger().error("Some XML content will be ignored. "
+                        + "Could not render XML", t);
+            }
+        } else {
+            // no handler found for document
+            getLogger().warn("Some XML content will be ignored. "
+                    + "No handler defined for XML: " + namespace);
+        }
     }
 
 }

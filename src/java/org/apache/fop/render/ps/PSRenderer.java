@@ -885,7 +885,7 @@ public class PSRenderer extends AbstractRenderer {
         context.setProperty(PDFXMLHandler.PDF_HEIGHT,
                             new Integer((int) pos.getHeight()));
         */
-        userAgent.renderXML(context, doc, ns);
+        renderXML(userAgent, context, doc, ns);
 
     }
 

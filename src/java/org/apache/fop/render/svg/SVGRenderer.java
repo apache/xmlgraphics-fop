@@ -354,7 +354,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     public void renderForeignObject(ForeignObject fo) {
         org.w3c.dom.Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
-        userAgent.renderXML(context, doc, ns);
+        renderXML(userAgent, context, doc, ns);
     }
 
     /**

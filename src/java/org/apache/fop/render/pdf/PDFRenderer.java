@@ -1190,7 +1190,7 @@ public class PDFRenderer extends PrintRenderer {
                             new Integer((int) pos.getWidth()));
         context.setProperty(PDFXMLHandler.PDF_HEIGHT,
                             new Integer((int) pos.getHeight()));
-        userAgent.renderXML(context, doc, ns);
+        renderXML(userAgent, context, doc, ns);
 
     }
 
