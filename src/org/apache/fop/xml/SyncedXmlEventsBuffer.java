@@ -72,7 +72,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
             //System.out.println("getEvent: " + ev);
             return ev;
         } catch (InterruptedException e) {
-            throw new FOPException("InterruptedException");
+            throw new FOPException(e);
         }
     }
 
@@ -221,6 +221,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
     public XMLEvent expectStartElement(int uriIndex, String localName)
         throws FOPException
     {
+        //System.out.println("In expectStartElement..................");
         XMLEvent ev = getEvent();
         if (ev != null &&
             (ev.type == XMLEvent.STARTELEMENT
