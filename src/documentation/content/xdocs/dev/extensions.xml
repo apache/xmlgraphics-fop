@@ -85,9 +85,9 @@ your element mappings class. This class must implement the
 </p>
 <p>
 Create your fo file with the extra xml data embedded in the file
-with the correct name space. The examples for svg and
-<link href="pdfoutline.pdf">pdfoutline.pdf</link>
-show how this can be done.
+with the correct name space. The pdf documents on the fob site
+use this extension, see <link href="examples.html">Examples</link>
+for more examples.
 </p>
 <p>
 Put your jar file in the classpath and then run fop over the fo file.

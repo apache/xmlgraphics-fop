@@ -113,8 +113,8 @@
       <question>How can I contribute?</question>
       <answer>
         <p>
-          There is always plenty of things to do. See <link>limitations</link>
-          and <link>bugzilla</link>.
+          There is always plenty of things to do. See <link href="../limitations.html">limitations</link>
+          and <link href="../resources.html">bugzilla</link>.
         </p>
       </answer>
     </faq>
@@ -128,7 +128,7 @@
       <answer>
         <p>
           FOP was changed to be in accordance with the latest standard
-          (see <link href="resources.html#w3-xsl">XSL
+          (see <link href="../resources.html#w3-xsl">XSL
           standard</link>).The page master for a fo:page-sequence is
           now refereced by the master-reference attribute. Replace the
           master-name attributes of your fo:page-sequence elements by
@@ -139,7 +139,7 @@
           master definitions.
         </p>
         <p>
-          See also <link>release notes</link>.
+          See also <link href="../relnotes.html">release notes</link>.
         </p>
       </answer>
     </faq>
@@ -150,14 +150,14 @@
           The Jimi image library, which is used for processing images in PNG and
           other formats, was removed from the distribution for licensing
           reasons. You have to <fork href="http://java.sun.com">download</fork>
-          and <link>install</link> it by yourself.
+          and install it by yourself.
         </p>
       </answer>
     </faq>
     <faq>
       <question>I get a NoClassDefFound exception.</question>
       <answer>
-        <p>This is typically a problem with your <link>classpath</link>.</p>
+        <p>This is typically a problem with your classpath.</p>
         <p>If you are running FOP from the command line:</p>
         <ul>
           <li>
@@ -207,11 +207,11 @@
         </p>
         <ul>
           <li>
-            Avoid forward <link>references</link>. Forward references cause all
+            Avoid forward references. Forward references cause all
             pages from the page with the reference on to be held in memory until
             the page with the referenced element is encountered. Common forward
             references are table of contents at the beginning of the document
-            and the <link>"page N of TOTAL"</link> in footers. Forward
+            and the <link href="#pagenum">"page N of TOTAL"</link> in footers. Forward
             references may be required by the task, however, if you are getting
             a memory overflow you should at least check whether this is really
             as necessary as claimed. A TOC, for example, could often be placed
@@ -233,7 +233,7 @@
             possibly be freed after the page sequence has been rendered.
           </li>
           <li>
-            Increase <link>memory settings of the JVM</link>. Be aware that it
+            Increase memory settings of the JVM. Be aware that it
             is usually unwise to increase the memory allocated to the JVM beyond
             the amount of physical RAM, it will significantly slow down. YMMV.
           </li>
@@ -246,15 +246,12 @@
           in the available space, like big images and improperly specified width
           of nested block elements. Look for such stuff and correct it.
         </p>
-        <p>
-          Reducing memory consumption in general and squishing bugs is an
-          ongoing effort, partially addressed in the <link>redesign</link>.
-        </p>
       </answer>
     </faq>
     <faq>
       <question>I get a MalformedURLException.</question>
       <answer>
+        <anchor id="MalformedURL"/>
         <p>
           What you probably think of as "file names" are usually URLs, in
           particular the src attribute of fo:external-graphic.
@@ -364,12 +361,11 @@
           not a file name.
         </p>
         <p>
-          Relative URLs are resolved against the baseDir property of FOP. For
-          the command line FOP application, the baseDir is the directory of the
+          Relative URLs are resolved against a base url. For
+          the command line FOP application, the base is the directory of the
           input file, either the FO file or the XML source. If FOP is used
-          embedded in a servlet, <link>baseDir can be set explicitely</link>. If
-          it's not set, it is usually the current working directory of the
-          process which runs FOP.
+          embedded in a servlet you will need to set the base url on
+          the user agent.
         </p>
         <p>
           See <link>Understanding URIs and URLs</link> and <link>Understanding
@@ -624,14 +620,13 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       </answer>
     </faq>
     <faq>
-      <question>How do I set the baseDir property in a servlet environment?</question>
+      <question>How do I set the base URL in a servlet environment?</question>
       <answer>
         <p>
           Use:
         </p>
         <p>
           You need to use the FOUserAgent that contains a base url.
-          for caveats.
         </p>
       </answer>
     </faq>
@@ -797,7 +792,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
           but also some effort by a standard committee in order to make the
           semantics of this kind of references in embedded SVG clearer.
         </p>
-        <p>See also <link>MalformedURLException</link></p>
+        <p>See also <link href="#MalformedURL">MalformedURLException</link></p>
       </answer>
     </faq>
   </part>
@@ -1181,6 +1176,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       <question>(FO) How do I print the total number of pages, like in "page 1
       of 12"</question>
       <answer>
+        <anchor id="pagenum"/>
         <p>
           (XSL FAQ)
         </p>
@@ -1334,7 +1330,7 @@ class rendtest {
           offending characters.
         </p>
         <p>
-          Refer to the <link>XML specification</link> or to a good tutorial for
+          Refer to the <link href="../resources.html">XML specification</link> or to a good tutorial for
           details of the XML file format.
         </p>
       </answer>
