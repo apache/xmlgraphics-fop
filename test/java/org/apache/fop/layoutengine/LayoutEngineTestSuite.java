@@ -32,6 +32,7 @@ import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
+import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
@@ -70,8 +71,12 @@ public class LayoutEngineTestSuite {
         
         IOFileFilter filter;
         String single = System.getProperty("fop.layoutengine.single");
+        String startsWith = System.getProperty("fop.layoutengine.starts-with");
         if (single != null) {
             filter = new NameFileFilter(single);
+        } else if (startsWith != null) {
+            filter = new PrefixFileFilter(startsWith);
+            filter = new AndFileFilter(filter, new SuffixFileFilter(".xml"));
         } else {
             filter = new SuffixFileFilter(".xml");
             String disabled = System.getProperty("fop.layoutengine.disabled");
