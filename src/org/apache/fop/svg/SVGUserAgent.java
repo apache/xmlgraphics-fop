@@ -141,6 +141,10 @@ public class SVGUserAgent implements UserAgent {
         return false;
     }
 
+    public boolean isXMLParserValidating() {
+        return true;
+    }
+
     public void registerExtension(BridgeExtension be) {}
 
     public void handleElement(Element elt, Object data) {}

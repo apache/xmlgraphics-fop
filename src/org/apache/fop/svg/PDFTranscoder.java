@@ -313,6 +313,10 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
      */
     protected class ImageTranscoderUserAgent implements UserAgent {
 
+    public boolean isXMLParserValidating() {
+        return true;
+    }
+
         /**
          * Returns the default size of this user agent (400x400).
          */
