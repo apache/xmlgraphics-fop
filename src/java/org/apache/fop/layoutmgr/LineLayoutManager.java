@@ -19,14 +19,12 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.hyphenation.Hyphenation;
 import org.apache.fop.hyphenation.Hyphenator;
-import org.apache.fop.traits.BlockProps;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Resolveable;
 
@@ -50,25 +48,24 @@ import org.apache.fop.traits.MinOptMax;
  * child layout managers.
  */
 public class LineLayoutManager extends InlineStackingLayoutManager {
-
+    private Block fobj; 
+    
     /**
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
     protected void initProperties() {
-        PropertyManager pm = fobj.getPropertyManager();
-        CommonMarginBlock marginProps = pm.getMarginProps();
-        iIndents = marginProps.startIndent + marginProps.endIndent;
-        BlockProps blockProps = pm.getBlockProps();
-        bTextAlignment = blockProps.textAlign;
-        bTextAlignmentLast = blockProps.textAlignLast;
+        CommonMarginBlock marginProps = fobj.getCommonMarginBlock();
+        bTextAlignment = fobj.getTextAlign();
+        bTextAlignmentLast = fobj.getTextAlignLast();
+        textIndent = fobj.getTextIndent();
+        hyphProps = fobj.getCommonHyphenation();
+        
         //
         if (bTextAlignment != JUSTIFY && bTextAlignmentLast == JUSTIFY) {
             effectiveAlignment = 0;
         } else {
             effectiveAlignment = bTextAlignment;
         }
-        textIndent = blockProps.firstIndent;
-        hyphProps = pm.getHyphenationProps();
     }
 
     /**
@@ -105,7 +102,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     private int bTextAlignmentLast;
     private int effectiveAlignment;
     private Length textIndent;
-    private int iIndents = 0;
     private CommonHyphenation hyphProps;
 
     private int lineHeight;
@@ -355,8 +351,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
      * @param l the default lead, from top to baseline
      * @param f the default follow, from baseline to bottom
      */
-    public LineLayoutManager(FObj node, int lh, int l, int f) {
+    public LineLayoutManager(Block node, int lh, int l, int f) {
         super(node);
+        fobj = node;
         // the child FObj are owned by the parent BlockLM
         // this LM has all its childLMs preloaded
         fobjIter = null;
