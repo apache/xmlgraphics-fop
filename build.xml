@@ -670,6 +670,12 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
         <package name="org.apache.fop.fonts"/>
         <package name="org.apache.fop.fonts.*"/>
       </group>
+      <classpath refid="libs-build-classpath"/>
+      <classpath>
+        <fileset dir="${lib.dir}">
+          <include name="ant*.jar"/>
+        </fileset>
+      </classpath>
     </javadoc>
   </target>
 
@@ -733,6 +739,18 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tar tarfile="${name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
     <gzip zipfile="${name}-${version}-src.tar.gz" src="${name}-${version}-src.tar" />
     <delete file="${name}-${version}-src.tar"/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Optional targets for Eclipse                                        -->
+  <!-- =================================================================== -->
+  <target name="src-jar" depends="prepare-src" description="Generates a source zip for Eclipse">
+    <jar jarfile="${build.dir}/${name}-src.jar">
+      <fileset dir="${build.src}">
+        <include name="**/*.java"/>
+      </fileset>
+    </jar>
 
   </target>
 
