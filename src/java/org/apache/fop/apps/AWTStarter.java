@@ -87,13 +87,7 @@ public class AWTStarter extends CommandLineStarter {
     }
 
     private void init() throws FOPException {
-        //Creates Translator according to the language
-        String language = commandLineOptions.getLanguage();
-        if (language == null) {
-            translator = new Translator(Locale.getDefault());
-        } else {
-            translator = new Translator(new Locale(language, ""));
-        }
+        translator = new Translator();
         AWTRenderer renderer = new AWTRenderer(translator);
         frame = createPreviewDialog(renderer, translator);
         renderer.setComponent(frame);

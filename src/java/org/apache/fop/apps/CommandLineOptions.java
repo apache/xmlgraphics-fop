@@ -53,6 +53,7 @@ package org.apache.fop.apps;
 // java
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Locale;
 
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
@@ -110,8 +111,6 @@ public class CommandLineOptions {
     private int inputmode = NOT_SET;
     /* output mode */
     private int outputmode = NOT_SET;
-    /* language for user information */
-    private String language = null;
 
     private java.util.HashMap rendererOptions;
 
@@ -233,7 +232,7 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("if you use '-l', you must specify a language");
         } else {
-            language = args[i + 1];
+            Locale.setDefault(new Locale(args[i + 1], ""));
             return 1;
         }
     }
@@ -496,7 +495,7 @@ public class CommandLineOptions {
         case XSLT_INPUT:
             return new XSLTInputHandler(xmlfile, xsltfile);
         default:
-            return new FOInputHandler(fofile);
+            throw new FOPException("Invalid inputmode setting!");
         }
     }
 
@@ -562,14 +561,6 @@ public class CommandLineOptions {
      */
     public File getUserConfigFile() {
         return userConfigFile;
-    }
-
-    /**
-     * Returns the default language
-     * @return the default language
-     */
-    public String getLanguage() {
-        return language;
     }
 
     /**
