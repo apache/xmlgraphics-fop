@@ -1,12 +1,16 @@
 @echo off
 
-echo Fop Build System
-echo ----------------
+echo Fop Servlet Build System
+echo --------------------------
 
 if "%JAVA_HOME%" == "" goto error
 
 set LIBDIR=../../lib
-set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;%LIBDIR%\ant.jar;%LIBDIR%\ant-1.3-optional.jar;%LIBDIR%\buildtools.jar;%LIBDIR%\xerces-1.4.3.jar;%LIBDIR%\xalan-2.2D11.jar
+set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\ant.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xml-apis.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xercesImpl-2.2.1.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xalan-2.4.1.jar
 
 set ANT_HOME=%LIBDIR%
 
