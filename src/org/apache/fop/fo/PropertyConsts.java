@@ -559,7 +559,7 @@ public class PropertyConsts {
         refineparsingmethods = new Method[PropNames.LAST_PROPERTY_INDEX + 1];
         mappednummethods     = new HashMap();
 
-        oneClass[0] = Integer.class;
+        oneClass[0] = int.class;
         twoClasses[0] = FONode.class;
         twoClasses[1] = PropertyValue.class;
 
@@ -630,9 +630,11 @@ public class PropertyConsts {
                 datatypes[i] = classes[i].getField("dataTypes").getInt(null);
                 refineparsingmethods[i] =
                             classes[i].getMethod("refineParsing", twoClasses);
-                if ((datatypes[i] & Properties.MAPPED_LENGTH) != 0)
+
+                if ((datatypes[i] & Properties.MAPPED_LENGTH) != 0) {
                     mappednummethods.put(Ints.consts.get(i),
                             classes[i].getMethod("getMappedLength", oneClass));
+                }
             }
             catch (NoSuchFieldException e) {
                 throw new RuntimeException(
