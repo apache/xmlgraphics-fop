@@ -1,0 +1,57 @@
+I'm building this test environment using jikes and optionally javac.
+No ant.
+
+The files are compiled in the source tree and the classes are
+collected under the build directory.  Although I have a minimal
+requirement as yet for any of the support facilities that are provided
+by the ant construction of the build sources, any that are required,
+like setting version information, are done manually in the files under
+the build directory.
+
+The environment for the build can be set up by copying the xml-fop
+tree from the web page, and adding the support jars to the xml-fop/lib
+directory.  I am currently building with the set of jars that were
+current at fop 0.19.
+
+To build, set the environment variables FOPDEV and JAVA_HOME.
+JAVA_HOME should be the directory under which the jre directory
+resides.  I have been compiling with the IBM 1.3 jdk under linux.
+FOPDEV is the path to the xml-fop directory under which src and build
+reside.  Then source the following files, found in the xml-fop/bin
+directory, in order
+
+. bin/.path.functions
+. bin/fopdevenv
+
+These are designed as Bourne and up shell files.  Unix only, I'm
+afraid.
+
+The fopcomp script is designed to execute from anywhere in the source
+tree where .java files may be found.  Make sure fopcomp is accessible
+via your PATH.  Then, e.g.,
+
+cd src/org/apache/fop/apps
+fopcomp Fop.java
+
+
+Running.
+
+N.B. As at the time of integrating this experimental code into the
+CVS tree, running will throw an exception.  Properties handling is
+in a state of flux.
+
+The code doesn't do much as yet, but to see what it does get up to, I
+use the extensions I have made to the config functionality.
+userconfig.xml is duly noted as the default user config file in
+config.xml.  In userconfig.xml I put my input mode, input file name
+and output file name.  Everything except fo->pdf has been stripped
+away at this stage, but it still has to be specified.  See
+build/conf/userconfig.xml for the way I have set up my simple test
+run.  I have a pre-constructed .fo file.  Note that no output is
+actually produced to a pdf file.
+
+To run, once my CLASSPATH environment is set up, I
+
+java org.apache.fop.apps.Fop
+
+possibly adding a -d flag.
