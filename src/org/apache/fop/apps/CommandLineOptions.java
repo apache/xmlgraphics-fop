@@ -50,6 +50,8 @@ public class CommandLineOptions {
     private static final int SVG_OUTPUT = 8;
     /* output: XML area tree */
     private static final int AREA_OUTPUT = 9;
+    /* output: RTF file */
+    private static final int RTF_OUTPUT = 10;
 
     /* show configuration information */
     Boolean dumpConfiguration = Boolean.FALSE;
@@ -180,6 +182,15 @@ public class CommandLineOptions {
                 if ((i + 1 == args.length)
                         || (args[i + 1].charAt(0) == '-')) {
                     throw new FOPException("you must specify the mif output file");
+                } else {
+                    outfile = new File(args[i + 1]);
+                    i++;
+                }
+            } else if (args[i].equals("-rtf")) {
+                setOutputMode(RTF_OUTPUT);
+                if ((i + 1 == args.length)
+                        || (args[i + 1].charAt(0) == '-')) {
+                    throw new FOPException("you must specify the rtf output file");
                 } else {
                     outfile = new File(args[i + 1]);
                     i++;
@@ -347,6 +358,8 @@ public class CommandLineOptions {
         case AREA_OUTPUT:
             rendererOptions.put("fineDetail", isCoarseAreaXml());
             return Driver.RENDER_XML;
+        case RTF_OUTPUT:
+            return Driver.RENDER_RTF;
         default:
             throw new FOPException("Invalid Renderer setting!");
         }
@@ -471,7 +484,7 @@ public class CommandLineOptions {
      * shows the commandline syntax including a summary of all available options and some examples
      */
     public static void printUsage() {
-        System.err.println("\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-ps|-txt|-at|-print] <outfile>\n"
+        System.err.println("\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-pcl|-ps|-txt|-at|-print] <outfile>\n"
                                + " [OPTIONS]  \n"
                                + "  -d          debug mode   \n"
                                + "  -x          dump configuration settings  \n"
@@ -489,6 +502,7 @@ public class CommandLineOptions {
                                + "  -pdf outfile      input will be rendered as pdf file (outfile req'd) \n"
                                + "  -awt              input will be displayed on screen \n"
                                + "  -mif outfile      input will be rendered as mif file (outfile req'd)\n"
+                               + "  -rtf outfile      input will be rendered as rtf file (outfile req'd)\n"
                                + "  -pcl outfile      input will be rendered as pcl file (outfile req'd) \n"
                                + "  -ps outfile       input will be rendered as PostScript file (outfile req'd) \n"
                                + "  -txt outfile      input will be rendered as text file (outfile req'd) \n"
@@ -500,6 +514,7 @@ public class CommandLineOptions {
                                + "  Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n"
                                + "  Fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf\n"
                                + "  Fop foo.fo -mif foo.mif\n"
+                               + "  Fop foo.fo -rtf foo.rtf\n"
                                + "  Fop foo.fo -print or Fop -print foo.fo \n"
                                + "  Fop foo.fo -awt \n");
     }
@@ -554,6 +569,10 @@ public class CommandLineOptions {
             break;
         case MIF_OUTPUT:
             log.debug("mif");
+            log.debug("output file: " + outfile.toString());
+            break;
+        case RTF_OUTPUT:
+            log.debug("rtf");
             log.debug("output file: " + outfile.toString());
             break;
         case PRINT_OUTPUT:

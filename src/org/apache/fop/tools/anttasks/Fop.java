@@ -205,6 +205,10 @@ class FOPTaskStarter extends Starter {
         } else if (format.equalsIgnoreCase("application/vnd.mif") ||
             format.equalsIgnoreCase("mif")) {
             return Driver.RENDER_MIF;
+        } else if (format.equalsIgnoreCase("application/msword") ||
+            format.equalsIgnoreCase("application/rtf") ||
+            format.equalsIgnoreCase("rtf")) {
+            return Driver.RENDER_RTF;
         } else if (format.equalsIgnoreCase("application/vnd.hp-PCL") ||
             format.equalsIgnoreCase("pcl")) {
             return Driver.RENDER_PCL;
@@ -230,6 +234,8 @@ class FOPTaskStarter extends Starter {
                 return ".ps";
             case Driver.RENDER_MIF:
                 return ".mif";
+            case Driver.RENDER_RTF:
+                return ".rtf";
             case Driver.RENDER_PCL:
                 return ".pcl";
             case Driver.RENDER_TXT:
