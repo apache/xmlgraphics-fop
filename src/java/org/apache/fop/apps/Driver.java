@@ -141,6 +141,11 @@ import java.io.OutputStream;
 public class Driver implements LogEnabled, FOTreeListener {
 
     /**
+     * private constant to indicate renderer was not defined.
+     */
+    private static final int NOT_SET = 0;
+
+    /**
      * Render to PDF. OutputStream must be set
      */
     public static final int RENDER_PDF = 1;
@@ -198,7 +203,7 @@ public class Driver implements LogEnabled, FOTreeListener {
     /**
      * the renderer type code given by setRenderer
      */
-    private int rendererType;
+    private int rendererType = NOT_SET;
 
     /**
      * the renderer to use to output the area tree
@@ -435,7 +440,8 @@ public class Driver implements LogEnabled, FOTreeListener {
             //foInputHandler will be set later
             break;
         default:
-            throw new IllegalArgumentException("Unknown renderer type");
+            rendererType = NOT_SET;
+            throw new IllegalArgumentException("Unknown renderer type " + renderer);
         }
     }
 
@@ -459,20 +465,6 @@ public class Driver implements LogEnabled, FOTreeListener {
      */
     public Renderer getRenderer() {
         return renderer;
-    }
-
-    /**
-     * Sets the renderer.
-     * @param rendererClassName the fully qualified classname of the renderer
-     * class to use.
-     * @param version version number
-     * @deprecated use renderer.setProducer(version) + setRenderer(renderer) or
-     * just setRenderer(rendererType) which will use the default producer string.
-     * @see #setRenderer(int)
-     * @see #setRenderer(Renderer)
-     */
-    public void setRenderer(String rendererClassName, String version) {
-        setRenderer(rendererClassName);
     }
 
     /**
@@ -668,8 +660,10 @@ public class Driver implements LogEnabled, FOTreeListener {
         if (!isInitialized()) {
             initialize();
         }
-        if (renderer == null) {
-            setRenderer(RENDER_PDF);
+
+        if (renderer == null && rendererType != RENDER_RTF 
+            && rendererType != RENDER_MIF) {
+                setRenderer(RENDER_PDF);
         }
 
         if (source == null) {
