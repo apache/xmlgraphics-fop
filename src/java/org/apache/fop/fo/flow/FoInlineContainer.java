@@ -138,7 +138,7 @@ public class FoInlineContainer extends FOPageSeqNode {
                 throw new FOPException
                         ("%block; not found in fo:inline-container");
             // Generate the flow object
-            FObjects.fobjects.makePageSeqFOChild(
+            FObjects.makePageSeqFOChild(
                     foTree, pageSequence, this, (FoXmlEvent)ev, stateFlags);
             // Clear the blockage
             ev = xmlevents.getEndElement(
@@ -152,7 +152,7 @@ public class FoInlineContainer extends FOPageSeqNode {
                     ev = xmlevents.expectOutOfLineBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makePageSeqFOChild(
+                    FObjects.makePageSeqFOChild(
                             foTree, pageSequence, this,
                             (FoXmlEvent)ev, stateFlags);
                     ev = xmlevents.getEndElement(

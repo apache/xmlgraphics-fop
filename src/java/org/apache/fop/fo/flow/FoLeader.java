@@ -147,7 +147,7 @@ public class FoLeader extends FOPageSeqNode {
                     ev = xmlevents.expectOutOfLinePcdataOrInline();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makePageSeqFOChild(
+                    FObjects.makePageSeqFOChild(
                             foTree, pageSequence, this,
                             ev, stateFlags | FONode.MC_LEADER);
                     if (ev.getType() != XmlEvent.CHARACTERS) {

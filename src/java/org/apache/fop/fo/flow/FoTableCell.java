@@ -137,7 +137,7 @@ public class FoTableCell extends FOPageSeqNode {
                 throw new FOPException
                         ("%block; not found in fo:table-cell");
             // Generate the flow object
-            FObjects.fobjects.makePageSeqFOChild(
+            FObjects.makePageSeqFOChild(
                     foTree, pageSequence, this,
                     (FoXmlEvent)ev, stateFlags);
             // Clear the blockage
@@ -151,7 +151,7 @@ public class FoTableCell extends FOPageSeqNode {
                     ev = xmlevents.expectOutOfLineBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makePageSeqFOChild(
+                    FObjects.makePageSeqFOChild(
                             foTree, pageSequence, this,
                             (FoXmlEvent)ev, stateFlags);
                     ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);

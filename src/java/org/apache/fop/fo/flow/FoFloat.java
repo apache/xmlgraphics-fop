@@ -117,7 +117,7 @@ public class FoFloat extends FOPageSeqNode {
                 throw new FOPException
                         ("%block; not found in fo:float");
             // Generate the flow object
-            FObjects.fobjects.makePageSeqFOChild(
+            FObjects.makePageSeqFOChild(
                     foTree, pageSequence, this, (FoXmlEvent)ev,
                     stateFlags | FONode.MC_FLOAT);
             // Clear the blockage
@@ -131,7 +131,7 @@ public class FoFloat extends FOPageSeqNode {
                     ev = xmlevents.expectOutOfLineBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makePageSeqFOChild(
+                    FObjects.makePageSeqFOChild(
                             foTree, pageSequence, this, (FoXmlEvent)ev,
                             stateFlags | FONode.MC_FLOAT);
                     ev = xmlevents.getEndElement(

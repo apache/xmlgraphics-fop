@@ -115,7 +115,7 @@ public class FoFootnoteBody extends FOPageSeqNode {
                 throw new FOPException
                         ("%block; not found in fo:footnote-body");
             // Generate the flow object
-            FObjects.fobjects.makePageSeqFOChild(
+            FObjects.makePageSeqFOChild(
                     foTree, pageSequence, this, (FoXmlEvent)ev, stateFlags);
             // Clear the blockage
             ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
@@ -128,7 +128,7 @@ public class FoFootnoteBody extends FOPageSeqNode {
                     ev = xmlevents.expectOutOfLineBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makePageSeqFOChild(
+                    FObjects.makePageSeqFOChild(
                             foTree, pageSequence, this,
                             (FoXmlEvent)ev, stateFlags);
                     ev = xmlevents.getEndElement(

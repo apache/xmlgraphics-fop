@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.Area;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOPageSeqNode;
@@ -98,7 +99,7 @@ public class FoFlow extends FOPageSeqNode {
             if ((ev = xmlevents.expectBlock()) == null)
                 throw new FOPException("%block; not found in fo:flow");
             // Generate the flow object
-            FObjects.fobjects.makePageSeqFOChild(
+            FObjects.makePageSeqFOChild(
                     foTree, pageSequence, this, (FoXmlEvent)ev,
                     FONode.FLOW_SET);
             // Clear the blockage
@@ -109,7 +110,7 @@ public class FoFlow extends FOPageSeqNode {
                 ev = xmlevents.expectBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makePageSeqFOChild(
+                    FObjects.makePageSeqFOChild(
                             foTree, parent, this, (FoXmlEvent)ev,
                             FONode.FLOW_SET);
                     ev = xmlevents.getEndElement(
@@ -124,4 +125,19 @@ public class FoFlow extends FOPageSeqNode {
         makeSparsePropsSet();
     }
 
+    public Area getReferenceRectangle() throws FOPException {
+        // TODO Reference rectangle is assumed to be the content rectangle of
+        // the first region into which the content is flowed.  For region-body
+        // it is normal-flow reference-area; for other regions it is the
+        // region-reference-area.  See
+        // 7.3 Reference Rectangle for Percentage Computations
+        throw new FOPException("Called from FoFlow");
+    }
+
+    public Area getLayoutContext() {
+        // The layout context for fo:flow is is the region-body-reference-area.
+        // TODO - the real version
+        Area context = null;
+        return context;
+    }
 }

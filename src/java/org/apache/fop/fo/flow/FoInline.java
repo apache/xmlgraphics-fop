@@ -138,7 +138,7 @@ public class FoInline extends FOPageSeqNode {
                 if (ev != null) {
                     // Generate the flow object
                     //System.out.println("Generating flow object for " + ev);
-                    FObjects.fobjects.makePageSeqFOChild(
+                    FObjects.makePageSeqFOChild(
                             foTree, pageSequence, this, ev, stateFlags);
                     if (ev.getType() != XmlEvent.CHARACTERS) {
                         ev = xmlevents.getEndElement(
