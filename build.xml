@@ -121,7 +121,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.13"/>
+    <property name="version" value="0.15cvs"/>
     <property name="year" value="1999-2000"/>
 
     <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>

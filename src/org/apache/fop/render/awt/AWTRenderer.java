@@ -29,6 +29,7 @@ import java.awt.geom.*;
 import java.awt.font.*;
 import java.util.*;
 import java.net.URL;
+import java.net.MalformedURLException;
 import java.io.*;
 import java.beans.*;
 import javax.swing.*;
@@ -458,124 +459,133 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
   }
 
 
-  public void renderImageArea(ImageArea area) {
-    int x = this.currentAreaContainerXPosition +
-        area.getXOffset();
-    int y = this.currentYPosition;
-    int w = area.getContentWidth();
-    int h = area.getHeight();
-
-    FopImage img = area.getImage();
-
-      if (img == null) {
-	    MessageHandler.logln("area.getImage() is null");
-      }
-
-	try {
-		byte[] map = img.getBitmaps();
-
-		String path = img.getURL();
-
-      ImageIcon icon = new ImageIcon(path);
-      Image imgage = icon.getImage();
-
-      graphics.drawImage(imgage, currentXPosition / 1000,
-                         pageHeight - y / 1000,
-                         img.getWidth() / 1000,
-                         img.getHeight() / 1000,
-                         null);
-
-    currentYPosition -= h;
-	} catch (FopImageException imgex) {
-		// ?
-		MessageHandler.logln("Error while loading image : " + imgex.getMessage());
+  	public void renderImageArea(ImageArea area) {
+		int x = currentAreaContainerXPosition +
+			area.getXOffset();
+		int y = currentYPosition;
+		int w = area.getContentWidth();
+		int h = area.getHeight();
+		
+		FopImage img = area.getImage();
+		
+		if (img == null) {
+			MessageHandler.logln("Error while loading image : area.getImage() is null");
+			graphics.drawRect(x / 1000,
+					   pageHeight - y / 1000,
+					   w / 1000,
+					   h / 1000);
+			java.awt.Font f = graphics.getFont();
+			java.awt.Font smallFont = new java.awt.Font(f.getFontName(),f.getStyle(),8);
+			graphics.setFont(smallFont);
+			graphics.drawString("area.getImage() is null", x / 1000, pageHeight - y / 1000);	
+			graphics.setFont(f);
+		} else {
+			
+			String urlString = img.getURL();
+			try {
+				URL url = new URL(urlString);
+				
+				ImageIcon icon = new ImageIcon(url);
+				Image image = icon.getImage();
+				
+				graphics.drawImage(image, x / 1000,
+						   pageHeight - y / 1000,
+						   w / 1000,
+						   h / 1000,
+						   null);
+			} catch(MalformedURLException mue) {
+				// cannot normally occur because, if URL is wrong, constructing FopImage
+				// will already have failed earlier on
+			}
+		}
+		
+		currentYPosition -= h;
 	}
-    }
 
   public void renderInlineArea(InlineArea area) {
-    char ch;
-    StringBuffer pdf = new StringBuffer();
+	char ch;
+	StringBuffer pdf = new StringBuffer();
 
-    String name = area.getFontState().getFontName();
-    int size = area.getFontState().getFontSize();
+	String name = area.getFontState().getFontName();
+	int size = area.getFontState().getFontSize();
 
-    float red = area.getRed();
-    float green = area.getGreen();
-    float blue = area.getBlue();
+	float red = area.getRed();
+	float green = area.getGreen();
+	float blue = area.getBlue();
 
-    if ((!name.equals(this.currentFontName))
-        || (size != this.currentFontSize)) {
-        this.currentFontName = name;
-        this.currentFontSize = size;
-    }
+	if ((!name.equals(this.currentFontName))
+		|| (size != this.currentFontSize)) {
+		this.currentFontName = name;
+		this.currentFontSize = size;
+	}
 
-    if ((red != this.currentRed)
-        || (green != this.currentGreen)
-        || (blue != this.currentBlue)) {
-        this.currentRed = red;
-        this.currentGreen = green;
-        this.currentBlue = blue;
-    }
+	if ((red != this.currentRed)
+		|| (green != this.currentGreen)
+		|| (blue != this.currentBlue)) {
+		this.currentRed = red;
+		this.currentGreen = green;
+		this.currentBlue = blue;
+	}
 
-    int rx = this.currentXPosition;
-    int bl = this.currentYPosition;
+	int rx = this.currentXPosition;
+	int bl = this.currentYPosition;
 
 
-    String s = area.getText();
-    Color oldColor = graphics.getColor();
-    java.awt.Font oldFont = graphics.getFont();
-    String aFontName = fontNames.get(name).toString();
+	String s = area.getText();
+	Color oldColor = graphics.getColor();
+	java.awt.Font oldFont = graphics.getFont();
+	String aFontName = fontNames.get(name).toString();
 
-    aFontName = getJavaFontName(aFontName);
+	aFontName = getJavaFontName(aFontName);
 
 	java.awt.Font f =
-	    new java.awt.Font(aFontName,
-                                        ((Integer)fontStyles.get(name)).intValue(),
-                                        (int)(size / 1000f));
+		new java.awt.Font(aFontName,
+										((Integer)fontStyles.get(name)).intValue(),
+										(int)(size / 1000f));
 
-    graphics.setColor(new Color(red, green, blue));
+	graphics.setColor(new Color(red, green, blue));
 
-    /*
-    Die KLasse TextLayout nimmt für die Ausgabe eigenen Schriftsatz,
-    der i.R. breiter ist. Deshalb wird bis diese Tatsache sich geklärt/
-    geregelt hat weniger schöne Ausgabe über Graphics benutzt.
-    */
+	/*
+	Die KLasse TextLayout nimmt für die Ausgabe eigenen Schriftsatz,
+	der i.R. breiter ist. Deshalb wird bis diese Tatsache sich geklärt/
+	geregelt hat weniger schöne Ausgabe über Graphics benutzt.
+	*/
 
 	// Fonts in bold still have trouble displaying!
 	FontRenderContext newContext = new FontRenderContext(null, true, true);
-    TextLayout layout = new TextLayout(s, f, newContext);
+	TextLayout layout = new TextLayout(s, f, newContext);
 	graphics.setRenderingHint(RenderingHints.KEY_RENDERING,
 				  RenderingHints.VALUE_RENDER_QUALITY);
-    layout.draw(graphics, rx / 1000f, (int)(pageHeight - bl / 1000f));
+	layout.draw(graphics, rx / 1000f, (int)(pageHeight - bl / 1000f));
 
 	graphics.setColor(oldColor);
-    this.currentXPosition += area.getContentWidth();
+	this.currentXPosition += area.getContentWidth();
   }
 
   public void renderInlineSpace(InlineSpace space) {
-    this.currentXPosition += space.getSize();
+	this.currentXPosition += space.getSize();
   }
 
   public void renderLineArea(LineArea area) {
-    int rx = this.currentAreaContainerXPosition
-        + area.getStartIndent();
-    int ry = this.currentYPosition;
-    int w = area.getContentWidth();
-    int h = area.getHeight();
+	int rx = this.currentAreaContainerXPosition
+		+ area.getStartIndent();
+	int ry = this.currentYPosition;
+	int w = area.getContentWidth();
+	int h = area.getHeight();
 
-    this.currentYPosition -= area.getPlacementOffset();
-    this.currentXPosition = rx;
+	this.currentYPosition -= area.getPlacementOffset();
+	this.currentXPosition = rx;
 
-    int bl = this.currentYPosition;
+	int bl = this.currentYPosition;
 
-    Enumeration e = area.getChildren().elements();
-    while (e.hasMoreElements()) {
-	    org.apache.fop.layout.Box b =
+	Enumeration e = area.getChildren().elements();
+	while (e.hasMoreElements()) {
+		org.apache.fop.layout.Box b =
 		(org.apache.fop.layout.Box) e.nextElement();
-        b.render(this);
-    }
+		b.render(this);
+	}
 
-    this.currentYPosition = ry-h;
+	this.currentYPosition = ry-h;
   }
 
   /**
@@ -584,107 +594,107 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
    * @param area area to render
    */
   public void renderRuleArea(RuleArea area) {
-    int rx = this.currentAreaContainerXPosition
-        + area.getStartIndent();
-    int ry = this.currentYPosition;
-    int w = area.getContentWidth();
-    int h = area.getHeight();
-    int th = area.getRuleThickness();
-    float r = area.getRed();
-    float g = area.getGreen();
-    float b = area.getBlue();
-    Color oldColor = graphics.getColor();
+	int rx = this.currentAreaContainerXPosition
+		+ area.getStartIndent();
+	int ry = this.currentYPosition;
+	int w = area.getContentWidth();
+	int h = area.getHeight();
+	int th = area.getRuleThickness();
+	float r = area.getRed();
+	float g = area.getGreen();
+	float b = area.getBlue();
+	Color oldColor = graphics.getColor();
 
-    graphics.setColor(new Color(r, g, b));
-    graphics.fillRect((int)(rx / 1000f), (int)(pageHeight - ry / 1000f),
-                      (int)(w / 1000f), (int)(th / 1000f));
-    graphics.setColor(oldColor);
+	graphics.setColor(new Color(r, g, b));
+	graphics.fillRect((int)(rx / 1000f), (int)(pageHeight - ry / 1000f),
+					  (int)(w / 1000f), (int)(th / 1000f));
+	graphics.setColor(oldColor);
 
   }
 
   public void renderSVGArea(SVGArea area) {
 
-    int x = this.currentAreaContainerXPosition;
-    int y = this.currentYPosition;
-    int w = area.getContentWidth();
-    int h = area.getHeight();
+	int x = this.currentAreaContainerXPosition;
+	int y = this.currentYPosition;
+	int w = area.getContentWidth();
+	int h = area.getHeight();
 
-    Enumeration e = area.getChildren().elements();
+	Enumeration e = area.getChildren().elements();
 	while (e.hasMoreElements()) {
-            Object o = e.nextElement();
-	    if(o instanceof GraphicImpl) {
-	      renderElement(area, (GraphicImpl)o, x, y, null);
-	     }
+			Object o = e.nextElement();
+		if(o instanceof GraphicImpl) {
+		  renderElement(area, (GraphicImpl)o, x, y, null);
+		 }
 	}
 
-    this.currentYPosition -= h;
+	this.currentYPosition -= h;
 
-    }
+	}
 
 
   protected String getJavaFontName(String aName) {
-    if (aName == null)
-      return null;
+	if (aName == null)
+	  return null;
 
-    Object o = JAVA_FONT_NAMES.get(aName);
+	Object o = JAVA_FONT_NAMES.get(aName);
 
-    return (o == null) ? aName : o.toString();
+	return (o == null) ? aName : o.toString();
   }
 
   public void setProducer(String producer) {
 	// defined in Renderer Interface
-    }
+	}
 
-    public int print(Graphics g, PageFormat pageFormat, int pageIndex)
+	public int print(Graphics g, PageFormat pageFormat, int pageIndex)
 	throws PrinterException {
-    if (pageIndex >= tree.getPages().size())
-      return NO_SUCH_PAGE;
+	if (pageIndex >= tree.getPages().size())
+	  return NO_SUCH_PAGE;
 
-    Graphics2D oldGraphics = graphics;
-    int oldPageNumber = pageNumber;
+	Graphics2D oldGraphics = graphics;
+	int oldPageNumber = pageNumber;
 
-    graphics = (Graphics2D)g;
-    Page aPage = (Page)tree.getPages().elementAt(pageIndex);
-    renderPage(aPage);
-    graphics = oldGraphics;
+	graphics = (Graphics2D)g;
+	Page aPage = (Page)tree.getPages().elementAt(pageIndex);
+	renderPage(aPage);
+	graphics = oldGraphics;
 
-    return PAGE_EXISTS;
+	return PAGE_EXISTS;
   }
 
   public int getNumberOfPages() {
-    return tree.getPages().size();
+	return tree.getPages().size();
   }
 
-    public PageFormat getPageFormat(int pageIndex)
+	public PageFormat getPageFormat(int pageIndex)
 	throws IndexOutOfBoundsException {
-    if (pageIndex >= tree.getPages().size())
-      return null;
+	if (pageIndex >= tree.getPages().size())
+	  return null;
 
-    Page page = (Page)tree.getPages().elementAt(pageIndex);
-    PageFormat pageFormat = new PageFormat();
-    Paper paper = new Paper();
+	Page page = (Page)tree.getPages().elementAt(pageIndex);
+	PageFormat pageFormat = new PageFormat();
+	Paper paper = new Paper();
 	paper.setImageableArea(0, 0,
-			       page.getWidth() / 1000d, page.getHeight() / 1000d);
-    paper.setSize(page.getWidth() / 1000d, page.getHeight() / 1000d);
-    pageFormat.setPaper(paper);
+				   page.getWidth() / 1000d, page.getHeight() / 1000d);
+	paper.setSize(page.getWidth() / 1000d, page.getHeight() / 1000d);
+	pageFormat.setPaper(paper);
 
-    return pageFormat;
+	return pageFormat;
   }
 
-    public Printable getPrintable(int pageIndex)
+	public Printable getPrintable(int pageIndex)
 	throws IndexOutOfBoundsException {
-    return this;
+	return this;
   }
 
   public void setProgressListener(ProgressListener l) {
-    progressListener = l;
+	progressListener = l;
   }
 
   public static Color colorType2Color(ColorType ct) {
-    if (ct == null) {
-      return null;
-    }
-    return new Color(ct.red(), ct.green(), ct.blue());
+	if (ct == null) {
+	  return null;
+	}
+	return new Color(ct.red(), ct.green(), ct.blue());
   }
 
 
@@ -694,79 +704,79 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
    * TODO: protect other image formats (JIMI)
    */
   public void renderImage(String href, float x, float y, float width, float height, Vector transform) {
-    // What is with transformations?
-    try {
-      URL url = new URL(href);
-      ImageIcon imageIcon = new ImageIcon(url);
+	// What is with transformations?
+	try {
+	  URL url = new URL(href);
+	  ImageIcon imageIcon = new ImageIcon(url);
 
-      AffineTransform fullTransform = new AffineTransform();
-      AffineTransform aTransform;
+	  AffineTransform fullTransform = new AffineTransform();
+	  AffineTransform aTransform;
 
-      transform = (transform == null) ? new Vector() : transform;
-      for (int i = 0; i < transform.size(); i++) {
-        org.w3c.dom.svg.SVGTransform t = (org.w3c.dom.svg.SVGTransform)transform.elementAt(i);
-        SVGMatrix matrix = t.getMatrix();
-        aTransform = new AffineTransform(matrix.getA(), matrix.getB(), matrix.getC(),
-                                 matrix.getD(), matrix.getE(), matrix.getF());
-        fullTransform.concatenate(aTransform);
-      }
+	  transform = (transform == null) ? new Vector() : transform;
+	  for (int i = 0; i < transform.size(); i++) {
+		org.w3c.dom.svg.SVGTransform t = (org.w3c.dom.svg.SVGTransform)transform.elementAt(i);
+		SVGMatrix matrix = t.getMatrix();
+		aTransform = new AffineTransform(matrix.getA(), matrix.getB(), matrix.getC(),
+								 matrix.getD(), matrix.getE(), matrix.getF());
+		fullTransform.concatenate(aTransform);
+	  }
 
-      BufferedImage bi = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_RGB);
-      Graphics2D g2d = bi.createGraphics();
-      BufferedImageOp bop = new AffineTransformOp(fullTransform,
-                                AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-      g2d.drawImage(imageIcon.getImage(), 0, 0, (int) width, (int) height, imageIcon.getImageObserver());
-      graphics.drawImage(bi, bop, (int) x, (int) y);
-    } catch (Exception ex) {
-      MessageHandler.errorln("AWTRenderer: renderImage(): " + ex.getMessage());
-    }
+	  BufferedImage bi = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_RGB);
+	  Graphics2D g2d = bi.createGraphics();
+	  BufferedImageOp bop = new AffineTransformOp(fullTransform,
+								AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+	  g2d.drawImage(imageIcon.getImage(), 0, 0, (int) width, (int) height, imageIcon.getImageObserver());
+	  graphics.drawImage(bi, bop, (int) x, (int) y);
+	} catch (Exception ex) {
+	  MessageHandler.errorln("AWTRenderer: renderImage(): " + ex.getMessage());
+	}
   }
 
 
 
   public void renderElement(SVGArea svgarea, GraphicImpl area, int posx, int posy,
-                            Vector parentTransforms)  {
+							Vector parentTransforms)  {
 		int x = posx;
 		int y = posy;
 		Hashtable style = area.oldgetStyle();
 		DrawingInstruction di = createInstruction(area, style);
 
-        Object o = null;
-        Vector v = area.oldgetTransform();
-        v = (v == null) ? new Vector() : v;
-        Vector trans = new Vector(v);
-        parentTransforms = (parentTransforms == null) ? new Vector() : parentTransforms;
+		Object o = null;
+		Vector v = area.oldgetTransform();
+		v = (v == null) ? new Vector() : v;
+		Vector trans = new Vector(v);
+		parentTransforms = (parentTransforms == null) ? new Vector() : parentTransforms;
 
-        if (parentTransforms != null) {
-          trans.addAll(0, parentTransforms);
-        }
+		if (parentTransforms != null) {
+		  trans.addAll(0, parentTransforms);
+		}
 
 		float red = (float) graphics.getColor().getRed();
 		float green = (float) graphics.getColor().getGreen();
 		float blue = (float) graphics.getColor().getBlue();
-        Color c = null;
+		Color c = null;
 
-        ColorType ct = null;
-        try {
-          o = style.get("fill");
-          if (o != null && o instanceof ColorType) {
-            ct = (ColorType) o;
-            c = new Color((int) (ct.red() * 255f), (int) (ct.green() * 255f), (int) (ct.blue() * 255f));
-          }
-          o = style.get("stroke");
-          if (c == null && o != null && o instanceof ColorType) {
-            ct = (ColorType) o;
-            c = new Color((int) (ct.red() * 255f), (int) (ct.green() * 255f), (int) (ct.blue() * 255f));
-            }
-        } catch (Exception ex) {
-          MessageHandler.errorln("Can't set color: R G B : " + (int) (ct.red() * 255f) + " " + (int) (ct.green() * 255f) + " " + (int) (ct.blue() * 255f));
-          c = Color.pink;
-        }
+		ColorType ct = null;
+		try {
+		  o = style.get("fill");
+		  if (o != null && o instanceof ColorType) {
+			ct = (ColorType) o;
+			c = new Color((int) (ct.red() * 255f), (int) (ct.green() * 255f), (int) (ct.blue() * 255f));
+		  }
+		  o = style.get("stroke");
+		  if (c == null && o != null && o instanceof ColorType) {
+			ct = (ColorType) o;
+			c = new Color((int) (ct.red() * 255f), (int) (ct.green() * 255f), (int) (ct.blue() * 255f));
+			}
+		} catch (Exception ex) {
+		  MessageHandler.errorln("Can't set color: R G B : " + (int) (ct.red() * 255f) + " " + (int) (ct.green() * 255f) + " " + (int) (ct.blue() * 255f));
+		  c = Color.pink;
+		}
 
-        if (c == null) {
-          c = new Color((int) red, (int) green, (int) blue);
-        }
-        Color oldColor = graphics.getColor();
+		if (c == null) {
+		  c = new Color((int) red, (int) green, (int) blue);
+		}
+		Color oldColor = graphics.getColor();
 
 		if (area instanceof SVGLineElement) {
 			graphics.setColor(c);
@@ -777,14 +787,14 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 			float x2 = lg.getX2().getBaseVal().getValue() * 1000 + posx;
 			float y2 = posy - lg.getY2().getBaseVal().getValue() * 1000;
 			// TODO:
-            // The thickness of contour protect.
+			// The thickness of contour protect.
    			int th = 1;
    			o = style.get("stroke-width");
-      	    if (o != null)
-              th = (int)((SVGLengthImpl)o).getValue();
-            Line2D.Double aLine = new Line2D.Double(x1 / 1000f, pageHeight - y1 / 1000f,
-                                                    x2 / 1000f, pageHeight - y2 / 1000f);
-            drawShape(transformShape(trans, aLine), di);
+	  		if (o != null)
+			  th = (int)((SVGLengthImpl)o).getValue();
+			Line2D.Double aLine = new Line2D.Double(x1 / 1000f, pageHeight - y1 / 1000f,
+													x2 / 1000f, pageHeight - y2 / 1000f);
+			drawShape(transformShape(trans, aLine), di);
 			graphics.setColor(oldColor);
   		} else if (area instanceof SVGRectElement) {
 			graphics.setColor(c);
@@ -796,12 +806,12 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 			float rw = rg.getWidth().getBaseVal().getValue() * 1000;
 			float rh = rg.getHeight().getBaseVal().getValue() * 1000;
 
-            // TODO:
+			// TODO:
 			// rx and ry are roundings.
-            // RoundRectangle2D.Double
-            Rectangle aRectangle = new Rectangle();
-            aRectangle.setRect(rectx / 1000d, pageHeight - recty / 1000d, rw / 1000d, rh / 1000d);
-            drawShape(transformShape(trans, aRectangle), di);
+			// RoundRectangle2D.Double
+			Rectangle aRectangle = new Rectangle();
+			aRectangle.setRect(rectx / 1000d, pageHeight - recty / 1000d, rw / 1000d, rh / 1000d);
+			drawShape(transformShape(trans, aRectangle), di);
 			graphics.setColor(oldColor);
 		} else if (area instanceof SVGCircleElement) {
 			graphics.setColor(c);
@@ -809,10 +819,10 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 			float cx = cg.getCx().getBaseVal().getValue() * 1000 + posx;
 			float cy = posy - cg.getCy().getBaseVal().getValue() * 1000;
 			float r = cg.getR().getBaseVal().getValue();
-            Ellipse2D.Double anEllipse = new Ellipse2D.Double(cx / 1000d - r,
-                                                              pageHeight - cy / 1000d - r,
-                                                              r * 2d, r * 2d);
-            drawShape(transformShape(trans, anEllipse), di);
+			Ellipse2D.Double anEllipse = new Ellipse2D.Double(cx / 1000d - r,
+															  pageHeight - cy / 1000d - r,
+															  r * 2d, r * 2d);
+			drawShape(transformShape(trans, anEllipse), di);
 			graphics.setColor(oldColor);
 		} else if (area instanceof SVGEllipseElement) {
 			graphics.setColor(c);
@@ -821,10 +831,10 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 			float cy = posy - cg.getCy().getBaseVal().getValue() * 1000;
 			float rx = cg.getRx().getBaseVal().getValue();
 			float ry = cg.getRy().getBaseVal().getValue();
-            Ellipse2D.Double anEllipse = new Ellipse2D.Double(cx / 1000d - rx,
-                                                              pageHeight - cy / 1000d - ry,
-                                                              rx * 2d, ry * 2d);
-            drawShape(transformShape(trans, anEllipse), di);
+			Ellipse2D.Double anEllipse = new Ellipse2D.Double(cx / 1000d - rx,
+															  pageHeight - cy / 1000d - ry,
+															  rx * 2d, ry * 2d);
+			drawShape(transformShape(trans, anEllipse), di);
 			graphics.setColor(oldColor);
 		}  else if (area instanceof SVGImageElementImpl) {
 			SVGImageElementImpl ig = (SVGImageElementImpl)area;
@@ -849,41 +859,41 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 			}
 		}  else if (area instanceof SVGPolylineElementImpl) {
 		   graphics.setColor(c);
-           Vector points = ((SVGPolylineElementImpl)area).points;
-           PathPoint p = null;
-           Point2D.Double p1 = null;
-           Point2D.Double p2 = null;
-           if (points.size() > 0) {
-             p = (PathPoint) points.elementAt(0);
-             double xc = p.x * 1000f + posx;
-             double yc = posy - p.y * 1000f;
-             p1 = new Point2D.Double(xc / 1000f, pageHeight - yc / 1000f);
+		   Vector points = ((SVGPolylineElementImpl)area).points;
+		   PathPoint p = null;
+		   Point2D.Double p1 = null;
+		   Point2D.Double p2 = null;
+		   if (points.size() > 0) {
+			 p = (PathPoint) points.elementAt(0);
+			 double xc = p.x * 1000f + posx;
+			 double yc = posy - p.y * 1000f;
+			 p1 = new Point2D.Double(xc / 1000f, pageHeight - yc / 1000f);
 
-             int[] xarr = {(int) xc};
-             int[] yarr = {(int) yc};
-             graphics.drawPolyline(xarr, yarr, 1);
-           }
-           Line2D.Double aLine;
-           for (int i = 1; i< points.size(); i++) {
-             p = (PathPoint) points.elementAt(i);
-             p2 = new Point2D.Double(p.x + posx / 1000f, pageHeight - (posy - p.y * 1000f) /  1000f);
-             aLine = new Line2D.Double(p1, p2);
-             graphics.draw(transformShape(trans, aLine));
-             p1 = p2;
-           }
+			 int[] xarr = {(int) xc};
+			 int[] yarr = {(int) yc};
+			 graphics.drawPolyline(xarr, yarr, 1);
+		   }
+		   Line2D.Double aLine;
+		   for (int i = 1; i< points.size(); i++) {
+			 p = (PathPoint) points.elementAt(i);
+			 p2 = new Point2D.Double(p.x + posx / 1000f, pageHeight - (posy - p.y * 1000f) /  1000f);
+			 aLine = new Line2D.Double(p1, p2);
+			 graphics.draw(transformShape(trans, aLine));
+			 p1 = p2;
+		   }
 		  graphics.setColor(oldColor);
 		} else if (area instanceof SVGPolygonElementImpl) {
 			graphics.setColor(c);
-            java.awt.Polygon aPolygon = convertPolygon(((SVGPolygonElementImpl)area), posx, posy);
-            drawShape(transformShape(trans, aPolygon), di);
+			java.awt.Polygon aPolygon = convertPolygon(((SVGPolygonElementImpl)area), posx, posy);
+			drawShape(transformShape(trans, aPolygon), di);
 			graphics.setColor(oldColor);
 		}  else if (area instanceof SVGGElementImpl) {
 			renderGArea(svgarea, (SVGGElementImpl)area, x, y, parentTransforms);
 		} else if (area instanceof SVGPathElementImpl) {
-          graphics.setColor(c);
-          GeneralPath path = convertPath((SVGPathElementImpl) area, posx, posy);
-          drawShape(transformShape(trans, path), di);
-          graphics.setColor(oldColor);
+		  graphics.setColor(c);
+		  GeneralPath path = convertPath((SVGPathElementImpl) area, posx, posy);
+		  drawShape(transformShape(trans, path), di);
+		  graphics.setColor(oldColor);
 		} else if (area instanceof SVGTextElementImpl) {
 			MessageHandler.errorln("SVGTextElementImpl  is not implemented yet.");
 			// renderText(svgarea, (SVGTextElementImpl)area, 0, 0, di);
@@ -893,7 +903,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 			while (e.hasMoreElements()) {
 				Object el = e.nextElement();
 				if(o instanceof GraphicImpl) {
-                    renderElement((SVGArea)area, (GraphicImpl)el, x, y, parentTransforms);
+					renderElement((SVGArea)area, (GraphicImpl)el, x, y, parentTransforms);
 				}
 			}
 		}
@@ -907,7 +917,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
 
   Vector trans = null;
-//    trans = new Vector(area.oldgetTransform());
+//	trans = new Vector(area.oldgetTransform());
 //  trans.addAll(0, v);
 /*		Enumeration e = area.getChildren().elements();
 		while (e.hasMoreElements()) {
@@ -919,7 +929,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
   }
 	public void renderGArea(SVGArea svgarea, SVGGElementImpl area, int posx, int posy)
 	{
-      renderGArea(svgarea, area, posx, posy, new Vector());
+	  renderGArea(svgarea, area, posx, posy, new Vector());
 	}
 
 
@@ -928,19 +938,19 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
   * The type of the new shape may be different to the original type.
   */
   public Shape transformShape(Vector trans, Shape shape) {
-    if (trans == null || trans.size() == 0) {
-      return shape;
-    }
+	if (trans == null || trans.size() == 0) {
+	  return shape;
+	}
 
-    AffineTransform at;
-    for(int i = trans.size() - 1; i >= 0; i--) {
-      org.w3c.dom.svg.SVGTransform t = (org.w3c.dom.svg.SVGTransform)trans.elementAt(i);
-      SVGMatrix matrix = t.getMatrix();
-      at = new AffineTransform(matrix.getA(), matrix.getB(), matrix.getC(),
-                           matrix.getD(), matrix.getE(), matrix.getF());
-      shape = at.createTransformedShape(shape);
-    }
-    return shape;
+	AffineTransform at;
+	for(int i = trans.size() - 1; i >= 0; i--) {
+	  org.w3c.dom.svg.SVGTransform t = (org.w3c.dom.svg.SVGTransform)trans.elementAt(i);
+	  SVGMatrix matrix = t.getMatrix();
+	  at = new AffineTransform(matrix.getA(), matrix.getB(), matrix.getC(),
+						   matrix.getD(), matrix.getE(), matrix.getF());
+	  shape = at.createTransformedShape(shape);
+	}
+	return shape;
   }
 
 
@@ -948,215 +958,215 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
    * Mapps a SVG-Polygon to a AWT-Polygon.
    */
   public java.awt.Polygon convertPolygon(SVGPolygonElementImpl svgpl, int x, int y) {
-    java.awt.Polygon aPolygon = new java.awt.Polygon();
-    Vector points = svgpl.points;
+	java.awt.Polygon aPolygon = new java.awt.Polygon();
+	Vector points = svgpl.points;
 
-    PathPoint p;
-    for (int i = 0; i < points.size(); i++) {
-      p = (PathPoint) points.elementAt(i);
-      aPolygon.addPoint((int) (x / 1000f + p.x), pageHeight - (int) (y / 1000f - p.y));
-    }
+	PathPoint p;
+	for (int i = 0; i < points.size(); i++) {
+	  p = (PathPoint) points.elementAt(i);
+	  aPolygon.addPoint((int) (x / 1000f + p.x), pageHeight - (int) (y / 1000f - p.y));
+	}
 
-    return aPolygon;
+	return aPolygon;
   }
 
   // TODO: other attributes of DrawingInstruction protect too.
   protected DrawingInstruction createInstruction(GraphicImpl area, Hashtable style) {
-    DrawingInstruction di = new DrawingInstruction();
-    Object sp;
-    sp = style.get("fill");
-    if(sp != null && !(sp instanceof String && sp.equals("none"))) {
-      di.fill = true;
-    }
-    // ...
-    return di;
+	DrawingInstruction di = new DrawingInstruction();
+	Object sp;
+	sp = style.get("fill");
+	if(sp != null && !(sp instanceof String && sp.equals("none"))) {
+	  di.fill = true;
+	}
+	// ...
+	return di;
   }
 
   // Draws a shape.
   // TODO: other attributes of DrawingInstruction protect too.
   protected void drawShape(Shape s, DrawingInstruction di) {
-    if (di.fill) {
-      graphics.fill(s);
-    } else {
-      graphics.draw(s);
-    }
+	if (di.fill) {
+	  graphics.fill(s);
+	} else {
+	  graphics.draw(s);
+	}
   }
 
   /**
    * Mapps a SVG-Path to a AWT-GeneralPath.
    */
   public GeneralPath convertPath(SVGPathElementImpl svgpath, float x, float y) {
-    Vector points = svgpath.pathElements;
-    GeneralPath path = new GeneralPath();
+	Vector points = svgpath.pathElements;
+	GeneralPath path = new GeneralPath();
 
-    float lastx = 0;
-    float lasty = 0;
-    SVGPathSegImpl pathmoveto = null;
+	float lastx = 0;
+	float lasty = 0;
+	SVGPathSegImpl pathmoveto = null;
 
-    for(Enumeration e = points.elements(); e.hasMoreElements(); ) {
-      SVGPathSegImpl pc = (SVGPathSegImpl)e.nextElement();
-      float[] vals = pc.getValues();
-      float lastcx = 0;
-      float lastcy = 0;
-      switch(pc.getPathSegType()) {
-        case SVGPathSeg.PATHSEG_MOVETO_ABS:
-          lastx = vals[0];
-          lasty = vals[1];
-          pathmoveto = pc;
-          path.moveTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
-        break;
-        case SVGPathSeg.PATHSEG_MOVETO_REL:
-          if (pathmoveto == null) {
-            lastx = vals[0];
-            lasty = vals[1];
-            path.moveTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
-            pathmoveto = pc;
-          } else {
-            lastx += vals[0];
-            lasty += vals[1];
-            path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
+	for(Enumeration e = points.elements(); e.hasMoreElements(); ) {
+	  SVGPathSegImpl pc = (SVGPathSegImpl)e.nextElement();
+	  float[] vals = pc.getValues();
+	  float lastcx = 0;
+	  float lastcy = 0;
+	  switch(pc.getPathSegType()) {
+		case SVGPathSeg.PATHSEG_MOVETO_ABS:
+		  lastx = vals[0];
+		  lasty = vals[1];
+		  pathmoveto = pc;
+		  path.moveTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
+		break;
+		case SVGPathSeg.PATHSEG_MOVETO_REL:
+		  if (pathmoveto == null) {
+			lastx = vals[0];
+			lasty = vals[1];
+			path.moveTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
+			pathmoveto = pc;
+		  } else {
+			lastx += vals[0];
+			lasty += vals[1];
+			path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
 
-          }
-        break;
-        case SVGPathSeg.PATHSEG_LINETO_ABS:
-          lastx = vals[0];
-          lasty = vals[1];
-          path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
-        break;
-        case SVGPathSeg.PATHSEG_LINETO_REL:
-            lastx += vals[0];
-            lasty += vals[1];
-            path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
-        break;
-        case SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS:
-          lasty = vals[0];
-          path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
-        break;
-        case SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL:
-          lasty += vals[0];
-          path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
-        break;
-        case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS:
-          lastx = vals[0];
-          path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
-        break;
-        case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL:
-          lastx += vals[0];
-          path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
-        break;
-        case SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS:
-          lastx = vals[4];
-          lasty = vals[5];
-          lastcx = vals[2];
-          lastcy = vals[3];
-          path.curveTo(x / 1000f + vals[0], pageHeight - y / 1000f + vals[1],
-                      x / 1000f + lastcx, pageHeight - y / 1000f + lastcy,
-                      x / 1000f + lastx, pageHeight - y / 1000f + lasty);
-        break;
-        case SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL:
-          path.curveTo(x / 1000f + vals[0] + lastx, pageHeight - y / 1000f + vals[1] + lasty,
-                       x / 1000f + lastx + vals[2], pageHeight - y / 1000f + lasty + vals[3],
-                       x / 1000f + lastx + vals[4], pageHeight - y / 1000f + lasty + vals[5]);
-          lastcx = vals[2] + lastx;
-          lastcy = vals[3] + lasty;
-          lastx += vals[4];
-          lasty += vals[5];
-        break;
-        case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
-          if (lastcx == 0)
-            lastcx = lastx;
-          if (lastcy == 0)
-            lastcy = lasty;
-          lastx = vals[2];
-          lasty = vals[3];
-          path.curveTo(x / 1000f + lastcx, pageHeight - y / 1000f + lastcy,
-                       x / 1000f + vals[0], pageHeight - y / 1000f + vals[1],
-                       x / 1000f + lastx, pageHeight - y / 1000f + lasty);
-        break;
-        case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL:
-          if (lastcx == 0)
-            lastcx = lastx;
-          if (lastcy == 0)
-            lastcy = lasty;
-          path.curveTo(x / 1000f + lastcx, pageHeight - y / 1000f + lastcy,
-                       x / 1000f + lastx + vals[0], pageHeight - y / 1000f + lasty + vals[1],
-                       x / 1000f + lastx + vals[2], pageHeight - y / 1000f + lasty + vals[3]);
-          lastx += vals[2];
-          lasty += vals[3];
-        break;
-        case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_ABS:
-          if (lastcx == 0)
-            lastcx = lastx;
-          if (lastcy == 0)
-            lastcy = lasty;
-          lastx = vals[0];
-          lasty = vals[1];
-          lastcx = 0;
-          lastcy = 0;
-          path.quadTo(x / 1000f + lastcx, pageHeight - y / 1000f + lastcy,
-                      x / 1000f + lastx, pageHeight - y / 1000f + lasty);
-        break;
-        case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL:
-          if (lastcx == 0)
-            lastcx = lastx;
-          if (lastcy == 0)
-            lastcy = lasty;
+		  }
+		break;
+		case SVGPathSeg.PATHSEG_LINETO_ABS:
+		  lastx = vals[0];
+		  lasty = vals[1];
+		  path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
+		break;
+		case SVGPathSeg.PATHSEG_LINETO_REL:
+			lastx += vals[0];
+			lasty += vals[1];
+			path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
+		break;
+		case SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS:
+		  lasty = vals[0];
+		  path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
+		break;
+		case SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL:
+		  lasty += vals[0];
+		  path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
+		break;
+		case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS:
+		  lastx = vals[0];
+		  path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
+		break;
+		case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL:
+		  lastx += vals[0];
+		  path.lineTo(lastx + x / 1000f, pageHeight - y / 1000f + lasty);
+		break;
+		case SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS:
+		  lastx = vals[4];
+		  lasty = vals[5];
+		  lastcx = vals[2];
+		  lastcy = vals[3];
+		  path.curveTo(x / 1000f + vals[0], pageHeight - y / 1000f + vals[1],
+					  x / 1000f + lastcx, pageHeight - y / 1000f + lastcy,
+					  x / 1000f + lastx, pageHeight - y / 1000f + lasty);
+		break;
+		case SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL:
+		  path.curveTo(x / 1000f + vals[0] + lastx, pageHeight - y / 1000f + vals[1] + lasty,
+					   x / 1000f + lastx + vals[2], pageHeight - y / 1000f + lasty + vals[3],
+					   x / 1000f + lastx + vals[4], pageHeight - y / 1000f + lasty + vals[5]);
+		  lastcx = vals[2] + lastx;
+		  lastcy = vals[3] + lasty;
+		  lastx += vals[4];
+		  lasty += vals[5];
+		break;
+		case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
+		  if (lastcx == 0)
+			lastcx = lastx;
+		  if (lastcy == 0)
+			lastcy = lasty;
+		  lastx = vals[2];
+		  lasty = vals[3];
+		  path.curveTo(x / 1000f + lastcx, pageHeight - y / 1000f + lastcy,
+					   x / 1000f + vals[0], pageHeight - y / 1000f + vals[1],
+					   x / 1000f + lastx, pageHeight - y / 1000f + lasty);
+		break;
+		case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL:
+		  if (lastcx == 0)
+			lastcx = lastx;
+		  if (lastcy == 0)
+			lastcy = lasty;
+		  path.curveTo(x / 1000f + lastcx, pageHeight - y / 1000f + lastcy,
+					   x / 1000f + lastx + vals[0], pageHeight - y / 1000f + lasty + vals[1],
+					   x / 1000f + lastx + vals[2], pageHeight - y / 1000f + lasty + vals[3]);
+		  lastx += vals[2];
+		  lasty += vals[3];
+		break;
+		case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_ABS:
+		  if (lastcx == 0)
+			lastcx = lastx;
+		  if (lastcy == 0)
+			lastcy = lasty;
+		  lastx = vals[0];
+		  lasty = vals[1];
+		  lastcx = 0;
+		  lastcy = 0;
+		  path.quadTo(x / 1000f + lastcx, pageHeight - y / 1000f + lastcy,
+					  x / 1000f + lastx, pageHeight - y / 1000f + lasty);
+		break;
+		case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL:
+		  if (lastcx == 0)
+			lastcx = lastx;
+		  if (lastcy == 0)
+			lastcy = lasty;
 
-          path.quadTo(x / 1000f + lastcx , pageHeight - y / 1000f + lastcy,
-                      x / 1000f + lastx + vals[0], pageHeight - y / 1000f + lasty + vals[1]);
+		  path.quadTo(x / 1000f + lastcx , pageHeight - y / 1000f + lastcy,
+					  x / 1000f + lastx + vals[0], pageHeight - y / 1000f + lasty + vals[1]);
 
-          lastx += vals[0];
-          lasty += vals[1];
-          lastcx = 0;
-          lastcy = 0;
-        break;
-        case SVGPathSeg.PATHSEG_ARC_ABS: {
-          // Arc2D.Double arc = new Arc2D.Double();
-          // arc.setAngles(current point, end point); ....
-	    				double rx = vals[0];
-	    				double ry = vals[1];
-	    				double theta = vals[2];
-	    				boolean largearcflag = (vals[3] == 1.0);
-	    				boolean sweepflag = (vals[4] == 1.0);
+		  lastx += vals[0];
+		  lasty += vals[1];
+		  lastcx = 0;
+		  lastcy = 0;
+		break;
+		case SVGPathSeg.PATHSEG_ARC_ABS: {
+		  // Arc2D.Double arc = new Arc2D.Double();
+		  // arc.setAngles(current point, end point); ....
+						double rx = vals[0];
+						double ry = vals[1];
+						double theta = vals[2];
+						boolean largearcflag = (vals[3] == 1.0);
+						boolean sweepflag = (vals[4] == 1.0);
 
 						double cx = lastx;
 						double cy = lasty;
 
-      path.curveTo(x / 1000f + lastx, pageHeight - y / 1000f + lasty,
-                   x / 1000f + vals[0], pageHeight - y / 1000f + vals[1],
-                   x / 1000f + vals[5], pageHeight - y / 1000f + vals[6]);
+	  path.curveTo(x / 1000f + lastx, pageHeight - y / 1000f + lasty,
+				   x / 1000f + vals[0], pageHeight - y / 1000f + vals[1],
+				   x / 1000f + vals[5], pageHeight - y / 1000f + vals[6]);
 
-		    			lastcx = 0; //??
-		    			lastcy = 0; //??
-		    			lastx = vals[5];
-		    			lasty = vals[6];
-         }
-        break;
-        case SVGPathSeg.PATHSEG_ARC_REL: {
-	    				double rx = vals[0];
-	    				double ry = vals[1];
-	    				double theta = vals[2];
-	    				boolean largearcflag = (vals[3] == 1.0);
-	    				boolean sweepflag = (vals[4] == 1.0);
+						lastcx = 0; //??
+						lastcy = 0; //??
+						lastx = vals[5];
+						lasty = vals[6];
+		 }
+		break;
+		case SVGPathSeg.PATHSEG_ARC_REL: {
+						double rx = vals[0];
+						double ry = vals[1];
+						double theta = vals[2];
+						boolean largearcflag = (vals[3] == 1.0);
+						boolean sweepflag = (vals[4] == 1.0);
 
 		path.curveTo(x / 1000f + lastx, pageHeight - y / 1000f + lasty,
-                    x / 1000f + (vals[0] + lastx), pageHeight - y / 1000f + (vals[1] + lasty),
+					x / 1000f + (vals[0] + lastx), pageHeight - y / 1000f + (vals[1] + lasty),
 					x / 1000f + (vals[5] + lastx) , pageHeight - y / 1000f + (vals[6] + lasty));
-		    			lastcx = 0; //??
-		    			lastcy = 0; //??
-		    			lastx += vals[5];
-		    			lasty += vals[6];
-         }
-        break;
-        case SVGPathSeg.PATHSEG_CLOSEPATH:
-          path.closePath();
-        break;
+						lastcx = 0; //??
+						lastcy = 0; //??
+						lastx += vals[5];
+						lasty += vals[6];
+		 }
+		break;
+		case SVGPathSeg.PATHSEG_CLOSEPATH:
+		  path.closePath();
+		break;
 
 
-      } // switch
-    } // for points.elements()
+	  } // switch
+	} // for points.elements()
 
-    return path;
+	return path;
   }  // convertPath
 /*
 		if(di == null) {
@@ -1194,9 +1204,9 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 		int miterwidth = 8;
 	}
 
-    public void renderForeignObjectArea(ForeignObjectArea area) {
-      area.getObject().render(this);
-    }
+	public void renderForeignObjectArea(ForeignObjectArea area) {
+	  area.getObject().render(this);
+	}
 
 }
 
