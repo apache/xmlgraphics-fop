@@ -56,12 +56,15 @@ public class Block extends FObjMixed {
 
     int areaHeight = 0;
     int contentWidth = 0;
+    int infLoopThreshhold = 50;
 
     String id;
     int span;
 
     // this may be helpful on other FOs too
     boolean anythingLaidOut = false;
+    //Added to see how long it's been since nothing was laid out.
+    int noLayoutCount = 0;
 
     public Block(FObj parent, PropertyList propertyList)
         throws FOPException {
@@ -77,8 +80,16 @@ public class Block extends FObjMixed {
     public int layout(Area area) throws FOPException {
         BlockArea blockArea;
 
-        // log.error(" b:LAY[" + marker + "] ");
+        if (!anythingLaidOut) {
+            noLayoutCount++;
+        }
+        if (noLayoutCount > infLoopThreshhold) {
+            throw new FOPException(
+                "No meaningful layout in block after many attempts.  "+
+                "Infinite loop is assumed.  Processing halted.");
+        }
 
+        // log.error(" b:LAY[" + marker + "] ");
 
         if (this.marker == BREAK_AFTER) {
             return Status.OK;
