@@ -25,6 +25,9 @@ import java.io.IOException;
 
 import org.apache.batik.ext.awt.g2d.GraphicContext;
 
+import org.apache.fop.image.JpegImage;
+import java.awt.image.ImageObserver;
+
 /**
  * This class is a wrapper for the <tt>PDFGraphics2D</tt> that
  * is used to create a full document around the pdf rendering from
@@ -35,8 +38,6 @@ import org.apache.batik.ext.awt.g2d.GraphicContext;
  * @see org.apache.fop.svg.PDFGraphics2D
  */
 public class PDFDocumentGraphics2D extends PDFGraphics2D {
-    OutputStream stream;
-
     PDFPage currentPage;
     PDFStream pdfStream;
     int width;
@@ -70,7 +71,6 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         standalone = true;
         this.pdfDoc = new PDFDocument();
         this.pdfDoc.setProducer("FOP SVG Renderer");
-        pdfStream = this.pdfDoc.makeStream(PDFStream.CONTENT_FILTER);
 
         graphicsState = new PDFState();
 
@@ -78,18 +78,24 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         currentFontSize = 0;
         currentYPosition = 0;
         currentXPosition = 0;
+
+        pdfStream = this.pdfDoc.makeStream(PDFStream.CONTENT_FILTER, false);
     }
 
-    void setupDocument(OutputStream stream, int width, int height) {
+    void setupDocument(OutputStream stream, int width, int height) throws IOException {
         this.width = width;
         this.height = height;
-        this.stream = stream;
 
         PDFResources pdfResources = this.pdfDoc.getResources();
         currentPage = this.pdfDoc.makePage(pdfResources,
                                                    width, height);
         resourceContext = currentPage;
+        pageRef = currentPage.referencePDF();
         currentStream.write("1 0 0 -1 0 " + height + " cm\n");
+
+        pdfDoc.outputHeader(stream);
+
+        setOutputStream(stream);
     }
 
     /**
@@ -105,7 +111,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @param height the height of the document
      */
     public PDFDocumentGraphics2D(boolean textAsShapes, OutputStream stream,
-                                 int width, int height) {
+                                 int width, int height) throws IOException {
         this(textAsShapes);
         setupDocument(stream, width, height);
     }
@@ -154,15 +160,14 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      */
     public void finish() throws IOException {
         pdfStream.add(getString());
-        PDFResources pdfResources = this.pdfDoc.getResources();
+        this.pdfDoc.addStream(pdfStream);
         currentPage.setContents(pdfStream);
         this.pdfDoc.addPage(currentPage);
         if (fontInfo != null) {
             FontSetup.addToResources(pdfDoc, pdfDoc.getResources(), fontInfo);
         }
-        pdfDoc.outputHeader(stream);
-        this.pdfDoc.output(stream);
-        pdfDoc.outputTrailer(stream);
+        this.pdfDoc.output(outputStream);
+        pdfDoc.outputTrailer(outputStream);
     }
 
     /**

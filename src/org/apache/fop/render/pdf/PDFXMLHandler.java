@@ -22,8 +22,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Attr;
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.batik.bridge.*;
 import org.apache.batik.swing.svg.*;
@@ -44,6 +44,7 @@ import java.awt.geom.AffineTransform;
  */
 public class PDFXMLHandler implements XMLHandler {
 public static final String PDF_DOCUMENT = "pdfDoc";
+public static final String OUTPUT_STREAM = "outputStream";
 public static final String PDF_STATE = "pdfState";
 public static final String PDF_PAGE = "pdfPage";
 public static final String PDF_STREAM = "pdfStream";
@@ -73,6 +74,7 @@ public static final String PDF_YPOS = "ypos";
     public static PDFInfo getPDFInfo(RendererContext context) {
         PDFInfo pdfi = new PDFInfo();
         pdfi.pdfDoc = (PDFDocument)context.getProperty(PDF_DOCUMENT);
+        pdfi.outputStream = (OutputStream)context.getProperty(OUTPUT_STREAM);
         pdfi.pdfState = (PDFState)context.getProperty(PDF_STATE);
         pdfi.pdfPage = (PDFPage)context.getProperty(PDF_PAGE);
         pdfi.currentStream = (PDFStream)context.getProperty(PDF_STREAM);
@@ -88,6 +90,7 @@ public static final String PDF_YPOS = "ypos";
 
     public static class PDFInfo {
         PDFDocument pdfDoc;
+        OutputStream outputStream;
         PDFState pdfState;
         PDFPage pdfPage;
         public PDFStream currentStream;
@@ -164,7 +167,7 @@ public static final String PDF_YPOS = "ypos";
             }
 
             PDFGraphics2D graphics = new PDFGraphics2D(true, pdfInfo.fs, pdfInfo.pdfDoc,
-                                     pdfInfo.pdfPage, pdfInfo.currentFontName,
+                                     pdfInfo.pdfPage, pdfInfo.pdfPage.referencePDF(), pdfInfo.currentFontName,
                                      pdfInfo.currentFontSize,
                                      pdfInfo.currentXPosition,
                                      pdfInfo.currentYPosition);
@@ -175,6 +178,7 @@ public static final String PDF_YPOS = "ypos";
             transform.translate(xOffset / 1000f, yOffset / 1000f);
             pdfInfo.pdfState.setTransform(transform);
             graphics.setPDFState(pdfInfo.pdfState);
+            graphics.setOutputStream(pdfInfo.outputStream);
             try {
                 root.paint(graphics);
                 pdfInfo.currentStream.add(graphics.getString());
