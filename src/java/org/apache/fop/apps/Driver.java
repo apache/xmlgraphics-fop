@@ -95,7 +95,7 @@ public class Driver {
     /**
      * Error handling, version and logging initialization.
      */
-    public Driver() throws FOPException {
+    public Driver() {
         _errorDump =
                 Configuration.getBooleanValue("debugMode").booleanValue();
         String version = Version.getVersion();
@@ -135,7 +135,8 @@ public class Driver {
         setInputHandler(Options.getInputHandler());
         parser = inputHandler.getParser();
         source = inputHandler.getInputSource();
-        setParserFeatures(parser);
+        // Setting of namespace-prefixes feature no longer required
+        //setParserFeatures(parser);
 
         xmlevents = new SyncedFoXmlEventsBuffer();
         xmlhandler = new FoXMLSerialHandler(xmlevents, parser, source);
@@ -197,11 +198,10 @@ public class Driver {
      * @param parser the XMLReader used to parse the input
      * @throws FOPException
      */
+    /*
     public void setParserFeatures(XMLReader parser) throws FOPException {
-        /*
-			Setting of namespaces-prefixes feature removed.
-        */
     }
+    */
 
     /**
      * Prints stack trace of an exception
