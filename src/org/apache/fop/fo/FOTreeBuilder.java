@@ -12,7 +12,6 @@ import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.fo.pagination.Root;
-import org.apache.fop.system.BufferManager;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.extensions.ExtensionObj;
 
@@ -67,8 +66,6 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      */
     protected FObj rootFObj = null;
 
-    public BufferManager bufferManager;
-
     /**
      * set of names of formatting objects encountered but unknown
      */
@@ -101,7 +98,6 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      * add a mapping from element name to maker.
      *
      * @param namespaceURI namespace URI of formatting object element
-     * @param localName local name of formatting object element
      * @param maker Maker for class representing formatting object
      */
     public void addMapping(String namespaceURI, HashMap table) {
@@ -113,7 +109,6 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      * add a mapping from element name to maker.
      *
      * @param namespaceURI namespace URI of formatting object element
-     * @param localName local name of formatting object element
      * @param maker Maker for class representing formatting object
      */
     public void addPropertyList(String namespaceURI, HashMap list) {
@@ -217,8 +212,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         /* the maker for the formatting object started */
         FObj.Maker fobjMaker = null;
 
-        // String fullName = mapName(rawName);
-        //String fullName = uri + "^" + localName;
+        /* look up Maker for the element */
         HashMap table = (HashMap)fobjTable.get(uri);
         if(table != null) {
             fobjMaker = (FObj.Maker)table.get(localName);
@@ -267,7 +261,6 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
 
         if (rootFObj == null) {
             rootFObj = fobj;
-            rootFObj.setBufferManager(this.bufferManager);
             if (!fobj.getName().equals("fo:root")) {
                 throw new SAXException(new FOPException("Root element must"
                                                         + " be root, not "
@@ -280,17 +273,6 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         currentFObj = fobj;
     }
 
-    /**
-     * format this formatting object tree
-     *
-     * @param areaTree the area tree to format into
-     */
-/*    public void format(AreaTree areaTree) throws FOPException {
-        log.info("formatting FOs into areas");
-        this.bufferManager.readComplete();
-        ((Root)this.rootFObj).format(areaTree);
-    }
-*/
     public void reset() {
         currentFObj = null;
         rootFObj = null;
@@ -299,10 +281,6 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
 
     public boolean hasData() {
         return (rootFObj != null);
-    }
-
-    public void setBufferManager(BufferManager bufferManager) {
-        this.bufferManager = bufferManager;
     }
 
 }
