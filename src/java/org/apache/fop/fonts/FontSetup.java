@@ -18,9 +18,6 @@
 
 package org.apache.fop.fonts;
 
-// FOP
-import org.apache.fop.apps.Document;
-
 // FOP (base 14 fonts)
 import org.apache.fop.fonts.base14.Helvetica;
 import org.apache.fop.fonts.base14.HelveticaBold;

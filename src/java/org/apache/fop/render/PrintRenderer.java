@@ -19,7 +19,6 @@
 package org.apache.fop.render;
 
 // FOP
-import org.apache.fop.apps.Document;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 
