@@ -534,7 +534,7 @@ public class Driver implements LogEnabled {
                 throw new IllegalStateException(
                         "Renderer not set when using standard foInputHandler");
             }
-            foInputHandler = new FOTreeHandler(currentDocument, stream, renderer, true);
+            foInputHandler = new FOTreeHandler(currentDocument, true);
         }
 
         foInputHandler.enableLogging(getLogger());
@@ -590,6 +590,17 @@ public class Driver implements LogEnabled {
                 currentDocument.atModel = AreaTree.createRenderPagesModel(renderer);
                 //this.atModel = new CachedRenderPagesModel(renderer);
                 currentDocument.areaTree.setTreeModel(currentDocument.atModel);
+                try {
+                    renderer.setupFontInfo(currentDocument);
+                    // check that the "any,normal,400" font exists
+                    if (!currentDocument.isSetupValid()) {
+                        throw new SAXException(new FOPException(
+                                "No default font defined by OutputConverter"));
+                    }
+                    renderer.startRenderer(stream);
+                } catch (IOException e) {
+                    throw new SAXException(e);
+                }
             }
             /**
              The following statement triggers virtually all of the processing

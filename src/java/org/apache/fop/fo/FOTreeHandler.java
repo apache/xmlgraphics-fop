@@ -51,8 +51,6 @@
 package org.apache.fop.fo;
 
 // Java
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -73,7 +71,6 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.render.Renderer;
 
 /**
  * Defines how SAX events specific to XSL-FO input should be handled when
@@ -110,19 +107,6 @@ public class FOTreeHandler extends FOInputHandler {
     private long startTime;
 
     /**
-     * The stream to which this rendering is to be
-     * written to. <B>Note</B> that some renderers
-     * do not render to a stream, and that this
-     * member can therefore be null.
-     */
-    private OutputStream outputStream;
-
-    /**
-     * The renderer being used.
-     */
-    private Renderer renderer;
-
-    /**
      * Collection of objects that have registered to be notified about
      * FOTreeEvent firings.
      */
@@ -132,20 +116,14 @@ public class FOTreeHandler extends FOInputHandler {
      * Main constructor
      * @param foTreeControl the FOTreeControl implementation that governs this
      * FO Tree
-     * @param outputStream the stream that the result is rendered to
-     * @param renderer the renderer to call
      * @param store if true then use the store pages model and keep the
      *              area tree in memory
      */
-    public FOTreeHandler(FOTreeControl foTreeControl, OutputStream outputStream,
-                         Renderer renderer, boolean store) {
+    public FOTreeHandler(FOTreeControl foTreeControl, boolean store) {
         super(foTreeControl);
         if (collectStatistics) {
             runtime = Runtime.getRuntime();
         }
-        this.outputStream = outputStream;
-        this.renderer = renderer;
-
     }
 
     /**
@@ -164,17 +142,6 @@ public class FOTreeHandler extends FOInputHandler {
 
             initialMemory = runtime.totalMemory() - runtime.freeMemory();
             startTime = System.currentTimeMillis();
-        }
-        try {
-            renderer.setupFontInfo(foTreeControl);
-            // check that the "any,normal,400" font exists
-            if (!foTreeControl.isSetupValid()) {
-                throw new SAXException(new FOPException(
-                        "No default font defined by OutputConverter"));
-            }
-            renderer.startRenderer(outputStream);
-        } catch (IOException e) {
-            throw new SAXException(e);
         }
     }
 
