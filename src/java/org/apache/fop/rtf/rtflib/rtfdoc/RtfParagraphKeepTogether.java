@@ -62,12 +62,19 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 import java.io.Writer;
 import java.io.IOException;
 
+/**
+ * Models the keep together attributes of paragraphs
+ */
 public class RtfParagraphKeepTogether extends RtfContainer {
 
+    /** constant for unset status */
     public static final int STATUS_NULL = 0;
+    /** constant for open paragraph */
     public static final int STATUS_OPEN_PARAGRAPH = 1;
+    /** constant for close paragraph */
     public static final int STATUS_CLOSE_PARAGRAPH = 2;
-    private int m_status = STATUS_NULL;
+
+    private int status = STATUS_NULL;
 
 
     /**    RtfParagraphKeepTogether*/
@@ -75,34 +82,42 @@ public class RtfParagraphKeepTogether extends RtfContainer {
         super((RtfContainer)parent, w);
     }
 
-
+    /**
+     * Write the content
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfContent() throws IOException {
 
         //First reet paragraph properties
         // create a new one with keepn
-        if (m_status == STATUS_OPEN_PARAGRAPH) {
+        if (status == STATUS_OPEN_PARAGRAPH) {
             writeControlWord("pard");
             writeControlWord("par");
             writeControlWord("keepn");
             writeGroupMark(true);
-            m_status = STATUS_NULL;
+            status = STATUS_NULL;
         }
 
 
-        if (m_status == STATUS_CLOSE_PARAGRAPH) {
+        if (status == STATUS_CLOSE_PARAGRAPH) {
             writeGroupMark(false);
-            m_status = STATUS_NULL;
+            status = STATUS_NULL;
         }
 
     }
 
 
-
+    /**
+     * set the status
+     * @param status the status to be set
+     */
     public void setStatus(int status) {
-        m_status = status;
+        this.status = status;
     }
 
-    /** true if this element would generate no "useful" RTF content */
+    /**
+     * @return true if this element would generate no "useful" RTF content
+     */
     public boolean isEmpty() {
         return false;
     }
