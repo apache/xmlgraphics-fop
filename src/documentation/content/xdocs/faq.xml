@@ -408,7 +408,7 @@
     <faq id="png-fails">
       <question>My graphical images do not work properly.</question>
       <answer>
-        <p>See <link href="svg.html">Graphical Formats</link>.</p>
+        <p>See <link href="graphics.html">Graphical Formats</link>.</p>
       </answer>
     </faq>
     <faq id="graphic-resolution">
@@ -603,7 +603,7 @@ See <link href="#usercfg">loading the user configuration file</link> for further
       <question>The rendering of SVG text in my PDF is of poor quality.
 Can I control this?</question>
       <answer>
-        <p>See <link href="svg.html#svg-pdf-text">Placing SVG Text into PDF</link>.</p>
+        <p>See <link href="graphics.html#svg-pdf-text">Placing SVG Text into PDF</link>.</p>
       </answer>
     </faq>
     <faq id="svg-headless">
