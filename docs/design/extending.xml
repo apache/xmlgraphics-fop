@@ -1,0 +1,99 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Overview -->
+
+<document>
+    <header>
+        <title>FOP Extensions</title>
+        <subtitle>Adding extensions to FOP</subtitle>
+        <authors>
+            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="Extensions">
+<p>
+FOP provides an extension mechanism to add extra functionality. There
+are a number of different types of extensions that apply to different
+steps when converting FO into the rendered output.
+  </p>
+<s2 title="Extensions">
+  <p>
+SVG Graphic - This applies to svg and any other xml document that
+can be converted into svg in the output. All that is required is
+the element mapping for the xml and a converter that changes the
+document into svg. This conversion is done in the FO Tree. The
+conversion is done by the top level element of the namespace
+or in the case of an external image a Converter.
+  </p>
+  <p>
+XML Document - Instead of converting the document into svg it
+can be passed directly to the renderer. The renderer will need
+to have a handler for the xml document. This handler can add
+information directly to the output document.
+  </p>
+  <p>
+Output Document - This is used to add document level information
+to the output result. Such an extension will set information that
+is passed to the output document. There needs to be a handler for
+the output information which creates a document level result.
+  </p>
+  <p>
+FO Area - This is where an extension creates an normal area in
+the Area Tree. This is useful when the normal FO objects
+cannot create the area in the way that is needed.
+  </p>
+  <p>
+Resolveable - In some cases it may require information to be
+resolved for information such as page numbers. This can apply
+to the XML Document, FO Area or output document extensions.
+   </p>
+  <p>
+- Add a string ['(Continued)'] to a table header if the table spans
+multiple pages. These tables are part of the content and can start
+anywhere in the page.
+   </p>
+  <p>
+- Separate page number display for a subsection. ie. - master document
+is page 4 of 7, but subsection is page 2 of 3.
+
+   </p>
+</s2>
+<s2 title="Examples">
+  <p>
+Plan - The plan extension is a simple SVG graphic extension.
+Given a plan document either inside an InstreamForeignObject
+or as an external graphic, it converts the plan document into
+an svg graphic. The svg graphic is then passed through the
+Area Tree to the Renderer. The Renderer then renders the svg
+graphic as normal.
+   </p>
+  <p>
+PDF Outline - This is output document extension. If rendering to
+pdf and this extensionis used then the bookmark information is
+passed to the pdf document. This information is then set on the
+document.
+   </p>
+  <p>
+PDF Additions - This can be done with an XML Document extension.
+A simple xml document is defined that provides the appropriate
+information. When the document is rendered a handler converts the
+document into PDF markup.
+   </p>
+  <p>
+eg.
+<source><![CDATA[<my:script-link script="app.execMenuItem('AcroSrch:Query');">Search</my:script-link>]]></source>
+
+to result in a text box referencing the following PDF action:
+<source><![CDATA[<< /S /JavaScript /JS (app.execMenuItem("AcroSrch:Query");) >>]]></source>
+
+   </p>
+
+</s2>
+
+  </s1>
+
+    </body>
+</document>
+

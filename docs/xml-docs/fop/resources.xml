@@ -44,6 +44,14 @@
       <li>There is an xsl:fo mailing list: www-xsl-fo@w3.org. Subscription info can be found here: <jump href="http://www.w3.org/Mail/Request">
           http://www.w3.org/Mail/Request</jump>. And the archive can be found here: 
           <jump href="http://lists.w3.org/Archives/Public/www-xsl-fo/">http://lists.w3.org/Archives/Public/www-xsl-fo/</jump></li>
+      <li>
+PJ is an open source product that can be used to modify PDF documents:
+<jump href="http://www.etymon.com/pj/index.html">http://www.etymon.com/pj/index.html</jump>
+      </li>
+      <li>
+iText is a library that can edit PDF files, it is possible to do
+post processing of the generated PDF files: <jump href="http://www.lowagie.com/iText/">http://www.lowagie.com/iText/</jump>.
+      </li>
     </ul>
   </s2>
 </s1>
