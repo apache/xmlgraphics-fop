@@ -45,18 +45,17 @@ public class BoxPropShorthandParser extends GenericShorthandParser {
                                                PropertyMaker maker,
                                                PropertyList propertyList)
                 throws PropertyException {
-        ListProperty listProperty = (ListProperty)property;
         String name = FOPropertyMapping.getPropertyName(propId);
         Property p = null;
-        int count = listProperty.getList().size();
+        int count = property.getList().size();
         if (name.indexOf("-top") >= 0) {
-            p = getElement(listProperty, 0);
+            p = getElement(property, 0);
         } else if (name.indexOf("-right") >= 0) {
-            p = getElement(listProperty, count > 1 ? 1 : 0);
+            p = getElement(property, count > 1 ? 1 : 0);
         } else if (name.indexOf("-bottom") >= 0) {
-            p = getElement(listProperty, count > 2 ? 2 : 0);
+            p = getElement(property, count > 2 ? 2 : 0);
         } else if (name.indexOf("-left") >= 0) {
-            p = getElement(listProperty, count > 3 ? 3 : (count > 1 ? 1 : 0));
+            p = getElement(property, count > 3 ? 3 : (count > 1 ? 1 : 0));
         }
         // if p not null, try to convert it to a value of the correct type
         if (p != null) {
