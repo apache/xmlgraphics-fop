@@ -85,8 +85,8 @@
     <default>0pt</default>
   </property>
   <property>
-    <name>page-master-name</name>
-    <class-name>PageMasterName</class-name>
+    <name>master-name</name>
+    <class-name>MasterName</class-name>
     <inherited>false</inherited>
     <datatype>String</datatype>
     <default></default>
@@ -812,6 +812,53 @@
 	<inherited>false</inherited>
 	<datatype>String</datatype>
 	<default></default> 
+   </property>
+  <property>
+	<name>maximum-repeats</name>
+	<class-name>MaximumRepeats</class-name>
+	<inherited>false</inherited>
+	<datatype>String</datatype>
+	<default>no-limit</default> 
+   </property>
+  <property>
+	<name>page-position</name>
+	<class-name>PagePosition</class-name>
+	<inherited>false</inherited>
+	<datatype>
+      <enumeration>
+        <value const="FIRST">first</value>
+        <value const="LAST">last</value>
+        <value const="REST">rest</value>
+        <value const="ANY">any</value>
+      </enumeration>
+	</datatype>
+	<default>any</default> 
+   </property>
+  <property>
+	<name>odd-or-even</name>
+	<class-name>OddOrEven</class-name>
+	<inherited>false</inherited>
+	<datatype>
+      <enumeration>
+        <value const="ODD">odd</value>
+        <value const="EVEN">even</value>
+        <value const="ANY">any</value>
+      </enumeration>
+	</datatype>
+	<default>any</default> 
+   </property>
+  <property>
+	<name>blank-or-not-blank</name>
+	<class-name>BlankOrNotBlank</class-name>
+	<inherited>false</inherited>
+	<datatype>
+      <enumeration>
+        <value const="BLANK">blank</value>
+        <value const="NOT_BLANK">not-blank</value>
+        <value const="ANY">any</value>
+      </enumeration>
+	</datatype>
+	<default>any</default> 
    </property>
 
 

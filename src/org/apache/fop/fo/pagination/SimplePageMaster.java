@@ -85,12 +85,12 @@ public class SimplePageMaster extends FObj {
 
 	if (parent.getName().equals("fo:layout-master-set")) {
 	    this.layoutMasterSet = (LayoutMasterSet) parent;
-	    String pm = this.properties.get("page-master-name").getString();
+	    String pm = this.properties.get("master-name").getString();
 	    if (pm == null) {
 		MessageHandler.errorln("WARNING: simple-page-master does not have "
-				   + "a page-master-name and so is being ignored");
+				   + "a master-name and so is being ignored");
 	    } else {
-		this.layoutMasterSet.addLayoutMaster(pm, this);
+		this.layoutMasterSet.addSimplePageMaster(pm, this);
 	    }
 	} else {
 	    throw new FOPException("fo:simple-page-master must be child "
@@ -122,7 +122,11 @@ public class SimplePageMaster extends FObj {
 	    this.pageMaster.addAfter(this.regionAfter.makeRegion(contentRectangleXPosition,contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
     }
 
-    PageMaster getPageMaster() {
+    public PageMaster getPageMaster() {
+	return this.pageMaster;
+    }
+
+    public PageMaster getNextPageMaster() {
 	return this.pageMaster;
     }
 

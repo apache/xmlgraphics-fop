@@ -111,6 +111,7 @@ public class PageMaster {
 	if (this.end != null) {
 	    p.addEnd(end.makeAreaContainer());
 	}
+	
 	return p;
     }
 }

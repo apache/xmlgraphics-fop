@@ -62,7 +62,6 @@ import org.apache.fop.layout.AreaContainer;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.layout.Page;
 import org.apache.fop.layout.PageMaster;
-import org.apache.fop.layout.PageMasterFactory;
 import org.apache.fop.apps.FOPException;                   
 
 // Java
@@ -90,12 +89,13 @@ public class PageSequence extends FObj
     static final int AUTO_ODD = 3;
 
     protected Root root;
-    protected SequenceSpecification sequenceSpecification;
     protected Flow flow;
+    // protected Title title;
     protected StaticContent staticBefore;
     protected StaticContent staticAfter;
     protected LayoutMasterSet layoutMasterSet;
-
+	protected String masterName;
+	
     protected Page currentPage;
     protected int currentPageNumber = 0;
     protected static int runningPageNumberCounter = 0;  //keeps count of page number from previous PageSequence
@@ -119,6 +119,7 @@ public class PageSequence extends FObj
             new FOPException("page-sequence must be child of root, not "
             + parent.getName());
         }
+	
         layoutMasterSet = root.getLayoutMasterSet();
         thisIsFirstPage=true; // we are now on the first page of the page sequence
         InitialPageNumber ipn = (InitialPageNumber) this.properties.get("initial-page-number");
@@ -149,36 +150,26 @@ public class PageSequence extends FObj
                 throw new FOPException("\""+ipnValue+"\" is not a valid value for initial-page-number");
             }
         }
+
+        masterName = ((MasterName) this.properties.get("master-name")).getString();
     }
 
     protected Page makePage(AreaTree areaTree) throws FOPException {
-        PageMaster pageMaster;
         // layout this page sequence
-
+		
         // while there is still stuff in the flow, ask the
-        // sequence-specification for a new page 
+        // layoutMasterSet for a new page 
 
-        if ( this.sequenceSpecification == null )
+		// page number is 0-indexed
+        PageMaster pageMaster =
+			this.layoutMasterSet.getNextPageMaster(
+			masterName, currentPageNumber, thisIsFirstPage );
+
+		// a legal alternative is to use the last sub-sequence
+		// specification. That's not done here.
+        if ( pageMaster == null )
         {
-            throw new FOPException("page-sequence is missing an"
-            + " sequence-specification");
-        }
-
-        PageMasterFactory pmf =
-        this.sequenceSpecification.getFirstPageMasterFactory();
-
-        pageMaster = pmf.getNextPageMaster();
-
-        while ( pageMaster == null )
-        {
-            /* move on to next sequence specifier */
-            pmf = pmf.getNext();
-            if ( pmf == null )
-            {
-                throw new FOPException("out of sequence specifiers"
-                + " (FOP will eventually allow this)");
-            }
-            pageMaster = pmf.getNextPageMaster();
+		throw new FOPException("page masters exhausted");
         }
         return pageMaster.makePage(areaTree);
     }
@@ -255,11 +246,6 @@ public class PageSequence extends FObj
 
     public void setFlow(Flow flow) {
         this.flow = flow;
-    }
-
-    protected void setSequenceSpecification(SequenceSpecification sequenceSpecification) {
-        this.sequenceSpecification = sequenceSpecification;
-        sequenceSpecification.setLayoutMasterSet(this.layoutMasterSet);
     }
 
     public void setStaticContent(String name, StaticContent staticContent) {
