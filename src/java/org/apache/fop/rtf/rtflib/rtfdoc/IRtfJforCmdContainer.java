@@ -62,5 +62,5 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 
 public interface IRtfJforCmdContainer {
-    public RtfJforCmd newJforCmd(RtfAttributes attr) throws IOException;
+    RtfJforCmd newJforCmd(RtfAttributes attr) throws IOException;
 }

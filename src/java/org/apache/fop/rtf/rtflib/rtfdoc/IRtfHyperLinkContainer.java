@@ -63,12 +63,11 @@ import java.io.IOException;
 /** interface for RtfElements that can contain RtfHyperLinks
  *  @author Andreas Putz a.putz@skynamics.com
  */
-public interface IRtfHyperLinkContainer extends IRtfTextContainer
-{
+public interface IRtfHyperLinkContainer extends IRtfTextContainer {
     /**
      * Creates a new hyperlink.
      *
      * @exception IOException on error
      */
-    public RtfHyperLink newHyperLink (String str, RtfAttributes attr) throws IOException;
+    RtfHyperLink newHyperLink (String str, RtfAttributes attr) throws IOException;
 }

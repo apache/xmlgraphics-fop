@@ -58,26 +58,26 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import java.io.*;
-import java.util.Iterator;
+import java.io.Writer;
+import java.io.IOException;
 import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 /**  Container for RtfRow elements
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-public class RtfTable extends RtfContainer
-{
+public class RtfTable extends RtfContainer {
     private RtfTableRow m_row;
-    private int highestRow=0;
+    private int highestRow = 0;
 
-    /** Added by Boris Poudérous on 07/22/2002 in order to process number-columns-spanned attribute */
+    /** Added by Boris Poudérous on 07/22/2002 in order to process
+     *  number-columns-spanned attribute */
     private ITableColumnsInfo m_table_context;
 
     /** Create an RTF element as a child of given container */
-    RtfTable(IRtfTableContainer parent, Writer w, ITableColumnsInfo tc) throws IOException
-    {
-        super((RtfContainer)parent,w);
+    RtfTable(IRtfTableContainer parent, Writer w, ITableColumnsInfo tc)
+            throws IOException {
+        super((RtfContainer)parent, w);
         // Line added by Boris Poudérous on 07/22/2002
         m_table_context = tc;
     }
@@ -85,62 +85,59 @@ public class RtfTable extends RtfContainer
     /** Create an RTF element as a child of given container
    * Modified by Boris Poudérous in order to process 'number-columns-spanned' attribute
    */
-  RtfTable(IRtfTableContainer parent, Writer w, RtfAttributes attrs, ITableColumnsInfo tc) throws IOException
-    {
-        super((RtfContainer)parent,w,attrs);
+  RtfTable(IRtfTableContainer parent, Writer w, RtfAttributes attrs,
+           ITableColumnsInfo tc) throws IOException {
+        super((RtfContainer)parent, w, attrs);
     // Line added by Boris Poudérous on 07/22/2002
     m_table_context = tc;
     }
 
     /** close current row if any and start a new one */
-    public RtfTableRow newTableRow() throws IOException
-    {
-        if(m_row != null) m_row.close();
+    public RtfTableRow newTableRow() throws IOException {
+        if (m_row != null) {
+            m_row.close();
+        }
 
         highestRow++;
-        m_row = new RtfTableRow(this,m_writer,m_attrib,highestRow);
+        m_row = new RtfTableRow(this, m_writer, m_attrib, highestRow);
         return m_row;
     }
     /** close current row if any and start a new one */
-    public RtfTableRow newTableRow(RtfAttributes attrs) throws IOException
-    {
+    public RtfTableRow newTableRow(RtfAttributes attrs) throws IOException {
         RtfAttributes attr = null;
-        if (m_attrib != null)
-        {
+        if (m_attrib != null) {
             attr = (RtfAttributes) m_attrib.clone ();
             attr.set (attrs);
-        }
-        else
+        } else {
             attr = attrs;
-        if(m_row != null) m_row.close();
+        }
+        if (m_row != null) {
+            m_row.close();
+        }
         highestRow++;
 
-        m_row = new RtfTableRow(this,m_writer,attr,highestRow);
+        m_row = new RtfTableRow(this, m_writer, attr, highestRow);
         return m_row;
     }
 
 
 
     /** overridden to write RTF prefix code, what comes before our children */
-    protected void writeRtfPrefix() throws IOException
-    {
+    protected void writeRtfPrefix() throws IOException {
         writeGroupMark(true);
     }
 
     /** overridden to write RTF suffix code, what comes after our children */
-    protected void writeRtfSuffix() throws IOException
-    {
+    protected void writeRtfSuffix() throws IOException {
         writeGroupMark(false);
     }
 
-    public boolean isHighestRow(int id)
-    {
+    public boolean isHighestRow(int id) {
         return (highestRow == id) ? true : false;
     }
 
     /** Added by Boris Poudérous on 07/22/2002 */
-    public ITableColumnsInfo getITableColumnsInfo()
-    {
+    public ITableColumnsInfo getITableColumnsInfo() {
       return this.m_table_context;
     }
 
@@ -148,7 +145,7 @@ public class RtfTable extends RtfContainer
 
     // Added by Normand Masse
     // Support for table-header attributes (used instead of table attributes
-    public void setHeaderAttribs( RtfAttributes attrs ) {
+    public void setHeaderAttribs(RtfAttributes attrs) {
         m_header_attribs = attrs;
     }
 
@@ -156,7 +153,7 @@ public class RtfTable extends RtfContainer
     // Returns the table-header attributes if they are present, otherwise the
     // parent's attributes are returned normally.
     public RtfAttributes getRtfAttributes() {
-        if ( m_header_attribs != null ) {
+        if (m_header_attribs != null) {
             return m_header_attribs;
         }
 

@@ -64,10 +64,9 @@ import java.io.IOException;
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-public interface IRtfPageContainer
-{
+public interface IRtfPageContainer {
     /** close current text run if any and start a new one with specified attributes
      *  @param str if not null, added to the RtfText created
      */
-    public RtfPage newPage(RtfAttributes attrs) throws IOException;
+    RtfPage newPage(RtfAttributes attrs) throws IOException;
 }

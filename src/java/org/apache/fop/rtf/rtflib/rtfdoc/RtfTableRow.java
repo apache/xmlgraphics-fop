@@ -58,8 +58,9 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Iterator;
 
 /**  Container for RtfTableCell elements
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
@@ -71,32 +72,32 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
     private RtfTableCell m_cell;
     private RtfExtraRowSet m_extraRowSet;
     private int id;
-    private int highestCell=0;
+    private int highestCell = 0;
 
 
     /** Create an RTF element as a child of given container */
     RtfTableRow(RtfTable parent, Writer w, int idNum) throws IOException {
-        super(parent,w);
+        super(parent, w);
         id = idNum;
     }
 
     /** Create an RTF element as a child of given container */
     RtfTableRow(RtfTable parent, Writer w, RtfAttributes attrs, int idNum) throws IOException {
-        super(parent,w,attrs);
-        id=idNum;
+        super(parent, w, attrs);
+        id = idNum;
     }
 
     /** close current cell if any and start a new one */
     public RtfTableCell newTableCell(int cellWidth) throws IOException {
         highestCell++;
-        m_cell = new RtfTableCell(this,m_writer,cellWidth,highestCell);
+        m_cell = new RtfTableCell(this, m_writer, cellWidth, highestCell);
         return m_cell;
     }
 
     /** close current cell if any and start a new one */
     public RtfTableCell newTableCell(int cellWidth, RtfAttributes attrs) throws IOException {
         highestCell++;
-        m_cell = new RtfTableCell(this,m_writer,cellWidth, attrs,highestCell);
+        m_cell = new RtfTableCell(this, m_writer, cellWidth, attrs, highestCell);
         return m_cell;
     }
 
@@ -105,7 +106,8 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
      * in order to add an empty cell that is merged with the cell above.
      * This cell is placed before or after the nested table.
      */
-    public RtfTableCell newTableCellMergedVertically(int cellWidth, RtfAttributes attrs) throws IOException {
+    public RtfTableCell newTableCellMergedVertically(int cellWidth,
+           RtfAttributes attrs) throws IOException {
         highestCell++;
         m_cell = new RtfTableCell (this, m_writer, cellWidth, attrs, highestCell);
         m_cell.setVMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
@@ -116,14 +118,15 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
      * Added by Boris POUDEROUS on 07/02/2002
      * in order to add an empty cell that is merged with the previous cell.
      */
-    public RtfTableCell newTableCellMergedHorizontally (int cellWidth, RtfAttributes attrs) throws IOException {
+    public RtfTableCell newTableCellMergedHorizontally (int cellWidth,
+           RtfAttributes attrs) throws IOException {
         highestCell++;
         // Added by Normand Masse
         // Inherit attributes from base cell for merge
         RtfAttributes wAttributes = (RtfAttributes)attrs.clone();
-        wAttributes.unset( "number-columns-spanned" );
+        wAttributes.unset("number-columns-spanned");
 
-        m_cell = new RtfTableCell(this,m_writer,cellWidth,wAttributes,highestCell);
+        m_cell = new RtfTableCell(this, m_writer, cellWidth, wAttributes, highestCell);
         m_cell.setHMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
         return m_cell;
     }
@@ -143,7 +146,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         writeControlWord("trowd");
 
         //check for keep-together
-        if(m_attrib != null && m_attrib.isSet(ITableAttributes.ROW_KEEP_TOGETHER)) {
+        if (m_attrib != null && m_attrib.isSet(ITableAttributes.ROW_KEEP_TOGETHER)) {
             writeControlWord(ROW_KEEP_TOGETHER);
         }
 
@@ -151,27 +154,27 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
 
         // if we have attributes, manipulate border properties
         final RtfTable parentTable = (RtfTable) m_parent;
-        if(m_attrib != null && parentTable != null) {
+        if (m_attrib != null && parentTable != null) {
 
             //if table is only one row long
-            if(isFirstRow() && parentTable.isHighestRow(id)){
+            if (isFirstRow() && parentTable.isHighestRow(id)) {
                 m_attrib.unset(ITableAttributes.ROW_BORDER_HORIZONTAL);
                 //or if row is the first row
-            }else if(isFirstRow()){
+            } else if (isFirstRow()) {
                 m_attrib.unset(ITableAttributes.ROW_BORDER_BOTTOM);
                 //or if row is the last row
-            }else if(parentTable.isHighestRow(id)){
+            } else if (parentTable.isHighestRow(id)) {
                 m_attrib.unset(ITableAttributes.ROW_BORDER_TOP);
                 //else the row is an inside row
-            }else{
+            } else {
                 m_attrib.unset(ITableAttributes.ROW_BORDER_BOTTOM);
                 m_attrib.unset(ITableAttributes.ROW_BORDER_TOP);
             }
         }
 
-        writeAttributes(m_attrib,ITableAttributes.ROW_BORDER);
-        writeAttributes(m_attrib,ITableAttributes.CELL_BORDER);
-        writeAttributes(m_attrib,BorderAttributesConverter.BORDERS);
+        writeAttributes(m_attrib, ITableAttributes.ROW_BORDER);
+        writeAttributes(m_attrib, ITableAttributes.CELL_BORDER);
+        writeAttributes(m_attrib, BorderAttributesConverter.BORDERS);
 
         /**
          * Added by Boris POUDEROUS on 07/02/2002
@@ -183,30 +186,24 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         int numberOfCellsBeforeNestedTable = 0;
 
         java.util.Vector indexesFound = new java.util.Vector();
-        for (Iterator it = getChildren().iterator(); it.hasNext(); )
-          {
+        for (Iterator it = getChildren().iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
 
-            if (e instanceof RtfTableCell)
-              {
-                if (!nestedTableFound)
-                  ++numberOfCellsBeforeNestedTable;
-
-                for (Iterator it2 = ((RtfTableCell)e).getChildren().iterator(); it2.hasNext(); )
-                   {
+            if (e instanceof RtfTableCell) {
+                if (!nestedTableFound) {
+                    ++numberOfCellsBeforeNestedTable;
+                }
+                for (Iterator it2 = ((RtfTableCell)e).getChildren().iterator(); it2.hasNext();) {
                       final RtfElement subElement = (RtfElement)it2.next();
-                      if (subElement instanceof RtfTable)
-                        {
+                      if (subElement instanceof RtfTable) {
                           nestedTableFound = true;
                           indexesFound.addElement(new Integer(index));
-                        }
-                      else if (subElement instanceof RtfParagraph)
-                        {
-                           for (Iterator it3 = ((RtfParagraph)subElement).getChildren().iterator(); it3.hasNext(); )
+                        } else if (subElement instanceof RtfParagraph) {
+                           for (Iterator it3 =
+                               ((RtfParagraph)subElement).getChildren().iterator(); it3.hasNext();)
                              {
                                 final RtfElement subSubElement = (RtfElement)it3.next();
-                                if (subSubElement instanceof RtfTable)
-                                  {
+                                if (subSubElement instanceof RtfTable) {
                                     nestedTableFound = true;
                                     indexesFound.addElement(new Integer(index));
                                   }
@@ -222,34 +219,29 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         // write X positions of our cells
         int xPos = 0;
         index = 0;            // Line added by Boris POUDEROUS on 07/02/2002
-        for(Iterator it = getChildren().iterator(); it.hasNext(); ) {
+        for (Iterator it = getChildren().iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
-            if(e instanceof RtfTableCell) {
+            if (e instanceof RtfTableCell) {
                 /**
                  * Added by Boris POUDEROUS on 2002/07/02
                  */
                 // If one of the row's child cells contains a nested table :
-                if (!indexesFound.isEmpty())
-                  {
-                    for (int i = 0; i < indexesFound.size(); i++)
-                      {
+                if (!indexesFound.isEmpty()) {
+                    for (int i = 0; i < indexesFound.size(); i++) {
                         // If the current cell index is equals to the index of the cell that
                         // contains a nested table => NO MERGE
-                        if (index == ((Integer)indexesFound.get(i)).intValue())
-                          break;
+                        if (index == ((Integer)indexesFound.get(i)).intValue()) {
+                            break;
 
                         // If the current cell index is lower than the index of the cell that
                         // contains a nested table => START VERTICAL MERGE
-                        else if (index < ((Integer)indexesFound.get(i)).intValue())
-                          {
+                        } else if (index < ((Integer)indexesFound.get(i)).intValue()) {
                             ((RtfTableCell)e).setVMerge(RtfTableCell.MERGE_START);
                             break;
-                          }
 
                         // If the current cell index is greater than the index of the cell that
                         // contains a nested table => START VERTICAL MERGE
-                        else if (index > ((Integer)indexesFound.get(i)).intValue())
-                          {
+                        } else if (index > ((Integer)indexesFound.get(i)).intValue()) {
                             ((RtfTableCell)e).setVMerge(RtfTableCell.MERGE_START);
                             break;
                           }
@@ -261,31 +253,31 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                 // Adjust the cell's display attributes so the table's/row's borders
                 // are drawn properly.
                 RtfTableCell cell = (RtfTableCell)e;
-                if ( index == 0 ) {
-                    if ( !cell.getRtfAttributes().isSet( ITableAttributes.CELL_BORDER_LEFT ) ) {
-                        cell.getRtfAttributes().set( ITableAttributes.CELL_BORDER_LEFT,
-                            (String)m_attrib.getValue( ITableAttributes.ROW_BORDER_LEFT ));
+                if (index == 0) {
+                    if (!cell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_LEFT)) {
+                        cell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_LEFT,
+                            (String)m_attrib.getValue(ITableAttributes.ROW_BORDER_LEFT));
                     }
                 }
 
-                if ( index == this.getChildCount() -1 ) {
-                    if ( !cell.getRtfAttributes().isSet( ITableAttributes.CELL_BORDER_RIGHT ) ) {
-                        cell.getRtfAttributes().set( ITableAttributes.CELL_BORDER_RIGHT,
-                            (String)m_attrib.getValue( ITableAttributes.ROW_BORDER_RIGHT ));
+                if (index == this.getChildCount() - 1) {
+                    if (!cell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_RIGHT)) {
+                        cell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_RIGHT,
+                            (String)m_attrib.getValue(ITableAttributes.ROW_BORDER_RIGHT));
                     }
                 }
 
-                if ( isFirstRow() ) {
-                    if ( !cell.getRtfAttributes().isSet( ITableAttributes.CELL_BORDER_TOP ) ) {
-                        cell.getRtfAttributes().set( ITableAttributes.CELL_BORDER_TOP,
-                            (String)m_attrib.getValue( ITableAttributes.ROW_BORDER_TOP ));
+                if (isFirstRow()) {
+                    if (!cell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_TOP)) {
+                        cell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_TOP,
+                            (String)m_attrib.getValue(ITableAttributes.ROW_BORDER_TOP));
                     }
                 }
 
-                if ( parentTable.isHighestRow(id) ) {
-                    if ( !cell.getRtfAttributes().isSet( ITableAttributes.CELL_BORDER_BOTTOM ) ) {
-                        cell.getRtfAttributes().set( ITableAttributes.CELL_BORDER_BOTTOM,
-                            (String)m_attrib.getValue( ITableAttributes.ROW_BORDER_BOTTOM ));
+                if (parentTable.isHighestRow(id)) {
+                    if (!cell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_BOTTOM)) {
+                        cell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_BOTTOM,
+                            (String)m_attrib.getValue(ITableAttributes.ROW_BORDER_BOTTOM));
                     }
                 }
 
@@ -314,22 +306,27 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
     private void writePaddingAttributes()
     throws IOException {
         // Row padding attributes generated in the converter package
-        // use RTF 1.6 definitions - try to compute a reasonable RTF 1.5 value out of them if present
+        // use RTF 1.6 definitions - try to compute a reasonable RTF 1.5 value
+        // out of them if present
         // how to do vertical padding with RTF 1.5?
-        if(m_attrib != null && !m_attrib.isSet(ATTR_RTF_15_TRGAPH)) {
+        if (m_attrib != null && !m_attrib.isSet(ATTR_RTF_15_TRGAPH)) {
             int gaph = -1;
             try {
                 // set (RTF 1.5) gaph to the average of the (RTF 1.6) left and right padding values
                 final Integer leftPadStr = (Integer)m_attrib.getValue(ATTR_ROW_PADDING_LEFT);
-                if(leftPadStr != null) gaph = leftPadStr.intValue();
+                if (leftPadStr != null) {
+                    gaph = leftPadStr.intValue();
+                }
                 final Integer rightPadStr = (Integer)m_attrib.getValue(ATTR_ROW_PADDING_RIGHT);
-                if(rightPadStr != null) gaph = (gaph + rightPadStr.intValue()) / 2;
-            } catch(Exception e) {
+                if (rightPadStr != null) {
+                    gaph = (gaph + rightPadStr.intValue()) / 2;
+                }
+            } catch (Exception e) {
                 final String msg = "RtfTableRow.writePaddingAttributes: " + e.toString();
 //                getRtfFile().getLog().logWarning(msg);
             }
-            if(gaph >= 0) {
-                m_attrib.set(ATTR_RTF_15_TRGAPH,gaph);
+            if (gaph >= 0) {
+                m_attrib.set(ATTR_RTF_15_TRGAPH, gaph);
             }
         }
 
@@ -337,11 +334,12 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         writeAttributes(m_attrib, ATTRIB_ROW_PADDING);
     }
 
-    public boolean isFirstRow(){
-        if(id == 1)
+    public boolean isFirstRow() {
+        if (id == 1) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     public boolean isHighestCell(int id) {

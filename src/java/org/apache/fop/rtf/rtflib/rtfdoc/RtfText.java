@@ -65,8 +65,7 @@ import java.io.Writer;
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-public class RtfText extends RtfElement
-{
+public class RtfText extends RtfElement {
         // char code for non-breakable space
         private static final int CHAR_NBSP = 160;
         private static final int CHAR_TAB = 137;
@@ -85,7 +84,8 @@ public class RtfText extends RtfElement
     private final RtfAttributes m_attr;
 
 
-    /** RtfText attributes: attribute names are RTF control word names to avoid additional mapping */
+    /** RtfText attributes: attribute names are RTF control word names to avoid
+     *  additional mapping */
     public static final String ATTR_BOLD = "b";
     public static final String ATTR_ITALIC = "i";
     public static final String ATTR_UNDERLINE = "ul";
@@ -145,7 +145,8 @@ public class RtfText extends RtfElement
     //this line added by Chris Scott, Westinghouse
     public static String[] BORDER = new String []
     {
-        BDR_BOTTOM_SINGLE,BDR_BOTTOM_DOUBLE,BDR_BOTTOM_EMBOSS,BDR_BOTTOM_DOTTED,BDR_BOTTOM_DASH
+        BDR_BOTTOM_SINGLE, BDR_BOTTOM_DOUBLE, BDR_BOTTOM_EMBOSS, BDR_BOTTOM_DOTTED,
+        BDR_BOTTOM_DASH
     };
 
     public static String[] INDENT = new String []
@@ -155,8 +156,8 @@ public class RtfText extends RtfElement
 
     public static String[] TABS = new String []
     {
-        TAB_CENTER ,TAB_RIGHT,TAB_LEADER_DOTS,TAB_LEADER_HYPHEN,TAB_LEADER_UNDER,
-        TAB_LEADER_THICK,TAB_LEADER_EQUALS
+        TAB_CENTER, TAB_RIGHT, TAB_LEADER_DOTS, TAB_LEADER_HYPHEN, TAB_LEADER_UNDER,
+        TAB_LEADER_THICK, TAB_LEADER_EQUALS
     };
 
 
@@ -174,40 +175,39 @@ public class RtfText extends RtfElement
     /** Create an RtfText in given IRtfTextContainer.
      *  @param str optional initial text content
      */
-    RtfText(IRtfTextContainer parent,Writer w,String str,RtfAttributes attr) throws IOException
-    {
-        super((RtfContainer)parent,w);
+    RtfText(IRtfTextContainer parent, Writer w, String str, RtfAttributes attr)
+           throws IOException {
+        super((RtfContainer)parent, w);
         m_text = str;
         m_attr = attr;
     }
 
     /** write our text to the RTF stream */
-    public void writeRtfContent() throws IOException
-    {
+    public void writeRtfContent() throws IOException {
             writeChars: {
 
                 //these lines were added by Boris Pouderous
                   if (m_attr != null) {
-                  writeAttributes(m_attr,new String[] {RtfText.SPACE_BEFORE});
-                  writeAttributes(m_attr,new String[] {RtfText.SPACE_AFTER});
+                  writeAttributes(m_attr, new String[] {RtfText.SPACE_BEFORE});
+                  writeAttributes(m_attr, new String[] {RtfText.SPACE_AFTER});
                 }
 
-                if(isTab()){
+                if (isTab()) {
                     writeControlWord("tab");
-                }else if(isNewLine()){
+                } else if (isNewLine()) {
                     break writeChars;
-                }else if(isBold(true)){
+                } else if (isBold(true)) {
                     writeControlWord("b");
-                }else if(isBold(false)){
+                } else if (isBold(false)) {
                     writeControlWord("b0");
-                }
-                // TODO not optimal, consecutive RtfText with same attributes could be written without group marks
-                else{
+                // TODO not optimal, consecutive RtfText with same attributes
+                // could be written without group marks
+                } else {
                     writeGroupMark(true);
-                    if(m_attr != null && mustWriteAttributes()) {
-                        writeAttributes(m_attr,RtfText.ATTR_NAMES);
+                    if (m_attr != null && mustWriteAttributes()) {
+                        writeAttributes(m_attr, RtfText.ATTR_NAMES);
                     }
-                    RtfStringConverter.getInstance().writeRtfString(m_writer,m_text);
+                    RtfStringConverter.getInstance().writeRtfString(m_writer, m_text);
                     writeGroupMark(false);
                 }
 
@@ -215,89 +215,89 @@ public class RtfText extends RtfElement
     }
 
         /** true if our text attributes must be written */
-        private boolean mustWriteAttributes()
-        {
+        private boolean mustWriteAttributes() {
             return !isEmpty() && !isNbsp();
         }
 
-    /** IRtfTextContainer requirement: return a copy of our attributes */
+    /** IRtfTextContainer requirement:
+     * @return a copy of our attributes */
     public RtfAttributes getTextContainerAttributes() {
-        if(m_attrib == null) return null;
+        if (m_attrib == null) {
+            return null;
+        }
         return (RtfAttributes)this.m_attrib.clone();
     }
 
     /** direct access to our text */
-    String getText()
-    {
+    String getText() {
         return m_text;
     }
 
     /** direct access to our text */
-    void setText(String str)
-    {
+    void setText(String str) {
         m_text = str;
     }
 
     /**
      * Checks whether the text is empty.
      *
-     * @return
-     *  true    If m_text is null\n
-     *  false   m_text is set
+     * @return true    If m_text is null\n
+     *         false   m_text is set
      */
-    public boolean isEmpty ()
-    {
+    public boolean isEmpty () {
         return m_text == null || m_text.trim().length() == 0;
     }
 
     /**
      *  True if text contains a single non-breaking space (#160).
-         *  TODO make this more general and/or merge with isEmpty? <-- what happen with empty paragraphs, if they will be removed, than NO, else ok
+     *  TODO make this more general and/or merge with isEmpty? <-- what happen
+     *       with empty paragraphs, if they will be removed, than NO, else ok
      *
-     * @return
-     *  true    If m_text is character 160\n
-     *  false   m_text is not a nbsp
+     * @return true    If m_text is character 160\n
+     *         false   m_text is not a nbsp
      */
-    public boolean isNbsp ()
-    {
-        if (! isEmpty ())
-            if (m_text.trim ().length () == 1 && m_text.charAt (0) == CHAR_NBSP)
+    public boolean isNbsp () {
+        if (!isEmpty ()) {
+            if (m_text.trim ().length () == 1 && m_text.charAt (0) == CHAR_NBSP) {
                 return true;
-        return false;
-    }
-
-    public boolean isTab()
-    {
-        if(m_text.trim().length()==1 && m_text.charAt(0)== CHAR_TAB)
-            return true;
-        else
-            return false;
-    }
-
-    public boolean isNewLine()
-    {
-        if(m_text.trim().length()==1 && m_text.charAt(0)== CHAR_NEW_LINE)
-            return true;
-        else
-            return false;
-    }
-
-    public boolean isBold(boolean isStart)
-    {
-        if(isStart){
-            if(m_text.trim().length()==1 && m_text.charAt(0)== CHAR_BOLD_START)
-                return true;
-        }else{
-            if(m_text.trim().length()==1 && m_text.charAt(0)== CHAR_BOLD_END)
-                return true;
-            else
-                return false;
+            }
         }
         return false;
     }
 
-    /** get the attributes of our text */
-    public RtfAttributes getTextAttributes(){
+    public boolean isTab() {
+        if (m_text.trim().length() == 1 && m_text.charAt(0) == CHAR_TAB) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isNewLine() {
+        if (m_text.trim().length() == 1 && m_text.charAt(0) == CHAR_NEW_LINE) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isBold(boolean isStart) {
+        if (isStart) {
+            if (m_text.trim().length() == 1 && m_text.charAt(0) == CHAR_BOLD_START) {
+                return true;
+            }
+        } else {
+            if (m_text.trim().length() == 1 && m_text.charAt(0) == CHAR_BOLD_END) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /** @return the attributes of our text */
+    public RtfAttributes getTextAttributes() {
         return m_attr;
     }
 }

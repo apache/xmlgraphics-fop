@@ -62,8 +62,7 @@ package org.apache.fop.rtf.rtflib.interfaces;
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-public interface ITableColumnsInfo
-{
+public interface ITableColumnsInfo {
     float INVALID_COLUM_WIDTH = 200f;
 
     /** reset the column iteration index, meant to be called when creating a new row */
@@ -77,9 +76,9 @@ public interface ITableColumnsInfo
      */
     float getColumnWidth();
 
-     /** return current column iteration index */
+     /** @return current column iteration index */
      int getColumnIndex();
 
-     /** return number of columns */
+     /** @return number of columns */
      int getNumberOfColumns();
 }
