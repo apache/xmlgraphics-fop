@@ -34,8 +34,8 @@ import org.apache.commons.logging.LogFactory;
  * The pages are stored and can be retrieved in any order.
  */
 public class StorePagesModel extends AreaTreeModel {
-    private List pageSequence = null;
-    private List currSequence;
+    private List pageSequenceList = null;
+    private List currentPageSequencePageList;
     private List offDocumentItems = new java.util.ArrayList();
 
     protected static Log log = LogFactory.getLog(StorePagesModel.class);
@@ -44,6 +44,7 @@ public class StorePagesModel extends AreaTreeModel {
      * Create a new store pages model
      */
     public StorePagesModel() {
+        pageSequenceList = new java.util.ArrayList();
     }
 
     /**
@@ -52,11 +53,8 @@ public class StorePagesModel extends AreaTreeModel {
      * @param title the title of the page sequence.
      */
     public void startPageSequence(LineArea title) {
-        if (pageSequence == null) {
-            pageSequence = new java.util.ArrayList();
-        }
-        currSequence = new java.util.ArrayList();
-        pageSequence.add(currSequence);
+        currentPageSequencePageList = new java.util.ArrayList();
+        pageSequenceList.add(currentPageSequencePageList);
     }
 
     /**
@@ -64,7 +62,7 @@ public class StorePagesModel extends AreaTreeModel {
      * @param page the page to add to the current page sequence
      */
     public void addPage(PageViewport page) {
-        currSequence.add(page);
+        currentPageSequencePageList.add(page);
     }
 
     /**
@@ -72,7 +70,7 @@ public class StorePagesModel extends AreaTreeModel {
      * @return the number of page sequences in the document.
      */
     public int getPageSequenceCount() {
-        return pageSequence.size();
+        return pageSequenceList.size();
     }
 
     /**
@@ -81,7 +79,7 @@ public class StorePagesModel extends AreaTreeModel {
      * @return returns the number of pages in a page sequence
      */
     public int getPageCount(int seq) {
-        List sequence = (List) pageSequence.get(seq - 1);
+        List sequence = (List) pageSequenceList.get(seq - 1);
         return sequence.size();
     }
 
@@ -92,7 +90,7 @@ public class StorePagesModel extends AreaTreeModel {
      * @return the PageViewport for the particular page
      */
     public PageViewport getPage(int seq, int count) {
-        List sequence = (List) pageSequence.get(seq - 1);
+        List sequence = (List) pageSequenceList.get(seq - 1);
         return (PageViewport) sequence.get(count);
     }
 
@@ -100,36 +98,14 @@ public class StorePagesModel extends AreaTreeModel {
      * @see org.apache.fop.area.AreaTreeModel#handleOffDocumentItem(OffDocumentItem)
      */
     public void handleOffDocumentItem(OffDocumentItem ext) {
-        int seq, page;
-        switch(ext.getWhenToProcess()) {
-            case OffDocumentItem.IMMEDIATELY:
-                seq = pageSequence == null ? 0 : pageSequence.size();
-                page = currSequence == null ? 0 : currSequence.size();
-                break;
-            case OffDocumentItem.AFTER_PAGE:
-                break;
-            case OffDocumentItem.END_OF_DOC:
-                break;
-        }
         offDocumentItems.add(ext);
     }
 
     /**
-     * Get the list of OffDocumentItems that apply at a particular
-     * position in the document.
-     * @param seq the page sequence number
-     * @param count the page count in the sequence
+     * Get the list of OffDocumentItems for this StorePagesModel.
      * @return the list of OffDocumentItems
      */
-    public List getOffDocumentItems(int seq, int count) {
-        return null;
-    }
-
-    /**
-     * Get the end of document OffDocumentItems for this store pages model.
-     * @return the list of end OffDocumentItems
-     */
-    public List getEndOffDocumentItems() {
+    public List getOffDocumentItems() {
         return offDocumentItems;
     }
 
