@@ -8,7 +8,6 @@
 package org.apache.fop.area;
 
 import java.io.Serializable;
-import org.apache.fop.fo.FObj;
 
 import java.util.HashMap;
 
@@ -46,8 +45,7 @@ public class Area implements Serializable {
     // IMPORTANT: make sure this is the maximum + 1
     public static final int CLASS_MAX = CLASS_SIDE_FLOAT+1;
 
-    private int areaClass=CLASS_NORMAL;
-    private FObj genFObj;
+    private int areaClass = CLASS_NORMAL;
     private int ipd;
 
     protected Area parent =null; // Doesn't need to be saved in serialization
@@ -119,14 +117,6 @@ public class Area implements Serializable {
 
     public void setParent(Area parent) {
 	this.parent = parent;
-    }
-
-    public void setGeneratingFObj(FObj fobj) {
-	this.genFObj = fobj;
-    }
-
-    public FObj getGeneratingFObj() {
-	return this.genFObj;
     }
 
     // Do nothing! Let subclasses do something if they can have child areas.
