@@ -25,18 +25,25 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ToBeImplementedElement;
+import org.apache.fop.fo.FObj;
 
 /**
  * fo:float element.
  */
-public class Float extends ToBeImplementedElement {
+public class Float extends FObj {
 
+    static boolean notImplementedWarningGiven = false;
+    
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public Float(FONode parent) {
         super(parent);
+        
+        if (!notImplementedWarningGiven) {
+            getLogger().warn("fo:float is not yet implemented.");
+            notImplementedWarningGiven = true;
+        }
     }
 
     /**

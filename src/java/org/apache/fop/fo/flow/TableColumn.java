@@ -36,13 +36,10 @@ import org.apache.fop.fo.FObj;
 public class TableColumn extends FObj {
 
     private ColorType backgroundColor;
-
     private Length columnWidth;
     private int columnOffset;
     private int numColumnsRepeated;
     private int iColumnNumber;
-
-    private boolean initialized = false;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -61,12 +58,26 @@ public class TableColumn extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addProperties
+     * @see org.apache.fop.fo.FObj#addProperties(Attributes)
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        initialize();    // init some basic property values
+
+        iColumnNumber = propertyList.get(PR_COLUMN_NUMBER).getNumber().intValue();
+        numColumnsRepeated =
+            propertyList.get(PR_NUMBER_COLUMNS_REPEATED).getNumber().intValue();
+        this.backgroundColor =
+            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
+        columnWidth = this.propertyList.get(PR_COLUMN_WIDTH).getLength();
+
         getFOInputHandler().startColumn(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        getFOInputHandler().endColumn(this);
     }
 
     /**
@@ -90,27 +101,6 @@ public class TableColumn extends FObj {
         return numColumnsRepeated;
     }
 
-    /**
-     * @todo convert to addProperties()
-     */
-    public void initialize() {
-        iColumnNumber = propertyList.get(PR_COLUMN_NUMBER).getNumber().intValue();
-
-        numColumnsRepeated =
-            propertyList.get(PR_NUMBER_COLUMNS_REPEATED).getNumber().intValue();
-
-        this.backgroundColor =
-            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
-
-        columnWidth = this.propertyList.get(PR_COLUMN_WIDTH).getLength();
-
-        initialized = true;
-    }
-
-    protected void endOfNode() throws SAXParseException {
-        getFOInputHandler().endColumn(this);
-    }
-    
     public String getName() {
         return "fo:table-column";
     }

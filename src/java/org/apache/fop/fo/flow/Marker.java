@@ -20,6 +20,7 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
@@ -28,16 +29,11 @@ import org.apache.fop.fo.FObjMixed;
 
 /**
  * Marker formatting object.
- * This is the marker formatting object that handles merkers.
- * This attempts to add itself to the parent formatting object.
  */
 public class Marker extends FObjMixed {
 
-    private String markerClassName;
-
     /**
      * Create a marker fo.
-     *
      * @param parent the parent fo node
      */
     public Marker(FONode parent) {
@@ -49,19 +45,26 @@ public class Marker extends FObjMixed {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        this.markerClassName =
-            this.propertyList.get(PR_MARKER_CLASS_NAME).getString();
     }
 
     /**
-     * Get the marker class name for this marker.
-     *
-     * @return the marker class name
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: (#PCDATA|%inline;|%block;)*
+     * Additionally: "An fo:marker may contain any formatting objects that 
+     * are permitted as a replacement of any fo:retrieve-marker that retrieves
+     * the fo:marker's children."
+     * @todo implement "additional" constraint, possibly within fo:retrieve-marker
      */
-    public String getMarkerClassName() {
-        return markerClassName;
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        if (!isBlockOrInlineItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        }
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:marker";
     }

@@ -180,11 +180,22 @@ public class FObj extends FONode implements Constants {
     /**
      * Helper method to quickly obtain the value of a property
      * for this FO, without querying for the propertyList first.
-     * @param name - the name of the desired property to obtain
+     * @param propId - the Constants ID of the desired property to obtain
      * @return the property
      */
     public Property getProperty(int propId) {
         return propertyList.get(propId);
+    }
+
+    /**
+     * Helper method to quickly obtain the String value of a property
+     * for this FO, without querying for the propertyList first.
+     * Meaningful only for properties having a string representation
+     * @param propId - the Constants ID of the desired property to obtain
+     * @return the String value of the property value
+     */
+    public String getPropString(int propId) {
+        return propertyList.get(propId).getString();
     }
 
     /**
@@ -378,7 +389,7 @@ public class FObj extends FONode implements Constants {
      * @param marker Marker to add.
      */
     protected void addMarker(Marker marker) {
-        String mcname = marker.getMarkerClassName();
+        String mcname = marker.getPropString(PR_MARKER_CLASS_NAME);
         if (childNodes != null) {
             // check for empty childNodes
             for (Iterator iter = childNodes.iterator(); iter.hasNext();) {
