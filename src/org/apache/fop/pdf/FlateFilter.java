@@ -135,8 +135,8 @@ public class FlateFilter extends PDFFilter {
      * @param predictor the predictor to use
      * @throws PDFFilterException if there is an error with the predictor
      */
-    public void setPredictor(int predictor) throws PDFFilterException {
-        predictor = predictor;
+    public void setPredictor(int pred) throws PDFFilterException {
+        predictor = pred;
 
     }
 
@@ -155,9 +155,9 @@ public class FlateFilter extends PDFFilter {
      * @param colors the colors to use
      * @throws PDFFilterException if predictor is not PREDICTION_NONE
      */
-    public void setColors(int colors) throws PDFFilterException {
+    public void setColors(int cols) throws PDFFilterException {
         if (predictor != PREDICTION_NONE) {
-            colors = colors;
+            colors = cols;
         } else {
             throw new PDFFilterException(
                           "Prediction must not be PREDICTION_NONE in"
@@ -205,9 +205,9 @@ public class FlateFilter extends PDFFilter {
      * @param columns the number of columns to use for the filter
      * @throws PDFFilterException if predictor is not PREDICTION_NONE
      */
-    public void setColumns(int columns) throws PDFFilterException {
+    public void setColumns(int cols) throws PDFFilterException {
         if (predictor != PREDICTION_NONE) {
-            columns = columns;
+            columns = cols;
         } else {
             throw new PDFFilterException(
                       "Prediction must not be PREDICTION_NONE in"
