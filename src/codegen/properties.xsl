@@ -883,7 +883,7 @@ public class </xsl:text>
     <xsl:value-of select="key('shorthandref', $shprop)/datatype-parser"/>
     <xsl:text>(listprop);
                p = shparser.getValueForProperty(
-                                        getPropName(), this, propertyList);
+                                        getPropId(), this, propertyList);
             }
         }</xsl:text>
   </xsl:for-each>

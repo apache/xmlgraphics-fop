@@ -1267,13 +1267,27 @@ public class PropertySets {
 
     }
 
+   /*  These arrays, one for each formatting object, define the properties that
+    *  are valid for an FO and its children.  The first element, indices[0], 
+    *  will be used in PropertyList to define the size of the Property[] array
+    *  for the FObj (= the number of properties valid for the element + 1.)  
+    *  Each other element of this array has a value of 0 if not supported by the FO,
+    *  1-based index otherwise.  This array will be used as a pointer to the Property[]
+    *  array in PropertyList holding the valid properties for the FO.
+    *  i.e., fo.propList.values[indices[propId]] will refer to the correct Property
+    *  element if the property is valid for the FO, values[indices[invalPropId]] =
+    *  values[0] = NULL otherwise.
+    */
     private static short[] makeSparseIndices(BitSet set) {
-        short[] indices = new short[Constants.PROPERTY_COUNT];
+        short[] indices = new short[Constants.PROPERTY_COUNT +1];
+
         indices[0] = (short) (set.cardinality() + 1);
-        int j = 1;
+
+        int propIndex = 1;
         for (int i = set.nextSetBit(0); i >= 0; i = set.nextSetBit(i+1)) {
-            indices[i] = (short) j++;
+            indices[i] = (short) propIndex++;
         }
+        
         return indices;
     }
 
