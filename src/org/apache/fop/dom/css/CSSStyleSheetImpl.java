@@ -115,7 +115,7 @@ public class CSSStyleSheetImpl implements CSSStyleSheet {
     public void deleteRule(int index)
                            throws DOMException
     {
-        rules.remove(index);
+        rules.removeElementAt(index);
     }
 
     public String getType()

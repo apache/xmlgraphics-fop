@@ -87,7 +87,7 @@ public class CompileXMLFiles extends Task
   private String configFile, outFile;
   private String [] filenameList;
   private String filenames;
-  private ArrayList files = new ArrayList(); 
+  private Vector files = new Vector(); 
  
   //sets name of configuration file, which must
   //be an xml file conforming to the book.dtd used by xml-site
@@ -163,7 +163,7 @@ public class CompileXMLFiles extends Task
   {
     String line, filename;
     BufferedReader in;  
-    Iterator iterator = files.iterator();  
+    Enumeration iterator = files.elements();  
     try {
       BufferedWriter out = 
                    new  BufferedWriter (new FileWriter("compileXMLFiles-tmp.xml"));
@@ -171,8 +171,8 @@ public class CompileXMLFiles extends Task
                 "<!DOCTYPE documentation [\n" +
                 "<!ENTITY nbsp \" \">\n" +
                 "]>\n<documentation>");
-      while (iterator.hasNext()) {
-        filename = (String) iterator.next();
+      while (iterator.hasMoreElements()) {
+        filename = (String) iterator.nextElement();
         in = new BufferedReader(new FileReader(filename));
         while ((line = in.readLine()) != null) {
           //kill the lines pointing to the sbk protocol and the xml declaration
@@ -196,7 +196,7 @@ public class CompileXMLFiles extends Task
     String id, label, source;
     if (name.equals("document") || name.equals("entry")) {
       source = atts.getValue("source");    
-      files.add(source);
+      files.addElement(source);
     }
   }
   public void endElement (String name)

@@ -157,9 +157,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <property name="ignore_jdk11"
               value="org/apache/fop/render/awt/**
-                     ,org/apache/fop/image/analyzer/*
                      ,org/apache/fop/viewer/**
-                     ,org/apache/fop/image/*
+                     ,**/GifJpegImage.java
+                     ,**/JimiImage.java
                      ,**/PrintCommandLine.java
                      ,**/AWTCommandLine.java"/>
 
