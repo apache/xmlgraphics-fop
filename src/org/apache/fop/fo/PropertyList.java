@@ -255,7 +255,7 @@ public class PropertyList extends HashMap {
 
         // if value is inherit then get computed value from
         // parent
-        if(p != null && "inherit".equals(p.getString())) {
+        if(p != null && "inherit".equals(p.getSpecifiedValue())) {
             if (this.parentPropertyList != null) {
                 p = parentPropertyList.get(propertyName, true, false);
             }
