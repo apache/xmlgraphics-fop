@@ -62,64 +62,79 @@ public class SVGFilterElementImpl extends SVGURIReferenceImpl implements SVGFilt
 	{
 	}
 
-	public short getFilterUnits( )
-	{
-		return 0;
-	}
-
-	public void setFilterUnits( short filterUnits )
-	{
-	}
-
-	public SVGLength getX( )
+	public SVGAnimatedEnumeration getFilterUnits( )
 	{
 		return null;
 	}
 
-	public void setX( SVGLength x )
+	public void setFilterUnits( SVGAnimatedEnumeration filterUnits )
 	{
 	}
 
-	public SVGLength getY( )
-	{
-		return null;
-	}
-
-	public void setY( SVGLength y )
-	{
-	}
-
-	public SVGLength getWidth( )
+	public SVGAnimatedEnumeration getPrimitiveUnits( )
 	{
 		return null;
 	}
 
-	public void setWidth( SVGLength width )
+	public void setPrimitiveUnits( SVGAnimatedEnumeration filterUnits )
 	{
 	}
 
-	public SVGLength getHeight( )
-	{
-		return null;
-	}
-
-	public void setHeight( SVGLength height )
-	{
-	}
-
-	public SVGInteger getFilterResX( )
+	public SVGAnimatedLength getX( )
 	{
 		return null;
 	}
 
-	public SVGInteger getFilterResY( )
+	public void setX( SVGAnimatedLength x )
+	{
+	}
+
+	public SVGAnimatedLength getY( )
 	{
 		return null;
 	}
 
+	public void setY( SVGAnimatedLength y )
+	{
+	}
+
+	public SVGAnimatedLength getWidth( )
+	{
+		return null;
+	}
+
+	public void setWidth( SVGAnimatedLength width )
+	{
+	}
+
+	public SVGAnimatedLength getHeight( )
+	{
+		return null;
+	}
+
+	public void setHeight( SVGAnimatedLength height )
+	{
+	}
+
+	public SVGAnimatedInteger getFilterResX( )
+	{
+		return null;
+	}
+
+	public SVGAnimatedInteger getFilterResY( )
+	{
+		return null;
+	}
+
+	public void setFilterResX( SVGAnimatedInteger filterResX )
+	{
+	}
+
+	public void setFilterResY( SVGAnimatedInteger filterResY )
+	{
+	}
 
 	public void setFilterRes ( int filterResX, int filterResY )
-	              throws SVGException
 	{
 	}
 }

@@ -60,7 +60,7 @@ import org.w3c.dom.svg.*;
  */
 public class SVGClipPathElementImpl extends GraphicElement implements SVGClipPathElement {
 	public Vector elements;
-	short units;
+	SVGAnimatedEnumeration units;
 
 	public void addElement(GraphicImpl g)
 	{
@@ -71,12 +71,12 @@ public class SVGClipPathElementImpl extends GraphicElement implements SVGClipPat
 	{
 	}
 
-	public short getClipPathUnits( )
+	public SVGAnimatedEnumeration getClipPathUnits( )
 	{
 		return units;
 	}
 
-	public void setClipPathUnits(short clipPathUnits)
+	public void setClipPathUnits(SVGAnimatedEnumeration clipPathUnits)
 	{
 		units = clipPathUnits;
 	}

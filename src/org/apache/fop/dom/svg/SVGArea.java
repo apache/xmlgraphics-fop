@@ -163,11 +163,11 @@ public class SVGArea extends Area implements GraphicImpl, GetSVGDocument {//, SV
 		return (GraphicImpl)obj;
 	}
 
-	public Hashtable getStyle()
+	public Hashtable oldgetStyle()
 	{
 		Hashtable ret = null;
 		if(parent != null) {
-			ret = parent.getStyle();
+			ret = parent.oldgetStyle();
 			if(ret != null)
 				ret = (Hashtable)ret.clone();
 		}

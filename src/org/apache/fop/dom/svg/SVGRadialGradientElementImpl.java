@@ -57,62 +57,62 @@ import org.w3c.dom.svg.*;
  *
  */
 public class SVGRadialGradientElementImpl extends SVGGradientElementImpl implements SVGRadialGradientElement {
-	SVGLength cx;
-	SVGLength cy;
-	SVGLength r;
-	SVGLength fx;
-	SVGLength fy;
+	SVGAnimatedLength cx;
+	SVGAnimatedLength cy;
+	SVGAnimatedLength r;
+	SVGAnimatedLength fx;
+	SVGAnimatedLength fy;
 
 	public SVGRadialGradientElementImpl()
 	{
 	}
 
-	public SVGLength getCx()
+	public SVGAnimatedLength getCx()
 	{
 		return cx;
 	}
 
-	public void setCx(SVGLength cx)
+	public void setCx(SVGAnimatedLength cx)
 	{
 		this.cx = cx;
 	}
 
-	public SVGLength getCy()
+	public SVGAnimatedLength getCy()
 	{
 		return cy;
 	}
 
-	public void setCy(SVGLength cy)
+	public void setCy(SVGAnimatedLength cy)
 	{
 		this.cy = cy;
 	}
 
-	public SVGLength getR()
+	public SVGAnimatedLength getR()
 	{
 		return r;
 	}
 
-	public void setR(SVGLength r)
+	public void setR(SVGAnimatedLength r)
 	{
 		this.r = r;
 	}
 
-	public SVGLength getFx()
+	public SVGAnimatedLength getFx()
 	{
 		return fx;
 	}
 
-	public void setFx(SVGLength fx)
+	public void setFx(SVGAnimatedLength fx)
 	{
 		this.fx = fx;
 	}
 
-	public SVGLength getFy()
+	public SVGAnimatedLength getFy()
 	{
 		return fy;
 	}
 
-	public void setFy(SVGLength fy)
+	public void setFy(SVGAnimatedLength fy)
 	{
 		this.fy = fy;
 	}

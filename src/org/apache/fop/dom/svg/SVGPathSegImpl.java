@@ -84,7 +84,7 @@ public class SVGPathSegImpl implements SVGPathSeg {
 	{
 	}
 
-	public float getX( )
+/*	public float getX( )
 	{
 		return 0;
 	}
@@ -181,5 +181,5 @@ public class SVGPathSegImpl implements SVGPathSeg {
 
 	public void setSweepFlag( boolean sweepFlag )
 	{
-	}
+	}*/
 }

@@ -123,10 +123,10 @@ public class LinearGradient extends FObj implements GraphicsCreator {
 		linear.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
 		linear.setId(this.properties.get("id").getString());
 
-		linear.setX1(((SVGLengthProperty)this.properties.get("x1")).getSVGLength());
-		linear.setX2(((SVGLengthProperty)this.properties.get("x2")).getSVGLength());
-		linear.setY1(((SVGLengthProperty)this.properties.get("y1")).getSVGLength());
-		linear.setY2(((SVGLengthProperty)this.properties.get("y2")).getSVGLength());
+		linear.setX1(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("x1")).getSVGLength()));
+		linear.setX2(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("x2")).getSVGLength()));
+		linear.setY1(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("y1")).getSVGLength()));
+		linear.setY2(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("y2")).getSVGLength()));
 //		linear.setSpreadMethod(?);
 		return linear;
 	}

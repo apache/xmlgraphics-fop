@@ -57,29 +57,29 @@ import org.w3c.dom.svg.*;
  *
  */
 public class SVGCursorElementImpl extends SVGURIReferenceImpl implements SVGCursorElement {
-	SVGLength x;
-	SVGLength y;
+	SVGAnimatedLength x;
+	SVGAnimatedLength y;
 
 	public SVGCursorElementImpl()
 	{
 	}
 
-	public SVGLength getX( )
+	public SVGAnimatedLength getX( )
 	{
 		return x;
 	}
 
-	public void setX( SVGLength x )
+	public void setX( SVGAnimatedLength x )
 	{
 		this.x = x;
 	}
 
-	public SVGLength getY( )
+	public SVGAnimatedLength getY( )
 	{
 		return y;
 	}
 
-	public void setY( SVGLength y )
+	public void setY( SVGAnimatedLength y )
 	{
 		this.y = y;
 	}

@@ -57,9 +57,9 @@ import org.w3c.dom.svg.*;
  *
  */
 public class SVGCircleElementImpl extends GraphicElement implements SVGCircleElement {
-	private SVGLength cx;
-	private SVGLength cy;
-	private SVGLength r;
+	private SVGAnimatedLength cx;
+	private SVGAnimatedLength cy;
+	private SVGAnimatedLength r;
 
 	/**
 	 */
@@ -67,41 +67,41 @@ public class SVGCircleElementImpl extends GraphicElement implements SVGCircleEle
 	{
 	}
 
-	public String getClassName( )
+/*	public String getClassName( )
 	{
 		return null;
 	}
 
 	public void setClassName( String className )
 	{
-	}
+	}*/
 
-	public SVGLength getCx( )
+	public SVGAnimatedLength getCx( )
 	{
 		return cx;
 	}
 
-	public void setCx( SVGLength cx )
+	public void setCx( SVGAnimatedLength cx )
 	{
 		this.cx = cx;
 	}
 
-	public SVGLength getCy( )
+	public SVGAnimatedLength getCy( )
 	{
 		return cy;
 	}
 
-	public void setCy( SVGLength cy )
+	public void setCy( SVGAnimatedLength cy )
 	{
 		this.cy = cy;
 	}
 
-	public SVGLength getR( )
+	public SVGAnimatedLength getR( )
 	{
 		return r;
 	}
 
-	public void setR( SVGLength r )
+	public void setR( SVGAnimatedLength r )
 	{
 		this.r = r;
 	}

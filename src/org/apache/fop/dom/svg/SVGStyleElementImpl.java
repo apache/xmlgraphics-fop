@@ -72,4 +72,22 @@ public class SVGStyleElementImpl extends GraphicElement implements SVGStyleEleme
 	{
 		this.type = type;
 	}
+
+	public String getMedia( )
+	{
+	    return null;
+	}
+
+	public void setMedia( String media )
+	{
+	}
+
+	public String getTitle( )
+	{
+	    return null;
+	}
+
+	public void setTitle( String title )
+	{
+	}
 }

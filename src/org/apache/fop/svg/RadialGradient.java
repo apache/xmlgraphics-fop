@@ -123,11 +123,11 @@ public class RadialGradient extends FObj implements GraphicsCreator {
 		radial.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
 		radial.setId(this.properties.get("id").getString());
 
-		radial.setCx(((SVGLengthProperty)this.properties.get("cx")).getSVGLength());
-		radial.setCy(((SVGLengthProperty)this.properties.get("cy")).getSVGLength());
-		radial.setR(((SVGLengthProperty)this.properties.get("r")).getSVGLength());
-		radial.setFx(((SVGLengthProperty)this.properties.get("fx")).getSVGLength());
-		radial.setFy(((SVGLengthProperty)this.properties.get("fy")).getSVGLength());
+		radial.setCx(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("cx")).getSVGLength()));
+		radial.setCy(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("cy")).getSVGLength()));
+		radial.setR(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("r")).getSVGLength()));
+		radial.setFx(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("fx")).getSVGLength()));
+		radial.setFy(new SVGAnimatedLengthImpl(((SVGLengthProperty)this.properties.get("fy")).getSVGLength()));
 		return radial;
 	}
 

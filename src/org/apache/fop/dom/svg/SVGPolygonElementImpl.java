@@ -71,4 +71,9 @@ public class SVGPolygonElementImpl extends GraphicElement implements SVGPolygonE
 	{
 		return null;
 	}
+
+	public SVGList getAnimatedPoints( )
+	{
+		return null;
+	}
 }

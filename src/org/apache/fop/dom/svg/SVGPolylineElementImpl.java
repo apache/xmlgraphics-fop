@@ -71,4 +71,18 @@ public class SVGPolylineElementImpl extends GraphicElement implements SVGPolylin
 	{
 		return null;
 	}
+
+	public SVGList getAnimatedPoints( )
+	{
+	    return null;
+	}
+
+/*	public SVGAnimatedBoolean getExternalResourcesRequired( )
+	{
+		return null;
+	}
+
+	public void setExternalResourcesRequired( SVGAnimatedBoolean externalResourcesRequired )
+	{
+	}*/
 }

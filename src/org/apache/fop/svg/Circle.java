@@ -115,9 +115,9 @@ public class Circle extends FObj implements GraphicsCreator {
 		SVGLength cy = ((SVGLengthProperty)this.properties.get("cy")).getSVGLength();
 		SVGLength r = ((SVGLengthProperty)this.properties.get("r")).getSVGLength();
 		SVGCircleElementImpl graph = new SVGCircleElementImpl();
-		graph.setCx(cx);
-		graph.setCy(cy);
-		graph.setR(r);
+		graph.setCx(new SVGAnimatedLengthImpl(cx));
+		graph.setCy(new SVGAnimatedLengthImpl(cy));
+		graph.setR(new SVGAnimatedLengthImpl(r));
 		graph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
 		graph.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
 		graph.setId(this.properties.get("id").getString());

@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
+ 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,61 +48,37 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-
 package org.apache.fop.dom.svg;
+
+import org.apache.fop.fo.Property;
+
+import java.util.*;
 
 import org.w3c.dom.svg.*;
 
 /**
  *
  */
-public class SVGGradientElementImpl extends SVGURIReferenceImpl implements SVGGradientElement {
-/*
-SVG_SPREADMETHOD_UNKNOWN;
-SVG_SPREADMETHOD_PAD;
-SVG_SPREADMETHOD_REFLECT;
-SVG_SPREADMETHOD_REPEAT;
-*/
-	SVGAnimatedEnumeration units = new SVGAnimatedEnumerationImpl(SVG_UNIT_TYPE_UNKNOWN);
+public class SVGAnimatedNumberImpl implements SVGAnimatedNumber {
+	float base = 0;
 
-	public SVGGradientElementImpl()
+	public SVGAnimatedNumberImpl(float b)
 	{
+	    base = b;
 	}
 
-	public SVGAnimatedEnumeration getGradientUnits( )
+	public float getBaseVal()
 	{
-		return units;
+	    return base;
 	}
 
-	public void setGradientUnits(SVGAnimatedEnumeration gradientUnits)
+	public void setBaseVal(float baseVal)
 	{
-		units = gradientUnits;
+	    base = baseVal;
 	}
 
-	public SVGAnimatedTransformList getGradientTransform()
+	public float getAnimVal()
 	{
-		return null;
-	}
-
-	public void setGradientTransform(SVGAnimatedTransformList gradientTransform)
-	{
-	}
-
-	public SVGAnimatedEnumeration   getSpreadMethod( )
-	{
-		return null;
-	}
-
-	public void setSpreadMethod( SVGAnimatedEnumeration spreadMethod )
-	{
-	}
-
-	public SVGAnimatedBoolean getExternalResourcesRequired( )
-	{
-		return null;
-	}
-
-	public void      setExternalResourcesRequired( SVGAnimatedBoolean externalResourcesRequired )
-	{
+	    return base;
 	}
 }

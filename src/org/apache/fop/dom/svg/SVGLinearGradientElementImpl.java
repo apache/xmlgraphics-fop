@@ -59,57 +59,57 @@ import org.w3c.dom.svg.*;
 public class SVGLinearGradientElementImpl extends SVGGradientElementImpl
 	implements SVGLinearGradientElement {
 
-	SVGLength x1;
-	SVGLength x2;
-	SVGLength y1;
-	SVGLength y2;
-	short spreadMethod;
+	SVGAnimatedLength x1;
+	SVGAnimatedLength x2;
+	SVGAnimatedLength y1;
+	SVGAnimatedLength y2;
+//	short spreadMethod;
 
 	public SVGLinearGradientElementImpl()
 	{
 	}
 
-	public SVGLength getX1()
+	public SVGAnimatedLength getX1()
 	{
 		return x1;
 	}
 
-	public void setX1(SVGLength x1)
+	public void setX1(SVGAnimatedLength x1)
 	{
 		this.x1 = x1;
 	}
 
-	public SVGLength getY1()
+	public SVGAnimatedLength getY1()
 	{
 		return y1;
 	}
 
-	public void setY1(SVGLength y1)
+	public void setY1(SVGAnimatedLength y1)
 	{
 		this.y1 = y1;
 	}
 
-	public SVGLength getX2()
+	public SVGAnimatedLength getX2()
 	{
 		return x2;
 	}
 
-	public void setX2(SVGLength x2)
+	public void setX2(SVGAnimatedLength x2)
 	{
 		this.x2 = x2;
 	}
 
-	public SVGLength getY2()
+	public SVGAnimatedLength getY2()
 	{
 		return y2;
 	}
 
-	public void setY2(SVGLength y2)
+	public void setY2(SVGAnimatedLength y2)
 	{
 		this.y2 = y2;
 	}
 
-	public short getSpreadMethod()
+/*	public short getSpreadMethod()
 	{
 		return spreadMethod;
 	}
@@ -117,5 +117,5 @@ public class SVGLinearGradientElementImpl extends SVGGradientElementImpl
 	public void setSpreadMethod(short spreadMethod)
 	{
 		this.spreadMethod = spreadMethod;
-	}
+	}*/
 }

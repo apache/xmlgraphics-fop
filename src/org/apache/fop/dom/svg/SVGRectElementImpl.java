@@ -60,16 +60,16 @@ import org.w3c.dom.events.*;
 public class SVGRectElementImpl extends GraphicElement implements SVGRectElement {
 
 	/** x-coordinate of corner */
-	private SVGLength x;
+	private SVGAnimatedLength x;
 
 	/** y-coordinate of corner */
-	private SVGLength y;
+	private SVGAnimatedLength y;
 
 	/** width of rectangle */
-	private SVGLength width;
+	private SVGAnimatedLength width;
 
 	/** height of rectangle */
-	private SVGLength height;
+	private SVGAnimatedLength height;
 
 	/**
 	 * construct a rectangle graphic.
@@ -85,74 +85,65 @@ public class SVGRectElementImpl extends GraphicElement implements SVGRectElement
 	public SVGRect getBBox()
 	{
 		SVGRect rect = new SVGRectImpl();
-		SVGNumber num;
-		num = new SVGNumberImpl();
-		num.setValue(x.getValue());
-		rect.setX(num);
-		num = new SVGNumberImpl();
-		num.setValue(y.getValue());
-		rect.setY(num);
-		num = new SVGNumberImpl();
-		num.setValue(width.getValue());
-		rect.setWidth(num);
-		num = new SVGNumberImpl();
-		num.setValue(height.getValue());
-		rect.setHeight(num);
+		rect.setX(x.getBaseVal().getValue());
+		rect.setY(y.getBaseVal().getValue());
+		rect.setWidth(width.getBaseVal().getValue());
+		rect.setHeight(height.getBaseVal().getValue());
 		return rect;
 	}
 
-	public SVGLength getX( )
+	public SVGAnimatedLength getX( )
 	{
 		return x;
 	}
 
-	public void setX( SVGLength x )
+	public void setX( SVGAnimatedLength x )
 	{
 		this.x = x;
 	}
 
-	public SVGLength getY( )
+	public SVGAnimatedLength getY( )
 	{
 		return y;
 	}
 
-	public void setY( SVGLength y )
+	public void setY( SVGAnimatedLength y )
 	{
 		this.y = y;
 	}
 
-	public SVGLength getWidth( )
+	public SVGAnimatedLength getWidth( )
 	{
 		return width;
 	}
 
-	public void setWidth( SVGLength width )
+	public void setWidth( SVGAnimatedLength width )
 	{
 		this.width = width;
 	}
 
-	public SVGLength getHeight( )
+	public SVGAnimatedLength getHeight( )
 	{
 		return height;
 	}
 
-	public void setHeight( SVGLength height )
+	public void setHeight( SVGAnimatedLength height )
 	{
 		this.height = height;
 	}
 
-	public SVGLength getRx( )
+	public SVGAnimatedLength getRx( )
 	{
 		return null;
 	}
-	public void setRx( SVGLength rx )
+	public void setRx( SVGAnimatedLength rx )
 	{
 	}
-	public SVGLength getRy( )
+	public SVGAnimatedLength getRy( )
 	{
 		return null;
 	}
-	public void setRy( SVGLength ry )
+	public void setRy( SVGAnimatedLength ry )
 	{
 	}
 }

@@ -59,10 +59,10 @@ import org.w3c.dom.events.*;
  *
  */
 public class SVGEllipseElementImpl extends GraphicElement implements SVGEllipseElement {
-	private SVGLength cx;
-	private SVGLength cy;
-	private SVGLength rx;
-	private SVGLength ry;
+	private SVGAnimatedLength cx;
+	private SVGAnimatedLength cy;
+	private SVGAnimatedLength rx;
+	private SVGAnimatedLength ry;
 
 	/**
 	 */
@@ -70,42 +70,42 @@ public class SVGEllipseElementImpl extends GraphicElement implements SVGEllipseE
 	{
 	}
 
-	public String getClassName( )
+/*	public String getClassName( )
 	{
 		return null;
 	}
 	public void setClassName( String className )
 	{
-	}
-	public SVGLength getCx( )
+	}*/
+	public SVGAnimatedLength getCx( )
 	{
 		return cx;
 	}
-	public void setCx( SVGLength cx )
+	public void setCx( SVGAnimatedLength cx )
 	{
 		this.cx = cx;
 	}
-	public SVGLength getCy( )
+	public SVGAnimatedLength getCy( )
 	{
 		return cy;
 	}
-	public void setCy( SVGLength cy )
+	public void setCy( SVGAnimatedLength cy )
 	{
 		this.cy = cy;
 	}
-	public SVGLength getRx( )
+	public SVGAnimatedLength getRx( )
 	{
 		return rx;
 	}
-	public void setRx( SVGLength rx )
+	public void setRx( SVGAnimatedLength rx )
 	{
 		this.rx = rx;
 	}
-	public SVGLength getRy( )
+	public SVGAnimatedLength getRy( )
 	{
 		return ry;
 	}
-	public void setRy( SVGLength ry )
+	public void setRy( SVGAnimatedLength ry )
 	{
 		this.ry = ry;
 	}
