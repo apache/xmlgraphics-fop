@@ -246,6 +246,24 @@ public class Property {
 
     public static Map enumHash = null;
 
+    /**
+     * Is this a corresponding absolute property?
+     * Such properties must override this method.
+     * @return answer
+     */
+    public static boolean isCorrespondingAbsolute() {
+        return false;
+    }
+
+    /**
+     * Is this a corresponding relative property?
+     * Such properties must override this method.
+     * @return answer
+     */
+    public static boolean isCorrespondingRelative() {
+        return false;
+    }
+
     public Property() {}
 
     /**

@@ -53,8 +53,8 @@ extends BorderCommonStyleAbsolute {
 
     public int getCorrespondingRelativeProperty(FONode foNode)
     throws PropertyException {
-        return WritingMode.getCorrespondingRelativeEdge(
-                getWritingMode(foNode), WritingMode.LEFT);
+        return getCorrespondingRelativeStyleProperty(
+                foNode, WritingMode.LEFT);
     }
 
     public boolean correspondingOverrides(FONode foNode) {

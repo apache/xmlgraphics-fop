@@ -23,13 +23,14 @@ package org.apache.fop.fo.properties;
 import java.util.HashMap;
 
 import org.apache.fop.datatypes.Ints;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Pseudo-property class for common border style values occurring in a
  * number of classes.
  */
-public class BorderCommonStyle extends Property  {
+public class BorderCommonStyle extends AbstractCorrespondingProperty  {
     public static final int HIDDEN = 1;
     public static final int DOTTED = 2;
     public static final int DASHED = 3;
@@ -76,6 +77,11 @@ public class BorderCommonStyle extends Property  {
         if (index < 1 || index >= rwEnums.length)
             throw new PropertyException("index out of range: " + index);
         return rwEnums[index];
+    }
+
+    public int getCorrespondingProperty(FONode foNode)
+    throws PropertyException {
+        throw new PropertyException("Called from superclass");
     }
 
 }

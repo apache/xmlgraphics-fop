@@ -30,9 +30,8 @@ import org.apache.fop.fo.expr.PropertyException;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public interface RelativeCorrespondingProperty {
-    public int getWritingMode(FONode foNode)
-    throws PropertyException;
+public interface RelativeCorrespondingProperty
+extends CorrespondingProperty {
     public int getCorrespondingAbsoluteProperty(FONode foNode)
     throws PropertyException;
     public boolean correspondingOverrides(FONode foNode);

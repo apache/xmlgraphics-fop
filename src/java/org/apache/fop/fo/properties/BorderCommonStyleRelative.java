@@ -43,6 +43,11 @@ implements RelativeCorrespondingProperty {
         PropertyValue wm = foNode.getPropertyValue(PropNames.WRITING_MODE);
         return EnumType.getEnumValue(wm);
     }
+
+    public int getCorrespondingProperty(FONode foNode)
+    throws PropertyException {
+        return getCorrespondingAbsoluteProperty(foNode);
+    }
     /* (non-Javadoc)
      * @see org.apache.fop.fo.properties.RelativeCorrespondingProperty#getCorrespondingAbsoluteProperty(org.apache.fop.fo.FONode)
      */
@@ -50,10 +55,45 @@ implements RelativeCorrespondingProperty {
     throws PropertyException {
         throw new PropertyException("Called from superclass");
     }
+
+    /** Array of absolute border style properties,
+     * indexed by absolute edge constants */
+    private static int[] absBorderStyleProps = {
+            PropNames.NO_PROPERTY
+            ,PropNames.BORDER_TOP_STYLE
+            ,PropNames.BORDER_BOTTOM_STYLE
+            ,PropNames.BORDER_LEFT_STYLE
+            ,PropNames.BORDER_RIGHT_STYLE
+    };
+
+    /**
+     * Gets the absolute border style property corresponding to the given
+     * relative edge
+     * @param foNode the node on which the property is being defined
+     * @param relativeEdge
+     * @return the absolute border style property index
+     * @throws PropertyException
+     */
+    protected int getCorrespondingAbsoluteStyleProperty(
+            FONode foNode, int relativeEdge)
+    throws PropertyException {
+        int absEdge = WritingMode.getCorrespondingAbsoluteEdge(
+                getWritingMode(foNode), relativeEdge);
+        return absBorderStyleProps[absEdge];
+    }
+
     /* (non-Javadoc)
      * @see org.apache.fop.fo.properties.RelativeCorrespondingProperty#correspondingOverrides(org.apache.fop.fo.FONode)
      */
     public boolean correspondingOverrides(FONode foNode) {
         return false;
     }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.fo.properties.Property#isCorrespondingRelative()
+     */
+    public static boolean isCorrespondingRelative() {
+        return true;
+    }
+
 }

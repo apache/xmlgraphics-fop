@@ -43,6 +43,11 @@ implements AbsoluteCorrespondingProperty {
         PropertyValue wm = foNode.getPropertyValue(PropNames.WRITING_MODE);
         return EnumType.getEnumValue(wm);
     }
+
+    public int getCorrespondingProperty(FONode foNode)
+    throws PropertyException {
+        return getCorrespondingRelativeProperty(foNode);
+    }
     /* (non-Javadoc)
      * @see org.apache.fop.fo.properties.AbsoluteCorrespondingProperty#getCorrespondingRelativeProperty()
      */
@@ -50,10 +55,44 @@ implements AbsoluteCorrespondingProperty {
     throws PropertyException {
         throw new PropertyException("Called from superclass");
     }
+
+    /** Array of relative border style properties,
+     * indexed by relative edge constants */
+    private static int[] relBorderStyleProps = {
+            PropNames.NO_PROPERTY
+            ,PropNames.BORDER_BEFORE_STYLE
+            ,PropNames.BORDER_AFTER_STYLE
+            ,PropNames.BORDER_START_STYLE
+            ,PropNames.BORDER_END_STYLE
+    };
+
+    /**
+     * Gets the relative border style property corresponding to the given
+     * absolute edge
+     * @param foNode the node on which the property is being defined
+     * @param absoluteEdge
+     * @return the relative border style property index
+     * @throws PropertyException
+     */
+    protected int getCorrespondingRelativeStyleProperty(
+            FONode foNode, int absoluteEdge)
+    throws PropertyException {
+        int relEdge = WritingMode.getCorrespondingRelativeEdge(
+                getWritingMode(foNode), absoluteEdge);
+        return relBorderStyleProps[relEdge];
+    }
+
     /* (non-Javadoc)
      * @see org.apache.fop.fo.properties.AbsoluteCorrespondingProperty#overridesCorresponding()
      */
     public boolean overridesCorresponding(FONode foNode) {
         return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.fo.properties.Property#isCorrespondingAbsolute()
+     */
+    public static boolean isCorrespondingAbsolute() {
+        return true;
     }
 }
