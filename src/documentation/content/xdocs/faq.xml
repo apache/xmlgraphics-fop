@@ -164,7 +164,7 @@
           If you run FOP embedded in your servlet, web application or
           other Java application, check the classpath of the
           application. Check the also the information pertaining <link
-          href="servlets.xml#servlet-engine">servlet engines</link>
+          href="servlets.html#servlet-engine">servlet engines</link>
           for further hints.
         </p>
       </answer>
