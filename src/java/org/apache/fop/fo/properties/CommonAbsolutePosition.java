@@ -53,9 +53,6 @@ public class CommonAbsolutePosition {
      */
     public Length left;
 
-    public CommonAbsolutePosition() {
-    }
-
     /**
      * Create a CommonAbsolutePosition object.
      * @param pList The PropertyList with propery values.

@@ -116,9 +116,6 @@ public class CommonAural {
      */
     public int volume;
 
-    public CommonAural() {
-    }
-
     /**
      * Create a CommonAbsolutePosition object.
      * @param pList The PropertyList with propery values.
