@@ -218,17 +218,7 @@ public class TableAttributesConverter {
         }
 
         // Border styles do not inherit from parent
-        if ((p = props.get(Constants.PR_BORDER_STYLE)) != null) {
-            log.warn("border-style not implemented. Please use border-style-left, "
-                     + "...-right, ...-top or ...-bottom");
-            /*
-            attrib.set(ITableAttributes.CELL_BORDER_LEFT,  "\\"+convertAttributetoRtf(e.getEnum()));
-            attrib.set(ITableAttributes.CELL_BORDER_RIGHT, "\\"+convertAttributetoRtf(e.getEnum()));
-            attrib.set(ITableAttributes.CELL_BORDER_BOTTOM,"\\"+convertAttributetoRtf(e.getEnum()));
-            attrib.set(ITableAttributes.CELL_BORDER_TOP,   "\\"+convertAttributetoRtf(e.getEnum()));
-            isBorderPresent=true;
-            */
-        }
+
         ep = (EnumProperty)props.get(Constants.PR_BORDER_TOP_STYLE);
         if (ep != null && ep.getEnum() != Constants.NONE) {
             attrib.set(ITableAttributes.CELL_BORDER_TOP,   "\\"
@@ -254,9 +244,19 @@ public class TableAttributesConverter {
             isBorderPresent = true;
         }
 
-        if ((p = props.get(Constants.PR_BORDER_WIDTH)) != null) {
-            ListProperty listprop = (ListProperty)p;
-            LengthProperty lengthprop = (LengthProperty)listprop.getList().get(0);
+        //Currently there is only one border width supported in each cell.  
+        p = props.get(Constants.PR_BORDER_LEFT_WIDTH);
+        if(p == null) {
+            p = props.get(Constants.PR_BORDER_RIGHT_WIDTH);
+        }
+        if(p == null) {
+            p = props.get(Constants.PR_BORDER_TOP_WIDTH);
+        }
+        if(p == null) {
+            p = props.get(Constants.PR_BORDER_BOTTOM_WIDTH);
+        }
+        if (p != null) {
+            LengthProperty lengthprop = (LengthProperty)p;
 
             Float f = new Float(lengthprop.getLength().getValue() / 1000f);
             String sValue = f.toString() + "pt";
@@ -351,26 +351,7 @@ public class TableAttributesConverter {
          * it is implemented that the border type is the value of the border
          * place.
          */
-        if ((p = props.get(Constants.PR_BORDER_STYLE)) != null) {
-            log.warn("border-style not implemented. Please use border-style-left, "
-                     + "...-right, ...-top or ...-bottom");
-/*
-            attrValue = new String(AbstractBuilder.getValue( attrs, "border-style", defAttrs ));
-            attrib.set(ITableAttributes.ROW_BORDER_LEFT,"\\"
-                       + BorderAttributesConverter.convertAttributetoRtf(attrValue));
-            attrib.set(ITableAttributes.ROW_BORDER_RIGHT,"\\"
-                       + BorderAttributesConverter.convertAttributetoRtf(attrValue));
-            attrib.set(ITableAttributes.ROW_BORDER_HORIZONTAL,"\\"
-                       + BorderAttributesConverter.convertAttributetoRtf(attrValue));
-            attrib.set(ITableAttributes.ROW_BORDER_VERTICAL,"\\"
-                       + BorderAttributesConverter.convertAttributetoRtf(attrValue));
-            attrib.set(ITableAttributes.ROW_BORDER_BOTTOM,"\\"
-                       + BorderAttributesConverter.convertAttributetoRtf(attrValue));
-            attrib.set(ITableAttributes.ROW_BORDER_TOP,"\\"
-                       + BorderAttributesConverter.convertAttributetoRtf(attrValue));
-            isBorderPresent=true;
-*/
-        }
+
         ep = (EnumProperty)props.get(Constants.PR_BORDER_TOP_STYLE);
         if (ep != null && ep.getEnum() != Constants.NONE) {
             attrib.set(ITableAttributes.ROW_BORDER_TOP,       "\\"
@@ -424,9 +405,19 @@ public class TableAttributesConverter {
             isBorderPresent = true;
         }
 
-        if ((p = props.get(Constants.PR_BORDER_WIDTH)) != null) {
-            ListProperty listprop = (ListProperty)p;
-            LengthProperty lengthprop = (LengthProperty)listprop.getList().get(0);
+        //Currently there is only one border width supported in each cell.  
+        p = props.get(Constants.PR_BORDER_LEFT_WIDTH);
+        if(p == null) {
+            p = props.get(Constants.PR_BORDER_RIGHT_WIDTH);
+        }
+        if(p == null) {
+            p = props.get(Constants.PR_BORDER_TOP_WIDTH);
+        }
+        if(p == null) {
+            p = props.get(Constants.PR_BORDER_BOTTOM_WIDTH);
+        }
+        if (p != null) {
+            LengthProperty lengthprop = (LengthProperty)p;
 
             Float f = new Float(lengthprop.getLength().getValue() / 1000f);
             String sValue = f.toString() + "pt";
