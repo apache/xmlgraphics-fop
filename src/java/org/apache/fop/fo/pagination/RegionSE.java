@@ -53,15 +53,15 @@ public abstract class RegionSE extends Region {
      * regions only go to the limits of their extents, otherwise
      * they extend in the BPD to the page reference rectangle
      * diminish by extend of start and end if present.
-     * @param refRect reference rectangle
+     * @param vpRefRect viewport reference rectangle
      * @param wm writing mode
      */
-    protected void adjustIPD(Rectangle refRect, int wm) {
+    protected void adjustIPD(Rectangle vpRefRect, int wm) {
         int offset = 0;
         Region before = getSiblingRegion(Region.BEFORE);
         if (before != null && before.getPrecedence()) {
             offset = before.getExtent();
-            refRect.translate(0, offset);
+            vpRefRect.translate(0, offset);
         }
         Region after = getSiblingRegion(Region.AFTER);
         if (after != null && after.getPrecedence()) {
@@ -69,9 +69,9 @@ public abstract class RegionSE extends Region {
         }
         if (offset > 0) {
             if (wm == WritingMode.LR_TB || wm == WritingMode.RL_TB) {
-                refRect.height -= offset;
+                vpRefRect.height -= offset;
             } else {
-                refRect.width -= offset;
+                vpRefRect.width -= offset;
             }
         }
     }

@@ -64,15 +64,15 @@ public abstract class RegionBA extends Region {
      * If precedence is false on a before or after region, its
      * inline-progression-dimension is limited by the extent of the start
      * and end regions if they are present.
-     * @param vpRect viewport rectangle
+     * @param vpRefRect viewport reference rectangle
      * @param wm writing mode
      */
-    protected void adjustIPD(Rectangle vpRect, int wm) {
+    protected void adjustIPD(Rectangle vpRefRect, int wm) {
         int offset = 0;
         Region start = getSiblingRegion(Region.START);
         if (start != null) {
             offset = start.getExtent();
-            vpRect.translate(offset, 0);
+            vpRefRect.translate(offset, 0);
         }
         Region end = getSiblingRegion(Region.END);
         if (end != null) {
@@ -80,9 +80,9 @@ public abstract class RegionBA extends Region {
         }
         if (offset > 0) {
             if (wm == WritingMode.LR_TB || wm == WritingMode.RL_TB) {
-                vpRect.width -= offset;
+                vpRefRect.width -= offset;
             } else {
-                vpRect.height -= offset;
+                vpRefRect.height -= offset;
             }
         }
     }
