@@ -10,13 +10,26 @@
 
 <configuration>
 
-<!--  NOT IMPLEMENTED
-basedir: normally the base directory is the directory where the fo file is 
-         located. if you want to specify your own, uncomment this entry
+<!--  
+baseDir: normally the base directory is the directory where the fo file is 
+         located. if you want to specify your own, uncomment this entry.
+         This value can also be a URL. Actually, the value is converted to 
+         a URL.
 -->
 <!-- 
   <entry>
     <key>baseDir</key>
+    <value></value>
+  </entry>
+-->
+
+<!--  
+fontBaseDir: Similar to baseDir, except that this value is used for fonts. If
+         it isn't specified, the value from baseDir is used.
+-->
+<!-- 
+  <entry>
+    <key>fontBaseDir</key>
     <value></value>
   </entry>
 -->
