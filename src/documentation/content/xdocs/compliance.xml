@@ -61,7 +61,7 @@ want it to.</comment>
           <level-3 name="table" compliance-level="1" comply="yes"/>
           <level-3 name="table-body" compliance-level="1" comply="yes"/>
           <level-3 name="table-cell" compliance-level="1" comply="yes">
-            <comment>must contain block-level FOs (cannot contain straight character data</comment> 
+            <comment>must contain block-level FOs (cannot contain straight character data</comment>
           </level-3>
           <level-3 name="table-column" compliance-level="1" comply="yes">
             <comment>you must explicitly specify column widths</comment>

@@ -2,11 +2,11 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
-<document> 
-  <header> 
-    <title>Extensions to FOP</title> 
-  </header> 
-  <body> 
+<document>
+  <header>
+    <title>Extensions to FOP</title>
+  </header>
+  <body>
     <section>
       <title>Overview</title>
       <p>

@@ -16,7 +16,7 @@ jefft@apache.org
   <!ELEMENT credit (name, url, image, width?, height?)>
   <!ELEMENT disable-search (#PCDATA)>
   <!ELEMENT searchsite-domain (#PCDATA)>
-  <!ELEMENT searchsite-name (#PCDATA)>  
+  <!ELEMENT searchsite-name (#PCDATA)>
   <!ELEMENT project-name (#PCDATA)>
   <!ELEMENT project-url (#PCDATA)>
   <!ELEMENT project-logo (#PCDATA)>
@@ -45,7 +45,7 @@ jefft@apache.org
   <!-- Do we want the Google search box? -->
   <disable-search>false</disable-search>
   <searchsite-domain>xml.apache.org</searchsite-domain>
-  <searchsite-name>Apache XML</searchsite-name>  
+  <searchsite-name>Apache XML</searchsite-name>
 
 
   <project-name>FOP</project-name>

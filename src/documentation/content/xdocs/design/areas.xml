@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?> 
+<?xml version="1.0" standalone="no"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
@@ -19,7 +19,7 @@ The code to implement the area tree will attempt to match the areas
 defined in the specification. A number of optimisations may be possible
 for similar areas and groups of areas.
   </p>
-  <p> 
+  <p>
 Since the area tree will be used during the layout by the layout managers
 it will need to store information that affects the layout. The information
 such as spacing and keeps will be held in such a way that it can be
@@ -27,7 +27,7 @@ discarded once the layout is finalised.
   </p>
 <section>
   <title>Structure</title>
-<p> 
+<p>
 The area tree is a root element that has a list of page-viewport-areas.
 Each page viewport has a page-reference-area which holds the contents of
 the page. To handle the processing better FOP does not maintain a list

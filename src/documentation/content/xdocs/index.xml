@@ -2,32 +2,32 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
-<document> 
-  <header> 
-    <title>FOP</title> 
-  </header> 
-  <body> 
+<document>
+  <header>
+    <title>FOP</title>
+  </header>
+  <body>
     <section>
       <title>Introduction</title>
     <p>FOP (Formatting Objects Processor) is the world's first print formatter driven by XSL formatting
        objects and the world's first output independent formatter. It is a
        Java application that reads a formatting object tree and then
        renders the resulting pages to a specified output. <link href="output.html">Output formats</link>
-       currently supported are PDF, PCL, PS, SVG, XML (area tree representation), 
+       currently supported are PDF, PCL, PS, SVG, XML (area tree representation),
        Print, AWT, MIF and TXT.
-       The primary output target is PDF. 
+       The primary output target is PDF.
     </p>
     <note>
       The PDF files on this site are created using current CVS.
     </note>
-        <figure width="480" height="260" src="images/document.jpg" alt="Render Diagram" /> 
+        <figure width="480" height="260" src="images/document.jpg" alt="Render Diagram" />
     <p>The latest version of Fop is 0.20.4 and it supports the
        <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0
        W3C Recommendation</link>.
-       You can <link href="download.html">download</link> 
-       Fop including a precompiled version, the source code and many example files to 
+       You can <link href="download.html">download</link>
+       Fop including a precompiled version, the source code and many example files to
        get you started. Pointers to introductions into xsl:fo can be found in the
-       <link href="resources.html">resources</link> section. Please be aware, that 
+       <link href="resources.html">resources</link> section. Please be aware, that
        Fop is at the moment not a full implementation of the basic conformance level
        of the xsl:fo standard. You can find a list of supported flow objects and properties
        in the section <link href="implemented.html">Features</link> and in section

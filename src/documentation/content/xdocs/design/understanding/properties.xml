@@ -28,13 +28,13 @@ the element name. Most Makers are generic and handle the attribute on
 any element, but it's possible to set up an element-specific property
 Maker. The attribute name to Maker mappings are automatically created
 during the code generation phase by processing the XML property
-description files.</p> 
+description files.</p>
 </section>
 
 <section>
   <title>Processing the attribute list</title>
 <p>The PLB first looks to see if the font-size property is specified, since
-it sets up relative units which can be used in other property 
+it sets up relative units which can be used in other property
 specifications. Each attribute is then handled in turn. If the attribute
 specifies part of a compound property such as space-before.optimum, the
 PLB looks to see if the attribute list also contains the "base" property
@@ -59,7 +59,7 @@ defined in foproperties.xml. The keyword value is just a string, so it
 still needs to be parsed as described next.</p>
 
 <p>The Maker also checks to see if the property is an Enumerated type and
-then checks whether the value matches one of the specified enumeration 
+then checks whether the value matches one of the specified enumeration
 values.</p>
 
 <p>Otherwise the Maker uses the property parser in the fo.expr package to

@@ -2,7 +2,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
-<document> 
+<document>
     <header>
         <title>FO Tree</title>
         <subtitle>Design of FO Tree Structure</subtitle>
@@ -14,7 +14,7 @@
     <body>
 <section>
   <title>Introduction</title>
-<p> 
+<p>
 The FO Tree is an internal representation of the input FO document.
 The tree is created by building the elements and attributes from
 the SAX events.

@@ -3,13 +3,13 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <!-- Status -->
- 
+
 <document>
     <header>
         <title>FOP Status</title>
         <subtitle>Current Status of FOP</subtitle>
     </header>
-    
+
     <body>
   <section>
     <title>Status</title>
@@ -21,7 +21,7 @@ maintenance releases while the development is done to address various
 performance and design issues.
 </p>
   </section>
-  
+
   <section>
     <title>Development Status</title>
 <p>
@@ -30,7 +30,7 @@ performance. The new design focusing on making it possible to be conformant
 to the spec and be able to handle large documents. The development effort
 is roughly 50% towards a developers release.
 </p>
-<p> 
+<p>
 The developers release should have the following: similar functionality
 to previous FOP releases, a rough API and a suitable design for
 developers to work on more functionality.
@@ -48,7 +48,7 @@ to predict any dates.
       <tr><td>xalan.jar</td><td>883 kb</td></tr>
       <tr><td>xerces.jar</td><td>1,809 kb</td></tr>
     </table>
-    
+
 <p><strong>Lines of code</strong> using "find . -iname "*.java" | xargs cat | wc -l"</p>
     <table>
       <tr><td>org.apache.fop.*</td><td>67479</td></tr>
