@@ -218,6 +218,7 @@ public class Block extends FObjMixed {
         blockArea.setBorderWidth(borderWidth, borderWidth, borderWidth, borderWidth); 
         blockArea.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
 	blockArea.start();
+	layoutStart(area);  // performs
 
         blockArea.setAbsoluteHeight(area.getAbsoluteHeight()); 
 

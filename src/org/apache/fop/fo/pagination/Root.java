@@ -52,58 +52,95 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.AreaTree;
-import org.apache.fop.apps.FOPException;				   
+import org.apache.fop.apps.FOPException;
 
 // Java
 import java.util.Vector;
 import java.util.Enumeration;
 
 public class Root extends FObj {
-
-    public static class Maker extends FObj.Maker {
-	public FObj make(FObj parent, PropertyList propertyList)
-	    throws FOPException {
-	    return new Root(parent, propertyList);
+	public static class Maker extends FObj.Maker {
+		public FObj make(FObj parent, PropertyList propertyList) throws FOPException {
+			return new Root(parent, propertyList);
+		}
 	}
-    }
 	
-    public static FObj.Maker maker() {
-	return new Root.Maker();
-    }
+	public static FObj.Maker maker() 
+	{
+		return new Root.Maker();
+	}
 
-    LayoutMasterSet layoutMasterSet;
-    Vector pageSequences;
+	LayoutMasterSet layoutMasterSet;
+ 	Vector pageSequences;
+	Vector unresolvedCitations;
 		
-    protected Root(FObj parent, PropertyList propertyList)
-	throws FOPException {
-	super(parent, propertyList);
-	this.name =  "fo:root";
+	protected Root(FObj parent, PropertyList propertyList) throws FOPException 
+	{
+		super(parent, propertyList);
+		this.name =  "fo:root";
 		
-	pageSequences = new Vector();
-	if (parent != null) {
-	    throw new FOPException("root must be root element");
+		pageSequences = new Vector();
+		if (parent != null) 
+		{
+			throw new FOPException("root must be root element");
+		}
 	}
-    }
 
-    public void addPageSequence(PageSequence pageSequence) {
-	this.pageSequences.addElement(pageSequence);
-    }
+
+	public void addPageSequence(PageSequence pageSequence) 
+	{
+		this.pageSequences.addElement(pageSequence);
+ 	}
 	
-    public LayoutMasterSet getLayoutMasterSet() {
-	return this.layoutMasterSet;
-    }
+
+	public LayoutMasterSet getLayoutMasterSet() 
+	{
+		return this.layoutMasterSet;
+	}
 	
-    public void format(AreaTree areaTree) throws FOPException {
-	if (layoutMasterSet == null) {
-	    throw new FOPException("No layout master set.");
+
+	public void format(AreaTree areaTree) throws FOPException 
+	{
+//	System.err.println(" Root[" + marker + "] ");
+		if(layoutMasterSet == null) 
+		{
+			throw new FOPException("No layout master set.");
+		}
+		
+		Enumeration e = pageSequences.elements();
+		while (e.hasMoreElements()) 
+		{
+			((PageSequence) e.nextElement()).format(areaTree);
+		}
+
+
+		if(unresolvedCitations != null)
+		{
+			Enumeration ec = unresolvedCitations.elements();
+			while( ec.hasMoreElements() ) 
+			{
+				((PageNumberCitation)ec.nextElement()).resolvePageNumber();
+			}
+			
+			// forward page number citations have been resolved here
+			// question now is how to apply this information to the document
+			
+		}
 	}
-	Enumeration e = pageSequences.elements();
-	while (e.hasMoreElements()) {
-	    ((PageSequence) e.nextElement()).format(areaTree);
+	
+	
+	public void addUnresolvedCitation(Object x)
+	{
+		if(unresolvedCitations == null)
+		{
+			unresolvedCitations = new Vector();
+		}
+		unresolvedCitations.add(x);
 	}
-    }
+
 
     public void setLayoutMasterSet(LayoutMasterSet layoutMasterSet) {
 	this.layoutMasterSet = layoutMasterSet;
