@@ -151,6 +151,7 @@ public class Block extends FObjMixed {
 
 						this.fs = new FontState(area.getFontInfo(), fontFamily,
 																		fontStyle, fontWeight, fontSize, fontVariant);
+
 						this.align = this.properties.get("text-align").getEnum();
 						this.alignLast =
 							this.properties.get("text-align-last").getEnum();
