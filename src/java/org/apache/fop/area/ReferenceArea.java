@@ -19,29 +19,44 @@
  */
 package org.apache.fop.area;
 
+import java.awt.geom.AffineTransform;
+
 /**
+ * Interface for <code>reference-area</code>s; i.e. areas which provide a
+ * context for possible changes in <code>writing-mode</code> or
+ * <code>reference-orientation</code>.
+ *  
  * @author pbw
  * @version $Revision$ $Name$
  */
 public interface ReferenceArea extends Cloneable {
 
     /**
-     * Set the Coordinate Transformation Matrix which transforms content
-     * coordinates in this reference area which are specified in
-     * terms of "start" and "before" into coordinates in a system which
-     * is positioned in "absolute" directions (with origin at lower left of
-     * the reference area.
+     * Java's text handling includes facilities for managing writing
+     * mode.  <code>java.awt.ComponentOrientation</code> handles the
+     * standard FO writing methods - LT (lr-tb), RT (rl-tb) and TR (tb-rl),
+     * as well as TL (tb-lr - e.g. Mongolian).
+     * Because these are dealt with within the context of a page-based
+     * co-ordinate system (left,top = 0,0, right,bottom = x,y), there is
+     * no need to apply any Affine transform to discriminate these cases.
+     * <p>When a <code>reference-orientation</code> is applied, however,
+     * and an area is rotated with reference to its containing area,
+     * such a transform must be applied.
+     * <p>Transforms will also be required to map Java page co-ordinates to
+     * Adobe 1st quadrant co-ordinates for PDF and Postscript rendering.
      *
-     * @param matrix the current transform to position this region
+     * @param matrix the transform to map the contents of this reference-area
+     * into statndard Java page co-ordinates. 
      */
-    public void setCoordTransformer(CoordTransformer matrix);
+    public void setCoordTransformer(AffineTransform matrix);
 
     /**
-     * Get the current transformer of this reference area.
+     * Get the transform mapping this reference area into standard page
+     * co-ordinates.  May return null.
      *
-     * @return the current transformer to position this reference area.
+     * @return the current transform of this reference area.
      */
-    public CoordTransformer getCoordTransformer();
+    public AffineTransform getCoordTransformer();
     
     public Object clone();
         

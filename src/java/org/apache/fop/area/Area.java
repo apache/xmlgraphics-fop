@@ -24,14 +24,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
- * @author pbw
- * @version $Revision$ $Name$
- */
-/**
- * @author pbw
- * @version $Revision$ $Name$
- */
-/**
  * The base class for all areas.  <code>Area</code> extends <code>Node</code>
  * because all areas will find themselves in a tree of some kind.
  * @author pbw

@@ -18,6 +18,8 @@
  */
 package org.apache.fop.area;
 
+import java.awt.geom.AffineTransform;
+
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
@@ -31,7 +33,7 @@ public abstract class AbstractReferenceArea
     implements ReferenceArea {
 
     // Set up as identity matrix
-    protected CoordTransformer transformer = new CoordTransformer();
+    protected AffineTransform transformer = new AffineTransform();
 
     /**
      * @param pageSeq through which this area was generated
@@ -57,7 +59,7 @@ public abstract class AbstractReferenceArea
      *
      * @param transformer to position this reference area
      */
-    public void setCoordTransformer(CoordTransformer transformer) {
+    public void setCoordTransformer(AffineTransform transformer) {
         synchronized (sync) {
             this.transformer = transformer;
         }
@@ -68,7 +70,7 @@ public abstract class AbstractReferenceArea
      *
      * @return the current transformer to position this reference area
      */
-    public CoordTransformer getCoordTransformer() {
+    public AffineTransform getCoordTransformer() {
         synchronized (sync) {
             return this.transformer;
         }
