@@ -60,10 +60,6 @@ public class FOPException extends Exception {
     private static final String TAG = "$Name$";
     private static final String REVISION = "$Revision$";
 
-    //private static final String EXCEPTION_SEPARATOR = "\n---------\n";
-
-    //private Throwable exception;
-
     /**
      * create a new FOP Exception
      * @param message description
@@ -87,105 +83,5 @@ public class FOPException extends Exception {
     public FOPException(String message, Throwable e) {
         super(message, e);
     }
-
-    /**
-     * Sets this exception to the Throwable parameter
-     * @param t the exception
-     */
-    /*
-    protected void setException(Throwable t) {
-        exception = t;
-    }
-    */
-
-    /**
-     * Gets this exception.
-     * @return a Throwable
-     */
-    /*
-    public Throwable getException() {
-        return exception;
-    }
-    */
-
-    /**
-     * Gets the root exception of this exception.
-     * @return the Throwable root exception
-     */
-    /*
-    protected Throwable getRootException() {
-        Throwable result = exception;
-
-        if (result instanceof SAXException) {
-            result = ((SAXException)result).getException();
-        }
-        if (result instanceof java.lang.reflect.InvocationTargetException) {
-            result = ((java.lang.reflect.InvocationTargetException)result)
-                        .getTargetException();
-        }
-        if (result != exception) {
-            return result;
-        }
-        return null;
-    }
-    */
-
-
-    /**
-     * @see java.lang.Throwable#printStackTrace()
-     */
-    /*
-    public void printStackTrace() {
-        synchronized (System.err) {
-            super.printStackTrace();
-            if (exception != null) {
-                System.err.println(EXCEPTION_SEPARATOR);
-                exception.printStackTrace();
-            }
-            if (getRootException() != null) {
-                System.err.println(EXCEPTION_SEPARATOR);
-                getRootException().printStackTrace();
-            }
-        }
-    }
-    */
-
-    /**
-     * @see java.lang.Throwable#printStackTrace(java.io.PrintStream)
-     */
-    /*
-    public void printStackTrace(java.io.PrintStream stream) {
-        synchronized (stream) {
-            super.printStackTrace(stream);
-            if (exception != null) {
-                stream.println(EXCEPTION_SEPARATOR);
-                exception.printStackTrace(stream);
-            }
-            if (getRootException() != null) {
-                System.err.println(EXCEPTION_SEPARATOR);
-                getRootException().printStackTrace(stream);
-            }
-        }
-    }
-    */
-
-    /**
-     * @see java.lang.Throwable#printStackTrace(java.io.PrintWriter)
-     */
-    /*
-    public void printStackTrace(java.io.PrintWriter writer) {
-        synchronized (writer) {
-            super.printStackTrace(writer);
-            if (exception != null) {
-                writer.println(EXCEPTION_SEPARATOR);
-                exception.printStackTrace(writer);
-            }
-            if (getRootException() != null) {
-                System.err.println(EXCEPTION_SEPARATOR);
-                getRootException().printStackTrace(writer);
-            }
-        }
-    }
-    */
 
 }
