@@ -429,27 +429,42 @@ public class LineArea extends Area {
                         wordWidth = 0;
                         return i;
                     }
-                    if (wordStart == start) {    // if couldn't even fit
-                        // first word
-                        overrun = true;
-                        // if not at start of line, return word start
-                        // to try again on a new line
-                        if (finalWidth > 0) {
-                            return wordStart;
-                        }
-                    } else if (this.wrapOption == WrapOption.WRAP) {
+
+                    if (this.wrapOption == WrapOption.WRAP) {
+
+                        int ret=wordStart;
+
                         if (hyphProps.hyphenate == Hyphenate.TRUE) {
-                            return this.doHyphenation(dataCopy, i, wordStart,
-                                                      this.getContentWidth()
-                                                      - (finalWidth
-                                                         + spaceWidth
-                                                         + pendingWidth));
-                        } else {
-                            return wordStart;
+                            ret = this.doHyphenation(dataCopy, i, wordStart,
+                                                     this.getContentWidth()
+                                                     - (finalWidth
+                                                        + spaceWidth
+                                                        + pendingWidth));
+
                         }
+
+
+                        if ((ret == wordStart) &&      // current word couldn't be hypenated
+                            (wordStart == start) &&    // couldn't fit first word
+                            (finalWidth == 0)) {       // I am at the beginning of my line
+
+                            MessageHandler.error(">");
+
+                            addSpacedWord(new String(data, wordStart, wordLength - 1),
+                                          ls,
+                                          finalWidth + spaceWidth
+                                          + embeddedLinkStart,
+                                          spaceWidth, textState, false);
+
+                            finalWidth += wordWidth;
+                            wordWidth = 0;
+
+                            ret = i;
+                        }
+
+                        return ret;
                     }
                 }
-
             }
         }                                        // end of iteration over text
 
