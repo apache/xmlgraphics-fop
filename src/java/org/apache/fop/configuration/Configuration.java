@@ -55,7 +55,7 @@ package org.apache.fop.configuration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import org.apache.fop.messaging.MessageHandler;
+import java.util.logging.Logger;
 
 /**
  * a configuration class for all general configuration aspects except those
@@ -66,6 +66,7 @@ import org.apache.fop.messaging.MessageHandler;
  */
 public class Configuration {
 
+    protected static final Logger logger = Logger.getLogger("org.apache.fop");
     /**
      * defines role types
      */
@@ -348,7 +349,7 @@ public class Configuration {
             awtConfiguration = config;
             break;
         default:
-            MessageHandler.errorln(
+            logger.warning(
             "Can't setup configuration. Unknown configuration role/target"
             );
         }
@@ -375,7 +376,7 @@ public class Configuration {
             break;
         default:
             standardConfiguration.put(key, value);
-            MessageHandler.errorln("Unknown role for new configuration entry."
+            logger.warning("Unknown role for new configuration entry."
                                    + " Putting key:" + key + " - value:"
                                    + value + " into standard configuration.");
         }
@@ -410,38 +411,38 @@ public class Configuration {
             standardConfiguration, pdfConfiguration, awtConfiguration
         };
         for (int i = 0; i < configs.length; i++) {
-            MessageHandler.logln("----------------------");
+            logger.config("----------------------");
             configuration = configs[i];
             Iterator iter = configuration.keySet().iterator();
             while (iter.hasNext()) {
                 key = (String)iter.next();
-                MessageHandler.logln("key: " + key);
+                logger.config("key: " + key);
                 value = configuration.get(key);
                 if (value instanceof String) {
-                    MessageHandler.logln("   value: " + value);
+                    logger.config("   value: " + value);
                 } else if (value instanceof Boolean) {
-                    MessageHandler.logln
+                    logger.config
                             ("   value: " + ((Boolean)value).booleanValue());
                 } else if (value instanceof Integer) {
-                    MessageHandler.logln
+                    logger.config
                                 ("   value: " + ((Integer)value).intValue());
                 } else if (value instanceof ArrayList) {
                     list = (ArrayList)value;
                     iterator = list.iterator();
-                    MessageHandler.log("   values: ");
+                    StringBuffer msg = new StringBuffer("   values: ");
                     while (iterator.hasNext()) {
-                        MessageHandler.log(iterator.next() + " - ");
+                        msg.append(iterator.next() + " - ");
                     }
-                    MessageHandler.logln("");
+                    logger.config(msg.toString());
                 } else if (value instanceof HashMap) {
                     map = (HashMap)value;
                     iterator = map.keySet().iterator();
-                    MessageHandler.log("   values: ");
+                    StringBuffer msg = new StringBuffer("   values: ");
                     while (iterator.hasNext()) {
                         tmp = (String)iterator.next();
-                        MessageHandler.log(" " + tmp + ":" + map.get(tmp));
+                        msg.append(" " + tmp + ":" + map.get(tmp));
                     }
-                    MessageHandler.logln("");
+                    logger.config(msg.toString());
                 }
             }
         }

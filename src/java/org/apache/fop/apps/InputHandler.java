@@ -59,15 +59,12 @@ import java.net.URL;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-import org.apache.fop.messaging.MessageHandler;
-
 
 abstract public class InputHandler {
 
 
     abstract public InputSource getInputSource();
     abstract public XMLReader getParser() throws FOPException;
-
 
     /**
      * create an InputSource from a File
@@ -101,7 +98,7 @@ abstract public class InputHandler {
         if (parserClassName == null) {
             parserClassName = "org.apache.xerces.parsers.SAXParser";
         }
-        MessageHandler.logln("using SAX parser " + parserClassName);
+        Fop.logger.config("using SAX parser " + parserClassName);
 
         try {
             return (XMLReader)Class.forName(parserClassName).newInstance();

@@ -62,9 +62,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Iterator;
-
+import java.util.logging.Level;
 // fop
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationReader;
 
@@ -93,6 +92,7 @@ public class Options {
 
     private static final String defaultConfigFile = "config.xml";
     private static final String defaultUserConfigFile = "userconfig.xml";
+    
     /**
      * An array of String indexed by the integer constants representing
      * the various input modes.  Provided so that integer modes can be
@@ -319,7 +319,7 @@ public class Options {
             } catch (Exception e) {}
         }
         if (debug) {
-            MessageHandler.logln("base directory: " + baseDir);
+            Fop.logger.config("base directory: " + baseDir);
         }
 
         if (dumpConfig) {
@@ -330,7 +330,9 @@ public class Options {
         // quiet mode - this is the last setting, so there is no way to
         // supress the logging of messages during options processing
         if ((bool = isQuiet()) != null) {
-            MessageHandler.setQuiet(bool.booleanValue());
+            if (bool.booleanValue()) {
+                Fop.logger.setLevel(Level.OFF);
+            }
         }
 
     }
@@ -411,7 +413,7 @@ public class Options {
                 getConfResourceFile(fname, ConfigurationReader.class);
 
         if (debug) {
-            MessageHandler.logln(
+            Fop.logger.config(
                     "reading configuration file " + fname);
         }
         ConfigurationReader reader =
@@ -436,7 +438,7 @@ public class Options {
         boolean readOk = true;
         userConfigFile = new File(userConfigFileName);
         if (userConfigFile != null) {
-            MessageHandler.logln(
+            Fop.logger.config(
                     "reading user configuration file " + userConfigFileName);
             ConfigurationReader reader = new ConfigurationReader(
                                 InputHandler.fileInputSource(userConfigFile));
@@ -446,7 +448,7 @@ public class Options {
             try {
                 reader.start();
             } catch (org.apache.fop.apps.FOPException error) {
-                MessageHandler.logln(
+                Fop.logger.config(
                         "Can't find user configuration file "
                         + userConfigFile + " in user locations");
                 if (debug) {
@@ -459,7 +461,7 @@ public class Options {
                     // Try reading the file using loadConfig()
                     loadConfiguration(userConfigFileName);
                 } catch (FOPException ex) {
-                    MessageHandler.logln("Can't find user configuration file "
+                    Fop.logger.warning("Can't find user configuration file "
                     + userConfigFile + " in system locations");
                     if (debug) {
                         reader.dumpError(ex);
@@ -620,9 +622,8 @@ public class Options {
 
             // warning if foFile has been set in xslt mode
             if (foFile != null) {
-                MessageHandler.errorln(
-                    "WARNING: "
-                    + "Can't use fo file with transform mode! Ignoring.\n"
+                Fop.logger.warning(
+                    "Can't use fo file with transform mode! Ignoring.\n"
                                        + "Your input is " + "\n xmlFile: "
                                        + xmlFile.getAbsolutePath()
                                        + "\nxsltFile: "
@@ -643,11 +644,11 @@ public class Options {
 
         } else if (inputmode == FO_INPUT) {
             if (xmlFile != null || xsltFile != null) {
-                MessageHandler.errorln(
-                    "WARNING: fo input mode, but xmlFile or xslt file are set:"
+                Fop.logger.warning(
+                    "fo input mode, but xmlFile or xslt file are set:"
                 );
-                MessageHandler.errorln("xml file: " + xmlFile.toString());
-                MessageHandler.errorln("xslt file: " + xsltFile.toString());
+                Fop.logger.warning("xml file: " + xmlFile.toString());
+                Fop.logger.warning("xslt file: " + xsltFile.toString());
             }
             if (!foFile.exists()) {
                 throw new FileNotFoundException("fo file "
@@ -797,7 +798,7 @@ public class Options {
      * options and some examples
      */
     public static void printUsage() {
-        MessageHandler.errorln(
+        Fop.logger.info(
             "\nUSAGE\n"
             + "Fop [options] [-fo|-xml] infile [-xsl file] "
             + "[-awt|-pdf|-mif|-pcl|-ps|-txt|-at|-print] [outputFile]\n"
@@ -847,7 +848,7 @@ public class Options {
      * shows the options for print output
      */
     public static void printUsagePrintOutput() {
-        MessageHandler.errorln(
+        Fop.logger.info(
             "USAGE:"
             + " -print [-Dstart=i] [-Dend=i] [-Dcopies=i] [-Deven=true|false]"
             + " org.apache.fop.apps.Fop (..) -print \n"
@@ -867,56 +868,56 @@ public class Options {
         System.out.print("Input mode: ");
         switch (inputmode) {
         case NOT_SET:
-            MessageHandler.logln("not set");
+            Fop.logger.config("not set");
             break;
         case FO_INPUT:
-            MessageHandler.logln("fo ");
-            MessageHandler.logln("fo input file: " + foFile.toString());
+            Fop.logger.config("fo ");
+            Fop.logger.config("fo input file: " + foFile.toString());
             break;
         default:
-            MessageHandler.logln("unknown input type");
+            Fop.logger.config("unknown input type");
         }
         System.out.print("Output mode: ");
         switch (outputmode) {
         case NOT_SET:
-            MessageHandler.logln("not set");
+            Fop.logger.config("not set");
             break;
         case PDF_OUTPUT:
-            MessageHandler.logln("pdf");
-            MessageHandler.logln("output file: " + outputFile.toString());
+            Fop.logger.config("pdf");
+            Fop.logger.config("output file: " + outputFile.toString());
             break;
         default:
-            MessageHandler.logln("unknown input type");
+            Fop.logger.config("unknown input type");
         }
 
 
-        MessageHandler.logln("OPTIONS");
+        Fop.logger.config("OPTIONS");
         if (userConfigFile != null) {
-            MessageHandler.logln("user configuration file: "
+            Fop.logger.config("user configuration file: "
                                  + userConfigFile.toString());
         } else {
-            MessageHandler.logln(
+            Fop.logger.config(
                             "no user configuration file is used [default]");
         }
         if ((bool = isDebugMode()) != null && bool.booleanValue()) {
-            MessageHandler.logln("debug mode on");
+            Fop.logger.config("debug mode on");
         } else {
-            MessageHandler.logln("debug mode off [default]");
+            Fop.logger.config("debug mode off [default]");
         }
         if ((bool = doDumpConfiguration()) != null && bool.booleanValue()) {
-            MessageHandler.logln("dump configuration");
+            Fop.logger.config("dump configuration");
         } else {
-            MessageHandler.logln("don't dump configuration [default]");
+            Fop.logger.config("don't dump configuration [default]");
         }
         if ((bool = isCoarseAreaXml()) != null && bool.booleanValue()) {
-            MessageHandler.logln("no low level areas");
+            Fop.logger.config("no low level areas");
         } else {
-            MessageHandler.logln("low level areas generated[default]");
+            Fop.logger.config("low level areas generated[default]");
         }
         if ((bool = isQuiet()) != null && bool.booleanValue()) {
-            MessageHandler.logln("quiet mode on");
+            Fop.logger.config("quiet mode on");
         } else {
-            MessageHandler.logln("quiet mode off [default]");
+            Fop.logger.config("quiet mode off [default]");
         }
 
     }

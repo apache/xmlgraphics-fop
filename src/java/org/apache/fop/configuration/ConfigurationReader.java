@@ -59,7 +59,6 @@ import org.xml.sax.InputSource;
 
 // fop
 import org.apache.fop.apps.Driver;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -136,7 +135,8 @@ public class ConfigurationReader {
     public static XMLReader createParser() throws FOPException {
         String parserClassName = Driver.getParserClassName();
         if (errorDump) {
-            MessageHandler.logln("configuration reader using SAX parser "
+            Configuration.logger.config(
+                    "configuration reader using SAX parser "
                                  + parserClassName);
         }
 
