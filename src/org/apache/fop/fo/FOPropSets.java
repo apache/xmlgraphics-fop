@@ -137,6 +137,7 @@ public class FOPropSets {
         block.set(PropNames.TEXT_ALIGN_LAST);
         block.set(PropNames.TEXT_INDENT);
         block.set(PropNames.VISIBILITY);
+        block.set(PropNames.USAGE_CONTEXT_OF_SUPPRESS_AT_LINE_BREAK);
         block.set(PropNames.WHITE_SPACE_COLLAPSE);
         block.set(PropNames.WIDOWS);
         block.set(PropNames.WRAP_OPTION);
@@ -314,6 +315,7 @@ public class FOPropSets {
         inline.set(PropNames.KEEP_WITH_PREVIOUS);
         inline.set(PropNames.LINE_HEIGHT);
         inline.set(PropNames.TEXT_DECORATION);
+        inline.set(PropNames.USAGE_CONTEXT_OF_SUPPRESS_AT_LINE_BREAK);
         inline.set(PropNames.VISIBILITY);
         inline.set(PropNames.WIDTH);
         inline.set(PropNames.WRAP_OPTION);
@@ -532,6 +534,7 @@ public class FOPropSets {
         page_number.set(PropNames.TEXT_DEPTH);
         page_number.set(PropNames.TEXT_SHADOW);
         page_number.set(PropNames.TEXT_TRANSFORM);
+        page_number.set(PropNames.USAGE_CONTEXT_OF_SUPPRESS_AT_LINE_BREAK);
         page_number.set(PropNames.VISIBILITY);
         page_number.set(PropNames.WORD_SPACING);
         page_number.set(PropNames.WRAP_OPTION);
@@ -563,6 +566,7 @@ public class FOPropSets {
         page_number_citation.set(PropNames.TEXT_DEPTH);
         page_number_citation.set(PropNames.TEXT_SHADOW);
         page_number_citation.set(PropNames.TEXT_TRANSFORM);
+        page_number_citation.set(PropNames.USAGE_CONTEXT_OF_SUPPRESS_AT_LINE_BREAK);
         page_number_citation.set(PropNames.VISIBILITY);
         page_number_citation.set(PropNames.WORD_SPACING);
         page_number_citation.set(PropNames.WRAP_OPTION);
