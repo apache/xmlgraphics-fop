@@ -23,6 +23,10 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -45,8 +49,15 @@ public class LayoutEngineTestSuite {
 
         final LayoutEngineTester tester = new LayoutEngineTester(backupDir);
         
+        String single = System.getProperty("fop.layoutengine.single");
+        IOFileFilter filter;
+        if (single != null) {
+            filter = new NameFileFilter(single);
+        } else {
+            filter = new SuffixFileFilter(".xml");
+        }
         Collection files = FileUtils.listFiles(new File(mainDir, "testcases"), 
-                new String[] {"xml"}, true);
+                filter, TrueFileFilter.INSTANCE);
         Iterator i = files.iterator();
         while (i.hasNext()) {
             File f = (File)i.next();
