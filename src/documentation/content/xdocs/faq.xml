@@ -248,7 +248,8 @@
         </p>
         <p>
           Reducing memory consumption in general and squishing bugs is an
-          ongoing effort, partially addressed in the <link>redesign</link>.
+          ongoing effort, partially addressed in the
+          <jump href="http://xml.apache.org/fop/design/index.html">redesign</jump>.
         </p>
       </answer>
     </faq>
