@@ -14,6 +14,9 @@
     <section id="mailing-lists-general">
       <title>General Information</title>
         <p>Before posting questions to any list, review "<link href="http://www.catb.org/~esr/faqs/smart-questions.html">How To Ask Questions The Smart Way</link>".</p>
+        <p>Be sure to set your email client to send plain text email messages to any mailing lists.
+Please do <em>not</em> send html or rtf email, as they do not work well with the archive engines.
+If you are using Microsoft Outlook, this setting can be found at the "Mail Format" tab of the Tools/Options menu.</p>
     </section>
     <section id="mailing-lists-fop-user">
       <title>FOP User Mailing List</title>
