@@ -28,10 +28,10 @@ public class Word extends InlineArea {
     }
 
     public int getWSadjust() {
-	return iWSadjust;
+        return iWSadjust;
     }
 
     public void setWSadjust(int iWSadjust) {
-	this.iWSadjust = iWSadjust;
+        this.iWSadjust = iWSadjust;
     }
 }

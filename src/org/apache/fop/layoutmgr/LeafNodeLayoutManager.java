@@ -111,6 +111,8 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         parentLM.addChild(curArea);
 
+        addID();
+
         int bpd = curArea.getHeight();
         switch(alignment) {
             case VerticalAlign.MIDDLE:

@@ -96,18 +96,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         lineHeight = ti.lineHeight;
     }
 
-    /**
-     * Called by child layout manager to get the available space for
-     * content in the inline progression direction.
-     * Note that a manager may need to ask its parent for this.
-     * For a block area, available IPD is determined by indents.
-     */
-    public int getContentIPD() {
-        // adjust for side floats and indents
-        getParentArea(null); // make if not existing
-        return curBlockArea.getIPD();
-    }
-
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         LayoutManager curLM ; // currently active LM
 
@@ -172,6 +160,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
+        addID();
 
         LayoutManager childLM ;
         int iStartPos = 0;

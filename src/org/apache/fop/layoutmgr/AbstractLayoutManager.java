@@ -10,6 +10,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.area.Area;
+import org.apache.fop.area.Resolveable;
 import org.apache.fop.fo.PropertyManager;
 
 import java.util.ListIterator;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 public abstract class AbstractLayoutManager implements LayoutManager {
     protected LayoutManager parentLM;
     protected FObj fobj;
+    protected String foID = null;
 
     /** True if this LayoutManager has handled all of its content. */
     private boolean m_bFinished = false;
@@ -41,16 +43,13 @@ public abstract class AbstractLayoutManager implements LayoutManager {
 
     public AbstractLayoutManager(FObj fobj, ListIterator lmIter) {
         this.fobj = fobj;
+        foID = fobj.getID();
         this.parentLM = null;
         m_childLMiter = lmIter;
     }
 
     public void setParentLM(LayoutManager lm) {
         this.parentLM = lm;
-    }
-
-    public int getContentIPD() {
-        return 0;
     }
 
     //     /**
@@ -255,6 +254,28 @@ public abstract class AbstractLayoutManager implements LayoutManager {
 
     public boolean addChild(Area childArea) {
         return false;
+    }
+
+    public String getCurrentPageNumber() {
+        return parentLM.getCurrentPageNumber();
+    }
+
+    public String resolveRefID(String ref) {
+        return parentLM.resolveRefID(ref);
+    }
+
+    protected void addID() {
+        if(foID != null) {
+            addIDToPage(foID);
+        }
+    }
+
+    public void addIDToPage(String id) {
+        parentLM.addIDToPage(id);
+    }
+
+    public void addUnresolvedArea(String id, Resolveable res) {
+        parentLM.addUnresolvedArea(id, res);
     }
 }
 

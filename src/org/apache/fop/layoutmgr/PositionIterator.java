@@ -11,7 +11,7 @@ package org.apache.fop.layoutmgr;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-abstract class PositionIterator implements Iterator {
+public abstract class PositionIterator implements Iterator {
     Iterator m_parentIter;
     Object m_nextObj;
     LayoutManager m_childLM;
