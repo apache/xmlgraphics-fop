@@ -565,7 +565,7 @@ public class PSRenderer extends AbstractRenderer {
 
             startVParea(ctm);
             handleBlockTraits(bv);
-            renderBlocks(children);
+            renderBlocks(bv, children);
             endVParea();
 
             if (bv.getClip()) {
@@ -615,7 +615,7 @@ public class PSRenderer extends AbstractRenderer {
                 startVParea(ctm);
             }
             handleBlockTraits(bv);
-            renderBlocks(children);
+            renderBlocks(bv, children);
             if (ctm != null) {
                 endVParea();
             }

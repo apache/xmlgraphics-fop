@@ -374,7 +374,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     protected void renderRegion(RegionReference region) {
         List blocks = region.getBlocks();
 
-        renderBlocks(blocks);
+        renderBlocks(null, blocks);
 
     }
 
@@ -406,7 +406,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     protected void renderBeforeFloat(BeforeFloat bf) {
         List blocks = bf.getChildAreas();
         if (blocks != null) {
-            renderBlocks(blocks);
+            renderBlocks(null, blocks);
             Block sep = bf.getSeparator();
             if (sep != null) {
                 renderBlock(sep);
@@ -426,7 +426,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
             if (sep != null) {
                 renderBlock(sep);
             }
-            renderBlocks(blocks);
+            renderBlocks(null, blocks);
         }
     }
 
@@ -471,7 +471,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
         // the normal flow reference area contains stacked blocks
         List blocks = flow.getChildAreas();
         if (blocks != null) {
-            renderBlocks(blocks);
+            renderBlocks(null, blocks);
         }
     }
 
@@ -506,7 +506,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
 
             startVParea(ctm);
             handleBlockTraits(bv);
-            renderBlocks(children);
+            renderBlocks(bv, children);
             endVParea();
 
             // clip if necessary
@@ -514,16 +514,26 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
         } else {
-            renderBlocks(children);
+            // save position and offset
+            int saveIP = currentIPPosition;
+            int saveBP = currentBPPosition;
+
+            handleBlockTraits(bv);
+            renderBlocks(bv, children);
+
+            currentIPPosition = saveIP;
+            currentBPPosition = saveBP + bv.getHeight();
         }
     }
 
     /**
      * Renders a list of block areas.
      *
+     * @param parent  the parent block if the parent is a block, otherwise
+     *                a null value. 
      * @param blocks  The block areas
      */
-    protected void renderBlocks(List blocks) {
+    protected void renderBlocks(Block parent, List blocks) {
         // the position of the containing block is used for
         // absolutely positioned areas
         int contBP = currentBPPosition;
@@ -575,7 +585,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
 
                 handleBlockTraits(block);
 
-                renderBlocks(children);
+                renderBlocks(block, children);
 
                 // absolute blocks do not effect the layout
                 currentBPPosition = saveBP;
@@ -586,7 +596,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
 
                 handleBlockTraits(block);
 
-                renderBlocks(children);
+                renderBlocks(block, children);
 
                 // stacked and relative blocks effect stacking
                 currentBPPosition = saveBP + block.getHeight();
@@ -649,7 +659,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
         int saveBP = currentBPPosition;
 
         List blocks = cont.getBlocks();
-        renderBlocks(blocks);
+        renderBlocks(null, blocks);
         currentIPPosition = saveIP;
         currentBlockIPPosition = saveBlockIP;
         currentBPPosition = saveBP;
