@@ -88,7 +88,8 @@ public class PDFPage extends PDFObject {
      * @param pageheight the page's height in points
      */
     public PDFPage(int number, PDFResources resources,
-		   PDFStream contents, int pagewidth,
+                   PDFStream contents,
+		   int pagewidth,
 		   int pageheight) {
 
 	/* generic creation of object */
@@ -119,6 +120,15 @@ public class PDFPage extends PDFObject {
      */
     public void setAnnotList(PDFAnnotList annotList) {
 	this.annotList = annotList;
+    }
+
+    /**
+     * get this page's annotation list
+     *
+     * @return annotList a PDFAnnotList list of annotations
+     */
+    public PDFAnnotList getAnnotList() {
+	return this.annotList;
     }
 
     /**
