@@ -10,6 +10,7 @@ package org.apache.fop.fo.expr;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.SystemFontFunction;
 
 import org.apache.fop.fo.expr.PropertyValue;
@@ -52,23 +53,12 @@ public class PropertyParser extends PropertyTokenizer {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
-    /**
-     * This is an attempt to ensure that the restriction on the application of
-     * from-parent() and from-nearest-specified-value() functions to shorthand
-     * properties (Section 5.10.4 Property Value Functions) is maintained.
-     * I.e. if a shorthand property is the subject of one of these functions,
-     * ist is valid only if "...the expression only consists of the
-     * [from-parent or from-nearest-specified-value] function with an argument
-     * matching the property being computed..."
-     */
-    //private int elementsSeen = 0;
-    /**
-     * Used in conjunction with <i>elementsSeen</i>.
-     */
-    //private String restrictedValueFunctSeen = null;
+    /** The FO tree which has initiated this parser */
+    private FOTree foTree;
 
-    public PropertyParser() {
+    public PropertyParser(FOTree foTree) {
         super();
+        this.foTree = foTree;
     }
 
     /**
@@ -314,10 +304,6 @@ public class PropertyParser extends PropertyTokenizer {
      */
     private PropertyValue parsePrimaryExpr() throws PropertyException {
         PropertyValue prop;
-        //if (restrictedValueFunctSeen != null)
-        //throw new PropertyException
-        //(restrictedValueFunctSeen
-        //+ " already seen with shorthand argument");
         switch (currentToken) {
         case LPAR:
             next();
@@ -325,7 +311,6 @@ public class PropertyParser extends PropertyTokenizer {
             expectRpar();
             // Do this here, rather than breaking, because expectRpar()
             // consumes the right parenthesis and calls next().
-            //elementsSeen++;
             return prop;
 
         case LITERAL:
@@ -576,14 +561,12 @@ public class PropertyParser extends PropertyTokenizer {
             else
                 throw new PropertyException("no such function: "
                                             + currentTokenValue);
-            //elementsSeen++;
             return prop;
         }
         default:
             throw new PropertyException("syntax error");
         }
         next();
-        //elementsSeen++;
         return prop;
     }
 
