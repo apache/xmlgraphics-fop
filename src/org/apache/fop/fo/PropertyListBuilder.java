@@ -64,13 +64,16 @@ import java.util.Hashtable;
 
 public class PropertyListBuilder {
     
+  /** Name of font-size property attribute to set first. */
+    private static final String FONTSIZEATTR = "font-size";
+    
     private Hashtable propertyListTable;
-	private Hashtable elementTable;
+    private Hashtable elementTable;
 
     public PropertyListBuilder() {
         this.propertyListTable = new Hashtable();
         this.elementTable = new Hashtable();
-	}
+    }
 
     public void addList(Hashtable list)
     {
@@ -107,7 +110,7 @@ public class PropertyListBuilder {
 	return b;
     }
     
-    public PropertyList makeList(String elementName, Attributes attributes, PropertyList parentPropertyList) throws FOPException {
+    public PropertyList makeList(String elementName, Attributes attributes, PropertyList parentPropertyList, FObj fo) throws FOPException {
 	int index = elementName.indexOf("^");
 	String space = "http://www.w3.org/TR/1999/XSL/Format";
 	if(index != -1) {
@@ -123,17 +126,64 @@ public class PropertyListBuilder {
 	p.setBuilder(this);
     Hashtable table;
     table = (Hashtable)elementTable.get(elementName.substring(index + 1));
+
+        /* Store names of properties already set. */
+	StringBuffer propsDone = new StringBuffer(256);
+	propsDone.append(' ');
+
+	/* If font-size is set on this FO, must set it first, since
+	 * other attributes specified in terms of "ems" depend on it.
+	 * When we do "shorthand" properties, must handle the "font"
+	 * property as well to see if font-size is set.
+	 */
+	String fontsizeval=attributes.getValue(FONTSIZEATTR);
+	if (fontsizeval != null) {
+	  // get a Property.Maker
+	  Property.Maker propertyMaker = findMaker(table, FONTSIZEATTR);
+	  if (propertyMaker != null) {
+	    p.put(FONTSIZEATTR, propertyMaker.make(p,fontsizeval,fo));
+	    propsDone.append(FONTSIZEATTR + ' ');
+	  }	
+	}
+
 	for (int i = 0; i < attributes.getLength(); i++) {
 	    String attributeName = attributes.getQName(i);
-	    Property.Maker propertyMaker = null;
-    	if(table != null) {
-	    	propertyMaker = (Property.Maker)table.get(attributeName);
+	    /* Handle "compound" properties, ex. space-before.minimum */
+	    int sepchar = attributeName.indexOf('.');
+	    String propName = attributeName;
+	    String subpropName = null;
+	    Property propVal = null;
+	    if (sepchar > -1) {
+		propName = attributeName.substring(0,sepchar);
+		subpropName = attributeName.substring(sepchar+1);
 	    }
-	    if(propertyMaker == null) {
-        	propertyMaker = (Property.Maker)propertyListTable.get(attributeName);
+	    else if (propsDone.toString().indexOf(' '+propName+' ') != -1) {
+		// Already processed this property (base property
+		// for a property with sub-components or font-size)
+		continue;
 	    }
+
+	    Property.Maker propertyMaker =findMaker(table, propName);
+
 	    if (propertyMaker != null) {
-		p.put(attributeName,propertyMaker.make(p,attributes.getValue(i)));
+		if (subpropName != null) {
+		    Property baseProp = p.getExplicit(propName);
+		    if (baseProp == null) {
+			// See if it is specified later in this list
+			String baseValue = attributes.getValue(propName);
+			if (baseValue != null) {
+			    baseProp = propertyMaker.make(p, baseValue,fo);
+			    propsDone.append(propName + ' ');
+			}
+			else baseProp = propertyMaker.make(p, true); //default
+		    }
+		    propVal = propertyMaker.make(baseProp, subpropName, p,
+						 attributes.getValue(i),fo);
+		}
+		else {
+		    propVal = propertyMaker.make(p,attributes.getValue(i),fo);
+		}
+		p.put(propName,propVal);
 	    } else {
 		//MessageHandler.errorln("WARNING: property " + attributeName + " ignored");
 	    }
@@ -141,7 +191,17 @@ public class PropertyListBuilder {
 	
 	return p;
     }
-    
+
+  public Property getSubpropValue(String space, String element,
+				  String propertyName, Property p,
+				  String subpropName) {
+    Property.Maker maker = findMaker(space, element, propertyName);
+    if (maker != null) {
+      return maker.getSubpropValue(p, subpropName);
+    }
+    else return null;
+  }
+
     public Property makeProperty(PropertyList propertyList, String space, String element, String propertyName) throws FOPException {
 	
 	Property p = null;
@@ -157,15 +217,27 @@ public class PropertyListBuilder {
 
     protected Property.Maker findMaker(String space, String elementName, String propertyName)
     {
-        Hashtable propertyTable;
-	    Property.Maker propertyMaker = null;
-        propertyTable = (Hashtable)elementTable.get(elementName);
-	    if(propertyTable != null) {
-	        propertyMaker = (Property.Maker)propertyTable.get(propertyName);
-	    }
-        if(propertyMaker == null) {
-        	propertyMaker = (Property.Maker)propertyListTable.get(propertyName);
-        }
-        return propertyMaker;
+      return findMaker((Hashtable)elementTable.get(elementName),
+		       propertyName);
     }
+
+  /**
+   * Convenience function to return the Maker for a given property
+   * given the Hashtable containing properties specific to this element.
+   * If table is non-null and
+   * @param elemTable Element-specific properties or null if none.
+   * @param propertyName Name of property.
+   * @return A Maker for this property.
+   */
+  private Property.Maker findMaker(Hashtable elemTable, String propertyName) {
+    Property.Maker propertyMaker = null;
+    if (elemTable != null) {
+      propertyMaker = (Property.Maker)elemTable.get(propertyName);
+    }
+    if (propertyMaker == null) {
+      propertyMaker = (Property.Maker)propertyListTable.get(propertyName);
+    }
+    return propertyMaker;
+  }
+
 }
