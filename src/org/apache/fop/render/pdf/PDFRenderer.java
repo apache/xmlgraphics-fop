@@ -176,6 +176,14 @@ public class PDFRenderer extends PrintRenderer {
         return true;
     }
 
+    public void startPageSequence(Title seqTitle) {
+        if(seqTitle != null) {
+            String str = convertTitleToString(seqTitle);
+            PDFInfo info = this.pdfDoc.getInfo();
+            info.setTitle(str);
+        }
+    }
+
     /**
      * The pdf page is prepared by making the page.
      * The page is made in the pdf document without any contents

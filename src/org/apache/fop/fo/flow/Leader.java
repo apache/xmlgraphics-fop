@@ -16,11 +16,22 @@ import org.apache.fop.layout.*;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.InlineStackingBPLayoutManager;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
+import org.apache.fop.layoutmgr.ContentLayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LMiter;
 import org.apache.fop.area.MinOptMax;
+import org.apache.fop.area.inline.Space;
+import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.Stretch;
+import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.util.CharUtilities;
+import org.apache.fop.apps.StructureHandler;
+import org.apache.fop.area.Trait;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Implements fo:leader; main property of leader leader-pattern.
@@ -31,6 +42,10 @@ public class Leader extends FObjMixed {
     int ruleStyle;
     int ruleThickness;
     int leaderPattern;
+    int patternWidth;
+    protected FontInfo fontInfo = null;
+    protected FontState fontState;
+    protected InlineArea leaderArea = null;
 
     public Leader(FONode parent) {
         super(parent);
@@ -48,20 +63,122 @@ public class Leader extends FObjMixed {
     }
 
     protected InlineArea getInlineArea(int refIPD) {
+        if(leaderArea == null) {
+            createLeaderArea();
+        }
+        MinOptMax alloc = getAllocationIPD(refIPD);
+        if(leaderArea instanceof Stretch) {
+            ((Stretch)leaderArea).setAllocationIPD(alloc);
+        } else if(leaderArea instanceof FilledArea) {
+            ((FilledArea)leaderArea).setAllocationIPD(alloc);
+        }
+        leaderArea.setWidth(alloc.opt);
+        return leaderArea;
+    }
+
+    protected void createLeaderArea() {
         setup();
 
-        org.apache.fop.area.inline.Leader leader = new org.apache.fop.area.inline.Leader();
-
-        MinOptMax alloc = getAllocationIPD(refIPD);
-        leader.setAllocationIPD(alloc);
-        leader.setWidth(alloc.opt);
-
         if(leaderPattern == LeaderPattern.RULE) {
+            org.apache.fop.area.inline.Leader leader = new org.apache.fop.area.inline.Leader();
+
             leader.setRuleStyle(ruleStyle);
             leader.setRuleThickness(ruleThickness);
+
+            leaderArea = leader;
+        } else if (leaderPattern == LeaderPattern.SPACE) {
+            Space space = new Space();
+
+            leaderArea = space;
+        } else if(leaderPattern == LeaderPattern.DOTS) {
+            Word w = new Word();
+            char dot = '.'; // userAgent.getLeaderDotChar();
+
+            w.setWord("" + dot);
+            w.addTrait(Trait.FONT_NAME, fontState.getFontName());
+            w.addTrait(Trait.FONT_SIZE,
+                             new Integer(fontState.getFontSize()));
+            // set offset of dot within inline parent
+            w.setOffset(fontState.getAscender());
+            int width = CharUtilities.getCharWidth(dot, fontState);
+            Space spacer = null;
+            if(patternWidth > width) {
+                spacer = new Space();
+                spacer.setWidth(patternWidth - width);
+                width = patternWidth;
+            }
+            FilledArea fa = new FilledArea();
+            fa.setUnitWidth(width);
+            fa.addChild(w);
+            if(spacer != null) {
+                fa.addChild(spacer);
+            }
+
+            leaderArea = fa;
+        } else if(leaderPattern == LeaderPattern.USECONTENT) {
+            InlineStackingBPLayoutManager lm;
+            lm = new InlineStackingBPLayoutManager(this,
+                     new LMiter(children.listIterator()));
+            lm.init();
+
+            // get breaks then add areas to FilledArea
+            FilledArea fa = new FilledArea();
+
+            ContentLayoutManager clm = new ContentLayoutManager(fa);
+            lm.setParentLM(clm);
+
+            clm.fillArea(lm);
+            int width = clm.getStackingSize();
+            Space spacer = null;
+            if(patternWidth > width) {
+                spacer = new Space();
+                spacer.setWidth(patternWidth - width);
+                width = patternWidth;
+            }
+            fa.setUnitWidth(width);
+            if(spacer != null) {
+                fa.addChild(spacer);
+            }
+            leaderArea = fa;
+        }
+    }
+
+    protected static class FilledArea extends InlineParent {
+        MinOptMax alloc;
+        int unitWidth;
+
+        public FilledArea() {
         }
 
-        return leader;
+        public void setUnitWidth(int w) {
+            unitWidth = w;
+        }
+
+        public void setAllocationIPD(MinOptMax all) {
+            alloc = all;
+        }
+
+        public MinOptMax getAllocationIPD() {
+            return alloc;
+        }
+
+        public void addChild(InlineArea childArea) {
+            inlines.add(childArea);
+        }
+
+        public List getChildAreas() {
+            int units = (int)(getWidth() / unitWidth);
+            ArrayList newList = new ArrayList();
+            for(int count = 0; count < units; count++) {
+                newList.addAll(inlines);
+            }
+            return newList;
+        }
+    }
+
+    public void setStructHandler(StructureHandler st) {
+        super.setStructHandler(st);
+        fontInfo = st.getFontInfo();
     }
 
     public void setup() {
@@ -77,7 +194,7 @@ public class Leader extends FObjMixed {
         BackgroundProps bProps = propMgr.getBackgroundProps();
 
         // Common Font Properties
-        //this.fontState = propMgr.getFontState(area.getFontInfo());
+        this.fontState = propMgr.getFontState(fontInfo);
 
         // Common Margin Properties-Inline
         MarginInlineProps mProps = propMgr.getMarginInlineProps();
@@ -136,7 +253,7 @@ public class Leader extends FObjMixed {
         }
 
         // if leaderPatternWidth = 0 = default = use-font-metric
-        int leaderPatternWidth =
+        patternWidth =
             this.properties.get("leader-pattern-width").getLength().mvalue();
 
     }

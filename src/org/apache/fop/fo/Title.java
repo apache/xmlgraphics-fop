@@ -15,9 +15,13 @@ import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
 
+import org.apache.fop.layoutmgr.LMiter;
+import org.apache.fop.layoutmgr.InlineStackingBPLayoutManager;
+import org.apache.fop.layoutmgr.ContentLayoutManager;
+
 /**
  */
-public class Title extends ToBeImplementedElement {
+public class Title extends FObjMixed {
 
     public Title(FONode parent) {
         super(parent);
@@ -28,6 +32,18 @@ public class Title extends ToBeImplementedElement {
                  new org.apache.fop.area.Title();
         // use special layout manager to add the inline areas
         // to the Title.
+        InlineStackingBPLayoutManager lm;
+        lm = new InlineStackingBPLayoutManager(this,
+                     new LMiter(children.listIterator()));
+        lm.init();
+
+        // get breaks then add areas to title
+
+        ContentLayoutManager clm = new ContentLayoutManager(title);
+        lm.setParentLM(clm);
+
+        clm.fillArea(lm);
+
         return title;
     }
 

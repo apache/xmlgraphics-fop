@@ -82,18 +82,25 @@ public abstract class AbstractRenderer extends AbstractLogEnabled implements Ren
     public String convertTitleToString(Title title) {
         String str = "";
         List children = title.getInlineAreas();
+        str = convertToString(children);
+        return str.trim();
+    }
 
+    private String convertToString(List children) {
+        String str = "";
         for (int count = 0; count < children.size(); count++) {
             InlineArea inline = (InlineArea) children.get(count);
             if (inline instanceof Character) {
                 str += ((Character) inline).getChar();
             } else if (inline instanceof Word) {
                 str += ((Word) inline).getWord();
+            } else if (inline instanceof InlineParent) {
+                str += convertToString(((InlineParent)inline).getChildAreas());
             } else {
                 str += " ";
             }
         }
-        return str.trim();
+        return str;
     }
 
     public void startPageSequence(Title seqTitle) {
@@ -304,11 +311,12 @@ public abstract class AbstractRenderer extends AbstractLogEnabled implements Ren
     }
 
     public void renderInlineParent(InlineParent ip) {
-        // currentBlockIPPosition += ip.getWidth();
-    Iterator iter = ip.getChildAreas().iterator();
-    while (iter.hasNext()) {
+        int saveIP = currentBlockIPPosition;
+        Iterator iter = ip.getChildAreas().iterator();
+        while (iter.hasNext()) {
             ((InlineArea)iter.next()).render(this);
         }
+        currentBlockIPPosition = saveIP + ip.getWidth();
     }
 
     protected void renderBlocks(List blocks) {

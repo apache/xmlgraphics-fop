@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 // this is an inline area that can have other inlines as children
 public class InlineParent extends InlineArea {
-    ArrayList inlines = new ArrayList();
+    protected ArrayList inlines = new ArrayList();
 
     public InlineParent() {
     }

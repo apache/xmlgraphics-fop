@@ -238,6 +238,10 @@ public class PDFDocument {
         return pdfInfo;
     }
 
+    public PDFInfo getInfo() {
+        return info;
+    }
+
     /**
      * Make a Type 0 sampled function
      *
