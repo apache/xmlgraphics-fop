@@ -59,8 +59,7 @@ public class MultiSwitch extends FObj {
     }
 
     /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
+     * Make sure content model satisfied.
      * @see org.apache.fop.fo.FONode#end
      */
     protected void endOfNode() throws SAXParseException {
