@@ -94,6 +94,7 @@ public class Table extends FObj {
 
     Vector columns = new Vector();
     int currentColumnNumber = 0;
+    int bodyCount = 0;
 
     AreaContainer areaContainer;
 
@@ -194,6 +195,7 @@ public class Table extends FObj {
         int offset = 0;
 
         boolean addedHeader = false;
+        boolean addedFooter = false;
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
             FONode fo = (FONode) children.elementAt(i);
@@ -239,11 +241,12 @@ public class Table extends FObj {
                     addedHeader = true;
                     tableHeader.resetMarker();
                 }
-                if (tableFooter != null && !this.omitFooterAtBreak) {
+                if (tableFooter != null && !this.omitFooterAtBreak && !addedFooter) {
                     if ((status = tableFooter.layout(areaContainer)).
                             isIncomplete()) {
                         return new Status(Status.AREA_FULL_NONE);
                     }
+                    addedFooter = true;
                     tableFooter.resetMarker();
                 }
                 fo.setWidows(widows);
@@ -252,11 +255,12 @@ public class Table extends FObj {
 
                 if ((status = fo.layout(areaContainer)).isIncomplete()) {
                     this.marker = i;
-                    if (status.getCode() == Status.AREA_FULL_NONE) {
+                    if (bodyCount == 0 && status.getCode() == Status.AREA_FULL_NONE) {
                         if (tableHeader != null)
                             tableHeader.removeLayout(areaContainer);
                         if (tableFooter != null)
                             tableFooter.removeLayout(areaContainer);
+                        resetMarker();
                         //			status = new Status(Status.AREA_FULL_SOME);
                     }
                     //areaContainer.end();
@@ -277,8 +281,11 @@ public class Table extends FObj {
                               tableFooter.getYPosition() +
                               ((TableBody) fo).getHeight());
                         }
+                        status = new Status(Status.AREA_FULL_SOME);
                     }
                     return status;
+                } else {
+                    bodyCount++;
                 }
                 if (tableFooter != null && !this.omitFooterAtBreak) {
                     // move footer to bottom of area and move up body
