@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.fo.Constants;
 
 /**
  * Base class for all property objects
@@ -126,6 +127,11 @@ public class Property {
         return 0;
     }
 
+    /** @return true if the property is an enum and has value 'auto' */
+    public boolean isAuto() {
+        return (getEnum() == Constants.EN_AUTO);
+    }
+    
     /**
      * This method expects to be overridden by subclasses
      * @return char property value
