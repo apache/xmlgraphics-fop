@@ -95,16 +95,18 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
      */
     private static class LineBreakPosition extends LeafPosition {
         // int iPos;
+        int iParIndex; // index of the Paragraph this Position refers to
         double dAdjust; // Percentage to adjust (stretch or shrink)
         double ipdAdjust; // Percentage to adjust (stretch or shrink)
         int startIndent;
         int lineHeight;
         int baseline;
 
-        LineBreakPosition(LayoutManager lm, int iBreakIndex,
+        LineBreakPosition(LayoutManager lm, int index, int iBreakIndex,
                           double ipdA, double adjust, int ind, int lh, int bl) {
             super(lm, iBreakIndex);
             // iPos = iBreakIndex;
+            iParIndex = index;
             ipdAdjust = ipdA;
             dAdjust = adjust;
             startIndent = ind;
@@ -140,7 +142,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     private int iReturnedLBP = 0;
     private int iStartElement = 0;
     private int iEndElement = 0;
-    private int iCurrParIndex = 0;
 
     private KnuthNode bestDeactivatedNode = null;
 
@@ -769,6 +770,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
         breakpoints.add(insertIndex,
                         new LineBreakPosition(this,
+                                              knuthParagraphs.indexOf(par),
                                               lastElementIndex ,
                                               ratio, 0, indent,
                                               lineLead + middlefollow,
@@ -1344,135 +1346,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /**
-     * Make a line break for returning as the next break.
-     * This makes the line break and calculates the height and
-     * ipd adjustment factors.
-     *
-     * @param prevLineEnd previous line break index
-     * @param target the target ipd value
-     * @param textalign the text align in operation for this line
-     * @return the line break position
-     */
-    private BreakPoss makeLineBreak(int prevLineEnd, MinOptMax target,
-                                    int textalign) {
-        // make a new BP
-        // Store information needed to make areas in the LineBreakPosition!
-
-        // lead to baseline is
-        // max of: baseline fixed alignment and middle/2
-        // after baseline is
-        // max: top height-lead, middle/2 and bottom height-lead
-        int halfLeading = (lineHeight - lead - follow) / 2;
-        // height before baseline
-        int lineLead = lead + halfLeading;
-        // maximum size of top and bottom alignment
-        int maxtb = follow + halfLeading;
-        // max size of middle alignment below baseline
-        int middlefollow = maxtb;
-
-        // calculate actual ipd
-        MinOptMax actual = new MinOptMax();
-        BreakPoss lastBP = null;
-        LayoutManager lastLM = null;
-        for (Iterator iter = vecInlineBreaks.listIterator(prevLineEnd);
-                iter.hasNext();) {
-            BreakPoss bp = (BreakPoss) iter.next();
-            if (bp.getLead() > lineLead) {
-                lineLead = bp.getLead();
-            }
-            if (bp.getTotal() > maxtb) {
-                maxtb = bp.getTotal();
-            }
-            if (bp.getMiddle() > middlefollow) {
-                middlefollow = bp.getMiddle();
-            }
-
-            // the stacking size of textLM accumulate for each break
-            // so the ipd is only added at the end of each LM
-            if (bp.getLayoutManager() != lastLM) {
-                if (lastLM != null) {
-                    actual.add(lastBP.getStackingSize());
-                }
-                lastLM = bp.getLayoutManager();
-            }
-            lastBP = bp;
-        }
-        if (lastBP != null) {
-            // add final ipd
-            actual.add(lastBP.getStackingSize());
-            // ATTENTION: make sure this hasn't gotten start space for next
-            // LM added onto it!
-            actual.add(lastBP.resolveTrailingSpace(true));
-        }
-
-        if (maxtb - lineLead > middlefollow) {
-            middlefollow = maxtb - lineLead;
-        }
-
-        // in 7.21.4 the spec suggests that the leader and other
-        // similar min/opt/max areas should be adjusted before
-        // adjusting word spacing
-
-        // Calculate stretch or shrink factor
-        double ipdAdjust = 0;
-        int targetWith = target.opt;
-        int realWidth = actual.opt;
-        if (actual.opt > targetWith) {
-            if (actual.opt - targetWith < (actual.opt - actual.min)) {
-                ipdAdjust = -(actual.opt - targetWith)
-                                / (float) (actual.opt - actual.min);
-                realWidth = targetWith;
-            } else {
-                ipdAdjust = -1;
-                realWidth = actual.min;
-            }
-        } else {
-            if (targetWith - actual.opt < actual.max - actual.opt) {
-                ipdAdjust = (targetWith - actual.opt)
-                                / (float) (actual.max - actual.opt);
-                realWidth = targetWith;
-            } else {
-                ipdAdjust = 1;
-                realWidth = actual.max;
-            }
-        }
-
-        // if justifying then set the space adjustment
-        // after the normal ipd adjustment
-        double dAdjust = 0.0;
-        int indent = 0;
-        switch (textalign) {
-            case EN_JUSTIFY:
-                if (realWidth != 0) {
-                    dAdjust = (double) (targetWith - realWidth) / realWidth;
-                }
-            break;
-            case EN_START:
-                if (prevLineEnd == 0) {
-                    indent = textIndent.getValue();
-                }
-                break;
-            case EN_CENTER:
-                indent = (targetWith - realWidth) / 2;
-            break;
-            case EN_END:
-                indent = targetWith - realWidth;
-            break;
-        }
-
-        LineBreakPosition lbp;
-        lbp = new LineBreakPosition(this,
-                                    vecInlineBreaks.size() - 1,
-                                    ipdAdjust, dAdjust, indent,
-                                    lineLead + middlefollow, lineLead);
-        BreakPoss curLineBP = new BreakPoss(lbp);
-
-        curLineBP.setFlag(BreakPoss.ISLAST, isFinished());
-        curLineBP.setStackingSize(new MinOptMax(lineLead + middlefollow));
-        return curLineBP;
-    }
-
-    /**
      * Reset the positions to the given position.
      *
      * @param resetPos the position to reset to
@@ -1523,7 +1396,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     public void addAreas(PositionIterator parentIter, double dSpaceAdjust) {
         LayoutManager childLM;
         LayoutContext lc = new LayoutContext(0);
-        iCurrParIndex = 0;
+        int iCurrParIndex;
         while (parentIter.hasNext()) {
             ListIterator paragraphIterator = null;
             KnuthElement tempElement = null;
@@ -1539,6 +1412,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             lc.setMiddleShift(middleShift);
             setCurrentArea(lineArea);
 
+            iCurrParIndex = lbp.iParIndex;
             Paragraph currPar = (Paragraph) knuthParagraphs.get(iCurrParIndex);
             iEndElement = lbp.getLeafPos();
 
@@ -1577,7 +1451,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             iStartElement = lbp.getLeafPos() + 1;
             if (iStartElement == currPar.size()) {
                 // advance to next paragraph
-                iCurrParIndex++;
                 iStartElement = 0;
             }
 
