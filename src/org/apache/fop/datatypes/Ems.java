@@ -3,6 +3,7 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyConsts;
 
 /*
@@ -33,29 +34,43 @@ public class Ems {
     /**
      * Construct a <tt>Numeric</tt> with a given unit and quantity.
      * The unit power is assumed as 1.  The base unit is millipoints.
+     * @param node - the <tt>FONode</tt> with reference to which this
+     * <i>EM</i> value is being consructed.  A null value imples the
+     * construction of an <i>initial value</i>.
      * @param property the index of the property with which this value
      * is associated.
      * @param value the number of units.
      * @return a <tt>Numeric</tt> representing this <i>Ems</i>.
      */
-    public static Numeric makeEms(int property, double value)
+    public static Numeric makeEms(FONode node, int property, double value)
         throws PropertyException
     {
-        return new Numeric(property, value, Numeric.EMS, 0, 0);
+        Numeric numeric = new Numeric(property, value, Numeric.EMS, 0, 0);
+        if (node == null)
+            numeric.expandEms((Numeric)
+            (PropertyConsts.pconsts.getInitialValue(PropNames.FONT_SIZE)));
+        else
+            numeric.expandEms(node.currentFontSize());
+        return numeric;
     }
 
     /**
      * Construct a <tt>Numeric</tt> with a given unit and quantity.
      * The unit power is assumed as 1.  The base unit is millipoints.
+     * @param node - the <tt>FONode</tt> with reference to which this
+     * <i>EM</i> value is being consructed.  A null value imples the
+     * construction of an <i>initial value</i>.
+     * @param property the index of the property with which this value
      * @param propertyName the name of the property with which this value
      * is associated.
      * @param value the number of units.
      * @return a <tt>Numeric</tt> representing this <i>Ems</i>.
      */
-    public static Numeric makeEms (String propertyName, double value)
+    public static Numeric makeEms
+                            (FONode node, String propertyName, double value)
         throws PropertyException
     {
-        return makeEms(PropNames.getPropertyIndex(propertyName), value);
+        return makeEms(node, PropNames.getPropertyIndex(propertyName), value);
     }
 
 }
