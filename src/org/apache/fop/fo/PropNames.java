@@ -18,6 +18,9 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class PropNames {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /*
      * The list of property constants can be regenerated in XEmacs by setting
      * the region on the list of constants. (C-Space at the beginning,

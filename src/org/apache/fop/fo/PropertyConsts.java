@@ -56,6 +56,9 @@ import org.apache.fop.fo.expr.PropertyValue;
  */
 public class PropertyConsts {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     private static final String packageName = "org.apache.fop.fo";
 
     /**

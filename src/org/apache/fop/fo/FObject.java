@@ -17,6 +17,9 @@ import org.apache.fop.for.FObjects;
  */
 public class FObject {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     private int foIndex;
 
     public FObject(int foIndex) {

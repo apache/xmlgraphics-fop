@@ -36,6 +36,9 @@ import java.util.NoSuchElementException;
 
 public class FoRoot extends FONode {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     private FoLayoutMasterSet layoutMasters;
 
     /**
@@ -115,5 +118,3 @@ public class FoRoot extends FONode {
         
     }
 }
-
-
