@@ -124,6 +124,12 @@ implements ReferenceArea, Serializable {
 
     public void addNormalFlowRef(NormalFlowRefArea normal) {
         flowAreas.add(normal);
+        currentFlowArea = normal;
     }
+
+    public NormalFlowRefArea getCurrNormalFlowRefArea() {
+        return currentFlowArea;
+    }
+
 }
 
