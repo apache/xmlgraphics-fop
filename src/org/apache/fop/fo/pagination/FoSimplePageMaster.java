@@ -13,6 +13,7 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.FOAttributes;
 import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
@@ -39,7 +40,7 @@ public class FoSimplePageMaster extends FONode {
         throws Tree.TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.SIMPLE_PAGE_MASTER, parent, event,
-              FONode.LAYOUT);
+              FObjects.LAYOUT_SET);
         System.out.println("FOAttributes: " + event);
         try {
             masterName = foAttributes.getFoAttrValue("master-name");
