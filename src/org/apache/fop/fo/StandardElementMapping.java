@@ -108,5 +108,7 @@ public class StandardElementMapping implements ElementMapping {
 	builder.addMapping(uri, "instream-foreign-object", InstreamForeignObject.maker());
 	builder.addMapping(uri, "leader", Leader.maker());
 	builder.addMapping(uri, "character", org.apache.fop.fo.flow.Character.maker());
+	builder.addMapping(uri, "footnote", Footnote.maker());
+	builder.addMapping(uri, "footnote-body", FootnoteBody.maker());
     }
 }

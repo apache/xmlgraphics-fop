@@ -53,6 +53,9 @@ package org.apache.fop.layout;
 
 // FOP
 import org.apache.fop.render.Renderer;
+import org.apache.fop.fo.flow.*;
+import org.apache.fop.fo.*;
+import org.apache.fop.apps.*;
 
 // Java
 import java.util.Vector;
@@ -76,6 +79,8 @@ public class Page {
     protected Vector linkSets = new Vector();
 
     private Vector idList = new Vector();
+
+    private Vector footnotes = null;
 
     Page(AreaTree areaTree, int height, int width) {
 	this.areaTree = areaTree;
@@ -170,5 +175,29 @@ public class Page {
 
     public Vector getIDList(){
         return idList;
+    }
+
+    public Vector getPendingFootnotes() {
+        return footnotes;
+    }
+
+    public void setPendingFootnotes(Vector v) {
+        footnotes = v;
+    	if(footnotes != null) {
+            for(Enumeration e = footnotes.elements(); e.hasMoreElements(); ) {
+                FootnoteBody fb = (FootnoteBody)e.nextElement();
+                if(!Footnote.layoutFootnote(this, fb, null)) {
+                    // footnotes are too large to fit on empty page
+                }
+            }
+	        footnotes = null;
+	    }
+    }
+
+    public void addPendingFootnote(FootnoteBody fb) {
+        if(footnotes == null) {
+            footnotes = new Vector();
+        }
+        footnotes.addElement(fb);
     }
 }
