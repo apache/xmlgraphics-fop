@@ -655,6 +655,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <mkdir dir="${dist.bin.result.dir}/build"/>
     <copy todir="${dist.bin.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.bin.result.dir}/fop.sh" perm="ugo+rx" />
+    <chmod file="${dist.src.result.dir}/docs/examples/runtests.sh" perm="ugo+rx" />
       
     <zip zipfile="${name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
     <tar tarfile="${name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
@@ -677,6 +678,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <copy todir="${dist.src.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.src.result.dir}/build.sh" perm="ugo+rx" />
     <chmod file="${dist.src.result.dir}/fop.sh" perm="ugo+rx" />
+    <chmod file="${dist.src.result.dir}/docs/examples/runtests.sh" perm="ugo+rx" />
 
     <zip zipfile="${name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
     <tar tarfile="${name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
