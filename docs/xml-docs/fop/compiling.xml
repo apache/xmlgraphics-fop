@@ -51,6 +51,14 @@
        <p>A help screen is shown by calling "build usage".
     </p>
   </s2>
+  <s2 title="Problems">
+    <p>If you have problems compiling Fop, please try this first: delete the build directory completely and
+       try a new build from scratch. Check, whether you have all necessary libraries in your classpath:
+       xerces.jar, xalan.jar, bsf.jar, jimi.jar (optional). If you still have problems, please look at the
+       page <jump href="bugs.html">bugs</jump>, for further help.
+    </p>
+  </s2>
+
   <s2 title="Compiling FOP on MacOS">
     <!-- contributed by Arved Sandstrom who also manages the webpage the jump points to -->
     <p>We strongly recommend the use of Codewarrior Java. You will find 

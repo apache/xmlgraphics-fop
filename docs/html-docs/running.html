@@ -24,20 +24,23 @@
     <P>a) Java 1.1.x or later (If you want to use AWTCommandLine, you need Swing)</P>
     <P>b) An XML parser which supports SAX and DOM like 
           <A href="http://xml.apache.org/xerces-j/index.html">Xerces-J</A>. 
-          (Xerces is the default xml parser)</P>
-    <P>c) If you have to produce the flow objects files, which are the input for FOP, 
-       you need a transformation utility to create this files from your xml files. 
-       Normally this is an XSLT stylesheet processor like 
-       <A href="http://www.jclark.com/xml/xt.html">XT</A> 
-       or <A href="http://xml.apache.org/xalan/index.html">XALAN</A>. 
+          (Xerces is the default xml parser)
+    </P>
+    <P>c) Fop supports SVG (see <A href="implemented.html">Features</A> for further information) and
+          needs the w3c.jar library. This library comes with Fop (xml-fop/lib) and must
+          be included in your classpath
+    </P>
+    <P>d) Optional: Fop supports the jimi library for image processing, if it is in your classpath
+          when you build Fop. 
     </P>
   </FONT></TD></TR></TABLE><BR>
   <TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="666699" colspan="2" width="494"><TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="#039acc" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#039acc" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#039acc" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" width="492"><FONT color="#ffffff" face="arial,helvetica,sanserif" size="+1"><IMG border="0" height="2" hspace="0" src="resources/void.gif" vspace="0" width="2"><B>Starting FOP as an standalone application</B></FONT></TD><TD bgcolor="#017299" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#017299" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#017299" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></TD></TR><TR><TD width="10">&nbsp;</TD><TD width="484"><FONT color="#000000" face="arial,helvetica,sanserif">
     <P>There are two ways to run FOP from the command line.</P>
     <P>a) Batch processing formatting objects (fo) files: </P>
     <P><CODE><FONT face="courier, monospaced">java org.apache.fop.apps.CommandLine fo-file pdf-file</FONT></CODE></P>
-
-    <P>b) Previewing the fo-file:</P>
+    <P>b) Batch processing xml files (includes production of the fo-files):</P>
+    <P><CODE><FONT face="courier, monospaced">java org.apache.fop.apps.XalanCommandLine xml-file xsl-file pdf-file</FONT></CODE></P> 
+    <P>c) Previewing the fo-file:</P>
     <P><CODE><FONT face="courier, monospaced">java org.apache.fop.apps.AWTCommandLine fo-file</FONT></CODE></P>
     <P>Each method uses next to the fop classes other packages. The following describes 
        each method in detail.</P>
@@ -61,8 +64,20 @@
       <P><CODE><FONT face="courier, monospaced">org.apache.fop.apps.CommandLine fo-file pdf-file</FONT></CODE></P>
       <P>Note: The xerces jar file must be included, because xp has no dom support.</P>
     </FONT></TD></TR></TABLE><BR>
-
-    <TABLE border="0" cellpadding="0" cellspacing="0" width="484"><TR><TD bgcolor="666699" colspan="2" width="484"><TABLE border="0" cellpadding="0" cellspacing="0" width="484"><TR><TD bgcolor="#039acc" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#039acc" height="1" width="482"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="482"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#039acc" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" width="482"><FONT color="#ffffff" face="arial,helvetica,sanserif"><IMG border="0" height="2" hspace="0" src="resources/void.gif" vspace="0" width="2"><B>Method Two</B></FONT></TD><TD bgcolor="#017299" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#017299" height="1" width="482"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="482"></TD><TD bgcolor="#017299" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></TD></TR><TR><TD width="10">&nbsp;</TD><TD width="474"><FONT color="#000000" face="arial,helvetica,sanserif" size="-1">
+-    <TABLE border="0" cellpadding="0" cellspacing="0" width="484"><TR><TD bgcolor="666699" colspan="2" width="484"><TABLE border="0" cellpadding="0" cellspacing="0" width="484"><TR><TD bgcolor="#039acc" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#039acc" height="1" width="482"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="482"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#039acc" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" width="482"><FONT color="#ffffff" face="arial,helvetica,sanserif"><IMG border="0" height="2" hspace="0" src="resources/void.gif" vspace="0" width="2"><B>Method Two</B></FONT></TD><TD bgcolor="#017299" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#017299" height="1" width="482"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="482"></TD><TD bgcolor="#017299" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></TD></TR><TR><TD width="10">&nbsp;</TD><TD width="474"><FONT color="#000000" face="arial,helvetica,sanserif" size="-1">
+      <P>Rather than performing transformation with an XSLT before invoking FOP, it is 
+         possible, if you use Xalan as your XSLT engine, to just call FOP and have it call 
+         Xalan for you. To do this, run the class org.apache.fop.apps.XalanCommandLine with the 
+         source XML file name, XSL file name and PDF file name as arguments. You will 
+         need to include Xalan in your classpath and so you might invoke 
+      </P>
+      <P><CODE><FONT face="courier, monospaced">java -cp fop.jar;xalan.jar;xerces.jar;w3c.jar</FONT></CODE></P>
+      <P><CODE><FONT face="courier, monospaced">org.apache.fop.apps.XalanCommandLine xml-file xsl-file pdf-file</FONT></CODE></P>
+      <P>Again, if your SAX Parser is other than Xerces, you will need to set the property
+         org.xml.sax.parser to the SAX Parser class to use.
+      </P> 
+    </FONT></TD></TR></TABLE><BR>
+    <TABLE border="0" cellpadding="0" cellspacing="0" width="484"><TR><TD bgcolor="666699" colspan="2" width="484"><TABLE border="0" cellpadding="0" cellspacing="0" width="484"><TR><TD bgcolor="#039acc" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#039acc" height="1" width="482"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="482"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#039acc" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" width="482"><FONT color="#ffffff" face="arial,helvetica,sanserif"><IMG border="0" height="2" hspace="0" src="resources/void.gif" vspace="0" width="2"><B>Method Three</B></FONT></TD><TD bgcolor="#017299" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#017299" height="1" width="482"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="482"></TD><TD bgcolor="#017299" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></TD></TR><TR><TD width="10">&nbsp;</TD><TD width="474"><FONT color="#000000" face="arial,helvetica,sanserif" size="-1">
       <P>If you already produced the FO file, you can preview the results of your 
          transformation without using any pdf viewer by invoking FOP with the viewer 
          application. You will need to include FOP and your XML Parser in your classpath 
@@ -70,11 +85,6 @@
       <P><CODE><FONT face="courier, monospaced">java -cp fop.jar;xerces.jar;w3c.jar</FONT></CODE></P>
       <P><CODE><FONT face="courier, monospaced">org.apache.fop.apps.AWTCommandLine fo-file </FONT></CODE></P>
       <P>The viewer uses the swing classes.</P> 
-      <P>Note: If you are using java 2 or later (i.e. jdk 1.2. or later) you can put all 
-         needed jar files into the subdirectory jdk1.2.x\jre\lib\ext (windows example). Then 
-         FOP can be started without classpath: 
-      </P>
-      <P><CODE><FONT face="courier, monospaced">java org.apache.fop.apps.CommandLine fo-file pdf-file</FONT></CODE></P>
     </FONT></TD></TR></TABLE><BR>
   </FONT></TD></TR></TABLE><BR>
   <TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="666699" colspan="2" width="494"><TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="#039acc" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#039acc" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#039acc" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" width="492"><FONT color="#ffffff" face="arial,helvetica,sanserif" size="+1"><IMG border="0" height="2" hspace="0" src="resources/void.gif" vspace="0" width="2"><B>Running FOP on MacOS</B></FONT></TD><TD bgcolor="#017299" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#017299" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#017299" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></TD></TR><TR><TD width="10">&nbsp;</TD><TD width="484"><FONT color="#000000" face="arial,helvetica,sanserif">  
