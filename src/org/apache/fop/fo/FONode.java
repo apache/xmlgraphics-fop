@@ -16,8 +16,8 @@ import org.apache.fop.datatypes.indirect.IndirectValue;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.xml.XMLEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.xml.XMLNamespaces;
 import org.apache.fop.messaging.MessageHandler;
 
@@ -55,9 +55,9 @@ public class FONode extends FOTree.Node{
     /** The parent <tt>FONode</tt> of this node. */
     protected FONode parent;
     /** The <tt>XMLEvent</tt> which triggered this node. */
-    protected XMLEvent event;
+    protected FoXMLEvent event;
     /** The buffer from which parser events are drawn. */
-    protected SyncedXmlEventsBuffer xmlevents;
+    protected SyncedFoXmlEventsBuffer xmlevents;
     /** The namespaces object associated with <i>xmlevents</i>. */
     protected XMLNamespaces namespaces;
     /** The FO type. */
@@ -101,7 +101,7 @@ public class FONode extends FOTree.Node{
      * node
      */
     public FONode
-        (FOTree foTree, int type, FONode parent, XMLEvent event, int attrSet)
+        (FOTree foTree, int type, FONode parent, FoXMLEvent event, int attrSet)
         throws Tree.TreeException, FOPException, PropertyException
     {
         foTree.super(parent);
