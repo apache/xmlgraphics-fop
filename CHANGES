@@ -1,6 +1,7 @@
 ==============================================================================
 Done since 0.20.4 release
-
+- Added infinite loop detection (just halts processing, see bug #8878)
+  Submitted by: Rhett Aultman (raultman@fcci-group.com)
 - Added autoselecting  portrait/landscape on PCL Renderer (see bug #6638)
   Submitted by: vicentesalvador@netscape.net (Vicente Salvador)
 - Improved AWT Font-measuring/rendering (see bug #14657)
