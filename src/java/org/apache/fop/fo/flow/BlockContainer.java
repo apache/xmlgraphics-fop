@@ -55,10 +55,10 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layout.AbsolutePositionProps;
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.MarginProps;
+import org.apache.fop.fo.properties.CommonAbsolutePosition;
+import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.layoutmgr.BlockContainerLayoutManager;
 
 import org.xml.sax.Attributes;
@@ -113,14 +113,14 @@ public class BlockContainer extends FObj {
     private void setup() {
 
             // Common Accessibility Properties
-            AbsolutePositionProps mAbsProps = propMgr.getAbsolutePositionProps();
+            CommonAbsolutePosition mAbsProps = propMgr.getAbsolutePositionProps();
 
             // Common Border, Padding, and Background Properties
-            BorderAndPadding bap = propMgr.getBorderAndPadding();
-            BackgroundProps bProps = propMgr.getBackgroundProps();
+            CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
+            CommonBackground bProps = propMgr.getBackgroundProps();
 
             // Common Margin-Block Properties
-            MarginProps mProps = propMgr.getMarginProps();
+            CommonMarginBlock mProps = propMgr.getMarginProps();
 
             // this.properties.get("block-progression-dimension");
             // this.properties.get("break-after");

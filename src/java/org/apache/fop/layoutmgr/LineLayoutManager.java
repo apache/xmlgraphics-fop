@@ -51,8 +51,8 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.PropertyManager;
-import org.apache.fop.layout.MarginProps;
-import org.apache.fop.layout.HyphenationProps;
+import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.layout.hyphenation.Hyphenation;
 import org.apache.fop.layout.hyphenation.Hyphenator;
 import org.apache.fop.traits.BlockProps;
@@ -111,7 +111,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     private int bTextAlignment = TextAlign.JUSTIFY;
     private int iTextIndent = 0;
     private int iIndents = 0;
-    private HyphenationProps hyphProps;
+    private CommonHyphenation hyphProps;
 
     private int lineHeight;
     private int lead;
@@ -142,7 +142,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties(PropertyManager)
      */
     protected void initProperties(PropertyManager propMgr) {
-        MarginProps marginProps = propMgr.getMarginProps();
+        CommonMarginBlock marginProps = propMgr.getMarginProps();
         iIndents = marginProps.startIndent + marginProps.endIndent;
         BlockProps blockProps = propMgr.getBlockProps();
         bTextAlignment = blockProps.textAlign;

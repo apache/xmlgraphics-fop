@@ -62,8 +62,8 @@ import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.layoutmgr.MinOptMax;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonBackground;
 
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -81,8 +81,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
     private List cellList = null;
     private int listItemHeight;
-    private BorderAndPadding borderProps = null;
-    private BackgroundProps backgroundProps;
+    private CommonBorderAndPadding borderProps = null;
+    private CommonBackground backgroundProps;
 
     private class ItemPosition extends LeafPosition {
         protected List cellBreaks;

@@ -58,12 +58,12 @@ import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.Property;
-import org.apache.fop.layout.AccessibilityProps;
-import org.apache.fop.layout.AuralProps;
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.MarginInlineProps;
+import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.layoutmgr.ContentLayoutManager;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.LMiter;
@@ -110,20 +110,20 @@ public class Title extends FObjMixed {
     private void setup() {
 
         // Common Accessibility Properties
-        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
 
         // Common Aural Properties
-        AuralProps mAurProps = propMgr.getAuralProps();
+        CommonAural mAurProps = propMgr.getAuralProps();
 
         // Common Border, Padding, and Background Properties
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
+        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
+        CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Font Properties
         FontState fontState = propMgr.getFontState(foInputHandler.getFontInfo());
 
         // Common Margin Properties-Inline
-        MarginInlineProps mProps = propMgr.getMarginInlineProps();
+        CommonMarginInline mProps = propMgr.getMarginInlineProps();
 
         Property prop;
         prop = this.properties.get("baseline-shift");

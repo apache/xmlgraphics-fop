@@ -61,11 +61,11 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.properties.Constants;
 
-import org.apache.fop.layout.AccessibilityProps;
-import org.apache.fop.layout.AuralProps;
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.layoutmgr.table.Row;
 
 /**
@@ -112,21 +112,21 @@ public class TableRow extends FObj {
     private void doSetup() {
 
         // Common Accessibility Properties
-        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
 
         // this.properties.get("block-progression-dimension");
 
         // Common Aural Properties
-        AuralProps mAurProps = propMgr.getAuralProps();
+        CommonAural mAurProps = propMgr.getAuralProps();
 
         // Common Border, Padding, and Background Properties
         // only background apply, border apply if border-collapse
         // is collapse.
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
+        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
+        CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Relative Position Properties
-        RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+        CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
 
         // this.properties.get("break-before");
         // this.properties.get("break-after");

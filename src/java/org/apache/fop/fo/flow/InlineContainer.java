@@ -61,10 +61,10 @@ import org.xml.sax.Attributes;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.MarginInlineProps;
-import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonMarginInline;
+import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 import org.apache.fop.area.inline.InlineArea;
@@ -100,14 +100,14 @@ public class InlineContainer extends FObj {
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
         // Common Border, Padding, and Background Properties
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
+        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
+        CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Margin Properties-Inline
-        MarginInlineProps mProps = propMgr.getMarginInlineProps();
+        CommonMarginInline mProps = propMgr.getMarginInlineProps();
 
         // Common Relative Position Properties
-        RelativePositionProps mRelProps =
+        CommonRelativePosition mRelProps =
           propMgr.getRelativePositionProps();
 
         // this.properties.get("alignment-adjust");

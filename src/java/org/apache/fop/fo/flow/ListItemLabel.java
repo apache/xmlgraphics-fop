@@ -53,7 +53,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layout.AccessibilityProps;
+import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.layoutmgr.list.Item;
 
 /**
@@ -82,7 +82,7 @@ public class ListItemLabel extends FObj {
     private void setup() {
 
         // Common Accessibility Properties
-        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
 
         setupID();
         // this.properties.get("keep-together");

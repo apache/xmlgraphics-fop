@@ -50,7 +50,7 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.util.CharUtilities;
 import java.util.NoSuchElementException;
 
@@ -64,13 +64,13 @@ public class InlineCharIterator extends RecursiveCharIterator {
      * descendant's character contents should be iterated
      * @param bap
      */
-    public InlineCharIterator(FObj fobj, BorderAndPadding bap) {
+    public InlineCharIterator(FObj fobj, CommonBorderAndPadding bap) {
         super(fobj);
         checkBoundaries(bap);
     }
 
 
-    private void checkBoundaries(BorderAndPadding bap) {
+    private void checkBoundaries(CommonBorderAndPadding bap) {
         // TODO! use start and end in BAP!!
         bStartBoundary = (bap.getBorderLeftWidth(false) > 0
                        || bap.getPaddingLeft(false) > 0);

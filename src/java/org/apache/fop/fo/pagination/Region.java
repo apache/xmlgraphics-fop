@@ -58,8 +58,8 @@ import java.awt.geom.Rectangle2D;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.RegionViewport;
@@ -159,8 +159,8 @@ public abstract class Region extends FObj {
      */
     protected void setRegionViewportTraits(RegionViewport r) {
         // Common Border, Padding, and Background Properties
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
+        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
+        CommonBackground bProps = propMgr.getBackgroundProps();
         TraitSetter.addBorders(r, bap);
         TraitSetter.addBackground(r, bProps);
 

@@ -53,11 +53,11 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ToBeImplementedElement;
-import org.apache.fop.layout.AccessibilityProps;
-import org.apache.fop.layout.AuralProps;
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonRelativePosition;
 
 /**
  * Class modelling the fo:table-caption object. See Sec. 6.7.5 of the XSL-FO
@@ -78,17 +78,17 @@ public class TableCaption extends ToBeImplementedElement {
     public void setup() {
 
         // Common Accessibility Properties
-        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
 
         // Common Aural Properties
-        AuralProps mAurProps = propMgr.getAuralProps();
+        CommonAural mAurProps = propMgr.getAuralProps();
 
         // Common Border, Padding, and Background Properties
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
+        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
+        CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Relative Position Properties
-        RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+        CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
 
         // this.properties.get("block-progression-dimension");
         // this.properties.get("height");

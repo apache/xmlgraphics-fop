@@ -62,12 +62,12 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.TableLayout;
 import org.apache.fop.fo.properties.TableOmitFooterAtBreak;
 import org.apache.fop.fo.properties.TableOmitHeaderAtBreak;
-import org.apache.fop.layout.AccessibilityProps;
-import org.apache.fop.layout.AuralProps;
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.MarginProps;
-import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
 
 /**
@@ -148,20 +148,20 @@ public class Table extends FObj {
 
     private void setup() {
         // Common Accessibility Properties
-        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
 
         // Common Aural Properties
-        AuralProps mAurProps = propMgr.getAuralProps();
+        CommonAural mAurProps = propMgr.getAuralProps();
 
         // Common Border, Padding, and Background Properties
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
+        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
+        CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Margin Properties-Block
-        MarginProps mProps = propMgr.getMarginProps();
+        CommonMarginBlock mProps = propMgr.getMarginProps();
 
         // Common Relative Position Properties
-        RelativePositionProps mRelProps =
+        CommonRelativePosition mRelProps =
                 propMgr.getRelativePositionProps();
 
         // this.properties.get("block-progression-dimension");

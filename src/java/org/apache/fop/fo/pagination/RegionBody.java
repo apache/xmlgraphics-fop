@@ -65,7 +65,7 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.BodyRegion;
-import org.apache.fop.layout.MarginProps;
+import org.apache.fop.fo.properties.CommonMarginBlock;
 
 /**
  * The fo:region-body element.
@@ -92,7 +92,7 @@ public class RegionBody extends Region {
         * writing-mode on the page (not on the region-body!). If that's not
         * set but indent is explicitly set, it will return that.
         */
-        MarginProps mProps = propMgr.getMarginProps();
+        CommonMarginBlock mProps = propMgr.getMarginProps();
         int start = getRelMargin(PropertyList.START, "start-indent");
         Rectangle vpRect;
         if (this.wm == WritingMode.LR_TB || this.wm == WritingMode.RL_TB) {
