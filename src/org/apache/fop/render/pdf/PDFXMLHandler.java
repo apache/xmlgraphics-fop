@@ -48,8 +48,8 @@ public static final String OUTPUT_STREAM = "outputStream";
 public static final String PDF_STATE = "pdfState";
 public static final String PDF_PAGE = "pdfPage";
 public static final String PDF_STREAM = "pdfStream";
-public static final String PDF_X = "x";
-public static final String PDF_Y = "y";
+public static final String PDF_WIDTH = "width";
+public static final String PDF_HEIGHT = "height";
 public static final String PDF_FONT_STATE = "fontState";
 public static final String PDF_FONT_NAME = "fontName";
 public static final String PDF_FONT_SIZE = "fontSize";
@@ -78,8 +78,8 @@ public static final String PDF_YPOS = "ypos";
         pdfi.pdfState = (PDFState)context.getProperty(PDF_STATE);
         pdfi.pdfPage = (PDFPage)context.getProperty(PDF_PAGE);
         pdfi.currentStream = (PDFStream)context.getProperty(PDF_STREAM);
-        pdfi.x = ((Integer)context.getProperty(PDF_X)).intValue();
-        pdfi.y = ((Integer)context.getProperty(PDF_Y)).intValue();
+        pdfi.width = ((Integer)context.getProperty(PDF_WIDTH)).intValue();
+        pdfi.height = ((Integer)context.getProperty(PDF_HEIGHT)).intValue();
         pdfi.fs = (FontState)context.getProperty(PDF_FONT_STATE);
         pdfi.currentFontName = (String)context.getProperty(PDF_FONT_NAME);
         pdfi.currentFontSize = ((Integer)context.getProperty(PDF_FONT_SIZE)).intValue();
@@ -94,8 +94,8 @@ public static final String PDF_YPOS = "ypos";
         PDFState pdfState;
         PDFPage pdfPage;
         public PDFStream currentStream;
-        int x;
-        int y;
+        int width;
+        int height;
         FontState fs;
         String currentFontName;
         int currentFontSize;
@@ -109,8 +109,8 @@ public static final String PDF_YPOS = "ypos";
      */
     protected class SVGHandler {
         protected void renderSVGDocument(RendererContext context, Document doc, PDFInfo pdfInfo) {
-            float sx = 1, sy = 1;
-            int xOffset = pdfInfo.x, yOffset = pdfInfo.y;
+            int xOffset = pdfInfo.currentXPosition;
+            int yOffset = pdfInfo.currentYPosition;
 
             SVGUserAgent ua
                  = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
@@ -138,6 +138,10 @@ public static final String PDF_YPOS = "ypos";
             // get the 'width' and 'height' attributes of the SVG document
             float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
             float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
+
+            float sx = pdfInfo.width / (float)w;
+            float sy = pdfInfo.height / (float)h;
+
             ctx = null;
             builder = null;
 

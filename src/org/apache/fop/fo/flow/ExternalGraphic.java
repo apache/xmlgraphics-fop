@@ -146,7 +146,7 @@ public class ExternalGraphic extends FObj {
                 // adjust the larger 
                 double rat1 = cwidth / (fopimage.getWidth() * 1000f);
                 double rat2 = cheight / (fopimage.getHeight() * 1000f);
-                if(rat1 > rat2) {
+                if(rat1 < rat2) {
                     // reduce cheight
                     cheight = (int)(rat1 * fopimage.getHeight() * 1000);
                 } else {
@@ -162,13 +162,14 @@ public class ExternalGraphic extends FObj {
             viewHeight = cheight;
         }
 
-        int overflow = properties.get("overflow").getEnum();
-        if(overflow == Overflow.HIDDEN) {
-            clip = true;
-        }
-        if(overflow == Overflow.ERROR_IF_OVERFLOW && (cwidth > viewWidth || cheight > viewHeight)) {
-            log.error("Image: " + url + " overflows the viewport");
-            clip = true;
+        if(cwidth > viewWidth || cheight > viewHeight) {
+            int overflow = properties.get("overflow").getEnum();
+            if(overflow == Overflow.HIDDEN) {
+                clip = true;
+            } else if(overflow == Overflow.ERROR_IF_OVERFLOW) {
+                log.error("Image: " + url + " overflows the viewport");
+                clip = true;
+            }
         }
 
         int xoffset = 0;
