@@ -60,13 +60,13 @@ public class EnumType extends AbstractPropertyValue {
     /**
      * @param property the <tt>int</tt> index of the property on which
      * this value is being defined.
-     * @param enum the <tt>int</tt> enumeration constant.
+     * @param enumval the <tt>int</tt> enumeration constant.
      * @exception PropertyException
      */
-    public EnumType(int property, int enum)
+    public EnumType(int property, int enumval)
         throws PropertyException
     {
-        this(property, enum, PropertyValue.ENUM);
+        this(property, enumval, PropertyValue.ENUM);
     }
 
     /**
@@ -86,14 +86,14 @@ public class EnumType extends AbstractPropertyValue {
     /**
      * @param propertyName the <tt>String</tt> name of the property on which
      * this value is being defined.
-     * @param enum the <tt>int</tt> enumeration constant.
+     * @param enumval the <tt>int</tt> enumeration constant.
      * @exception PropertyException
      */
-    public EnumType(String propertyName, int enum)
+    public EnumType(String propertyName, int enumval)
         throws PropertyException
     {
         this(PropNames.getPropertyIndex(propertyName),
-                                                    enum, PropertyValue.ENUM);
+                                                    enumval, PropertyValue.ENUM);
     }
 
     /**
@@ -108,25 +108,25 @@ public class EnumType extends AbstractPropertyValue {
         throws PropertyException
     {
         super(property, type);
-        // Get the enum integer or mapped enum integer
+        // Get the enumval integer or mapped enumval integer
         enumValue = propertyConsts.getEnumIndex(property, enumText);
     }
 
     /**
      * @param property the <tt>int</tt> index of the property on which
      * this value is being defined.
-     * @param enum the <tt>int</tt> enumeration constant.
+     * @param enumval the <tt>int</tt> enumeration constant.
      * @param type of this value
      * @exception PropertyException
      */
-    public EnumType(int property, int enum, int type)
+    public EnumType(int property, int enumval, int type)
         throws PropertyException
     {
         super(property, type);
-        enumValue = enum;
+        enumValue = enumval;
         // Validate the text; getEnumText will throw a PropertyException
-        // if the enum integer is invalid
-        String enumText = propertyConsts.getEnumText(property, enum);
+        // if the enumval integer is invalid
+        String enumText = propertyConsts.getEnumText(property, enumval);
     }
 
     /**
@@ -146,14 +146,14 @@ public class EnumType extends AbstractPropertyValue {
     /**
      * @param propertyName the <tt>String</tt> name of the property on which
      * this value is being defined.
-     * @param enum the <tt>int</tt> enumeration constant.
+     * @param enumval the <tt>int</tt> enumeration constant.
      * @param type of this value
      * @exception PropertyException
      */
-    public EnumType(String propertyName, int enum, int type)
+    public EnumType(String propertyName, int enumval, int type)
         throws PropertyException
     {
-        this(PropNames.getPropertyIndex(propertyName), enum, type);
+        this(PropNames.getPropertyIndex(propertyName), enumval, type);
     }
 
     /**
