@@ -131,8 +131,8 @@ public class JimiImage extends AbstractFopImage {
         for (int i = 0; i < this.m_height; i++) {
             for (int j = 0; j < this.m_width; j++) {
                 int p = tmpMap[i * this.m_width + j];
-                int r = (p > > 16) & 0xFF;
-                int g = (p > > 8) & 0xFF;
+                int r = (p >> 16) & 0xFF;
+                int g = (p >> 8) & 0xFF;
                 int b = (p) & 0xFF;
                 this.m_bitmaps[3 * (i * this.m_width + j)] =
                   (byte)(r & 0xFF);
