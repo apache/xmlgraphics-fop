@@ -231,7 +231,7 @@ public class FObjectNames {
                 "Duplicate values in propertyToIndex for key " +
                     foLocalNames[i][NAMEX]);
     }
-
+    
     /**
      * Get the FObject index corresponding to the FObject name.
      * @param foName - the FO name.
