@@ -3,26 +3,31 @@
 
   <developers>
   <!-- in strict alphabetical order -->
-  <person name="Bertrand Delacretaz" email="bdelacretaz@apache.org" id="BD"/>
-  <person name="Christian Geisert" email="chrisg@apache.org" id="CG"/>
-  <person name="Karen Lease" email="klease@apache.org" id="KL"/>
-  <person name="Keiron Liddle" email="keiron@apache.org" id="KLL"/>
+  <person name="Finn Bock" email="bckfnn@apache.org" id="FB"/>
+  <person name="Chris Bowditch" email="cbowditch@apache.org" id="CB"/>
+  <person name="Andreas L. Delmelle" email="adelmelle@apache.org" id="ALD"/>
+  <person name="Peter Herweg" email="pherweg@apache.org" id="PH"/>
   <person name="Jeremias Maerki" email="jeremias@apache.org" id="JM"/>
-  <person name="Victor Mote" email="vmote@apache.org" id="VM"/>
+  <person name="Glen Mazza" email="gmazza@apache.org" id="GM"/>
   <person name="Joerg Pietschmann" email="pietsch@apache.org" id="JP"/>
-  <person name="Arved Sandstrom" email="arved@apache.org" id="AS"/>
-  <person name="Oleg Tkachenko" email="olegt@apache.org" id="OT"/>
   <person name="Peter B. West" email="pbwest@apache.org" id="PBW"/>
 
 <!--
 inactive??
   <person name="Kelly Campbell" email="kellyc@apache.org" id="KC"/>
   <person name="Steven Coffman" email="gears@apache.org" id="SC"/>
+  <person name="Bertrand Delacretaz" email="bdelacretaz@apache.org" id="BD"/>
   <person name="Tore Engvig" email="tore@apache.org" id=""/>
+  <person name="Christian Geisert" email="chrisg@apache.org" id="CG"/>
   <person name="Stanislav Gorkhover" email="stanislav@apache.org" id=""/>
   <person name="Fotis Jannidis" email="fotis@apache.org" id=""/>
+  <person name="Karen Lease" email="klease@apache.org" id="KL"/>
+  <person name="Keiron Liddle" email="keiron@apache.org" id="KLL"/>
+  <person name="Victor Mote" email="vmote@apache.org" id="VM"/>
   <person name="Jordan Naftolin" email="jordan@apache.org" id=""/>
+  <person name="Arved Sandstrom" email="arved@apache.org" id="AS"/>
   <person name="Eric Schaeffer" email="eschaeffer@apache.org" id=""/>
+  <person name="Oleg Tkachenko" email="olegt@apache.org" id="OT"/>
   <person name="Art Welch" email="artw@apache.org" id=""/>
 -->
     <person name="Volunteer needed"   email="fop-dev@xml.apache.org" id="open"/>
@@ -30,6 +35,9 @@ inactive??
 
   <todo>
    <actions priority="high">
+    <action context="code" dev="JM, open">
+      Finish applying Apache License 2.0. Open items: documentation files, hyphenation patterns...
+    </action>
     <action context="code" dev="open">
       From branch: char encoding for pdf output.
     </action>
