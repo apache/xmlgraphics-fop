@@ -307,6 +307,10 @@ abstract public class Area extends Box {
         return this.parent;
     }
 
+    public void setParent(Area parent) {
+        this.parent = parent;
+    }
+
     public void setIDReferences(IDReferences idReferences) {
         this.idReferences = idReferences;
     }
@@ -320,4 +324,13 @@ abstract public class Area extends Box {
 		return this.foCreator;
 	}	
 
+	public AreaContainer getNearestAncestorAreaContainer()
+	{
+		Area area = this.getParent();
+		while (!(area instanceof AreaContainer))
+		{
+			area = area.getParent();
+		} 
+		return (AreaContainer)area;
+	}
 }
