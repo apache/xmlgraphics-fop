@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="yes"?>
 
-<svg:svg width="200" height="200" viewBox="-100, -100, 200, 200" xmlns:svg="http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd">
+<svg:svg width="200" height="200" viewBox="-100, -100, 200, 200" xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
   <svg:title>Nested verses Transform list test</svg:title>
   <svg:desc>This is to test that the transformations are being applied in
         the correct order. Both squares should be first filled and
