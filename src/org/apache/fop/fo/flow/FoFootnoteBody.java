@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.BitSet;
 
 /**
- * Implements the fo:simple-page-master flow object
+ * Implements the fo:footnote-body flow object.
  */
 public class FoFootnoteBody extends FONode {
 

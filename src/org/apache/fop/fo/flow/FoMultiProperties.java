@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.BitSet;
 
 /**
- * Implements the fo:simple-page-master flow object
+ * Implements the fo:multi-properties flow object.
  */
 public class FoMultiProperties extends FONode {
 
