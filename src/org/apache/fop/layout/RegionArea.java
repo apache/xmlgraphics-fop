@@ -53,10 +53,10 @@ import org.apache.fop.fo.properties.*;
 
 public class RegionArea {
 
-    private int xPosition;
-    private int yPosition;
-    private int width;
-    private int height;
+    protected int xPosition;
+    protected int yPosition;
+    protected int width;
+    protected int height;
     
     public RegionArea(int xPosition, int yPosition, int width, int height) {
 	this.xPosition = xPosition;
