@@ -54,6 +54,7 @@ package org.apache.fop.fo;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.svg.*;
+import org.apache.fop.datatypes.*;
 
 import org.apache.fop.apps.FOPException;
 
@@ -64,6 +65,8 @@ import java.util.Hashtable;
 public class PropertyListBuilder {
     
     private Hashtable propertyTable;
+	private Hashtable spaceTable;
+	private Hashtable elementTable;
 
     public PropertyListBuilder() {
 	this.propertyTable = new Hashtable();
@@ -112,15 +115,13 @@ public class PropertyListBuilder {
 	propertyTable.put("padding-right",PaddingRight.maker());
 	propertyTable.put("external-destination",ExternalDestination.maker());
         propertyTable.put("internal-destination",InternalDestination.maker());
-	propertyTable.put("height",SVGLength.maker());
-	propertyTable.put("width",SVGLength.maker());
-	propertyTable.put("x",SVGLength.maker());
-	propertyTable.put("y",SVGLength.maker());
-	propertyTable.put("x1",SVGLength.maker());
-	propertyTable.put("x2",SVGLength.maker());
-	propertyTable.put("y1",SVGLength.maker());
-	propertyTable.put("y2",SVGLength.maker());
-        
+	propertyTable.put("x",SVGLengthProperty.maker());
+	propertyTable.put("y",SVGLengthProperty.maker());
+	propertyTable.put("x1",SVGLengthProperty.maker());
+	propertyTable.put("x2",SVGLengthProperty.maker());
+	propertyTable.put("y1",SVGLengthProperty.maker());
+	propertyTable.put("y2",SVGLengthProperty.maker());
+
 	propertyTable.put("border-after-color",BorderAfterColor.maker());
 	propertyTable.put("border-after-style",BorderAfterStyle.maker());
 	propertyTable.put("border-after-width",BorderAfterWidth.maker());
@@ -172,7 +173,48 @@ public class PropertyListBuilder {
 	propertyTable.put("odd-or-even",OddOrEven.maker());
 	propertyTable.put("blank-or-not-blank",BlankOrNotBlank.maker());
 
-    }
+		// should split up name space properties into separate files
+		spaceTable = new Hashtable();
+		Hashtable table = new Hashtable();
+		table.put("height",SVGLengthProperty.maker());
+		table.put("width",SVGLengthProperty.maker());
+		spaceTable.put("http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd", table);
+
+		propertyTable.put("rx",SVGLengthProperty.maker());
+		propertyTable.put("ry",SVGLengthProperty.maker());
+		propertyTable.put("dx",SVGLengthProperty.maker());
+		propertyTable.put("dy",SVGLengthProperty.maker());
+		propertyTable.put("cx",SVGLengthProperty.maker());
+		propertyTable.put("cy",SVGLengthProperty.maker());
+		propertyTable.put("r",SVGLengthProperty.maker());
+		propertyTable.put("fx",SVGLengthProperty.maker());
+		propertyTable.put("fy",SVGLengthProperty.maker());
+		propertyTable.put("refX",SVGLengthProperty.maker());
+		propertyTable.put("refY",SVGLengthProperty.maker());
+		propertyTable.put("markerWidth",SVGLengthProperty.maker());
+		propertyTable.put("markerHeight",SVGLengthProperty.maker());
+		propertyTable.put("offset",SVGLengthProperty.maker());
+
+/*		propertyTable.put("orient",SVGOrient.maker());*/
+		propertyTable.put("xlink:href",HRef.maker());
+		propertyTable.put("style",SVGStyle.maker());
+		propertyTable.put("transform",SVGTransform.maker());
+		propertyTable.put("d",SVGD.maker());
+		propertyTable.put("points",SVGPoints.maker());
+//		propertyTable.put("viewBox",SVGBox.maker());
+
+//		propertyTable.put("id", SVGStringProperty.maker());
+
+		elementTable = new Hashtable();
+		table = new Hashtable();
+		table.put("x",SVGLengthListProperty.maker());
+		table.put("y",SVGLengthListProperty.maker());
+		table.put("dx",SVGLengthListProperty.maker());
+		table.put("dy",SVGLengthListProperty.maker());
+//		table.put("id",SVGStringProperty.maker());
+		elementTable.put("http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd^tref", table);
+		elementTable.put("http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd^tspan", table);
+	}
 
     public Property computeProperty(PropertyList propertyList, String propertyName) {
 	
@@ -200,14 +242,36 @@ public class PropertyListBuilder {
 	return b;
     }
     
-    public PropertyList makeList(Attributes attributes, PropertyList parentPropertyList) throws FOPException {
-	
-	PropertyList p = new PropertyList(parentPropertyList);
+    public PropertyList makeList(String elementName, Attributes attributes, PropertyList parentPropertyList) throws FOPException {
+	int index = elementName.indexOf("^");
+	String space = "http://www.w3.org/TR/1999/XSL/Format";
+    Hashtable sptable = null;
+	if(index != -1) {
+		space = elementName.substring(0, index);
+		sptable = (Hashtable)spaceTable.get(space);
+	}
+
+	PropertyList par = null;
+	if(parentPropertyList != null && space.equals(parentPropertyList.getNameSpace())) {
+		par = parentPropertyList;
+	}
+	PropertyList p = new PropertyList(par, space);
 	p.setBuilder(this);
-	
+    Hashtable table;
+    table = (Hashtable)elementTable.get(elementName);
 	for (int i = 0; i < attributes.getLength(); i++) {
 	    String attributeName = attributes.getRawName(i);
-	    Property.Maker propertyMaker = (Property.Maker)propertyTable.get(attributeName);
+	    Property.Maker propertyMaker = null;
+	    if(sptable != null) {
+	    	propertyMaker = (Property.Maker)sptable.get(attributeName);
+	    }
+	    if(propertyMaker == null) {
+	    	if(table != null) {
+		    	propertyMaker = (Property.Maker)table.get(attributeName);
+		    }
+	    }
+	    if(propertyMaker == null)
+		    propertyMaker = (Property.Maker)propertyTable.get(attributeName);
 	    if (propertyMaker != null) {
 		p.put(attributeName,propertyMaker.make(p,attributes.getValue(i)));
 	    } else {
