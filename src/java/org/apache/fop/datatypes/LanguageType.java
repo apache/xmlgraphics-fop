@@ -76,7 +76,41 @@ public class LanguageType extends NCName {
         return string;
     }
 
+    /**
+     * Gets the ISO 639-2T language code from a PropertyValue
+     * @param pv
+     * @return the language code
+     * @exception PropertyException if the <code>PropertyValue</code> is not
+     * a <code>LanguageType</code>
+     */
+    public static String getLanguage(PropertyValue pv)
+    throws PropertyException {
+        if (pv.getType() == PropertyValue.LANGUAGE) {
+            return ((LanguageType)pv).getLanguage();
+        }
+        throw new PropertyException("PropertyValue not an LANGUAGE type");
+    }
+
+    /**
+     * Gets the ISO 639-1 language code
+     * @return the language code
+     */
     public String getISO639_1Language() {
         return iso639_1Code;
+    }
+
+    /**
+     * Gets the ISO 639-1 language code from a PropertyValue
+     * @param pv
+     * @return the language code
+     * @exception PropertyException if the <code>PropertyValue</code> is not
+     * a <code>LanguageType</code>
+     */
+    public static String getISO639_1Language(PropertyValue pv)
+    throws PropertyException {
+        if (pv.getType() == PropertyValue.LANGUAGE) {
+            return ((LanguageType)pv).getISO639_1Language();
+        }
+        throw new PropertyException("PropertyValue not an LANGUAGE type");
     }
 }
