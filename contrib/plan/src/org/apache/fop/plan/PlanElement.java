@@ -23,6 +23,7 @@ public class PlanElement extends PlanObj {
     Document svgDoc = null;
     float width;
     float height;
+    boolean converted;
 
     public PlanElement(FONode parent) {
         super(parent);
@@ -34,7 +35,9 @@ public class PlanElement extends PlanObj {
     }
 
     public void convertToSVG() {
-        if(svgDoc == null && doc != null) {
+        try {
+        if(!converted) {
+            converted = true;
             PlanRenderer pr = new PlanRenderer();
             pr.setFontInfo("Helvetica", 12);
             svgDoc = pr.createSVGDocument(doc);
@@ -42,6 +45,11 @@ public class PlanElement extends PlanObj {
             height = pr.getHeight();
 
             doc = svgDoc;
+        }
+        } catch(Throwable t) {
+            log.error("Could not convert Plan to SVG", t);
+            width = 0;
+            height = 0;
         }
 
     }
@@ -52,6 +60,9 @@ public class PlanElement extends PlanObj {
     }
 
     public String getDocumentNamespace() {
+        if(svgDoc == null) {
+            return PlanElementMapping.URI;
+        }
         return "http://www.w3.org/2000/svg";
     }
 
