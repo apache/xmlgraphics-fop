@@ -125,7 +125,7 @@ public class AreaFrame extends AreaGeometry {
         this.contents = contents;
     }
 
-    public Rectangle2D getContents() {
+    public AreaGeometry getContents() {
         return contents;
     }
 
