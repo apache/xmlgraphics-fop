@@ -21,6 +21,8 @@ package org.apache.fop.layoutmgr.table;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.TableBody;
+import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.TableColLength;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -62,6 +64,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
     private BreakPoss footerBreak;
     
     private int referenceIPD;
+    private boolean autoLayout = true;
 
     //TODO space-before|after: handle space-resolution rules
     private MinOptMax spaceBefore;
@@ -78,13 +81,18 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
 
     /**
      * Create a new table layout manager.
-     *
+     * @param node the table FO
      */
     public TableLayoutManager(Table node) {
         super(node);
         fobj = node;
     }
 
+    /** @return the table FO */
+    public Table getTable() {
+        return this.fobj;
+    }
+    
     /**
      * Set the columns for this table.
      *
@@ -119,6 +127,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         super.initProperties();
         spaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore).getSpace();
         spaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter).getSpace();
+        
+        if (!fobj.isAutoLayout() 
+                && fobj.getInlineProgressionDimension().getOptimum().getEnum() != EN_AUTO) {
+            autoLayout = false;
+        }
     }
 
     private int getIPIndents() {
@@ -164,6 +177,10 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, referenceIPD);
         fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, context.getStackLimit().opt);
 
+        if (columns == null) {
+            createColumnsFromFirstRow();
+        }
+        
         // either works out table of column widths or if proportional-column-width function
         // is used works out total factor, so that value of single unit can be computed.
         int sumCols = 0;
@@ -265,6 +282,18 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         return null;
     }
 
+    private void createColumnsFromFirstRow() {
+        this.columns = new java.util.ArrayList();
+        //TODO Create columns from first row here 
+        //--> rule 2 in "fixed table layout", see CSS2, 17.5.2
+        //Alternative: extend columns on-the-fly, but in this case we need the
+        //new property evaluation context so proportional-column-width() works
+        //correctly.
+        if (columns.size() == 0) {
+            this.columns.add(new Column(getTable().getDefaultColumn()));
+        }
+    }
+    
     /**
      * Get the break possibility and height of the table header or footer.
      *
@@ -316,6 +345,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         double adjust = layoutContext.getSpaceAdjust();
         addBlockSpacing(adjust, spaceBefore);
         spaceBefore = null;
+
+        int startXOffset = fobj.getCommonMarginBlock().startIndent.getValue();
         
         // add column, body then row areas
 
@@ -329,7 +360,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
             List list = pos.list;
             PositionIterator breakPosIter = new BreakPossPosIter(list, 0, list.size() + 1);
             while ((childLM = (Body)breakPosIter.getNextChildLM()) != null) {
-                childLM.setXOffset(fobj.getCommonMarginBlock().startIndent.getValue());
+                childLM.setXOffset(startXOffset);
                 childLM.addAreas(breakPosIter, lc);
                 tableHeight += childLM.getBodyHeight();
             }
@@ -344,7 +375,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
                                    lfp.getLeafPos() + 1);
             iStartPos = lfp.getLeafPos() + 1;
             while ((childLM = (Body)breakPosIter.getNextChildLM()) != null) {
-                childLM.setXOffset(fobj.getCommonMarginBlock().startIndent.getValue());
+                childLM.setXOffset(startXOffset);
                 childLM.setYOffset(tableHeight);
                 childLM.addAreas(breakPosIter, lc);
                 tableHeight += childLM.getBodyHeight();
@@ -357,7 +388,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
             List list = pos.list;
             PositionIterator breakPosIter = new BreakPossPosIter(list, 0, list.size() + 1);
             while ((childLM = (Body)breakPosIter.getNextChildLM()) != null) {
-                childLM.setXOffset(fobj.getCommonMarginBlock().startIndent.getValue());
+                childLM.setXOffset(startXOffset);
                 childLM.setYOffset(tableHeight);
                 childLM.addAreas(breakPosIter, lc);
                 tableHeight += childLM.getBodyHeight();
