@@ -201,7 +201,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="src.dir" value="./src"/>
     <property name="src.codegen" value="./src/codegen"/>
     <property name="lib.dir" value="./lib"/>
-    <property name="hyph.dir" value="./hyph"/>
+    <property name="hyph.dir" value="./src/hyph"/>
     <property name="conf.dir" value="./conf"/>
     <property name="packages" value="org.apache.fop.*"/>
 
