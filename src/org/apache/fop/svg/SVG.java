@@ -194,13 +194,17 @@ public class SVG extends FObj implements GraphicsCreator {
 	}
 
 	/* create an SVG area */
+	/* if width and height are zero, may want to get the bounds of the content. */
 	SVGArea svg = new SVGArea(fs, width, height);
 	svg.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
 	svg.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
 	svg.start();
 
 	/* add the SVG area to the containing area */
-	((ForeignObjectArea)area).setObject(svg);
+	ForeignObjectArea foa = (ForeignObjectArea)area;
+	foa.setObject(svg);
+	foa.setIntrinsicWidth(svg.getWidth());
+	foa.setIntrinsicHeight(svg.getHeight());
 
 	/* iterate over the child formatting objects and lay them out
 	   into the SVG area */
@@ -215,10 +219,6 @@ public class SVG extends FObj implements GraphicsCreator {
 
 	/* finish off the SVG area */
 	svg.end();
-
-	/* increase the height of the containing area accordingly */
-	area.increaseHeight(svg.getHeight());
-//	area.setWidth(svg.getWidth());
 
 	/* return status */
 	return new Status(Status.OK);

@@ -59,15 +59,34 @@ import java.util.Enumeration;
 
 public class ForeignObjectArea extends Area {
 	
-    /* text-align of all but the last line */
+    /* text-align of contents */
     protected int align;
+    /* vertical align of contents */
+    protected int valign;
+    /* scaling method */
+    protected int scaling;
     protected Area foreignObject;
+    /* height according to the instream-foreign-object */
+    protected int cheight;
+    /* width according to the instream-foreign-object */
+    protected int cwidth;
+    /* width of the content */
+    protected int awidth;
+    /* height of the content */
+    protected int aheight;
+    /* width */
+    protected int width;
+    /* height */
+    protected int height;
+    boolean wauto;
+    boolean hauto;
+    boolean cwauto;
+    boolean chauto;
+    int overflow;
 
     public ForeignObjectArea(FontState fontState, int width,
-		     int height, int align) {
+		     int height) {
 	super(fontState, width, height);
-
-	this.align = align;
     }
 
     public void render(Renderer renderer) {
@@ -81,5 +100,143 @@ public class ForeignObjectArea extends Area {
 
     public Area getObject() {
         return foreignObject;
+    }
+
+    public void setSizeAuto(boolean wa, boolean ha)
+    {
+		wauto = wa;
+		hauto = ha;
+    }
+
+    public void setContentSizeAuto(boolean wa, boolean ha)
+    {
+		cwauto = wa;
+		chauto = ha;
+    }
+
+    public void setAlign(int align)
+    {
+		this.align = align;
+	}
+
+    public int getAlign()
+    {
+		return this.align;
+	}
+
+    public void setVerticalAlign(int align)
+    {
+		this.valign = align;
+	}
+
+    public int getVerticalAlign()
+    {
+		return this.valign;
+	}
+
+    public void setOverflow(int o)
+    {
+		this.overflow = o;
+	}
+
+    public int getOverflow()
+    {
+		return this.overflow;
+	}
+
+    public void setHeight(int height)
+    {
+		this.height = height;
+	}
+
+    public void setWidth(int width)
+    {
+		this.width = width;
+	}
+
+    public void setContentHeight(int cheight)
+    {
+		this.cheight = cheight;
+	}
+
+    public void setContentWidth(int cwidth)
+    {
+		this.cwidth = cwidth;
+	}
+
+    public void setScaling(int scaling)
+    {
+		this.scaling = scaling;
+	}
+
+    public int scalingMethod()
+    {
+		return this.scaling;
+	}
+
+    public void setIntrinsicWidth(int w)
+    {
+        awidth = w;
+    }
+
+    public void setIntrinsicHeight(int h)
+    {
+        aheight = h;
+    }
+
+    public int getIntrinsicHeight()
+    {
+        return aheight;
+    }
+
+    public int getIntrinsicWidth()
+    {
+        return awidth;
+    }
+
+    public int getEffectiveHeight()
+    {
+		if(this.hauto) {
+			if(this.chauto) {
+				return aheight;
+			} else {
+			    // need to handle percentages, this would be a scaling factor on the
+			    // instrinsic height (content determined height)
+			    // if(this.properties.get("content-height").getLength().isPercentage()) {
+			    // switch(scaling) {
+			    // case Scaling.UNIFORM:
+			    // break;
+			    // case Scaling.NON_UNIFORM:
+			    // break;
+			    // }
+			    // } else {
+				return this.cheight;
+			}
+		} else {
+			return this.height;
+		}
+    }
+
+    public int getEffectiveWidth()
+    {
+		if(this.wauto) {
+			if(this.cwauto) {
+				return awidth;
+			} else {
+			    // need to handle percentages, this would be a scaling factor on the
+			    // instrinsic height (content determined height)
+			    // if(this.properties.get("content-width").getLength().isPercentage()) {
+			    // switch(scaling) {
+			    // case Scaling.UNIFORM:
+			    // break;
+			    // case Scaling.NON_UNIFORM:
+			    // break;
+			    // }
+			    // } else {
+				return this.cwidth;
+			}
+		} else {
+			return this.width;
+		}
     }
 }
