@@ -76,13 +76,23 @@ public class FOText extends FONode {
     int wrapOption;
     int whiteSpaceTreatment;
 
-    protected FOText(char[] chars, int s, int e, FObj parent) {
+    // Textdecoration
+    protected boolean underlined = false;
+    protected boolean overlined = false;
+    protected boolean lineThrough = false;
+
+
+    public FOText(char[] chars, int s, int e, FObj parent) {
 	super(parent);
 	this.start = 0;
 	this.ca = new char[e - s];
 	for (int i = s; i < e; i++)
 	    this.ca[i - s] = chars[i];
 	this.length = e - s;
+    }
+
+    public void setUnderlined(boolean ul) {
+        this.underlined = ul;
     }
 
     public Status layout(Area area) throws FOPException {
@@ -121,7 +131,8 @@ public class FOText extends FONode {
 						 wrapOption,
 						 this.getLinkSet(),
 						 whiteSpaceTreatment,
-						 ca, this.marker, length);
+						 ca, this.marker, length,
+						 underlined);
 	if (this.marker == -1) {
 	    this.marker = 0;
 	    return new Status(Status.OK);

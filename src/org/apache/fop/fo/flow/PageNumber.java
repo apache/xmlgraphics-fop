@@ -122,7 +122,8 @@ public class PageNumber extends FObj {
 						 null,
 						 whiteSpaceTreatment,
 						 p.toCharArray(), 0,
-						 p.length());
+						 p.length(),
+						 false);
 	return new Status(Status.OK);
     }
 }

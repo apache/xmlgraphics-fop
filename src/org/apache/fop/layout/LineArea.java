@@ -175,7 +175,7 @@ public class LineArea extends Area {
     }
 
 
-    public int addText(char odata[], int start, int end, LinkSet ls) {
+    public int addText(char odata[], int start, int end, LinkSet ls,  boolean ul) {
 	boolean overrun = false;
 
 	wordStart = start;
@@ -274,6 +274,7 @@ public class LineArea extends Area {
 						       String(data, wordStart,
 							      wordLength),
 						       wordWidth);
+			ia.setUnderlined(ul);
 			addChild(ia);
 			if (ls != null) {
 			    Rectangle lr =
@@ -381,6 +382,8 @@ public class LineArea extends Area {
 				    this.green, this.blue, new
 				    String(data, wordStart,
 					   wordLength), wordWidth); 
+
+	    pia.setUnderlined(ul);
 	    
 	    if (ls != null) {
 		Rectangle lr =
