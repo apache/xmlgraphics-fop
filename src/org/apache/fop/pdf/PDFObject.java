@@ -103,7 +103,7 @@ public abstract class PDFObject {
      *
      * @return the reference string
      */
-    protected String referencePDF() {
+    public String referencePDF() {
 	String p = this.number + " " + this.generation + " R";
 	return p;
     }
