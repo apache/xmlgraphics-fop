@@ -18,10 +18,10 @@
  *    "This product includes software developed by the Apache Group
  *    for use in the Apache XML-Fop project (http://xml.apache.org/)."
  *
- * 4. The names "Apache Server" and "Apache Group" must not be used to
+ * 4. The names "Apache" and "Apache Group" must not be used to
  *    endorse or promote products derived from this software without
  *    prior written permission. For written permission, please contact
- *    apache@@apache.org.
+ *    apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
  *    nor may "Apache" appear in their names without prior written
@@ -46,5 +46,6 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  *
- * Add any major contributor's here..
+ * This code is based on, and was originally contributed by James
+ * Tauber.
  */
