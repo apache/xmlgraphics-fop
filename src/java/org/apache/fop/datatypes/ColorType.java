@@ -254,7 +254,7 @@ public class ColorType implements Serializable {
         if (floatValue < 0) {
             floatValue = 0;
         }
-        return (int) floatValue * 255;
+        return (int) (floatValue * 255);
     }
 
     /**
