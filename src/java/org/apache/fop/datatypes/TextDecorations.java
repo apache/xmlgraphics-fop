@@ -26,6 +26,7 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.properties.TextDecoration;
 
 /**
  * Class for the text decorations to be applied according to the
@@ -33,6 +34,7 @@ import org.apache.fop.fo.expr.PropertyException;
  * set of text decorations.  Modifications to the set are specified in a
  * TextDecorator object, which contains the on and off masks to be applied
  * to the "current" set of decorations.
+ * TODO Should this be a PropertyValue at all?  I don't think so.
  */
 
 public class TextDecorations
@@ -72,6 +74,27 @@ public class TextDecorations
     {
         super(propertyName, PropertyValue.TEXT_DECORATIONS);
         this.decorations = decorations;
+    }
+
+    public boolean overlined() {
+        if ((decorations & TextDecoration.OVERLINE) != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean struckthrough() {
+        if ((decorations & TextDecoration.LINE_THROUGH) != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean underlined() {
+        if ((decorations & TextDecoration.UNDERLINE) != 0) {
+            return true;
+        }
+        return false;
     }
 
     /**
