@@ -202,6 +202,7 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
             //                   + Thread.currentThread().getName());
             event.type = XMLEvent.CHARACTERS;
             event.chars = new String(ch, start, length);
+            event.foType = FObjectNames.PCDATA;
             //System.out.println("SerialHandler: " + event);
             putEvent(event);
         }
