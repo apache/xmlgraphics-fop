@@ -25,7 +25,9 @@ import org.apache.fop.datastructs.Node;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class BlockContainer extends BlockArea implements ReferenceArea {
+public class BlockContainer
+extends AbstractReferenceArea
+implements ReferenceArea {
 
     /**
      * @param parent

@@ -19,6 +19,7 @@
  */
 package org.apache.fop.area.inline;
 
+import org.apache.fop.area.AbstractReferenceArea;
 import org.apache.fop.area.ReferenceArea;
 import org.apache.fop.datastructs.Node;
 
@@ -26,7 +27,9 @@ import org.apache.fop.datastructs.Node;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class InlineContainer extends InlineArea implements ReferenceArea {
+public class InlineContainer
+extends AbstractReferenceArea
+implements ReferenceArea {
 
     /**
      * @param parent
