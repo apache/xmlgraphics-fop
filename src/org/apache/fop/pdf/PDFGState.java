@@ -7,6 +7,9 @@
 
 package org.apache.fop.pdf;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 /**
  * class representing a /ExtGState object.
  *
@@ -39,8 +42,26 @@ public class PDFGState extends PDFObject {
     public static final String AIS = "ais";
     public static final String TK = "tk";
 
-    float alphaFill = 1;
-    float alphaStroke = 1;
+    public static final PDFGState DEFAULT;
+
+    static {
+        DEFAULT = new PDFGState(0);
+        HashMap vals = DEFAULT.values;
+        /*vals.put(LW, new Float(1.0));
+        vals.put(LC, new Integer(0));
+        vals.put(LJ, new Integer(0));
+        vals.put(ML, new Float(10.0));
+        vals.put(D, "0 []");
+        vals.put(RI, "RelativeColorimetric");
+        vals.put(OP, Boolean.FALSE);
+        vals.put(op, Boolean.FALSE);
+        vals.put(OPM, new Integer(1));
+        vals.put(Font, "");*/
+        vals.put(CA, new Float(1.0));
+        vals.put(ca, new Float(1.0));
+    }
+
+    HashMap values = new HashMap();
 
     /**
      * create a /ExtGState object.
@@ -61,10 +82,18 @@ public class PDFGState extends PDFObject {
 
     public void setAlpha(float val, boolean fill) {
         if(fill) {
-            alphaFill = val;
+            values.put(ca, new Float(val));
         } else {
-            alphaStroke = val;
+            values.put(CA, new Float(val));
         }
+    }
+
+    public void addValues(PDFGState state) {
+        values.putAll(state.values);
+    }
+
+    public void addValues(HashMap vals) {
+        values.putAll(vals);
     }
 
     /**
@@ -75,14 +104,18 @@ public class PDFGState extends PDFObject {
     public byte[] toPDF() {
         StringBuffer sb = new StringBuffer(this.number + " " + this.generation
                               + " obj\n<<\n/Type /ExtGState\n");
-        if(alphaFill != 1) {
-            sb.append("/ca " + alphaFill + "\n");
-        }
-        if(alphaStroke != 1) {
-            sb.append("/CA " + alphaStroke + "\n");
-        }
+        appendVal(sb, ca);
+        appendVal(sb, CA);
+
         sb.append(">>\nendobj\n");
         return sb.toString().getBytes();
+    }
+
+    private void appendVal(StringBuffer sb, String name) {
+        Object val = values.get(name);
+        if(val != null) {
+            sb.append("/" + name + " " + val + "\n");
+        }
     }
 
     /*
@@ -94,4 +127,27 @@ public class PDFGState extends PDFObject {
      * >>
      * endobj
      */
+
+    public boolean equals(Object obj) {
+        if(obj == this) {
+            return true;
+        }
+        if(!(obj instanceof PDFGState)) {
+            return false;
+        }
+        HashMap vals1 = values;
+        HashMap vals2 = ((PDFGState)obj).values;
+        if(vals1.size() != vals2.size()) {
+            return false;
+        }
+        for(Iterator iter = vals1.keySet().iterator(); iter.hasNext(); ) {
+            Object str = iter.next();
+            Object obj1 = vals1.get(str);
+            if(!obj1.equals(vals2.get(str))) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
+

@@ -177,10 +177,20 @@ public class PDFState {
         return !tf.equals(transform);
     }
 
+    /**
+     * Set a new transform.
+     * This transform is appended to the transform of
+     * the current graphic state.
+     */
     public void setTransform(AffineTransform tf) {
         transform.concatenate(tf);
     }
 
+    /**
+     * Get the current transform.
+     * This gets the combination of all transforms in the
+     * current state.
+     */
     public AffineTransform getTransform() {
         AffineTransform tf;
         AffineTransform at = new AffineTransform();
@@ -192,6 +202,33 @@ public class PDFState {
         at.concatenate(transform);
 
         return at;
+    }
+
+    /**
+     * Get the grapics state.
+     * This gets the combination of all graphic states for
+     * the current context.
+     * This is the graphic state set with the gs operator not
+     * the other graphic state changes.
+     */
+    public PDFGState getGState() {
+        PDFGState defaultState = PDFGState.DEFAULT;
+
+        PDFGState state;
+        PDFGState newstate = new PDFGState(0);
+        newstate.addValues(defaultState);
+        for(Iterator iter = stateStack.iterator(); iter.hasNext(); ) {
+            HashMap map = (HashMap)iter.next();
+            state = (PDFGState)map.get(GSTATE);
+            if(state != null) {
+                newstate.addValues(state);
+            }
+        }
+        if(gstate != null) {
+            newstate.addValues(gstate);
+        }
+
+        return newstate;
     }
 }
 

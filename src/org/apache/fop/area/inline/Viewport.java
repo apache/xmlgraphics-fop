@@ -25,6 +25,22 @@ public class Viewport extends InlineArea {
         content = child;
     }
 
+    public void setClip(boolean c) {
+        clip = c;
+    }
+
+    public boolean getClip() {
+        return clip;
+    }
+
+    public void setContentPosition(Rectangle2D cp) {
+        contentPosition = cp;
+    }
+
+    public Rectangle2D getContentPosition() {
+        return contentPosition;
+    }
+
     public Area getContent() {
         return content;
     }

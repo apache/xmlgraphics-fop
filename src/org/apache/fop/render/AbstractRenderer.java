@@ -256,18 +256,19 @@ public abstract class AbstractRenderer implements Renderer {
         Area content = viewport.getContent();
         int saveBP = currentBPPosition;
         currentBPPosition += viewport.getOffset();
+        Rectangle2D contpos = viewport.getContentPosition();
         if (content instanceof Image) {
-            renderImage((Image) content);
+            renderImage((Image) content, contpos);
         } else if (content instanceof Container) {
             renderContainer((Container) content);
         } else if (content instanceof ForeignObject) {
-            renderForeignObject((ForeignObject) content);
+            renderForeignObject((ForeignObject) content, contpos);
         }
         currentBlockIPPosition += viewport.getWidth();
         currentBPPosition = saveBP;
     }
 
-    public void renderImage(Image image) {
+    public void renderImage(Image image, Rectangle2D pos) {
     }
 
     public void renderContainer(Container cont) {
@@ -283,7 +284,7 @@ public abstract class AbstractRenderer implements Renderer {
         currentBPPosition = saveBP;
     }
 
-    public void renderForeignObject(ForeignObject fo) {
+    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
 
     }
 
