@@ -917,11 +917,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
          * Returns the class name of the XML parser.
          */
         public String getXMLParserClassName() {
-            String parserClassName = System.getProperty("org.xml.sax.parser");
-            if (parserClassName == null) {
-                parserClassName = "org.apache.xerces.parsers.SAXParser";
-            }
-            return parserClassName;//application.getXMLParserClassName();
+            return Driver.getParserClassName();
         }
 
         /**

@@ -9,7 +9,6 @@ package org.apache.fop.apps;
 // FOP
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.fo.PropertyListMapping;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.Renderer;
@@ -136,6 +135,18 @@ public class Driver {
     /** the system resources that FOP will use    */
     private BufferManager _bufferManager;
 
+    public static final String getParserClassName() {
+        String parserClassName = null;
+        try {
+            parserClassName = System.getProperty("org.xml.sax.parser");
+        } catch(SecurityException se) {
+        }
+        if (parserClassName == null) {
+            parserClassName = "org.apache.xerces.parsers.SAXParser";
+        }
+        return parserClassName;
+    }
+
     /** create a new Driver */
     public Driver() {
         _stream = null;
@@ -200,30 +211,24 @@ public class Driver {
         _reader = reader;
     }
 
-
     /**
      * Sets all the element and property list mappings to their default values.
      *
      */
     public void setupDefaultMappings() {
         addElementMapping("org.apache.fop.fo.StandardElementMapping");
-        addPropertyList ("org.apache.fop.fo.StandardPropertyListMapping");
-
         addElementMapping("org.apache.fop.svg.SVGElementMapping");
-        addPropertyList ("org.apache.fop.svg.SVGPropertyListMapping");
-
         addElementMapping("org.apache.fop.extensions.ExtensionElementMapping");
-        addPropertyList ("org.apache.fop.extensions.ExtensionPropertyListMapping");
 
-        // add mappings from user configuration
-        Hashtable mappings = Configuration.getHashtableValue("mappings");
-        if (mappings != null) {
-            String prop = (String) mappings.get("property");
-            String ele = (String) mappings.get("element");
-            try {
-                addElementMapping(ele);
-                addPropertyList(prop);
-            } catch (IllegalArgumentException e) {
+        // add mappings from available services
+        Enumeration providers = Service.providers(org.apache.fop.fo.ElementMapping.class);
+        if (providers != null) {
+            while(providers.hasMoreElements()) {
+                String str = (String)providers.nextElement();
+                try {
+                    addElementMapping(str);
+                } catch (IllegalArgumentException e) {
+                }
             }
         }
     }
@@ -270,7 +275,6 @@ public class Driver {
         }
 
     }
-
 
     /**
      * Set the Renderer to use
@@ -357,41 +361,6 @@ public class Driver {
         }
         catch (ClassCastException e) {
             throw new IllegalArgumentException(mappingClassName + " is not an ElementMapping");
-        }
-    }
-
-    /**
-     * Add the PropertyListMapping.
-     */
-    public void addPropertyList(PropertyListMapping mapping) {
-        mapping.addToBuilder(_treeBuilder);
-    }
-
-    /**
-     * Add the PropertyListMapping with the given class name.
-     */
-    public void addPropertyList(String listClassName)
-    throws IllegalArgumentException {
-        try {
-            PropertyListMapping mapping =
-              (PropertyListMapping) Class.forName(
-                listClassName).newInstance();
-            addPropertyList(mapping);
-
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Could not find " +
-                                               listClassName);
-        }
-        catch (InstantiationException e) {
-            throw new IllegalArgumentException(
-              "Could not instantiate " + listClassName);
-        }
-        catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Could not access " +
-                                               listClassName);
-        }
-        catch (ClassCastException e) {
-            throw new IllegalArgumentException(listClassName + " is not an ElementMapping");
         }
     }
 
@@ -522,5 +491,79 @@ public class Driver {
         format();
         render();
     }
-
 }
+
+// code stolen from org.apache.batik.util and modified slightly
+// does what sun.misc.Service probably does, but it cannot be relied on.
+// hopefully will be part of standard jdk sometime.
+/**
+ * This class loads services present in the class path.
+ */
+class Service {
+
+    static Hashtable providerMap = new Hashtable();
+
+    public static synchronized Enumeration providers(Class cls) {
+        ClassLoader cl = cls.getClassLoader();
+        String serviceFile = "META-INF/services/"+cls.getName();
+
+        // System.out.println("File: " + serviceFile);
+
+        Vector v = (Vector)providerMap.get(serviceFile);
+        if (v != null)
+            return v.elements();
+
+        v = new Vector();
+        providerMap.put(serviceFile, v);
+
+        Enumeration e;
+        try {
+            e = cl.getResources(serviceFile);
+        } catch (IOException ioe) {
+            return v.elements();
+        }
+
+        while (e.hasMoreElements()) {
+            try {
+                java.net.URL u = (java.net.URL)e.nextElement();
+                // System.out.println("URL: " + u);
+
+                InputStream    is = u.openStream();
+                Reader         r  = new InputStreamReader(is, "UTF-8");
+                BufferedReader br = new BufferedReader(r);
+
+                String line = br.readLine();
+                while (line != null) {
+                    try {
+                        // First strip any comment...
+                        int idx = line.indexOf('#');
+                        if (idx != -1)
+                            line = line.substring(0, idx);
+
+                        // Trim whitespace.
+                        line = line.trim();
+
+                        // If nothing left then loop around...
+                        if (line.length() == 0) {
+                            line = br.readLine();
+                            continue;
+                        }
+                        // System.out.println("Line: " + line);
+
+                        // Try and load the class
+                        //Object obj = cl.loadClass(line).newInstance();
+                        // stick it into our vector...
+                        v.add(line);
+                    } catch (Exception ex) {
+                        // Just try the next line
+                    }
+                    line = br.readLine();
+                }
+            } catch (Exception ex) {
+                // Just try the next file...
+            }
+        }
+        return v.elements();
+    }
+}
+
