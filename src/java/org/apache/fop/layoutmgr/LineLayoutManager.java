@@ -252,14 +252,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                         }
 
                         inlineLC.setHyphContext(
-                          getHyphenContext(prevBP, bp));
+                          getHyphenContext((prevBP == null) ? prev : prevBP, bp));
                         if (inlineLC.getHyphContext() == null) {
                             break;
                         }
                         inlineLC.setFlags(LayoutContext.TRY_HYPHENATE,
                                           true);
                         // Reset to previous acceptable break
-                        reset();
+                        resetBP((prevBP == null) ? prev : prevBP);
                     } else {
                         /* If we are not in justified text, we can end the line at
                          * prevBP.
@@ -313,6 +313,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             return null;
         }
         if (prevBP == null) {
+            vecInlineBreaks.add(bp);
             prevBP = bp;
         }
 
@@ -335,11 +336,19 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         return makeLineBreak(iPrevLineEnd, availIPD, talign);
     }
 
-    private void reset() {
-        while (vecInlineBreaks.get(vecInlineBreaks.size() - 1) != prevBP) {
-            vecInlineBreaks.remove(vecInlineBreaks.size() - 1);
+    private void resetBP(BreakPoss resetBP) {
+        if (resetBP == null) {
+            reset((Position) null);
+        } else {
+            while (vecInlineBreaks.get(vecInlineBreaks.size() - 1) != resetBP) {
+                vecInlineBreaks.remove(vecInlineBreaks.size() - 1);
+            }
+            reset(resetBP.getPosition());
         }
-        reset(prevBP.getPosition());
+    }
+
+    private void reset() {
+        resetBP(prevBP);
     }
 
     protected boolean couldEndLine(BreakPoss bp) {
@@ -398,19 +407,20 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             vecInlineBreaks.listIterator(vecInlineBreaks.size());
         while (bpIter.hasPrevious() && bpIter.previous() != prev) {
         }
-        if (bpIter.next() != prev) {
+        if (prev != null && bpIter.next() != prev) {
             getLogger().error("findHyphenPoss: problem!");
             return null;
         }
         StringBuffer sbChars = new StringBuffer(30);
         while (bpIter.hasNext()) {
             BreakPoss bp = (BreakPoss) bpIter.next();
-            if (bp.getLayoutManager() == prev.getLayoutManager()) {
+            if (prev != null &&
+                bp.getLayoutManager() == prev.getLayoutManager()) {
                 bp.getLayoutManager().getWordChars(sbChars,
-                                                   prev.getPosition(), bp.getPosition());
+                    prev.getPosition(), bp.getPosition());
             } else {
                 bp.getLayoutManager().getWordChars(sbChars, null,
-                                                   bp.getPosition());
+                    bp.getPosition());
             }
             prev = bp;
         }
