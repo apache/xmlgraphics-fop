@@ -23,7 +23,9 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Stack;
 
 /**
@@ -47,9 +49,9 @@ public class PSGenerator {
     
     private Stack graphicsStateStack = new Stack();
     private PSState currentState;
-    private DecimalFormat df3 = new DecimalFormat("0.000");
-    private DecimalFormat df1 = new DecimalFormat("0.#");
-    private DecimalFormat df5 = new DecimalFormat("0.#####");
+    private DecimalFormat df3 = new DecimalFormat("0.000", new DecimalFormatSymbols(Locale.US));
+    private DecimalFormat df1 = new DecimalFormat("0.#", new DecimalFormatSymbols(Locale.US));
+    private DecimalFormat df5 = new DecimalFormat("0.#####", new DecimalFormatSymbols(Locale.US));
 
     private StringBuffer tempBuffer = new StringBuffer(256);
 
