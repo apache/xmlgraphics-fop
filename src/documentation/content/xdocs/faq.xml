@@ -138,22 +138,21 @@
           definitions.
         </p>
         <p>
-          See also <link href="relnotes.html">release notes</link>.
+          Update your FO documents and style sheets.
         </p>
       </answer>
     </faq>
     <faq id="NoClassDefFound">
       <question>I get a NoClassDefFound exception.</question>
       <answer>
-        <p>
-          This is typically a problem with your <!--link
-            href="classpath.html"-->classpath<!--/link-->.</p>
+        <p>This is typically a problem with your classpath.</p>
         <p>If you are running FOP from the command line:</p>
         <ul>
           <li>
-            Use the fop.bat or fop.sh command file from the FOP distribution.
-            Ensure the directory where FOP and these files have been installed
-            is the current working directory.
+            Use the fop.bat or fop.sh command file from the FOP
+            distribution. If you have a FOP version older than 0.20.5,
+            ensure the directory where FOP and these files have been
+            installed is the current working directory.
           </li>
           <li>
             If this doesn't help, check whether still all the jar files
@@ -162,8 +161,11 @@
           </li>
         </ul>
         <p>
-          If you run FOP embedded in your servlet, web application or other
-          Java application, check the classpath of the application.
+          If you run FOP embedded in your servlet, web application or
+          other Java application, check the classpath of the
+          application. Check the also the information pertaining <link
+          href="servlets.xml#servlet-engine">servlet engines</link>
+          for further hints.
         </p>
       </answer>
     </faq>
@@ -248,7 +250,7 @@
         </p>
         <p>
           If you use XSLT, problems in your style sheet and in your source XML
-          also often produce a NullPointerException. Run the transformation
+          also can produce a NullPointerException. Run the transformation
           separately to check for this, usually you'll get a detailed error
           message from the XSLT processor.
         </p>
@@ -330,7 +332,7 @@
       <answer>
         <p>
           Did you get: &#171;Failed to read font metrics file C:\foo\arial.xml
-          : File "C:\foo\arial.xml" not found&#178;? The value for the
+          : File "C:\foo\arial.xml" not found&#187;? The value for the
           metrics-file attribute in the user config file is actually an URL, not
           a file name. Use "file:///C:/foo/arial.xml" instead.
         </p>
@@ -339,11 +341,51 @@
           directory you expect. Currently FOP does not use the baseDir for
           resolving relative URLs pointing to font metric files.
         </p>
+        <p>
+          Try also setting the fontBaseDir configuration. (FIXME: add
+          link to congfiguration page)
+        </p>
       </answer>
     </faq>
   </part>
   <part id="part-output">
     <title>Problems with FOP output</title>
+    <faq id="leader-expansion">
+      <question>Leaders don't work anymore in 0.20.5. Instead of
+      filling the line, only three dots or a short ruler is
+      output.</question>
+      <answer>
+        <p>
+          Leaders still work, in fact they work better than ever
+          before. You'll just have to add text-align="justify" and/or
+          text-align-last="justify" to the block with the leader. Be
+          sure you haven't accidentally overridden the
+          leader-length.maximum="100%" default value.
+        </p>
+        <p>
+          Earlier versions of FOP used to expand a leader to fill the
+          rest of the line unconditionally, anything following it,
+          like page numbers in a TOC, was actually shifted beyong the
+          right margin.
+        </p>
+        <p>
+          The new implementation uses leader-length.optimum to
+          determine where to break the line, and expands the leader
+          only further if the line should be filled, as indicated by
+          the text-aling and text-align-last properties.
+        </p>
+        <p>
+          Actually due to the fuzzyness of the specification both the
+          old and the new method are conformant (although adding text
+          after the expanded leader in the old variant never was).
+        </p>
+        <p>
+          If you want to have a longer ruler or space in a
+          non-justified line, you have to increase the
+          leader-length.optimum property.
+        </p>
+      </answer>
+    </faq>
     <faq id="blank-page-between-page-sequences">
       <question>Why does FOP insert a blank page between my page sequences?</question>
       <answer>
@@ -488,16 +530,16 @@ Any easy way to check this is to cut&amp;paste the source URL from the fo:extern
       <question>Page numbers are not properly right aligned.</question>
       <answer>
         <p>
-          This happens for fo:page-number-citation elements if the citation
-          occurs before FOP formatted the requested page, usually in TOC or
-          index pages.
+          This happens for fo:page-number-citation elements if the
+          citation occurs before FOP formatted the requested page,
+          usually in TOC or index pages. It is caused by the problem
+          that FOP has to guess how much space the yet unknown page
+          number will occupy, and usually the guesses are somewhat
+          off.
         </p>
         <p>
-          It is caused by the problem that FOP has to guess how much space the
-          yet unknown page number will occupy, and usually the guesses are
-          somewhat off. You can try to use a non-proportional font like Courier
-          to remedy this. However, this is likely to look ugly, and wont fix the
-          problem completely.
+          The most recent FOP releases should have this problem
+          fixed. Check whether you can upgrade.
         </p>
       </answer>
     </faq>
@@ -678,17 +720,28 @@ Can I control this?</question>
       displayed as &#8220;#&#8221;.</question>
       <answer>
         <p>
-          There are a few fonts supplied with Acrobat Reader. If you use other
-          fonts, the font must be available on the machine where the PDF is
-          viewed or it must have been embedded in the PDF file. See
-          <link href="fonts.html">embedding fonts</link>.
+          This usually means the selected font doesn't have a glyph
+          for the character.
         </p>
         <p>
-          Furthermore, if you select a certain font family, the font must
-          contain glyphs for the desired character. There is an <link
-            href="output.html#pdf-fonts">overview</link> available for the
-          default PDF fonts. For most symbols, it is better to select the symbol
-          font explicitely, for example in order to get the symbol for the
+          The standard text fonts supplied with Acrobat Reader have
+          mostly glyphs for characters from the ISO Latin 1 character
+          set. For a variety of reasons, even those are not completely
+          guaranteed to work, for example you can't use the fi
+          ligature from the standard serif font. Check the <link
+          href="output.html#pdf-fonts">overview</link> for the default
+          PDF fonts.
+        </p>
+        <p>
+          If you use your own fonts, the font must have a glyph for
+          the desired character. Furthermore the font must be
+          available on the machine where the PDF is viewed or it must
+          have been embedded in the PDF file. See <link
+          href="fonts.html">embedding fonts</link>.
+        </p>
+        <p>
+          For most symbols, it is better to select the symbol font
+          explicitely, for example in order to get the symbol for the
           mathematical empty set, write:
         </p>
         <source><![CDATA[<fo:inline font-family="Symbol">&#x2205;</fo:inline>]]></source>
@@ -915,7 +968,7 @@ Can I control this?</question>
       in the input.</question>
       <answer>
         <p>
-          See <link href="fo.html#xml-entity-chars">XML Entity Characters</link>.
+          See <link href="fo.html#xml-entity-chars">Using HTML Character Names</link>.
         </p>
       </answer>
     </faq>

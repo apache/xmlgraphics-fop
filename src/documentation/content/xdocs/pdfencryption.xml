@@ -15,13 +15,13 @@
       <warning>PDF Encryption is available in Release 0.20.5 and later. The comments on this page do not apply to releases earlier than 0.20.5.</warning>
       <p>
         FOP supports encryption of PDF output, thanks to Patrick
-        C. Lankswert. This feature is commonly used to prevent unauthorized
-        viewing, printing, editing and copying text from the document
-        annotations. It is also possible to ask the user for a password in order
-        to view the contents. Note that there already exist third party
-        applications which can decrypt an encrypted PDF without effort and allow
-        the aforementioned operations, therefore the degree of protection is
-        limited.
+        C. Lankswert. This feature is commonly used to prevent
+        unauthorized viewing, printing, editing, copying text from the
+        document and doing annotations. It is also possible to ask the
+        user for a password in order to view the contents. Note that
+        there already exist third party applications which can decrypt
+        an encrypted PDF without effort and allow the aforementioned
+        operations, therefore the degree of protection is limited.
       </p>
       <p>
         For further information about features and restrictions regarding PDF
@@ -36,13 +36,15 @@
         options.
       </p>
       <p>
-        An owner password with the <code>-o</code> option. This password is
-        actually used as encryption key. Usually it is also used by most tools
-        to disregard any restriction imposed on the PDF document.
+        An owner password is set with the <code>-o</code> option. This
+        password is actually used as encryption key. Many tools for
+        PDF processing ask for this password to disregard any
+        restriction imposed on the PDF document.
       </p>
       <p>
         If no owner password has been supplied but FOP was asked to apply some
-        restrictions, a random password is used.
+        restrictions, a random password is used. In this case it is obviously
+        impossiible to disregard restrictions in PDF processing tools.
       </p>
       <p>
         A user password, supplied with the <code>-u</code> option, will
@@ -60,13 +62,13 @@
     <section>
       <title>Environment</title>
       <p>
-        In order to use PDF encryption, FOP has to be compiled with cryptography
-        support. Currently, only <link
+        In order to use PDF encryption, FOP has to be compiled with
+        cryptography support. Currently, only <link
         href="http://java.sun.com/j2se/1.4/docs/guide/security/jce/JCERefGuide.html">JCE</link>
-        is supported. JCE is part of JDK 1.4. For earlier JDKs, it can be
-        installed separately. The build process automatically senses JCE
-        presence and installs PDF support if possible, otherwise, a stub is
-        compiled in.
+        is supported. JCE is part of JDK 1.4. For earlier JDKs, it can
+        be installed separately. The build process automatically
+        detects JCE presence and installs PDF encryption support if
+        possible, otherwise a stub is compiled in.
       </p>
       <p>
         Cryptography support must also be present at run time. In particular, a
@@ -76,7 +78,7 @@
       </p>
       <source>"Cannot find any provider supporting RC4"</source>
       <p>
-        then you don't have the needed support.
+        then you don't have the needed infrastructure.
       </p>
       <p>
         There are several commercial and a few Open Source packages which
@@ -113,6 +115,10 @@
           providers. For JDK 1.4 this is detailed on <link href="http://java.sun.com/j2se/1.4/docs/guide/security/jce/JCERefGuide.html#InstallProvider">Sun's web site</link>.
         </li>
       </ol>
+      <p>
+        If you have any experience with Mozilla JSS or any other
+        cryptography provider, please post it to the fop-user list.
+      </p>
     </section>
   </body>
 </document>
