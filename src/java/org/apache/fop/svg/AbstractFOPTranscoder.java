@@ -50,17 +50,12 @@
  */ 
 package org.apache.fop.svg;
 
-import java.awt.Dimension;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Dimension2D;
-
 import org.xml.sax.EntityResolver;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.LogEnabled;
 import org.apache.avalon.framework.logger.Logger;
 import org.apache.batik.bridge.UserAgent;
-import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.DocumentFactory;
 import org.apache.batik.transcoder.ErrorHandler;
@@ -70,7 +65,6 @@ import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.keys.BooleanKey;
 import org.apache.batik.util.SVGConstants;
-import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.DOMImplementation;
 
 /**
