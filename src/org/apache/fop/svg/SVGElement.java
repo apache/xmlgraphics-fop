@@ -37,6 +37,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 /**
  * class representing svg:svg pseudo flow object.
@@ -107,37 +108,38 @@ public class SVGElement extends SVGObj {
         final Element svgRoot = element;
         /* create an SVG area */
         /* if width and height are zero, get the bounds of the content. */
-        DefaultSVGContext dc = new DefaultSVGContext() {
+        final ForeignObjectArea foa = (ForeignObjectArea)area;
+        SVGContext dc = new SVGContext() {
             public float getPixelToMM() {
                 // 72 dpi
                 return 0.35277777777777777778f;
             }
 
-            public float getViewportWidth(Element e) throws IllegalStateException {
-                if(e == svgRoot) {
-                    ForeignObjectArea foa = (ForeignObjectArea)area;
-                    if(!foa.isContentWidthAuto()) {
-                        return foa.getContentWidth();
-                    }
-                }
-                return super.getViewportWidth(e);
+            public Rectangle2D getBBox() {
+                return new Rectangle2D.Double(0, 0, foa.getContentWidth(), foa.getContentHeight());
             }
 
-            public float getViewportHeight(Element e) throws IllegalStateException {
-                if(e == svgRoot) {
-                    ForeignObjectArea foa = (ForeignObjectArea)area;
-                    if(!foa.isContentHeightAuto()) {
-                        return foa.getContentHeight();
-                    }
-                }
-                return super.getViewportHeight(e);
+            public AffineTransform getCTM() {
+                return new AffineTransform();
             }
 
-            public List getDefaultFontFamilyValue() {
-                return FONT_FAMILY;
+            public AffineTransform getGlobalTransform() {
+                return new AffineTransform();
+            }
+
+            public float getViewportWidth() {
+                return (float)foa.getContentWidth();
+            }
+
+            public float getViewportHeight() {
+                return (float)foa.getContentHeight();
+            }
+
+            public float getFontSize(){
+                return fs.getFontSize() / 1000f;
             }
         };
-        ((SVGOMDocument)doc).setSVGContext(dc);
+        ((SVGOMElement)svgRoot).setSVGContext(dc);
 
         try {
             String baseDir = Configuration.getStringValue("baseDir");
@@ -184,10 +186,11 @@ public class SVGElement extends SVGObj {
         svg.end();
 
         /* add the SVG area to the containing area */
-        ForeignObjectArea foa = (ForeignObjectArea)area;
         foa.setObject(svg);
         foa.setIntrinsicWidth(svg.getWidth());
         foa.setIntrinsicHeight(svg.getHeight());
+
+       ((SVGOMElement)svgRoot).setSVGContext(null);
 
         /* return status */
         return new Status(Status.OK);
@@ -201,16 +204,6 @@ public class SVGElement extends SVGObj {
         element = doc.getDocumentElement();
 
         buildTopLevel(doc, element);
-    }
-
-    public final static List FONT_FAMILY;
-    static {
-        FONT_FAMILY = new ArrayList();
-        FONT_FAMILY.add("Helvetica");
-        FONT_FAMILY.add("Times");
-        FONT_FAMILY.add("Courier");
-        FONT_FAMILY.add("sans-serif");
-        FONT_FAMILY.add("serif");
     }
 
 }
