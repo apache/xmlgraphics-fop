@@ -118,10 +118,10 @@ public class FopImageFactory {
         String imgMimeType = imgReader.getMimeType();
         String imgClassName = null;
         if ("image/gif".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.GifJpegImage";
+            imgClassName = "org.apache.fop.image.GifImage";
             // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/jpeg".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.GifJpegImage";
+            imgClassName = "org.apache.fop.image.JpegImage";
             // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/bmp".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.BmpImage";
