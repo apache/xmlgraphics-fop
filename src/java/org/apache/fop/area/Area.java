@@ -44,17 +44,17 @@ import org.apache.fop.fo.properties.WritingMode;
 public class Area extends AreaNode implements Cloneable  {
 
     /** Current inline progression dimension.  May be unknown. */
-    protected Integer iPDim = null;
+    protected Float iPDim = null;
     /** Maximum required inline progression dimension.  May be unknown. */
-    protected Integer iPDimMax = null;
+    protected Float iPDimMax = null;
     /** Mimimum required inline progression dimension.  May be unknown. */
-    protected Integer iPDimMin = null;
+    protected Float iPDimMin = null;
     /** Current block progression dimension.  May be unknown. */
-    protected Integer bPDim = null;
+    protected Float bPDim = null;
     /** Maximum required block progression dimension.  May be unknown. */
-    protected Integer bPDimMax = null;
+    protected Float bPDimMax = null;
     /** Mimimum required block progression dimension.  May be unknown. */
-    protected Integer bPDimMin = null;
+    protected Float bPDimMin = null;
     /** The geometrical area.  The <code>width</code> of this
      * <code>Rectangle</code> is the <code>inline-progression-dimension</code>
      * of the area, and the <code>height</code> is the
@@ -218,11 +218,11 @@ public class Area extends AreaNode implements Cloneable  {
 
     /**
      * Gets the <code>block-progression-dimension</code> maximum value,
-     * in millipoints
+     * in points
      * N.B. The method is synchronized only on this object.
      * @return the <code>block-progression-dimension</code> maximum value
      */
-    public Integer getBPDimMax() {
+    public Float getBPDimMax() {
         synchronized (this) {
             return bPDimMax;
         }
@@ -230,24 +230,24 @@ public class Area extends AreaNode implements Cloneable  {
 
     /**
      * Sets the <code>block-progression-dimension</code> maximum value,
-     * in millipoints
+     * in points
      * N.B. The method is synchronized only on this object.
      * @param dimMax <code>block-progression-dimension</code> maximum value
      * to set
      */
-    public void setBPDimMax(Integer dimMax) {
+    public void setBPDimMax(float dimMax) {
         synchronized (this) {
-            bPDimMax = dimMax;
+            bPDimMax = new Float(dimMax);
         }
     }
 
     /**
      * Gets the <code>block-progression-dimension</code> minimum value,
-     * in millipoints
+     * in points
      * N.B. The method is synchronized only on this object.
      * @return the <code>block-progression-dimension</code> minimum value
      */
-    public Integer getBPDimMin() {
+    public Float getBPDimMin() {
         synchronized (this) {
             return bPDimMin;
         }
@@ -255,14 +255,14 @@ public class Area extends AreaNode implements Cloneable  {
 
     /**
      * Sets the <code>block-progression-dimension</code> minimum value,
-     * in millipoints
+     * in points
      * N.B. The method is synchronized only on this object.
      * @param dimMin <code>block-progression-dimension</code> minimum value
      * to set
      */
-    public void setBPDimMin(Integer dimMin) {
+    public void setBPDimMin(float dimMin) {
         synchronized (this) {
-            bPDimMin = dimMin;
+            bPDimMin = new Float(dimMin);
         }
     }
 
@@ -303,7 +303,7 @@ public class Area extends AreaNode implements Cloneable  {
 
     /**
      * Sets the <code>inline-progression-dimension</code> of the contents of
-     * this area, in millipoints.  This value is applied to the appropriate
+     * this area, in points.  This value is applied to the appropriate
      * dimension of the <code>Rectangle2D</code> representing this area.  If no
      * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
      * created, then the value is applied.
@@ -338,11 +338,11 @@ public class Area extends AreaNode implements Cloneable  {
 
     /**
      * Gets the <code>inline-progression-dimension</code> maximum value,
-     * in millipoints
+     * in points
      * N.B. The method is synchronized only on this object.
      * @return the <code>inline-progression-dimension</code> maximum value
      */
-    public Integer getIPDimMax() {
+    public Float getIPDimMax() {
         synchronized(this) {
             return iPDimMax;
         }
@@ -350,24 +350,24 @@ public class Area extends AreaNode implements Cloneable  {
 
     /**
      * Sets the <code>inline-progression-dimension</code> maximum value,
-     * in millipoints
+     * in points
      * N.B. The method is synchronized only on this object.
      * @param dimMax <code>inline-progression-dimension</code> maximum value
      * to set
      */
-    public void setIPDimMax(Integer dimMax) {
+    public void setIPDimMax(float dimMax) {
         synchronized (this) {
-            iPDimMax = dimMax;
+            iPDimMax = new Float(dimMax);
         }
     }
 
     /**
      * Gets the <code>inline-progression-dimension</code> mimimum value,
-     * in millipoints
+     * in points
      * N.B. The method is synchronized only on this object.
      * @return the <code>inline-progression-dimension</code> minimum value
      */
-    public Integer getIPDimMin() {
+    public Float getIPDimMin() {
         synchronized (this) {
             return iPDimMin;
         }
@@ -380,9 +380,9 @@ public class Area extends AreaNode implements Cloneable  {
      * @param dimMin <code>inline-progression-dimension</code> minimum value
      * to set
      */
-    public void setIPDimMin(Integer dimMin) {
+    public void setIPDimMin(float dimMin) {
         synchronized (this) {
-            iPDimMin = dimMin;
+            iPDimMin = new Float(dimMin);
         }
     }
 
