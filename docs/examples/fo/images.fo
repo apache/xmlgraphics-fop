@@ -38,8 +38,8 @@
 
 <fo:flow>
 <fo:block font-size="18pt" font-weight="bold">1. FOP test for images</fo:block><fo:block id="N2531">
-<fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A GIF image in FOP</fo:block><fo:block><fo:inline-graphic href="file:../../graphics/xml_feather.gif"/>
-</fo:block></fo:block><fo:block id="N2545"><fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A JPEG image in FOP</fo:block><fo:block><fo:inline-graphic href="file:../../graphics/fop.jpg"/></fo:block></fo:block><fo:block id="N2559"><fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em"/>
+<fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A GIF image in FOP</fo:block><fo:block><fo:inline-graphic href="file:../graphics/xml_feather.gif"/>
+</fo:block></fo:block><fo:block id="N2545"><fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A JPEG image in FOP</fo:block><fo:block><fo:inline-graphic href="file:../graphics/fop.jpg"/></fo:block></fo:block><fo:block id="N2559"><fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em"/>
           This section is only required to show that the layout still works.
       </fo:block>
 	  </fo:flow>
