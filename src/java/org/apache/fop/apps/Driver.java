@@ -35,7 +35,6 @@ import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeHandler;
-import org.apache.fop.render.Renderer;
 import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.render.mif.MIFHandler;
 import org.apache.fop.render.rtf.RTFHandler;
@@ -57,16 +56,16 @@ import org.apache.fop.tools.DocumentReader;
  * driver.setRenderer(RENDER_PDF);
  * driver.run();
  * </PRE>
- * If neccessary, calling classes can call into the lower level
+ * If necessary, calling classes can call into the lower level
  * methods to setup and
- * render. Methods can be called to set the
+ * render. Methods within FOUserAgent can be called to set the
  * Renderer to use, the (possibly multiple) ElementMapping(s) to
  * use and the OutputStream to use to output the results of the
- * rendering (where applicable). In the case of the Renderer and
+ * rendering (where applicable). In the case of 
  * ElementMapping(s), the Driver may be supplied either with the
  * object itself, or the name of the class, in which case Driver will
  * instantiate the class itself. The advantage of the latter is it
- * enables runtime determination of Renderer and ElementMapping(s).
+ * enables runtime determination of ElementMapping(s).
  * <P>
  * Once the Driver is set up, the render method
  * is called. Depending on whether DOM or SAX is being used, the
@@ -83,7 +82,7 @@ import org.apache.fop.tools.DocumentReader;
  *
  * <PRE>
  * Driver driver = new Driver();
- * driver.setRenderer(new org.apache.fop.render.awt.AWTRenderer(translator));
+ * driver.setRenderer(RENDER_AWT);
  * driver.render(parser, fileInputSource(args[0]));
  * </PRE>
  */
@@ -98,11 +97,6 @@ public class Driver implements Constants {
      * the renderer type code given by setRenderer
      */
     private int rendererType = NOT_SET;
-
-    /**
-     * the renderer to use to output the area tree
-     */
-    private Renderer renderer;
 
     /**
      * the SAX ContentHandler
@@ -127,7 +121,7 @@ public class Driver implements Constants {
     /**
      * The system resources that FOP will use
      */
-    private FOUserAgent userAgent = null;
+    private FOUserAgent foUserAgent = null;
 
     /**
      * Main constructor for the Driver class.
@@ -142,7 +136,8 @@ public class Driver implements Constants {
      */
     public Driver(AWTRenderer renderer) {
         this();
-        setRenderer(renderer);
+        rendererType = RENDER_AWT;
+        foUserAgent = renderer.getUserAgent();
     }
 
     /**
@@ -171,29 +166,6 @@ public class Driver implements Constants {
     }
 
     /**
-     * Optionally sets the FOUserAgent instance for FOP to use. The Driver
-     * class sets up its own FOUserAgent if none is set through this method.
-     * @param agent FOUserAgent to use
-     */
-    public void setUserAgent(FOUserAgent agent) {
-        userAgent = agent;
-        if (renderer != null) {
-            renderer.setUserAgent(userAgent);
-        }
-    }
-
-    /**
-     * Get the FOUserAgent instance for this process
-     * @return the user agent
-     */
-    public FOUserAgent getUserAgent() {
-        if (userAgent == null) {
-            userAgent = new FOUserAgent();
-        }
-        return userAgent;
-    }
-
-    /**
      * Resets the Driver so it can be reused. Property and element
      * mappings are reset to defaults.
      * The output stream is cleared. The renderer is cleared.
@@ -205,6 +177,30 @@ public class Driver implements Constants {
         if (treeBuilder != null) {
             treeBuilder.reset();
         }
+    }
+
+    /**
+     * Optionally sets the FOUserAgent instance for FOP to use. The Driver
+     * class sets up its own FOUserAgent if none is set through this method.
+     * @param agent FOUserAgent to use
+     */
+    public void setUserAgent(FOUserAgent agent) throws FOPException {
+        if (foUserAgent != null) {
+            throw new IllegalStateException("FOUserAgent " +
+                "instance already set.");
+        }
+        foUserAgent = agent;
+    }
+
+    /**
+     * Get the FOUserAgent instance for this process
+     * @return the user agent
+     */
+    public FOUserAgent getUserAgent() {
+        if (foUserAgent == null) {
+            foUserAgent = new FOUserAgent();
+        }
+        return foUserAgent;
     }
 
     /**
@@ -241,68 +237,30 @@ public class Driver implements Constants {
     }
 
     /**
-     * Method to set the rendering type to use. Must be one of
+     * Method to set the rendering type desired. Must be one of
      * <ul>
-     * <li>RENDER_PDF</li>
-     * <li>RENDER_AWT</li>
-     * <li>RENDER_PRINT</li>
-     * <li>RENDER_MIF</li>
-     * <li>RENDER_XML</li>
-     * <li>RENDER_PCL</li>
-     * <li>RENDER_PS</li>
-     * <li>RENDER_TXT</li>
-     * <li>RENDER_SVG</li>
-     * <li>RENDER_RTF</li>
+     * <li>Driver.RENDER_PDF</li>
+     * <li>Driver.RENDER_AWT</li>
+     * <li>Driver.RENDER_PRINT</li>
+     * <li>Driver.RENDER_MIF</li>
+     * <li>Driver.RENDER_XML</li>
+     * <li>Driver.RENDER_PCL</li>
+     * <li>Driver.RENDER_PS</li>
+     * <li>Driver.RENDER_TXT</li>
+     * <li>Driver.RENDER_SVG</li>
+     * <li>Driver.RENDER_RTF</li>
      * </ul>
-     * @param renderer the type of renderer to use
-     * @throws IllegalArgumentException if an unsupported renderer type was required.
+     * @param renderType the type of renderer to use
+     * @throws IllegalArgumentException if an unsupported renderer type was requested.
      */
-    public void setRenderer(int renderer) throws IllegalArgumentException {
-        rendererType = renderer;
-        switch (renderer) {
-        case RENDER_PDF:
-            setRenderer(new org.apache.fop.render.pdf.PDFRenderer());
-            break;
-        case RENDER_AWT:
-            setRenderer(new org.apache.fop.render.awt.AWTRenderer());
-            break;
-        case RENDER_PRINT:
-            setRenderer(new org.apache.fop.render.awt.AWTPrintRenderer());
-            break;
-        case RENDER_PCL:
-            setRenderer(new org.apache.fop.render.pcl.PCLRenderer());
-            break;
-        case RENDER_PS:
-            setRenderer(new org.apache.fop.render.ps.PSRenderer());
-            break;
-        case RENDER_TXT:
-            setRenderer(new org.apache.fop.render.txt.TXTRenderer());
-            break;
-        case RENDER_MIF:
-            //foInputHandler will be set later
-            break;
-        case RENDER_XML:
-            setRenderer(new org.apache.fop.render.xml.XMLRenderer());
-            break;
-        case RENDER_SVG:
-            setRenderer(new org.apache.fop.render.svg.SVGRenderer());
-            break;
-        case RENDER_RTF:
-            //foInputHandler will be set later
-            break;
-        default:
+    public void setRenderer(int renderType) throws IllegalArgumentException {
+        if (renderType < RENDER_MIN_CONST || renderType > RENDER_MAX_CONST) {
             rendererType = NOT_SET;
-            throw new IllegalArgumentException("Unknown renderer type " + renderer);
+            throw new IllegalArgumentException(
+                "Invalid renderer ID#" + renderType);
         }
-    }
 
-    /**
-     * Set the Renderer to use.
-     * @param renderer the renderer instance to use
-     */
-    private void setRenderer(Renderer renderer) {
-        renderer.setUserAgent(getUserAgent());
-        this.renderer = renderer;
+        this.rendererType = renderType;
     }
 
     /**
@@ -344,16 +302,17 @@ public class Driver implements Constants {
         // TODO: - do this stuff in a better way
         // PIJ: I guess the structure handler should be created by the renderer.
         if (rendererType == RENDER_MIF) {
-            foInputHandler = new MIFHandler(userAgent, stream);
+            foInputHandler = new MIFHandler(foUserAgent, stream);
         } else if (rendererType == RENDER_RTF) {
-            foInputHandler = new RTFHandler(userAgent, stream);
+            foInputHandler = new RTFHandler(foUserAgent, stream);
         } else {
-            if (renderer == null) {
+            if (rendererType == NOT_SET) {
                 throw new IllegalStateException(
-                        "Renderer not set when using standard foInputHandler");
+                        "Renderer must be set using setRenderer(int renderType)");
             }
 
-            foInputHandler = new FOTreeHandler(userAgent, renderer, stream, true);
+            foInputHandler = new FOTreeHandler(foUserAgent, rendererType, 
+                stream, true);
         }
 
         treeBuilder.setFOInputHandler(foInputHandler);
@@ -369,7 +328,7 @@ public class Driver implements Constants {
     public synchronized void render(InputHandler inputHandler)
                 throws FOPException {
         XMLReader parser = inputHandler.getParser();
-        userAgent.setBaseURL(inputHandler.getBaseURL());
+        foUserAgent.setBaseURL(inputHandler.getBaseURL());
         render(parser, inputHandler.getInputSource());
     }
 
@@ -431,7 +390,6 @@ public class Driver implements Constants {
     /**
      * Runs the formatting and renderering process using the previously set
      * parser, input source, renderer and output stream.
-     * If the renderer was not set, default to PDF.
      * If no parser was set, and the input source is not a dom document,
      * get a default SAX parser.
      * @throws IOException in case of IO errors.
@@ -442,9 +400,8 @@ public class Driver implements Constants {
             initialize();
         }
 
-        if (renderer == null && rendererType != RENDER_RTF
-            && rendererType != RENDER_MIF) {
-                setRenderer(RENDER_PDF);
+        if (rendererType == NOT_SET) {
+            rendererType = RENDER_PDF;
         }
 
         if (source == null) {

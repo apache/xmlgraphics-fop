@@ -27,6 +27,7 @@ import java.io.InputStream;
 
 // FOP
 import org.apache.fop.pdf.PDFEncryptionParams;
+import org.apache.fop.render.Renderer;
 
 /**
  * The User Agent for fo.
@@ -59,7 +60,7 @@ public class FOUserAgent {
     private float px2mm = 0.35277777777777777778f; //72dpi (=25.4/dpi)
     private HashMap rendererOptions = new java.util.HashMap();
     private InputHandler inputHandler = null;
-    
+    private Renderer rendererOverride = null;
     
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
@@ -91,6 +92,22 @@ public class FOUserAgent {
      */
     public InputHandler getInputHandler() {
         return inputHandler;
+    }
+
+    /**
+     * Sets the producer of the document.  
+     * @param producer source of document
+     */
+    public void setRendererOverride(Renderer renderer) {
+        this.rendererOverride = renderer;
+    }
+
+    /**
+     * Returns the producer of the document
+     * @return producer name
+     */
+    public Renderer getRendererOverride() {
+        return rendererOverride;
     }
 
     /**
