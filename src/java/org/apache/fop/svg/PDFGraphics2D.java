@@ -43,9 +43,9 @@ import org.apache.fop.render.pdf.FopPDFImage;
 
 import org.apache.batik.ext.awt.g2d.AbstractGraphics2D;
 import org.apache.batik.ext.awt.g2d.GraphicContext;
-//import org.apache.batik.ext.awt.MultipleGradientPaint;
 import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.batik.ext.awt.LinearGradientPaint;
+import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.gvt.PatternPaint;
 import org.apache.batik.gvt.GraphicsNode;
 
@@ -174,7 +174,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public PDFGraphics2D(boolean textAsShapes, FontInfo fi, PDFDocument doc,
                          PDFResourceContext page, String pref, String font, float size) {
-        super(textAsShapes);
+        this(textAsShapes);
         pdfDoc = doc;
         resourceContext = page;
         currentFontName = font;
@@ -191,6 +191,26 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     protected PDFGraphics2D(boolean textAsShapes) {
         super(textAsShapes);
+    }
+
+    /**
+     * This constructor supports the create method.
+     * This is not implemented properly.
+     *
+     * @param g the PDF graphics to make a copy of
+     */
+    public PDFGraphics2D(PDFGraphics2D g) {
+        super(g);
+    }
+
+    /**
+     * Creates a new <code>Graphics</code> object that is
+     * a copy of this <code>Graphics</code> object.
+     * @return     a new graphics context that is a copy of
+     * this graphics context.
+     */
+    public Graphics create() {
+        return new PDFGraphics2D(this);
     }
 
     /**
@@ -231,8 +251,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void setGraphicContext(GraphicContext c) {
         gc = c;
+        setPrivateHints();
     }
 
+    private void setPrivateHints() {
+        setRenderingHint(RenderingHintsKeyExt.KEY_AVOID_TILE_PAINTING, 
+                RenderingHintsKeyExt.VALUE_AVOID_TILE_PAINTING_ON);
+    }
+    
     /**
      * Set the override font state for drawing text.
      * This is used by the PDF text painter so that it can temporarily
@@ -243,26 +269,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void setOverrideFontState(Font infont) {
         ovFontState = infont;
-    }
-
-    /**
-     * This constructor supports the create method.
-     * This is not implemented properly.
-     *
-     * @param g the PDF graphics to make a copy of
-     */
-    public PDFGraphics2D(PDFGraphics2D g) {
-        super(g);
-    }
-
-    /**
-     * Creates a new <code>Graphics</code> object that is
-     * a copy of this <code>Graphics</code> object.
-     * @return     a new graphics context that is a copy of
-     * this graphics context.
-     */
-    public Graphics create() {
-        return new PDFGraphics2D(this);
     }
 
     /**
@@ -429,6 +435,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public boolean drawImage(Image img, int x, int y, int width, int height,
                                ImageObserver observer) {
+        System.out.println("drawImage x=" + x + " y=" + y + " width=" + width + " height=" + height + " image=" + img.toString());
         // first we look to see if we've already added this image to
         // the pdf document. If so, we just reuse the reference;
         // otherwise we have to build a FopImage and add it to the pdf
