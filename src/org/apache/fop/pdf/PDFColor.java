@@ -314,9 +314,9 @@ public class PDFColor extends PDFPathPaint {
         this.green = 1.0 - this.green;
         this.blue = 1.0 - this.yellow;
 
-        this.red = (this.black / this.blackFactor) + this.red;
-        this.green = (this.black / this.blackFactor) + this.green;
-        this.blue = (this.black / this.blackFactor) + this.blue;
+        this.red = (this.black / PDFColor.blackFactor) + this.red;
+        this.green = (this.black / PDFColor.blackFactor) + this.green;
+        this.blue = (this.black / PDFColor.blackFactor) + this.blue;
 
     }
 
@@ -381,7 +381,7 @@ public class PDFColor extends PDFPathPaint {
             tempDouble = this.yellow;
         }
 
-        this.black = (tempDouble / this.blackFactor);
+        this.black = (tempDouble / PDFColor.blackFactor);
 
     }
 
@@ -402,7 +402,7 @@ public class PDFColor extends PDFPathPaint {
             tempDouble = this.blue;
         }
 
-        this.black = 1.0 - (tempDouble / this.blackFactor);
+        this.black = 1.0 - (tempDouble / PDFColor.blackFactor);
     }
 
     /**
