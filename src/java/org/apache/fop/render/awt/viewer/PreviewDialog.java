@@ -85,35 +85,40 @@ public class PreviewDialog extends JFrame {
         translator = renderer.getTranslator();
 
         //Commands aka Actions
-        Command printAction = new Command(translator.getString("Menu.Print"), "Print") {
+        Command printAction =
+            new Command(translator.getString("Menu.Print"), "Print") {
             public void doit() {
                 print();
             }
         };
-        Command firstPageAction = new Command(translator.getString("Menu.First.page"),
+        Command firstPageAction =
+            new Command(translator.getString("Menu.First.page"),
                                       "firstpg") {
             public void doit() {
                 goToFirstPage();
             }
         };
-        Command previousPageAction = new Command(translator.getString("Menu.Prev.page"),
-                                         "prevpg") {
+        Command previousPageAction =
+            new Command(translator.getString("Menu.Prev.page"), "prevpg") {
             public void doit() {
                 goToPreviousPage();
             }
         };
-        Command nextPageAction = new Command(translator.getString("Menu.Next.page"), "nextpg") {
+        Command nextPageAction =
+            new Command(translator.getString("Menu.Next.page"), "nextpg") {
             public void doit() {
                 goToNextPage();
             }
 
         };
-        Command lastPageAction = new Command(translator.getString("Menu.Last.page"), "lastpg") {
+        Command lastPageAction =
+            new Command(translator.getString("Menu.Last.page"), "lastpg") {
             public void doit() {
                 goToLastPage();
             }
         };
-        Command reloadAction = new Command(translator.getString("Menu.Reload"), "reload") {
+        Command reloadAction =
+            new Command(translator.getString("Menu.Reload"), "reload") {
             public void doit() {
                 reload();
             }
@@ -388,9 +393,9 @@ public class PreviewDialog extends JFrame {
             infoStatus.setText("");
             currentPage = 0;
 
-                // TODO work out how to reload
-                setStatus(translator.getString("Status.Build.FO.tree"));
-                setStatus(translator.getString("Status.Show"));
+            // TODO work out how to reload
+            setStatus(translator.getString("Status.Build.FO.tree"));
+            setStatus(translator.getString("Status.Show"));
         }
     }
 
