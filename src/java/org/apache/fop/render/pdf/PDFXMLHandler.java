@@ -220,7 +220,9 @@ public class PDFXMLHandler implements XMLHandler {
             int yOffset = pdfInfo.currentYPosition;
 
             SVGUserAgent ua
-                 = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
+                 = new SVGUserAgent(context.getUserAgent().getLogger(), 
+                        context.getUserAgent().getPixelUnitToMillimeter(),
+                        new AffineTransform());
 
             GVTBuilder builder = new GVTBuilder();
             BridgeContext ctx = new BridgeContext(ua);
