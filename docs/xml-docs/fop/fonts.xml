@@ -11,7 +11,6 @@
 		</p>
     <note><p>
         The Font is simply embedded into the PDF file, it is not converted.
-        If it is a Windows font then it will only be displayed properly on Windows.
     </p></note>
 	</s2>
 	<s2 title="Adding additional Type 1 fonts">
@@ -45,12 +44,22 @@
                 ie:
 		</p>
         <p>
-		<code>
-&lt;font metrics-file="cyberbit.xml" kerning="yes" embed-file="C:\WINNT\Fonts\Cyberbit.ttf"&gt;
-  &lt;font-triplet name="Cyberbit" style="normal" weight="normal"&gt;
-&lt;/font&gt;
-</code>
+		<source><![CDATA[
+<font metrics-file="cyberbit.xml" kerning="yes" embed-file="C:\WINNT\Fonts\Cyberbit.ttf">
+  <font-triplet name="Cyberbit" style="normal" weight="normal">
+</font>]]>
+</source>
 </p>
+    <note><p>
+        If you do not want the font embedded in the PDF then remove the
+        "embed-file" attribute. The PDF will then contain text using
+        the font with the font metrics and to view it properly the
+        font will need to be installed where it is being viewed.
+    </p></note>
+    <note><p>
+        Cocoon users will need to setup the config, see FOPSerializer
+        for more information.
+    </p></note>
 		</s3>
 	</s2>
 	<s2 title="Adding additional TrueType">
