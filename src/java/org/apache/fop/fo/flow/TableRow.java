@@ -128,7 +128,7 @@ public class TableRow extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
      */
     public void addLayoutManager(List list) {
         Row rlm = new Row(this);

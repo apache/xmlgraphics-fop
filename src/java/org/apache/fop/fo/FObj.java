@@ -21,7 +21,6 @@ package org.apache.fop.fo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
@@ -457,14 +456,6 @@ public class FObj extends FONode implements Constants {
      */
     public Map getMarkers() {
         return markers;
-    }
-
-    /**
-     * Return a LayoutManager responsible for laying out this FObj's content.
-     * Must override in subclasses if their content can be laid out.
-     * @param list the list to which the layout manager(s) should be added
-     */
-    public void addLayoutManager(List list) {
     }
 
     /*

@@ -19,6 +19,7 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
@@ -413,9 +414,9 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         List newLMs = new ArrayList(size);
         while (fobjIter.hasNext() && newLMs.size() < size ) {
             Object theobj = fobjIter.next();
-            if (theobj instanceof FObj) {
-                FObj fobj = (FObj) theobj;
-                fobj.addLayoutManager(newLMs);
+            if (theobj instanceof FONode) {
+                FONode foNode = (FONode) theobj;
+                foNode.addLayoutManager(newLMs);
             }
         }
         return newLMs;

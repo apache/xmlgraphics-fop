@@ -46,7 +46,7 @@ public class Wrapper extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
      * @todo remove null check when vCN() & endOfNode() implemented
      */
     public void addLayoutManager(List list) {

@@ -121,7 +121,8 @@ public class TextLayoutManager extends AbstractLayoutManager {
      * @param node The FOText object to be rendered
      */
     public TextLayoutManager(FOText node) {
-        super(node);
+        super();
+
         foText = node;
         textArray = new char[node.endIndex - node.startIndex];
         System.arraycopy(node.ca, node.startIndex, textArray, 0,

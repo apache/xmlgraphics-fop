@@ -131,7 +131,7 @@ public class FOText extends FObj {
      * @return true if this will create an area in the output
      */
     public boolean willCreateArea() {
-        if (textInfo.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE
+        if (textInfo.whiteSpaceCollapse == Constants.WhiteSpaceCollapse.FALSE
                 && endIndex - startIndex > 0) {
             return true;
         }
@@ -194,7 +194,7 @@ public class FOText extends FObj {
      * text-transform property.
      */
     private void textTransform() {
-        if (textInfo.textTransform == TextTransform.NONE) {
+        if (textInfo.textTransform == Constants.TextTransform.NONE) {
             return;
         }
         for (int i = 0; i < endIndex; i++) {
@@ -323,13 +323,13 @@ public class FOText extends FObj {
     private char charTransform(int i) {
         switch (textInfo.textTransform) {
         /* put NONE first, as this is probably the common case */
-        case TextTransform.NONE:
+        case Constants.TextTransform.NONE:
             return ca[i];
-        case TextTransform.UPPERCASE:
+        case Constants.TextTransform.UPPERCASE:
             return Character.toUpperCase(ca[i]);
-        case TextTransform.LOWERCASE:
+        case Constants.TextTransform.LOWERCASE:
             return Character.toLowerCase(ca[i]);
-        case TextTransform.CAPITALIZE:
+        case Constants.TextTransform.CAPITALIZE:
             if (isStartOfWord(i)) {
                 /*
                  Use toTitleCase here. Apparently, some languages use
@@ -497,7 +497,7 @@ public class FOText extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
      */
     public void addLayoutManager(List list) {
         if (endIndex - startIndex > 0) {
