@@ -63,7 +63,7 @@ To unsubscribe: Send email to <link href="mailto:fop-user-unsubscribe@xml.apache
       </ul>
     </section>
     <section id="mailing-lists-w3c-xslfo">
-      <title>XSL:FO Mailing List (at W3C)</title>
+      <title>XSL-FO Mailing List (at W3C)</title>
           <p>
 Use this forum to ask general XSL-FO questions.
           </p>
@@ -76,6 +76,13 @@ To review the archive: <link href="http://lists.w3.org/Archives/Public/www-xsl-f
 Subscription administration information can be found at <link href="http://www.w3.org/Mail/Request">W3C Mailing List Administrativia</link>. After reviewing the instructions there, send your subscribe or unsubscribe request to <link href="mailto:www-xsl-fo-request@w3.org">www-xsl-fo-request@w3.org</link>.
             </li>
       </ul>
+      <section id="mailing-lists-xslt-mulberry">
+        <title>XSLT List (Mulberry Tech)</title>
+        <ul>
+            <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
+          <li>Information for using and subscribing can be found at <jump href="http://www.mulberrytech.com/xsl/xsl-list">XSL-List -- Open Forum on XSL</jump>.</li>
+        </ul>
+      </section>
     </section>
   </section>
   <section id="specs">
@@ -130,6 +137,7 @@ Subscription administration information can be found at <link href="http://www.w
         <li><jump href="http://wrox.com/books/1861005067.htm">XSLT Programmer's Reference</jump>, by Michael H. Kay, Wrox Press, ISBN 1-861-00506-7.</li>
         <li><jump href="http://www.oreilly.com/catalog/xslt">XSLT</jump>, by Doug Tidwell, O'Reilly &amp; Associates, 2001, ISBN 0-596-00053-7.</li>
         <li><jump href="http://www.oreilly.com/catalog/xsltckbk">XSLT Cookbook</jump>, by Sal Mangano, O'Reilly &amp; Associates, 2002, ISBN 0-596-00372-2.</li>
+        <li><jump href="http://www.dpawson.co.uk/xsl/xslfaq.html">Dave Pawson's XSLT FAQ</jump>.</li>
       </ul>
     </section>
   </section>
