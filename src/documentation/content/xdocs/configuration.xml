@@ -16,17 +16,23 @@ It contains templates for the various configuration options, most of which are c
 Be sure to follow any instructions, including comments which specify the value range.
 Also, since the configuration file is XML, be sure to keep it well-formed.</p>
     <note>Do <strong>not</strong> change <code>{fop-dir}/conf/config.xml</code> or use it as the basis for your configuration file. It has an entirely different purpose.</note>
-    <p>The general structure of the configuration file is a series of &lt;entry> tags, each containing a &lt;key> and a &lt;value>. (Fonts use a different format). Here is an example:</p>
-    <source><![CDATA[<entry>
+    <section id="general-entries">
+      <title>Creating Entries</title>
+      <p>The general structure of the configuration file is a series of &lt;entry> tags, each containing a &lt;key> and a &lt;value>. (Fonts use a different format). Here is an example:</p>
+      <source><![CDATA[<entry>
   <key>strokeSVGText</key>
   <value>false</value>
 </entry>]]></source>
-    <p>After creating your configuration file, you must tell FOP how to find it:</p>
-    <ul>
-      <li>If running FOP from the command-line, see the "-c" command-line option in <link href="running.html">Running FOP</link>.</li>
-      <li>If running FOP as an embedded application, see <link href="embedding.html#config-external">FOP: Embedding, Using a Configuration File</link>.</li>
-    </ul>
-    <p>See <link href="embedding.html#config-internal">Setting the Configuration Programmatically</link> for instructions on how to do so in an embedded environment.</p>
+    </section>
+    <section id="general-available">
+      <title>Making Configuration Available to FOP</title>
+      <p>After creating your configuration file, you must tell FOP how to find it:</p>
+      <ul>
+        <li>If running FOP from the command-line, see the "-c" command-line option in <link href="running.html">Running FOP</link>.</li>
+        <li>If running FOP as an embedded application, see <link href="embedding.html#config-external">FOP: Embedding, Using a Configuration File</link>.</li>
+      </ul>
+      <p>See <link href="embedding.html#config-internal">Setting the Configuration Programmatically</link> for instructions on how to do so in an embedded environment.</p>
+    </section>
   </section>
   <section id="summary-key-value">
     <title>Summary of Key-Value Configuration Options</title>
