@@ -135,6 +135,11 @@ public class Driver implements LogEnabled {
     public static final int RENDER_SVG = 9;
 
     /**
+     * Render to RTF. OutputStream must be set
+     */
+    public static final int RENDER_RTF = 10;
+
+    /**
      * the FO tree builder
      */
     private FOTreeBuilder _treeBuilder;
@@ -308,6 +313,7 @@ public class Driver implements LogEnabled {
      * <li>RENDER_PS
      * <li>RENDER_TXT
      * <li>RENDER_SVG
+     * <li>RENDER_RTF
      * </ul>
      * @param renderer the type of renderer to use
      */
@@ -337,6 +343,9 @@ public class Driver implements LogEnabled {
             break;
         case RENDER_SVG:
             setRenderer("org.apache.fop.render.svg.SVGRenderer");
+            break;
+        case RENDER_RTF:
+            if(true) throw new IllegalArgumentException("-rtf option recognized but RTF output is not implemented yet");
             break;
         default:
             throw new IllegalArgumentException("Unknown renderer type");
