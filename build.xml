@@ -409,11 +409,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <dependset>
         <srcfilelist dir="./" files="${foproperties.xml},${colorkw.xml}"/>
-        <targetfilelist dir="./" files="${build.src}/org/apache/fop/fo/properties/Constants.java,${build.src}/org/apache/fop/fo/properties/fo_${ignore_this}"/>
+        <targetfilelist dir="./" files="${build.src}/org/apache/fop/fo/properties/Constants.java,${build.src}/fo_${ignore_this}"/>
     </dependset>
     <dependset>
         <srcfilelist dir="./" files="${propinc.xsl}"/>
-        <targetfilelist dir="./" files="${build.src}/org/apache/fop/fo/properties/fo_${ignore_this},${build.src}/org/apache/fop/fo/properties/FOPropertyMapping.java,${build.src}/org/apache/fop/fo/properties/foenums_${ignore_this}"/>
+        <targetfilelist dir="./" files="${build.src}/fo_${ignore_this},${build.src}/org/apache/fop/fo/properties/FOPropertyMapping.java,${build.src}/foenums_${ignore_this}"/>
     </dependset>
 
     <dependset>
@@ -435,11 +435,15 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <style in="${allprops.xml}" style="${genconst.xsl}"
            out="${build.src}/${properties.dir}/Constants.java"/>
     <style in="${foproperties.xml}" style="${properties.xsl}"
-           out="${build.src}/${properties.dir}/fo_${ignore_this}"/>
+           out="${build.src}/fo_${ignore_this}">
+      <param name="reldir" expression="${properties.dir}"/>
+    </style>
     <style in="${foproperties.xml}" style="${propmap.xsl}"
            out="${build.src}/${properties.dir}/FOPropertyMapping.java"/>
     <style in="${foproperties.xml}" style="${enumgen.xsl}"
-           out="${build.src}/${properties.dir}/foenums_${ignore_this}"/>
+           out="${build.src}/foenums_${ignore_this}">
+      <param name="reldir" expression="${properties.dir}"/>
+    </style>
     <style in="${extproperties.xml}" style="${propmap.xsl}"
            out="${build.src}/${properties.dir}/ExtensionPropertyMapping.java"/>
     <style in="${encodings.xml}" style="${charlist.xsl}"
