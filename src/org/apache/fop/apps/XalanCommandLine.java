@@ -92,17 +92,63 @@ import org.apache.fop.configuration.ConfigurationReader;
  */
 public class XalanCommandLine {
 
+    private String foFile = null;
+    private String pdfFile = null;
+    private String xsltFile = null;
     private String userConfigFile = null;
+    private String baseDir = null;
 
-    /** show a full dump on error */  //this should be implemented here too
+
+    /** show a full dump on error */ //this should be implemented here too
     private static boolean errorDump = false;
 
+    public XalanCommandLine(String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
+                errorDump = true;
+            } else if ((args[i].charAt(0) == '-') &&
+                    (args[i].charAt(1) == 'c')) {
+                userConfigFile = args[i].substring(2);
+            } else if (args[i].charAt(0) == '-') {
+                printUsage(args[i]);
+            } else if (foFile == null) {
+                foFile = args[i];
+            } else if (xsltFile == null) {
+                xsltFile = args[i];
+            } else if (pdfFile == null) {
+                pdfFile = args[i];
+            } else {
+                printUsage(args[i]);
+            }
+        }
+        if (foFile == null || pdfFile == null || xsltFile == null) {
+            printUsage(null);
+        }
+    }
+
+
+    /*
+      * shows usage info
+      */
+    public void printUsage(String arg) {
+        if (arg != null) {
+            MessageHandler.errorln("Unkown argument: '"+ arg + "'");
+            MessageHandler.errorln("Usage: java [-d] " +
+                                   "[-cMyConfigFile] " +
+                                   "org.apache.fop.apps.XalanCommandLine " + "xml-file xslt-file pdf-file");
+            MessageHandler.errorln("Options:\n" + "  -d or --full-error-dump    Show stack traces upon error");
+            MessageHandler.errorln("-cMyConfigFile use values in configuration file MyConfigFile instead of/additional to default");
+
+            System.exit(1);
+        }
+    }
+
     /**
-     * creates a SAX parser, using the value of org.xml.sax.parser
-     * defaulting to org.apache.xerces.parsers.SAXParser
-     *
-     * @return the created SAX parser
-     */
+      * creates a SAX parser, using the value of org.xml.sax.parser
+      * defaulting to org.apache.xerces.parsers.SAXParser
+      *
+      * @return the created SAX parser
+      */
     static XMLReader createParser() {
         String parserClassName = System.getProperty("org.xml.sax.parser");
         if (parserClassName == null) {
@@ -134,11 +180,11 @@ public class XalanCommandLine {
     }
 
     /**
-      * create an InputSource from a file name
-      *
-      * @param filename the name of the file
-      * @return the InputSource created
-      */
+       * create an InputSource from a file name
+       *
+       * @param filename the name of the file
+       * @return the InputSource created
+       */
     protected static InputSource fileInputSource(String filename) {
 
         /* this code adapted from James Clark's in XT */
@@ -158,34 +204,26 @@ public class XalanCommandLine {
 
 
     /**
-      * mainline method
-      *
-      * first command line argument is xml input file
-      * second command line argument is xslt file which commands the conversion from xml to xsl:fo
-      * third command line argument is the output file
-      *
-      * @param command line arguments
-      */
-    public static void main(String[] args) {
-        if (args.length != 3) {
-            MessageHandler.errorln("usage: java " +
-                                   "org.apache.fop.apps.XalanCommandLine " + "xml-file xslt-file pdf-file");
-            System.exit(1);
+       * mainline method
+       *
+       * first command line argument is xml input file
+       * second command line argument is xslt file which commands the conversion from xml to xsl:fo
+       * third command line argument is the output file
+       *
+       * @param command line arguments
+       */
+    public void run () {
+        Driver driver = new Driver();
+        if (errorDump)  {
+            driver.setErrorDump(true);
         }
-
-        Driver driver  = new Driver();
         driver.loadStandardConfiguration("standard");
-//must be redone like CommandLine
-/*        if (userConfigFile != null)  {
-            driver.loadUserconfiguration(userConfigFile,"standard");
+        if (userConfigFile != null) {
+            driver.loadUserconfiguration(userConfigFile, "standard");
         }
-*/
-        driver.setBaseDir(args[0]);
-
+        driver.setBaseDir(foFile);
         String version = Version.getVersion();
         MessageHandler.logln(version);
-
-
 
         XMLReader parser = createParser();
 
@@ -216,8 +254,8 @@ public class XalanCommandLine {
             // create a Writer
             // the following is an ugly hack to allow processing of larger files
             // if xml file size is larger than 700 kb write the fo:file to disk
-            if ((new File(args[0]).length()) > 500000) {
-                writer = new FileWriter(args[2] + ".tmp");
+            if ((new File(foFile).length()) > 500000) {
+                writer = new FileWriter(pdfFile + ".tmp");
                 usefile = true;
             } else {
                 writer = new StringWriter();
@@ -229,14 +267,12 @@ public class XalanCommandLine {
             // Create the 3 objects the XSLTProcessor needs to perform the transformation.
             // Fix up the args...
             XMLParserLiaison xmlPL = processor.getXMLProcessorLiaison();
-            URL urlTmp = xmlPL.getURLFromString(args[0], null);
-            System.err.println("XML File: " + args[0]);
-            System.err.println("URL: " + urlTmp);
+            URL urlTmp = xmlPL.getURLFromString(foFile, null);
+            MessageHandler.errorln("xml: " + urlTmp);
             XSLTInputSource xmlSource =
               new XSLTInputSource (urlTmp.toString());
-            urlTmp = xmlPL.getURLFromString(args[1], null);
-            System.err.println("XSL File: " + args[1]);
-            System.err.println("URL: " + urlTmp);
+            urlTmp = xmlPL.getURLFromString(xsltFile, null);
+            MessageHandler.errorln("xslt: " + urlTmp);
             XSLTInputSource xslSheet =
               new XSLTInputSource (urlTmp.toString());
 
@@ -246,7 +282,7 @@ public class XalanCommandLine {
             processor.process(xmlSource, xslSheet, xmlResult);
 
             if (usefile) {
-                reader = new FileReader(args[2] + ".tmp");
+                reader = new FileReader(pdfFile + ".tmp");
             } else {
                 // create a input source containing the xsl:fo file which can be fed to Fop
                 reader = new StringReader(writer.toString());
@@ -261,21 +297,41 @@ public class XalanCommandLine {
             driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
             driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
             driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-		    PrintWriter pwriter = new PrintWriter(new BufferedWriter(new FileWriter(args[2])));
-		    driver.setWriter(pwriter);
+            PrintWriter pwriter = new PrintWriter(
+                                    new BufferedWriter(new FileWriter(pdfFile)));
+            driver.setWriter(pwriter);
             driver.buildFOTree(parser, new InputSource(reader));
             reader.close();
             driver.format();
             driver.render();
             if (usefile) {
-                new File (args[2] + ".tmp").delete();
+                new File (pdfFile + ".tmp").delete();
             }
-			pwriter.flush();
-			pwriter.close();
+            pwriter.flush();
+            pwriter.close();
         }
         catch (Exception e) {
             MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
+            if (errorDump) {
+                e.printStackTrace();
+            }
             System.exit(1);
         }
     }
+
+    /**
+       * mainline method
+       *
+       * first command line argument is xml input file
+       * second command line argument is xslt file
+       * third command line argument is the target pdf file
+       *
+       * @param command line arguments
+       */
+    public static void main(String[] args) {
+        XalanCommandLine xcmdLine = new XalanCommandLine(args);
+        xcmdLine.run();
+
+    }
+
 }
