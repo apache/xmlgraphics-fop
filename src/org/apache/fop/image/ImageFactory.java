@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Collections;
+import java.util.Iterator;
 
 // FOP
 import org.apache.fop.image.analyser.ImageReaderFactory;
@@ -39,7 +40,7 @@ handle context: base dir, logger, caching
  */
 public class ImageFactory {
     private static ImageFactory factory = new ImageFactory();
-    ImageCache cache = new ContextImageCache();
+    ImageCache cache = new ContextImageCache(true);
 
     private ImageFactory() {}
 
@@ -277,26 +278,58 @@ class BasicImageCache implements ImageCache {
  * weak hashmap so they may be garbage collected.
  */
 class ContextImageCache implements ImageCache {
-    Set invalid = Collections.synchronizedSet(new HashSet());
+    // if this cache is collective then images can be shared
+    // among contexts, this implies that the base directory
+    // is either the same or does not effect the images being
+    // loaded
+    boolean collective;
     Map contextStore = Collections.synchronizedMap(new HashMap());
-    Map weakStore = Collections.synchronizedMap(new WeakHashMap());
+    Set invalid = null;
+    Map weakStore = null;
+
+    public ContextImageCache(boolean col) {
+        collective = col;
+        if(collective) {
+            weakStore = Collections.synchronizedMap(new WeakHashMap());
+            invalid = Collections.synchronizedSet(new HashSet());
+        }
+    }
 
     // sync around lookups and puts
     // another sync around load for a particular image
     public FopImage getImage(String url, FOUserAgent context) {
-        ImageLoader im;
+        ImageLoader im = null;
         // this protects the finding or creating of a new
         // ImageLoader for multi threads
         synchronized (this) {
-            if (invalid.contains(url)) {
+            if (collective && invalid.contains(url)) {
                 return null;
             }
             Context con = (Context) contextStore.get(context);
             if (con == null) {
-                con = new Context(context);
+                con = new Context(context, collective);
                 contextStore.put(context, con);
+            } else {
+                if(con.invalid(url)) {
+                    return null;
+                }
+                im = con.getImage(url);
             }
-            im = (ImageLoader) weakStore.get(url);
+            if(im == null && collective) {
+                for(Iterator iter = contextStore.values().iterator(); iter.hasNext(); ) {
+                    Context c = (Context)iter.next();
+                    if(c != con) {
+                        im = c.getImage(url);
+                        if(im != null) {
+                            break;
+                        }
+                    }
+                }
+                if(im == null) {
+                    im = (ImageLoader) weakStore.get(url);
+                }
+            }
+
             if (im != null) {
                 con.putImage(url, im);
             } else {
@@ -315,39 +348,49 @@ class ContextImageCache implements ImageCache {
     public void releaseImage(String url, FOUserAgent context) {
         Context con = (Context) contextStore.get(context);
         if (con != null) {
-            ImageLoader im = con.getImage(url);
-            weakStore.put(url, im);
+            if(collective) {
+                ImageLoader im = con.getImage(url);
+                weakStore.put(url, im);
+            }
             con.releaseImage(url);
         }
     }
 
     public void invalidateImage(String url, FOUserAgent context) {
-        // cap size of invalid list
-        if (invalid.size() > 100) {
-            invalid.clear();
+        if(collective) {
+            // cap size of invalid list
+            if (invalid.size() > 100) {
+                invalid.clear();
+            }
+            invalid.add(url);
         }
-        invalid.add(url);
         Context con = (Context) contextStore.get(context);
         if (con != null) {
-            con.releaseImage(url);
+            con.invalidateImage(url);
         }
     }
 
     public void removeContext(FOUserAgent context) {
         Context con = (Context) contextStore.get(context);
         if (con != null) {
-            Map images = con.getImages();
-            weakStore.putAll(images);
+            if(collective) {
+                Map images = con.getImages();
+                weakStore.putAll(images);
+            }
             contextStore.remove(context);
         }
     }
 
     class Context {
         Map images = Collections.synchronizedMap(new HashMap());
+        Set invalid = null;
         FOUserAgent userAgent;
 
-        public Context(FOUserAgent ua) {
+        public Context(FOUserAgent ua, boolean inv) {
             userAgent = ua;
+            if(inv) {
+                invalid = Collections.synchronizedSet(new HashSet());
+            }
         }
 
         public ImageLoader getImage(String url, ImageCache c) {
@@ -373,6 +416,14 @@ class ContextImageCache implements ImageCache {
 
         public Map getImages() {
             return images;
+        }
+
+        public void invalidateImage(String url) {
+            invalid.add(url);
+        }
+
+        public boolean invalid(String url) {
+            return invalid.contains(url);
         }
 
     }

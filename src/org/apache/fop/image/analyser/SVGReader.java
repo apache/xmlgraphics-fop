@@ -56,6 +56,7 @@ public class SVGReader extends AbstractImageReader {
     public static final String SVG_MIME_TYPE = "image/svg+xml";
     FOUserAgent userAgent;
     Document doc;
+    boolean batik = true;
 
     public SVGReader() {
     }
@@ -80,13 +81,17 @@ public class SVGReader extends AbstractImageReader {
      * Possibly need a slightly different design for the image stuff.
      */
     protected boolean loadImage(String uri) {
-        try {
-            Loader loader = new Loader();
-            return loader.getImage(uri);
-        } catch (NoClassDefFoundError e) {
-            //userAgent.getLogger().error("Batik not in class path", e);
-            return false;
+        if(batik) {
+            try {
+                Loader loader = new Loader();
+                return loader.getImage(uri);
+            } catch (NoClassDefFoundError e) {
+                batik = false;
+                //userAgent.getLogger().error("Batik not in class path", e);
+                return false;
+            }
         }
+        return false;
     }
 
     /**
@@ -134,6 +139,7 @@ public class SVGReader extends AbstractImageReader {
 
                 return true;
             } catch (NoClassDefFoundError ncdfe) {
+                batik = false;
                 //userAgent.getLogger().error("Batik not in class path", ncdfe);
                 return false;
             }
