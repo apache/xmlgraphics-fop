@@ -213,13 +213,13 @@
   <property>
     <name>source-document</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>String</datatype>
     <default>none</default>
   </property>
   <property>
     <name>role</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>String</datatype>
     <default>none</default>
   </property>
 
@@ -915,7 +915,12 @@
   <property>
     <name>baseline-shift</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>Length</datatype>
+      <enumeration>
+        <value const="BASELINE">baseline</value>
+        <value const="SUB">sub</value>
+        <value const="SUPER">super</value>
+      </enumeration>
     <default>baseline</default>
   </property>
   <property>
