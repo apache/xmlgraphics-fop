@@ -62,6 +62,7 @@ import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+//import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.apache.fop.fo.properties.LeaderPattern;
 import org.apache.fop.fonts.Font;
 
@@ -165,6 +166,8 @@ public class Leader extends FObjMixed {
 
     public int getLength(String prop, int dim) {
         int length;
+//      int propId = FOPropertyMapping.getPropertyId(prop);
+//      System.out.println("prop/propID = " + prop + " " + propId);
         Length maxlength = propertyList.get(prop).getLength();
         if (maxlength instanceof PercentLength) {
             length = (int)(((PercentLength)maxlength).value()

@@ -68,6 +68,7 @@ import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.FOPropertyMapping;
 
 /**
  * Class modelling the fo:table-row object. See Sec. 6.7.9 of the XSL-FO
@@ -142,7 +143,8 @@ public class TableRow extends FObj {
     }
 
     private KeepValue getKeepValue(String sPropName) {
-        Property p = this.propertyList.get(sPropName);
+        int propId = FOPropertyMapping.getPropertyId(sPropName);
+        Property p = this.propertyList.get(propId);
         Number n = p.getNumber();
         if (n != null) {
             return new KeepValue(KeepValue.KEEP_WITH_VALUE, n.intValue());

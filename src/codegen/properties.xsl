@@ -735,9 +735,11 @@ public class </xsl:text>
         <xsl:text>
     public Property compute(PropertyList propertyList) {
         Property computedProperty = null;
-        Property correspondingProperty = propertyList.get("</xsl:text>
-        <xsl:value-of select="derive/@from"/>
-        <xsl:text>");
+        Property correspondingProperty = propertyList.get(Constants.PR_</xsl:text>
+        <xsl:call-template name="makeEnumConstant">
+          <xsl:with-param name="propstr" select="derive/@from"/>
+        </xsl:call-template>
+        <xsl:text>);
         if (correspondingProperty != null) {
             int correspondingValue = correspondingProperty.getEnum();</xsl:text>
         <xsl:for-each select="derive/if">
