@@ -1,11 +1,6 @@
 /*
- * FOAttributes.java
- * $Id$
  *
- * Created: Wed Nov 14 15:19:51 2001
- * 
- *
- * Copyright 1999-2003 The Apache Software Foundation.
+ * Copyright 1999-2004 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- *  
+ * $Id$
  *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
- * @version $Revision$ $Name$
+ * Created: Wed Nov 14 15:19:51 2001
  */
 package org.apache.fop.fo;
 
@@ -43,6 +37,9 @@ import org.apache.fop.xml.Namespaces;
 /**
  * The FO Attributes data structures and methods needed to manage the
  * Attributes associated with FO nodes.
+ *
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * @version $Revision$ $Name$
  */
 
 public class FOAttributes {

@@ -1,8 +1,6 @@
 /*
- * $Id$
- * 
  *
- * Copyright 1999-2003 The Apache Software Foundation.
+ * Copyright 1999-2004 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- *  
- *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * $Id$
  */
 
 package org.apache.fop.fo.flow;
@@ -39,6 +35,8 @@ import org.apache.fop.xml.XmlEvent;
 
 /**
  * Implements #PcdATA within page-sequence flow objects.
+ *
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
  */
 public class FoPcdata extends FOPageSeqNode {
 
