@@ -30,12 +30,6 @@ public class Inline extends FObjMixed {
         return new Inline.Maker();
     }
 
-    // Textdecoration
-    protected boolean underlined = false;
-    protected boolean overlined = false;
-    protected boolean lineThrough = false;
-
-
     public Inline(FObj parent,
                   PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
@@ -79,27 +73,17 @@ public class Inline extends FObjMixed {
         // this.properties.get("visibility");
         // this.properties.get("z-index");
 
-        int textDecoration = this.properties.get("text-decoration").getEnum();
+        // Text Decoration Properties
+        ts = propMgr.getTextDecoration();
 
-        if (textDecoration == TextDecoration.UNDERLINE) {
-            this.underlined = true;
-        }
-
-        if (textDecoration == TextDecoration.OVERLINE) {
-            this.overlined = true;
-        }
-
-        if (textDecoration == TextDecoration.LINE_THROUGH) {
-            this.lineThrough = true;
-        }
     }
 
     protected void addCharacters(char data[], int start, int length) {
         FOText ft = new FOText(data, start, length, this);
         ft.setLogger(log);
-        ft.setUnderlined(underlined);
-        ft.setOverlined(overlined);
-        ft.setLineThrough(lineThrough);
+        ft.setUnderlined(ts.getUnderlined());
+        ft.setOverlined(ts.getOverlined());
+        ft.setLineThrough(ts.getLineThrough());
         children.addElement(ft);
     }
 

@@ -8,6 +8,7 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.layout.Area;
+import org.apache.fop.layout.TextState;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -15,6 +16,9 @@ import org.apache.fop.apps.FOPException;
  * and their processing
  */
 public class FObjMixed extends FObj {
+
+    // Textdecoration
+    protected TextState ts;
 
     public static class Maker extends FObj.Maker {
         public FObj make(FObj parent,
@@ -33,7 +37,14 @@ public class FObjMixed extends FObj {
     }
 
     protected void addCharacters(char data[], int start, int length) {
-        addChild(new FOText(data, start, length, this));
+        // addChild(new FOText(data, start, length, this));
+        FOText ft = new FOText(data, start, length, this);
+        ft.setLogger(log);
+        ft.setUnderlined(ts.getUnderlined());
+        ft.setOverlined(ts.getOverlined());
+        ft.setLineThrough(ts.getLineThrough());
+        addChild(ft);
+
     }
 
     public Status layout(Area area) throws FOPException {

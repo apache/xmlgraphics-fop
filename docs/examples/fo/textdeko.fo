@@ -77,7 +77,7 @@
                 line-height="15pt"
                 space-after.optimum="10pt"
                 text-align="start">
-        This is simple test of the text-decoration<fo:inline text-decoration="underline">underline</fo:inline>.
+        This is simple test of the text-decoration <fo:inline text-decoration="underline">'underline'</fo:inline>.
       </fo:block>
       <fo:block font-size="22pt" 
                 font-family="sans-serif" 
@@ -96,7 +96,7 @@
       </fo:block>
 
       <fo:block font-size="12pt" font-family="sans-serif" line-height="15pt" text-align="justify" space-after.optimum="3pt">
-      The following text decorations are defined in the CR:
+      The following text decorations are defined in the REC:
       </fo:block>
 
       <fo:list-block space-after.optimum="13pt">
@@ -244,6 +244,12 @@
                 space-after.optimum="10pt"
                 text-align="start">
         What about underlining of whitespace only<fo:inline text-decoration="underline"> </fo:inline>?
+      </fo:block>
+
+
+      <fo:block space-after.optimum="13pt" font-size="14pt" text-decoration="underline">
+      A whole block should work now.
+      And again some more Text to get at least two lines.
       </fo:block>
 
 
