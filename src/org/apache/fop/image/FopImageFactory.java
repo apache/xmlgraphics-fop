@@ -43,13 +43,20 @@ public class FopImageFactory {
         URL absoluteURL = null;
         InputStream imgIS = null;
         try {
-            absoluteURL = new URL(href);
+            try {
+                absoluteURL = new URL(href);
+            } catch (MalformedURLException mue) {
+                // if the href contains onl a path then file is assumed
+                absoluteURL = new URL("file:" + href);
+            }
             imgIS = absoluteURL.openStream();
+        } catch (MalformedURLException e_context) {
+            throw new FopImageException("Error with image URL: " + e_context.getMessage());
         } catch (Exception e) {
             // maybe relative
             URL context_url = null;
             try {
-                absoluteURL = new URL(Configuration.getStringValue("baseDir") + absoluteURL.getPath());
+                absoluteURL = new URL(Configuration.getStringValue("baseDir") + absoluteURL.getFile());
             } catch (MalformedURLException e_context) {
                 // pb context url
                 throw new FopImageException(
