@@ -8,7 +8,7 @@
   </header>
 
   <body>
-  <section>
+  <section id="general">
     <title>How to configure FOP</title>
     <p>In the directory xml-fop/conf you will find two configuration files. One of them,
        config.xml, is only intended for FOP developers, who want to add new default values
@@ -23,7 +23,7 @@
        or <link href="embedding.html">Embedding FOP</link> for details.
     </p>
   </section>
-  <section>
+  <section id="hyphenation">
     <title>Setting up hyphenation</title>
     <p>FOP comes already with some hyphenation pattern. If you need a hyphenation pattern
        which isn't included in the distribution, do the following:
