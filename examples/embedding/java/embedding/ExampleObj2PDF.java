@@ -97,7 +97,7 @@ public class ExampleObj2PDF {
             outDir.mkdirs();
 
             // Setup input and output
-            File xsltfile = new File(baseDir, "xml/xslt/projectteam2FO.xsl");
+            File xsltfile = new File(baseDir, "xml/xslt/projectteam2fo.xsl");
             File pdffile = new File(outDir, "ResultObj2PDF.pdf");
 
             System.out.println("Input: a ProjectTeam object");
