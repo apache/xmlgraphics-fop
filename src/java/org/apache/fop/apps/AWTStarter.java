@@ -107,6 +107,7 @@ public class AWTStarter extends CommandLineStarter {
         if (parser == null) {
             throw new FOPException("Unable to create SAX parser");
         }
+        setParserFeatures(parser);
     }
 
     /**
