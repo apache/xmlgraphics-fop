@@ -82,8 +82,6 @@ public class BodyAreaContainer extends Area {
 
     // current heights
     private int mainRefAreaHeight;
-    private int beforeFloatRefAreaHeight;
-    private int footnoteRefAreaHeight;
 
     // reference area yPositions
     private int mainYPosition;
@@ -109,13 +107,11 @@ public class BodyAreaContainer extends Area {
         this.columnGap = columnGap;
 
         // create the primary reference areas
-        beforeFloatRefAreaHeight = 0;
-        footnoteRefAreaHeight = 0;
-        mainRefAreaHeight = maxHeight - beforeFloatRefAreaHeight
-                            - footnoteRefAreaHeight;
+        mainRefAreaHeight = maxHeight;
         beforeFloatReferenceArea = new AreaContainer(fontState, xPosition,
-                yPosition, allocationWidth, beforeFloatRefAreaHeight,
-                Position.ABSOLUTE);
+                                                     yPosition,
+                                                     allocationWidth, 0,
+                                                     Position.ABSOLUTE);
         beforeFloatReferenceArea.setAreaName("before-float-reference-area");
         this.addChild(beforeFloatReferenceArea);
         mainReferenceArea = new AreaContainer(fontState, xPosition,
@@ -124,11 +120,9 @@ public class BodyAreaContainer extends Area {
                                               Position.ABSOLUTE);
         mainReferenceArea.setAreaName("main-reference-area");
         this.addChild(mainReferenceArea);
-        int footnoteRefAreaYPosition = yPosition - mainRefAreaHeight;
         footnoteReferenceArea = new AreaContainer(fontState, xPosition,
-                                                  footnoteRefAreaYPosition,
-                                                  allocationWidth,
-                                                  footnoteRefAreaHeight,
+                                                  yPosition - mainRefAreaHeight,
+                                                  allocationWidth, 0,
                                                   Position.ABSOLUTE);
         footnoteReferenceArea.setAreaName("footnote-reference-area");
         this.addChild(footnoteReferenceArea);

@@ -129,6 +129,26 @@ public class Footnote extends FObj {
                 footArea.setMaxHeight(bac.getMaxHeight()
                                       + footArea.getHeight());
             }
+            if (!footArea.hasChildren()) {
+                StaticContent separator = bac.getPage().getPageSequence()
+                    .getStaticContent("xsl-footnote-separator");
+                if (separator!=null) {
+                    footArea.setIDReferences(bac.getIDReferences());
+                    separator.layout(footArea, null);
+                    int diff = footArea.getHeight() - oldHeight;
+                    if (area != null) {
+                        area.setMaxHeight(area.getMaxHeight() - diff);
+                    }
+                    if (bac.getFootnoteState() == 0) {
+                        Area ar = bac.getMainReferenceArea();
+                        decreaseMaxHeight(ar, diff);
+                        footArea.setYPosition(basePos + footArea.getHeight());
+                    }
+                     basePos = footArea.getCurrentYPosition()
+                               - footArea.getHeight();
+                     oldHeight = footArea.getHeight();
+                }
+            }
             int status = fb.layout(footArea);
             if (Status.isIncomplete(status)) {
                 // add as a pending footnote

@@ -234,7 +234,10 @@ public class PageSequence extends FObj {
         if (flowMap.containsKey(staticContent.getFlowName())) {
             throw new FOPException("flow-names must be unique within an fo:page-sequence");
         }
-        if (!this.layoutMasterSet.regionNameExists(staticContent.getFlowName())) {
+        String flowName = staticContent.getFlowName();
+        if (!this.layoutMasterSet.regionNameExists(flowName)
+            && !flowName.equals("xsl-before-float-separator")
+            && !flowName.equals("xsl-footnote-separator")) {
             log.error("region-name '"
                       + staticContent.getFlowName()
                       + "' doesn't exist in the layout-master-set.");
@@ -480,6 +483,10 @@ public class PageSequence extends FObj {
 //                        + flow.getFlowName() + "'");
     }
 
+    public StaticContent getStaticContent(String regionName) {
+        return (StaticContent)flowMap.get(regionName);
+    }
+    
     public int getCurrentPageNumber() {
         return currentPageNumber; 
     }
