@@ -98,6 +98,7 @@ public class FoInlineContainer extends FONode {
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
      * this node
+     * @param attrSet the index of the attribute set applying to the node.
      */
     public FoInlineContainer
                 (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
