@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
 <document>
   <header>
     <title>FOP Development: Developer Tools</title>
