@@ -1,4 +1,4 @@
-package org.apache.fop.fo.expr;
+package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
 

@@ -1,4 +1,4 @@
-package org.apache.fop.fo.expr;
+package org.apache.fop.datatypes;
 
 import java.util.LinkedList;
 import java.util.Collection;
@@ -7,7 +7,7 @@ import java.util.Iterator;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.expr.PropertyValue;
+import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 
 /*

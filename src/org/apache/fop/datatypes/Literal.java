@@ -4,7 +4,7 @@ package org.apache.fop.datatypes;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.expr.PropertyValue;
+import org.apache.fop.datatypes.PropertyValue;
 
 /*
  * Literal.java

@@ -11,8 +11,8 @@ import java.util.HashMap;
 
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.expr.PropertyValue;
-import org.apache.fop.fo.expr.AbstractPropertyValue;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.datatypes.AbstractPropertyValue;
 
 /**
  * A base datatype class; colour in XSL
