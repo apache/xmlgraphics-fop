@@ -72,17 +72,34 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
     /** Used to store previous content IPD for each child LM. */
     private HashMap hmPrevIPD = new HashMap();
 
+    /**
+     * Create an inline stacking layout manager.
+     * This is used for fo's that create areas that
+     * contain inline areas.
+     *
+     * @param fobj the formatting object that creates the area
+     * @param childLMiter the iterator for child areas
+     */
     public InlineStackingLayoutManager(FObj fobj,
                                          ListIterator childLMiter) {
         super(fobj, childLMiter);
-        // Initialize inline properties (borders, padding, space)
-        // initProperties();
     }
 
+    /**
+     * Check if this generates inline areas.
+     * This creates inline areas that contain other inline areas.
+     *
+     * @return true
+     */
     public boolean generatesInlineAreas() {
         return true;
     }
 
+    /**
+     * Initialize properties for this layout manager.
+     *
+     * @param propMgr the property manager from the fo that created this manager
+     */
     protected void initProperties(PropertyManager propMgr) {
         // super.initProperties(propMgr);
         inlineProps = propMgr.getInlineProps();
@@ -123,13 +140,11 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         return (iBP > 0);
     }
 
-
     /**
      * Reset position for returning next BreakPossibility.
      * @param prevPos a Position returned by this layout manager
      * representing a potential break decision.
      */
-
     public void resetPosition(Position prevPos) {
         if (prevPos != null) {
             // ASSERT (prevPos.getLM() == this)
@@ -158,7 +173,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         // What about prevBP?
     }
 
-
     /**
      * Return value indicating whether the next area to be generated could
      * start a new line. This should only be called in the "START" condition
@@ -183,12 +197,21 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         return (MinOptMax) hmPrevIPD.get(lm);
     }
 
-
+    /**
+     * Clear the previous IPD calculation.
+     */
     protected void clearPrevIPD() {
         hmPrevIPD.clear();
     }
 
-
+    /**
+     * Get the next break position for this layout manager.
+     * The next break position will be an position within the
+     * areas return by the child inline layout managers.
+     *
+     * @param lc the layout context for finding breaks
+     * @return the next break position
+     */
     public BreakPoss getNextBreakPoss(LayoutContext lc) {
         // Get a break from currently active child LM
         BreakPoss bp = null;
@@ -213,6 +236,13 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         // We only do this loop more than once if a childLM returns
         // a null BreakPoss, meaning it has nothing (more) to layout.
         while ((curLM = getChildLM()) != null) {
+
+            // ignore nested blocks for now
+            if (!curLM.generatesInlineAreas()) {
+                System.err.println("WARNING: ignoring block inside inline fo");
+                curLM.setFinished(true);
+                continue;
+            }
             /* If first break for this child LM, set START_AREA flag
              * and initialize pending space from previous LM sibling's
              * trailing space specifiers.
@@ -272,7 +302,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         } else {
             childLC.setLeadingSpace(null);
         }
-
     }
 
 
@@ -389,7 +418,9 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
 
     /**
      * Generate and add areas to parent area.
-     * Set size of each area.
+     * Set size of each area. This should only create and return one
+     * inline area for any inline parent area.
+     *
      * @param parentIter Iterator over Position information returned
      * by this LayoutManager.
      * @param dSpaceAdjust Factor controlling how much extra space to add
