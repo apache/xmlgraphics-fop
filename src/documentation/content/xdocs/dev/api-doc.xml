@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+<document>
+  <header>
+    <title>FOP API Documentation (javadocs)</title>
+  </header>
+  <body>
+    <section id="gump">
+      <title>On-line Access (through Gump)</title>
+      <p>FOP (and many other Apache projects) use <link href="http://jakarta.apache.org/gump">Apache Gump</link> to do a test build several times each day. One of the useful byproducts of this process is that javadocs can be created and made available.</p>
+      <p>First, determine which line of development code you wish to see. If you don't know, you probably want the "Maintenance Branch", which is the line that currently produces FOP releases. See <link href="index.html#lines">Development Lines</link> for more details.</p>
+      <warning>Javadocs for both development lines are made from current CVS code, and are not tied to any particular release. Both the documentation and the API may be different, even if you are working with the correct branch. Currently, the only way to obtain API documentation for a specific release is to <link href="#self-built">build it yourself</link>.</warning>
+      <ul>
+        <li><link href="http://nagoya.apache.org/gump/javadoc/xml-fop-maintenance/build/javadocs/index.html">Javadocs for Maintenance Branch</link></li>
+        <li><link href="http://nagoya.apache.org/gump/javadoc/xml-fop/build/javadocs/index.html">Javadocs for Trunk (Redesign)</link></li>
+      </ul>
+      <note>If the links return an "Object not found!" message or otherwise do not work properly, it is probably because of a build error. Please raise a question on the <link href="../maillist.html#fop-user">fop-user mailing list</link> so that any problems can be fixed before the next build.</note>
+    </section>
+    <section id="self-built">
+      <title>Building them Yourself</title>
+      <p>See <link href="../download.html#source">Source Download</link> for instructions on obtaining the source code. Then see <link href="../compiling.html">Building FOP</link> for instructions on running the build process. The Ant build target that you will use to generate the API documentation is "javadocs", and the results will be stored in xml-fop/build/javadocs.</p>
+    </section>
+  </body>
+</document>
