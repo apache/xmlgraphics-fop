@@ -2242,7 +2242,7 @@ LengthBase.BLOCK_WIDTH</literal>.</para>
 									  </listitem>
 									  <listitem>
 										<para><literal>pcBase.getDimension</literal>;
-dimension: type of integer, int &rarr; 0, length &rarr; 1; used by
+dimension: type of integer, int &#x2192; 0, length &#x2192; 1; used by
 <literal>PercentBase</literal> and <literal>NumericProperty</literal>;
 <literal>LengthBase</literal> has a dimension of 1</para>
 									  </listitem>
