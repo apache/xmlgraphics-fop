@@ -4,6 +4,12 @@
     <META http-equiv= "Content-Type" content= "text/html; charset=ISO-8859-1" >
     <title>Property classes overview</title>
     <link type="text/css" href="../../../page.css" rel="stylesheet">
+    <script type="text/javascript">
+      <!--
+      topdoc=window.top.document;
+      topwin=window.top;
+      // -->
+    </script>
   </head>
   <body marginheight= "0" marginwidth= "0" topmargin= "0" leftmargin= "0" text= "#000000" bgcolor= "#FFFFFF" >
     <div class= "content" >
@@ -38,21 +44,21 @@
       "N10019" ></a> <h4>org.apache.fop.fo</h4>
       <dl>
         <dt>
-          <a href = "javascript:parent.displayCode(
+          <a href = "javascript:topwin.displayCode(
              'PropNames.html#PropNamesClass'
           )" ><em>PropNames</em></a>
         </dt>
         <dd>
           This class maintains an array of <a href=
-          "javascript:parent.displayCode(
+          "javascript:topwin.displayCode(
           'PropNames.html#propertyNames' )" >property names</a>,
           synchronized to a complete set of property name <a href =
-          "javascript:parent.displayCode( 'PropNames.html#NO_PROPERTY'
+          "javascript:topwin.displayCode( 'PropNames.html#NO_PROPERTY'
           )" >constants</a> for indexing property-based arrays.  It
           includes methods to <a href =
-          "javascript:parent.displayCode(
+          "javascript:topwin.displayCode(
           'PropNames.html#getPropertyName' )" >convert an index to a
-          name</a> and to <a href = "javascript:parent.displayCode(
+          name</a> and to <a href = "javascript:topwin.displayCode(
           'PropNames.html#getPropertyIndex' )" >convert a property
           name to an index</a>.
         </dd>
@@ -62,13 +68,13 @@
         <dd>
           A singleton instance of <span class= "codefrag"
           >PropertyConsts</span> is created by the static initializer
-          of the <a href = "javascript:parent.displayCode(
+          of the <a href = "javascript:topwin.displayCode(
           'PropertyConsts.html#pconsts' )" >pconsts</a> field.
           Working from the property indices defined in PropNames, the
           methods in this class collect and supply the values of
           fields defined in property objects into arrays.<br> The
           heart of this class in the method <a href =
-          "javascript:parent.displayCode(
+          "javascript:topwin.displayCode(
           'PropertyConsts.html#setupProperty' )" >setupProperty</a>,
           which constructs the property name from the index,
           instantiates a singleton of the appropriate class, and
@@ -76,7 +82,7 @@
           the arrays of field values.
         </dd>
         <dt>
-          <a href = "javascript:parent.displayCode(
+          <a href = "javascript:topwin.displayCode(
           'PropertySets.html#PropertySetsClass' )" ><em>PropertySets</em></a>
         </dt>
         <dd>
@@ -84,16 +90,16 @@
           >ROBitSet</span>s representing many of the sets of
           properties defined in <em>Section 7</em> of the
           specification.  Note that the <a
-          href="javascript:parent.displayCode(
+          href="javascript:topwin.displayCode(
           'PropertySets.html#borderProps' )"><em>Border</em></a>, <a
-          href="javascript:parent.displayCode(
+          href="javascript:topwin.displayCode(
           'PropertySets.html#paddingProps' )"><em>Padding</em></a> and
-          <a href="javascript:parent.displayCode(
+          <a href="javascript:topwin.displayCode(
           'PropertySets.html#backgroundProps'
           )"><em>Background</em></a> sets are defined separately.
         </dd>
         <dt>
-          <a href = "javascript:parent.displayCode(
+          <a href = "javascript:topwin.displayCode(
           '../FOPropertySets.html#FOPropertySetsClass' )"
           ><em>FOPropertySets</em></a>
         </dt>
@@ -105,15 +111,15 @@
           during processing of the subtrees.
         </dd>
         <dt>
-          <a href = "javascript:parent.displayCode(
+          <a href = "javascript:topwin.displayCode(
           'ShorthandPropSets.html#ShorthandPropSetsClass' )"
           ><em>ShorthandPropSets</em></a>
         </dt>
         <dd>
           This class contains arrays of <a href =
-          "javascript:parent.displayCode(
+          "javascript:topwin.displayCode(
           'ShorthandPropSets.html#shorthands' )" >shorthand property
-          indices</a> and <a href = "javascript:parent.displayCode(
+          indices</a> and <a href = "javascript:topwin.displayCode(
           'ShorthandPropSets.html#compounds' )" >compound property
           indices</a>, and <span class= "codefrag" >ROBitSet</span>s
           representing the expansion sets of these shorthands and
@@ -121,7 +127,7 @@
           properties are also included.
         </dd>
         <dt>
-          <a href = "javascript:parent.displayCode(
+          <a href = "javascript:topwin.displayCode(
           'FOAttributes.html#FOAttributesClass' )"
           ><em>FOAttributes</em></a>
         </dt>
@@ -129,12 +135,12 @@
           This class manages the attribute set that is associated with
           a SAX <span class= "codefrag" >startElement</span> event.
           <em>fo:</em> namespace attributes are entered into a <a href
-          = "javascript:parent.displayCode(
+          = "javascript:topwin.displayCode(
           'FOAttributes.html#foAttrMap' )"><span class= "codefrag"
           >HashMap</span></a>, indexed by the <em>fo:</em> property
           index.  As other namespaces are encountered, the values are
           entered into namespace-specific <a href =
-          "javascript:parent.displayCode(
+          "javascript:topwin.displayCode(
           'FOAttributes.html#nSpaceAttrMaps' )"><span class=
           "codefrag" >HashMap</span>s</a>, indexed by the <em>local
           name</em> of the attribute.
@@ -144,7 +150,7 @@
       <h4>org.apache.fop.fo.properties</h4>
       <dl>
         <dt>
-          <a href="javascript:parent.displayCode(
+          <a href="javascript:topwin.displayCode(
           'Property.html#PropertyClass' )" ><em>Property</em></a>
         </dt>
         <dd>
@@ -200,18 +206,18 @@
       <h4>org.apache.fop.fo.expr</h4>
       <dl>
         <dt>
-          <a href = "javascript:parent.displayCode(
+          <a href = "javascript:topwin.displayCode(
           'PropertyTokenizer.html#PropertyTokenizerClass' )"
           ><em>PropertyTokenizer</em></a>
         </dt>
         <dd>
           The tokenizer for the property expression parser.  Defines a
-          set of <a href = "javascript:parent.displayCode(
+          set of <a href = "javascript:topwin.displayCode(
           'PropertyTokenizer.html#EOF' )" >token constants</a> and
           returns these with associated token values.
         </dd>
         <dt>
-          <a href = "javascript:parent.displayCode(
+          <a href = "javascript:topwin.displayCode(
           'PropertyParser.html#PropertyParserClass' )"
           ><em>PropertyParser</em></a>
         </dt>
@@ -248,7 +254,7 @@
       <h4>org.apache.fop.datatypes</h4>
       <dl>
         <dt>
-          <a href = "javascript:parent.displayCode(
+          <a href = "javascript:topwin.displayCode(
           'PropertyValue.html#PropertyValueInterface' )"
           ><em>PropertyValue</em></a>
         </dt>
@@ -257,13 +263,13 @@
           >PropertyValue</span> classes must implement.  In addition
           to a few methods, <span class= "codefrag"
           >PropertyValue</span> defines the set of <a href =
-          "javascript:parent.displayCode( 'PropertyValue.html#NO_TYPE'
+          "javascript:topwin.displayCode( 'PropertyValue.html#NO_TYPE'
           )" >constants</a> which the <span class= "codefrag"
           >getType()</span> method may return; i.e. the valid set of
           <span class= "codefrag" >PropertyValue</span> types.
         </dd>
         <dt>
-          <a href = "javascript:parent.displayCode(
+          <a href = "javascript:topwin.displayCode(
           'AbstractPropertyValue.html#AbstractPropertyValueClass' )"
           ><em>AbstractPropertyValue</em></a>
         </dt>
@@ -274,7 +280,7 @@
           >AbstractPropertyValue</span>.
         </dd>
         <dt>
-          <a href = "javascript:parent.displayCode(
+          <a href = "javascript:topwin.displayCode(
           'PropertyValueList.html#PropertyValueListClass' )"
           ><em>PropertyValueList</em></a>
         </dt>
