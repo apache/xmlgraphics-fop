@@ -155,7 +155,9 @@ public class LineArea extends Area {
                 else
                     b = null;
             }
-            pendingWidth = prevLineArea.getPendingWidth() - eatenWidth;
+            pendingWidth = prevLineArea.pendingWidth - eatenWidth;
+            prevLineArea.pendingWidth=0;
+            prevLineArea.pendingAreas=null;
         }
     }
 
@@ -166,12 +168,14 @@ public class LineArea extends Area {
     public int addPageNumberCitation(String refid, LinkSet ls) {
 
         /*
-         * We should add code here to handle the case where the page number doesn't fit on the current line
+         * We should add code here to handle the case where the page
+         * number doesn't fit on the current line
          */
 
-        // Space must be alloted to the page number, so currently we give it 3 spaces
+        // Space must be allocated for the page number, so currently we
+        // give it 3 spaces
 
-        int width = currentFontState.width(currentFontState.mapChar(' '));
+        int width = 3*getCharWidth(' ');
 
 
         PageNumberInlineArea pia = new PageNumberInlineArea(currentFontState,
@@ -191,7 +195,7 @@ public class LineArea extends Area {
      *
      * @return int character position
      */
-    public int addText(char odata[], int start, int end, LinkSet ls,
+    public int addText(char data[], int start, int end, LinkSet ls,
                        TextState textState) {
         // this prevents an array index out of bounds
         // which occurs when some text is laid out again.
@@ -204,11 +208,6 @@ public class LineArea extends Area {
         int wordWidth = 0;
         // With CID fonts, space isn't neccesary currentFontState.width(32)
         int whitespaceWidth = getCharWidth(' ');
-
-        char[] data = new char[odata.length];
-        char[] dataCopy = new char[odata.length];
-        System.arraycopy(odata, 0, data, 0, odata.length);
-        System.arraycopy(odata, 0, dataCopy, 0, odata.length);
 
         boolean isText = false;
         boolean isMultiByteChar = false;
@@ -498,11 +497,14 @@ public class LineArea extends Area {
 
                         if (hyphProps.hyphenate == Hyphenate.TRUE) {
                             int ret = wordStart;
-                            ret = this.doHyphenation(dataCopy, i, wordStart,
+                            ret = this.doHyphenation(data, i, wordStart,
                                                      this.getContentWidth()
                                                      - (finalWidth
                                                         + spaceWidth
-                                                        + pendingWidth));
+                                                        + pendingWidth),
+                                                     finalWidth + spaceWidth
+                                                     + embeddedLinkStart,
+                                                     ls, textState);
 
                             // current word couldn't be hypenated
                             // couldn't fit first word
@@ -514,8 +516,7 @@ public class LineArea extends Area {
                                 MessageHandler.log("area contents overflows area");
                                 addSpacedWord(new String(data, wordStart, wordLength - 1),
                                               ls,
-                                              finalWidth + spaceWidth
-                                              + embeddedLinkStart,
+                                              embeddedLinkStart,
                                               spaceWidth, textState, false);
 
                                 finalWidth += wordWidth;
@@ -586,12 +587,10 @@ public class LineArea extends Area {
                           int leaderPatternWidth, int leaderAlignment) {
         WordArea leaderPatternArea;
         int leaderLength = 0;
-        char dotIndex = '.';           // currentFontState.mapChar('.');
-        int dotWidth =
-            currentFontState.width(currentFontState.mapChar(dotIndex));
-        char whitespaceIndex = ' ';    // currentFontState.mapChar(' ');
-        int whitespaceWidth =
-            currentFontState.width(currentFontState.mapChar(whitespaceIndex));
+        char dot = '.';
+        int dotWidth =  getCharWidth(dot);
+        char space = ' ';
+        int spaceWidth = getCharWidth(space);
 
         int remainingWidth = this.getRemainingWidth();
 
@@ -637,7 +636,7 @@ public class LineArea extends Area {
             }
             // if value of leader-pattern-width is 'use-font-metrics' (0)
             if (leaderPatternWidth == 0) {
-                pendingAreas.addElement(this.buildSimpleLeader(dotIndex,
+                pendingAreas.addElement(this.buildSimpleLeader(dot,
                         leaderLength));
             } else {
                 // if leader-alignment is used, calculate space to insert before leader
@@ -855,22 +854,6 @@ public class LineArea extends Area {
         // return (prev == NOTHING);
     }
 
-    public Vector getPendingAreas() {
-        return pendingAreas;
-    }
-
-    public int getPendingWidth() {
-        return pendingWidth;
-    }
-
-    public void setPendingAreas(Vector areas) {
-        pendingAreas = areas;
-    }
-
-    public void setPendingWidth(int width) {
-        pendingWidth = width;
-    }
-
     /**
      * sets hyphenation related traits: language, country, hyphenate, hyphenation-character
      * and minimum number of character to remain one the previous line and to be on the
@@ -886,7 +869,7 @@ public class LineArea extends Area {
      * and wraps it in an InlineArea which is returned
      */
     private InlineArea buildSimpleLeader(char c, int leaderLength) {
-        int width = this.currentFontState.width(currentFontState.mapChar(c));
+        int width = getCharWidth(c);
         if (width == 0) {
             MessageHandler.errorln("char " + c
                                    + " has width 0. Using width 100 instead.");
@@ -895,7 +878,7 @@ public class LineArea extends Area {
         int factor = (int)Math.floor(leaderLength / width);
         char[] leaderChars = new char[factor];
         for (int i = 0; i < factor; i++) {
-            leaderChars[i] = c;    // currentFontState.mapChar(c);
+            leaderChars[i] = c;
         }
         WordArea leaderPatternArea = new WordArea(currentFontState, this.red,
                                                   this.green, this.blue,
@@ -960,7 +943,8 @@ public class LineArea extends Area {
      * of words, but not in a internationalized way
      */
     public int doHyphenation(char[] characters, int position, int wordStart,
-                             int remainingWidth) {
+                             int remainingWidth, int startw, LinkSet ls,
+                             TextState textState) {
         // check whether the language property has been set
         if (this.hyphProps.language.equalsIgnoreCase("none")) {
             MessageHandler.errorln("if property 'hyphenate' is used, a language must be specified");
@@ -978,11 +962,6 @@ public class LineArea extends Area {
         StringBuffer preString = null;
 
         /**
-         * char before the word, probably whitespace
-         */
-        char startChar = ' ';    // characters[wordStart-1];
-
-        /**
          * in word punctuation character
          */
         char inwordPunctuation;
@@ -993,8 +972,7 @@ public class LineArea extends Area {
         String wordToHyphenate;
 
         // width of hyphenation character
-        int hyphCharWidth =
-            this.currentFontState.width(currentFontState.mapChar(this.hyphProps.hyphenationChar));
+        int hyphCharWidth = getCharWidth(this.hyphProps.hyphenationChar);
         remainingWidth -= hyphCharWidth;
 
         // handles ' or " at the beginning of the word
@@ -1022,7 +1000,7 @@ public class LineArea extends Area {
                                        + wordToHyphenate.length() + 1);
                 remainingWidth -=
                     (getWordWidth(wordToHyphenate)
-                     + this.currentFontState.width(currentFontState.mapChar(inwordPunctuation)));
+                     + getCharWidth(inwordPunctuation));
             }
         }
 
@@ -1032,43 +1010,34 @@ public class LineArea extends Area {
                                  wordToHyphenate,
                                  hyphProps.hyphenationRemainCharacterCount,
                                  hyphProps.hyphenationPushCharacterCount);
-        // no hyphenation points and no inword non letter character
         if (hyph == null && preString == null) {
-            if (remainingString.length() > 0) {
-                return wordStart - 1;
-            } else {
-                return wordStart;
-            }
-
-            // no hyphenation points, but a inword non-letter character
+            // no hyphenation points and no inword non letter character
+            return wordStart;
         } else if (hyph == null && preString != null) {
+            // no hyphenation points, but a inword non-letter character
             remainingString.append(preString);
-            // is.addMapWord(startChar,remainingString);
-            this.addWord(startChar, remainingString);
+            this.addWord(remainingString, startw, ls, textState);
             return wordStart + remainingString.length();
-            // hyphenation points and no inword non-letter character
         } else if (hyph != null && preString == null) {
+            // hyphenation points and no inword non-letter character
             int index = getFinalHyphenationPoint(hyph, remainingWidth);
             if (index != -1) {
                 remainingString.append(hyph.getPreHyphenText(index));
                 remainingString.append(this.hyphProps.hyphenationChar);
-                // is.addMapWord(startChar,remainingString);
-                this.addWord(startChar, remainingString);
+                this.addWord(remainingString, startw, ls, textState);
                 return wordStart + remainingString.length() - 1;
             }
-            // hyphenation points and a inword non letter character
         } else if (hyph != null && preString != null) {
+            // hyphenation points and a inword non letter character
             int index = getFinalHyphenationPoint(hyph, remainingWidth);
             if (index != -1) {
                 remainingString.append(preString.append(hyph.getPreHyphenText(index)));
                 remainingString.append(this.hyphProps.hyphenationChar);
-                // is.addMapWord(startChar,remainingString);
-                this.addWord(startChar, remainingString);
+                this.addWord(remainingString, startw, ls, textState);
                 return wordStart + remainingString.length() - 1;
             } else {
                 remainingString.append(preString);
-                // is.addMapWord(startChar,remainingString);
-                this.addWord(startChar, remainingString);
+                this.addWord(remainingString, startw, ls, textState);
                 return wordStart + remainingString.length();
             }
         }
@@ -1118,8 +1087,7 @@ public class LineArea extends Area {
     public int addCharacter(char data, LinkSet ls, boolean ul) {
         WordArea ia = null;
         int remainingWidth = this.getRemainingWidth();
-        int width =
-            this.currentFontState.width(currentFontState.mapChar(data));
+        int width = getCharWidth(data);
         // if it doesn't fit, return
         if (width > remainingWidth) {
             return org.apache.fop.fo.flow.Character.DOESNOT_FIT;
@@ -1148,44 +1116,74 @@ public class LineArea extends Area {
     }
 
 
+
     /**
-     * Same as addWord except that characters in wordBuf is mapped
-     * to the current fontstate's encoding
+     * adds a InlineArea containing the String wordBuf to
+     * the line area children.
      */
-    private void addMapWord(char startChar, StringBuffer wordBuf) {
-        StringBuffer mapBuf = new StringBuffer(wordBuf.length());
-        for (int i = 0; i < wordBuf.length(); i++) {
-            mapBuf.append(currentFontState.mapChar(wordBuf.charAt(i)));
+    private void addWord(StringBuffer wordBuf, int startw,
+                         LinkSet ls, TextState textState) {  
+        if (spaceWidth > 0) {
+            InlineSpace is = new InlineSpace(spaceWidth);
+            if (prevUlState) {
+                is.setUnderlined(textState.getUnderlined());
+            }
+            if (prevOlState) {
+                is.setOverlined(textState.getOverlined());
+            }
+            if (prevLTState) {
+                is.setLineThrough(textState.getLineThrough());
+            }
+            addChild(is);
+            finalWidth += spaceWidth;
+            spaceWidth = 0;
         }
 
-        addWord(startChar, mapBuf);
-    }
+        // add any pending areas
 
-    /**
-     * adds a InlineArea containing the String startChar+wordBuf to the line area children.
-     */
-    private void addWord(char startChar, StringBuffer wordBuf) {
+        Enumeration e = pendingAreas.elements();
+        while (e.hasMoreElements()) {
+            Box box = (Box)e.nextElement();
+            if (box instanceof InlineArea) {
+                if (ls != null) {
+                    Rectangle lr =
+                      new Rectangle(finalWidth, 0,
+                                    ((InlineArea)box).getContentWidth(),
+                                    fontState.getFontSize());
+                    ls.addRect(lr, this, (InlineArea)box);
+                }
+            }
+            addChild(box);
+        }
+
+        finalWidth += pendingWidth;
+
+        // reset pending areas array
+        pendingWidth = 0;
+        pendingAreas = new Vector();
         String word = (wordBuf != null) ? wordBuf.toString() : "";
-        WordArea hia;
-        int startCharWidth = getCharWidth(startChar);
-
-        if (isAnySpace(startChar)) {
-            this.addChild(new InlineSpace(startCharWidth));
-        } else {
-            hia = new WordArea(currentFontState, this.red, this.green,
-                               this.blue,
-                               new Character(startChar).toString(), 1);
-            hia.setYOffset(placementOffset);
-            this.addChild(hia);
-        }
         int wordWidth = this.getWordWidth(word);
-        hia = new WordArea(currentFontState, this.red, this.green, this.blue,
-                           word, word.length());
+        WordArea hia = new WordArea(currentFontState,
+                          this.red, this.green, this.blue,
+                          word, wordWidth);
         hia.setYOffset(placementOffset);
+        hia.setUnderlined(textState.getUnderlined());
+        prevUlState = textState.getUnderlined();
+        hia.setOverlined(textState.getOverlined());
+        prevOlState = textState.getOverlined();
+        hia.setLineThrough(textState.getLineThrough());
+        prevLTState = textState.getLineThrough();
+        hia.setVerticalAlign(vAlign);
         this.addChild(hia);
 
+        if (ls != null) {
+           Rectangle lr = new Rectangle(startw, 0,
+                                       hia.getContentWidth(),
+                                       fontState.getFontSize());
+           ls.addRect(lr, this, hia);
+        }
         // calculate the space needed
-        finalWidth += startCharWidth + wordWidth;
+        finalWidth +=  wordWidth;
     }
 
 
@@ -1342,7 +1340,6 @@ public class LineArea extends Area {
                                int spacew, TextState textState,
                                boolean addToPending) {
         StringTokenizer st = new StringTokenizer(word, "\u00A0\u202F\u3000\uFEFF", true);
-        int extraw = 0;
         while (st.hasMoreTokens()) {
             String currentWord = st.nextToken();
 
@@ -1352,7 +1349,7 @@ public class LineArea extends Area {
                 int spaceWidth = getCharWidth(currentWord.charAt(0));
                 if (spaceWidth > 0) {
                     InlineSpace is = new InlineSpace(spaceWidth);
-                    extraw += spaceWidth;
+                    startw += spaceWidth;
                     if (prevUlState) {
                         is.setUnderlined(textState.getUnderlined());
                     }
@@ -1371,10 +1368,12 @@ public class LineArea extends Area {
                     }
                 }
             } else {
+                int wordWidth = getWordWidth(currentWord);
                 WordArea ia = new WordArea(currentFontState, this.red,
                                            this.green, this.blue,
                                            currentWord,
-                                           getWordWidth(currentWord));
+                                           wordWidth);
+                startw += wordWidth;
                 ia.setYOffset(placementOffset);
                 ia.setUnderlined(textState.getUnderlined());
                 prevUlState = textState.getUnderlined();
@@ -1386,12 +1385,12 @@ public class LineArea extends Area {
 
                 if (addToPending) {
                     pendingAreas.addElement(ia);
-                    pendingWidth += getWordWidth(currentWord);
+                    pendingWidth += wordWidth;
                 } else {
                     addChild(ia);
                 }
                 if (ls != null) {
-                    Rectangle lr = new Rectangle(startw + extraw, spacew,
+                    Rectangle lr = new Rectangle(startw, spacew,
                                                  ia.getContentWidth(),
                                                  fontState.getFontSize());
                     ls.addRect(lr, this, ia);
