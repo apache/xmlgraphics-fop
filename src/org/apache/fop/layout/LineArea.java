@@ -396,7 +396,7 @@ public class LineArea extends Area {
                     if ((finalWidth + spaceWidth + wordWidth)
                             > this.getContentWidth()) {
                         if (overrun)
-                            MessageHandler.error(">");
+                            MessageHandler.log("area contents overflows area");
                         if (this.wrapOption == WrapOption.WRAP) {
                             return i;
                         }
@@ -447,7 +447,7 @@ public class LineArea extends Area {
                                 (wordStart == start) &&
                                 (finalWidth == 0)) {
 
-                                MessageHandler.error(">");
+                                MessageHandler.log("area contents overflows area");
                                 addSpacedWord(new String(data, wordStart, wordLength - 1),
                                               ls,
                                               finalWidth + spaceWidth
@@ -506,7 +506,7 @@ public class LineArea extends Area {
         }
 
         if (overrun)
-            MessageHandler.error(">");
+            MessageHandler.log("area contents overflows area");
         return -1;
     }
 
