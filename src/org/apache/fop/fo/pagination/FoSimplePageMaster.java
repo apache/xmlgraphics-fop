@@ -103,7 +103,7 @@ public class FoSimplePageMaster extends FONode {
                     + getMasterName());
         // Process region-body
         regionBody = new FoRegionBody(foTree, this, regionEv);
-        xmlevents.getEndElement(regionEv);
+        regionEv = xmlevents.getEndElement(xmlevents.DISCARD_EV, regionEv);
         pool.surrenderEvent(regionEv);
 
         // Remaining regions are optional
@@ -112,7 +112,8 @@ public class FoSimplePageMaster extends FONode {
                 != null)
         {
             regionBefore = new FoRegionBefore(foTree, this, regionEv);
-            xmlevents.getEndElement(regionEv);
+            regionEv =
+                xmlevents.getEndElement(xmlevents.DISCARD_EV, regionEv);
             pool.surrenderEvent(regionEv);
         }
 
@@ -121,7 +122,8 @@ public class FoSimplePageMaster extends FONode {
                 != null)
         {
             regionAfter = new FoRegionAfter(foTree, this, regionEv);
-            xmlevents.getEndElement(regionEv);
+            regionEv =
+                xmlevents.getEndElement(xmlevents.DISCARD_EV, regionEv);
             pool.surrenderEvent(regionEv);
         }
 
@@ -130,7 +132,8 @@ public class FoSimplePageMaster extends FONode {
                 != null)
         {
             regionStart = new FoRegionStart(foTree, this, regionEv);
-            xmlevents.getEndElement(regionEv);
+            regionEv =
+                xmlevents.getEndElement(xmlevents.DISCARD_EV, regionEv);
             pool.surrenderEvent(regionEv);
         }
 
@@ -139,7 +142,8 @@ public class FoSimplePageMaster extends FONode {
                 != null)
         {
             regionEnd = new FoRegionEnd(foTree, this, regionEv);
-            xmlevents.getEndElement(regionEv);
+            regionEv =
+                xmlevents.getEndElement(xmlevents.DISCARD_EV, regionEv);
             pool.surrenderEvent(regionEv);
         }
 

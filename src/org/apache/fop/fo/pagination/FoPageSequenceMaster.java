@@ -214,7 +214,7 @@ public class FoPageSequenceMaster extends FONode {
                 } else
                     throw new FOPException
                             ("Aargh! expectStartElement(events, list)");
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
                 pool.surrenderEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
@@ -304,7 +304,8 @@ public class FoPageSequenceMaster extends FONode {
                     //System.out.println
                     //    ("Found conditional-page-master-reference");
                     new FoConditionalPageMasterReference(foTree, this, ev);
-                    this.xmlevents.getEndElement(ev);
+                    ev = this.xmlevents.getEndElement
+                                            (this.xmlevents.DISCARD_EV, ev);
                     this.pool.surrenderEvent(ev);
                 } while (true);
             } catch (NoSuchElementException e) {

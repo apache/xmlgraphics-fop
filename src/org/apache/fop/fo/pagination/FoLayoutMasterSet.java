@@ -172,7 +172,7 @@ public class FoLayoutMasterSet extends FONode {
                     throw new FOPException
                             ("Aargh! expectStartElement(events, list)");
                 // Flush the master event
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
                 pool.surrenderEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
