@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -367,6 +367,14 @@ public class Area implements Serializable {
                     + oTraitCode.getClass().getName()
                     + " could not be converted to an integer");
         }
+    }
+    
+    public String toString() {
+        StringBuffer sb = new StringBuffer(super.toString());
+        sb.append(" {ipd=").append(Integer.toString(getIPD()));
+        sb.append(", bpd=").append(Integer.toString(getBPD()));
+        sb.append("}");
+        return sb.toString();
     }
 }
 
