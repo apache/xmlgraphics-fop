@@ -14,9 +14,9 @@ file charlist.xml and extracts the WinAnsi code.
                 extension-element-prefixes="redirect">
 <xsl:output method="text" />
 
-<!-- note that match in xsl:key doesn't like document('charlist.xml'), so the charlist 
-     must be merged with the source xml at build time by the Xslt task -->
-<xsl:key name="adobe-char-map" match="/font-metrics/font-mappings/map" use="@adobe-name"/>
+
+<!-- Note: this key is used with charlist.xml in a for-each. -->
+<xsl:key name="adobe-char-map" match="map" use="@adobe-name"/>
 
 <xsl:template match="font-metrics">
 <xsl:variable name="class-name" select="class-name"/>
@@ -38,8 +38,10 @@ public class <xsl:value-of select="class-name"/> extends Font {
 
     static {
         width = new int[256];
-<xsl:for-each select="widths/char"><xsl:variable name="char-name" select="@name"/><xsl:variable name="char-num" select="key('adobe-char-map',$char-name)/@win-ansi"/><xsl:if test="$char-num!='-1'">        width[<xsl:value-of select="$char-num"/>] = <xsl:value-of select="@width"/>;
-</xsl:if></xsl:for-each>
+<xsl:for-each select="widths/char"><xsl:variable name="char-name" select="@name"/><xsl:variable name="char-width" select="@width"/>
+<xsl:for-each select="document('charlist.xml')"><xsl:variable name="char-num" select="key('adobe-char-map',$char-name)/@win-ansi"/>
+<xsl:if test="$char-num!='-1'">        width[<xsl:value-of select="$char-num"/>] = <xsl:value-of select="$char-width"/>;
+</xsl:if></xsl:for-each></xsl:for-each>
     }
 
     public String encoding() {
