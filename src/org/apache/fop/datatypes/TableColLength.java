@@ -7,6 +7,8 @@
 
 package org.apache.fop.datatypes;
 
+import org.apache.fop.fo.expr.Numeric;
+
 /**
  * A table-column width specification, possibly including some
  * number of proportional "column-units". The absolute size of a
@@ -18,7 +20,7 @@ package org.apache.fop.datatypes;
  * during layout.
  * NOTE: this is only supposed to be allowed if table-layout=fixed.
  */
-public class TableColLength extends MixedLength {
+public class TableColLength extends Length {
 
     /**
      * Number of table-column proportional units
@@ -29,15 +31,9 @@ public class TableColLength extends MixedLength {
      * Construct an object with tcolUnits of proportional measure.
      */
     public TableColLength(double tcolUnits) {
-        super(0, null);
         this.tcolUnits = tcolUnits;
     }
 
-    public TableColLength(int absUnits, PercentLength pcUnits,
-                          double tcolUnits) {
-        super(absUnits, pcUnits);
-        this.tcolUnits = tcolUnits;
-    }
 
 
     /**
@@ -48,11 +44,27 @@ public class TableColLength extends MixedLength {
         return tcolUnits;
     }
 
-    // Set tcolUnits too when resolved?
-
-    public String toString() {
-        return (super.toString() + "+" + (new Double(tcolUnits).toString())
-                + "table-column-units");
+    /**
+     * Calculate the number of millipoints and set it.
+     */
+    public void resolveTableUnit(double mpointsPerUnit) {
+	setComputedValue((int)(tcolUnits * mpointsPerUnit));
     }
 
+// 	If the table-unit can be resolved, set the computed value
+//     protected void computeValue() {
+// 	if (tblUnitBase.canResolveUnit()) {
+// 	    rslt += (int)(tcolUnits * (double)tblUnitBase.getUnitValue());
+// 	    setComputedValue(rslt);
+// 	}
+//     }
+
+
+    public String toString() {
+        return (Double.toString(tcolUnits) + " table-column-units");
+    }
+
+    public Numeric asNumeric() {
+	return new Numeric(this);
+    }
 }

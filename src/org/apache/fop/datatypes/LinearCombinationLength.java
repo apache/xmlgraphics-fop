@@ -15,10 +15,8 @@ public class LinearCombinationLength extends Length {
     protected Vector lengths;
 
     public LinearCombinationLength() {
-        super(0);
         factors = new Vector();
         lengths = new Vector();
-        super.setIsComputed(false);
     }
 
     public void addTerm(double factor, Length length) {
@@ -29,7 +27,7 @@ public class LinearCombinationLength extends Length {
     /**
      * Return the computed value in millipoints.
      */
-    protected int computeValue() {
+    protected void computeValue() {
         int result = 0;
         int numFactors = factors.size();
         for (int i = 0; i < numFactors; ++i) {
@@ -37,7 +35,7 @@ public class LinearCombinationLength extends Length {
                 (int)(((Double)factors.elementAt(i)).doubleValue()
                       * (double)((Length)lengths.elementAt(i)).mvalue());
         }
-        return result;
+        setComputedValue(result);
     }
 
 }
