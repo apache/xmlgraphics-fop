@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 import java.util.Date;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 /**
  * class representing an /Info object
@@ -156,10 +155,8 @@ public class PDFInfo extends PDFObject {
             if (creationDate == null) {
                 creationDate = new Date();
             }
-            final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-            final String str = sdf.format(creationDate) + "+00'00'";
             bout.write(encode("/CreationDate "));
-            bout.write(encodeString("D:" + str));
+            bout.write(encodeString(formatDateTime(creationDate)));
             bout.write(encode("\n>>\nendobj\n"));
         } catch (IOException ioe) {
             log.error("Ignored I/O exception", ioe);
