@@ -594,129 +594,24 @@ public class SVGRenderer {
 										lastx += vals[0];
 										lasty += vals[1];
 										break;
-										// get angle between the two points
-										// then get angle of points to centre (ie. both points are on the
-										// apogee and perigee of the ellipse)
-										// then work out the direction from flags
 								case SVGPathSeg.PATHSEG_ARC_ABS:
 										{
-/*                        double rx = vals[0];
-												double ry = vals[1];
-												double theta = vals[2];
-												boolean largearcflag = (vals[3] == 1.0);
-												boolean sweepflag = (vals[4] == 1.0);
-
-												double angle = Math.atan((vals[6] - lasty) /
-																								 (vals[5] - lastx));
-												double relangle = Math.acos(rx /
-																										Math.sqrt((vals[6] - lasty) *
-																															(vals[6] - lasty) +
-																															(vals[5] - lastx) * (vals[5] - lastx)));
-												double absangle = angle + relangle;
-												// change sign depending on flags
-												double contrx1;
-												double contry1;
-												double contrx2;
-												double contry2;
-												if (largearcflag) {
-														if (sweepflag) {
-																contrx1 = lastx - rx * Math.cos(absangle);
-																contry1 = lasty + rx * Math.sin(absangle);
-																contrx2 = vals[5] + ry * Math.cos(absangle);
-																contry2 = vals[6] + ry * Math.sin(absangle);
-														} else {
-																contrx1 = lastx - rx * Math.cos(absangle);
-																contry1 = lasty - rx * Math.sin(absangle);
-																contrx2 = vals[5] + ry * Math.cos(absangle);
-																contry2 = vals[6] - ry * Math.sin(absangle);
-														}
-												} else {
-														if (sweepflag) {
-																contrx1 = lastx + rx * Math.cos(absangle);
-																contry1 = lasty + rx * Math.sin(absangle);
-																contrx2 = contrx1;
-																contry2 = contry1;
-														} else {
-																contrx1 = lastx + ry * Math.cos(absangle);
-																contry1 = lasty - ry * Math.sin(absangle);
-																contrx2 = contrx1;
-																contry2 = contry1;
-														}
-												}
-
-												double cx = lastx;
-												double cy = lasty;
-												currentStream.write(pdfNumber.doubleOut(contrx1) + " " + pdfNumber.doubleOut(contry1) +
-																						" " + pdfNumber.doubleOut(contrx2) + " " + pdfNumber.doubleOut(contry2) + " " +
-																						pdfNumber.doubleOut(vals[5]) + " " + pdfNumber.doubleOut(vals[6]) + " c\n");
-												lastcx = 0; //??
-												lastcy = 0; //??
-												lastx = vals[5];
-												lasty = vals[6];*/
+    									    addArc(lastx, lasty, vals[0], vals[1], vals[2], (vals[3] != 0.0), (vals[4] != 0.0),
+	    								            vals[5], vals[6]);
+											lastcx = 0; //??
+											lastcy = 0; //??
+											lastx = vals[5];
+											lasty = vals[6];
 										}
 										break;
 								case SVGPathSeg.PATHSEG_ARC_REL:
 										{
-/*                        double rx = vals[0];
-												double ry = vals[1];
-												double theta = vals[2];
-												boolean largearcflag = (vals[3] == 1.0);
-												boolean sweepflag = (vals[4] == 1.0);
-
-												double angle = Math.atan(vals[6] / vals[5]);
-												double relangle = Math.atan(ry / rx);
-												//	    				System.out.println((theta * Math.PI / 180f) + ":" + relangle + ":" + largearcflag + ":" + sweepflag);
-												double absangle = (theta * Math.PI / 180f);//angle + relangle;
-												// change sign depending on flags
-												double contrx1;
-												double contry1;
-												double contrx2;
-												double contry2;
-												if (largearcflag) {
-														// in a large arc we need to do at least 2 and a bit
-														// segments or curves.
-														if (sweepflag) {
-																contrx1 = lastx + rx * Math.cos(absangle);
-																contry1 = lasty + rx * Math.sin(absangle);
-																contrx2 = lastx + vals[5] +
-																					ry * Math.cos(absangle);
-																contry2 = lasty + vals[6] -
-																					ry * Math.sin(absangle);
-														} else {
-																contrx1 = lastx + rx * Math.sin(absangle);
-																contry1 = lasty + rx * Math.cos(absangle);
-																contrx2 = lastx + vals[5] +
-																					ry * Math.cos(absangle);
-																contry2 = lasty + vals[6] +
-																					ry * Math.sin(absangle);
-														}
-												} else {
-														// only need at most two segments
-														if (sweepflag) {
-																contrx1 = lastx + rx * Math.cos(absangle);
-																contry1 = lasty - rx * Math.sin(absangle);
-																contrx2 = contrx1;
-																contry2 = contry1;
-														} else {
-																contrx1 = lastx - ry * Math.cos(absangle);
-																contry1 = lasty + ry * Math.sin(absangle);
-																contrx2 = contrx1;
-																contry2 = contry1;
-														}
-												}
-												//System.out.println(contrx1 + ":" + contry1 + ":" + contrx2 + ":" + contry2);
-
-												double cx = lastx;
-												double cy = lasty;
-												currentStream.write(pdfNumber.doubleOut(contrx1) + " " + pdfNumber.doubleOut(contry1) +
-																						" " + pdfNumber.doubleOut(contrx2) + " " + pdfNumber.doubleOut(contry2) + " " +
-																						pdfNumber.doubleOut(vals[5] + lastx) + " " +
-																						pdfNumber.doubleOut(vals[6] + lasty) + " c\n");
-
-												lastcx = 0; //??
-												lastcy = 0; //??
-												lastx += vals[5];
-												lasty += vals[6];*/
+    									    addArc(lastx, lasty, vals[0], vals[1], vals[2], (vals[3] != 0.0), (vals[4] != 0.0),
+	    								            lastx + vals[5], lasty + vals[6]);
+											lastcx = 0; //??
+											lastcy = 0; //??
+											lastx += vals[5];
+											lasty += vals[6];
 										}
 										break;
 								case SVGPathSeg.PATHSEG_CLOSEPATH:
@@ -756,6 +651,120 @@ public class SVGRenderer {
 				vals[1] = y2 - rely;
 				return vals;
 		}
+
+        protected void addArc(double startx, double starty, double rx, double ry,
+                                   double angle,
+                                   boolean largeArcFlag,
+                                   boolean sweepFlag,
+                                   double x, double y)
+        {
+			PDFNumber pdfNumber = new PDFNumber();
+            if((startx == x) && (starty == y)) {
+                return;
+            }
+            // Ensure radii are valid
+            if (rx == 0 || ry == 0) {
+                currentStream.write(pdfNumber.doubleOut(x) + " " + pdfNumber.doubleOut(y) + " l\n");
+                return;
+            }
+            if(rx < 0)
+                rx = -rx;
+            if(ry < 0)
+                ry = -ry;
+            // Convert angle from degrees to radians
+            angle = Math.toRadians(angle % 360.0);
+
+            double x0 = startx;
+            double y0 = starty;
+            // Compute the half distance between the current and the final point
+            double dx2 = (x0 - x) / 2.0;
+            double dy2 = (y0 - y) / 2.0;
+
+            double cosAngle = Math.cos(angle);
+            double sinAngle = Math.sin(angle);
+
+            // Step 1 : Compute (x1, y1)
+            double x1 = (cosAngle * dx2 + sinAngle * dy2);
+            double y1 = (-sinAngle * dx2 + cosAngle * dy2);
+
+            double Prx = rx * rx;
+            double Pry = ry * ry;
+            double Px1 = x1 * x1;
+            double Py1 = y1 * y1;
+            // check that radii are large enough
+            double radiiCheck = Px1/Prx + Py1/Pry;
+            if (radiiCheck > 1) {
+                rx = Math.sqrt(radiiCheck) * rx;
+                ry = Math.sqrt(radiiCheck) * ry;
+                Prx = rx * rx;
+                Pry = ry * ry;
+            }
+
+            // Step 2 : Compute (cx1, cy1)
+            double sign = (largeArcFlag == sweepFlag) ? -1 : 1;
+            double sq = ((Prx*Pry)-(Prx*Py1)-(Pry*Px1)) / ((Prx*Py1)+(Pry*Px1));
+            sq = (sq < 0) ? 0 : sq;
+            double coef = (sign * Math.sqrt(sq));
+            double cx1 = coef * ((rx * y1) / ry);
+            double cy1 = coef * -((ry * x1) / rx);
+
+            // Step 3 : Compute (cx, cy) from (cx1, cy1)
+            double sx2 = (x0 + x) / 2.0;
+            double sy2 = (y0 + y) / 2.0;
+            double cx = sx2 + (cosAngle * cx1 - sinAngle * cy1);
+            double cy = sy2 + (sinAngle * cx1 + cosAngle * cy1);
+
+            // Step 4 : Compute the angleStart (angle1) and the angleExtent (dangle)
+            double ux = (x1 - cx1) / rx;
+            double uy = (y1 - cy1) / ry;
+            double vx = (-x1 - cx1) / rx;
+            double vy = (-y1 - cy1) / ry;
+            double p, n;
+            // Compute the angle start
+            n = Math.sqrt((ux * ux) + (uy * uy));
+            p = ux; // (1 * ux) + (0 * uy)
+            sign = (uy < 0) ? -1d : 1d;
+            double angleStart = Math.toDegrees(sign * Math.acos(p / n));
+
+            // Compute the angle extent
+            n = Math.sqrt((ux * ux + uy * uy) * (vx * vx + vy * vy));
+            p = ux * vx + uy * vy;
+            sign = (ux * vy - uy * vx < 0) ? -1d : 1d;
+            double angleExtent = Math.toDegrees(sign * Math.acos(p / n));
+            if(!sweepFlag && angleExtent > 0) {
+                angleExtent -= 360f;
+            } else if (sweepFlag && angleExtent < 0) {
+                angleExtent += 360f;
+            }
+            angleExtent %= 360f;
+            angleStart %= 360f;
+
+            // arc attempt with lines
+//            System.out.println("start:" + angleStart + " : " + angleExtent + " sweep:" + sweepFlag);
+            double newx = startx;
+            double newy = starty;
+            double currentAngle = angleStart + angle;
+            boolean wrap = (sweepFlag ? angleStart > angleExtent : angleStart < angleExtent);
+            boolean wrapped = false;
+
+/*            newx = Math.cos(Math.toRadians(angle)) * rx * Math.cos(Math.toRadians(currentAngle)) - Math.sin(Math.toRadians(angle)) * ry * Math.sin(Math.toRadians(currentAngle)) + cx;
+            newy = Math.sin(Math.toRadians(angle)) * rx * Math.cos(Math.toRadians(currentAngle)) + Math.cos(Math.toRadians(angle)) * ry * Math.sin(Math.toRadians(currentAngle)) + cy;
+            System.out.println("ox:" + startx + " oy: " + starty + " nx:" + newx + " ny:" + newy);
+            newx = Math.cos(Math.toRadians(angle)) * rx * Math.cos(Math.toRadians(angleStart + angleExtent)) - Math.sin(Math.toRadians(angle)) * ry * Math.sin(Math.toRadians(angleStart + angleExtent)) + cx;
+            newy = Math.sin(Math.toRadians(angle)) * rx * Math.cos(Math.toRadians(angleStart + angleExtent)) + Math.cos(Math.toRadians(angle)) * ry * Math.sin(Math.toRadians(angleStart + angleExtent)) + cy;
+            System.out.println("ox:" + x + " oy: " + y + " nx:" + newx + " ny:" + newy);*/
+
+            while(true) {
+                newx = Math.cos(Math.toRadians(angle)) * rx * Math.cos(Math.toRadians(currentAngle)) - Math.sin(Math.toRadians(angle)) * ry * Math.sin(Math.toRadians(currentAngle)) + cx;
+                newy = Math.sin(Math.toRadians(angle)) * rx * Math.cos(Math.toRadians(currentAngle)) + Math.cos(Math.toRadians(angle)) * ry * Math.sin(Math.toRadians(currentAngle)) + cy;
+                currentStream.write(pdfNumber.doubleOut(newx) + " " + pdfNumber.doubleOut(newy) + " l\n");
+                currentAngle = (currentAngle + (sweepFlag ? 1 : -1) * 5.0);
+                if((sweepFlag && currentAngle > (angleStart + angleExtent)) || (!sweepFlag && currentAngle < (angleStart + angleExtent))) {
+                    break;
+                }
+            }
+            currentStream.write(pdfNumber.doubleOut(x) + " " + pdfNumber.doubleOut(y) + " l\n");
+        }
 
 		/**
 		 * Adds an SVG polyline or polygon.
@@ -1958,12 +1967,12 @@ public class SVGRenderer {
 				for (int count = 0; count < list.getNumberOfItems(); count++) {
 						SVGMatrix matrix =
 							((SVGTransform) list.getItem(count)).getMatrix();
-						currentStream.write(pdfNumber.doubleOut(matrix.getA()) +
-																" " + pdfNumber.doubleOut(matrix.getB()) + " " +
-																pdfNumber.doubleOut(matrix.getC()) + " " +
-																pdfNumber.doubleOut(matrix.getD()) + " " +
-																pdfNumber.doubleOut(matrix.getE()) + " " +
-																pdfNumber.doubleOut(matrix.getF()) + " cm\n");
+						currentStream.write(pdfNumber.doubleOut(matrix.getA(), 5) +
+																" " + pdfNumber.doubleOut(matrix.getB(), 5) + " " +
+																pdfNumber.doubleOut(matrix.getC(), 5) + " " +
+																pdfNumber.doubleOut(matrix.getD(), 5) + " " +
+																pdfNumber.doubleOut(matrix.getE(), 5) + " " +
+																pdfNumber.doubleOut(matrix.getF(), 5) + " cm\n");
 				}
 		}
 

@@ -138,4 +138,44 @@ public class PDFNumber {
 		}
 		return(p.toString());
 	}
+
+	public String doubleOut(double doubleDown, int dec)
+	{
+		
+		StringBuffer p = new StringBuffer();
+		if(doubleDown < 0) {
+			doubleDown = -doubleDown;
+			p.append("-");
+		}
+		double trouble = doubleDown % 1;
+		
+		if(trouble > (1.0 - (5.0 / (Math.pow(10.0, dec)))))
+		{
+			p.append((int)doubleDown+1);
+		}
+		else if (trouble < (5.0 / (Math.pow(10.0, dec))))
+		{
+			p.append((int)doubleDown);
+		}
+		else
+		{
+			String doubleString = new String(doubleDown+"");
+			int decimal = doubleString.indexOf(".");
+			if(decimal != -1) {
+				p.append(doubleString.substring(0, decimal));
+
+				if ((doubleString.length() - decimal) > dec)
+				{
+					p.append(doubleString.substring(decimal,decimal+dec));
+				}
+				else
+				{
+					p.append(doubleString.substring(decimal));
+				}
+			} else {
+				p.append(doubleString);
+			}
+		}
+		return(p.toString());
+	}
 } 
