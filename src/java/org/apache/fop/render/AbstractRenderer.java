@@ -89,6 +89,7 @@ import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOTreeControl;
+import org.apache.fop.fo.pagination.Region;
 
 // Avalon
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
@@ -272,15 +273,15 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
      */
     protected void renderPageAreas(Page page) {
         RegionViewport viewport;
-        viewport = page.getRegion(RegionReference.BEFORE);
+        viewport = page.getRegion(Region.BEFORE_CODE);
         renderRegionViewport(viewport);
-        viewport = page.getRegion(RegionReference.START);
+        viewport = page.getRegion(Region.START_CODE);
         renderRegionViewport(viewport);
-        viewport = page.getRegion(RegionReference.BODY);
+        viewport = page.getRegion(Region.BODY_CODE);
         renderRegionViewport(viewport);
-        viewport = page.getRegion(RegionReference.END);
+        viewport = page.getRegion(Region.END_CODE);
         renderRegionViewport(viewport);
-        viewport = page.getRegion(RegionReference.AFTER);
+        viewport = page.getRegion(Region.AFTER_CODE);
         renderRegionViewport(viewport);
     }
 
@@ -308,7 +309,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
 
             // do after starting viewport area
             handleViewportTraits(port);
-            if (region.getRegionClass() == RegionReference.BODY) {
+            if (region.getRegionClass() == Region.BODY_CODE) {
                 renderBodyRegion((BodyRegion) region);
             } else {
                 renderRegion(region);

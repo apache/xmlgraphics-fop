@@ -460,7 +460,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
         curPage.setPageNumber(getCurrentPageNumber());
         RegionViewport reg = curPage.getPage().getRegion(
-                    RegionReference.BODY);
+                    Region.BODY_CODE);
         curBody = (BodyRegion) reg.getRegion();
         flowBPD = (int)reg.getViewArea().getHeight();
         return curPage;
@@ -508,13 +508,13 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             // Layout static content into the regions
             // Need help from pageseq for this
             layoutStaticContent(currentSimplePageMaster.getRegion(Region.BEFORE),
-                                RegionReference.BEFORE);
+                                Region.BEFORE_CODE);
             layoutStaticContent(currentSimplePageMaster.getRegion(Region.AFTER),
-                                RegionReference.AFTER);
+                                Region.AFTER_CODE);
             layoutStaticContent(currentSimplePageMaster.getRegion(Region.START),
-                                RegionReference.START);
+                                Region.START_CODE);
             layoutStaticContent(currentSimplePageMaster.getRegion(Region.END),
-                                RegionReference.END);
+                                Region.END_CODE);
             // Queue for ID resolution and rendering
             areaTree.addPage(curPage);
             curPage = null;
@@ -699,7 +699,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         curSpan = new Span(numCols);
         // get Width or Height as IPD for span
         curSpan.setIPD((int) curPage.getPage().getRegion(
-                          RegionReference.BODY).getViewArea().getWidth());
+                          Region.BODY_CODE).getViewArea().getWidth());
 
         //curSpan.setPosition(BPD, newpos);
         curBody.getMainReference().addSpan(curSpan);
@@ -792,7 +792,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                rvp.setRegion(makeRegionReferenceArea(r, rvp.getViewArea()));
            }
            page.setRegion(r.getRegionClassCode(), rvp);
-           if (r.getRegionClassCode() == RegionReference.BODY) {
+           if (r.getRegionClassCode() == Region.BODY_CODE) {
                bHasBody = true;
            }
        }
