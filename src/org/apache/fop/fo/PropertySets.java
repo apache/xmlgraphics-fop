@@ -639,7 +639,7 @@ public class PropertySets {
         new ROIntArray(shorthands);
 
     /**
-     * Array of <i>ROIntArray</i> <b>in same order as <i>shorthands</></b>
+     * Array of <i>ROIntArray</i><b> in same order as <i>shorthands</i></b>
      * <i>ROIntArray</i>.
      * If a public view of this is required, use
      * Collections.unmodifiableList(Arrays.asList(shorthandExpansions))
@@ -849,14 +849,14 @@ public class PropertySets {
         return expansionList;
     }
 
-    public static final ROIntArray blockProgressDimCopyExpansion =
+    public static final ROIntArray blockProgressionDimensionCopyExpansion =
         new ROIntArray(new int[] {
             PropNames.BLOCK_PROGRESSION_DIMENSION_MINIMUM
             ,PropNames.BLOCK_PROGRESSION_DIMENSION_OPTIMUM
             ,PropNames.BLOCK_PROGRESSION_DIMENSION_MAXIMUM
         });
 
-    public static final ROIntArray blockProgressDimNonCopyExpansion =
+    public static final ROIntArray blockProgressionDimensionNonCopyExpansion =
         new ROIntArray(new int[] {});
 
     public static final ROIntArray borderAfterWidthCopyExpansion =
@@ -908,14 +908,14 @@ public class PropertySets {
     public static final ROIntArray borderSeparationNonCopyExpansion =
         new ROIntArray(new int[] {});
 
-    public static final ROIntArray inlineProgressDimCopyExpansion =
+    public static final ROIntArray inlineProgressionDimensionCopyExpansion =
         new ROIntArray(new int[] {
             PropNames.INLINE_PROGRESSION_DIMENSION_MINIMUM
             ,PropNames.INLINE_PROGRESSION_DIMENSION_OPTIMUM
             ,PropNames.INLINE_PROGRESSION_DIMENSION_MAXIMUM
         });
 
-    public static final ROIntArray inlineProgressDimNonCopyExpansion =
+    public static final ROIntArray inlineProgressionDimensionNonCopyExpansion =
         new ROIntArray(new int[] {});
 
     public static final ROIntArray keepTogetherCopyExpansion =
@@ -957,6 +957,19 @@ public class PropertySets {
 
     public static final ROIntArray leaderLengthNonCopyExpansion =
         new ROIntArray(new int[] {});
+
+    public static final ROIntArray letterSpacingCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.LETTER_SPACING_MINIMUM
+            ,PropNames.LETTER_SPACING_OPTIMUM
+            ,PropNames.LETTER_SPACING_MAXIMUM
+        });
+
+    public static final ROIntArray letterSpacingNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.LETTER_SPACING_CONDITIONALITY
+            ,PropNames.LETTER_SPACING_PRECEDENCE
+        });
 
     public static final ROIntArray lineHeightCopyExpansion =
         new ROIntArray(new int[] {
@@ -1063,6 +1076,19 @@ public class PropertySets {
             ,PropNames.SPACE_START_PRECEDENCE
         });
 
+    public static final ROIntArray wordSpacingCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.WORD_SPACING_MINIMUM
+            ,PropNames.WORD_SPACING_OPTIMUM
+            ,PropNames.WORD_SPACING_MAXIMUM
+        });
+
+    public static final ROIntArray wordSpacingNonCopyExpansion =
+        new ROIntArray(new int[] {
+            PropNames.WORD_SPACING_CONDITIONALITY
+            ,PropNames.WORD_SPACING_PRECEDENCE
+        });
+
     private static final int[] compounds = {
         PropNames.BLOCK_PROGRESSION_DIMENSION
         ,PropNames.BORDER_AFTER_WIDTH
@@ -1075,6 +1101,7 @@ public class PropertySets {
         ,PropNames.KEEP_WITH_NEXT
         ,PropNames.KEEP_WITH_PREVIOUS
         ,PropNames.LEADER_LENGTH
+        ,PropNames.LETTER_SPACING
         ,PropNames.LINE_HEIGHT
         ,PropNames.PADDING_AFTER
         ,PropNames.PADDING_BEFORE
@@ -1107,6 +1134,70 @@ public class PropertySets {
     static {
         roCompounds = new ROIntArray(compounds);
     }
+
+    /**
+     * Array of <i>ROIntArray</i><b> of the copy expansion properties of
+     * compounds in same order as <i>compounds</i></b>
+     * <i>ROIntArray</i>.
+     * If a public view of this is required, use
+     * Collections.unmodifiableList(Arrays.asList(compoundCopyExpansions))
+     */
+    private static final ROIntArray[] compoundCopyExpansions = {
+        blockProgressionDimensionCopyExpansion
+        ,borderAfterWidthCopyExpansion
+        ,borderBeforeWidthCopyExpansion
+        ,borderEndWidthCopyExpansion
+        ,borderStartWidthCopyExpansion
+        ,borderSeparationCopyExpansion
+        ,inlineProgressionDimensionCopyExpansion
+        ,keepTogetherCopyExpansion
+        ,keepWithNextCopyExpansion
+        ,keepWithPreviousCopyExpansion
+        ,leaderLengthCopyExpansion
+        ,letterSpacingCopyExpansion
+        ,lineHeightCopyExpansion
+        ,paddingAfterCopyExpansion
+        ,paddingBeforeCopyExpansion
+        ,paddingEndCopyExpansion
+        ,paddingStartCopyExpansion
+        ,spaceAfterCopyExpansion
+        ,spaceBeforeCopyExpansion
+        ,spaceEndCopyExpansion
+        ,spaceStartCopyExpansion
+        ,wordSpacingCopyExpansion
+    };
+
+    /**
+     * Array of <i>ROIntArray</i><b> of the non-copy expansion properties of
+     * compounds in same order as <i>compounds</i></b>
+     * <i>ROIntArray</i>.
+     * If a public view of this is required, use
+     * Collections.unmodifiableList(Arrays.asList(compoundNonCopyExpansions))
+     */
+    private static final ROIntArray[] compoundNonCopyExpansions = {
+        blockProgressionDimensionNonCopyExpansion
+        ,borderAfterWidthNonCopyExpansion
+        ,borderBeforeWidthNonCopyExpansion
+        ,borderEndWidthNonCopyExpansion
+        ,borderStartWidthNonCopyExpansion
+        ,borderSeparationNonCopyExpansion
+        ,inlineProgressionDimensionNonCopyExpansion
+        ,keepTogetherNonCopyExpansion
+        ,keepWithNextNonCopyExpansion
+        ,keepWithPreviousNonCopyExpansion
+        ,leaderLengthNonCopyExpansion
+        ,letterSpacingNonCopyExpansion
+        ,lineHeightNonCopyExpansion
+        ,paddingAfterNonCopyExpansion
+        ,paddingBeforeNonCopyExpansion
+        ,paddingEndNonCopyExpansion
+        ,paddingStartNonCopyExpansion
+        ,spaceAfterNonCopyExpansion
+        ,spaceBeforeNonCopyExpansion
+        ,spaceEndNonCopyExpansion
+        ,spaceStartNonCopyExpansion
+        ,wordSpacingNonCopyExpansion
+    };
 
     private PropertySets (){}
 

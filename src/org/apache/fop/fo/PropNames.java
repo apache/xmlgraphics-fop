@@ -221,161 +221,166 @@ public class PropNames {
                            LEADER_PATTERN_WIDTH = 166,
                                            LEFT = 167,
                                  LETTER_SPACING = 168,
-                                   LETTER_VALUE = 169,
-                             LINEFEED_TREATMENT = 170,
-                                    LINE_HEIGHT = 171,
-                            LINE_HEIGHT_MINIMUM = 172,
-                            LINE_HEIGHT_OPTIMUM = 173,
-                            LINE_HEIGHT_MAXIMUM = 174,
-                     LINE_HEIGHT_CONDITIONALITY = 175,
-                         LINE_HEIGHT_PRECEDENCE = 176,
-                   LINE_HEIGHT_SHIFT_ADJUSTMENT = 177,
-                         LINE_STACKING_STRATEGY = 178,
+                         LETTER_SPACING_MINIMUM = 169,
+                         LETTER_SPACING_OPTIMUM = 170,
+                         LETTER_SPACING_MAXIMUM = 171,
+                  LETTER_SPACING_CONDITIONALITY = 172,
+                      LETTER_SPACING_PRECEDENCE = 173,
+                                   LETTER_VALUE = 174,
+                             LINEFEED_TREATMENT = 175,
+                                    LINE_HEIGHT = 176,
+                            LINE_HEIGHT_MINIMUM = 177,
+                            LINE_HEIGHT_OPTIMUM = 178,
+                            LINE_HEIGHT_MAXIMUM = 179,
+                     LINE_HEIGHT_CONDITIONALITY = 180,
+                         LINE_HEIGHT_PRECEDENCE = 181,
+                   LINE_HEIGHT_SHIFT_ADJUSTMENT = 182,
+                         LINE_STACKING_STRATEGY = 183,
 
-                              MARKER_CLASS_NAME = 179,
-                                    MASTER_NAME = 180,
-                               MASTER_REFERENCE = 181,
-                                     MAX_HEIGHT = 182,
-                                MAXIMUM_REPEATS = 183,
-                                      MAX_WIDTH = 184,
-                                    MEDIA_USAGE = 185,
-                                     MIN_HEIGHT = 186,
-                                      MIN_WIDTH = 187,
-                        NUMBER_COLUMNS_REPEATED = 188,
-                         NUMBER_COLUMNS_SPANNED = 189,
-                            NUMBER_ROWS_SPANNED = 190,
-                                    ODD_OR_EVEN = 191,
-                                        ORPHANS = 192,
-                                       OVERFLOW = 193,
+                              MARKER_CLASS_NAME = 184,
+                                    MASTER_NAME = 185,
+                               MASTER_REFERENCE = 186,
+                                     MAX_HEIGHT = 187,
+                                MAXIMUM_REPEATS = 188,
+                                      MAX_WIDTH = 189,
+                                    MEDIA_USAGE = 190,
+                                     MIN_HEIGHT = 191,
+                                      MIN_WIDTH = 192,
+                        NUMBER_COLUMNS_REPEATED = 193,
+                         NUMBER_COLUMNS_SPANNED = 194,
+                            NUMBER_ROWS_SPANNED = 195,
+                                    ODD_OR_EVEN = 196,
+                                        ORPHANS = 197,
+                                       OVERFLOW = 198,
 
         // Padding corresponding properties
-                                  PADDING_AFTER = 194,
-                           PADDING_AFTER_LENGTH = 195,
-                   PADDING_AFTER_CONDITIONALITY = 196,
-                                 PADDING_BEFORE = 197,
-                          PADDING_BEFORE_LENGTH = 198,
-                  PADDING_BEFORE_CONDITIONALITY = 199,
-                                    PADDING_END = 200,
-                             PADDING_END_LENGTH = 201,
-                     PADDING_END_CONDITIONALITY = 202,
-                                  PADDING_START = 203,
-                           PADDING_START_LENGTH = 204,
-                   PADDING_START_CONDITIONALITY = 205,
+                                  PADDING_AFTER = 199,
+                           PADDING_AFTER_LENGTH = 200,
+                   PADDING_AFTER_CONDITIONALITY = 201,
+                                 PADDING_BEFORE = 202,
+                          PADDING_BEFORE_LENGTH = 203,
+                  PADDING_BEFORE_CONDITIONALITY = 204,
+                                    PADDING_END = 205,
+                             PADDING_END_LENGTH = 206,
+                     PADDING_END_CONDITIONALITY = 207,
+                                  PADDING_START = 208,
+                           PADDING_START_LENGTH = 209,
+                   PADDING_START_CONDITIONALITY = 210,
 
-                                 PADDING_BOTTOM = 206,
-                                   PADDING_LEFT = 207,
-                                  PADDING_RIGHT = 208,
-                                    PADDING_TOP = 209,
+                                 PADDING_BOTTOM = 211,
+                                   PADDING_LEFT = 212,
+                                  PADDING_RIGHT = 213,
+                                    PADDING_TOP = 214,
 
-                                    PAGE_HEIGHT = 210,
-                                  PAGE_POSITION = 211,
-                                     PAGE_WIDTH = 212,
-                                    PAUSE_AFTER = 213,
-                                   PAUSE_BEFORE = 214,
-                                          PITCH = 215,
-                                    PITCH_RANGE = 216,
-                                    PLAY_DURING = 217,
-                                     PRECEDENCE = 218,
-            PROVISIONAL_DISTANCE_BETWEEN_STARTS = 219,
-                   PROVISIONAL_LABEL_SEPARATION = 220,
-                          REFERENCE_ORIENTATION = 221,
-                                         REF_ID = 222,
-                                    REGION_NAME = 223,
-                                 RELATIVE_ALIGN = 224,
-                              RELATIVE_POSITION = 225,
-                               RENDERING_INTENT = 226,
-                              RETRIEVE_BOUNDARY = 227,
-                            RETRIEVE_CLASS_NAME = 228,
-                              RETRIEVE_POSITION = 229,
-                                       RICHNESS = 230,
-                                          RIGHT = 231,
-                                           ROLE = 232,
-                                     RULE_STYLE = 233,
-                                 RULE_THICKNESS = 234,
-                                        SCALING = 235,
-                                 SCALING_METHOD = 236,
-                                   SCORE_SPACES = 237,
-                                         SCRIPT = 238,
-                               SHOW_DESTINATION = 239,
-                                SOURCE_DOCUMENT = 240,
+                                    PAGE_HEIGHT = 215,
+                                  PAGE_POSITION = 216,
+                                     PAGE_WIDTH = 217,
+                                    PAUSE_AFTER = 218,
+                                   PAUSE_BEFORE = 219,
+                                          PITCH = 220,
+                                    PITCH_RANGE = 221,
+                                    PLAY_DURING = 222,
+                                     PRECEDENCE = 223,
+            PROVISIONAL_DISTANCE_BETWEEN_STARTS = 224,
+                   PROVISIONAL_LABEL_SEPARATION = 225,
+                          REFERENCE_ORIENTATION = 226,
+                                         REF_ID = 227,
+                                    REGION_NAME = 228,
+                                 RELATIVE_ALIGN = 229,
+                              RELATIVE_POSITION = 230,
+                               RENDERING_INTENT = 231,
+                              RETRIEVE_BOUNDARY = 232,
+                            RETRIEVE_CLASS_NAME = 233,
+                              RETRIEVE_POSITION = 234,
+                                       RICHNESS = 235,
+                                          RIGHT = 236,
+                                           ROLE = 237,
+                                     RULE_STYLE = 238,
+                                 RULE_THICKNESS = 239,
+                                        SCALING = 240,
+                                 SCALING_METHOD = 241,
+                                   SCORE_SPACES = 242,
+                                         SCRIPT = 243,
+                               SHOW_DESTINATION = 244,
+                                SOURCE_DOCUMENT = 245,
 
         // Space/margin corresponding properties
-                                    SPACE_AFTER = 241,
-                            SPACE_AFTER_MINIMUM = 242,
-                            SPACE_AFTER_OPTIMUM = 243,
-                            SPACE_AFTER_MAXIMUM = 244,
-                     SPACE_AFTER_CONDITIONALITY = 245,
-                         SPACE_AFTER_PRECEDENCE = 246,
-                                   SPACE_BEFORE = 247,
-                           SPACE_BEFORE_MINIMUM = 248,
-                           SPACE_BEFORE_OPTIMUM = 249,
-                           SPACE_BEFORE_MAXIMUM = 250,
-                    SPACE_BEFORE_CONDITIONALITY = 251,
-                        SPACE_BEFORE_PRECEDENCE = 252,
-                                      SPACE_END = 253,
-                              SPACE_END_MINIMUM = 254,
-                              SPACE_END_OPTIMUM = 255,
-                              SPACE_END_MAXIMUM = 256,
-                       SPACE_END_CONDITIONALITY = 257,
-                           SPACE_END_PRECEDENCE = 258,
-                                    SPACE_START = 259,
-                            SPACE_START_MINIMUM = 260,
-                            SPACE_START_OPTIMUM = 261,
-                            SPACE_START_MAXIMUM = 262,
-                     SPACE_START_CONDITIONALITY = 263,
-                         SPACE_START_PRECEDENCE = 264,
+                                    SPACE_AFTER = 246,
+                            SPACE_AFTER_MINIMUM = 247,
+                            SPACE_AFTER_OPTIMUM = 248,
+                            SPACE_AFTER_MAXIMUM = 249,
+                     SPACE_AFTER_CONDITIONALITY = 250,
+                         SPACE_AFTER_PRECEDENCE = 251,
+                                   SPACE_BEFORE = 252,
+                           SPACE_BEFORE_MINIMUM = 253,
+                           SPACE_BEFORE_OPTIMUM = 254,
+                           SPACE_BEFORE_MAXIMUM = 255,
+                    SPACE_BEFORE_CONDITIONALITY = 256,
+                        SPACE_BEFORE_PRECEDENCE = 257,
+                                      SPACE_END = 258,
+                              SPACE_END_MINIMUM = 259,
+                              SPACE_END_OPTIMUM = 260,
+                              SPACE_END_MAXIMUM = 261,
+                       SPACE_END_CONDITIONALITY = 262,
+                           SPACE_END_PRECEDENCE = 263,
+                                    SPACE_START = 264,
+                            SPACE_START_MINIMUM = 265,
+                            SPACE_START_OPTIMUM = 266,
+                            SPACE_START_MAXIMUM = 267,
+                     SPACE_START_CONDITIONALITY = 268,
+                         SPACE_START_PRECEDENCE = 269,
 
-                                  MARGIN_BOTTOM = 265,
-                                    MARGIN_LEFT = 266,
-                                   MARGIN_RIGHT = 267,
-                                     MARGIN_TOP = 268,
+                                  MARGIN_BOTTOM = 270,
+                                    MARGIN_LEFT = 271,
+                                   MARGIN_RIGHT = 272,
+                                     MARGIN_TOP = 273,
 
-                                           SPAN = 269,
-                                          SPEAK = 270,
-                                   SPEAK_HEADER = 271,
-                                  SPEAK_NUMERAL = 272,
-                              SPEAK_PUNCTUATION = 273,
-                                    SPEECH_RATE = 274,
-                                            SRC = 275,
-                                   START_INDENT = 276,
-                                 STARTING_STATE = 277,
-                                     STARTS_ROW = 278,
-                                         STRESS = 279,
-                         SUPPRESS_AT_LINE_BREAK = 280,
-                                      SWITCH_TO = 281,
-                                   TABLE_LAYOUT = 282,
-                     TABLE_OMIT_FOOTER_AT_BREAK = 283,
-                     TABLE_OMIT_HEADER_AT_BREAK = 284,
-                    TARGET_PRESENTATION_CONTEXT = 285,
-                      TARGET_PROCESSING_CONTEXT = 286,
-                              TARGET_STYLESHEET = 287,
-                                     TEXT_ALIGN = 288,
-                                TEXT_ALIGN_LAST = 289,
-                                  TEXT_ALTITUDE = 290,
-                                TEXT_DECORATION = 291,
-                                     TEXT_DEPTH = 292,
-                                    TEXT_INDENT = 293,
-                                    TEXT_SHADOW = 294,
-                                 TEXT_TRANSFORM = 295,
-                                            TOP = 296,
-                            TREAT_AS_WORD_SPACE = 297,
-                                   UNICODE_BIDI = 298,
-                                     VISIBILITY = 299,
-                                   VOICE_FAMILY = 300,
-                                         VOLUME = 301,
-                           WHITE_SPACE_COLLAPSE = 302,
-                          WHITE_SPACE_TREATMENT = 303,
-                                         WIDOWS = 304,
-                                          WIDTH = 305,
-                                   WORD_SPACING = 306,
-                           WORD_SPACING_MINIMUM = 307,
-                           WORD_SPACING_OPTIMUM = 308,
-                           WORD_SPACING_MAXIMUM = 309,
-                    WORD_SPACING_CONDITIONALITY = 310,
-                        WORD_SPACING_PRECEDENCE = 311,
-                                    WRAP_OPTION = 312,
-                                   WRITING_MODE = 313,
-                                        Z_INDEX = 314,
+                                           SPAN = 274,
+                                          SPEAK = 275,
+                                   SPEAK_HEADER = 276,
+                                  SPEAK_NUMERAL = 277,
+                              SPEAK_PUNCTUATION = 278,
+                                    SPEECH_RATE = 279,
+                                            SRC = 280,
+                                   START_INDENT = 281,
+                                 STARTING_STATE = 282,
+                                     STARTS_ROW = 283,
+                                         STRESS = 284,
+                         SUPPRESS_AT_LINE_BREAK = 285,
+                                      SWITCH_TO = 286,
+                                   TABLE_LAYOUT = 287,
+                     TABLE_OMIT_FOOTER_AT_BREAK = 288,
+                     TABLE_OMIT_HEADER_AT_BREAK = 289,
+                    TARGET_PRESENTATION_CONTEXT = 290,
+                      TARGET_PROCESSING_CONTEXT = 291,
+                              TARGET_STYLESHEET = 292,
+                                     TEXT_ALIGN = 293,
+                                TEXT_ALIGN_LAST = 294,
+                                  TEXT_ALTITUDE = 295,
+                                TEXT_DECORATION = 296,
+                                     TEXT_DEPTH = 297,
+                                    TEXT_INDENT = 298,
+                                    TEXT_SHADOW = 299,
+                                 TEXT_TRANSFORM = 300,
+                                            TOP = 301,
+                            TREAT_AS_WORD_SPACE = 302,
+                                   UNICODE_BIDI = 303,
+                                     VISIBILITY = 304,
+                                   VOICE_FAMILY = 305,
+                                         VOLUME = 306,
+                           WHITE_SPACE_COLLAPSE = 307,
+                          WHITE_SPACE_TREATMENT = 308,
+                                         WIDOWS = 309,
+                                          WIDTH = 310,
+                                   WORD_SPACING = 311,
+                           WORD_SPACING_MINIMUM = 312,
+                           WORD_SPACING_OPTIMUM = 313,
+                           WORD_SPACING_MAXIMUM = 314,
+                    WORD_SPACING_CONDITIONALITY = 315,
+                        WORD_SPACING_PRECEDENCE = 316,
+                                    WRAP_OPTION = 317,
+                                   WRITING_MODE = 318,
+                                        Z_INDEX = 319,
         
                             LAST_PROPERTY_INDEX = Z_INDEX;
 
@@ -389,333 +394,338 @@ public class PropNames {
      */
 
     private static final String[] propertyNames = {
-        "no-property",
-        "font",
-        "font-size",
+        "no-property"                                          // 0
+        ,"font"                                                // 1
+        ,"font-size"                                           // 2
 
-        "background",
-        "background-position",
-        "border",
-        "border-color",
-        "border-style",
-        "border-width",
-        "border-bottom",
-        "border-left",
-        "border-right",
-        "border-top",
-        "border-spacing",
-        "cue",
-        "margin",
-        "padding",
-        "page-break-after",
-        "page-break-before",
-        "page-break-inside",
-        "pause",
-        "position",
-        "size",
-        "vertical-align",
-        "white-space",
-        "xml:lang",
+        ,"background"                                          // 3
+        ,"background-position"                                 // 4
+        ,"border"                                              // 5
+        ,"border-color"                                        // 6
+        ,"border-style"                                        // 7
+        ,"border-width"                                        // 8
+        ,"border-bottom"                                       // 9
+        ,"border-left"                                         // 10
+        ,"border-right"                                        // 11
+        ,"border-top"                                          // 12
+        ,"border-spacing"                                      // 13
+        ,"cue"                                                 // 14
+        ,"margin"                                              // 15
+        ,"padding"                                             // 16
+        ,"page-break-after"                                    // 17
+        ,"page-break-before"                                   // 18
+        ,"page-break-inside"                                   // 19
+        ,"pause"                                               // 20
+        ,"position"                                            // 21
+        ,"size"                                                // 22
+        ,"vertical-align"                                      // 23
+        ,"white-space"                                         // 24
+        ,"xml:lang"                                            // 25
 
-        "absolute-position",
-        "active-state",
-        "alignment-adjust",
-        "alignment-baseline",
-        "auto-restore",
-        "azimuth",
-        "background-attachment",
-        "background-color",
-        "background-image",
-        "background-position-horizontal",
-        "background-position-vertical",
-        "background-repeat",
-        "baseline-shift",
-        "blank-or-not-blank",
-        "block-progression-dimension",
-        "block-progression-dimension.minimum",
-        "block-progression-dimension.optimum",
-        "block-progression-dimension.maximum",
+        ,"absolute-position"                                   // 26
+        ,"active-state"                                        // 27
+        ,"alignment-adjust"                                    // 28
+        ,"alignment-baseline"                                  // 29
+        ,"auto-restore"                                        // 30
+        ,"azimuth"                                             // 31
+        ,"background-attachment"                               // 32
+        ,"background-color"                                    // 33
+        ,"background-image"                                    // 34
+        ,"background-position-horizontal"                      // 35
+        ,"background-position-vertical"                        // 36
+        ,"background-repeat"                                   // 37
+        ,"baseline-shift"                                      // 38
+        ,"blank-or-not-blank"                                  // 39
+        ,"block-progression-dimension"                         // 40
+        ,"block-progression-dimension.minimum"                 // 41
+        ,"block-progression-dimension.optimum"                 // 42
+        ,"block-progression-dimension.maximum"                 // 43
 
-        "border-after-color",
-        "border-after-precedence",
-        "border-after-style",
-        "border-after-width",
-        "border-after-width.length",
-        "border-after-width.conditionality",
-        "border-before-color",
-        "border-before-precedence",
-        "border-before-style",
-        "border-before-width",
-        "border-before-width.length",
-        "border-before-width.conditionality",
-        "border-end-color",
-        "border-end-precedence",
-        "border-end-style",
-        "border-end-width",
-        "border-end-width.length",
-        "border-end-width.conditionality",
-        "border-start-color",
-        "border-start-precedence",
-        "border-start-style",
-        "border-start-width",
-        "border-start-width.length",
-        "border-start-width.conditionality",
+        ,"border-after-color"                                  // 44
+        ,"border-after-precedence"                             // 45
+        ,"border-after-style"                                  // 46
+        ,"border-after-width"                                  // 47
+        ,"border-after-width.length"                           // 48
+        ,"border-after-width.conditionality"                   // 49
+        ,"border-before-color"                                 // 50
+        ,"border-before-precedence"                            // 51
+        ,"border-before-style"                                 // 52
+        ,"border-before-width"                                 // 53
+        ,"border-before-width.length"                          // 54
+        ,"border-before-width.conditionality"                  // 55
+        ,"border-end-color"                                    // 56
+        ,"border-end-precedence"                               // 57
+        ,"border-end-style"                                    // 58
+        ,"border-end-width"                                    // 59
+        ,"border-end-width.length"                             // 60
+        ,"border-end-width.conditionality"                     // 61
+        ,"border-start-color"                                  // 62
+        ,"border-start-precedence"                             // 63
+        ,"border-start-style"                                  // 64
+        ,"border-start-width"                                  // 65
+        ,"border-start-width.length"                           // 66
+        ,"border-start-width.conditionality"                   // 67
 
-        "border-bottom-color",
-        "border-bottom-style",
-        "border-bottom-width",
-        "border-left-color",
-        "border-left-style",
-        "border-left-width",
-        "border-right-color",
-        "border-right-style",
-        "border-right-width",
-        "border-top-color",
-        "border-top-style",
-        "border-top-width",
+        ,"border-bottom-color"                                 // 68
+        ,"border-bottom-style"                                 // 69
+        ,"border-bottom-width"                                 // 70
+        ,"border-left-color"                                   // 71
+        ,"border-left-style"                                   // 72
+        ,"border-left-width"                                   // 73
+        ,"border-right-color"                                  // 74
+        ,"border-right-style"                                  // 75
+        ,"border-right-width"                                  // 76
+        ,"border-top-color"                                    // 77
+        ,"border-top-style"                                    // 78
+        ,"border-top-width"                                    // 79
 
-        "border-collapse",
-        "border-separation",
-        "border-separation.block-progression-direction",
-        "border-separation.inline-progression-direction",
-        "bottom",
-        "break-after",
-        "break-before",
-        "caption-side",
-        "case-name",
-        "case-title",
-        "character",
-        "clear",
-        "clip",
-        "color",
-        "color-profile-name",
-        "column-count",
-        "column-gap",
-        "column-number",
-        "column-width",
-        "content-height",
-        "content-type",
-        "content-width",
-        "country",
-        "cue-after",
-        "cue-before",
-        "destination-placement-offset",
-        "direction",
-        "display-align",
-        "dominant-baseline",
-        "elevation",
-        "empty-cells",
-        "end-indent",
-        "ends-row",
-        "extent",
-        "external-destination",
-        "float",
-        "flow-name",
-        "font-family",
-        "font-selection-strategy",
-        "font-size-adjust",
-        "font-stretch",
-        "font-style",
-        "font-variant",
-        "font-weight",
-        "force-page-count",
-        "format",
-        "glyph-orientation-horizontal",
-        "glyph-orientation-vertical",
-        "grouping-separator",
-        "grouping-size",
-        "height",
-        "hyphenate",
-        "hyphenation-character",
-        "hyphenation-keep",
-        "hyphenation-ladder-count",
-        "hyphenation-push-character-count",
-        "hyphenation-remain-character-count",
-        "id",
-        "indicate-destination",
-        "initial-page-number",
-        "inline-progression-dimension",
-        "inline-progression-dimension.minimum",
-        "inline-progression-dimension.optimum",
-        "inline-progression-dimension.maximum",
-        "internal-destination",
-        "intrusion-displace",
-        "keep-together",
-        "keep-together.within-line",
-        "keep-together.within-column",
-        "keep-together.within-page",
-        "keep-with-next",
-        "keep-with-next.within-line",
-        "keep-with-next.within-column",
-        "keep-with-next.within-page",
-        "keep-with-previous",
-        "keep-with-previous.within-line",
-        "keep-with-previous.within-column",
-        "keep-with-previous.within-page",
-        "language",
-        "last-line-end-indent",
-        "leader-alignment",
-        "leader-length",
-        "leader-length.minimum",
-        "leader-length.optimum",
-        "leader-length.maximum",
-        "leader-pattern",
-        "leader-pattern-width",
-        "left",
-        "letter-spacing",
-        "letter-value",
-        "linefeed-treatment",
-        "line-height",
-        "line-height.minimum",
-        "line-height.optimum",
-        "line-height.maximum",
-        "line-height.conditionality",
-        "line-height.precedence",
-        "line-height-shift-adjustment",
-        "line-stacking-strategy",
+        ,"border-collapse"                                     // 80
+        ,"border-separation"                                   // 81
+        ,"border-separation.block-progression-direction"       // 82
+        ,"border-separation.inline-progression-direction"      // 83
+        ,"bottom"                                              // 84
+        ,"break-after"                                         // 85
+        ,"break-before"                                        // 86
+        ,"caption-side"                                        // 87
+        ,"case-name"                                           // 88
+        ,"case-title"                                          // 89
+        ,"character"                                           // 90
+        ,"clear"                                               // 91
+        ,"clip"                                                // 92
+        ,"color"                                               // 93
+        ,"color-profile-name"                                  // 94
+        ,"column-count"                                        // 95
+        ,"column-gap"                                          // 96
+        ,"column-number"                                       // 97
+        ,"column-width"                                        // 98
+        ,"content-height"                                      // 99
+        ,"content-type"                                        // 100
+        ,"content-width"                                       // 101
+        ,"country"                                             // 102
+        ,"cue-after"                                           // 103
+        ,"cue-before"                                          // 104
+        ,"destination-placement-offset"                        // 105
+        ,"direction"                                           // 106
+        ,"display-align"                                       // 107
+        ,"dominant-baseline"                                   // 108
+        ,"elevation"                                           // 109
+        ,"empty-cells"                                         // 110
+        ,"end-indent"                                          // 111
+        ,"ends-row"                                            // 112
+        ,"extent"                                              // 113
+        ,"external-destination"                                // 114
+        ,"float"                                               // 115
+        ,"flow-name"                                           // 116
+        ,"font-family"                                         // 117
+        ,"font-selection-strategy"                             // 118
+        ,"font-size-adjust"                                    // 119
+        ,"font-stretch"                                        // 120
+        ,"font-style"                                          // 121
+        ,"font-variant"                                        // 122
+        ,"font-weight"                                         // 123
+        ,"force-page-count"                                    // 124
+        ,"format"                                              // 125
+        ,"glyph-orientation-horizontal"                        // 126
+        ,"glyph-orientation-vertical"                          // 127
+        ,"grouping-separator"                                  // 128
+        ,"grouping-size"                                       // 129
+        ,"height"                                              // 130
+        ,"hyphenate"                                           // 131
+        ,"hyphenation-character"                               // 132
+        ,"hyphenation-keep"                                    // 133
+        ,"hyphenation-ladder-count"                            // 134
+        ,"hyphenation-push-character-count"                    // 135
+        ,"hyphenation-remain-character-count"                  // 136
+        ,"id"                                                  // 137
+        ,"indicate-destination"                                // 138
+        ,"initial-page-number"                                 // 139
+        ,"inline-progression-dimension"                        // 140
+        ,"inline-progression-dimension.minimum"                // 141
+        ,"inline-progression-dimension.optimum"                // 142
+        ,"inline-progression-dimension.maximum"                // 143
+        ,"internal-destination"                                // 144
+        ,"intrusion-displace"                                  // 145
+        ,"keep-together"                                       // 146
+        ,"keep-together.within-line"                           // 147
+        ,"keep-together.within-column"                         // 148
+        ,"keep-together.within-page"                           // 149
+        ,"keep-with-next"                                      // 150
+        ,"keep-with-next.within-line"                          // 151
+        ,"keep-with-next.within-column"                        // 152
+        ,"keep-with-next.within-page"                          // 153
+        ,"keep-with-previous"                                  // 154
+        ,"keep-with-previous.within-line"                      // 155
+        ,"keep-with-previous.within-column"                    // 156
+        ,"keep-with-previous.within-page"                      // 157
+        ,"language"                                            // 158
+        ,"last-line-end-indent"                                // 159
+        ,"leader-alignment"                                    // 160
+        ,"leader-length"                                       // 161
+        ,"leader-length.minimum"                               // 162
+        ,"leader-length.optimum"                               // 163
+        ,"leader-length.maximum"                               // 164
+        ,"leader-pattern"                                      // 165
+        ,"leader-pattern-width"                                // 166
+        ,"left"                                                // 167
+        ,"letter-spacing"                                      // 168
+        ,"letter-spacing.minimum"                              // 169
+        ,"letter-spacing.optimum"                              // 170
+        ,"letter-spacing.maximum"                              // 171
+        ,"letter-spacing.conditionality"                       // 172
+        ,"letter-spacing.precedence"                           // 173
+        ,"letter-value"                                        // 174
+        ,"linefeed-treatment"                                  // 175
+        ,"line-height"                                         // 176
+        ,"line-height.minimum"                                 // 177
+        ,"line-height.optimum"                                 // 178
+        ,"line-height.maximum"                                 // 179
+        ,"line-height.conditionality"                          // 180
+        ,"line-height.precedence"                              // 181
+        ,"line-height-shift-adjustment"                        // 182
+        ,"line-stacking-strategy"                              // 183
 
-        "marker-class-name",
-        "master-name",
-        "master-reference",
-        "max-height",
-        "maximum-repeats",
-        "max-width",
-        "media-usage",
-        "min-height",
-        "min-width",
-        "number-columns-repeated",
-        "number-columns-spanned",
-        "number-rows-spanned",
-        "odd-or-even",
-        "orphans",
-        "overflow",
-        
-        "padding-after",
-        "padding-after.length",
-        "padding-after.conditionality",
-        "padding-before",
-        "padding-before.length",
-        "padding-before.conditionality",
-        "padding-end",
-        "padding-end.length",
-        "padding-end.conditionality",
-        "padding-start",
-        "padding-start.length",
-        "padding-start.conditionality",
+        ,"marker-class-name"                                   // 184
+        ,"master-name"                                         // 185
+        ,"master-reference"                                    // 186
+        ,"max-height"                                          // 187
+        ,"maximum-repeats"                                     // 188
+        ,"max-width"                                           // 189
+        ,"media-usage"                                         // 190
+        ,"min-height"                                          // 191
+        ,"min-width"                                           // 192
+        ,"number-columns-repeated"                             // 193
+        ,"number-columns-spanned"                              // 194
+        ,"number-rows-spanned"                                 // 195
+        ,"odd-or-even"                                         // 196
+        ,"orphans"                                             // 197
+        ,"overflow"                                            // 198
 
-        "padding-bottom",
-        "padding-left",
-        "padding-right",
-        "padding-top",
-        
-        "page-height",
-        "page-position",
-        "page-width",
-        "pause-after",
-        "pause-before",
-        "pitch",
-        "pitch-range",
-        "play-during",
-        "precedence",
-        "provisional-distance-between-starts",
-        "provisional-label-separation",
-        "reference-orientation",
-        "ref-id",
-        "region-name",
-        "relative-align",
-        "relative-position",
-        "rendering-intent",
-        "retrieve-boundary",
-        "retrieve-class-name",
-        "retrieve-position",
-        "richness",
-        "right",
-        "role",
-        "rule-style",
-        "rule-thickness",
-        "scaling",
-        "scaling-method",
-        "score-spaces",
-        "script",
-        "show-destination",
-        "source-document",
+        ,"padding-after"                                       // 199
+        ,"padding-after.length"                                // 200
+        ,"padding-after.conditionality"                        // 201
+        ,"padding-before"                                      // 202
+        ,"padding-before.length"                               // 203
+        ,"padding-before.conditionality"                       // 204
+        ,"padding-end"                                         // 205
+        ,"padding-end.length"                                  // 206
+        ,"padding-end.conditionality"                          // 207
+        ,"padding-start"                                       // 208
+        ,"padding-start.length"                                // 209
+        ,"padding-start.conditionality"                        // 210
 
-        "space-after",
-        "space-after.minimum",
-        "space-after.optimum",
-        "space-after.maximum",
-        "space-after.conditionality",
-        "space-after.precedence",
-        "space-before",
-        "space-before.minimum",
-        "space-before.optimum",
-        "space-before.maximum",
-        "space-before.conditionality",
-        "space-before.precedence",
-        "space-end",
-        "space-end.minimum",
-        "space-end.optimum",
-        "space-end.maximum",
-        "space-end.conditionality",
-        "space-end.precedence",
-        "space-start",
-        "space-start.minimum",
-        "space-start.optimum",
-        "space-start.maximum",
-        "space-start.conditionality",
-        "space-start.precedence",
+        ,"padding-bottom"                                      // 211
+        ,"padding-left"                                        // 212
+        ,"padding-right"                                       // 213
+        ,"padding-top"                                         // 214
 
-        "margin-bottom",
-        "margin-left",
-        "margin-right",
-        "margin-top",
+        ,"page-height"                                         // 215
+        ,"page-position"                                       // 216
+        ,"page-width"                                          // 217
+        ,"pause-after"                                         // 218
+        ,"pause-before"                                        // 219
+        ,"pitch"                                               // 220
+        ,"pitch-range"                                         // 221
+        ,"play-during"                                         // 222
+        ,"precedence"                                          // 223
+        ,"provisional-distance-between-starts"                 // 224
+        ,"provisional-label-separation"                        // 225
+        ,"reference-orientation"                               // 226
+        ,"ref-id"                                              // 227
+        ,"region-name"                                         // 228
+        ,"relative-align"                                      // 229
+        ,"relative-position"                                   // 230
+        ,"rendering-intent"                                    // 231
+        ,"retrieve-boundary"                                   // 232
+        ,"retrieve-class-name"                                 // 233
+        ,"retrieve-position"                                   // 234
+        ,"richness"                                            // 235
+        ,"right"                                               // 236
+        ,"role"                                                // 237
+        ,"rule-style"                                          // 238
+        ,"rule-thickness"                                      // 239
+        ,"scaling"                                             // 240
+        ,"scaling-method"                                      // 241
+        ,"score-spaces"                                        // 242
+        ,"script"                                              // 243
+        ,"show-destination"                                    // 244
+        ,"source-document"                                     // 245
 
-        "span",
-        "speak",
-        "speak-header",
-        "speak-numeral",
-        "speak-punctuation",
-        "speech-rate",
-        "src",
-        "start-indent",
-        "starting-state",
-        "starts-row",
-        "stress",
-        "suppress-at-line-break",
-        "switch-to",
-        "table-layout",
-        "table-omit-footer-at-break",
-        "table-omit-header-at-break",
-        "target-presentation-context",
-        "target-processing-context",
-        "target-stylesheet",
-        "text-align",
-        "text-align-last",
-        "text-altitude",
-        "text-decoration",
-        "text-depth",
-        "text-indent",
-        "text-shadow",
-        "text-transform",
-        "top",
-        "treat-as-word-space",
-        "unicode-bidi",
-        "visibility",
-        "voice-family",
-        "volume",
-        "white-space-collapse",
-        "white-space-treatment",
-        "widows",
-        "width",
-        "word-spacing",
-        "word-spacing-minimum",
-        "word-spacing-optimum",
-        "word-spacing-maximum",
-        "word-spacing-conditionality",
-        "word-spacing-precedence",
-        "wrap-option",
-        "writing-mode",
-        "z-index"
+        ,"space-after"                                         // 246
+        ,"space-after.minimum"                                 // 247
+        ,"space-after.optimum"                                 // 248
+        ,"space-after.maximum"                                 // 249
+        ,"space-after.conditionality"                          // 250
+        ,"space-after.precedence"                              // 251
+        ,"space-before"                                        // 252
+        ,"space-before.minimum"                                // 253
+        ,"space-before.optimum"                                // 254
+        ,"space-before.maximum"                                // 255
+        ,"space-before.conditionality"                         // 256
+        ,"space-before.precedence"                             // 257
+        ,"space-end"                                           // 258
+        ,"space-end.minimum"                                   // 259
+        ,"space-end.optimum"                                   // 260
+        ,"space-end.maximum"                                   // 261
+        ,"space-end.conditionality"                            // 262
+        ,"space-end.precedence"                                // 263
+        ,"space-start"                                         // 264
+        ,"space-start.minimum"                                 // 265
+        ,"space-start.optimum"                                 // 266
+        ,"space-start.maximum"                                 // 267
+        ,"space-start.conditionality"                          // 268
+        ,"space-start.precedence"                              // 269
+
+        ,"margin-bottom"                                       // 270
+        ,"margin-left"                                         // 271
+        ,"margin-right"                                        // 272
+        ,"margin-top"                                          // 273
+
+        ,"span"                                                // 274
+        ,"speak"                                               // 275
+        ,"speak-header"                                        // 276
+        ,"speak-numeral"                                       // 277
+        ,"speak-punctuation"                                   // 278
+        ,"speech-rate"                                         // 279
+        ,"src"                                                 // 280
+        ,"start-indent"                                        // 281
+        ,"starting-state"                                      // 282
+        ,"starts-row"                                          // 283
+        ,"stress"                                              // 284
+        ,"suppress-at-line-break"                              // 285
+        ,"switch-to"                                           // 286
+        ,"table-layout"                                        // 287
+        ,"table-omit-footer-at-break"                          // 288
+        ,"table-omit-header-at-break"                          // 289
+        ,"target-presentation-context"                         // 290
+        ,"target-processing-context"                           // 291
+        ,"target-stylesheet"                                   // 292
+        ,"text-align"                                          // 293
+        ,"text-align-last"                                     // 294
+        ,"text-altitude"                                       // 295
+        ,"text-decoration"                                     // 296
+        ,"text-depth"                                          // 297
+        ,"text-indent"                                         // 298
+        ,"text-shadow"                                         // 299
+        ,"text-transform"                                      // 300
+        ,"top"                                                 // 301
+        ,"treat-as-word-space"                                 // 302
+        ,"unicode-bidi"                                        // 303
+        ,"visibility"                                          // 304
+        ,"voice-family"                                        // 305
+        ,"volume"                                              // 306
+        ,"white-space-collapse"                                // 307
+        ,"white-space-treatment"                               // 308
+        ,"widows"                                              // 309
+        ,"width"                                               // 310
+        ,"word-spacing"                                        // 311
+        ,"word-spacing-minimum"                                // 312
+        ,"word-spacing-optimum"                                // 313
+        ,"word-spacing-maximum"                                // 314
+        ,"word-spacing-conditionality"                         // 315
+        ,"word-spacing-precedence"                             // 316
+        ,"wrap-option"                                         // 317
+        ,"writing-mode"                                        // 318
+        ,"z-index"                                             // 319
     };
 
     /**
