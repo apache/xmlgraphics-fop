@@ -85,7 +85,7 @@ public class RegionBody extends Region {
     /**
      * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension)
      */
-    protected Rectangle getViewportRectangle (FODimension reldims) {
+    public Rectangle getViewportRectangle (FODimension reldims) {
         /*
         * Use space-before and space-after which will use corresponding
         * absolute margin properties if specified. For indents:

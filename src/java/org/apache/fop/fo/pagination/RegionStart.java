@@ -75,7 +75,7 @@ public class RegionStart extends RegionSE {
     /**
      * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension)
      */
-    protected Rectangle getViewportRectangle (FODimension reldims) {
+    public Rectangle getViewportRectangle (FODimension reldims) {
         // Depends on extent, precedence and writing mode
         // This is the rectangle relative to the page-reference area in
         // writing-mode relative coordinates

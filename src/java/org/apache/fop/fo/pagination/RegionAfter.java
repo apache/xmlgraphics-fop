@@ -75,7 +75,7 @@ public class RegionAfter extends RegionBA {
     /**
      * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension)
      */
-    protected Rectangle getViewportRectangle (FODimension reldims) {
+    public Rectangle getViewportRectangle (FODimension reldims) {
         // Depends on extent, precedence ans writing mode
         Rectangle vpRect;
         if (this.wm == WritingMode.LR_TB || this.wm == WritingMode.RL_TB) {

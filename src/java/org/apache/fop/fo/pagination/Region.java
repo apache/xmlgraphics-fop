@@ -59,13 +59,9 @@ import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.CTM;
-import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
-import org.apache.fop.layoutmgr.TraitSetter;
 
 // SAX
 import org.xml.sax.Attributes;
@@ -133,44 +129,13 @@ public abstract class Region extends FObj {
                     + parent.getName());
         }
         this.wm = this.properties.get("writing-mode").getEnum();
-    }
-
-    /**
-     * Creates a RegionViewport Area object for this pagination Region.
-     * @param reldims relative dimensions
-     * @param pageCTM page coordinate transformation matrix
-     * @return the new region viewport
-     */
-    public RegionViewport makeRegionViewport(FODimension reldims, CTM pageCTM) {
-        Rectangle2D relRegionRect = getViewportRectangle(reldims);
-        Rectangle2D absRegionRect = pageCTM.transform(relRegionRect);
-        // Get the region viewport rectangle in absolute coords by
-        // transforming it using the page CTM
-        RegionViewport rv = new RegionViewport(absRegionRect);
-        setRegionViewportTraits(rv);
-        return rv;
-    }
-
-    /**
-     * Set the region viewport traits.
-     * The viewport has the border, background and
-     * clipping overflow traits.
-     *
-     * @param r the region viewport
-     */
-    protected void setRegionViewportTraits(RegionViewport r) {
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-        TraitSetter.addBorders(r, bap);
-        TraitSetter.addBackground(r, bProps);
 
         // this.properties.get("clip");
         // this.properties.get("display-align");
         this.overflow = this.properties.get("overflow").getEnum();
     }
 
-    protected abstract Rectangle getViewportRectangle(FODimension pageRefRect);
+    public abstract Rectangle getViewportRectangle(FODimension pageRefRect);
 
     /**
      * Create the region reference area for this region master.
