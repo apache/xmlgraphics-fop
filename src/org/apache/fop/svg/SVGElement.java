@@ -141,7 +141,9 @@ public class SVGElement extends SVGObj {
 
         try {
             String baseDir = Configuration.getStringValue("baseDir");
-            ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
+            if(baseDir != null) {
+                ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
+            }
         } catch (Exception e) {
             log.error("Could not set base URL for svg", e);
         }
