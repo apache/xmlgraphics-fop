@@ -71,7 +71,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.apps.Document;
 import org.apache.fop.render.AbstractRenderer;

@@ -104,6 +104,7 @@ import org.apache.fop.util.CharUtilities;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.ArrayList;
+import org.apache.fop.apps.*;
 
 /**
  * Concrete implementation of FOTreeVisitor for the purpose of adding

@@ -76,6 +76,7 @@ import org.apache.fop.fo.pagination.StaticContent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.fop.apps.*;
 
 /**
  * LayoutManager for a PageSequence and its flow.

@@ -55,7 +55,7 @@ import org.apache.fop.area.AreaTree;
 
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
-import org.apache.fop.fo.FOUserAgent;
+
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.mif.MIFHandler;

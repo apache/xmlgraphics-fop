@@ -61,7 +61,7 @@ import java.net.URLConnection;
 
 // FOP
 import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * FopImage object for GIF images, using Java native classes.

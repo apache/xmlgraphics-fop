@@ -74,6 +74,7 @@ import java.io.Reader;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.fop.apps.*;
 
 /**
  * SAX Handler that passes parsed data to the various

@@ -62,6 +62,7 @@ import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.table.Column;
+import org.apache.fop.apps.*;
 
 /**
  * Class modelling the fo:table-column object. See Sec. 6.7.4 of the XSL-FO

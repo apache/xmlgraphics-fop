@@ -68,6 +68,7 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.layoutmgr.ContentLayoutManager;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.LMiter;
+import org.apache.fop.apps.*;
 
 /**
  * Class modelling the fo:title object. See Sec. 6.4.20 in the XSL-FO Standard.

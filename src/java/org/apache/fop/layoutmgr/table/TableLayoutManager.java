@@ -68,6 +68,7 @@ import org.apache.fop.fo.properties.CommonBackground;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.fop.apps.*;
 
 /**
  * LayoutManager for a table FO.

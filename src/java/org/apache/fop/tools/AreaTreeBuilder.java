@@ -106,7 +106,7 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.render.svg.SVGRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fonts.FontMetrics;
 

@@ -64,7 +64,7 @@ import org.apache.avalon.framework.logger.Logger;
 
 // FOP
 import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * FopImage object for several images types, using Jimi.

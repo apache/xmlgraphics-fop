@@ -79,6 +79,7 @@ import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
 
 import java.awt.geom.AffineTransform;
+import org.apache.fop.apps.*;
 
 /**
  * PDF XML handler.

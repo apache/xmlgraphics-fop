@@ -73,6 +73,7 @@ import java.net.URL;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import org.apache.fop.apps.*;
 
 /**
  * class representing the SVG root element

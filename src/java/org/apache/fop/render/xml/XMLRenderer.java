@@ -67,7 +67,7 @@ import java.awt.geom.Rectangle2D;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.BeforeFloat;

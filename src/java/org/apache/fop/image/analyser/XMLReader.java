@@ -62,7 +62,7 @@ import org.w3c.dom.Element;
 
 // FOP
 import org.apache.fop.image.FopImage;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 
 /** ImageReader object for XML document image type. */
 public class XMLReader implements ImageReader {

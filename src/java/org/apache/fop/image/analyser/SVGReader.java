@@ -69,7 +69,7 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 // FOP
 import org.apache.fop.image.XMLImage;
 import org.apache.fop.image.FopImage;
-import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.svg.SVGUserAgent;
 
 /** 
