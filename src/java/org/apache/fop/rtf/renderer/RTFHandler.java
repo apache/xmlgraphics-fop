@@ -79,12 +79,12 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 
 // JFOR
-import org.jfor.jfor.rtflib.rtfdoc.RtfAttributes;
-import org.jfor.jfor.rtflib.rtfdoc.RtfFile;
-import org.jfor.jfor.rtflib.rtfdoc.RtfSection;
-import org.jfor.jfor.rtflib.rtfdoc.RtfText;
-import org.jfor.jfor.rtflib.rtfdoc.RtfParagraph;
-import org.jfor.jfor.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfFile;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfText;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
 
 /**
  * RTF Handler: generates RTF output using the structure events from

@@ -55,7 +55,7 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 import java.util.*;
 import java.io.Writer;
 import java.io.IOException;
-import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
+//import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
 
 /**  RTF file header, contains style, font and other document-level information.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
@@ -65,14 +65,14 @@ import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
 class RtfHeader extends RtfContainer {
     private final String m_charset = "ansi";
     private final Map m_userProperties = new HashMap();
-    
+
     /** Create an RTF header */
     RtfHeader(RtfFile f,Writer w) throws IOException {
         super(f,w);
         new RtfFontTable(this,w);
-        m_userProperties.put("jforVersion",JForVersionInfo.getLongVersionInfo());
+//        m_userProperties.put("jforVersion",JForVersionInfo.getLongVersionInfo());
     }
-    
+
     /** Overridden to write our own data before our children's data */
     protected void writeRtfContent() throws IOException {
         writeControlWord(m_charset);
@@ -83,7 +83,7 @@ class RtfHeader extends RtfContainer {
        	RtfStyleSheetTable.getInstance().writeStyleSheet(this);
 
     }
-    
+
     /** write user properties if any */
     private void writeUserProperties() throws IOException {
         if(m_userProperties.size() > 0) {
@@ -104,7 +104,7 @@ class RtfHeader extends RtfContainer {
             writeGroupMark(false);
         }
     }
-    
+
     /** write directly to our Writer
      *  TODO should check that this done at the right point, or even better, store
      *  what is written here to render it in writeRtfContent. <-- it is for the color table
@@ -112,7 +112,7 @@ class RtfHeader extends RtfContainer {
     void write(String toWrite) throws IOException {
         m_writer.write(toWrite);
     }
-    
+
     /** write to our Writer using an RtfStringConverter */
     void writeRtfString(String toWrite) throws IOException {
 	    RtfStringConverter.getInstance().writeRtfString(m_writer,toWrite);

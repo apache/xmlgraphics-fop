@@ -53,7 +53,7 @@
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import org.apache.fop.rtf.rtflib.exceptions.RtfStructureException;
-import org.apache.fop.rtf.rtflib.jfor.converter.ConverterLogChannel;
+//import org.apache.fop.rtf.rtflib.jfor.converter.ConverterLogChannel;
 import java.io.*;
 
 /**  Models the top-level structure of an RTF file.
@@ -69,7 +69,7 @@ extends RtfContainer {
 	private RtfPageArea m_pageArea;
 	private RtfListTable m_listTable;
 	private RtfDocumentArea m_docArea;
-	private ConverterLogChannel m_log;
+//	private ConverterLogChannel m_log;
 	private RtfContainer m_listTableContainer;
 	private int listNum=0;
 
@@ -79,21 +79,21 @@ extends RtfContainer {
 	}
 
 	/** optional log channel */
-	public void setLogChannel(ConverterLogChannel log)
-	{
-		m_log = log;
-	}
+//	public void setLogChannel(ConverterLogChannel log)
+//	{
+//		m_log = log;
+//	}
 
 	/**
 	 * Gets the log channel.
 	 * If logchannel not set, it will return a empty log channel.
 	 * @return our log channel, it is never null */
-	ConverterLogChannel getLog()
-	{
-		if (m_log == null)
-			m_log = new ConverterLogChannel (null);
-		return m_log;
-	}
+//	ConverterLogChannel getLog()
+//	{
+//		if (m_log == null)
+//			m_log = new ConverterLogChannel (null);
+//		return m_log;
+//	}
 
 	/** If called, must be called before startDocumentArea */
 	public RtfHeader startHeader()
@@ -103,7 +103,7 @@ extends RtfContainer {
 		m_listTableContainer = new RtfContainer(this,m_writer);
 		return m_header;
 	}
-	
+
 	/** Creates the list table.*/
 	public RtfListTable startListTable(RtfAttributes attr)
 	throws IOException{
@@ -112,7 +112,7 @@ extends RtfContainer {
 		m_listTableContainer.addChild(m_listTable);
 		return m_listTable;
 	}
-	
+
 	/** Closes the RtfHeader if not done yet, and starts the docment area.
 		Like startDocumentArea, is only called once. This is not optimal,
 		must be able to have multiple page definition, and corresponding
@@ -127,14 +127,14 @@ extends RtfContainer {
 		addChild(m_pageArea);
 		return m_pageArea;
 	}
-	
+
 	/** Call startPageArea if needed and return the page area object. */
 	public RtfPageArea getPageArea()
 	throws IOException,RtfStructureException {
 		if(m_pageArea== null) return startPageArea();
 		return m_pageArea;
 	}
-	
+
 	/** Closes the RtfHeader if not done yet, and starts the document area.
 	 *  Must be called once only.
 	 */
@@ -148,9 +148,9 @@ extends RtfContainer {
 		addChild(m_docArea);
 		return m_docArea;
 	}
-	
-	
-	
+
+
+
 	/** Call startDocumentArea if needed and return the document area object. */
 	public RtfDocumentArea getDocumentArea()
 	throws IOException,RtfStructureException {

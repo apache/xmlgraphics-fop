@@ -54,7 +54,7 @@ package org.apache.fop.rtf.rtflib.testdocs;
 
 import java.io.File;
 import java.io.IOException;
-import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
+//import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
 
 /**  Create test RTF documents from classes found in this package.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
@@ -112,7 +112,7 @@ public class CreateTestDocuments {
 			System.exit(1);
 		}
 
-		System.err.println("CreateTestDocuments - using " + JForVersionInfo.getLongVersionInfo());
+//		System.err.println("CreateTestDocuments - using " + JForVersionInfo.getLongVersionInfo());
 		System.err.println("Generates documents to test the jfor RTF library.");
 		final File outDir = new File(args[0]);
 		new CreateTestDocuments(outDir);

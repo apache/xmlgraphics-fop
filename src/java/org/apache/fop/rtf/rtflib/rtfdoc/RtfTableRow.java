@@ -321,7 +321,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                 if(rightPadStr != null) gaph = (gaph + rightPadStr.intValue()) / 2;
             } catch(Exception e) {
                 final String msg = "RtfTableRow.writePaddingAttributes: " + e.toString();
-                getRtfFile().getLog().logWarning(msg);
+//                getRtfFile().getLog().logWarning(msg);
             }
             if(gaph >= 0) {
                 m_attrib.set(ATTR_RTF_15_TRGAPH,gaph);

@@ -118,12 +118,6 @@ list of possible build targets.
     <exclude name="org/apache/fop/pdf/PDFEncryptionJCE.java" unless="jce.present"/>
   </patternset>
 
-  <!-- jfor RTF library has been moved here but needs tweaking before it compiles -->
-  <!-- remove this once the RTF library compiles -->
-  <patternset id="exclude-rtflib">
-    <exclude name="org/apache/fop/rtf/rtflib/**/*.java"/>
-  </patternset>
-
   <patternset id="base-sources">
     <include name="**/*.java"/>
     <exclude name="**/*${ignore_this}"/>
@@ -438,10 +432,6 @@ list of possible build targets.
       <patternset refid="exclude-jce-dependencies"/>
       <patternset refid="exclude-jai"/>
       <patternset refid="exclude-jimi"/>
-
-      <!-- remove this once the RTF library compiles -->
-      <patternset refid="exclude-rtflib"/>
-
       <classpath refid="libs-build-classpath"/>
       <patternset refid="base-sources"/>
     </javac>
