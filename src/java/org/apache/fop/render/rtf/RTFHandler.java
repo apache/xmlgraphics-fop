@@ -1080,7 +1080,7 @@ public class RTFHandler extends FOInputHandler {
                     IRtfTextrunContainer.class, true, this);
                     
             RtfTextrun textrun = container.getTextrun();
-            textrun.addString(new String(data, start, length));
+            textrun.addString(new String(data, start, length-start));
          } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOInputHandler events?
             log.error("characters: " + ioe.getMessage());
