@@ -186,7 +186,6 @@ public class BodyAreaContainer extends Area {
 	 * @param fo The next formatting object
 	 * @returns the next column area (possibly the current one)
 	 */
-	private static int counter = 0;
 	public AreaContainer getNextArea(FObj fo)
 		throws FOPException
 	{
