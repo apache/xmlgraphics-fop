@@ -69,6 +69,9 @@ public class LayoutMasterSet extends FObj {
         }
     }
 
+    /**
+     * @see org.apache.fop.fo.FONode#end
+     */
     protected void end() {
         if (children == null) {
            missingChildElementError("(simple-page-master|page-sequence-master)+");

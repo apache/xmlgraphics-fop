@@ -187,13 +187,6 @@ public interface Renderer {
      * @param cont  The inline container area
      */
     void renderContainer(Container cont);
-    
-    /**
-     * Tells the renderer to render an inline container.
-     *
-     * @param cont  The inline container area
-     */
-    void setLogger(Log logger);
 
 }
 
