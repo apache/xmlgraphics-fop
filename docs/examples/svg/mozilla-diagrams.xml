@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE Diagrams SYSTEM "diagrams.dtd">
-<Diagrams xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd">
+<Diagrams xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
 	<Diagram entry="mozilla-xml">
 <svg:svg xml:space="preserve" width="760" height="580" preserveAspectRatio="meet meet"
 viewBox="0 0 751.859 576.421">

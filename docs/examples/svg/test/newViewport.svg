@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="yes"?>
 
-<svg:svg width="4in" height="3in" xmlns:svg="http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd">
+<svg:svg width="4in" height="3in" xmlns:svg="http://www.w3.org/2000/svg">
   <svg:title>New Viewport</svg:title>
   <svg:desc>This SVG drawing embeds another one,
         thus establishing a new viewport

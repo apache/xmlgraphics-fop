@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE Diagrams SYSTEM "diagrams.dtd">
-<Diagrams xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd">
+<Diagrams xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
 	<Diagram entry="apache-foplogo">
 		<svg:svg width="15cm" height="10cm" viewBox="0 0 1000 300">
 			<svg:rect x="30pt" y="30pt" width="50pt" height="80pt"/>

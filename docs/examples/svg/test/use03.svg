@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="yes"?>
 
-<svg:svg width="10cm" height="3cm" xmlns:svg="http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd">
+<svg:svg width="10cm" height="3cm" xmlns:svg="http://www.w3.org/2000/svg">
   <svg:desc>Example Use03 - 'use' with a 'transform' attribute</svg:desc>
   <svg:defs>
     <svg:rect id="MyRect" x="0" y="0" width="6cm" height="1cm"/>
