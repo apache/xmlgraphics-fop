@@ -127,6 +127,8 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     public void endDocument()
     throws SAXException {
+        rootFObj = null;
+        currentFObj = null;
         if (getLogger().isDebugEnabled())
             getLogger().debug("Parsing of document complete");
         structHandler.endDocument();
@@ -168,8 +170,8 @@ public class FOTreeBuilder extends DefaultHandler {
             fobj.setName(localName);
             // set the user agent for resolving user agent values
             fobj.setUserAgent(userAgent);
-            // set the stream renderer so that appropriate
-            // elements can add pages and handle resolving references
+            // set the structure handler so that appropriate
+            // elements can signal structure events
             fobj.setStructHandler(structHandler);
 
             fobj.handleAttrs(attlist);
