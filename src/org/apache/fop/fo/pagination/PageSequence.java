@@ -143,7 +143,8 @@ public class PageSequence extends FObj {
         if (parent.getName().equals("fo:root")) {
             this.root = (Root)parent;
             // this.root.addPageSequence(this);
-        } else {
+        }
+        else {
             throw new FOPException("page-sequence must be child of root, not "
                                    + parent.getName());
         }
@@ -192,6 +193,7 @@ public class PageSequence extends FObj {
         // this.properties.get("language");
         // this.properties.get("id");
     }
+
 
     public void addFlow(Flow flow) throws FOPException {
         if (_flowMap.containsKey(flow.getFlowName())) {
@@ -274,9 +276,9 @@ public class PageSequence extends FObj {
             MessageHandler.log(" [" + currentPageNumber);
 
             if ((status.getCode() == Status.FORCE_PAGE_BREAK_EVEN)
-                    && ((currentPageNumber % 2) == 1)) {}
+                && ((currentPageNumber % 2) == 1)) {}
             else if ((status.getCode() == Status.FORCE_PAGE_BREAK_ODD)
-                     && ((currentPageNumber % 2) == 0)) {}
+                 && ((currentPageNumber % 2) == 0)) {}
             else {
                 BodyAreaContainer bodyArea = currentPage.getBody();
                 bodyArea.setIDReferences(areaTree.getIDReferences());
@@ -303,12 +305,13 @@ public class PageSequence extends FObj {
             MessageHandler.log("]");
             areaTree.addPage(currentPage);
             this.pageCount++;    // used for 'force-page-count' calculations
-        } while (flowsAreIncomplete());
+        }
+        while (flowsAreIncomplete());
         // handle the 'force-page-count'
         forcePage(areaTree, firstAvailPageNumber);
 
         currentPage = null;
-        
+
         MessageHandler.logln("");
     }
 
@@ -330,8 +333,8 @@ public class PageSequence extends FObj {
 
         // page number is 0-indexed
         PageMaster pageMaster = getNextPageMaster(masterName,
-                                                  firstAvailPageNumber,
-                                                  isFirstPage, isEmptyPage);
+                                firstAvailPageNumber,
+                                isFirstPage, isEmptyPage);
 
         // a legal alternative is to use the last sub-sequence
         // specification which should be handled in getNextSubsequence. That's not done here.
@@ -447,11 +450,11 @@ public class PageSequence extends FObj {
         // handle forcing
         if (isForcing) {
             String nextPageMaster = getNextPageMasterName(sequenceMaster,
-                    currentPageNumber, false, true);
+                                    currentPageNumber, false, true);
             return this.layoutMasterSet.getSimplePageMaster(nextPageMaster);
         }
         String nextPageMaster = getNextPageMasterName(sequenceMaster,
-                currentPageNumber, thisIsFirstPage, isEmptyPage);
+                                currentPageNumber, thisIsFirstPage, isEmptyPage);
         return this.layoutMasterSet.getSimplePageMaster(nextPageMaster);
 
     }
@@ -482,7 +485,8 @@ public class PageSequence extends FObj {
                 currentSubsequence.reset();
 
                 // we leave currentSubsequence alone
-            } else {
+            }
+            else {
                 currentSubsequence = nextSubsequence;
             }
 
@@ -621,7 +625,8 @@ public class PageSequence extends FObj {
             if (nextSequence != null) {
                 if (nextSequence.getIpnValue().equals("auto")) {
                     // do nothing special
-                } else if (nextSequence.getIpnValue().equals("auto-odd")) {
+                }
+                else if (nextSequence.getIpnValue().equals("auto-odd")) {
                     if (firstAvailPageNumber % 2 == 0) {
                         makePage = true;
                     }
@@ -656,6 +661,7 @@ public class PageSequence extends FObj {
         } else if (this.forcePageCount == ForcePageCount.NO_FORCE) {
             // do nothing
         }
+
         if (makePage) {
             try {
                 this.isForcing = true;

@@ -171,6 +171,7 @@ public class Driver {
         try {
             parserClassName = System.getProperty("org.xml.sax.parser");
         } catch (SecurityException se) {}
+
         if (parserClassName == null) {
             parserClassName = "org.apache.xerces.parsers.SAXParser";
         }
@@ -261,6 +262,7 @@ public class Driver {
                 try {
                     addElementMapping(str);
                 } catch (IllegalArgumentException e) {}
+
             }
         }
     }
@@ -338,7 +340,7 @@ public class Driver {
      * @see #setRenderer(int)
      */
     public void setRenderer(String rendererClassName)
-            throws IllegalArgumentException {
+    throws IllegalArgumentException {
         try {
             _renderer =
                 (Renderer)Class.forName(rendererClassName).newInstance();
@@ -346,13 +348,16 @@ public class Driver {
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
                                                + rendererClassName);
-        } catch (InstantiationException e) {
+        }
+        catch (InstantiationException e) {
             throw new IllegalArgumentException("Could not instantiate "
                                                + rendererClassName);
-        } catch (IllegalAccessException e) {
+        }
+        catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Could not access "
                                                + rendererClassName);
-        } catch (ClassCastException e) {
+        }
+        catch (ClassCastException e) {
             throw new IllegalArgumentException(rendererClassName
                                                + " is not a renderer");
         }
@@ -372,7 +377,7 @@ public class Driver {
      * add the element mapping with the given class name
      */
     public void addElementMapping(String mappingClassName)
-            throws IllegalArgumentException {
+    throws IllegalArgumentException {
         try {
             ElementMapping mapping =
                 (ElementMapping)Class.forName(mappingClassName).newInstance();
@@ -380,13 +385,16 @@ public class Driver {
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
                                                + mappingClassName);
-        } catch (InstantiationException e) {
+        }
+        catch (InstantiationException e) {
             throw new IllegalArgumentException("Could not instantiate "
                                                + mappingClassName);
-        } catch (IllegalAccessException e) {
+        }
+        catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Could not access "
                                                + mappingClassName);
-        } catch (ClassCastException e) {
+        }
+        catch (ClassCastException e) {
             throw new IllegalArgumentException(mappingClassName
                                                + " is not an ElementMapping");
         }
@@ -408,7 +416,7 @@ public class Driver {
      * SAX InputSource
      */
     public synchronized void render(XMLReader parser, InputSource source)
-            throws FOPException {
+    throws FOPException {
         StreamRenderer streamRenderer = new StreamRenderer(_stream, _renderer);
         _treeBuilder.setStreamRenderer(streamRenderer);
         parser.setContentHandler(_treeBuilder);
@@ -420,7 +428,8 @@ public class Driver {
             } else {
                 throw new FOPException(e);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new FOPException(e);
         }
     }
@@ -429,10 +438,10 @@ public class Driver {
      * Build the formatting object tree using the given DOM Document
      */
     public synchronized void render(Document document)
-            throws FOPException {
+    throws FOPException {
         StreamRenderer streamRenderer = new StreamRenderer(_stream, _renderer);
         _treeBuilder.setStreamRenderer(streamRenderer);
-        
+
         try {
             DocumentInputSource source = new DocumentInputSource(document);
             DocumentReader reader = new DocumentReader();
@@ -440,7 +449,8 @@ public class Driver {
             reader.parse(source);
         } catch (SAXException e) {
             throw new FOPException(e);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new FOPException(e);
         }
 
@@ -473,7 +483,7 @@ public class Driver {
         this._bufferManager.addBufferFile(bufferFile);
     }
 
-    /** 
+    /**
      * Runs the formatting and renderering process using the previously set
      * inputsource and outputstream
      */
@@ -481,17 +491,17 @@ public class Driver {
         if (_renderer == null) {
             setRenderer(RENDER_PDF);
         }
-        
+
         if (_source == null) {
             throw new FOPException("InputSource is not set.");
         }
-        
+
         if (_reader == null) {
             if (!(_source instanceof DocumentInputSource)) {
                 _reader = ConfigurationReader.createParser();
             }
         }
-        
+
         if (_source instanceof DocumentInputSource) {
             render(((DocumentInputSource)_source).getDocument());
         } else {
@@ -549,7 +559,7 @@ class Service {
                         if (idx != -1)
                             line = line.substring(0, idx);
 
-                            // Trim whitespace.
+                        // Trim whitespace.
                         line = line.trim();
 
                         // If nothing left then loop around...
@@ -566,11 +576,13 @@ class Service {
                     } catch (Exception ex) {
                         // Just try the next line
                     }
+
                     line = br.readLine();
                 }
             } catch (Exception ex) {
                 // Just try the next file...
             }
+
         }
         return v.elements();
     }

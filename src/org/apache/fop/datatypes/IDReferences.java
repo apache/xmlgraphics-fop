@@ -237,7 +237,7 @@ public class IDReferences {
      * ex. 23 0 R
      */
     public void setInternalGoToPageReference(String id,
-                                             String pageReference) {
+            String pageReference) {
         IDNode node = (IDNode)idReferences.get(id);
         if (node != null) {
             node.setInternalLinkGoToPageReference(pageReference);
@@ -286,8 +286,7 @@ public class IDReferences {
         node.setPosition(x, y);
     }
 
-    public Enumeration getInvalidElements()
-    {
-      return idValidation.keys();
+    public Enumeration getInvalidElements() {
+        return idValidation.keys();
     }
 }

@@ -132,6 +132,7 @@ abstract public class FONode {
         // still to do
     }
 
+
     protected void addChild(FONode child) {
         children.addElement(child);
     }

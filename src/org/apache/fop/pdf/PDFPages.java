@@ -80,8 +80,7 @@ public class PDFPages extends PDFObject {
      *
      * @return the PDF string
      */
-    public byte[] toPDF()
-    {
+    public byte[] toPDF() {
         StringBuffer p = new StringBuffer(this.number + " " + this.generation
                                           + " obj\n<< /Type /Pages\n/Count "
                                           + this.getCount() + "\n/Kids [");

@@ -96,6 +96,7 @@ public class TXTRenderer extends PrintRenderer {
      */
     public void setProducer(String producer) {}
 
+
     void addStr(int row, int col, String str, boolean ischar) {
         if (debug)
             System.out.println("TXTRenderer.addStr(" + row + ", " + col
@@ -734,6 +735,7 @@ public class TXTRenderer extends PrintRenderer {
                                PDFColor fc, PDFColor sc, float sw,
                                boolean close) {}
 
+
     boolean printBMP(FopImage img, int x, int y, int w,
                      int h) throws FopImageException {
         if (debug)
@@ -750,13 +752,13 @@ public class TXTRenderer extends PrintRenderer {
                 if (iname.length() >= namew)
                     addStr((int)((pageHeight - (y / 100)) * 100 * yFactor)
                            + nameh, (int)(x * xFactor),
-                                    iname.substring(iname.length() - namew),
-                                    true);
+                           iname.substring(iname.length() - namew),
+                           true);
                 else
                     addStr((int)((pageHeight - (y / 100)) * 100 * yFactor)
                            + nameh, (int)(x * xFactor
                                           + (namew - iname.length())
-                                            / 2), iname, true);
+                                          / 2), iname, true);
 
             }
         }
@@ -867,6 +869,7 @@ public class TXTRenderer extends PrintRenderer {
         this.currentXPosition += area.getEffectiveWidth();
         // this.currentYPosition -= area.getEffectiveHeight();
     }
+
 
     void renderSVG(FontState fontState, SVGSVGElement svg, int x, int y) {
         /*
@@ -1607,7 +1610,7 @@ public class TXTRenderer extends PrintRenderer {
         if (end != null)
             renderAreaContainer(end);
 
-            // Write out the buffers.
+        // Write out the buffers.
         for (int row = 0; row <= maxY; row++) {
             StringBuffer cr = charData[row];
             StringBuffer dr = decoData[row];
@@ -1673,35 +1676,32 @@ public class TXTRenderer extends PrintRenderer {
          */
     }
     public void startRenderer(OutputStream outputStream)
-      throws IOException
-    {
-      MessageHandler.logln("rendering areas to TEXT");
-      currentStream = new PCLStream(outputStream);
-      firstPage=true;
+    throws IOException {
+        MessageHandler.logln("rendering areas to TEXT");
+        currentStream = new PCLStream(outputStream);
+        firstPage=true;
     }
-    
-   /**
-     * In Mark's patch, this is endRenderer
-     * However, I couldn't see how it builds that way, so
-     * i changed it. - Steve gears@apache.org
-     */
+
+    /**
+      * In Mark's patch, this is endRenderer
+      * However, I couldn't see how it builds that way, so
+      * i changed it. - Steve gears@apache.org
+      */
 
     public void stopRenderer(OutputStream outputStream)
-      throws IOException
-    {
+    throws IOException {
         MessageHandler.logln("writing out TEXT");
         outputStream.flush();
     }
 
-    public void render(Page page, OutputStream outputStream)
-    {
-      idReferences = page.getIDReferences();
+    public void render(Page page, OutputStream outputStream) {
+        idReferences = page.getIDReferences();
 
-      if ( firstPage )
-	firstPage = false;
-      else
-	currentStream.add(pageEnding);
-      this.renderPage(page);
-      currentStream.add(lineEnding);
-     }
+        if ( firstPage )
+            firstPage = false;
+        else
+            currentStream.add(pageEnding);
+        this.renderPage(page);
+        currentStream.add(lineEnding);
+    }
 }

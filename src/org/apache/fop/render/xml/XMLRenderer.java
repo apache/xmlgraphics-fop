@@ -70,12 +70,11 @@ public class XMLRenderer implements Renderer {
         this.producer = producer;
     }
 
-    
+
     public void render(Page page, OutputStream outputStream)
-      throws IOException
-    {
-      this.renderPage(page);
-     }
+    throws IOException {
+        this.renderPage(page);
+    }
 
     /**
      * write out spaces to make indent
@@ -427,30 +426,28 @@ public class XMLRenderer implements Renderer {
     private boolean isCoarseXml() {
         return ((Boolean)options.get("fineDetail")).booleanValue();
     }
-    
+
     /**
       Default start renderer method. This would
       normally be overridden. (mark-fop@inomial.com).
     */
     public void startRenderer(OutputStream outputStream)
-      throws IOException
-    {
+    throws IOException {
         MessageHandler.logln("rendering areas to XML");
         this.writer = new PrintWriter(outputStream);
         this.writer.write( "<?xml version=\"1.0\"?>\n<!-- produced by " +
                            this.producer + " -->\n");
         writeStartTag("<AreaTree>");
     }
-    
+
     /**
       Default stop renderer method. This would
       normally be overridden. (mark-fop@inomial.com).
     */
     public void stopRenderer(OutputStream outputStream)
-      throws IOException
-    {
+    throws IOException {
         writeEndTag("</AreaTree>");
         this.writer.flush();
         MessageHandler.errorln("written out XML");
-     }
+    }
 }

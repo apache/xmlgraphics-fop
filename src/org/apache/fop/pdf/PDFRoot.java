@@ -39,14 +39,14 @@ public class PDFRoot extends PDFObject {
         super(number);
         setRootPages(pages);
     }
-    
+
     /**
      * Before the root is written to the document stream,
      * make sure it's object number is set. Package-private access
      * only; outsiders should not be fiddling with this stuff.
      */
     void setNumber(int number) {
-      this.number = number;
+        this.number = number;
     }
 
     /**
@@ -71,10 +71,9 @@ public class PDFRoot extends PDFObject {
         _outline = outline;
     }
 
-   public PDFOutline getRootOutline()
-   {
-   	return _outline;
-   }
+    public PDFOutline getRootOutline() {
+        return _outline;
+    }
 
 
     /**
@@ -86,8 +85,7 @@ public class PDFRoot extends PDFObject {
      * @return the PDF string
      */
     public byte[] toPDF()
-      throws IllegalStateException
-    {
+    throws IllegalStateException {
         StringBuffer p = new StringBuffer(this.number + " " + this.generation
                                           + " obj\n<< /Type /Catalog\n/Pages "
                                           + this.rootPages.referencePDF()

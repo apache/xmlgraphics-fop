@@ -140,7 +140,7 @@ public abstract class PrintRenderer implements Renderer {
      * @param g the green component
      * @param b the blue component
      */
-    protected abstract void addLine(int x1, int y1, int x2, int y2, int th, 
+    protected abstract void addLine(int x1, int y1, int x2, int y2, int th,
                                     PDFPathPaint stroke);
 
     /**
@@ -156,7 +156,7 @@ public abstract class PrintRenderer implements Renderer {
      * @param g the green component
      * @param b the blue component
      */
-    protected abstract void addLine(int x1, int y1, int x2, int y2, int th, 
+    protected abstract void addLine(int x1, int y1, int x2, int y2, int th,
                                     int rs, PDFPathPaint stroke);
 
     /**
@@ -168,7 +168,7 @@ public abstract class PrintRenderer implements Renderer {
      * @param h the height in millipoints
      * @param stroke the stroke color/gradient
      */
-    protected abstract void addRect(int x, int y, int w, int h, 
+    protected abstract void addRect(int x, int y, int w, int h,
                                     PDFPathPaint stroke);
 
     /**
@@ -181,7 +181,7 @@ public abstract class PrintRenderer implements Renderer {
      * @param fill the fill color/gradient
      * @param stroke the stroke color/gradient
      */
-    protected abstract void addRect(int x, int y, int w, int h, 
+    protected abstract void addRect(int x, int y, int w, int h,
                                     PDFPathPaint stroke, PDFPathPaint fill);
 
     /**
@@ -195,10 +195,10 @@ public abstract class PrintRenderer implements Renderer {
      * @param h the height in millipoints
      * @param fill the fill color/gradient
      */
-    protected void addFilledRect(int x, int y, int w, int h, 
+    protected void addFilledRect(int x, int y, int w, int h,
                                  PDFPathPaint fill) {
         addRect(x, y, w, h, fill, fill);
-    } 
+    }
 
     /**
      * render area container
@@ -218,13 +218,13 @@ public abstract class PrintRenderer implements Renderer {
             this.currentYPosition -= area.getYPosition();
             this.currentAreaContainerXPosition += area.getXPosition();
         } else if (area.getPosition() == Position.STATIC) {
-            this.currentYPosition -= area.getPaddingTop() 
+            this.currentYPosition -= area.getPaddingTop()
                                      + area.getBorderTopWidth();
             /*
              * this.currentAreaContainerXPosition +=
              * area.getPaddingLeft() + area.getBorderLeftWidth();
              */
-        } 
+        }
 
         this.currentXPosition = this.currentAreaContainerXPosition;
         doFrame(area);
@@ -233,13 +233,13 @@ public abstract class PrintRenderer implements Renderer {
         while (e.hasMoreElements()) {
             Box b = (Box)e.nextElement();
             b.render(this);
-        } 
+        }
         // Restore previous origin
         this.currentYPosition = saveY;
         this.currentAreaContainerXPosition = saveX;
         if (area.getPosition() == Position.STATIC) {
             this.currentYPosition -= area.getHeight();
-        } 
+        }
 
         /**
          * **
@@ -250,7 +250,7 @@ public abstract class PrintRenderer implements Renderer {
          * this.currentYPosition -= area.getHeight();
          * **
          */
-    } 
+    }
 
     public void renderBodyAreaContainer(BodyAreaContainer area) {
         int saveY = this.currentYPosition;
@@ -263,7 +263,7 @@ public abstract class PrintRenderer implements Renderer {
         } else if (area.getPosition() == Position.RELATIVE) {
             this.currentYPosition -= area.getYPosition();
             this.currentAreaContainerXPosition += area.getXPosition();
-        } 
+        }
 
         this.currentXPosition = this.currentAreaContainerXPosition;
         int w, h;
@@ -277,7 +277,7 @@ public abstract class PrintRenderer implements Renderer {
         // but I do
         if ((bg != null) && (bg.alpha() == 0)) {
             this.addRect(rx, ry, w, -h, new PDFColor(bg), new PDFColor(bg));
-        } 
+        }
 
         // floats & footnotes stuff
         renderAreaContainer(area.getBeforeFloatReferenceArea());
@@ -288,7 +288,8 @@ public abstract class PrintRenderer implements Renderer {
         while (e.hasMoreElements()) {
             Box b = (Box)e.nextElement();
             b.render(this);    // span areas
-        } 
+        }
+
 
         if (area.getPosition() != Position.STATIC) {
             this.currentYPosition = saveY;
@@ -296,15 +297,16 @@ public abstract class PrintRenderer implements Renderer {
         } else
             this.currentYPosition -= area.getHeight();
 
-    } 
+    }
 
     public void renderSpanArea(SpanArea area) {
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
             Box b = (Box)e.nextElement();
             b.render(this);    // column areas
-        } 
-    } 
+        }
+
+    }
 
     private void doFrame(Area area) {
         int w, h;
@@ -325,7 +327,7 @@ public abstract class PrintRenderer implements Renderer {
         // but I do
         if ((bg != null) && (bg.alpha() == 0)) {
             this.addFilledRect(rx, ry, w, -h, new PDFColor(bg));
-        } 
+        }
 
         // rx = rx - area.getBorderLeftWidth();
         // ry = ry + area.getBorderTopWidth();
@@ -359,18 +361,18 @@ public abstract class PrintRenderer implements Renderer {
         int bottom = area.getBorderBottomWidth();
         // If style is solid, use filled rectangles
         if (top != 0)
-            addFilledRect(rx, ry, w, top, 
+            addFilledRect(rx, ry, w, top,
                           new PDFColor(bp.getBorderColor(BorderAndPadding.TOP)));
         if (left != 0)
-            addFilledRect(rx - left, ry - h - bottom, left, h + top + bottom, 
+            addFilledRect(rx - left, ry - h - bottom, left, h + top + bottom,
                           new PDFColor(bp.getBorderColor(BorderAndPadding.LEFT)));
         if (right != 0)
-            addFilledRect(rx + w, ry - h - bottom, right, h + top + bottom, 
+            addFilledRect(rx + w, ry - h - bottom, right, h + top + bottom,
                           new PDFColor(bp.getBorderColor(BorderAndPadding.RIGHT)));
         if (bottom != 0)
-            addFilledRect(rx, ry - h - bottom, w, bottom, 
+            addFilledRect(rx, ry - h - bottom, w, bottom,
                           new PDFColor(bp.getBorderColor(BorderAndPadding.BOTTOM)));
-    } 
+    }
 
 
     /**
@@ -381,17 +383,17 @@ public abstract class PrintRenderer implements Renderer {
     public void renderBlockArea(BlockArea area) {
         // KLease: Temporary test to fix block positioning
         // Offset ypos by padding and border widths
-        this.currentYPosition -= (area.getPaddingTop() 
+        this.currentYPosition -= (area.getPaddingTop()
                                   + area.getBorderTopWidth());
         doFrame(area);
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
             Box b = (Box)e.nextElement();
             b.render(this);
-        } 
-        this.currentYPosition -= (area.getPaddingBottom() 
+        }
+        this.currentYPosition -= (area.getPaddingBottom()
                                   + area.getBorderBottomWidth());
-    } 
+    }
 
     /**
      * render display space
@@ -401,7 +403,7 @@ public abstract class PrintRenderer implements Renderer {
     public void renderDisplaySpace(DisplaySpace space) {
         int d = space.getSize();
         this.currentYPosition -= d;
-    } 
+    }
 
     /**
      * render image area
@@ -429,39 +431,39 @@ public abstract class PrintRenderer implements Renderer {
      */
     public abstract void renderWordArea(WordArea area);
 
-    protected void addWordLines(WordArea area, int rx, int bl, int size, 
+    protected void addWordLines(WordArea area, int rx, int bl, int size,
                                 PDFColor theAreaColor) {
         if (area.getUnderlined()) {
             int yPos = bl - size / 10;
-            addLine(rx, yPos, rx + area.getContentWidth(), yPos, size / 14, 
+            addLine(rx, yPos, rx + area.getContentWidth(), yPos, size / 14,
                     theAreaColor);
             // save position for underlining a following InlineSpace
             prevUnderlineXEndPos = rx + area.getContentWidth();
             prevUnderlineYEndPos = yPos;
             prevUnderlineSize = size / 14;
             prevUnderlineColor = theAreaColor;
-        } 
+        }
 
         if (area.getOverlined()) {
             int yPos = bl + area.getFontState().getAscender() + size / 10;
-            addLine(rx, yPos, rx + area.getContentWidth(), yPos, size / 14, 
+            addLine(rx, yPos, rx + area.getContentWidth(), yPos, size / 14,
                     theAreaColor);
             prevOverlineXEndPos = rx + area.getContentWidth();
             prevOverlineYEndPos = yPos;
             prevOverlineSize = size / 14;
             prevOverlineColor = theAreaColor;
-        } 
+        }
 
         if (area.getLineThrough()) {
             int yPos = bl + area.getFontState().getAscender() * 3 / 8;
-            addLine(rx, yPos, rx + area.getContentWidth(), yPos, size / 14, 
+            addLine(rx, yPos, rx + area.getContentWidth(), yPos, size / 14,
                     theAreaColor);
             prevLineThroughXEndPos = rx + area.getContentWidth();
             prevLineThroughYEndPos = yPos;
             prevLineThroughSize = size / 14;
             prevLineThroughColor = theAreaColor;
-        } 
-    } 
+        }
+    }
 
     /**
      * render inline space
@@ -472,29 +474,29 @@ public abstract class PrintRenderer implements Renderer {
         this.currentXPosition += space.getSize();
         if (space.getUnderlined()) {
             if (prevUnderlineColor != null) {
-                addLine(prevUnderlineXEndPos, prevUnderlineYEndPos, 
-                        prevUnderlineXEndPos + space.getSize(), 
-                        prevUnderlineYEndPos, prevUnderlineSize, 
+                addLine(prevUnderlineXEndPos, prevUnderlineYEndPos,
+                        prevUnderlineXEndPos + space.getSize(),
+                        prevUnderlineYEndPos, prevUnderlineSize,
                         prevUnderlineColor);
-            } 
-        } 
+            }
+        }
         if (space.getOverlined()) {
             if (prevOverlineColor != null) {
-                addLine(prevOverlineXEndPos, prevOverlineYEndPos, 
-                        prevOverlineXEndPos + space.getSize(), 
-                        prevOverlineYEndPos, prevOverlineSize, 
+                addLine(prevOverlineXEndPos, prevOverlineYEndPos,
+                        prevOverlineXEndPos + space.getSize(),
+                        prevOverlineYEndPos, prevOverlineSize,
                         prevOverlineColor);
-            } 
-        } 
+            }
+        }
         if (space.getLineThrough()) {
             if (prevLineThroughColor != null) {
-                addLine(prevLineThroughXEndPos, prevLineThroughYEndPos, 
-                        prevLineThroughXEndPos + space.getSize(), 
-                        prevLineThroughYEndPos, prevLineThroughSize, 
+                addLine(prevLineThroughXEndPos, prevLineThroughYEndPos,
+                        prevLineThroughXEndPos + space.getSize(),
+                        prevLineThroughYEndPos, prevLineThroughSize,
                         prevLineThroughColor);
-            } 
-        } 
-    } 
+            }
+        }
+    }
 
     /**
      * render line area
@@ -520,13 +522,13 @@ public abstract class PrintRenderer implements Renderer {
                 this.currentYPosition = ry - ia.getYOffset();
             } else {
                 this.currentYPosition = ry - area.getPlacementOffset();
-            } 
+            }
             b.render(this);
-        } 
+        }
 
         this.currentYPosition = ry - h;
         this.currentXPosition = rx;
-    } 
+    }
 
     /**
      * render page
@@ -553,37 +555,37 @@ public abstract class PrintRenderer implements Renderer {
         if (th != 0) {
             switch (st) {
             case org.apache.fop.fo.properties.RuleStyle.DOUBLE:
-                addLine(rx, ry, rx + w, ry, th / 3, st, 
-                        new PDFColor(area.getRed(), area.getGreen(), 
+                addLine(rx, ry, rx + w, ry, th / 3, st,
+                        new PDFColor(area.getRed(), area.getGreen(),
                                      area.getBlue()));
-                addLine(rx, ry + (2 * th / 3), rx + w, ry + (2 * th / 3), 
-                        th / 3, st, 
-                        new PDFColor(area.getRed(), area.getGreen(), 
+                addLine(rx, ry + (2 * th / 3), rx + w, ry + (2 * th / 3),
+                        th / 3, st,
+                        new PDFColor(area.getRed(), area.getGreen(),
                                      area.getBlue()));
                 break;
             case org.apache.fop.fo.properties.RuleStyle.GROOVE:
-                addLine(rx, ry, rx + w, ry, th / 2, st, 
-                        new PDFColor(area.getRed(), area.getGreen(), 
+                addLine(rx, ry, rx + w, ry, th / 2, st,
+                        new PDFColor(area.getRed(), area.getGreen(),
                                      area.getBlue()));
-                addLine(rx, ry + (th / 2), rx + w, ry + (th / 2), th / 2, st, 
+                addLine(rx, ry + (th / 2), rx + w, ry + (th / 2), th / 2, st,
                         new PDFColor(255, 255, 255));
                 break;
             case org.apache.fop.fo.properties.RuleStyle.RIDGE:
-                addLine(rx, ry, rx + w, ry, th / 2, st, 
+                addLine(rx, ry, rx + w, ry, th / 2, st,
                         new PDFColor(255, 255, 255));
-                addLine(rx, ry + (th / 2), rx + w, ry + (th / 2), th / 2, st, 
-                        new PDFColor(area.getRed(), area.getGreen(), 
+                addLine(rx, ry + (th / 2), rx + w, ry + (th / 2), th / 2, st,
+                        new PDFColor(area.getRed(), area.getGreen(),
                                      area.getBlue()));
                 break;
             default:
-                addLine(rx, ry, rx + w, ry, th, st, 
-                        new PDFColor(area.getRed(), area.getGreen(), 
+                addLine(rx, ry, rx + w, ry, th, st,
+                        new PDFColor(area.getRed(), area.getGreen(),
                                      area.getBlue()));
             }
             this.currentXPosition += area.getContentWidth();
             this.currentYPosition += th;
-        } 
-    } 
+        }
+    }
 
     /**
      * set up the font info
@@ -593,16 +595,14 @@ public abstract class PrintRenderer implements Renderer {
     public void setupFontInfo(FontInfo fontInfo) {
         this.fontInfo = fontInfo;
         FontSetup.setup(fontInfo);
-    } 
-    
+    }
+
     /**
       Default start renderer method. This would
       normally be overridden. (mark-fop@inomial.com).
     */
     public void startRenderer(OutputStream outputStream)
-      throws IOException
-    {
-    }
+    throws IOException {}
     /**
      Default stop renderer method. This would
      normally be overridden. (mark-fop@inomial.com).

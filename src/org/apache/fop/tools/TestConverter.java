@@ -79,6 +79,7 @@ public class TestConverter {
 
     public TestConverter() {}
 
+
     public void setOutputPDF(boolean pdf) {
         outputPDF = pdf;
     }
@@ -123,6 +124,7 @@ public class TestConverter {
                     testsuite.getAttributes().getNamedItem("profile").getNodeValue();
                 // System.out.println("testing test suite:" + profile);
             }
+
             NodeList testcases = testsuite.getChildNodes();
             for (int count = 0; count < testcases.getLength(); count++) {
                 Node testcase = testcases.item(count);
@@ -148,6 +150,7 @@ public class TestConverter {
                 tcase.getAttributes().getNamedItem("profile").getNodeValue();
             // System.out.println("testing profile:" + profile);
         }
+
         NodeList cases = tcase.getChildNodes();
         for (int count = 0; count < cases.getLength(); count++) {
             Node node = cases.item(count);
@@ -157,6 +160,7 @@ public class TestConverter {
             } else if (nodename.equals("test")) {
                 runTest(tcase, node);
             } else if (nodename.equals("result")) {}
+
         }
 
     }
@@ -207,7 +211,7 @@ public class TestConverter {
             } else {
                 inputHandler = new XSLTInputHandler(xmlFile,
                                                     new File(baseDir + "/"
-                                                    + xsl));
+                                                             + xsl));
             }
 
             XMLReader parser = inputHandler.getParser();
@@ -224,13 +228,13 @@ public class TestConverter {
             rendererOptions.put("fineDetail", new Boolean(false));
             driver.getRenderer().setOptions(rendererOptions);
             driver.getRenderer().setProducer("Testsuite Converter");
-            
+
             String outname = xmlFile.getName();
             if (outname.endsWith(".xml")) {
                 outname = outname.substring(0, outname.length() - 4);
             }
             driver.setOutputStream(new FileOutputStream(new File(destdir,
-                    outname + (outputPDF ? ".pdf" : ".at.xml"))));
+                                   outname + (outputPDF ? ".pdf" : ".at.xml"))));
             // System.out.println("ddir:" + destdir + " on:" + outname + ".pdf");
             driver.render(parser, inputHandler.getInputSource());
 
@@ -266,6 +270,7 @@ public class TestConverter {
                 }
             }
         } catch (Exception e) {}
+
         return false;
     }
 

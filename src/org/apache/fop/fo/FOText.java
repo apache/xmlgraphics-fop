@@ -56,15 +56,15 @@ public class FOText extends FONode {
         for (int i = s; i < e; i++)
             ca[i - s] = chars[i];
         this.length = e - s;
-        
+
         /* ML - remove refs to BufferManager
         this.bufferManager = parent.bufferManager;
         if (this.bufferManager != null) {
             bufferManager.writeBuffer((Object)this, ca);
-        } else {
+    } else {
             System.out.println("abnormal exit");
             System.exit(0);
-        }
+    }
         */
     }
 
@@ -84,7 +84,7 @@ public class FOText extends FONode {
     public boolean willCreateArea() {
         // ML - remove refs to BufferManager
         //char ca[] = this.bufferManager.readBuffer((Object)this);
-        
+
         this.whiteSpaceCollapse =
             this.parent.properties.get("white-space-collapse").getEnum();
         if (this.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE
@@ -208,8 +208,8 @@ public class FOText extends FONode {
                 isLowerCase = (java.lang.Character.isLetter(c)
                                && java.lang.Character.isLowerCase(c));
                 while (isLowerCase
-                       == (java.lang.Character.isLetter(c)
-                           && java.lang.Character.isLowerCase(c))) {
+                        == (java.lang.Character.isLetter(c)
+                            && java.lang.Character.isLowerCase(c))) {
                     if (isLowerCase) {
                         data[i] = java.lang.Character.toUpperCase(c);
                     }

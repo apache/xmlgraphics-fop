@@ -34,7 +34,7 @@ public class CommandLineStarter extends Starter {
     boolean errorDump;
 
     public CommandLineStarter(CommandLineOptions commandLineOptions)
-            throws FOPException {
+    throws FOPException {
         this.commandLineOptions = commandLineOptions;
         options.setCommandLineOptions(commandLineOptions);
         errorDump = Configuration.getBooleanValue("debugMode").booleanValue();
