@@ -8,8 +8,6 @@
     </header>
 
     <body>
-<section>
-  <title>Property Handling</title>
 <p>During XML Parsing, the FO tree is constructed. For each FO object (some
 subclass of FObj), the tree builder then passes the list of all
 attributes specified on the FO element to the handleAttrs method. This
@@ -104,7 +102,6 @@ inherited or no value is found at any level, the initial value is
 returned.</p>
 </section>
 
-</section>
     </body>
 </document>
 

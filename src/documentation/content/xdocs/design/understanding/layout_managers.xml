@@ -7,9 +7,6 @@
         <title>Layout Managers</title>
     </header>
     <body>
-<section>
-  <title>Layout Managers</title>
-
 <p>The role of the layout managers is to build the Area Tree by using the
 information from the FO Tree. The layout managers decide where information
 is placed in the area tree.</p>
@@ -57,7 +54,6 @@ turn effects the available size of the main reference area that contains
 the flow.</p>
 <p>A layout manager handles the adding and removing of footnotes/floats, this in turn effects the available space in the main reference area.</p>
 
-</section>
 </section>
 
     </body>
