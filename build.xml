@@ -150,6 +150,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <fileset dir="${basedir}" id="dist.src">
     <exclude name="lib/jimi*"/>
     <exclude name="lib/jai*"/>
+    <exclude name="lib/jce*"/>
     <include name="src/**"/>
     <include name="build/site/**"/>
     <include name="conf/**"/>
@@ -189,7 +190,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.20.5rc3a"/>
+    <property name="version" value="0.20.5"/>
     <filter  token="version" value="${version}"/>
     <property name="year" value="1999-2003"/>
 
