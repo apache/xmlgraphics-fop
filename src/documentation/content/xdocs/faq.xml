@@ -531,21 +531,10 @@ Any easy way to check this is to cut&amp;paste the source URL from the fo:extern
     <faq id="hyphenation-fails">
       <question>Hyphenation does not work.</question>
       <answer>
-        <p>
-          Set the language attribute somewhere and explicitly enable hyphenation. 
-          Check whether you use a language for which hyphenation is supported. 
-          Supported languages can be deduced from the files in the {fop-dir}/src/hyph
-          directory of the FOP source distribution. If you want to use a language
-          FOP currently doesn't hyphenate, please see the 
-          <link href="configuration.html#hyphenation">Configuration page</link>.
-        </p>
-        <p>
-          Set the language (on fo:page-sequence, fo:block or fo:character):
-        </p>
+        <p>Make sure you have set the language and/or country attributes for an appropriate XSL-FO element (fo:page-sequence, fo:block or fo:character):</p>
         <source><![CDATA[<fo:page-sequence language="fi">]]></source>
-        <p>
-          Enable hyphenation on a block:
-        </p>
+        <p>See <link href="hyphenation.html#std">Standard Hyphenation Support</link> for a list of supported language and country codes, and <link href="hyphenation.html#custom">Custom Hyphenation Support</link> for instructions on adding support for other languages and countries.</p>
+        <p>Explicitly enable hyphenation for an appropriate XSL-FO element (fo:block, fo:character):</p>
         <source><![CDATA[<fo:block hyphenate="true">]]></source>
       </answer>
     </faq>
