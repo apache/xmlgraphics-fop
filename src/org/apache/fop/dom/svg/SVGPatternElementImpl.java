@@ -57,79 +57,95 @@ import org.w3c.dom.svg.*;
  *
  */
 public class SVGPatternElementImpl extends SVGURIReferenceImpl implements SVGPatternElement {
+    SVGAnimatedEnumeration patternUnits;
+    SVGAnimatedTransformList patternTransform;
+    SVGAnimatedLength x;
+    SVGAnimatedLength y;
+    SVGAnimatedLength width;
+    SVGAnimatedLength height;
+    SVGAnimatedRect viewBox;
+    SVGAnimatedPreserveAspectRatio preserveAspectRatio;
 
 	public SVGPatternElementImpl() {
 	}
 
 	public SVGAnimatedEnumeration getPatternUnits( )
 	{
-		return null;
+		return patternUnits;
 	}
 
 	public void setPatternUnits( SVGAnimatedEnumeration patternUnits )
 	{
+	    this.patternUnits = patternUnits;
 	}
 
 	public SVGAnimatedTransformList getPatternTransform( )
 	{
-		return null;
+		return patternTransform;
 	}
 
 	public void setPatternTransform( SVGAnimatedTransformList patternTransform )
 	{
+	    this.patternTransform = patternTransform;
 	}
 
 	public SVGAnimatedLength getX( )
 	{
-		return null;
+		return x;
 	}
 
 	public void setX( SVGAnimatedLength x )
 	{
+	    this.x = x;
 	}
 
 	public SVGAnimatedLength getY( )
 	{
-		return null;
+		return y;
 	}
 
 	public void setY( SVGAnimatedLength y )
 	{
+	    this.y = y;
 	}
 
 	public SVGAnimatedLength getWidth( )
 	{
-		return null;
+		return width;
 	}
 
 	public void setWidth( SVGAnimatedLength width )
 	{
+	    this.width = width;
 	}
 
 	public SVGAnimatedLength getHeight( )
 	{
-		return null;
+		return height;
 	}
 
 	public void setHeight( SVGAnimatedLength height )
 	{
+	    this.height = height;
 	}
 
 	public SVGAnimatedRect getViewBox( )
 	{
-		return null;
+		return viewBox;
 	}
 
 	public void setViewBox( SVGAnimatedRect viewBox )
 	{
+	    this.viewBox = viewBox;
 	}
 
 	public SVGAnimatedPreserveAspectRatio getPreserveAspectRatio( )
 	{
-		return null;
+		return preserveAspectRatio;
 	}
 
 	public void setPreserveAspectRatio( SVGAnimatedPreserveAspectRatio preserveAspectRatio)
 	{
+	    this.preserveAspectRatio = preserveAspectRatio;
 	}
 }
