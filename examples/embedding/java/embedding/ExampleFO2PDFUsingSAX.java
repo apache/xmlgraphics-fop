@@ -64,8 +64,7 @@ public class ExampleFO2PDFUsingSAX {
         
         try {
             // Construct driver and setup output format
-            Driver driver = new Driver();
-            driver.setRenderer(Driver.RENDER_PDF);
+            Driver driver = new Driver(Driver.RENDER_PDF);
     
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).
@@ -110,7 +109,7 @@ public class ExampleFO2PDFUsingSAX {
 
             //Setup input and output files            
             File fofile = new File(baseDir, "xml/fo/helloworld.fo");
-            File pdffile = new File(outDir, "ResultFO2PDF.pdf");
+            File pdffile = new File(outDir, "ResultFO2PDFUsingSAX.pdf");
 
             System.out.println("Input: XSL-FO (" + fofile + ")");
             System.out.println("Output: PDF (" + pdffile + ")");

@@ -531,11 +531,9 @@ class FOPTaskStarter {
         }
 
         try {
-            Driver driver = new Driver();
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(this.baseURL);
-            driver.setUserAgent(userAgent);
-            driver.setRenderer(renderer);
+            Driver driver = new Driver(renderer, userAgent);
             driver.setOutputStream(out);
             driver.render(inputHandler);
         } catch (Exception ex) {

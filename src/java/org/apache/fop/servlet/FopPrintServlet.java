@@ -138,8 +138,7 @@ public class FopPrintServlet extends HttpServlet {
     public void renderFO(InputStream foFile,
                          HttpServletResponse response) throws ServletException {
         try {
-            Driver driver = new Driver();
-            driver.setRenderer(Driver.RENDER_PRINT);
+            Driver driver = new Driver(Driver.RENDER_PRINT);
 
             // Setup JAXP
             TransformerFactory factory = TransformerFactory.newInstance();
@@ -170,8 +169,7 @@ public class FopPrintServlet extends HttpServlet {
     public void renderXML(File xmlfile, File xsltfile,
                           HttpServletResponse response) throws ServletException {
         try {
-            Driver driver = new Driver();
-            driver.setRenderer(Driver.RENDER_PRINT);
+            Driver driver = new Driver(Driver.RENDER_PRINT);
 
             // Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();

@@ -84,7 +84,16 @@
 		  </classpath>
 		</java>
 	</target>
-	<target name="example2" depends="compile" description="Runs the XML to FO example">
+	<target name="example2" depends="compile" description="Runs the FO to PDF example using a SAXParser">
+		<echo message="Running the FO to PDF example using a SAXParser"/>
+		<java classname="${name}.ExampleFO2PDFUsingSAX" fork="yes">
+		  <classpath>
+		    <path refid="project.class.path"/>
+		    <pathelement location="${build.dest}"/>
+		  </classpath>
+		</java>
+	</target>
+	<target name="example3" depends="compile" description="Runs the XML to FO example">
 		<echo message="Running the XML to FO example"/>
 		<java classname="${name}.ExampleXML2FO" fork="yes">
 		  <classpath>
@@ -93,7 +102,7 @@
 		  </classpath>
 		</java>
 	</target>
-	<target name="example3" depends="compile" description="Runs the XML to PDF example">
+	<target name="example4" depends="compile" description="Runs the XML to PDF example">
 		<echo message="Running the XML to PDF example"/>
 		<java classname="${name}.ExampleXML2PDF" fork="yes">
 		  <classpath>
@@ -102,7 +111,7 @@
 		  </classpath>
 		</java>
 	</target>
-	<target name="example4" depends="compile" description="Runs the Object to XML example">
+	<target name="example5" depends="compile" description="Runs the Object to XML example">
 		<echo message="Running the Object to XML example"/>
 		<java classname="${name}.ExampleObj2XML" fork="yes">
 		  <classpath>
@@ -111,7 +120,7 @@
 		  </classpath>
 		</java>
 	</target>
-	<target name="example5" depends="compile" description="Runs the Object to PDF example">
+	<target name="example6" depends="compile" description="Runs the Object to PDF example">
 		<echo message="Running the Object to PDF example"/>
 		<java classname="${name}.ExampleObj2PDF" fork="yes">
 		  <classpath>
@@ -120,7 +129,7 @@
 		  </classpath>
 		</java>
 	</target>
-	<target name="example6" depends="compile" description="Runs the DOM to PDF example">
+	<target name="example7" depends="compile" description="Runs the DOM to PDF example">
 		<echo message="Running the DOM to PDF example"/>
 		<java classname="${name}.ExampleDOM2PDF" fork="yes">
 		  <classpath>
@@ -129,18 +138,9 @@
 		  </classpath>
 		</java>
 	</target>
-	<target name="example7" depends="compile" description="Runs the SVG to PDF example">
+	<target name="example8" depends="compile" description="Runs the SVG to PDF example">
 		<echo message="Running the SVG to PDF example"/>
 		<java classname="${name}.ExampleSVG2PDF" fork="yes">
-		  <classpath>
-		    <path refid="project.class.path"/>
-		    <pathelement location="${build.dest}"/>
-		  </classpath>
-		</java>
-	</target>
-	<target name="example8" depends="compile" description="Runs the FO to PDF example using a SAXParser">
-		<echo message="Running the FO to PDF example using a SAXParser"/>
-		<java classname="${name}.ExampleFO2PDFUsingSAX" fork="yes">
 		  <classpath>
 		    <path refid="project.class.path"/>
 		    <pathelement location="${build.dest}"/>

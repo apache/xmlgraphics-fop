@@ -91,7 +91,7 @@ public class FOTreeBuilder extends DefaultHandler {
     
     /**
      * FOTreeBuilder constructor
-     * @param render type as defined in Constants class
+     * @param renderType output type as defined in Constants class
      * @param foUserAgent in effect for this process
      * @param stream OutputStream to direct results
      */
@@ -113,7 +113,13 @@ public class FOTreeBuilder extends DefaultHandler {
         } else {
             if (renderType == Constants.NOT_SET) {
                 throw new IllegalStateException(
-                        "Render must be set using setRender(int renderType)");
+                        "Desired render type not set.");
+            }
+            
+            if (renderType < Constants.RENDER_MIN_CONST 
+                || renderType > Constants.RENDER_MAX_CONST) {
+                throw new IllegalArgumentException(
+                    "Invalid render ID#" + renderType);
             }
 
             foInputHandler = new AreaTreeHandler(foUserAgent, renderType, 

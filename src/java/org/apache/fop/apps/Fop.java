@@ -44,8 +44,7 @@ public class Fop {
             options = new CommandLineOptions(args);
             foUserAgent = options.getFOUserAgent();
             
-            Driver driver = new Driver(foUserAgent);
-            driver.setRenderer(options.getRenderer());
+            Driver driver = new Driver(options.getRenderer(), foUserAgent);
 
             try {
                 if (options.getOutputFile() != null) {

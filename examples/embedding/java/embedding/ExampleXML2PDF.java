@@ -66,11 +66,8 @@ public class ExampleXML2PDF {
             System.out.println();
             System.out.println("Transforming...");
             
-            // Construct driver
-            Driver driver = new Driver();
-            
-            // Setup Renderer (output format)        
-            driver.setRenderer(Driver.RENDER_PDF);
+            // Construct driver with desired output format
+            Driver driver = new Driver(Driver.RENDER_PDF);
             
             // Setup output
             OutputStream out = new java.io.FileOutputStream(pdffile);

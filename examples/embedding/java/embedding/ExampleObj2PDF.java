@@ -55,11 +55,8 @@ public class ExampleObj2PDF {
     public void convertProjectTeam2PDF(ProjectTeam team, File xslt, File pdf) 
                 throws IOException, FOPException, TransformerException {
                     
-        // Construct driver
-        Driver driver = new Driver();
-        
-        // Setup Renderer (output format)        
-        driver.setRenderer(Driver.RENDER_PDF);
+        // Construct driver with desired output format
+        Driver driver = new Driver(Driver.RENDER_PDF);
 
         // Setup output
         OutputStream out = new java.io.FileOutputStream(pdf);

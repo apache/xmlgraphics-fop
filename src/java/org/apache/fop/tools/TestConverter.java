@@ -55,7 +55,7 @@ import org.apache.commons.logging.impl.SimpleLog;
 public class TestConverter {
     
     private boolean failOnly = false;
-    private boolean outputPDF = false;
+    private int renderType = Driver.RENDER_XML;
     private File destdir;
     private File compare = null;
     private String baseDir = "./";
@@ -106,7 +106,7 @@ public class TestConverter {
             if (args[count].equals("-failOnly")) {
                 tc.setFailOnly(true);
             } else if (args[count].equals("-pdf")) {
-                tc.setOutputPDF(true);
+                tc.setRenderType(Driver.RENDER_PDF);
             } else if (args[count].equals("-d")) {
                 tc.setDebug(true);
             } else if (args[count].equals("-b")) {
@@ -134,11 +134,11 @@ public class TestConverter {
     }
 
     /**
-     * Controls whether to generate PDF or XML.
-     * @param pdf If True, PDF is generated, Area Tree XML otherwise.
+     * Controls output type to generate
+     * @param renderType fo.Constants output constant (RENDER_PDF, RENDER_XML, etc.)
      */
-    public void setOutputPDF(boolean pdf) {
-        outputPDF = pdf;
+    public void setRenderType(int renderType) {
+        this.renderType = renderType;
     }
 
     /**
@@ -305,15 +305,9 @@ public class TestConverter {
                                                              + xsl));
             }
 
-            Driver driver = new Driver();
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(baseURL);
-            driver.setUserAgent(userAgent);
-            if (outputPDF) {
-                driver.setRenderer(Driver.RENDER_PDF);
-            } else {
-                driver.setRenderer(Driver.RENDER_XML);
-            }
+            Driver driver = new Driver(renderType, userAgent);
 
             userAgent.getRendererOptions().put("fineDetail", new Boolean(false));
             userAgent.getRendererOptions().put("consistentOutput", new Boolean(true));
@@ -323,8 +317,8 @@ public class TestConverter {
             if (outname.endsWith(".xml") || outname.endsWith(".pdf")) {
                 outname = outname.substring(0, outname.length() - 4);
             }
-            File outputFile = new File(destdir,
-                                 outname + (outputPDF ? ".pdf" : ".at.xml"));
+            File outputFile = new File(destdir, // assuming only RENDER_PDF or RENDER_XML here
+                                 outname + ((renderType==Driver.RENDER_PDF) ? ".pdf" : ".at.xml"));
 
             outputFile.getParentFile().mkdirs();
             OutputStream outStream = new java.io.BufferedOutputStream(

@@ -118,9 +118,7 @@ public final class GenericFOPTestCase extends TestCase {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
         DigestOutputStream out =
             new DigestOutputStream(new ByteArrayOutputStream(), outDigest);
-        Driver driver = new Driver();
-        driver.setUserAgent(foUserAgent);
-        driver.setRenderer(Driver.RENDER_PDF);
+        Driver driver = new Driver(Driver.RENDER_PDF, foUserAgent);
         driver.setOutputStream(out);
         InputSource source = new InputSource(new StringReader(fo));
         DigestFilter filter = new DigestFilter("MD5");
