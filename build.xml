@@ -117,7 +117,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
-  <target name="init">
+  <target name="init" depends="init-avail, init-filters-xalan1, init-filters-xalan2">
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
@@ -211,15 +211,31 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern"/> 
     <taskdef name="xslt" classname="org.apache.fop.tools.anttasks.Xslt"/>
+															
+    <filter filtersfile="${build.src}/codegen/filter"/>
+
+  </target>
+
+  <target name="init-avail">
     <available property="xt.present" classname="com.jclark.xsl.sax.XSLProcessor"/>
     <available property="jimi.present" classname="com.sun.jimi.core.Jimi"/>
     <available property="jai.present" classname="javax.media.jai.JAI"/>
 
     <available property="trax.present" classname="javax.xml.transform.Transformer"/>
     <available property="xalan1.present" classname="org.apache.xalan.xslt.XSLTProcessor"/>
+    <filter token="xalan1-replacestring" value="./build/src/org/apache/fop"/>
+    <filter token="xalan2-replacestring" value="../org/apache/fop"/>
 
-    <filter token="${replacestring}" value="${build.src}/${replacestring}"/>
   </target>
+
+  <target name="init-filters-xalan1" depends="init-avail" if="xalan1.present" unless="trax.present">
+    <copy file="src/codegen/xalan1.filter" toFile="./build/src/codegen/filter" filtering="on"/>
+  </target>
+
+  <target name="init-filters-xalan2" depends="init-avail" if="trax.present">
+    <copy file="src/codegen/xalan2.filter" toFile="./build/src/codegen/filter" filtering="on"/>
+  </target>
+
 
   <!-- =================================================================== -->
   <!-- Help on usage                                                       -->
@@ -316,7 +332,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
       <echo message="JAXP1.1 transforms is present. Installing TRaX support"/>
       <copydir src="${src.dir}"
  	      dest="${build.src}"
- 	      includes="**/${xsltransform},**/${trax}"/>
+ 	      includes="**/${xsltransform},**/${trax},**/apps/TraxInputHandler.java"/>
   </target>
 
 
@@ -327,7 +343,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <!-- copy src files -->
     <copydir src="${src.dir}"
              dest="${build.src}"
-             excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi},**/${jai},**/${xsltransform},**/${trax},**/${xalan1}"/>
+             excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi},**/${jai},**/${xsltransform},**/${trax},**/${xalan1},**/apps/TraxInputHandler.java"/>
   </target>
 
   <!-- =================================================================== -->
