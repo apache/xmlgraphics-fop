@@ -59,6 +59,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.NCName;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -72,7 +73,7 @@ import org.apache.fop.xml.XmlEventsArrayBuffer;
  * Implements the fo:marker flow object.
  * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
  */
-public class FoMarker extends FONode {
+public class FoMarker extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -120,6 +121,7 @@ public class FoMarker extends FONode {
     /**
      * Construct an fo:marker node, and buffer the contents for later parsing.
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
@@ -127,10 +129,11 @@ public class FoMarker extends FONode {
      * attribute set information.
      */
     public FoMarker
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.MARKER, parent, event,
+        super(foTree, FObjectNames.MARKER, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         if ((stateFlags & FONode.FLOW) == 0)
             throw new FOPException
@@ -139,7 +142,8 @@ public class FoMarker extends FONode {
             try {
             ncName = (NCName)(getPropertyValue(PropNames.MARKER_CLASS_NAME));
         } catch (PropertyException e) {
-            throw new FOPException("Cannot find marker-class-name in fo:marker", e);
+            throw new FOPException(
+                    "Cannot find marker-class-name in fo:marker", e);
         } catch (ClassCastException e) {
             throw new FOPException("Wrong PropertyValue type in fo:marker", e);
         }

@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
@@ -73,7 +74,7 @@ import org.apache.fop.xml.UnexpectedStartElementException;
 /**
  * Implements the fo:float flow object.
  */
-public class FoFloat extends FONode {
+public class FoFloat extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -120,6 +121,7 @@ public class FoFloat extends FONode {
      * Construct an fo:float node, and build the fo:float subtree.
      * <p>Content model for fo:float: (%block;+)
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
@@ -127,10 +129,11 @@ public class FoFloat extends FONode {
      * attribute set information.
      */
     public FoFloat
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.FLOAT, parent, event,
+        super(foTree, FObjectNames.FLOAT, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev = null;
         if ((stateFlags & (FONode.MC_FLOAT | FONode.MC_FOOTNOTE)) != 0)
@@ -146,8 +149,8 @@ public class FoFloat extends FONode {
                 throw new FOPException
                         ("%block; not found in fo:float");
             // Generate the flow object
-            FObjects.fobjects.makeFlowObject(
-                    foTree, this, (FoXmlEvent)ev,
+            FObjects.fobjects.makePageSeqFOChild(
+                    foTree, pageSequence, this, (FoXmlEvent)ev,
                     stateFlags | FONode.MC_FLOAT);
             // Clear the blockage
             ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
@@ -160,8 +163,8 @@ public class FoFloat extends FONode {
                     ev = xmlevents.expectOutOfLineBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makeFlowObject(
-                            foTree, this, (FoXmlEvent)ev,
+                    FObjects.fobjects.makePageSeqFOChild(
+                            foTree, pageSequence, this, (FoXmlEvent)ev,
                             stateFlags | FONode.MC_FLOAT);
                     ev = xmlevents.getEndElement(
                             XmlEventReader.DISCARD_EV, ev);

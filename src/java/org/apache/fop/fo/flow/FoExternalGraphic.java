@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -70,7 +71,7 @@ import org.apache.fop.xml.FoXmlEvent;
 /**
  * Implements the fo:external-graphic flow object.
  */
-public class FoExternalGraphic extends FONode {
+public class FoExternalGraphic extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -143,6 +144,7 @@ public class FoExternalGraphic extends FONode {
     /**
      * Construct an fo:external-graphic node.  This node has no children.
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event  that triggered the creation of
      * this node
@@ -150,11 +152,12 @@ public class FoExternalGraphic extends FONode {
      * attribute set information.
      */
     public FoExternalGraphic
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.EXTERNAL_GRAPHIC, parent, event,
-                          stateFlags, sparsePropsMap, sparseIndices);
+        super(foTree, FObjectNames.EXTERNAL_GRAPHIC, pageSequence, parent,
+                event, stateFlags, sparsePropsMap, sparseIndices);
         makeSparsePropsSet();
     }
 

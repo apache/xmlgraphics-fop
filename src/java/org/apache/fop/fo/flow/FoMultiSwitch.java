@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -73,7 +74,7 @@ import org.apache.fop.xml.XmlEventReader;
 /**
  * Implements the fo:multi-switch flow object.
  */
-public class FoMultiSwitch extends FONode {
+public class FoMultiSwitch extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -125,6 +126,7 @@ public class FoMultiSwitch extends FONode {
      * fo:multi-switch subtree.
      * <p>Content model for fo:multi-switch: (multi-case+)
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event that triggered the creation of
      * this node
@@ -132,10 +134,11 @@ public class FoMultiSwitch extends FONode {
      * attribute set information.
      */
     public FoMultiSwitch
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.MULTI_SWITCH, parent, event,
+        super(foTree, FObjectNames.MULTI_SWITCH, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev;
         try {
@@ -144,7 +147,8 @@ public class FoMultiSwitch extends FONode {
                     (FObjectNames.MULTI_CASE, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 new FoMultiCase(
-                        getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+                        getFOTree(), pageSequence, this,
+                        (FoXmlEvent)ev, stateFlags);
                 numCases++;
                 ev = xmlevents.getEndElement(
                         XmlEventReader.DISCARD_EV, ev);

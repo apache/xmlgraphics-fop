@@ -58,6 +58,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
@@ -72,7 +73,7 @@ import org.apache.fop.xml.UnexpectedStartElementException;
  * Implements the fo:leader flow object.
  * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
  */
-public class FoLeader extends FONode {
+public class FoLeader extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -146,6 +147,7 @@ public class FoLeader extends FONode {
      * Construct an fo:leader node, and build the fo:leader subtree.
      * <p>Content model for fo:leader: (#PCDATA|%inline;)*
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
@@ -153,10 +155,11 @@ public class FoLeader extends FONode {
      * attribute set information.
      */
     public FoLeader
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.LEADER, parent, event,
+        super(foTree, FObjectNames.LEADER, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev = null;
         if ((stateFlags & FONode.MC_LEADER) != 0) {
@@ -176,8 +179,9 @@ public class FoLeader extends FONode {
                     ev = xmlevents.expectOutOfLinePcdataOrInline();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makeFlowObject(
-                            foTree, this, ev, stateFlags | FONode.MC_LEADER);
+                    FObjects.fobjects.makePageSeqFOChild(
+                            foTree, pageSequence, this,
+                            ev, stateFlags | FONode.MC_LEADER);
                     if (ev.getType() != XmlEvent.CHARACTERS) {
                         ev = xmlevents.getEndElement(
                                 XmlEventReader.DISCARD_EV, ev);

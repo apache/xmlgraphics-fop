@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -69,7 +70,7 @@ import org.apache.fop.xml.FoXmlEvent;
 /**
  * Implements the fo:retrieve-marker flow object.
  */
-public class FoRetrieveMarker extends FONode {
+public class FoRetrieveMarker extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -116,6 +117,7 @@ public class FoRetrieveMarker extends FONode {
     /**
      * Construct an fo:retrieve-marker node.  This node has no children.
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event that triggered the creation of
      * this node
@@ -123,11 +125,12 @@ public class FoRetrieveMarker extends FONode {
      * attribute set information.
      */
     public FoRetrieveMarker
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.RETRIEVE_MARKER, parent, event,
-                          stateFlags, sparsePropsMap, sparseIndices);
+        super(foTree, FObjectNames.RETRIEVE_MARKER, pageSequence, parent,
+                event, stateFlags, sparsePropsMap, sparseIndices);
         if ((stateFlags & FONode.STATIC) == 0)
             throw new FOPException
             ("fo:retrieve-marker must be descendent of fo:static-content.");

@@ -60,6 +60,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
@@ -73,7 +74,7 @@ import org.apache.fop.xml.UnexpectedStartElementException;
 /**
  * Implements the fo:multi-case flow object.
  */
-public class FoMultiCase extends FONode {
+public class FoMultiCase extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -126,6 +127,7 @@ public class FoMultiCase extends FONode {
      * <p> N.B. no marker children, and the allowable children restricted to
      * FOs available in place of the outer multi-case's parent multi-switch.
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event that triggered the creation of
      * this node
@@ -133,10 +135,11 @@ public class FoMultiCase extends FONode {
      * attribute set information.
      */
     public FoMultiCase
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.MULTI_CASE, parent, event,
+        super(foTree, FObjectNames.MULTI_CASE, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         stateFlags |= FONode.MC_MULTI_CASE;
         if (getMarkers() != 0) {
@@ -153,8 +156,8 @@ public class FoMultiCase extends FONode {
                 if (ev != null) {
                     // Generate the flow object
                     //System.out.println("Generating flow object for " + ev);
-                    FObjects.fobjects.makeFlowObject
-                                (foTree, this, ev, stateFlags);
+                    FObjects.fobjects.makePageSeqFOChild(
+                                foTree, pageSequence, this, ev, stateFlags);
                     if (ev.getType() != XmlEvent.CHARACTERS) {
                         ev = xmlevents.getEndElement(
                                 XmlEventReader.DISCARD_EV, ev);

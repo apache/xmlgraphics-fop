@@ -60,6 +60,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
@@ -73,7 +74,7 @@ import org.apache.fop.xml.UnexpectedStartElementException;
 /**
  * Implements the fo:bidi-override flow object.
  */
-public class FoBidiOverride extends FONode {
+public class FoBidiOverride extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -130,6 +131,7 @@ public class FoBidiOverride extends FONode {
      * fo:bidi-override subtree.
      * <p>Content model for fo:bidi-override: (#PCDATA|%inline;|%block;)*
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
@@ -137,10 +139,11 @@ public class FoBidiOverride extends FONode {
      * attribute set information.
      */
     public FoBidiOverride
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.BIDI_OVERRIDE, parent, event,
+        super(foTree, FObjectNames.BIDI_OVERRIDE, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         getMarkers();
         XmlEvent ev = null;
@@ -152,8 +155,8 @@ public class FoBidiOverride extends FONode {
                     ev = xmlevents.expectOutOfLinePcdataOrInlineOrBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makeFlowObject(
-                            foTree, this, ev, stateFlags);
+                    FObjects.fobjects.makePageSeqFOChild(
+                            foTree, pageSequence, this, ev, stateFlags);
                     if (ev.getType() != XmlEvent.CHARACTERS)
                         ev = xmlevents.getEndElement(
                                 XmlEventReader.DISCARD_EV, ev);

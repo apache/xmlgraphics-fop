@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -73,7 +74,7 @@ import org.apache.fop.xml.XmlEventReader;
 /**
  * Implements the fo:list-block flow object.
  */
-public class FoListBlock extends FONode {
+public class FoListBlock extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -140,6 +141,7 @@ public class FoListBlock extends FONode {
      * Construct an fo:list-block node, and build the fo:list-block subtree.
      * <p>Content model for fo:list-block: (marker*, list-item+)
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
@@ -147,10 +149,11 @@ public class FoListBlock extends FONode {
      * attribute set information.
      */
     public FoListBlock
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.LIST_BLOCK, parent, event,
+        super(foTree, FObjectNames.LIST_BLOCK, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev;
         // Look for zero or more markers
@@ -162,7 +165,8 @@ public class FoListBlock extends FONode {
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.LIST_ITEM, XmlEvent.DISCARD_W_SPACE))
                    != null) {
-                new FoListItem(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+                new FoListItem(getFOTree(), pageSequence, this,
+                        (FoXmlEvent)ev, stateFlags);
                 numItems++;
                 ev = xmlevents.getEndElement(
                         XmlEventReader.DISCARD_EV, ev);

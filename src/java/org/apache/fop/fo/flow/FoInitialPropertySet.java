@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -70,7 +71,7 @@ import org.apache.fop.xml.FoXmlEvent;
 /**
  * Implements the fo:initial-property-set flow object.
  */
-public class FoInitialPropertySet extends FONode {
+public class FoInitialPropertySet extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -130,17 +131,19 @@ public class FoInitialPropertySet extends FONode {
     /**
      * Construct an fo:initial-property-set node.  This node has no children.
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event that triggered the creation of this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
      */
     public FoInitialPropertySet
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.INITIAL_PROPERTY_SET, parent, event,
-                          stateFlags, sparsePropsMap, sparseIndices);
+        super(foTree, FObjectNames.INITIAL_PROPERTY_SET, pageSequence, parent,
+                event, stateFlags, sparsePropsMap, sparseIndices);
         makeSparsePropsSet();
     }
 

@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -84,7 +85,7 @@ import org.apache.fop.xml.XmlEventReader;
  * <p>In other words, it's wrong, but you can do it anyway.  The end result
  * is that fo:footnote can appear almost anywhere.
  */
-public class FoFootnote extends FONode {
+public class FoFootnote extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -130,6 +131,7 @@ public class FoFootnote extends FONode {
      * Construct an fo:footnote node, and build the fo:footnote subtree.
      * <p>Content model for fo:footnote: (inline,footnote-body)
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
@@ -137,10 +139,11 @@ public class FoFootnote extends FONode {
      * attribute set information.
      */
     public FoFootnote
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.FOOTNOTE, parent, event,
+        super(foTree, FObjectNames.FOOTNOTE, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         if ((stateFlags & FONode.MC_FOOTNOTE) != 0)
             throw new FOPException
@@ -153,7 +156,7 @@ public class FoFootnote extends FONode {
                    == null)
                 throw new FOPException("No inline in footnote.");
             new FoInline(
-                    getFOTree(), this, (FoXmlEvent)ev,
+                    getFOTree(), pageSequence, this, (FoXmlEvent)ev,
                     stateFlags | FONode.MC_FOOTNOTE);
             ev =  xmlevents.getEndElement(
                     XmlEventReader.DISCARD_EV, ev);
@@ -165,7 +168,7 @@ public class FoFootnote extends FONode {
                    == null)
                 throw new FOPException("No footnote-body in footnote.");
             new FoFootnoteBody(
-                    getFOTree(), this, (FoXmlEvent)ev,
+                    getFOTree(), pageSequence, this, (FoXmlEvent)ev,
                     stateFlags | FONode.MC_FOOTNOTE);
             ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
             namespaces.relinquishEvent(ev);

@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -73,7 +74,7 @@ import org.apache.fop.xml.XmlEventReader;
 /**
  * Implements the fo:table-and-caption flow object.
  */
-public class FoTableAndCaption extends FONode {
+public class FoTableAndCaption extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -142,6 +143,7 @@ public class FoTableAndCaption extends FONode {
      * <p>Content model for fo:table-and-caption:<br>
      * (marker*, table-caption?, table)
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
@@ -149,11 +151,12 @@ public class FoTableAndCaption extends FONode {
      * attribute set information.
      */
     public FoTableAndCaption
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.TABLE_AND_CAPTION, parent, event,
-                          stateFlags, sparsePropsMap, sparseIndices);
+        super(foTree, FObjectNames.TABLE_AND_CAPTION, pageSequence, parent,
+                event, stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev;
         // Look for zero or more markers
         // Markers are cleaned up within the <code>getMarkers</code> method
@@ -166,7 +169,8 @@ public class FoTableAndCaption extends FONode {
                     (FObjectNames.TABLE_CAPTION, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 new FoTableCaption(
-                        getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+                        getFOTree(), pageSequence, this,
+                        (FoXmlEvent)ev, stateFlags);
                 captionOffset = numMarkers;
                 ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
                 namespaces.relinquishEvent(ev);
@@ -179,7 +183,8 @@ public class FoTableAndCaption extends FONode {
             if (ev == null)
                 throw new FOPException("No table found.");
             tableOffset = numChildren();
-            new FoTable(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+            new FoTable(getFOTree(), pageSequence, this,
+                    (FoXmlEvent)ev, stateFlags);
             ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
             namespaces.relinquishEvent(ev);
 
