@@ -42,34 +42,34 @@
     </p>
     <p>A working basic example of a table looks like this: </p>  
     <p><code>&lt;fo:table></code></p>
-    <p><code>&nbsp;&lt;fo:table-column column-width="150pt"/></code></p>
-    <p><code>&nbsp;&lt;fo:table-column column-width="150pt"/></code></p>
-    <p><code>&nbsp;&lt;fo:table-body font-size="10pt" font-family="sans-serif"></code></p>
-    <p><code>&nbsp;&nbsp;&lt;fo:table-row></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&lt;fo:table-cell></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;fo:block>text&lt;/fo:block></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&lt;/fo:table-cell></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&lt;fo:table-cell></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;fo:block>text&lt;/fo:block></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&lt;/fo:table-cell></code></p>
-    <p><code>&nbsp;&nbsp;&lt;/fo:table-row></code></p>
-    <p><code>&nbsp;&nbsp;&lt;fo:table-row></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&lt;fo:table-cell></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;fo:block>text&lt;/fo:block></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&lt;/fo:table-cell></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&lt;fo:table-cell></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;fo:block>text&lt;/fo:block></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&lt;/fo:table-cell></code></p>
-    <p><code>&nbsp;&nbsp;&lt;/fo:table-row></code></p>
-    <p><code>&nbsp;&nbsp;&lt;fo:table-row></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&lt;fo:table-cell></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;fo:block>text&lt;/fo:block></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&lt;/fo:table-cell></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&lt;fo:table-cell></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;fo:block>text&lt;/fo:block></code></p>
-    <p><code>&nbsp;&nbsp;&nbsp;&lt;/fo:table-cell></code></p>
-    <p><code>&nbsp;&nbsp;&lt;/fo:table-row></code></p>
-    <p><code>&nbsp;&lt;/fo:table-body></code></p>
+    <p><code>&#160;&lt;fo:table-column column-width="150pt"/></code></p>
+    <p><code>&#160;&lt;fo:table-column column-width="150pt"/></code></p>
+    <p><code>&#160;&lt;fo:table-body font-size="10pt" font-family="sans-serif"></code></p>
+    <p><code>&#160;&#160;&lt;fo:table-row></code></p>
+    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
+    <p><code>&#160;&#160;&lt;/fo:table-row></code></p>
+    <p><code>&#160;&#160;&lt;fo:table-row></code></p>
+    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
+    <p><code>&#160;&#160;&lt;/fo:table-row></code></p>
+    <p><code>&#160;&#160;&lt;fo:table-row></code></p>
+    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
+    <p><code>&#160;&#160;&lt;/fo:table-row></code></p>
+    <p><code>&#160;&lt;/fo:table-body></code></p>
     <p><code>&lt;/fo:table></code></p>
   </s2>
 
