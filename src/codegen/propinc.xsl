@@ -2,6 +2,7 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >
 
 <xsl:key name="genericref" match="property[@type='generic']" use="class-name"/>
+<xsl:key name="shorthandref" match="property" use="name"/>
 
 <xsl:template name="capfirst">
   <xsl:param name="str"/>

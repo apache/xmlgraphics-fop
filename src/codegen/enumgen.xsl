@@ -41,7 +41,7 @@ package org.apache.fop.fo.properties;
 	extends  <xsl:value-of select="use-generic"/>.Enums
     </xsl:if>{
    <xsl:for-each select="enumeration/value">
-     public final static int <xsl:value-of select="@const"/> = <xsl:number/>;
+     public final static int <xsl:value-of select="@const"/> = Constants.<xsl:value-of select="@const"/>;
 </xsl:for-each>
 <xsl:if test="contains($bSubpropEnum, 'true')">
     <xsl:call-template name="genSubpropEnum"/>
@@ -58,7 +58,7 @@ package org.apache.fop.fo.properties;
       <xsl:for-each select="compound/subproperty[enumeration]">
       public interface <xsl:value-of select="name"/> {
         <xsl:for-each select="enumeration/value">
-        public final static int <xsl:value-of select="@const"/> = <xsl:number/>;
+        public final static int <xsl:value-of select="@const"/> =  Constants.<xsl:value-of select="@const"/>;
         </xsl:for-each>
       }
       </xsl:for-each>

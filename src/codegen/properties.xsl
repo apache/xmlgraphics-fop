@@ -8,6 +8,10 @@
 
 <xsl:output method="text" />
 
+<xsl:template match="extfile">
+<xsl:message>Do <xsl:value-of select="@href"/></xsl:message>
+   <xsl:apply-templates select="document(@href)/*"/>
+</xsl:template>
 
 <!-- Content of element is code to calculate the base length -->
 <xsl:template match="percent-ok">
@@ -49,13 +53,26 @@
 
 <!-- Look for keyword equivalents. Value is the new expression  -->
 <xsl:template match="keyword-equiv[1]">
-    protected String checkValueKeywords(String value) {
+    // Initialize hashtable of keywords
+    static Hashtable s_htKeywords;
+    static {
+	s_htKeywords = new Hashtable(<xsl:value-of select="count(../keyword-equiv)"/>);
   <xsl:for-each select="../keyword-equiv">
+      	s_htKeywords.put("<xsl:value-of select="@match"/>", "<xsl:value-of select="."/>");
+  </xsl:for-each>
+    }
+    protected String checkValueKeywords(String keyword) {
+<!--  <xsl:for-each select="../keyword-equiv">
       if (value.equals("<xsl:value-of select="@match"/>")) {
 	return new String("<xsl:value-of select="."/>");
       }
   </xsl:for-each>
-      return super.checkValueKeywords(value);
+-->
+      String value = (String)s_htKeywords.get(keyword);
+      if (value == null) {
+	return super.checkValueKeywords(keyword);
+      }
+      else return value;
     }
 </xsl:template>
 
@@ -91,7 +108,7 @@
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:variable>
-	<xsl:value-of select="$dtc"/><xsl:text> </xsl:text> <xsl:value-of select="@varname"/> = 
+	<xsl:value-of select="$dtc"/><xsl:text> </xsl:text> <xsl:value-of select="@varname"/> =
 		p.get<xsl:value-of select="@from-type"/>();
 	if (<xsl:value-of select="@varname"/> != null) {
 	    return new <xsl:value-of select="$propclass"/>(
@@ -194,6 +211,7 @@
 <redirect:write select="concat('@org/apache/fop@/fo/properties/', $classname, '.java')">
 package org.apache.fop.fo.properties;
 
+import java.util.Hashtable;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
@@ -206,7 +224,7 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
 <xsl:if test=".//enumeration and @type='generic'">
   public interface Enums {
 <xsl:for-each select="enumeration/value">
-    int <xsl:value-of select="@const"/> = <xsl:number/>;
+    int <xsl:value-of select="@const"/> =  Constants.<xsl:value-of select="@const"/>;
 </xsl:for-each>
 <xsl:for-each select="compound/subproperty[enumeration]">
        <xsl:variable name="spname">
@@ -216,7 +234,7 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
       </xsl:variable>
   public interface <xsl:value-of select="$spname"/> {
 <xsl:for-each select="enumeration/value">
-    int <xsl:value-of select="@const"/> = <xsl:number/>;
+    int <xsl:value-of select="@const"/> =  Constants.<xsl:value-of select="@const"/>;
 </xsl:for-each>
   }
 </xsl:for-each>
@@ -231,7 +249,7 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
 
 
 <!-- Look for compound properties -->
-<xsl:if test="compound"> 
+<xsl:if test="compound">
       <xsl:variable name="enumclass">
       <xsl:choose>
         <xsl:when test="@type='generic'">Enums</xsl:when>
@@ -257,7 +275,7 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
 
       <xsl:choose>
         <xsl:when test='*[local-name(.)!="name" and local-name(.)!="datatype" and local-name(.)!="use-generic" and local-name(.)!="default"]'>
-    static private class SP_<xsl:value-of select="$spname"/>Maker 
+    static private class SP_<xsl:value-of select="$spname"/>Maker
 	extends <xsl:value-of select="$sp_superclass"/>
 <xsl:if test="enumeration"> implements <xsl:value-of select="$enumclass"/>.<xsl:value-of select="$spname"/></xsl:if> {
 	SP_<xsl:value-of select="$spname"/>Maker(String sPropName) {
@@ -330,8 +348,8 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
       <xsl:value-of select="datatype"/> val = baseProp.get<xsl:value-of select="datatype"/>();
       return val.getComponent(subpropName);
     }
-<xsl:choose>  
-<!-- some subproperty default is context dependent; don't cache default! -->  
+<xsl:choose>
+<!-- some subproperty default is context dependent; don't cache default! -->
 <xsl:when test='.//default[@contextdep="true"]'>
     public Property make(PropertyList propertyList) throws FOPException {
         return makeCompound(propertyList, propertyList.getParentFObj());
@@ -462,11 +480,11 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
       sbExpr.setLength(0);
       <xsl:apply-templates select="."/>
       if (propertyList.getExplicit(sbExpr.toString()) != null) return true;
-      </xsl:for-each> 
+      </xsl:for-each>
       return false;
     }
     </xsl:if>
-    
+
     public Property compute(PropertyList propertyList) throws FOPException {
       FObj parentFO = propertyList.getParentFObj();
       StringBuffer sbExpr=new StringBuffer();
@@ -474,20 +492,20 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
       <xsl:choose><xsl:when test="corresponding/propexpr">
       <xsl:apply-templates select="corresponding/propval"/>
 	// Make sure the property is set before calculating it!
-      if (propertyList.getExplicit(sbExpr.toString()) == null) return p;
+      if (propertyList.getExplicitOrShorthand(sbExpr.toString()) == null) return p;
       sbExpr.setLength(0);
       <xsl:apply-templates select="corresponding/propexpr"/>
       p= make(propertyList, sbExpr.toString(), propertyList.getParentFObj());
       </xsl:when><xsl:otherwise>
       <xsl:apply-templates select="corresponding/propval"/>
-      p= propertyList.getExplicit(sbExpr.toString());
+      p= propertyList.getExplicitOrShorthand(sbExpr.toString());
       </xsl:otherwise></xsl:choose>
       if (p != null) {
           p = convertProperty(p, propertyList, parentFO );
       }
       <xsl:if test="compound">
       else p= makeCompound(propertyList, parentFO);
-      
+
       Property subprop;
       <xsl:for-each select="compound/subproperty/corresponding">
       sbExpr.setLength(0);
@@ -497,7 +515,7 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
       		make(propertyList, sbExpr.toString(), parentFO);
       </xsl:when><xsl:otherwise>
       <xsl:apply-templates select="propval"/>
-      subprop= propertyList.getExplicit(sbExpr.toString());
+      subprop= propertyList.getExplicitOrShorthand(sbExpr.toString());
       </xsl:otherwise></xsl:choose>
       setSubprop(p, "<xsl:value-of select='../name'/>", subprop);
       </xsl:for-each>
@@ -506,7 +524,29 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
     }
 </xsl:if>
 
-<xsl:apply-templates select="percent-ok|auto-ok|default|keyword-equiv|datatype-conversion|enumeration"/>
+<!-- If can be specified by any shorthand property -->
+<xsl:if test="shorthand">
+    public Property getShorthand(PropertyList propertyList) {
+      Property p = null;
+      ListProperty listprop;
+      <xsl:for-each select="shorthand">
+	<xsl:variable name="shprop" select="."/>
+      if (p == null) {
+         listprop = (ListProperty)propertyList.getExplicit("<xsl:value-of select='$shprop'/>");
+         if (listprop != null) {
+           // Get a parser for the shorthand to set the individual properties
+<!--           ShorthandParser shparser = new <xsl:value-of select="//property[name=$shprop]/datatype-parser"/>(listprop);
+-->
+           ShorthandParser shparser = new <xsl:value-of select="key('shorthandref', $shprop)/datatype-parser"/>(listprop);
+             p = shparser.getValueForProperty(getPropName(), this, propertyList);
+         }
+      }
+      </xsl:for-each>
+      return p;
+    }
+</xsl:if>
+
+<xsl:apply-templates select="percent-ok|auto-ok|default|keyword-equiv|datatype-conversion|enumeration|extfile"/>
 }
 </redirect:write>
 </xsl:if> <!-- need to create a class -->
@@ -536,7 +576,7 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
 <xsl:template match="localname"/>
 
 <!-- Check that each member of the nodeset dtlist has the same value.
-     Print a message if any member of dtlist is different 
+     Print a message if any member of dtlist is different
      from the first member. Return the first member.
  -->
 <xsl:template name="check-subprop-datatype">
