@@ -27,6 +27,7 @@ import org.xml.sax.Attributes;
 // Java
 import java.util.Hashtable;
 import java.util.Stack;
+import java.util.Vector;
 import java.io.IOException;
 
 /**
@@ -47,6 +48,8 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      * representing formatting objects
      */
     protected Hashtable fobjTable = new Hashtable();
+
+    protected Vector namespaces = new Vector();
 
     /**
      * class that builds a property list for each formatting object
@@ -99,6 +102,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     public void addMapping(String namespaceURI, String localName,
                            FObj.Maker maker) {
         this.fobjTable.put(namespaceURI + "^" + localName, maker);
+        this.namespaces.addElement(namespaceURI.intern());
     }
 
     /**
@@ -215,13 +219,20 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         PropertyListBuilder currentListBuilder =
             (PropertyListBuilder)this.propertylistTable.get(uri);
 
+        boolean foreignXML = false;
         if (fobjMaker == null) {
             if (!this.unknownFOs.containsKey(fullName)) {
                 this.unknownFOs.put(fullName, "");
                 log.error("Unknown formatting object "
                                        + fullName);
             }
-            fobjMaker = new Unknown.Maker();    // fall back
+            if(namespaces.contains(uri.intern())) {
+                // fall back
+                fobjMaker = new Unknown.Maker();
+            } else {
+                fobjMaker = new UnknownXMLObj.Maker(uri, localName);
+                foreignXML = true;
+            }
         }
 
         try {
@@ -231,6 +242,8 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
                     currentListBuilder.makeList(fullName, attlist,
                                                 (currentFObj == null) ? null
                                                 : currentFObj.properties, currentFObj);
+            } else if(foreignXML) {
+                list = new DirectPropertyListBuilder.AttrPropertyList(attlist);
             } else {
                 if(currentFObj == null) {
                     throw new FOPException("Invalid XML or missing namespace");
