@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -449,14 +449,21 @@ public class XMLRenderer implements Renderer {
         after = page.getAfter();
         start = page.getStart();
         end = page.getEnd();
-        if (before != null)
+        if (before != null) {
             before.render(this);
-        if (after != null)
+        }
+        if (after != null) {
             after.render(this);
-        if (start != null)
+        }
+        if (start != null) {
             start.render(this);
-        if (end != null)
+        }
+        if (end != null) {
             end.render(this);
+        }
+        if (body != null) {
+        	body.render(this);
+        }
         writeEndTag("</Page>");
     }
 
