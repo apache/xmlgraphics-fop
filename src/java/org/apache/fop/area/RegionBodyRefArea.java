@@ -32,12 +32,16 @@ implements ReferenceArea {
     //private BeforeFloat beforeFloat;
     private MainReferenceArea mainReference;
     //private Footnote footnote;
-    private int columnGap;
-    private int columnCount;
+    private int columnGap = 0;
+    private int columnCount = 1;
 
     /**
      * Create a new body region area.
      * This sets the region reference area class to BODY.
+     * @param pageSeq the generating <code>page-sequence</code>
+     * @param generatedBy the generating <code>FONode</code>
+     * @param parent
+     * @param sync
      */
     public RegionBodyRefArea(
             FoPageSequence pageSeq,
@@ -63,6 +67,15 @@ implements ReferenceArea {
         this.columnGap = columnGap;
     }
 
+    public static RegionBodyRefArea nullRegionBodyRef(
+            FoPageSequence pageSeq, FONode generatedBy,
+            Node parent, Object sync) {
+        RegionBodyRefArea bodyRef =
+            new RegionBodyRefArea(pageSeq, generatedBy, parent, sync);
+        bodyRef.setMainReference(MainReferenceArea.nullMainRefArea(
+                pageSeq, generatedBy, bodyRef, sync));
+        return bodyRef;
+    }
     /**
      * Set the number of columns for blocks when not spanning
      *

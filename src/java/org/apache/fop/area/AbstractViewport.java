@@ -69,8 +69,7 @@ implements Viewport {
             FONode generatedBy,
             Node parent,
             Object sync) {
-        super(pageSeq, generatedBy, parent, sync);
-        this.area = area;
+        super(area, pageSeq, generatedBy, parent, sync);
     }
     /**
      * @param pageSeq
@@ -81,8 +80,7 @@ implements Viewport {
             Rectangle2D area,
             FoPageSequence pageSeq,
             FONode generatedBy) {
-        super(pageSeq, generatedBy);
-        this.area = area;
+        super(area, pageSeq, generatedBy);
     }
     /* (non-Javadoc)
      * @see org.apache.fop.area.Viewport#setReferenceArea(org.apache.fop.area.ReferenceArea)

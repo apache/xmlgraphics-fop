@@ -30,12 +30,13 @@ import org.apache.fop.fo.flow.FoPageSequence;
 public class RegionViewport
 extends AbstractViewport
 implements Viewport, Cloneable {
-    // this rectangle is relative to the page
-
     /**
-     * Create a new region viewport.
-     *
-     * @param area the view area of this viewport
+     * Creates a new region viewport.
+     * @param area the rectangular area
+     * @param pageSeq the generating <code>page-sequence</code>
+     * @param generatedBy the generating <code>FONode</code>
+     * @param parent
+     * @param sync
      */
     public RegionViewport(
             Rectangle2D area,
@@ -44,6 +45,21 @@ implements Viewport, Cloneable {
             Node parent,
             Object sync) {
         super(area, pageSeq, generatedBy, parent, sync);
+    }
+
+    /**
+     * Creates a new region viewport with a null rectangular area
+     * @param pageSeq the generating <code>page-sequence</code>
+     * @param generatedBy the generating <code>FONode</code>
+     * @param parent
+     * @param sync
+     */
+    public RegionViewport(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
     }
 
     /**

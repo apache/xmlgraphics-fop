@@ -17,6 +17,7 @@
  */ 
 package org.apache.fop.area;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.datastructs.Node;
@@ -33,27 +34,36 @@ import org.apache.fop.fo.flow.FoPageSequence;
 public class MainReferenceArea
 extends AbstractReferenceArea
 implements ReferenceArea {
-    private List spanAreas = new java.util.ArrayList();
+    private List spanAreas = new ArrayList();
 
     /**
      * @param parent
-     * @param areaSync
+     * @param sync
      * @throws IndexOutOfBoundsException
      */
     public MainReferenceArea(
             FoPageSequence pageSeq,
             FONode generatedBy,
             Node parent,
-            Object areaSync) {
-        super(pageSeq, generatedBy, parent, areaSync);
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
     }
-    
+
+    public static MainReferenceArea nullMainRefArea(
+            FoPageSequence pageSeq, FONode generatedBy,
+            Node parent, Object sync) {
+        MainReferenceArea main =
+            new MainReferenceArea(pageSeq, generatedBy, parent, sync);
+        SpanReferenceArea span =
+            SpanReferenceArea.nullSpanArea(pageSeq, generatedBy, main, sync);
+        return main;
+    }
     /**
      * Add a span area to this area.
      *
      * @param span the span area to add
      */
-    public void addSpan(Span span) {
+    public void addSpan(SpanReferenceArea span) {
         spanAreas.add(span);
     }
 

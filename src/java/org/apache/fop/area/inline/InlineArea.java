@@ -32,22 +32,6 @@ public class InlineArea extends Area {
 
     /**
      * @param parent
-     * @param index
-     * @throws IndexOutOfBoundsException
-     */
-    public InlineArea(
-            FoPageSequence pageSeq,
-            FONode generatedBy,
-            Node parent,
-            int index,
-            Object sync)
-        throws IndexOutOfBoundsException {
-        super(pageSeq, generatedBy, parent, index, sync);
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
-     * @param parent
      * @throws IndexOutOfBoundsException
      */
     public InlineArea(

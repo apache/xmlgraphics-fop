@@ -18,6 +18,7 @@
 package org.apache.fop.area;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.apps.FOPException;
@@ -33,8 +34,9 @@ import org.apache.fop.fo.flow.FoPageSequence;
 public class SpanReferenceArea
 extends AbstractReferenceArea
 implements ReferenceArea, Serializable {
+    
     // the list of normal-flow-reference-areas in this span area
-    private List flowAreas;
+    private List flowAreas = new ArrayList();
     
     private NormalFlowRefArea currentFlowArea = null;
     
@@ -71,6 +73,16 @@ implements ReferenceArea, Serializable {
         this.columnCount =  columnCount;
     }
 
+    public static SpanReferenceArea nullSpanArea(
+            FoPageSequence pageSeq, FONode generatedBy,
+            Node parent, Object sync) {
+        SpanReferenceArea span = new SpanReferenceArea(
+                pageSeq, generatedBy, parent, sync);
+        span.addNormalFlowRef(
+                new NormalFlowRefArea(pageSeq, generatedBy, span, sync));
+        return span;
+    }
+
     /**
      * @return the column count
      */
@@ -96,6 +108,10 @@ implements ReferenceArea, Serializable {
             return false;
         }
         return true;
+    }
+
+    public void addNormalFlowRef(NormalFlowRefArea normal) {
+        flowAreas.add(normal);
     }
 }
 

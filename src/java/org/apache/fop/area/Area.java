@@ -77,25 +77,26 @@ public class Area extends AreaNode implements Cloneable  {
         }
     }
     /**
+     * Constructs an <code>Area</code> which is based on the given
+     * <code>Rectangle2D</code>
+     * @param area the rectangular area
      * @param pageSeq through which this area was generated
      * @param generatedBy the given <code>FONode</code> generated this
      * @param parent <code>Node</code> of this
-     * @param index of this in children of parent
      * @param sync the object on which this area is synchronized
-     * @throws IndexOutOfBoundsException
      */
     public Area(
+            Rectangle2D area,
             FoPageSequence pageSeq,
             FONode generatedBy,
             Node parent,
-            int index,
-            Object sync)
-        throws IndexOutOfBoundsException {
-        super(pageSeq, generatedBy, parent, index, sync);
-        setup();
+            Object sync) {
+        this(pageSeq, generatedBy, parent, sync);
+        this.area = area;
     }
 
     /**
+     * Constructs an <code>Area</code> with a null rectangular area
      * @param pageSeq through which this area was generated
      * @param generatedBy the given <code>FONode</code> generated this
      * @param parent <code>Node</code> of this
@@ -109,6 +110,21 @@ public class Area extends AreaNode implements Cloneable  {
             Object sync) {
         super(pageSeq, generatedBy, parent, sync);
         setup();
+    }
+
+    /**
+     * Constructs an <code>Area</code> with the given rectangular area,
+     * which is the root of a tree, and is synchronized on itself.
+     * @param area the rectangular area
+     * @param pageSeq through which this area was generated
+     * @param generatedBy the given <code>FONode</code> generated this
+     */
+    public Area(
+            Rectangle2D area,
+            FoPageSequence pageSeq,
+            FONode generatedBy) {
+        this(pageSeq, generatedBy);
+        this.area = area;
     }
 
     /**
