@@ -108,6 +108,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         }
 
         this.pdfDoc = new PDFDocument("FOP SVG Renderer");
+        this.pdfDoc.enableLogging(new org.apache.avalon.framework.logger.NullLogger());
 
         graphicsState = new PDFState();
 
