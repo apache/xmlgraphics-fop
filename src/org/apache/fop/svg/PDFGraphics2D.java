@@ -294,7 +294,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param height the height to draw the image
      */
     public void addJpegImage(JpegImage jpeg, float x, float y, float width, float height) {
-        FopPDFImage fopimage = new FopPDFImage(jpeg, jpeg.getURL());
+        FopPDFImage fopimage = new FopPDFImage(jpeg, "");
         int xObjectNum = this.pdfDoc.addImage(resourceContext, fopimage).getXNumber();
 
         AffineTransform at = getTransform();

@@ -7,7 +7,7 @@
 package org.apache.fop.image.analyser;
 
 // Java
-import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.Map;
 
@@ -36,10 +36,17 @@ public class XMLReader implements ImageReader {
     }
 
     /** @see org.apache.fop.image.analyser.ImageReader */
-    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream fis,
+    public FopImage.ImageInfo verifySignature(String uri, InputStream fis,
             FOUserAgent ua)
         throws IOException {
-        return loadImage(uri, fis, ua);
+        FopImage.ImageInfo info = loadImage(uri, fis, ua);
+        if (info != null) {
+            try {
+                fis.close();
+            } catch (Exception e) {
+            }
+        }
+        return info;
     }
 
     /**
@@ -62,7 +69,7 @@ public class XMLReader implements ImageReader {
      * @param ua   The user agent
      * @return     An ImageInfo object describing the image
      */
-    protected FopImage.ImageInfo loadImage(String uri, BufferedInputStream bis,
+    protected FopImage.ImageInfo loadImage(String uri, InputStream bis,
             FOUserAgent ua) {
         return createDocument(bis, ua);
     }
@@ -74,7 +81,7 @@ public class XMLReader implements ImageReader {
      * @param ua  The user agent
      * @return    An ImageInfo object describing the image
      */
-    public FopImage.ImageInfo createDocument(BufferedInputStream is, FOUserAgent ua) {
+    public FopImage.ImageInfo createDocument(InputStream is, FOUserAgent ua) {
         Document doc = null;
         FopImage.ImageInfo info = new FopImage.ImageInfo();
         info.mimeType = getMimeType();

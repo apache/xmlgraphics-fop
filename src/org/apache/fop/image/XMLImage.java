@@ -10,6 +10,7 @@ package org.apache.fop.image;
 // Java
 import java.net.URL;
 import org.w3c.dom.Document;
+import java.io.InputStream;
 
 // FOP
 import org.apache.fop.apps.Driver;
@@ -25,8 +26,8 @@ public class XMLImage extends AbstractFopImage {
     Document doc;
     String ns = "";
 
-    public XMLImage(URL href, FopImage.ImageInfo imgInfo) {
-        super(href, imgInfo);
+    public XMLImage(FopImage.ImageInfo imgInfo) {
+        super(imgInfo);
         if(imgInfo.data instanceof Document) {
             doc = (Document)imgInfo.data;
             loaded = loaded | ORIGINAL_DATA;

@@ -10,7 +10,7 @@ package org.apache.fop.image;
 // Java
 import java.net.URL;
 import java.io.InputStream;
-import java.io.BufferedInputStream;
+import java.io.InputStream;
 
 // AWT
 import java.awt.image.ColorModel;
@@ -36,20 +36,17 @@ import org.apache.fop.image.analyser.ImageReader;
  */
 public class JAIImage extends AbstractFopImage {
 
-    public JAIImage(URL href, FopImage.ImageInfo imgReader) {
-        super(href, imgReader);
+    public JAIImage(FopImage.ImageInfo imgReader) {
+        super(imgReader);
     }
 
     protected void loadImage() {
         try {
-            InputStream inputStream = this.m_href.openStream();
-            /*
-             * BufferedInputStream inputStream = this.m_imageReader.getInputStream();
-             * inputStream.reset();
-             */
             com.sun.media.jai.codec.FileCacheSeekableStream seekableInput =
               new FileCacheSeekableStream(inputStream);
             RenderedOp imageOp = JAI.create("stream", seekableInput);
+            inputStream.close();
+            inputStream = null;
 
             this.m_height = imageOp.getHeight();
             this.m_width = imageOp.getWidth();
@@ -138,7 +135,7 @@ public class JAIImage extends AbstractFopImage {
         }
         catch (Exception ex) {
             /*throw new FopImageException("Error while loading image "
-                                         + this.m_href.toString() + " : "
+                                         + "" + " : "
                                          + ex.getClass() + " - "
                                          + ex.getMessage());
              */}

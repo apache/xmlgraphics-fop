@@ -13,9 +13,10 @@ import org.apache.fop.render.RendererContext;
 import org.apache.avalon.framework.logger.LogEnabled;
 import org.apache.avalon.framework.logger.Logger;
 
-import org.w3c.dom.*;
-
 import java.util.HashMap;
+import java.io.InputStream;
+
+import org.w3c.dom.Document;
 
 /**
  * The User Agent for fo.
@@ -52,6 +53,14 @@ public class FOUserAgent implements LogEnabled {
 
     public String getBaseURL() {
         return base;
+    }
+
+    /**
+     * Get an input stream for a reference.
+     * Temporary solution until API better.
+     */
+    public InputStream getStream(String uri) {
+        return null;
     }
 
     public float getPixelUnitToMillimeter() {

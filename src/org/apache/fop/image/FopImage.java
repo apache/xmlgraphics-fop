@@ -32,9 +32,6 @@ public interface FopImage {
      */
     public boolean load(int type, FOUserAgent ua);
 
-    // Ressource location
-    public String getURL();
-
     // image size
     public int getWidth();
     public int getHeight();
@@ -65,7 +62,7 @@ public interface FopImage {
     public int getRessourceBytesSize();
 
     public static class ImageInfo {
-        public InputStream stream;
+        public InputStream inputStream;
         public int width;
         public int height;
         public Object data;

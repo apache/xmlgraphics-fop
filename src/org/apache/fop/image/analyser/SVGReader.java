@@ -7,7 +7,7 @@
 package org.apache.fop.image.analyser;
 
 // Java
-import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.awt.geom.AffineTransform;
@@ -37,10 +37,17 @@ public class SVGReader implements ImageReader {
     private boolean batik = true;
 
     /** @see org.apache.fop.image.analyser.ImageReader */
-    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream fis,
+    public FopImage.ImageInfo verifySignature(String uri, InputStream fis,
             FOUserAgent ua)
         throws IOException {
-        return loadImage(uri, fis, ua);
+        FopImage.ImageInfo info = loadImage(uri, fis, ua);
+        if (info != null) {
+            try {
+                fis.close();
+            } catch (Exception e) {
+            }
+        }
+        return info;
     }
 
     /**
@@ -61,7 +68,7 @@ public class SVGReader implements ImageReader {
      * @param ua   @todo Description of the Parameter
      * @return     @todo Description of the Return Value
      */
-    private FopImage.ImageInfo loadImage(String uri, BufferedInputStream bis,
+    private FopImage.ImageInfo loadImage(String uri, InputStream bis,
             FOUserAgent ua) {
         if (batik) {
             try {

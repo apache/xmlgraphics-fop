@@ -13,6 +13,7 @@ import java.awt.image.ImageProducer;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.color.ColorSpace;
+import java.io.InputStream;
 
 // Jimi
 import com.sun.jimi.core.*;
@@ -32,8 +33,8 @@ import org.apache.avalon.framework.logger.Logger;
  * @see FopImage
  */
 public class JimiImage extends AbstractFopImage {
-    public JimiImage(URL href, FopImage.ImageInfo imgReader) {
-        super(href, imgReader);
+    public JimiImage(FopImage.ImageInfo imgReader) {
+        super(imgReader);
         try {
             Class c = Class.forName("com.sun.jimi.core.Jimi");
         } catch (ClassNotFoundException e) {
@@ -61,7 +62,7 @@ public class JimiImage extends AbstractFopImage {
         int[] tmpMap = null;
         try {
             ImageProducer ip =
-              Jimi.getImageProducer(this.m_href.openStream(),
+              Jimi.getImageProducer(inputStream,
                                     Jimi.SYNCHRONOUS | Jimi.IN_MEMORY);
             FopImageConsumer consumer = new FopImageConsumer(ip);
             ip.startProduction(consumer);
@@ -71,6 +72,9 @@ public class JimiImage extends AbstractFopImage {
             }
             this.m_height = consumer.getHeight();
             this.m_width = consumer.getWidth();
+
+            inputStream.close();
+            inputStream = null;
 
             try {
                 tmpMap = consumer.getImage();
@@ -139,7 +143,7 @@ public class JimiImage extends AbstractFopImage {
             }
         } catch (Throwable ex) {
             log.error("Error while loading image "
-                               + this.m_href.toString(), ex);
+                               + "", ex);
             return;
         }
 

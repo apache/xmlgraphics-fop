@@ -7,7 +7,7 @@
 package org.apache.fop.image.analyser;
 
 // Java
-import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 
 // FOP
@@ -26,13 +26,15 @@ public class BMPReader implements ImageReader {
     protected static final int BMP_SIG_LENGTH = 26;
 
     /** @see org.apache.fop.image.analyser.ImageReader */
-    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream bis,
+    public FopImage.ImageInfo verifySignature(String uri, InputStream bis,
                 FOUserAgent ua) throws IOException {
         byte[] header = getDefaultHeader(bis);
         boolean supported = ((header[0] == (byte) 0x42)
                 && (header[1] == (byte) 0x4d));
         if (supported) {
-            return getDimension(header);
+            FopImage.ImageInfo info = getDimension(header);
+            info.inputStream = bis;
+            return info;
         } else {
             return null;
         }
@@ -69,7 +71,7 @@ public class BMPReader implements ImageReader {
         return info;
     }
 
-    private byte[] getDefaultHeader(BufferedInputStream imageStream)
+    private byte[] getDefaultHeader(InputStream imageStream)
                 throws IOException {
         byte[] header = new byte[BMP_SIG_LENGTH];
         try {

@@ -13,6 +13,7 @@ import java.awt.image.ImageProducer;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.color.ColorSpace;
+import java.io.InputStream;
 
 // FOP
 import org.apache.fop.pdf.PDFColor;
@@ -27,14 +28,19 @@ import org.apache.fop.fo.FOUserAgent;
  * @see FopImage
  */
 public class GifImage extends AbstractFopImage {
-    public GifImage(URL href, FopImage.ImageInfo imgReader) {
-        super(href, imgReader);
+    public GifImage(FopImage.ImageInfo imgReader) {
+        super(imgReader);
     }
 
     protected boolean loadBitmap(FOUserAgent ua) {
         int[] tmpMap = null;
+
         try {
-            ImageProducer ip = (ImageProducer) this.m_href.getContent();
+            ImageProducer ip = null;
+            // todo: how to load gif image from stream
+            //ip = (ImageProducer) inputStream.getContent();
+            inputStream.close();
+            inputStream = null;
             FopImageConsumer consumer = new FopImageConsumer(ip);
             ip.startProduction(consumer);
 
@@ -66,21 +72,18 @@ public class GifImage extends AbstractFopImage {
                 } else if (transparencyType ==
                     java.awt.Transparency.BITMASK) {
                     if (cm instanceof IndexColorModel) {
+                        IndexColorModel indexcm = (IndexColorModel) cm;
                         this.m_isTransparent = false;
-                        byte[] alphas = new byte[
-                                          ((IndexColorModel) cm).getMapSize()];
-                        byte[] reds = new byte[
-                                        ((IndexColorModel) cm).getMapSize()];
-                        byte[] greens = new byte[
-                                          ((IndexColorModel) cm).getMapSize()];
-                        byte[] blues = new byte[
-                                         ((IndexColorModel) cm).getMapSize()];
-                        ((IndexColorModel) cm).getAlphas(alphas);
-                        ((IndexColorModel) cm).getReds(reds);
-                        ((IndexColorModel) cm).getGreens(greens);
-                        ((IndexColorModel) cm).getBlues(blues);
+                        byte[] alphas = new byte[indexcm.getMapSize()];
+                        byte[] reds = new byte[indexcm.getMapSize()];
+                        byte[] greens = new byte[indexcm.getMapSize()];
+                        byte[] blues = new byte[indexcm.getMapSize()];
+                        indexcm.getAlphas(alphas);
+                        indexcm.getReds(reds);
+                        indexcm.getGreens(greens);
+                        indexcm.getBlues(blues);
                         for (int i = 0;
-                                i < ((IndexColorModel) cm).getMapSize();
+                                i < indexcm.getMapSize();
                                 i++) {
                             if ((alphas[i] & 0xFF) == 0) {
                                 this.m_isTransparent = true;
@@ -114,7 +117,7 @@ public class GifImage extends AbstractFopImage {
             }
         } catch (Exception ex) {
             ua.getLogger().error("Error while loading image "
-                                         + this.m_href.toString() + " : "
+                                         + "" + " : "
                                          + ex.getClass() + " - "
                                          + ex.getMessage(), ex);
             return false;

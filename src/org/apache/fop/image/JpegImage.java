@@ -33,8 +33,8 @@ public class JpegImage extends AbstractFopImage {
     boolean found_icc_profile = false;
     boolean found_dimensions = false;
 
-    public JpegImage(URL href, FopImage.ImageInfo imgReader) {
-        super(href, imgReader);
+    public JpegImage(FopImage.ImageInfo imgReader) {
+        super(imgReader);
     }
 
     protected boolean loadOriginalData(FOUserAgent ua) {
@@ -47,14 +47,16 @@ public class JpegImage extends AbstractFopImage {
         boolean cont = true;
 
         try {
-            inStream = this.m_href.openStream();
+            inStream = inputStream;
 
             while ((bytes_read = inStream.read(readBuf)) != -1) {
                 baos.write(readBuf, 0, bytes_read);
             }
+            inputStream.close();
+            inputStream = null;
         } catch (java.io.IOException ex) {
             ua.getLogger().error("Error while loading image " +
-                                         this.m_href.toString() + " : " + ex.getClass() +
+                                         "" + " : " + ex.getClass() +
                                          " - " + ex.getMessage(), ex);
             return false;
         }
@@ -94,7 +96,7 @@ public class JpegImage extends AbstractFopImage {
                               ColorSpace.CS_CIEXYZ);
                         } else {
                             ua.getLogger().error("Unknown ColorSpace for image: "
-                                                   + this.m_href.toString());
+                                                   + "");
                             return false;
                         }
 
@@ -140,7 +142,7 @@ public class JpegImage extends AbstractFopImage {
             }
         } else {
             ua.getLogger().error( "1 Error while loading image " +
-                                          this.m_href.toString() +
+                                          "" +
                                           " : JpegImage - Invalid JPEG Header.");
             return false;
         }
@@ -150,14 +152,14 @@ public class JpegImage extends AbstractFopImage {
                 iccStream.write(align);
             } catch (Exception e) {
                 ua.getLogger().error( "1 Error while loading image " +
-                                              this.m_href.toString() + " : " +
+                                              "" + " : " +
                                               e.getMessage(), e);
                 return false;
             }
             iccProfile = ICC_Profile.getInstance(iccStream.toByteArray());
         } else if(this.m_colorSpace == null) {
             ua.getLogger().error("ColorSpace not specified for image: "
-                                     + this.m_href.toString());
+                                     + "");
             return false;
         }
         return true;
