@@ -20,6 +20,7 @@ package org.apache.fop.fo.extensions.svg;
 
 // FOP
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
 
 import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.dom.svg.SVGOMElement;
@@ -61,8 +62,8 @@ public class SVGElement extends SVGObj {
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, 
-                            Attributes attlist) throws SAXParseException {
-        super.processNode(elementName, locator, attlist);
+                            Attributes attlist, PropertyList propertyList) throws SAXParseException {
+        super.processNode(elementName, locator, attlist, propertyList);
         init();
     }
 

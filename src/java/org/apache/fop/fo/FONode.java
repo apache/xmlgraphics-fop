@@ -107,7 +107,8 @@ public abstract class FONode {
      * @param attlist Collection of attributes passed to us from the parser.
      * @throws SAXParseException for errors or inconsistencies in the attributes
     */
-    public void processNode(String elementName, Locator locator, Attributes attlist) throws SAXParseException {
+    public void processNode(String elementName, Locator locator, 
+            Attributes attlist, PropertyList parent) throws SAXParseException {
         System.out.println("name = " + elementName);
     }
 
@@ -143,6 +144,7 @@ public abstract class FONode {
      * @param locator location in fo source file. 
      */
     protected void addCharacters(char data[], int start, int length,
+                                 PropertyList pList,
                                  Locator locator) throws SAXParseException {
         // ignore
     }

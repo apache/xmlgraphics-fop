@@ -21,6 +21,7 @@ package org.apache.fop.plan;
 import java.awt.geom.Point2D;
 
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
 
 import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
@@ -48,8 +49,10 @@ public class PlanElement extends PlanObj {
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, 
-                            Attributes attlist) throws SAXParseException {
-        super.processNode(elementName, locator, attlist);
+                            Attributes attlist, PropertyList propertyList)
+        throws SAXParseException
+    {
+        super.processNode(elementName, locator, attlist, propertyList);
         createBasicDocument();
     }
 
