@@ -227,6 +227,9 @@ public class FontSetup {
         FontReader reader = null;
 
         Vector fontInfos = Configuration.getFonts();
+        if (fontInfos == null)
+           return;
+        
         for (Enumeration e = fontInfos.elements(); e.hasMoreElements();) {
             org.apache.fop.configuration.FontInfo configFontInfo =
                 (org.apache.fop.configuration.FontInfo)e.nextElement();
