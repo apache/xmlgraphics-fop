@@ -1,3 +1,5 @@
 config.dtd
 config.xml
+fop.system.properties
 fop.xconf
+logging.properties
