@@ -85,6 +85,8 @@ public class PropertyParser extends PropertyTokenizer {
     functionTable.put("from-parent", new FromParentFunction());
     functionTable.put("from-nearest-specified-value", new NearestSpecPropFunction());
     functionTable.put("proportional-column-width", new PPColWidthFunction());
+    // NOTE: used from code generated for corresponding properties
+    functionTable.put("_fop-property-value", new FopPropValFunction());
 
      /*** NOT YET IMPLEMENTED!!!
     functionTable.put("icc-color", new ICCcolorFunction());
