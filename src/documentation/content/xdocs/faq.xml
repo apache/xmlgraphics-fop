@@ -433,22 +433,9 @@
       </answer>
     </faq>
     <faq id="png-fails">
-      <question>My PNG images don't work.</question>
+      <question>My graphical images do not work properly.</question>
       <answer>
-        <p>
-          The Jimi image library, which is by default used for processing
-          images in PNG and other formats, was removed from the distribution
-          for licensing reasons. You have to <fork
-            href="http://java.sun.com/products/jimi">download</fork>
-          and install it by yourself.
-        </p>
-        <p>
-          Extract the file "JimiProClasses.zip" from the archive you've downloaded, rename it to "jimi-1.0.jar" and move it to FOP's lib directory.
-        </p>
-        <p>
-          An alternative to Jimi is to use Sun's JAI. It is much faster, but
-          not available for all platforms.
-        </p>
+        <p>See <link href="svg.html">Graphical Formats</link>.</p>
       </answer>
     </faq>
     <faq id="keep-with">
