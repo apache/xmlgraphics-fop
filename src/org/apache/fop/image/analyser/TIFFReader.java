@@ -77,7 +77,10 @@ public class TIFFReader implements ImageReader {
          * byte4 );
          * this.height = ( int ) ( l );
          */
-         return null;
+         FopImage.ImageInfo info = new FopImage.ImageInfo();
+         info.width = -1;
+         info.height = -1;
+         return info;
     }
 
     protected byte[] getDefaultHeader(BufferedInputStream imageStream) throws IOException {
