@@ -485,7 +485,7 @@
       value to a "reasonable" value based on the font size of
       the element.
     </p>
-  </s3>
+  </section>
   <p>
     ... When an element contains text that is rendered in more
     than one font, <strong>user agents</strong> should determine
@@ -741,7 +741,8 @@
       </section>
       <section>
         <title>7.26.5 "border-separation"</title>
-  <s3 title="&lt;length-bp-ip-direction&gt;">
+  <section>
+    <title>&lt;length-bp-ip-direction&gt;</title>
     <p>
       ... Rows, columns, row groups, and column groups cannot
       have borders (i.e., <strong>user agents</strong> must

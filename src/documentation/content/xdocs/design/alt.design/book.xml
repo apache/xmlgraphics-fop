@@ -18,7 +18,7 @@
       <menu-item label="footnotes" href="footnotes.html"/>
       <menu-item label="keeps" href="keeps.html"/>
       <menu-item label="space-specifiers" href="spaces.html"/>
-      <menu-item label="alt.properties" href="alt.properties.html"/>
+      <menu-item label="alt.properties" href="alt-properties.html"/>
       <menu-item label="Classes overview" href="classes-overview.html"/>
       <menu-item label="Properties classes" href="properties-classes.html"/>
       <menu-item label="Properties" href="Properties.png.html"/>

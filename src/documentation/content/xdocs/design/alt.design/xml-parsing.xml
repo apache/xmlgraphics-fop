@@ -40,7 +40,7 @@
     callback must complete before the next is called.<br/><br/>
     <strong>Figure 1</strong>
   </p>
-  <figure src="SAXParsing.png" alt="SAX parsing schematic"/>
+  <figure src="images/design/alt.design/SAXParsing.png" alt="SAX parsing schematic"/>
   <p>
     In the process of parsing, the hierarchical structure of the
     original FO tree is flattened into a number of streams of
@@ -104,7 +104,7 @@
     footprint.  This occurs when the approach is generalised to
     modularise FOP processing.<br/><br/> <strong>Figure 2</strong>
   </p>
-  <figure src="XML-event-buffer.png" alt="XML event buffer"/>
+  <figure src="images/design/alt.design/XML-event-buffer.png" alt="XML event buffer"/>
   <p>
     The most useful change that this brings about is the switch
     from <em>passive</em> to <em>active</em> XML element
@@ -220,7 +220,7 @@
     processes.<br/><br/>
     <strong>Figure 3</strong>
   </p>
-  <figure src="processPlumbing.png" alt="FOP modularisation"/>
+  <figure src="images/design/alt.design/processPlumbing.png" alt="FOP modularisation"/>
       </section>
     </section>
     </body>

@@ -5,6 +5,7 @@
 <document>
     <header>
         <title>..fo.PropNames diagram</title>
+    <authors>
       <person id="pbw" name="Peter B. West"
         email="pbwest@powerup.com.au"/>
     </authors>
@@ -12,7 +13,7 @@
     <body>
     <section>
       <title>PropNames.class</title>
-      <figure src="PropNames.png" alt="PropNames.class diagram"/>
+      <figure src="images/design/alt.design/PropNames.png" alt="PropNames.class diagram"/>
     </section>
     </body>
 </document>

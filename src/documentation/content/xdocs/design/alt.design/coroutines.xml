@@ -88,7 +88,7 @@
     left off.<br/><br/>
     <strong>Figure 1</strong>
   </p>
-  <figure src="coroutines.png" alt="Co-routine diagram"/>
+  <figure src="images/design/alt.design/coroutines.png" alt="Co-routine diagram"/>
   <p>
     For example, think of a page-production method working on a
     complex page-sequence-master.
