@@ -443,6 +443,14 @@ public class FOText extends FObj {
     
     private class TextCharIterator extends AbstractCharIterator {
         private int curIndex = 0;
+
+        /* Current space removal process:  just increment the startIndex
+           to "remove" leading spaces from ca, until an unremoved character
+           is found.  Then perform arraycopy's to remove extra spaces
+           between words.  nextCharCalled is used to determine if an 
+           unremoved character has already been found--if its value > 2
+           than it means that has occurred (it is reset to zero each time we 
+           remove a space via incrementing the startIndex.)  */
         private int nextCharCalled = 0;
         
         public boolean hasNext() {
@@ -476,7 +484,8 @@ public class FOText extends FObj {
 //              System.out.println("removeB: " + new String(ca, startIndex, endIndex - startIndex));
             } else if (curIndex == endIndex) {
 //              System.out.println("removeC: " + new String(ca, startIndex, endIndex - startIndex));
-                curIndex = --endIndex;
+                endIndex--;
+                curIndex--;
             }
         }
 
