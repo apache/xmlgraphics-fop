@@ -9,28 +9,20 @@ package org.apache.fop.render.svg;
 
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
-import org.apache.fop.datatypes.*;
+import org.apache.fop.datatypes.IDReferences;
+import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.image.*;
-import org.apache.fop.svg.*;
-import org.apache.fop.render.pdf.*;
-import org.apache.fop.render.awt.*;
-import org.apache.fop.viewer.*;
-import org.apache.fop.apps.*;
+import org.apache.fop.svg.SVGArea;
 import org.apache.fop.svg.SVGUtilities;
 
-import org.w3c.dom.*;
-import org.w3c.dom.svg.*;
+import org.w3c.dom.Node;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.svg.SVGSVGElement;
+import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.DOMImplementation;
 
-import org.apache.batik.bridge.*;
-import org.apache.batik.swing.svg.*;
-import org.apache.batik.swing.gvt.*;
-import org.apache.batik.gvt.*;
-import org.apache.batik.gvt.renderer.*;
-import org.apache.batik.gvt.filter.*;
-import org.apache.batik.gvt.event.*;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.svg.SVGOMElement;
 import org.apache.batik.dom.util.XMLSupport;
@@ -39,26 +31,19 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.TranscoderException;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.Image;
-import java.awt.image.*;
-import java.awt.geom.*;
-import java.awt.font.*;
-import java.util.*;
+import java.awt.image.BufferedImage;
+import java.awt.geom.Rectangle2D;
+import java.util.Hashtable;
 import java.net.URL;
 import java.net.MalformedURLException;
-import java.io.*;
-import java.beans.*;
-import javax.swing.*;
-import java.awt.print.*;
-import java.awt.image.BufferedImage;
-import java.text.*;
+import java.io.OutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import javax.swing.ImageIcon;
 
 import org.apache.fop.render.AbstractRenderer;
-
-import org.apache.batik.util.SVGConstants;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.batik.dom.svg.ExtensibleSVGDOMImplementation;
 
 public class SVGRenderer extends AbstractRenderer {
     static final String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
