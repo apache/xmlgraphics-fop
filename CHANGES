@@ -9,9 +9,11 @@ Done since 0.20.3 release
 - Changed build.sh to work under cygwin
   Submitted by: Andriy Palamarchuk <APalamar@wyeth.com>
 - Added turkish hyphenation patterns
-  Submitted by:	Togan Muftuoglu <toganm@users.sourceforge.net>
-- Aportuguese hyphenation patterns
-  Submitted by:	Paulo Soares <psoares@consiste.pt>
+  Submitted by: Togan Muftuoglu <toganm@users.sourceforge.net>
+- Added portuguese hyphenation patterns
+  Submitted by: Paulo Soares <psoares@consiste.pt>
+- Added czech translation for AWT viewer
+  Submitted by: Michal Buchtik <BuchtikM@dlsystem.cz>
 ==============================================================================
 Done since 0.20.2 release
 *** General
