@@ -10,8 +10,9 @@ package org.apache.fop.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Enumeration;
 
 /**
@@ -37,7 +38,7 @@ public class PDFStream extends PDFObject {
     /**
      * the filters that should be applied
      */
-    private ArrayList _filters;
+    private List _filters;
 
     /**
      * create an empty stream object
@@ -100,10 +101,10 @@ public class PDFStream extends PDFObject {
         }
     }
 
-    public void addDefaultFilters(HashMap filters, String type) {
-        ArrayList filterset = (ArrayList)filters.get(type);
+    public void addDefaultFilters(Map filters, String type) {
+        List filterset = (List)filters.get(type);
         if(filterset == null) {
-            filterset = (ArrayList)filters.get(DEFAULT_FILTER);
+            filterset = (List)filters.get(DEFAULT_FILTER);
         }
         if(filterset == null || filterset.size() == 0) {
             // built-in default to flate
@@ -241,8 +242,8 @@ public class PDFStream extends PDFObject {
      */
     protected String applyFilters() throws IOException {
         if (_filters.size() > 0) {
-            ArrayList names = new ArrayList();
-            ArrayList parms = new ArrayList();
+            List names = new ArrayList();
+            List parms = new ArrayList();
 
             // run the filters
             for (int count = 0; count < _filters.size(); count++) {
@@ -264,7 +265,7 @@ public class PDFStream extends PDFObject {
 
     }
 
-    private String buildFilterEntries(ArrayList names) {
+    private String buildFilterEntries(List names) {
         StringBuffer sb = new StringBuffer();
         sb.append("/Filter ");
         if (names.size() > 1) {
@@ -281,7 +282,7 @@ public class PDFStream extends PDFObject {
         return sb.toString();
     }
 
-    private String buildDecodeParms(ArrayList parms) {
+    private String buildDecodeParms(List parms) {
         StringBuffer sb = new StringBuffer();
         boolean needParmsEntry = false;
         sb.append("/DecodeParms ");

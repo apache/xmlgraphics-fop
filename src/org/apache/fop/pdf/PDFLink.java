@@ -86,4 +86,35 @@ public class PDFLink extends PDFObject {
      * >>
      * endobj
      */
+
+    /**
+     * Check if this equals another object.
+     *
+     * @param obj the object to compare
+     * @return true if this equals other object
+     */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || !(obj instanceof PDFLink)) {
+            return false;
+        }
+
+        PDFLink link = (PDFLink)obj;
+
+        if (!((link.ulx == ulx) && (link.uly == uly)
+              && (link.brx == brx) && (link.bry == bry))) {
+            return false;
+        }
+
+        if (!(link.color.equals(color)
+             && link.action.getAction().equals(action.getAction()))) {
+            return false;
+        }
+
+        return true;
+    }
 }
+

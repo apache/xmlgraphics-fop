@@ -80,16 +80,15 @@ public class PDFGoTo extends PDFAction {
      * @return the PDF string
      */
     public byte[] toPDF() {
+        String dest;
         if(destination == null) {
-            destination = "/D ["
-                              + this.pageReference + " /XYZ " + xPosition
-                              + " " + yPosition + " null]\n";
+            dest = "/D [" + this.pageReference + " /XYZ " + xPosition
+                          + " " + yPosition + " null]\n";
         } else {
-            destination = "/D ["
-                              + this.pageReference + " " + destination + "]\n";
+            dest = "/D [" + this.pageReference + " " + destination + "]\n";
         }
         String p = new String(this.number + " " + this.generation
-                              + " obj\n<<\n/S /GoTo\n" + destination
+                              + " obj\n<<\n/S /GoTo\n" + dest
                               + ">>\nendobj\n");
         return p.getBytes();
     }
@@ -103,4 +102,46 @@ public class PDFGoTo extends PDFAction {
      * >>
      * endobj
      */
+
+    /**
+     * Check if this equals another object.
+     *
+     * @param obj the object to compare
+     * @return true if this equals other object
+     */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || !(obj instanceof PDFGoTo)) {
+            return false;
+        }
+
+        PDFGoTo gt = (PDFGoTo)obj;
+
+        if (gt.pageReference == null) {
+            if (pageReference != null) {
+                return false;
+            }
+        } else {
+            if (!gt.pageReference.equals(pageReference)) {
+                return false;
+            }
+        }
+
+        if(destination == null) {
+            if (!(gt.destination == null && gt.xPosition == xPosition
+                && gt.yPosition == yPosition)) {
+                return false;
+            }
+        } else {
+            if (!destination.equals(gt.destination)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
+

@@ -106,4 +106,39 @@ public class PDFGoToRemote extends PDFAction {
      * >>
      * endobj
      */
+
+    /**
+     * Check if this equals another object.
+     *
+     * @param obj the object to compare
+     * @return true if this equals other object
+     */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || !(obj instanceof PDFGoToRemote)) {
+            return false;
+        }
+
+        PDFGoToRemote remote = (PDFGoToRemote)obj;
+
+        if (!remote.pdfFileSpec.referencePDF().equals(pdfFileSpec.referencePDF())) {
+            return false;
+        }
+
+        if (destination != null) {
+            if (!destination.equals(remote.destination)) {
+                return false;
+            }
+        } else {
+            if (pageReference != remote.pageReference) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
+

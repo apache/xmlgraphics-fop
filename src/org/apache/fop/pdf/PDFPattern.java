@@ -8,7 +8,7 @@
 package org.apache.fop.pdf;
 
 // Java...
-import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.io.OutputStream;
 import java.io.IOException;
@@ -53,9 +53,9 @@ public class PDFPattern extends PDFPathPaint {
     protected int tilingType = 1;
 
     /**
-     * ArrayList of Doubles representing the Bounding box rectangle
+     * List of Doubles representing the Bounding box rectangle
      */
-    protected ArrayList bBox = null;
+    protected List bBox = null;
 
     /**
      * Horizontal spacing
@@ -73,9 +73,9 @@ public class PDFPattern extends PDFPathPaint {
     protected PDFShading shading = null;
 
     /**
-     * ArrayList of Integers represetning the Extended unique Identifier
+     * List of Integers represetning the Extended unique Identifier
      */
-    protected ArrayList xUID = null;
+    protected List xUID = null;
 
     /**
      * TODO use PDFGState
@@ -85,9 +85,9 @@ public class PDFPattern extends PDFPathPaint {
     protected StringBuffer extGState = null;
 
     /**
-     * ArrayList of Doubles representing the Transformation matrix.
+     * List of Doubles representing the Transformation matrix.
      */
-    protected ArrayList matrix = null;
+    protected List matrix = null;
 
     /**
      * The stream of a pattern
@@ -103,17 +103,17 @@ public class PDFPattern extends PDFPathPaint {
      * @param thePatternType the type of pattern, which is 1 for tiling.
      * @param thePaintType 1 or 2, colored or uncolored.
      * @param theTilingType 1, 2, or 3, constant spacing, no distortion, or faster tiling
-     * @param theBBox ArrayList of Doubles: The pattern cell bounding box
+     * @param theBBox List of Doubles: The pattern cell bounding box
      * @param theXStep horizontal spacing
      * @param theYStep vertical spacing
-     * @param theMatrix Optional ArrayList of Doubles transformation matrix
+     * @param theMatrix Optional List of Doubles transformation matrix
      * @param theXUID Optional vector of Integers that uniquely identify the pattern
      * @param thePatternDataStream The stream of pattern data to be tiled.
      */
     public PDFPattern(int theNumber, String thePatternName,
                       PDFResources theResources, int thePatternType,    // 1
-    int thePaintType, int theTilingType, ArrayList theBBox, double theXStep,
-    double theYStep, ArrayList theMatrix, ArrayList theXUID,
+    int thePaintType, int theTilingType, List theBBox, double theXStep,
+    double theYStep, List theMatrix, List theXUID,
     StringBuffer thePatternDataStream) {
         super(theNumber);
         this.patternName = thePatternName;
@@ -142,12 +142,12 @@ public class PDFPattern extends PDFPathPaint {
      * @param theShading the PDF Shading object that comprises this pattern
      * @param theXUID optional:the extended unique Identifier if used.
      * @param theExtGState optional: the extended graphics state, if used.
-     * @param theMatrix Optional:ArrayList of Doubles that specify the matrix.
+     * @param theMatrix Optional:List of Doubles that specify the matrix.
      */
     public PDFPattern(int theNumber, String thePatternName,
                       int thePatternType, PDFShading theShading,
-                      ArrayList theXUID, StringBuffer theExtGState,
-                      ArrayList theMatrix) {
+                      List theXUID, StringBuffer theExtGState,
+                      List theMatrix) {
         super(theNumber);
 
         this.patternName = thePatternName;
