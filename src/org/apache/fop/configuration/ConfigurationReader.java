@@ -122,9 +122,9 @@ public class ConfigurationReader {
 
         try {
             parser.parse(filename);
-            Configuration.setup(Configuration.STANDARD, configurationParser.getConfiguration(Configuration.STANDARD));
-            Configuration.setup(Configuration.PDF, configurationParser.getConfiguration(Configuration.PDF));
-            Configuration.setup(Configuration.AWT, configurationParser.getConfiguration(Configuration.AWT));
+//            Configuration.setup(Configuration.STANDARD, configurationParser.getConfiguration(Configuration.STANDARD));
+//            Configuration.setup(Configuration.PDF, configurationParser.getConfiguration(Configuration.PDF));
+//            Configuration.setup(Configuration.AWT, configurationParser.getConfiguration(Configuration.AWT));
         } catch (SAXException e) {
             if (e.getException() instanceof FOPException) {
                 dumpError(e.getException());

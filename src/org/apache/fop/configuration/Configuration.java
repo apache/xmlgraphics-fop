@@ -15,15 +15,29 @@ import org.apache.fop.messaging.MessageHandler;
  */
 public class Configuration {
 
-    /** stores the configuration information */
-    private static Hashtable standardConfiguration;
-    private static Hashtable pdfConfiguration;
-    private static Hashtable awtConfiguration;
-
     /** defines role types */
     public final static int STANDARD = 0;
     public final static int PDF = 1;
     public final static int AWT = 2;
+
+    /** stores the configuration information */
+    private static Hashtable standardConfiguration = new Hashtable(30);;
+    private static Hashtable pdfConfiguration  = new Hashtable(20);
+    private static Hashtable awtConfiguration  = new Hashtable(20);
+
+    /** contains a Hashtable of existing Hashtables */    
+    private static Hashtable configuration = new Hashtable(3);
+
+    /** loads the configuration types into the configuration Hashtable */
+    static {
+        configuration.put("standard",standardConfiguration);
+        configuration.put("pdf",pdfConfiguration);
+        configuration.put("awt",awtConfiguration);
+    }
+
+    public static Hashtable getConfiguration() {
+        return configuration;
+    }
 
     /**
      * general access method
