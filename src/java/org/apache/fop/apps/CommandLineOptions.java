@@ -407,10 +407,10 @@ public class CommandLineOptions {
         if (inputmode == XSLT_INPUT) {
             // check whether xml *and* xslt file have been set
             if (xmlfile == null) {
-                throw new FOPException("XML file must be specified for the tranform mode");
+                throw new FOPException("XML file must be specified for the transform mode");
             }
             if (xsltfile == null) {
-                throw new FOPException("XSLT file must be specified for the tranform mode");
+                throw new FOPException("XSLT file must be specified for the transform mode");
             }
 
             // warning if fofile has been set in xslt mode
@@ -424,12 +424,12 @@ public class CommandLineOptions {
                                        + fofile.getAbsolutePath());
             }
             if (!xmlfile.exists()) {
-                throw new FileNotFoundException("xml file "
+                throw new FileNotFoundException("Error: xml file "
                                                 + xmlfile.getAbsolutePath()
                                                 + " not found ");
             }
             if (!xsltfile.exists()) {
-                throw new FileNotFoundException("xsl file "
+                throw new FileNotFoundException("Error: xsl file "
                                                 + xsltfile.getAbsolutePath()
                                                 + " not found ");
             }
@@ -441,7 +441,7 @@ public class CommandLineOptions {
                 log.error("xslt file: " + xsltfile.toString());
             }
             if (!fofile.exists()) {
-                throw new FileNotFoundException("fo file "
+                throw new FileNotFoundException("Error: fo file "
                                                 + fofile.getAbsolutePath()
                                                 + " not found ");
             }
