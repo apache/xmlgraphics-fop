@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+<document>
+  <header>
+    <title>FOP Development: RTFLib (jfor)</title>
+  </header>
+  <body>
+    <section id="general">
+      <title>General Information</title>
+      <section id="intro">
+        <title>Introduction</title>
+        <p>The RTFLib package is an open-source, <em>independent</em> package suitable for writing RTF files in a java environment.
+By <em>independent</em> we mean:</p>
+        <ul>
+          <li>Although it is used by FOP to generate FOP's RTF output, it is not dependent on FOP for any of its functionality.</li>
+          <li>It does not require FOP as a front-end, nor does it even require XSL-FO for input.
+It can be used anywhere RTF output is required and java is available.</li>
+        </ul>
+        <p>The FOP development team intends to keep the RTFLib package independent so that it can be used for other purposes.</p>
+      </section>
+      <section id="history">
+        <title>History</title>
+        <p>RTFLib was originally developed by <link href="mailto:bdelacretaz@apache.org">Bertrand Delacr&#x00E9;taz</link> and the <link href="http://www.jfor.org">jfor</link> team. jfor was written under an Apache-style license, and the jfor team contributed the code to the Apache Software Foundation in June, 2003. RTFLib is a subset of the original jfor project, which also includes an XSL-FO parsing mechanism for a complete XSL-FO to RTF solution.</p>
+      </section>
+      <section id="status">
+        <title>Status</title>
+        <p>Although FOP's implementation of the RTFLib package is very incomplete, the RTFLib package itself is relatively mature. RTFLib is only available in the trunk <link href="index.html#lines">line of FOP development</link>.</p>
+        <warning>This documentation is a work in progress. If you see errors or omissions, please report them to the <link href="index.html#mail-fop-dev">fop-dev mailing list</link>.</warning>
+      </section>
+    </section>
+    <section id="userdoc">
+      <title>User Documentation</title>
+      <section id="userdoc-overview">
+        <title>Overview</title>
+        <p>Perhaps the easiest way to see how to use RTFLib is by looking at an example. A set of test documents is part of the package, and can be <link href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/java/org/apache/fop/rtf/rtflib/testdocs/">viewed online</link>.
+A quick look at the Abstract <link href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/java/org/apache/fop/rtf/rtflib/testdocs/TestDocument.java?rev=HEAD&amp;content-type=text/vnd.viewcvs-markup">TestDocument</link> class, and one of the Concrete subclasses, <link href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/java/org/apache/fop/rtf/rtflib/testdocs/SimpleDocument.java&amp;rev=HEAD&amp;content-type=text/vnd.viewcvs-markup">SimpleDocument</link> will provide the basics of how to use the package.</p>
+        <p>There are two basic concepts you will need to understand to use RTFLib:</p>
+        <ul>
+          <li>Documents are created by filling bigger containers with successively smaller containers, and eventually with content.</li>
+          <li>Attributes may be set for each container or content as it is created</li>
+        </ul>
+        <p>RTFLib handles the process of converting to and writing the RTF content as the document is created. All you need to do is flush the document at the end to make sure that the last pieces get written.</p>
+      </section>
+      <section id="userdoc-structure">
+        <title>Document Structure</title>
+        <warning>This section is very incomplete.</warning>
+        <p>The following table summarizes the various containers that can be created:</p>
+        <table>
+          <tr>
+            <th>Name</th>
+            <th>Class.Method where created</th>
+            <th>Attribute Set(s)</th>
+            <th>Valid children</th>
+          </tr>
+          <tr>
+            <td>Document Area</td>
+            <td>RtfFile.startDocumentArea()</td>
+            <td>.</td>
+            <td>Section</td>
+          </tr>
+          <tr>
+            <td>Section</td>
+            <td>RtfDocumentArea.newSection()</td>
+            <td>.</td>
+            <td>Paragraph</td>
+          </tr>
+          <tr>
+            <td>Paragraph</td>
+            <td>RtfSection.newParagraph()</td>
+            <td>.</td>
+            <td>Text</td>
+          </tr>
+          <tr>
+            <td>Text</td>
+            <td>RtfParagraph.newText()</td>
+            <td>.</td>
+            <td>N/A</td>
+          </tr>
+        </table>
+      </section>
+      <section id="userdoc-attributes">
+        <title>Attributes</title>
+        <warning>This section is very incomplete.</warning>
+        <p>Attributes can be set for each container and piece of content in the document. The general approach is to build an RtfAttributes object containing the various attributes, then pass that RtfAttributes object to the method that creates the new container or content. The following information lists the various attributes that can be set for each type of container.</p>
+      </section>
+    </section>
+  </body>
+</document>

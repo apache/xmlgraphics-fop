@@ -36,4 +36,7 @@
       <menu-item label="Tools" href="tools.html"/>
       <external label="ViewCVS" href="http://cvs.apache.org/viewcvs.cgi/xml-fop"/>
     </menu>
+    <menu label="SubPackages">
+      <menu-item label="RTFlib" href="rtflib.html"></menu-item>
+    </menu>
 </book>
