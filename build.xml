@@ -774,6 +774,10 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <fileset dir="${basedir}" includes="${name}-*.zip"/>
     </delete>
   </target>
+  <!-- =================================================================== -->
+  <!-- Special target for Gump                                             -->
+  <!-- =================================================================== -->
+  <target name="gump" depends="all"/>
 
 </project>
 
