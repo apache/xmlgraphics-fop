@@ -23,8 +23,6 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.Color;
 
-import org.apache.commons.logging.Log;
-
 /**
  * Fop image interface for loading images.
  *

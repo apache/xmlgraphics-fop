@@ -28,9 +28,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.net.URLConnection;
 
-// FOP
-import org.apache.commons.logging.Log;
-
 /**
  * FopImage object for GIF images, using Java native classes.
  * @author Eric SCHAEFFER
