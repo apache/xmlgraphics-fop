@@ -67,18 +67,30 @@ public class AWTPrintRenderer extends AWTRenderer {
     private int copies = 1;
     private PrinterJob printerJob;
 
-    public AWTPrintRenderer(PrinterJob printerJob) {
+    public AWTPrintRenderer() {
         super(null);
-        this.printerJob = printerJob;
+        initialize();
+    }
+
+    private void initialize() throws IllegalArgumentException {
+        // read from command-line options
+        copies = getIntProperty("copies", 1);
         startNumber = getIntProperty("start", 1) - 1;
         endNumber = getIntProperty("end", -1);
-        printerJob.setPageable(this);
-        mode = EVEN_AND_ALL;
         String str = System.getProperty("even");
         if (str != null) {
             mode = Boolean.valueOf(str).booleanValue() ? EVEN : ODD;
         }
-    }
+        
+        printerJob = PrinterJob.getPrinterJob();
+        printerJob.setCopies(copies);
+        if (System.getProperty("dialog") != null) {
+            if (!printerJob.printDialog()) {
+                throw new IllegalArgumentException("Printing cancelled by operator");
+            }
+        }
+        printerJob.setPageable(this);
+    }   
 
     public void stopRenderer() throws IOException {
         super.stopRenderer();
@@ -137,14 +149,5 @@ public class AWTPrintRenderer extends AWTRenderer {
         }
         return vec;
     }
-
-    /* TODO: I'm not totally sure that this is necessary -Mark
-	void setCopies(int val) {
-		copies = val;
-		Vector copie = tree.getPages();
-		for (int i = 1; i < copies; i++) {
-			tree.getPages().addAll(copie);
-		}
-    } */
 } // class AWTPrintRenderer
 

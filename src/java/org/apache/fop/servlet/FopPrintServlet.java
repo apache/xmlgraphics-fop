@@ -56,8 +56,6 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
-import java.awt.print.PrinterJob;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -171,8 +169,7 @@ public class FopPrintServlet extends HttpServlet {
                          HttpServletResponse response) throws ServletException {
         try {
             Driver driver = new Driver(foFile, null);
-            PrinterJob pj = PrinterJob.getPrinterJob();
-            AWTPrintRenderer renderer = new AWTPrintRenderer(pj);
+            AWTPrintRenderer renderer = new AWTPrintRenderer();
 
             driver.enableLogging(log);
             driver.setRenderer(renderer);
@@ -194,10 +191,7 @@ public class FopPrintServlet extends HttpServlet {
                           HttpServletResponse response) throws ServletException {
         try {
             Driver driver = new Driver();
-            PrinterJob pj = PrinterJob.getPrinterJob();
-            AWTPrintRenderer renderer = new AWTPrintRenderer(pj);
-
-            pj.setCopies(1);
+            AWTPrintRenderer renderer = new AWTPrintRenderer();
 
             driver.enableLogging(log);
             driver.setRenderer(renderer);
