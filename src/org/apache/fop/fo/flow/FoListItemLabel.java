@@ -92,7 +92,6 @@ public class FoListItemLabel extends FONode {
     {
         super(foTree, FObjectNames.LIST_ITEM_LABEL, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         try {
             // Get at least one %block;

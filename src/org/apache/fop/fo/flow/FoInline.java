@@ -114,7 +114,6 @@ public class FoInline extends FONode {
     {
         super(foTree, FObjectNames.INLINE, parent, event,
                                   stateFlags, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         do {
             try {

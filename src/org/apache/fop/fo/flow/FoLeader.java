@@ -117,7 +117,6 @@ public class FoLeader extends FONode {
     {
         super(foTree, FObjectNames.LEADER, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         do {
             try {

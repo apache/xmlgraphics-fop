@@ -93,7 +93,6 @@ public class FoMultiProperties extends FONode {
         super(foTree, FObjectNames.MULTI_PROPERTIES, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
-        xmlevents = foTree.getXmlevents();
         try {
             // Look for one or more multi-property-set
             while ((ev = xmlevents.expectStartElement

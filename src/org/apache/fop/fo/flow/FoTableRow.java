@@ -111,7 +111,6 @@ public class FoTableRow extends FONode {
         super(foTree, FObjectNames.TABLE_ROW, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
-        xmlevents = foTree.getXmlevents();
         // Look for zero or more markers
         String nowProcessing = "table-cell";
         try {

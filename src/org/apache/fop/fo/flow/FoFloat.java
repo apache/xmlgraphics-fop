@@ -89,7 +89,6 @@ public class FoFloat extends FONode {
     {
         super(foTree, FObjectNames.FLOAT, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         if ((stateFlags & (FONode.MC_FLOAT | FONode.MC_FOOTNOTE)) != 0)
             throw new FOPException

@@ -102,7 +102,6 @@ public class FoFootnote extends FONode {
             throw new FOPException
                     ("fo:footnote not allowed as child of fo:footnote.");
         FoXMLEvent ev;
-        xmlevents = foTree.getXmlevents();
         try {
             // Look for the inline
             if ((ev = xmlevents.expectStartElement

@@ -89,7 +89,6 @@ public class FoFootnoteBody extends FONode {
     {
         super(foTree, FObjectNames.FOOTNOTE_BODY, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         try {
             // Get at least one %block;

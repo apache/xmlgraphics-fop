@@ -79,7 +79,6 @@ public class FoFlow extends FONode {
     {
         super(foTree, FObjectNames.FLOW, parent, event,
               FONode.FLOW_SET, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev;
         try {
             // Get at least one %block;

@@ -111,7 +111,6 @@ public class FoInlineContainer extends FONode {
     {
         super(foTree, FObjectNames.INLINE_CONTAINER, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         try {
             // Get at least one %block;

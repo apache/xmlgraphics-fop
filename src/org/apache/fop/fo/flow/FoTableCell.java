@@ -110,7 +110,6 @@ public class FoTableCell extends FONode {
     {
         super(foTree, FObjectNames.TABLE_CELL, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         try {
             // Get at least one %block;

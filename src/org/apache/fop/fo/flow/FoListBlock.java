@@ -112,7 +112,6 @@ public class FoListBlock extends FONode {
         super(foTree, FObjectNames.LIST_BLOCK, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
-        xmlevents = foTree.getXmlevents();
         // Look for zero or more markers
         String nowProcessing = "marker";
         try {

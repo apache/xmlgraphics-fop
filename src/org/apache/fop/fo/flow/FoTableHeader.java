@@ -115,7 +115,6 @@ public class FoTableHeader extends FONode {
         super(foTree, FObjectNames.TABLE_HEADER, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
-        xmlevents = foTree.getXmlevents();
         // Look for zero or more markers
         String nowProcessing = "marker";
         try {
