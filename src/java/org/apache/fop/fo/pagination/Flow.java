@@ -65,13 +65,15 @@ public class Flow extends FObj {
 
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * XSL/FOP Content Model: (%block;)+
+     * XSL/FOP Content Model: markers* (%block;)+
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+/*  temporarily disabled:  need to account for fo-markers which may be initial children
+     protected void validateChildNode(Locator loc, String nsURI, String localName) {
         if (!isBlockItem(nsURI, localName)) {
             invalidChildError(loc, nsURI, localName);
         }
     }
+*/
 
     /**
      * Make sure content model satisfied, if so then tell the

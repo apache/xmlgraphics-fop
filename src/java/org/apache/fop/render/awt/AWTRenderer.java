@@ -106,6 +106,10 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         createPreviewDialog(foUserAgent.getInputHandler());
     }
 
+    public FOUserAgent getUserAgent() {
+        return userAgent;
+    }
+
     /**
      * @see org.apache.fop.render.Renderer
      */

@@ -25,6 +25,9 @@ public interface Constants {
        apps.Driver to describe the input (either .FO or .XML/.XSL)
        and desired output (PDF, PS, AWT, etc.) of the document */
        
+    /** render constants for bounds checking */
+    int RENDER_MIN_CONST = 1;
+    int RENDER_MAX_CONST = 10;
     /** input / output not set */
     int NOT_SET = 0;
     /** input: fo file */

@@ -66,7 +66,7 @@ public abstract class FOInputHandler {
     /** 
      * The FOUserAgent for this process
      */
-    private FOUserAgent foUserAgent;
+    protected FOUserAgent foUserAgent;
 
     /** 
      * The Font information relevant for this document

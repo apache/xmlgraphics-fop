@@ -115,10 +115,17 @@ public class FOTreeHandler extends FOInputHandler {
      * @param store if true then use the store pages model and keep the
      *        area tree in memory
      */
-    public FOTreeHandler(FOUserAgent userAgent, Renderer renderer, 
+    public FOTreeHandler(FOUserAgent userAgent, int renderType, 
         OutputStream stream, boolean store) throws FOPException {
         super(userAgent);
-        this.renderer = renderer;
+
+        if (foUserAgent.getRendererOverride() != null) {
+            renderer = foUserAgent.getRendererOverride();
+        } else {
+            renderer = createRenderer(renderType);
+            renderer.setUserAgent(foUserAgent);
+        }
+        
         areaTree = new AreaTree(renderer);
 
         try {
@@ -135,6 +142,37 @@ public class FOTreeHandler extends FOInputHandler {
         
         if (collectStatistics) {
             runtime = Runtime.getRuntime();
+        }
+    }
+
+    /**
+     * Creates a Renderer object based on render-type desired
+     * @param renderType the type of renderer to use
+     * @return Renderer the new Renderer instance
+     * @throws IllegalArgumentException if an unsupported renderer type was requested
+     */
+    private Renderer createRenderer(int renderType) throws IllegalArgumentException {
+
+        switch (renderType) {
+        case Constants.RENDER_PDF:
+            return new org.apache.fop.render.pdf.PDFRenderer();
+        case Constants.RENDER_AWT:
+            return new org.apache.fop.render.awt.AWTRenderer();
+        case Constants.RENDER_PRINT:
+            return new org.apache.fop.render.awt.AWTPrintRenderer();
+        case Constants.RENDER_PCL:
+            return new org.apache.fop.render.pcl.PCLRenderer();
+        case Constants.RENDER_PS:
+            return new org.apache.fop.render.ps.PSRenderer();
+        case Constants.RENDER_TXT:
+            return new org.apache.fop.render.txt.TXTRenderer();
+        case Constants.RENDER_XML:
+            return new org.apache.fop.render.xml.XMLRenderer();
+        case Constants.RENDER_SVG:
+            return new org.apache.fop.render.svg.SVGRenderer();
+        default:
+            throw new IllegalArgumentException("Invalid renderer type " 
+                + renderType);
         }
     }
 
