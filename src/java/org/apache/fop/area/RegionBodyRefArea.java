@@ -174,20 +174,4 @@ implements ReferenceArea {
         return footnoteRefArea;
     }
 
-    /**
-     * Clone this object.
-     *
-     * @return a shallow copy of this object
-     */
-    public Object clone() {
-        synchronized (sync) {
-            RegionBodyRefArea br = (RegionBodyRefArea)(super.clone());
-            br.columnGap = columnGap;
-            br.columnCount = columnCount;
-            br.beforeFloatRefArea = beforeFloatRefArea;
-            br.mainReference = mainReference;
-            br.footnoteRefArea = footnoteRefArea;
-            return br;
-        }
-    }
 }
