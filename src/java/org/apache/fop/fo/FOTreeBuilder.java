@@ -55,12 +55,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+// SAX
 import org.apache.avalon.framework.logger.Logger;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+// Java
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * SAX Handler that builds the formatting object tree.
@@ -108,6 +119,7 @@ public class FOTreeBuilder extends DefaultHandler {
      * Default constructor
      */
     public FOTreeBuilder() {
+        setupDefaultMappings();
     }
 
     private Logger getLogger() {
@@ -135,6 +147,31 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
+     * Sets all the element and property list mappings to their default values.
+     *
+     */
+    private void setupDefaultMappings() {
+        addElementMapping("org.apache.fop.fo.FOElementMapping");
+        addElementMapping("org.apache.fop.svg.SVGElementMapping");
+        addElementMapping("org.apache.fop.extensions.ExtensionElementMapping");
+
+        // add mappings from available services
+        Iterator providers =
+            Service.providers(ElementMapping.class);
+        if (providers != null) {
+            while (providers.hasNext()) {
+                String str = (String)providers.next();
+                try {
+                    addElementMapping(str);
+                } catch (IllegalArgumentException e) {
+                    getLogger().warn("Error while adding element mapping", e);
+                }
+
+            }
+        }
+    }
+
+    /**
      * Adds a mapping from a namespace to a table of makers.
      *
      * @param namespaceURI namespace URI of formatting object elements
@@ -143,6 +180,42 @@ public class FOTreeBuilder extends DefaultHandler {
     public void addMapping(String namespaceURI, HashMap table) {
         this.fobjTable.put(namespaceURI, table);
         this.namespaces.add(namespaceURI.intern());
+    }
+
+    /**
+     * Add the given element mapping.
+     * An element mapping maps element names to Java classes.
+     *
+     * @param mapping the element mappingto add
+     */
+    public void addElementMapping(ElementMapping mapping) {
+        mapping.addToBuilder(this);
+    }
+
+    /**
+     * Add the element mapping with the given class name.
+     * @param mappingClassName the class name representing the element mapping.
+     * @throws IllegalArgumentException if there was not such element mapping.
+     */
+    public void addElementMapping(String mappingClassName)
+                throws IllegalArgumentException {
+        try {
+            ElementMapping mapping =
+                (ElementMapping)Class.forName(mappingClassName).newInstance();
+            addElementMapping(mapping);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("Could not find "
+                                               + mappingClassName);
+        } catch (InstantiationException e) {
+            throw new IllegalArgumentException("Could not instantiate "
+                                               + mappingClassName);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Could not access "
+                                               + mappingClassName);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException(mappingClassName
+                                               + " is not an ElementMapping");
+        }
     }
 
     /**
@@ -277,4 +350,90 @@ public class FOTreeBuilder extends DefaultHandler {
     public boolean hasData() {
         return (rootFObj != null);
     }
+	 
 }
+
+// code stolen from org.apache.batik.util and modified slightly
+// does what sun.misc.Service probably does, but it cannot be relied on.
+// hopefully will be part of standard jdk sometime.
+
+/**
+ * This class loads services present in the class path.
+ */
+class Service {
+
+    private static Map providerMap = new java.util.Hashtable();
+
+    public static synchronized Iterator providers(Class cls) {
+        ClassLoader cl = cls.getClassLoader();
+        // null if loaded by bootstrap class loader
+        if (cl == null) {
+            cl = ClassLoader.getSystemClassLoader();
+        }
+        String serviceFile = "META-INF/services/" + cls.getName();
+
+        // getLogger().debug("File: " + serviceFile);
+
+        List lst = (List)providerMap.get(serviceFile);
+        if (lst != null) {
+            return lst.iterator();
+        }
+
+        lst = new java.util.Vector();
+        providerMap.put(serviceFile, lst);
+
+        Enumeration e;
+        try {
+            e = cl.getResources(serviceFile);
+        } catch (IOException ioe) {
+            return lst.iterator();
+        }
+
+        while (e.hasMoreElements()) {
+            try {
+                java.net.URL u = (java.net.URL)e.nextElement();
+                //getLogger().debug("URL: " + u);
+
+                InputStream is = u.openStream();
+                Reader r = new InputStreamReader(is, "UTF-8");
+                BufferedReader br = new BufferedReader(r);
+
+                String line = br.readLine();
+                while (line != null) {
+                    try {
+                        // First strip any comment...
+                        int idx = line.indexOf('#');
+                        if (idx != -1) {
+                            line = line.substring(0, idx);
+                        }
+
+                        // Trim whitespace.
+                        line = line.trim();
+
+                        // If nothing left then loop around...
+                        if (line.length() == 0) {
+                            line = br.readLine();
+                            continue;
+                        }
+                        // getLogger().debug("Line: " + line);
+
+                        // Try and load the class
+                        // Object obj = cl.loadClass(line).newInstance();
+                        // stick it into our vector...
+                        lst.add(line);
+                    } catch (Exception ex) {
+                        // Just try the next line
+                    }
+
+                    line = br.readLine();
+                }
+            } catch (Exception ex) {
+                // Just try the next file...
+            }
+
+        }
+        return lst.iterator();
+    }
+
+}
+
