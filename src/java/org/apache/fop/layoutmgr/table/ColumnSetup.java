@@ -80,10 +80,16 @@ public class ColumnSetup {
         }
     }
 
+    /**
+     * Returns a column. If the index of the column is bigger than the number of explicitly
+     * defined columns the last column is returned.
+     * @param index index of the column (1 is the first column)
+     * @return the requested column
+     */
     public TableColumn getColumn(int index) {
         int size = columns.size();
-        if (index > size - 1) {
-            maxColIndexReferenced = index;
+        if (index > size) {
+            maxColIndexReferenced = Math.max(maxColIndexReferenced, index);
             return (TableColumn)columns.get(size - 1);
         } else {
             return (TableColumn)columns.get(index - 1);
