@@ -30,20 +30,8 @@ import org.apache.fop.fo.flow.FoPageSequence;
  * The page reference area is then rendered inside the PageRefArea object
  */
 public class PageViewport
-extends AbstractViewport
+extends BlockViewportArea
 implements Viewport {
-
-    /**
-     * Creates a page viewport at the root of a tree, synchronized on itself,
-     * with a null page reference area and rectangular area
-     * @param pageSeq the page-sequence which generated this area
-     * the page-sequence
-     */
-    public PageViewport(
-            FoPageSequence pageSeq) {
-        // The pageSeq is also the generating node
-        super(pageSeq, pageSeq);
-    }
 
     /**
      * Creates a page viewport with a null page ref area and rectangular area,
@@ -96,24 +84,6 @@ implements Viewport {
      */
     public String[] getIDs() {
         return null;
-    }
-
-    /**
-     * Clone this page.
-     * Used by the page master to create a copy of an original page.
-     * @return a copy of this page and associated viewports
-     */
-    public Object clone() {
-        synchronized (sync) {
-            PageViewport pv;
-            try {
-                pv = (PageViewport)(super.clone());
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-            pv.refArea = (PageRefArea)(refArea.clone());
-            return pv;
-        }
     }
 
     /**
