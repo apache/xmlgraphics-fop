@@ -15,7 +15,7 @@ import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.Enumeration;
+import java.util.Iterator;
 
 public class ListItemBody extends FObj {
 
@@ -48,7 +48,7 @@ public class ListItemBody extends FObj {
 
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
-            FObj fo = (FObj)children.elementAt(i);
+            FObj fo = (FObj)children.get(i);
 
             Status status;
             if ((status = fo.layout(area)).isIncomplete()) {

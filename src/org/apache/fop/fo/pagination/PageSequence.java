@@ -64,13 +64,13 @@ public class PageSequence extends FObj {
 
     // There doesn't seem to be anything in the spec requiring flows
     // to be in the order given, only that they map to the regions
-    // defined in the page sequence, so all we need is this one hashtable
+    // defined in the page sequence, so all we need is this one hashmap
     // the set of flows includes StaticContent flows also
 
     /**
      * Map of flows to their flow name (flow-name, Flow)
      */
-    private Hashtable _flowMap;
+    private HashMap _flowMap;
 
     /**
      * the "master-reference" attribute
@@ -158,7 +158,7 @@ public class PageSequence extends FObj {
         // best time to run some checks on LayoutMasterSet
         layoutMasterSet.checkRegionNames();
 
-        _flowMap = new Hashtable();
+        _flowMap = new HashMap();
 
         thisIsFirstPage =
             true;    // we are now on the first page of the page sequence
@@ -652,8 +652,8 @@ public class PageSequence extends FObj {
 //     private boolean flowsAreIncomplete() {
 //         boolean isIncomplete = false;
 
-//         for (Enumeration e = _flowMap.elements(); e.hasMoreElements(); ) {
-//             Flow flow = (Flow)e.nextElement();
+//         for (Iterator e = _flowMap.values().iterator(); e.hasNext(); ) {
+//             Flow flow = (Flow)e.next();
 //             if (flow instanceof StaticContent) {
 //                 continue;
 //             }

@@ -14,15 +14,16 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.PageMaster;
 
 // Java
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.xml.sax.Attributes;
 
 public class LayoutMasterSet extends FObj {
 
-    private Hashtable simplePageMasters;
-    private Hashtable pageSequenceMasters;
-    private Hashtable allRegions;
+    private HashMap simplePageMasters;
+    private HashMap pageSequenceMasters;
+    private HashMap allRegions;
 
     private Root root;
 
@@ -32,8 +33,8 @@ public class LayoutMasterSet extends FObj {
 
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
-        this.simplePageMasters = new Hashtable();
-        this.pageSequenceMasters = new Hashtable();
+        this.simplePageMasters = new HashMap();
+        this.pageSequenceMasters = new HashMap();
 
         if (parent.getName().equals("fo:root")) {
             this.root = (Root)parent;
@@ -42,7 +43,7 @@ public class LayoutMasterSet extends FObj {
             throw new FOPException("fo:layout-master-set must be child of fo:root, not "
                                    + parent.getName());
         }
-        allRegions = new Hashtable();
+        allRegions = new HashMap();
 
     }
 
@@ -85,24 +86,23 @@ public class LayoutMasterSet extends FObj {
     }
 
     protected void resetPageMasters() {
-        for (Enumeration e = pageSequenceMasters.elements();
-                e.hasMoreElements(); ) {
-            ((PageSequenceMaster)e.nextElement()).reset();
+        for (Iterator e = pageSequenceMasters.values().iterator();
+                e.hasNext(); ) {
+            ((PageSequenceMaster)e.next()).reset();
         }
-
     }
 
     protected void checkRegionNames() throws FOPException {
         // Section 7.33.15 check to see that if a region-name is a
         // duplicate, that it maps to the same region-class.
-        for (Enumeration spm = simplePageMasters.elements();
-                spm.hasMoreElements(); ) {
+        for (Iterator spm = simplePageMasters.values().iterator();
+                spm.hasNext(); ) {
             SimplePageMaster simplePageMaster =
-                (SimplePageMaster)spm.nextElement();
-            Hashtable spmRegions = simplePageMaster.getRegions();
-            for (Enumeration e = spmRegions.elements();
-                    e.hasMoreElements(); ) {
-                Region region = (Region)e.nextElement();
+                (SimplePageMaster)spm.next();
+            HashMap spmRegions = simplePageMaster.getRegions();
+            for (Iterator e = spmRegions.values().iterator();
+                    e.hasNext(); ) {
+                Region region = (Region)e.next();
                 if (allRegions.containsKey(region.getRegionName())) {
                     String localClass =
                         (String)allRegions.get(region.getRegionName());
@@ -128,16 +128,15 @@ public class LayoutMasterSet extends FObj {
      */
     protected boolean regionNameExists(String regionName) {
         boolean result = false;
-        for (Enumeration e = simplePageMasters.elements();
-                e.hasMoreElements(); ) {
+        for (Iterator e = simplePageMasters.values().iterator();
+                e.hasNext(); ) {
             result =
-                ((SimplePageMaster)e.nextElement()).regionNameExists(regionName);
+                ((SimplePageMaster)e.next()).regionNameExists(regionName);
             if (result) {
                 return result;
             }
         }
         return result;
     }
-
-
 }
+

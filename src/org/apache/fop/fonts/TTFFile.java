@@ -7,9 +7,9 @@
 
 package org.apache.fop.fonts;
 import java.io.*;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.Iterator;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Reads a TrueType file or a TrueType Collection.
@@ -26,11 +26,11 @@ public class TTFFile {
     short firstChar = 0;
     boolean is_embeddable = true;
     boolean hasSerifs = true;
-    Hashtable dirTabs;                             // Table directory
-    Hashtable kerningTab;                          // for CIDs
-    Hashtable ansiKerningTab;                      // For winAnsiEncoding
-    Vector cmaps;
-    Vector unicodeMapping;                         //
+    HashMap dirTabs;                             // Table directory
+    HashMap kerningTab;                          // for CIDs
+    HashMap ansiKerningTab;                      // For winAnsiEncoding
+    ArrayList cmaps;
+    ArrayList unicodeMapping;                         //
 
     int upem;                                      // unitsPerEm from "head" table
     int nhmtx;                                     // Number of horizontal metrics
@@ -65,7 +65,7 @@ public class TTFFile {
     short lastChar = 0;
 
     int ansiWidth[];
-    Hashtable ansiIndex;
+    HashMap ansiIndex;
 
     /**
      * Position inputstream to position indicated
@@ -111,7 +111,7 @@ public class TTFFile {
      */
     private boolean readCMAP(FontFileReader in) throws IOException {
 
-        unicodeMapping = new Vector();
+        unicodeMapping = new ArrayList();
 
         /**
          * Read CMAP table and correct mtx_tab.index
@@ -193,7 +193,7 @@ public class TTFFile {
             int glyphIdArrayOffset = in.getCurrentPos();
 
             // Insert the unicode id for the glyphs in mtx_tab
-            // and fill in the cmaps Vector
+            // and fill in the cmaps ArrayList
 
             for (int i = 0; i < cmap_startCounts.length; i++) {
                 /*
@@ -218,9 +218,9 @@ public class TTFFile {
                             glyphIdx = (in.readTTFUShort() + cmap_deltas[i])
                                        & 0xffff;
 
-                            unicodeMapping.addElement(new UnicodeMapping(glyphIdx,
+                            unicodeMapping.add(new UnicodeMapping(glyphIdx,
                                     j));
-                            mtx_tab[glyphIdx].unicodeIndex.addElement(new Integer(j));
+                            mtx_tab[glyphIdx].unicodeIndex.add(new Integer(j));
 
 
                             // Also add winAnsiWidth
@@ -231,13 +231,13 @@ public class TTFFile {
                                 if (d < ansiWidth.length)
                                     ansiWidth[d] = mtx_tab[glyphIdx].wx;
                             } else {
-                                Vector v =
-                                    (Vector)ansiIndex.get(new Integer(j));
+                                ArrayList v =
+                                    (ArrayList)ansiIndex.get(new Integer(j));
                                 if (v != null) {
-                                    for (Enumeration e = v.elements();
-                                            e.hasMoreElements(); ) {
+                                    for (Iterator e = v.listIterator();
+                                            e.hasNext(); ) {
                                         Integer aIdx =
-                                            (Integer)e.nextElement();
+                                            (Integer)e.next();
                                         ansiWidth[aIdx.intValue()] =
                                             mtx_tab[glyphIdx].wx;
                                         /*
@@ -263,16 +263,16 @@ public class TTFFile {
                             glyphIdx = (j + cmap_deltas[i]) & 0xffff;
 
                             if (glyphIdx < mtx_tab.length)
-                                mtx_tab[glyphIdx].unicodeIndex.addElement(new Integer(j));
+                                mtx_tab[glyphIdx].unicodeIndex.add(new Integer(j));
                             else
                                 System.out.println("Glyph " + glyphIdx
                                                    + " out of range: "
                                                    + mtx_tab.length);
 
-                            unicodeMapping.addElement(new UnicodeMapping(glyphIdx,
+                            unicodeMapping.add(new UnicodeMapping(glyphIdx,
                                     j));
                             if (glyphIdx < mtx_tab.length)
-                                mtx_tab[glyphIdx].unicodeIndex.addElement(new Integer(j));
+                                mtx_tab[glyphIdx].unicodeIndex.add(new Integer(j));
                             else
                                 System.out.println("Glyph " + glyphIdx
                                                    + " out of range: "
@@ -289,13 +289,13 @@ public class TTFFile {
                                 if (d < ansiWidth.length)
                                     ansiWidth[d] = mtx_tab[glyphIdx].wx;
                             } else {
-                                Vector v =
-                                    (Vector)ansiIndex.get(new Integer(j));
+                                ArrayList v =
+                                    (ArrayList)ansiIndex.get(new Integer(j));
                                 if (v != null) {
-                                    for (Enumeration e = v.elements();
-                                            e.hasMoreElements(); ) {
+                                    for (Iterator e = v.listIterator();
+                                            e.hasNext(); ) {
                                         Integer aIdx =
-                                            (Integer)e.nextElement();
+                                            (Integer)e.next();
                                         ansiWidth[aIdx.intValue()] =
                                             mtx_tab[glyphIdx].wx;
                                     }
@@ -357,17 +357,17 @@ public class TTFFile {
         // Create an index hash to the ansiWidth
         // Can't just index the winAnsiEncoding when inserting widths
         // same char (eg bullet) is repeated more than one place
-        ansiIndex = new Hashtable();
+        ansiIndex = new HashMap();
         for (int i = 32; i < Glyphs.winAnsiEncoding.length; i++) {
             Integer ansi = new Integer(i);
             Integer uni = new Integer((int)Glyphs.winAnsiEncoding[i]);
 
-            Vector v = (Vector)ansiIndex.get(uni);
+            ArrayList v = (ArrayList)ansiIndex.get(uni);
             if (v == null) {
-                v = new Vector();
+                v = new ArrayList();
                 ansiIndex.put(uni, v);
             }
-            v.addElement(ansi);
+            v.add(ansi);
         }
     }
 
@@ -408,22 +408,22 @@ public class TTFFile {
     }
 
     private void createCMaps() {
-        cmaps = new Vector();
+        cmaps = new ArrayList();
         TTFCmapEntry tce = new TTFCmapEntry();
 
-        Enumeration e = unicodeMapping.elements();
-        UnicodeMapping um = (UnicodeMapping)e.nextElement();
+        Iterator e = unicodeMapping.listIterator();
+        UnicodeMapping um = (UnicodeMapping)e.next();
         UnicodeMapping lastMapping = um;
 
         tce.unicodeStart = um.uIdx;
         tce.glyphStartIndex = um.gIdx;
 
-        while (e.hasMoreElements()) {
-            um = (UnicodeMapping)e.nextElement();
+        while (e.hasNext()) {
+            um = (UnicodeMapping)e.next();
             if (((lastMapping.uIdx + 1) != um.uIdx)
                     || ((lastMapping.gIdx + 1) != um.gIdx)) {
                 tce.unicodeEnd = lastMapping.uIdx;
-                cmaps.addElement(tce);
+                cmaps.add(tce);
 
                 tce = new TTFCmapEntry();
                 tce.unicodeStart = um.uIdx;
@@ -433,7 +433,7 @@ public class TTFFile {
         }
 
         tce.unicodeEnd = um.uIdx;
-        cmaps.addElement(tce);
+        cmaps.add(tce);
     }
 
     public void printStuff() {
@@ -573,11 +573,11 @@ public class TTFFile {
         return (int)get_ttf_funit(ansiWidth[idx]);
     }
 
-    public Hashtable getKerning() {
+    public HashMap getKerning() {
         return kerningTab;
     }
 
-    public Hashtable getAnsiKerning() {
+    public HashMap getAnsiKerning() {
         return ansiKerningTab;
     }
 
@@ -588,7 +588,7 @@ public class TTFFile {
 
     /**
      * Read Table Directory from the current position in the
-     * FontFileReader and fill the global Hashtable dirTabs
+     * FontFileReader and fill the global HashMap dirTabs
      * with the table name (String) as key and a TTFDirTabEntry
      * as value.
      */
@@ -597,7 +597,7 @@ public class TTFFile {
         int ntabs = in.readTTFUShort();
         in.skip(6);    // 3xTTF_USHORT_SIZE
 
-        dirTabs = new Hashtable();
+        dirTabs = new HashMap();
         TTFDirTabEntry[] pd = new TTFDirTabEntry[ntabs];
         // System.out.println("Reading " + ntabs + " dir tables");
         for (int i = 0; i < ntabs; i++) {
@@ -928,8 +928,8 @@ public class TTFFile {
      */
     private final void readKerning(FontFileReader in) throws IOException {
         // Read kerning
-        kerningTab = new Hashtable();
-        ansiKerningTab = new Hashtable();
+        kerningTab = new HashMap();
+        ansiKerningTab = new HashMap();
         TTFDirTabEntry dirTab = (TTFDirTabEntry)dirTabs.get("kern");
         if (dirTab != null) {
             seek_tab(in, "kern", 2);
@@ -950,9 +950,9 @@ public class TTFFile {
                     if (kpx != 0) {
                         // CID table
                         Integer iObj = new Integer(i);
-                        Hashtable adjTab = (Hashtable)kerningTab.get(iObj);
+                        HashMap adjTab = (HashMap)kerningTab.get(iObj);
                         if (adjTab == null)
-                            adjTab = new java.util.Hashtable();
+                            adjTab = new HashMap();
                         adjTab.put(new Integer(j),
                                    new Integer((int)get_ttf_funit(kpx)));
                         kerningTab.put(iObj, adjTab);
@@ -963,18 +963,18 @@ public class TTFFile {
 
             // Create winAnsiEncoded kerning table
 
-            for (Enumeration ae = kerningTab.keys(); ae.hasMoreElements(); ) {
-                Integer cidKey = (Integer)ae.nextElement();
-                Hashtable akpx = new Hashtable();
-                Hashtable ckpx = (Hashtable)kerningTab.get(cidKey);
+            for (Iterator ae = kerningTab.keySet().iterator(); ae.hasNext(); ) {
+                Integer cidKey = (Integer)ae.next();
+                HashMap akpx = new HashMap();
+                HashMap ckpx = (HashMap)kerningTab.get(cidKey);
 
-                for (Enumeration aee = ckpx.keys(); aee.hasMoreElements(); ) {
-                    Integer cidKey2 = (Integer)aee.nextElement();
+                for (Iterator aee = ckpx.keySet().iterator(); aee.hasNext(); ) {
+                    Integer cidKey2 = (Integer)aee.next();
                     Integer kern = (Integer)ckpx.get(cidKey2);
 
-                    for (Enumeration uniMap = mtx_tab[cidKey2.intValue()].unicodeIndex.elements();
-                            uniMap.hasMoreElements(); ) {
-                        Integer unicodeKey = (Integer)uniMap.nextElement();
+                    for (Iterator uniMap = mtx_tab[cidKey2.intValue()].unicodeIndex.listIterator();
+                            uniMap.hasNext(); ) {
+                        Integer unicodeKey = (Integer)uniMap.next();
                         Integer[] ansiKeys =
                             unicodeToWinAnsi(unicodeKey.intValue());
                         for (int u = 0; u < ansiKeys.length; u++) {
@@ -984,9 +984,9 @@ public class TTFFile {
                 }
 
                 if (akpx.size() > 0)
-                    for (Enumeration uniMap = mtx_tab[cidKey.intValue()].unicodeIndex.elements();
-                            uniMap.hasMoreElements(); ) {
-                        Integer unicodeKey = (Integer)uniMap.nextElement();
+                    for (Iterator uniMap = mtx_tab[cidKey.intValue()].unicodeIndex.listIterator();
+                            uniMap.hasNext(); ) {
+                        Integer unicodeKey = (Integer)uniMap.next();
                         Integer[] ansiKeys =
                             unicodeToWinAnsi(unicodeKey.intValue());
                         for (int u = 0; u < ansiKeys.length; u++) {
@@ -1000,7 +1000,7 @@ public class TTFFile {
     /**
      * Return a vector with TTFCmapEntry
      */
-    public Vector getCMaps() {
+    public ArrayList getCMaps() {
         return cmaps;
     }
 
@@ -1077,13 +1077,11 @@ public class TTFFile {
      * doesn't matter...
      */
     private Integer[] unicodeToWinAnsi(int unicode) {
-        Vector ret = new Vector();
+        ArrayList ret = new ArrayList();
         for (int i = 32; i < Glyphs.winAnsiEncoding.length; i++)
             if (unicode == Glyphs.winAnsiEncoding[i])
-                ret.addElement(new Integer(i));
-        Integer[] itg = new Integer[ret.size()];
-        ret.copyInto(itg);
-        return itg;
+                ret.add(new Integer(i));
+        return (Integer[])ret.toArray(new Integer[0]);
     }
 
 }

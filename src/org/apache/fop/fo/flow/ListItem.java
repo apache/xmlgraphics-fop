@@ -16,7 +16,7 @@ import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.Enumeration;
+import java.util.Iterator;
 
 public class ListItem extends FObj {
 
@@ -100,8 +100,8 @@ public class ListItem extends FObj {
         this.blockArea.addLineagePair(this, this.areasGenerated);
 
         // markers
-        if (this.hasMarkers())
-            this.blockArea.addMarkers(this.getMarkers());
+        //if (this.hasMarkers())
+            //this.blockArea.addMarkers(this.getMarkers());
 
         blockArea.setPage(area.getPage());
         blockArea.start();
@@ -113,8 +113,8 @@ public class ListItem extends FObj {
         if (numChildren != 2) {
             throw new FOPException("list-item must have exactly two children");
         }
-        ListItemLabel label = (ListItemLabel)children.elementAt(0);
-        ListItemBody body = (ListItemBody)children.elementAt(1);
+        ListItemLabel label = (ListItemLabel)children.get(0);
+        ListItemBody body = (ListItemBody)children.get(1);
 
         Status status;
 

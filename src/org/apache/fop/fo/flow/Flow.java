@@ -18,9 +18,7 @@ import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.FlowLayoutManager;
 
 // Java
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
 
@@ -37,9 +35,9 @@ public class Flow extends FObj {
     private Area area;
 
     /**
-     * Vector to store snapshot
+     * ArrayList to store snapshot
      */
-    private Vector markerSnapshot;
+    private ArrayList markerSnapshot;
 
     /**
      * flow-name attribute
@@ -118,14 +116,14 @@ public class Flow extends FObj {
         BodyAreaContainer bac = (BodyAreaContainer)area;
 
         boolean prevChildMustKeepWithNext = false;
-        Vector pageMarker = this.getMarkerSnapshot(new Vector());
+        ArrayList pageMarker = this.getMarkerSnapshot(new ArrayList());
 
         int numChildren = this.children.size();
         if (numChildren == 0) {
             throw new FOPException("fo:flow must contain block-level children");
         }
         for (int i = this.marker; i < numChildren; i++) {
-            FObj fo = (FObj)children.elementAt(i);
+            FObj fo = (FObj)children.get(i);
 
             if (bac.isBalancingRequired(fo)) {
                 // reset the the just-done span area in preparation
@@ -143,7 +141,7 @@ public class Flow extends FObj {
             currentArea.setIDReferences(bac.getIDReferences());
             if (bac.isNewSpanArea()) {
                 this.marker = i;
-                markerSnapshot = this.getMarkerSnapshot(new Vector());
+                markerSnapshot = this.getMarkerSnapshot(new ArrayList());
             }
 	    // Set current content width for percent-based lengths in children
 	    setContentWidth(currentArea.getContentWidth());
@@ -163,7 +161,7 @@ public class Flow extends FObj {
             if (_status.isIncomplete()) {
                 if ((prevChildMustKeepWithNext) && (_status.laidOutNone())) {
                     this.marker = i - 1;
-                    FObj prevChild = (FObj)children.elementAt(this.marker);
+                    FObj prevChild = (FObj)children.get(this.marker);
                     prevChild.removeAreas();
                     prevChild.resetMarker();
                     prevChild.removeID(area.getIDReferences());

@@ -174,13 +174,13 @@ public class Block extends FObjMixed {
 
             int numChildren = this.children.size();
             for (int i = 0; i < numChildren; i++) {
-                FONode fo = (FONode)children.elementAt(i);
+                FONode fo = (FONode)children.get(i);
                 if (fo instanceof FOText) {
                     if (((FOText)fo).willCreateArea()) {
                         //fo.setWidows(blockWidows);
                         break;
                     } else {
-                        children.removeElementAt(i);
+                        children.remove(i);
                         numChildren = this.children.size();
                         i--;
                     }
@@ -191,7 +191,7 @@ public class Block extends FObjMixed {
             }
 
             for (int i = numChildren - 1; i >= 0; i--) {
-                FONode fo = (FONode)children.elementAt(i);
+                FONode fo = (FONode)children.get(i);
                 if (fo instanceof FOText) {
                     if (((FOText)fo).willCreateArea()) {
                         //fo.setOrphans(blockOrphans);
@@ -230,8 +230,8 @@ public class Block extends FObjMixed {
         blockArea.addLineagePair(this, this.areasGenerated);
 
         // markers
-        if (this.hasMarkers())
-            blockArea.addMarkers(this.getMarkers());
+        //if (this.hasMarkers())
+            //blockArea.addMarkers(this.getMarkers());
 
         blockArea.setParent(area);    // BasicLink needs it
         blockArea.setPage(area.getPage());
@@ -247,7 +247,7 @@ public class Block extends FObjMixed {
 
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
-            FONode fo = (FONode)children.elementAt(i);
+            FONode fo = (FONode)children.get(i);
             Status status;
             if ((status = fo.layout(blockArea)).isIncomplete()) {
                 this.marker = i;
