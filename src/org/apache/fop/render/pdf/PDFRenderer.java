@@ -64,6 +64,8 @@ import org.apache.fop.pdf.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
+import java.awt.Rectangle;
+import java.util.Vector;
 
 /**
  * Renderer that renders areas to PDF
@@ -457,7 +459,21 @@ public class PDFRenderer implements Renderer {
 	currentStream.add("ET\n");
 
 	this.pdfDoc.makePage(this.pdfResources, currentStream,
-			     page.getWidth()/1000, page.getHeight()/1000);
+			     page.getWidth()/1000,
+			     page.getHeight()/1000);
+
+	if (page.hasLinks()) {
+	    Enumeration e = page.getLinkSets().elements();
+	    while (e.hasMoreElements()) {
+		LinkSet linkSet = (LinkSet) e.nextElement();
+		String dest = linkSet.getDest();
+		Enumeration f = linkSet.getRects().elements();
+		while (f.hasMoreElements()) {
+		    Rectangle rect = (Rectangle) f.nextElement();
+		    this.pdfDoc.makeLink(rect, dest);
+		}
+	    }
+	}
     }
 
     /**

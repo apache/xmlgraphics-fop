@@ -49,108 +49,84 @@
  
  */
 
-package org.apache.fop.layout;
+/* this class contributed by Arved Sandstrom with minor modifications
+   by James Tauber */
 
-// FOP
-import org.apache.fop.render.Renderer;
+package org.apache.fop.layout;
 
 // Java
 import java.util.Vector;
 import java.util.Enumeration;
+import java.awt.Rectangle;
 
-public class Page {
+/**
+ * a set of rectangles on a page that are linked to a common
+ * destination
+ */
+public class LinkSet {
 
-    private int height;
-    private int width;
+    /** the destination of the links */
+    String externalDestination;
 
-    private AreaContainer body;
-    private AreaContainer before;
-    private AreaContainer after;
-    private AreaContainer start;
-    private AreaContainer end;
+    /** the set of rectangles */
+    Vector rects = new Vector();
+
+    int xoffset = 0;
+
+    int yoffset = 0;
 	
-    private AreaTree areaTree;
-
-    protected int pageNumber = 0;
-
-    protected Vector linkSets = new Vector();
-
-    Page(AreaTree areaTree, int height, int width) {
-	this.areaTree = areaTree;
-	this.height = height;
-	this.width = width;
+    public LinkSet(String externalDest) {
+	this.externalDestination = externalDest;
     }
-
-    public void setNumber(int number) {
-	this.pageNumber = number;
-    }
-
-    public int getNumber() {
-	return this.pageNumber;
-    }
-
-    void addAfter(AreaContainer area) {
-	this.after = area;
-	area.setPage(this);
-    }
-
-    void addBefore(AreaContainer area) {
-	this.before = area;
-	area.setPage(this);
-    }
-
-    void addBody(AreaContainer area) {
-	this.body = area;
-	area.setPage(this);
+    
+    public void addLinkedRect(Rectangle r) {
+	r.y = yoffset;
+	rects.addElement(r);
     }
 	
-    void addEnd(AreaContainer area) {
-	this.end = area;
-	area.setPage(this);
+    public void setYOffset(int y) {
+	this.yoffset = y;
+    }
+	
+    public void applyAreaContainerOffsets(AreaContainer ac) {
+	Enumeration re = rects.elements();
+	while (re.hasMoreElements()) {
+	    Rectangle r = (Rectangle)re.nextElement();
+	    r.x += ac.getXPosition();
+	    r.y = ac.getYPosition() - ac.getHeight() - r.y;
+	}
+    }
+	
+    // intermediate implementation for joining all sublinks on same line
+    public void mergeLinks() {
+	int numRects = rects.size();
+	if (numRects == 1)
+	    return;
+	
+	Rectangle curRect = new Rectangle((Rectangle)rects.elementAt(0));
+	Vector nv = new Vector();
+		
+	for (int ri=1; ri < numRects; ri++) {
+	    Rectangle r = (Rectangle)rects.elementAt(ri);
+	    
+	    if ((r.y != curRect.y) || (curRect.height != r.height)) {
+		nv.addElement(curRect);
+		curRect = new Rectangle(r);
+	    } else {
+		curRect.width = r.x + r.width - curRect.x;
+	    }
+	    if (ri == numRects-1)
+		nv.addElement(curRect);
+	}
+	
+	rects = nv;
+    }
+	
+    public String getDest() {
+	return this.externalDestination;
     }
 
-    void addStart(AreaContainer area) {
-	this.start = area;
-	area.setPage(this);
-    }
-
-    public void render(Renderer renderer) {
-	renderer.renderPage(this);
-    }
-
-    public AreaContainer getAfter() {
-	return this.after;
-    }
-
-    public AreaContainer getBefore() {
-	return this.before;
-    }
-
-    public AreaContainer getBody() {
-	return this.body;
-    }
-
-    public int getHeight() {
-	return this.height;
-    }
-
-    public int getWidth() {
-	return this.width;
-    }
-
-    public FontInfo getFontInfo() {
-	return this.areaTree.getFontInfo();
-    }
-
-    public void addLinkSet(LinkSet linkSet) {
-	this.linkSets.addElement(linkSet);
-    }
-
-    public Vector getLinkSets() {
-	return this.linkSets;
-    }
-
-    public boolean hasLinks() {
-	return (!this.linkSets.isEmpty());
+    public Vector getRects() {
+	return this.rects;
     }
 }
