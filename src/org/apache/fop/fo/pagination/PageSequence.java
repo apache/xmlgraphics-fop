@@ -62,24 +62,31 @@ import org.apache.fop.layout.AreaTree;
 import org.apache.fop.layout.Page;
 import org.apache.fop.layout.PageMaster;
 import org.apache.fop.layout.PageMasterFactory;
-import org.apache.fop.apps.FOPException;				   
+import org.apache.fop.apps.FOPException;                   
 
 // Java
 import java.util.Hashtable;
 import java.util.Vector;
 
-public class PageSequence extends FObj { 
+public class PageSequence extends FObj
+{
 
-    public static class Maker extends FObj.Maker {
-	public FObj make(FObj parent, PropertyList propertyList)
-	    throws FOPException {
-	    return new PageSequence(parent, propertyList);
-	}
+    public static class Maker extends FObj.Maker
+    {
+        public FObj make(FObj parent, PropertyList propertyList)
+        throws FOPException {
+            return new PageSequence(parent, propertyList);
+        }
     }
 
     public static FObj.Maker maker() {
-	return new PageSequence.Maker();
+        return new PageSequence.Maker();
     }
+
+    static final int EXPLICIT = 0;
+    static final int AUTO = 1;
+    static final int AUTO_EVEN = 2;
+    static final int AUTO_ODD = 3;
 
     protected Root root;
     protected SequenceSpecification sequenceSpecification;
@@ -90,105 +97,179 @@ public class PageSequence extends FObj {
 
     protected Page currentPage;
     protected int currentPageNumber = 0;
+    protected static int runningPageNumberCounter = 0;  //keeps count of page number from previous PageSequence
+    protected int pageNumberType;  // specifies page numbering type (auto|auto-even|auto-odd|explicit)
+    protected boolean thisIsFirstPage; // used to determine whether to calculate auto, auto-even, auto-odd
 
     protected PageSequence(FObj parent, PropertyList propertyList)
-	throws FOPException {
-	super(parent, propertyList);
-	this.name = "fo:page-sequence";
+    throws FOPException {
+        super(parent, propertyList);
+        this.name = "fo:page-sequence";
 
-	if (parent.getName().equals("fo:root")) {
-	    this.root = (Root) parent;
-	    this.root.addPageSequence(this);
-	} else {
-	    throw
-		new FOPException("page-sequence must be child of root, not "
-				 + parent.getName());
-	}
-	layoutMasterSet = root.getLayoutMasterSet();
+        if ( parent.getName().equals("fo:root") )
+        {
+            this.root = (Root) parent;
+            this.root.addPageSequence(this);
+        }
+        else
+        {
+            throw
+            new FOPException("page-sequence must be child of root, not "
+            + parent.getName());
+        }
+        layoutMasterSet = root.getLayoutMasterSet();
+        thisIsFirstPage=true; // we are now on the first page of the page sequence
+        InitialPageNumber ipn = (InitialPageNumber) this.properties.get("initial-page-number");
+        String ipnValue=ipn.getString();
 
-	InitialPageNumber ipn = (InitialPageNumber) this.properties.get("initial-page-number");
-	int pageStart = ipn.getInteger().intValue();
-	this.currentPageNumber =
-	    (pageStart > 0) ? pageStart - 1 : 0;
+        if ( ipnValue.equals("auto") )
+        {
+            pageNumberType=AUTO;            
+        }
+        else if ( ipnValue.equals("auto-even") )
+        {
+            pageNumberType=AUTO_EVEN;            
+        }
+        else if ( ipnValue.equals("auto-odd") )
+        {
+            pageNumberType=AUTO_ODD;            
+        }
+        else
+        {
+            pageNumberType=EXPLICIT;            
+            try
+            {
+                int pageStart = new Integer(ipnValue).intValue();                                 
+                this.currentPageNumber = (pageStart > 0) ? pageStart - 1 : 0;
+            }
+            catch ( NumberFormatException nfe )
+            {
+                throw new FOPException("\""+ipnValue+"\" is not a valid value for initial-page-number");
+            }
+        }
     }
 
     protected Page makePage(AreaTree areaTree) throws FOPException {
-	PageMaster pageMaster;
-	// layout this page sequence
-		
-	// while there is still stuff in the flow, ask the
-	// sequence-specification for a new page 
-	    
-	if (this.sequenceSpecification == null) {
-	    throw new FOPException("page-sequence is missing an"
-				   + " sequence-specification");
-	}
-		
-	PageMasterFactory pmf =
-	    this.sequenceSpecification.getFirstPageMasterFactory();
+        PageMaster pageMaster;
+        // layout this page sequence
 
-	pageMaster = pmf.getNextPageMaster();
+        // while there is still stuff in the flow, ask the
+        // sequence-specification for a new page 
 
-	while (pageMaster == null) {
-	    /* move on to next sequence specifier */
-	    pmf = pmf.getNext();
-	    if (pmf == null) {
-		throw new FOPException("out of sequence specifiers"
-				       + " (FOP will eventually allow this)");
-	    }
-	    pageMaster = pmf.getNextPageMaster();
-	}
-	return pageMaster.makePage(areaTree);
+        if ( this.sequenceSpecification == null )
+        {
+            throw new FOPException("page-sequence is missing an"
+            + " sequence-specification");
+        }
+
+        PageMasterFactory pmf =
+        this.sequenceSpecification.getFirstPageMasterFactory();
+
+        pageMaster = pmf.getNextPageMaster();
+
+        while ( pageMaster == null )
+        {
+            /* move on to next sequence specifier */
+            pmf = pmf.getNext();
+            if ( pmf == null )
+            {
+                throw new FOPException("out of sequence specifiers"
+                + " (FOP will eventually allow this)");
+            }
+            pageMaster = pmf.getNextPageMaster();
+        }
+        return pageMaster.makePage(areaTree);
     }
 
     public void format(AreaTree areaTree) throws FOPException {
-	Status status = new Status(Status.OK);
+        Status status = new Status(Status.OK);
 
-	do {
-	    currentPage = makePage(areaTree);
-	    currentPage.setNumber(++this.currentPageNumber);
-	    System.err.print(" [" + currentPageNumber);
-	    if ((this.staticBefore != null) &&
-		(currentPage.getBefore() != null)) {
-		AreaContainer beforeArea = currentPage.getBefore();
-		this.staticBefore.layout(beforeArea);
-	    }
-	    if ((this.staticAfter != null) &&
-		(currentPage.getAfter() != null)) {
-		AreaContainer afterArea = currentPage.getAfter();
-		this.staticAfter.layout(afterArea);
-	    }
-	    if ((status.getCode() == Status.FORCE_PAGE_BREAK_EVEN) &&
-		((currentPageNumber % 2) == 1)) {
-	    } else if ((status.getCode() == Status.FORCE_PAGE_BREAK_ODD) &&
-		       ((currentPageNumber % 2) == 0)) {
-	    } else {
-		AreaContainer bodyArea = currentPage.getBody();
-		status = this.flow.layout(bodyArea);
-	    }
-	    System.err.print("]");
-	    areaTree.addPage(currentPage);
-	} while (status.isIncomplete());
-	System.err.println();
+        do
+        {
+            currentPage = makePage(areaTree);            
+
+            if ( thisIsFirstPage )
+            {
+                if ( pageNumberType==AUTO )
+                {
+                    this.currentPageNumber=this.runningPageNumberCounter;
+                }
+                else if ( pageNumberType==AUTO_ODD )
+                {
+                    this.currentPageNumber=this.runningPageNumberCounter;
+                    if ( this.currentPageNumber % 2== 1 )
+                    {
+                        this.currentPageNumber++;
+                    }
+                }
+                else if ( pageNumberType==AUTO_EVEN )
+                {
+                    this.currentPageNumber=this.runningPageNumberCounter;
+                    if ( this.currentPageNumber % 2 == 0 )
+                    {
+                        this.currentPageNumber++;
+                    }
+                }
+                thisIsFirstPage=false;
+            }
+
+            currentPage.setNumber(++this.currentPageNumber);
+            this.runningPageNumberCounter=this.currentPageNumber;            
+
+            System.err.print(" [" + currentPageNumber);
+            if ( (this.staticBefore != null) &&
+            (currentPage.getBefore() != null) )
+            {
+                AreaContainer beforeArea = currentPage.getBefore();
+                this.staticBefore.layout(beforeArea);
+            }
+            if ( (this.staticAfter != null) &&
+            (currentPage.getAfter() != null) )
+            {
+                AreaContainer afterArea = currentPage.getAfter();
+                this.staticAfter.layout(afterArea);
+            }
+            if ( (status.getCode() == Status.FORCE_PAGE_BREAK_EVEN) &&
+            ((currentPageNumber % 2) == 1) )
+            {
+            }
+            else if ( (status.getCode() == Status.FORCE_PAGE_BREAK_ODD) &&
+            ((currentPageNumber % 2) == 0) )
+            {
+            }
+            else
+            {
+                AreaContainer bodyArea = currentPage.getBody();
+                status = this.flow.layout(bodyArea);
+            }
+            System.err.print("]");
+            areaTree.addPage(currentPage);
+        } while ( status.isIncomplete() );
+        System.err.println();
     }
 
     public void setFlow(Flow flow) {
-	this.flow = flow;
+        this.flow = flow;
     }
-    
+
     protected void setSequenceSpecification(SequenceSpecification sequenceSpecification) {
-	this.sequenceSpecification = sequenceSpecification;
-	sequenceSpecification.setLayoutMasterSet(this.layoutMasterSet);
+        this.sequenceSpecification = sequenceSpecification;
+        sequenceSpecification.setLayoutMasterSet(this.layoutMasterSet);
     }
-    
+
     public void setStaticContent(String name, StaticContent staticContent) {
-	if (name.equals("xsl-before")) {
-	    this.staticBefore = staticContent;
-	} else if (name.equals("xsl-after")) {
-	    this.staticAfter = staticContent;
-	} else {
-	    System.err.println("WARNING: this version of FOP only supports "
-			       + "static-content in region-before and region-after"); 
-	}
+        if ( name.equals("xsl-before") )
+        {
+            this.staticBefore = staticContent;
+        }
+        else if ( name.equals("xsl-after") )
+        {
+            this.staticAfter = staticContent;
+        }
+        else
+        {
+            System.err.println("WARNING: this version of FOP only supports "
+            + "static-content in region-before and region-after"); 
+        }
     }
 }
