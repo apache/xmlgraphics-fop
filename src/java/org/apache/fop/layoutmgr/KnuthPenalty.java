@@ -18,20 +18,53 @@
 
 package org.apache.fop.layoutmgr;
 
+/**
+ * An instance of this class represents information about a feasible
+ * breaking point; it does not represent any piece of content.
+ * 
+ * A KnuthPenalty is a feasible breaking point unless its value is infinity;
+ * a KnuthPenalty whose value is -infinity represents a forced break.
+ * 
+ * A KnuthPenalty is suppressed, and its width is ignored, if it is not a
+ * chosen breaking point; for example, a KnuthPenalty representing a
+ * hyphenation point has a width (the "-" width), which must be ignored if
+ * that point is not chosen as a breaking point.
+ * 
+ * Besides the inherited methods and attributes, this class has two more
+ * attributes and the methods used to get them: the penalty value, which is
+ * a kind of "aesthetic cost" (the higher the value, the more unsightly the
+ * breaking point), and a boolean that marks KnuthPenalties which should not
+ * be chosen as breaking points for consecutive lines.
+ */
 public class KnuthPenalty extends KnuthElement {
     private int penalty;
     private boolean bFlagged; 
 
+    /**
+     * Create a new KnuthPenalty.
+     *
+     * @param w the width of this penalty
+     * @param p the penalty value of this penalty
+     * @param f is this penalty flagged?
+     * @param pos the Position stored in this penalty
+     * @param bAux is this penalty auxiliary?
+     */
     public KnuthPenalty(int w, int p, boolean f, Position pos, boolean bAux) {
         super(KNUTH_PENALTY, w, pos, bAux);
         penalty = p;
         bFlagged = f;
     }
 
+    /**
+     * Return the penalty value of this penalty.
+     */
     public int getP() {
         return penalty;
     }
 
+    /**
+     * Return true is this penalty is a flagged one.
+     */
     public boolean isFlagged() {
         return bFlagged;
     }
