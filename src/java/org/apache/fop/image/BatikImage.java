@@ -118,14 +118,15 @@ public abstract class BatikImage extends AbstractFopImage {
 
             this.height = cr.getHeight();
             this.width  = cr.getWidth();
-
-            cr = new Any2sRGBRed(cr);
-
             this.isTransparent = false;
             this.softMask = null;
+            this.bitmapsSize = this.width * this.height * 3;
+            this.bitmaps = new byte[this.bitmapsSize];
+            this.bitsPerPixel = 8;
+
             int transparencyType = cm.getTransparency();
-            if ((transparencyType == Transparency.BITMASK) 
-                    && (cm instanceof IndexColorModel)) {
+            if (cm instanceof IndexColorModel)  {
+                if (transparencyType == Transparency.BITMASK) {
                 // Use 'transparent color'.
                 IndexColorModel icm = (IndexColorModel)cm;
                 int numColor = icm.getMapSize();
@@ -142,20 +143,18 @@ public abstract class BatikImage extends AbstractFopImage {
                     }
                 }
             }
+            } else {
+                cr = new Any2sRGBRed(cr);
+            }
 
             // Get our current ColorModel
             cm = cr.getColorModel();
 
             // It has an alpha channel so generate a soft mask.
-            if ((!this.isTransparent) && cm.hasAlpha()) {
+            if (!this.isTransparent && cm.hasAlpha())
                 this.softMask = new byte[this.width * this.height];
-            }
 
-            this.bitsPerPixel = 8;
-            this.bitmapsSize = this.width * this.height * 3;
-            this.bitmaps = new byte[this.bitmapsSize];
             this.colorSpace = cm.getColorSpace();
-
             WritableRaster wr = (WritableRaster)cr.getData();
             BufferedImage bi = new BufferedImage
                 (cm, wr.createWritableTranslatedChild(0, 0), 
