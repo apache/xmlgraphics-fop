@@ -5,7 +5,7 @@
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.area;
+package org.apache.fop.layoutmgr;
 
 /**
  * This class holds the resolved (as mpoints) form of a LengthRange or

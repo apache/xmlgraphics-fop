@@ -8,7 +8,7 @@
 package org.apache.fop.traits;
 
 import org.apache.fop.datatypes.Space;
-import org.apache.fop.area.MinOptMax;
+import org.apache.fop.layoutmgr.MinOptMax;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.properties.Constants;
 

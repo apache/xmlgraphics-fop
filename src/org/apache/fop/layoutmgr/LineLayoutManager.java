@@ -18,7 +18,6 @@ import org.apache.fop.layout.hyphenation.Hyphenator;
 import org.apache.fop.traits.BlockProps;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
-import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.fo.properties.TextAlign;

@@ -7,7 +7,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.area.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 import java.util.ArrayList;
 import java.util.List;

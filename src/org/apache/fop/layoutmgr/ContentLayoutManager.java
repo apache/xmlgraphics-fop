@@ -8,7 +8,6 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
 
