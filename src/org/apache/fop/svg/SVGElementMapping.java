@@ -14,6 +14,9 @@ import org.apache.fop.fo.DirectPropertyListBuilder;
 import org.apache.fop.fo.TreeBuilder;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.apps.Driver;
+
+import org.apache.batik.util.XMLResourceDescriptor;
 
 public class SVGElementMapping implements ElementMapping {
 
@@ -22,6 +25,11 @@ public class SVGElementMapping implements ElementMapping {
     public synchronized void addToBuilder(TreeBuilder builder) {
 
         if(foObjs == null) {
+            // this sets the parser that will be used
+            // by default (SVGBrokenLinkProvider)
+            // normally the user agent value is used
+            XMLResourceDescriptor.setXMLParserClassName(Driver.getParserClassName());
+
             foObjs = new HashMap();
             foObjs.put("svg", SVGElement.maker());
             foObjs.put("rect", SVGObj.maker("rect"));
