@@ -56,7 +56,7 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 
 // FOP
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.avalon.framework.logger.Logger;
 import org.apache.fop.util.CMYKColorSpace;
 
 /**
@@ -87,7 +87,7 @@ public class JpegImage extends AbstractFopImage {
      * @param ua the user agent
      * @return true if loaded false for any error
      */
-    protected boolean loadOriginalData(FOUserAgent ua) {
+    protected boolean loadOriginalData(Logger logger) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ByteArrayOutputStream iccStream = new ByteArrayOutputStream();
         int index = 0;
@@ -102,9 +102,9 @@ public class JpegImage extends AbstractFopImage {
             inputStream.close();
             inputStream = null;
         } catch (java.io.IOException ex) {
-            ua.getLogger().error("Error while loading image "
-                                         + " : " + ex.getClass()
-                                         + " - " + ex.getMessage(), ex);
+            logger.error("Error while loading image "
+                          + " : " + ex.getClass()
+                          + " - " + ex.getMessage(), ex);
             return false;
         }
 
@@ -147,7 +147,7 @@ public class JpegImage extends AbstractFopImage {
                             */
                             this.colorSpace = CMYKColorSpace.getInstance();
                         } else {
-                            ua.getLogger().error("Unknown ColorSpace for image: "
+                            logger.error("Unknown ColorSpace for image: "
                                                    + "");
                             return false;
                         }
@@ -189,8 +189,8 @@ public class JpegImage extends AbstractFopImage {
                 }
             }
         } else {
-            ua.getLogger().error("Error while loading "
-                                          + "JpegImage - Invalid JPEG Header.");
+            logger.error("Error while loading "
+                         + "JpegImage - Invalid JPEG Header.");
             return false;
         }
         if (iccStream.size() > 0) {
@@ -198,19 +198,19 @@ public class JpegImage extends AbstractFopImage {
             try {
                 iccStream.write(align);
             } catch (Exception e) {
-                ua.getLogger().error("Error while loading image "
-                                              + " : "
-                                              + e.getMessage(), e);
+                logger.error("Error while loading image "
+                              + " : "
+                              + e.getMessage(), e);
                 return false;
             }
             try {
                 iccProfile = ICC_Profile.getInstance(iccStream.toByteArray());
             } catch (Exception e) {
-                ua.getLogger().error("Invalid ICC profile: " + e, e);
+                logger.error("Invalid ICC profile: " + e, e);
                 return false;
             }
         } else if (this.colorSpace == null) {
-            ua.getLogger().error("ColorSpace not specified for JPEG image");
+            logger.error("ColorSpace not specified for JPEG image");
             return false;
         }
         return true;

@@ -62,6 +62,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.w3c.dom.Element;
 
+import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.gvt.AbstractGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
@@ -97,7 +98,8 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
                 (purl.toString(), purl.openStream(), null);
             if (ii.mimeType.toLowerCase() == "image/jpeg") {
                 JpegImage jpeg = new JpegImage(ii);
-                jpeg.load(FopImage.ORIGINAL_DATA, null);
+                ConsoleLogger logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+                jpeg.load(FopImage.ORIGINAL_DATA, logger);
                 PDFJpegNode node = new PDFJpegNode(jpeg, origGN);
 
                 Rectangle2D imgBounds = getImageBounds(ctx, e);
