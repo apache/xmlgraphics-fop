@@ -24,11 +24,11 @@ import java.util.ArrayList;
  * For use with objects that contain inline areas such as
  * leader use-content and title.
  */
-public class ContentLayoutManager implements LayoutManager {
+public class ContentLayoutManager implements LayoutProcessor {
     private FOUserAgent userAgent;
     private Area holder;
     private int stackSize;
-    private LayoutManager parentLM;
+    private LayoutProcessor parentLM;
 
     /**
      * Constructs a new ContentLayoutManager
@@ -47,7 +47,7 @@ public class ContentLayoutManager implements LayoutManager {
     public void setFObj(FObj fo) {
     }
 
-    public void fillArea(LayoutManager curLM) {
+    public void fillArea(LayoutProcessor curLM) {
 
         List childBreaks = new ArrayList();
         MinOptMax stack = new MinOptMax();
@@ -152,7 +152,7 @@ public class ContentLayoutManager implements LayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void setParentLM(LayoutManager lm) {
+    public void setParent(LayoutProcessor lm) {
         parentLM = lm;
     }
 

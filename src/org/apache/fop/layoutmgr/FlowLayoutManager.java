@@ -39,7 +39,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
         // currently active LM
-        LayoutManager curLM;
+        LayoutProcessor curLM;
         MinOptMax stackSize = new MinOptMax();
 
         while ((curLM = getChildLM()) != null) {
@@ -93,7 +93,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
 
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
 
-        LayoutManager childLM;
+        LayoutProcessor childLM;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
             LeafPosition lfp = (LeafPosition) parentIter.next();

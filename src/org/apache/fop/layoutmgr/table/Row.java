@@ -9,7 +9,7 @@ package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.LayoutProcessor;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -45,7 +45,7 @@ public class Row extends BlockStackingLayoutManager {
 
     private class RowPosition extends LeafPosition {
         protected List cellBreaks;
-        protected RowPosition(LayoutManager lm, int pos, List l) {
+        protected RowPosition(LayoutProcessor lm, int pos, List l) {
             super(lm, pos);
             cellBreaks = l;
         }
@@ -81,9 +81,9 @@ public class Row extends BlockStackingLayoutManager {
         cellList = new ArrayList();
         // add cells to list
         while (childLMiter.hasNext()) {
-            curChildLM = (LayoutManager) childLMiter.next();
+            curChildLM = (LayoutProcessor) childLMiter.next();
             curChildLM.setUserAgent(getUserAgent());
-            curChildLM.setParentLM(this);
+            curChildLM.setParent(this);
             curChildLM.init();
             cellList.add(curChildLM);
         }
@@ -114,7 +114,7 @@ public class Row extends BlockStackingLayoutManager {
      * @return the next break possibility
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
-        LayoutManager curLM; // currently active LM
+        LayoutProcessor curLM; // currently active LM
 
         BreakPoss lastPos = null;
         List breakList = new ArrayList();
@@ -155,7 +155,7 @@ public class Row extends BlockStackingLayoutManager {
                     if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
-                            LayoutManager lm = lastPos.getLayoutManager();
+                            LayoutProcessor lm = lastPos.getLayoutManager();
                             lm.resetPosition(lastPos.getPosition());
                             if (lm != curLM) {
                                 curLM.resetPosition(null);
@@ -226,7 +226,7 @@ public class Row extends BlockStackingLayoutManager {
      * If pos is null, then back up to the first child LM.
      */
     protected void reset(Position pos) {
-        LayoutManager curLM; // currently active LM
+        LayoutProcessor curLM; // currently active LM
         int cellcount = 0;
 
         if (pos == null) {

@@ -43,7 +43,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private static class BlockBreakPosition extends LeafPosition {
         protected BreakPoss breakps;
 
-        protected BlockBreakPosition(LayoutManager lm, BreakPoss bp) {
+        protected BlockBreakPosition(LayoutProcessor lm, BreakPoss bp) {
             super(lm, 0);
             breakps = bp;
         }
@@ -170,7 +170,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
-        LayoutManager curLM ; // currently active LM
+        LayoutProcessor curLM ; // currently active LM
 
         while ((curLM = getChildLM()) != null) {
             BreakPoss bp = null;
@@ -415,7 +415,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                 lm.setUserAgent(getUserAgent());
                 lm.init();
                 lm.setRegionReference(reg.getRegion());
-                lm.setParentLM(this);
+                lm.setParent(this);
                 LayoutContext childLC = new LayoutContext(0);
                 childLC.setStackLimit(new MinOptMax((int)curPage.getViewArea().getHeight()));
                 childLC.setRefIPD((int)reg.getViewArea().getWidth());

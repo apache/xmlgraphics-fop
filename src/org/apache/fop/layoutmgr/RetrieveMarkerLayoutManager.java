@@ -17,7 +17,7 @@ import org.apache.fop.fo.flow.Marker;
  * LayoutManager for a block FO.
  */
 public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
-    private LayoutManager replaceLM = null;
+    private LayoutProcessor replaceLM = null;
     private boolean loaded = false;
     private String name;
     private int position;
@@ -82,8 +82,8 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
             if (marker != null) {
                 marker.addLayoutManager(list);
                 if (list.size() > 0) {
-                    replaceLM =  (LayoutManager)list.get(0);
-                    replaceLM.setParentLM(this);
+                    replaceLM =  (LayoutProcessor)list.get(0);
+                    replaceLM.setParent(this);
                     replaceLM.init();
                     getLogger().debug("retrieved: " + replaceLM + ":" + list.size());
                 } else {
@@ -119,7 +119,7 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
             reset(null);
         }
         if (replaceLM != null) {
-            replaceLM.resetPosition(resetPos);
+            replaceLM.resetPosition(null);
         }
         loaded = false;
         replaceLM = null;
