@@ -285,6 +285,13 @@ public class TableCell extends FObj {
     }
 
     /**
+     * @return true if the "column-number" property was set.
+     */
+    public boolean hasColumnNumber() {
+        return (columnNumber.getValue() >= 1);
+    }
+
+    /**
      * @return the "column-number" property.
      */
     public int getColumnNumber() {
