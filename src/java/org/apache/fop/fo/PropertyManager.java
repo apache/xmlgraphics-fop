@@ -70,14 +70,6 @@ public class PropertyManager implements Constants {
     }
 
     /**
-     * Returns the property list that is used for lookup.
-     * @return the property list
-     */
-    public PropertyList getPropertyList() {
-        return propertyList;
-    }
-
-    /**
      * Sets the Document object telling the property manager which fonts are
      * available.
      * @param foTreeControl foTreeControl implementation containing font

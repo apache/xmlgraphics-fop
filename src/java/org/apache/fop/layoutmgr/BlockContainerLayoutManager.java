@@ -85,9 +85,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         
         marginProps = propManager.getMarginProps();
         borderProps = propManager.getBorderAndPadding();
-        height = propManager.getPropertyList().get(
+        height = fobj.getPropertyList().get(
             PR_BLOCK_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
-        width = propManager.getPropertyList().get(
+        width = fobj.getPropertyList().get(
             PR_INLINE_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
     }
 
