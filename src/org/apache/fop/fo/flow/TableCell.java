@@ -260,6 +260,10 @@ public class TableCell extends FObj {
 	areaContainer.end();
 	area.addChild(areaContainer);
 
+ 	area.setHeight(getHeight());
+ 	// reset absoluteHeight to beginning of row
+ 	area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
+
 	return new Status(Status.OK);
     }
 
