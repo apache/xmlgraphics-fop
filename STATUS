@@ -3,6 +3,5 @@ $Id$
 STATUS
 
 Transition to xml.apache.org isn't complete yet
-Makefile don't fully work
-Some package names may be incorrect
-code generation is producing Java source with XML Declaration
+Makefiles don't fully work
+
