@@ -1,0 +1,193 @@
+<?xml version="1.0"?>
+<!DOCTYPE Document SYSTEM "Document.dtd">
+<Document>
+	<Title>Basic SVG Examples</Title>
+	<Description>
+	    Shows some of the basic svg elements when placed in FO.
+	</Description>
+	<Chapter>
+		<Title>Examples</Title>
+		<Section>
+			<Title>Introduction</Title>
+			<Body>
+				<p>
+					These examples show the areas of SVG currently implemented.
+				</p>
+				<p>
+					This is provided so that others can see how to write the svg elements
+					and the result to expect.
+				</p>
+			</Body>
+		</Section>
+		<Section>
+			<Title>Graphic Elements</Title>
+			<SubSection>
+				<Title>SVG Examples</Title>
+				<ExternalDiagram file="ex-diagrams.xml">examples</ExternalDiagram>
+				<Body>
+					<p>
+						The SVG xml data is capable of any type of drawing,
+						from simple lines and shapes to complex shading, colouring
+						and transformations.
+					</p>
+					<p>
+						Currently only a small set of the possibilities are implemented.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Basic Shapes</Title>
+				<Body>
+					<p>
+						Lines can be draw, they map directly to PDF data.
+						<ExternalDiagram file="ex-diagrams.xml" showcode="true">ex-lines</ExternalDiagram>
+						The example above shows some lines.
+					</p>
+					<p>
+						The rectangle is a simple shape, which maps directly
+						to PDF data.
+						<ExternalDiagram file="ex-diagrams.xml" showcode="true">ex-rect</ExternalDiagram>
+						The example above is a simple rectangle, circle and ellipse.
+					</p>
+					<p>
+						The circle and ellipse are drawn by creating four curves
+						that make up the shape.
+					</p>
+					<p>
+						All shapes can have style applied to them. Style can also
+						be inherited from a surrounding &lt;svg:g&gt; element.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Curves and Paths</Title>
+				<Body>
+					<p>
+						<ExternalDiagram file="ex-diagrams.xml" showcode="true">ex-paths</ExternalDiagram>
+						Paths have no effect by themselves unless there
+						is some style applied. The default styling is set
+						by the svg area.
+					</p>
+					<p>
+						There are many possible parts to a path. There are simple
+						moveto, lineto and closepath commands. There are also
+						a number of curve commands that create Bezier curves etc.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Poly Elements</Title>
+				<Body>
+					<p>
+						<ExternalDiagram file="ex-diagrams.xml" showcode="true">ex-poly</ExternalDiagram>
+						Polylines and Polygons are multi-point lines
+						made up of straight lines. A polygon has a close path
+						at the end. <b>Note</b> how the numbers in the points
+						property can be over a number of lines to make it
+						easier to read.
+					</p>
+					<p>
+						The only difference between the polyline and the polygon
+						is that a polygon has a close path at the end.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Styling</Title>
+				<Body>
+					<p>
+						<ExternalDiagram file="ex-diagrams.xml" showcode="true">ex-style</ExternalDiagram>
+						Most elements can have style. The style information
+						is a list of properties separated by a ';'. The
+						property name and value are separated by a ':'.
+						Notice how the style of the sub-element overrides that
+						of all the ones in the heirarchy, the element also inherits
+						all the other style data.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>G Element</Title>
+				<Body>
+					<p>
+						<ExternalDiagram file="ex-diagrams.xml" showcode="true">ex-g</ExternalDiagram>
+						The G element can contain any other graphic
+						element, including other G elements. The purpose
+						of this is to enable style and transform to apply
+						to a group of graphic elements. The elements have no
+						other relationship except they are drawn together.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Transform</Title>
+				<Body>
+					<p>
+						The transform of an element can do all the usual
+						mathematical transforms. These can be represented by
+						a matrix for use in the pdf. The options include
+						translate, scale, rotate, shear etc.
+					</p>
+					<p>
+						The transform of an element is accumulative from
+						its ancestors. That is, if a transform is applied to
+						a &lt;svg:g&gt; element then any graphic element also
+						has that transform applied to it. If the child
+						element has a transform then its transform is also
+						applied after the transform of the parent.
+					</p>
+					<p>
+						<ExternalDiagram file="ex-diagrams.xml" showcode="true">ex-transform</ExternalDiagram>
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Text Elements</Title>
+				<Body>
+					<p>
+						<ExternalDiagram file="ex-diagrams.xml" showcode="true">ex-text</ExternalDiagram>
+						Text can be placed in any position and with style.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Clipping, Masking</Title>
+				<Body>
+					<p>
+						Not yet implemented.
+						The SVG area is clipped to start with.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Text Paths</Title>
+				<Body>
+					<p>
+						<ExternalDiagram file="ex-diagrams.xml" showcode="true">ex-textpath</ExternalDiagram>
+						The above example shows the &lt;svg:use&gt; and textPath
+						elements in action.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Images</Title>
+				<Body>
+					<p>
+						<ExternalDiagram file="ex-diagrams.xml" showcode="true">ex-image</ExternalDiagram>
+						The above example shows the &lt;svg:image&gt; with position
+						and sizing elements in action.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>SVG Element</Title>
+				<Body>
+					<p>
+						<ExternalDiagram file="ex-diagrams.xml" showcode="true">ex-misc</ExternalDiagram>
+						Doing some silly stuff with svg elements.
+					</p>
+				</Body>
+			</SubSection>
+		</Section>
+	</Chapter>
+</Document>
