@@ -404,9 +404,9 @@ public class TTFReader {
 
         el = doc.createElement("bfranges");
         mel.appendChild(el);
-        Iterator e = ttf.getCMaps().listIterator();
-        while (e.hasNext()) {
-            TTFCmapEntry ce = (TTFCmapEntry)e.next();
+        Iterator iter = ttf.getCMaps().listIterator();
+        while (iter.hasNext()) {
+            TTFCmapEntry ce = (TTFCmapEntry)iter.next();
             Element el2 = doc.createElement("bf");
             el.appendChild(el2);
             el2.setAttribute("us", String.valueOf(ce.getUnicodeStart()));
@@ -461,15 +461,15 @@ public class TTFReader {
         Document doc = parent.getOwnerDocument();
         
         // Get kerning
-        Iterator enum;
+        Iterator iter;
         if (isCid) {
-            enum = ttf.getKerning().keySet().iterator();
+            iter = ttf.getKerning().keySet().iterator();
         } else {
-            enum = ttf.getAnsiKerning().keySet().iterator();
+            iter = ttf.getAnsiKerning().keySet().iterator();
         }
 
-        while (enum.hasNext()) {
-            Integer kpx1 = (Integer)enum.next();
+        while (iter.hasNext()) {
+            Integer kpx1 = (Integer)iter.next();
 
             el = doc.createElement("kerning");
             el.setAttribute("kpx1", kpx1.toString());
@@ -483,9 +483,9 @@ public class TTFReader {
                 h2 = (Map)ttf.getAnsiKerning().get(kpx1);
             }
 
-            Iterator enum2 = h2.keySet().iterator();
-            while (enum2.hasNext()) {
-                Integer kpx2 = (Integer)enum2.next();
+            Iterator iter2 = h2.keySet().iterator();
+            while (iter2.hasNext()) {
+                Integer kpx2 = (Integer)iter2.next();
                 if (isCid || kpx2.intValue() < 256) {
                     el2 = doc.createElement("pair");
                     el2.setAttribute("kpx2", kpx2.toString());

@@ -384,14 +384,14 @@ public class FOPropertyMapping implements Constants {
      * @param enum A enum value from Constants.java.
      * @return An EnumProperty instance.
      */
-    private Property makeEnumProperty(int enum) {
+    private Property makeEnumProperty(int enumValue) {
         if (enums == null) {
             enums = new Property[200];
         }
-        if (enums[enum] == null) {
-            enums[enum] = new EnumProperty(enum);
+        if (enums[enumValue] == null) {
+            enums[enumValue] = new EnumProperty(enumValue);
         }
-        return enums[enum];
+        return enums[enumValue];
     }
 
     /**
