@@ -100,6 +100,10 @@
 						<ExternalSVG file="test/shapes.svg"/>
 						unit test
 					</p>
+					<p>
+						<ExternalSVG file="test/arcs.svg"/>
+						Arcs using the arc command in the path data.
+					</p>
 				</Body>
 			</SubSection>
 		</Section>
