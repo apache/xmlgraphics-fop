@@ -159,9 +159,13 @@ public class Flow extends FObj {
 		Vector pageMarker = this.getMarkerSnapshot(new Vector());
 
 		int numChildren = this.children.size();
+		if (numChildren == 0)
+		{
+			throw new FOPException("fo:flow must contain block-level children");
+		}
 		for (int i = this.marker; i < numChildren; i++) {
 			FObj fo = (FObj) children.elementAt(i);
-			
+
 			if (bac.isBalancingRequired(fo))
 			{
 				// reset the the just-done span area in preparation
