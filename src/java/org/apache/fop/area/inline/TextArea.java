@@ -27,7 +27,7 @@ public class TextArea extends InlineArea {
      * The text for this inline area
      */
     protected String text;
-    private int iTSadjust = 0;
+    private int iTextSpaceAdjust = 0;
 
     /**
      * Create a text inline area
@@ -58,8 +58,8 @@ public class TextArea extends InlineArea {
      *
      * @return the text space adjustment
      */
-    public int getTSadjust() {
-        return iTSadjust;
+    public int getTextSpaceAdjust() {
+        return iTextSpaceAdjust;
     }
 
     /**
@@ -67,8 +67,8 @@ public class TextArea extends InlineArea {
      *
      * @param iTSadjust the text space adjustment
      */
-    public void setTSadjust(int iTSadjust) {
-        this.iTSadjust = iTSadjust;
+    public void setTextSpaceAdjust(int iTSadjust) {
+        iTextSpaceAdjust = iTSadjust;
     }
 }
 

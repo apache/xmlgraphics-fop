@@ -448,12 +448,15 @@ public class FObj extends FONode implements Constants {
         fotv.serveFObj(this);
     }
     
-    /**
-     * Return a string representation of the fo element. 
+
+    /*
+     * Return a string representation of the fo element.
+     * Deactivated in order to see precise ID of each fo element created
+     *    (helpful for debugging)
      */
-    public String toString() {
+/*    public String toString() {
         return getName() + " at line " + line + ":" + column;
     }
-    
+*/    
 }
 

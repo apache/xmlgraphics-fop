@@ -499,7 +499,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
             if (iWScount > 0) {
                 //getLogger().error("Adjustment per word-space= " +
                 //                   iAdjust / iWScount);
-                t.setTSadjust(iAdjust / iWScount);
+                t.setTextSpaceAdjust(iAdjust / iWScount);
                 //System.err.println("TextLayoutManager> word spaces= " + iWScount + " adjustment per word space= " + (iAdjust/iWScount));
             }
             word = t;

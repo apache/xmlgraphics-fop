@@ -426,7 +426,7 @@ public class XMLRenderer extends AbstractRenderer {
         if (map != null) {
             prop = " props=\"" + getPropString(map) + "\"";
         }
-        writeElement("<text tsadjust=\"" + text.getTSadjust() + "\""
+        writeElement("<text tsadjust=\"" + text.getTextSpaceAdjust() + "\""
              + prop + ">" + text.getTextArea() + "</text>");
         super.renderText(text);
     }
