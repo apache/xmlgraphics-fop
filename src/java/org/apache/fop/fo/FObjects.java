@@ -62,7 +62,9 @@ import java.util.StringTokenizer;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Ints;
+import org.apache.fop.fo.flow.FoPcdata;
 import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.XMLEvent;
 
 /**
  * Data class for common data and methods relating to Flow Objects.
@@ -129,6 +131,24 @@ public class FObjects {
     private final Constructor[] foConstructors
                         = new Constructor[FObjectNames.foLocalNamesLength];
 
+    /**
+     * The default constructor arguments for an FObject. <b>N.B.</b> not
+     * all subclasses of <tt>FONode</tt> use this constructor; e.g.
+     * <tt>FoRoot</tt>, <tt>FoPageSequence</tt> &amp; <tt>FoFlow</tt>.
+     * Generally these FObjects are not invoked through reflection.  If such
+     * invocation becomes necessary for a particular class, a contructor of
+     * this kind must be added to the class.
+     * <p>At present, the only difference is in the addition of the
+     * <tt>int.class</tt> constructor argument.
+     */
+    protected static final Class[] defaultConstructorArgs =
+        new Class[] {
+            FOTree.class
+            ,FONode.class
+            ,FoXMLEvent.class
+            ,int.class
+    };
+    
     /**
      * A HashMap whose elements are an integer index value keyed by an
      * fo local name.  The index value is the index of the fo local name in
@@ -207,6 +227,18 @@ public class FObjects {
         }
     }
 
+    /**
+     * This method generates generates new FO objects, except for FoPcdata
+     * objects, which require an XMLEvent argument.  Use only when it is
+     * known that no CHARACTERS event will be passed.
+     * @param foTree
+     * @param parent
+     * @param event the <code>FoXMLEvent</code> event that triggered the
+     * generation of this FO
+     * @param stateFlags
+     * @return the new FO node
+     * @throws FOPException
+     */
     public Object makeFlowObject(FOTree foTree,
                              FONode parent, FoXMLEvent event, int stateFlags)
         throws FOPException
@@ -225,7 +257,7 @@ public class FObjects {
                 // Generate the constructor object
                 foclass = Class.forName(foPkgClassNames[foType]);
                 foConstructors[foType] =
-                        foclass.getConstructor(FONode.defaultConstructorArgs);
+                        foclass.getConstructor(defaultConstructorArgs);
             }
             // Now generate a new instance
             return foConstructors[foType].newInstance(args);
@@ -240,6 +272,37 @@ public class FObjects {
         } catch (InvocationTargetException e) {
             throw new FOPException(e);
         }
+    }
+
+    /**
+     * This method generates generates new FO objects, including FoPcdata
+     * objects.  It is more general in this sense than the overloaded
+     * version which takes the <code>FoXMLEvent event</code> parameter.
+     * objects, which require an XMLEvent argument.
+     * @param foTree
+     * @param parent
+     * @param event the <code>XMLEvent</code> which triggered the generation
+     * of this fo
+     * @param stateFlags
+     * @return
+     * @throws FOPException
+     */
+    public Object makeFlowObject(FOTree foTree,
+            FONode parent, XMLEvent event, int stateFlags)
+    throws FOPException
+    {
+        if (event instanceof FoXMLEvent) {
+            return makeFlowObject(
+                    foTree, parent, (FoXMLEvent)event, stateFlags);
+        }
+        if (event.getType() != XMLEvent.CHARACTERS) {
+            throw new FOPException(
+                    "Attempt to makeFlowObject() with XMLEvent for event type "
+                    + XMLEvent.eventTypeName(event.getType()));
+        }
+        int foType = FObjectNames.PCDATA;
+
+        return new FoPcdata(foTree, parent, event, stateFlags);
     }
 
     public static int getFoIndex(String name) {
