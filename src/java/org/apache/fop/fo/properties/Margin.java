@@ -182,7 +182,7 @@ public class Margin extends Property  {
      * @return <tt>PropertyValue</t> the same value, with its property set
      *  to the <i>property</i> argument, if it is an Auto or a
      * <tt>Numeric</tt> distance
-     * @exception <tt>PropertyException</tt> if the conditions are not met
+     * @exception PropertyException if the conditions are not met
      */
     private static PropertyValue autoOrDistance
                                     (PropertyValue value, int property)
@@ -202,7 +202,7 @@ public class Margin extends Property  {
      * @param value <tt>PropertyValue</tt> the value being tested
      * @return <tt>PropertyValue</t> the same value if it is an Auto or a
      * <tt>Numeric</tt> distance
-     * @exception <tt>PropertyException</tt> if the conditions are not met
+     * @exception PropertyException if the conditions are not met
      */
     private static PropertyValue autoOrDistance(PropertyValue value)
         throws PropertyException

@@ -150,14 +150,13 @@ public class BackgroundPosition extends Property  {
 
     /**
      * Do the work for the three argument refineParsing method.
-     * @param propindex - the <tt>int</tt> property index.
-     * @param foNode - the <tt>FONode</tt> being built
+     * @param propindex  the property index.
+     * @param foNode  the FONode being built
      * @param value <tt>PropertyValue</tt> returned by the parser
-     * @param nested <tt>boolean</tt> indicating whether this method is
+     * @param nested  indicates whether this method is
      * called normally (false), or as part of another <i>refineParsing</i>
-     * method.
-     * @return <tt>PropertyValue</tt> the verified value
-     * @see #refineParsing(FOTree,PropertyValue)
+     * method
+     * @return  the verified <tt>PropertyValue</tt>
      */
     public PropertyValue refineParsing
         (int propindex, FONode foNode, PropertyValue value, boolean nested)

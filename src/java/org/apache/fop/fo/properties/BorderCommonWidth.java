@@ -83,8 +83,9 @@ public class BorderCommonWidth extends Property  {
     // terms must be manually changed.
 
     /**
-     * @param <tt>int</tt> property index
-     * @param <tt>int</tt> mappedEnum enumeration value
+     * @param node  the FONode with an expressing the property
+     * @param property  the property index
+     * @param enum  the mappedEnum enumeration value
      * @return <tt>Numeric[]</tt> containing the values corresponding
      * to the MappedNumeric enumeration constants for border width
      */

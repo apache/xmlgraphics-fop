@@ -109,11 +109,11 @@ public class ColorCommon extends Property  {
      * The argument must be either a ColorType already, in which case
      * it is returned unchanged, or an NCName whose string value is a
      * standard color or 'transparent'.
-     * @param propindex the index of the property to which this value is
+     * @param property the index of the property to which this value is
      * being applied.
      * @param value <tt>PropertyValue</tt>
      * @return <tt>ColorValue</tt> equivalent of the argument
-     * @exception <tt>PropertyException</tt>
+     * @exception PropertyException
      */
     protected static ColorType getColor(int property, PropertyValue value)
             throws PropertyException
@@ -185,7 +185,6 @@ public class ColorCommon extends Property  {
      * called normally (false), or as part of another <i>refineParsing</i>
      * method.
      * @return <tt>PropertyValue</tt> the verified value
-     * @see #refineParsing(FONode,PropertyValue)
      */
     public PropertyValue refineParsing
         (int propindex, FONode foNode, PropertyValue value, boolean nested)

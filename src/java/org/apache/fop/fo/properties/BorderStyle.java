@@ -129,7 +129,6 @@ public class BorderStyle extends BorderCommonStyle  {
      * called normally (false), or as part of another <i>refineParsing</i>
      * method.
      * @return <tt>PropertyValue</tt> the verified value
-     * @see #refineParsing(FONode,PropertyValue)
      */
     public PropertyValue refineParsing
         (int propindex, FONode foNode, PropertyValue value, boolean nested)
