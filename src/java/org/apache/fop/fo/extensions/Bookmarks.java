@@ -54,7 +54,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 
 import java.util.ArrayList;
-import org.apache.fop.extensions.*;
 
 /**
  * Bookmarks data is the top level element of the pdf bookmark extension.
