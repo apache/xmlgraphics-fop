@@ -8,21 +8,13 @@ ant.jar           Ant is the scripting tool which is used to build Fop or to run
                   added which are needed for the style task.
 
 batik.jar         the svg library from Batik at xml.apache.org
-version 1.5 beta2
-
-buildtools.jar    Ant tasks required for building FOP. Rebuild with 
-                  build.sh -f buildtools.xml in the top level directory.
-                  (Note: if you are going to check in a new version of 
-                  buildtools.jar, make sure you have both Xalan 1 and
-                  Xalan 2 in the classpath when building it.)
-
-stylebook.jar	  Jar used for creating the FOP website
+version 1.5 beta4
 
 xalan-*.jar       XSLT processor from xml.apache.org
-version 2.3.1
+version 2.4.1
 
 xercesImpl-*.jar  XML parser from xml.apache.org
-version 2.0.1
+version 2.2.1
 
 *** OPTIONAL ***
 
