@@ -34,11 +34,11 @@ public class PageRefArea
 extends AbstractReferenceArea
 implements ReferenceArea, Serializable {
     // contains before, start, body, end and after regions
-    private RegionBodyVport regionBody = null;
-    private RegionBeforeVport regionBefore = null;
-    private RegionAfterVport regionAfter = null;
-    private RegionStartVport regionStart = null;
-    private RegionEndVport regionEnd = null;
+    private RegionBodyVport regionBodyVport = null;
+    private RegionBeforeVport regionBeforeVport = null;
+    private RegionAfterVport regionAfterVport = null;
+    private RegionStartVport regionStartVport = null;
+    private RegionEndVport regionEndVport = null;
 
 //    // temporary map of unresolved objects used when serializing the page
 //    private Map unresolved = null;
@@ -73,107 +73,87 @@ implements ReferenceArea, Serializable {
             FoPageSequence pageSeq, Node parent, Object sync) {
         PageRefArea pageRef =
             new PageRefArea(pageSeq, parent, sync);
-        pageRef.setRegionBody(RegionBodyVport.nullRegionBodyVport(
+        pageRef.setRegionBodyVport(RegionBodyVport.nullRegionBodyVport(
                 pageSeq, pageRef, sync));
-        pageRef.setRegionBefore(RegionBeforeVport.nullRegionBeforeVport(
+        pageRef.setRegionBeforeVport(RegionBeforeVport.nullRegionBeforeVport(
                 pageSeq, pageRef, sync));
-        pageRef.setRegionAfter(RegionAfterVport.nullRegionAfterVport(
+        pageRef.setRegionAfterVport(RegionAfterVport.nullRegionAfterVport(
                 pageSeq, pageRef, sync));
-        pageRef.setRegionStart(RegionStartVport.nullRegionStartVport(
+        pageRef.setRegionStartVport(RegionStartVport.nullRegionStartVport(
                 pageSeq, pageRef, sync));
-        pageRef.setRegionEnd(RegionEndVport.nullRegionEndVport(
+        pageRef.setRegionEndVport(RegionEndVport.nullRegionEndVport(
                 pageSeq, pageRef, sync));
         return pageRef;
     }
 
-//    /**
-//     * Set the unresolved references on this page for serializing.
-//     *
-//     * @param unres the map of unresolved objects
-//     */
-//    public void setUnresolvedReferences(Map unres) {
-//        unresolved = unres;
-//    }
-//
-//    /**
-//     * Get the map unresolved references from this page.
-//     * This should be called after deserializing to retrieve
-//     * the map of unresolved references that were serialized.
-//     *
-//     * @return the de-serialized map of unresolved objects
-//     */
-//    public Map getUnresolvedReferences() {
-//        return unresolved;
-//    }
-    
     /**
-     * @return the regionAfter
+     * @return the regionAfterVport
      */
-    public RegionAfterVport getRegionAfter() {
-        return regionAfter;
+    public RegionAfterVport getRegionAfterVport() {
+        return regionAfterVport;
     }
 
     /**
-     * @param regionAfter to set
+     * @param regionAfter viewport to set
      */
-    public void setRegionAfter(RegionAfterVport regionAfter) {
-        this.regionAfter = regionAfter;
+    public void setRegionAfterVport(RegionAfterVport regionAfter) {
+        regionAfterVport = regionAfter;
     }
 
     /**
-     * @return the regionBefore
+     * @return the regionBeforeVport
      */
-    public RegionBeforeVport getRegionBefore() {
-        return regionBefore;
+    public RegionBeforeVport getRegionBeforeVport() {
+        return regionBeforeVport;
     }
 
     /**
-     * @param regionBefore to set
+     * @param regionBefore viewport to set
      */
-    public void setRegionBefore(RegionBeforeVport regionBefore) {
-        this.regionBefore = regionBefore;
+    public void setRegionBeforeVport(RegionBeforeVport regionBefore) {
+        regionBeforeVport = regionBefore;
     }
 
     /**
-     * @return the regionBody
+     * @return the regionBodyVport
      */
-    public RegionBodyVport getRegionBody() {
-        return regionBody;
+    public RegionBodyVport getRegionBodyVport() {
+        return regionBodyVport;
     }
 
     /**
-     * @param regionBody to set
+     * @param regionBody viewport to set
      */
-    public void setRegionBody(RegionBodyVport regionBody) {
-        this.regionBody = regionBody;
+    public void setRegionBodyVport(RegionBodyVport regionBody) {
+        regionBodyVport = regionBody;
     }
 
     /**
-     * @return the regionEnd
+     * @return the regionEndVport
      */
-    public RegionEndVport getRegionEnd() {
-        return regionEnd;
+    public RegionEndVport getRegionEndVport() {
+        return regionEndVport;
     }
 
     /**
-     * @param regionEnd to set
+     * @param regionEnd viewport to set
      */
-    public void setRegionEnd(RegionEndVport regionEnd) {
-        this.regionEnd = regionEnd;
+    public void setRegionEndVport(RegionEndVport regionEnd) {
+        regionEndVport = regionEnd;
     }
 
     /**
-     * @return the regionStart
+     * @return the regionStartVport
      */
-    public RegionStartVport getRegionStart() {
-        return regionStart;
+    public RegionStartVport getRegionStartVport() {
+        return regionStartVport;
     }
 
     /**
-     * @param regionStart to set
+     * @param regionStart viewport to set
      */
-    public void setRegionStart(RegionStartVport regionStart) {
-        this.regionStart = regionStart;
+    public void setRegionStartVport(RegionStartVport regionStart) {
+        regionStartVport = regionStart;
     }
 
     /**
@@ -184,20 +164,20 @@ implements ReferenceArea, Serializable {
      */
     public Object clone() {
         PageRefArea p = (PageRefArea)(this.clone());
-        if (regionBody != null) {
-            p.regionBody = (RegionBodyVport)regionBody.clone();
+        if (regionBodyVport != null) {
+            p.regionBodyVport = (RegionBodyVport)regionBodyVport.clone();
         }
-        if (regionBefore != null) {
-            p.regionBefore = (RegionBeforeVport)regionBefore.clone();
+        if (regionBeforeVport != null) {
+            p.regionBeforeVport = (RegionBeforeVport)regionBeforeVport.clone();
         }
-        if (regionAfter != null) {
-            p.regionAfter = (RegionAfterVport)regionAfter.clone();
+        if (regionAfterVport != null) {
+            p.regionAfterVport = (RegionAfterVport)regionAfterVport.clone();
         }
-        if (regionStart != null) {
-            p.regionStart = (RegionStartVport)regionStart.clone();
+        if (regionStartVport != null) {
+            p.regionStartVport = (RegionStartVport)regionStartVport.clone();
         }
-        if (regionEnd != null) {
-            p.regionEnd = (RegionEndVport)regionEnd.clone();
+        if (regionEndVport != null) {
+            p.regionEndVport = (RegionEndVport)regionEndVport.clone();
         }
 
         return p;
