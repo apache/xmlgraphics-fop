@@ -51,6 +51,7 @@
 package org.apache.fop.render.pdf;
 
 import org.apache.fop.area.CTM;
+import org.apache.fop.pdf.PDFNumber;
 
 /**
  * CTMHelper converts FOP transformation matrixis to those
@@ -84,9 +85,12 @@ public final class CTMHelper {
 
         final double matrix[] = toPDFArray(sourceMatrix);
 
-        return matrix[0] + " " + matrix[1] + " " 
-             + matrix[2] + " " + matrix[3] + " " 
-             + matrix[4] + " " + matrix[5];
+        return PDFNumber.doubleOut(matrix[0], 8) + " " + 
+               PDFNumber.doubleOut(matrix[1], 8) + " " + 
+               PDFNumber.doubleOut(matrix[2], 8) + " " + 
+               PDFNumber.doubleOut(matrix[3], 8) + " " + 
+               PDFNumber.doubleOut(matrix[4], 8) + " " + 
+               PDFNumber.doubleOut(matrix[5], 8);
     }
 
     /**
