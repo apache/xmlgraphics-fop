@@ -374,37 +374,19 @@ public class PropertySets {
         tableSet = Collections.unmodifiableSet((Set)tableProps);
     }
 
-    /**
-     * Shorthand properties.  Where properties interact, they are listed
-     * in increasing precision.
-     */
-    public static final ROIntArray shorthands =
-        new ROIntArray(new int[] {
-            PropNames.BACKGROUND
-            ,PropNames.BACKGROUND_POSITION
-            ,PropNames.BORDER
-            ,PropNames.BORDER_STYLE
-            ,PropNames.BORDER_COLOR
-            ,PropNames.BORDER_WIDTH
-            ,PropNames.BORDER_TOP
-            ,PropNames.BORDER_RIGHT
-            ,PropNames.BORDER_BOTTOM
-            ,PropNames.BORDER_LEFT
-            ,PropNames.BORDER_SPACING
-            ,PropNames.CUE
-            ,PropNames.FONT
-            ,PropNames.MARGIN
-            ,PropNames.PADDING
-            ,PropNames.PAGE_BREAK_AFTER
-            ,PropNames.PAGE_BREAK_BEFORE
-            ,PropNames.PAGE_BREAK_INSIDE
-            ,PropNames.PAUSE
-            ,PropNames.POSITION
-            ,PropNames.SIZE
-            ,PropNames.VERTICAL_ALIGN
-            ,PropNames.WHITE_SPACE
-            ,PropNames.XML_LANG
-        });
+    // My preference here for shorthands which expand to compound properties
+    // would be to expand only to the compound, and allow compounds to be
+    // "normally" expanded in a second step.  Unfortunately, the shorthand
+    // border-spacing expands (potentially) into both of the elements of
+    // the border-separation compound.  However, other compound expansions
+    // are defined with only a single value for the compound, so I will
+    // treat border-separation as a special case in the event that two
+    // values are provided.
+    // I''m not sure whether a shorthand specification which sets a compound
+    // property with a single top-level value should be regarded as a
+    // specification for the purposes of inheritance, but I will assume so
+    // until further notice.
+    // pbw
 
     private static final int[] backgroundPosition = {
         PropNames.BACKGROUND_POSITION_HORIZONTAL
@@ -493,8 +475,7 @@ public class PropertySets {
      */
     public static final ROIntArray borderSpacingExpansion =
         new ROIntArray(new int[] {
-            PropNames.BORDER_SEPARATION_BLOCK_PROGRESSION_DIRECTION
-            ,PropNames.BORDER_SEPARATION_INLINE_PROGRESSION_DIRECTION
+            PropNames.BORDER_SEPARATION
         });
 
     public static final ROIntArray cueExpansion =
@@ -515,11 +496,7 @@ public class PropertySets {
             ,PropNames.FONT_VARIANT
             ,PropNames.FONT_WEIGHT
             ,PropNames.FONT_SIZE
-            ,PropNames.LINE_HEIGHT_MINIMUM
-            ,PropNames.LINE_HEIGHT_OPTIMUM
-            ,PropNames.LINE_HEIGHT_MAXIMUM
-            ,PropNames.LINE_HEIGHT_PRECEDENCE
-            ,PropNames.LINE_HEIGHT_CONDITIONALITY
+            ,PropNames.LINE_HEIGHT
         });
 
     public static final ROIntArray marginExpansion =
@@ -537,6 +514,128 @@ public class PropertySets {
             ,PropNames.PADDING_BOTTOM
             ,PropNames.PADDING_LEFT
         });
+
+    public static final ROIntArray pageBreakAfterExpansion =
+        new ROIntArray(new int[] {
+            PropNames.BREAK_AFTER
+            ,PropNames.KEEP_WITH_NEXT
+        });
+
+    public static final ROIntArray pageBreakBeforeExpansion =
+        new ROIntArray(new int[] {
+            PropNames.BREAK_BEFORE
+            ,PropNames.KEEP_WITH_PREVIOUS
+        });
+
+    public static final ROIntArray pageBreakInsideExpansion =
+        new ROIntArray(new int[] {
+            PropNames.KEEP_TOGETHER
+        });
+
+    public static final ROIntArray pauseExpansion =
+        new ROIntArray(new int[] {
+            PropNames.PAUSE_BEFORE
+            ,PropNames.PAUSE_AFTER
+        });
+
+    public static final ROIntArray positionExpansion =
+        new ROIntArray(new int[] {
+            PropNames.RELATIVE_POSITION
+            ,PropNames.ABSOLUTE_POSITION
+        });
+
+    public static final ROIntArray sizeExpansion =
+        new ROIntArray(new int[] {
+            PropNames.PAGE_HEIGHT
+            ,PropNames.PAGE_WIDTH
+        });
+
+    public static final ROIntArray verticalAlignExpansion =
+        new ROIntArray(new int[] {
+            PropNames.ALIGNMENT_BASELINE
+            ,PropNames.ALIGNMENT_ADJUST
+            ,PropNames.BASELINE_SHIFT
+            ,PropNames.DOMINANT_BASELINE
+        });
+
+    public static final ROIntArray whiteSpaceExpansion =
+        new ROIntArray(new int[] {
+            PropNames.LINEFEED_TREATMENT
+            ,PropNames.WHITE_SPACE_COLLAPSE
+            ,PropNames.WHITE_SPACE_TREATMENT
+            ,PropNames.WRAP_OPTION
+        });
+
+    public static final ROIntArray xmlLangExpansion =
+        new ROIntArray(new int[] {
+            PropNames.COUNTRY
+            ,PropNames.LANGUAGE
+        });
+
+    /**
+     * Shorthand properties.  Where properties interact, they are listed
+     * in increasing precision.
+     */
+    public static final ROIntArray shorthands =
+        new ROIntArray(new int[] {
+            PropNames.BACKGROUND
+            ,PropNames.BACKGROUND_POSITION
+            ,PropNames.BORDER
+            ,PropNames.BORDER_STYLE
+            ,PropNames.BORDER_COLOR
+            ,PropNames.BORDER_WIDTH
+            ,PropNames.BORDER_TOP
+            ,PropNames.BORDER_RIGHT
+            ,PropNames.BORDER_BOTTOM
+            ,PropNames.BORDER_LEFT
+            ,PropNames.BORDER_SPACING
+            ,PropNames.CUE
+            ,PropNames.FONT
+            ,PropNames.MARGIN
+            ,PropNames.PADDING
+            ,PropNames.PAGE_BREAK_AFTER
+            ,PropNames.PAGE_BREAK_BEFORE
+            ,PropNames.PAGE_BREAK_INSIDE
+            ,PropNames.PAUSE
+            ,PropNames.POSITION
+            ,PropNames.SIZE
+            ,PropNames.VERTICAL_ALIGN
+            ,PropNames.WHITE_SPACE
+            ,PropNames.XML_LANG
+        });
+
+    /**
+     * Array of <i>ROIntArray</i> <b>in same order as <i>shorthands</></b>
+     * <i>ROIntArray</i>.
+     * <p><b>TODO:</b> Full paranoia mode requires that this array
+     * be expressed in a new data type <i>ROIntROArray</i>.
+     */
+    public static final ROIntArray[] shorthandExpansions = {
+        backgroundExpansion
+        ,backgroundPositionExpansion
+        ,borderExpansion
+        ,borderStyleExpansion
+        ,borderColorExpansion
+        ,borderWidthExpansion
+        ,borderTopExpansion
+        ,borderRightExpansion
+        ,borderBottomExpansion
+        ,borderLeftExpansion
+        ,borderSpacingExpansion
+        ,cueExpansion
+        ,fontExpansion
+        ,marginExpansion
+        ,paddingExpansion
+        ,pageBreakAfterExpansion
+        ,pageBreakBeforeExpansion
+        ,pageBreakInsideExpansion
+        ,pauseExpansion
+        ,positionExpansion
+        ,sizeExpansion
+        ,verticalAlignExpansion
+        ,whiteSpaceExpansion
+        ,xmlLangExpansion
+    };
 
     private PropertySets (){}
 
