@@ -1,19 +1,20 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.fonts;
+package org.apache.fop.fonts.type1;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.DataInputStream;
 
 /**
  * This is a helper class for reading PFM files. It defines functions for
  * extracting specific values out of the stream.
- *
- * @author  jeremias.maerki@outline.ch
  */
 public class PFMInputStream extends java.io.FilterInputStream {
 

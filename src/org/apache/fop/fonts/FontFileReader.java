@@ -6,10 +6,12 @@
  */
 
 package org.apache.fop.fonts;
+
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.File;
 import java.io.IOException;
+
+import org.apache.fop.tools.IOUtil;
 
 /**
  * Reads a file into an array and
@@ -28,8 +30,7 @@ public class FontFileReader {
     private void init(InputStream in) throws java.io.IOException {
         java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
         try {
-            copyStream(in, bout);
-            this.file = bout.toByteArray();
+            this.file = IOUtil.toByteArray(in, 50000);
             this.fsize = this.file.length;
             this.current = 0;
         } finally {
@@ -38,24 +39,13 @@ public class FontFileReader {
     }
 
 
-    /**@todo Use method from Avalon Excalibur IO or Jakarta Commons IO*/
-    private void copyStream(InputStream in, OutputStream out) throws IOException {
-        final int bufferSize = 2048;
-        final byte[] buffer = new byte[bufferSize];
-        byte[] buf = new byte[bufferSize];
-        int bytesRead;
-        while ((bytesRead = in.read(buf)) != -1) {
-            out.write(buf, 0, bytesRead);
-        }
-    }
-
     /**
      * Constructor
      * @param fileName filename to read
      */
     public FontFileReader(String fileName) throws java.io.IOException {
         File f = new File(fileName);
-        InputStream in = new java.io.FileInputStream(fileName);
+        InputStream in = new java.io.FileInputStream(f);
         try {
             init(in);
         } finally {

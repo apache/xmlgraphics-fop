@@ -1,21 +1,23 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.fonts;
+package org.apache.fop.fonts.type1;
 
 import java.io.*;
-import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
+
+import org.apache.fop.fonts.Glyphs;
 
 /**
  * This class represents a PFM file (or parts of it) as a Java object.
- *
- * @author  jeremias.maerki@outline.ch
  */
-public class PFMFile {
+public class PFMFile extends AbstractLogEnabled {
 
     // Header stuff
     private String windowsName;
@@ -42,11 +44,8 @@ public class PFMFile {
     // Extent table
     private int[] extentTable;
 
-    private HashMap kerningTab;
-    public PFMFile() {
-        kerningTab = new HashMap();
-    }
-
+    private Map kerningTab = new java.util.HashMap();;
+    
     /**
      * Parses a PFM file
      *
@@ -142,27 +141,29 @@ public class PFMFile {
     private void loadKernPairs(PFMInputStream inStream) throws IOException {
         int i = inStream.readShort();
 
-
-        System.out.println(i + " kerning pairs");
+        getLogger().info(i + " kerning pairs");
         while (i > 0) {
             int g1 = (int)inStream.readByte();
             i--;
-            // System.out.print ("Char no: ("+g1+", ");
-
             int g2 = (int)inStream.readByte();
-            // System.out.print (g2+") kern");
+            getLogger().debug("Char no: (" + g1 + ", " + g2 + ") kern");
 
             int adj = inStream.readShort();
-            if (adj > 0x8000)
+            if (adj > 0x8000) {
                 adj = -(0x10000 - adj);
-                // System.out.println (": " + adj);
+                getLogger().debug("adjust: " + adj);
+            }
 
-            String glyph1 = Glyphs.tex8r[g1];
-            String glyph2 = Glyphs.tex8r[g2];
+            if (getLogger().isDebugEnabled()) {
+                String glyph1 = Glyphs.tex8r[g1];
+                String glyph2 = Glyphs.tex8r[g2];
+                getLogger().debug("glyphs: " + glyph1 + ", " + glyph2);
+            }
 
-            HashMap adjTab = (HashMap)kerningTab.get(new Integer(g1));
-            if (adjTab == null)
-                adjTab = new HashMap();
+            Map adjTab = (Map)kerningTab.get(new Integer(g1));
+            if (adjTab == null) {
+                adjTab = new java.util.HashMap();
+            }
             adjTab.put(new Integer(g2), new Integer(adj));
             kerningTab.put(new Integer(g1), adjTab);
         }
@@ -212,7 +213,7 @@ public class PFMFile {
      * strings with glyphnames as keys, containing hashmaps as value.
      * The value hashmaps contain a glyph name string key and an Integer value
      */
-    public HashMap getKerning() {
+    public Map getKerning() {
         return kerningTab;
     }
 
