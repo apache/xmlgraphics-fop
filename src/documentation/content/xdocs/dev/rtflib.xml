@@ -34,7 +34,7 @@ It can be used anywhere RTF output is required and java is available.</li>
       <section id="userdoc-overview">
         <title>Overview</title>
         <p>Perhaps the easiest way to see how to use RTFLib is by looking at an example. A set of test documents is part of the package, and can be <link href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/java/org/apache/fop/rtf/rtflib/testdocs/">viewed online</link>.
-A quick look at the Abstract <link href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/java/org/apache/fop/rtf/rtflib/testdocs/TestDocument.java?rev=HEAD&amp;content-type=text/vnd.viewcvs-markup">TestDocument</link> class, and one of the Concrete subclasses, <link href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/java/org/apache/fop/rtf/rtflib/testdocs/SimpleDocument.java&amp;rev=HEAD&amp;content-type=text/vnd.viewcvs-markup">SimpleDocument</link> will provide the basics of how to use the package.</p>
+A quick look at the Abstract <link href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/java/org/apache/fop/rtf/rtflib/testdocs/TestDocument.java?rev=HEAD&amp;content-type=text/vnd.viewcvs-markup">TestDocument</link> class, and one of the Concrete subclasses, <link href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/java/org/apache/fop/rtf/rtflib/testdocs/SimpleDocument.java?rev=HEAD&amp;content-type=text/vnd.viewcvs-markup">SimpleDocument</link> will provide the basics of how to use the package.</p>
         <p>There are two basic concepts you will need to understand to use RTFLib:</p>
         <ul>
           <li>Documents are created by filling bigger containers with successively smaller containers, and eventually with content.</li>
