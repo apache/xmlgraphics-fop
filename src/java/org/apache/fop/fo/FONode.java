@@ -621,4 +621,16 @@ public class FONode extends SyncedNode{
         throw new FOPException("Called from FONode");
     }
 
+    /**
+     * Gets a <code>String</code> with the node type
+     * @return the name of the node type
+     */
+    public String nodeType() {
+        try {
+            return FObjectNames.getFOName(type);
+        } catch (FOPException e) {
+            return "Unknown";
+        }
+    }
+
 }// FONode
