@@ -12,7 +12,6 @@ public class Fop {
         CommandLineOptions options = new CommandLineOptions (args);
         Starter starter = options.getStarter();
         starter.run();
-	System.exit(0);
     }
 }
 
