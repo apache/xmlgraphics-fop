@@ -179,7 +179,7 @@ public class FOUserAgent {
 
     /**
      * Set the user configuration.
-     * @return the user configuration
+     * @param user configuration
      */
     public void setUserConfig(Configuration userConfig) {
         this.userConfig = userConfig;
