@@ -26,49 +26,28 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import org.xml.sax.InputSource;
 
-// fop
-import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.Fop;
 
 /**
  * entry class for reading configuration from file and creating a configuration
- * class. Typical use looks like: <br>
- *
- * <code>ConfigurationReader reader = new ConfigurationReader ("config.xml","standard");
- * try {
- * reader.start();
- * } catch (org.apache.fop.apps.FOPException error) {
- * reader.dumpError(error);
- * }
- * </code>
- * Once the configuration has been setup, the information can be accessed with
- * the methods of StandardConfiguration.
- */
+ * class. */
 public class ConfigurationReader {
 
-    /**
-     * show a full dump on error
-     */
-    private static boolean errorDump = false;
-
-    /**
-     * inputsource for configuration file
-     */
+    /** inputsource for configuration file */
     private InputSource filename;
 
+    private Configuration configuration;
 
     /**
-     * creates a configuration reader
+     * creates a configuration reader and starts parsing of config file
      * @param filename the file which contains the configuration information
      */
-    public ConfigurationReader(InputSource filename) {
+    public ConfigurationReader(
+            InputSource filename, Configuration configuration)
+    throws FOPException {
         this.filename = filename;
-    }
-
-    /**
-     * intantiates parser and starts parsing of config file
-     */
-    public void start() throws FOPException {
+        this.configuration = configuration;
         XMLReader parser = createParser();
 
         // setting the parser features
@@ -79,7 +58,8 @@ public class ConfigurationReader {
             throw new FOPException("You need a parser which supports SAX version 2",
                                    e);
         }
-        ConfigurationParser configurationParser = new ConfigurationParser();
+        ConfigurationParser configurationParser =
+            new ConfigurationParser(configuration);
         parser.setContentHandler(configurationParser);
 
         try {
@@ -101,13 +81,11 @@ public class ConfigurationReader {
      *
      * @return the created SAX parser
      */
-    public static XMLReader createParser() throws FOPException {
-        String parserClassName = Driver.getParserClassName();
-        if (errorDump) {
-            Configuration.logger.config(
-                    "configuration reader using SAX parser "
-                                 + parserClassName);
-        }
+    public XMLReader createParser() throws FOPException {
+        String parserClassName = Fop.getParserClassName();
+        configuration.logger.config(
+                "configuration reader using SAX parser "
+                + parserClassName);
 
         try {
             return (XMLReader)Class.forName(parserClassName).newInstance();
@@ -122,30 +100,6 @@ public class ConfigurationReader {
             throw new FOPException(parserClassName + " is not a SAX driver",
                                    e);
         }
-    }
-
-    /**
-     * Dumps an error
-     */
-    public void dumpError(Exception e) {
-        if (errorDump) {
-            if (e instanceof SAXException) {
-                e.printStackTrace();
-                if (((SAXException)e).getException() != null) {
-                    ((SAXException)e).getException().printStackTrace();
-                }
-            } else {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * long or short error messages
-     *
-     */
-    public void setDumpError(boolean dumpError) {
-        errorDump = dumpError;
     }
 
 }

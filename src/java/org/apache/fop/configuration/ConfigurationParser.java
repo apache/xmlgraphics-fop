@@ -33,7 +33,7 @@ import java.util.ArrayList;
 
 
 /**
- * SAX2 Handler which retrieves the configuration information and stores them in Configuration.
+ * SAX2 Handler which retrieves the configMaps information and stores them in Configuration.
  * Normally this class doesn't need to be accessed directly.
  */
 public class ConfigurationParser extends DefaultHandler {
@@ -55,18 +55,18 @@ public class ConfigurationParser extends DefaultHandler {
     private int status = OUT;
     private int datatype = -1;
 
-    // store the result configuration
-    private static HashMap configuration;
+    // store the result configMaps
+    private static HashMap configMaps;
     private static HashMap activeConfiguration;
 
-    // stores key for new config entry
+    // stores key for new configuration entry
     private String key = "";
     private ArrayList keyStack = new ArrayList();
 
     // stores string value
     private String value = "";
 
-    // stores key for new config entry
+    // stores key for new configuration entry
     private String subkey = "";
 
     // stores list value
@@ -81,7 +81,7 @@ public class ConfigurationParser extends DefaultHandler {
     private Locator locator;
 
     /**
-     * determines role / target of configuration information, default is standard
+     * determines role / target of configMaps information, default is standard
      */
     private String role = "standard";
 
@@ -101,9 +101,14 @@ public class ConfigurationParser extends DefaultHandler {
 
     // information on a font triplet
     private String fontTripletName, weight, style;
+    private Configuration configuration;
+    
+    public ConfigurationParser(Configuration config) {
+        this.configuration = config;
+    }
 
     public void startDocument() {
-        configuration = Configuration.getConfiguration();
+        configMaps = configuration.getConfiguration();
     }
 
     /**
@@ -130,7 +135,7 @@ public class ConfigurationParser extends DefaultHandler {
             // role=standard as default
             if (attributes.getLength() == 0) {
                 role = "standard";
-                // retrieve attribute value for "role" which determines configuration target
+                // retrieve attribute value for "role" which determines configMaps target
             } else {
                 role = attributes.getValue("role");
             }
@@ -156,13 +161,13 @@ public class ConfigurationParser extends DefaultHandler {
             fontTriplets.add(fontTriplet);
         } else {
             // to make sure that user knows about false tag
-            Configuration.logger.warning("Unknown tag in configuration file: "
+            configuration.logger.warning("Unknown tag in configMaps file: "
                                    + localName);
         }
     }                                            // end startElement
 
     /**
-     * stores subentries or entries into their hashes (map for subentries, configuration for entry)
+     * stores subentries or entries into their hashes (map for subentries, configMaps for entry)
      */
     public void endElement(String uri, String localName, String qName) {
         if (localName.equals("entry")) {
@@ -252,18 +257,20 @@ public class ConfigurationParser extends DefaultHandler {
     }    // end characters
 
     /**
-     * stores configuration entry into configuration hashtable according to the role
+     * stores configuration entry into configuration hashtable
+     * according to the role
      *
-     * @param role a string containing the role / target for this configuration information
+     * @param role a string containing the role / target for this
+     * configuration information
      * @param key a string containing the key value for the configuration
      * @param value a string containing the value for the configuration
      */
     private void store(String role, String key, Object value) {
-        activeConfiguration = (HashMap)configuration.get(role);
+        activeConfiguration = (HashMap)configMaps.get(role);
         if (activeConfiguration != null) {
             activeConfiguration.put(key, value);
         } else {
-            Configuration.logger.warning("Unknown role >" + role
+            configuration.logger.warning("Unknown role >" + role
                                    + "< for new configuration entry. \n"
                                    + "Putting configuration with key:" + key
                                    + " into standard configuration.");
