@@ -27,7 +27,7 @@ public class Fop {
                 options.outfile.delete();
               }
             }
-            System.exit(1);
+            System.exit(2);
         } catch (java.io.FileNotFoundException e) {
             MessageHandler.errorln("" + e.getMessage());
             if (options != null) {

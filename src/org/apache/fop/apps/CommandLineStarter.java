@@ -60,19 +60,27 @@ public class CommandLineStarter extends Starter {
             driver.setErrorDump(true);
         }
 
+        FileOutputStream output=null;
         try {
+            output=new FileOutputStream(commandLineOptions.getOutputFile());
             driver.setRenderer(commandLineOptions.getRenderer());
-            driver.setOutputStream( new FileOutputStream(
-                                      commandLineOptions.getOutputFile()));
+            driver.setOutputStream(output);
             driver.getRenderer().setOptions(
               commandLineOptions.getRendererOptions());
             driver.render(parser, inputHandler.getInputSource());
-            System.exit(0);
         } catch (Exception e) {
             if (e instanceof FOPException) {
                 throw (FOPException) e;
             }
             throw new FOPException(e);
+        }
+        finally {
+          if (output!=null) {
+            try {
+              output.close();
+            }
+            catch(Exception e) {}
+          }
         }
     }
 
