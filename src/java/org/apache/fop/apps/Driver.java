@@ -601,7 +601,7 @@ public class Driver implements LogEnabled, FOTreeListener {
         if (foInputHandler instanceof FOTreeHandler) {
             currentDocument.setLayoutStrategy(new LayoutManagerLS());
         }
-        treeBuilder.document = currentDocument;
+        treeBuilder.foTreeControl = currentDocument;
         try {
             if (foInputHandler instanceof FOTreeHandler) {
                 FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;

@@ -61,7 +61,7 @@ import org.apache.avalon.framework.logger.Logger;
 
 // FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.control.Document;
+import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -216,8 +216,8 @@ public abstract class FONode {
      * which returns the parent Document.
      * @return the Document object that is the parent of this node.
      */
-    public Document getDocument() {
-        return parent.getDocument();
+    public FOTreeControl getFOTreeControl() {
+        return parent.getFOTreeControl();
     }
 
     /**
