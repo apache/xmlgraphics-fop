@@ -934,7 +934,7 @@
          <fo:block>TIFF logo and XSL FO table bar code</fo:block>
       </fo:flow>
    </fo:page-sequence>
-   <fo:page-sequence master-name="A4">
+   <fo:page-sequence master-reference="A4">
       <fo:static-content flow-name="xsl-region-after">
          <fo:table space-before.optimum="1in div 12" margin-left="2in div 12" margin-top="1in div 10" font-family="sans-serif" font-size="7pt" color="green">
             <fo:table-column column-width="8in div 10 - 2in div 12"/>
