@@ -52,19 +52,30 @@ package org.apache.fop.control;
 
 // Java
 import java.util.Map;
+import java.io.IOException;
 
 // FOP
+import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOTreeControl;
+import org.apache.fop.fo.FOTreeEvent;
+import org.apache.fop.fo.FOTreeListener;
+import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.area.Title;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.layout.LayoutStrategy;
+
+// SAX
+import org.xml.sax.SAXException;
 
 /**
  * Class storing information for the FOP Document being processed, and managing
  * the processing of it.
  */
-public class Document implements FOTreeControl {
+public class Document implements FOTreeControl, FOTreeListener {
 
     /** The parent Driver object */
     private Driver driver;
@@ -84,6 +95,12 @@ public class Document implements FOTreeControl {
      * created
      */
     private LayoutStrategy ls = null;
+
+    /**
+     * The current AreaTree for the PageSequence being rendered.
+     */
+    public AreaTree areaTree;
+    public AreaTreeModel atModel;
 
     /**
      * Main constructor
@@ -290,5 +307,47 @@ public class Document implements FOTreeControl {
     public Driver getDriver() {
         return driver;
     }
+
+    /**
+     * Required by the FOTreeListener interface. It handles an
+     * FOTreeEvent that is fired when a PageSequence object has been completed.
+     * @param event the FOTreeEvent that was fired
+     * @throws FOPException for errors in building the PageSequence
+     */
+    public void foPageSequenceComplete (FOTreeEvent event) throws FOPException {
+        PageSequence pageSeq = event.getPageSequence();
+        Title title = null;
+        if (pageSeq.getTitleFO() != null) {
+            title = pageSeq.getTitleFO().getTitleArea();
+        }
+        areaTree.startPageSequence(title);
+        pageSeq.format(areaTree);
+    }
+
+    /**
+     * Required by the FOTreeListener interface. It handles an FOTreeEvent that
+     * is fired when the Document has been completely parsed.
+     * @param event the FOTreeEvent that was fired
+     * @throws SAXException for parsing errors
+     */
+    public void foDocumentComplete (FOTreeEvent event) throws SAXException {
+        //processAreaTree(atModel);
+        try {
+            areaTree.endDocument();
+            driver.getRenderer().stopRenderer();
+        } catch (IOException ex) {
+            throw new SAXException(ex);
+        }
+    }
+
+    /**
+     * Get the area tree for this layout handler.
+     *
+     * @return the area tree for this document
+     */
+    public AreaTree getAreaTree() {
+        return areaTree;
+    }
+
 }
 

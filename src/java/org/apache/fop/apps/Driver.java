@@ -59,8 +59,6 @@ import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeHandler;
-import org.apache.fop.fo.FOTreeListener;
-import org.apache.fop.fo.FOTreeEvent;
 import org.apache.fop.area.Title;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.mif.MIFHandler;
@@ -138,7 +136,7 @@ import java.io.OutputStream;
  * driver.render(parser, fileInputSource(args[0]));
  * </PRE>
  */
-public class Driver implements LogEnabled, FOTreeListener {
+public class Driver implements LogEnabled {
 
     /**
      * private constant to indicate renderer was not defined.
@@ -235,12 +233,6 @@ public class Driver implements LogEnabled, FOTreeListener {
      */
     private Logger log = null;
     private FOUserAgent userAgent = null;
-
-    /**
-     * The current AreaTree for the PageSequence being rendered.
-     */
-    private AreaTree areaTree;
-    private AreaTreeModel atModel;
 
     private Document currentDocument = null;
 
@@ -597,11 +589,11 @@ public class Driver implements LogEnabled, FOTreeListener {
         try {
             if (foInputHandler instanceof FOTreeHandler) {
                 FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
-                foTreeHandler.addFOTreeListener(this);
-                this.areaTree = new AreaTree();
-                this.atModel = AreaTree.createRenderPagesModel(renderer);
+                foTreeHandler.addFOTreeListener(currentDocument);
+                currentDocument.areaTree = new AreaTree();
+                currentDocument.atModel = AreaTree.createRenderPagesModel(renderer);
                 //this.atModel = new CachedRenderPagesModel(renderer);
-                areaTree.setTreeModel(atModel);
+                currentDocument.areaTree.setTreeModel(currentDocument.atModel);
             }
             /**
              The following statement triggers virtually all of the processing
@@ -619,7 +611,7 @@ public class Driver implements LogEnabled, FOTreeListener {
             parser.parse(source);
             if (foInputHandler instanceof FOTreeHandler) {
                 FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
-                foTreeHandler.removeFOTreeListener(this);
+                foTreeHandler.removeFOTreeListener(currentDocument);
             }
         } catch (SAXException e) {
             if (e.getException() instanceof FOPException) {
@@ -661,7 +653,7 @@ public class Driver implements LogEnabled, FOTreeListener {
             initialize();
         }
 
-        if (renderer == null && rendererType != RENDER_RTF 
+        if (renderer == null && rendererType != RENDER_RTF
             && rendererType != RENDER_MIF) {
                 setRenderer(RENDER_PDF);
         }
@@ -681,47 +673,6 @@ public class Driver implements LogEnabled, FOTreeListener {
         } else {
             render(reader, source);
         }
-    }
-
-    /**
-     * Required by the FOTreeListener interface. It handles an
-     * FOTreeEvent that is fired when a PageSequence object has been completed.
-     * @param event the FOTreeEvent that was fired
-     * @throws FOPException for errors in building the PageSequence
-     */
-    public void foPageSequenceComplete (FOTreeEvent event) throws FOPException {
-        PageSequence pageSeq = event.getPageSequence();
-        Title title = null;
-        if (pageSeq.getTitleFO() != null) {
-            title = pageSeq.getTitleFO().getTitleArea();
-        }
-        areaTree.startPageSequence(title);
-        pageSeq.format(areaTree);
-    }
-
-    /**
-     * Required by the FOTreeListener interface. It handles an FOTreeEvent that
-     * is fired when the Document has been completely parsed.
-     * @param event the FOTreeEvent that was fired
-     * @throws SAXException for parsing errors
-     */
-    public void foDocumentComplete (FOTreeEvent event) throws SAXException {
-        //processAreaTree(atModel);
-        try {
-            areaTree.endDocument();
-            renderer.stopRenderer();
-        } catch (IOException ex) {
-            throw new SAXException(ex);
-        }
-    }
-
-    /**
-     * Get the area tree for this layout handler.
-     *
-     * @return the area tree for this document
-     */
-    public AreaTree getAreaTree() {
-        return areaTree;
     }
 
 }
