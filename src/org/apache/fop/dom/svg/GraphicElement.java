@@ -68,6 +68,8 @@ public abstract class GraphicElement extends SVGElementImpl implements SVGTransf
 	protected SVGList reqFeatures;
 	protected SVGList reqExtensions;
 	protected SVGList sysLanguage;
+	SVGAnimatedTransformList transform;
+	String xmlspace = "default";
 
 	public SVGElement getNearestViewportElement( )
 	{
@@ -81,20 +83,20 @@ public abstract class GraphicElement extends SVGElementImpl implements SVGTransf
 
 	public SVGAnimatedTransformList getTransform()
 	{
-		if(trans != null) {
-			SVGTransformList stl = new SVGTransformListImpl();
-			for(Enumeration e = trans.elements(); e.hasMoreElements(); ) {
-				stl.appendItem((SVGTransform)e.nextElement());
-			}
-			SVGAnimatedTransformList atl = new SVGAnimatedTransformListImpl();
-			atl.setBaseVal(stl);
-			return atl;
+		if(transform != null) {
+			return transform;
 		}
-		return null;
+		SVGTransformList stl = new SVGTransformListImpl();
+		SVGTransform transform = new SVGTransformImpl();
+		stl.appendItem(transform);
+		SVGAnimatedTransformList atl = new SVGAnimatedTransformListImpl();
+		atl.setBaseVal(stl);
+		return atl;
 	}
 
 	public void setTransform(SVGAnimatedTransformList transform)
 	{
+		this.transform = transform;
 	}
 
 	public SVGRect getBBox()
@@ -129,11 +131,12 @@ public abstract class GraphicElement extends SVGElementImpl implements SVGTransf
 
 	public String getXMLspace()
 	{
-		return null;
+		return xmlspace;
 	}
 
 	public void setXMLspace(String xmlspace)
 	{
+		this.xmlspace = xmlspace;
 	}
 
 	public SVGList getRequiredFeatures( )
@@ -189,5 +192,41 @@ public abstract class GraphicElement extends SVGElementImpl implements SVGTransf
 //								throws EventException
 	{
 		return false;
+	}
+
+	/**
+	 * Convenience method for implementations of SVGTransformable
+	 * that have children that represents the bounding box
+	 */
+	protected SVGRect getChildrenBBox()
+	{
+		float minX = 10000000; // a big number
+		float maxX = -10000000; // a low number
+		float minY = 10000000; // a big number
+		float maxY = -10000000; // a low number
+		NodeList nl = getChildNodes();
+		// can width and height be negative??
+		for(int count = 0; count < nl.getLength(); count++) {
+			Node n = nl.item(count);
+			if(n instanceof SVGTransformable) {
+				SVGRect r = ((SVGTransformable)n).getBBox();
+				if(r != null) {
+					if(minX > r.getX())
+					    minX = r.getX();
+					if(minY > r.getY())
+					    minY = r.getY();
+					if(maxX < r.getX() + r.getWidth())
+					    maxX = r.getX() + r.getWidth();
+					if(maxY > r.getY() + r.getHeight())
+					    maxY = r.getY() + r.getHeight();
+				}
+			}
+		}
+		SVGRect rect = new SVGRectImpl();
+		rect.setX(minX);
+		rect.setY(minY);
+		rect.setWidth(maxX - minX);
+		rect.setHeight(maxY - minY);
+		return rect;
 	}
 }

@@ -60,4 +60,10 @@ public class SVGSwitchElementImpl extends GraphicElement implements SVGSwitchEle
 
 	public SVGSwitchElementImpl() {
 	}
+
+    public SVGRect getBBox()
+    {
+        // is this valid since only one will be rendered?
+        return getChildrenBBox();
+    }
 }

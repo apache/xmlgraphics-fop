@@ -65,12 +65,8 @@ import org.w3c.dom.*;
 /**
  * class representing an SVG area in which the SVG graphics sit
  */
-public class SVGArea extends Area implements GraphicImpl, GetSVGDocument {//, SVGSVGElement {
-
-	public SVGDocument getSVGDocument() throws DOMException
-	{
-		return null;
-	}
+public class SVGArea extends Area implements GetSVGDocument {
+	SVGDocument doc;
 
 	/**
 	 * construct an SVG area
@@ -85,22 +81,21 @@ public class SVGArea extends Area implements GraphicImpl, GetSVGDocument {//, SV
 		contentRectangleWidth = (int)width * 1000;
 	}
 
+	public void setSVGDocument(SVGDocument doc)
+	{
+		this.doc = doc;
+	}
+
+	public SVGDocument getSVGDocument() throws DOMException
+	{
+		return doc;
+	}
+
     public int getWidth()
     {
+//        return getSVGDocument().getRootElement().getWidth().getBaseVal().getValue();
         return contentRectangleWidth;
     }
-
-	/**
-	 * add a graphic.
-	 *
-	 * Graphics include SVG Rectangles, Lines and Text
-	 *
-	 * @param graphic the Graphic to add
-	 */
-	public void addGraphic(GraphicImpl graphic) {
-		graphic.setParent(this);
-		this.children.addElement(graphic);
-	}
 
 	/**
 	 * render the SVG.
@@ -109,128 +104,5 @@ public class SVGArea extends Area implements GraphicImpl, GetSVGDocument {//, SV
 	 */
 	public void render(Renderer renderer) {
 		renderer.renderSVGArea(this);
-	}
-
-
-	Hashtable defs = new Hashtable();
-	public void addDefs(Hashtable table)
-	{
-		for(Enumeration e = table.keys(); e.hasMoreElements(); ) {
-			String str = (String)e.nextElement();
-			defs.put(str, table.get(str));
-		}
-	}
-
-	public Hashtable getDefs()
-	{
-		Hashtable ret = null;
-		if(parent != null) {
-			ret = parent.getDefs();
-			if(ret != null)
-				ret = (Hashtable)ret.clone();
-		}
-		if(ret == null) {
-			ret = defs;
-		} else {
-			if(defs != null) {
-				for(Enumeration e = defs.keys(); e.hasMoreElements(); ) {
-					String str = (String)e.nextElement();
-					ret.put(str, defs.get(str));
-				}
-			}
-		}
-		return ret;
-	}
-
-	public GraphicImpl locateDef(String str)
-	{
-		Object obj = null;
-		if(defs != null) {
-			obj = defs.get(str);
-		}
-		if(obj == null) {
-			Enumeration e = getChildren().elements();
-			while (e.hasMoreElements()) {
-				Object o = e.nextElement();
-				if(o instanceof SVGElement) {
-					String s;
-					s = ((SVGElement)o).getId();
-					if(str.equals(s)) {
-						obj = o;
-						break;
-					}
-				}
-			}
-		}
-		if(obj == null && parent != null) {
-			obj = parent.locateDef(str);
-		}
-		return (GraphicImpl)obj;
-	}
-
-	public Hashtable oldgetStyle()
-	{
-		Hashtable ret = null;
-		if(parent != null) {
-			ret = parent.oldgetStyle();
-			if(ret != null)
-				ret = (Hashtable)ret.clone();
-		}
-		if(ret == null) {
-			ret = style;
-		} else {
-			if(style != null) {
-				for(Enumeration e = style.keys(); e.hasMoreElements(); ) {
-					String str = (String)e.nextElement();
-					ret.put(str, style.get(str));
-				}
-			}
-		}
-		return ret;
-	}
-
-	public Vector oldgetTransform()
-	{
-		return trans;
-/*		Vector ret = null;
-		if(parent != null) {
-			ret = parent.oldgetTransform();
-			if(ret != null)
-				ret = (Vector)ret.clone();
-		}
-		if(ret == null) {
-			ret = trans;
-		} else {
-			if(trans != null) {
-				for(Enumeration e = trans.elements(); e.hasMoreElements(); ) {
-					Object o = e.nextElement();
-					ret.addElement(o);
-				}
-			}
-		}
-		return ret;*/
-	}
-
-	Hashtable style = null;
-	public void setStyle(Hashtable st)
-	{
-		style = st;
-	}
-
-	Vector trans = null;
-	public void setTransform(Vector tr)
-	{
-		trans = tr;
-	}
-
-	GraphicImpl parent = null;
-	public void setParent(GraphicImpl g)
-	{
-		parent = g;
-	}
-
-	public GraphicImpl getGraphicParent()
-	{
-		return parent;
 	}
 }

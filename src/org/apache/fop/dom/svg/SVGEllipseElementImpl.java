@@ -70,13 +70,16 @@ public class SVGEllipseElementImpl extends GraphicElement implements SVGEllipseE
 	{
 	}
 
-/*	public String getClassName( )
+	public SVGRect getBBox()
 	{
-		return null;
+		SVGRect rect = new SVGRectImpl();
+		rect.setX(cx.getBaseVal().getValue() - rx.getBaseVal().getValue());
+		rect.setY(cy.getBaseVal().getValue() - ry.getBaseVal().getValue());
+		rect.setWidth(2 * rx.getBaseVal().getValue());
+		rect.setHeight(2 * ry.getBaseVal().getValue());
+		return rect;
 	}
-	public void setClassName( String className )
-	{
-	}*/
+
 	public SVGAnimatedLength getCx( )
 	{
 		return cx;

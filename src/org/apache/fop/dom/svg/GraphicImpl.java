@@ -54,6 +54,8 @@ import org.apache.fop.datatypes.*;
 
 import java.util.*;
 
+import org.w3c.dom.svg.SVGElement;
+
 /**
  * base class for SVG graphic objects.
  *
@@ -63,11 +65,11 @@ import java.util.*;
 // use this so that the SVGArea can also hold style, defs and transform etc.
 public interface GraphicImpl {
 	public Hashtable oldgetStyle();
-	public void setParent(GraphicImpl g);
-	public GraphicImpl getGraphicParent();
+	public void setParent(SVGElement g);
+	public SVGElement getGraphicParent();
 	public Vector oldgetTransform();	// ??
 	public Hashtable getDefs();
-	public GraphicImpl locateDef(String str);
+	public SVGElement locateDef(String str);
 	public void setStyle(Hashtable st);
 	public void addDefs(Hashtable st);
 	public void setTransform(Vector tr);	// ??

@@ -55,13 +55,12 @@ import org.apache.fop.layout.*;
 import java.util.*;
 
 import org.w3c.dom.svg.*;
+import org.w3c.dom.*;
 
 /**
  *
  */
 public class SVGGElementImpl extends GraphicElement implements SVGGElement {
-
-	protected Vector children = new Vector();
 
 	/**
 	 */
@@ -69,21 +68,8 @@ public class SVGGElementImpl extends GraphicElement implements SVGGElement {
 	{
 	}
 
-	/**
-	 * add a graphic.
-	 *
-	 * Graphics include SVG Rectangles, Lines and Text
-	 *
-	 * @param graphic the GraphicImpl to add
-	 */
-	public void addGraphic(GraphicImpl graphic)
-	{
-		this.children.addElement(graphic);
-		graphic.setParent(this);
-	}
-
-	public Vector getChildren()
-	{
-		return this.children;
-	}
+    public SVGRect getBBox()
+    {
+        return getChildrenBBox();
+    }
 }
