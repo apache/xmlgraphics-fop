@@ -26,6 +26,9 @@ import javax.swing.JComponent.*;
  *
  * @changed 09.06.99 Juergen.Verwohlt@jCatalog.com
  * @subject Neue Klasse MessagesException zur Anzeige verwenden
+ *
+ * @changed 10.12.00 gears@apache.org
+ * @subject Unicode
  */
 public class UserMessage {
 
@@ -159,7 +162,7 @@ public class UserMessage {
       case WARNING   : title = "Warning"; currentIconName = "warn.gif"; break;
       case QUESTION  : title = "Question"; currentIconName = "quest.gif"; break;
       case ERROR     : title = "Error"; currentIconName = "error.gif"; break;
-      default : title =  "Ung\uFFFCltiger IonType f\uFFFCr diese Meldung. Pr\uFFFCfen in \uFFDCbersetzungsdatei.";
+      default : title =  "Ung\u00FCltiger IonType f\u00FCr diese Meldung. Pr\u00FCfen in \u00DCbersetzungsdatei.";
     }
     return title;
   }
@@ -261,7 +264,7 @@ public class UserMessage {
     else {
       if (optionTypeIndex == STYLE_NOBUTTON) {
         // Wird nicht mehr unterstützt
-        MessageHandler.logln("UserMessage: STYLE_NOBUTTON wird nicht unterst\uFFFCtzt");
+        MessageHandler.logln("UserMessage: STYLE_NOBUTTON wird nicht unterst\u00FCtzt");
         return result;
       }
       else {
