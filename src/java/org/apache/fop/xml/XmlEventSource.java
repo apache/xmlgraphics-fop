@@ -67,6 +67,13 @@ public interface XmlEventSource {
     public XmlEvent getEvent() throws FOPException;
     
     /**
+     * Push back an XmlEvent.  The next call to <code>get()</code> will
+     * retrieve this event.  Only one level of pushback is supported.
+     * @param event to be pushed back
+     */
+    public void pushBack(XmlEvent event);
+    
+    /**
      * @return true if source is exhausted
      */
     public boolean isExhausted();
