@@ -301,12 +301,13 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
-     * Finds the Maker used to create FO objects of a particular type
+     * Finds the Maker used to create node objects of a particular type
      * @param namespaceURI URI for the namespace of the element
      * @param localName name of the Element
      * @return the ElementMapping.Maker that can create an FO object for this element
+     * @throws SAXParseException if a Maker could not be found for a bound namespace.
      */
-    private Maker findFOMaker(String namespaceURI, String localName) {
+    private Maker findFOMaker(String namespaceURI, String localName) throws SAXParseException {
       Map table = (Map)fobjTable.get(namespaceURI);
       Maker fobjMaker = null;
       if (table != null) {
@@ -318,13 +319,12 @@ public class FOTreeBuilder extends DefaultHandler {
       }
 
       if (fobjMaker == null) {
-          if (log.isWarnEnabled()) {
-              log.warn("Unknown formatting object " + namespaceURI + "^" + localName);
-          }
           if (namespaces.contains(namespaceURI.intern())) {
-              // fall back
-              fobjMaker = new Unknown.Maker();
+                throw new SAXParseException (FONode.errorText(locator) + 
+                    "No element mapping definition found for "
+                    + FONode.getNodeString(namespaceURI, localName), locator);
           } else {
+              log.warn("Unknown formatting object " + namespaceURI + "^" + localName);
               fobjMaker = new UnknownXMLObj.Maker(namespaceURI);
           }
       }
