@@ -17,6 +17,9 @@ JAR=jar
 
 XT=${JAVA} com.jclark.xsl.sax.Driver
 
+JAVADOC = javadoc
+JAVADOC_ARGS = -overview $(BASEDIR)/src/overview.html -sourcepath "$(BASEDIR)/src;$(BASEDIR)/generated" -classpath "$(BASEDIR)/src;$(BASEDIR)/generated;$(CLASSPATH)" -d $(APIDOCDIR)
+
 TARGETS = all clean clobber
 
 .SUFFIXES: .java .class .xml $(SUFFIXES)

@@ -4,6 +4,8 @@
 #
 BASEDIR=.
 
+APIDOCDIR=docs/api
+
 include $(BASEDIR)/Makefile.rules
 
 SUBDIRS=src
@@ -42,6 +44,24 @@ PROPERTIESXSL=$(CODEGEN)/properties.xsl
 CHARLISTXML  =$(CODEGEN)/charlist.xml
 CHARLISTXSL  =$(CODEGEN)/code-point-mapping.xsl
 
+PACKAGES=org.apache.fop.apps \
+	org.apache.fop.datatypes \
+	org.apache.fop.fo \
+	org.apache.fop.fo.flow \
+	org.apache.fop.fo.pagination \
+	org.apache.fop.image \
+	org.apache.fop.layout \
+	org.apache.fop.pdf \
+	org.apache.fop.render \
+	org.apache.fop.render.awt \
+	org.apache.fop.render.pdf \
+	org.apache.fop.render.xml \
+	org.apache.fop.svg \
+	org.apache.fop.viewer \
+	org.apache.fop.fo.properties \
+	org.apache.fop.render.pdf.fonts
+
+
 all: codegen allsubs
 
 clean: cleansubs
@@ -51,8 +71,7 @@ clobber: clean
 	rm -rf $(GENDIR)
 	rm -rf $(JARTEMP) $(JARTOC) $(JARFILE)
 	rm -f $(SRCJAR)
-
-
+	rm -rf $(APIDOCDIR)
 
 codegen: $(GENDIR) compilegen
 
@@ -77,6 +96,9 @@ charlist: $(CHARLISTXML) $(CHARLISTXSL)
 fonts: $(FONTXML) $(FONTXSL)
 	cd $(GENDIR) && for font in $(FONTXML) ; do $(XT) ../$$font ../$(FONTXSL) ; done
 
+docs: all $(APIDOCDIR) 
+	$(JAVADOC) $(JAVADOC_ARGS) $(PACKAGES)
+
 dist: all $(JARTEMP) distgen distorg
 	rm -f $(JARFILE)
 	cd $(JARTEMP) && $(JAR) -cf ../$(JARFILE) *
@@ -87,6 +109,9 @@ srcdist: clobber
 
 $(JARTEMP):
 	mkdir $(JARTEMP)
+
+$(APIDOCDIR):
+	mkdir $(APIDOCDIR)
 
 distgen:
 	cd $(GENDIR) && \
