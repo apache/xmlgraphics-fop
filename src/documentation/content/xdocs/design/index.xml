@@ -106,5 +106,38 @@ Each component outlines the design issues which have already been addressed.
 These resolution of these design issues is in support of the primary and secondary goals, so they are not necessarily written in stone.
 However, most of them have been discussed at length among the developers, and are reasonably well settled.</p>
     </section>
+
+
+    <section id="vocabulary">
+      <title>Vocabulary</title>
+      <p>This section will attempt to provide information about any jargon used in the design documentation.</p>
+      <p>There is a rough relationship between terms used to describe the various trees in XSL-FO processing, all of which come from the XML and XSL-FO standards. In the table below, the <em>terms</em> (but not the actual items) in each column are roughly equivalent to each other:</p>
+      <table>
+        <tr>
+          <th>Tree Concept</th>
+          <th>Thing (Noun)</th>
+          <th>Descriptive Item (Adjective)</th>
+        </tr>
+        <tr>
+          <td>XML</td>
+          <td>Element</td>
+          <td>Attribute</td>
+        </tr>
+        <tr>
+          <td>FO Tree</td>
+          <td>Object</td>
+          <td>Property</td>
+        </tr>
+        <tr>
+          <td>Area Tree</td>
+          <td>Area</td>
+          <td>Trait</td>
+        </tr>
+      </table>
+      <ul>
+        <li><strong>LM</strong>: Layout Manager.</li>
+        <li><strong>PLB</strong>: PropertyListBuilder.</li>
+      </ul>
+    </section>
   </body>
 </document>

@@ -14,33 +14,6 @@
       <p>As the input XSL-FO is being parsed and the FO Tree is being built, the attributes of the FO elements are passed by the parser to the related FO object.
 The java object that represent the FO object then converts the attributes into properties that are stored in the FO Tree.</p>
     </section>
-    <section id="terms-related">
-      <title>Related Terms</title>
-      <p>It may be helpful here to show the rough relationship between terms used to describe the various trees in XSL-FO processing, all of which come from the XML and XSL-FO standards. In the table below, the <em>terms</em> (but not the actual items) in each column are roughly equivalent to each other:</p>
-      <table>
-        <tr>
-          <th>Tree Concept</th>
-          <th>Thing (Noun)</th>
-          <th>Descriptive Item (Adjective)</th>
-        </tr>
-        <tr>
-          <td>XML</td>
-          <td>Element</td>
-          <td>Attribute</td>
-        </tr>
-        <tr>
-          <td>FO Tree</td>
-          <td>Object</td>
-          <td>Property</td>
-        </tr>
-        <tr>
-          <td>Area Tree</td>
-          <td>Area</td>
-          <td>Trait</td>
-        </tr>
-      </table>
-    </section>
-
     <section id="issues">
       <title>Issues</title>
       <p>The following are some issues when dealing with properties:</p>
@@ -53,14 +26,13 @@ Markers are one example.</li>
         <li>Expressions: XSL-FO expressions can be included in properties.</li>
       </ul>
     </section>
-
     <section id="process-overview">
       <title>Overview of Processing</title>
       <p>The general flow of property processing is as follows:</p>
       <ul>
         <li>As part of <code>FOTreeBuilder.startElement()</code>, <code>FObj.handleAttrs</code> is passed a list of attributes to be processed for the new FObj.</li>
-        <li>FObj.handleAttrs gets a PropertyListBuilder and asks it to create a Property List from them. There is currently only one static PropertyListBuilder, which handles the fo: namespace.</li>
-        <li>FObj.handleAttrs then cross-references the PropertyList with the FObj.</li>
+        <li>FObj.handleAttrs gets a PropertyListBuilder and asks it to create a Property List from the list of attributes. There is currently only one static PropertyListBuilder, which handles the fo: namespace.</li>
+        <li>FObj.handleAttrs then cross-references the returned PropertyList with the FObj, creates a PropertyManager to facilitate downstream processing of the PropertyList, and handles the special case of the writing-mode property.</li>
       </ul>
     </section>
     <section id="plb">
