@@ -113,13 +113,13 @@ public class BasicLink extends FObjMixed {
 	}
 
 	// new LinkedArea to gather up inlines
-        LinkSet ls = new LinkSet(destination, area, linkType);
+    LinkSet ls = new LinkSet(destination, area, linkType);
 
 	Page p = area.getPage();
 
-	// assumption - AS
-	// should be able to retrieve this from somewhere - JT
-	AreaContainer ac = p.getBody().getMainReferenceArea();
+	// this will only work if links are in region-body (AHS);
+	// need to handle links in all regions
+	AreaContainer ac = p.getBody().getCurrentColumnArea();
 
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
