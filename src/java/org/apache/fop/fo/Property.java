@@ -174,7 +174,8 @@ public class Property {
          * value is already partially initialized, this method will modify it.
          * @param baseProp The Property object representing the compound property,
          * for example: SpaceProperty.
-         * @param partName The name of the component whose value is specified.
+         * @param subpropId The Constants ID of the subproperty (component)
+         *        whose value is specified.
          * @param propertyList The propertyList being built.
          * @param fo The FO whose properties are being set.
          * @param value the value of the
@@ -182,18 +183,19 @@ public class Property {
          * the new subproperty added
          * @throws FOPException for invalid or inconsistent FO input
          */
-        public Property make(Property baseProp, String partName,
+        public Property make(Property baseProp, int subpropId,
                              PropertyList propertyList, String value,
                              FObj fo) throws FOPException {
             if (baseProp == null) {
                 baseProp = makeCompound(propertyList, fo);
             }
-            int partId = FOPropertyMapping.getSubPropertyId(partName);
-            Maker spMaker = getSubpropMaker(partId);
+
+            Maker spMaker = getSubpropMaker(subpropId);
+
             if (spMaker != null) {
                 Property p = spMaker.make(propertyList, value, fo);
                 if (p != null) {
-                    return setSubprop(baseProp, partId, p);
+                    return setSubprop(baseProp, subpropId, p);
                 }
             } else {
                 //getLogger().error("compound property component "
