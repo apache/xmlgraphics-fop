@@ -8,6 +8,7 @@
 package org.apache.fop.layout;
 
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.FontVariant;
@@ -37,7 +38,43 @@ public class FontState {
         _fontStyle = fontStyle;
         _fontWeight = fontWeight;
         _fontSize = fontSize;
-        _fontName = fontInfo.fontLookup(fontFamily, fontStyle, fontWeight);
+        String _fontKey = FontInfo.createFontKey(_fontFamily, _fontStyle, _fontWeight);
+        //Quick check-out for simple font family
+        if (!fontInfo.hasFont(_fontKey)) {
+            //Tokenizes font-family list
+            StringTokenizer st = new StringTokenizer(_fontFamily, ",");
+            while (st.hasMoreTokens()) {
+                String token = st.nextToken().trim();
+                //Checks for quoted font family name
+                if (token.charAt(0) == '"' || token.charAt(0) == '\'')
+                    token = token.substring(1, token.length()-1);
+                else {
+                    //In a nonquoted font family name any sequence of whitespace
+                    //inside should be converted to a single space
+                    StringBuffer sb = new StringBuffer();
+                    boolean spaced = false;
+                    for (int i=0; i<token.length(); i++) {
+                        char c = token.charAt(i);
+                        if (!isWhitespace(c)) {
+                            sb.append(c);
+                            spaced = false;
+                        }
+                        else if (!spaced) {
+                            sb.append(c);
+                            spaced = true;
+                        }
+                    }
+                    token = sb.toString();
+                }
+                //Checks found font family name for existence
+                _fontKey = FontInfo.createFontKey(token, _fontStyle, _fontWeight);
+                if (fontInfo.hasFont(_fontKey)) {
+                    _fontFamily = token;
+                    break;
+                }
+            }
+        }
+        _fontName = fontInfo.fontLookup(_fontKey);
         _metric = fontInfo.getMetricsFor(_fontName);
         _fontVariant = fontVariant;
         _letterSpacing = 0;
@@ -51,6 +88,14 @@ public class FontState {
         _letterSpacing = letterSpacing;
     }
 
+    private static boolean isWhitespace(char ch) {
+        return (ch <= 0x0020) &&
+            (((((1L << 0x0009) |
+            (1L << 0x000A) |
+            (1L << 0x000C) |
+            (1L << 0x000D) |
+            (1L << 0x0020)) >> ch) & 1L) != 0);
+    }
 
     public int getAscender() {
         return _metric.getAscender(_fontSize) / 1000;
