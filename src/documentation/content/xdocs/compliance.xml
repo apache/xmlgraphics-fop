@@ -142,28 +142,44 @@ want it to.</comment>
           <level-3 name="background-position-horizontal" citation="§7.7.5" extURL="slice7.html#background-position-horizontal" compliance-level="2" comply="no"/>
           <level-3 name="background-position-vertical" citation="§7.7.6" extURL="slice7.html#background-position-vertical" compliance-level="2" comply="no"/>
           <level-3 name="border-before-color" citation="§7.7.7" extURL="slice7.html#border-before-color" compliance-level="1" comply="yes"/>
-          <level-3 name="border-before-style" citation="§7.7.8" extURL="slice7.html#border-before-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-before-style" citation="§7.7.8" extURL="slice7.html#border-before-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
           <level-3 name="border-before-width" citation="§7.7.9" extURL="slice7.html#border-before-width" compliance-level="1" comply="yes"/>
           <level-3 name="border-after-color" citation="§7.7.10" extURL="slice7.html#border-after-color" compliance-level="1" comply="yes"/>
-          <level-3 name="border-after-style" citation="§7.7.11" extURL="slice7.html#border-after-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-after-style" citation="§7.7.11" extURL="slice7.html#border-after-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
           <level-3 name="border-after-width" citation="§7.7.12" extURL="slice7.html#border-after-width" compliance-level="1" comply="yes"/>
           <level-3 name="border-start-color" citation="§7.7.13" extURL="slice7.html#border-start-color" compliance-level="1" comply="yes"/>
-          <level-3 name="border-start-style" citation="§7.7.14" extURL="slice7.html#border-start-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-start-style" citation="§7.7.14" extURL="slice7.html#border-start-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
           <level-3 name="border-start-width" citation="§7.7.15" extURL="slice7.html#border-start-width" compliance-level="1" comply="yes"/>
           <level-3 name="border-end-color" citation="§7.7.16" extURL="slice7.html#border-end-color" compliance-level="1" comply="yes"/>
-          <level-3 name="border-end-style" citation="§7.7.17" extURL="slice7.html#border-end-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-end-style" citation="§7.7.17" extURL="slice7.html#border-end-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
           <level-3 name="border-end-width" citation="§7.7.18" extURL="slice7.html#border-end-width" compliance-level="1" comply="yes"/>
           <level-3 name="border-top-color" citation="§7.7.19" extURL="slice7.html#border-top-color" compliance-level="1" comply="yes"/>
-          <level-3 name="border-top-style" citation="§7.7.20" extURL="slice7.html#border-top-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-top-style" citation="§7.7.20" extURL="slice7.html#border-top-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
           <level-3 name="border-top-width" citation="§7.7.21" extURL="slice7.html#border-top-width" compliance-level="1" comply="yes"/>
           <level-3 name="border-bottom-color" citation="§7.7.22" extURL="slice7.html#border-bottom-color" compliance-level="1" comply="yes"/>
-          <level-3 name="border-bottom-style" citation="§7.7.23" extURL="slice7.html#border-bottom-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-bottom-style" citation="§7.7.23" extURL="slice7.html#border-bottom-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
           <level-3 name="border-bottom-width" citation="§7.7.24" extURL="slice7.html#border-bottom-width" compliance-level="1" comply="yes"/>
           <level-3 name="border-left-color" citation="§7.7.25" extURL="slice7.html#border-left-color" compliance-level="1" comply="yes"/>
-          <level-3 name="border-left-style" citation="§7.7.26" extURL="slice7.html#border-left-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-left-style" citation="§7.7.26" extURL="slice7.html#border-left-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
           <level-3 name="border-left-width" citation="§7.7.27" extURL="slice7.html#border-left-width" compliance-level="1" comply="yes"/>
           <level-3 name="border-right-color" citation="§7.7.28" extURL="slice7.html#border-right-color" compliance-level="1" comply="yes"/>
-          <level-3 name="border-right-style" citation="§7.7.29" extURL="slice7.html#border-right-style" compliance-level="1" comply="yes"/>
+          <level-3 name="border-right-style" citation="§7.7.29" extURL="slice7.html#border-right-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
           <level-3 name="border-right-width" citation="§7.7.30" extURL="slice7.html#border-right-width" compliance-level="1" comply="yes"/>
           <level-3 name="padding-before" citation="§7.7.31" extURL="slice7.html#padding-before" compliance-level="1" comply="yes">
             <comment>only one value allowed</comment>
@@ -194,7 +210,9 @@ want it to.</comment>
           </level-3>
         </level-2>
         <level-2 name="Common Font Properties" citation="§7.8" extURL="slice7.html#common-font-properties" ref-name="commonfont">
-          <level-3 name="font-family" citation="§7.8.2" extURL="slice7.html#font-family" compliance-level="1" comply="yes"/>
+          <level-3 name="font-family" citation="§7.8.2" extURL="slice7.html#font-family" compliance-level="1" comply="yes">
+          	<comment>font-family lists are not suppported, use a single font-family name</comment>
+          </level-3>
           <level-3 name="font-selection-strategy" citation="§7.8.3" extURL="slice7.html#font-selection-strategy" compliance-level="3" comply="no"/>
           <level-3 name="font-size" citation="§7.8.4" extURL="slice7.html#font-size" compliance-level="1" comply="yes"/>
           <level-3 name="font-stretch" citation="§7.8.5" extURL="slice7.html#font-stretch" compliance-level="2" comply="no"/>
@@ -433,7 +451,9 @@ want it to.</comment>
           </level-3>
           <level-3 name="border-left" citation="§7.29.6" extURL="slice7.html#border-left" compliance-level="3" comply="yes"/>
           <level-3 name="border-right" citation="§7.29.7" extURL="slice7.html#border-right" compliance-level="3" comply="yes"/>
-          <level-3 name="border-style" citation="§7.29.8" extURL="slice7.html#border-style" compliance-level="3" comply="yes"/>
+          <level-3 name="border-style" citation="§7.29.8" extURL="slice7.html#border-style" compliance-level="3" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
           <level-3 name="border-spacing" citation="§7.29.9" extURL="slice7.html#border-spacing" compliance-level="3" comply="no"/>
           <level-3 name="border-top" citation="§7.29.10" extURL="slice7.html#border-top" compliance-level="3" comply="yes"/>
           <level-3 name="border-width" citation="§7.29.11" extURL="slice7.html#border-width" compliance-level="3" comply="yes"/>
