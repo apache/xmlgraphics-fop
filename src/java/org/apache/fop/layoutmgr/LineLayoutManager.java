@@ -242,6 +242,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                         // If we are already in a hyphenation loop, then stop.
 
                         if (inlineLC.tryHyphenate()) {
+                            if (prevBP == null) {
+                                vecInlineBreaks.add(bp);
+                                prevBP = bp;
+                            }
                             break;
                         }
                         // Otherwise, prepare to try hyphenation
@@ -254,6 +258,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                         inlineLC.setHyphContext(
                           getHyphenContext((prevBP == null) ? prev : prevBP, bp));
                         if (inlineLC.getHyphContext() == null) {
+                            if (prevBP == null) {
+                                vecInlineBreaks.add(bp);
+                                prevBP = bp;
+                            }
                             break;
                         }
                         inlineLC.setFlags(LayoutContext.TRY_HYPHENATE,
@@ -264,6 +272,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                         /* If we are not in justified text, we can end the line at
                          * prevBP.
                          */
+                        if (prevBP == null) {
+                            vecInlineBreaks.add(bp);
+                            prevBP = bp;
+                        }
                         break;
                     }
                 } else {
@@ -313,7 +325,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             return null;
         }
         if (prevBP == null) {
-            vecInlineBreaks.add(bp);
             prevBP = bp;
         }
 
