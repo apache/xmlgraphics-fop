@@ -6,6 +6,7 @@ import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XMLNamespaces;
 
 import org.xml.sax.Attributes;
 
@@ -62,7 +63,7 @@ public class FOAttributes {
      */
     private HashMap foAttrMap = new HashMap(0);
 
-    private int DefAttrNSIndex = XMLEvent.DefAttrNSIndex;
+    private int DefAttrNSIndex = XMLNamespaces.DefAttrNSIndex;
 
     private FONode foNode;
 
@@ -92,7 +93,7 @@ public class FOAttributes {
         this.foNode = foNode;
 
         // Create the foAttrMap.
-        Attributes attributes = event.attributes;
+        Attributes attributes = event.getAttributes();
         if (attributes == null) throw new FOPException
                                        ("No Attributes in XMLEvent");
         int propIndex;
@@ -101,7 +102,8 @@ public class FOAttributes {
             String attrUri = attributes.getURI(i);
             String attrLocalname = attributes.getLocalName(i);
             String attrValue = attributes.getValue(i);
-            int attrUriIndex = XMLEvent.getURIIndex(attrUri);
+            int attrUriIndex = foNode.namespaces.getURIIndex(attrUri);
+
             //System.out.println("FONode:" + event);
             if (attrUriIndex == DefAttrNSIndex) {
                 // Standard FO namespace
@@ -117,7 +119,7 @@ public class FOAttributes {
                     foAttrMap.put(Ints.consts.get(propIndex), attrValue);
                 } catch (PropertyException e) {
                     // Not known - ignore
-                    MessageHandler.errorln(event.qName + " "
+                    MessageHandler.errorln(event.getQName() + " "
                                            + attributes.getQName(i)
                                            + " not recognized.  Ignoring.");
                 }
