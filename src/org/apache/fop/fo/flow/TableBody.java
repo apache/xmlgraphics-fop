@@ -192,9 +192,8 @@ public class TableBody extends FObj {
             if (row.getKeepWithPrevious().getType() != KeepValue.KEEP_WITH_AUTO && lastRow != null &&
                     keepWith.indexOf(lastRow) == -1) {
                 keepWith.addElement(lastRow);
-                endKeepGroup = false;
             } else {
-                if(endKeepGroup) {
+                if(endKeepGroup && keepWith.size() > 0) {
                     keepWith = new Vector();
                 }
             }
@@ -227,9 +226,9 @@ public class TableBody extends FObj {
                     resetMarker();
                     return new Status(Status.AREA_FULL_NONE);
                 }
-                if (numChildren - i < orphans && numChildren > orphans) {
-                    for (int count = numChildren - orphans - i;
-                            count > 0; count--) {
+                if (numChildren - i < orphans && numChildren >= orphans) {
+                    for (int count = i;
+                            count > numChildren - orphans - 1; count--) {
                         row = (TableRow) children.elementAt(count);
                         row.removeLayout(areaContainer);
                         i--;
@@ -261,9 +260,7 @@ public class TableBody extends FObj {
                 keepWith.addElement(row);
                 endKeepGroup = false;
             } else {
-                if (keepWith.size() > 0 && row.getKeepWithPrevious().getType() == KeepValue.KEEP_WITH_AUTO) {
-                    endKeepGroup = true;
-                }
+                endKeepGroup = true;
             }
             lastRow = row;
         }
@@ -285,10 +282,6 @@ public class TableBody extends FObj {
 
         return new Status(Status.OK);
     }
-
-/*    public int getAreaHeight() {
-        return areaContainer.getHeight();
-    }*/
 
     public void removeLayout(Area area) {
         area.removeChild(areaContainer);
