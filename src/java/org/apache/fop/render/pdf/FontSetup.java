@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,17 +42,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.render.pdf;
 
 // FOP
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontUtil;
@@ -121,52 +122,52 @@ public class FontSetup {
         // fontInfo.addMetrics("F17", new BauerBodoniBoldItalic());
 
         /* any is treated as serif */
-        fontInfo.addFontProperties("F5", "any", "normal", Document.NORMAL);
-        fontInfo.addFontProperties("F6", "any", "italic", Document.NORMAL);
-        fontInfo.addFontProperties("F6", "any", "oblique", Document.NORMAL);
-        fontInfo.addFontProperties("F7", "any", "normal", Document.BOLD);
-        fontInfo.addFontProperties("F8", "any", "italic", Document.BOLD);
-        fontInfo.addFontProperties("F8", "any", "oblique", Document.BOLD);
+        fontInfo.addFontProperties("F5", "any", "normal", Font.NORMAL);
+        fontInfo.addFontProperties("F6", "any", "italic", Font.NORMAL);
+        fontInfo.addFontProperties("F6", "any", "oblique", Font.NORMAL);
+        fontInfo.addFontProperties("F7", "any", "normal", Font.BOLD);
+        fontInfo.addFontProperties("F8", "any", "italic", Font.BOLD);
+        fontInfo.addFontProperties("F8", "any", "oblique", Font.BOLD);
 
-        fontInfo.addFontProperties("F1", "sans-serif", "normal", Document.NORMAL);
-        fontInfo.addFontProperties("F2", "sans-serif", "oblique", Document.NORMAL);
-        fontInfo.addFontProperties("F2", "sans-serif", "italic", Document.NORMAL);
-        fontInfo.addFontProperties("F3", "sans-serif", "normal", Document.BOLD);
-        fontInfo.addFontProperties("F4", "sans-serif", "oblique", Document.BOLD);
-        fontInfo.addFontProperties("F4", "sans-serif", "italic", Document.BOLD);
-        fontInfo.addFontProperties("F5", "serif", "normal", Document.NORMAL);
-        fontInfo.addFontProperties("F6", "serif", "oblique", Document.NORMAL);
-        fontInfo.addFontProperties("F6", "serif", "italic", Document.NORMAL);
-        fontInfo.addFontProperties("F7", "serif", "normal", Document.BOLD);
-        fontInfo.addFontProperties("F8", "serif", "oblique", Document.BOLD);
-        fontInfo.addFontProperties("F8", "serif", "italic", Document.BOLD);
-        fontInfo.addFontProperties("F9", "monospace", "normal", Document.NORMAL);
-        fontInfo.addFontProperties("F10", "monospace", "oblique", Document.NORMAL);
-        fontInfo.addFontProperties("F10", "monospace", "italic", Document.NORMAL);
-        fontInfo.addFontProperties("F11", "monospace", "normal", Document.BOLD);
-        fontInfo.addFontProperties("F12", "monospace", "oblique", Document.BOLD);
-        fontInfo.addFontProperties("F12", "monospace", "italic", Document.BOLD);
+        fontInfo.addFontProperties("F1", "sans-serif", "normal", Font.NORMAL);
+        fontInfo.addFontProperties("F2", "sans-serif", "oblique", Font.NORMAL);
+        fontInfo.addFontProperties("F2", "sans-serif", "italic", Font.NORMAL);
+        fontInfo.addFontProperties("F3", "sans-serif", "normal", Font.BOLD);
+        fontInfo.addFontProperties("F4", "sans-serif", "oblique", Font.BOLD);
+        fontInfo.addFontProperties("F4", "sans-serif", "italic", Font.BOLD);
+        fontInfo.addFontProperties("F5", "serif", "normal", Font.NORMAL);
+        fontInfo.addFontProperties("F6", "serif", "oblique", Font.NORMAL);
+        fontInfo.addFontProperties("F6", "serif", "italic", Font.NORMAL);
+        fontInfo.addFontProperties("F7", "serif", "normal", Font.BOLD);
+        fontInfo.addFontProperties("F8", "serif", "oblique", Font.BOLD);
+        fontInfo.addFontProperties("F8", "serif", "italic", Font.BOLD);
+        fontInfo.addFontProperties("F9", "monospace", "normal", Font.NORMAL);
+        fontInfo.addFontProperties("F10", "monospace", "oblique", Font.NORMAL);
+        fontInfo.addFontProperties("F10", "monospace", "italic", Font.NORMAL);
+        fontInfo.addFontProperties("F11", "monospace", "normal", Font.BOLD);
+        fontInfo.addFontProperties("F12", "monospace", "oblique", Font.BOLD);
+        fontInfo.addFontProperties("F12", "monospace", "italic", Font.BOLD);
 
-        fontInfo.addFontProperties("F1", "Helvetica", "normal", Document.NORMAL);
-        fontInfo.addFontProperties("F2", "Helvetica", "oblique", Document.NORMAL);
-        fontInfo.addFontProperties("F2", "Helvetica", "italic", Document.NORMAL);
-        fontInfo.addFontProperties("F3", "Helvetica", "normal", Document.BOLD);
-        fontInfo.addFontProperties("F4", "Helvetica", "oblique", Document.BOLD);
-        fontInfo.addFontProperties("F4", "Helvetica", "italic", Document.BOLD);
-        fontInfo.addFontProperties("F5", "Times", "normal", Document.NORMAL);
-        fontInfo.addFontProperties("F6", "Times", "oblique", Document.NORMAL);
-        fontInfo.addFontProperties("F6", "Times", "italic", Document.NORMAL);
-        fontInfo.addFontProperties("F7", "Times", "normal", Document.BOLD);
-        fontInfo.addFontProperties("F8", "Times", "oblique", Document.BOLD);
-        fontInfo.addFontProperties("F8", "Times", "italic", Document.BOLD);
-        fontInfo.addFontProperties("F9", "Courier", "normal", Document.NORMAL);
-        fontInfo.addFontProperties("F10", "Courier", "oblique", Document.NORMAL);
-        fontInfo.addFontProperties("F10", "Courier", "italic", Document.NORMAL);
-        fontInfo.addFontProperties("F11", "Courier", "normal", Document.BOLD);
-        fontInfo.addFontProperties("F12", "Courier", "oblique", Document.BOLD);
-        fontInfo.addFontProperties("F12", "Courier", "italic", Document.BOLD);
-        fontInfo.addFontProperties("F13", "Symbol", "normal", Document.NORMAL);
-        fontInfo.addFontProperties("F14", "ZapfDingbats", "normal", Document.NORMAL);
+        fontInfo.addFontProperties("F1", "Helvetica", "normal", Font.NORMAL);
+        fontInfo.addFontProperties("F2", "Helvetica", "oblique", Font.NORMAL);
+        fontInfo.addFontProperties("F2", "Helvetica", "italic", Font.NORMAL);
+        fontInfo.addFontProperties("F3", "Helvetica", "normal", Font.BOLD);
+        fontInfo.addFontProperties("F4", "Helvetica", "oblique", Font.BOLD);
+        fontInfo.addFontProperties("F4", "Helvetica", "italic", Font.BOLD);
+        fontInfo.addFontProperties("F5", "Times", "normal", Font.NORMAL);
+        fontInfo.addFontProperties("F6", "Times", "oblique", Font.NORMAL);
+        fontInfo.addFontProperties("F6", "Times", "italic", Font.NORMAL);
+        fontInfo.addFontProperties("F7", "Times", "normal", Font.BOLD);
+        fontInfo.addFontProperties("F8", "Times", "oblique", Font.BOLD);
+        fontInfo.addFontProperties("F8", "Times", "italic", Font.BOLD);
+        fontInfo.addFontProperties("F9", "Courier", "normal", Font.NORMAL);
+        fontInfo.addFontProperties("F10", "Courier", "oblique", Font.NORMAL);
+        fontInfo.addFontProperties("F10", "Courier", "italic", Font.NORMAL);
+        fontInfo.addFontProperties("F11", "Courier", "normal", Font.BOLD);
+        fontInfo.addFontProperties("F12", "Courier", "oblique", Font.BOLD);
+        fontInfo.addFontProperties("F12", "Courier", "italic", Font.BOLD);
+        fontInfo.addFontProperties("F13", "Symbol", "normal", Font.NORMAL);
+        fontInfo.addFontProperties("F14", "ZapfDingbats", "normal", Font.NORMAL);
 
         // Custom type 1 fonts step 2/2
         // fontInfo.addFontProperties("F15", "OMEP", "normal", FontInfo.NORMAL);
@@ -174,20 +175,20 @@ public class FontSetup {
         // fontInfo.addFontProperties("F17", "BauerBodoni", "italic", FontInfo.BOLD);
 
         /* for compatibility with PassiveTex */
-        fontInfo.addFontProperties("F5", "Times-Roman", "normal", Document.NORMAL);
-        fontInfo.addFontProperties("F6", "Times-Roman", "oblique", Document.NORMAL);
-        fontInfo.addFontProperties("F6", "Times-Roman", "italic", Document.NORMAL);
-        fontInfo.addFontProperties("F7", "Times-Roman", "normal", Document.BOLD);
-        fontInfo.addFontProperties("F8", "Times-Roman", "oblique", Document.BOLD);
-        fontInfo.addFontProperties("F8", "Times-Roman", "italic", Document.BOLD);
-        fontInfo.addFontProperties("F5", "Times Roman", "normal", Document.NORMAL);
-        fontInfo.addFontProperties("F6", "Times Roman", "oblique", Document.NORMAL);
-        fontInfo.addFontProperties("F6", "Times Roman", "italic", Document.NORMAL);
-        fontInfo.addFontProperties("F7", "Times Roman", "normal", Document.BOLD);
-        fontInfo.addFontProperties("F8", "Times Roman", "oblique", Document.BOLD);
-        fontInfo.addFontProperties("F8", "Times Roman", "italic", Document.BOLD);
+        fontInfo.addFontProperties("F5", "Times-Roman", "normal", Font.NORMAL);
+        fontInfo.addFontProperties("F6", "Times-Roman", "oblique", Font.NORMAL);
+        fontInfo.addFontProperties("F6", "Times-Roman", "italic", Font.NORMAL);
+        fontInfo.addFontProperties("F7", "Times-Roman", "normal", Font.BOLD);
+        fontInfo.addFontProperties("F8", "Times-Roman", "oblique", Font.BOLD);
+        fontInfo.addFontProperties("F8", "Times-Roman", "italic", Font.BOLD);
+        fontInfo.addFontProperties("F5", "Times Roman", "normal", Font.NORMAL);
+        fontInfo.addFontProperties("F6", "Times Roman", "oblique", Font.NORMAL);
+        fontInfo.addFontProperties("F6", "Times Roman", "italic", Font.NORMAL);
+        fontInfo.addFontProperties("F7", "Times Roman", "normal", Font.BOLD);
+        fontInfo.addFontProperties("F8", "Times Roman", "oblique", Font.BOLD);
+        fontInfo.addFontProperties("F8", "Times Roman", "italic", Font.BOLD);
         fontInfo.addFontProperties("F9", "Computer-Modern-Typewriter",
-                                   "normal", Document.NORMAL);
+                                   "normal", Font.NORMAL);
 
         /* Add configured fonts */
         addConfiguredFonts(fontInfo, embedList, 15);
@@ -262,15 +263,15 @@ public class FontSetup {
                 f, font.getFontName(), font.getEncoding(), font, desc));
         }
     }
-    
-    
+
+
     /**
      * Builds a list of EmbedFontInfo objects for use with the setup() method.
      * @param cfg Configuration object
      * @return List the newly created list of fonts
      * @throws ConfigurationException if something's wrong with the config data
      */
-    public static List buildFontListFromConfiguration(Configuration cfg) 
+    public static List buildFontListFromConfiguration(Configuration cfg)
             throws ConfigurationException {
         List fontList = new java.util.ArrayList();
         Configuration[] font = cfg.getChildren("font");

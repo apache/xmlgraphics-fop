@@ -559,7 +559,7 @@ class TreeLoader extends AbstractLogEnabled {
                 Character ch =
                   new Character(getString((Element) obj).charAt(0));
                 addTraits((Element) obj, ch);
-                String fname = fontInfo.fontLookup("sans-serif", "normal", Document.NORMAL);
+                String fname = fontInfo.fontLookup("sans-serif", "normal", Font.NORMAL);
                 FontMetrics metrics = fontInfo.getMetricsFor(fname);
                 currentFontState =
                     new Font(fname, metrics, 12000);
@@ -584,7 +584,7 @@ class TreeLoader extends AbstractLogEnabled {
                     list.add(leader);
                 }
             } else if (obj.getNodeName().equals("word")) {
-                String fname = fontInfo.fontLookup("sans-serif", "normal", Document.NORMAL);
+                String fname = fontInfo.fontLookup("sans-serif", "normal", Font.NORMAL);
                 FontMetrics metrics = fontInfo.getMetricsFor(fname);
                 currentFontState =
                     new Font(fname, metrics, 12000);
