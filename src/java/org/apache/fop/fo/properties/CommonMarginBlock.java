@@ -70,16 +70,6 @@ public class CommonMarginBlock {
     public Length endIndent;
 
     /**
-     * The inherited "start-indent" property.
-     */
-    public Length inheritedStartIndent;
-
-    /**
-     * The inherited "end-indent" property.
-     */
-    public Length inheritedEndIndent;
-
-    /**
      * Create a CommonMarginBlock object.
      * @param pList The PropertyList with propery values.
      */
@@ -94,13 +84,6 @@ public class CommonMarginBlock {
 
         startIndent = pList.get(Constants.PR_START_INDENT).getLength();
         endIndent = pList.get(Constants.PR_END_INDENT).getLength();
-        
-        if (!pList.getFObj().generatesReferenceAreas()) {
-            inheritedStartIndent = pList.getParentPropertyList()
-                    .get(Constants.PR_START_INDENT).getLength();
-            inheritedEndIndent = pList.getParentPropertyList()
-                    .get(Constants.PR_END_INDENT).getLength();
-        }
     }
     
     /** @see java.lang.Object#toString() */
@@ -112,9 +95,7 @@ public class CommonMarginBlock {
             + "Space (before, after): (" 
             + spaceBefore + ", " + spaceAfter + ")\n" 
             + "Indents (start, end): ("
-            + startIndent + ", " + endIndent + ")\n"
-            + "Indents inherited (start, end): (" 
-            + inheritedStartIndent + ", " + inheritedEndIndent + ")\n";
+            + startIndent + ", " + endIndent + ")\n";
     }
     
 }

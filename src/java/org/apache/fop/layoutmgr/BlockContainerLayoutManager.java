@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,11 @@ import java.awt.geom.Rectangle2D;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
+import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
@@ -53,51 +56,135 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     // When viewport should grow with the content.
     private boolean autoHeight = true; 
 
+    private int referenceIPD;
+    
     /**
      * Create a new block container layout manager.
+     * @param node block-container node to create the layout manager for.
      */
     public BlockContainerLayoutManager(BlockContainer node) {
         super(node);
         fobj = node;
+    }
+    
+    protected PageViewport getPageViewport() {
+        LayoutManager lm = this;
+        while (lm != null && !(lm instanceof PageSequenceLayoutManager)) {
+            lm = lm.getParent();
+        }
+        if (lm == null) {
+            return null;
+        } else {
+            return ((PageSequenceLayoutManager)lm).getCurrentPageViewport();
+        }
     }
 
     /**
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
     protected void initProperties() {
+        log.debug(fobj.getBlockProgressionDimension().getOptimum());
+        log.debug(fobj.getInlineProgressionDimension().getOptimum());
         abProps = fobj.getCommonAbsolutePosition();
-        if (abProps.absolutePosition == EN_ABSOLUTE) {
+        log.debug(abProps);
+        
+        int iIndents = fobj.getCommonMarginBlock().startIndent.getValue();
+        iIndents += fobj.getCommonMarginBlock().endIndent.getValue();
+        int bIndents = fobj.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
+
+        
+        if (abProps.absolutePosition == EN_ABSOLUTE && false) {
             Rectangle2D rect = new Rectangle2D.Double(abProps.left.getValue(),
-                                abProps.top.getValue(), abProps.right.getValue() - abProps.left.getValue(),
+                                abProps.top.getValue(), 
+                                abProps.right.getValue() - abProps.left.getValue(),
                                 abProps.bottom.getValue() - abProps.top.getValue());
+            relDims = new FODimension(0, 0);
+            absoluteCTM = CTM.getCTMandRelDims(fobj.getReferenceOrientation(),
+                fobj.getWritingMode(), rect, relDims);
+        } else if (abProps.absolutePosition == EN_FIXED
+                || abProps.absolutePosition == EN_ABSOLUTE) {
+            Rectangle2D viewArea = getPageViewport().getViewArea();
+            double x = viewArea.getX() + abProps.left.getValue();
+            double y = viewArea.getY() + abProps.top.getValue();
+            double w = 0.0;
+            if (abProps.right.getEnum() == Constants.EN_AUTO) {
+                if (fobj.getWidth().getEnum() == Constants.EN_AUTO) {
+                    w = viewArea.getWidth() - x;
+                } else {
+                    if (fobj.getReferenceOrientation() % 180 == 0) {
+                        w = fobj.getInlineProgressionDimension().getOptimum().getLength().getValue();
+                    } else {
+                        w = fobj.getBlockProgressionDimension().getOptimum().getLength().getValue();
+                    }
+                }
+            } else {
+                w = viewArea.getWidth() - x - abProps.right.getValue();
+            }
+            double h = 0.0;
+            if (abProps.bottom.getEnum() == Constants.EN_AUTO) {
+                if (fobj.getHeight().getEnum() == Constants.EN_AUTO) {
+                    h = viewArea.getHeight() - y;
+                } else {
+                    if (fobj.getReferenceOrientation() % 180 == 0) {
+                        h = fobj.getBlockProgressionDimension().getOptimum().getLength().getValue();
+                    } else {
+                        h = fobj.getInlineProgressionDimension().getOptimum().getLength().getValue();
+                    }
+                }
+            } else {
+                h = viewArea.getHeight() - y - abProps.bottom.getValue();
+            }
+            log.debug("x=" + x + " y=" + y + " w=" + w + " h=" + h + " orient=" + fobj.getReferenceOrientation());
+            if (w != 0) {
+                this.width = new FixedLength((int)w);
+            }
+            if (h != 0) {
+                this.height = new FixedLength((int)h);
+            }
+            Rectangle2D rect = new Rectangle2D.Double(x, y, w, h);
             relDims = new FODimension(0, 0);
             absoluteCTM = CTM.getCTMandRelDims(fobj.getReferenceOrientation(),
                 fobj.getWritingMode(), rect, relDims);
         }
  
-        height = fobj.getBlockProgressionDimension().getOptimum().getLength();
-        width = fobj.getInlineProgressionDimension().getOptimum().getLength();
+        if (height == null) {
+            height = fobj.getBlockProgressionDimension().getOptimum().getLength();
+        }
+        if (width == null) {
+            width = fobj.getInlineProgressionDimension().getOptimum().getLength();
+        }
     }
 
     protected int getRotatedIPD() {
         return fobj.getInlineProgressionDimension().getOptimum().getLength().getValue();
     }
 
+    private int getIPIndents() {
+        int iIndents = 0;
+        iIndents += fobj.getCommonMarginBlock().startIndent.getValue();
+        iIndents += fobj.getCommonMarginBlock().endIndent.getValue();
+        return iIndents;
+    }
+    
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
         if (abProps.absolutePosition == EN_ABSOLUTE) {
             return getAbsoluteBreakPoss(context);
+        } else if (abProps.absolutePosition == EN_FIXED) {
+            return getAbsoluteBreakPoss(context);
         }
 
-        int ipd = context.getRefIPD();
+        referenceIPD = context.getRefIPD();
         int bpd = context.getStackLimit().opt;
         if (width.getEnum() != EN_AUTO) {
-            ipd = width.getValue();
+            referenceIPD = width.getValue();
         }
         if (height.getEnum() != EN_AUTO) {
             bpd = height.getValue();
         }
-        Rectangle2D rect = new Rectangle2D.Double(0, 0, ipd, bpd);
+        int contentIPD = referenceIPD - getIPIndents();
+        
+        Rectangle2D rect = new Rectangle2D.Double(0, 0, contentIPD, bpd);
         relDims = new FODimension(0, 0);
         absoluteCTM = CTM.getCTMandRelDims(fobj.getReferenceOrientation(),
                 fobj.getWritingMode(), rect, relDims);
@@ -122,16 +209,16 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             stackLimit = context.getStackLimit();
         }
 
-        LayoutManager curLM ; // currently active LM
+        LayoutManager curLM; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
         // stackSize.add(spaceBefore);
         BreakPoss lastPos = null;
 
-        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, ipd);
+        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, contentIPD);
         fobj.setLayoutDimension(PercentBase.BLOCK_BPD, bpd);
-        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, ipd);
+        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, contentIPD);
         fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, bpd);
 
         while ((curLM = getChildLM()) != null) {
@@ -143,7 +230,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 childLC.setStackLimit(
                   MinOptMax.subtract(stackLimit,
                                      stackSize));
-                childLC.setRefIPD(ipd);
+                childLC.setRefIPD(contentIPD);
 
             boolean over = false;
             while (!curLM.isFinished()) {
@@ -187,7 +274,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             BreakPoss breakPoss;
             breakPoss = new BreakPoss(new LeafPosition(this,
                                                childBreaks.size() - 1));
-            breakPoss.setStackingSize(new MinOptMax(ipd));
+            breakPoss.setStackingSize(new MinOptMax(contentIPD));
             return breakPoss;
         }
         return null;
@@ -207,8 +294,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             BreakPoss bp;
 
             LayoutContext childLC = new LayoutContext(0);
-                childLC.setStackLimit(new MinOptMax(1000000));
-                childLC.setRefIPD(ipd);
+            childLC.setStackLimit(new MinOptMax(1000000));
+            childLC.setRefIPD(ipd);
 
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
@@ -225,10 +312,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         breakPoss.setStackingSize(new MinOptMax(0));
 
         if (stackSize.opt > relDims.bpd) {
+            log.warn("Contents overflow block-container viewport: clipping");
             if (fobj.getOverflow() == EN_HIDDEN) {
                 clip = true;
             } else if (fobj.getOverflow() == EN_ERROR_IF_OVERFLOW) {
-                log.error("contents overflows block-container viewport: clipping");
+                //TODO Throw layout exception
                 clip = true;
             }
         }
@@ -279,11 +367,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             TraitSetter.addBorders(viewportBlockArea, fobj.getCommonBorderPaddingBackground());
             TraitSetter.addBackground(viewportBlockArea, fobj.getCommonBorderPaddingBackground());
             
-            if (abProps.absolutePosition == EN_ABSOLUTE) {
+            if (abProps.absolutePosition == EN_ABSOLUTE 
+                    || abProps.absolutePosition == EN_FIXED) {
                 viewportBlockArea.setXOffset(abProps.left.getValue());
                 viewportBlockArea.setYOffset(abProps.top.getValue());
-                viewportBlockArea.setIPD(abProps.right.getValue() - abProps.left.getValue());
-                viewportBlockArea.setBPD(abProps.bottom.getValue() - abProps.top.getValue());
+                viewportBlockArea.setIPD(width.getValue());
+                viewportBlockArea.setBPD(height.getValue());
 
                 viewportBlockArea.setCTM(absoluteCTM);
                 viewportBlockArea.setClip(clip);
@@ -320,6 +409,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
             if (abProps.absolutePosition == EN_ABSOLUTE) {
                 viewportBlockArea.setPositioning(Block.ABSOLUTE);
+            } else if (abProps.absolutePosition == EN_FIXED) {
+                viewportBlockArea.setPositioning(Block.FIXED);
             }
 
             // Set up dimensions

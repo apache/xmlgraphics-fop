@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.inline.Character;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.ForeignObject;
@@ -237,8 +238,12 @@ public class PDFRenderer extends PrintRenderer {
      * @see org.apache.fop.render.Renderer#startRenderer(OutputStream)
      */
     public void startRenderer(OutputStream stream) throws IOException {
+        if (userAgent == null) {
+            throw new IllegalStateException("UserAgent must be set before starting the renderer");
+        }
         ostream = stream;
-        this.pdfDoc = new PDFDocument(userAgent.getProducer());
+        this.pdfDoc = new PDFDocument(
+                userAgent.getProducer() != null ? userAgent.getProducer() : "");
         this.pdfDoc.setCreator(userAgent.getCreator());
         this.pdfDoc.setCreationDate(userAgent.getCreationDate());
         this.pdfDoc.setFilterMap(filterMap);
@@ -505,10 +510,13 @@ public class PDFRenderer extends PrintRenderer {
         float width = block.getIPD() / 1000f;
         float height = block.getBPD() / 1000f;
 
+        /* using start-indent now
         Integer spaceStart = (Integer) block.getTrait(Trait.SPACE_START);
         if (spaceStart != null) {
-            startx += spaceStart.floatValue() / 1000;
-        }
+            startx += spaceStart.floatValue() / 1000f;
+        }*/
+        startx += block.getStartIndent() / 1000f;
+        startx -= block.getBorderAndPaddingWidthStart() / 1000f;
 
         width += borderPaddingStart / 1000f;
         width += block.getBorderAndPaddingWidthEnd() / 1000f;
@@ -572,11 +580,9 @@ public class PDFRenderer extends PrintRenderer {
             float bwidth = bps.width / 1000f;
             updateColor(bps.color, false, null);
             updateLineStyle(bps.style);
-            currentStream.add(bwidth + " w\n");
+            updateLineWidth(bwidth);
             float y1 = starty + bwidth / 2;
-            currentStream.add(startx + " " + y1 + " m\n");
-            currentStream.add(startx + width + " " + y1 + " l\n");
-            currentStream.add("S\n");
+            drawLine(startx, y1, startx + width, y1);
         }
         bps = (BorderProps)area.getTrait(Trait.BORDER_AFTER);
         if (bps != null) {
@@ -585,11 +591,9 @@ public class PDFRenderer extends PrintRenderer {
             float bwidth = bps.width / 1000f;
             updateColor(bps.color, false, null);
             updateLineStyle(bps.style);
-            currentStream.add(bwidth + " w\n");
+            updateLineWidth(bwidth);
             float y1 = starty - bwidth / 2;
-            currentStream.add(startx + " " + (y1 + height) + " m\n");
-            currentStream.add((startx + width) + " " + (y1 + height) + " l\n");
-            currentStream.add("S\n");
+            drawLine(startx, y1 + height, startx + width, y1 + height);
         }
         bps = (BorderProps)area.getTrait(Trait.BORDER_START);
         if (bps != null) {
@@ -598,11 +602,9 @@ public class PDFRenderer extends PrintRenderer {
             float bwidth = bps.width / 1000f;
             updateColor(bps.color, false, null);
             updateLineStyle(bps.style);
-            currentStream.add(bwidth + " w\n");
+            updateLineWidth(bwidth);
             float x1 = startx + bwidth / 2;
-            currentStream.add(x1 + " " + starty + " m\n");
-            currentStream.add(x1 + " " + (starty + height) + " l\n");
-            currentStream.add("S\n");
+            drawLine(x1, starty, x1, starty + height);
         }
         bps = (BorderProps)area.getTrait(Trait.BORDER_END);
         if (bps != null) {
@@ -611,14 +613,23 @@ public class PDFRenderer extends PrintRenderer {
             float bwidth = bps.width / 1000f;
             updateColor(bps.color, false, null);
             updateLineStyle(bps.style);
-            currentStream.add(bwidth + " w\n");
+            updateLineWidth(bwidth);
             float x1 = startx - bwidth / 2;
-            currentStream.add((x1 + width) + " " + starty + " m\n");
-            currentStream.add((x1 + width) + " " + (starty + height) + " l\n");
-            currentStream.add("S\n");
+            drawLine(x1 + width, starty, x1 + width, starty + height);
         }
     }
 
+    /**
+     * Sets the current line width in points.
+     * @param width line width in points
+     */
+    private void updateLineWidth(float width) {
+        if (currentState.setLineWidth(width)) {
+            //Only write if value has changed WRT the current line width
+            currentStream.add(width + " w\n");
+        }
+    }
+    
     private void updateLineStyle(int style) {
         switch (style) {
             case Constants.EN_DASHED:
@@ -643,9 +654,8 @@ public class PDFRenderer extends PrintRenderer {
      * @param endy the y end position
      */
     private void drawLine(float startx, float starty, float endx, float endy) {
-        currentStream.add(startx + " " + starty + " m\n");
-        currentStream.add(endx + " " + endy + " l\n");
-        currentStream.add("S\n");
+        currentStream.add(startx + " " + starty + " m ");
+        currentStream.add(endx + " " + endy + " l S\n");
     }
 
     /**
@@ -661,15 +671,33 @@ public class PDFRenderer extends PrintRenderer {
 
         CTM ctm = bv.getCTM();
 
-        if (bv.getPositioning() == Block.ABSOLUTE) {
+        if (bv.getPositioning() == Block.ABSOLUTE
+                || bv.getPositioning() == Block.FIXED) {
 
+            getLogger().debug("containing position ip=" + containingIPPosition + " bp=" + containingBPPosition);
             CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
             ctm = tempctm.multiply(ctm);
+            getLogger().debug("tempctm=" + tempctm + " ctm=" + ctm);
 
-            float x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
-            float y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
+            float x,y;
+            x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
+            y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
             float width = (float)bv.getIPD() / 1000f;
             float height = (float)bv.getBPD() / 1000f;
+            getLogger().debug("renderBlockViewport: x=" + x + " y=" + y + " width=" + width + " height=" + height);
+            
+            int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
+            int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
+
+            Integer spaceStart = (Integer) bv.getTrait(Trait.SPACE_START);
+            if (spaceStart != null) {
+                x += spaceStart.floatValue() / 1000;
+            }
+
+            width += borderPaddingStart / 1000f;
+            width += bv.getBorderAndPaddingWidthEnd() / 1000f;
+            height += borderPaddingBefore / 1000f;
+            height += bv.getBorderAndPaddingWidthAfter() / 1000f;
 
             drawBackAndBorders(bv, x, y, width, height);
 
@@ -750,12 +778,7 @@ public class PDFRenderer extends PrintRenderer {
      * @param height the height of the area
      */
     protected void clip(float x, float y, float width, float height) {
-        currentStream.add(x + " " + y + " m\n");
-        currentStream.add((x + width) + " " + y + " l\n");
-        currentStream.add((x + width) + " " + (y + height) + " l\n");
-        currentStream.add(x + " " + (y + height) + " l\n");
-        currentStream.add("h\n");
-        currentStream.add("W\n");
+        currentStream.add(x + " " + y + " " + width + " " + height + " re W\n");
         currentStream.add("n\n");
     }
 
@@ -1278,12 +1301,12 @@ public class PDFRenderer extends PrintRenderer {
         float starty = ((currentBPPosition + area.getOffset()) / 1000f);
         float endx = (currentIPPosition + area.getIPD()) / 1000f;
         if (!alt) {
-            currentStream.add(area.getRuleThickness() / 1000f + " w\n");
+            updateLineWidth(area.getRuleThickness() / 1000f);
             drawLine(startx, starty, endx, starty);
         } else {
             if (style == EN_DOUBLE) {
                 float third = area.getRuleThickness() / 3000f;
-                currentStream.add(third + " w\n");
+                updateLineWidth(third);
                 drawLine(startx, starty, endx, starty);
 
                 drawLine(startx, (starty + 2 * third), endx, (starty + 2 * third));
