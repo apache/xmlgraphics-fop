@@ -77,7 +77,9 @@ public abstract class PDFObject {
     public PDFObject(int number) {
 	this.number = number;
     }
-
+	public PDFObject() {
+		//do nothing
+	}
     /**
      * write the PDF represention of this object
      *
