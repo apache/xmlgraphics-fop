@@ -58,7 +58,6 @@ import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.mif.MIFHandler;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.render.awt.AWTPrintRenderer;
 import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.rtf.renderer.RTFHandler;
 import org.apache.fop.tools.DocumentInputSource;
@@ -550,7 +549,7 @@ public class Driver implements LogEnabled {
 
     /**
      * Render the FO document read by a SAX Parser from an InputHandler
-     * @param InputHandler the input handler containing the source and
+     * @param inputHandler the input handler containing the source and
      * parser information.
      * @throws FOPException if anything goes wrong.
      */
