@@ -16,6 +16,9 @@ import org.xml.sax.Attributes;
 
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 /*
  * FONode.java
@@ -44,19 +47,25 @@ public class FONode extends FOTree.Node{
         NONE = 0
        ,ROOT = 1
      ,LAYOUT = 2
-       ,FLOW = 3
+    ,PAGESEQ = 3
+       ,FLOW = 4
+     ,STATIC = 5
+     ,MARKER = 6
         ;
-
     /** The <tt>FOTree</tt> of which this node is a member. */
     protected FOTree foTree;
     /** The <tt>XMLEvent</tt> which triggered this node. */
     protected XMLEvent event;
     /** The buffer from which parser events are drawn. */
     protected SyncedCircularBuffer xmlevents;
+    /** The node identifier obtained from <tt>foTree</tt>. */
+    public final int id;
     /** The array of property value stacks */
     protected LinkedList[] propertyStacks;
     /** The attributes defined on this node. */
     public FOAttributes foAttributes;
+    /** The properties defined on this node. */
+    public HashMap foProperties = null;
     /** The property expression parser in the FOTree. */
     protected PropertyParser exprParser;
 
@@ -76,23 +85,43 @@ public class FONode extends FOTree.Node{
         xmlevents = foTree.xmlevents;
         propertyStacks = foTree.propertyStacks;
         exprParser = foTree.exprParser;
+        id = foTree.nextNodeID();
         foAttributes = new FOAttributes(event);
-        // Process the FOAttributes - parse and stack the values
-        // font-size is always done first
-        String value = foAttributes.getFoAttrValue("font-size");
-        if (value != null) { // font-size is defined in the attributes
-            // parse the expression
-            exprParser.resetParser();
-            PropertyValue props =
-                    exprParser.parse(PropNames.FONT_SIZE, value);
-            // font-size must be a single property value, which may be
-            // a percentage
-            if (props instanceof PropertyValueList)
-                throw new PropertyException
-                        ("font-size requires single PropertyValue in " +
-                        "PropertyValueList");
-            
+        if ( ! (attrSet == MARKER)) {
+            processProperties();
         }
     }
 
+    private void processProperties() throws PropertyException {
+        // Process the FOAttributes - parse and stack the values
+        // Build a HashMap of the properties defined on this node
+        foProperties = foAttributes.getFoAttrMap();
+        PropertyValue props;
+        for (int prop = 1; prop <= PropNames.LAST_PROPERTY_INDEX; prop++) {
+            String value = foAttributes.getFoAttrValue(prop);
+            if (value != null) { // property is defined in the attributes
+                props = handleAttrValue(prop, value);
+            }
+        }
+    }
+
+    private PropertyValue handleAttrValue(int property, String attrValue)
+        throws PropertyException
+    {
+        // parse the expression
+        exprParser.resetParser();
+        foTree.args[0] = foTree;
+        foTree.args[1] = exprParser.parse(property, attrValue);
+        try {
+            return (PropertyValue)
+                    (((Method)PropertyConsts.refineParsingMethods
+                      .get(property))
+                     .invoke(null, foTree.args));
+        } catch (IllegalAccessException e) {
+            throw new PropertyException (e.getMessage());
+        } catch (InvocationTargetException e) {
+            throw new PropertyException (e.getMessage());
+        }
+    }
+    
 }// FONode
