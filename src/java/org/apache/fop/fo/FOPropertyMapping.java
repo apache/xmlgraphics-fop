@@ -4,7 +4,7 @@
  *                    The Apache Software License, Version 1.1
  * ============================================================================
  *
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -482,8 +482,9 @@ public class FOPropertyMapping implements Constants {
      */
     public static int getPropertyId(String name) {
         Integer i = (Integer) s_htPropNames.get(name);
-        if (i == null)
+        if (i == null) {
             return -1;
+        }
         return i.intValue();
     }
 
@@ -494,8 +495,9 @@ public class FOPropertyMapping implements Constants {
      */
     public static int getSubPropertyId(String name) {
         Integer i = (Integer) s_htSubPropNames.get(name);
-        if (i == null)
+        if (i == null) {
             return -1;
+        }
         return i.intValue();
     }
     
@@ -1362,8 +1364,8 @@ public class FOPropertyMapping implements Constants {
         pdim = new DimensionPropertyMaker(m);
         pdim.setCorresponding(PR_HEIGHT, PR_HEIGHT, PR_WIDTH);
         pdim.setExtraCorresponding(new int[][] {
-             { PR_MIN_HEIGHT, PR_MIN_HEIGHT, PR_MIN_WIDTH, },
-             { PR_MAX_HEIGHT, PR_MAX_HEIGHT, PR_MAX_WIDTH, }
+             {PR_MIN_HEIGHT, PR_MIN_HEIGHT, PR_MIN_WIDTH, },
+             {PR_MAX_HEIGHT, PR_MAX_HEIGHT, PR_MAX_WIDTH, }
         });
         pdim.setRelative(true);
         addPropertyMaker("block-progression-dimension", m);
@@ -1400,7 +1402,7 @@ public class FOPropertyMapping implements Constants {
         l.setByShorthand(true);
         m.addSubpropMaker(l);
 
-        l= new LengthProperty.Maker(CP_OPTIMUM);
+        l = new LengthProperty.Maker(CP_OPTIMUM);
         l.setDefault("auto");
         l.setAutoOk(true);
         l.setPercentBase(LengthBase.CONTAINING_BOX);
@@ -1418,8 +1420,8 @@ public class FOPropertyMapping implements Constants {
         pdim.setRelative(true);
         pdim.setCorresponding(PR_WIDTH, PR_WIDTH, PR_HEIGHT);
         pdim.setExtraCorresponding(new int[][] {
-			{ PR_MIN_WIDTH, PR_MIN_WIDTH, PR_MIN_HEIGHT, },
-            { PR_MAX_WIDTH, PR_MAX_WIDTH, PR_MAX_HEIGHT, }
+            {PR_MIN_WIDTH, PR_MIN_WIDTH, PR_MIN_HEIGHT, },
+            {PR_MAX_WIDTH, PR_MAX_WIDTH, PR_MAX_HEIGHT, }
         });
         addPropertyMaker("inline-progression-dimension", m);
 
@@ -1549,15 +1551,17 @@ public class FOPropertyMapping implements Constants {
                     return null;
                 }
                 int correspondingValue = corresponding.getEnum();
-                if (correspondingValue == JUSTIFY)
+                if (correspondingValue == JUSTIFY) {
                     return new EnumProperty(START);
-                else if (correspondingValue == END)
+                } else if (correspondingValue == END) {
                     return new EnumProperty(END);
-                else if (correspondingValue == START)
+                } else if (correspondingValue == START) {
                     return new EnumProperty(START);
-                else if (correspondingValue == CENTER)
+                } else if (correspondingValue == CENTER) {
                     return new EnumProperty(CENTER);
-                return null;
+                } else {
+                    return null;
+                }
             }
         };
         m.setInherited(true);
