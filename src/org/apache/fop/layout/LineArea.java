@@ -224,8 +224,7 @@ public class LineArea extends Area {
 			InlineArea inlineArea = (InlineArea) e.nextElement();
 			if (ls != null) {
 			    Rectangle lr =
-				new Rectangle(startIndent +
-					      finalWidth,
+				new Rectangle(finalWidth,
 					      0,
 					      inlineArea.getContentWidth(),
 					      fontState.getFontSize());
@@ -252,8 +251,7 @@ public class LineArea extends Area {
 			addChild(ia);
 			if (ls != null) {
 			    Rectangle lr =
-				new Rectangle(startIndent +
-					      finalWidth,
+				new Rectangle(finalWidth,
 					      0,
 					      ia.getContentWidth(),
 					      fontState.getFontSize());                            
@@ -360,7 +358,7 @@ public class LineArea extends Area {
 	    
 	    if (ls != null) {
 		Rectangle lr =
-		    new Rectangle(startIndent + finalWidth + spaceWidth + embeddedLinkStart,
+		    new Rectangle(finalWidth + spaceWidth + embeddedLinkStart,
 				  spaceWidth,
 				  pia.getContentWidth(),
 			          fontState.getFontSize());                		
