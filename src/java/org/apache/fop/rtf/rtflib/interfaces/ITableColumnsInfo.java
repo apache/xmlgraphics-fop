@@ -63,6 +63,7 @@ package org.apache.fop.rtf.rtflib.interfaces;
  */
 
 public interface ITableColumnsInfo {
+    /** value for invalid column width */
     float INVALID_COLUM_WIDTH = 200f;
 
     /** reset the column iteration index, meant to be called when creating a new row */
