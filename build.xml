@@ -696,6 +696,7 @@ list of possible build targets.
       <formatter type="brief" usefile="false"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
+        <path refid="libs-basic-run-classpath"/>
         <fileset dir="build">
           <include name="fop-transcoder-allinone.jar"/>
         </fileset>
