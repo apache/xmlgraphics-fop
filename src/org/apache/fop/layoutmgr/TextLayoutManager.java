@@ -247,7 +247,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         curWordArea.setWord(str);
         // curWordArea.addTrait(new Trait(Trait.FONT_STATE, textInfo.fs));
-        curWordArea.addTrait(Trait.FONT_STATE, textInfo.fs);
+        //curWordArea.addTrait(Trait.FONT_STATE, textInfo.fs);
         return curWordArea;
     }
 

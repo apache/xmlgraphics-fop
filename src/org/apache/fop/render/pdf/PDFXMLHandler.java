@@ -13,7 +13,7 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.pdf.*;
 import org.apache.fop.svg.*;
 import org.apache.fop.svg.SVGUserAgent;
-import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.FontInfo;
 
 import org.apache.batik.dom.util.DOMUtilities;
 
@@ -50,7 +50,7 @@ public static final String PDF_PAGE = "pdfPage";
 public static final String PDF_STREAM = "pdfStream";
 public static final String PDF_WIDTH = "width";
 public static final String PDF_HEIGHT = "height";
-public static final String PDF_FONT_STATE = "fontState";
+public static final String PDF_FONT_INFO = "fontInfo";
 public static final String PDF_FONT_NAME = "fontName";
 public static final String PDF_FONT_SIZE = "fontSize";
 public static final String PDF_XPOS = "xpos";
@@ -80,7 +80,7 @@ public static final String PDF_YPOS = "ypos";
         pdfi.currentStream = (PDFStream)context.getProperty(PDF_STREAM);
         pdfi.width = ((Integer)context.getProperty(PDF_WIDTH)).intValue();
         pdfi.height = ((Integer)context.getProperty(PDF_HEIGHT)).intValue();
-        pdfi.fs = (FontState)context.getProperty(PDF_FONT_STATE);
+        pdfi.fi = (FontInfo)context.getProperty(PDF_FONT_INFO);
         pdfi.currentFontName = (String)context.getProperty(PDF_FONT_NAME);
         pdfi.currentFontSize = ((Integer)context.getProperty(PDF_FONT_SIZE)).intValue();
         pdfi.currentXPosition = ((Integer)context.getProperty(PDF_XPOS)).intValue();
@@ -96,7 +96,7 @@ public static final String PDF_YPOS = "ypos";
         public PDFStream currentStream;
         int width;
         int height;
-        FontState fs;
+        FontInfo fi;
         String currentFontName;
         int currentFontSize;
         int currentXPosition;
@@ -117,7 +117,7 @@ public static final String PDF_YPOS = "ypos";
 
             GVTBuilder builder = new GVTBuilder();
             BridgeContext ctx = new BridgeContext(ua);
-            PDFTextElementBridge tBridge = new PDFTextElementBridge(pdfInfo.fs);
+            PDFTextElementBridge tBridge = new PDFTextElementBridge(pdfInfo.fi);
             ctx.putBridge(tBridge);
 
             PDFAElementBridge aBridge = new PDFAElementBridge();
@@ -170,7 +170,7 @@ public static final String PDF_YPOS = "ypos";
                                 + PDFNumber.doubleOut(vals[5]) + " cm\n");
             }
 
-            PDFGraphics2D graphics = new PDFGraphics2D(true, pdfInfo.fs, pdfInfo.pdfDoc,
+            PDFGraphics2D graphics = new PDFGraphics2D(true, pdfInfo.fi, pdfInfo.pdfDoc,
                                      pdfInfo.pdfPage, pdfInfo.pdfPage.referencePDF(), pdfInfo.currentFontName,
                                      pdfInfo.currentFontSize,
                                      pdfInfo.currentXPosition,

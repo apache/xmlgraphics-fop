@@ -527,8 +527,8 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
         curWordArea.info.blOffset = true;
 
         curWordArea.setWord(str);
-        //curWordArea.addTrait(new Trait(Trait.FONT_STATE, textInfo.fs));
-        curWordArea.addTrait(Trait.FONT_STATE, textInfo.fs);
+        curWordArea.addTrait(Trait.FONT_NAME, textInfo.fs.getFontName());
+        curWordArea.addTrait(Trait.FONT_SIZE, new Integer(textInfo.fs.getFontSize()));
         return curWordArea;
     }
 

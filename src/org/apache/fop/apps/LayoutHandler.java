@@ -100,6 +100,10 @@ public class LayoutHandler extends StructureHandler {
 
         try {
             renderer.setupFontInfo(fontInfo);
+            // check that the "any,normal,400" font exists
+            if(!fontInfo.isSetupValid()) {
+                throw new SAXException(new FOPException("no default font defined by OutputConverter"));
+            }
             renderer.startRenderer(outputStream);
         } catch (IOException e) {
             throw new SAXException(e);

@@ -9,18 +9,16 @@ package org.apache.fop.layout;
 
 import java.util.HashMap;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.FontVariant;
 import org.apache.fop.render.pdf.CodePointMapping;
 
 public class FontState {
 
-    private FontInfo _fontInfo;
     private String _fontName;
     private int _fontSize;
     private String _fontFamily;
     private String _fontStyle;
-    private String _fontWeight;
+    private int _fontWeight;
     private int _fontVariant;
 
     private FontMetric _metric;
@@ -28,17 +26,10 @@ public class FontState {
     private static HashMap EMPTY_HASHMAP = new HashMap();
 
 
-    public FontState(FontInfo fontInfo, String fontFamily, String fontStyle,
-                     String fontWeight, int fontSize,
-                     int fontVariant) throws FOPException {
-        _fontInfo = fontInfo;
-        _fontFamily = fontFamily;
-        _fontStyle = fontStyle;
-        _fontWeight = fontWeight;
+    public FontState(String key, FontMetric met, int fontSize) {
         _fontSize = fontSize;
-        _fontName = fontInfo.fontLookup(fontFamily, fontStyle, fontWeight);
-        _metric = fontInfo.getMetricsFor(_fontName);
-        _fontVariant = fontVariant;
+        _fontName = key;
+        _metric = met;
     }
 
     public int getAscender() {
@@ -59,26 +50,6 @@ public class FontState {
 
     public int getFontSize() {
         return _fontSize;
-    }
-
-    public String getFontWeight() {
-        return _fontWeight;
-    }
-
-    public String getFontFamily() {
-        return _fontFamily;
-    }
-
-    public String getFontStyle() {
-        return _fontStyle;
-    }
-
-    public int getFontVariant() {
-        return _fontVariant;
-    }
-
-    public FontInfo getFontInfo() {
-        return _fontInfo;
     }
 
     public int getXHeight() {
