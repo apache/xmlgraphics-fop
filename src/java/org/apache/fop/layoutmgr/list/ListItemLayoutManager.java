@@ -170,7 +170,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
             if (stage == 0) {
                 childLC.setRefIPD(24000);
             } else if (stage == 1) {
-                childLC.setRefIPD(context.getRefIPD() - 24000);
+                childLC.setRefIPD(context.getRefIPD());
             }
             stage++;
             while (!curLM.isFinished()) {
@@ -259,9 +259,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
                 breakPosIter = new BreakPossPosIter(cellsbr, 0, cellsbr.size());
 
                 while ((childLM = (Item)breakPosIter.getNextChildLM()) != null) {
-                    if (childLM == body) {
-                        childLM.setXOffset(24000);
-                    }
                     childLM.addAreas(breakPosIter, lc);
                 }
             }
