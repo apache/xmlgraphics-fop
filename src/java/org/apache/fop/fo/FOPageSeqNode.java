@@ -61,6 +61,13 @@ public class FOPageSeqNode extends FONode {
     /** Decorations applicable to generated text. See 7.16.4 "text-decoration"
      * in the Recommendation.*/
     protected TextDecorations decorations = null;
+    /**
+     * Gets the current <code>TextDecorations</code> object
+     * @return the decorations
+     */
+    public TextDecorations getDecorations() {
+        return decorations;
+    }
     
     /**
      * @param foTree the FO tree to which this node is added
@@ -305,7 +312,7 @@ public class FOPageSeqNode extends FONode {
      * @throws PropertyException
      * @throws FontException
      */
-    protected Map getFontAttributes() throws PropertyException, FontException {
+    public Map getFontAttributes() throws PropertyException, FontException {
         int pvtype;
         Numeric fontSize = null;
         PropertyValue pv = getPropertyValue(PropNames.FONT_STYLE);
