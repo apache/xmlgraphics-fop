@@ -8,8 +8,7 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.PercentLength;
-import org.apache.fop.datatypes.TableColLength;
+import org.apache.fop.datatypes.AutoLength;
 import org.apache.fop.fo.expr.Numeric;
 import org.apache.fop.apps.FOPException;
 
@@ -40,7 +39,7 @@ public class LengthProperty extends Property {
             if (isAutoLengthAllowed()) {
                 String pval = p.getString();
                 if (pval != null && pval.equals("auto"))
-                    return new LengthProperty(Length.AUTO);
+                    return new LengthProperty(new AutoLength());
             }
             if (p instanceof LengthProperty)
                 return p;
@@ -70,15 +69,7 @@ public class LengthProperty extends Property {
     }
 
     public Numeric getNumeric() {
-        // Can't just do new Numeric(length) because it always uses
-        // the constructor for Length!
-        // Otherwise, must make each class know about Numeric...
-        // ie, return length.asNumeric(): cleaner
-        if (length instanceof PercentLength)
-            return new Numeric((PercentLength)length);
-        if (length instanceof TableColLength)
-            return new Numeric((TableColLength)length);
-        return new Numeric(length);
+        return length.asNumeric() ;
     }
 
     public Length getLength() {
