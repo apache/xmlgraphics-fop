@@ -22,7 +22,8 @@ import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFDocument; 
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFResources;
-import org.apache.fop.pdf.PDFXObject;      
+import org.apache.fop.pdf.PDFResourceContext;
+import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.pdf.PDFPage;        
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFLink;
@@ -131,7 +132,7 @@ public class PDFRenderer extends PrintRenderer {
     /**
      * the current annotation list to add annotations to
      */
-    protected PDFAnnotList currentAnnotList;
+    protected PDFResourceContext currentContext = null;
 
     /**
      * the current page to add annotations to
@@ -369,16 +370,17 @@ public class PDFRenderer extends PrintRenderer {
         // Transform origin at top left to origin at bottom left
         currentStream.add("1 0 0 -1 0 "
                            + (int) Math.round(pageHeight / 1000) + " cm\n");
-        //currentStream.add("BT\n");
         currentFontName = "";
 
         Page p = page.getPage();
         renderPageAreas(p);
 
-        //currentStream.add("ET\n");
-
         this.pdfDoc.addStream(currentStream);
         currentPage.setContents(currentStream);
+        PDFAnnotList annots = currentPage.getAnnotations();
+        if (annots != null) {
+            this.pdfDoc.addAnnotList(annots);
+        }
         this.pdfDoc.addPage(currentPage);
         this.pdfDoc.output(ostream);
     }
@@ -899,7 +901,7 @@ public class PDFRenderer extends PrintRenderer {
      * Checks to see if we have some text rendering commands open
      * still and writes out the TJ command to the stream if we do
      */
-    private void closeText() {
+    protected void closeText() {
         if (textOpen) {
             currentStream.add("] TJ\n");
             textOpen = false;
@@ -989,14 +991,14 @@ public class PDFRenderer extends PrintRenderer {
                 return;
             }
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
-            int xobj = pdfDoc.addImage(null, pdfimage).getXNumber();
+            int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
         } else if ("image/jpeg".equals(mime)) {
             if (!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
                 return;
             }
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
-            int xobj = pdfDoc.addImage(null, pdfimage).getXNumber();
+            int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
 
             int w = (int) pos.getWidth() / 1000;
@@ -1008,7 +1010,7 @@ public class PDFRenderer extends PrintRenderer {
                 return;
             }
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
-            int xobj = pdfDoc.addImage(null, pdfimage).getXNumber();
+            int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
 
             int w = (int) pos.getWidth() / 1000;
@@ -1049,6 +1051,8 @@ public class PDFRenderer extends PrintRenderer {
         context.setProperty(PDFXMLHandler.OUTPUT_STREAM, ostream);
         context.setProperty(PDFXMLHandler.PDF_STATE, currentState);
         context.setProperty(PDFXMLHandler.PDF_PAGE, currentPage);
+        context.setProperty(PDFXMLHandler.PDF_CONTEXT, currentContext == null ? currentPage: currentContext);
+        context.setProperty(PDFXMLHandler.PDF_CONTEXT, currentContext);
         context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);
         context.setProperty(PDFXMLHandler.PDF_XPOS,
                             new Integer(currentBlockIPPosition + (int) pos.getX()));

@@ -69,6 +69,10 @@ public class PDFResourceContext extends PDFObject {
         this.annotList.addAnnot(annot);
     }
 
+    public PDFAnnotList getAnnotations() {
+        return this.annotList;
+    }
+
     public void addGState(PDFGState gstate) {
         this.resources.addGState(gstate);
     }
